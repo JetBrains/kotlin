@@ -1,11 +1,12 @@
-// !LANGUAGE: -NestedClassesInAnnotations
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -NestedClassesInAnnotations
 
 annotation class Annotation2() {
-    <!ANNOTATION_CLASS_MEMBER!>public val s: String = ""<!>
+    public <!ANNOTATION_CLASS_MEMBER!>val s: String<!> = ""
 }
 
 annotation class Annotation3() {
-    <!ANNOTATION_CLASS_MEMBER!>public fun foo() {}<!>
+    public <!ANNOTATION_CLASS_MEMBER!>fun foo()<!> {}
 }
 
 annotation class Annotation4() {
@@ -17,7 +18,7 @@ annotation class Annotation5() {
 }
 
 annotation class Annotation6() {
-    <!ANNOTATION_CLASS_MEMBER!>init {}<!>
+    <!ANNOTATION_CLASS_MEMBER!>init<!> {}
 }
 
 annotation class Annotation1() {}

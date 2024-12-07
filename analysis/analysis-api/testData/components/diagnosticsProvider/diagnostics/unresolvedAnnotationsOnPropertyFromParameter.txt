@@ -1,0 +1,19 @@
+Diagnostics from elements:
+  for PSI element of type KtNameReferenceExpression at (2,15-27)
+    UNRESOLVED_REFERENCE      text ranges: [(23,35)]
+      PSI: KtNameReferenceExpression at (2,15-27)
+  for PSI element of type KtNameReferenceExpression at (3,10-20)
+    UNRESOLVED_REFERENCE      text ranges: [(45,55)]
+      PSI: KtNameReferenceExpression at (3,10-20)
+  for PSI element of type KtNameReferenceExpression at (4,10-20)
+    UNRESOLVED_REFERENCE      text ranges: [(65,75)]
+      PSI: KtNameReferenceExpression at (4,10-20)
+  for PSI element of type KtNameReferenceExpression at (5,15-30)
+    UNRESOLVED_REFERENCE      text ranges: [(90,105)]
+      PSI: KtNameReferenceExpression at (5,15-30)
+  for PSI element of type KtNameReferenceExpression at (6,12-21)
+    UNRESOLVED_REFERENCE      text ranges: [(117,126)]
+      PSI: KtNameReferenceExpression at (6,12-21)
+  for PSI element of type KtNameReferenceExpression at (7,12-21)
+    UNRESOLVED_REFERENCE      text ranges: [(138,147)]
+      PSI: KtNameReferenceExpression at (7,12-21)

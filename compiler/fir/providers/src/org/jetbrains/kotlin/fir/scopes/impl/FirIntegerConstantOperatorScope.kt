@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,10 +12,12 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.getFunctions
+import org.jetbrains.kotlin.fir.scopes.impl.ConvertibleIntegerOperators.binaryOperatorsWithSignedArgument
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -33,8 +35,14 @@ class FirIntegerConstantOperatorScope(
         val baseType = when (isUnsigned) {
             true -> session.builtinTypes.uIntType
             false -> session.builtinTypes.intType
-        }.type
-        baseType.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing) ?: error("Scope for $baseType not found")
+        }.coneType
+
+        baseType.scope(
+            session,
+            scopeSession,
+            CallableCopyTypeCalculator.DoNothing,
+            requiredMembersPhase = FirResolvePhase.STATUS,
+        ) ?: Empty
     }
 
     private val mappedFunctions = mutableMapOf<Name, FirNamedFunctionSymbol>()
@@ -46,6 +54,7 @@ class FirIntegerConstantOperatorScope(
         if (!isUnaryOperator && !isBinaryOperator) {
             return baseScope.processFunctionsByName(name, processor)
         }
+        val requiresUnsignedOperand = isUnsigned && name !in binaryOperatorsWithSignedArgument
         val wrappedSymbol = mappedFunctions.getOrPut(name) {
             val allFunctions = baseScope.getFunctions(name)
             val functionSymbol = allFunctions.first {
@@ -53,7 +62,7 @@ class FirIntegerConstantOperatorScope(
                 if (isUnaryOperator) return@first true
 
                 val coneType = it.fir.valueParameters.first().returnTypeRef.coneType
-                if (isUnsigned) {
+                if (requiresUnsignedOperand) {
                     coneType.isUInt
                 } else {
                     coneType.isInt
@@ -71,9 +80,8 @@ class FirIntegerConstantOperatorScope(
             symbol = FirNamedFunctionSymbol(originalSymbol.callableId)
             origin = FirDeclarationOrigin.WrappedIntegerOperator
             returnTypeRef = buildResolvedTypeRef {
-                type = ConeIntegerConstantOperatorTypeImpl(isUnsigned, ConeNullability.NOT_NULL)
+                coneType = ConeIntegerConstantOperatorTypeImpl(isUnsigned, isMarkedNullable = false)
             }
-
         }.also {
             it.originalForWrappedIntegerOperator = originalSymbol
             it.isUnsignedWrappedIntegerOperator = isUnsigned
@@ -117,6 +125,11 @@ class FirIntegerConstantOperatorScope(
         processor: (FirPropertySymbol, FirTypeScope) -> ProcessorAction
     ): ProcessorAction {
         return ProcessorAction.NONE
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirIntegerConstantOperatorScope {
+        return FirIntegerConstantOperatorScope(newSession, newScopeSession, isUnsigned)
     }
 }
 

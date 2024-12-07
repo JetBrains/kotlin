@@ -1,0 +1,26 @@
+KT element: KtNameReferenceExpression
+FIR element: FirPropertyAccessExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|<local>/m|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] incWithArrayAccessConvention_propertyAccess.kt
+    public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {
+        public abstract operator [ResolvedTo(CONTRACTS)] fun inc(): R|A|
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface MyMap<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V> : R|kotlin/Any| {
+        public abstract operator [ResolvedTo(CONTRACTS)] fun get([ResolvedTo(CONTRACTS)] k: R|K|): R|V|
+
+        public abstract operator [ResolvedTo(CONTRACTS)] fun set([ResolvedTo(CONTRACTS)] k: R|K|, [ResolvedTo(CONTRACTS)] v: R|V|): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] m: R|MyMap<kotlin/String, A>|): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval <array>: R|MyMap<kotlin/String, A>| = R|<local>/m|
+        [ResolvedTo(BODY_RESOLVE)] lval <index_0>: R|kotlin/String| = String(a)
+        [ResolvedTo(BODY_RESOLVE)] lval <unary>: R|A| = R|<local>/<array>|.R|SubstitutionOverride</MyMap.get: R|A|>|(R|<local>/<index_0>|)
+        R|<local>/<array>|.R|SubstitutionOverride</MyMap.set: R|kotlin/Unit|>|(R|<local>/<index_0>|, R|<local>/<unary>|.R|/A.inc|())
+        R|<local>/<unary>|
+    }

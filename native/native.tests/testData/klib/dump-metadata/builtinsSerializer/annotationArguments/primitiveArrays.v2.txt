@@ -1,0 +1,74 @@
+library {
+  // module name: <primitiveArrays.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/C1
+    // class name: test/C2
+    // class name: test/PrimitiveArrays
+
+    // signature: test/C1|null[0]
+    @test/PrimitiveArrays(byteArray = [-7.toByte(), 7.toByte()], charArray = ['%', 'z'], shortArray = [239.toShort()], intArray = [239017, -1], longArray = [123456789123456789L], floatArray = [2.72f, 0.0f], doubleArray = [-3.14], booleanArray = [true, false, true])
+    public final class test/C1 : kotlin/Any {
+
+      // signature: test/C1.<init>|<init>(){}[0]
+      public constructor()
+    }
+
+    // signature: test/C2|null[0]
+    @test/PrimitiveArrays(byteArray = [], charArray = [], shortArray = [], intArray = [], longArray = [], floatArray = [], doubleArray = [], booleanArray = [])
+    public final class test/C2 : kotlin/Any {
+
+      // signature: test/C2.<init>|<init>(){}[0]
+      public constructor()
+    }
+
+    // signature: test/PrimitiveArrays|null[0]
+    public final annotation class test/PrimitiveArrays : kotlin/Annotation {
+
+      // signature: test/PrimitiveArrays.<init>|<init>(kotlin.ByteArray;kotlin.CharArray;kotlin.ShortArray;kotlin.IntArray;kotlin.LongArray;kotlin.FloatArray;kotlin.DoubleArray;kotlin.BooleanArray){}[0]
+      public constructor(byteArray: kotlin/ByteArray, charArray: kotlin/CharArray, shortArray: kotlin/ShortArray, intArray: kotlin/IntArray, longArray: kotlin/LongArray, floatArray: kotlin/FloatArray, doubleArray: kotlin/DoubleArray, booleanArray: kotlin/BooleanArray)
+
+      // signature: test/PrimitiveArrays.booleanArray|{}booleanArray[0]
+      public final val booleanArray: kotlin/BooleanArray
+        // signature: test/PrimitiveArrays.booleanArray.<get-booleanArray>|<get-booleanArray>(){}[0]
+        public final get
+
+      // signature: test/PrimitiveArrays.byteArray|{}byteArray[0]
+      public final val byteArray: kotlin/ByteArray
+        // signature: test/PrimitiveArrays.byteArray.<get-byteArray>|<get-byteArray>(){}[0]
+        public final get
+
+      // signature: test/PrimitiveArrays.charArray|{}charArray[0]
+      public final val charArray: kotlin/CharArray
+        // signature: test/PrimitiveArrays.charArray.<get-charArray>|<get-charArray>(){}[0]
+        public final get
+
+      // signature: test/PrimitiveArrays.doubleArray|{}doubleArray[0]
+      public final val doubleArray: kotlin/DoubleArray
+        // signature: test/PrimitiveArrays.doubleArray.<get-doubleArray>|<get-doubleArray>(){}[0]
+        public final get
+
+      // signature: test/PrimitiveArrays.floatArray|{}floatArray[0]
+      public final val floatArray: kotlin/FloatArray
+        // signature: test/PrimitiveArrays.floatArray.<get-floatArray>|<get-floatArray>(){}[0]
+        public final get
+
+      // signature: test/PrimitiveArrays.intArray|{}intArray[0]
+      public final val intArray: kotlin/IntArray
+        // signature: test/PrimitiveArrays.intArray.<get-intArray>|<get-intArray>(){}[0]
+        public final get
+
+      // signature: test/PrimitiveArrays.longArray|{}longArray[0]
+      public final val longArray: kotlin/LongArray
+        // signature: test/PrimitiveArrays.longArray.<get-longArray>|<get-longArray>(){}[0]
+        public final get
+
+      // signature: test/PrimitiveArrays.shortArray|{}shortArray[0]
+      public final val shortArray: kotlin/ShortArray
+        // signature: test/PrimitiveArrays.shortArray.<get-shortArray>|<get-shortArray>(){}[0]
+        public final get
+    }
+  }
+}

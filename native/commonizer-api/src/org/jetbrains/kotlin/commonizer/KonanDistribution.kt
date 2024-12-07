@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer
 
-import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMON_LIBS_DIR
-import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_KLIB_DIR
-import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR
-import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
+import org.jetbrains.kotlin.konan.library.*
 import java.io.File
 
 public data class KonanDistribution(val root: File) {
@@ -26,3 +23,9 @@ public val KonanDistribution.klibDir: File
 
 public val KonanDistribution.platformLibsDir: File
     get() = klibDir.resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR)
+
+public val KonanDistribution.sourcesDir: File
+    get() = root.resolve(KONAN_DISTRIBUTION_SOURCES_DIR)
+
+public val KonanDistribution.toolsDir: File
+    get() = root.resolve(KONAN_DISTRIBUTION_TOOLS_DIR)

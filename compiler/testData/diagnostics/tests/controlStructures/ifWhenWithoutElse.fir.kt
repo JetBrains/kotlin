@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun idAny(x: Any) = x
 fun <T> id(x: T) = x
 fun idUnit(x: Unit) = x
@@ -11,18 +12,18 @@ val mlist = MList()
 fun work() {}
 
 val xx1 = <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42
-val xx2: Unit = <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42
+val xx2: Unit = <!INITIALIZER_TYPE_MISMATCH!><!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42<!>
 val xx3 = idAny(<!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42)
 val xx4 = id(<!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42)
-val xx5 = idUnit(<!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42)
+val xx5 = idUnit(<!ARGUMENT_TYPE_MISMATCH!><!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42<!>)
 val xx6 = null ?: <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42
 val xx7 = "" + <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42
 
 val wxx1 = <!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }
-val wxx2: Unit = <!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }
+val wxx2: Unit = <!INITIALIZER_TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }<!>
 val wxx3 = idAny(<!NO_ELSE_IN_WHEN!>when<!> { true -> 42 })
 val wxx4 = id(<!NO_ELSE_IN_WHEN!>when<!> { true -> 42 })
-val wxx5 = idUnit(<!NO_ELSE_IN_WHEN!>when<!> { true -> 42 })
+val wxx5 = idUnit(<!ARGUMENT_TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }<!>)
 val wxx6 = null ?: <!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }
 val wxx7 = "" + <!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }
 
@@ -57,7 +58,7 @@ fun foo1(x: String?) {
     "" + <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42
     w@while (true) {
         x ?: <!INVALID_IF_AS_EXPRESSION!>if<!> (true) break
-        x ?: <!NO_ELSE_IN_WHEN!>when<!> { true -> break@w }
+        x <!USELESS_ELVIS!>?: <!NO_ELSE_IN_WHEN!>when<!> { true -> break@w }<!>
     }
 }
 

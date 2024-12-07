@@ -24,7 +24,9 @@ class A(val s: String)
 
 class Derived : Base() {
     override fun foo() {
-        // ir: resolved to fake-override field Derived.a
+        // ir: resolved to fake-override field Derived.a in K1,
+        // but to base field Base.a in K2
+        // However, box() works correctly in both cases
         (Derived::a).javaField!![this] = A("OK")
     }
 

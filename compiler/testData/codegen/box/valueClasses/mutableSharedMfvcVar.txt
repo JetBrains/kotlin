@@ -1,0 +1,28 @@
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class DPoint {
+    // source: 'mutableSharedMfvcVar.kt'
+    private final field x: double
+    private final field y: double
+    private synthetic method <init>(p0: double, p1: double): void
+    public synthetic final static method box-impl(p0: double, p1: double): DPoint
+    public final static method constructor-impl(p0: double, p1: double): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: double, p1: double, p2: java.lang.Object): boolean
+    public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
+    public final method getX(): double
+    public final method getY(): double
+    public method hashCode(): int
+    public static method hashCode-impl(p0: double, p1: double): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static method toString-impl(p0: double, p1: double): java.lang.String
+    public synthetic final method unbox-impl-x(): double
+    public synthetic final method unbox-impl-y(): double
+}
+
+@kotlin.Metadata
+public final class MutableSharedMfvcVarKt {
+    // source: 'mutableSharedMfvcVar.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final inner class kotlin/jvm/internal/Ref$DoubleRef
+}

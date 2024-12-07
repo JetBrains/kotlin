@@ -1,3 +1,12 @@
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ *
+ * SPEC VERSION: 0.1-435
+ * MAIN LINK: expressions, constant-literals, real-literals -> paragraph 2 -> sentence 1
+ * NUMBER: 2
+ * DESCRIPTION: Real literals with a not allowed exponent mark at the beginning.
+ */
+
 // TESTCASE NUMBER: 1
 val value_1 = <!UNRESOLVED_REFERENCE!>E0<!>
 

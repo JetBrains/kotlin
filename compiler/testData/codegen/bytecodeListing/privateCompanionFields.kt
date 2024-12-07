@@ -16,6 +16,15 @@ class TestClass {
     }
 }
 
+class TestClass2 {
+
+    private companion object {
+        val testPublic: String = "1"
+        private val testPrivate: String = "2"
+        const val testPublicConst: String = "3"
+    }
+}
+
 interface TestConst {
 
     private companion object {

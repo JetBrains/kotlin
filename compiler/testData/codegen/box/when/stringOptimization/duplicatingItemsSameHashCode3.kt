@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: NATIVE
-
 // WITH_STDLIB
 
 import kotlin.test.assertEquals

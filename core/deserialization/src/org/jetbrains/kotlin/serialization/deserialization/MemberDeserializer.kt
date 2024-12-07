@@ -60,7 +60,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
             proto.receiverType(c.typeTable)?.let(local.typeDeserializer::type)?.let { receiverType ->
                 DescriptorFactory.createExtensionReceiverParameterForCallable(property, receiverType, receiverAnnotations)
             },
-            proto.contextReceiverTypes(c.typeTable).map { it.toContextReceiver(local, property) }
+            proto.contextReceiverTypes(c.typeTable).mapIndexed { index, type -> type.toContextReceiver(local, property, index) }
         )
 
         // Per documentation on Property.getter_flags in metadata.proto, if an accessor flags field is absent, its value should be computed
@@ -212,7 +212,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
                 DescriptorFactory.createExtensionReceiverParameterForCallable(function, receiverType, receiverAnnotations)
             },
             getDispatchReceiverParameter(),
-            proto.contextReceiverTypes(c.typeTable).mapNotNull { it.toContextReceiver(local, function) },
+            proto.contextReceiverTypes(c.typeTable).mapIndexedNotNull { index, type -> type.toContextReceiver(local, function, index) },
             local.typeDeserializer.ownTypeParameters,
             local.memberDeserializer.valueParameters(proto.valueParameterList, proto, AnnotatedCallableKind.FUNCTION),
             local.typeDeserializer.type(proto.returnType(c.typeTable)),
@@ -355,9 +355,16 @@ class MemberDeserializer(private val c: DeserializationContext) {
 
     private fun ProtoBuf.Type.toContextReceiver(
         deserializationContext: DeserializationContext,
-        callableDescriptor: CallableDescriptor
+        callableDescriptor: CallableDescriptor,
+        index: Int
     ): ReceiverParameterDescriptor? {
         val contextReceiverType = deserializationContext.typeDeserializer.type(this)
-        return DescriptorFactory.createContextReceiverParameterForCallable(callableDescriptor, contextReceiverType, Annotations.EMPTY)
+        return DescriptorFactory.createContextReceiverParameterForCallable(
+            callableDescriptor,
+            contextReceiverType,
+            /* customLabelName = */ null/*todo store custom label name in metadata?*/,
+            Annotations.EMPTY,
+            index
+        )
     }
 }

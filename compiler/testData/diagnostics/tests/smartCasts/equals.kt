@@ -1,3 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
+// SKIP_TXT
+
 fun foo(x: String?) = x
 
 class Test

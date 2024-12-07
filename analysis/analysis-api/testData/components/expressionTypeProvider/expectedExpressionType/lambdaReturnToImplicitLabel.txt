@@ -1,0 +1,7 @@
+expression: {
+        return@consumeCloseable makeCloseMe()
+    }
+expected type: KaUsualClassType:
+  annotations: []
+  typeArguments: []
+  type: test/pkg/ResourceFactory

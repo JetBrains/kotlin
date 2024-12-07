@@ -1,2 +1,1 @@
-KtType: T!!
-PsiType: PsiType:T
+null

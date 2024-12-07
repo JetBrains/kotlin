@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 val p1 = -1
 val p2 = -1.toLong()
 val p3 = (-1).toByte()

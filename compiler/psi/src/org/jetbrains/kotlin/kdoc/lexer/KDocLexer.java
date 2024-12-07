@@ -19,16 +19,19 @@ package org.jetbrains.kotlin.kdoc.lexer;
 import com.intellij.lexer.FlexAdapter;
 import com.intellij.lexer.MergingLexerAdapter;
 import com.intellij.psi.tree.TokenSet;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Reader;
 
 public class KDocLexer extends MergingLexerAdapter {
+    private static final TokenSet KDOC_TOKENS = TokenSet.create(KDocTokens.TEXT, KDocTokens.CODE_BLOCK_TEXT);
+
     public KDocLexer() {
         super(
                 new FlexAdapter(
                         new _KDocLexer((Reader) null)
                 ),
-                TokenSet.create(KDocTokens.TEXT, KDocTokens.CODE_BLOCK_TEXT)
+                KDOC_TOKENS
         );
     }
 }

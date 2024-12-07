@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 open class JvmTypeSpecificityComparator(open val context: TypeSystemInferenceExtensionContext) : TypeSpecificityComparator {
 
     override fun isDefinitelyLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean = with(context) {
-        val simpleGeneral = general.asSimpleType()
+        val simpleGeneral = general.asRigidType()
         if (!specific.isFlexible() || simpleGeneral == null) return false
 
         // general is inflexible

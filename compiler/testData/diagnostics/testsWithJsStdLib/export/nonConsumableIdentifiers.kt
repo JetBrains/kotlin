@@ -1,5 +1,5 @@
-// !OPT_IN: kotlin.js.ExperimentalJsExport
-// !RENDER_DIAGNOSTICS_MESSAGES
+// OPT_IN: kotlin.js.ExperimentalJsExport
+// RENDER_DIAGNOSTICS_MESSAGES
 
 package foo
 
@@ -23,6 +23,10 @@ val bar = 4
 @JsExport
 @JsName(<!NON_CONSUMABLE_EXPORTED_IDENTIFIER!>"super"<!>)
 class Baz
+
+@JsExport
+@JsName("default")
+class DefDef
 
 @JsExport
 class Test {

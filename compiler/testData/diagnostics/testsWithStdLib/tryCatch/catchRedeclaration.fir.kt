@@ -1,4 +1,5 @@
-// !WTIH_NEW_INFERENCE
+// RUN_PIPELINE_TILL: FRONTEND
+// WITH_NEW_INFERENCE
 // SKIP_TXT
 
 class MyException : Exception() {
@@ -35,8 +36,8 @@ fun test3() {
 fun test4() {
     try {}
     catch (e: Exception) {
-        val a = 42
-        val a = "foo"
+        val <!REDECLARATION!>a<!> = 42
+        val <!REDECLARATION!>a<!> = "foo"
     }
 }
 

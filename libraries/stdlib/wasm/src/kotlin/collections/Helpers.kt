@@ -10,19 +10,20 @@ package kotlin.collections
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
+@Suppress("NOTHING_TO_INLINE")
 @PublishedApi
-internal inline fun <E> arrayOfUninitializedElements(size: Int): Array<E> {
+internal actual inline fun <E> arrayOfUninitializedElements(size: Int): Array<E> {
     require(size >= 0) { "capacity must be non-negative." }
     @Suppress("TYPE_PARAMETER_AS_REIFIED")
     return Array<E>(size)
 }
 
-internal fun <E> Array<E>.resetRange(fromIndex: Int, toIndex: Int) {
+internal actual fun <E> Array<E>.resetRange(fromIndex: Int, toIndex: Int) {
     @Suppress("UNCHECKED_CAST")
     this.fill(null as E, fromIndex, toIndex)
 }
 
-internal fun <E> Array<E>.resetAt(index: Int) {
+internal actual fun <E> Array<E>.resetAt(index: Int) {
     @Suppress("UNCHECKED_CAST")
     (this as Array<Any?>)[index] = null
 }

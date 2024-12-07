@@ -1,0 +1,74 @@
+FILE: nameShadowingOfExternallyDefinedEntriesOn.fir.kt
+    package pckg
+
+    public final val entries: R|kotlin/String| = String(E)
+        public get(): R|kotlin/String|
+    public final enum class E : R|kotlin/Enum<pckg/E>| {
+        private constructor(): R|pckg/E| {
+            super<R|kotlin/Enum<pckg/E>|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+            R|pckg/entries|.R|kotlin/String.length|
+            Q|pckg|.R|pckg/entries|.R|kotlin/String.length|
+        }
+
+        public final static fun values(): R|kotlin/Array<pckg/E>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|pckg/E| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<pckg/E>|
+            public get(): R|kotlin/enums/EnumEntries<pckg/E>|
+
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|pckg/A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final enum class E : R|kotlin/Enum<pckg/A.E>| {
+            private constructor(): R|pckg/A.E| {
+                super<R|kotlin/Enum<pckg/A.E>|>()
+            }
+
+            public final class B : R|kotlin/Any| {
+                public constructor(): R|pckg/A.E.B| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final fun foo(): R|kotlin/Unit| {
+                    R|pckg/entries|.R|kotlin/String.length|
+                    Q|pckg|.R|pckg/entries|.R|kotlin/String.length|
+                }
+
+            }
+
+            public final class C : R|kotlin/Any| {
+                public constructor(): R|pckg/A.E.C| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final val entries: R|kotlin/Int| = Int(0)
+                    public get(): R|kotlin/Int|
+
+                public final fun foo(): R|kotlin/Unit| {
+                    this@R|pckg/A.E.C|.R|pckg/A.E.C.entries|.R|kotlin/Int.plus|(Int(4))
+                    this@R|pckg/A.E.C|.R|pckg/A.E.C.entries|.R|kotlin/Int.plus|(Int(4))
+                }
+
+            }
+
+            public final static fun values(): R|kotlin/Array<pckg/A.E>| {
+            }
+
+            public final static fun valueOf(value: R|kotlin/String|): R|pckg/A.E| {
+            }
+
+            public final static val entries: R|kotlin/enums/EnumEntries<pckg/A.E>|
+                public get(): R|kotlin/enums/EnumEntries<pckg/A.E>|
+
+        }
+
+    }

@@ -1,1 +1,3 @@
+@FieldAnnotation
+@java.lang.Deprecated
 field

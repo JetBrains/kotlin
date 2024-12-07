@@ -1,0 +1,8 @@
+abi_version=1.8.0
+builtins_platform=JS
+compiler_version=1.9.255-SNAPSHOT
+depends=kotlin
+metadata_version=1.4.1
+serializedIrFileFingerprints=3vriludieft1x.1583499ndbss7
+serializedKlibFingerprint=3f3efqjuxw1sw.xi1rrqn6iire
+unique_name=LibraryExample

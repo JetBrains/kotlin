@@ -1,3 +1,4 @@
+// LANGUAGE: +EnumEntries
 enum class Enum1 {
     BLACK, WHITE
 }
@@ -20,4 +21,8 @@ enum class Nested1 {
             }
         }
     };
+}
+
+interface I {
+    enum class Nested { WHITE }
 }

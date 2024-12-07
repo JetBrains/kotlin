@@ -8,43 +8,51 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.symbols.*
 
 class Fir2IrScopeCache {
-    private val parameterCache = mutableMapOf<FirValueParameter, IrValueParameter>()
+    private val parameterCache = mutableMapOf<FirValueParameter, IrValueParameterSymbol>()
 
-    private val variableCache = mutableMapOf<FirVariable, IrVariable>()
+    private val variableCache = mutableMapOf<FirVariable, IrVariableSymbol>()
 
-    private val localFunctionCache = mutableMapOf<FirFunction, IrSimpleFunction>()
+    private val localFunctionCache = mutableMapOf<FirFunction, IrSimpleFunctionSymbol>()
 
-    private val delegatedPropertyCache = mutableMapOf<FirProperty, IrLocalDelegatedProperty>()
+    val localFunctions: Map<FirFunction, IrSimpleFunctionSymbol>
+        get() = localFunctionCache
 
-    fun getParameter(parameter: FirValueParameter): IrValueParameter? = parameterCache[parameter]
+    private val delegatedPropertyCache = mutableMapOf<FirProperty, IrLocalDelegatedPropertySymbol>()
 
-    fun putParameter(firParameter: FirValueParameter, irParameter: IrValueParameter) {
-        parameterCache[firParameter] = irParameter
+    fun getParameter(parameter: FirValueParameter): IrValueParameterSymbol? {
+        return parameterCache[parameter]
     }
 
-    fun getVariable(variable: FirVariable): IrVariable? = variableCache[variable]
-
-    fun putVariable(firVariable: FirVariable, irVariable: IrVariable) {
-        variableCache[firVariable] = irVariable
+    fun putParameter(firParameter: FirValueParameter, irParameterSymbol: IrValueParameterSymbol) {
+        parameterCache[firParameter] = irParameterSymbol
     }
 
-    fun getLocalFunction(localFunction: FirFunction): IrSimpleFunction? = localFunctionCache[localFunction]
+    fun getVariable(variable: FirVariable): IrVariableSymbol? {
+        return variableCache[variable]
+    }
 
-    fun putLocalFunction(localFunction: FirFunction, irFunction: IrSimpleFunction) {
+    fun putVariable(firVariable: FirVariable, irVariableSymbol: IrVariableSymbol) {
+        variableCache[firVariable] = irVariableSymbol
+    }
+
+    fun getLocalFunction(localFunction: FirFunction): IrSimpleFunctionSymbol? {
+        return localFunctionCache[localFunction]
+    }
+
+    fun putLocalFunction(localFunction: FirFunction, irFunctionSymbol: IrSimpleFunctionSymbol) {
         require(localFunction !is FirSimpleFunction || localFunction.visibility == Visibilities.Local)
-        localFunctionCache[localFunction] = irFunction
+        localFunctionCache[localFunction] = irFunctionSymbol
     }
 
-    fun getDelegatedProperty(property: FirProperty): IrLocalDelegatedProperty? = delegatedPropertyCache[property]
+    fun getDelegatedProperty(property: FirProperty): IrLocalDelegatedPropertySymbol? {
+        return delegatedPropertyCache[property]
+    }
 
-    fun putDelegatedProperty(firProperty: FirProperty, irProperty: IrLocalDelegatedProperty) {
-        delegatedPropertyCache[firProperty] = irProperty
+    fun putDelegatedProperty(firProperty: FirProperty, irPropertySymbol: IrLocalDelegatedPropertySymbol) {
+        delegatedPropertyCache[firProperty] = irPropertySymbol
     }
 
     fun clear() {

@@ -6,38 +6,59 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
-import java.util.WeakHashMap
+import org.gradle.api.plugins.ExtraPropertiesExtension
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 
+/**
+ * Base implementation of an actions executor that executes them once.
+ */
 internal abstract class SingleAction {
-    private val performedActions = WeakHashMap<Project, MutableSet<String>>()
 
-    protected abstract fun selectKey(project: Project): Project
+    protected abstract val propertyKey: String
+    protected abstract fun extraProperties(project: Project): ExtraPropertiesExtension
 
-    fun run(project: Project, actionId: String, action: () -> Unit) {
-        val performedActions = performedActions.computeIfAbsent(selectKey(project)) { mutableSetOf() }
-        if (performedActions.add(actionId)) {
+    /**
+     * Runs an [action] once per [actionId] key value.
+     *
+     * Check the concrete implementation description for how often this action is expected to run.
+     */
+    fun run(
+        project: Project,
+        actionId: String,
+        action: () -> Unit
+    ) {
+        val extraProperties = extraProperties(project)
+        val performedActions = extraProperties.getOrPut(propertyKey) {
+            PerformedActions()
+        }
+        if (performedActions.actionsIds.add(actionId)) {
             action()
+            extraProperties.set(propertyKey, performedActions)
         }
     }
+
+    class PerformedActions(
+        val actionsIds: MutableSet<String> = mutableSetOf()
+    )
 }
 
+/**
+ * Object that allows to run actions once per build
+ *
+ * Warning:
+  * - if the build has an included build, the action can be executed for each included build
+ */
 internal object SingleActionPerBuild : SingleAction() {
-    override fun selectKey(project: Project): Project = project.rootProject
+    override val propertyKey = SingleActionPerBuild::class.java.name
+
+    override fun extraProperties(project: Project): ExtraPropertiesExtension = project.rootProject.extraProperties
 }
 
+/**
+ * Object that allows to run actions once per project.
+ */
 internal object SingleActionPerProject : SingleAction() {
-    override fun selectKey(project: Project) = project
-}
+    override val propertyKey: String = SingleActionPerProject::class.java.name
 
-internal object SingleWarningPerBuild {
-    private const val ACTION_ID_SHOW_WARNING = "show-warning:"
-
-    fun show(project: Project, warningText: String) = SingleActionPerBuild.run(project, ACTION_ID_SHOW_WARNING + warningText) {
-        project.logger.warn(warningText)
-    }
-
-    fun deprecation(project: Project, context: String, target: String, replacement: String?) {
-        val replacementMessage = replacement?.let { " Please, use '$replacement' instead." } ?: ""
-        show(project, "Warning: $context '$target' is deprecated and will be removed in next major releases.$replacementMessage\n")
-    }
+    override fun extraProperties(project: Project): ExtraPropertiesExtension = project.extraProperties
 }

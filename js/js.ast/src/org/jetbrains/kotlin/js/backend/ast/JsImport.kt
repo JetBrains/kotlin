@@ -7,25 +7,42 @@ package org.jetbrains.kotlin.js.backend.ast
 
 class JsImport(
     val module: String,
-    val elements: MutableList<Element> = mutableListOf(),
+    val target: Target,
 ) : SourceInfoAwareJsNode(), JsStatement {
+    constructor(module: String, vararg elements: Element) : this(module, Target.Elements(elements.toMutableList()))
+
+    val elements: MutableList<Element>
+        get() = (target as Target.Elements).elements
+
+    sealed class Target {
+        object Effect : Target()
+        class Elements(val elements: MutableList<Element>) : Target()
+        class Default(val name: JsNameRef) : Target()
+        class All(val alias: JsNameRef) : Target()
+    }
 
     class Element(
         val name: JsName,
-        val alias: JsName?
-    ) {
-        constructor(name: String, alias: String?) : this(JsName(name, false), alias?.let { JsName(it, false) })
-    }
+        val alias: JsNameRef? = null
+    )
 
     override fun accept(visitor: JsVisitor) {
         visitor.visitImport(this)
     }
 
     override fun acceptChildren(visitor: JsVisitor) {
+        when (target) {
+            is Target.Effect -> {}
+            is Target.All -> visitor.accept(target.alias)
+            is Target.Default -> visitor.accept(target.name)
+            is Target.Elements -> target.elements.forEach {
+                it.alias?.let(visitor::accept)
+            }
+        }
     }
 
     override fun deepCopy(): JsStatement =
-        JsImport(module, elements.map { it }.toMutableList())
+        JsImport(module, target)
 
     override fun traverse(v: JsVisitorWithContext, ctx: JsContext<*>) {
         v.visit(this, ctx)

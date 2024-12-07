@@ -13,14 +13,14 @@ kotlin {
     }
 }
 
-def compileKotlinJs = tasks.named('compileKotlinJs') {
-    it.kotlinOptions.outputFile = "${buildDir}/web/examplelib.js"
-    it.kotlinOptions.sourceMap = true
-}
+//def compileKotlinJs = tasks.named('compileKotlinJs') {
+//    it.kotlinOptions.outputFile = "${buildDir}/web/examplelib.js"
+//    it.kotlinOptions.sourceMap = true
+//}
 
-tasks.register('jar', Jar).configure {
-    dependsOn(compileKotlinJs)
-    from compileKotlinJs.map { it.destinationDirectory }
-    include "**/*.js"
-    include "**/*.js.map"
-}
+//tasks.register('jar', Jar).configure {
+//    dependsOn(compileKotlinJs)
+//    from compileKotlinJs.map { it.destinationDirectory }
+//    include "**/*.js"
+//    include "**/*.js.map"
+//}

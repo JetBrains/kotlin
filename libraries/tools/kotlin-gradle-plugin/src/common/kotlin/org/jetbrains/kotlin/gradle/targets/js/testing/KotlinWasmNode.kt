@@ -5,32 +5,49 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing
 
+import org.gradle.api.file.Directory
+import org.gradle.api.provider.Provider
 import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
-import org.jetbrains.kotlin.gradle.targets.js.isTeamCity
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.writeWasmUnitTestRunner
 
-internal class KotlinWasmNode(private val kotlinJsTest: KotlinJsTest) : KotlinJsTestFramework {
+internal class KotlinWasmNode(kotlinJsTest: KotlinJsTest) : KotlinJsTestFramework {
     override val settingsState: String = "KotlinWasmNode"
-    @Transient
-    override val compilation: KotlinJsCompilation = kotlinJsTest.compilation
-    private val isTeamCity by lazy { compilation.target.project.isTeamCity }
 
-    init {
-        kotlinJsTest.outputs.upToDateWhen { false }
-    }
+    private val testPath = kotlinJsTest.path
+
+    @Transient
+    private val nodeJs = kotlinJsTest.project.kotlinNodeJsEnvSpec
+
+    @Transient
+    override val compilation: KotlinJsIrCompilation = kotlinJsTest.compilation
+
+    private val projectLayout = kotlinJsTest.project.layout
+
+    override val workingDir: Provider<Directory> =
+        if (compilation.target.wasmTargetType != KotlinWasmTargetType.WASI) {
+            compilation.npmProject.dir
+        } else {
+            projectLayout.dir(kotlinJsTest.inputFileProperty.asFile.map { it.parentFile })
+        }
+
+
+    override val executable: Provider<String> = nodeJs.executable
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
         forkOptions: ProcessForkOptions,
         nodeJsArgs: MutableList<String>,
-        debug: Boolean
+        debug: Boolean,
     ): TCServiceMessagesTestExecutionSpec {
-        val testRunnerFile = writeWasmUnitTestRunner(task.inputFileProperty.get().asFile)
+        val testRunnerFile = writeWasmUnitTestRunner(workingDir.get().asFile, task.inputFileProperty.get().asFile)
 
         val clientSettings = TCServiceMessagesClientSettings(
             task.name,
@@ -38,7 +55,6 @@ internal class KotlinWasmNode(private val kotlinJsTest: KotlinJsTest) : KotlinJs
             prependSuiteName = true,
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
             ignoreOutOfRootNodes = true,
-            escapeTCMessagesInLog = isTeamCity
         )
 
         val cliArgs = KotlinTestRunnerCliArgs(
@@ -48,8 +64,7 @@ internal class KotlinWasmNode(private val kotlinJsTest: KotlinJsTest) : KotlinJs
 
         val args = mutableListOf<String>()
         with(args) {
-            add("--experimental-wasm-gc")
-            add("--experimental-wasm-eh")
+            addAll(nodeJsArgs)
             add(testRunnerFile.absolutePath)
             addAll(cliArgs.toList())
         }
@@ -64,5 +79,5 @@ internal class KotlinWasmNode(private val kotlinJsTest: KotlinJsTest) : KotlinJs
 
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> = emptySet()
 
-    override fun getPath(): String = "${kotlinJsTest.path}:kotlinTestFrameworkStub"
+    override fun getPath(): String = "$testPath:kotlinTestFrameworkStub"
 }

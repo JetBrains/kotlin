@@ -10,27 +10,26 @@ import com.sun.jdi.event.*
 import com.sun.jdi.request.EventRequest.SUSPEND_ALL
 import com.sun.jdi.request.StepRequest
 import com.sun.tools.jdi.SocketAttachingConnector
+import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.model.FrontendKind
-import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.defaultDirectives
+import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.BOX_MAIN_FILE_NAME
-import org.jetbrains.kotlin.test.utils.SteppingTestLoggedData
-import org.jetbrains.kotlin.test.utils.checkSteppingTestResult
-import org.jetbrains.kotlin.test.utils.formatAsSteppingTestExpectation
+import org.jetbrains.kotlin.test.utils.*
 import java.io.File
 import java.net.URL
 
 abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServices) {
-
     companion object {
         val BOX_MAIN_FILE_CLASS_NAME = BOX_MAIN_FILE_NAME.replace(".kt", "Kt")
     }
 
-    private var wholeFile = File("")
-    private var backend = TargetBackend.JVM
-    private var frontend: FrontendKind<*> = FrontendKinds.ClassicFrontend
+    private lateinit var wholeFile: File
+    private lateinit var backend: TargetBackend
+    private lateinit var frontend: FrontendKind<*>
 
     abstract fun storeStep(loggedItems: ArrayList<SteppingTestLoggedData>, event: Event)
 
@@ -97,6 +96,7 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
                                 stepReq.addClassExclusionFilter("java.*")
                                 stepReq.addClassExclusionFilter("sun.*")
                                 stepReq.addClassExclusionFilter("kotlin.*")
+                                stepReq.addClassExclusionFilter("jdk.internal.*")
                                 // Create class prepare request to be able to set breakpoints on class initializer lines.
                                 // There are no line stepping events for class initializers, so we depend on breakpoints.
                                 val prepareReq = manager.createClassPrepareRequest()
@@ -104,6 +104,7 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
                                 prepareReq.addClassExclusionFilter("java.*")
                                 prepareReq.addClassExclusionFilter("sun.*")
                                 prepareReq.addClassExclusionFilter("kotlin.*")
+                                prepareReq.addClassExclusionFilter("jdk.internal.*")
                             }
                             manager.stepRequests().map { it.enable() }
                             manager.classPrepareRequests().map { it.enable() }
@@ -157,14 +158,25 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
             }
             eventSet.resume()
         }
-        checkSteppingTestResult(frontend, backend, wholeFile, loggedItems)
+        checkSteppingTestResult(frontend, backend, wholeFile, loggedItems, testServices.defaultDirectives)
         virtualMachine.resume()
     }
 
-    fun Location.formatAsExpectation() =
-        formatAsSteppingTestExpectation(sourceName(), lineNumber(), method().name(), method().isSynthetic)
+    protected fun Location.formatAsExpectation(visibleVars: List<LocalVariableRecord>?): String {
+        val fileNames =
+            testServices.moduleStructure.modules.flatMap { it.files }.map { it.name } +
+                    SourceMapper.FAKE_FILE_NAME
+        return formatAsSteppingTestExpectation(
+            sourceName(),
+            // Do not render line numbers outside of test sources (i.e. from stdlib): they can change and it's not a part of this test.
+            lineNumber().takeIf { sourceName() in fileNames },
+            method().name(),
+            method().isSynthetic,
+            visibleVars
+        )
+    }
 
-    fun setupMethodEntryAndExitRequests(virtualMachine: VirtualMachine) {
+    private fun setupMethodEntryAndExitRequests(virtualMachine: VirtualMachine) {
         val manager = virtualMachine.eventRequestManager()
 
         val methodEntryReq = manager.createMethodEntryRequest()
@@ -193,51 +205,25 @@ class SteppingDebugRunner(testServices: TestServices) : DebugRunner(testServices
     override fun storeStep(loggedItems: ArrayList<SteppingTestLoggedData>, event: Event) {
         assert(event is LocatableEvent)
         val location = (event as LocatableEvent).location()
-        loggedItems.add(
-            SteppingTestLoggedData(
+        val data =
+            if (isIndyLambda(location)) {
+                // Invokedynamic lambdas are not synthetic in JDI, and they don't have source information.
+                SteppingTestLoggedData(-1, true, "<lambda>")
+            } else SteppingTestLoggedData(
                 location.lineNumber(),
                 location.method().isSynthetic,
-                location.formatAsExpectation()
+                location.formatAsExpectation(null)
             )
-        )
+        loggedItems.add(data)
     }
 }
 
 class LocalVariableDebugRunner(testServices: TestServices) : DebugRunner(testServices) {
-    interface LocalValue
-
-    class LocalPrimitive(val value: String, val valueType: String) : LocalValue {
-        override fun toString(): String {
-            return "$value:$valueType"
-        }
-    }
-
-    class LocalReference(val id: String, val referenceType: String) : LocalValue {
-        override fun toString(): String {
-            return referenceType
-        }
-    }
-
-    class LocalNullValue : LocalValue {
-        override fun toString(): String {
-            return "null"
-        }
-    }
-
-    class LocalVariableRecord(
-        val variable: String,
-        val variableType: String,
-        val value: LocalValue
-    ) {
-        override fun toString(): String {
-            return "$variable:$variableType=$value"
-        }
-    }
 
     private fun toRecord(frame: StackFrame, variable: LocalVariable): LocalVariableRecord {
         val value = frame.getValue(variable)
         val valueRecord = if (value == null) {
-            LocalNullValue()
+            LocalNullValue
         } else if (value is ObjectReference && value.referenceType().name() != "java.lang.String") {
             LocalReference(value.uniqueID().toString(), value.referenceType().name())
         } else {
@@ -265,12 +251,18 @@ class LocalVariableDebugRunner(testServices: TestServices) : DebugRunner(testSer
             // Local variable table completely absent - not distinguished from an empty table.
             listOf()
         }
-        loggedItems.add(
-            SteppingTestLoggedData(
+        val data =
+            if (isIndyLambda(location)) {
+                // Invokedynamic lambdas are not synthetic in JDI, and they don't have source information.
+                SteppingTestLoggedData(-1, true, "<lambda>")
+            } else SteppingTestLoggedData(
                 location.lineNumber(),
                 false,
-                "${location.formatAsExpectation()}: ${visibleVars.joinToString(", ")}".trim()
+                location.formatAsExpectation(visibleVars)
             )
-        )
+        loggedItems.add(data)
     }
 }
+
+private fun isIndyLambda(location: Location): Boolean =
+    "$\$Lambda$" in location.declaringType().name()

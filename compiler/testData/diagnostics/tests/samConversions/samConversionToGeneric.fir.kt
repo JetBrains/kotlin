@@ -1,5 +1,5 @@
-// !LANGUAGE: +NewInference
-
+// RUN_PIPELINE_TILL: BACKEND
+// FIR_DUMP
 // FILE: samConversionToGeneric.kt
 
 fun test1() = J<String> { x -> x }

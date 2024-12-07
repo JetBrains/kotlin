@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1283
-
 fun box(): String {
     var x: String? = foo()
     var r = x + bar()

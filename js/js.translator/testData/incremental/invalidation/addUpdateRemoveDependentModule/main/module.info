@@ -10,7 +10,7 @@ STEP 1:
     modified ir: m.kt
 STEP 2:
     dependencies: lib1, lib2
-    updated inline imports: m.kt
+    updated imports: m.kt
 STEP 3:
     dependencies: lib1
     modifications:

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: NATIVE
 class A(var v: Int) {
     fun f(x: Int) = x * v
 }

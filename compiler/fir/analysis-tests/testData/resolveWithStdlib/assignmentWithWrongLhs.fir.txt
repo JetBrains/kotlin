@@ -1,0 +1,24 @@
+FILE: assignmentWithWrongLhs.kt
+    public final fun foo(): R|kotlin/Int| {
+        ^foo Int(1)
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/foo|() = Int(1)
+        R|/foo|().R|kotlin/Int.toString|() = Int(1)
+        when () {
+            Boolean(true) ->  {
+                R|/foo|()
+            }
+            else ->  {
+                Int(1)
+            }
+        }
+         = String()
+        R|kotlin/run|<R|kotlin/Unit|>(<L> = run@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|kotlin/io/print|(String(To string)).R|kotlin/also|<R|kotlin/Unit|>(<L> = also@fun <anonymous>(it: R|kotlin/Unit|): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+                R|kotlin/io/print|(R|<local>/it|)
+            }
+            )
+        }
+        ) = Int(1)
+    }

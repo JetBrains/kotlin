@@ -1,5 +1,0 @@
-interface B<T1 : Any?> : A<T1> {
-  abstract override fun foo(x: T1): T1
-  abstract override fun bar(x: (T1 & Any)): (T1 & Any)
-
-}

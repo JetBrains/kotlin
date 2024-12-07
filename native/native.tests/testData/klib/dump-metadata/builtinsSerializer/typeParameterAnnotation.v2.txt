@@ -1,0 +1,29 @@
+library {
+  // module name: <typeParameterAnnotation.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Ann
+
+    // signature: test/Ann|null[0]
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.BINARY)
+    @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE_PARAMETER])
+    public final annotation class test/Ann : kotlin/Annotation {
+
+      // signature: test/Ann.<init>|<init>(kotlin.String){}[0]
+      public constructor(value: kotlin/String)
+
+      // signature: test/Ann.value|{}value[0]
+      public final val value: kotlin/String
+        // signature: test/Ann.value.<get-value>|<get-value>(){}[0]
+        public final get
+    }
+
+    package {
+
+      // signature: test/foo|foo(){0§<kotlin.Any?>}[0]
+      public final inline fun <reified @test/Ann(value = "abc") T#0 /* T */> foo(): kotlin/Unit
+    }
+  }
+}

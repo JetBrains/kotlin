@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 enum class A(val v: A) {
     A1(<!UNINITIALIZED_ENUM_ENTRY!>A2<!>),
     A2(A1),
@@ -31,6 +32,6 @@ enum class MyEnum {
     val x = when(this) {
         <!UNINITIALIZED_ENUM_ENTRY!>A<!> -> 1
         <!UNINITIALIZED_ENUM_ENTRY!>B<!> -> 2
-        else -> 3
+        <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> 3
     }
 }

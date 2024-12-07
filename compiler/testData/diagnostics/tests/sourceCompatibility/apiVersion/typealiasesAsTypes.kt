@@ -1,4 +1,5 @@
-// !API_VERSION: 1.0
+// RUN_PIPELINE_TILL: FRONTEND
+// API_VERSION: 1.0
 
 @SinceKotlin("1.1")
 class Since_1_1

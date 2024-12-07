@@ -1,5 +1,5 @@
+// FIR_IDENTICAL
 // SKIP_KT_DUMP
-
 class ObjectAssert<ACTUAL> {
     fun describedAs(description: String?, vararg args: Any?): ObjectAssert<ACTUAL>? = null
 }

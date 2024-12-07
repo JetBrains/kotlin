@@ -189,6 +189,50 @@ object LombokAnnotations {
                 )
         }
     }
+
+    class Builder(
+        val builderClassName: String,
+        val buildMethodName: String,
+        val builderMethodName: String,
+        val requiresToBuilder: Boolean,
+        val visibility: AccessLevel,
+        val setterPrefix: String?
+    ) {
+        companion object : AnnotationAndConfigCompanion<Builder>(LombokNames.BUILDER) {
+            private const val DEFAULT_BUILDER_CLASS_NAME = "*Builder"
+            private const val DEFAULT_BUILD_METHOD_NAME = "build"
+            private const val DEFAULT_BUILDER_METHOD_NAME = "builder"
+            private const val DEFAULT_REQUIRES_TO_BUILDER = false
+
+
+            override fun extract(annotation: AnnotationDescriptor?, config: LombokConfig): Builder {
+                return Builder(
+                    builderClassName = annotation?.getStringArgument("builderClassName")
+                        ?: config.getString("lombok.builder.className")
+                        ?: DEFAULT_BUILDER_CLASS_NAME,
+                    buildMethodName = annotation?.getStringArgument("buildMethodName") ?: DEFAULT_BUILD_METHOD_NAME,
+                    builderMethodName = annotation?.getStringArgument("builderMethodName") ?: DEFAULT_BUILDER_METHOD_NAME,
+                    requiresToBuilder = annotation?.getBooleanArgument("toBuilder") ?: DEFAULT_REQUIRES_TO_BUILDER,
+                    visibility = annotation?.getAccessLevel("access") ?: AccessLevel.PUBLIC,
+                    setterPrefix = annotation?.getStringArgument("setterPrefix")
+                )
+            }
+        }
+    }
+
+    class Singular(
+        val singularName: String?,
+        val allowNull: Boolean,
+    ) {
+        companion object : AnnotationCompanion<Singular>(LombokNames.SINGULAR) {
+            override fun extract(annotation: AnnotationDescriptor): Singular {
+                return Singular(
+                    singularName = annotation.getStringArgument("value"),
+                    allowNull = annotation.getBooleanArgument("ignoreNullCollections") ?: false
+                )
+            }
+        }
+    }
 }
 
 

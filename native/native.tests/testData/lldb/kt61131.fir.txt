@@ -1,0 +1,24 @@
+> b call_bar
+> r
+> s
+> s
+> bt
+* thread #1, [..] stop reason = step in
+  * frame #0: [..]`kfun:Foo#bar(){}kotlin.String-trampoline at kt61131-2.kt:20:5
+    frame #1: [..]`kfun:#call_bar(foo=[..]){} at kt61131-1.kt:9:18
+    frame #2: [..]`kfun:#main(){} at kt61131-1.kt:15:5
+    frame #3: [..]`Konan_start(args=[..]) at [..]
+    frame #4: [..]
+    frame #5: [..]
+> s
+> bt
+* thread #1, [..] stop reason = step in
+  * frame #0: [..]`kfun:FooImpl#bar(_this=[..]]){}kotlin.String at kt61131-1.kt:5:5
+    frame #1: [..]`kfun:Foo#bar(){}kotlin.String-trampoline at kt61131-2.kt:20:5
+    frame #2: [..]`kfun:#call_bar(foo=[..]){} at kt61131-1.kt:9:18
+    frame #3: [..]`kfun:#main(){} at kt61131-1.kt:15:5
+    frame #4: [..]`Konan_start(args=[..]) at [..]
+    frame #5: [..]
+    frame #6: [..]
+> q
+

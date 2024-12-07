@@ -6,13 +6,15 @@
 package org.jetbrains.kotlin.incremental.classpathDiff
 
 import com.google.gson.GsonBuilder
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.cli.common.isWindows
-import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.asFile
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.snapshot
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.CompileUtil.compile
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.CompileUtil.compileAll
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.SourceFile.KotlinSourceFile
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.incremental.storage.fromByteArray
+import org.jetbrains.kotlin.incremental.storage.toByteArray
+import org.jetbrains.kotlin.test.compileJavaFiles
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
@@ -25,7 +27,11 @@ abstract class ClasspathSnapshotTestCommon {
 
     // Use Gson to compare objects
     private val gson by lazy { GsonBuilder().setPrettyPrinting().create() }
-    protected fun Any.toGson(): String = gson.toJson(this)
+    protected fun ClassSnapshot.toGson(): String = gson.toJson(
+        // Serialize and deserialize the object to unset lazy properties' values as they are not essential and can add noise when comparing
+        // objects
+        ClassSnapshotExternalizer.fromByteArray(ClassSnapshotExternalizer.toByteArray(this))
+    )
 
     sealed class SourceFile(val baseDir: File, relativePath: String) {
         val unixStyleRelativePath: String
@@ -65,7 +71,7 @@ abstract class ClasspathSnapshotTestCommon {
         fun SourceFile.compile(tmpDir: TemporaryFolder): List<ClassFile> {
             return if (this is KotlinSourceFile) {
                 preCompiledClassFiles.forEach {
-                    preCompileKotlinFilesIfNecessary(baseDir, it.classRoot, classpath = emptyList(), tmpDir)
+                    compileKotlin(srcDir = baseDir, classesDir = it.classRoot, classpath = emptyList())
                 }
                 preCompiledClassFiles
             } else {
@@ -77,58 +83,49 @@ abstract class ClasspathSnapshotTestCommon {
 
         /** Compiles the source files in the given directory and returns all generated .class files. */
         fun compileAll(srcDir: File, tmpDir: TemporaryFolder, classpath: List<File> = emptyList()): List<ClassFile> {
-            val kotlinClasses = compileKotlin(srcDir, classpath, tmpDir)
+            val classesDir = srcDir.path.let {
+                File(it.substringBeforeLast("src") + "classes" + it.substringAfterLast("src"))
+            }
+            val kotlinClasses = compileKotlin(srcDir, classesDir, classpath)
 
             val javaClasspath = classpath + listOfNotNull(kotlinClasses.firstOrNull()?.classRoot)
-            val javaClasses = compileJava(srcDir, javaClasspath, tmpDir)
+            val javaClasses = compileJava(srcDir, classesDir = tmpDir.newFolder(), javaClasspath)
 
             return kotlinClasses + javaClasses
         }
 
-        private fun compileKotlin(srcDir: File, classpath: List<File>, tmpDir: TemporaryFolder): List<ClassFile> {
-            val preCompiledKotlinClassesDir = srcDir.path.let {
-                File(it.substringBeforeLast("src") + "classes" + it.substringAfterLast("src"))
-            }
-            preCompileKotlinFilesIfNecessary(srcDir, preCompiledKotlinClassesDir, classpath, tmpDir)
-            return getClassFilesInDir(preCompiledKotlinClassesDir)
-        }
-
-        private val preCompiledKotlinClassesDirs = mutableSetOf<File>()
-
         /**
-         * If <kotlin-repo>/dist/kotlinc/lib/kotlin-compiler.jar is available (e.g., by running ./gradlew dist), we will be able to call the
-         * Kotlin compiler to generate classes. However, kotlin-compiler.jar is currently not available in CI builds, so we need to
-         * pre-compile the classes locally and put them in the test data to check in.
+         * Set to `true` to (re)generate Kotlin .class files locally which can then be checked in (remember to set this value back to
+         * `false` afterwards, DO NOT check in this code when this value = `true`).
+         *
+         * Reason for this flag: If <kotlin-repo>/dist/kotlinc/lib/kotlin-compiler.jar is available (e.g., by running ./gradlew dist), we
+         * will be able to call the Kotlin compiler to generate classes. However, kotlin-compiler.jar is currently not available in CI
+         * builds, so we need to pre-compile the classes locally and put them in the test data to check in.
          */
-        @Synchronized // To safe-guard shared variable preCompiledKotlinClassesDirs
-        private fun preCompileKotlinFilesIfNecessary(
-            srcDir: File,
-            preCompiledKotlinClassesDir: File,
-            classpath: List<File>,
-            tmpDir: TemporaryFolder,
-            preCompile: Boolean = false // Set to `true` to pre-compile Kotlin class files locally (DO NOT check in with preCompile = true)
-        ) {
-            if (preCompile) {
-                if (!preCompiledKotlinClassesDirs.contains(preCompiledKotlinClassesDir)) {
-                    val classFiles = doCompileKotlin(srcDir, classpath, tmpDir)
-                    preCompiledKotlinClassesDir.deleteRecursively()
-                    for (classFile in classFiles) {
-                        File(preCompiledKotlinClassesDir, classFile.unixStyleRelativePath).apply {
-                            parentFile.mkdirs()
-                            classFile.asFile().copyTo(this)
-                        }
+        private const val GENERATE_KOTLIN_CLASS_FILES = false
+
+        private val alreadyCompiledKotlinSrcDirs = mutableSetOf<File>()
+
+        private fun compileKotlin(srcDir: File, classesDir: File, classpath: List<File>): List<ClassFile> {
+            if (GENERATE_KOTLIN_CLASS_FILES) {
+                // This block may be called concurrently so add this synchronization to be safe
+                synchronized(alreadyCompiledKotlinSrcDirs) {
+                    if (!alreadyCompiledKotlinSrcDirs.contains(srcDir)) {
+                        doCompileKotlin(srcDir, classesDir, classpath)
+                        alreadyCompiledKotlinSrcDirs.add(srcDir)
                     }
-                    preCompiledKotlinClassesDirs.add(preCompiledKotlinClassesDir)
                 }
             }
+            return getClassFilesInDir(classesDir)
         }
 
-        private fun doCompileKotlin(srcDir: File, classpath: List<File>, tmpDir: TemporaryFolder): List<ClassFile> {
+        private fun doCompileKotlin(srcDir: File, classesDir: File, classpath: List<File>) {
+            classesDir.deleteRecursively()
+            classesDir.mkdirs()
             if (srcDir.walk().none { it.path.endsWith(".kt") }) {
-                return emptyList()
+                return
             }
 
-            val classesDir = tmpDir.newFolder()
             // Note: Calling the following is simpler:
             //     org.jetbrains.kotlin.test.MockLibraryUtil.compileKotlin(
             //         srcDir.path, classesDir, extraClasspath = classpath.map { it.path }.toTypedArray())
@@ -143,21 +140,25 @@ abstract class ClasspathSnapshotTestCommon {
             )
             runCommandInNewProcess(commandAndArgs)
 
+            classesDir.resolve("META-INF").deleteRecursively()
+        }
+
+        private fun compileJava(srcDir: File, classesDir: File, classpath: List<File>): List<ClassFile> {
+            doCompileJava(srcDir, classesDir, classpath)
             return getClassFilesInDir(classesDir)
         }
 
-        private fun compileJava(srcDir: File, classpath: List<File>, tmpDir: TemporaryFolder): List<ClassFile> {
+        private fun doCompileJava(srcDir: File, classesDir: File, classpath: List<File>) {
+            classesDir.deleteRecursively()
+            classesDir.mkdirs()
             val javaFiles = srcDir.walk().toList().filter { it.path.endsWith(".java") }
             if (javaFiles.isEmpty()) {
-                return emptyList()
+                return
             }
 
-            val classesDir = tmpDir.newFolder()
             val classpathOption =
                 if (classpath.isNotEmpty()) listOf("-classpath", classpath.joinToString(File.pathSeparator)) else emptyList()
-
-            KotlinTestUtils.compileJavaFiles(javaFiles, listOf("-d", classesDir.path) + classpathOption)
-            return getClassFilesInDir(classesDir)
+            compileJavaFiles(javaFiles, listOf("-d", classesDir.path) + classpathOption).assertSuccessful()
         }
 
         private fun getClassFilesInDir(classesDir: File): List<ClassFile> {
@@ -179,12 +180,8 @@ abstract class ClasspathSnapshotTestCommon {
         fun ClassFile.snapshot(granularity: ClassSnapshotGranularity? = null): ClassSnapshot = listOf(this).snapshot(granularity).single()
 
         fun List<ClassFile>.snapshot(granularity: ClassSnapshotGranularity? = null): List<ClassSnapshot> {
-            val classes = map { ClassFileWithContents(it, it.readBytes()) }
-            return if (granularity == null) {
-                ClassSnapshotter.snapshot(classes)
-            } else {
-                ClassSnapshotter.snapshot(classes, granularity = granularity)
-            }
+            val classes = map { ClassFileWithContentsProvider(it) { it.readBytes() } }
+            return ClassSnapshotter.snapshot(classes, granularity ?: ClassSnapshotGranularity.CLASS_MEMBER_LEVEL)
         }
     }
 }
@@ -195,7 +192,12 @@ internal fun snapshotClasspath(
     granularity: ClassSnapshotGranularity? = null
 ): ClasspathSnapshot {
     val classpath = mutableListOf<File>()
-    val classpathEntrySnapshots = classpathSourceDir.listFiles()!!.sortedBy { it.name }.map { classpathEntrySourceDir ->
+    val classpathEntrySourceDirs = if (classpathSourceDir.listFiles()!!.size == 1) {
+        listOf(classpathSourceDir)
+    } else {
+        classpathSourceDir.listFiles()!!.sortedBy { it.name }
+    }
+    val classpathEntrySnapshots = classpathEntrySourceDirs.map { classpathEntrySourceDir ->
         val classFiles = compileAll(classpathEntrySourceDir, tmpDir, classpath)
         classpath.addAll(listOfNotNull(classFiles.firstOrNull()?.classRoot))
 

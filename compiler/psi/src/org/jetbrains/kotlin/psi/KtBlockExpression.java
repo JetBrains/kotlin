@@ -20,7 +20,6 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiModifiableCodeBlock;
 import com.intellij.psi.impl.source.tree.CompositeElement;
 import com.intellij.psi.impl.source.tree.LazyParseablePsiElement;
 import com.intellij.psi.util.PsiUtilCore;
@@ -40,13 +39,13 @@ import java.util.List;
 import static org.jetbrains.kotlin.KtNodeTypes.BLOCK;
 
 @SuppressWarnings("deprecation")
-public class KtBlockExpression extends LazyParseablePsiElement implements KtElement, KtExpression, KtStatementExpression, PsiModifiableCodeBlock {
+public class KtBlockExpression extends LazyParseablePsiElement implements KtElement, KtExpression, KtStatementExpression {
 
     public KtBlockExpression(@Nullable CharSequence text) {
         super(BLOCK, text);
     }
 
-    @Override
+    @SuppressWarnings({"unused", "MethodMayBeStatic"}) //keep for compatibility with potential plugins
     public boolean shouldChangeModificationCount(PsiElement place) {
         // To prevent OutOfBlockModification increase from JavaCodeBlockModificationListener
         return false;

@@ -1,0 +1,26 @@
+@kotlin.Metadata
+final class IndexArrayElementGetterTest$AtomicArrayClass {
+    // source: 'IndexArrayElementGetterTest.kt'
+    private synthetic final field intArr: java.util.concurrent.atomic.AtomicIntegerArray
+    private synthetic final field longArr: java.util.concurrent.atomic.AtomicLongArray
+    public method <init>(): void
+    public synthetic final method getIntArr(): java.util.concurrent.atomic.AtomicIntegerArray
+    public synthetic final method getLongArr(): java.util.concurrent.atomic.AtomicLongArray
+    private final inner class IndexArrayElementGetterTest$AtomicArrayClass
+}
+
+@kotlin.Metadata
+public final class IndexArrayElementGetterTest {
+    // source: 'IndexArrayElementGetterTest.kt'
+    private final @org.jetbrains.annotations.NotNull field clazz: IndexArrayElementGetterTest$AtomicArrayClass
+    public method <init>(): void
+    public final method fib(p0: int): int
+    public final method testIndexArrayElementGetting(): void
+    private final inner class IndexArrayElementGetterTest$AtomicArrayClass
+}
+
+@kotlin.Metadata
+public final class IndexArrayElementGetterTestKt {
+    // source: 'IndexArrayElementGetterTest.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

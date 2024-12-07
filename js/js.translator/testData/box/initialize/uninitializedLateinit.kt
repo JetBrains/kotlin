@@ -1,6 +1,3 @@
-// IGNORE_FIR
-// IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1336
 // MODULE: lib
 // FILE: lib.kt
 open class A {

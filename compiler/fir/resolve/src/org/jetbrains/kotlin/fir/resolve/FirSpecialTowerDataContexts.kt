@@ -7,43 +7,54 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
+import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 
 class FirSpecialTowerDataContexts {
-    private val towerDataContextForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, FirTowerDataContext> = mutableMapOf()
-    private val towerDataContextForCallableReferences: MutableMap<FirCallableReferenceAccess, FirTowerDataContext> = mutableMapOf()
+    private val contextForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, PostponedAtomsResolutionContext> = mutableMapOf()
+    private val contextForCallableReferences: MutableMap<FirCallableReferenceAccess, PostponedAtomsResolutionContext> = mutableMapOf()
 
-    fun getAnonymousFunctionContext(symbol: FirAnonymousFunctionSymbol): FirTowerDataContext? {
-        return towerDataContextForAnonymousFunctions[symbol]
+    fun getAnonymousFunctionContext(symbol: FirAnonymousFunctionSymbol): PostponedAtomsResolutionContext? {
+        return contextForAnonymousFunctions[symbol]
     }
 
-    fun getCallableReferenceContext(access: FirCallableReferenceAccess): FirTowerDataContext? {
-        return towerDataContextForCallableReferences[access]
+    fun getCallableReferenceContext(access: FirCallableReferenceAccess): PostponedAtomsResolutionContext? {
+        return contextForCallableReferences[access]
     }
 
-    fun storeAnonymousFunctionContext(symbol: FirAnonymousFunctionSymbol, context: FirTowerDataContext) {
-        towerDataContextForAnonymousFunctions[symbol] = context
+    fun storeAnonymousFunctionContext(
+        symbol: FirAnonymousFunctionSymbol,
+        context: FirTowerDataContext,
+        inferenceSession: FirInferenceSession,
+    ) {
+        contextForAnonymousFunctions[symbol] = Pair(context, inferenceSession)
     }
 
     fun dropAnonymousFunctionContext(symbol: FirAnonymousFunctionSymbol) {
-        towerDataContextForAnonymousFunctions.remove(symbol)
+        contextForAnonymousFunctions.remove(symbol)
     }
 
-    fun storeCallableReferenceContext(access: FirCallableReferenceAccess, context: FirTowerDataContext) {
-        towerDataContextForCallableReferences[access] = context
+    fun storeCallableReferenceContext(
+        access: FirCallableReferenceAccess,
+        context: FirTowerDataContext,
+        inferenceSession: FirInferenceSession
+    ) {
+        contextForCallableReferences[access] = Pair(context, inferenceSession)
     }
 
     fun dropCallableReferenceContext(access: FirCallableReferenceAccess) {
-        towerDataContextForCallableReferences.remove(access)
+        contextForCallableReferences.remove(access)
     }
 
     fun putAll(contexts: FirSpecialTowerDataContexts) {
-        towerDataContextForCallableReferences.putAll(contexts.towerDataContextForCallableReferences)
-        towerDataContextForAnonymousFunctions.putAll(contexts.towerDataContextForAnonymousFunctions)
+        contextForCallableReferences.putAll(contexts.contextForCallableReferences)
+        contextForAnonymousFunctions.putAll(contexts.contextForAnonymousFunctions)
     }
 
     fun clear() {
-        towerDataContextForAnonymousFunctions.clear()
-        towerDataContextForCallableReferences.clear()
+        contextForAnonymousFunctions.clear()
+        contextForCallableReferences.clear()
     }
 }
+
+typealias PostponedAtomsResolutionContext = Pair<FirTowerDataContext, FirInferenceSession>

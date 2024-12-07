@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 @Target(AnnotationTarget.FUNCTION)
 annotation class FunAnn
 
@@ -21,8 +22,8 @@ fun foo(arg: Int) {
     // Literal is annotatable
     bar @FunAnn { arg }
     // Annotatable in principle but useless, fast is inline
-    fast @FunAnn { arg }
-    fast2(1, @FunAnn { arg })
+    fast <!NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION!>@FunAnn<!> { arg }
+    fast2(1, <!NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION!>@FunAnn<!> { arg })
     // Source annotation, ok
     fast @SourceAnn { arg }
     fast2(1, @SourceAnn { arg })

@@ -1,0 +1,65 @@
+data class Some {
+  val a: String
+    field = a
+    get
+
+  val b: dynamic
+    field = b
+    get
+
+  constructor(a: String, b: dynamic) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  operator fun component1(): String {
+    return <this>.#a
+  }
+
+  operator fun component2(): dynamic {
+    return <this>.#b
+  }
+
+  fun copy(a: String = <this>.#a, b: dynamic = <this>.#b): Some {
+    return Some(a = a, b = b)
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Some -> return false
+    }
+    val tmp_0: Some = other as Some
+    when {
+      EQEQ(arg0 = <this>.#a, arg1 = tmp_0.#a).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#b, arg1 = tmp_0.#b).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result: Int = <this>.#a.hashCode()
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#b, arg1 = null) -> 0
+      else -> <this>.#b /*~> Any */.hashCode()
+    })
+    return result
+  }
+
+  override fun toString(): String {
+    return "Some(" + "a=" + <this>.#a + ", " + "b=" + <this>.#b + ")"
+  }
+
+}
+
+fun box(): String {
+  val event: Some = Some(a = "O", b = "K")
+  event.hashCode() /*~> Unit */
+  return "OK"
+}
+

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun take(arg: Any) {}
 
 fun <T> foo(a: A, t: T) {} // 1
@@ -8,6 +9,6 @@ class A
 class B
 
 fun box(): String {
-    val ref1 = take(::foo) // error before 1.6.20; ok, resolved to (3) since 1.6.20
+    val ref1 = take(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>) // error before 1.6.20; ok, resolved to (3) since 1.6.20
     return "OK"
 }

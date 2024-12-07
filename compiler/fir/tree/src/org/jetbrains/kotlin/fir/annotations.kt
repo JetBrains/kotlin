@@ -36,9 +36,3 @@ annotation class PrivateSessionConstructor
 @RequiresOptIn
 annotation class SessionConfiguration
 
-/**
- * [PrivateForInline] used for cases when there is a var property with mutable set and corresponding
- *   inline function which mutates this var
- */
-@RequiresOptIn
-annotation class PrivateForInline

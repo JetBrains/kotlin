@@ -53,16 +53,12 @@ open class StrictBasicValue(type: Type?) : BasicValue(type) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || other::class.java != this::class.java) return false
-        if (!super.equals(other)) return false
 
         other as StrictBasicValue
 
-        if (this === NULL_VALUE) return other === NULL_VALUE
-        if (other === NULL_VALUE) return this === NULL_VALUE
+        if (this === NULL_VALUE || other === NULL_VALUE) return false
 
-        if (type != other.type) return false
-
-        return true
+        return type == other.type
     }
 
     override fun hashCode() = (type?.hashCode() ?: 0)

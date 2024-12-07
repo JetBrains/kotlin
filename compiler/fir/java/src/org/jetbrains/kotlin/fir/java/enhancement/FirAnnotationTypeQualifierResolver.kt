@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.fir.java.enhancement
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.extractEnumValueArgumentInfo
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.convertAnnotationsToFir
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -27,14 +29,17 @@ class FirAnnotationTypeQualifierResolver(
     private val javaModuleAnnotationsProvider: JavaModuleAnnotationsProvider,
 ) : AbstractAnnotationTypeQualifierResolver<FirAnnotation>(javaTypeEnhancementState), FirSessionComponent {
 
+    override val isK2: Boolean
+        get() = true
+
     override val FirAnnotation.metaAnnotations: Iterable<FirAnnotation>
-        get() = coneClassLikeType?.lookupTag?.toSymbol(session)?.fir?.annotations.orEmpty()
+        get() = unexpandedConeClassLikeType?.lookupTag?.toSymbol(session)?.fir?.annotations.orEmpty()
 
     override val FirAnnotation.key: Any
-        get() = coneClassLikeType!!.lookupTag
+        get() = unexpandedConeClassLikeType!!.lookupTag
 
     override val FirAnnotation.fqName: FqName?
-        get() = coneClassLikeType?.lookupTag?.classId?.asSingleFqName()
+        get() = unexpandedConeClassLikeType?.lookupTag?.classId?.asSingleFqName()
 
     override fun FirAnnotation.enumArguments(onlyValue: Boolean): Iterable<String> =
         argumentMapping.mapping.values.flatMap { argument ->
@@ -46,9 +51,9 @@ class FirAnnotationTypeQualifierResolver(
 
     private fun FirExpression.toEnumNames(): List<String> =
         when (this) {
-            is FirArrayOfCall -> arguments.flatMap { it.toEnumNames() }
+            is FirArrayLiteral -> arguments.flatMap { it.toEnumNames() }
             is FirVarargArgumentsExpression -> arguments.flatMap { it.toEnumNames() }
-            else -> listOfNotNull(toResolvedCallableSymbol()?.callableId?.callableName?.asString())
+            else -> listOfNotNull(extractEnumValueArgumentInfo()?.enumEntryName?.asString())
         }
 
     fun extractDefaultQualifiers(firClass: FirRegularClass): JavaTypeQualifiersByElementType? {
@@ -58,10 +63,11 @@ class FirAnnotationTypeQualifierResolver(
             (session.symbolProvider.getClassLikeSymbolByClassId(outerClassId)?.fir as? FirRegularClass)
                 ?.let { extractDefaultQualifiers(it) }
         } else {
+            val fakeSource = firClass.source?.fakeElement(KtFakeSourceElementKind.Enhancement)
             val forModule = javaModuleAnnotationsProvider.getAnnotationsForModuleOwnerOfClass(classId)
-                ?.let { extractAndMergeDefaultQualifiers(null, it.convertAnnotationsToFir(session, JavaTypeParameterStack.EMPTY)) }
+                ?.let { extractAndMergeDefaultQualifiers(null, it.convertAnnotationsToFir(session, fakeSource)) }
             val forPackage = (firClass as? FirJavaClass)?.javaPackage
-                ?.let { extractAndMergeDefaultQualifiers(forModule, it.convertAnnotationsToFir(session, JavaTypeParameterStack.EMPTY)) }
+                ?.let { extractAndMergeDefaultQualifiers(forModule, it.convertAnnotationsToFir(session, fakeSource)) }
             forPackage ?: forModule
         }
         return extractAndMergeDefaultQualifiers(parentQualifiers, firClass.annotations)

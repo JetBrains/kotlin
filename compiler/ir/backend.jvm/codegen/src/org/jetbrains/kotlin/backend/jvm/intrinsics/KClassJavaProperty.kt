@@ -28,6 +28,6 @@ object KClassJavaProperty : IntrinsicMethod() {
         val extensionReceiver = expression.extensionReceiver
         if (extensionReceiver !is IrClassReference && extensionReceiver !is IrGetClass)
             return null
-        return codegen.generateClassLiteralReference(extensionReceiver, false, data)
+        return codegen.generateClassLiteralReference(extensionReceiver, wrapIntoKClass = false, wrapPrimitives = false, data = data)
     }
 }

@@ -25,15 +25,13 @@ class IrLazyTypeAlias(
     override val descriptor: TypeAliasDescriptor,
     override var name: Name,
     override var visibility: DescriptorVisibility,
-    override val isActual: Boolean,
+    override var isActual: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
 ) : IrTypeAlias(), IrLazyDeclarationBase {
     init {
         symbol.bind(this)
     }
-
-    override var parent: IrDeclarationParent by createLazyParent()
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 
@@ -48,4 +46,8 @@ class IrLazyTypeAlias(
             descriptor.expandedType.toIrType()
         }
     }
+
+    override var metadata: MetadataSource?
+        get() = null
+        set(_) = error("We should never need to store metadata of external declarations.")
 }

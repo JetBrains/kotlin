@@ -1,0 +1,6 @@
+-no-stdlib
+-language-version
+1.9
+$TESTDATA_DIR$/noStdlibK1.kt
+-d
+$TEMP_DIR$

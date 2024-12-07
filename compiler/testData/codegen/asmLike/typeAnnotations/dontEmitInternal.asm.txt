@@ -1,0 +1,18 @@
+Module: lib
+Module: main
+public final class foo/Kotlin : java/lang/Object {
+    public void <init>()
+
+    public final java.lang.Object foo(bar.J j)
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    public final java.lang.Object[] foo2(bar.J j)
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lbar/J;)Ljava/util/List<Ljava/lang/Object;>;
+    public final java.util.List foo3(bar.J j)
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    public final java.util.List foo4(bar.J j)
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+}

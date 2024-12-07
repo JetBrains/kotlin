@@ -20,14 +20,17 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.isValueClass
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.util.MemberKindCheck.Member
 import org.jetbrains.kotlin.util.MemberKindCheck.MemberOrExtension
 import org.jetbrains.kotlin.util.OperatorNameConventions.ASSIGNMENT_OPERATIONS
@@ -53,7 +56,6 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.SIMPLE_UNARY_OPERATION_
 import org.jetbrains.kotlin.util.ReturnsCheck.*
 import org.jetbrains.kotlin.util.ValueParameterCountCheck.NoValueParameters
 import org.jetbrains.kotlin.util.ValueParameterCountCheck.SingleValueParameter
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 sealed class CheckResult(val isSuccess: Boolean) {
     class IllegalSignature(val error: String) : CheckResult(false)
@@ -198,8 +200,16 @@ object OperatorChecks : AbstractModifierChecks() {
         Checks(RANGE_UNTIL, MemberOrExtension, SingleValueParameter, NoDefaultAndVarargsCheck),
         Checks(EQUALS, Member) {
             fun DeclarationDescriptor.isAny() = this is ClassDescriptor && KotlinBuiltIns.isAny(this)
-            ensure(containingDeclaration.isAny() || overriddenDescriptors.any { it.containingDeclaration.isAny() }) {
-                "must override ''equals()'' in Any"
+            ensure(containingDeclaration.isAny() || overriddenDescriptors.any { it.containingDeclaration.isAny() } || isTypedEqualsInValueClass()) {
+                buildString {
+                    append("must override ''equals()'' in Any")
+                    if (containingDeclaration.isValueClass()) {
+                        val expectedParameterTypeRendered = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(
+                            (containingDeclaration as ClassDescriptor).defaultType.replaceArgumentsWithStarProjections()
+                        )
+                        append(" or define ''equals(other: $expectedParameterTypeRendered): Boolean''")
+                    }
+                }
             }
         },
         Checks(COMPARE_TO, MemberOrExtension, ReturnsInt, SingleValueParameter, NoDefaultAndVarargsCheck),
@@ -234,8 +244,7 @@ object OperatorChecks : AbstractModifierChecks() {
 
         val potentialActualAliasId = classDescriptor.classId ?: return false
         val actualReceiverTypeAlias =
-            classDescriptor.module.findClassifierAcrossModuleDependencies(potentialActualAliasId).safeAs<TypeAliasDescriptor>()
-                ?: return false
+            classDescriptor.module.findClassifierAcrossModuleDependencies(potentialActualAliasId) as? TypeAliasDescriptor ?: return false
 
         returnType?.let { returnType ->
             return returnType.isSubtypeOf(actualReceiverTypeAlias.expandedType)

@@ -1,4 +1,5 @@
-// !LANGUAGE: -NestedClassesInAnnotations
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -NestedClassesInAnnotations
 
 annotation class Annotation2() {
     <!ANNOTATION_CLASS_MEMBER!>public val s: String = ""<!>

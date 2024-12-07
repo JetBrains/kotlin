@@ -29,17 +29,9 @@ fun local() {
 // 0 \$\$delegatedProperties
 // 0 kotlin/jvm/internal/PropertyReference[0-2]Impl\.\<init\>
 
-// JVM_IR_TEMPLATES
 // Optimized all to direct accesses, with `$delegate` methods generating reflected references on demand:
 // 0 extends kotlin/jvm/internal/MutablePropertyReference[0-2]Impl
 // 0 private final( static)? Lkotlin/reflect/KMutableProperty[0-2]; [xyz]m?\$delegate
 // 2 private final( static)? LC; [xyz]m?\$receiver
 // 0 LOCALVARIABLE [xyz]m? Lkotlin/reflect/KMutableProperty[0-2];
 // 12 private( static)? get[XYZ]m?\$delegate
-
-// JVM_TEMPLATES
-// Not optimized, references created as classes and stored in fields:
-// 16 extends kotlin/jvm/internal/MutablePropertyReference[0-2]Impl
-// 12 private final( static)? Lkotlin/reflect/KMutableProperty[0-2]; [xyz]m?\$delegate
-// 4 LOCALVARIABLE [xyz]m? Lkotlin/reflect/KMutableProperty[0-2];
-// 0 get[XYZ]m?\$delegate

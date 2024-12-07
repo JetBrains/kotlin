@@ -5,57 +5,96 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiImplUtil
 import com.intellij.psi.impl.PsiSuperMethodImplUtil
 import com.intellij.psi.impl.light.LightMethodBuilder
 import com.intellij.psi.impl.light.LightTypeParameterListBuilder
+import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
-import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
-import org.jetbrains.kotlin.asJava.builder.MemberIndex
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
+import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
+import org.jetbrains.kotlin.asJava.elements.KtUltraLightModifierList
 import org.jetbrains.kotlin.codegen.FunctionCodegen
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.hasBody
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.types.RawType
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-const val METHOD_INDEX_FOR_GETTER = 1
-const val METHOD_INDEX_FOR_SETTER = 2
-const val METHOD_INDEX_FOR_DEFAULT_CTOR = 3
-const val METHOD_INDEX_FOR_NO_ARG_OVERLOAD_CTOR = 4
-const val METHOD_INDEX_FOR_NON_ORIGIN_METHOD = 5
-const val METHOD_INDEX_FOR_SCRIPT_MAIN = 6
-const val METHOD_INDEX_BASE = 7
+private class KtUltraLightMethodModifierList(
+    support: KtUltraLightSupport,
+    owner: KtUltraLightMethod,
+    val delegate: PsiMethod,
+) : KtUltraLightModifierList<KtUltraLightMethod>(owner, support) {
+    override fun hasModifierProperty(name: String): Boolean = when {
+        name == PsiModifier.ABSTRACT && isImplementationInInterface() -> false
+        // pretend this method behaves like a default method
+        name == PsiModifier.DEFAULT && isImplementationInInterface() && !hasModifierProperty(PsiModifier.STATIC) -> true
+        name == PsiModifier.FINAL &&
+                (owner.containingClass.safeAs<KtLightClassForSourceDeclaration>()?.isPossiblyAffectedByAllOpen() == true)
+        -> delegate.hasModifierProperty(name)
+
+        else -> delegate.hasModifierProperty(name)
+    }
+
+    override fun hasExplicitModifier(name: String) =
+        // Kotlin methods can't be truly default atm, that way we can avoid being reported on by diagnostics, namely UAST
+        if (name == PsiModifier.DEFAULT) false else super.hasExplicitModifier(name)
+
+    private fun isImplementationInInterface() = owner.containingClass.isInterface && owner.kotlinOrigin?.hasBody() == true
+
+    override fun copy() = KtUltraLightMethodModifierList(support, owner, delegate)
+
+    private inline fun <R> getTextVariantFromModifierListOfPropertyAccessorIfNeeded(
+        retriever: (KtModifierList) -> R
+    ): R? {
+        val auxiliaryOrigin = (owner as? KtLightMember<*>)?.lightMemberOrigin?.auxiliaryOriginalElement
+        return (auxiliaryOrigin as? KtPropertyAccessor)?.modifierList?.let(retriever)
+    }
+
+    override fun getText(): String {
+        return getTextVariantFromModifierListOfPropertyAccessorIfNeeded(KtModifierList::getText)
+            ?: super.getText()
+    }
+
+    override fun getTextOffset(): Int {
+        return getTextVariantFromModifierListOfPropertyAccessorIfNeeded(KtModifierList::getTextOffset)
+            ?: super.getTextOffset()
+    }
+
+    override fun getTextRange(): TextRange {
+        return getTextVariantFromModifierListOfPropertyAccessorIfNeeded(KtModifierList::getTextRange)
+            ?: super.getTextRange()
+    }
+}
 
 internal abstract class KtUltraLightMethod(
     internal val delegate: PsiMethod,
-    lightMemberOrigin: LightMemberOrigin?,
+    lightMemberOrigin: LightMemberOriginForDeclaration?,
     protected val support: KtUltraLightSupport,
     containingClass: KtLightClass,
-    private val methodIndex: Int
+    protected val methodIndex: Int
 ) : KtLightMethodImpl(
-    { delegate },
     lightMemberOrigin,
     containingClass
-), KtUltraLightElementWithNullabilityAnnotation<KtDeclaration, PsiMethod> {
-
+), KtUltraLightElementWithNullabilityAnnotationDescriptorBased<KtDeclaration, PsiMethod> {
     private class KtUltraLightThrowsReferenceListBuilder(private val parentMethod: PsiMethod) :
         KotlinLightReferenceListBuilder(parentMethod.manager, parentMethod.language, PsiReferenceList.Role.THROWS_LIST) {
-        override fun getParent() = parentMethod
-        override fun getContainingFile() = parentMethod.containingFile
+        override fun getParent(): PsiMethod = parentMethod
+        override fun getContainingFile(): PsiFile? = parentMethod.containingFile
     }
 
     protected fun computeThrowsList(methodDescriptor: FunctionDescriptor?): PsiReferenceList {
@@ -96,18 +135,24 @@ internal abstract class KtUltraLightMethod(
 
     abstract val checkNeedToErasureParametersTypes: Boolean
 
-    override val memberIndex: MemberIndex? = null
-
-    override val psiTypeForNullabilityAnnotation: PsiType?
-        get() = returnType
+    override val psiTypeForNullabilityAnnotation: PsiType? get() = returnType
 
     // These two overrides are necessary because ones from KtLightMethodImpl suppose that clsDelegate.returnTypeElement is valid
     // While here we only set return type for LightMethodBuilder (see org.jetbrains.kotlin.asJava.classes.KtUltraLightClass.asJavaMethod)
     override fun getReturnTypeElement(): PsiTypeElement? = null
 
-    override fun getReturnType(): PsiType? = clsDelegate.returnType
+    override fun getReturnType(): PsiType? = delegate.returnType
 
-    override fun buildParametersForList(): List<PsiParameter> = clsDelegate.parameterList.parameters.toList()
+    override fun buildParametersForList(): List<PsiParameter> = delegate.parameterList.parameters.toList()
+
+    private val _modifierList by lazyPub {
+        KtUltraLightMethodModifierList(support, this, delegate)
+    }
+
+    override fun hasModifierProperty(name: String): Boolean = _modifierList.hasModifierProperty(name)
+    override fun getModifierList(): PsiModifierList = _modifierList
+    override fun getDefaultValue(): PsiAnnotationMemberValue? = delegate.safeAs<PsiAnnotationMethod>()?.defaultValue
+    override fun getName(): String = delegate.name
 
     // should be in super
     override fun isVarArgs() = PsiImplUtil.isVarArgs(this)
@@ -119,7 +164,8 @@ internal abstract class KtUltraLightMethod(
     override fun findSuperMethodSignaturesIncludingStatic(checkAccess: Boolean): List<MethodSignatureBackedByPsiMethod> =
         PsiSuperMethodImplUtil.findSuperMethodSignaturesIncludingStatic(this, checkAccess)
 
-    override fun findDeepestSuperMethod() = PsiSuperMethodImplUtil.findDeepestSuperMethod(this)
+    @Deprecated("Deprecated in Java")
+    override fun findDeepestSuperMethod(): PsiMethod? = PsiSuperMethodImplUtil.findDeepestSuperMethod(this)
 
     override fun findDeepestSuperMethods(): Array<out PsiMethod> = PsiSuperMethodImplUtil.findDeepestSuperMethods(this)
 
@@ -142,11 +188,15 @@ internal abstract class KtUltraLightMethod(
     override fun hashCode(): Int = super.hashCode().times(31).plus(methodIndex.hashCode())
 
     override fun isDeprecated(): Boolean = _deprecated
+
+    override fun getDocComment(): PsiDocComment? = delegate.docComment
+
+    override fun isConstructor(): Boolean = delegate.isConstructor
 }
 
 internal class KtUltraLightMethodForSourceDeclaration(
     delegate: PsiMethod,
-    lightMemberOrigin: LightMemberOrigin?,
+    lightMemberOrigin: LightMemberOriginForDeclaration?,
     support: KtUltraLightSupport,
     containingClass: KtLightClass,
     private val forceToSkipNullabilityAnnotation: Boolean = false,
@@ -186,7 +236,20 @@ internal class KtUltraLightMethodForSourceDeclaration(
         else LightTypeParameterListBuilder(manager, language)
     }
 
-    private val methodDescriptor get() = kotlinOrigin?.resolve() as? FunctionDescriptor
+    private val methodDescriptor: FunctionDescriptor?
+        get() {
+            return when (val descriptor = kotlinOrigin?.resolve()) {
+                is FunctionDescriptor -> descriptor
+                is PropertyDescriptor -> {
+                    when (methodIndex) {
+                        METHOD_INDEX_FOR_GETTER -> descriptor.getter
+                        METHOD_INDEX_FOR_SETTER -> descriptor.setter
+                        else -> null
+                    }
+                }
+                else -> null
+            }
+        }
 
     private val _throwsList: PsiReferenceList by lazyPub { computeThrowsList(methodDescriptor) }
     override fun getThrowsList(): PsiReferenceList = _throwsList
@@ -204,7 +267,7 @@ internal class KtUltraLightMethodForSourceDeclaration(
 internal class KtUltraLightMethodForDescriptor(
     methodDescriptor: FunctionDescriptor,
     delegate: LightMethodBuilder,
-    lightMemberOrigin: LightMemberOrigin?,
+    lightMemberOrigin: LightMemberOriginForDeclaration?,
     support: KtUltraLightSupport,
     containingClass: KtUltraLightClass
 ) : KtUltraLightMethod(
@@ -236,7 +299,7 @@ internal class KtUltraLightMethodForDescriptor(
     override fun getThrowsList(): PsiReferenceList = _throwsList
 
     override val givenAnnotations: List<KtLightAbstractAnnotation> by getAndAddLazy {
-        methodDescriptor.obtainLightAnnotations(support, this)
+        methodDescriptor.obtainLightAnnotations(this)
     }
 
     override val qualifiedNameForNullabilityAnnotation: String? by getAndAddLazy {
@@ -258,7 +321,7 @@ internal class KtUltraLightMethodForDescriptor(
 
         val returnType = if (methodDescriptor is ConstructorDescriptor) {
             delegate.isConstructor = true
-            PsiType.VOID
+            PsiTypes.voidType()
         } else {
             support.mapType(methodDescriptor.returnType, this) { typeMapper, signatureWriter ->
                 typeMapper.mapReturnType(methodDescriptor, signatureWriter)

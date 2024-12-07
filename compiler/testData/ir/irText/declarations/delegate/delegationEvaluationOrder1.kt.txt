@@ -1,0 +1,97 @@
+package foo
+
+var global: String
+  field = ""
+  get
+  set
+
+class BaseImpl : Base {
+  val s: String
+    field = s
+    get
+
+  constructor(s: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun foo(x: String): String {
+    return "Base: " + <this>.<get-s>() + ":" + x
+  }
+
+}
+
+class Derived : DerivedBase, Base {
+  private /* final field */ val $$delegate_0: Base = newBase()
+  init {
+    { // BLOCK
+      <set-global>(<set-?> = <get-global>().plus(other = ":Derived"))
+    }
+  }
+
+  constructor() /* primary */ {
+    super/*DerivedBase*/()
+    /* <init>() */
+
+  }
+
+  override fun foo(x: String): String {
+    return <this>.#$$delegate_0.foo(x = x)
+  }
+
+}
+
+class Derived1 : DerivedBase, Base {
+  private /* final field */ val $$delegate_0: Base = newBase()
+  init {
+    { // BLOCK
+      <set-global>(<set-?> = <get-global>().plus(other = ":Derived"))
+    }
+  }
+
+  constructor() /* primary */ {
+    super/*DerivedBase*/()
+    /* <init>() */
+
+  }
+
+  override fun foo(x: String): String {
+    return <this>.#$$delegate_0.foo(x = x)
+  }
+
+}
+
+open class DerivedBase {
+  init {
+    { // BLOCK
+      <set-global>(<set-?> = <get-global>().plus(other = ":DerivedBase"))
+    }
+  }
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+interface Base {
+  abstract fun foo(x: String): String
+
+}
+
+fun box(): String {
+  var d: Derived = Derived()
+  var d1: Derived1 = Derived1()
+  return "OK"
+}
+
+fun newBase(): Base {
+  { // BLOCK
+    <set-global>(<set-?> = <get-global>().plus(other = ":newBase"))
+  }
+  return BaseImpl(s = "test")
+}
+

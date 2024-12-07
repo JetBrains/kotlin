@@ -1,0 +1,3 @@
+org.jetbrains:annotations:13.0 => [compile]
+project : => [jvmCompileClasspath]
+sample.gradle_7_6_3:JavaOnly:1.0 => [apiElements]

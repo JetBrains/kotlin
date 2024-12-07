@@ -1,3 +1,6 @@
+// FIR_IDENTICAL
+// KT-64271
+
 inline class IT(val x: Int)
 
 inline class InlineMutableSet(private val ms: MutableSet<IT>) : MutableSet<IT> {

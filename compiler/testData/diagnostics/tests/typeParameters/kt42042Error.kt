@@ -1,4 +1,5 @@
-// !LANGUAGE: +ProperTypeInferenceConstraintsProcessing
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ProperTypeInferenceConstraintsProcessing
 
 sealed class Subtype<A1, B1> {
     abstract fun cast(value: A1): B1

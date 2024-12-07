@@ -53,7 +53,7 @@ interface MemberTemplate {
     /** Specifies which platforms this member template should be generated for */
     fun platforms(vararg platforms: Platform)
 
-    fun instantiate(targets: Collection<KotlinTarget> = KotlinTarget.values): Sequence<MemberBuilder>
+    fun instantiate(targets: Collection<KotlinTarget> = KotlinTarget.entries): Sequence<MemberBuilder>
 
     /** Registers parameterless member builder function */
     fun builder(b: MemberBuildAction)
@@ -78,7 +78,7 @@ abstract class MemberTemplateDefinition<TParam> : MemberTemplate {
 
     private val buildActions = mutableListOf<BuildAction>()
 
-    private var allowedPlatforms = setOf(*Platform.values())
+    private var allowedPlatforms = Platform.entries.toSet()
     override fun platforms(vararg platforms: Platform) {
         allowedPlatforms = setOf(*platforms)
     }

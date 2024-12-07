@@ -1,5 +1,4 @@
-// FIR_IDENTICAL
-
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(): Int = 42
 
 object ThrowInTryWithCatch {

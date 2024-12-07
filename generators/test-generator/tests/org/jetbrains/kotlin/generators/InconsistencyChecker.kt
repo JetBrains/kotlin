@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.generators
 
+import java.util.Collections
+
 interface InconsistencyChecker {
     fun add(affectedFile: String)
 
@@ -18,7 +20,7 @@ interface InconsistencyChecker {
 }
 
 object DefaultInconsistencyChecker : InconsistencyChecker {
-    private val files = mutableListOf<String>()
+    private val files = Collections.synchronizedList(mutableListOf<String>())
 
     override fun add(affectedFile: String) {
         files.add(affectedFile)

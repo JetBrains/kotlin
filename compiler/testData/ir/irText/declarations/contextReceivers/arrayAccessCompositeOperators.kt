@@ -1,5 +1,4 @@
-// !LANGUAGE: +ContextReceivers
-// TARGET_BACKEND: JVM_IR
+// LANGUAGE: +ContextReceivers
 
 data class MyContainer(var i: Int)
 

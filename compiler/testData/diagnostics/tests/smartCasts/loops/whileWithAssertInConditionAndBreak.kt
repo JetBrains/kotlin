@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo() {
     var x: String? = "123"
     while (x!!.length < 42) {

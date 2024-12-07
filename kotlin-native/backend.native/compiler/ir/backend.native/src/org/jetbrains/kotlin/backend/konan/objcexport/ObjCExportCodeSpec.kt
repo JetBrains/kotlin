@@ -11,11 +11,12 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasCompanionObject
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): ObjCExportCodeSpec {
 
     fun createObjCMethods(methods: List<FunctionDescriptor>) = methods.map {
@@ -23,7 +24,7 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
                 createObjCMethodSpecBaseMethod(
                         mapper,
                         namer,
-                        symbolTable.referenceSimpleFunction(it),
+                        symbolTable.descriptorExtension.referenceSimpleFunction(it),
                         it
                 )
         )
@@ -43,7 +44,7 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
     val files = topLevel.map { (sourceFile, declarations) ->
         val binaryName = namer.getFileClassName(sourceFile).binaryName
         val methods = declarations.toObjCMethods()
-        ObjCClassForKotlinFile(binaryName, methods)
+        ObjCClassForKotlinFile(binaryName, sourceFile, methods)
     }
 
     val classToType = mutableMapOf<ClassDescriptor, ObjCTypeForKotlinType>()
@@ -57,13 +58,13 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
         methods += createObjCMethods(allBaseMethods)
 
         val binaryName = namer.getClassOrProtocolName(descriptor).binaryName
-        val irClassSymbol = symbolTable.referenceClass(descriptor)
+        val irClassSymbol = symbolTable.descriptorExtension.referenceClass(descriptor)
 
         if (descriptor.isInterface) {
             ObjCProtocolForKotlinInterface(binaryName, irClassSymbol, methods)
         } else {
             descriptor.constructors.filter { mapper.shouldBeExposed(it) }.mapTo(methods) {
-                val irConstructorSymbol = symbolTable.referenceConstructor(it)
+                val irConstructorSymbol = symbolTable.descriptorExtension.referenceConstructor(it)
                 val baseMethod = createObjCMethodSpecBaseMethod(mapper, namer, irConstructorSymbol, it)
 
                 if (descriptor.isArray) {
@@ -79,19 +80,27 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
             }
 
             if (descriptor.needCompanionObjectProperty(namer, mapper)) {
-                methods += ObjCGetterForObjectInstance(namer.getCompanionObjectPropertySelector(descriptor),
-                        symbolTable.referenceClass(descriptor.companionObjectDescriptor!!))
+                methods += ObjCGetterForObjectInstance(
+                    namer.getCompanionObjectPropertySelector(descriptor),
+                    symbolTable.descriptorExtension.referenceClass(descriptor.companionObjectDescriptor!!)
+                )
             }
 
             if (descriptor.kind == ClassKind.ENUM_CLASS) {
                 descriptor.enumEntries.mapTo(methods) {
-                    ObjCGetterForKotlinEnumEntry(symbolTable.referenceEnumEntry(it), namer.getEnumEntrySelector(it))
+                    ObjCGetterForKotlinEnumEntry(symbolTable.descriptorExtension.referenceEnumEntry(it), namer.getEnumEntrySelector(it))
                 }
 
                 descriptor.getEnumValuesFunctionDescriptor()?.let {
-                    methods += ObjCClassMethodForKotlinEnumValues(
-                            symbolTable.referenceSimpleFunction(it),
-                            namer.getEnumValuesSelector(it)
+                    methods += ObjCClassMethodForKotlinEnumValuesOrEntries(
+                            symbolTable.descriptorExtension.referenceSimpleFunction(it),
+                            namer.getEnumStaticMemberSelector(it)
+                    )
+                }
+                descriptor.getEnumEntriesPropertyDescriptor()?.let {
+                    methods += ObjCClassMethodForKotlinEnumValuesOrEntries(
+                            symbolTable.descriptorExtension.referenceSimpleFunction(it.getter!!),
+                            namer.getEnumStaticMemberSelector(it)
                     )
                 }
             }
@@ -141,27 +150,48 @@ internal sealed class ObjCMethodSpec {
     data class BaseMethod<out S : IrFunctionSymbol>(val symbol: S, val bridge: MethodBridge, val selector: String)
 }
 
-internal class ObjCMethodForKotlinMethod(val baseMethod: BaseMethod<IrSimpleFunctionSymbol>) : ObjCMethodSpec()
+internal class ObjCMethodForKotlinMethod(val baseMethod: BaseMethod<IrSimpleFunctionSymbol>) : ObjCMethodSpec() {
+    override fun toString(): String =
+            "ObjC spec of method `${baseMethod.selector}` for `${baseMethod.symbol}`"
+}
 
-internal class ObjCInitMethodForKotlinConstructor(val baseMethod: BaseMethod<IrConstructorSymbol>) : ObjCMethodSpec()
+internal class ObjCInitMethodForKotlinConstructor(val baseMethod: BaseMethod<IrConstructorSymbol>) : ObjCMethodSpec() {
+    override fun toString(): String =
+            "ObjC spec of method `${baseMethod.selector}` for `${baseMethod.symbol}`"
+}
 
 internal class ObjCFactoryMethodForKotlinArrayConstructor(
         val baseMethod: BaseMethod<IrConstructorSymbol>
-) : ObjCMethodSpec()
+) : ObjCMethodSpec() {
+    override fun toString(): String =
+            "ObjC spec of factory ${baseMethod.selector} for ${baseMethod.symbol}"
+}
 
 internal class ObjCGetterForKotlinEnumEntry(
         val irEnumEntrySymbol: IrEnumEntrySymbol,
         val selector: String
-) : ObjCMethodSpec()
+) : ObjCMethodSpec() {
+    override fun toString(): String =
+            "ObjC spec of getter `$selector` for `$irEnumEntrySymbol`"
+}
 
-internal class ObjCClassMethodForKotlinEnumValues(
+internal class ObjCClassMethodForKotlinEnumValuesOrEntries(
         val valuesFunctionSymbol: IrFunctionSymbol,
         val selector: String
-) : ObjCMethodSpec()
+) : ObjCMethodSpec() {
+    override fun toString(): String =
+            "ObjC spec of method `$selector` for $valuesFunctionSymbol"
+}
 
-internal class ObjCGetterForObjectInstance(val selector: String, val classSymbol: IrClassSymbol) : ObjCMethodSpec()
+internal class ObjCGetterForObjectInstance(val selector: String, val classSymbol: IrClassSymbol) : ObjCMethodSpec() {
+    override fun toString(): String =
+            "ObjC spec of instance getter `$selector` for $classSymbol"
+}
 
-internal object ObjCKotlinThrowableAsErrorMethod : ObjCMethodSpec()
+internal object ObjCKotlinThrowableAsErrorMethod : ObjCMethodSpec() {
+    override fun toString(): String =
+            "ObjC spec for ThrowableAsError method"
+}
 
 internal sealed class ObjCTypeSpec(val binaryName: String)
 
@@ -177,15 +207,26 @@ internal class ObjCClassForKotlinClass(
         methods: List<ObjCMethodSpec>,
         val categoryMethods: List<ObjCMethodForKotlinMethod>,
         val superClassNotAny: ObjCClassForKotlinClass?
-) : ObjCTypeForKotlinType(binaryName, irClassSymbol, methods)
+) : ObjCTypeForKotlinType(binaryName, irClassSymbol, methods) {
+    override fun toString(): String =
+            "ObjC spec of class `$binaryName` for `$irClassSymbol`"
+}
 
 internal class ObjCProtocolForKotlinInterface(
         binaryName: String,
         irClassSymbol: IrClassSymbol,
         methods: List<ObjCMethodSpec>
-) : ObjCTypeForKotlinType(binaryName, irClassSymbol, methods)
+) : ObjCTypeForKotlinType(binaryName, irClassSymbol, methods) {
+
+    override fun toString(): String =
+            "ObjC spec of protocol `$binaryName` for `$irClassSymbol`"
+}
 
 internal class ObjCClassForKotlinFile(
         binaryName: String,
+        private val sourceFile: SourceFile,
         val methods: List<ObjCMethodForKotlinMethod>
-) : ObjCTypeSpec(binaryName)
+) : ObjCTypeSpec(binaryName) {
+    override fun toString(): String =
+            "ObjC spec of class `$binaryName` for `${sourceFile.name}`"
+}

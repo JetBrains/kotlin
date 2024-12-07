@@ -1,3 +1,5 @@
+// FULL_JDK
+
 annotation class Anno
 
 @Target(AnnotationTarget.TYPE)

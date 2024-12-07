@@ -1,7 +1,9 @@
-depends = CFNetwork CoreFoundation CoreLocation Foundation Security darwin posix
+depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreLocation Foundation Security darwin posix
 language = Objective-C
 package = platform.CloudKit
 modules = CloudKit
 
 compilerOpts = -framework CloudKit
 linkerOpts = -framework CloudKit
+
+objcClassesIncludingCategories = CKNotification

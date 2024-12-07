@@ -5,21 +5,19 @@
 
 package org.jetbrains.kotlin.backend.jvm.ir
 
+import org.jetbrains.kotlin.backend.common.ir.isReifiable
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.types.isNullable
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun IrValueParameter.isInlineParameter(): Boolean =
-    index >= 0 && !isNoinline && (type.isFunction() || type.isSuspendFunction()) &&
+    indexInOldValueParameters >= 0 && !isNoinline && (type.isFunction() || type.isSuspendFunction()) &&
             // Parameters with default values are always nullable, so check the expression too.
             // Note that the frontend has a diagnostic for nullable inline parameters, so actually
             // making this return `false` requires using `@Suppress`.
@@ -48,7 +46,7 @@ val IrDeclaration.inlineScopeVisibility: DescriptorVisibility?
                     owner.visibility
                 }
             }
-            owner = owner.parent.safeAs<IrDeclaration>()?.original
+            owner = (owner.parent as? IrDeclaration)?.original
         }
         return result
     }
@@ -63,22 +61,18 @@ private val IrDeclaration.original: IrDeclaration
 
 fun IrStatement.unwrapInlineLambda(): IrFunctionReference? = when (this) {
     is IrBlock -> statements.lastOrNull()?.unwrapInlineLambda()
-    is IrFunctionReference -> takeIf { it.origin == JvmLoweredStatementOrigin.INLINE_LAMBDA }
+    is IrFunctionReference -> takeIf { it.origin == LoweredStatementOrigins.INLINE_LAMBDA }
     else -> null
 }
 
 fun IrFunction.isInlineFunctionCall(context: JvmBackendContext): Boolean =
-    (!context.state.isInlineDisabled || typeParameters.any { it.isReified }) && (isInline || isInlineArrayConstructor(context))
+    (!context.config.isInlineDisabled || typeParameters.any { it.isReified }) && (isInline || isInlineArrayConstructor())
 
-// Constructors can't be marked as inline in metadata, hence this hack.
-private fun IrFunction.isInlineArrayConstructor(context: JvmBackendContext): Boolean =
-    this is IrConstructor && valueParameters.size == 2 && constructedClass.symbol.let {
-        it == context.irBuiltIns.arrayClass || it in context.irBuiltIns.primitiveArraysToPrimitiveTypes
-    }
-
-fun IrFunction.isInlineOnly(): Boolean =
-    (isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)) ||
-            (this is IrSimpleFunction && correspondingPropertySymbol?.owner?.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME) == true)
+fun IrDeclaration.isInlineOnly(): Boolean =
+    this is IrFunction && (
+            (isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)) ||
+                    (this is IrSimpleFunction && correspondingPropertySymbol?.owner?.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME) == true)
+            )
 
 fun IrDeclarationWithVisibility.isEffectivelyInlineOnly(): Boolean =
     this is IrFunction && (isReifiable() || isInlineOnly() || isPrivateInlineSuspend())
@@ -86,5 +80,30 @@ fun IrDeclarationWithVisibility.isEffectivelyInlineOnly(): Boolean =
 fun IrFunction.isPrivateInlineSuspend(): Boolean =
     isSuspend && isInline && visibility == DescriptorVisibilities.PRIVATE
 
-fun IrFunction.isReifiable(): Boolean =
-    typeParameters.any { it.isReified }
+private fun IrAttributeContainer.getDeclarationBeforeInline(): IrDeclaration? {
+    val original = this.originalBeforeInline ?: return null
+    return original.extractRelatedDeclaration()
+}
+
+fun IrAttributeContainer.getAttributeOwnerBeforeInline(): IrAttributeContainer? {
+    if (this.originalBeforeInline == null) return null
+    return generateSequence(this) { it.originalBeforeInline }.last()
+}
+
+val IrDeclaration.fileParentBeforeInline: IrFile
+    get() {
+        val original = (this as? IrAttributeContainer)?.getDeclarationBeforeInline()
+            ?: this.parentClassOrNull?.getDeclarationBeforeInline()
+            ?: this
+        return original.fileParent
+    }
+
+@OptIn(JvmIrInlineExperimental::class)
+val IrInlinedFunctionBlock.inlineDeclaration: IrDeclaration
+    get() = when (val element = inlinedElement) {
+        is IrFunction -> element
+        is IrFunctionExpression -> element.function
+        is IrFunctionReference -> element.symbol.owner
+        is IrPropertyReference -> element.symbol.owner
+        else -> throw AssertionError("Not supported ir element for inlining ${element?.dump()}")
+    }

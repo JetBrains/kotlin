@@ -1,3 +1,4 @@
+// IGNORE_INLINER_K2: IR
 // FILE: 1.kt
 
 package test
@@ -8,11 +9,11 @@ inline fun myrun(s: () -> Unit) {
 }
 
 inline fun test(crossinline s: () -> Unit) {
-    {
+    val lambda = {
         val z = 1;
         myrun(s)
         val x = 1;
-    }()
+    }; lambda()
 }
 
 // FILE: 2.kt

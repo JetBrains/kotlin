@@ -1,0 +1,47 @@
+Restored type is the same as the original one
+
+KaIntersectionType:
+  abbreviation: null
+  annotations: []
+  conjuncts: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: Bound1
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: Bound1
+          symbol: KaNamedClassSymbol(Bound1)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(Bound1)
+      typeArguments: []
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: Bound2
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: Bound2
+          symbol: KaNamedClassSymbol(Bound2)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(Bound2)
+      typeArguments: []
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: Bound3
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: Bound3
+          symbol: KaNamedClassSymbol(Bound3)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(Bound3)
+      typeArguments: []
+  ]
+  nullability: NON_NULLABLE

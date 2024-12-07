@@ -5,7 +5,17 @@
 
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
+import org.jetbrains.kotlin.analysis.decompiler.konan.AbstractAdditionalStubInfoKnmTest
+import org.jetbrains.kotlin.analysis.decompiler.konan.AbstractDecompiledKnmStubConsistencyFe10Test
+import org.jetbrains.kotlin.analysis.decompiler.konan.AbstractDecompiledKnmStubConsistencyK2Test
+import org.jetbrains.kotlin.analysis.decompiler.psi.AbstractByDecompiledPsiStubBuilderK2CompilerTest
+import org.jetbrains.kotlin.analysis.decompiler.psi.AbstractByDecompiledPsiStubBuilderTest
+import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractAdditionalStubInfoK2CompilerTest
+import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractAdditionalStubInfoTest
+import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractClsStubBuilderK2CompilerTest
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractClsStubBuilderTest
+import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractPsiStubElementTypeConsistencyK2CompilerTest
+import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractPsiStubElementTypeConsistencyTest
 import org.jetbrains.kotlin.generators.TestGroupSuite
 
 internal fun TestGroupSuite.generateDecompiledTests() {
@@ -15,6 +25,60 @@ internal fun TestGroupSuite.generateDecompiledTests() {
     ) {
         testClass<AbstractClsStubBuilderTest> {
             model("clsFileStubBuilder", extension = null, recursive = false)
+        }
+
+        testClass<AbstractClsStubBuilderK2CompilerTest> {
+            model("clsFileStubBuilder", extension = null, recursive = false)
+        }
+
+        testClass<AbstractPsiStubElementTypeConsistencyTest> {
+            model("clsFileStubBuilder", extension = null, recursive = false)
+        }
+
+        testClass<AbstractPsiStubElementTypeConsistencyK2CompilerTest> {
+            model("clsFileStubBuilder", extension = null, recursive = false)
+        }
+
+        testClass<AbstractAdditionalStubInfoTest> {
+            model("additionalClsStubInfo", extension = null, recursive = false)
+        }
+
+        testClass<AbstractAdditionalStubInfoK2CompilerTest> {
+            model("additionalClsStubInfo", extension = null, recursive = false)
+        }
+    }
+
+    testGroup(
+        "analysis/decompiled/decompiler-to-psi/tests",
+        "analysis/decompiled/decompiler-to-file-stubs/testData",
+    ) {
+        testClass<AbstractByDecompiledPsiStubBuilderTest> {
+            model("clsFileStubBuilder", extension = null, recursive = false)
+        }
+
+        testClass<AbstractByDecompiledPsiStubBuilderK2CompilerTest> {
+            model("clsFileStubBuilder", extension = null, recursive = false)
+        }
+    }
+
+    testGroup(
+        "analysis/decompiled/decompiler-native/tests",
+        "analysis/decompiled/decompiler-to-file-stubs/testData",
+    ) {
+        testClass<AbstractDecompiledKnmStubConsistencyK2Test> {
+            model("clsFileStubBuilder", extension = null, recursive = false)
+        }
+        testClass<AbstractDecompiledKnmStubConsistencyFe10Test> {
+            model("clsFileStubBuilder", extension = null, recursive = false)
+        }
+    }
+
+    testGroup(
+        "analysis/decompiled/decompiler-native/tests",
+        "analysis/decompiled/decompiler-to-file-stubs/testData",
+    ) {
+        testClass<AbstractAdditionalStubInfoKnmTest> {
+            model("additionalClsStubInfo", extension = null, recursive = false)
         }
     }
 }

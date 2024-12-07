@@ -1,0 +1,156 @@
+Restored type is the same as the original one
+
+KaFlexibleType:
+  abbreviation: null
+  annotations: []
+  lowerBound: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: kotlin/collections/MutableList
+    nullability: NON_NULLABLE
+    qualifiers: [
+      qualifier:
+        name: MutableList
+        symbol: KaNamedClassSymbol(kotlin/collections/MutableList)
+        typeArguments: [
+          KaFlexibleType:
+            abbreviation: null
+            annotations: []
+            lowerBound: KaUsualClassType:
+              abbreviation: null
+              annotations: []
+              classId: kotlin/String
+              nullability: NON_NULLABLE
+              qualifiers: [
+                qualifier:
+                  name: String
+                  symbol: KaNamedClassSymbol(kotlin/String)
+                  typeArguments: []
+              ]
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+            nullability: UNKNOWN
+            upperBound: KaUsualClassType:
+              abbreviation: null
+              annotations: []
+              classId: kotlin/String
+              nullability: NULLABLE
+              qualifiers: [
+                qualifier:
+                  name: String
+                  symbol: KaNamedClassSymbol(kotlin/String)
+                  typeArguments: []
+              ]
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+        ]
+    ]
+    symbol: KaNamedClassSymbol(kotlin/collections/MutableList)
+    typeArguments: [
+      KaFlexibleType:
+        abbreviation: null
+        annotations: []
+        lowerBound: KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/String
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+        nullability: UNKNOWN
+        upperBound: KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/String
+          nullability: NULLABLE
+          qualifiers: [
+            qualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+    ]
+  nullability: UNKNOWN
+  upperBound: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: kotlin/collections/List
+    nullability: NULLABLE
+    qualifiers: [
+      qualifier:
+        name: List
+        symbol: KaNamedClassSymbol(kotlin/collections/List)
+        typeArguments: [
+          KaFlexibleType:
+            abbreviation: null
+            annotations: []
+            lowerBound: KaUsualClassType:
+              abbreviation: null
+              annotations: []
+              classId: kotlin/String
+              nullability: NON_NULLABLE
+              qualifiers: [
+                qualifier:
+                  name: String
+                  symbol: KaNamedClassSymbol(kotlin/String)
+                  typeArguments: []
+              ]
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+            nullability: UNKNOWN
+            upperBound: KaUsualClassType:
+              abbreviation: null
+              annotations: []
+              classId: kotlin/String
+              nullability: NULLABLE
+              qualifiers: [
+                qualifier:
+                  name: String
+                  symbol: KaNamedClassSymbol(kotlin/String)
+                  typeArguments: []
+              ]
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+        ]
+    ]
+    symbol: KaNamedClassSymbol(kotlin/collections/List)
+    typeArguments: [
+      KaFlexibleType:
+        abbreviation: null
+        annotations: []
+        lowerBound: KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/String
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+        nullability: UNKNOWN
+        upperBound: KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/String
+          nullability: NULLABLE
+          qualifiers: [
+            qualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+    ]

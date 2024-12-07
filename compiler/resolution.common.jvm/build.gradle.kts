@@ -8,11 +8,12 @@ dependencies {
     api(project(":core:compiler.common.jvm"))
     api(project(":compiler:psi"))
     implementation(project(":compiler:util"))
-    implementation(commonDependency("io.javaslang","javaslang"))
+    implementation(libs.vavr)
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
-    compileOnly(commonDependency("com.google.guava:guava"))
+    compileOnly(libs.kotlinx.coroutines.core.jvm)
+    compileOnly(libs.intellij.asm)
+    compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    compileOnly(libs.guava)
 }
 
 sourceSets {

@@ -15,22 +15,21 @@ repositories {
 dependencies {
     testApi(intellijCore())
 
-    testRuntimeOnly("xerces:xercesImpl:2.12.0")
+    testRuntimeOnly(libs.xerces)
     testRuntimeOnly(commonDependency("commons-lang:commons-lang"))
 
-    testApi(commonDependency("junit:junit"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(libs.junit4)
+    testCompileOnly(kotlinTest("junit"))
     testApi(projectTests(":compiler:tests-common"))
 
-    testCompileOnly(project(":kotlin-reflect-api"))
-    testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
     testApi(project(":compiler:fir:resolve"))
     testApi(project(":compiler:fir:providers"))
     testApi(project(":compiler:fir:semantics"))
     testApi(project(":compiler:fir:dump"))
+
+    testRuntimeOnly(project(":compiler:fir:plugin-utils"))
 
     val asyncProfilerClasspath = project.findProperty("fir.bench.async.profiler.classpath") as? String
     if (asyncProfilerClasspath != null) {
@@ -44,9 +43,9 @@ sourceSets {
 }
 
 projectTest(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512) {
+    dependsOn(":dist")
     systemProperties(project.properties.filterKeys { it.startsWith("fir.") })
     workingDir = rootDir
-    dependsOn(":dist")
 
     run {
         val argsExt = project.findProperty("fir.modularized.jvm.args") as? String

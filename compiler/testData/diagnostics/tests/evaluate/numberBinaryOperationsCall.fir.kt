@@ -1,4 +1,4 @@
-// !LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
+// RUN_PIPELINE_TILL: FRONTEND
 fun fooInt(p: Int) = p
 fun fooLong(p: Long) = p
 fun fooByte(p: Byte) = p

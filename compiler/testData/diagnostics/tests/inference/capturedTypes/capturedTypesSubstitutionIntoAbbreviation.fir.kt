@@ -1,3 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
+// SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE
+// influences only DEBUG_INFO_EXPRESSION_TYPE, so not important
+
 typealias Action<K> = (@UnsafeVariance K) -> Unit
 typealias Action2<K> = (@UnsafeVariance K) -> K
 
@@ -20,12 +24,12 @@ fun getTag7(): Tag7<*> = Tag7<Int> { }
 fun getTag8(): Tag8<*> = Tag8<Int> { 1 }
 
 fun main() {
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Nothing, kotlin.Unit>")!>getTag().action<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Nothing, kotlin.Unit>")!>getTag2().action<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Nothing, kotlin.Unit>")!>getTag3().action<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Nothing, kotlin.Unit>")!>getTag4().action<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Nothing, kotlin.Any?>")!>getTag5().action<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Nothing, kotlin.Unit>")!>getTag6().action<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Nothing, kotlin.Unit>")!>getTag7().action<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Nothing, kotlin.Any?>")!>getTag8().action<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<CapturedType(*), kotlin.Unit>")!>getTag().action<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<in CapturedType(*), kotlin.Unit>")!>getTag2().action<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<CapturedType(*), kotlin.Unit>")!>getTag3().action<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<in CapturedType(*), kotlin.Unit>")!>getTag4().action<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<CapturedType(*), CapturedType(*)>")!>getTag5().action<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<in kotlin.Any?, kotlin.Unit>")!>getTag6().action<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Any?, kotlin.Unit>")!>getTag7().action<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Any?, kotlin.Any?>")!>getTag8().action<!>
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun ff(a: String) = 1
 
 fun gg() {

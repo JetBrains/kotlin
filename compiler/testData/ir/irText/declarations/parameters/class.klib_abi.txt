@@ -1,0 +1,18 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class <#A: kotlin/Any?> /Test { // /Test|null[0]
+    constructor <init>() // /Test.<init>|<init>(){}[0]
+    final inner class <#A1: kotlin/Any?> TestInner { // /Test.TestInner|null[0]
+        constructor <init>() // /Test.TestInner.<init>|<init>(){}[0]
+    }
+    final class <#A1: kotlin/Any?> TestNested { // /Test.TestNested|null[0]
+        constructor <init>() // /Test.TestNested.<init>|<init>(){}[0]
+    }
+}
+abstract interface <#A: kotlin/Any?> /TestInterface { // /TestInterface|null[0]
+    abstract interface <#A1: kotlin/Any?> TestNestedInterface // /TestInterface.TestNestedInterface|null[0]
+}

@@ -1,0 +1,66 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+@Composable
+fun StrongSkippingIssue(
+    data: ClassWithData
+) {
+    val action by data::action
+    val action1 by getData()::action
+    {
+        action
+    }
+    {
+        action1
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun StrongSkippingIssue(data: ClassWithData, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(data)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    val action by {
+      val action%delegate = data::action
+      get() {
+        return action%delegate.getValue(null, ::action%delegate)
+      }
+    }
+    val action1 by {
+      val action1%delegate = getData()::action
+      get() {
+        return action1%delegate.getValue(null, ::action1%delegate)
+      }
+    }
+    {
+      <get-action>()
+    }
+    {
+      <get-action1>()
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    StrongSkippingIssue(data, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

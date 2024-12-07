@@ -1,3 +1,0 @@
-KtErrorCallInfo:
-  candidateCalls = []
-  diagnostic = ERROR<FUNCTION_EXPECTED: Expression 'Obj' of type 'Obj' cannot be invoked as a function. The function 'invoke()' is not found>

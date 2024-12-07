@@ -1,19 +1,39 @@
-import java.lang.System;
-
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
 public abstract @interface Anno {
 }
 
 ////////////////////
 
 
-import java.lang.System;
-
+/**
+ * public final class Bar : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: a:Ljava/lang/String;
+ *   // getter: getA()Ljava/lang/String;
+ *   // synthetic method for annotations: getA$annotations()V
+ *   public final val a: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Bar {
-    @org.jetbrains.annotations.NotNull()
     @FieldAnno()
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = "";
 
     public Bar() {
@@ -25,8 +45,8 @@ public final class Bar {
         return null;
     }
 
-    @Anno()
     @PropertyAnno()
+    @Anno()
     @java.lang.Deprecated()
     public static void getA$annotations() {
     }
@@ -35,13 +55,25 @@ public final class Bar {
 ////////////////////
 
 
-import java.lang.System;
-
+/**
+ * public final class Baz : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: a:Ljava/lang/String;
+ *   // synthetic method for annotations: getA$annotations()V
+ *   public final val a: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Baz {
-    @org.jetbrains.annotations.NotNull()
-    @kotlin.jvm.JvmField()
     @FieldAnno()
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String a = "";
 
     public Baz() {
@@ -57,29 +89,49 @@ public final class Baz {
 ////////////////////
 
 
-import java.lang.System;
-
-@kotlin.Metadata()
-@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.FIELD})
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.FIELD})
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.FIELD})
+/**
+ * public final annotation class FieldAnno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
 public abstract @interface FieldAnno {
 }
 
 ////////////////////
 
 
-import java.lang.System;
-
+/**
+ * public final class Foo : kotlin/Any {
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   public constructor(a: kotlin/String)
+ *
+ *   // field: a:Ljava/lang/String;
+ *   // getter: getA()Ljava/lang/String;
+ *   // synthetic method for annotations: getA$annotations()V
+ *   public final val a: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Foo {
-    @org.jetbrains.annotations.NotNull()
     @FieldAnno()
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = null;
 
-    public Foo(@org.jetbrains.annotations.NotNull()
+    public Foo(@ParameterAnno()
     @Anno()
-    @ParameterAnno()
+    @org.jetbrains.annotations.NotNull()
     java.lang.String a) {
         super();
     }
@@ -98,23 +150,37 @@ public final class Foo {
 ////////////////////
 
 
-import java.lang.System;
-
-@kotlin.Metadata()
-@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.PARAMETER})
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.VALUE_PARAMETER})
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.PARAMETER})
+/**
+ * public final annotation class ParameterAnno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
 public abstract @interface ParameterAnno {
 }
 
 ////////////////////
 
 
-import java.lang.System;
-
-@kotlin.Metadata()
-@java.lang.annotation.Target(value = {})
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.PROPERTY})
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {})
+/**
+ * public final annotation class PropertyAnno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
 public abstract @interface PropertyAnno {
 }

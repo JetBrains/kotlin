@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.visitors
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
 
 fun <T : FirElement, D> T.transformSingle(transformer: FirTransformer<D>, data: D): T {
     return (this as FirPureAbstractElement).transform<T, D>(transformer, data)
@@ -21,6 +22,10 @@ fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirTransfor
             iterator.set(result)
         }
     }
+}
+
+fun <T : FirElement, D> MutableOrEmptyList<T>.transformInplace(transformer: FirTransformer<D>, data: D) {
+    list?.transformInplace(transformer, data)
 }
 
 sealed class TransformData<out D> {
@@ -42,12 +47,4 @@ inline fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirT
             iterator.set(result)
         }
     }
-}
-
-fun <R, D> List<FirElement>.acceptAllElements(visitor: FirVisitor<R, D>, data: D) {
-    forEach { it.accept(visitor, data) }
-}
-
-fun List<FirElement>.acceptAllElements(visitor: FirVisitorVoid) {
-    forEach { it.accept(visitor) }
 }

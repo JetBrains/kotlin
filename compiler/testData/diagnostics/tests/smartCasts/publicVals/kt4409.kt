@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 public interface A {
     public val x: Any
 }

@@ -1,0 +1,16 @@
+KT element: KtTypeReference
+FIR element: FirResolvedTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|Two|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] whereFunction.kt
+    public final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|One|, R|Two|> foo([ResolvedTo(ANNOTATION_ARGUMENTS)] t: R|T|): R|T| {
+        ^foo R|<local>/t|
+    }

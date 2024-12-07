@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
+// CHECK_TYPE
 
 // Here we mostly trying to fix behaviour in order to track changes in inference rules for unsigned types later
 

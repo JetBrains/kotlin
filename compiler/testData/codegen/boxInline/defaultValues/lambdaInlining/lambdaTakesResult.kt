@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // SKIP_INLINE_CHECK_IN: inlineFun$default
-// IGNORE_BACKEND: JS
 // FILE: 1.kt
 package test
 

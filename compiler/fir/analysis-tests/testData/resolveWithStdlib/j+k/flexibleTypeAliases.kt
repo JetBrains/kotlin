@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FULL_JDK
 // FILE: imm/Map.java
 package imm;
@@ -18,7 +19,7 @@ public interface Option<T> {
 
 // FILE: imm/LinkedHashSet.java
 package imm;
-public class LinkedHashSet<E> extends Set<E> {
+public class LinkedHashSet<E> implements Set<E> {
     public static <T> LinkedHashSet<T> empty() { return null; }
 }
 

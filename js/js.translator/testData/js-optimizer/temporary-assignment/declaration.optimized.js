@@ -1,11 +1,11 @@
 function test(n) {
-    var result;
+    var $tmp;
     if (n >= 0) {
-        result = n;
+        $tmp = n;
+    } else {
+        $tmp = -n;
     }
-    else {
-        result = -n;
-    }
+    var result = $tmp;
     return result;
 }
 

@@ -1,0 +1,65 @@
+library {
+  // module name: <primitives.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/C
+    // class name: test/Primitives
+
+    // signature: test/C|null[0]
+    @test/Primitives(byte = 7.toByte(), char = '%', short = 239.toShort(), int = 239017, long = 123456789123456789L, float = 2.72f, double = -3.14, boolean = true)
+    public final class test/C : kotlin/Any {
+
+      // signature: test/C.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: test/Primitives|null[0]
+    public final annotation class test/Primitives : kotlin/Annotation {
+
+      // signature: test/Primitives.<init>|4757917789516536964[0]
+      public constructor(byte: kotlin/Byte, char: kotlin/Char, short: kotlin/Short, int: kotlin/Int, long: kotlin/Long, float: kotlin/Float, double: kotlin/Double, boolean: kotlin/Boolean)
+
+      // signature: test/Primitives.boolean|-4261332457766342551[0]
+      public final val boolean: kotlin/Boolean
+        // signature: test/Primitives.boolean.<get-boolean>|517708060946479255[0]
+        public final get
+
+      // signature: test/Primitives.byte|-96849965763790584[0]
+      public final val byte: kotlin/Byte
+        // signature: test/Primitives.byte.<get-byte>|310937544708577298[0]
+        public final get
+
+      // signature: test/Primitives.char|-1670337955414892634[0]
+      public final val char: kotlin/Char
+        // signature: test/Primitives.char.<get-char>|1437740164735763428[0]
+        public final get
+
+      // signature: test/Primitives.double|2356391280675975773[0]
+      public final val double: kotlin/Double
+        // signature: test/Primitives.double.<get-double>|-6763865848971261464[0]
+        public final get
+
+      // signature: test/Primitives.float|3027698144133593704[0]
+      public final val float: kotlin/Float
+        // signature: test/Primitives.float.<get-float>|1344292707679993701[0]
+        public final get
+
+      // signature: test/Primitives.int|4038882325283937173[0]
+      public final val int: kotlin/Int
+        // signature: test/Primitives.int.<get-int>|-626442327997506045[0]
+        public final get
+
+      // signature: test/Primitives.long|-3528812958611327186[0]
+      public final val long: kotlin/Long
+        // signature: test/Primitives.long.<get-long>|-8542925932497577082[0]
+        public final get
+
+      // signature: test/Primitives.short|2683753303457941763[0]
+      public final val short: kotlin/Short
+        // signature: test/Primitives.short.<get-short>|-8651028235276253274[0]
+        public final get
+    }
+  }
+}

@@ -4,7 +4,6 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.common.Symbol;
 import org.jetbrains.kotlin.js.util.AstUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
@@ -79,11 +78,6 @@ public class JsVars extends SourceInfoAwareJsNode implements JsStatement, Iterab
             this.name = name;
         }
 
-        @Override
-        public Symbol getSymbol() {
-            return name;
-        }
-
         public void setInitExpression(JsExpression initExpression) {
             this.initExpression = initExpression;
         }
@@ -125,16 +119,6 @@ public class JsVars extends SourceInfoAwareJsNode implements JsStatement, Iterab
 
     public void addAll(Collection<? extends JsVars.JsVar> vars) {
         this.vars.addAll(vars);
-    }
-
-    public void addAll(JsVars otherVars) {
-        this.vars.addAll(otherVars.vars);
-    }
-
-    public void addIfHasInitializer(JsVar var) {
-        if (var.getInitExpression() != null) {
-            add(var);
-        }
     }
 
     public boolean isEmpty() {

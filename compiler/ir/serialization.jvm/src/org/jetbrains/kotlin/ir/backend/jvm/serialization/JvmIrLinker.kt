@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.ir.backend.jvm.serialization
 
-import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
+import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
@@ -34,17 +34,22 @@ import org.jetbrains.kotlin.name.Name
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JvmIrLinker(
     currentModule: ModuleDescriptor?,
-    messageLogger: IrMessageLogger,
+    messageCollector: MessageCollector,
     typeSystem: IrTypeSystemContext,
     symbolTable: SymbolTable,
-    override val translationPluginContext: TranslationPluginContext?,
     private val stubGenerator: DeclarationStubGenerator,
     private val manglerDesc: JvmDescriptorMangler,
     private val enableIdSignatures: Boolean,
-) : KotlinIrLinker(currentModule, messageLogger, typeSystem.irBuiltIns, symbolTable, emptyList()) {
+) : KotlinIrLinker(currentModule, messageCollector, typeSystem.irBuiltIns, symbolTable, emptyList()) {
 
-    // TODO: provide friend modules
-    override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, JvmIrMangler, typeSystem, emptyMap())
+    override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
+        linker = this,
+        symbolTable = symbolTable,
+        mangler = JvmIrMangler,
+        typeSystem = typeSystem,
+        friendModules = emptyMap(), // TODO: provide friend modules
+        partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED
+    )
 
     private val javaName = Name.identifier("java")
 
@@ -134,12 +139,10 @@ class JvmIrLinker(
             DescriptorByIdSignatureFinderImpl.LookupMode.MODULE_ONLY
         )
 
-        private fun resolveDescriptor(idSig: IdSignature): DeclarationDescriptor {
-            return descriptorFinder.findDescriptorBySignature(idSig) ?: error("No descriptor found for $idSig")
-        }
+        private fun resolveDescriptor(idSig: IdSignature): DeclarationDescriptor? = descriptorFinder.findDescriptorBySignature(idSig)
 
-        override fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
-            val descriptor = resolveDescriptor(idSig)
+        override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
+            val descriptor = resolveDescriptor(idSig) ?: return null
 
             val declaration = stubGenerator.run {
                 when (symbolKind) {
@@ -156,6 +159,8 @@ class JvmIrLinker(
             return declaration.symbol
         }
 
+        override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No descriptor found for $idSig")
+
         override fun declareIrSymbol(symbol: IrSymbol) {
             if (symbol is IrFieldSymbol) {
                 declareJavaFieldStub(symbol)
@@ -164,7 +169,7 @@ class JvmIrLinker(
             }
         }
 
-        override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, builtIns, emptyList())
+        override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor)
         override val moduleDependencies: Collection<IrModuleDeserializer> = dependencies
 
         override val kind get() = IrModuleDeserializerKind.SYNTHETIC

@@ -1,6 +1,3 @@
-// IGNORE_FIR
-// EXPECTED_REACHABLE_NODES: 1311
-
 // MODULE: lib
 // FILE: lib.kt
 
@@ -24,6 +21,6 @@ inline fun K(a: A) = a.foo.call(a, "K")
 
 val a = A
 
-// CHECK_BREAKS_COUNT: function=box count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=box name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=box count=0
+// CHECK_LABELS_COUNT: function=box name=$l$block count=0
 fun box() = O() + K(a)

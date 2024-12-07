@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-7186: False "Type mismatch" error
 
 fun indexOfMax(a: IntArray): Int? {

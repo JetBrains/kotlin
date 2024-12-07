@@ -52,10 +52,10 @@ public actual fun Int.takeLowestOneBit(): Int =
  * Rotating by a multiple of [Int.SIZE_BITS] (32) returns the same number, or more generally
  * `number.rotateLeft(n) == number.rotateLeft(n % 32)`
  */
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Int.rotateLeft(bitCount: Int): Int =
     shl(bitCount) or ushr(32 - bitCount)
-
 
 /**
  * Rotates the binary representation of this [Int] number right by the specified [bitCount] number of bits.
@@ -67,26 +67,27 @@ public actual fun Int.rotateLeft(bitCount: Int): Int =
  * Rotating by a multiple of [Int.SIZE_BITS] (32) returns the same number, or more generally
  * `number.rotateRight(n) == number.rotateRight(n % 32)`
  */
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Int.rotateRight(bitCount: Int): Int =
     shl(32 - bitCount) or ushr(bitCount)
-
 
 /**
  * Counts the number of set bits in the binary representation of this [Long] number.
  */
+@Suppress("NOTHING_TO_INLINE")
 public actual inline fun Long.countOneBits(): Int =
     wasm_i64_popcnt(this).toInt()
 
 /**
  * Counts the number of consecutive most significant bits that are zero in the binary representation of this [Long] number.
  */
-@ExperimentalStdlibApi
 public actual fun Long.countLeadingZeroBits(): Int = wasm_i64_clz(this).toInt()
 
 /**
  * Counts the number of consecutive least significant bits that are zero in the binary representation of this [Long] number.
  */
+@Suppress("NOTHING_TO_INLINE")
 public actual inline fun Long.countTrailingZeroBits(): Int =
     wasm_i64_ctz(this).toInt()
 
@@ -114,7 +115,8 @@ public actual fun Long.takeLowestOneBit(): Long =
  * Rotating by a multiple of [Long.SIZE_BITS] (64) returns the same number, or more generally
  * `number.rotateLeft(n) == number.rotateLeft(n % 64)`
  */
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Long.rotateLeft(bitCount: Int): Long =
     shl(bitCount) or ushr(64 - bitCount)
 
@@ -128,7 +130,8 @@ public actual fun Long.rotateLeft(bitCount: Int): Long =
  * Rotating by a multiple of [Long.SIZE_BITS] (64) returns the same number, or more generally
  * `number.rotateRight(n) == number.rotateRight(n % 64)`
  */
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Long.rotateRight(bitCount: Int): Long =
     shl(64 - bitCount) or ushr(bitCount)
@@ -137,33 +140,33 @@ public actual inline fun Long.rotateRight(bitCount: Int): Long =
  * Returns `true` if the specified number is a
  * Not-a-Number (NaN) value, `false` otherwise.
  */
-actual fun Double.isNaN(): Boolean = this != this
+public actual fun Double.isNaN(): Boolean = this != this
 
 /**
  * Returns `true` if the specified number is a
  * Not-a-Number (NaN) value, `false` otherwise.
  */
-actual fun Float.isNaN(): Boolean = this != this
+public actual fun Float.isNaN(): Boolean = this != this
 
 /**
  * Returns `true` if this value is infinitely large in magnitude.
  */
-actual fun Double.isInfinite(): Boolean = (this == Double.POSITIVE_INFINITY) || (this == Double.NEGATIVE_INFINITY)
+public actual fun Double.isInfinite(): Boolean = (this == Double.POSITIVE_INFINITY) || (this == Double.NEGATIVE_INFINITY)
 
 /**
  * Returns `true` if this value is infinitely large in magnitude.
  */
-actual fun Float.isInfinite(): Boolean = (this == Float.POSITIVE_INFINITY) || (this == Float.NEGATIVE_INFINITY)
+public actual fun Float.isInfinite(): Boolean = (this == Float.POSITIVE_INFINITY) || (this == Float.NEGATIVE_INFINITY)
 
 /**
  * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
  */
-actual fun Double.isFinite(): Boolean = !isInfinite() && !isNaN()
+public actual fun Double.isFinite(): Boolean = (toRawBits() and 0x7fffffff_ffffffffL) < 0x7ff00000_00000000L
 
 /**
  * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
  */
-actual fun Float.isFinite(): Boolean = !isInfinite() && !isNaN()
+public actual fun Float.isFinite(): Boolean = (toRawBits() and 0x7fffffff) < 0x7f800000
 
 /**
  * Returns a bit representation of the specified floating-point value as [Long]

@@ -1,6 +1,4 @@
-// IGNORE_FIR
 // KJS_WITH_FULL_RUNTIME
-// EXPECTED_REACHABLE_NODES: 1304
 // MODULE: lib1
 // FILE: lib1.kt
 package pkg

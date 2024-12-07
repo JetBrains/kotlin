@@ -1,4 +1,5 @@
-// !LANGUAGE: +AllowBreakAndContinueInsideWhen
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +AllowBreakAndContinueInsideWhen
 
 fun breakContinueInWhen(i: Int) {
     for (y in 0..10) {

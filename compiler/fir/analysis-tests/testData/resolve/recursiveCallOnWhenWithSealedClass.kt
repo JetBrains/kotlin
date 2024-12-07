@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // Issue: KT-18583
 
 sealed class Maybe<T> {

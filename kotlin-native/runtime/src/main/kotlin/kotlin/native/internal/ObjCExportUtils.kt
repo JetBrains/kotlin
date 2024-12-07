@@ -5,9 +5,7 @@
 
 package kotlin.native.internal
 
-import kotlin.native.internal.ExportForCppRuntime
-import kotlin.native.internal.KonanSet
-import kotlin.native.internal.ReportUnhandledException
+import kotlin.native.internal.escapeAnalysis.Escapes
 
 /**
  * This interface denotes the object to be a wrapper for the Objective-C object,
@@ -16,34 +14,41 @@ import kotlin.native.internal.ReportUnhandledException
 @ExportTypeInfo("theObjCObjectWrapperTypeInfo")
 internal interface ObjCObjectWrapper
 
-internal class NSArrayAsKList : AbstractList<Any?>(), ObjCObjectWrapper {
+internal class NSArrayAsKList : AbstractList<Any?>(), RandomAccess, ObjCObjectWrapper {
 
     override val size: Int get() = getSize()
 
     @GCUnsafeCall("Kotlin_NSArrayAsKList_getSize")
+    @Escapes.Nothing
     private external fun getSize(): Int
 
     @GCUnsafeCall("Kotlin_NSArrayAsKList_get")
+    @Escapes(0b100) // return value escapes into stable ref
     external override fun get(index: Int): Any?
 }
 
-internal class NSMutableArrayAsKMutableList : AbstractMutableList<Any?>(), ObjCObjectWrapper {
+internal class NSMutableArrayAsKMutableList : AbstractMutableList<Any?>(), RandomAccess, ObjCObjectWrapper {
 
     override val size: Int get() = getSize()
 
     @GCUnsafeCall("Kotlin_NSArrayAsKList_getSize")
+    @Escapes.Nothing
     private external fun getSize(): Int
 
     @GCUnsafeCall("Kotlin_NSArrayAsKList_get")
+    @Escapes(0b100) // return value escapes into stable ref
     external override fun get(index: Int): Any?
 
     @GCUnsafeCall("Kotlin_NSMutableArrayAsKMutableList_add")
+    @Escapes(0b0100) // element escapes into a stable ref.
     external override fun add(index: Int, element: Any?): Unit
 
     @GCUnsafeCall("Kotlin_NSMutableArrayAsKMutableList_removeAt")
+    @Escapes(0b100) // return value escapes into stable ref
     external override fun removeAt(index: Int): Any?
 
     @GCUnsafeCall("Kotlin_NSMutableArrayAsKMutableList_set")
+    @Escapes(0b1100) // element and the return value escape into a stable ref.
     external override fun set(index: Int, element: Any?): Any?
 }
 
@@ -52,15 +57,19 @@ internal class NSSetAsKSet : AbstractSet<Any?>(), KonanSet<Any?>, ObjCObjectWrap
     override val size: Int get() = getSize()
 
     @GCUnsafeCall("Kotlin_NSSetAsKSet_getSize")
+    @Escapes.Nothing
     private external fun getSize(): Int
 
     @GCUnsafeCall("Kotlin_NSSetAsKSet_contains")
+    @Escapes(0b010) // element escapes into a stable ref.
     external override fun contains(element: Any?): Boolean
 
     @GCUnsafeCall("Kotlin_NSSetAsKSet_getElement")
+    @Escapes(0b110) // element and the return value escape into a stable ref.
     external override fun getElement(element: Any?): Any?
 
     @GCUnsafeCall("Kotlin_NSSetAsKSet_iterator")
+    @Escapes.Nothing
     external override fun iterator(): Iterator<Any?>
 }
 
@@ -89,23 +98,29 @@ internal class NSDictionaryAsKMap : Map<Any?, Any?>, ObjCObjectWrapper {
     override val size: Int get() = getSize()
 
     @GCUnsafeCall("Kotlin_NSDictionaryAsKMap_getSize")
+    @Escapes.Nothing
     private external fun getSize(): Int
 
     override fun isEmpty(): Boolean = (size == 0)
 
     @GCUnsafeCall("Kotlin_NSDictionaryAsKMap_containsKey")
+    @Escapes(0b010) // key escapes into a stable ref.
     override external fun containsKey(key: Any?): Boolean
 
     @GCUnsafeCall("Kotlin_NSDictionaryAsKMap_containsValue")
+    @Escapes(0b010) // value escapes into a stable ref.
     override external fun containsValue(value: Any?): Boolean
 
     @GCUnsafeCall("Kotlin_NSDictionaryAsKMap_get")
+    @Escapes(0b110) // key and the return value escape into a stable ref.
     external override operator fun get(key: Any?): Any?
 
     @GCUnsafeCall("Kotlin_NSDictionaryAsKMap_getOrThrowConcurrentModification")
+    @Escapes(0b110) // key and the return value escapes into a stable ref.
     private external fun getOrThrowConcurrentModification(key: Any?): Any?
 
     @GCUnsafeCall("Kotlin_NSDictionaryAsKMap_containsEntry")
+    @Escapes(0b0110) // key and value escape into a stable ref.
     private external fun containsEntry(key: Any?, value: Any?): Boolean
 
     // Views
@@ -116,6 +131,7 @@ internal class NSDictionaryAsKMap : Map<Any?, Any?>, ObjCObjectWrapper {
     override val entries: Set<Map.Entry<Any?, Any?>> get() = this.Entries()
 
     @GCUnsafeCall("Kotlin_NSDictionaryAsKMap_keyIterator")
+    @Escapes.Nothing
     private external fun keyIterator(): Iterator<Any?>
 
     private inner class Keys : AbstractSet<Any?>() {
@@ -128,6 +144,7 @@ internal class NSDictionaryAsKMap : Map<Any?, Any?>, ObjCObjectWrapper {
     }
 
     @GCUnsafeCall("Kotlin_NSDictionaryAsKMap_valueIterator")
+    @Escapes.Nothing
     private external fun valueIterator(): Iterator<Any?>
 
     private inner class Values : AbstractCollection<Any?>() {
@@ -180,6 +197,7 @@ internal class NSDictionaryAsKMap : Map<Any?, Any?>, ObjCObjectWrapper {
 internal class NSEnumeratorAsKIterator : AbstractIterator<Any?>() {
 
     @GCUnsafeCall("Kotlin_NSEnumeratorAsKIterator_computeNext")
+    @Escapes.Nothing
     override external fun computeNext()
 
     @ExportForCppRuntime
@@ -271,7 +289,7 @@ internal class NSEnumeratorAsKIterator : AbstractIterator<Any?>() {
         error: Any
 ) = ObjCErrorException(message, error)
 
-class ObjCErrorException(
+public class ObjCErrorException(
         message: String?,
         internal val error: Any
 ) : Exception(message) {
@@ -281,6 +299,7 @@ class ObjCErrorException(
 @PublishedApi
 @GCUnsafeCall("Kotlin_ObjCExport_trapOnUndeclaredException")
 @ExportForCppRuntime
+@Escapes.Nothing // this function actually never returns.
 internal external fun trapOnUndeclaredException(exception: Throwable)
 
 @ExportForCppRuntime
@@ -293,3 +312,15 @@ private fun Kotlin_ObjCExport_getWrappedError(throwable: Throwable): Any? =
 @ExportTypeInfo("theOpaqueFunctionTypeInfo")
 @PublishedApi
 internal class OpaqueFunction : Function<Any?>
+
+@PublishedApi
+@ExportForCppRuntime("Kotlin_hashCode")
+internal fun Kotlin_hashCode(obj: Any): Int = obj.hashCode()
+
+@PublishedApi
+@ExportForCppRuntime("Kotlin_equals")
+internal fun Kotlin_equals(lhs: Any, rhs: Any): Boolean = lhs == rhs
+
+@PublishedApi
+@ExportForCppRuntime("Kotlin_toString")
+internal fun Kotlin_toString(obj: Any): String = obj.toString()

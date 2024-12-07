@@ -17,10 +17,11 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import com.intellij.openapi.diagnostic.Logger
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 
 internal class JpsKotlinLogger(private val log: Logger) : KotlinLogger {
-    override fun error(msg: String) {
-        log.error(msg)
+    override fun error(msg: String, throwable: Throwable?) {
+        log.error(msg, throwable)
     }
 
     override fun warn(msg: String) {
@@ -33,6 +34,10 @@ internal class JpsKotlinLogger(private val log: Logger) : KotlinLogger {
 
     override fun debug(msg: String) {
         log.debug(msg)
+    }
+
+    override fun lifecycle(msg: String) {
+        log.info(msg)
     }
 
     override val isDebugEnabled: Boolean

@@ -570,7 +570,7 @@ class DefaultRandomSmokeTest : RandomSmokeTest() {
 }
 
 @ThreadLocal
-private val seededRandomSmokeTestSubject = Random(Random.nextInt().also { println("Seed: $it") })
+internal val seededRandomSmokeTestSubject = Random(Random.nextInt().also { println("Seed: $it") })
 
 class SeededRandomSmokeTest : RandomSmokeTest() {
     override val subject: Random get() = seededRandomSmokeTestSubject

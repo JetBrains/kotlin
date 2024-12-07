@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Module
 
 fun getModule(): Module? = null

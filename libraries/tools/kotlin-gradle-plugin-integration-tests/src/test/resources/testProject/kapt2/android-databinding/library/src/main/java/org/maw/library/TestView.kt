@@ -1,9 +1,9 @@
 package org.maw.library
 
 import android.content.Context
-import android.databinding.BindingAdapter
-import android.databinding.DataBindingComponent
-import android.databinding.DataBindingUtil
+import androidx.databinding.BindingAdapter
+import androidx.databinding.DataBindingComponent
+import androidx.databinding.DataBindingUtil
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout

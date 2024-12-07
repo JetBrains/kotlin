@@ -24,8 +24,8 @@ class SerializationGradleSubplugin :
 
     companion object {
         const val SERIALIZATION_GROUP_NAME = "org.jetbrains.kotlin"
-        const val SERIALIZATION_ARTIFACT_NAME = "kotlin-serialization"
-        const val SERIALIZATION_ARTIFACT_UNSHADED_NAME = "kotlin-serialization-unshaded"
+        const val SERIALIZATION_ARTIFACT_NAME = "kotlin-serialization-compiler-plugin-embeddable"
+        const val SERIALIZATION_ARTIFACT_UNSHADED_NAME = "kotlin-serialization-compiler-plugin"
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = true

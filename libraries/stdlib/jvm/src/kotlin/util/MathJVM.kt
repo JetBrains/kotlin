@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -474,8 +474,8 @@ public actual inline fun max(a: Double, b: Double): Double = nativeMath.max(a, b
  *   - If the argument is infinite, then the result is an infinity with the same sign as the argument.
  *   - If the argument is zero, then the result is a zero with the same sign as the argument.
  */
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("1.8")
+@WasExperimental(ExperimentalStdlibApi::class)
 @InlineOnly
 public actual inline fun cbrt(x: Double): Double = nativeMath.cbrt(x)
 
@@ -514,8 +514,8 @@ public actual inline fun Double.pow(n: Int): Double = nativeMath.pow(this, n.toD
  * `q = round(this / other)`.
  *
  * Special cases:
- *    - `x.IEEErem(y)` is `NaN`, when `x` is `NaN` or `y` is `NaN` or `x` is `+Inf|-Inf` or `y` is zero.
- *    - `x.IEEErem(y) == x` when `x` is finite and `y` is infinite.
+ *   - `x.IEEErem(y)` is `NaN`, when `x` is `NaN` or `y` is `NaN` or `x` is `+Inf|-Inf` or `y` is zero.
+ *   - `x.IEEErem(y) == x` when `x` is finite and `y` is infinite.
  *
  * @see round
  */
@@ -898,7 +898,7 @@ public actual inline fun log10(x: Float): Float = nativeMath.log10(x.toDouble())
 public actual fun log2(x: Float): Float = (nativeMath.log(x.toDouble()) / LN2).toFloat()
 
 /**
- * Computes `ln(a + 1)`.
+ * Computes `ln(x + 1)`.
  *
  * This function can be implemented to produce more precise result for [x] near zero.
  *
@@ -1021,8 +1021,8 @@ public actual inline fun max(a: Float, b: Float): Float = nativeMath.max(a, b)
  *   - If the argument is infinite, then the result is an infinity with the same sign as the argument.
  *   - If the argument is zero, then the result is a zero with the same sign as the argument.
  */
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("1.8")
+@WasExperimental(ExperimentalStdlibApi::class)
 @InlineOnly
 public actual inline fun cbrt(x: Float): Float = nativeMath.cbrt(x.toDouble()).toFloat()
 
@@ -1060,8 +1060,8 @@ public actual inline fun Float.pow(n: Int): Float = nativeMath.pow(this.toDouble
  * `q = round(this / other)`.
  *
  * Special cases:
- *    - `x.IEEErem(y)` is `NaN`, when `x` is `NaN` or `y` is `NaN` or `x` is `+Inf|-Inf` or `y` is zero.
- *    - `x.IEEErem(y) == x` when `x` is finite and `y` is infinite.
+ *   - `x.IEEErem(y)` is `NaN`, when `x` is `NaN` or `y` is `NaN` or `x` is `+Inf|-Inf` or `y` is zero.
+ *   - `x.IEEErem(y) == x` when `x` is finite and `y` is infinite.
  *
  * @see round
  */
@@ -1228,11 +1228,7 @@ public actual inline val Int.absoluteValue: Int get() = nativeMath.abs(this)
  *   - `1` if the value is positive
  */
 @SinceKotlin("1.2")
-public actual val Int.sign: Int get() = when {
-    this < 0 -> -1
-    this > 0 -> 1
-    else -> 0
-}
+public actual val Int.sign: Int get() = Integer.signum(this)
 
 
 
@@ -1281,11 +1277,7 @@ public actual inline val Long.absoluteValue: Long get() = nativeMath.abs(this)
  *   - `1` if the value is positive
  */
 @SinceKotlin("1.2")
-public actual val Long.sign: Int get() = when {
-    this < 0 -> -1
-    this > 0 -> 1
-    else -> 0
-}
+public actual val Long.sign: Int get() = java.lang.Long.signum(this)
 
 
 // endregion

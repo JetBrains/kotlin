@@ -1,5 +1,5 @@
-// !LANGUAGE: +RepeatableAnnotations
-// !API_VERSION: LATEST
+// LANGUAGE: +RepeatableAnnotations
+// API_VERSION: LATEST
 // TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
 // FULL_JDK

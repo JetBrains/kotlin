@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.toAbstractProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.toAbstractProjectFileSearchScope
 import org.jetbrains.kotlin.serialization.builtins.BuiltinsTestUtils
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -22,8 +22,8 @@ class BuiltInsDeserializationForFirTestCase : AbstractFirLoadBinariesTest() {
     @OptIn(ObsoleteTestInfrastructure::class)
     fun testBuiltInPackagesContent() {
         val moduleDescriptor = BuiltinsTestUtils.compileBuiltinsModule(environment)
-        val session = createSessionForTests(
-            environment.toAbstractProjectEnvironment(),
+        val session = FirTestSessionFactoryHelper.createSessionForTests(
+            environment.toVfsBasedProjectEnvironment(),
             GlobalSearchScope.allScope(project).toAbstractProjectFileSearchScope()
         )
         for (packageFqName in BuiltinsTestUtils.BUILTIN_PACKAGE_NAMES) {

@@ -5,57 +5,29 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.jvm.FirJvmNamesChecker
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.name.Name
 
-object FirJvmInvalidAndDangerousCharactersChecker : FirBasicDeclarationChecker() {
-    // See The Java Virtual Machine Specification, section 4.7.9.1 https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.9.1
-    private val INVALID_CHARS = setOf('.', ';', '[', ']', '/', '<', '>', ':', '\\')
-
-    // These characters can cause problems on Windows. '?*"|' are not allowed in file names, and % leads to unexpected env var expansion.
-    private val DANGEROUS_CHARS = setOf('?', '*', '"', '|', '%')
-
+object FirJvmInvalidAndDangerousCharactersChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         val source = declaration.source
         when (declaration) {
-            is FirRegularClass -> checkNameAndReport(declaration.name, source, context, reporter)
-            is FirSimpleFunction -> checkNameAndReport(declaration.name, source, context, reporter)
-            is FirTypeParameter -> checkNameAndReport(declaration.name, source, context, reporter)
-            is FirProperty -> checkNameAndReport(declaration.name, source, context, reporter)
-            is FirTypeAlias -> checkNameAndReport(declaration.name, source, context, reporter)
-            is FirValueParameter -> checkNameAndReport(declaration.name, source, context, reporter)
-            else -> return
-        }
-    }
-
-    private fun checkNameAndReport(name: Name, source: KtSourceElement?, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (source != null &&
-            source.kind !is KtFakeSourceElementKind &&
-            !name.isSpecial
-        ) {
-            val nameString = name.asString()
-            if (nameString.any { it in INVALID_CHARS }) {
-                reporter.reportOn(
-                    source,
-                    FirErrors.INVALID_CHARACTERS,
-                    "contains illegal characters: ${INVALID_CHARS.intersect(nameString.toSet()).joinToString("")}",
-                    context
-                )
-            } else if (nameString.any { it in DANGEROUS_CHARS }) {
-                reporter.reportOn(
-                    source,
-                    FirErrors.DANGEROUS_CHARACTERS,
-                    DANGEROUS_CHARS.intersect(nameString.toSet()).joinToString(""),
-                    context
-                )
+            is FirRegularClass -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source, context, reporter)
+            is FirSimpleFunction -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source, context, reporter)
+            is FirTypeParameter -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source, context, reporter)
+            is FirProperty -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source, context, reporter)
+            is FirTypeAlias -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source, context, reporter)
+            is FirValueParameter -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source, context, reporter)
+            is FirFile -> {
+                declaration.packageDirective.packageFqName.pathSegments().forEach {
+                    FirJvmNamesChecker.checkNameAndReport(it, declaration.packageDirective.source, context, reporter)
+                }
             }
+            else -> return
         }
     }
 }

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // FULL_JDK
 
 import java.util.*
@@ -35,8 +36,8 @@ fun fooTreeSet() {
 
 fun fooLinkedHashSet() {
     var x = LinkedHashSet<String>()
-    x.add(null)
-    x.add(bar())
+    x.add(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    x.add(<!ARGUMENT_TYPE_MISMATCH!>bar()<!>)
     x.add("")
 
     val b1: MutableSet<String?> = <!INITIALIZER_TYPE_MISMATCH!>x<!>

@@ -1,0 +1,18 @@
+KtDeclaration: KtPropertyAccessor
+Symbol:
+set(value: kotlin.Int)
+
+Signature:
+KaFunctionSignature:
+  receiverType = null
+  returnType = kotlin.Unit
+  symbol = <setter>(value: kotlin.Int): kotlin.Unit
+  valueParameters = [
+    KaVariableSignature:
+      name = value
+      receiverType = null
+      returnType = kotlin.Int
+      symbol = value: kotlin.Int
+      callableId = null
+  ]
+  callableId = null

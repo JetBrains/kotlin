@@ -1,0 +1,2 @@
+KtNameReferenceExpression(44,54): 'Annotation'
+  NO_CANDIDATES

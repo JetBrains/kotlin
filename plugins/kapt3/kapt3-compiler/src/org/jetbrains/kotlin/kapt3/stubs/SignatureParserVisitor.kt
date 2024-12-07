@@ -215,6 +215,7 @@ class SignatureParser(private val treeMaker: KaptTreeMaker) {
 
                 expression
             }
+
             TypeVariable -> treeMaker.SimpleName(node.name!!)
             ArrayType -> treeMaker.TypeArray(parseType(node.children.single()))
             PrimitiveType -> {
@@ -232,6 +233,7 @@ class SignatureParser(private val treeMaker: KaptTreeMaker) {
                 }
                 treeMaker.TypeIdent(typeTag)
             }
+
             else -> error("Unsupported type: $node")
         }
     }

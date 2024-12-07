@@ -16,17 +16,26 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import groovy.json.StringEscapeUtils
+import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
-import org.jetbrains.kotlin.daemon.client.launchProcessWithFallback
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
+import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
+import org.jetbrains.kotlin.gradle.report.TaskExecutionInfo
+import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
+import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.FieldVisitor
@@ -35,8 +44,10 @@ import java.io.File
 import java.nio.file.Files
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 import java.util.zip.ZipFile
 import kotlin.concurrent.thread
+
 
 internal fun loadCompilerVersion(compilerClasspath: Iterable<File>): String {
     var result: String? = null
@@ -58,7 +69,7 @@ internal fun loadCompilerVersion(compilerClasspath: Iterable<File>): String {
     try {
         val versionClassFileName = KotlinCompilerVersion::class.java.name.replace('.', '/') + ".class"
         for (cpFile in compilerClasspath) {
-            if (cpFile.isFile && cpFile.extension.toLowerCase() == "jar") {
+            if (cpFile.isFile && cpFile.extension.toLowerCaseAsciiOnly() == "jar") {
                 ZipFile(cpFile).use { jar ->
                     val versionFileEntry = jar.getEntry(KotlinCompilerVersion.VERSION_FILE_PATH)
                     if (versionFileEntry != null) {
@@ -92,7 +103,7 @@ internal fun runToolInSeparateProcess(
     classpath: Iterable<File>,
     logger: KotlinLogger,
     buildDir: File,
-    jvmArgs: List<String> = emptyList()
+    jvmArgs: List<String> = emptyList(),
 ): ExitCode {
     val javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java"
     val classpathString = classpath.joinToString(separator = File.pathSeparator) { it.absolutePath }
@@ -107,13 +118,13 @@ internal fun runToolInSeparateProcess(
         compilerClassName,
         "@${compilerOptions.absolutePath}"
     )
-    val messageCollector = createLoggingMessageCollector(logger)
-    val process = launchProcessWithFallback(builder, DaemonReportingTargets(messageCollector = messageCollector))
+    val messageCollector = GradleErrorMessageCollector(logger, createLoggingMessageCollector(logger))
+    val process = builder.start()
 
     // important to read inputStream, otherwise the process may hang on some systems
     val readErrThread = thread {
         process.errorStream!!.bufferedReader().forEachLine {
-            logger.error(it)
+            messageCollector.report(CompilerMessageSeverity.EXCEPTION, it)
         }
     }
 
@@ -141,8 +152,58 @@ private fun writeArgumentsToFile(directory: File, argsArray: Array<String>): Fil
         Files.createTempFile(directory.toPath(), prefix, suffix).toFile()
     else
         Files.createTempFile(prefix, suffix).toFile()
-    compilerOptions.writeText(argsArray.joinToString(" ") { "\"${StringEscapeUtils.escapeJava(it)}\"" })
+    compilerOptions.writeText(
+        argsArray.joinToString(" ") {
+            "\"${it.escapeJavaStyleString()}\""
+        }
+    )
     return compilerOptions
+}
+
+// Ported method from Groovy:
+// https://github.com/apache/groovy/blob/73c0f12ab35427bc3e7fd76929b482df61e1b80d/subprojects/groovy-json/src/main/java/groovy/json/StringEscapeUtils.java#L175
+// Note: using '/f' char produces a compilation error, so removed it
+internal fun String.escapeJavaStyleString(
+    escapeSingleQuote: Boolean = false,
+    escapeForwardSlash: Boolean = false,
+): String {
+    return buildString {
+        this@escapeJavaStyleString.forEach { ch ->
+            when {
+                ch.toInt() > 0xfff -> append("\\u${ch.hex()}")
+                ch.toInt() > 0xff -> append("\\u0${ch.hex()}")
+                ch.toInt() >= 0x7f -> append("\\u00${ch.hex()}")
+                ch < 32.toChar() -> when (ch) {
+                    '\b' -> append('\\').append('b')
+                    '\n' -> append('\\').append('n')
+                    '\t' -> append('\\').append('t')
+                    '\r' -> append('\\').append('r')
+                    else -> if (ch > 0xf.toChar()) {
+                        append("\\u00${ch.hex()}")
+                    } else {
+                        append("\\u000${ch.hex()}")
+                    }
+                }
+                else -> when (ch) {
+                    '\'' -> {
+                        if (escapeSingleQuote) append('\\')
+                        append('\'')
+                    }
+                    '"' -> append('\\').append('"')
+                    '\\' -> append('\\').append('\\')
+                    '/' -> {
+                        if (escapeForwardSlash) append('\\')
+                        append('/')
+                    }
+                    else -> append(ch)
+                }
+            }
+        }
+    }
+}
+
+private fun Char.hex(): String {
+    return Integer.toHexString(toInt()).toUpperCase(Locale.ENGLISH)
 }
 
 private fun createLoggingMessageCollector(log: KotlinLogger): MessageCollector = object : MessageCollector {
@@ -162,7 +223,7 @@ private fun createLoggingMessageCollector(log: KotlinLogger): MessageCollector =
             CompilerMessageSeverity.ERROR,
             CompilerMessageSeverity.STRONG_WARNING,
             CompilerMessageSeverity.WARNING,
-            CompilerMessageSeverity.INFO
+            CompilerMessageSeverity.INFO,
             -> log.info(locMessage)
             CompilerMessageSeverity.LOGGING -> log.debug(locMessage)
             CompilerMessageSeverity.OUTPUT -> {
@@ -171,8 +232,11 @@ private fun createLoggingMessageCollector(log: KotlinLogger): MessageCollector =
     }
 }
 
+internal val KotlinCompilerExecutionStrategy.asFinishLogMessage: String
+    get() = "Finished executing kotlin compiler using $this strategy"
+
 internal fun KotlinLogger.logFinish(strategy: KotlinCompilerExecutionStrategy) {
-    debug("Finished executing kotlin compiler using $strategy strategy")
+    info(strategy.asFinishLogMessage)
 }
 
 internal fun exitCodeFromProcessExitCode(log: KotlinLogger, code: Int): ExitCode {
@@ -181,4 +245,21 @@ internal fun exitCodeFromProcessExitCode(log: KotlinLogger, code: Int): ExitCode
 
     log.debug("Could not find exit code by value: $code")
     return if (code == 0) ExitCode.OK else ExitCode.COMPILATION_ERROR
+}
+
+internal fun UsesBuildMetricsService.addBuildMetricsForTaskAction(
+    metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    languageVersion: KotlinVersion?,
+    fn: () -> Any
+) {
+    metricsReporter.addTimeMetric(GradleBuildPerformanceMetric.START_TASK_ACTION_EXECUTION)
+    buildMetricsService.orNull?.also { it.addTask(path, this.javaClass, metricsReporter) }
+
+    try {
+        fn.invoke()
+    } finally {
+        val result = TaskExecutionResult(buildMetrics = BuildMetrics(), taskInfo = TaskExecutionInfo(kotlinLanguageVersion = languageVersion))
+        TaskExecutionResults[path] = result
+    }
+
 }

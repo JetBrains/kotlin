@@ -1,0 +1,7 @@
+FILE: invalidDestructing.kt
+    public final? class A : R|kotlin/Any| {
+        public? constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }

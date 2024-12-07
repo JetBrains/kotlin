@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._MarketplaceKit_UIKit
+
+modules = _MarketplaceKit_UIKit
+compilerOpts = -framework _MarketplaceKit_UIKit
+linkerOpts = -framework _MarketplaceKit_UIKit
+#Disabled: Unavailable

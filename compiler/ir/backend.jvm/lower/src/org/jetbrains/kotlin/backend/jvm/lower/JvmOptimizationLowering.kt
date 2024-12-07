@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.AbstractVariableRemapper
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.lower.loops.isInductionVariable
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineScopeResolver
@@ -28,16 +28,12 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-internal val jvmOptimizationLoweringPhase = makeIrFilePhase(
-    ::JvmOptimizationLowering,
-    name = "JvmOptimizationLowering",
-    description = "Optimize code for JVM code generation"
-)
-
-class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass {
+@PhaseDescription(name = "JvmOptimizationLowering")
+internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass {
     private companion object {
         private fun isNegation(expression: IrExpression): Boolean =
             expression is IrCall && expression.symbol.owner.let { not ->
@@ -82,7 +78,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
     private inner class Transformer(
         private val fileEntry: IrFileEntry,
         private val inlineScopeResolver: IrInlineScopeResolver
-    ) : IrElementTransformer<IrDeclaration?> {
+    ) : IrTransformer<IrDeclaration?>() {
 
         private val dontTouchTemporaryVals = HashSet<IrVariable>()
 
@@ -106,7 +102,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                 if (left.isNullConst() && right.isNullConst())
                     return IrConstImpl.constTrue(expression.startOffset, expression.endOffset, context.irBuiltIns.booleanType)
 
-                if (left.isNullConst() && right is IrConst<*> || right.isNullConst() && left is IrConst<*>)
+                if (left.isNullConst() && right is IrConst || right.isNullConst() && left is IrConst)
                     return IrConstImpl.constFalse(expression.startOffset, expression.endOffset, context.irBuiltIns.booleanType)
             }
 
@@ -114,7 +110,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
         }
 
         private fun optimizePropertyAccess(expression: IrCall, data: IrDeclaration?): IrExpression {
-            val accessor = expression.symbol.owner as? IrSimpleFunction ?: return expression
+            val accessor = expression.symbol.owner
             if (accessor.modality != Modality.FINAL || accessor.isExternal) return expression
             val property = accessor.correspondingPropertySymbol?.owner ?: return expression
             if (property.isLateinit) return expression
@@ -125,7 +121,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
             return context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).irBlock(expression) {
                 if (backingField.isStatic && receiver != null && receiver !is IrGetValue) {
                     // If the field is static, evaluate the receiver for potential side effects.
-                    +receiver.coerceToUnit(context.irBuiltIns, this@JvmOptimizationLowering.context.typeSystem)
+                    +receiver.coerceToUnit(context.irBuiltIns)
                 }
                 if (accessor.valueParameters.isNotEmpty()) {
                     +irSetField(
@@ -134,10 +130,13 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                         expression.getValueArgument(expression.valueArgumentsCount - 1)!!
                     )
                 } else {
-                    +irGetField(receiver.takeUnless { backingField.isStatic }, backingField)
+                    +irGetField(receiver.takeUnless { backingField.isStatic }, backingField, expression.type)
                 }
-            }
+            }.unwrapSingleExpressionBlock()
         }
+
+        private fun IrExpression.unwrapSingleExpressionBlock(): IrExpression =
+            (this as? IrBlock)?.statements?.singleOrNull() as? IrExpression ?: this
 
         override fun visitWhen(expression: IrWhen, data: IrDeclaration?): IrExpression {
             val isCompilerGenerated = expression.origin == null
@@ -209,7 +208,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
             if (variable in dontTouchTemporaryVals) return null
 
             when (val initializer = variable.initializer) {
-                is IrConst<*> ->
+                is IrConst ->
                     return initializer
                 is IrGetValue ->
                     when (val initializerValue = initializer.symbol.owner) {
@@ -357,9 +356,8 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
             when (statement) {
                 is IrDoWhileLoop -> {
                     // Expecting counter loop
-                    val doWhileLoop = statement as? IrDoWhileLoop ?: return null
-                    if (doWhileLoop.origin != JvmLoweredStatementOrigin.DO_WHILE_COUNTER_LOOP) return null
-                    val doWhileLoopBody = doWhileLoop.body as? IrComposite ?: return null
+                    if (statement.origin != JvmLoweredStatementOrigin.DO_WHILE_COUNTER_LOOP) return null
+                    val doWhileLoopBody = statement.body as? IrComposite ?: return null
                     if (doWhileLoopBody.origin != IrStatementOrigin.FOR_LOOP_INNER_WHILE) return null
                     val iterationInitialization = doWhileLoopBody.statements[0] as? IrComposite ?: return null
                     val loopVariableIndex = iterationInitialization.statements.indexOfFirst { it.isLoopVariable() }
@@ -414,7 +412,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
             // initializer with the constant initializer.
             val variable = expression.symbol.owner
             return when (val replacement = getInlineableValueForTemporaryVal(variable)) {
-                is IrConst<*> ->
+                is IrConst ->
                     replacement.copyWithOffsets(expression.startOffset, expression.endOffset)
                 is IrGetValue ->
                     replacement.copyWithOffsets(expression.startOffset, expression.endOffset)
@@ -440,7 +438,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                     if (!hasSameLineNumber(argument, expression)) {
                         return null
                     }
-                    return rewriteCompoundAssignmentAsPrefixIncrDecr(expression, argument, expression.origin is IrStatementOrigin.MINUSEQ)
+                    return rewriteCompoundAssignmentAsPrefixIncrDecr(expression, argument, expression.origin == IrStatementOrigin.MINUSEQ)
                 }
                 IrStatementOrigin.EQ -> {
                     val value = expression.value
@@ -473,8 +471,8 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
             value: IrExpression?,
             isMinus: Boolean
         ): IrExpression? {
-            if (value is IrConst<*> && value.kind == IrConstKind.Int) {
-                val delta = IrConstKind.Int.valueOf(value)
+            if (value is IrConst && value.kind == IrConstKind.Int) {
+                val delta = value.value as Int
                 val upperBound = Byte.MAX_VALUE.toInt() + (if (isMinus) 1 else 0)
                 val lowerBound = Byte.MIN_VALUE.toInt() + (if (isMinus) 1 else 0)
                 if (delta in lowerBound..upperBound) {

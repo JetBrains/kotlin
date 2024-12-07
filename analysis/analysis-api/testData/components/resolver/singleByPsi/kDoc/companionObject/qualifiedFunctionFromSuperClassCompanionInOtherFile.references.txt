@@ -1,0 +1,3 @@
+KDocName(34,42): 'Base.foo'
+  KDocReference:
+    (in Base.Companion) fun foo()

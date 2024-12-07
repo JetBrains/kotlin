@@ -1,4 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
+
 // FILE: a/A.java
 package a;
 public interface A {
@@ -20,6 +22,9 @@ public class AImpl implements A {
         return new BImpl();
     }
 }
+
+// FILE: a/BImpl.java
+package a;
 
 class BImpl implements B {
     @Override

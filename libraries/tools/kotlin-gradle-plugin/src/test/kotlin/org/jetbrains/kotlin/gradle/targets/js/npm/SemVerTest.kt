@@ -44,4 +44,41 @@ class SemVerTest {
             ).sorted().joinToString(", ")
         )
     }
+
+    @Test
+    fun testParseGradleRichVersions() {
+        val maxInt = Int.MAX_VALUE.toBigInteger()
+        listOf(
+            // Version prefix
+            SemVer(maxInt, maxInt, maxInt) to SemVer.fromGradleRichVersion("+"),
+            SemVer(1.toBigInteger(), maxInt, maxInt) to SemVer.fromGradleRichVersion("1.+"),
+            SemVer(1.toBigInteger(), 10.toBigInteger(), maxInt) to SemVer.fromGradleRichVersion("1.10.+"),
+            SemVer(1.toBigInteger(), 10.toBigInteger(), 0.toBigInteger()) to SemVer.fromGradleRichVersion("1.10.0.+"),
+
+            // Version latest state
+            SemVer(maxInt, maxInt, maxInt) to SemVer.fromGradleRichVersion("latest.release"),
+            SemVer(maxInt, maxInt, maxInt) to SemVer.fromGradleRichVersion("latest.integration"),
+
+            // Ranges
+            SemVer(1.toBigInteger(), 5.toBigInteger(), 0.toBigInteger()) to SemVer.fromGradleRichVersion("(1.2,1.5]"),
+            SemVer(1.toBigInteger(), 5.toBigInteger(), 55.toBigInteger()) to SemVer.fromGradleRichVersion("[1.2,1.5.55]"),
+            SemVer(1.toBigInteger(), 5.toBigInteger(), 54.toBigInteger()) to SemVer.fromGradleRichVersion("[1.2,1.5.55-SNAPSHOT["),
+            SemVer(1.toBigInteger(), maxInt, maxInt) to SemVer.fromGradleRichVersion("[1.1,2.0)"),
+            SemVer(1.toBigInteger(), maxInt, maxInt) to SemVer.fromGradleRichVersion("(1.1,2.0)"),
+            SemVer(1.toBigInteger(), maxInt, maxInt) to SemVer.fromGradleRichVersion("(1.1,2.0-SNAPSHOT)"),
+            SemVer(1.toBigInteger(), maxInt, maxInt) to SemVer.fromGradleRichVersion("]1.0, 2.0["),
+            SemVer(1.toBigInteger(), maxInt, maxInt) to SemVer.fromGradleRichVersion("[1.0, 2.0["),
+            SemVer(1.toBigInteger(), 0.toBigInteger(), 0.toBigInteger()) to SemVer.fromGradleRichVersion("(,1.0]"),
+            SemVer(1.toBigInteger(), 0.toBigInteger(), 0.toBigInteger(), "SNAPSHOT") to SemVer.fromGradleRichVersion("(,1.0-SNAPSHOT]"),
+            SemVer(0.toBigInteger(), maxInt, maxInt) to SemVer.fromGradleRichVersion("(,1.0)"),
+            SemVer(maxInt, maxInt, maxInt) to SemVer.fromGradleRichVersion("[1.0,)"),
+            SemVer(10.toBigInteger(), 0.toBigInteger(), 20.toBigInteger()) to SemVer.fromGradleRichVersion("[10.0.20]"),
+
+            // Normal
+            SemVer(10.toBigInteger(), 0.toBigInteger(), 20.toBigInteger()) to SemVer.fromGradleRichVersion("10.0.20"),
+            SemVer(10.toBigInteger(), 0.toBigInteger(), 0.toBigInteger(), "SNAPSHOT") to SemVer.fromGradleRichVersion("10.0-SNAPSHOT"),
+        ).forEach { (expected, actual) ->
+            assertEquals(expected, actual)
+        }
+    }
 }

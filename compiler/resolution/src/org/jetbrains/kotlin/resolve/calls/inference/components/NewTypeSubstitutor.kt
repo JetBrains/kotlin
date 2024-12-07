@@ -117,7 +117,8 @@ interface NewTypeSubstitutor : TypeSubstitutorMarker {
                             TypeProjectionImpl(typeConstructor.projection.projectionKind, substitutedInnerType),
                             typeParameter = typeConstructor.typeParameter
                         ).also { it.initializeSupertypes(substitutedSuperTypes) },
-                        lowerType = if (capturedType.lowerType != null) substitutedInnerType else null
+                        lowerType = if (capturedType.lowerType != null) substitutedInnerType else null,
+                        isMarkedNullable = type.isMarkedNullable
                     )
                 }
             }

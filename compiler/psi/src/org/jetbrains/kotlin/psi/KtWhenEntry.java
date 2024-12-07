@@ -28,8 +28,11 @@ public class KtWhenEntry extends KtElementImpl {
         super(node);
     }
 
+    /**
+     * @return {@code true} if this is an {@code else} condition with no {@link #getGuard() guard}, {@code false} otherwise.
+     */
     public boolean isElse() {
-        return getElseKeyword() != null;
+        return getElseKeyword() != null && getGuard() == null;
     }
 
     @Nullable
@@ -50,6 +53,11 @@ public class KtWhenEntry extends KtElementImpl {
     @NotNull
     public KtWhenCondition[] getConditions() {
         return findChildrenByClass(KtWhenCondition.class);
+    }
+
+    @Nullable
+    public KtWhenEntryGuard getGuard() {
+        return findChildByClass(KtWhenEntryGuard.class);
     }
 
     public PsiElement getTrailingComma() {

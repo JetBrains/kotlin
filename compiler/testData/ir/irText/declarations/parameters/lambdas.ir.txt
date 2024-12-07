@@ -38,7 +38,7 @@ FILE fqName:<root> fileName:/lambdas.kt
             VALUE_PARAMETER name:j index:1 type:kotlin.Int
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (i: kotlin.Int, j: kotlin.Int): kotlin.Unit declared in <root>.test3'
-                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit>
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val]
       BLOCK_BODY

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.references
 
-import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.util.containers.MultiMap
@@ -19,14 +19,14 @@ interface KotlinReferenceProviderContributor {
     fun registerReferenceProviders(registrar: KotlinPsiReferenceRegistrar)
 
     companion object {
-        fun getInstance(): KotlinReferenceProviderContributor =
-            ServiceManager.getService(KotlinReferenceProviderContributor::class.java)
+        fun getInstance(project: Project): KotlinReferenceProviderContributor =
+            project.getService(KotlinReferenceProviderContributor::class.java)
     }
 }
 
 
 class KotlinPsiReferenceRegistrar {
-    val providers: MultiMap<Class<out PsiElement>, KotlinPsiReferenceProvider> = MultiMap.create()
+    val providers: MultiMap<Class<out PsiElement>, KotlinPsiReferenceProvider> = MultiMap(LinkedHashMap())
 
     inline fun <reified E : KtElement> registerProvider(crossinline factory: (E) -> PsiReference?) {
         registerMultiProvider<E> { element ->
@@ -34,7 +34,7 @@ class KotlinPsiReferenceRegistrar {
         }
     }
 
-    inline fun <reified E : KtElement>  registerMultiProvider(crossinline factory: (E) -> Array<PsiReference>) {
+    inline fun <reified E : KtElement> registerMultiProvider(crossinline factory: (E) -> Array<PsiReference>) {
         val provider: KotlinPsiReferenceProvider = object : KotlinPsiReferenceProvider {
             override fun getReferencesByElement(element: PsiElement): Array<PsiReference> {
                 return factory(element as E)

@@ -1,42 +1,4 @@
-class SettingType<out V : Any> {
-  constructor(type: KClass<out V>) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  val type: KClass<out V>
-    field = type
-    get
-
-}
-
-class SettingReference<V : Any, T : SettingType<V>> {
-  constructor(t: T, v: V) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  var t: T
-    field = t
-    get
-    set
-
-  var v: V
-    field = v
-    get
-    set
-
-}
-
 class IdeWizard {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   var projectTemplate: Int? /* by */
     field = <this>.setting<Int, SettingType<Int>>(reference = SettingReference<Int, SettingType<Int>>(t = SettingType<Int>(type = 42::class), v = 42))
     get(): Int? {
@@ -45,6 +7,12 @@ class IdeWizard {
     set(<set-?>: Int?) {
       return <this>.#projectTemplate$delegate.setValue(thisRef = <this>, property = IdeWizard::projectTemplate, value = <set-?>)
     }
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
   private fun <V : Any, T : SettingType<V>> setting(reference: SettingReference<V, T>): <no name provided><V, T> {
     return { // BLOCK
@@ -55,16 +23,16 @@ class IdeWizard {
 
         }
 
+        override operator fun getValue(thisRef: Any?, property: KProperty<*>): V? {
+          return reference.<get-v>()
+        }
+
         override operator fun setValue(thisRef: Any?, property: KProperty<*>, value: V?) {
           when {
             EQEQ(arg0 = value, arg1 = null) -> return Unit
           }
           reference.<set-t>(<set-?> = SettingType<V>(type = value::class) as T)
           reference.<set-v>(<set-?> = value)
-        }
-
-        override operator fun getValue(thisRef: Any?, property: KProperty<*>): V? {
-          return reference.<get-v>()
         }
 
       }
@@ -74,3 +42,36 @@ class IdeWizard {
   }
 
 }
+
+class SettingReference<V : Any, T : SettingType<V>> {
+  var t: T
+    field = t
+    get
+    set
+
+  var v: V
+    field = v
+    get
+    set
+
+  constructor(t: T, v: V) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class SettingType<out V : Any> {
+  val type: KClass<out V>
+    field = type
+    get
+
+  constructor(type: KClass<out V>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+

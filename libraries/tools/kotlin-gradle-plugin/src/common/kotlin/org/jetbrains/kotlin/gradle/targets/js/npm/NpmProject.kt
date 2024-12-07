@@ -6,19 +6,28 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
+import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.Provider
 import org.gradle.process.ExecSpec
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
+import org.jetbrains.kotlin.gradle.plugin.mpp.fileExtension
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
+import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import java.io.Serializable
 
-val KotlinJsCompilation.npmProject: NpmProject
+val KotlinJsIrCompilation.npmProject: NpmProject
     get() = NpmProject(this)
+
+@Deprecated("Use npmProject for KotlinJsIrCompilation")
+val KotlinJsCompilation.npmProject: NpmProject
+    get() = NpmProject(this as KotlinJsIrCompilation)
 
 /**
  * Basic info for [NpmProject] created from [compilation].
@@ -26,33 +35,38 @@ val KotlinJsCompilation.npmProject: NpmProject
  *
  * More info can be obtained from [KotlinCompilationNpmResolution], which is available after project resolution (after [KotlinNpmInstallTask] execution).
  */
-open class NpmProject(@Transient val compilation: KotlinJsCompilation) : Serializable {
+open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Serializable {
     val compilationName = compilation.disambiguatedName
 
-    private val extension = if (compilation.platformType == KotlinPlatformType.wasm) ".mjs" else ".js"
+    private val extension: Provider<String> = compilation.fileExtension
 
-    val name: String by lazy {
-        buildNpmProjectName()
+    val name: Provider<String> = compilation.outputModuleName
+
+    @delegate:Transient
+    val nodeJsRoot by lazy {
+        project.rootProject.kotlinNodeJsRootExtension
     }
 
-    @Transient
-    val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
+    @delegate:Transient
+    val nodeJs by lazy {
+        project.kotlinNodeJsEnvSpec
+    }
 
-    val dir: File by lazy {
-        nodeJs.projectPackagesDir.resolve(name)
+    val dir: Provider<Directory> = nodeJsRoot.projectPackagesDirectory.zip(name) { directory, name ->
+        directory.dir(name)
     }
 
     val target: KotlinJsTargetDsl
-        get() = compilation.target as KotlinJsTargetDsl
+        get() = compilation.target
 
     val project: Project
         get() = target.project
 
     val nodeModulesDir
-        get() = dir.resolve(NODE_MODULES)
+        get() = dir.map { it.dir(NODE_MODULES) }
 
-    val packageJsonFile: File
-        get() = dir.resolve(PACKAGE_JSON)
+    val packageJsonFile: Provider<RegularFile>
+        get() = dir.map { it.file(PACKAGE_JSON) }
 
     val packageJsonTaskName: String
         get() = compilation.disambiguateName("packageJson")
@@ -60,30 +74,25 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) : Seriali
     val packageJsonTask: KotlinPackageJsonTask
         get() = project.tasks.getByName(packageJsonTaskName) as KotlinPackageJsonTask
 
-    val packageJsonTaskPath by lazy {
-        packageJsonTask.path
+    val packageJsonTaskPath: String
+        get() = packageJsonTask.path
+
+    val dist: Provider<Directory>
+        get() = dir.map { it.dir(DIST_FOLDER) }
+
+    val main: Provider<String> = extension.zip(name) { ext, name ->
+        "${DIST_FOLDER}/$name.$ext"
     }
-
-    val dist: File
-        get() = dir.resolve(DIST_FOLDER)
-
-    val main: String
-        get() = "$DIST_FOLDER/$name$extension"
-
-    val externalsDirRoot by lazy {
-        project.buildDir.resolve("externals").resolve(name)
-    }
-
-    val externalsDir: File
-        get() = externalsDirRoot.resolve("src")
 
     val publicPackageJsonTaskName: String
         get() = compilation.disambiguateName(PublicPackageJsonTask.NAME)
 
-    internal val modules = NpmProjectModules(dir)
+    internal val modules by lazy {
+        NpmProjectModules(dir.getFile())
+    }
 
     private val nodeExecutable by lazy {
-        nodeJs.requireConfigured().nodeExecutable
+        nodeJs.executable.get()
     }
 
     fun useTool(
@@ -92,8 +101,8 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) : Seriali
         nodeArgs: List<String> = listOf(),
         args: List<String>
     ) {
-        exec.workingDir = dir
-        exec.executable = nodeExecutable
+        exec.workingDir(dir)
+        exec.executable(nodeExecutable)
         exec.args = nodeArgs + require(tool) + args
     }
 
@@ -111,58 +120,11 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) : Seriali
      */
     internal fun resolve(name: String): File? = modules.resolve(name)
 
-    private fun buildNpmProjectName(): String {
-        compilation.outputModuleName?.let {
-            return it
-        }
-
-        val project = target.project
-
-        val moduleName = target.moduleName
-
-        val compilationName = if (compilation.name != KotlinCompilation.MAIN_COMPILATION_NAME) {
-            compilation.name
-        } else null
-
-        if (moduleName != null) {
-            return sequenceOf(moduleName, compilationName)
-                .filterNotNull()
-                .joinToString("-")
-        }
-
-        val rootProjectName = project.rootProject.name
-
-        val localName = if (project != project.rootProject) {
-            project.name
-        } else null
-
-        val targetName = if (target.name.isNotEmpty() && target.name.toLowerCase() != "js") {
-            target.name
-                .replace(DECAMELIZE_REGEX) {
-                    it.groupValues
-                        .drop(1)
-                        .joinToString(prefix = "-", separator = "-")
-                }
-                .toLowerCase()
-        } else null
-
-        return sequenceOf(
-            rootProjectName,
-            localName,
-            targetName,
-            compilationName
-        )
-            .filterNotNull()
-            .joinToString("-")
-    }
-
-    override fun toString() = "NpmProject($name)"
+    override fun toString() = "NpmProject(${name.get()})"
 
     companion object {
         const val PACKAGE_JSON = "package.json"
         const val NODE_MODULES = "node_modules"
         const val DIST_FOLDER = "kotlin"
-
-        private val DECAMELIZE_REGEX = "([A-Z])".toRegex()
     }
 }

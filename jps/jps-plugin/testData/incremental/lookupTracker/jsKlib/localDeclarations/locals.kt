@@ -2,48 +2,48 @@ package local.declarations
 
 import bar.*
 
-/*p:local.declarations*/fun f(p: /*p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.js p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:local.declarations*/Any) /*p:kotlin(Int)*/{
-    /*p:kotlin(Any) p:kotlin(String)*/p./*c:kotlin.Any*/toString()
+/*p:local.declarations*/fun f(p: /*p:bar p:local.declarations*/Any) {
+    /*p:kotlin.Any(toString)*/p.toString()
 
-    val a = /*p:kotlin(Int)*/1
-    val b = /*p:kotlin(Int)*/a
-    fun localFun() = /*p:kotlin(Int)*/b
-    fun /*p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.js p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:local.declarations*/Int.localExtFun() = /*p:kotlin(Int)*/localFun()
+    val a = 1
+    val b = a
+    fun localFun() = b
+    fun /*p:bar p:local.declarations*/Int.localExtFun() = localFun()
 
     abstract class LocalI {
-        abstract var a: /*p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.js p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:local.declarations*/Int
+        abstract var a: /*p:bar p:local.declarations*/Int
         abstract fun foo()
     }
 
-    class LocalC : LocalI() {
-        override var a = /*p:kotlin(Int)*/1
+    class LocalC : /*p:bar p:local.declarations*/LocalI() {
+        override var a = 1
 
         override fun foo() {}
 
-        var b = /*p:kotlin(String)*/"bbb"
+        var b = "bbb"
 
-        fun bar() = /*p:kotlin(Int)*/b
+        fun bar() = b
     }
 
     val o = object {
-        val a = /*p:kotlin(String)*/"aaa"
-        fun foo(): LocalI = /*p:kotlin(Nothing)*/null as LocalI
+        val a = "aaa"
+        fun foo(): /*p:bar p:local.declarations*/LocalI = null as /*p:bar p:local.declarations*/LocalI
     }
 
-    /*p:kotlin(Int)*/localFun()
-    /*p:kotlin(Int)*/1./*c:kotlin.Int c:kotlin.Number*/localExtFun()
+    localFun()
+    1.localExtFun()
 
     val c = LocalC()
-    /*p:kotlin(Int)*/c.a
-    /*p:kotlin(String)*/c.b
+    c.a
+    c.b
     c.foo()
-    /*p:kotlin(Int)*/c.bar()
+    c.bar()
 
-    val i: LocalI = c
-    /*p:kotlin(Int)*/i.a
+    val i: /*p:bar p:local.declarations*/LocalI = c
+    i.a
     i.foo()
 
-    /*p:kotlin(String)*/o.a
+    o.a
     val ii = o.foo()
-    /*p:kotlin(Int)*/ii.a
+    ii.a
 }

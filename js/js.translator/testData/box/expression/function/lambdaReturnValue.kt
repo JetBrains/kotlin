@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1285
-
 fun <T> rawReturnValue(fn: () -> T): Any {
     return fn() as Any
 }

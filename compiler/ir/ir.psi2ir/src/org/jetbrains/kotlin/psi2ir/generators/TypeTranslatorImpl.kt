@@ -14,30 +14,24 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.*
 
-open class TypeTranslatorImpl(
+class TypeTranslatorImpl(
     symbolTable: ReferenceSymbolTable,
     languageVersionSettings: LanguageVersionSettings,
     moduleDescriptor: ModuleDescriptor,
     typeParametersResolverBuilder: () -> TypeParametersResolver = { ScopedTypeParametersResolver() },
     enterTableScope: Boolean = false,
     extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY,
-    private val ktFile: KtFile? = null
+    private val ktFile: KtFile? = null,
+    allowErrorTypeInAnnotations: Boolean = false,
 ) : TypeTranslator(symbolTable, languageVersionSettings, typeParametersResolverBuilder, enterTableScope, extensions) {
-    override val constantValueGenerator: ConstantValueGenerator = ConstantValueGeneratorImpl(moduleDescriptor, symbolTable, this)
+    override val constantValueGenerator: ConstantValueGenerator =
+        ConstantValueGeneratorImpl(moduleDescriptor, symbolTable, this, allowErrorTypeInAnnotations)
 
     private val typeApproximatorForNI = TypeApproximator(moduleDescriptor.builtIns, languageVersionSettings)
 
-    private val typeApproximatorConfiguration =
-        object : TypeApproximatorConfiguration.AllFlexibleSameValue() {
-            override val allFlexible: Boolean get() = true
-            override val errorType: Boolean get() = true
-            override val integerLiteralConstantType: Boolean get() = true
-            override val intersectionTypesInContravariantPositions: Boolean get() = true
-        }
-
     override fun approximateType(type: KotlinType): KotlinType =
         substituteAlternativesInPublicType(type).let {
-            typeApproximatorForNI.approximateToSuperType(it, typeApproximatorConfiguration) ?: it
+            typeApproximatorForNI.approximateToSuperType(it, TypeApproximatorConfiguration.FrontendToBackendTypesApproximation) ?: it
         }
 
     override fun commonSupertype(types: Collection<KotlinType>): KotlinType =

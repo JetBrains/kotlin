@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.konan.BinaryType
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.computeBinaryType
-import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationStringValue
+import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -29,22 +29,22 @@ internal class FunctionsWithoutBoundCheckGenerator(val context: KonanBackendCont
     private val symbols = context.ir.symbols
 
     private fun generateFunction(baseFunction: IrSimpleFunction, delegatingToFunction: IrSimpleFunction?, functionName: Name) =
-            context.irFactory.createFunction(
-                    baseFunction.startOffset, baseFunction.endOffset,
-                    IrDeclarationOrigin.GENERATED_SETTER_GETTER,
-                    IrSimpleFunctionSymbolImpl(),
-                    functionName,
-                    DescriptorVisibilities.PUBLIC,
-                    Modality.FINAL,
-                    baseFunction.returnType,
+            context.irFactory.createSimpleFunction(
+                    startOffset = baseFunction.startOffset,
+                    endOffset = baseFunction.endOffset,
+                    origin = IrDeclarationOrigin.GENERATED_SETTER_GETTER,
+                    name = functionName,
+                    visibility = DescriptorVisibilities.PUBLIC,
                     isInline = false,
-                    isExternal = true,
+                    isExpect = false,
+                    returnType = baseFunction.returnType,
+                    modality = Modality.FINAL,
+                    symbol = IrSimpleFunctionSymbolImpl(),
                     isTailrec = false,
                     isSuspend = false,
-                    isExpect = false,
-                    isFakeOverride = false,
                     isOperator = false,
-                    isInfix = false
+                    isInfix = false,
+                    isExternal = true,
             ).also { function ->
                 function.parent = baseFunction.parent
                 function.createDispatchReceiverParameter()

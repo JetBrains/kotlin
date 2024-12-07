@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun UInt.fUInt() {}
 fun UByte.fUByte() {}
 fun UShort.fUShort() {}

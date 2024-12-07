@@ -145,10 +145,6 @@ public class AsmUtil {
         return unboxType(boxedOrPrimitiveType);
     }
 
-    public static boolean isBoxedTypeOf(@NotNull Type boxedType, @NotNull Type unboxedType) {
-        return unboxPrimitiveTypeOrNull(boxedType) == unboxedType;
-    }
-
     public static boolean isIntPrimitive(Type type) {
         return type == Type.INT_TYPE || type == Type.SHORT_TYPE || type == Type.BYTE_TYPE || type == Type.CHAR_TYPE;
     }
@@ -230,27 +226,6 @@ public class AsmUtil {
         }
         else {
             throw new IllegalArgumentException("Primitive numeric type expected, got: " + type);
-        }
-    }
-
-    public static void swap(InstructionAdapter v, Type stackTop, Type afterTop) {
-        if (stackTop.getSize() == 1) {
-            if (afterTop.getSize() == 1) {
-                v.swap();
-            }
-            else {
-                v.dupX2();
-                v.pop();
-            }
-        }
-        else {
-            if (afterTop.getSize() == 1) {
-                v.dup2X1();
-            }
-            else {
-                v.dup2X2();
-            }
-            v.pop2();
         }
     }
 
@@ -340,45 +315,6 @@ public class AsmUtil {
         }
         else {
             throw new UnsupportedOperationException();
-        }
-    }
-
-    public static void dupx(@NotNull InstructionAdapter v, @NotNull Type type) {
-        dupx(v, type.getSize());
-    }
-
-    private static void dupx(@NotNull InstructionAdapter v, int size) {
-        if (size == 2) {
-            v.dup2X2();
-        }
-        else if (size == 1) {
-            v.dupX1();
-        }
-        else {
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    // Duplicate the element afterTop and push it on the top of the stack.
-    public static void dupSecond(@NotNull InstructionAdapter v, @NotNull Type topOfStack, @NotNull Type afterTop) {
-        if (afterTop.getSize() == 0) {
-            return;
-        }
-
-        if (topOfStack.getSize() == 0) {
-            dup(v, afterTop);
-        } else if (topOfStack.getSize() == 1 && afterTop.getSize() == 1) {
-            v.dup2();
-            v.pop();
-        } else {
-            swap(v, topOfStack, afterTop);
-            if (topOfStack.getSize() == 1 && afterTop.getSize() == 2) {
-                v.dup2X1();
-            } else if (topOfStack.getSize() == 2 && afterTop.getSize() == 1) {
-                v.dupX2();
-            } else /* top = 2, after top = 2 */ {
-                v.dup2X2();
-            }
         }
     }
 

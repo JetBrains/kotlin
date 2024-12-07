@@ -1,0 +1,8 @@
+package one
+
+/* anchor --> */annotation class Anno/* anchor --> */(/* anchor --> */val s: String/* <-- */)/* <-- *//* <-- */
+
+/* anchor --> */@Anno(fun(): String {
+
+}())
+class TopLevelClass/* <-- */

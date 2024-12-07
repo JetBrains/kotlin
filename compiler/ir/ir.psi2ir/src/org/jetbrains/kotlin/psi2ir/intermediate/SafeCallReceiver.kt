@@ -25,8 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorWithScope
 
-
-class SafeCallReceiver(
+internal class SafeCallReceiver(
     val generator: GeneratorWithScope,
     val startOffset: Int,
     val endOffset: Int,
@@ -67,8 +66,7 @@ class SafeCallReceiver(
     }
 }
 
-
-fun IrExpression.safeCallOnDispatchReceiver(
+internal fun IrExpression.safeCallOnDispatchReceiver(
     generator: GeneratorWithScope,
     startOffset: Int,
     endOffset: Int,

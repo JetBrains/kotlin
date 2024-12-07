@@ -25,7 +25,9 @@ class JavaClassDataFinder(
     private val deserializedDescriptorResolver: DeserializedDescriptorResolver
 ) : ClassDataFinder {
     override fun findClassData(classId: ClassId): ClassData? {
-        val kotlinClass = kotlinClassFinder.findKotlinClass(classId) ?: return null
+        val kotlinClass = kotlinClassFinder.findKotlinClass(
+            classId, deserializedDescriptorResolver.components.configuration.metadataVersion
+        ) ?: return null
         assert(kotlinClass.classId == classId) {
             "Class with incorrect id found: expected $classId, actual ${kotlinClass.classId}"
         }

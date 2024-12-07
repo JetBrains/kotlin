@@ -1,6 +1,8 @@
 -target 1.6
 -dontoptimize
 -dontobfuscate
+-dontprocesskotlinmetadata
+-keep class kotlin.Metadata
 # -dontshrink
 
 -keepdirectories META-INF/**

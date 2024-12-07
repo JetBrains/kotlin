@@ -24,6 +24,10 @@ abstract class FirSession @PrivateSessionConstructor constructor(
             return generateAccessor(T::class)
         }
 
+        inline fun <reified T : FirSessionComponent> sessionComponentAccessor(id: String): ArrayMapAccessor<FirSessionComponent, FirSessionComponent, T> {
+            return generateAccessor(id)
+        }
+
         inline fun <reified T : FirSessionComponent> nullableSessionComponentAccessor(): NullableArrayMapAccessor<FirSessionComponent, FirSessionComponent, T> {
             return generateNullableAccessor(T::class)
         }
@@ -36,6 +40,11 @@ abstract class FirSession @PrivateSessionConstructor constructor(
     @SessionConfiguration
     fun register(tClass: KClass<out FirSessionComponent>, value: FirSessionComponent) {
         registerComponent(tClass, value)
+    }
+
+    @SessionConfiguration
+    fun register(keyQualifiedName: String, value: FirSessionComponent) {
+        registerComponent(keyQualifiedName, value)
     }
 
     override fun toString(): String {
@@ -59,6 +68,7 @@ class BuiltinTypes {
     val enumType: FirImplicitBuiltinTypeRef = FirImplicitEnumTypeRef(null)
     val annotationType: FirImplicitBuiltinTypeRef = FirImplicitAnnotationTypeRef(null)
     val booleanType: FirImplicitBuiltinTypeRef = FirImplicitBooleanTypeRef(null)
+    val numberType: FirImplicitBuiltinTypeRef = FirImplicitNumberTypeRef(null)
     val byteType: FirImplicitBuiltinTypeRef = FirImplicitByteTypeRef(null)
     val shortType: FirImplicitBuiltinTypeRef = FirImplicitShortTypeRef(null)
     val intType: FirImplicitBuiltinTypeRef = FirImplicitIntTypeRef(null)
@@ -66,6 +76,8 @@ class BuiltinTypes {
     val doubleType: FirImplicitBuiltinTypeRef = FirImplicitDoubleTypeRef(null)
     val floatType: FirImplicitBuiltinTypeRef = FirImplicitFloatTypeRef(null)
 
+    val uByteType: FirImplicitUByteTypeRef = FirImplicitUByteTypeRef(null)
+    val uShortType: FirImplicitUShortTypeRef = FirImplicitUShortTypeRef(null)
     val uIntType: FirImplicitUIntTypeRef = FirImplicitUIntTypeRef(null)
     val uLongType: FirImplicitULongTypeRef = FirImplicitULongTypeRef(null)
 
@@ -74,4 +86,7 @@ class BuiltinTypes {
     val charType: FirImplicitBuiltinTypeRef = FirImplicitCharTypeRef(null)
     val stringType: FirImplicitBuiltinTypeRef = FirImplicitStringTypeRef(null)
     val throwableType: FirImplicitThrowableTypeRef = FirImplicitThrowableTypeRef(null)
+
+    val charSequenceType: FirImplicitCharSequenceTypeRef = FirImplicitCharSequenceTypeRef(null)
+    val charIteratorType: FirImplicitCharIteratorTypeRef = FirImplicitCharIteratorTypeRef(null)
 }

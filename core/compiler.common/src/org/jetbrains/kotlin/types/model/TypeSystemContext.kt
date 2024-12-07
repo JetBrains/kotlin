@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.types.model
 
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeChecker
 import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeInfo
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.TypeCheckerState
+import org.jetbrains.kotlin.types.Variance
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -16,13 +18,14 @@ interface TypeArgumentMarker
 interface TypeConstructorMarker
 interface TypeParameterMarker
 
-interface SimpleTypeMarker : KotlinTypeMarker
-interface CapturedTypeMarker : SimpleTypeMarker
-interface DefinitelyNotNullTypeMarker : SimpleTypeMarker
-
+interface RigidTypeMarker : KotlinTypeMarker
 interface FlexibleTypeMarker : KotlinTypeMarker
 interface DynamicTypeMarker : FlexibleTypeMarker
-interface RawTypeMarker : FlexibleTypeMarker
+
+interface DefinitelyNotNullTypeMarker : RigidTypeMarker
+interface SimpleTypeMarker : RigidTypeMarker
+
+interface CapturedTypeMarker : SimpleTypeMarker
 interface StubTypeMarker : SimpleTypeMarker
 
 interface TypeArgumentListMarker
@@ -58,7 +61,7 @@ interface TypeSystemOptimizationContext {
     /**
      *  @return true is a.arguments == b.arguments, or false if not supported
      */
-    fun identicalArguments(a: SimpleTypeMarker, b: SimpleTypeMarker) = false
+    fun identicalArguments(a: RigidTypeMarker, b: RigidTypeMarker) = false
 }
 
 /**
@@ -75,7 +78,7 @@ interface TypeSystemBuiltInsContext {
  * Context that allow construction of types
  */
 interface TypeSystemTypeFactoryContext: TypeSystemBuiltInsContext {
-    fun createFlexibleType(lowerBound: SimpleTypeMarker, upperBound: SimpleTypeMarker): KotlinTypeMarker
+    fun createFlexibleType(lowerBound: RigidTypeMarker, upperBound: RigidTypeMarker): KotlinTypeMarker
     fun createSimpleType(
         constructor: TypeConstructorMarker,
         arguments: List<TypeArgumentMarker>,
@@ -87,7 +90,7 @@ interface TypeSystemTypeFactoryContext: TypeSystemBuiltInsContext {
     fun createTypeArgument(type: KotlinTypeMarker, variance: TypeVariance): TypeArgumentMarker
     fun createStarProjection(typeParameter: TypeParameterMarker): TypeArgumentMarker
 
-    fun createErrorType(debugName: String): SimpleTypeMarker
+    fun createErrorType(debugName: String, delegatedType: RigidTypeMarker?): SimpleTypeMarker
     fun createUninferredType(constructor: TypeConstructorMarker): KotlinTypeMarker
 }
 
@@ -107,7 +110,7 @@ interface TypeCheckerProviderContext {
  */
 interface TypeSystemCommonSuperTypesContext : TypeSystemContext, TypeSystemTypeFactoryContext, TypeCheckerProviderContext {
 
-    fun KotlinTypeMarker.anySuperTypeConstructor(predicate: (SimpleTypeMarker) -> Boolean) =
+    fun KotlinTypeMarker.anySuperTypeConstructor(predicate: (RigidTypeMarker) -> Boolean) =
         newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = true)
             .anySupertype(
                 lowerBoundIfFlexible(),
@@ -117,17 +120,21 @@ interface TypeSystemCommonSuperTypesContext : TypeSystemContext, TypeSystemTypeF
 
     fun KotlinTypeMarker.canHaveUndefinedNullability(): Boolean
 
-    fun SimpleTypeMarker.isExtensionFunction(): Boolean
+    fun RigidTypeMarker.isExtensionFunction(): Boolean
 
-    fun SimpleTypeMarker.typeDepth(): Int
+    // TODO: KT-71905: consider removing all typeDepth() and typeDepthForApproximation() functions
+    fun RigidTypeMarker.typeDepth(): Int
 
     fun KotlinTypeMarker.typeDepth(): Int = when (this) {
-        is SimpleTypeMarker -> typeDepth()
+        is RigidTypeMarker -> typeDepth()
         is FlexibleTypeMarker -> maxOf(lowerBound().typeDepth(), upperBound().typeDepth())
-        else -> error("Type should be simple or flexible: $this")
+        else -> error("Type should be rigid or flexible: $this")
     }
 
-    fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker?
+    fun KotlinTypeMarker.typeDepthForApproximation(): Int =
+        typeDepth()
+
+    fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<RigidTypeMarker>): RigidTypeMarker?
 
     /*
      * Converts error type constructor to error type
@@ -138,6 +145,8 @@ interface TypeSystemCommonSuperTypesContext : TypeSystemContext, TypeSystemTypeF
     fun unionTypeAttributes(types: List<KotlinTypeMarker>): List<AnnotationMarker>
 
     fun KotlinTypeMarker.replaceCustomAttributes(newAttributes: List<AnnotationMarker>): KotlinTypeMarker
+
+    fun supportsImprovedVarianceInCst(): Boolean
 }
 
 // This interface is only used to declare that implementing class is supposed to be used as a TypeSystemInferenceExtensionContext component
@@ -154,7 +163,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     fun TypeConstructorMarker.isUnitTypeConstructor(): Boolean
 
-    fun TypeConstructorMarker.getApproximatedIntegerLiteralType(): KotlinTypeMarker
+    fun TypeConstructorMarker.getApproximatedIntegerLiteralType(expectedType: KotlinTypeMarker?): KotlinTypeMarker
 
     fun TypeConstructorMarker.isCapturedTypeConstructor(): Boolean
 
@@ -164,7 +173,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     fun KotlinTypeMarker.isUnit(): Boolean
 
-    fun KotlinTypeMarker.isBuiltinFunctionalTypeOrSubtype(): Boolean
+    fun KotlinTypeMarker.isBuiltinFunctionTypeOrSubtype(): Boolean
 
     fun createCapturedType(
         constructorProjection: TypeArgumentMarker,
@@ -179,12 +188,12 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
     fun KotlinTypeMarker.removeAnnotations(): KotlinTypeMarker
     fun KotlinTypeMarker.removeExactAnnotation(): KotlinTypeMarker
 
-    fun SimpleTypeMarker.replaceArguments(newArguments: List<TypeArgumentMarker>): SimpleTypeMarker
-    fun SimpleTypeMarker.replaceArguments(replacement: (TypeArgumentMarker) -> TypeArgumentMarker): SimpleTypeMarker
+    fun RigidTypeMarker.replaceArguments(newArguments: List<TypeArgumentMarker>): RigidTypeMarker
+    fun RigidTypeMarker.replaceArguments(replacement: (TypeArgumentMarker) -> TypeArgumentMarker): RigidTypeMarker
 
     fun KotlinTypeMarker.replaceArguments(replacement: (TypeArgumentMarker) -> TypeArgumentMarker): KotlinTypeMarker =
         when (this) {
-            is SimpleTypeMarker -> replaceArguments(replacement)
+            is RigidTypeMarker -> replaceArguments(replacement)
             is FlexibleTypeMarker -> createFlexibleType(
                 lowerBound().replaceArguments(replacement),
                 upperBound().replaceArguments(replacement)
@@ -192,11 +201,9 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
             else -> error("sealed")
         }
 
-    fun SimpleTypeMarker.replaceArgumentsDeeply(replacement: (TypeArgumentMarker) -> TypeArgumentMarker): SimpleTypeMarker {
+    fun RigidTypeMarker.replaceArgumentsDeeply(replacement: (TypeArgumentMarker) -> TypeArgumentMarker): RigidTypeMarker {
         return replaceArguments {
-            if (it.isStarProjection()) return@replaceArguments it
-
-            val type = it.getType()
+            val type = it.getType() ?: return@replaceArguments it
             val newProjection = if (type.argumentsCount() > 0) {
                 it.replaceType(type.replaceArgumentsDeeply(replacement))
             } else it
@@ -207,7 +214,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     fun KotlinTypeMarker.replaceArgumentsDeeply(replacement: (TypeArgumentMarker) -> TypeArgumentMarker): KotlinTypeMarker {
         return when (this) {
-            is SimpleTypeMarker -> replaceArgumentsDeeply(replacement)
+            is RigidTypeMarker -> replaceArgumentsDeeply(replacement)
             is FlexibleTypeMarker -> createFlexibleType(
                 lowerBound().replaceArgumentsDeeply(replacement),
                 upperBound().replaceArgumentsDeeply(replacement)
@@ -227,18 +234,22 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
     fun CapturedTypeMarker.typeParameter(): TypeParameterMarker?
     fun CapturedTypeMarker.withNotNullProjection(): KotlinTypeMarker
 
-    fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker
-    fun createEmptySubstitutor(): TypeSubstitutorMarker
-
-    fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker
-
+    /**
+     * Only for K2.
+     */
+    fun CapturedTypeMarker.hasRawSuperType(): Boolean
 
     fun TypeVariableMarker.defaultType(): SimpleTypeMarker
 
-    fun createTypeWithAlternativeForIntersectionResult(
+    fun createTypeWithUpperBoundForIntersectionResult(
         firstCandidate: KotlinTypeMarker,
         secondCandidate: KotlinTypeMarker
     ): KotlinTypeMarker
+
+    /**
+     * Only for K2
+     */
+    fun RigidTypeMarker.getUpperBoundForApproximationOfIntersectionType() : KotlinTypeMarker? = null
 
     fun KotlinTypeMarker.isSpecial(): Boolean
 
@@ -247,29 +258,31 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     fun KotlinTypeMarker.isSignedOrUnsignedNumberType(): Boolean
 
+    // ------------- functional type utils -------------
+
     fun KotlinTypeMarker.isFunctionOrKFunctionWithAnySuspendability(): Boolean
 
-    fun KotlinTypeMarker.isSuspendFunctionTypeOrSubtype(): Boolean
+    fun KotlinTypeMarker.functionTypeKind(): FunctionTypeKind?
 
     fun KotlinTypeMarker.isExtensionFunctionType(): Boolean
 
-    fun KotlinTypeMarker.extractArgumentsForFunctionalTypeOrSubtype(): List<KotlinTypeMarker>
+    fun KotlinTypeMarker.extractArgumentsForFunctionTypeOrSubtype(): List<KotlinTypeMarker>
 
-    fun KotlinTypeMarker.getFunctionalTypeFromSupertypes(): KotlinTypeMarker
+    fun KotlinTypeMarker.getFunctionTypeFromSupertypes(): KotlinTypeMarker
+
+    fun getNonReflectFunctionTypeConstructor(parametersNumber: Int, kind: FunctionTypeKind): TypeConstructorMarker
+
+    fun getReflectFunctionTypeConstructor(parametersNumber: Int, kind: FunctionTypeKind): TypeConstructorMarker
+
+    // -------------------------------------------------
 
     fun StubTypeMarker.getOriginalTypeVariable(): TypeVariableTypeConstructorMarker
-
-    fun getFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker
-
-    fun getKFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker
 
     private fun <T> KotlinTypeMarker.extractTypeOf(to: MutableSet<T>, getIfApplicable: (TypeConstructorMarker) -> T?) {
         for (i in 0 until argumentsCount()) {
             val argument = getArgument(i)
 
-            if (argument.isStarProjection()) continue
-
-            val argumentType = argument.getType()
+            val argumentType = argument.getType() ?: continue
             val argumentTypeConstructor = argumentType.typeConstructor()
             val argumentToAdd = getIfApplicable(argumentTypeConstructor)
 
@@ -297,15 +310,24 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
      * In K1, in case nullable it was just Foo?, so constraint was Foo? <: T
      * But it's not 100% correct because prevent having not-nullable upper constraint on T while initial (Foo? <: (T..T?)) is not violated
      *
-     * In FIR, we try to have a correct one: (Foo & Any..Foo?) <: T
+     * In K2 (with +JavaTypeParameterDefaultRepresentationWithDNN), we try to have a correct one: (Foo & Any..Foo?) <: T
      *
      * The same logic applies for T! <: UpperConstraint, as well
      * In K1, it was reduced to T <: UpperConstraint..UpperConstraint?
-     * In FIR, we use UpperConstraint & Any..UpperConstraint?
+     * In K2 (with +JavaTypeParameterDefaultRepresentationWithDNN), we use UpperConstraint & Any..UpperConstraint?
      *
-     * In future once we have only FIR (or FE 1.0 behavior is fixed) this method should be inlined to the use-site
+     * In future once we have only K2 (or FE 1.0 behavior is fixed) this method should be inlined to the use-site
+     * TODO: Get rid of this function once KT-59138 is fixed and the relevant feature for disabling it will be removed
      */
     fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean
+
+    /**
+     * It's only relevant for K2 (and is not expected to be implemented properly in other contexts)
+     */
+    fun KotlinTypeMarker.convertToNonRaw(): KotlinTypeMarker
+
+    @K2Only
+    fun createSubstitutionFromSubtypingStubTypesToTypeVariables(): TypeSubstitutorMarker
 
     fun createCapturedStarProjectionForSelfType(
         typeVariable: TypeVariableTypeConstructorMarker,
@@ -316,7 +338,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         val superType = intersectTypes(
             typesForRecursiveTypeParameters.map { type ->
                 type.replaceArgumentsDeeply {
-                    val constructor = it.getType().typeConstructor()
+                    val constructor = it.getType()?.typeConstructor()
                     if (constructor is TypeVariableTypeConstructorMarker && constructor == typeVariable) starProjection else it
                 }
             }
@@ -330,8 +352,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
     fun computeEmptyIntersectionTypeKind(types: Collection<KotlinTypeMarker>): EmptyIntersectionTypeInfo? =
         EmptyIntersectionTypeChecker.computeEmptyIntersectionEmptiness(this, types)
 
-    private fun computeEffectiveVariance(parameter: TypeParameterMarker, argument: TypeArgumentMarker): TypeVariance? =
-        AbstractTypeChecker.effectiveVariance(parameter.getVariance(), argument.getVariance())
+    val isK2: Boolean
 }
 
 
@@ -341,35 +362,57 @@ class ArgumentList(initialSize: Int) : ArrayList<TypeArgumentMarker>(initialSize
  * Defines common kotlin type operations with types for abstract types
  */
 interface TypeSystemContext : TypeSystemOptimizationContext {
-    fun KotlinTypeMarker.asSimpleType(): SimpleTypeMarker?
+    @Deprecated(level = DeprecationLevel.ERROR, message = "This call does effectively nothing, please drop it")
+    fun RigidTypeMarker.asRigidType(): RigidTypeMarker = this
+    fun KotlinTypeMarker.asRigidType(): RigidTypeMarker?
+
+    @Deprecated(level = DeprecationLevel.ERROR, message = "This call does effectively nothing, please drop it")
+    fun FlexibleTypeMarker.asFlexibleType(): FlexibleTypeMarker = this
     fun KotlinTypeMarker.asFlexibleType(): FlexibleTypeMarker?
 
     fun KotlinTypeMarker.isError(): Boolean
     fun TypeConstructorMarker.isError(): Boolean
     fun KotlinTypeMarker.isUninferredParameter(): Boolean
+
+    @Deprecated(level = DeprecationLevel.ERROR, message = "This call does effectively nothing, please drop it")
+    fun DynamicTypeMarker.asDynamicType(): DynamicTypeMarker = this
     fun FlexibleTypeMarker.asDynamicType(): DynamicTypeMarker?
 
-    fun FlexibleTypeMarker.asRawType(): RawTypeMarker?
-    fun FlexibleTypeMarker.upperBound(): SimpleTypeMarker
+    fun KotlinTypeMarker.isRawType(): Boolean
 
-    fun FlexibleTypeMarker.lowerBound(): SimpleTypeMarker
+    fun FlexibleTypeMarker.upperBound(): RigidTypeMarker
+    fun FlexibleTypeMarker.lowerBound(): RigidTypeMarker
+
+    @Deprecated(level = DeprecationLevel.ERROR, message = "This call does effectively nothing, please drop it")
+    fun CapturedTypeMarker.asCapturedType(): CapturedTypeMarker = this
     fun SimpleTypeMarker.asCapturedType(): CapturedTypeMarker?
 
-    fun KotlinTypeMarker.isCapturedType() = asSimpleType()?.asCapturedType() != null
+    @Deprecated(level = DeprecationLevel.ERROR, message = "This call does effectively nothing, please drop it")
+    fun CapturedTypeMarker.asCapturedTypeUnwrappingDnn(): CapturedTypeMarker = this
+    fun RigidTypeMarker.asCapturedTypeUnwrappingDnn(): CapturedTypeMarker? = originalIfDefinitelyNotNullable().asCapturedType()
 
-    fun SimpleTypeMarker.asDefinitelyNotNullType(): DefinitelyNotNullTypeMarker?
+    fun KotlinTypeMarker.isCapturedType() = asRigidType()?.asCapturedTypeUnwrappingDnn() != null
+
+    @Deprecated(level = DeprecationLevel.ERROR, message = "This call does effectively nothing, please drop it")
+    fun DefinitelyNotNullTypeMarker.asDefinitelyNotNullType(): DefinitelyNotNullTypeMarker = this
+    fun RigidTypeMarker.asDefinitelyNotNullType(): DefinitelyNotNullTypeMarker?
     fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker
 
-    fun SimpleTypeMarker.originalIfDefinitelyNotNullable(): SimpleTypeMarker = asDefinitelyNotNullType()?.original() ?: this
+    @Deprecated(level = DeprecationLevel.ERROR, message = "This call does effectively nothing, please drop it")
+    fun SimpleTypeMarker.originalIfDefinitelyNotNullable(): SimpleTypeMarker = this
+    fun RigidTypeMarker.originalIfDefinitelyNotNullable(): SimpleTypeMarker =
+        asDefinitelyNotNullType()?.original() ?: this as SimpleTypeMarker
 
-    fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(): KotlinTypeMarker
-    fun SimpleTypeMarker.makeSimpleTypeDefinitelyNotNullOrNotNull(): SimpleTypeMarker
-    fun SimpleTypeMarker.isMarkedNullable(): Boolean
-    fun KotlinTypeMarker.isMarkedNullable(): Boolean =
-        this is SimpleTypeMarker && isMarkedNullable()
+    @Deprecated(level = DeprecationLevel.ERROR, message = "This call does effectively nothing, please drop it")
+    fun DefinitelyNotNullTypeMarker.makeDefinitelyNotNullOrNotNull(): DefinitelyNotNullTypeMarker = this
+    fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(): KotlinTypeMarker = makeDefinitelyNotNullOrNotNull(preserveAttributes = false)
+    fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(preserveAttributes: Boolean): KotlinTypeMarker
+    fun RigidTypeMarker.makeDefinitelyNotNullOrNotNull(): RigidTypeMarker
 
-    fun SimpleTypeMarker.withNullability(nullable: Boolean): SimpleTypeMarker
-    fun SimpleTypeMarker.typeConstructor(): TypeConstructorMarker
+    fun KotlinTypeMarker.isMarkedNullable(): Boolean
+
+    fun RigidTypeMarker.withNullability(nullable: Boolean): RigidTypeMarker
+    fun RigidTypeMarker.typeConstructor(): TypeConstructorMarker
     fun KotlinTypeMarker.withNullability(nullable: Boolean): KotlinTypeMarker
 
     fun CapturedTypeMarker.isOldCapturedType(): Boolean
@@ -382,14 +425,14 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun KotlinTypeMarker.getArgument(index: Int): TypeArgumentMarker
     fun KotlinTypeMarker.getArguments(): List<TypeArgumentMarker>
 
-    fun SimpleTypeMarker.getArgumentOrNull(index: Int): TypeArgumentMarker? {
+    fun RigidTypeMarker.getArgumentOrNull(index: Int): TypeArgumentMarker? {
         if (index in 0 until argumentsCount()) return getArgument(index)
         return null
     }
 
-    fun SimpleTypeMarker.isStubType(): Boolean
-    fun SimpleTypeMarker.isStubTypeForVariableInSubtyping(): Boolean
-    fun SimpleTypeMarker.isStubTypeForBuilderInference(): Boolean
+    fun RigidTypeMarker.isStubType(): Boolean
+    fun RigidTypeMarker.isStubTypeForVariableInSubtyping(): Boolean
+    fun RigidTypeMarker.isStubTypeForBuilderInference(): Boolean
     fun TypeConstructorMarker.unwrapStubTypeVariableConstructor(): TypeConstructorMarker
 
     fun KotlinTypeMarker.asTypeArgument(): TypeArgumentMarker
@@ -398,7 +441,11 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun TypeArgumentMarker.isStarProjection(): Boolean
     fun TypeArgumentMarker.getVariance(): TypeVariance
-    fun TypeArgumentMarker.getType(): KotlinTypeMarker
+
+    /**
+     * Returns the type of the [TypeArgumentMarker] or `null` if it's a star projection.
+     */
+    fun TypeArgumentMarker.getType(): KotlinTypeMarker?
     fun TypeArgumentMarker.replaceType(newType: KotlinTypeMarker): TypeArgumentMarker
 
     fun TypeConstructorMarker.parametersCount(): Int
@@ -429,19 +476,25 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun TypeConstructorMarker.isDenotable(): Boolean
 
-    fun KotlinTypeMarker.lowerBoundIfFlexible(): SimpleTypeMarker = this.asFlexibleType()?.lowerBound() ?: this.asSimpleType()!!
-    fun KotlinTypeMarker.upperBoundIfFlexible(): SimpleTypeMarker = this.asFlexibleType()?.upperBound() ?: this.asSimpleType()!!
+    @Deprecated(level = DeprecationLevel.ERROR, message = "This call does effectively nothing, please drop it")
+    fun RigidTypeMarker.lowerBoundIfFlexible(): RigidTypeMarker = this
+    fun KotlinTypeMarker.lowerBoundIfFlexible(): RigidTypeMarker = this.asFlexibleType()?.lowerBound() ?: this.asRigidType()!!
 
-    fun TypeConstructorMarker.isDefinitelyClassTypeConstructor(): Boolean = isClassTypeConstructor() && !isInterface()
+    @Deprecated(level = DeprecationLevel.ERROR, message = "This call does effectively nothing, please drop it")
+    fun RigidTypeMarker.upperBoundIfFlexible(): RigidTypeMarker = this
+    fun KotlinTypeMarker.upperBoundIfFlexible(): RigidTypeMarker = this.asFlexibleType()?.upperBound() ?: this.asRigidType()!!
+
+    fun KotlinTypeMarker.isFlexibleWithDifferentTypeConstructors(): Boolean =
+        lowerBoundIfFlexible().typeConstructor() != upperBoundIfFlexible().typeConstructor()
 
     fun KotlinTypeMarker.isFlexible(): Boolean = asFlexibleType() != null
 
     fun KotlinTypeMarker.isDynamic(): Boolean = asFlexibleType()?.asDynamicType() != null
     fun KotlinTypeMarker.isCapturedDynamic(): Boolean =
-        asSimpleType()?.asCapturedType()?.typeConstructor()?.projection()?.takeUnless { it.isStarProjection() }
-            ?.getType()?.isDynamic() == true
+        asRigidType()?.asCapturedTypeUnwrappingDnn()?.typeConstructor()?.projection()?.getType()?.isDynamic() == true
 
-    fun KotlinTypeMarker.isDefinitelyNotNullType(): Boolean = asSimpleType()?.asDefinitelyNotNullType() != null
+    fun KotlinTypeMarker.isDefinitelyNotNullType(): Boolean = asRigidType()?.asDefinitelyNotNullType() != null
+    fun RigidTypeMarker.isDefinitelyNotNullType(): Boolean = asDefinitelyNotNullType() != null
 
     // This kind of types is obsolete (expected to be removed at 1.7) and shouldn't be used further in a new code
     // Now, such types are being replaced with definitely non-nullable types
@@ -452,7 +505,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
         lowerBoundIfFlexible().isMarkedNullable() != upperBoundIfFlexible().isMarkedNullable()
 
     fun KotlinTypeMarker.typeConstructor(): TypeConstructorMarker =
-        (asSimpleType() ?: lowerBoundIfFlexible()).typeConstructor()
+        (asRigidType() ?: lowerBoundIfFlexible()).typeConstructor()
 
     fun KotlinTypeMarker.isNullableType(): Boolean
 
@@ -463,24 +516,24 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun KotlinTypeMarker.isNullableNothing() = this.typeConstructor().isNothingConstructor() && this.isNullableType()
 
-    fun SimpleTypeMarker.isClassType(): Boolean = typeConstructor().isClassTypeConstructor()
+    fun RigidTypeMarker.isClassType(): Boolean = typeConstructor().isClassTypeConstructor()
 
-    fun SimpleTypeMarker.fastCorrespondingSupertypes(constructor: TypeConstructorMarker): List<SimpleTypeMarker>? = null
+    fun RigidTypeMarker.fastCorrespondingSupertypes(constructor: TypeConstructorMarker): List<SimpleTypeMarker>? = null
 
-    fun SimpleTypeMarker.isIntegerLiteralType(): Boolean = typeConstructor().isIntegerLiteralTypeConstructor()
+    fun RigidTypeMarker.isIntegerLiteralType(): Boolean = typeConstructor().isIntegerLiteralTypeConstructor()
 
-    fun SimpleTypeMarker.possibleIntegerTypes(): Collection<KotlinTypeMarker>
+    fun RigidTypeMarker.possibleIntegerTypes(): Collection<KotlinTypeMarker>
 
     fun TypeConstructorMarker.isCommonFinalClassConstructor(): Boolean
 
     fun captureFromArguments(
-        type: SimpleTypeMarker,
+        type: RigidTypeMarker,
         status: CaptureStatus
-    ): SimpleTypeMarker?
+    ): RigidTypeMarker?
 
     fun captureFromExpression(type: KotlinTypeMarker): KotlinTypeMarker?
 
-    fun SimpleTypeMarker.asArgumentList(): TypeArgumentListMarker
+    fun RigidTypeMarker.asArgumentList(): TypeArgumentListMarker
 
     operator fun TypeArgumentListMarker.get(index: Int): TypeArgumentMarker {
         return when (this) {
@@ -492,7 +545,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun TypeArgumentListMarker.size(): Int {
         return when (this) {
-            is SimpleTypeMarker -> argumentsCount()
+            is RigidTypeMarker -> argumentsCount()
             is ArgumentList -> size
             else -> error("unknown type argument list type: $this, ${this::class}")
         }
@@ -512,6 +565,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun TypeConstructorMarker.isAnyConstructor(): Boolean
     fun TypeConstructorMarker.isNothingConstructor(): Boolean
+    fun TypeConstructorMarker.isArrayConstructor(): Boolean
 
     /**
      *
@@ -522,24 +576,29 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
      *
      * Such types can contains error types in our arguments, but type constructor isn't errorTypeConstructor
      */
-    fun SimpleTypeMarker.isSingleClassifierType(): Boolean
+    fun RigidTypeMarker.isSingleClassifierType(): Boolean
 
-    fun intersectTypes(types: List<KotlinTypeMarker>): KotlinTypeMarker
-    fun intersectTypes(types: List<SimpleTypeMarker>): SimpleTypeMarker
+    fun intersectTypes(types: Collection<KotlinTypeMarker>): KotlinTypeMarker
+    fun intersectTypes(types: Collection<SimpleTypeMarker>): SimpleTypeMarker
 
-    fun KotlinTypeMarker.isSimpleType(): Boolean = asSimpleType() != null
+    fun KotlinTypeMarker.isRigidType(): Boolean = asRigidType() != null
 
+    fun RigidTypeMarker.isPrimitiveType(): Boolean = (this as? SimpleTypeMarker)?.isPrimitiveType() == true
     fun SimpleTypeMarker.isPrimitiveType(): Boolean
 
     fun KotlinTypeMarker.getAttributes(): List<AnnotationMarker>
 
-    fun KotlinTypeMarker.hasCustomAttributes(): Boolean
-
-    fun KotlinTypeMarker.getCustomAttributes(): List<AnnotationMarker>
-
-    fun substitutionSupertypePolicy(type: SimpleTypeMarker): TypeCheckerState.SupertypesPolicy
+    fun substitutionSupertypePolicy(type: RigidTypeMarker): TypeCheckerState.SupertypesPolicy
 
     fun KotlinTypeMarker.isTypeVariableType(): Boolean
+
+    fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker
+    fun createEmptySubstitutor(): TypeSubstitutorMarker
+
+    /**
+     * @returns substituted type or [type] if there were no substitution
+     */
+    fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker
 }
 
 enum class CaptureStatus {
@@ -573,3 +632,6 @@ fun requireOrDescribe(condition: Boolean, value: Any?) {
 
 @RequiresOptIn("This kinds of type is obsolete and should not be used until you really need it")
 annotation class ObsoleteTypeKind
+
+@RequiresOptIn
+annotation class K2Only

@@ -1,17 +1,20 @@
-public final enum class Enum : R|kotlin/Enum<ft<test/Enum, test/Enum?>>| {
-    public final static enum entry A: R|@EnhancedNullability test/Enum|
-    public final static enum entry B: R|@EnhancedNullability test/Enum|
-    public final static enum entry C: R|@EnhancedNullability test/Enum|
+public final enum class Enum : R|kotlin/Enum<test/Enum!>| {
+    public final static enum entry A: R|test/Enum|
+    public final static enum entry B: R|test/Enum|
+    public final static enum entry C: R|test/Enum|
     public final static fun values(): R|kotlin/Array<test/Enum>| {
     }
 
     public final static fun valueOf(value: R|kotlin/String|): R|test/Enum| {
     }
 
+    public final static val entries: R|kotlin/enums/EnumEntries<test/Enum>|
+        public get(): R|kotlin/enums/EnumEntries<test/Enum>|
+
     public open inner class Inner : R|kotlin/Any| {
         public/*package*/ open fun bar(): R|kotlin/Unit|
 
-        public/*package*/ open fun valueOf(s: R|ft<kotlin/String, kotlin/String?>|): R|kotlin/Unit|
+        public/*package*/ open fun valueOf(s: R|kotlin/String!|): R|kotlin/Unit|
 
         public test/Enum.constructor(): R|test/Enum.Inner|
 

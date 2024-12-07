@@ -22,6 +22,8 @@
 
 package kotlin.text.regex
 
+import kotlin.experimental.ExperimentalNativeApi
+
 /**
  * This class represents nodes constructed with character sequences. For
  * example, lets consider regular expression: ".*word.*". During regular
@@ -89,6 +91,7 @@ open internal class SequenceSet(substring: CharSequence, val ignoreCase: Boolean
         return -1
     }
 
+    @OptIn(ExperimentalNativeApi::class)
     override fun first(set: AbstractSet): Boolean {
         if (ignoreCase) {
             return super.first(set)
@@ -97,8 +100,6 @@ open internal class SequenceSet(substring: CharSequence, val ignoreCase: Boolean
             is CharSet -> set.char == patternString[0]
             is RangeSet -> set.accepts(0, patternString.substring(0, 1)) > 0
             is SupplementaryRangeSet -> set.contains(patternString[0]) || patternString.length > 1 && set.contains(Char.toCodePoint(patternString[0], patternString[1]))
-            is SupplementaryCharSet -> if (patternString.length > 1) set.codePoint == Char.toCodePoint(patternString[0], patternString[1])
-                               else false
             else -> true
         }
     }

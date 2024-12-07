@@ -52,7 +52,8 @@ class JvmBuiltInsPackageFragmentProvider(
             additionalClassPartsProvider, platformDependentDeclarationFilter,
             BuiltInSerializerProtocol.extensionRegistry,
             kotlinTypeChecker,
-            samConversionResolver
+            samConversionResolver,
+            enumEntriesDeserializationSupport = JvmEnumEntriesDeserializationSupport,
         )
     }
 

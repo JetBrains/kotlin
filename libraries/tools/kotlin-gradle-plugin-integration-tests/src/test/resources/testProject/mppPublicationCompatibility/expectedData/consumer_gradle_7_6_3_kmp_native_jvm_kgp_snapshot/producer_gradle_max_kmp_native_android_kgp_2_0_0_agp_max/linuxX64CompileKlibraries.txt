@@ -1,0 +1,3 @@
+project : => [linuxX64CompileKlibraries]
+sample.gradle_max:kmp_native_android_kgp_2_0_0_agp_max-linuxx64:1.0 => [linuxX64ApiElements-published]
+sample.gradle_max:kmp_native_android_kgp_2_0_0_agp_max:1.0 => [linuxX64ApiElements-published]

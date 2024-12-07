@@ -21,35 +21,30 @@
 #define RUNTIME_NORETURN __attribute__((noreturn))
 #define RUNTIME_CONST __attribute__((const))
 #define RUNTIME_PURE __attribute__((pure))
-#define RUNTIME_USED __attribute__((used))
+
+#if __has_attribute(retain)
+// See https://youtrack.jetbrains.com/issue/KT-68640
+#define RUNTIME_EXPORT __attribute__((used,retain))
+#else
+#define RUNTIME_EXPORT __attribute__((used))
+#endif
+
 #define RUNTIME_WEAK __attribute__((weak))
 #define RUNTIME_NODEBUG __attribute__((nodebug))
 
-#if KONAN_ARM32 && (KONAN_IOS || KONAN_WATCHOS)
-  // On the one hand, ALWAYS_INLINE forces many performance-critical function to be, well,
-  // inlined. Which is good for performance, of course.
-  // On the other hand, 32-bit Mach-O object files can't be really big.
-  // As a compromise, we let the compiler decide what should be inlined or not.
-  #define ALWAYS_INLINE
-#else
-  #define ALWAYS_INLINE __attribute__((always_inline))
-#endif
+#define ALWAYS_INLINE __attribute__((always_inline))
 #define NO_INLINE __attribute__((noinline))
-
-#define NO_EXTERNAL_CALLS_CHECK __attribute__((annotate("no_external_calls_check")))
+#define PERFORMANCE_INLINE __attribute__((annotate("performance_inline")))
 
 #define OPTNONE __attribute__((optnone))
 
-#if KONAN_NO_THREADS
-#define THREAD_LOCAL_VARIABLE
-#else
 #define THREAD_LOCAL_VARIABLE __thread
-#endif
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
 #if KONAN_OBJC_INTEROP
 #define KONAN_TYPE_INFO_HAS_WRITABLE_PART 1
 #endif
+
 
 #endif // RUNTIME_COMMON_H

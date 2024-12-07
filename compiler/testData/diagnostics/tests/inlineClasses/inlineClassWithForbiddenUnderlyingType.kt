@@ -1,11 +1,13 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
+// LANGUAGE: +InlineClasses
+// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 
-inline class Foo<T>(val x: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>T<!>)
-inline class FooNullable<T>(val x: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>T?<!>)
+inline class Foo<T>(val x: T)
+inline class FooNullable<T>(val x: T?)
 
-inline class FooGenericArray<T>(val x: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>Array<T><!>)
-inline class FooGenericArray2<T>(val x: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>Array<Array<T>><!>)
+inline class FooGenericArray<T>(val x: Array<T>)
+inline class FooGenericArray2<T>(val x: Array<Array<T>>)
 
 inline class FooStarProjectedArray(val x: Array<*>)
 inline class FooStarProjectedArray2(val x: Array<Array<*>>)

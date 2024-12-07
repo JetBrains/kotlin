@@ -7,21 +7,12 @@
 
 #include "TestSupportCompilerGenerated.hpp"
 
-#include <Foundation/NSObject.h>
+#include <Foundation/Foundation.h>
 #include <objc/runtime.h>
 
 #include "Types.h"
 
 extern "C" {
-
-Class Kotlin_Interop_getObjCClass(const char* name) {
-    Class result = objc_lookUpClass(name);
-    if (result == nil) {
-        // GTest can display error messages of C++ exceptions so we use them instead of ObjC ones.
-        throw std::invalid_argument("Incorrect class name");
-    }
-    return result;
-}
 
 RUNTIME_NORETURN OBJ_GETTER0(Kotlin_NSEnumeratorAsKIterator_create) {
     throw std::runtime_error("Not implemented for tests");
@@ -165,6 +156,18 @@ void Kotlin_MutableList_removeLastObject(KRef list) {
 }
 
 void Kotlin_MutableList_setObject(KRef list, KInt index, KRef obj) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+KInt Kotlin_hashCode(KRef str) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+KBoolean Kotlin_equals(KRef lhs, KRef rhs) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_toString, KRef obj) {
     throw std::runtime_error("Not implemented for tests");
 }
 

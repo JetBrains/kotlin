@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+
 // FILE: removeOverriddenInJava_Map.kt
 
 open class MapA : Map<String, String> {

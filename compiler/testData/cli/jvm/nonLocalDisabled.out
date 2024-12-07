@@ -1,7 +1,7 @@
 compiler/testData/cli/jvm/nonLocalDisabled.kt:3:9: error: non-local returns are not allowed with inlining disabled
         return
-        ^
+        ^^^^^^
 compiler/testData/cli/jvm/nonLocalDisabled.kt:7:9: error: non-local returns are not allowed with inlining disabled
         return@a
-        ^
+        ^^^^^^^^
 COMPILATION_ERROR

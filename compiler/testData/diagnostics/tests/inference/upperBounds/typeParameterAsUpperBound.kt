@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 
 @<!INVISIBLE_MEMBER!>kotlin.internal.<!INVISIBLE_REFERENCE!>InlineOnly<!><!>

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Interner<T> {
     private fun find(obj: T): Int? = null
 

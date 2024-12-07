@@ -7,22 +7,27 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
 class FirClassUseSiteMemberScope(
-    klass: FirClass,
+    private val klass: FirClass,
     session: FirSession,
     superTypeScopes: List<FirTypeScope>,
     declaredMemberScope: FirContainingNamesAwareScope
 ) : AbstractFirUseSiteMemberScope(
-    klass.classId,
+    klass.symbol.toLookupTag(),
     session,
-    FirStandardOverrideChecker(session),
+    session.firOverrideChecker,
+    // The checker here is used for matching supertype intersections
+    // If we came here from platform (e.g. Native), we use a platform override checker
+    // JavaClassUseSiteMemberScope also uses its own JavaOverrideChecker here
+    // Otherwise we should use a special intersection checker (similar one is used in FirTypeIntersectionScope)
+    session.firOverrideChecker.takeIf { it !is FirStandardOverrideChecker } ?: FirIntersectionScopeOverrideChecker(session),
     superTypeScopes,
     klass.defaultType(),
     declaredMemberScope
@@ -42,12 +47,8 @@ class FirClassUseSiteMemberScope(
 
 
             val (properties, fields) = getPropertiesAndFieldsFromSupertypesByName(name)
-            for (propertyFromSupertype in properties) {
-                val superSymbol = propertyFromSupertype.extractSomeSymbolFromSuperType()
-                val overriddenBy = superSymbol.getOverridden(explicitlyDeclaredProperties)
-                if (overriddenBy == null) {
-                    add(propertyFromSupertype.chosenSymbol)
-                }
+            for (resultOfIntersection in properties) {
+                resultOfIntersection.collectNonOverriddenDeclarations(explicitlyDeclaredProperties, this@buildList)
             }
             addAll(fields)
         }
@@ -55,11 +56,9 @@ class FirClassUseSiteMemberScope(
 
     private fun computeDirectOverriddenForDeclaredProperty(declaredPropertySymbol: FirPropertySymbol): List<FirTypeIntersectionScopeContext.ResultOfIntersection<FirPropertySymbol>> {
         val result = mutableListOf<FirTypeIntersectionScopeContext.ResultOfIntersection<FirPropertySymbol>>()
-        val declaredProperty = declaredPropertySymbol.fir
         for (resultOfIntersection in getPropertiesAndFieldsFromSupertypesByName(declaredPropertySymbol.name).first) {
-            val symbolFromSupertype = resultOfIntersection.extractSomeSymbolFromSuperType()
-            if (overrideChecker.isOverriddenProperty(declaredProperty, symbolFromSupertype.fir)) {
-                result.add(resultOfIntersection)
+            resultOfIntersection.collectDirectOverriddenForDeclared(declaredPropertySymbol, result) { overrideCandidate, baseProperty, _ ->
+                overrideChecker.isOverriddenProperty(overrideCandidate, baseProperty)
             }
         }
         return result
@@ -90,6 +89,16 @@ class FirClassUseSiteMemberScope(
     }
 
     override fun toString(): String {
-        return "Use site scope of $classId"
+        return "Use site scope of ${ownerClassLookupTag.classId}"
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirClassUseSiteMemberScope {
+        return FirClassUseSiteMemberScope(
+            klass,
+            newSession,
+            superTypeScopes.withReplacedSessionOrNull(newSession, newScopeSession) ?: superTypeScopes,
+            declaredMemberScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: declaredMemberScope
+        )
     }
 }

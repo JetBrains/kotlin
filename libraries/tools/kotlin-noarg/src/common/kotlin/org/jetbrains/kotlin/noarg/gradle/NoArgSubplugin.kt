@@ -33,7 +33,7 @@ class NoArgGradleSubplugin
             return project.extensions.getByType(NoArgExtension::class.java)
         }
 
-        private const val NOARG_ARTIFACT_NAME = "kotlin-noarg"
+        private const val NOARG_ARTIFACT_NAME = "kotlin-noarg-compiler-plugin-embeddable"
 
         private const val ANNOTATION_ARG_NAME = "annotation"
         private const val PRESET_ARG_NAME = "preset"

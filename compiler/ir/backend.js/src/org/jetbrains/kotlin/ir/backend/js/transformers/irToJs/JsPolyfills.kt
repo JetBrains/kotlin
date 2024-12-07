@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsPolyfill
+import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
 import org.jetbrains.kotlin.ir.backend.js.utils.hasJsPolyfill
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.js.backend.ast.JsStatement
 
 class JsPolyfills {
@@ -31,9 +33,10 @@ class JsPolyfills {
     private fun Iterable<IrDeclaration>.asImplementationList() =
         asSequence().asImplementationList()
 
-    private fun Sequence<IrDeclaration>.asImplementationList(): List<JsStatement> =
-        map { it.getJsPolyfill()!! }
-            .distinct()
-            .flatMap { parseJsCode(it).orEmpty() }
+    private fun Sequence<IrDeclaration>.asImplementationList(): List<JsStatement> {
+        return map { it to it.getAnnotation(JsAnnotations.JsPolyfillFqn)!!.getValueArgument(0)!! }
+            .distinctBy { (it.second as IrConst).value as String }
+            .flatMap { (container, polyfill) -> translateJsCodeIntoStatementList(polyfill, container).orEmpty() }
             .toList()
+    }
 }

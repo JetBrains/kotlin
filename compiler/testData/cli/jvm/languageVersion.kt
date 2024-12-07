@@ -1,3 +1,4 @@
 package test
 
-sealed interface Polygon
+@JvmInline
+value class Holder<T>(val value: T)

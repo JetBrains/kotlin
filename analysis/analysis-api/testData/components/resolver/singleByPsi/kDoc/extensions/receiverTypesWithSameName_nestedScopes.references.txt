@@ -1,0 +1,44 @@
+<caret_1>:
+  KDocName(88,91): 'Foo'
+    KDocReference:
+      (in test.Outer) class Foo
+
+<caret_2>:
+  KDocName(112,121): 'Outer.Foo'
+    KDocReference:
+      (in test.Outer) class Foo
+
+<caret_3>:
+  KDocName(135,149): 'test.Outer.Foo'
+    KDocReference:
+      (in test.Outer) class Foo
+
+<caret_4>:
+  KDocName(170,178): 'test.Foo'
+    KDocReference:
+      (in test) class Foo
+
+<caret_nested_1>:
+  KDocName(275,278): 'Foo'
+    KDocReference:
+      (in test.Outer.Nested) class Foo
+
+<caret_nested_2>:
+  KDocName(307,317): 'Nested.Foo'
+    KDocReference:
+      (in test.Outer.Nested) class Foo
+
+<caret_nested_3>:
+  KDocName(335,351): 'Outer.Nested.Foo'
+    KDocReference:
+      (in test.Outer.Nested) class Foo
+
+<caret_nested_4>:
+  KDocName(369,390): 'test.Outer.Nested.Foo'
+    KDocReference:
+      (in test.Outer.Nested) class Foo
+
+<caret_nested_5>:
+  KDocName(419,427): 'test.Foo'
+    KDocReference:
+      (in test) class Foo

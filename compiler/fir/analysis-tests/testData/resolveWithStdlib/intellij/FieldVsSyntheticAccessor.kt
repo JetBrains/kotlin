@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: BaseClass.java
 
 public class BaseClass {
@@ -5,8 +6,9 @@ public class BaseClass {
 }
 
 // FILE: User.kt
-
 package test
+
+import BaseClass
 
 class User : BaseClass() {
     fun foo(tree: BaseClass) {

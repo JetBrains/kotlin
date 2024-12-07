@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: INLINE_ARRAY_CONSTRUCTOR
 typealias ArrayS = Array<String>
 
 fun testArray() {

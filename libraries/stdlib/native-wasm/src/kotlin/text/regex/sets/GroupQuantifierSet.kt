@@ -26,7 +26,6 @@ package kotlin.text.regex
  * Default quantifier over groups, in fact this type of quantifier is
  * generally used for constructions we cant identify number of characters they
  * consume.
-
  */
 open internal class GroupQuantifierSet(
         val quantifier: Quantifier,
@@ -35,6 +34,11 @@ open internal class GroupQuantifierSet(
         type: Int,
         val groupQuantifierIndex: Int // It's used to remember a number of the innerSet occurrences during the recursive search.
 ) : QuantifierSet(innerSet, next, type) {
+
+    init {
+        require(!innerSet.consumesFixedLength)
+        innerSet.next = this
+    }
 
     val max: Int get() = quantifier.max
     val min: Int get() = quantifier.min

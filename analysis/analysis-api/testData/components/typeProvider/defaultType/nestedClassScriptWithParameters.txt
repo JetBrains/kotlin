@@ -1,0 +1,14 @@
+KaUsualClassType:
+  annotations: []
+  typeArguments: [
+    KaTypeParameterType:
+      annotations: []
+      type: C
+    KaTypeParameterType:
+      annotations: []
+      type: D
+    KaTypeParameterType:
+      annotations: []
+      type: E
+  ]
+  type: pack/Foo.NestedClass<C, D, E>

@@ -1,0 +1,13 @@
+MODULE_FRAGMENT
+  FILE fqName:home fileName:main.kt
+    FUN name:preview visibility:public modality:FINAL <> (featuredPodcast:data.PodcastWithExtraInfo) returnType:kotlin.Unit
+      VALUE_PARAMETER name:featuredPodcast index:0 type:data.PodcastWithExtraInfo
+      BLOCK_BODY
+        VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:data.PodcastWithExtraInfo [val]
+          GET_VAR 'featuredPodcast: data.PodcastWithExtraInfo declared in home.preview' type=data.PodcastWithExtraInfo origin=null
+        VAR name:podcast type:kotlin.String [val]
+          CALL 'public final fun component1 (): kotlin.String [operator] declared in data.PodcastWithExtraInfo' type=kotlin.String origin=COMPONENT_N(index=1)
+            $this: GET_VAR 'val tmp_0: data.PodcastWithExtraInfo [val] declared in home.preview' type=data.PodcastWithExtraInfo origin=null
+        VAR name:lastEpisodeDate type:kotlin.time.TimeSource? [val]
+          CALL 'public final fun component2 (): kotlin.time.TimeSource? [operator] declared in data.PodcastWithExtraInfo' type=kotlin.time.TimeSource? origin=COMPONENT_N(index=2)
+            $this: GET_VAR 'val tmp_0: data.PodcastWithExtraInfo [val] declared in home.preview' type=data.PodcastWithExtraInfo origin=null

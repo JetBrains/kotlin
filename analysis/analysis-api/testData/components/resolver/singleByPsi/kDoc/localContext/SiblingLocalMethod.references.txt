@@ -1,0 +1,3 @@
+KDocName(48,50): 'bb'
+  KDocReference:
+    (in <local>: f.C) fun bb()

@@ -1,4 +1,5 @@
-// !LANGUAGE: +ContextReceivers
+// FIR_IDENTICAL
+// LANGUAGE: +ContextReceivers
 
 context(T) class A<T>
 

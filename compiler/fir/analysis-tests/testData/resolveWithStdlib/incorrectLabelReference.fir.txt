@@ -1,0 +1,4 @@
+FILE: incorrectLabelReference.kt
+    public final fun myMap(x: R|kotlin/Int| = ERROR_EXPR(Strange annotated expression: ???)): R|kotlin/Unit|
+    public final val y: <ERROR TYPE REF: Empty parentheses> = ERROR_EXPR(Empty parentheses)
+        public get(): <ERROR TYPE REF: Empty parentheses>

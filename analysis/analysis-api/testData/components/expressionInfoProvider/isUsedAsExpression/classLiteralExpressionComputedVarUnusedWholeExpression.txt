@@ -1,0 +1,3 @@
+expression: CLASS_LITERAL_EXPRESSION
+text: b::class
+isUsedAsExpression: false

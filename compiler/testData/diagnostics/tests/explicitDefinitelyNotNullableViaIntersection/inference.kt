@@ -1,4 +1,5 @@
-// !LANGUAGE: +DefinitelyNonNullableTypes
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +DefinitelyNonNullableTypes
 
 fun <T> toDefNotNull(s: T): T & Any = s!!
 

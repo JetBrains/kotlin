@@ -99,7 +99,7 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
     @Nullable
     public PsiElement getTrailingComma() {
         PsiElement parentElement = getParent();
-        if (parentElement instanceof KtFunctionLiteral || parentElement instanceof KtPropertyAccessor) {
+        if (parentElement instanceof KtFunctionLiteral) {
             return KtPsiUtilKt.getTrailingCommaByElementsList(this);
         } else {
             return KtPsiUtilKt.getTrailingCommaByClosingElement(getRightParenthesis());

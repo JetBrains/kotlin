@@ -16,11 +16,15 @@
 
 package org.jetbrains.kotlin.codegen.optimization.boxing
 
-import org.jetbrains.kotlin.codegen.optimization.common.FastMethodAnalyzer
+import org.jetbrains.kotlin.codegen.optimization.common.FastAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.common.findPreviousOrNull
+import org.jetbrains.kotlin.codegen.optimization.common.nodeType
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.tree.*
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
+import org.jetbrains.org.objectweb.asm.tree.InsnNode
+import org.jetbrains.org.objectweb.asm.tree.LdcInsnNode
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class StackPeepholeOptimizationsTransformer : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
@@ -33,12 +37,12 @@ class StackPeepholeOptimizationsTransformer : MethodTransformer() {
         val instructions = methodNode.instructions
         var changed = false
 
-        val isMergeNode = FastMethodAnalyzer.findMergeNodes(methodNode)
+        val isMergeNode = FastAnalyzer.findMergeNodes(methodNode)
 
         fun AbstractInsnNode.previousMeaningful() =
             findPreviousOrNull {
-                it.opcode != Opcodes.NOP && it.type != AbstractInsnNode.LINE &&
-                        (it.type != AbstractInsnNode.LABEL || isMergeNode[instructions.indexOf(it)])
+                it.opcode != Opcodes.NOP && it.nodeType != AbstractInsnNode.LINE &&
+                        (it.nodeType != AbstractInsnNode.LABEL || isMergeNode[instructions.indexOf(it)])
             }
 
         var insn: AbstractInsnNode?

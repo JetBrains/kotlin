@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: byteArray.kt
 
 package Test
@@ -10,7 +11,7 @@ interface ByteArray {
 
 package use
 
-import test.*
+import <!UNRESOLVED_IMPORT!>test<!>.*
 
 interface My {
     // Should be kotlin.ByteArray

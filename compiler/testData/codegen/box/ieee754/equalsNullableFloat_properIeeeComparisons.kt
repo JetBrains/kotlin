@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProperIeee754Comparisons
+// LANGUAGE: +ProperIeee754Comparisons
 
 fun equals1(a: Float, b: Float?) = a == b
 

@@ -1,5 +1,4 @@
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER
+// DIAGNOSTICS: -UNUSED_EXPRESSION -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER
 // SKIP_TXT
 
 /*
@@ -155,7 +154,7 @@ fun case_10(x: Any): String {
 fun case_11(x: Any?): String? {
     if (x is Nothing?) {
         return when(x) {
-            <!SENSELESS_NULL_IN_WHEN!>null<!> -> null
+            <!SENSELESS_COMPARISON!>null<!> -> null
         }
     }
     return ""
@@ -169,7 +168,7 @@ fun case_11(x: Any?): String? {
 fun case_12(x: Any?): String? {
     if (x == null) {
         return when(x) {
-            <!SENSELESS_NULL_IN_WHEN!>null<!> -> null
+            <!SENSELESS_COMPARISON!>null<!> -> null
         }
     }
     return ""
@@ -183,7 +182,7 @@ fun case_12(x: Any?): String? {
 fun case_13(x: Any?): String? {
     if (x === null) {
         return when(x) {
-            <!SENSELESS_NULL_IN_WHEN!>null<!> -> null
+            <!SENSELESS_COMPARISON!>null<!> -> null
         }
     }
     return ""
@@ -197,7 +196,7 @@ fun case_13(x: Any?): String? {
 fun case_14(x: Any?): String? {
     x as Nothing?
     return when(x) {
-        <!SENSELESS_NULL_IN_WHEN!>null<!> -> null
+        <!SENSELESS_COMPARISON!>null<!> -> null
     }
 }
 

@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.containsTypeAliasParameters
 
 @DefaultImplementation(impl = UpperBoundChecker::class)
-open class UpperBoundChecker {
+open class UpperBoundChecker(
+    private val typeChecker: KotlinTypeChecker,
+) {
     open fun checkBoundsOfExpandedTypeAlias(type: KotlinType, expression: KtExpression, trace: BindingTrace) {
         // do nothing in the strict mode as the errors are already reported in the type inference if necessary
     }
@@ -141,7 +143,7 @@ open class UpperBoundChecker {
     ): Boolean {
         val substitutedBound = substitutor.safeSubstitute(bound, Variance.INVARIANT)
 
-        if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(argumentType, substitutedBound)) {
+        if (!typeChecker.isSubtypeOf(argumentType, substitutedBound)) {
             if (argumentReference != null) {
                 upperBoundViolatedReporter.report(argumentReference, substitutedBound)
             } else if (typeAliasUsageElement != null && !substitutedBound.containsTypeAliasParameters() && !argumentType.containsTypeAliasParameters()) {

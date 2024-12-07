@@ -5,11 +5,32 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import java.util.*
+
+/**
+ * The different modes of the Kotlin compiler for compiling source code into an output artifact for the [KotlinPlatformType.js] platform.
+ */
 enum class KotlinJsCompilerType {
+    /**
+     * @suppress
+     */
+    @Deprecated("The legacy compiler is deprecated. Migrate your project to the new IR-based compiler")
     LEGACY,
+
+    /**
+     * Represents the IR (Intermediate Representation) backend mode of the Kotlin compiler.
+     */
     IR,
+
+    /**
+     * @suppress
+     */
+    @Deprecated("Legacy compiler is deprecated. Migrate your project to the new IR-based compiler")
     BOTH;
 
+    /**
+     * @suppress
+     */
     companion object {
         const val jsCompilerProperty = "kotlin.js.compiler"
 
@@ -24,14 +45,23 @@ enum class KotlinJsCompilerType {
     }
 }
 
+/**
+ * @suppress
+ */
+@Deprecated("This method is planned to be removed")
 val KotlinJsCompilerType.lowerName
-    get() = name.toLowerCase()
+    get() = name.toLowerCase(Locale.ENGLISH)
 
+/**
+ * @suppress
+ */
+@Suppress("DEPRECATION")
+@Deprecated("This method is planned to be removed")
 fun String.removeJsCompilerSuffix(compilerType: KotlinJsCompilerType): String {
     val truncatedString = removeSuffix(compilerType.lowerName)
     if (this != truncatedString) {
         return truncatedString
     }
 
-    return removeSuffix(compilerType.lowerName.capitalize())
+    return removeSuffix(compilerType.lowerName.capitalize(Locale.ENGLISH))
 }

@@ -35,7 +35,7 @@ FILE: argumentsOfAnnotations.kt
             public get(): R|kotlin/Int|
 
     }
-    @R|AnnVarargs|(x = Int(1), y = Int(2)) public final class B : R|kotlin/Any| {
+    @R|AnnVarargs|(x = Int(1), y = vararg(String(a), String(b), String(c), Int(2))) public final class B : R|kotlin/Any| {
         public constructor(): R|B| {
             super<R|kotlin/Any|>()
         }

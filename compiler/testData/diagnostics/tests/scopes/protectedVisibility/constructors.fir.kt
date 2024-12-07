@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 open class A protected constructor(x: Int) {
     protected constructor() : this(1)
@@ -7,7 +8,7 @@ open class A protected constructor(x: Int) {
 }
 
 fun foo() {
-    A(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    <!INVISIBLE_REFERENCE!>A<!>()
     A(1.0)
 }
 

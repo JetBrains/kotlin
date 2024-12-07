@@ -23,21 +23,21 @@ tvos*)
   SIM_SDK=$(xcrun --show-sdk-path --sdk appletvsimulator)
   OS_NAME="tvOS"
   DEVICES=("tvos_arm64")
-  SIMULATORS=("tvos_x64")
+  SIMULATORS=("tvos_x64" "tvos_simulator_arm64")
   ;;
 ios*)
   DEV_SDK=$(xcrun --show-sdk-path --sdk iphoneos)
   SIM_SDK=$(xcrun --show-sdk-path --sdk iphonesimulator)
   OS_NAME="iOS"
-  DEVICES=("ios_arm32" "ios_arm64")
-  SIMULATORS=("ios_x64")
+  DEVICES=("ios_arm64")
+  SIMULATORS=("ios_x64" "ios_simulator_arm64")
   ;;
 watchos*)
   DEV_SDK=$(xcrun --show-sdk-path --sdk watchos)
   SIM_SDK=$(xcrun --show-sdk-path --sdk watchsimulator)
   OS_NAME="watchOS"
-  DEVICES=("watchos_arm32" "watchos_arm64")
-  SIMULATORS=("watchos_i386")
+  DEVICES=("watchos_arm32" "watchos_arm64" "watchos_device_arm64")
+  SIMULATORS=("watchos_x64" "watchos_simulator_arm64")
   ;;
 osx*)
   DEV_SDK=$(xcrun --show-sdk-path)
@@ -101,20 +101,20 @@ function classify {
         return
     fi
     # DriverKit is C++. Drop it.
-    if [[ $(cat $JSON | jq '.metadata.platforms[] | .name' | grep DriverKit) ]]
+    if [[ $(cat $JSON | jq '.metadata.platforms[]? | .name' | grep DriverKit) ]]
     then
         DRIVER_KIT+=($FRAMEWORK_NAME)
         return
     fi
     # Sometimes framework is present in SDK directory, but actually it isn't supported on
     # current OS.
-    if [[ ! $(cat $JSON | jq '.metadata.platforms[] | .name' | grep $OS_NAME) ]]
+    if [[ ! $(cat $JSON | jq '.metadata.platforms[]? | .name' | grep $OS_NAME) ]]
     then
         OS_UNSUPPORTED+=($FRAMEWORK_NAME)
         return
     fi
-    LANG=$(cat $JSON | jq '.identifier.interfaceLanguage' | grep swift || true)
-    if [[ $LANG = \"swift\" ]]
+    # Filter out Swift-only frameworks
+    if [[ ! $(cat $JSON | jq '.variants[]? | .traits[]? | .interfaceLanguage' | grep \"occ\") ]]
     then
         SWIFT_ONLY+=($FRAMEWORK_NAME)
         return

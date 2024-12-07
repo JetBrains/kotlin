@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 
@@ -36,7 +37,7 @@ object JvmIrMangler : IrBasedKotlinManglerImpl() {
         override fun copy(newMode: MangleMode): IrMangleComputer =
             JvmIrManglerComputer(builder, newMode, compatibleMode)
 
-        override fun addReturnTypeSpecialCase(irFunction: IrFunction): Boolean = true
+        override fun addReturnTypeSpecialCase(function: IrFunction): Boolean = true
 
         override fun mangleTypePlatformSpecific(type: IrType, tBuilder: StringBuilder) {
             if (type.hasAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)) {
@@ -61,7 +62,7 @@ class JvmDescriptorMangler(private val mainDetector: MainFunctionDetector?) : De
         private val mainDetector: MainFunctionDetector?,
         mode: MangleMode
     ) : DescriptorMangleComputer(builder, mode) {
-        override fun addReturnTypeSpecialCase(functionDescriptor: FunctionDescriptor): Boolean = true
+        override fun addReturnTypeSpecialCase(function: FunctionDescriptor): Boolean = true
 
         override fun copy(newMode: MangleMode): DescriptorMangleComputer = JvmDescriptorManglerComputer(builder, mainDetector, newMode)
 
@@ -78,13 +79,13 @@ class JvmDescriptorMangler(private val mainDetector: MainFunctionDetector?) : De
             return if (isJavaField) MangleConstant.JAVA_FIELD_SUFFIX else null
         }
 
-        override fun visitModuleDeclaration(descriptor: ModuleDescriptor, data: Nothing?) {
+        override fun visitModuleDeclaration(descriptor: ModuleDescriptor) {
             // In general, having module descriptor as `containingDeclaration` for regular declaration is considered an error (in JS/Native)
             // because there should be `PackageFragmentDescriptor` in between
             // but on JVM there is `SyntheticJavaPropertyDescriptor` whose parent is a module. So let just skip it.
         }
 
-        override fun mangleTypePlatformSpecific(type: UnwrappedType, tBuilder: StringBuilder) {
+        override fun mangleTypePlatformSpecific(type: KotlinType, tBuilder: StringBuilder) {
             // Disambiguate between 'double' and '@NotNull java.lang.Double' types in mixed Java/Kotlin class hierarchies
             if (SimpleClassicTypeSystemContext.hasEnhancedNullability(type)) {
                 tBuilder.appendSignature(MangleConstant.ENHANCED_NULLABILITY_MARK)

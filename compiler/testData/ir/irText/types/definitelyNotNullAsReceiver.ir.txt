@@ -1,12 +1,4 @@
 FILE fqName:<root> fileName:/definitelyNotNullAsReceiver.kt
-  FUN name:foo visibility:public modality:FINAL <T> ($receiver:{T of <root>.foo & Any}) returnType:kotlin.Unit
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    $receiver: VALUE_PARAMETER name:<this> type:{T of <root>.foo & Any}
-    BLOCK_BODY
-  FUN name:foo visibility:public modality:FINAL <T> (l:kotlin.Function1<{T of <root>.foo & Any}, kotlin.Unit>) returnType:kotlin.Unit
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    VALUE_PARAMETER name:l index:0 type:kotlin.Function1<{T of <root>.foo & Any}, kotlin.Unit>
-    BLOCK_BODY
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun foo <T> (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -21,3 +13,11 @@ FILE fqName:<root> fileName:/definitelyNotNullAsReceiver.kt
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 STRING_CONCATENATION type=kotlin.String
                   GET_VAR 'it: kotlin.String declared in <root>.box.<anonymous>' type=kotlin.String origin=null
+  FUN name:foo visibility:public modality:FINAL <T> ($receiver:{T of <root>.foo & Any}) returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    $receiver: VALUE_PARAMETER name:<this> type:{T of <root>.foo & Any}
+    BLOCK_BODY
+  FUN name:foo visibility:public modality:FINAL <T> (l:kotlin.Function1<{T of <root>.foo & Any}, kotlin.Unit>) returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER name:l index:0 type:kotlin.Function1<{T of <root>.foo & Any}, kotlin.Unit>
+    BLOCK_BODY

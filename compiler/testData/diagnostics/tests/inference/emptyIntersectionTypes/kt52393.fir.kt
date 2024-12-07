@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class Wrapper<T>
 
 class WrapperFunctions {
@@ -11,7 +12,7 @@ fun main() {
     val number: Int = 5 // doesn't work
 //    val number: Long = 5 // works
 
-    with (WrapperFunctions()) {
-        <!ARGUMENT_TYPE_MISMATCH!>wrapper <!NONE_APPLICABLE!>greaterEq<!> number<!>
+    <!CANNOT_INFER_PARAMETER_TYPE!>with<!> (WrapperFunctions()) {
+        wrapper <!NONE_APPLICABLE!>greaterEq<!> number
     }
 }

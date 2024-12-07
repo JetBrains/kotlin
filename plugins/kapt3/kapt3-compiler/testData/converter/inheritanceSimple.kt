@@ -1,3 +1,6 @@
+// STRIP_METADATA
+// TODO: Re-enable metadata generation
+
 interface Context
 
 enum class Result {

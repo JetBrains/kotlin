@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 // WITH_STDLIB
 // NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
@@ -14,5 +13,5 @@ enum class Z {
 import test.*
 
 fun box(): String {
-    return  { enumValueOf<Z>("OK").name  } ()
+    return  { enumValueOf<Z>("OK").name  }.let { it() }
 }

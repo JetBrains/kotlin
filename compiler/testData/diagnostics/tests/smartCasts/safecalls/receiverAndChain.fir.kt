@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun foo(x: String): String? = x
 
 fun calc(x: String?): Int {

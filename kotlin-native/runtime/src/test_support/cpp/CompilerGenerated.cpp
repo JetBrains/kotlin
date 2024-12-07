@@ -5,6 +5,7 @@
 
 #include "TestSupportCompilerGenerated.hpp"
 
+#include "Logging.hpp"
 #include "ObjectTestSupport.hpp"
 #include "Types.h"
 
@@ -21,12 +22,11 @@ testing::MockFunction<void(KRef)>* kotlin::test_support::internal::Kotlin_runUnh
 namespace {
 
 struct EmptyPayload {
-    using Field = ObjHeader* EmptyPayload::*;
-    static constexpr std::array<Field, 0> kFields{};
+    static constexpr kotlin::test_support::NoRefFields<EmptyPayload> kFields{};
 };
 
 kotlin::test_support::TypeInfoHolder theAnyTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
-kotlin::test_support::TypeInfoHolder theArrayTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ArrayBuilder<ObjHeader*>()};
+kotlin::test_support::TypeInfoHolder theArrayTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ArrayBuilder<kotlin::mm::RefField>()};
 kotlin::test_support::TypeInfoHolder theBooleanArrayTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ArrayBuilder<KBoolean>()};
 kotlin::test_support::TypeInfoHolder theByteArrayTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ArrayBuilder<KByte>()};
 kotlin::test_support::TypeInfoHolder theCharArrayTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ArrayBuilder<KChar>()};
@@ -47,9 +47,10 @@ kotlin::test_support::TypeInfoHolder theStringTypeInfoHolder{
         kotlin::test_support::TypeInfoHolder::ArrayBuilder<KChar>().addFlag(TF_IMMUTABLE)};
 kotlin::test_support::TypeInfoHolder theThrowableTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
 kotlin::test_support::TypeInfoHolder theUnitTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
-kotlin::test_support::TypeInfoHolder theWorkerBoundReferenceTypeInfoHolder{
-        kotlin::test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
 kotlin::test_support::TypeInfoHolder theCleanerImplTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
+kotlin::test_support::TypeInfoHolder theRegularWeakReferenceImplTypeInfoHolder{
+        kotlin::test_support::TypeInfoHolder::ObjectBuilder<kotlin::test_support::RegularWeakReferenceImplPayload>().addFlag(
+                TF_HAS_FINALIZER)};
 
 ArrayHeader theEmptyStringImpl = {theStringTypeInfoHolder.typeInfo(), /* element count */ 0};
 
@@ -65,10 +66,20 @@ extern "C" {
 
 extern const int32_t Kotlin_needDebugInfo = 1;
 extern const int32_t Kotlin_runtimeAssertsMode = static_cast<int32_t>(kotlin::compiler::RuntimeAssertsMode::kPanic);
-extern const char* const Kotlin_runtimeLogs = nullptr;
-extern const int32_t Kotlin_gcSchedulerType = static_cast<int32_t>(kotlin::compiler::GCSchedulerType::kDisabled);
-extern const int32_t Kotlin_freezingChecksEnabled = 1;
-extern const int32_t Kotlin_freezingEnabled = 1;
+#if KONAN_WINDOWS
+extern const int32_t Kotlin_disableMmap = 1;
+#else
+extern const int32_t Kotlin_disableMmap = 0;
+#endif
+extern const int32_t Kotlin_runtimeLogs[static_cast<size_t>(kotlin::logging::Tag::kEnumSize)] = {0};
+extern const int32_t Kotlin_concurrentWeakSweep = 1;
+#if KONAN_WINDOWS
+// parallel mark tests hang on mingw due to (presumably) a bug in winpthread
+extern const int32_t Kotlin_gcMarkSingleThreaded = 1;
+#else
+extern const int32_t Kotlin_gcMarkSingleThreaded = 0;
+#endif
+extern const int32_t Kotlin_fixedBlockPageSize = 128;
 
 extern const TypeInfo* theAnyTypeInfo = theAnyTypeInfoHolder.typeInfo();
 extern const TypeInfo* theArrayTypeInfo = theArrayTypeInfoHolder.typeInfo();
@@ -88,8 +99,8 @@ extern const TypeInfo* theShortArrayTypeInfo = theShortArrayTypeInfoHolder.typeI
 extern const TypeInfo* theStringTypeInfo = theStringTypeInfoHolder.typeInfo();
 extern const TypeInfo* theThrowableTypeInfo = theThrowableTypeInfoHolder.typeInfo();
 extern const TypeInfo* theUnitTypeInfo = theUnitTypeInfoHolder.typeInfo();
-extern const TypeInfo* theWorkerBoundReferenceTypeInfo = theWorkerBoundReferenceTypeInfoHolder.typeInfo();
 extern const TypeInfo* theCleanerImplTypeInfo = theCleanerImplTypeInfoHolder.typeInfo();
+extern const TypeInfo* theRegularWeakReferenceImplTypeInfo = theRegularWeakReferenceImplTypeInfoHolder.typeInfo();
 
 extern const ArrayHeader theEmptyArray = {theArrayTypeInfoHolder.typeInfo(), /* element count */ 0};
 
@@ -97,7 +108,7 @@ OBJ_GETTER0(TheEmptyString) {
     RETURN_OBJ(theEmptyStringImpl.obj());
 }
 
-RUNTIME_NORETURN OBJ_GETTER(makeWeakReferenceCounter, void*) {
+RUNTIME_NORETURN OBJ_GETTER(makeRegularWeakReferenceImpl, void*) {
     throw std::runtime_error("Not implemented for tests");
 }
 
@@ -129,10 +140,6 @@ void RUNTIME_NORETURN ThrowWorkerAlreadyTerminated() {
 }
 
 void RUNTIME_NORETURN ThrowWrongWorkerOrAlreadyTerminated() {
-    throw std::runtime_error("Not implemented for tests");
-}
-
-void RUNTIME_NORETURN ThrowCannotTransferOwnership() {
     throw std::runtime_error("Not implemented for tests");
 }
 
@@ -180,23 +187,11 @@ void RUNTIME_NORETURN ThrowIllegalStateException() {
     throw std::runtime_error("Not implemented for tests");
 }
 
-void RUNTIME_NORETURN ThrowInvalidMutabilityException(KConstRef where) {
-    throw std::runtime_error("Not implemented for tests");
-}
-
-void RUNTIME_NORETURN ThrowIncorrectDereferenceException() {
+void RUNTIME_NORETURN ThrowIllegalStateExceptionWithMessage(KConstRef message) {
     throw std::runtime_error("Not implemented for tests");
 }
 
 void RUNTIME_NORETURN ThrowFileFailedToInitializeException() {
-    throw std::runtime_error("Not implemented for tests");
-}
-
-void RUNTIME_NORETURN ThrowIllegalObjectSharingException(KConstNativePtr typeInfo, KConstNativePtr address) {
-    throw std::runtime_error("Not implemented for tests");
-}
-
-void RUNTIME_NORETURN ThrowFreezingException(KRef toFreeze, KRef blocker) {
     throw std::runtime_error("Not implemented for tests");
 }
 
@@ -216,9 +211,52 @@ void Kotlin_runUnhandledExceptionHook(KRef throwable) {
     return Kotlin_runUnhandledExceptionHookMock->Call(throwable);
 }
 
-void Kotlin_WorkerBoundReference_freezeHook(KRef thiz) {
+void Kotlin_Internal_GC_GCInfoBuilder_setEpoch(KRef thiz, KLong value) {
     throw std::runtime_error("Not implemented for tests");
 }
+void Kotlin_Internal_GC_GCInfoBuilder_setStartTime(KRef thiz, KLong value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+void Kotlin_Internal_GC_GCInfoBuilder_setEndTime(KRef thiz, KLong value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+void Kotlin_Internal_GC_GCInfoBuilder_setFirstPauseRequestTime(KRef thiz, KLong value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+void Kotlin_Internal_GC_GCInfoBuilder_setFirstPauseStartTime(KRef thiz, KLong value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+void Kotlin_Internal_GC_GCInfoBuilder_setFirstPauseEndTime(KRef thiz, KLong value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+void Kotlin_Internal_GC_GCInfoBuilder_setSecondPauseRequestTime(KRef thiz, KLong value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+void Kotlin_Internal_GC_GCInfoBuilder_setSecondPauseStartTime(KRef thiz, KLong value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+void Kotlin_Internal_GC_GCInfoBuilder_setSecondPauseEndTime(KRef thiz, KLong value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+void Kotlin_Internal_GC_GCInfoBuilder_setPostGcCleanupTime(KRef thiz, KLong value) {
+    throw std::runtime_error("Not implemented for tests");
+}
+void Kotlin_Internal_GC_GCInfoBuilder_setRootSet(KRef thiz, KLong threadLocalReferences, KLong stackReferences, KLong globalReferences, KLong stableReferences) {
+    throw std::runtime_error("Not implemented for tests");
+}
+void Kotlin_Internal_GC_GCInfoBuilder_setMarkStats(KRef thiz, KLong markedCount) {
+    throw std::runtime_error("Not implemented for tests");
+}
+void Kotlin_Internal_GC_GCInfoBuilder_setSweepStats(KRef thiz, KNativePtr name, KLong sweptCount, KLong keptCount) {
+    throw std::runtime_error("Not implemented for tests");
+}
+void Kotlin_Internal_GC_GCInfoBuilder_setMemoryUsageBefore(KRef thiz, KNativePtr name, KLong objectsCount, KLong totalObjectsSize) {
+    throw std::runtime_error("Not implemented for tests");
+}
+void Kotlin_Internal_GC_GCInfoBuilder_setMemoryUsageAfter(KRef thiz, KNativePtr name, KLong objectsCount, KLong totalObjectsSize) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
 
 extern const KBoolean BOOLEAN_RANGE_FROM = false;
 extern const KBoolean BOOLEAN_RANGE_TO = true;

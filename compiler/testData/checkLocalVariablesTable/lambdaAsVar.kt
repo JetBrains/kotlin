@@ -1,3 +1,5 @@
+// LAMBDAS: CLASS
+
 fun foo() {
     var a = {
 

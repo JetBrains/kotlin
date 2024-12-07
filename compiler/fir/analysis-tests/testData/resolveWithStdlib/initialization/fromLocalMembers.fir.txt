@@ -10,6 +10,7 @@ FILE: fromLocalMembers.kt
     public final fun test2(): R|kotlin/Unit| {
         lval x: R|kotlin/Int|
         lval y: R|kotlin/Int|
+        lval z: R|kotlin/Int|
         object : R|kotlin/Any| {
             private constructor(): R|<anonymous>| {
                 super<R|kotlin/Any|>()
@@ -23,6 +24,12 @@ FILE: fromLocalMembers.kt
                 R|<local>/y| = Int(0)
             }
 
+            public final val prop: R|kotlin/Int|
+                public get(): R|kotlin/Int| {
+                    R|<local>/z| = Int(0)
+                    ^ Int(2)
+                }
+
         }
 
         R|kotlin/io/println|(R|<local>/x|)
@@ -32,7 +39,7 @@ FILE: fromLocalMembers.kt
         lval x: R|kotlin/Int|
         lval y: R|kotlin/Int|
         local final class A : R|kotlin/Any| {
-            public constructor(): R|A| {
+            public constructor(): R|<local>/A| {
                 super<R|kotlin/Any|>()
             }
 

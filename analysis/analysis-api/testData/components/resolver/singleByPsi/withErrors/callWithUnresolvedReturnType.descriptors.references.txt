@@ -1,0 +1,6 @@
+KtNameReferenceExpression(81,84): 'foo'
+  KtSimpleNameReference:
+    (in ROOT) fun <T> foo(x: kotlin.Int): ERROR_TYPE(Unresolved type for Unresolved)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

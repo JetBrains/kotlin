@@ -1,0 +1,75 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.TextLayoutResult
+
+@Composable
+fun BasicText(
+    style: TextStyle = TextStyle.Default,
+    onTextLayout: (TextLayoutResult) -> Unit = {},
+    overflow: TextOverflow = TextOverflow.Clip,
+) {
+    used(style)
+    used(onTextLayout)
+    used(overflow)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun BasicText(style: TextStyle?, onTextLayout: Function1<TextLayoutResult, Unit>?, overflow: TextOverflow, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(BasicText)P(2!,1:c#ui.text.style.TextOverflow):Test.kt")
+  val %dirty = %changed
+  if (%default and 0b0001 != 0) {
+    %dirty = %dirty or 0b0110
+  } else if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(style)) 0b0100 else 0b0010
+  }
+  if (%default and 0b0010 != 0) {
+    %dirty = %dirty or 0b00110000
+  } else if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(onTextLayout)) 0b00100000 else 0b00010000
+  }
+  if (%default and 0b0100 != 0) {
+    %dirty = %dirty or 0b000110000000
+  } else if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(<unsafe-coerce>(overflow))) 0b000100000000 else 0b10000000
+  }
+  if (%dirty and 0b10010011 != 0b10010010 || !%composer.skipping) {
+    if (%default and 0b0001 != 0) {
+      style = Companion.Default
+    }
+    if (%default and 0b0010 != 0) {
+      onTextLayout = { it: TextLayoutResult ->
+      }
+    }
+    if (%default and 0b0100 != 0) {
+      overflow = Companion.Clip
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(style)
+    used(onTextLayout)
+    used(overflow)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    BasicText(style, onTextLayout, overflow, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}

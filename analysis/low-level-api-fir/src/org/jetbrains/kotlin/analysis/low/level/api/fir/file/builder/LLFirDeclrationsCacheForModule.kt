@@ -5,38 +5,21 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
-import com.intellij.concurrency.ConcurrentCollectionFactory
-import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.ThreadSafe
+import com.google.common.collect.MapMaker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtFile
-import java.util.*
-import java.util.concurrent.ConcurrentHashMap
+import org.jetbrains.kotlin.utils.ThreadSafe
+import java.util.concurrent.ConcurrentMap
 
 /**
- * Caches mapping [KtFile] -> [FirFile] of module [KtModule]
+ * Caches the [KtFile] to [FirFile] mapping of a [KaModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaModule].
  */
 @ThreadSafe
 internal abstract class ModuleFileCache {
     abstract val moduleComponents: LLFirModuleResolveComponents
-
-    /**
-     * Maps [ClassId] to corresponding classifiers
-     * If classifier with required [ClassId] is not found in given module then map contains [Optional.EMPTY]
-     */
-    abstract val classifierByClassId: ConcurrentHashMap<ClassId, Optional<FirClassLikeDeclaration>>
-
-    /**
-     * Maps [CallableId] to corresponding callable
-     * If callable with required [CallableId]] is not found in given module then map contains emptyList
-     */
-    abstract val callableByCallableId: ConcurrentHashMap<CallableId, List<FirCallableSymbol<*>>>
 
     /**
      * @return [FirFile] by [file] if it was previously built or runs [createValue] otherwise
@@ -50,11 +33,7 @@ internal abstract class ModuleFileCache {
 }
 
 internal class ModuleFileCacheImpl(override val moduleComponents: LLFirModuleResolveComponents) : ModuleFileCache() {
-    private val ktFileToFirFile = ConcurrentCollectionFactory.createConcurrentIdentityMap<KtFile, FirFile>()
-
-    override val classifierByClassId: ConcurrentHashMap<ClassId, Optional<FirClassLikeDeclaration>> = ConcurrentHashMap()
-    override val callableByCallableId: ConcurrentHashMap<CallableId, List<FirCallableSymbol<*>>> = ConcurrentHashMap()
-
+    private val ktFileToFirFile: ConcurrentMap<KtFile, FirFile> = MapMaker().weakKeys().makeMap()
     override fun fileCached(file: KtFile, createValue: () -> FirFile): FirFile =
         ktFileToFirFile.computeIfAbsent(file) { createValue() }
 

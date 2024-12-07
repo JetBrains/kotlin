@@ -1,3 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +MultiPlatformProjects
+
 // FILE: B.kt
 
 package b.d

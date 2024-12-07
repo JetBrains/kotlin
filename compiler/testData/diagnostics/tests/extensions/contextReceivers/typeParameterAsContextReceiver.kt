@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
 // FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
-// IGNORE_BACKEND_FIR: JVM_IR
+// LANGUAGE: +ContextReceivers
 
 context(T)
 fun <T> useContext(block: (T) -> Unit) { }

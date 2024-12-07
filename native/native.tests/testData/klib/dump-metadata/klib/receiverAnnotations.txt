@@ -1,0 +1,37 @@
+library {
+  // module name: <receiverAnnotations.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+    // class name: test/Ann
+
+    public final class test/A : kotlin/Any {
+
+      public constructor()
+
+      @test/Ann
+      public final fun kotlin/Int.foo(@test/Ann arg: kotlin/Int): kotlin/Int
+
+      @test/Ann
+      public final val kotlin/Int.bar: kotlin/Int
+        public final /* non-default */ get
+    }
+
+    public final annotation class test/Ann : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    package {
+
+      @test/Ann
+      public final fun kotlin/Int.foo(@test/Ann arg: kotlin/Int): kotlin/Int
+
+      @test/Ann
+      public final val kotlin/Int.bar: kotlin/Int
+        public final /* non-default */ get
+    }
+  }
+}

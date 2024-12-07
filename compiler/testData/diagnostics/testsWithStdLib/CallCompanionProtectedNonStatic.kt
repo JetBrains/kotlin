@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class VeryBase {
     protected fun baz() {}
 }

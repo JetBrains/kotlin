@@ -1,0 +1,19 @@
+FILE: dataClassWithAnnotations.kt
+    @Anno(LAZY_EXPRESSION) public final? data class Derived : @Anno(LAZY_EXPRESSION) Base<@Anno(LAZY_EXPRESSION) Nested<@Anno(LAZY_EXPRESSION) NestedNested>> {
+        @Anno(LAZY_EXPRESSION) public? constructor(@Anno(LAZY_EXPRESSION) @CONSTRUCTOR_PARAMETER:Anno(LAZY_EXPRESSION) b: @Anno(LAZY_EXPRESSION) B<@Anno(LAZY_EXPRESSION) BNested<@Anno(LAZY_EXPRESSION) BNestedNested>>, c: @Anno(LAZY_EXPRESSION) C<@Anno(LAZY_EXPRESSION) CNested<@Anno(LAZY_EXPRESSION) CNestedNested>>): R|Derived| {
+            LAZY_super<@Anno(LAZY_EXPRESSION) Base<@Anno(LAZY_EXPRESSION) Nested<@Anno(LAZY_EXPRESSION) NestedNested>>>
+        }
+
+        @Anno(LAZY_EXPRESSION) @PROPERTY:Anno(LAZY_EXPRESSION) public? final? val b: @Anno(LAZY_EXPRESSION) B<@Anno(LAZY_EXPRESSION) BNested<@Anno(LAZY_EXPRESSION) BNestedNested>> = R|<local>/b|
+            @PROPERTY_GETTER:Anno(LAZY_EXPRESSION) public? get(): @Anno(LAZY_EXPRESSION) B<@Anno(LAZY_EXPRESSION) BNested<@Anno(LAZY_EXPRESSION) BNestedNested>>
+
+        public? final? val c: @Anno(LAZY_EXPRESSION) C<@Anno(LAZY_EXPRESSION) CNested<@Anno(LAZY_EXPRESSION) CNestedNested>> = R|<local>/c|
+            public? get(): @Anno(LAZY_EXPRESSION) C<@Anno(LAZY_EXPRESSION) CNested<@Anno(LAZY_EXPRESSION) CNestedNested>>
+
+        public? final operator fun component1(): @Anno(LAZY_EXPRESSION) B<@Anno(LAZY_EXPRESSION) BNested<@Anno(LAZY_EXPRESSION) BNestedNested>>
+
+        public? final operator fun component2(): @Anno(LAZY_EXPRESSION) C<@Anno(LAZY_EXPRESSION) CNested<@Anno(LAZY_EXPRESSION) CNestedNested>>
+
+        public? final fun copy(@Anno(LAZY_EXPRESSION) @Anno(LAZY_EXPRESSION) b: @Anno(LAZY_EXPRESSION) B<@Anno(LAZY_EXPRESSION) BNested<@Anno(LAZY_EXPRESSION) BNestedNested>> = this@R|/Derived|.R|/Derived.b|, c: @Anno(LAZY_EXPRESSION) C<@Anno(LAZY_EXPRESSION) CNested<@Anno(LAZY_EXPRESSION) CNestedNested>> = this@R|/Derived|.R|/Derived.c|): R|Derived|
+
+    }

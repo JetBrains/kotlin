@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.library.metadata
 
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragment
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
@@ -27,8 +28,9 @@ open class KlibMetadataDeserializedPackageFragment(
     private val packageAccessHandler: PackageAccessHandler?,
     storageManager: StorageManager,
     module: ModuleDescriptor,
-    private val partName: String
-) : KlibMetadataPackageFragment(fqName, storageManager, module) {
+    private val partName: String,
+    containerSource: KlibDeserializedContainerSource
+) : KlibMetadataPackageFragment(fqName, storageManager, module, containerSource) {
 
     // The proto field is lazy so that we can load only needed
     // packages from the library.
@@ -58,8 +60,9 @@ class BuiltInKlibMetadataDeserializedPackageFragment(
     packageAccessHandler: PackageAccessHandler?,
     storageManager: StorageManager,
     module: ModuleDescriptor,
-    partName: String
-) : KlibMetadataDeserializedPackageFragment(fqName, library, packageAccessHandler, storageManager, module, partName),
+    partName: String,
+    containerSource: KlibDeserializedContainerSource
+) : KlibMetadataDeserializedPackageFragment(fqName, library, packageAccessHandler, storageManager, module, partName, containerSource),
     BuiltInsPackageFragment {
 
     override val isFallback: Boolean
@@ -72,12 +75,13 @@ class KlibMetadataCachedPackageFragment(
     module: ModuleDescriptor,
     override val protoForNames: ProtoBuf.PackageFragment = parsePackageFragment(byteArray),
     fqName: FqName = FqName(protoForNames.getExtension(KlibMetadataProtoBuf.fqName))
-) :  KlibMetadataPackageFragment(fqName, storageManager, module)
+) : KlibMetadataPackageFragment(fqName, storageManager, module, containerSource = null)
 
 abstract class KlibMetadataPackageFragment(
     fqName: FqName,
     storageManager: StorageManager,
-    module: ModuleDescriptor
+    module: ModuleDescriptor,
+    protected val containerSource: KlibDeserializedContainerSource?
 ) : DeserializedPackageFragment(fqName, storageManager, module) {
 
     lateinit var components: DeserializationComponents
@@ -98,8 +102,10 @@ abstract class KlibMetadataPackageFragment(
     }
 
     override val classDataFinder by lazy {
-        KlibMetadataClassDataFinder(protoForNames, nameResolver)
+        KlibMetadataClassDataFinder(protoForNames, nameResolver, containerSource)
     }
+
+    override fun getSource(): SourceElement = containerSource ?: super.source
 
     private val _memberScope by lazy {
         /* TODO: we fake proto binary versioning for now. */
@@ -108,7 +114,7 @@ abstract class KlibMetadataPackageFragment(
             proto.getPackage(),
             nameResolver,
             KlibMetadataVersion.INSTANCE,
-            /* containerSource = */ null,
+            /* containerSource = */ containerSource,
             components,
             "scope for $this"
         ) { loadClassNames() }

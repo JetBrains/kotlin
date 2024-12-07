@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SCOPE_DUMP: C:foo;getFoo
 // FILE: A.java
 public abstract class A {

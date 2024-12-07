@@ -1,6 +1,6 @@
 package
 
-@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ T> flow(/*0*/ @kotlin.BuilderInference block: suspend FlowCollector<T>.() -> kotlin.Unit): Flow<T>
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ T> flow(/*0*/ block: suspend FlowCollector<T>.() -> kotlin.Unit): Flow<T>
 public fun test(): kotlin.Unit
 
 public interface Flow</*0*/ out T> {

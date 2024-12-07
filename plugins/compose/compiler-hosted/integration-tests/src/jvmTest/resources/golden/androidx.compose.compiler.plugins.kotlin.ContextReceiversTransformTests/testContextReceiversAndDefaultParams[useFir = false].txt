@@ -1,0 +1,100 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+
+
+context(Foo, Bar)
+@Composable
+fun A(a: Int = 1) { }
+
+context(Foo, Bar, FooBar)
+@Composable
+fun B(a: Int, b: String = "", c: Int = 1) { }
+
+context(Foo)
+@Composable
+fun C(a: Int, bar: Bar = Bar()) { }
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun A(%context_receiver_0: Foo, %context_receiver_1: Bar, a: Int, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(A):Test.kt")
+  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (%default and 0b0100 != 0) {
+      a = 1
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    A(%context_receiver_0, %context_receiver_1, a, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}
+@Composable
+fun B(%context_receiver_0: Foo, %context_receiver_1: Bar, %context_receiver_2: FooBar, a: Int, b: String?, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(B):Test.kt")
+  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (%default and 0b00010000 != 0) {
+      b = ""
+    }
+    if (%default and 0b00100000 != 0) {
+      c = 1
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    B(%context_receiver_0, %context_receiver_1, %context_receiver_2, a, b, c, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}
+@Composable
+fun C(%context_receiver_0: Foo, a: Int, bar: Bar?, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(C):Test.kt")
+  val %dirty = %changed
+  if (%dirty and 0b0001 != 0 || !%composer.skipping) {
+    %composer.startDefaults()
+    if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
+      if (%default and 0b0100 != 0) {
+        bar = Bar()
+        %dirty = %dirty and 0b001110000000.inv()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+      if (%default and 0b0100 != 0) {
+        %dirty = %dirty and 0b001110000000.inv()
+      }
+    }
+    %composer.endDefaults()
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    C(%context_receiver_0, a, bar, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}

@@ -1,2 +1,0 @@
-Resolved to:
-0: (in test.WithOperator) operator fun plus(f: test.Foo): test.WithOperator

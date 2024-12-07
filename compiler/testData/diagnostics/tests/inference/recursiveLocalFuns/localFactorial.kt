@@ -1,4 +1,4 @@
-// FIR_IDE_IGNORE
+// RUN_PIPELINE_TILL: FRONTEND
 // See KT-6271
 fun foo() {
     fun fact(n: Int) = {

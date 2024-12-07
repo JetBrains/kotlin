@@ -19,5 +19,5 @@ fun box(): String {
 
     return {
         prop + test()
-    }()
+    }.let { it() }
 }

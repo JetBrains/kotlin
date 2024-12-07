@@ -1,6 +1,0 @@
-language = Objective-C
----
-id getVoidBlockAsId() {
-    void (^result)(void) = ^{};
-    return result;
-}

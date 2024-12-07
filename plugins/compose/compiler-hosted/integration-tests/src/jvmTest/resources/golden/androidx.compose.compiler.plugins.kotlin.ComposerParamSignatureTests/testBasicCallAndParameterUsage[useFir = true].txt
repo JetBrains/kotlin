@@ -1,0 +1,25 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable fun Foo(a: Int, b: String) {
+    print(a)
+    print(b)
+    Bar(a, b)
+}
+
+@Composable fun Bar(a: Int, b: String) {
+    print(a)
+    print(b)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public final class TestKt {
+  public final static Foo(ILjava/lang/String;Landroidx/compose/runtime/Composer;I)V
+  public final static Bar(ILjava/lang/String;Landroidx/compose/runtime/Composer;I)V
+  private final static Foo%lambda%0(ILjava/lang/String;ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static Bar%lambda%1(ILjava/lang/String;ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+}

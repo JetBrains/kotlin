@@ -1,9 +1,10 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 open class B0(x: Int)
 
 class A0 : B0 {
     <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor()<!>
-    constructor(x: Int) : super(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    constructor(x: Int) : super<!NO_VALUE_FOR_PARAMETER!>()<!>
 }
 
 // --------------------------

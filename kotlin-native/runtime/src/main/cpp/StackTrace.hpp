@@ -6,16 +6,19 @@
 #ifndef RUNTIME_STACK_TRACE_H
 #define RUNTIME_STACK_TRACE_H
 
+#include <algorithm>
+#include <string>
+#include <vector>
+
+#include "Common.h"
+#include "Utils.hpp"
 #include "std_support/Span.hpp"
-#include "Memory.h"
-#include "std_support/String.hpp"
-#include "std_support/Vector.hpp"
 
 namespace kotlin {
 
 namespace internal {
 
-NO_INLINE std_support::vector<void*> GetCurrentStackTrace(size_t skipFrames) noexcept;
+NO_INLINE std::vector<void*> GetCurrentStackTrace(size_t skipFrames) noexcept;
 NO_INLINE size_t GetCurrentStackTrace(size_t skipFrames, std_support::span<void*> buffer) noexcept;
 
 enum class StackTraceCapacityKind {
@@ -24,9 +27,7 @@ enum class StackTraceCapacityKind {
 
 template <StackTraceCapacityKind kind>
 constexpr size_t GetMaxStackTraceDepth() noexcept {
-#if KONAN_NO_BACKTRACE
-    return 0;
-#elif USE_GCC_UNWIND
+#if USE_GCC_UNWIND
     return std::numeric_limits<size_t>::max();
 #else
     switch (kind) {
@@ -182,18 +183,18 @@ public:
 
     struct TestSupport : private Pinned {
         static StackTrace constructFrom(std::initializer_list<void*> values) {
-            std_support::vector<void*> traceElements(values);
+            std::vector<void*> traceElements(values);
             return StackTrace(std::move(traceElements));
         }
     };
 
 private:
-    explicit StackTrace(std_support::vector<void*>&& buffer) noexcept : buffer_(buffer) {}
+    explicit StackTrace(std::vector<void*>&& buffer) noexcept : buffer_(buffer) {}
 
-    std_support::vector<void*> buffer_;
+    std::vector<void*> buffer_;
 };
 
-std_support::vector<std_support::string> GetStackTraceStrings(std_support::span<void* const> stackTrace) noexcept;
+std::vector<std::string> GetStackTraceStrings(std_support::span<void* const> stackTrace) noexcept;
 
 // It's not always safe to extract SourceInfo during unhandled exception termination.
 void DisallowSourceInfo();

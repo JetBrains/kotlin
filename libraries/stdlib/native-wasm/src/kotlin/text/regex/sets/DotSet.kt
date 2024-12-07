@@ -22,12 +22,21 @@
 
 package kotlin.text.regex
 
+import kotlin.experimental.ExperimentalNativeApi
+
 /**
  * Node accepting any character except line terminators.
  */
 internal class DotSet(val lt: AbstractLineTerminator, val matchLineTerminator: Boolean)
     : SimpleSet(AbstractSet.TYPE_DOTSET) {
 
+    // This node consumes any character. If the character is supplementary, this node consumes both surrogate chars representing it.
+    // Otherwise, consumes a single char.
+    // Thus, for a given [testString] and [startIndex] a fixed amount of chars are consumed.
+    override val consumesFixedLength: Boolean
+        get() = true
+
+    @OptIn(ExperimentalNativeApi::class)
     override fun matches(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         val rightBound = testString.length
         if (startIndex >= rightBound) {

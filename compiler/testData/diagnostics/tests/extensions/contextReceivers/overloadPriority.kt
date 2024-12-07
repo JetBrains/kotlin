@@ -1,5 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
 // FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 
 class Context
 

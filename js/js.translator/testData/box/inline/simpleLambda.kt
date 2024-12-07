@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1284
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/simple/simpleLambda.1.kt
@@ -19,8 +18,8 @@ public inline fun use2() : Int {
 
 class Z {}
 
-// CHECK_BREAKS_COUNT: function=test1 count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=test1 name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=test1 count=0
+// CHECK_LABELS_COUNT: function=test1 name=$l$block count=0
 fun test1() : Int {
     val input = Z()
     return input.use<Z, Int>{
@@ -28,8 +27,8 @@ fun test1() : Int {
     }
 }
 
-// CHECK_BREAKS_COUNT: function=test2 count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=test2 name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=test2 count=0
+// CHECK_LABELS_COUNT: function=test2 name=$l$block count=0
 fun test2() : Int {
     val x = 1000
     return use2() + x

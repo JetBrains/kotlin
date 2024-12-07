@@ -40,4 +40,5 @@ class IdeSystemOutWrapperReplWriter(standardOut: PrintStream) : PrintStream(stan
     override fun outputCompileError(x: String) = printlnWithEscaping(x, COMPILE_ERROR)
     override fun outputRuntimeError(x: String) = printlnWithEscaping(x, RUNTIME_ERROR)
     override fun sendInternalErrorReport(x: String) = printlnWithEscaping(x, INTERNAL_ERROR)
+    override fun notifyErrorsReported() = printlnWithEscaping("", ERRORS_REPORTED)
 }

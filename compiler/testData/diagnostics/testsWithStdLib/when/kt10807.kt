@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
 import java.util.*
 import kotlin.comparisons.compareBy
 import kotlin.comparisons.nullsLast

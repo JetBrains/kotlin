@@ -1,0 +1,6 @@
+==== INITIAL BUILD ====
+Compiling files:
+  src/Foo.kt
+  src/TypeAlias.kt
+  src/usage.kt
+Exit code: OK

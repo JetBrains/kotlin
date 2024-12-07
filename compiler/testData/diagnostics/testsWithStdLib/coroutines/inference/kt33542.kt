@@ -1,6 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
-// !LANGUAGE: +NewInference
+// OPT_IN: kotlin.RequiresOptIn
 
 import kotlin.experimental.ExperimentalTypeInference
 
@@ -13,7 +13,7 @@ class InImpl<E> : In<E> {
 }
 
 @OptIn(ExperimentalTypeInference::class)
-public fun <T> builder(@BuilderInference block: In<T>.() -> Unit) {
+public fun <T> builder(block: In<T>.() -> Unit) {
     InImpl<T>().block()
 }
 

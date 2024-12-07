@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
-// !LANGUAGE: +ProperTypeInferenceConstraintsProcessing
+// LANGUAGE: +ProperTypeInferenceConstraintsProcessing
 
 class A<T, F : T>
 fun foo(a: A<*, in CharSequence>) {}

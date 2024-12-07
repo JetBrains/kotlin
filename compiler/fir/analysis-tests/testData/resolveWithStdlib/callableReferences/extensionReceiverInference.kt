@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class A
 val <X> X.prop: Int get() = 1
 fun <X> X.baz(): Int = 1

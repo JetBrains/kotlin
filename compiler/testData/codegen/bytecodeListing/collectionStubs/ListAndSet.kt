@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // FULL_JDK
-
 import java.util.*
 
 class ListSet<out E : Any> : List<E>, Set<E> {

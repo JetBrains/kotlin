@@ -8,26 +8,6 @@ package org.jetbrains.kotlin.test.utils
 import org.jetbrains.kotlin.test.directives.model.Directive
 import java.io.File
 
-private const val FIR_KT = ".fir.kt"
-private const val KT = ".kt"
-
-val File.isFirTestData: Boolean
-    get() = name.endsWith(FIR_KT)
-
-val File.originalTestDataFile: File
-    get() = if (isFirTestData) {
-        parentFile.resolve("${name.removeSuffix(FIR_KT)}$KT")
-    } else {
-        this
-    }
-
-val File.firTestDataFile: File
-    get() = if (isFirTestData) {
-        this
-    } else {
-        parentFile.resolve("${name.removeSuffix(KT)}$FIR_KT")
-    }
-
 fun File.withExtension(extension: String): File {
     return withSuffixAndExtension(suffix = "", extension)
 }
@@ -47,6 +27,8 @@ fun File.isDirectiveDefined(directive: String): Boolean = this.useLines { line -
 }
 
 fun File.removeDirectiveFromFile(directive: Directive) {
+    if (!exists()) return
+
     val directiveName = directive.name
     val directiveRegexp = "^// $directiveName(:.*)?$(\n)?".toRegex(RegexOption.MULTILINE)
     val text = readText()

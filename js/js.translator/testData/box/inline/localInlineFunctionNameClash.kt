@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1283
 package foo
 
 // CHECK_CONTAINS_NO_CALLS: myAdd
@@ -7,8 +6,8 @@ internal inline fun run(action: () -> Int): Int {
     return action()
 }
 
-// CHECK_BREAKS_COUNT: function=myAdd count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=myAdd name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=myAdd count=0
+// CHECK_LABELS_COUNT: function=myAdd name=$l$block count=0
 internal fun myAdd(a: Int, b: Int): Int {
     var sum = a + b
 

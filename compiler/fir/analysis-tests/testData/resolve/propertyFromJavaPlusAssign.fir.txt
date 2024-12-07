@@ -1,4 +1,8 @@
 FILE: main.kt
     public final fun test(b: R|B|): R|kotlin/Unit| {
-        R|<local>/b|.R|/B.text| = R|<local>/b|.R|/B.text|.R|kotlin/String.plus|(String())
+         {
+            lval <receiver>: R|B| = R|<local>/b|
+            R|<local>/<receiver>|.R|/B.text| = R|<local>/<receiver>|.R|/B.text|.R|kotlin/String.plus|(String())
+        }
+
     }

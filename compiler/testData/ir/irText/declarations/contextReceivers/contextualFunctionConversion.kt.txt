@@ -1,14 +1,15 @@
-fun withContext(f: @ContextFunctionTypeParams(count = 1) Function1<String, String>): String {
-  return f.invoke(p1 = "OK")
-}
-
-fun callWithContext(f: Function1<String, String>): String {
-  return withContext(f = f)
-}
-
 fun box(): String {
   return callWithContext(f = local fun <anonymous>(s: String): String {
     return s
   }
 )
 }
+
+fun callWithContext(f: Function1<String, String>): String {
+  return withContext(f = f)
+}
+
+fun withContext(f: @ContextFunctionTypeParams(count = 1) Function1<String, String>): String {
+  return f.invoke(p1 = "OK")
+}
+

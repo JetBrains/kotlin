@@ -1,4 +1,5 @@
-// !LANGUAGE: +ContextReceivers
+// FIR_IDENTICAL
+// LANGUAGE: +ContextReceivers
 
 context(T)
 fun <T> useContext(block: (T) -> Unit) { }

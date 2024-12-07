@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun bar(x: Int): RuntimeException = RuntimeException(x.toString())
 
 fun foo() {

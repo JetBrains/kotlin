@@ -1,0 +1,36 @@
+# copy
+../simple/ap
+ap
+
+# copy
+../simple/Test.kt
+Test.kt
+
+# mkdir
+output/ap
+output/stubs
+output/classes
+output/javaClasses
+output/sources
+
+# kotlinc
+@apKotlincArgs.txt
+
+# kapt
+@kaptArgs.txt
+
+# javac
+@javacArgs.txt
+
+# kotlinc
+-language-version 2.0
+-d output/classes
+-cp output/ap:output/classes:output/javaClasses
+Test.kt
+
+# java
+-cp output/classes:output/javaClasses:output/ap:%KOTLIN_STDLIB%
+test.TestKt
+
+# after
+Generated class: generated.Test

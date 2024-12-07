@@ -7,18 +7,19 @@ package org.jetbrains.kotlin.gradle.testing.internal
 
 import org.gradle.api.GradleException
 import org.gradle.api.execution.TaskExecutionGraph
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.*
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.internal.testing.KotlinTestRunnerListener
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.utils.appendLine
-import java.io.File
-import java.net.URI
+import org.jetbrains.kotlin.gradle.utils.toUri
 
 /**
  * Aggregates tests reports for kotlin test tasks added by [registerTestTask].
@@ -42,7 +43,8 @@ import java.net.URI
  * In this case, only topmost aggregate test task will override reporting,
  * event if child tasks will be executed.
  */
-open class KotlinTestReport : TestReport() {
+@DisableCachingByDefault
+abstract class KotlinTestReport : TestReport(), UsesTestReportService {
     @Transient
     @Internal
     val testTasks = mutableListOf<AbstractTestTask>()
@@ -57,12 +59,9 @@ open class KotlinTestReport : TestReport() {
     @Transient
     val children = mutableListOf<TaskProvider<KotlinTestReport>>()
 
-    @Transient
-    private val projectProperties = PropertiesProvider(project)
-
     @get:Input
     val overrideReporting: Boolean by lazy {
-        projectProperties.individualTaskReports == null
+        !PropertiesProvider(project).individualTaskReports
     }
 
     @Input
@@ -71,14 +70,11 @@ open class KotlinTestReport : TestReport() {
     @Input
     var ignoreFailures: Boolean = false
 
-    private val testReportServiceProvider = TestReportService.registerIfAbsent(project.gradle)
     private val testReportService
         get() = testReportServiceProvider.get()
 
     private val hasFailedTests: Boolean
         get() = testReportService.hasFailedTests(path)
-
-    private val failedTestsListener = FailedTestListener(parentPaths, testReportServiceProvider)
 
     private fun computeAllParentTasksPaths(): List<String> {
         val allParents = mutableListOf<String>()
@@ -114,7 +110,7 @@ open class KotlinTestReport : TestReport() {
     fun registerTestTask(task: AbstractTestTask) {
         testTasks.add(task)
 
-        task.addTestListener(failedTestsListener)
+        task.addTestListener(FailedTestListener(task.path, parentPaths, testReportServiceProvider))
         if (task is KotlinTest) {
             val listener = SuppressedTestRunningFailureListener(parentPaths, task.path, testReportServiceProvider)
             task.addRunListener(listener)
@@ -133,15 +129,17 @@ open class KotlinTestReport : TestReport() {
     }
 
     private fun reportOn(task: AbstractTestTask) {
-        reportOn(task.binaryResultsDirectory)
+        testResults.from(task.binaryResultsDirectory)
     }
 
+    @get:Internal
+    abstract val htmlReportFile: RegularFileProperty
+
+    @Suppress("unused")
+    @Deprecated("Use `htmlReportFile` instead", ReplaceWith("htmlReportFile"))
+    @get:Internal
     open val htmlReportUrl: String?
-        @Internal get() = destinationDir?.let { asClickableFileUrl(it.resolve("index.html")) }
-
-    private fun asClickableFileUrl(path: File): String {
-        return URI("file", "", path.toURI().path, null, null).toString()
-    }
+        get() = htmlReportFile.orNull?.toUri().toString()
 
     @TaskAction
     fun checkFailedTests() {
@@ -160,9 +158,8 @@ open class KotlinTestReport : TestReport() {
     private fun getFailingTestsMessage(): String {
         val message = StringBuilder("There were failing tests.")
 
-        val reportUrl = htmlReportUrl
-        if (reportUrl != null) {
-            message.append(" See the report at: $reportUrl")
+        if (htmlReportFile.isPresent) {
+            message.append(" See the report at: ${htmlReportFile.get().toUri()}")
         }
         return message.toString()
     }
@@ -217,31 +214,23 @@ open class KotlinTestReport : TestReport() {
         ignoreFailures = false
         checkFailedTests = true
 
-        disableIndividualTestTaskReportingAndFailing()
+        disableIndividualTestTaskFailing()
     }
 
-    private fun disableIndividualTestTaskReportingAndFailing() {
-        testTasks.forEach {
-            disableTestReporting(it)
+    private fun disableIndividualTestTaskFailing() {
+        testTasks.forEach { task ->
+            task.ignoreFailures = true
+            if (task is KotlinTest) {
+                task.ignoreRunFailures = true
+            }
         }
 
         children.forEach { child ->
             child.configure {
                 it.checkFailedTests = false
-                it.disableIndividualTestTaskReportingAndFailing()
+                it.disableIndividualTestTaskFailing()
             }
         }
-    }
-
-    private fun disableTestReporting(task: AbstractTestTask) {
-        task.ignoreFailures = true
-        if (task is KotlinTest) {
-            task.ignoreRunFailures = true
-        }
-
-        task.reports.html.isEnabled = false
-
-        task.reports.junitXml.isEnabled = false
     }
 
     private class SuppressedTestRunningFailureListener(
@@ -257,6 +246,7 @@ open class KotlinTestReport : TestReport() {
     }
 
     private class FailedTestListener(
+        private val testTaskPath: String,
         private val allListenedTaskParentsPaths: Provider<List<String>>,
         private val testReportServiceProvider: Provider<TestReportService>
     ) : TestListener {
@@ -275,7 +265,7 @@ open class KotlinTestReport : TestReport() {
         private fun reportFailure(result: TestResult) {
             if (result.failedTestCount > 0) {
                 allListenedTaskParentsPaths.get().forEach {
-                    testReportServiceProvider.get().testFailed(it)
+                    testReportServiceProvider.get().testFailed(it, testTaskPath)
                 }
             }
         }

@@ -1,0 +1,91 @@
+KtNameReferenceExpression(38,42): 'main'
+  KtSimpleNameReference:
+    package main
+
+KtNameReferenceExpression(51,54): 'one'
+  KtSimpleNameReference:
+    package one
+
+KtNameReferenceExpression(55,58): 'two'
+  KtSimpleNameReference:
+    package one.two
+
+KtNameReferenceExpression(59,68): 'JavaClass'
+  KtSimpleNameReference:
+    (in one.two) open class JavaClass
+
+KtNameReferenceExpression(69,72): 'foo'
+  KtSimpleNameReference:
+    (in one.two.JavaClass) open fun foo()
+
+KtNameReferenceExpression(80,83): 'one'
+  KtSimpleNameReference:
+    package one
+
+KtNameReferenceExpression(84,87): 'two'
+  KtSimpleNameReference:
+    package one.two
+
+KtNameReferenceExpression(88,97): 'JavaClass'
+  KtSimpleNameReference:
+    (in one.two) open class JavaClass
+
+KtNameReferenceExpression(98,101): 'bar'
+  KtSimpleNameReference:
+    (in one.two.JavaClass) var bar: kotlin.Int
+
+KtNameReferenceExpression(110,113): 'one'
+  KtSimpleNameReference:
+    package one
+
+KtNameReferenceExpression(114,117): 'two'
+  KtSimpleNameReference:
+    package one.two
+
+KtNameReferenceExpression(118,127): 'JavaClass'
+  KtSimpleNameReference:
+    (in one.two) open class JavaClass
+
+KtNameReferenceExpression(128,139): 'NestedClass'
+  KtSimpleNameReference:
+    (in one.two.JavaClass) open class NestedClass
+
+KtNameReferenceExpression(147,150): 'one'
+  KtSimpleNameReference:
+    package one
+
+KtNameReferenceExpression(151,154): 'two'
+  KtSimpleNameReference:
+    package one.two
+
+KtNameReferenceExpression(155,164): 'JavaClass'
+  KtSimpleNameReference:
+    (in one.two) open class JavaClass
+
+KtNameReferenceExpression(165,176): 'NestedClass'
+  KtSimpleNameReference:
+    (in one.two.JavaClass) open class NestedClass
+
+KtNameReferenceExpression(177,180): 'foo'
+  KtSimpleNameReference:
+    (in one.two.JavaClass.NestedClass) open fun foo()
+
+KtNameReferenceExpression(188,191): 'one'
+  KtSimpleNameReference:
+    package one
+
+KtNameReferenceExpression(192,195): 'two'
+  KtSimpleNameReference:
+    package one.two
+
+KtNameReferenceExpression(196,205): 'JavaClass'
+  KtSimpleNameReference:
+    (in one.two) open class JavaClass
+
+KtNameReferenceExpression(206,217): 'NestedClass'
+  KtSimpleNameReference:
+    (in one.two.JavaClass) open class NestedClass
+
+KtNameReferenceExpression(218,221): 'bar'
+  KtSimpleNameReference:
+    (in one.two.JavaClass.NestedClass) var bar: kotlin.Int

@@ -146,8 +146,12 @@ fun configureConstructorArgsFromMainArgs(context: ScriptEvaluationConfigurationR
     return res.asSuccess()
 }
 
-class MainKtsConfigurator : RefineScriptCompilationConfigurationHandler {
-    private val resolver = CompoundDependenciesResolver(FileSystemDependenciesResolver(), MavenDependenciesResolver())
+class MainKtsConfigurator(
+    private val resolver: ExternalDependenciesResolver = CompoundDependenciesResolver(FileSystemDependenciesResolver(), MavenDependenciesResolver()),
+) : RefineScriptCompilationConfigurationHandler, ConfiguratorWithDependencyResolver<MainKtsConfigurator> {
+
+    override fun transformResolver(transform: (ExternalDependenciesResolver) -> ExternalDependenciesResolver) =
+        MainKtsConfigurator(transform(resolver))
 
     override operator fun invoke(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> =
         processAnnotations(context)

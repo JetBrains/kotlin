@@ -107,7 +107,7 @@ public class CallTransformer {
             this.explicitExtensionReceiver = explicitExtensionReceiver;
             this.calleeExpressionAsDispatchReceiver = calleeExpressionAsDispatchReceiver;
             this.fakeInvokeExpression =
-                    (KtSimpleNameExpression) KtPsiFactoryKt.KtPsiFactory(call.getCallElement(), false)
+                    (KtSimpleNameExpression) new KtPsiFactory(call.getCallElement().getProject(), false)
                             .createExpression(OperatorNameConventions.INVOKE.asString());
             itIsVariableAsFunctionCall = functionCall;
         }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class StringBuilder {
     fun append(s: String) {}
 }

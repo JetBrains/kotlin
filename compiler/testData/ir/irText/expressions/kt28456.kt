@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class A
 
 operator fun A.get(vararg xs: Int) = 0

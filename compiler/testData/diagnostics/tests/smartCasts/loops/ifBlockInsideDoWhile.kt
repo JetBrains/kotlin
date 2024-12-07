@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 public fun foo(p: String?, y: String?): Int {
     do {
         // After the check, smart cast should work

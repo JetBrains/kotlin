@@ -6,17 +6,21 @@
 package org.jetbrains.kotlin.gradle.report
 
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
-import org.jetbrains.kotlin.incremental.ChangedFiles
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.build.report.statistics.StatTag
+import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 
 internal class TaskExecutionResult(
-    val buildMetrics: BuildMetrics,
+    val buildMetrics: BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>,
     val taskInfo: TaskExecutionInfo = TaskExecutionInfo(),
     val icLogLines: List<String> = emptyList()
 )
 
 internal class TaskExecutionInfo(
-    val changedFiles: ChangedFiles? = null,
+    val kotlinLanguageVersion: KotlinVersion? = null,
+    val changedFiles: SourcesChanges? = null,
     val compilerArguments: Array<String> = emptyArray(),
-    val withArtifactTransform: Boolean? = false,
-    val withAbiSnapshot: Boolean? = false
+    val tags: Set<StatTag> = emptySet(),
 )

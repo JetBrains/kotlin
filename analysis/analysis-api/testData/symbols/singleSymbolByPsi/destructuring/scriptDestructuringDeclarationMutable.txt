@@ -1,0 +1,16 @@
+KaDestructuringDeclarationSymbol:
+  annotations: []
+  compilerVisibility: Local
+  entries: [
+    KaKotlinPropertySymbol(/a)
+    KaKotlinPropertySymbol(/b)
+  ]
+  isActual: false
+  isExpect: false
+  location: LOCAL
+  modality: FINAL
+  origin: SOURCE
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(scriptDestructuringDeclarationMutable.kts)
+  getContainingModule: KaScriptModule "Script scriptDestructuringDeclarationMutable.kts"
+  deprecationStatus: null

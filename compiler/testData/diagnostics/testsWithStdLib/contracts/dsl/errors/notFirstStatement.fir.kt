@@ -1,36 +1,37 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -UNUSED_VARIABLE -REDUNDANT_LABEL_WARNING -UNUSED_PARAMETER -NOTHING_TO_INLINE -CAST_NEVER_SUCCEEDS
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -UNUSED_VARIABLE -REDUNDANT_LABEL_WARNING -UNUSED_PARAMETER -NOTHING_TO_INLINE -CAST_NEVER_SUCCEEDS
 // Issues: KT-26153, KT-26191
 
 import kotlin.contracts.*
 
 fun foo(y: Boolean) {
     val x: Int = 42
-    contract {
+    <!CONTRACT_NOT_ALLOWED("Contract should be the first statement.")!>contract<!> {
         returns() implies y
     }
 }
 
 inline fun case1(block: () -> Unit) {
     val contracts = listOf(
-        contract {
+        <!CONTRACT_NOT_ALLOWED!>contract<!> {
             callsInPlace(<!USAGE_IS_NOT_INLINABLE!>block<!>, InvocationKind.EXACTLY_ONCE)
-        }, contract {
+        }, <!CONTRACT_NOT_ALLOWED!>contract<!> {
             callsInPlace(<!USAGE_IS_NOT_INLINABLE!>block<!>, InvocationKind.EXACTLY_ONCE)
         }
     )
     block()
 }
 
-inline fun case_2(block: () -> Unit) = contract {
+inline fun case_2(block: () -> Unit) = <!CONTRACT_NOT_ALLOWED("Contracts are only allowed in function body blocks.")!>contract<!> {
     callsInPlace(<!USAGE_IS_NOT_INLINABLE!>block<!>, InvocationKind.EXACTLY_ONCE)
 }
 
 fun case_3(block: () -> Unit) {
     class Class {
         fun innerFun(block2: () -> Unit) {
-            contract {
+            <!CONTRACT_NOT_ALLOWED("Contracts are not allowed for local functions.")!>contract<!> {
                 callsInPlace(block2, InvocationKind.EXACTLY_ONCE)
             }
             block2()
@@ -41,7 +42,7 @@ fun case_3(block: () -> Unit) {
 
 inline fun case_4(number: Int?): Boolean {
     val cond = number != null
-    contract {
+    <!CONTRACT_NOT_ALLOWED!>contract<!> {
         returns(false) implies (cond)
     } as ContractBuilder
     return number == null
@@ -49,7 +50,7 @@ inline fun case_4(number: Int?): Boolean {
 
 inline fun case_5(cond: Boolean): Boolean {
     run {
-        contract {
+        <!CONTRACT_NOT_ALLOWED!>contract<!> {
             returns(true) implies (cond)
         }
     }
@@ -59,7 +60,7 @@ inline fun case_5(cond: Boolean): Boolean {
 inline fun case_6(cond: Boolean): Boolean {
     run {
         val x = 10
-        contract {
+        <!CONTRACT_NOT_ALLOWED!>contract<!> {
             returns(true) implies (cond)
         }
     }
@@ -68,7 +69,7 @@ inline fun case_6(cond: Boolean): Boolean {
 
 fun case_7(cond: Boolean): Boolean {
     fun innerFun() {
-        contract {
+        <!CONTRACT_NOT_ALLOWED!>contract<!> {
             returns(true) implies (cond)
         }
     }

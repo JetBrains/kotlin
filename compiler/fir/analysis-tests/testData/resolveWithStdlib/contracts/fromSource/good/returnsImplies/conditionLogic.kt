@@ -1,4 +1,5 @@
-// !OPT_IN: kotlin.RequiresOptIn
+// RUN_PIPELINE_TILL: BACKEND
+// OPT_IN: kotlin.RequiresOptIn
 import kotlin.contracts.*
 
 @OptIn(ExperimentalContracts::class)
@@ -13,7 +14,7 @@ fun test1(x: String?): Any? {
 @OptIn(ExperimentalContracts::class)
 fun test2(x: String?): Any? {
     contract {
-        returnsNotNull() implies (x is String && x != null)
+        returnsNotNull() implies (x is String)
     }
 
     return x
@@ -22,7 +23,7 @@ fun test2(x: String?): Any? {
 @OptIn(ExperimentalContracts::class)
 fun test3(x: String?): Any? {
     contract {
-        returnsNotNull() implies (x is String? || x is Any?)
+        returnsNotNull() implies (x !is String)
     }
 
     return x

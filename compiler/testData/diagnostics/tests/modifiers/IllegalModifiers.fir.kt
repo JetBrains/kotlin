@@ -1,4 +1,5 @@
-@<!UNRESOLVED_REFERENCE!><!SYNTAX!><!>myAnnotation<!> public
+// RUN_PIPELINE_TILL: FRONTEND
+@<!UNRESOLVED_REFERENCE!><!SYNTAX!><!>myAnnotation<!> <!WRONG_MODIFIER_TARGET!>public<!>
 package illegal_modifiers
 
 abstract class A() {
@@ -6,7 +7,7 @@ abstract class A() {
     abstract <!REDUNDANT_MODIFIER!>open<!> fun g()
     <!INCOMPATIBLE_MODIFIERS!>final<!> <!INCOMPATIBLE_MODIFIERS!>open<!> fun h() {}
 
-    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>open var r: String<!>
+    open <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var r: String<!>
         get
         <!WRONG_MODIFIER_TARGET!>abstract<!> protected set
 }
@@ -85,9 +86,9 @@ abstract class IllegalModifiers6() {
     <!WRONG_MODIFIER_TARGET!>open<!> init {}
     <!WRONG_MODIFIER_TARGET!>final<!> init {}
 
-    <!WRONG_MODIFIER_TARGET!>public<!> @annotated init {}
+    <!WRONG_MODIFIER_TARGET!>public<!> <!WRONG_ANNOTATION_TARGET!>@annotated<!> init {}
 
-    <!WRONG_MODIFIER_TARGET!>private<!> @IllegalModifiers6() init {}
+    <!WRONG_MODIFIER_TARGET!>private<!> <!WRONG_ANNOTATION_TARGET!>@<!NOT_AN_ANNOTATION_CLASS!>IllegalModifiers6<!>()<!> init {}
 }
 
 // strange inappropriate modifiers usages

@@ -5,27 +5,20 @@
 
 package org.jetbrains.kotlin.noarg
 
-import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractDiagnosticTest
-import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTest
+import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
 import org.jetbrains.kotlin.test.runners.codegen.*
 import org.jetbrains.kotlin.test.runners.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
 // ---------------------------- codegen ----------------------------
-
-open class AbstractBlackBoxCodegenTestForNoArg : AbstractBlackBoxCodegenTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.enableNoArg()
-    }
-}
 
 open class AbstractIrBlackBoxCodegenTestForNoArg : AbstractIrBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -34,7 +27,7 @@ open class AbstractIrBlackBoxCodegenTestForNoArg : AbstractIrBlackBoxCodegenTest
     }
 }
 
-open class AbstractFirBlackBoxCodegenTestForNoArg : AbstractFirBlackBoxCodegenTest() {
+open class AbstractFirLightTreeBlackBoxCodegenTestForNoArg : AbstractFirLightTreeBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.enableNoArg()
@@ -43,13 +36,6 @@ open class AbstractFirBlackBoxCodegenTestForNoArg : AbstractFirBlackBoxCodegenTe
 
 // ---------------------------- bytecode ----------------------------
 
-open class AbstractBytecodeListingTestForNoArg : AbstractBytecodeListingTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.enableNoArg()
-    }
-}
-
 open class AbstractIrBytecodeListingTestForNoArg : AbstractIrBytecodeListingTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
@@ -57,7 +43,7 @@ open class AbstractIrBytecodeListingTestForNoArg : AbstractIrBytecodeListingTest
     }
 }
 
-open class AbstractFirBytecodeListingTestForNoArg : AbstractFirBytecodeListingTest() {
+open class AbstractFirLightTreeBytecodeListingTestForNoArg : AbstractFirLightTreeBytecodeListingTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.enableNoArg()
@@ -73,7 +59,7 @@ abstract class AbstractDiagnosticsTestForNoArg : AbstractDiagnosticTest() {
     }
 }
 
-abstract class AbstractFirDiagnosticsTestForNoArg : AbstractFirDiagnosticTest() {
+abstract class AbstractFirPsiDiagnosticsTestForNoArg : AbstractFirPsiDiagnosticTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configurationForClassicAndFirTestsAlongside()
@@ -94,13 +80,11 @@ class NoArgEnvironmentConfigurator(testServices: TestServices) : EnvironmentConf
 
     override val directiveContainers: List<DirectivesContainer> = listOf(NoArgDirectives)
 
-    override fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
-        NoArgComponentRegistrar.registerNoArgComponents(
-            project,
-            NOARG_ANNOTATIONS,
-            useIr = module.targetBackend?.isIR == true,
-            invokeInitializers = NoArgDirectives.INVOKE_INITIALIZERS in module.directives
-        )
+    override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
+        module: TestModule,
+        configuration: CompilerConfiguration
+    ) {
+        NoArgComponentRegistrar.registerNoArgComponents(this, NOARG_ANNOTATIONS, NoArgDirectives.INVOKE_INITIALIZERS in module.directives)
     }
 }
 

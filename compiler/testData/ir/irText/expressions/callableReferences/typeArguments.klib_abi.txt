@@ -1,0 +1,17 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final object /Host { // /Host|null[0]
+    final inline fun <#A1: reified kotlin/Any?> objectMember(#A1) // /Host.objectMember|objectMember(0:0){0§<kotlin.Any?>}[0]
+}
+final val /test1 // /test1|{}test1[0]
+    final fun <get-test1>(): kotlin/Function1<kotlin/Int, kotlin/Unit> // /test1.<get-test1>|<get-test1>(){}[0]
+final val /test2 // /test2|{}test2[0]
+    final fun <get-test2>(): kotlin/Function1<kotlin.collections/List<kotlin/String>, kotlin/Unit> // /test2.<get-test2>|<get-test2>(){}[0]
+final val /test3 // /test3|{}test3[0]
+    final fun <get-test3>(): kotlin/Function1<kotlin/Int, kotlin/Unit> // /test3.<get-test3>|<get-test3>(){}[0]
+final inline fun <#A: reified kotlin/Any?> /topLevel1(#A) // /topLevel1|topLevel1(0:0){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> /topLevel2(kotlin.collections/List<#A>) // /topLevel2|topLevel2(kotlin.collections.List<0:0>){0§<kotlin.Any?>}[0]

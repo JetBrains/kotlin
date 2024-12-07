@@ -70,8 +70,8 @@ public open class RangeIterationTestBase {
             else -> throw IllegalArgumentException("Unsupported sequence type: $sequence")
         }
 
-        assertEquals(expectedFirst, first)
-        assertEquals(expectedLast, last)
+        assertEquals<Any>(expectedFirst, first)
+        assertEquals<Any>(expectedLast, last)
         assertEquals(expectedIncrement, increment)
 
         assertEquals(expectedElements.isEmpty(), sequence.none())
@@ -166,6 +166,19 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest(1u.toUByte() until 5u.toUByte(), 1u, 4u, 1, listOf(1u, 2u, 3u, 4u))
         doTest(1u.toUShort() until 5u.toUShort(), 1u, 4u, 1, listOf(1u, 2u, 3u, 4u))
         doTest(1uL until 5uL, 1uL, 4uL, 1L, listOf<ULong>(1u, 2u, 3u, 4u))
+    }
+
+    @Test fun openRangeUntil() {
+        doTest(1..<5, 1, 4, 1, listOf(1, 2, 3, 4))
+        doTest(1.toByte()..<5.toByte(), 1, 4, 1, listOf(1, 2, 3, 4))
+        doTest(1.toShort()..<5.toShort(), 1, 4, 1, listOf(1, 2, 3, 4))
+        doTest(1L..<5L, 1L, 4L, 1L, listOf<Long>(1, 2, 3, 4))
+        doTest('a'..<'d', 'a', 'c', 1, listOf('a', 'b', 'c'))
+
+        doTest(1u..<5u, 1u, 4u, 1, listOf(1u, 2u, 3u, 4u))
+        doTest(1u.toUByte()..<5u.toUByte(), 1u, 4u, 1, listOf(1u, 2u, 3u, 4u))
+        doTest(1u.toUShort()..<5u.toUShort(), 1u, 4u, 1, listOf(1u, 2u, 3u, 4u))
+        doTest(1uL..<5uL, 1uL, 4uL, 1L, listOf<ULong>(1u, 2u, 3u, 4u))
     }
 
 
@@ -475,6 +488,11 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest(0 until MinI step 3, 1, 0, 3, listOf())
         doTest(0L until MinL step 3, 1L, 0L, 3L, listOf())
 
+        doTest(0.toByte()..<MinB step 3, 0, MinB.toInt() - 1, 3, listOf())
+        doTest(0.toShort()..<MinS step 3, 0, MinS.toInt() - 1, 3, listOf())
+        doTest(0..<MinI step 3, 1, 0, 3, listOf())
+        doTest(0L..<MinL step 3, 1L, 0L, 3L, listOf())
+
         // 1u as used as a start since min value is 0u for unsigned types
         doTest(1u.toUByte()..MinUB step 3, 1u, MinUB.toUInt(), 3, listOf())
         doTest(1u.toUShort()..MinUS step 3, 1u, MinUS.toUInt(), 3, listOf())
@@ -485,6 +503,11 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest(1u.toUShort() until MinUS step 3, MaxUI, MinUI, 3, listOf())
         doTest(1u until MinUI step 3, MaxUI, MinUI, 3, listOf())
         doTest(1uL until MinUL step 3, MaxUL, MinUL, 3L, listOf())
+
+        doTest(1u.toUByte()..<MinUB step 3, MaxUI, MinUI, 3, listOf())
+        doTest(1u.toUShort()..<MinUS step 3, MaxUI, MinUI, 3, listOf())
+        doTest(1u..<MinUI step 3, MaxUI, MinUI, 3, listOf())
+        doTest(1uL..<MinUL step 3, MaxUL, MinUL, 3L, listOf())
     }
 
     @Test fun progressionDownToMinValue() {

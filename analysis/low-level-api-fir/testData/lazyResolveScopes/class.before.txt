@@ -1,0 +1,10 @@
+public final [ResolvedTo(STATUS)] fun function([ResolvedTo(STATUS)] i: R|kotlin/Int|): <implicit> { LAZY_BLOCK }
+
+public final [ResolvedTo(STATUS)] val property: <implicit> = LAZY_EXPRESSION
+    public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] get(): <implicit>
+
+public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|
+
+public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String|

@@ -1,0 +1,25 @@
+// FILE: a.kt
+
+fun main() {
+  println(message = "main() in a.kt")
+}
+
+// FILE: b.kt
+
+fun main() {
+  println(message = "main() in b.kt")
+}
+
+// FILE: c.kt
+package foo
+
+fun main() {
+  println(message = "foo.main() in c.kt")
+}
+
+// FILE: d.kt
+package foo
+
+fun main() {
+  println(message = "foo.main() in d.kt")
+}

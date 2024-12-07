@@ -4,27 +4,31 @@ enum class Order {
   THIRD
 }
 
-enum class Planet {
-  EARTH,
-  MERCURY,
-  VENERA;
-
-  constructor(m: Double, r: Double)
-
-  val g: Double
-
-  val m: Double
-
-  internal val r: Double
+enum class Planet(m: Double, r: Double) {
+  EARTH {
+    override fun sayHello()
+  },
+  MERCURY {
+    override fun sayHello()
+  },
+  VENERA {
+    override fun sayHello()
+  };
 
   abstract fun sayHello()
 
   companion object {
     const val G: Double
   }
+
+  internal val r: Double
+
+  val g: Double
+
+  val m: Double
 }
 
-enum class PseudoInsn {
+enum class PseudoInsn(signature: String) {
   AS_NOT_NULL,
   FAKE_ALWAYS_FALSE_IFEQ,
   FAKE_ALWAYS_TRUE_IFEQ,
@@ -33,10 +37,8 @@ enum class PseudoInsn {
   SAVE_STACK_BEFORE_TRY,
   STORE_NOT_NULL;
 
-  constructor(signature: String = ...)
+  fun emit()
 
   val signature: String
-
-  fun emit()
 }
 

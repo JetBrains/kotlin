@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.test.fixes.android.fixes
 
-import com.android.build.gradle.*
+import com.android.build.api.dsl.*
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -22,19 +22,25 @@ import org.jetbrains.kotlin.gradle.test.fixes.android.TestFixesProperties
 internal fun Project.applyDebugKeystoreFix(
     testFixesProperties: TestFixesProperties
 ) {
-    plugins.withId("com.android.application", fix<AppExtension>(testFixesProperties))
+    plugins.withId("com.android.application", fix<ApplicationExtension>(testFixesProperties))
     plugins.withId("com.android.library", fix<LibraryExtension>(testFixesProperties))
-    plugins.withId("com.android.feature", fix<FeatureExtension>(testFixesProperties))
     plugins.withId("com.android.test", fix<TestExtension>(testFixesProperties))
 }
 
-private inline fun <reified AndroidExtension : BaseExtension> Project.fix(
+private inline fun <reified AndroidExtension : CommonExtension<*, *, *, *>> Project.fix(
     testFixesProperties: TestFixesProperties
 ): Action<Plugin<*>> = Action {
     extensions.configure<AndroidExtension> {
         logger.info("Reconfiguring Android debug keystore")
-        buildTypes.named("debug") {
-            it.signingConfig?.storeFile = file(testFixesProperties.androidDebugKeystoreLocation)
+        buildTypes.named("debug") { buildType ->
+            val signingConfig = when (buildType) {
+                is ApplicationBuildType -> buildType.signingConfig
+                is LibraryBuildType -> buildType.signingConfig
+                is TestBuildType -> buildType.signingConfig
+                else -> null
+            }
+
+            signingConfig?.storeFile = file(testFixesProperties.androidDebugKeystoreLocation)
         }
     }
 }

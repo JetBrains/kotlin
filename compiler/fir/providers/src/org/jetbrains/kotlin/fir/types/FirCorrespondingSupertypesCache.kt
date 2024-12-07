@@ -8,19 +8,25 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.CaptureStatus
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 @ThreadSafeMutableState
 class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSessionComponent {
-    private val cache = HashMap<ConeClassLikeLookupTag, Map<ConeClassLikeLookupTag, List<ConeClassLikeType>>?>(1000, 0.5f)
+    private val cache =
+        session.firCachesFactory.createCache<ConeClassLikeLookupTag, Map<ConeClassLikeLookupTag, List<ConeClassLikeType>>?, TypeCheckerState>(
+            initialCapacity = 1000,
+            loadFactor = 0.5f
+        ) { lookupTag, typeCheckerState ->
+            computeSupertypesMap(lookupTag, typeCheckerState)
+        }
 
     fun getCorrespondingSupertypes(
         type: ConeKotlinType,
@@ -36,11 +42,9 @@ class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSess
 
         val lookupTag = type.lookupTag
         if (lookupTag == supertypeConstructor) return listOf(captureType(type, typeContext))
-        if (lookupTag !in cache) {
-            cache[lookupTag] = computeSupertypesMap(lookupTag, typeCheckerState)
-        }
 
-        val resultTypes = cache[lookupTag]?.getOrDefault(supertypeConstructor, emptyList()) ?: return null
+        val resultTypes =
+            cache.getValue(lookupTag, typeCheckerState)?.getOrDefault(supertypeConstructor, emptyList()) ?: return null
         if (type.typeArguments.isEmpty()) return resultTypes
 
         val capturedType = captureType(type, typeContext)
@@ -63,9 +67,8 @@ class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSess
 
         val defaultType = subtypeLookupTag.constructClassType(
             (subtypeFirClass as? FirTypeParameterRefsOwner)?.typeParameters?.map {
-                it.symbol.toLookupTag().constructType(emptyArray(), isNullable = false)
+                it.symbol.toLookupTag().constructType()
             }?.toTypedArray().orEmpty(),
-            isNullable = false
         )
 
         if (state.anySupertype(
@@ -82,7 +85,7 @@ class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSess
     }
 
     private fun computeSupertypePolicyAndPutInMap(
-        supertype: SimpleTypeMarker,
+        supertype: RigidTypeMarker,
         resultingMap: MutableMap<ConeClassLikeLookupTag, MutableList<ConeClassLikeType>>,
         state: TypeCheckerState
     ): TypeCheckerState.SupertypesPolicy {

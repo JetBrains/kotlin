@@ -423,8 +423,9 @@ KtFile: CommentsBinding.kt
     PsiWhiteSpace('\n  ')
     PROPERTY_ACCESSOR
       PsiElement(get)('get')
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
@@ -435,11 +436,11 @@ KtFile: CommentsBinding.kt
     PsiWhiteSpace('\n  ')
     PROPERTY_ACCESSOR
       PsiElement(set)('set')
-      PsiElement(LPAR)('(')
       VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
         VALUE_PARAMETER
           PsiElement(IDENTIFIER)('value')
-      PsiElement(RPAR)(')')
+        PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       BLOCK
         PsiElement(LBRACE)('{')
@@ -462,11 +463,12 @@ KtFile: CommentsBinding.kt
       PsiElement(get)('get')
       PsiErrorElement:Accessor body expected
         <empty list>
-      PsiErrorElement:Expecting '('
-        <empty list>
-      PsiErrorElement:Expecting ')'
-        <empty list>
       PsiWhiteSpace(' ')
+      VALUE_PARAMETER_LIST
+        PsiErrorElement:Expecting '('
+          <empty list>
+        PsiErrorElement:Expecting ')'
+          <empty list>
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
       INTEGER_CONSTANT
@@ -491,8 +493,9 @@ KtFile: CommentsBinding.kt
       PsiComment(EOL_COMMENT)('// this comment is for getter')
       PsiWhiteSpace('\n    ')
       PsiElement(get)('get')
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(EQ)('=')
       PsiWhiteSpace(' ')
@@ -503,11 +506,11 @@ KtFile: CommentsBinding.kt
       PsiComment(EOL_COMMENT)('// this comment is for setter')
       PsiWhiteSpace('\n    ')
       PsiElement(set)('set')
-      PsiElement(LPAR)('(')
       VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
         VALUE_PARAMETER
           PsiElement(IDENTIFIER)('value')
-      PsiElement(RPAR)(')')
+        PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       BLOCK
         PsiElement(LBRACE)('{')

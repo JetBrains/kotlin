@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 class A<T> {
     class Nested<N>
@@ -15,8 +16,8 @@ val n1 = A.Nested::class
 val n2 = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>A.Nested<*>::class<!>
 
 val i1 = A.Inner::class
-val i2 = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>A<*>.Inner<*>::class<!>
-val i3 = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>A<Int>.Inner<CharSequence>::class<!>
+val i2 = A<*>.Inner<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><*><!>::class
+val i3 = A<Int>.Inner<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><CharSequence><!>::class
 
 val m1 = Map::class
 val m2 = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>Map<Int, *>::class<!>

@@ -1,6 +1,0 @@
-KT element: KtEnumEntry
-FIR element: FirEnumEntryImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-public final static enum entry ENTRY: R|X|

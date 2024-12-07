@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
-// !LANGUAGE: -SafeCallsAreAlwaysNullable
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -SafeCallsAreAlwaysNullable
 // http://youtrack.jetbrains.net/issue/KT-418
 
 fun ff() {

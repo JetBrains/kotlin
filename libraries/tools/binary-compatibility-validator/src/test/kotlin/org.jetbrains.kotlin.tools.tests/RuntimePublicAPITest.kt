@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.tools.tests
 
-import kotlinx.validation.api.*
+import kotlinx.validation.api.filterOutAnnotated
+import kotlinx.validation.api.filterOutNonPublic
+import kotlinx.validation.api.loadApiFromJvmClasses
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestName
@@ -18,7 +20,7 @@ class RuntimePublicAPITest {
     val testName = TestName()
 
     @Test fun kotlinStdlibRuntimeMerged() {
-        snapshotAPIAndCompare("../../stdlib/jvm/build/libs", "kotlin-stdlib", listOf("kotlin.jvm.internal"))
+        snapshotAPIAndCompare("../../stdlib/build/libs", "kotlin-stdlib", listOf("kotlin.jvm.internal"))
     }
 
     @Test fun kotlinStdlibJdk7() {
@@ -33,24 +35,6 @@ class RuntimePublicAPITest {
         snapshotAPIAndCompare("../../reflect/api/build/libs", "kotlin-reflect-api(?!-[-a-z]+)", nonPublicPackages = listOf("kotlin.reflect.jvm.internal"))
     }
 
-    @Test fun kotlinGradlePluginIdea() {
-        snapshotAPIAndCompare(
-            "../kotlin-gradle-plugin-idea/build/libs", "kotlin-gradle-plugin-idea(?!-[-a-z]+)",
-            nonPublicAnnotations = listOf("org/jetbrains/kotlin/gradle/kpm/idea/InternalKotlinGradlePluginApi")
-        )
-    }
-
-    @Test fun kotlinGradlePluginIdeaProto() {
-        snapshotAPIAndCompare(
-            "../kotlin-gradle-plugin-idea-proto/build/libs", "kotlin-gradle-plugin-idea-proto-api(?!-[-a-z]+)",
-            nonPublicAnnotations = listOf("org/jetbrains/kotlin/gradle/kpm/idea/InternalKotlinGradlePluginApi")
-        )
-    }
-
-    @Test fun kotlinToolingCore() {
-        snapshotAPIAndCompare("../kotlin-tooling-core/build/libs", "kotlin-tooling-core(?!-[-a-z]+)")
-    }
-
     private fun snapshotAPIAndCompare(
         basePath: String,
         jarPattern: String,
@@ -59,12 +43,11 @@ class RuntimePublicAPITest {
         nonPublicAnnotations: List<String> = emptyList()
     ) {
         val base = File(basePath).absoluteFile.normalize()
-        val jarFile = getJarPath(base, jarPattern, System.getProperty("kotlinVersion"))
+        val jarFile = getJarFile(base, jarPattern, System.getProperty("kotlinVersion"))
 
         val publicPackagePrefixes = publicPackages.map { it.replace('.', '/') + '/' }
         val publicPackageFilter = { className: String -> publicPackagePrefixes.none { className.startsWith(it) } }
 
-        println("Reading binary API from $jarFile")
         val api = JarFile(jarFile).loadApiFromJvmClasses(publicPackageFilter)
             .filterOutNonPublic(nonPublicPackages)
             .filterOutAnnotated(nonPublicAnnotations.toSet())
@@ -75,16 +58,7 @@ class RuntimePublicAPITest {
         api.dumpAndCompareWith(target)
     }
 
-    private fun getJarPath(base: File, jarPattern: String, kotlinVersion: String?): File {
-        val versionPattern = kotlinVersion?.let { "-" + Regex.escape(it) } ?: ".+"
-        val regex = Regex(jarPattern + versionPattern + "\\.jar")
-        val files = (base.listFiles() ?: throw Exception("Cannot list files in $base"))
-            .filter { it.name.let {
-                    it matches regex
-                            && !it.endsWith("-sources.jar")
-                            && !it.endsWith("-javadoc.jar") } }
-
-        return files.singleOrNull() ?: throw Exception("No single file matching $regex in $base:\n${files.joinToString("\n")}")
-    }
+    private fun getJarFile(base: File, jarPattern: String, kotlinVersion: String?): File =
+        getLibFile(base, jarPattern, kotlinVersion, "jar")
 
 }

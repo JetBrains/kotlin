@@ -8,7 +8,12 @@ package org.jetbrains.kotlin.resolve.checkers
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.name.FqName
 
-data class OptInDescription(val annotationFqName: FqName, val severity: Severity, val message: String?) {
+data class OptInDescription(
+    val annotationFqName: FqName,
+    val severity: Severity,
+    val message: String?,
+    val subclassesOnly: Boolean,
+) {
     enum class Severity { WARNING, ERROR, FUTURE_ERROR }
 
     companion object {

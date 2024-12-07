@@ -1,0 +1,24 @@
+STEP 0:
+    modifications:
+        U : classA.0.kt -> classA.kt
+        U : interface.0.kt -> interface.kt
+    added file: classA.kt, interface.kt
+STEP 1:
+    modifications:
+        U : classA.1.kt -> classA.kt
+    modified ir: classA.kt
+STEP 2:
+    modifications:
+        U : interface.2.kt -> interface.kt
+    modified ir: interface.kt
+    updated exports: interface.kt
+    updated imports: classA.kt
+STEP 3:
+STEP 4:
+    modifications:
+        U : interface.4.kt -> interface.kt
+    modified ir: interface.kt
+    updated exports: interface.kt
+    updated imports: classA.kt
+STEP 5:
+    updated exports: interface.kt

@@ -4,7 +4,7 @@ public abstract interface TwoSuperclassesReturnSameJavaType : R|kotlin/Any| {
 
     }
     public abstract interface Super1 : R|kotlin/Any| {
-        public abstract fun foo(): R|ft<kotlin/CharSequence, kotlin/CharSequence?>|
+        public abstract fun foo(): R|kotlin/CharSequence!|
 
         public abstract fun dummy(): R|kotlin/Unit|
 

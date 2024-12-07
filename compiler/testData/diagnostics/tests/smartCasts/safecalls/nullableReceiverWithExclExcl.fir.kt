@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Foo(val bar: String?)
 
 fun test(foo: Foo?) {
@@ -7,5 +8,5 @@ fun test(foo: Foo?) {
         // Unnecessary
         foo<!UNNECESSARY_SAFE_CALL!>?.<!>bar?.length
     }
-    foo.bar<!UNNECESSARY_SAFE_CALL!>?.<!>length
+    foo.bar?.length
 }

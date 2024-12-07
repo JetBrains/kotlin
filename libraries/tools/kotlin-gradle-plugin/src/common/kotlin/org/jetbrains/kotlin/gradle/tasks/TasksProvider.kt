@@ -18,12 +18,13 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.UnknownTaskException
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskCollection
+import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.tasks.configuration.*
+import org.jetbrains.kotlin.gradle.utils.named
 
 /**
  * Registers the task with [name] and [type] and initialization script [body]
@@ -57,17 +58,48 @@ internal fun TaskProvider<*>.dependsOn(other: TaskProvider<*>) = configure { it.
 
 internal fun TaskProvider<*>.dependsOn(other: Task) = configure { it.dependsOn(other) }
 
+internal fun TaskProvider<*>.dependsOn(otherPath: String) = configure { it.dependsOn(otherPath) }
+
 internal inline fun <reified S : Task> TaskCollection<in S>.withType(): TaskCollection<S> = withType(S::class.java)
+
+/**
+ * Returns a task provider by [name].
+ *
+ * The same as `tasks.named` but:
+ * 1) It doesn't fail if the task is not registered at the moment
+ * 2) It returns Provider<Task> instead of TaskProvider, therefore one can't call `configure`
+ *
+ * @see configureByName
+ */
+internal inline fun <reified T : Task> Project.providerOfTask(name: String): Provider<T> {
+    return project.provider { name }.flatMap { tasks.named<T>(name) }
+}
+
+/**
+ *  Configures a task by [name]. The same as `named().configure { .. }`, but works when the task isn't registered yet.
+ *
+ *  Note that it will not emit any error if the task is never registered.
+ *
+ *  @see providerOfTask
+ */
+internal inline fun <reified T : Task> TaskContainer.configureByName(name: String, crossinline configure: (T) -> Unit) {
+    withType<T>().configureEach { task ->
+        if (name == task.name) {
+            configure(task)
+        }
+    }
+}
 
 /**
  * Locates a task by [name] and [type], without triggering its creation or configuration.
  */
-internal inline fun <reified T : Task> Project.locateTask(name: String): TaskProvider<T>? =
-    try {
-        tasks.withType(T::class.java).named(name)
-    } catch (e: UnknownTaskException) {
-        null
-    }
+internal inline fun <reified T : Task> Project.locateTask(name: String): TaskProvider<T>? = tasks.locateTask(name)
+
+/**
+ * Locates a task by [name] and [type], without triggering its creation or configuration.
+ */
+internal inline fun <reified T : Task> TaskContainer.locateTask(name: String): TaskProvider<T>? =
+    if (names.contains(name)) named(name, T::class.java) else null
 
 /**
  * Locates a task by [name] and [type], without triggering its creation or configuration or registers new task
@@ -89,40 +121,41 @@ internal inline fun <reified T : Task> Project.locateOrRegisterTask(
 
 internal open class KotlinTasksProvider {
     open fun registerKotlinJVMTask(
-        project: Project, taskName: String, kotlinOptions: KotlinCommonOptions, configuration: KotlinCompileConfig
+        project: Project,
+        taskName: String,
+        compilerOptions: KotlinJvmCompilerOptions,
+        configuration: KotlinCompileConfig
     ): TaskProvider<out KotlinCompile> {
-        return project.registerTask(taskName, KotlinCompile::class.java, constructorArgs = listOf(kotlinOptions)).also {
+        return project.registerTask(taskName, KotlinCompile::class.java, constructorArgs = listOf(compilerOptions)).also {
             configuration.execute(it)
         }
     }
 
     fun registerKotlinJSTask(
-        project: Project, taskName: String, kotlinOptions: KotlinCommonOptions, configuration: Kotlin2JsCompileConfig
+        project: Project,
+        taskName: String,
+        compilerOptions: KotlinJsCompilerOptions,
+        configuration: Kotlin2JsCompileConfig
     ): TaskProvider<out Kotlin2JsCompile> {
         return project.registerTask(
             taskName,
             Kotlin2JsCompile::class.java,
-            constructorArgs = listOf(kotlinOptions)
+            constructorArgs = listOf(compilerOptions)
         ).also {
             configuration.execute(it)
         }
     }
 
-    fun registerKotlinJsIrTask(
-        project: Project, taskName: String, configuration: KotlinJsIrLinkConfig
-    ): TaskProvider<out KotlinJsIrLink> {
-        return project.registerTask(taskName, KotlinJsIrLink::class.java).also {
-            configuration.execute(it)
-        }
-    }
-
     fun registerKotlinCommonTask(
-        project: Project, taskName: String, kotlinOptions: KotlinCommonOptions, configuration: KotlinCompileCommonConfig
+        project: Project,
+        taskName: String,
+        compilerOptions: KotlinMultiplatformCommonCompilerOptions,
+        configuration: KotlinCompileCommonConfig
     ): TaskProvider<out KotlinCompileCommon> {
         return project.registerTask(
             taskName,
             KotlinCompileCommon::class.java,
-            constructorArgs = listOf(kotlinOptions)
+            constructorArgs = listOf(compilerOptions)
         ).also {
             configuration.execute(it)
         }

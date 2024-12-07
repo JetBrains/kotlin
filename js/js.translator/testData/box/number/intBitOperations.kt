@@ -1,4 +1,3 @@
-// DONT_TARGET_EXACT_BACKEND: JS
 
 fun testShl() {
     // wrapper prevents the constants folding

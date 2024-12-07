@@ -1,4 +1,4 @@
-depends = CoreFoundation darwin posix
+depends = CFCGTypes CoreFoundation CoreFoundationBase darwin posix
 language = Objective-C
 package = platform.CoreGraphics
 modules = CoreGraphics

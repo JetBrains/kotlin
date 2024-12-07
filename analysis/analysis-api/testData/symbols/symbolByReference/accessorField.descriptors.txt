@@ -1,13 +1,24 @@
-KtBackingFieldSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
+KaBackingFieldSymbol:
+  annotations: []
+  callableId: null
+  compilerVisibility: Private
+  contextReceivers: []
+  isActual: false
+  isExpect: false
   isExtension: false
+  isVal: false
+  location: PROPERTY
+  modality: FINAL
   name: field
   origin: PROPERTY_BACKING_FIELD
-  owningProperty: KtKotlinPropertySymbol(/x)
-  receiverType: null
-  returnType: kotlin/Int
-  symbolKind: LOCAL
-  getContainingModule: Could not render due to java.lang.IllegalStateException: Unexpected KtSymbol KtFe10DescSyntheticFieldSymbol
-
+  owningProperty: KaKotlinPropertySymbol(/x)
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Int
+  visibility: PRIVATE
+  getContainingFileSymbol: KaFileSymbol(accessorField.kt)
+  getContainingJvmClassName: AccessorFieldKt
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

@@ -1,0 +1,7 @@
+@0:0..6:0 FILE fqName:<root> fileName:/extensionLambdaCall.kt
+  @2:0..5:1 FUN name:lookAtMe visibility:public modality:FINAL <> (f:@[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.Unit>) returnType:kotlin.Unit
+    @2:13..33 VALUE_PARAMETER name:f index:0 type:@[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.Unit>
+    @2:35..5:1 BLOCK_BODY
+      @4:12..15 CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 [operator] declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
+        @4:12..13 GET_VAR 'f: @[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.Unit> declared in <root>.lookAtMe' type=@[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
+        @3:4..9 CONST String type=kotlin.String value="123"

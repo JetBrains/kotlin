@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See KT-13468, KT-13765
 
 fun basic(): String {

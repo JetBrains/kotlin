@@ -1,0 +1,27 @@
+FILE: lambdaInIfInTry.kt
+    public final suspend fun <R> suspendRun(block: R|suspend () -> R|): R|R| {
+        ^suspendRun Null(null)!!
+    }
+    public final suspend fun test(): R|kotlin/Unit| {
+        lvar e: R|kotlin/Throwable?| = Null(null)
+        try {
+            R|/suspendRun|<R|kotlin/Unit|>(<L> = suspendRun@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                when () {
+                    Boolean(true) ->  {
+                        ^test Unit
+                    }
+                }
+
+            }
+            )
+        }
+        finally {
+            when () {
+                !=(R|<local>/e|, Null(null)) ->  {
+                    throw R|<local>/e|
+                }
+            }
+
+        }
+
+    }

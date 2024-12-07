@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ClassTypeParameterAnnotations
+// LANGUAGE: +ClassTypeParameterAnnotations
 
 @Target(AnnotationTarget.TYPE)
 annotation class TypeAnn(val name: String)

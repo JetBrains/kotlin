@@ -20,25 +20,26 @@ import org.jetbrains.kotlin.jps.build.KotlinDirtySourceFilesHolder
 import org.jetbrains.kotlin.jps.build.ModuleBuildTarget
 import org.jetbrains.kotlin.jps.model.k2MetadataCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerSettings
+import org.jetbrains.kotlin.jps.statistic.JpsBuilderMetricReporter
 
 private const val COMMON_BUILD_META_INFO_FILE_NAME = "common-build-meta-info.txt"
 
 class KotlinCommonModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleBuildTarget: ModuleBuildTarget) :
     KotlinModuleBuildTarget<CommonBuildMetaInfo>(kotlinContext, jpsModuleBuildTarget) {
 
-    override fun isEnabled(chunkCompilerArguments: CommonCompilerArguments): Boolean {
+    override fun isEnabled(chunkCompilerArguments: Lazy<CommonCompilerArguments>): Boolean {
         val k2MetadataArguments = module.k2MetadataCompilerArguments
-        return k2MetadataArguments.enabledInJps || (chunkCompilerArguments as? K2MetadataCompilerArguments)?.enabledInJps == true
+        return k2MetadataArguments.enabledInJps || (chunkCompilerArguments.value as? K2MetadataCompilerArguments)?.enabledInJps == true
     }
 
     override val isIncrementalCompilationEnabled: Boolean
         get() = false
 
-    override val buildMetaInfoFactory
-        get() = CommonBuildMetaInfo
-
-    override val buildMetaInfoFileName
+    override val compilerArgumentsFileName
         get() = COMMON_BUILD_META_INFO_FILE_NAME
+
+    override val buildMetaInfo: CommonBuildMetaInfo
+        get() = CommonBuildMetaInfo()
 
     override val globalLookupCacheId: String
         get() = "metadata-compiler"
@@ -46,7 +47,8 @@ class KotlinCommonModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModu
     override fun compileModuleChunk(
         commonArguments: CommonCompilerArguments,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
-        environment: JpsCompilerEnvironment
+        environment: JpsCompilerEnvironment,
+        buildMetricReporter: JpsBuilderMetricReporter?
     ): Boolean {
         require(chunk.representativeTarget == this)
 
@@ -59,7 +61,8 @@ class KotlinCommonModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModu
             environment,
             destination,
             dependenciesOutputDirs + libraryFiles,
-            sourceFiles // incremental K2MetadataCompiler not supported yet
+            sourceFiles, // incremental K2MetadataCompiler not supported yet
+            buildMetricReporter
         )
 
         return true

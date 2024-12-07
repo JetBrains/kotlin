@@ -1,34 +1,34 @@
 fun valuesNotNull(map: MutableMap<Int, String>) {
     map.computeIfPresent(1) { k, v -> v.length.toString() ?: null }
         // SUCCESS
-        // ORIGINAL:    fun computeIfPresent(K, BiFunction<in K, in V, out V?>): V? defined in kotlin.collections.MutableMap
+        // ORIGINAL:    fun computeIfPresent(K, BiFunction<in K, in V & Any, out V?>): V? defined in kotlin.collections.MutableMap
         // SUBSTITUTED: fun computeIfPresent(Int, BiFunction<in Int, in String, out String?>): String? defined in kotlin.collections.MutableMap
 }
 
 fun valuesNullable(map: MutableMap<Int, String?>) {
     map.computeIfPresent(1) { k, v -> v?.length?.toString() }
         // SUCCESS
-        // ORIGINAL:    fun computeIfPresent(K, BiFunction<in K, in V, out V?>): V? defined in kotlin.collections.MutableMap
+        // ORIGINAL:    fun computeIfPresent(K, BiFunction<in K, in V & Any, out V?>): V? defined in kotlin.collections.MutableMap
         // SUBSTITUTED: fun computeIfPresent(Int, BiFunction<in Int, in String, out String?>): String? defined in kotlin.collections.MutableMap
 }
 
 fun <T : String?> valuesT(map: MutableMap<Int, T>, newValue: T) {
     map.computeIfPresent(1) { k, v -> v?.length.toString() ?: null }
         // SUCCESS
-        // ORIGINAL:    fun computeIfPresent(K, BiFunction<in K, in V, out V?>): V? defined in kotlin.collections.MutableMap
-        // SUBSTITUTED: fun computeIfPresent(Int, BiFunction<in Int, in T, out T?>): T? defined in kotlin.collections.MutableMap
+        // ORIGINAL:    fun computeIfPresent(K, BiFunction<in K, in V & Any, out V?>): V? defined in kotlin.collections.MutableMap
+        // SUBSTITUTED: fun computeIfPresent(Int, BiFunction<in Int, in T & Any, out T?>): T? defined in kotlin.collections.MutableMap
 }
 
 fun <T : Any> valuesTNotNull(map: MutableMap<Int, T>, newValue: T) {
     map.computeIfPresent(1) { k, v -> null }
         // SUCCESS
-        // ORIGINAL:    fun computeIfPresent(K, BiFunction<in K, in V, out V?>): V? defined in kotlin.collections.MutableMap
+        // ORIGINAL:    fun computeIfPresent(K, BiFunction<in K, in V & Any, out V?>): V? defined in kotlin.collections.MutableMap
         // SUBSTITUTED: fun computeIfPresent(Int, BiFunction<in Int, in T, out T?>): T? defined in kotlin.collections.MutableMap
 }
 
 fun <T : Any> valuesTNullable(map: MutableMap<Int, T?>, newValue: T?) {
     map.computeIfPresent(1) { k, v -> null }
         // SUCCESS
-        // ORIGINAL:    fun computeIfPresent(K, BiFunction<in K, in V, out V?>): V? defined in kotlin.collections.MutableMap
-        // SUBSTITUTED: fun computeIfPresent(Int, BiFunction<in Int, in T, out T?>): T? defined in kotlin.collections.MutableMap
+        // ORIGINAL:    fun computeIfPresent(K, BiFunction<in K, in V & Any, out V?>): V? defined in kotlin.collections.MutableMap
+        // SUBSTITUTED: fun computeIfPresent(Int, BiFunction<in Int, in T & Any, out T?>): T? defined in kotlin.collections.MutableMap
 }

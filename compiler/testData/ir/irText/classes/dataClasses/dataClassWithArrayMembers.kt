@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 data class Test1(
         val stringArray: Array<String>,
         val charArray: CharArray,

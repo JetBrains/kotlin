@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
+import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.utils.erasedUpperBound
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -16,10 +17,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.wasm.ir.*
 
 class WasmTypeTransformer(
-    val context: WasmBaseCodegenContext,
-    val builtIns: IrBuiltIns
+    val backendContext: WasmBackendContext,
+    val wasmFileCodegenContext: WasmFileCodegenContext,
 ) {
-    val symbols = context.backendContext.wasmSymbols
+    private val builtIns: IrBuiltIns = backendContext.irBuiltIns
+    private val symbols = backendContext.wasmSymbols
 
     fun IrType.toWasmResultType(): WasmType? =
         when (this) {
@@ -45,7 +47,7 @@ class WasmTypeTransformer(
         }
 
     private fun IrType.toWasmGcRefType(): WasmType =
-        WasmRefNullType(WasmHeapType.Type(context.referenceGcType(getRuntimeClass(context.backendContext.irBuiltIns).symbol)))
+        WasmRefNullType(WasmHeapType.Type(wasmFileCodegenContext.referenceGcType(getRuntimeClass(backendContext.irBuiltIns).symbol)))
 
     fun IrType.toBoxedInlineClassType(): WasmType =
         toWasmGcRefType()
@@ -82,7 +84,7 @@ class WasmTypeTransformer(
                 WasmF64
 
             builtIns.nothingNType ->
-                WasmAnyRef
+                WasmRefNullrefType
 
             // Value will not be created. Just using a random Wasm type.
             builtIns.nothingType ->
@@ -93,21 +95,21 @@ class WasmTypeTransformer(
 
             else -> {
                 val klass = this.erasedUpperBound ?: builtIns.anyClass.owner
-                val ic = context.backendContext.inlineClassesUtils.getInlinedClass(this)
+                val ic = backendContext.inlineClassesUtils.getInlinedClass(this)
 
                 if (klass.isExternal) {
-                    WasmAnyRef
+                    WasmExternRef
                 } else if (isBuiltInWasmRefType(this)) {
                     when (val name = klass.name.identifier) {
                         "anyref" -> WasmAnyRef
                         "eqref" -> WasmEqRef
-                        "dataref" -> WasmRefNullType(WasmHeapType.Simple.Data)
+                        "structref" -> WasmRefNullType(WasmHeapType.Simple.Struct)
                         "i31ref" -> WasmI31Ref
                         "funcref" -> WasmRefNullType(WasmHeapType.Simple.Func)
                         else -> error("Unknown reference type $name")
                     }
                 } else if (ic != null) {
-                    context.backendContext.inlineClassesUtils.getInlineClassUnderlyingType(ic).toWasmValueType()
+                    backendContext.inlineClassesUtils.getInlineClassUnderlyingType(ic).toWasmValueType()
                 } else {
                     this.toWasmGcRefType()
                 }

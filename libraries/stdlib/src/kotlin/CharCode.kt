@@ -32,7 +32,6 @@ public inline fun Char(code: Int): Char {
  */
 @SinceKotlin("1.5")
 @WasExperimental(ExperimentalStdlibApi::class)
-@Suppress("NO_ACTUAL_FOR_EXPECT")
 public expect fun Char(code: UShort): Char
 
 /**

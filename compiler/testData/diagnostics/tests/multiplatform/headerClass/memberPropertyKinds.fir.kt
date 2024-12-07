@@ -1,7 +1,9 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class Foo {
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> class Foo {
     val justVal: String
     var justVar: String
 
@@ -17,10 +19,10 @@ expect class Foo {
     var backingFieldVar: String = <!EXPECTED_PROPERTY_INITIALIZER!>"no"<!>
 
     val customAccessorVal: String
-    get() = "no"
+    <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = "no"
     var customAccessorVar: String
-    get() = "no"
-    set(value) {}
+    <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = "no"
+    <!EXPECTED_DECLARATION_WITH_BODY!>set(value)<!> {}
 
     <!EXPECTED_LATEINIT_PROPERTY!>lateinit<!> var lateinitVar: String
 

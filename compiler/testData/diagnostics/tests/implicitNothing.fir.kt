@@ -1,37 +1,38 @@
-fun foo() = throw Exception()
+// RUN_PIPELINE_TILL: FRONTEND
+fun <!IMPLICIT_NOTHING_RETURN_TYPE!>foo<!>() = throw Exception()
 
-fun bar() = null!!
+fun <!IMPLICIT_NOTHING_RETURN_TYPE!>bar<!>() = null!!
 
-fun baz() = bar()
+fun <!IMPLICIT_NOTHING_RETURN_TYPE!>baz<!>() = bar()
 
 fun gav(): Any = null!!
 
-val x = null!!
+val <!IMPLICIT_NOTHING_PROPERTY_TYPE!>x<!> = null!!
 
 val y: Nothing = throw Exception()
 
 fun check() {
     // Error: KT-10449
-    fun local() = bar()
+    fun <!IMPLICIT_NOTHING_RETURN_TYPE!>local<!>() = bar()
     // Unreachable / unused, but not implicit Nothing
     val x = null!!
 }
 
-fun nonLocalReturn() = run { <!RETURN_TYPE_MISMATCH!>return<!> }
+fun <!IMPLICIT_NOTHING_RETURN_TYPE!>nonLocalReturn<!>() = run { <!RETURN_TYPE_MISMATCH!>return<!> }
 
 class Klass {
-    fun bar() = null!!
+    fun <!IMPLICIT_NOTHING_RETURN_TYPE!>bar<!>() = null!!
 
-    val y = null!!
+    val <!IMPLICIT_NOTHING_PROPERTY_TYPE!>y<!> = null!!
 
     init {
-        fun local() = bar()
+        fun <!IMPLICIT_NOTHING_RETURN_TYPE!>local<!>() = bar()
         // Should be unreachable: see KT-5311
         val z = null!!
     }
 
     fun foo() {
-        fun local() = bar()
+        fun <!IMPLICIT_NOTHING_RETURN_TYPE!>local<!>() = bar()
 
         val x = y
     }

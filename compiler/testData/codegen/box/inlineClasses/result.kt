@@ -1,6 +1,7 @@
-// IGNORE_BACKEND: WASM
+// TARGET_BACKEND: JVM
+// In this test, stdlib class `public value class Result<out T>` within `kotlin` package is replaced with a custom non-generic class
+
 // IGNORE_BACKEND: ANDROID
-// IGNORE_BACKEND: NATIVE
 // ALLOW_KOTLIN_PACKAGE
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS

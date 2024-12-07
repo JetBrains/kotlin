@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun foo(x: (String) -> Int) {}
 fun foo2(x: (A, String) -> Int) {}
 

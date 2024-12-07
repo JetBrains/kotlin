@@ -1,6 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
-// !LANGUAGE: +NewInference
 
 interface Self<E : Self<E>> {
     val x: E

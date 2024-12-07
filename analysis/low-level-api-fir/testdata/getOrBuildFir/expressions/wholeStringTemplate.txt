@@ -1,6 +1,0 @@
-KT element: KtStringTemplateExpression
-FIR element: FirStringConcatenationCallImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-<strcat>(String(string ), Int(1).R|kotlin/Int.plus|(Int(2)), String( template))

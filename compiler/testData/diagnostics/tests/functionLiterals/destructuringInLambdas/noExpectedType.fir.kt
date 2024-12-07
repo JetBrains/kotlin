@@ -1,5 +1,6 @@
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 data class A(val x: Int, val y: String)
 
 fun bar() {
@@ -24,7 +25,7 @@ fun bar() {
 
     y2 checkType { _<(A) -> Unit>() }
 
-    val z = { <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>(a: Int, b: String)<!> ->
+    val z = { <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING, VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>(a: Int, b: String)<!> ->
         a checkType { _<Int>() }
         b checkType { _<String>() }
     }

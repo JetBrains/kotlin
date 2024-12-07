@@ -1,0 +1,17 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class <#A: kotlin/Any?> /Outer { // /Outer|null[0]
+    final val x // /Outer.x|{}x[0]
+        final fun <get-x>(): #A // /Outer.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(#A) // /Outer.<init>|<init>(1:0){}[0]
+    open inner class Inner { // /Outer.Inner|null[0]
+        final val y // /Outer.Inner.y|{}y[0]
+            final fun <get-y>(): kotlin/Int // /Outer.Inner.y.<get-y>|<get-y>(){}[0]
+        constructor <init>(kotlin/Int) // /Outer.Inner.<init>|<init>(kotlin.Int){}[0]
+    }
+}
+final fun (/Outer<kotlin/Int>)./test(): /Outer.Inner<kotlin/Int> // /test|test@Outer<kotlin.Int>(){}[0]

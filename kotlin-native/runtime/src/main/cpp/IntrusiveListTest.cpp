@@ -6,13 +6,13 @@
 #include "IntrusiveList.hpp"
 
 #include <forward_list>
+#include <list>
 #include <type_traits>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 #include "Utils.hpp"
-#include "std_support/List.hpp"
 
 using namespace kotlin;
 
@@ -45,8 +45,23 @@ public:
     int& operator*() { return value_; }
     const int& operator*() const { return value_; }
 
+    void clearNext() noexcept { next_ = nullptr; }
+
 private:
     friend struct DefaultIntrusiveForwardListTraits<Node>;
+    Node() : Node(37) {}
+
+    Node* next() const noexcept { return next_; }
+    void setNext(Node* next) noexcept {
+        RuntimeAssert(next, "next cannot be nullptr");
+        next_ = next;
+    }
+    bool trySetNext(Node* next) noexcept {
+        RuntimeAssert(next, "next cannot be nullptr");
+        if (next_) return false;
+        next_ = next;
+        return true;
+    }
 
     int value_;
     // Use non-null marker to make sure inserting into the list properly updates this value.
@@ -54,8 +69,8 @@ private:
 };
 
 template <typename List>
-std_support::list<typename List::value_type> create(std::initializer_list<int> list) {
-    std_support::list<typename List::value_type> result;
+std::list<typename List::value_type> create(std::initializer_list<int> list) {
+    std::list<typename List::value_type> result;
     for (auto x : list) {
         result.emplace_back(x);
     }
@@ -68,16 +83,8 @@ MATCHER_P(isEmpty, expected, (expected == !negation) ? "is empty" : "is not empt
     return expected == actual;
 }
 
-size_t getSize(const std::forward_list<Element>& list) {
-    return std::distance(list.begin(), list.end());
-}
-
-size_t getSize(const intrusive_forward_list<Node>& list) {
-    return list.size();
-}
-
 MATCHER_P(hasSize, expected, "") {
-    size_t actual = getSize(arg);
+    size_t actual = std::distance(arg.begin(), arg.end());
     *result_listener << "of size " << actual;
     return expected == actual;
 }
@@ -621,4 +628,154 @@ TYPED_TEST(ForwardListTest, EraseAfterEmptyRangeFront) {
     auto result = list.erase_after(list.before_begin(), list.begin());
     EXPECT_THAT(result, list.begin());
     EXPECT_ELEMENTS_ARE(list, 1, 2, 3, 4);
+}
+
+TEST(IntrusiveForwardListTest, TryPushFrontSuccess) {
+    using List = intrusive_forward_list<Node>;
+    auto values = create<List>({1, 2, 3, 4});
+    List list(values.begin(), values.end());
+    typename List::value_type value(5);
+    value.clearNext();
+    auto result = list.try_push_front(value);
+    EXPECT_TRUE(result);
+    EXPECT_ELEMENTS_ARE(list, 5, 1, 2, 3, 4);
+}
+
+TEST(IntrusiveForwardListTest, TryPushFrontFailure) {
+    using List = intrusive_forward_list<Node>;
+    auto values = create<List>({1, 2, 3, 4});
+    List list(values.begin(), values.end());
+    typename List::value_type value(5);
+    auto result = list.try_push_front(value);
+    EXPECT_FALSE(result);
+    EXPECT_ELEMENTS_ARE(list, 1, 2, 3, 4);
+}
+
+TEST(IntrusiveForwardListTest, TryPushFrontEmptySuccess) {
+    using List = intrusive_forward_list<Node>;
+    List list;
+    typename List::value_type value(5);
+    value.clearNext();
+    auto result = list.try_push_front(value);
+    EXPECT_TRUE(result);
+    EXPECT_ELEMENTS_ARE(list, 5);
+}
+
+TEST(IntrusiveForwardListTest, TryPushFrontEmptyFailure) {
+    using List = intrusive_forward_list<Node>;
+    List list;
+    typename List::value_type value(5);
+    auto result = list.try_push_front(value);
+    EXPECT_FALSE(result);
+    EXPECT_ELEMENTS_ARE(list);
+}
+
+TEST(IntrusiveForwardListTest, TryPopFront) {
+    using List = intrusive_forward_list<Node>;
+    auto values = create<List>({1, 2, 3, 4});
+    List list(values.begin(), values.end());
+    auto& front = list.front();
+    auto result = list.try_pop_front();
+    EXPECT_THAT(result, &front);
+    EXPECT_ELEMENTS_ARE(list, 2, 3, 4);
+}
+
+TEST(IntrusiveForwardListTest, TryPopFrontIntoEmpty) {
+    using List = intrusive_forward_list<Node>;
+    auto values = create<List>({1});
+    List list(values.begin(), values.end());
+    auto& front = list.front();
+    auto result = list.try_pop_front();
+    EXPECT_THAT(result, &front);
+    EXPECT_ELEMENTS_ARE(list);
+}
+
+TEST(IntrusiveForwardListTest, TryPopFrontFromEmpty) {
+    using List = intrusive_forward_list<Node>;
+    auto values = create<List>({});
+    List list(values.begin(), values.end());
+    auto result = list.try_pop_front();
+    EXPECT_THAT(result, nullptr);
+    EXPECT_ELEMENTS_ARE(list);
+}
+
+template<typename List>
+typename List::iterator before_end(List& list) {
+    auto cur = list.before_begin();
+    auto next = list.begin();
+    while (next != list.end()) {
+        ++cur;
+        ++next;
+    }
+    return cur;
+}
+
+TEST(IntrusiveForwardListTest, SpliceAfterBeforeBeginAll) {
+    using List = intrusive_forward_list<Node>;
+    auto values1 = create<List>({1, 2, 3, 4});
+    auto values2 = create<List>({11, 12, 13, 14});
+    List l1(values1.begin(), values1.end());
+    List l2(values2.begin(), values2.end());
+
+    auto spliced = l1.splice_after(l1.before_begin(), l2.before_begin(), l2.end(), values2.size());
+    EXPECT_THAT(spliced, values2.size());
+    EXPECT_ELEMENTS_ARE(l1, 11, 12, 13, 14, 1, 2, 3, 4);
+    EXPECT_ELEMENTS_ARE(l2);
+}
+
+TEST(IntrusiveForwardListTest, SpliceAfterBeforeEndAll) {
+    using List = intrusive_forward_list<Node>;
+    auto values1 = create<List>({1, 2, 3, 4});
+    auto values2 = create<List>({11, 12, 13, 14});
+    List l1(values1.begin(), values1.end());
+    List l2(values2.begin(), values2.end());
+
+    auto spliced = l1.splice_after(before_end(l1), l2.before_begin(), l2.end(), values2.size());
+    EXPECT_THAT(spliced, values2.size());
+    EXPECT_ELEMENTS_ARE(l1, 1, 2, 3, 4, 11, 12, 13, 14);
+    EXPECT_ELEMENTS_ARE(l2);
+}
+
+TEST(IntrusiveForwardListTest, SpliceAfterMidMidHalf) {
+    using List = intrusive_forward_list<Node>;
+    auto values1 = create<List>({1, 2, 3, 4});
+    auto values2 = create<List>({11, 12, 13, 14});
+    List l1(values1.begin(), values1.end());
+    List l2(values2.begin(), values2.end());
+
+    auto spliced = l1.splice_after(std::next(l1.begin()), l2.begin(), l2.end(), 2);
+    EXPECT_THAT(spliced, 2);
+    EXPECT_ELEMENTS_ARE(l1, 1, 2, 12, 13, 3, 4);
+    EXPECT_ELEMENTS_ARE(l2, 11, 14);
+}
+
+TEST(IntrusiveForwardListTest, SpliceAfterBeforeBeginOwnTail) {
+    using List = intrusive_forward_list<Node>;
+    auto values = create<List>({1, 2, 3, 4});
+    List list(values.begin(), values.end());
+    auto spliced = list.splice_after(list.before_begin(), std::next(list.begin()), list.end(), 2);
+    EXPECT_THAT(spliced, 2);
+    EXPECT_ELEMENTS_ARE(list, 3, 4, 1, 2);
+}
+
+TEST(IntrusiveForwardListTest, SpliceAfterLessThanAvailable) {
+    using List = intrusive_forward_list<Node>;
+    auto values = create<List>({1, 2, 3, 4});
+    List from(values.begin(), values.end());
+    List to;
+    auto spliced = to.splice_after(to.before_begin(), from.before_begin(), from.end(), 2);
+    EXPECT_THAT(spliced, 2);
+    EXPECT_ELEMENTS_ARE(to, 1, 2);
+    EXPECT_ELEMENTS_ARE(from, 3, 4);
+}
+
+TEST(IntrusiveForwardListTest, SpliceAfterMoreThanAvailable) {
+    using List = intrusive_forward_list<Node>;
+    auto values = create<List>({1, 2, 3, 4});
+    List from(values.begin(), values.end());
+    List to;
+    auto spliced = to.splice_after(to.before_begin(), from.before_begin(), std::next(from.begin(), 2), 4);
+    EXPECT_THAT(spliced, 2);
+    EXPECT_ELEMENTS_ARE(to, 1, 2);
+    EXPECT_ELEMENTS_ARE(from, 3, 4);
 }

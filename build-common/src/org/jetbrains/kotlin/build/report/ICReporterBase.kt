@@ -18,12 +18,12 @@ abstract class ICReporterBase(private val pathsBase: File? = null) : ICReporter 
 
     override fun reportMarkDirty(affectedFiles: Iterable<File>, reason: String) {
         affectedFiles.forEach { file ->
-            reportVerbose { "${pathsAsString(file)} is marked dirty: $reason" }
+            debug { "${pathsAsString(file)} is marked dirty: $reason" }
         }
     }
 
     protected fun relativizeIfPossible(files: Iterable<File>): List<File> =
-        files.map { it.relativeOrCanonical() }
+        files.map { it.relativeOrAbsolute() }
 
     protected fun pathsAsString(files: Iterable<File>): String =
         relativizeIfPossible(files).map { it.path }.sorted().joinToString()
@@ -31,6 +31,6 @@ abstract class ICReporterBase(private val pathsBase: File? = null) : ICReporter 
     protected fun pathsAsString(vararg files: File): String =
         pathsAsString(files.toList())
 
-    protected fun File.relativeOrCanonical(): File =
-        pathsBase?.let { relativeToOrNull(it) } ?: canonicalFile
+    protected fun File.relativeOrAbsolute(): File =
+        pathsBase?.let { relativeToOrNull(it) } ?: normalize().absoluteFile
 }

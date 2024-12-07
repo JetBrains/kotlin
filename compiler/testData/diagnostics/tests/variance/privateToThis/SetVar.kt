@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun <T> getT(): T = null!!
 
 class Test<in I, out O> {
@@ -14,7 +15,7 @@ class Test<in I, out O> {
         i = getT()
         this.i = getT()
         with(Test<I, O>()) {
-            i = getT() // resolved to this@Test.i
+            i = getT() // K1: this@Test.i, K2: this@with.i, see KT-55446
             this.<!INVISIBLE_MEMBER("i; private/*private to this*/; 'Test'")!>i<!> = getT()
             this@with.<!INVISIBLE_MEMBER("i; private/*private to this*/; 'Test'")!>i<!> = getT()
             this@Test.i  = getT()

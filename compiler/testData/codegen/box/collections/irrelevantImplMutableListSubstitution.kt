@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: wrong CONFLICTING_INHERITED_JVM_DECLARATIONS, probably provoked by override mapping error
 // TARGET_BACKEND: JVM
 
 // FILE: J.java

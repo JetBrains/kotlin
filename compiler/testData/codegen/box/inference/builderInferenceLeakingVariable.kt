@@ -12,7 +12,7 @@ class InImpl<E>(val block: suspend In<E>.() -> Unit) : In<E> {
 }
 
 @OptIn(ExperimentalTypeInference::class)
-public fun <T> builder(@BuilderInference block: suspend In<T>.() -> Unit) {
+public fun <T> builder(block: suspend In<T>.() -> Unit) {
     InImpl(block)
 }
 

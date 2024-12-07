@@ -1,0 +1,128 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.analysis.api
+
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.components.*
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolProvider
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
+
+/**
+ * [KaSession] is the entry point to all frontend-related work. It has the following contracts:
+ *
+ * - It should not be accessed from the event dispatch thread or outside a read action.
+ * - It should not be leaked outside the read action it was created in. To ensure that an analysis session isn't leaked, there are
+ *   additional conventions, explained further below.
+ * - It should not be accessed in [the dumb mode][com.intellij.openapi.project.DumbService].
+ * - All entities retrieved from an analysis session should not be leaked outside the read action the analysis session was created in.
+ *
+ * To pass a symbol from one read action to another, use [KaSymbolPointer], which can be created from a symbol by [KaSymbol.createPointer].
+ *
+ * To create a [KaSession], please use [analyze] or one of its siblings.
+ *
+ * ### Conventions to avoid leakage
+ *
+ * It is crucial to avoid leaking the analysis session outside the read action it was created in, as the analysis session itself and all
+ * entities retrieved from it will become invalid. An analysis session also shouldn't be leaked from the [analyze] call it was created in.
+ *
+ * It is forbidden to store an analysis session in a variable, parameter, or property. From the [analyze] block which provides the analysis
+ * session, the analysis session should be passed to functions via an extension receiver, or as an ordinary parameter. For example:
+ *
+ * ```kotlin
+ * fun KaSession.foo() { ... }
+ * ```
+ *
+ * **Class context receivers** should not be used to pass analysis sessions. While a context receiver on a class will make the analysis
+ * session available in the constructor, it will also be captured by the class as a property. This behavior is easy to miss and a high risk
+ * for unintentional leakage. For example:
+ *
+ * ```kotlin
+ * // DO NOT DO THIS
+ * context(KaSession)
+ * class Usage {
+ *     fun foo() {
+ *         // The `KaSession` is available here.
+ *     }
+ * }
+ * ```
+ */
+@Suppress("DEPRECATION")
+@OptIn(KaNonPublicApi::class, KaExperimentalApi::class, KaIdeApi::class)
+public interface KaSession : KaLifetimeOwner,
+    KaResolver,
+    KaSymbolRelationProvider,
+    KaDiagnosticProvider,
+    KaScopeProvider,
+    KaCompletionCandidateChecker,
+    KaExpressionTypeProvider,
+    KaTypeProvider,
+    KaTypeInformationProvider,
+    KaSymbolProvider,
+    KaJavaInteroperabilityComponent,
+    KaSymbolInformationProvider,
+    KaTypeRelationChecker,
+    KaExpressionInformationProvider,
+    KaEvaluator,
+    KaReferenceShortener,
+    KaImportOptimizer,
+    KaRenderer,
+    KaVisibilityChecker,
+    KaOriginalPsiProvider,
+    KaTypeCreator,
+    KaAnalysisScopeProvider,
+    KaSignatureSubstitutor,
+    KaResolveExtensionInfoProvider,
+    KaCompilerPluginGeneratedDeclarationsProvider,
+    KaCompilerFacility,
+    KaMetadataCalculator,
+    KaSubstitutorProvider,
+    KaDataFlowProvider,
+    KaSourceProvider
+{
+    /**
+     * The [KaModule] from whose perspective the analysis is performed. The use-site module defines the resolution scope of the [KaSession],
+     * which signifies *where* symbols are located (such as sources, dependencies, and so on) and *which* symbols can be found in the first
+     * place.
+     */
+    public val useSiteModule: KaModule
+
+    /**
+     * The [KaSession] of the current analysis context.
+     */
+    public val useSiteSession: KaSession
+        get() = this
+
+    /**
+     * Returns the restored [KaSymbol] (possibly a new symbol instance) if the pointer is still valid, or `null` otherwise.
+     */
+    public fun <S : KaSymbol> KaSymbolPointer<S>.restoreSymbol(): S? = withValidityAssertion {
+        @OptIn(KaImplementationDetail::class)
+        restoreSymbol(useSiteSession)
+    }
+
+    /**
+     * Returns the restored [KaType] (possibly a new type instance) if the pointer is still valid, or `null` otherwise.
+     */
+    public fun <T : KaType> KaTypePointer<T>.restore(): T? = withValidityAssertion {
+        @OptIn(KaImplementationDetail::class)
+        restore(useSiteSession)
+    }
+}
+
+/**
+ * Returns a [KaModule] for a given [element] in the context of the session's use-site module.
+ *
+ * @see KaModuleProvider.getModule
+ */
+public fun KaSession.getModule(element: PsiElement): KaModule =
+    KaModuleProvider.getModule(useSiteModule.project, element, useSiteModule)

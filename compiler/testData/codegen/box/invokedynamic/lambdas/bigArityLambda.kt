@@ -3,7 +3,6 @@
 // LAMBDAS: INDY
 
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 0 java/lang/invoke/LambdaMetafactory\.metafactory
 // 1 final class BigArityLambdaKt\$box\$lam\$1
 

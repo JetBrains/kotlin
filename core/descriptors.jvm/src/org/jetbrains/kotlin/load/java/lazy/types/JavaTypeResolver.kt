@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.types.TypeUsage
+import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
+import org.jetbrains.kotlin.load.java.extractNullabilityAnnotationOnBoundedWildcard
 import org.jetbrains.kotlin.types.TypeUsage.COMMON
 import org.jetbrains.kotlin.types.TypeUsage.SUPERTYPE
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaAnnotations
@@ -69,13 +70,13 @@ class JavaTypeResolver(
         val annotations = LazyJavaAnnotations(c, arrayType, areAnnotationsFreshlySupported = true)
 
         if (primitiveType != null) {
-            val jetType = c.module.builtIns.getPrimitiveArrayKotlinType(primitiveType)
-
-            jetType.replaceAnnotations(Annotations.create(annotations + jetType.annotations))
+            val kotlinType = c.module.builtIns.getPrimitiveArrayKotlinType(primitiveType).let {
+                it.replaceAnnotations(CompositeAnnotations(it.annotations, annotations)) as SimpleType
+            }
 
             return if (attr.isForAnnotationParameter)
-                jetType
-            else KotlinTypeFactory.flexibleType(jetType, jetType.makeNullableAsSpecified(true))
+                kotlinType
+            else KotlinTypeFactory.flexibleType(kotlinType, kotlinType.makeNullableAsSpecified(true))
         }
 
         val componentType = transformJavaType(
@@ -287,8 +288,15 @@ class JavaTypeResolver(
                 if (bound == null || projectionKind.isConflictingArgumentFor(typeParameter))
                     makeStarProjection(typeParameter, attr)
                 else {
+                    val nullabilityAnnotationOnWildcard = extractNullabilityAnnotationOnBoundedWildcard(c, javaType)
+                    val transformedJavaType = transformJavaType(bound, COMMON.toAttributes()).let {
+                        if (nullabilityAnnotationOnWildcard != null) {
+                            it.replaceAnnotations(Annotations.create(it.annotations + nullabilityAnnotationOnWildcard))
+                        } else it
+                    }
+
                     createProjection(
-                        type = transformJavaType(bound, COMMON.toAttributes()),
+                        type = transformedJavaType,
                         projectionKind = projectionKind,
                         typeParameterDescriptor = typeParameter
                     )

@@ -1,0 +1,56 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+
+@Composable
+fun AttemptedToRealizeGroupTwice() {
+    Wrapper {
+        repeat(1) {
+            repeat(1) {
+                Leaf(0)
+            }
+            Leaf(0)
+        }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun AttemptedToRealizeGroupTwice(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(AttemptedToRealizeGroupTwice)<Wrappe...>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    Wrapper({ %composer: Composer?, %changed: Int ->
+      sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "*<Leaf(0...>")
+      repeat(1) { it: Int ->
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "*<Leaf(0...>")
+        repeat(1) { it: Int ->
+          Leaf(0, %composer, 0b0110, 0)
+        }
+        %composer.endReplaceGroup()
+        Leaf(0, %composer, 0b0110, 0)
+      }
+      %composer.endReplaceGroup()
+      sourceInformationMarkerEnd(%composer)
+    }, %composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    AttemptedToRealizeGroupTwice(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

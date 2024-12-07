@@ -40,5 +40,9 @@ public abstract class AbstractTokenStreamPattern implements TokenStreamPattern {
     public boolean handleUnmatchedClosing(IElementType token) {
         return false;
     }
+
+    public void reset() {
+        lastOccurrence = -1;
+    }
 }
 

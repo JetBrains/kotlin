@@ -1,7 +1,9 @@
 pluginManagement {
+    apply(from = "../../../../repo/scripts/cache-redirector.settings.gradle.kts")
+    apply(from = "../../../../repo/scripts/kotlin-bootstrap.settings.gradle.kts")
+
     repositories {
         maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
-        jcenter()
         mavenCentral()
         gradlePluginPortal()
     }

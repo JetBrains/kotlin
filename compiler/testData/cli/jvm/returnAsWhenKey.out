@@ -1,7 +1,4 @@
-compiler/testData/cli/jvm/returnAsWhenKey.kt:5:17: warning: unreachable code
-        return 0 -> return 1
-                ^
-compiler/testData/cli/jvm/returnAsWhenKey.kt:5:21: warning: unreachable code
-        return 0 -> return 1
-                    ^
-OK
+compiler/testData/cli/jvm/returnAsWhenKey.kt:4:5: error: 'when' expression must be exhaustive. Add the 'true', 'false' branches or an 'else' branch.
+    when (true) {
+    ^^^^
+COMPILATION_ERROR

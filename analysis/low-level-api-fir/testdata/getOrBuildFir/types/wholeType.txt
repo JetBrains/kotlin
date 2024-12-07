@@ -1,6 +1,0 @@
-KT element: KtTypeReference
-FIR element: FirResolvedTypeRefImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-R|kotlin/collections/Map<kotlin/String, kotlin/collections/List<kotlin/Int>>|

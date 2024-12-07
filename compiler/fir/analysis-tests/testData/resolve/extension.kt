@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun String.foo() {}
 
 fun String.bar() {

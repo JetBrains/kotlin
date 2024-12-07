@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // FIR_IDENTICAL
+
 // FILE: nnStringVsT.kt
 fun <T> useT(fn: () -> T) = fn()
 

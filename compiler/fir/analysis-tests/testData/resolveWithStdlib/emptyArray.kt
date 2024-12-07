@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 val x: Array<String> = emptyArray()
 
 val y: Array<String>

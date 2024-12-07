@@ -18,6 +18,7 @@ public interface A {
 public final class B$DefaultImpls {
     // source: 'noDelegationsToPrivateInterfaceMembers.kt'
     public static @org.jetbrains.annotations.NotNull method foo(@org.jetbrains.annotations.NotNull p0: B): java.lang.String
+    public final inner class A$DefaultImpls
     public final inner class B$DefaultImpls
 }
 
@@ -32,4 +33,5 @@ public final class C {
     // source: 'noDelegationsToPrivateInterfaceMembers.kt'
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method foo(): java.lang.String
+    public final inner class B$DefaultImpls
 }

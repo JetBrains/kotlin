@@ -1,6 +1,7 @@
 <component name="ProjectDictionaryState">
   <dictionary name="4u7">
     <words>
+      <w>aarch</w>
       <w>bintray</w>
       <w>cacheability</w>
       <w>cacheable</w>
@@ -9,6 +10,7 @@
       <w>foldable</w>
       <w>instrumentator</w>
       <w>jdks</w>
+      <w>jsshell</w>
       <w>proguarded</w>
       <w>protobuf</w>
       <w>redirector</w>

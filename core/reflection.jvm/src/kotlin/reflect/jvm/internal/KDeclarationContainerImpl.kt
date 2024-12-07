@@ -24,10 +24,12 @@ import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.isMultiFieldValueClass
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import kotlin.jvm.internal.ClassBasedDeclarationContainer
+import kotlin.reflect.jvm.internal.calls.toJvmDescriptor
 
 internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContainer {
     abstract inner class Data {
@@ -119,9 +121,25 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     }
 
     fun findFunctionDescriptor(name: String, signature: String): FunctionDescriptor {
-        val members = if (name == "<init>") constructorDescriptors.toList() else getFunctions(Name.identifier(name))
-        val functions = members.filter { descriptor ->
-            RuntimeTypeMapper.mapSignature(descriptor).asString() == signature
+        val members: Collection<FunctionDescriptor>
+        val functions: List<FunctionDescriptor>
+        if (name == "<init>") {
+            members = constructorDescriptors.toList()
+            functions = members.filter { descriptor ->
+                val descriptorSignature = if (descriptor.isPrimary && descriptor.containingDeclaration.isMultiFieldValueClass()) {
+                    val initial = RuntimeTypeMapper.mapSignature(descriptor).asString()
+                    require(initial.startsWith("constructor-impl") && initial.endsWith(")V")) {
+                        "Invalid signature of $descriptor: $initial"
+                    }
+                    initial.removeSuffix("V") + descriptor.containingDeclaration.toJvmDescriptor()
+                } else {
+                    RuntimeTypeMapper.mapSignature(descriptor).asString()
+                }
+                descriptorSignature == signature
+            }
+        } else {
+            members = getFunctions(Name.identifier(name))
+            functions = members.filter { descriptor -> RuntimeTypeMapper.mapSignature(descriptor).asString() == signature }
         }
 
         if (functions.size != 1) {
@@ -194,8 +212,9 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     fun findMethodBySignature(name: String, desc: String): Method? {
         if (name == "<init>") return null
 
-        val parameterTypes = loadParameterTypes(desc).toTypedArray()
-        val returnType = loadReturnType(desc)
+        val functionJvmDescriptor = parseJvmDescriptor(desc, parseReturnType = true)
+        val parameterTypes = functionJvmDescriptor.parameters.toTypedArray()
+        val returnType = functionJvmDescriptor.returnType!!
         methodOwner.lookupMethod(name, parameterTypes, returnType, false)?.let { return it }
 
         // Methods from java.lang.Object (equals, hashCode, toString) cannot be found in the interface via
@@ -215,39 +234,41 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
             // Note that this value is replaced inside the lookupMethod call below, for each class/interface in the hierarchy.
             parameterTypes.add(jClass)
         }
-        addParametersAndMasks(parameterTypes, desc, false)
+        val jvmDescriptor = parseJvmDescriptor(desc, parseReturnType = true)
+        addParametersAndMasks(parameterTypes, jvmDescriptor.parameters, isConstructor = false)
 
         return methodOwner.lookupMethod(
-            name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, parameterTypes.toTypedArray(), loadReturnType(desc), isStaticDefault = isMember
+            name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, parameterTypes.toTypedArray(), jvmDescriptor.returnType!!, isStaticDefault = isMember
         )
     }
 
     fun findConstructorBySignature(desc: String): Constructor<*>? =
-        jClass.tryGetConstructor(loadParameterTypes(desc))
+        jClass.tryGetConstructor(parseJvmDescriptor(desc, parseReturnType = false).parameters)
 
     fun findDefaultConstructor(desc: String): Constructor<*>? =
         jClass.tryGetConstructor(arrayListOf<Class<*>>().also { parameterTypes ->
-            addParametersAndMasks(parameterTypes, desc, true)
+            val parsedParameters = parseJvmDescriptor(desc, parseReturnType = false).parameters
+            addParametersAndMasks(parameterTypes, parsedParameters, isConstructor = true)
         })
 
-    private fun addParametersAndMasks(result: MutableList<Class<*>>, desc: String, isConstructor: Boolean) {
-        val valueParameters = loadParameterTypes(desc)
-        result.addAll(valueParameters)
-        repeat((valueParameters.size + Integer.SIZE - 1) / Integer.SIZE) {
+    private fun addParametersAndMasks(result: MutableList<Class<*>>, valueParameters: List<Class<*>>, isConstructor: Boolean) {
+        // Constructors that include parameters of inline class types contain an extra trailing DEFAULT_CONSTRUCTOR_MARKER parameter,
+        // which should be excluded when calculating mask size.
+        val withoutMarker =
+            if (valueParameters.lastOrNull() == DEFAULT_CONSTRUCTOR_MARKER) valueParameters.subList(0, valueParameters.size - 1)
+            else valueParameters
+
+        result.addAll(withoutMarker)
+        repeat((withoutMarker.size + Integer.SIZE - 1) / Integer.SIZE) {
             result.add(Integer.TYPE)
         }
 
-        if (isConstructor) {
-            // Constructors that include the value class as an argument will include DEFAULT_CONSTRUCTOR_MARKER as an argument,
-            // regardless of whether there is a default argument.
-            // On the other hand, when searching for the default constructor,
-            // DEFAULT_CONSTRUCTOR_MARKER needs to be present only at the end, so it is removed here.
-            result.remove(DEFAULT_CONSTRUCTOR_MARKER)
-            result.add(DEFAULT_CONSTRUCTOR_MARKER)
-        } else result.add(Any::class.java)
+        result.add(if (isConstructor) DEFAULT_CONSTRUCTOR_MARKER else Any::class.java)
     }
 
-    private fun loadParameterTypes(desc: String): List<Class<*>> {
+    private class FunctionJvmDescriptor(val parameters: List<Class<*>>, val returnType: Class<*>?)
+
+    private fun parseJvmDescriptor(desc: String, parseReturnType: Boolean): FunctionJvmDescriptor {
         val result = arrayListOf<Class<*>>()
 
         var begin = 1
@@ -265,7 +286,9 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
             begin = end
         }
 
-        return result
+        val returnType = if (parseReturnType) parseType(desc, begin = begin + 1, end = desc.length) else null
+
+        return FunctionJvmDescriptor(result, returnType)
     }
 
     private fun parseType(desc: String, begin: Int, end: Int): Class<*> =
@@ -283,9 +306,6 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
             'D' -> Double::class.java
             else -> throw KotlinReflectionInternalError("Unknown type prefix in the method signature: $desc")
         }
-
-    private fun loadReturnType(desc: String): Class<*> =
-        parseType(desc, desc.indexOf(')') + 1, desc.length)
 
     companion object {
         private val DEFAULT_CONSTRUCTOR_MARKER = Class.forName("kotlin.jvm.internal.DefaultConstructorMarker")

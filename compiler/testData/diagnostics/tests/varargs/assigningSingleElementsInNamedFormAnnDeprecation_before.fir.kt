@@ -1,4 +1,5 @@
-// !LANGUAGE: +AssigningArraysToVarargsInNamedFormInAnnotations, -ProhibitAssigningSingleElementsToVarargsInNamedForm
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +AssigningArraysToVarargsInNamedFormInAnnotations, -ProhibitAssigningSingleElementsToVarargsInNamedForm
 
 // FILE: JavaAnn.java
 

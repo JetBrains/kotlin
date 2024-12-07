@@ -5,36 +5,49 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.tasks
 
-import org.gradle.api.Project
-import org.gradle.api.Task
-import org.jetbrains.kotlin.compilerRunner.KotlinNativeCInteropRunner
-import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
+import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
+import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
 
-internal fun KotlinNativeCInteropRunner.Companion.createExecutionContext(
-    task: Task
-): KotlinNativeCInteropRunner.ExecutionContext {
-    return if (task.project.isInIdeaSync) IdeaSyncKotlinNativeCInteropRunnerExecutionContext(task)
-    else DefaultKotlinNativeCInteropRunnerExecutionContext(task.project)
+internal interface CInteropProcessExecutionContext {
+    val task: CInteropProcess
+    val cinteropRunner: KotlinNativeToolRunner
+    fun runWithContext(action: KotlinNativeToolRunner.() -> Unit)
+}
+
+internal fun CInteropProcess.createExecutionContext(
+    isInIdeaSync: Boolean,
+    cinteropRunner: KotlinNativeToolRunner,
+): CInteropProcessExecutionContext = if (isInIdeaSync) {
+    IdeaSyncKotlinNativeCInteropRunnerExecutionContext(this, cinteropRunner)
+} else {
+    DefaultKotlinNativeCInteropRunnerExecutionContext(this, cinteropRunner)
 }
 
 private class DefaultKotlinNativeCInteropRunnerExecutionContext(
-    override val project: Project
-) : KotlinNativeCInteropRunner.ExecutionContext {
-    override fun runWithContext(action: () -> Unit) = action()
+    override val task: CInteropProcess,
+    override val cinteropRunner: KotlinNativeToolRunner,
+) : CInteropProcessExecutionContext {
+    override fun runWithContext(action: KotlinNativeToolRunner.() -> Unit) {
+        task.errorFileProvider.get().delete()
+        cinteropRunner.action()
+    }
 }
 
 private class IdeaSyncKotlinNativeCInteropRunnerExecutionContext(
-    private val task: Task
-) : KotlinNativeCInteropRunner.ExecutionContext {
+    override val task: CInteropProcess,
+    override val cinteropRunner: KotlinNativeToolRunner,
+) : CInteropProcessExecutionContext {
 
-    override val project: Project = task.project
-
-    override fun runWithContext(action: () -> Unit) {
+    override fun runWithContext(action: KotlinNativeToolRunner.() -> Unit) {
+        val errorFile = task.errorFileProvider.get()
+        errorFile.delete()
         try {
-            action()
+            cinteropRunner.action()
         } catch (t: Throwable) {
-            task.logger.warn("Warning: Failed to generate cinterop for ${task.path}: ${t.message ?: ""}", t)
+            val errorText = "Warning: Failed to generate cinterop for ${task.path}: ${t.message ?: ""}"
+            task.logger.warn(errorText, t)
             task.outputs.files.forEach { file -> file.deleteRecursively() }
+            errorFile.writeText(errorText)
         }
     }
 }

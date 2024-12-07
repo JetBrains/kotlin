@@ -1,7 +1,8 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: List is empty for val argumentType = mycType.arguments.single().type!!
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
+
+// JVM_ABI_K1_K2_DIFF: KT-63872
+
 // MODULE: lib
 // FILE: A.kt
 @Target(AnnotationTarget.TYPE)

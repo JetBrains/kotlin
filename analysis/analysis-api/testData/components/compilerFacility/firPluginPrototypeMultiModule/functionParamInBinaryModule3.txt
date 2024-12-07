@@ -1,0 +1,29 @@
+final class MainKt$ArticleScreenContent$1$1 {
+    // source: 'main.kt'
+    enclosing method MainKt$ArticleScreenContent$1.invoke()Lkotlin/jvm/functions/Function0;
+    synthetic final field $title: java.lang.String
+    inner (anonymous) class MainKt$ArticleScreenContent$1
+    inner (anonymous) class MainKt$ArticleScreenContent$1$1
+    method <init>(p0: java.lang.String): void
+    public synthetic bridge method invoke(): java.lang.Object
+    public final method invoke(): void
+}
+
+final class MainKt$ArticleScreenContent$1 {
+    // source: 'main.kt'
+    enclosing method MainKt.ArticleScreenContent(Ljava/lang/String;)V
+    synthetic final field $title: java.lang.String
+    inner (anonymous) class MainKt$ArticleScreenContent$1
+    inner (anonymous) class MainKt$ArticleScreenContent$1$1
+    method <init>(p0: java.lang.String): void
+    public synthetic bridge method invoke(): java.lang.Object
+    public final method invoke(): kotlin.jvm.functions.Function0
+}
+
+public final class MainKt {
+    // source: 'main.kt'
+    inner (anonymous) class MainKt$ArticleScreenContent$1
+    private final static method ArticleScreenContent(p0: java.lang.String): void
+    private final static method TopAppBar(p0: java.lang.String): void
+    public synthetic final static method access$TopAppBar(p0: java.lang.String): void
+}

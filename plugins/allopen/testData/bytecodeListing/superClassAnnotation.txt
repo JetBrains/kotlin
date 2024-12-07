@@ -49,6 +49,7 @@ public class IntfImpl {
     public method <init>(): void
     public method intfImplMethod_ShouldBeOpen(): void
     public method intfMethod(): void
+    public final inner class Intf$DefaultImpls
 }
 
 @kotlin.Metadata

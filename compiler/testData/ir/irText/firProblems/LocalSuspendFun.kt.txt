@@ -1,0 +1,12 @@
+fun foo() {
+  val addNewStatusAction: SuspendFunction0<Unit> = useMemo<SuspendFunction0<Unit>>(callback = local fun <anonymous>(): SuspendFunction0<Unit> {
+    return local suspend fun <no name provided>() {
+    }
+
+  }
+)
+}
+
+fun <T : Any?> useMemo(callback: Function0<T>): T {
+  return callback.invoke()
+}

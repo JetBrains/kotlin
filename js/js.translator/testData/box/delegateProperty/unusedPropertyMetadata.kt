@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1284
 // PROPERTY_NOT_USED: PropertyMetadata
 import kotlin.reflect.KProperty
 

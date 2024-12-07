@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class StatementGenerator(
+internal class StatementGenerator(
     val bodyGenerator: BodyGenerator,
     override val scope: Scope
 ) : KtVisitor<IrStatement, Nothing?>(),
@@ -119,7 +119,7 @@ class StatementGenerator(
             } else {
                 property
             }
-        return context.symbolTable.declareVariable(
+        return context.symbolTable.descriptorExtension.declareVariable(
             sourceElement.startOffsetSkippingComments, sourceElement.endOffset, IrDeclarationOrigin.DEFINED,
             variableDescriptor,
             variableDescriptor.type.toIrType(),
@@ -207,7 +207,7 @@ class StatementGenerator(
                 } else {
                     ktEntry
                 }
-            val irComponentVar = context.symbolTable.declareVariable(
+            val irComponentVar = context.symbolTable.descriptorExtension.declareVariable(
                 componentVarOffsetSource.startOffsetSkippingComments, componentVarOffsetSource.endOffset,
                 IrDeclarationOrigin.DEFINED,
                 componentVariable, componentVariable.type.toIrType(), irComponentCall
@@ -301,8 +301,8 @@ class StatementGenerator(
 
             1 -> {
                 val first = entries.first()
-                if (first is IrConst<*> && first.kind == IrConstKind.String)
-                    first
+                if (first is IrConst && first.kind == IrConstKind.String)
+                    IrConstImpl.string(startOffset, endOffset, first.type, first.value as String)
                 else
                     IrStringConcatenationImpl(startOffset, endOffset, resultType, listOf(first))
             }
@@ -320,11 +320,11 @@ class StatementGenerator(
             var constStringEndOffset = 0
 
             for (entry in this) {
-                if (entry is IrConst<*> && entry.kind == IrConstKind.String) {
+                if (entry is IrConst && entry.kind == IrConstKind.String) {
                     if (constString.isEmpty()) {
                         constStringStartOffset = entry.startOffset
                     }
-                    constString.append(IrConstKind.String.valueOf(entry))
+                    constString.append(entry.value as String)
                     constStringEndOffset = entry.endOffset
                 } else {
                     if (constString.isNotEmpty()) {
@@ -447,13 +447,13 @@ class StatementGenerator(
             IrGetObjectValueImpl(
                 startOffset, endOffset,
                 thisType,
-                context.symbolTable.referenceClass(classDescriptor)
+                context.symbolTable.descriptorExtension.referenceClass(classDescriptor)
             )
         } else {
             IrGetValueImpl(
                 startOffset, endOffset,
                 thisType,
-                context.symbolTable.referenceValueParameter(thisAsReceiverParameter)
+                context.symbolTable.descriptorExtension.referenceValueParameter(thisAsReceiverParameter)
             )
         }
     }
@@ -479,7 +479,7 @@ class StatementGenerator(
                 IrGetValueImpl(
                     startOffset, endOffset,
                     receiverType,
-                    context.symbolTable.referenceValueParameter(receiverParameter)
+                    context.symbolTable.descriptorExtension.referenceValueParameter(receiverParameter)
                 )
             }
 
@@ -553,7 +553,7 @@ class StatementGenerator(
         ReflectionReferencesGenerator(this).generateCallableReference(expression)
 }
 
-abstract class StatementGeneratorExtension(val statementGenerator: StatementGenerator) : GeneratorWithScope {
+internal abstract class StatementGeneratorExtension(val statementGenerator: StatementGenerator) : GeneratorWithScope {
     override val scope: Scope get() = statementGenerator.scope
     override val context: GeneratorContext get() = statementGenerator.context
 

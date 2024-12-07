@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
 // FILE: test.kt
 typealias RunnableT = java.lang.Runnable
 typealias ComparatorT<T> = java.util.Comparator<T>

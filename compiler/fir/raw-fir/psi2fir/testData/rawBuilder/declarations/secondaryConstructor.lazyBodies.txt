@@ -1,0 +1,22 @@
+FILE: secondaryConstructor.kt
+    @Target(LAZY_EXPRESSION) public final? annotation class Anno : R|kotlin/Annotation| {
+        public? constructor(position: String): R|util/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? val position: String = R|<local>/position|
+            public? get(): String
+
+    }
+    public? final? const val prop: <implicit> = LAZY_EXPRESSION
+        public? get(): <implicit>
+    public abstract class AbstractClass<T> : R|kotlin/Any| {
+        public? constructor<T>(): R|util/AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? class MyClass : @Anno(LAZY_EXPRESSION) AbstractClass<@Anno(LAZY_EXPRESSION) List<@Anno(LAZY_EXPRESSION) Int>> {
+        public? constructor(): R|util/MyClass| { LAZY_BLOCK }
+
+    }

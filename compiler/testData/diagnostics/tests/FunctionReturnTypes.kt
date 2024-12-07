@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNREACHABLE_CODE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNREACHABLE_CODE
 
 fun none() {}
 
@@ -158,6 +159,8 @@ fun illegalReturnIf(): Char {
 fun returnNothing(): Nothing {
     throw <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>
 }
+fun returnNothingEmpty(): Nothing {
+<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun f(): Int {
     if (1 < 2) { return 1 } else returnNothing()
 }

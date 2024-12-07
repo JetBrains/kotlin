@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test1() {
     test1@ for(i in 1..2) {
         continue@test1

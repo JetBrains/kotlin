@@ -24,24 +24,24 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api "org.jetbrains.kotlin:kotlin-stdlib-common"
                 api(project(":exported"))
             }
         }
         
         commonTest {
             dependencies {
-                api "org.jetbrains.kotlin:kotlin-test-annotations-common"
+                api "org.jetbrains.kotlin:kotlin-test"
             }
         }
     }
 
     targets {
         macosX64("macos64")
+        macosArm64("macosArm64")
         linuxX64("linux64")
         mingwX64("mingw64")
 
-        configure([macos64, linux64, mingw64]) {
+        configure([findByName('macos64'), findByName('macosArm64'), findByName('linux64'), findByName('mingw64')]) {
             compilations.all { kotlinOptions.verbose = true }
             compilations.test.kotlinOptions.freeCompilerArgs += "-nowarn"
             binaries {

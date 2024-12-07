@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package kt606_dependents
 
 //KT-1489 Code analyzer fails with assertion

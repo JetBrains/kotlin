@@ -1,9 +1,10 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface A {
-    <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>override fun toString() = "Hello"<!>
-    <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>override fun equals(other: Any?) = true<!>
-    <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>override fun hashCode(): Int {
+    override fun <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>toString<!>() = "Hello"
+    override fun <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>equals<!>(other: Any?) = true
+    override fun <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>hashCode<!>(): Int {
         return 42;
-    }<!>
+    }
 }
 
 interface B {
@@ -13,9 +14,9 @@ interface B {
 }
 
 interface C {
-    <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>override <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun toString(): String = "Rest"<!>
-    <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>override operator fun equals(other: Any?): Boolean = false<!>
-    <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>override <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun hashCode(): Int = 2<!>
+    override <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>toString<!>(): String = "Rest"
+    override operator fun <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>equals<!>(other: Any?): Boolean = false
+    override <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>hashCode<!>(): Int = 2
 }
 
 interface D {

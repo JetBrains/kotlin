@@ -1,4 +1,4 @@
-// FIR_IDE_IGNORE
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: file1.kt
 private class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C<!> {
     companion object

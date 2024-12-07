@@ -1,0 +1,19 @@
+STEP 0:
+    modifications:
+        U : A.0.kt -> A.kt
+        U : l1.0.kt -> l1.kt
+    added file: A.kt, l1.kt
+STEP 1:
+    modifications:
+        U : A.1.kt -> A.kt
+    modified ir: A.kt
+STEP 2:
+    modifications:
+        U : A.2.kt -> A.kt
+        U : l1.2.kt -> l1.kt
+    modified ir: A.kt, l1.kt
+STEP 3:
+    modifications:
+        U : A.3.kt -> A.kt
+        U : l1.3.kt -> l1.kt
+    modified ir: A.kt, l1.kt

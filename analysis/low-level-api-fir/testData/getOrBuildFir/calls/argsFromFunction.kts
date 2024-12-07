@@ -1,0 +1,1 @@
+fun foo() = <expr>args.size</expr>

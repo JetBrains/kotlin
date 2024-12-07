@@ -9,6 +9,54 @@ class C {
 
 }
 
+operator fun Int?.get(index: Int): Int {
+  return 42
+}
+
+operator fun Int?.inc(): Int? {
+  return { // BLOCK
+    val tmp_0: Int? = <this>
+    when {
+      EQEQ(arg0 = tmp_0, arg1 = null) -> null
+      else -> tmp_0.inc()
+    }
+  }
+}
+
+operator fun Int?.set(index: Int, value: Int) {
+}
+
+fun testArrayAccess(nc: C?) {
+  { // BLOCK
+    val tmp_1: C? = nc
+    when {
+      EQEQ(arg0 = tmp_1, arg1 = null) -> null
+      else -> { // BLOCK
+        val tmp_2: Int = tmp_1.<get-p>()
+        val tmp_3: Int = 0
+        val tmp_4: Int = tmp_2.get(index = tmp_3)
+        tmp_2.set(index = tmp_3, value = tmp_4.inc())
+        tmp_4
+      }
+    }
+  } /*~> Unit */
+}
+
+fun testProperty(nc: C?) {
+  { // BLOCK
+    val tmp_5: C? = nc
+    when {
+      EQEQ(arg0 = tmp_5, arg1 = null) -> null
+      else -> { // BLOCK
+        val tmp_6: C = tmp_5
+        val tmp_7: Int = tmp_6.<get-p>()
+        tmp_6.<set-p>(value = tmp_7.inc())
+        tmp_7
+      }
+    }
+  } /*~> Unit */
+}
+
 var C?.p: Int
   get(): Int {
     return 42
@@ -16,50 +64,3 @@ var C?.p: Int
   set(value: Int) {
   }
 
-operator fun Int?.inc(): Int? {
-  return { // BLOCK
-    val tmp0_safe_receiver: Int? = <this>
-    when {
-      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> tmp0_safe_receiver.inc()
-    }
-  }
-}
-
-operator fun Int?.get(index: Int): Int {
-  return 42
-}
-
-operator fun Int?.set(index: Int, value: Int) {
-}
-
-fun testProperty(nc: C?) {
-  { // BLOCK
-    val tmp1_safe_receiver: C? = nc
-    when {
-      EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
-      else -> { // BLOCK
-        val <receiver>: C = tmp1_safe_receiver
-        val <unary>: Int = <receiver>.<get-p>()
-        <receiver>.<set-p>(value = <unary>.inc())
-        <unary>
-      }
-    }
-  } /*~> Unit */
-}
-
-fun testArrayAccess(nc: C?) {
-  { // BLOCK
-    val tmp2_safe_receiver: C? = nc
-    when {
-      EQEQ(arg0 = tmp2_safe_receiver, arg1 = null) -> null
-      else -> { // BLOCK
-        val <array>: Int = tmp2_safe_receiver.<get-p>()
-        val <index_0>: Int = 0
-        val <unary>: Int = <array>.get(index = <index_0>)
-        <array>.set(index = <index_0>, value = <unary>.inc())
-        <unary>
-      }
-    }
-  } /*~> Unit */
-}

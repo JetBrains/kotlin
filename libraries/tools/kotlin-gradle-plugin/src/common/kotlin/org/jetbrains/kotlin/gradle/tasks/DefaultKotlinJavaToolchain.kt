@@ -7,16 +7,23 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.GradleException
 import org.gradle.api.JavaVersion
+import org.gradle.api.Project
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Internal
 import org.gradle.internal.jvm.Jvm
 import org.gradle.jvm.toolchain.*
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.chainedFinalizeValueOnRead
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
@@ -27,31 +34,38 @@ import javax.inject.Inject
 internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
     private val objects: ObjectFactory,
     projectLayout: ProjectLayout,
-    kotlinCompileTaskProvider: () -> KotlinCompile?
+    providerFactory: ProviderFactory,
+    jvmCompilerOptions: () -> KotlinJvmCompilerOptions?
 ) : KotlinJavaToolchain {
 
+    private val logger = Logging.getLogger("KotlinJavaToolchain")
+
     @get:Internal
-    internal val currentJvm: Provider<Jvm> = objects
+    internal val gradleJvm: Provider<Jvm> = objects
         .property(Jvm.current())
+        .chainedDisallowChanges()
         .chainedFinalizeValueOnRead()
 
     @get:Internal
-    internal var providedJvmExplicitlySet = false
+    internal val providedJvm: Property<Jvm> = objects
+        .property<Jvm>()
+        .chainedFinalizeValueOnRead()
 
     @get:Internal
-    internal val providedJvm: Property<Jvm> = objects
-        .propertyWithConvention(currentJvm)
+    internal val buildJvm: Provider<Jvm> = objects
+        .property(providedJvm.orElse(gradleJvm))
+        .chainedDisallowChanges()
         .chainedFinalizeValueOnRead()
 
     final override val javaVersion: Provider<JavaVersion> = objects
         .property(
-            providedJvm.map { jvm ->
-                jvm.javaVersion
-                    ?: throw GradleException(
-                        "Kotlin could not get java version for the JDK installation: " +
-                                jvm.javaHome?.let { "'$it' " }.orEmpty()
-                    )
-            }
+            buildJvm
+                .map { jvm ->
+                    jvm.javaVersion
+                        ?: throw GradleException(
+                            "Kotlin could not get java version for the JDK installation: '${jvm.javaHome}'"
+                        )
+                }
         )
         .chainedFinalizeValueOnRead()
 
@@ -59,13 +73,12 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
     internal val javaExecutable: RegularFileProperty = objects
         .fileProperty()
         .value(
-            providedJvm.flatMap { jvm ->
+            buildJvm.flatMap { jvm ->
                 projectLayout.file(
                     objects.property<File>(
                         jvm.javaExecutable
                             ?: throw GradleException(
-                                "Kotlin could not find 'java' executable in the JDK installation: " +
-                                        jvm.javaHome?.let { "'$it' " }.orEmpty()
+                                "Kotlin could not find 'java' executable in the JDK installation: '${jvm.javaHome}'"
                             )
                     )
                 )
@@ -74,34 +87,35 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
         .chainedFinalizeValueOnRead()
 
     private fun getToolsJarFromJvm(
+        providerFactory: ProviderFactory,
         jvmProvider: Provider<Jvm>,
         javaVersionProvider: Provider<JavaVersion>
     ): Provider<File?> {
         return objects
             .propertyWithConvention(
-                jvmProvider.flatMap { jvm ->
-                    objects.propertyWithConvention(jvm.toolsJar)
+                javaVersionProvider.flatMap { javaVersion ->
+                    jvmProvider.mapOrNull(providerFactory) { jvm ->
+                        jvm.toolsJar.also {
+                            if (it == null && javaVersion < JavaVersion.VERSION_1_9) {
+                                throw GradleException(
+                                    "Kotlin could not find the required JDK tools in the Java installation. " +
+                                            "Make sure Kotlin compilation is running on a JDK, not JRE."
+                                )
+                            }
+                        }
+                    }
                 }
             )
-            .orElse(javaVersionProvider.flatMap {
-                if (it < JavaVersion.VERSION_1_9) {
-                    throw GradleException(
-                        "Kotlin could not find the required JDK tools in the Java installation. " +
-                                "Make sure Kotlin compilation is running on a JDK, not JRE."
-                    )
-                } else {
-                    objects.propertyWithConvention<File?>(null)
-                }
-            })
     }
 
     @get:Internal
-    internal val jdkToolsJar: Provider<File?> = getToolsJarFromJvm(providedJvm, javaVersion)
+    internal val jdkToolsJar: Provider<File?> = getToolsJarFromJvm(providerFactory, buildJvm, javaVersion)
 
     @get:Internal
     internal val currentJvmJdkToolsJar: Provider<File?> = getToolsJarFromJvm(
-        currentJvm,
-        currentJvm.map {
+        providerFactory,
+        gradleJvm,
+        gradleJvm.map {
             // Current JVM should always have java version
             it.javaVersion!!
         }
@@ -110,77 +124,23 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
     final override val jdk: KotlinJavaToolchain.JdkSetter = DefaultJdkSetter(
         providedJvm,
         objects,
-        { providedJvmExplicitlySet = true },
-        kotlinCompileTaskProvider
+        logger,
+        jvmCompilerOptions
     )
 
     final override val toolchain: KotlinJavaToolchain.JavaToolchainSetter =
-        DefaultJavaToolchainSetter(providedJvm, kotlinCompileTaskProvider)
-
-    /**
-     * Updates [task] 'jvmTarget' if user has configured toolchain and not 'jvmTarget'.
-     *
-     *  Should be called on execution state to ensure 'jvmTarget' is set to correct value even on
-     *  reusing configuration cache.
-     *
-     * Should be called on task execution phase!
-     */
-    internal fun updateJvmTarget(
-        task: KotlinCompile,
-        args: K2JVMCompilerArguments
-    ) {
-        if (providedJvmExplicitlySet) {
-            val jdkVersion = javaVersion.get()
-
-            // parentKotlinOptionsImpl is set from 'kotlin-android' plugin
-            val appliedJvmTargets = listOfNotNull(task.kotlinOptions, task.parentKotlinOptions.orNull)
-                .mapNotNull { (it as KotlinJvmOptionsImpl).jvmTarget }
-
-            if (appliedJvmTargets.isEmpty()) {
-                // For Java 9 and Java 10 JavaVersion returns "1.9" or "1.10" accordingly
-                // that is not accepted by Kotlin compiler
-                val toolchainJvmTarget = when (jdkVersion) {
-                    JavaVersion.VERSION_1_9 -> "9"
-                    JavaVersion.VERSION_1_10 -> "10"
-                    else -> jdkVersion.toString()
-                }
-                task.kotlinOptions.jvmTarget = toolchainJvmTarget
-                args.jvmTarget = toolchainJvmTarget
-            }
-        }
-    }
-
-    private abstract class JvmTargetUpdater(
-        private val kotlinCompileTaskProvider: () -> KotlinCompile?
-    ) {
-        fun updateJvmTarget(
-            jdkVersion: JavaVersion
-        ) {
-            kotlinCompileTaskProvider()?.let { task ->
-                // parentKotlinOptionsImpl is set from 'kotlin-android' plugin
-                val appliedJvmTargets = listOfNotNull(task.kotlinOptions, task.parentKotlinOptions.orNull)
-                    .mapNotNull { (it as KotlinJvmOptionsImpl).jvmTarget }
-
-                if (appliedJvmTargets.isEmpty()) {
-                    // For Java 9 and Java 10 JavaVersion returns "1.9" or "1.10" accordingly
-                    // that is not accepted by Kotlin compiler
-                    task.kotlinOptions.jvmTarget = when (jdkVersion) {
-                        JavaVersion.VERSION_1_9 -> "9"
-                        JavaVersion.VERSION_1_10 -> "10"
-                        else -> jdkVersion.toString()
-                    }
-                }
-            }
-        }
-    }
+        DefaultJavaToolchainSetter(
+            providedJvm,
+            logger,
+            jvmCompilerOptions
+        )
 
     private class DefaultJdkSetter(
         private val providedJvm: Property<Jvm>,
         private val objects: ObjectFactory,
-        private val updateProvidedJdkCallback: () -> Unit,
-        kotlinCompileTaskProvider: () -> KotlinCompile?
-    ) : JvmTargetUpdater(kotlinCompileTaskProvider),
-        KotlinJavaToolchain.JdkSetter {
+        private val logger: Logger,
+        private val jvmCompilerOptions: () -> KotlinJvmCompilerOptions?
+    ) : KotlinJavaToolchain.JdkSetter {
 
         override fun use(
             jdkHomeLocation: File,
@@ -190,40 +150,144 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
                 "Supplied jdkHomeLocation must be a valid directory. You supplied: $jdkHomeLocation"
             }
             require(jdkHomeLocation.exists()) {
-                "Supplied jdkHomeLocation does not exists. You supplied: $jdkHomeLocation"
+                "Supplied jdkHomeLocation does not exist. You supplied: $jdkHomeLocation"
             }
 
-            updateProvidedJdkCallback.invoke()
             providedJvm.set(
                 objects.providerWithLazyConvention {
-                    updateJvmTarget(jdkVersion)
-                    Jvm.discovered(jdkHomeLocation, null, jdkVersion)
+                    if (GradleVersion.current() < GradleVersion.version("8.8")) {
+                        // https://youtrack.jetbrains.com/issue/KT-69386/Migrate-to-non-internal-org.gradle.internal.jvm.Jvm-API
+                        @Suppress("DEPRECATION", "NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+                        Jvm.discovered(
+                            jdkHomeLocation,
+                            null,
+                            jdkVersion
+                        )
+                    } else {
+                        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+                        Jvm.discovered(
+                            jdkHomeLocation,
+                            null,
+                            jdkVersion.majorVersion.toInt()
+                        )
+                    }
                 }
             )
+
+            jvmCompilerOptions()?.let {
+                wireJvmTargetToJvm(it, providedJvm, logger)
+            }
         }
     }
 
-    private inner class DefaultJavaToolchainSetter(
+    internal class DefaultJavaToolchainSetter(
         private val providedJvm: Property<Jvm>,
-        kotlinCompileTaskProvider: () -> KotlinCompile?
-    ) : JvmTargetUpdater(kotlinCompileTaskProvider),
-        KotlinJavaToolchain.JavaToolchainSetter {
+        private val logger: Logger,
+        private val jvmCompilerOptions: () -> KotlinJvmCompilerOptions?
+    ) : KotlinJavaToolchain.JavaToolchainSetter {
+
+        internal fun useAsConvention(
+            javaLauncher: Provider<JavaLauncher>
+        ) {
+            providedJvm.convention(javaLauncher.map(::mapToJvm))
+        }
+
         override fun use(
             javaLauncher: Provider<JavaLauncher>
         ) {
-            providedJvmExplicitlySet = true
-            providedJvm.set(
-                javaLauncher.map {
-                    val metadata = javaLauncher.get().metadata
-                    val javaVersion = JavaVersion.toVersion(metadata.languageVersion.asInt())
-                    updateJvmTarget(javaVersion)
-                    Jvm.discovered(
-                        metadata.installationPath.asFile,
-                        null,
-                        javaVersion
-                    )
-                }
+            providedJvm.set(javaLauncher.map(::mapToJvm))
+
+            jvmCompilerOptions()?.let {
+                wireJvmTargetToJvm(it, providedJvm, logger)
+            }
+        }
+    }
+
+    companion object {
+
+        internal fun wireJvmTargetToJvm(
+            jvmCompilerOptions: KotlinJvmCompilerOptions,
+            toolchainJvm: Provider<Jvm>,
+            logger: Logger
+        ) {
+            jvmCompilerOptions.jvmTarget.convention(
+                toolchainJvm.map { jvm ->
+                    convertJavaVersionToJvmTarget(requireNotNull(jvm.javaVersion), logger)
+                }.orElse(JvmTarget.DEFAULT)
             )
+        }
+
+        private fun convertJavaVersionToJvmTarget(
+            javaVersion: JavaVersion,
+            logger: Logger
+        ): JvmTarget {
+            // For Java 9 and Java 10 JavaVersion returns "1.9" or "1.10" accordingly
+            // that is not accepted by the Kotlin compiler
+            val normalizedVersion = when (javaVersion) {
+                JavaVersion.VERSION_1_9 -> "9"
+                JavaVersion.VERSION_1_10 -> "10"
+                else -> javaVersion.toString()
+            }
+
+            // Update to the latest JDK LTS once it is released and Kotlin has JVM target with this version
+            return if (javaVersion > JavaVersion.VERSION_17) {
+                try {
+                    JvmTarget.fromTarget(normalizedVersion)
+                } catch (_: IllegalArgumentException) {
+                    val fallbackTarget = JvmTarget.values().last()
+                    logger.warn(
+                        "Kotlin does not yet support $normalizedVersion JDK target, falling back to Kotlin $fallbackTarget JVM target"
+                    )
+                    fallbackTarget
+                }
+            } else {
+                JvmTarget.fromTarget(normalizedVersion)
+            }
+        }
+
+        private fun wireJvmTargetToToolchain(
+            jvmCompilerOptions: KotlinJvmCompilerOptions,
+            javaLauncher: Provider<JavaLauncher>,
+            logger: Logger
+        ): Unit = wireJvmTargetToJvm(
+            jvmCompilerOptions,
+            javaLauncher.map(::mapToJvm),
+            logger
+        )
+
+        internal fun wireJvmTargetToToolchain(
+            compilerOptions: KotlinJvmCompilerOptions,
+            project: Project,
+        ) {
+            project.plugins.withId("org.gradle.java-base") {
+                val toolchainService = project.extensions.findByType(JavaToolchainService::class.java)
+                    ?: error("Gradle JavaToolchainService is not available!")
+                val toolchainSpec = project.extensions
+                    .getByType(JavaPluginExtension::class.java)
+                    .toolchain
+                val javaLauncher = toolchainService.launcherFor(toolchainSpec)
+                wireJvmTargetToToolchain(compilerOptions, javaLauncher, project.logger)
+            }
+        }
+
+        private fun mapToJvm(javaLauncher: JavaLauncher): Jvm {
+            val metadata = javaLauncher.metadata
+            return if (GradleVersion.current() < GradleVersion.version("8.8")) {
+                @Suppress("DEPRECATION", "NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+                // https://youtrack.jetbrains.com/issue/KT-69386/Migrate-to-non-internal-org.gradle.internal.jvm.Jvm-API
+                Jvm.discovered(
+                    metadata.installationPath.asFile,
+                    null,
+                    JavaVersion.toVersion(metadata.languageVersion.asInt())
+                )
+            } else {
+                @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+                Jvm.discovered(
+                    metadata.installationPath.asFile,
+                    null,
+                    metadata.languageVersion.asInt()
+                )
+            }
         }
     }
 }

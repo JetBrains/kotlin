@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ProhibitConfusingSyntaxInWhenBranches
 // DIAGNOSTICS: -INCOMPATIBLE_TYPES, -NON_EXHAUSTIVE_WHEN_STATEMENT, -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
 // ISSUE: KT-48385
@@ -39,16 +40,16 @@ fun testWithSubject_ok(x: Boolean, y: Boolean?, any: Any, z: Boolean) {
         y ?: x -> {}
         x in x -> {}
         x !in x -> {}
-        x is String -> {}
-        x !is String -> {}
-        x <!OVERLOAD_RESOLUTION_AMBIGUITY!><<!> x -> {}
-        x <!OVERLOAD_RESOLUTION_AMBIGUITY!>><!> x -> {}
-        x <!OVERLOAD_RESOLUTION_AMBIGUITY!><=<!> x -> {}
-        x <!OVERLOAD_RESOLUTION_AMBIGUITY!>>=<!> x -> {}
+        <!USELESS_IS_CHECK!>x is String<!> -> {}
+        <!USELESS_IS_CHECK!>x !is String<!> -> {}
+        x < x -> {}
+        x > x -> {}
+        x <= x -> {}
+        x >= x -> {}
         x == x -> {}
         x != x -> {}
-        x === x -> {}
-        x !== x -> {}
+        <!DEPRECATED_IDENTITY_EQUALS!>x === x<!> -> {}
+        <!DEPRECATED_IDENTITY_EQUALS!>x !== x<!> -> {}
         x && x -> {}
         x || x -> {}
     }

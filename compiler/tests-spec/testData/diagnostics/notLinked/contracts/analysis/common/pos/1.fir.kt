@@ -1,4 +1,12 @@
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: contracts, analysis, common
+ * NUMBER: 1
+ * DESCRIPTION: Analysis by contracts with mixed CallsInPlace and Returns effects.
+ */
 
 // FILE: contracts.kt
 
@@ -61,7 +69,7 @@ fun case_2(value_1: Int?, value_2: Int?, value_3: Any?) {
             println(value_2)
         }
         null -> {
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_3?.<!UNRESOLVED_REFERENCE!>xor<!>(true))
+            println(value_3?.xor(true))
             println(value_4)
             println(value_1)
             println(value_2)

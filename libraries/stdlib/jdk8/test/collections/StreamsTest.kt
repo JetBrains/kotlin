@@ -35,7 +35,7 @@ class StreamsTest {
 
 
     @Test fun asSequence() {
-        val data = arrayOf(1, 2L, 1.23, null)
+        val data = arrayOf<Any?>(1, 2L, 1.23, null)
 
         fun<T> assertSequenceContent(expected: List<T>, actual: Sequence<T>) {
             assertEquals(expected, actual.toList())

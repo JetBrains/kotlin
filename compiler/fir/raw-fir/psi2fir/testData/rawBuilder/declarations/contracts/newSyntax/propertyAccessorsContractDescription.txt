@@ -1,36 +1,36 @@
 FILE: propertyAccessorsContractDescription.kt
-    public? final? class MyClass : R|kotlin/Any| {
+    public final? class MyClass : R|kotlin/Any| {
         public? [ContainingClassKey=MyClass] constructor(): R|MyClass| {
             super<R|kotlin/Any|>()
         }
 
         public? final? var myInt: Int = IntegerLiteral(0)
-            [ContainingClassKey=MyClass] public? get(): Int
+            public? [ContainingClassKey=MyClass] get(): Int
                 [Contract description] <
                     returnsNotNull#()
                 >
              {
                 ^ IntegerLiteral(1)
             }
-            [ContainingClassKey=MyClass] public? set(value: Int): R|kotlin/Unit| {
+            public? [ContainingClassKey=MyClass] set(value: Int): R|kotlin/Unit| {
                 field# = value#.times#(IntegerLiteral(10))
             }
 
     }
-    public? final? class AnotherClass : R|kotlin/Any| {
+    public final? class AnotherClass : R|kotlin/Any| {
         public? [ContainingClassKey=AnotherClass] constructor(multiplier: Int): R|AnotherClass| {
             super<R|kotlin/Any|>()
         }
 
         public? final? var anotherInt: Int = IntegerLiteral(0)
-            [ContainingClassKey=AnotherClass] public? get(): Int
+            public? [ContainingClassKey=AnotherClass] get(): Int
                 [Contract description] <
                     returnsNotNull#()
                 >
              {
                 ^ IntegerLiteral(1)
             }
-            [ContainingClassKey=AnotherClass] public? set(value: Int): R|kotlin/Unit|
+            public? [ContainingClassKey=AnotherClass] set(value: Int): R|kotlin/Unit|
                 [Contract description] <
                     returns#()
                 >
@@ -39,20 +39,20 @@ FILE: propertyAccessorsContractDescription.kt
             }
 
     }
-    public? final? class SomeClass : R|kotlin/Any| {
+    public final? class SomeClass : R|kotlin/Any| {
         public? [ContainingClassKey=SomeClass] constructor(multiplier: Int?): R|SomeClass| {
             super<R|kotlin/Any|>()
         }
 
         public? final? var someInt: Int = IntegerLiteral(0)
-            [ContainingClassKey=SomeClass] public? get(): Int
+            public? [ContainingClassKey=SomeClass] get(): Int
                 [Contract description] <
                     returnsNotNull#()
                 >
              {
                 ^ IntegerLiteral(1)
             }
-            [ContainingClassKey=SomeClass] public? set(value: Int): R|kotlin/Unit|
+            public? [ContainingClassKey=SomeClass] set(value: Int): R|kotlin/Unit|
                 [Contract description] <
                     returns#().implies#(!=(value#, Null(null)))
                 >

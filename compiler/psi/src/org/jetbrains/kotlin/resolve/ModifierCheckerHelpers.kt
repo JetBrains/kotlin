@@ -63,6 +63,7 @@ private fun buildCompatibilityMap(): Map<Pair<KtKeywordToken, KtKeywordToken>, C
     result += incompatibilityRegister(DATA_KEYWORD, SEALED_KEYWORD)
     result += incompatibilityRegister(DATA_KEYWORD, INLINE_KEYWORD)
     result += incompatibilityRegister(DATA_KEYWORD, VALUE_KEYWORD)
+    result += incompatibilityRegister(DATA_KEYWORD, OBJECT_KEYWORD, EXPECT_KEYWORD)
     // open is redundant to abstract & override
     result += redundantRegister(ABSTRACT_KEYWORD, OPEN_KEYWORD)
     // abstract is redundant to sealed
@@ -87,8 +88,8 @@ private fun buildCompatibilityMap(): Map<Pair<KtKeywordToken, KtKeywordToken>, C
     // (see the KEEP https://github.com/Kotlin/KEEP/blob/master/proposals/sealed-class-inheritance.md)
     result += incompatibilityRegister(SEALED_KEYWORD, INNER_KEYWORD)
 
-    // header / expect / impl / actual are all incompatible
-    result += incompatibilityRegister(HEADER_KEYWORD, EXPECT_KEYWORD, IMPL_KEYWORD, ACTUAL_KEYWORD)
+    // expect / actual are all incompatible
+    result += incompatibilityRegister(EXPECT_KEYWORD, ACTUAL_KEYWORD)
 
     return result
 }
@@ -127,12 +128,11 @@ private fun compatibilityRegister(
 val featureDependencies = mapOf(
     SUSPEND_KEYWORD to listOf(LanguageFeature.Coroutines),
     INLINE_KEYWORD to listOf(LanguageFeature.InlineProperties, LanguageFeature.InlineClasses),
-    HEADER_KEYWORD to listOf(LanguageFeature.MultiPlatformProjects),
-    IMPL_KEYWORD to listOf(LanguageFeature.MultiPlatformProjects),
     EXPECT_KEYWORD to listOf(LanguageFeature.MultiPlatformProjects),
     ACTUAL_KEYWORD to listOf(LanguageFeature.MultiPlatformProjects),
     LATEINIT_KEYWORD to listOf(LanguageFeature.LateinitTopLevelProperties, LanguageFeature.LateinitLocalVariables),
-    FUN_KEYWORD to listOf(LanguageFeature.FunctionalInterfaceConversion)
+    FUN_KEYWORD to listOf(LanguageFeature.FunctionalInterfaceConversion),
+    DATA_KEYWORD to listOf(LanguageFeature.DataObjects)
 )
 
 val featureDependenciesTargets = mapOf(
@@ -141,7 +141,8 @@ val featureDependenciesTargets = mapOf(
     LanguageFeature.LateinitTopLevelProperties to setOf(KotlinTarget.TOP_LEVEL_PROPERTY),
     LanguageFeature.InlineClasses to setOf(KotlinTarget.CLASS_ONLY),
     LanguageFeature.JvmInlineValueClasses to setOf(KotlinTarget.CLASS_ONLY),
-    LanguageFeature.FunctionalInterfaceConversion to setOf(KotlinTarget.INTERFACE)
+    LanguageFeature.FunctionalInterfaceConversion to setOf(KotlinTarget.INTERFACE),
+    LanguageFeature.DataObjects to setOf(KotlinTarget.STANDALONE_OBJECT)
 )
 
 val defaultVisibilityTargets: EnumSet<KotlinTarget> = EnumSet.of(
@@ -204,7 +205,7 @@ val possibleTargetMap = mapOf(
         KotlinTarget.LOCAL_VARIABLE,
         KotlinTarget.BACKING_FIELD
     ),
-    DATA_KEYWORD to EnumSet.of(KotlinTarget.CLASS_ONLY, KotlinTarget.LOCAL_CLASS),
+    DATA_KEYWORD to EnumSet.of(KotlinTarget.CLASS_ONLY, KotlinTarget.LOCAL_CLASS, KotlinTarget.STANDALONE_OBJECT),
     INLINE_KEYWORD to EnumSet.of(
         KotlinTarget.FUNCTION,
         KotlinTarget.PROPERTY,
@@ -214,7 +215,12 @@ val possibleTargetMap = mapOf(
     ),
     NOINLINE_KEYWORD to EnumSet.of(KotlinTarget.VALUE_PARAMETER),
     TAILREC_KEYWORD to EnumSet.of(KotlinTarget.FUNCTION),
-    SUSPEND_KEYWORD to EnumSet.of(KotlinTarget.MEMBER_FUNCTION, KotlinTarget.TOP_LEVEL_FUNCTION, KotlinTarget.LOCAL_FUNCTION),
+    SUSPEND_KEYWORD to EnumSet.of(
+        KotlinTarget.MEMBER_FUNCTION,
+        KotlinTarget.TOP_LEVEL_FUNCTION,
+        KotlinTarget.LOCAL_FUNCTION,
+        KotlinTarget.ANONYMOUS_FUNCTION
+    ),
     EXTERNAL_KEYWORD to EnumSet.of(
         KotlinTarget.FUNCTION,
         KotlinTarget.PROPERTY,
@@ -227,28 +233,6 @@ val possibleTargetMap = mapOf(
     CONST_KEYWORD to EnumSet.of(KotlinTarget.MEMBER_PROPERTY, KotlinTarget.TOP_LEVEL_PROPERTY),
     OPERATOR_KEYWORD to EnumSet.of(KotlinTarget.FUNCTION),
     INFIX_KEYWORD to EnumSet.of(KotlinTarget.FUNCTION),
-    HEADER_KEYWORD to EnumSet.of(
-        KotlinTarget.TOP_LEVEL_FUNCTION,
-        KotlinTarget.TOP_LEVEL_PROPERTY,
-        KotlinTarget.CLASS_ONLY,
-        KotlinTarget.OBJECT,
-        KotlinTarget.INTERFACE,
-        KotlinTarget.ENUM_CLASS,
-        KotlinTarget.ANNOTATION_CLASS
-    ),
-    IMPL_KEYWORD to EnumSet.of(
-        KotlinTarget.TOP_LEVEL_FUNCTION,
-        KotlinTarget.MEMBER_FUNCTION,
-        KotlinTarget.TOP_LEVEL_PROPERTY,
-        KotlinTarget.MEMBER_PROPERTY,
-        KotlinTarget.CONSTRUCTOR,
-        KotlinTarget.CLASS_ONLY,
-        KotlinTarget.OBJECT,
-        KotlinTarget.INTERFACE,
-        KotlinTarget.ENUM_CLASS,
-        KotlinTarget.ANNOTATION_CLASS,
-        KotlinTarget.TYPEALIAS
-    ),
     EXPECT_KEYWORD to EnumSet.of(
         KotlinTarget.TOP_LEVEL_FUNCTION,
         KotlinTarget.TOP_LEVEL_PROPERTY,
@@ -279,11 +263,6 @@ val possibleTargetMap = mapOf(
 val deprecatedTargetMap = mapOf<KtKeywordToken, Set<KotlinTarget>>()
 
 val deprecatedParentTargetMap = mapOf<KtKeywordToken, Set<KotlinTarget>>()
-
-val deprecatedModifierMap = mapOf(
-    HEADER_KEYWORD to EXPECT_KEYWORD,
-    IMPL_KEYWORD to ACTUAL_KEYWORD
-)
 
 // NOTE: redundant targets must be possible!
 val redundantTargetMap = mapOf<KtKeywordToken, Set<KotlinTarget>>(

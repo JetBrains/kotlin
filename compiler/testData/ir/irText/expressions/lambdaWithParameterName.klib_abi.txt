@@ -1,0 +1,17 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final val /expectedType1 // /expectedType1|{}expectedType1[0]
+    final fun <get-expectedType1>(): kotlin/Function1<kotlin/String, kotlin/Int> // /expectedType1.<get-expectedType1>|<get-expectedType1>(){}[0]
+final val /expectedType2 // /expectedType2|{}expectedType2[0]
+    final fun <get-expectedType2>(): kotlin/Function1<kotlin/String, kotlin/Int> // /expectedType2.<get-expectedType2>|<get-expectedType2>(){}[0]
+final val /x1 // /x1|{}x1[0]
+    final fun <get-x1>(): kotlin/String // /x1.<get-x1>|<get-x1>(){}[0]
+final val /x2 // /x2|{}x2[0]
+    final fun <get-x2>(): kotlin/String // /x2.<get-x2>|<get-x2>(){}[0]
+final fun /bar(): kotlin/String // /bar|bar(){}[0]
+final fun <#A: kotlin/Any?, #B: kotlin/Any?> /foo(#A, kotlin/Function1<#A, #B>): #B // /foo|foo(0:0;kotlin.Function1<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+final fun /myMain() // /myMain|myMain(){}[0]

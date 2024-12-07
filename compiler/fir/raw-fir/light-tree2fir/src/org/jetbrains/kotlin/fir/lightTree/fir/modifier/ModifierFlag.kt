@@ -1,5 +1,5 @@
 /*
- * Copyright 201L0-201L9 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -41,15 +41,12 @@ enum class ModifierFlag(val value: Long) {
     PARAMETER_CONST(1L shl 28),
     PLATFORM_EXPECT(1L shl 29),
     PLATFORM_ACTUAL(1L shl 30),
-    PLATFORM_HEADER(1L shl 31),
-    PLATFORM_IMPL(1L shl 32),
-    VARIANCE_IN(1L shl 33),
-    VARIANCE_OUT(1L shl 34),
-    VARIANCE_INVARIANT(1L shl 35),
-    REIFICATION_REIFIED(1L shl 36);
+    VARIANCE_IN(1L shl 31),
+    VARIANCE_OUT(1L shl 32),
+    VARIANCE_INVARIANT(1L shl 33),
+    REIFICATION_REIFIED(1L shl 34);
 
     companion object {
-        val Values = values()
         val ElementTypeToModifierFlagMap: Map<IElementType, ModifierFlag> = mutableMapOf(
             // Class
             KtTokens.ENUM_KEYWORD to CLASS_ENUM,
@@ -90,8 +87,6 @@ enum class ModifierFlag(val value: Long) {
             // Platform
             KtTokens.EXPECT_KEYWORD to PLATFORM_EXPECT,
             KtTokens.ACTUAL_KEYWORD to PLATFORM_ACTUAL,
-            KtTokens.HEADER_KEYWORD to PLATFORM_HEADER,
-            KtTokens.IMPL_KEYWORD to PLATFORM_IMPL,
 
             // Variance
             KtTokens.IN_KEYWORD to VARIANCE_IN,

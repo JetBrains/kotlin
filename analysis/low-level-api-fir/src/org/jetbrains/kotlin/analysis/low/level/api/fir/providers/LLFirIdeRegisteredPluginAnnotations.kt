@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
-import org.jetbrains.kotlin.analysis.providers.KotlinAnnotationsResolver
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinAnnotationsResolver
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -25,7 +25,7 @@ internal class LLFirIdeRegisteredPluginAnnotations(
     override val annotations: Set<AnnotationFqn>
         get() = allAnnotationsCache.getValue()
 
-    private val allAnnotationsCache: FirLazyValue<Set<AnnotationFqn>, Nothing?> = session.firCachesFactory.createLazyValue {
+    private val allAnnotationsCache: FirLazyValue<Set<AnnotationFqn>> = session.firCachesFactory.createLazyValue {
         // at this point, both metaAnnotations and annotationsFromPlugins should be collected
         val result = metaAnnotations.flatMapTo(mutableSetOf()) { getAnnotationsWithMetaAnnotation(it) }
 

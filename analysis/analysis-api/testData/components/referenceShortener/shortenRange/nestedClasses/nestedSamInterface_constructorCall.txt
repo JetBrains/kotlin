@@ -1,0 +1,9 @@
+Before shortening: dependency.Outer.NestedSAM {}
+with default settings:
+[qualifier] dependency.Outer
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+with SHORTEN_AND_IMPORT:
+[qualifier] dependency.Outer.NestedSAM {}
+with SHORTEN_AND_STAR_IMPORT:
+[qualifier] dependency.Outer.NestedSAM {}

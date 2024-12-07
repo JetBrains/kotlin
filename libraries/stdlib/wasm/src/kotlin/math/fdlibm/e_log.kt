@@ -77,22 +77,22 @@ private const val Lg7 = 1.479819860511658591e-01  /* 3FC2F112 DF3E5244 */
 
 private const val zero = 0.0
 
-internal fun __ieee754_log(x: Double): Double {
-    var x: Double = x
-    var hfsq: Double = 0.0
-    var f: Double = 0.0
-    var s: Double = 0.0
-    var z: Double = 0.0
-    var R: Double = 0.0
-    var w: Double = 0.0
-    var t1: Double = 0.0
-    var t2: Double = 0.0
-    var dk: Double = 0.0
-    var k: Int = 0
-    var hx: Int = 0
-    var i: Int = 0
-    var j: Int = 0
-    var lx: UInt = 0U
+internal fun __ieee754_log(_x: Double): Double {
+    var x: Double = _x
+    var hfsq: Double
+    var f: Double
+    var s: Double
+    var z: Double
+    var R: Double
+    var w: Double
+    var t1: Double
+    var t2: Double
+    var dk: Double
+    var k: Int
+    var hx: Int
+    var i: Int
+    var j: Int
+    var lx: UInt
 
     hx = __HI(x)        /* high word of x */
     lx = __LOu(x)        /* low  word of x */
@@ -100,8 +100,8 @@ internal fun __ieee754_log(x: Double): Double {
     k = 0
     if (hx < 0x00100000) {            /* x < 2**-1022  */
         if (((hx and 0x7fffffff) or lx.toInt()) == 0)
-            return -two54 / zero        /* log(+-0)=-inf */
-        if (hx < 0) return (x - x) / zero    /* log(-#) = NaN */
+            return Double.NEGATIVE_INFINITY        /* log(+-0)=-inf */
+        if (hx < 0) return Double.NaN    /* log(-#) = NaN */
         k -= 54; x *= two54 /* subnormal number, scale up x */
         hx = __HI(x)        /* high word of x */
     }

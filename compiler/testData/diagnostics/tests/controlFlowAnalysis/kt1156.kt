@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-1156 Throwing exception on the right side of elvis operator marks code unreachable
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface Box<T>
 
 public fun <T> foo(nextFunction: (T) -> T): Box<T> = null!!

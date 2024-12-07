@@ -1,0 +1,2 @@
+FILE: danglingAnnotationsFileLevel.kt
+    @Suppress(LAZY_EXPRESSION) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>

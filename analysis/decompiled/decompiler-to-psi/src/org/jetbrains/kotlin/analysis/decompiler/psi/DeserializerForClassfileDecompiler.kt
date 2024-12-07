@@ -16,10 +16,8 @@ import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.load.kotlin.BinaryClassAnnotationAndConstantLoaderImpl
-import org.jetbrains.kotlin.load.kotlin.JavaFlexibleTypeDeserializer
-import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
-import org.jetbrains.kotlin.load.kotlin.findKotlinClass
+import org.jetbrains.kotlin.load.kotlin.*
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -33,12 +31,13 @@ fun DeserializerForClassfileDecompiler(classFile: VirtualFile): DeserializerForC
         ClsKotlinBinaryClassCache.getInstance().getKotlinBinaryClassHeaderData(classFile)
             ?: error("Decompiled data factory shouldn't be called on an unsupported file: $classFile")
     val packageFqName = kotlinClassHeaderInfo.classId.packageFqName
-    return DeserializerForClassfileDecompiler(classFile.parent!!, packageFqName)
+    return DeserializerForClassfileDecompiler(classFile.parent!!, packageFqName, kotlinClassHeaderInfo.metadataVersion)
 }
 
 class DeserializerForClassfileDecompiler(
     packageDirectory: VirtualFile,
-    directoryPackageFqName: FqName
+    directoryPackageFqName: FqName,
+    private val metadataVersion: MetadataVersion
 ) : DeserializerForDecompilerBase(directoryPackageFqName) {
     override val builtIns: KotlinBuiltIns get() = DefaultBuiltIns.Instance
 
@@ -47,10 +46,11 @@ class DeserializerForClassfileDecompiler(
     override val deserializationComponents: DeserializationComponents
 
     init {
-        val classDataFinder = DirectoryBasedDataFinder(classFinder, LOG)
+        val classDataFinder = DirectoryBasedDataFinder(classFinder, LOG, metadataVersion)
         val notFoundClasses = NotFoundClasses(storageManager, moduleDescriptor)
-        val annotationAndConstantLoader =
-            BinaryClassAnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, storageManager, classFinder)
+        val annotationAndConstantLoader = createBinaryClassAnnotationAndConstantLoader(
+            moduleDescriptor, notFoundClasses, storageManager, classFinder, metadataVersion
+        )
 
         val configuration = object : DeserializationConfiguration {
             override val readDeserializedContracts: Boolean = true
@@ -63,7 +63,8 @@ class DeserializerForClassfileDecompiler(
             LookupTracker.DO_NOTHING, JavaFlexibleTypeDeserializer, emptyList(), notFoundClasses,
             ContractDeserializerImpl(configuration, storageManager),
             extensionRegistryLite = JvmProtoBufUtil.EXTENSION_REGISTRY,
-            samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList())
+            samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList()),
+            enumEntriesDeserializationSupport = enumEntriesDeserializationSupport,
         )
     }
 
@@ -72,7 +73,7 @@ class DeserializerForClassfileDecompiler(
         assert(packageFqName == directoryPackageFqName) {
             "Was called for $facadeFqName; only members of $directoryPackageFqName package are expected."
         }
-        val binaryClassForPackageClass = classFinder.findKotlinClass(ClassId.topLevel(facadeFqName))
+        val binaryClassForPackageClass = classFinder.findKotlinClass(ClassId.topLevel(facadeFqName), metadataVersion)
         val header = binaryClassForPackageClass?.classHeader
         val annotationData = header?.data
         val strings = header?.strings

@@ -13,5 +13,7 @@ expect var inlineProperty6: Int
 expect var inlineProperty7: Int
 expect var inlineProperty8: Int
 
-expect external val externalProperty1: Int
+expect val externalProperty1: Int
 expect val externalProperty2: Int
+
+expect var externalSetGet: Int

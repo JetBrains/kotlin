@@ -10,8 +10,8 @@ public/*package*/ abstract class MyComparableSettings : kotlin.Comparable<MyComp
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public/*package*/ open class MySettings</*0*/ SS : MySettings<SS!, PS!, L!>!, /*1*/ PS : MyComparableSettings!, /*2*/ L : MySettingsListener<PS!>!> {
-    public/*package*/ constructor MySettings</*0*/ SS : MySettings<SS!, PS!, L!>!, /*1*/ PS : MyComparableSettings!, /*2*/ L : MySettingsListener<PS!>!>()
+public open class MySettings</*0*/ SS : MySettings<SS!, PS!, L!>!, /*1*/ PS : MyComparableSettings!, /*2*/ L : MySettingsListener<PS!>!> {
+    public constructor MySettings</*0*/ SS : MySettings<SS!, PS!, L!>!, /*1*/ PS : MyComparableSettings!, /*2*/ L : MySettingsListener<PS!>!>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open fun getLinkedProjectsSettings(): kotlin.collections.(Mutable)Collection<PS!>!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

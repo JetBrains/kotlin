@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun f(a: Boolean, b: Int) {}
 
 fun foo(a: Any) {

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import org.jetbrains.jps.model.JpsModuleRootModificationUtil
 import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope
 import org.jetbrains.jps.model.java.JpsJavaLibraryType
@@ -37,6 +36,10 @@ abstract class AbstractKotlinJpsBuildTestCase : BaseKotlinJpsBuildTestCase() {
 
     protected fun addKotlinLombokDependency(): JpsLibrary {
         return addDependency(KotlinJpsLibrary.Lombok)
+    }
+
+    protected fun addKotlinSerializationDependency(): JpsLibrary {
+        return addDependency(KotlinJpsLibrary.Serialization)
     }
 
     private fun addDependency(library: KotlinJpsLibrary): JpsLibrary {

@@ -62,7 +62,6 @@ import org.jetbrains.kotlin.types.error.ErrorScope
 import org.jetbrains.kotlin.types.error.ThrowingScope
 import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
 import org.jetbrains.kotlin.types.typeUtil.*
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.math.min
 
 class TypeResolver(
@@ -83,6 +82,14 @@ class TypeResolver(
 
     open class TypeTransformerForTests {
         open fun transformType(kotlinType: KotlinType): KotlinType? = null
+    }
+
+    // Entry point for KotlinTypeCheckerTest
+    fun resolveTypeWithPossibleIntersections(scope: LexicalScope, typeReference: KtTypeReference, trace: BindingTrace): KotlinType {
+        return resolveType(
+            TypeResolutionContext(scope, trace, false, false, typeReference.suppressDiagnosticsInDebugMode(), false, true),
+            typeReference
+        )
     }
 
     fun resolveType(scope: LexicalScope, typeReference: KtTypeReference, trace: BindingTrace, checkBounds: Boolean): KotlinType {
@@ -321,37 +328,41 @@ class TypeResolver(
                     }
                 }
 
-                if (!languageVersionSettings.supportsFeature(LanguageFeature.DefinitelyNonNullableTypes)) {
-                    c.trace.report(
-                        UNSUPPORTED_FEATURE.on(
-                            intersectionType,
-                            LanguageFeature.DefinitelyNonNullableTypes to languageVersionSettings
+                if (!c.allowIntersectionTypes) {
+                    if (!languageVersionSettings.supportsFeature(LanguageFeature.DefinitelyNonNullableTypes)) {
+                        c.trace.report(
+                            UNSUPPORTED_FEATURE.on(
+                                intersectionType,
+                                LanguageFeature.DefinitelyNonNullableTypes to languageVersionSettings
+                            )
                         )
-                    )
-                    return
+                        return
+                    }
+
+                    if (!leftType.isTypeParameter() || leftType.isMarkedNullable || !leftType.isNullableOrUninitializedTypeParameter()) {
+                        c.trace.report(INCORRECT_LEFT_COMPONENT_OF_INTERSECTION.on(intersectionType.getLeftTypeRef()!!))
+                        return
+                    }
+
+                    if (!rightType.isAny()) {
+                        c.trace.report(INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION.on(intersectionType.getRightTypeRef()!!))
+                        return
+                    }
+
+                    val definitelyNotNullType =
+                        DefinitelyNotNullType.makeDefinitelyNotNull(leftType.unwrap())
+                            ?: error(
+                                "Definitely not-nullable type is not created for type parameter with nullable upper bound ${
+                                    TypeUtils.getTypeParameterDescriptorOrNull(
+                                        leftType
+                                    )!!
+                                }"
+                            )
+
+                    result = type(definitelyNotNullType)
+                } else {
+                    result = type(IntersectionTypeConstructor(listOf(leftType, rightType)).createType())
                 }
-
-                if (!leftType.isTypeParameter() || leftType.isMarkedNullable || !leftType.isNullableOrUninitializedTypeParameter()) {
-                    c.trace.report(INCORRECT_LEFT_COMPONENT_OF_INTERSECTION.on(intersectionType.getLeftTypeRef()!!))
-                    return
-                }
-
-                if (!rightType.isAny()) {
-                    c.trace.report(INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION.on(intersectionType.getRightTypeRef()!!))
-                    return
-                }
-
-                val definitelyNotNullType =
-                    DefinitelyNotNullType.makeDefinitelyNotNull(leftType.unwrap())
-                        ?: error(
-                            "Definitely not-nullable type is not created for type parameter with nullable upper bound ${
-                                TypeUtils.getTypeParameterDescriptorOrNull(
-                                    leftType
-                                )!!
-                            }"
-                        )
-
-                result = type(definitelyNotNullType)
             }
 
             private fun KotlinType.isNullableOrUninitializedTypeParameter(): Boolean {
@@ -404,7 +415,7 @@ class TypeResolver(
                 for (parametersGroup in parametersByName.values) {
                     if (parametersGroup.size < 2) continue
                     for (parameter in parametersGroup) {
-                        val ktParameter = parameter.source.getPsi()?.safeAs<KtParameter>() ?: continue
+                        val ktParameter = (parameter.source.getPsi() as? KtParameter) ?: continue
                         c.trace.report(DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE.on(ktParameter))
                     }
                 }

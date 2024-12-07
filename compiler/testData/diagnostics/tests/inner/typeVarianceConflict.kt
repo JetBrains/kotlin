@@ -1,4 +1,5 @@
-// !LANGUAGE: -ReportTypeVarianceConflictOnQualifierArguments
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ReportTypeVarianceConflictOnQualifierArguments
 
 class Bar<K> {
     inner class Inner {

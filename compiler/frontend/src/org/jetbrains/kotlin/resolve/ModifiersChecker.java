@@ -246,13 +246,8 @@ public class ModifiersChecker {
         private void checkIllegalHeader(@NotNull KtModifierListOwner modifierListOwner, @NotNull DeclarationDescriptor descriptor) {
             // Most cases are already handled by ModifierCheckerCore, only check nested classes here
             KtModifierList modifierList = modifierListOwner.getModifierList();
-            PsiElement keyword = modifierList != null ? modifierList.getModifier(HEADER_KEYWORD) : null;
-            if (keyword != null &&
-                descriptor instanceof ClassDescriptor && descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
-                trace.report(WRONG_MODIFIER_TARGET.on(keyword, KtTokens.HEADER_KEYWORD, "nested class"));
-            }
-            else if (keyword == null && modifierList != null) {
-                keyword = modifierList.getModifier(EXPECT_KEYWORD);
+            if (modifierList != null) {
+                PsiElement keyword = modifierList.getModifier(EXPECT_KEYWORD);
                 if (keyword != null &&
                     descriptor instanceof ClassDescriptor && descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
                     trace.report(WRONG_MODIFIER_TARGET.on(keyword, KtTokens.EXPECT_KEYWORD, "nested class"));

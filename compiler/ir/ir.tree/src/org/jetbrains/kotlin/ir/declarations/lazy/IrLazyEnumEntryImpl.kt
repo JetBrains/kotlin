@@ -43,8 +43,6 @@ class IrLazyEnumEntryImpl(
         symbol.bind(this)
     }
 
-    override var parent: IrDeclarationParent by createLazyParent()
-
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 
     override var name: Name = descriptor.name

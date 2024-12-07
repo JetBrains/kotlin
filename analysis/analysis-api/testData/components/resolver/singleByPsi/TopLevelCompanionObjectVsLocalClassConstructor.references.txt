@@ -1,0 +1,3 @@
+KtNameReferenceExpression(92,100): 'Conflict'
+  KtSimpleNameReference:
+    (in test.Conflict) companion object

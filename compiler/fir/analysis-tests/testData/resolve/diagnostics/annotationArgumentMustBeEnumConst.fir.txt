@@ -11,6 +11,9 @@ FILE: annotationArgumentMustBeEnumConst.kt
         public final static fun valueOf(value: R|kotlin/String|): R|TestEnum| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<TestEnum>|
+            public get(): R|kotlin/enums/EnumEntries<TestEnum>|
+
     }
     public final annotation class Ann : R|kotlin/Annotation| {
         public constructor(vararg a: R|kotlin/Array<out TestEnum>|): R|Ann| {

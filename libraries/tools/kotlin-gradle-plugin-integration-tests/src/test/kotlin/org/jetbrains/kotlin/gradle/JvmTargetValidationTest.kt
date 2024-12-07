@@ -10,20 +10,22 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.internal.jvm.JavaInfo
 import org.gradle.internal.jvm.Jvm
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.io.File
+import kotlin.io.path.appendText
 import kotlin.io.path.createDirectories
 import kotlin.io.path.deleteExisting
 import kotlin.io.path.writeText
 
 @DisplayName("JVM tasks target validation")
-@JvmGradlePluginTests
 class JvmTargetValidationTest : KGPBaseTest() {
 
-    @DisplayName("Should produce warning if java and kotlin jvm targets are different")
+    @JvmGradlePluginTests
+    @DisplayName("Should produce error if java and kotlin jvm targets are different")
     @GradleTest
-    internal fun shouldWarnIfJavaAndKotlinJvmTargetsAreDifferent(gradleVersion: GradleVersion) {
+    internal fun shouldFailIfJavaAndKotlinJvmTargetsAreDifferent(gradleVersion: GradleVersion) {
         project(
             projectName = "kotlinJavaProject".fullProjectName,
             gradleVersion = gradleVersion,
@@ -32,18 +34,56 @@ class JvmTargetValidationTest : KGPBaseTest() {
             setJavaCompilationCompatibility(JavaVersion.VERSION_1_8)
             useToolchainToCompile(11)
 
-            build("assemble") {
-                assertOutputContains(
-                    "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
-                            "should be set to the same Java version."
-                )
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
+            )
+
+            buildAndFail("assemble") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
             }
         }
     }
 
-    @DisplayName("Should fail the build if verification mode is 'error' and kotlin and java targets are different")
+    @JvmGradlePluginTests
+    @DisplayName("Should allow to override validation mode for specific task")
     @GradleTest
-    internal fun shouldFailBuildIfJavaAndKotlinJvmTargetsAreDifferent(gradleVersion: GradleVersion) {
+    internal fun overrideModeForTask(gradleVersion: GradleVersion) {
+        project(
+            projectName = "kotlinJavaProject".fullProjectName,
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.WARN)
+        ) {
+            setJavaCompilationCompatibility(JavaVersion.VERSION_1_8)
+            useToolchainToCompile(11)
+
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
+            )
+
+            buildGradle.appendText(
+                //language=groovy
+                """
+                |
+                |tasks.named("compileKotlin", org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile.class) {
+                |    jvmTargetValidationMode.set(org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode.IGNORE)
+                |}
+                """.trimMargin()
+            )
+
+            build("assemble") {
+                assertNoDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
+            }
+        }
+    }
+
+    @JvmGradlePluginTests
+    @DisplayName("Should warn in the build log if verification mode is 'warning' and kotlin and java targets are different")
+    @GradleTest
+    internal fun shouldWarnBuildIfJavaAndKotlinJvmTargetsAreDifferent(gradleVersion: GradleVersion) {
         project(
             projectName = "kotlinJavaProject".fullProjectName,
             gradleVersion = gradleVersion
@@ -54,19 +94,17 @@ class JvmTargetValidationTest : KGPBaseTest() {
             gradleProperties.append(
                 """
                 # suppress inspection "UnusedProperty"
-                kotlin.jvm.target.validation.mode = error
+                kotlin.jvm.target.validation.mode = warning
                 """.trimIndent()
             )
 
-            buildAndFail("assemble") {
-                assertOutputContains(
-                    "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
-                            "should be set to the same Java version."
-                )
+            build("assemble") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
             }
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Should ignore if verification mode is 'ignore' and kotlin and java targets are different")
     @GradleTest
     internal fun shouldNotPrintAnythingIfJavaAndKotlinJvmTargetsAreDifferent(
@@ -87,14 +125,12 @@ class JvmTargetValidationTest : KGPBaseTest() {
             )
 
             build("assemble") {
-                assertOutputDoesNotContain(
-                    "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
-                            "should be set to the same Java version."
-                )
+                assertNoDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
             }
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Should not produce warning when java and kotlin jvm targets are the same")
     @GradleTest
     internal fun shouldNotWarnOnJavaAndKotlinSameJvmTargets(gradleVersion: GradleVersion) {
@@ -104,15 +140,19 @@ class JvmTargetValidationTest : KGPBaseTest() {
         ) {
             useToolchainToCompile(11)
 
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
+            )
+
             build("build") {
-                assertOutputDoesNotContain(
-                    "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
-                            "should be set to the same Java version."
-                )
+                assertNoDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
             }
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Should produce Java-Kotlin jvm target incompatibility warning only for related tasks")
     @GradleTest
     internal fun shouldProduceJavaKotlinJvmTargetDifferenceWarningOnlyForRelatedTasks(
@@ -124,7 +164,14 @@ class JvmTargetValidationTest : KGPBaseTest() {
         ) {
             useToolchainToCompile(11)
 
-            JavaVersion.VERSION_1_8
+            //language=properties
+            gradleProperties.append(
+                """
+                # suppress inspection "UnusedProperty"
+                kotlin.jvm.target.validation.mode = warning
+                """.trimIndent()
+            )
+
             //language=Groovy
             buildGradle.append(
                 """
@@ -142,18 +189,19 @@ class JvmTargetValidationTest : KGPBaseTest() {
             )
 
             build("build") {
-                assertOutputContains(
-                    "'compileTestJava' task (current target is 1.8) and 'compileTestKotlin' task (current target is 11) jvm target " +
-                            "compatibility should be set to the same Java version."
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks,
+                    withSubstring = "compileTestKotlin"
                 )
-                assertOutputDoesNotContain(
-                    "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
-                            "should be set to the same Java version."
+                assertNoDiagnostic(
+                    KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks,
+                    withSubstring = "compileKotlin"
                 )
             }
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Should correctly validate JVM targets in mixed Kotlin/Java projects that are using <JDK1.8")
     @GradleTest
     internal fun oldJdkMixedJavaKotlinTargetVerification(gradleVersion: GradleVersion) {
@@ -173,10 +221,9 @@ class JvmTargetValidationTest : KGPBaseTest() {
                 
                 """.trimIndent()
             )
-            //language=properties
+
             gradleProperties.append(
                 """
-                # suppress inspection "UnusedProperty"
                 kotlin.jvm.target.validation.mode = error
                 """.trimIndent()
             )
@@ -185,6 +232,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Should skip JVM target validation if no Kotlin sources are available")
     @GradleTest
     internal fun shouldSkipJvmTargetValidationNoKotlinSources(gradleVersion: GradleVersion) {
@@ -194,21 +242,18 @@ class JvmTargetValidationTest : KGPBaseTest() {
         ) {
             setJavaCompilationCompatibility(JavaVersion.VERSION_1_8)
             useToolchainToCompile(11)
-            //language=properties
+
             gradleProperties.append(
                 """
-                # suppress inspection "UnusedProperty"
                 kotlin.jvm.target.validation.mode = error
                 """.trimIndent()
             )
+
             kotlinSourcesDir().toFile().deleteRecursively()
             javaSourcesDir().resolve("demo/HelloWorld.java").deleteExisting()
 
             build("assemble") {
-                assertOutputDoesNotContain(
-                    "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
-                            "should be set to the same Java version."
-                )
+                assertNoDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
             }
 
             javaSourcesDir().resolve("demo/Greeter.java").modify {
@@ -216,42 +261,49 @@ class JvmTargetValidationTest : KGPBaseTest() {
             }
 
             build("assemble") {
-                assertOutputDoesNotContain(
-                    "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
-                            "should be set to the same Java version."
-                )
+                assertNoDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
             }
         }
     }
 
-    @DisplayName("Should skip JVM target validation if no java sources are available")
+    @JvmGradlePluginTests
+    @DisplayName("Should still do JVM target validation if no java sources are available")
     @GradleTest
-    internal fun shouldSkipJvmTargetValidationNoJavaSources(gradleVersion: GradleVersion) {
+    internal fun shouldDoJvmTargetValidationOnNoJavaSources(gradleVersion: GradleVersion) {
         project(
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
-            buildJdk = getJdk11().javaHome // should differ from default Kotlin jvm target value
         ) {
             //language=properties
             gradleProperties.append(
                 """
                 # suppress inspection "UnusedProperty"
-                kotlin.jvm.target.validation.mode = error
+                kotlin.jvm.target.validation.mode = warning
                 """.trimIndent()
             )
 
-            build("assemble")
+            buildGradle.appendText(
+                """
+                |
+                |kotlin.jvmToolchain(11)
+                |kotlin.compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+                """.trimMargin()
+            )
+
+            build(":compileKotlin") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
+            }
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Should do JVM target validation if java sources are added and configuration cache is reused")
     @GradleTest
     internal fun shouldDoJvmTargetValidationOnNewJavaSourcesAndConfigurationCacheReuse(gradleVersion: GradleVersion) {
         project(
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.withConfigurationCache,
-            buildJdk = getJdk11().javaHome // should differ from default Kotlin jvm target value
+            buildOptions = defaultBuildOptions.withConfigurationCache
         ) {
             // Validation mode should be 'warning' because of https://github.com/gradle/gradle/issues/9339
             // which is fixed in Gradle 7.2
@@ -263,10 +315,16 @@ class JvmTargetValidationTest : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            build("assemble") {
-                assertOutputDoesNotContain(
-                    "'compileJava' task (current target is 11) and 'compileKotlin' task (current target is 1.8) jvm target compatibility should be set to the same Java version."
-                )
+            buildGradle.appendText(
+                """
+                |
+                |kotlin.jvmToolchain(11)
+                |kotlin.compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+                """.trimMargin()
+            )
+
+            build(":compileKotlin") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
             }
 
             javaSourcesDir().resolve("demo").run {
@@ -285,36 +343,29 @@ class JvmTargetValidationTest : KGPBaseTest() {
                 )
             }
 
-            build("assemble") {
-                assertOutputContains(
-                    "'compileJava' task (current target is 11) and 'compileKotlin' task (current target is 1.8) jvm target compatibility should be set to the same Java version."
-                )
+            build(":compileKotlin") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
             }
         }
     }
 
+    @OtherGradlePluginTests
     @DisplayName("Validation should work correctly for KaptGenerateStubs task")
-    @GradleTestVersions
     @GradleTest
     internal fun kaptGenerateStubsValidateCorrect(gradleVersion: GradleVersion) {
         project(
             projectName = "kapt2/simple",
             gradleVersion = gradleVersion,
-            buildJdk = getJdk11().javaHome
         ) {
-            //language=properties
+            val toolchainJavaVersion = if (gradleVersion < GradleVersion.version("6.9")) 11 else 17
+
             gradleProperties.append(
                 """
-                # suppress inspection "UnusedProperty"
                 kotlin.jvm.target.validation.mode = error
+                org.gradle.java.installations.paths=${getJdk17().javaHome},${getJdk11().javaHome}
                 """.trimIndent()
             )
 
-            val toolchainJavaVersion = if (gradleVersion < GradleVersion.version("6.9")) {
-                15
-            } else {
-                16
-            }
             buildGradle.append(
                 """
                 
@@ -326,7 +377,94 @@ class JvmTargetValidationTest : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            build("assemble", forceOutput = true)
+            build(":kaptGenerateStubsKotlin")
+        }
+    }
+
+    @JvmGradlePluginTests
+    @DisplayName("Default value becomes 'error' with Gradle 8+")
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_0)
+    @GradleTest
+    internal fun errorByDefaultWithGradle8(gradleVersion: GradleVersion) {
+        project("simple".fullProjectName, gradleVersion) {
+            //language=Groovy
+            @Suppress("UnnecessaryQualifiedReference")
+            buildGradle.appendText(
+                """
+                |
+                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile.class).configureEach {
+                |    compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+                |}
+                """.trimMargin()
+            )
+
+            if (gradleVersion.baseVersion >= GradleVersion.version("8.0")) {
+                buildAndFail("assemble") {
+                    assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
+                }
+            } else {
+                build("assemble") {
+                    assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
+                }
+            }
+        }
+    }
+
+    @MppGradlePluginTests
+    @DisplayName("Validation should show error for MPP JVM target withJava")
+    @GradleTest
+    internal fun mppWithJavaFailValidation(gradleVersion: GradleVersion) {
+        project("kt-31468-multiple-jvm-targets-with-java", gradleVersion) {
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
+            )
+
+            subProject("lib").buildGradleKts.appendText(
+                """
+                |
+                |java {
+                |    targetCompatibility = JavaVersion.VERSION_11
+                |    sourceCompatibility = JavaVersion.VERSION_11
+                |}
+                """.trimMargin()
+            )
+
+            buildAndFail(
+                ":lib:compileKotlinJvmWithJava",
+                "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError"
+            ) {
+                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
+            }
+        }
+    }
+
+    @MppGradlePluginTests
+    @DisplayName("Validation should not run MPP JVM target without withJava")
+    @GradleTest
+    internal fun mppJvmNotFailValidation(gradleVersion: GradleVersion) {
+        project("kt-31468-multiple-jvm-targets-with-java", gradleVersion) {
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
+            )
+
+            subProject("lib").buildGradleKts.appendText(
+                """
+                |
+                |java {
+                |    targetCompatibility = JavaVersion.VERSION_17
+                |    sourceCompatibility = JavaVersion.VERSION_17
+                |}
+                """.trimMargin()
+            )
+
+            build(
+                ":lib:compileKotlinPlainJvm",
+                "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError"
+            )
         }
     }
 
@@ -372,6 +510,8 @@ class JvmTargetValidationTest : KGPBaseTest() {
     }
 
     private fun getJdk11(): JavaInfo = Jvm.forHome(File(System.getProperty("jdk11Home")))
+
+    private fun getJdk17(): JavaInfo = Jvm.forHome(File(System.getProperty("jdk17Home")))
 
     private val String.fullProjectName get() = "kotlin-java-toolchain/$this"
 }

@@ -7,6 +7,9 @@
 
 package kotlin.collections
 
+/**
+ * Marker interface indicating that the [List] implementation supports fast indexed access.
+ */
 @SinceKotlin("1.1") public actual typealias RandomAccess = java.util.RandomAccess
 
 

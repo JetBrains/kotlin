@@ -1,5 +1,8 @@
 $TESTDATA_DIR$/withLib.kt
+-Xir-produce-klib-dir
 -libraries
-compiler/testData/integration/ant/js/simpleWithJsFileAsAnotherLib
--output
-$TEMP_DIR$/out.js
+$STDLIB_JS$:compiler/testData/integration/ant/js/simpleWithJsFileAsAnotherLib
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out

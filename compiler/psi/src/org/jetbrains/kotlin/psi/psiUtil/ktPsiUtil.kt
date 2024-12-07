@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,17 +12,18 @@ import com.intellij.psi.*
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.MODALITY_MODIFIERS
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 // NOTE: in this file we collect only Kotlin-specific methods working with PSI and not modifying it
@@ -183,22 +184,13 @@ fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out KtClassOrObject>>.ge
 
         val file = containingFile
         if (file is KtFile) {
-            val directive = file.findImportByAlias(referencedName)
-            if (directive != null) {
-                var reference = directive.importedReference
-                while (reference is KtDotQualifiedExpression) {
-                    reference = reference.selectorExpression
-                }
-                if (reference is KtSimpleNameExpression) {
-                    result.add(reference.getReferencedName())
-                }
-            }
+            getImportedSimpleNameByImportAlias(file, referencedName)?.let(result::add)
         }
     }
 
     require(this is KtClassOrObject) { "it should be ${KtClassOrObject::class} but it is a ${this::class.java.name}" }
 
-    val stub = stub
+    val stub = greenStub
     if (stub != null) {
         return stub.getSuperNames()
     }
@@ -298,9 +290,10 @@ fun KtNamedFunction.isContractPresentPsiCheck(isAllowedOnMembers: Boolean): Bool
 fun KtExpression.isContractDescriptionCallPsiCheck(): Boolean =
     (this is KtCallExpression && calleeExpression?.text == "contract") || (this is KtQualifiedExpression && isContractDescriptionCallPsiCheck())
 
+@OptIn(KtPsiInconsistencyHandling::class)
 fun KtQualifiedExpression.isContractDescriptionCallPsiCheck(): Boolean {
     val expression = selectorExpression ?: return false
-    return receiverExpression.text == "kotlin.contracts" && expression.isContractDescriptionCallPsiCheck()
+    return receiverExpressionOrNull?.text == "kotlin.contracts" && expression.isContractDescriptionCallPsiCheck()
 }
 
 fun KtElement.isFirstStatement(): Boolean {
@@ -331,6 +324,12 @@ fun PsiElement.isExtensionDeclaration(): Boolean {
     }
 
     return callable?.receiverTypeReference != null
+}
+
+fun KtDeclaration.isExpectDeclaration(): Boolean = when {
+    hasExpectModifier() -> true
+    this is KtParameter -> ownerFunction?.isExpectDeclaration() == true
+    else -> containingClassOrObject?.isExpectDeclaration() == true
 }
 
 fun KtElement.isContextualDeclaration(): Boolean {
@@ -397,7 +396,11 @@ tailrec fun findAssignment(element: PsiElement?): KtBinaryExpression? =
     }
 
 fun KtStringTemplateExpression.getContentRange(): TextRange {
-    val start = node.firstChildNode.textLength
+    val interpolationPrefixOrOpenQuote = node.firstChildNode ?: return TextRange.EMPTY_RANGE
+    val openQuoteAfterPrefixOrNull = interpolationPrefixOrOpenQuote.treeNext?.takeIf { secondNode ->
+        interpolationPrefixOrOpenQuote.elementType == KtTokens.INTERPOLATION_PREFIX && secondNode.elementType == KtTokens.OPEN_QUOTE
+    }
+    val start = interpolationPrefixOrOpenQuote.textLength + (openQuoteAfterPrefixOrNull?.textLength ?: 0)
     val lastChild = node.lastChildNode
     val length = textLength
     return TextRange(start, if (lastChild.elementType == KtTokens.CLOSING_QUOTE) length - lastChild.textLength else length)
@@ -432,7 +435,8 @@ fun KtSimpleNameExpression.isCallee(): Boolean {
 val KtStringTemplateExpression.plainContent: String
     get() = getContentRange().substring(text)
 
-fun KtStringTemplateExpression.isSingleQuoted(): Boolean = node.firstChildNode.textLength == 1
+fun KtStringTemplateExpression.isSingleQuoted(): Boolean =
+    node.findChildByType(KtTokens.OPEN_QUOTE)?.textLength == 1
 
 val KtNamedDeclaration.isPrivateNestedClassOrObject: Boolean get() = this is KtClassOrObject && isPrivate() && !isTopLevel()
 
@@ -549,7 +553,7 @@ fun isDoubleColonReceiver(expression: KtExpression) =
 fun KtFunctionLiteral.getOrCreateParameterList(): KtParameterList {
     valueParameterList?.let { return it }
 
-    val psiFactory = KtPsiFactory(this)
+    val psiFactory = KtPsiFactory(project)
 
     val anchor = lBrace
     val newParameterList = addAfter(psiFactory.createLambdaParameterList("x"), anchor) as KtParameterList
@@ -590,7 +594,7 @@ fun KtFunctionLiteral.findLabelAndCall(): Pair<Name?, KtCallExpression?> {
 fun KtCallExpression.getOrCreateValueArgumentList(): KtValueArgumentList {
     valueArgumentList?.let { return it }
     return addAfter(
-        KtPsiFactory(this).createCallArguments("()"),
+        KtPsiFactory(project).createCallArguments("()"),
         typeArgumentList ?: calleeExpression,
     ) as KtValueArgumentList
 }
@@ -599,7 +603,7 @@ fun KtCallExpression.addTypeArgument(typeArgument: KtTypeProjection) {
     if (typeArgumentList != null) {
         typeArgumentList?.addArgument(typeArgument)
     } else {
-        addAfter(KtPsiFactory(this).createTypeArguments("<${typeArgument.text}>"), calleeExpression)
+        addAfter(KtPsiFactory(project).createTypeArguments("<${typeArgument.text}>"), calleeExpression)
     }
 }
 
@@ -642,7 +646,7 @@ fun String.quoteIfNeeded(): String = if (this.isIdentifier()) this else "`$this`
 
 fun PsiElement.isTopLevelKtOrJavaMember(): Boolean {
     return when (this) {
-        is KtDeclaration -> parent is KtFile
+        is KtDeclaration -> isKtFile(parent)
         is PsiClass -> containingClass == null && this.qualifiedName != null
         else -> false
     }
@@ -652,9 +656,7 @@ fun KtNamedDeclaration.safeNameForLazyResolve(): Name {
     return nameAsName.safeNameForLazyResolve()
 }
 
-fun Name?.safeNameForLazyResolve(): Name {
-    return SpecialNames.safeIdentifier(this)
-}
+fun Name?.safeNameForLazyResolve(): Name = this?.takeUnless(Name::isSpecial) ?: SpecialNames.NO_NAME_PROVIDED
 
 fun KtNamedDeclaration.safeFqNameForLazyResolve(): FqName? {
     //NOTE: should only create special names for package level declarations, so we can safely rely on real fq name for parent
@@ -674,7 +676,7 @@ fun isTopLevelInFileOrScript(element: PsiElement): Boolean {
 fun KtFile.getFileOrScriptDeclarations() = if (isScript()) script!!.declarations else declarations
 
 fun KtExpression.getBinaryWithTypeParent(): KtBinaryExpressionWithTypeRHS? {
-    val callExpression = parent.safeAs<KtCallExpression>() ?: return null
+    val callExpression = parent as? KtCallExpression ?: return null
     val possibleQualifiedExpression = callExpression.parent
 
     val targetExpression = if (possibleQualifiedExpression is KtQualifiedExpression) {
@@ -716,3 +718,29 @@ tailrec fun KtTypeElement.unwrapNullability(): KtTypeElement? {
         else -> this
     }
 }
+
+internal fun isKtFile(parent: PsiElement?): Boolean {
+    //avoid loading KtFile which depends on java psi, which is not available in some setup
+    //e.g. remote dev https://youtrack.jetbrains.com/issue/GTW-7554
+    return parent is PsiFile && parent.language == KotlinLanguage.INSTANCE
+}
+
+fun getImportedSimpleNameByImportAlias(file: KtFile, aliasName: String): String? {
+    val directive = file.findImportByAlias(aliasName) ?: return null
+
+    var reference = directive.importedReference
+    while (reference is KtDotQualifiedExpression) {
+        reference = reference.selectorExpression
+    }
+    if (reference is KtSimpleNameExpression) {
+        return reference.getReferencedName()
+    }
+
+    return null
+}
+
+/**
+ * A best-effort way to get the class id of expression's type without resolve.
+ */
+fun KtConstantExpression.inferClassIdByPsi(): ClassId? =
+    ClassIdCalculator.inferConstantExpressionClassIdByPsi(this)

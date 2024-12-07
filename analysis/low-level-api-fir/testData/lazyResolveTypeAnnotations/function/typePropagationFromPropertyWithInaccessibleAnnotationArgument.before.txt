@@ -1,0 +1,21 @@
+FILE: [ResolvedTo(RAW_FIR)] declaration.kt
+    private final? const [ResolvedTo(RAW_FIR)] val privateConstant: <implicit> = LAZY_EXPRESSION
+        private [ResolvedTo(RAW_FIR)] get(): <implicit>
+    internal final? const [ResolvedTo(RAW_FIR)] val internalConstant: <implicit> = LAZY_EXPRESSION
+        internal [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val regularConstant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
+        public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
+FILE: [ResolvedTo(IMPORTS)] usafe.kt
+    public? final? [ResolvedTo(TYPES)] val propertyToResolve: R|kotlin/String|
+        public? [ResolvedTo(TYPES)] get(): R|kotlin/String| { LAZY_BLOCK }

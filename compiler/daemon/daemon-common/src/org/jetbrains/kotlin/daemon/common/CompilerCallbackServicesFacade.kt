@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.daemon.common
 
 import org.jetbrains.kotlin.incremental.components.LookupInfo
-import org.jetbrains.kotlin.incremental.js.JsInlineFunctionHash
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId
 import java.io.Serializable
@@ -53,6 +52,9 @@ interface CompilerCallbackServicesFacade : Remote {
 
     @Throws(RemoteException::class)
     fun hasEnumWhenTracker(): Boolean
+
+    @Throws(RemoteException::class)
+    fun hasImportTracker(): Boolean
 
     @Throws(RemoteException::class)
     fun hasIncrementalResultsConsumer(): Boolean
@@ -118,15 +120,17 @@ interface CompilerCallbackServicesFacade : Remote {
     fun enumWhenTracker_report(whenUsageClassPath: String, enumClassFqName: String)
 
     // ---------------------------------------------------
+    // ImportTracker
+    @Throws(RemoteException::class)
+    fun importTracker_report(filePath: String, importedFqName: String)
+
+    // ---------------------------------------------------
     // IncrementalResultsConsumer (js)
     @Throws(RemoteException::class)
     fun incrementalResultsConsumer_processHeader(headerMetadata: ByteArray)
 
     @Throws(RemoteException::class)
     fun incrementalResultsConsumer_processPackagePart(sourceFilePath: String, packagePartMetadata: ByteArray, binaryAst: ByteArray, inlineData: ByteArray)
-
-    @Throws(RemoteException::class)
-    fun incrementalResultsConsumer_processInlineFunctions(functions: Collection<JsInlineFunctionHash>)
 
     @Throws(RemoteException::class)
     fun incrementalResultsConsumer_processPackageMetadata(packageName: String, metadata: ByteArray)

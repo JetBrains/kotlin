@@ -1,5 +1,7 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+
+
 // FILE: test.kt
 fun box(): String {
     class Local(val i: Int, val j: Int) : Foo() {

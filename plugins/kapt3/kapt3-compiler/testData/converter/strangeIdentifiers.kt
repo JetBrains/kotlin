@@ -37,4 +37,4 @@ class `A B` {
     class C
 }
 
-// EXPECTED_ERROR(other:-1:-1) '60x60' is an invalid Java enum value name
+// EXPECTED_ERROR: (other:-1:-1) '60x60' is an invalid Java enum value name

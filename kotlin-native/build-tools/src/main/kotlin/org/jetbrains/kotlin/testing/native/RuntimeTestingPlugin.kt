@@ -8,79 +8,93 @@ package org.jetbrains.kotlin.testing.native
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.ProjectLayout
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.property
 import org.jetbrains.kotlin.bitcode.CompileToBitcodeExtension
-import org.jetbrains.kotlin.bitcode.CompileToBitcodePlugin
-import org.jetbrains.kotlin.resolve
-import java.io.File
-import java.net.URL
+import java.net.URI
 import javax.inject.Inject
 
 @Suppress("UnstableApiUsage")
 open class RuntimeTestingPlugin : Plugin<Project> {
     override fun apply(target: Project): Unit = with(target) {
-        val extension = extensions.create(GOOGLE_TEST_EXTENSION_NAME, GoogleTestExtension::class.java, target)
+        val extension = extensions.create(GOOGLE_TEST_EXTENSION_NAME, GoogleTestExtension::class.java)
         val downloadTask = registerDownloadTask(extension)
 
-        val googleTestRoot = project.provider { extension.sourceDirectory }
+        val googleTestRoot = extension.sourceDirectory
 
-        createBitcodeTasks(googleTestRoot, listOf(downloadTask))
+        createBitcodeTasks(project.objects.directoryProperty().value(googleTestRoot), listOf(downloadTask))
     }
 
-    private fun Project.registerDownloadTask(extension: GoogleTestExtension): TaskProvider<GitDownloadTask> {
-        val task = tasks.register(
-                "downloadGoogleTest",
-                GitDownloadTask::class.java,
-                provider { URL(extension.repository) },
-                provider { extension.revision },
-                provider { extension.fetchDirectory }
-        )
-        task.configure {
-            refresh.set(provider { extension.refresh })
-            onlyIf { extension.localSourceRoot == null }
-            description = "Retrieves GoogleTest from the given repository"
-            group = "Google Test"
-        }
-        return task
-    }
+    private fun Project.registerDownloadTask(extension: GoogleTestExtension): TaskProvider<GitDownloadTask> =
+            tasks.register("downloadGoogleTest", GitDownloadTask::class.java) {
+                description = "Retrieves GoogleTest from the given repository"
+                group = "Google Test"
+                onlyIf {
+                    !extension.hasLocalSourceRoot.get()
+                }
+                repository.set(extension.repository.map { URI.create(it) })
+                revision.set(extension.revision)
+                outputDirectory.set(extension.sourceDirectory)
+                refresh.set(extension.refresh)
+            }
 
     private fun Project.createBitcodeTasks(
-            googleTestRoot: Provider<File>,
+            googleTestRoot: DirectoryProperty,
             dependencies: Iterable<TaskProvider<*>>
     ) {
         pluginManager.withPlugin("compile-to-bitcode") {
-            val bitcodeExtension =
-                    project.extensions.getByName(CompileToBitcodePlugin.EXTENSION_NAME) as CompileToBitcodeExtension
+            val bitcodeExtension = project.extensions.getByType<CompileToBitcodeExtension>()
 
-            bitcodeExtension.module("googletest", outputGroup = "test") {
-                srcDirs = project.files(
-                        googleTestRoot.resolve("googletest/src")
-                )
-                headersDirs = project.files(
-                        googleTestRoot.resolve("googletest/include"),
-                        googleTestRoot.resolve("googletest")
-                )
-                includeFiles = listOf("*.cc")
-                excludeFiles = listOf("gtest-all.cc", "gtest_main.cc")
-                // Original GTest sources contain an unused variable on Windows (kAlternatePathSeparatorString).
-                compilerArgs.add("-Wno-unused")
-                dependsOn(dependencies)
-            }
+            bitcodeExtension.allTargets {
+                module("googletest") {
+                    sourceSets {
+                        testFixtures {
+                            inputFiles.from(googleTestRoot.dir("googletest/src"))
+                            // That's how googletest/CMakeLists.txt builds gtest library.
+                            inputFiles.include("gtest-all.cc")
+                            headersDirs.setFrom(
+                                    googleTestRoot.dir("googletest/include"),
+                                    googleTestRoot.dir("googletest")
+                            )
+                            // Fix Gradle Configuration Cache: support this task being configured before googletest sources are actually downloaded.
+                            compileTask.configure {
+                                inputFiles.setFrom(googleTestRoot.dir("googletest/src/gtest-all.cc"))
+                            }
+                        }
+                    }
+                    compilerArgs.set(listOf("-std=c++17", "-O2"))
+                    this.dependencies.addAll(dependencies)
+                }
 
-            bitcodeExtension.module("googlemock", outputGroup = "test") {
-                srcDirs = project.files(
-                        googleTestRoot.resolve("googlemock/src")
-                )
-                headersDirs = project.files(
-                        googleTestRoot.resolve("googlemock"),
-                        googleTestRoot.resolve("googlemock/include"),
-                        googleTestRoot.resolve("googletest/include")
-                )
-                includeFiles = listOf("*.cc")
-                excludeFiles = listOf("gmock-all.cc", "gmock_main.cc")
-                dependsOn(dependencies)
+                module("googlemock") {
+                    sourceSets {
+                        testFixtures {
+                            inputFiles.from(googleTestRoot.dir("googlemock/src"))
+                            // That's how googlemock/CMakeLists.txt builds gmock library.
+                            inputFiles.include("gmock-all.cc")
+                            headersDirs.setFrom(
+                                    googleTestRoot.dir("googlemock"),
+                                    googleTestRoot.dir("googlemock/include"),
+                                    googleTestRoot.dir("googletest/include"),
+                            )
+                            // Fix Gradle Configuration Cache: support this task being configured before googletest sources are actually downloaded.
+                            compileTask.configure {
+                                inputFiles.setFrom(googleTestRoot.dir("googlemock/src/gmock-all.cc"))
+                            }
+                        }
+                    }
+                    compilerArgs.set(listOf("-std=c++17", "-O2"))
+                    this.dependencies.addAll(dependencies)
+                }
             }
         }
     }
@@ -94,12 +108,16 @@ open class RuntimeTestingPlugin : Plugin<Project> {
 /**
  * A project extension to configure from where we get the GoogleTest framework.
  */
-open class GoogleTestExtension @Inject constructor(private val project: Project) {
+abstract class GoogleTestExtension @Inject constructor(
+        layout: ProjectLayout,
+        providers: ProviderFactory,
+        objects: ObjectFactory,
+) {
 
     /**
      * A repository to fetch GoogleTest from.
      */
-    var repository: String = "https://github.com/google/googletest.git"
+    val repository: Property<String> = objects.property<String>().convention("https://github.com/google/googletest.git")
 
     private var _revision: String? = null
 
@@ -117,43 +135,32 @@ open class GoogleTestExtension @Inject constructor(private val project: Project)
     /**
      * Fetch the [revision] even if the [fetchDirectory] already contains it. Overwrite all changes manually made in the output directory.
      */
-    var refresh: Boolean = false
+    val refresh: Property<Boolean> = objects.property<Boolean>().convention(false)
 
     /**
      * A directory to fetch the [revision] to.
      */
-    var fetchDirectory: File = project.file("googletest")
-
-    internal var localSourceRoot: File? = null
+    private val fetchDirectory: Directory = layout.projectDirectory.dir("googletest")
 
     /**
-     * Use a local [directory] with GoogleTest instead of the fetched one. If set, the download task will not be executed.
+     * Use a local directory with GoogleTest instead of the fetched one. If set, the download task will not be executed.
      */
-    fun useLocalSources(directory: File) {
-        localSourceRoot = directory
-    }
-
-    /**
-     * Use a local [directory] with GoogleTest instead of the fetched one. If set, the download task will not be executed.
-     */
-    fun useLocalSources(directory: String) {
-        localSourceRoot = project.file(directory)
-    }
+    abstract val localSourceRoot: DirectoryProperty
+    val hasLocalSourceRoot: Provider<Boolean> = providers.provider { localSourceRoot.isPresent }
 
     /**
      * A getter for directory that contains the GTest sources.
-     * Returns a local source directory if it's specified (see [useLocalSources]) or [fetchDirectory] otherwise.
+     * Returns a local source directory if it's specified (see [localSourceRoot]) or [fetchDirectory] otherwise.
      */
-    val sourceDirectory: File
-        get() = localSourceRoot ?: fetchDirectory
+    val sourceDirectory: Provider<Directory> = localSourceRoot.orElse(fetchDirectory)
 
     /**
      * A file collection with header directories for GoogleTest and GoogleMock.
      * Useful to configure compilation against GTest.
      */
-    val headersDirs: FileCollection = project.files(
-            project.provider { sourceDirectory.resolve("googletest/include") },
-            project.provider { sourceDirectory.resolve("googlemock/include") }
+    val headersDirs: FileCollection = layout.files(
+            sourceDirectory.map { it.dir("googletest/include")},
+            sourceDirectory.map { it.dir("googlemock/include")}
     )
 }
 

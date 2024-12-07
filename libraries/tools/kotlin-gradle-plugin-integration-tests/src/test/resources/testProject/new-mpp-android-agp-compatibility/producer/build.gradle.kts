@@ -11,17 +11,22 @@ version = "1.0.0-SNAPSHOT"
 
 publishing {
     repositories {
-        maven(rootProject.buildDir.resolve("repo")) {
+        maven("<localRepo>") {
             name = "buildDir"
         }
     }
 }
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+}
+
 android {
     compileSdkVersion(30)
+    namespace = "com.example.producer"
 }
 
 kotlin {
     jvm()
-    android { publishAllLibraryVariants() }
+    androidTarget { publishAllLibraryVariants() }
 }

@@ -5,23 +5,26 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
-import org.gradle.api.artifacts.ResolvedArtifact
-import org.gradle.api.artifacts.ResolvedDependency
+import org.gradle.api.artifacts.result.ResolvedArtifactResult
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.logging.Logger
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.library.uniqueName
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
+import org.jetbrains.kotlin.util.Logger as KLogger
 
-fun getCacheDirectory(
+internal fun getCacheDirectory(
     rootCacheDirectory: File,
-    dependency: ResolvedDependency,
-    artifact: ResolvedArtifact?,
-    partialLinkage: Boolean
+    dependency: ResolvedDependencyResult,
+    artifact: ResolvedArtifactResult?,
+    resolvedConfiguration: LazyResolvedConfiguration,
+    partialLinkageMode: String
 ): File {
-    val moduleCacheDirectory = File(rootCacheDirectory, dependency.moduleName)
-    val versionCacheDirectory = File(moduleCacheDirectory, dependency.moduleVersion)
+    val moduleCacheDirectory = File(rootCacheDirectory, dependency.selected.moduleVersion?.name ?: "undefined")
+    val versionCacheDirectory = File(moduleCacheDirectory, dependency.selected.moduleVersion?.version ?: "undefined")
     val uniqueName = artifact
         ?.let {
             if (libraryFilter(it))
@@ -40,16 +43,22 @@ fun getCacheDirectory(
         versionCacheDirectory.resolve(hash)
     } else versionCacheDirectory
 
-    return File(cacheDirectory, computeDependenciesHash(dependency, partialLinkage))
+    return File(cacheDirectory, computeDependenciesHash(dependency, resolvedConfiguration, partialLinkageMode))
 }
 
 internal fun ByteArray.toHexString() = joinToString("") { (0xFF and it.toInt()).toString(16).padStart(2, '0') }
 
-private fun computeDependenciesHash(dependency: ResolvedDependency, partialLinkage: Boolean): String {
+private fun computeDependenciesHash(
+    dependency: ResolvedDependencyResult,
+    resolvedConfiguration: LazyResolvedConfiguration,
+    partialLinkageMode: String
+): String {
     val hashedValue = buildString {
-        if (partialLinkage) append("#__PL__#")
+        if (PartialLinkageMode.resolveMode(partialLinkageMode)?.isEnabled == true)
+            append("#__PL__#")
 
-        (dependency.moduleArtifacts + getAllDependencies(dependency).flatMap { it.moduleArtifacts })
+        (listOf(dependency) + getAllDependencies(dependency))
+            .flatMap { resolvedConfiguration.getArtifacts(it) }
             .map { it.file.absolutePath }
             .distinct()
             .sortedBy { it }
@@ -61,21 +70,23 @@ private fun computeDependenciesHash(dependency: ResolvedDependency, partialLinka
     return hash.toHexString()
 }
 
-fun getDependenciesCacheDirectories(
+internal fun getDependenciesCacheDirectories(
     rootCacheDirectory: File,
-    dependency: ResolvedDependency,
+    dependency: ResolvedDependencyResult,
+    resolvedConfiguration: LazyResolvedConfiguration,
     considerArtifact: Boolean,
-    partialLinkage: Boolean
+    partialLinkageMode: String
 ): List<File>? {
     return getAllDependencies(dependency)
         .flatMap { childDependency ->
-            childDependency.moduleArtifacts.map {
+            resolvedConfiguration.getArtifacts(childDependency).map {
                 if (libraryFilter(it)) {
                     val cacheDirectory = getCacheDirectory(
                         rootCacheDirectory = rootCacheDirectory,
                         dependency = childDependency,
                         artifact = if (considerArtifact) it else null,
-                        partialLinkage = partialLinkage
+                        resolvedConfiguration = resolvedConfiguration,
+                        partialLinkageMode = partialLinkageMode
                     )
                     if (!cacheDirectory.exists()) return null
                     cacheDirectory
@@ -88,25 +99,27 @@ fun getDependenciesCacheDirectories(
         .filter { it.exists() }
 }
 
-fun getAllDependencies(dependency: ResolvedDependency): Set<ResolvedDependency> {
-    val allDependencies = mutableSetOf<ResolvedDependency>()
+internal fun getAllDependencies(dependency: ResolvedDependencyResult): Set<ResolvedDependencyResult> {
+    val allDependencies = mutableSetOf<ResolvedDependencyResult>()
 
-    fun traverseAllDependencies(dependency: ResolvedDependency) {
+    fun traverseAllDependencies(dependency: ResolvedDependencyResult) {
         if (dependency in allDependencies)
             return
         allDependencies.add(dependency)
-        dependency.children.forEach { traverseAllDependencies(it) }
+        dependency.selected.dependencies.filterIsInstance<ResolvedDependencyResult>().forEach { traverseAllDependencies(it) }
     }
 
-    dependency.children.forEach { traverseAllDependencies(it) }
+    dependency.selected.dependencies.filterIsInstance<ResolvedDependencyResult>().forEach { traverseAllDependencies(it) }
     return allDependencies
 }
 
-internal class GradleLoggerAdapter(private val gradleLogger: Logger) : org.jetbrains.kotlin.util.Logger {
+internal class GradleLoggerAdapter(private val gradleLogger: Logger) : KLogger {
     override fun log(message: String) = gradleLogger.info(message)
     override fun warning(message: String) = gradleLogger.warn(message)
-    override fun error(message: String) = kotlin.error(message)
-    override fun fatal(message: String): Nothing = kotlin.error(message)
+    override fun error(message: String) = gradleLogger.error(message)
+
+    @Deprecated(KLogger.FATAL_DEPRECATION_MESSAGE, ReplaceWith(KLogger.FATAL_REPLACEMENT))
+    override fun fatal(message: String): Nothing = kotlin.error(message) // WARNING: This would crash Gradle daemon!
 }
 
-private fun libraryFilter(artifact: ResolvedArtifact): Boolean = artifact.file.absolutePath.endsWith(".klib")
+private fun libraryFilter(artifact: ResolvedArtifactResult): Boolean = artifact.file.absolutePath.endsWith(".klib")

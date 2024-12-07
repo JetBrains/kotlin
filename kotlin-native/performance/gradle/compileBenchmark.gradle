@@ -16,7 +16,7 @@ task konanRun {
 
 task configureBuild {
     doLast {
-        mkdir "${buildDir.absolutePath}"
+        mkdir "${layout.buildDirectory.get().asFile.absolutePath}"
     }
 }
 
@@ -33,23 +33,21 @@ task configureBuild {
 }
 
 task clean {
-    doLast {
-        delete "${buildDir.absolutePath}"
-    }
+    delete(layout.buildDirectory)
 }
 
 task konanJsonReport {
     doLast {
         def nativeCompileTime = MPPTools.getCompileBenchmarkTime(project.ext.applicationName, project.ext.buildSteps.keySet(),
                 project.ext.repeatNumber, exitCodes)
-        def nativeExecutable = "${buildDir.absolutePath}/program${MPPTools.getNativeProgramExtension()}"
+        def nativeExecutable = layout.buildDirectory.file("program${MPPTools.getNativeProgramExtension()}").get().asFile.toString()
         def properties = getCommonProperties() + ['type': 'native',
                                                   'compilerVersion': "${konanVersion}".toString(),
                                                   'benchmarks': "[]",
                                                   'compileTime': nativeCompileTime,
                                                   'codeSize': MPPTools.getCodeSizeBenchmark(project.ext.applicationName, nativeExecutable) ]
         def output = MPPTools.createJsonReport(properties)
-        new File("${buildDir.absolutePath}/${nativeJson}").write(output)
+        layout.buildDirectory.file(nativeJson).get().asFile.write(output)
     }
 }
 task jvmRun {

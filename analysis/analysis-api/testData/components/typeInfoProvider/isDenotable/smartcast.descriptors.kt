@@ -18,7 +18,7 @@ fun test(a: Any?) {
         (@Denotable("kotlin.Any?") a).length
         (@Denotable("kotlin.Any?") a).inc()
     }
-    @Nondenotable("(kotlin.Comparable<*> & java.io.Serializable)") if (true) {
+    @Nondenotable("kotlin.Comparable<*> & java.io.Serializable") if (true) {
         ""
     } else {
         1

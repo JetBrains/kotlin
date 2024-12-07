@@ -69,18 +69,18 @@ private const val pio2_3t = 8.47842766036889956997e-32 /* 0x397B839A, 0x252049C1
 
 internal fun __ieee754_rem_pio2(x: Double, y: DoubleArray): Int {
     var z: Double = 0.0
-    var w: Double = 0.0
-    var t: Double = 0.0
-    var r: Double = 0.0
-    var fn: Double = 0.0
+    var w: Double
+    var t: Double
+    var r: Double
+    var fn: Double
     val tx: DoubleArray = DoubleArray(3)
-    var e0: Int = 0
-    var i: Int = 0
-    var j: Int = 0
-    var nx: Int = 0
-    var n: Int = 0
-    var ix: Int = 0
-    var hx: Int = 0
+    var e0: Int
+    var i: Int
+    var j: Int
+    var nx: Int
+    var n: Int
+    var ix: Int
+    var hx: Int
 
     hx = __HI(x)        /* high word of x */
     ix = hx and 0x7fffffff

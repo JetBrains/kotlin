@@ -1,6 +1,4 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +NewInference
-
+// RUN_PIPELINE_TILL: FRONTEND
 val Int.plusAssign: (Int) -> Unit
     get() = {}
 

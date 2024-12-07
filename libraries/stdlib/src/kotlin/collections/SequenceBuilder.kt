@@ -22,6 +22,7 @@ import kotlin.experimental.ExperimentalTypeInference
  * @sample samples.collections.Sequences.Building.buildFibonacciSequence
  */
 @SinceKotlin("1.3")
+@Suppress("DEPRECATION")
 public fun <T> sequence(@BuilderInference block: suspend SequenceScope<T>.() -> Unit): Sequence<T> = Sequence { iterator(block) }
 
 /**
@@ -31,6 +32,7 @@ public fun <T> sequence(@BuilderInference block: suspend SequenceScope<T>.() -> 
  * @sample samples.collections.Iterables.Building.iterable
  */
 @SinceKotlin("1.3")
+@Suppress("DEPRECATION")
 public fun <T> iterator(@BuilderInference block: suspend SequenceScope<T>.() -> Unit): Iterator<T> {
     val iterator = SequenceBuilderIterator<T>()
     iterator.nextStep = block.createCoroutineUnintercepted(receiver = iterator, completion = iterator)
@@ -87,7 +89,7 @@ public abstract class SequenceScope<in T> internal constructor() {
      *
      * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
      */
-    public suspend fun yieldAll(sequence: Sequence<T>) = yieldAll(sequence.iterator())
+    public suspend fun yieldAll(sequence: Sequence<T>): Unit = yieldAll(sequence.iterator())
 }
 
 private typealias State = Int

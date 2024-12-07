@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -DEPRECATION
+// FIR_IDENTICAL
+// DIAGNOSTICS: -DEPRECATION
 @nativeGetter
 fun String.foo(n: Int): Int?
 @nativeGetter

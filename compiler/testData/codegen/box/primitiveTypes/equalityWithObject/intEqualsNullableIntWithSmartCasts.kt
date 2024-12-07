@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProperIeee754Comparisons
+// LANGUAGE: +ProperIeee754Comparisons
 
 fun eq1(a: Any?, b: Any?) =
     a is Int? && b is Int && a == b

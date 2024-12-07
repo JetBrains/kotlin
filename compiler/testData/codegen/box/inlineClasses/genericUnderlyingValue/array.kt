@@ -1,5 +1,7 @@
 // CHECK_BYTECODE_LISTING
-// LANGUAGE: -JvmInlineValueClasses, +GenericInlineClassParameter
+// FIR_IDENTICAL
+// LANGUAGE: +GenericInlineClassParameter
+// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 
 inline class ICIntArray<T: Int>(val value: Array<T>)
 

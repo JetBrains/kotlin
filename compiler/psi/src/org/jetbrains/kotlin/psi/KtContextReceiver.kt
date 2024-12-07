@@ -8,21 +8,31 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
+import org.jetbrains.kotlin.psi.stubs.KotlinContextReceiverStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
-class KtContextReceiver : KtElementImplStub<KotlinPlaceHolderStub<KtContextReceiver>> {
+/**
+ * Deprecated in favor of context parameters.
+ */
+class KtContextReceiver : KtElementImplStub<KotlinContextReceiverStub> {
     constructor(node: ASTNode) : super(node)
-    constructor(stub: KotlinPlaceHolderStub<KtContextReceiver>) : super(stub, KtStubElementTypes.CONTEXT_RECEIVER)
+    constructor(stub: KotlinContextReceiverStub) : super(stub, KtStubElementTypes.CONTEXT_RECEIVER)
 
     fun targetLabel(): KtSimpleNameExpression? =
         findChildByType<KtContainerNode?>(KtNodeTypes.LABEL_QUALIFIER)
             ?.findChildByType(KtNodeTypes.LABEL)
 
-    fun labelName(): String? = targetLabel()?.getReferencedName()
-    fun labelNameAsName(): Name? = targetLabel()?.getReferencedNameAsName()
+    fun labelName(): String? {
+        stub?.let { return it.getLabel() }
+        return targetLabel()?.getReferencedName()
+    }
 
-    fun typeReference(): KtTypeReference? = findChildByType(KtNodeTypes.TYPE_REFERENCE)
+    fun labelNameAsName(): Name? {
+        stub?.let { stub -> return stub.getLabel()?.let { Name.identifier(it) } }
+        return targetLabel()?.getReferencedNameAsName()
+    }
+
+    fun typeReference(): KtTypeReference? = getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE)
 
     fun name(): String? = labelName() ?: typeReference()?.nameForReceiverLabel()
 }

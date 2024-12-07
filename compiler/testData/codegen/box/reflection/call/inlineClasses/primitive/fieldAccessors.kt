@@ -4,7 +4,8 @@
 import kotlin.reflect.jvm.isAccessible
 import kotlin.test.assertEquals
 
-inline class S(val value: Int) {
+@JvmInline
+value class S(val value: Int) {
     operator fun plus(other: S): S = S(this.value + other.value)
 }
 

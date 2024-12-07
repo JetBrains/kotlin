@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface IA
 interface IB
 interface IC

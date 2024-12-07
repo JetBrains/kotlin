@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-12982 Incorrect type inference when accessing mutable protected property via reflection
 

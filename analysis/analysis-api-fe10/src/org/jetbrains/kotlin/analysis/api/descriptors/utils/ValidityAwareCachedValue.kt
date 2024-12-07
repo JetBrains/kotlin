@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.utils
 
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValidAndAccessible
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -15,16 +15,15 @@ import kotlin.reflect.KProperty
  * Lazy value that guaranties safe publication and checks validity on every access
  */
 internal class ValidityAwareCachedValue<T>(
-    private val token: KtLifetimeToken,
+    private val token: KaLifetimeToken,
     init: () -> T
 ) : ReadOnlyProperty<Any, T> {
     private val lazyValue = lazy(LazyThreadSafetyMode.PUBLICATION, init)
 
-    @Suppress("UNCHECKED_CAST")
     override fun getValue(thisRef: Any, property: KProperty<*>): T {
         token.assertIsValidAndAccessible()
         return lazyValue.value
     }
 }
 
-internal fun <T> KtLifetimeOwner.cached(init: () -> T) = ValidityAwareCachedValue(token, init)
+internal fun <T> KaLifetimeOwner.cached(init: () -> T) = ValidityAwareCachedValue(token, init)

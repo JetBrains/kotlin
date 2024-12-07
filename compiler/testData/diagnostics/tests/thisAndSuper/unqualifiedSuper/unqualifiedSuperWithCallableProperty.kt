@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // Ambiguity between fun and callable property
 
 open class BaseWithCallableProp {

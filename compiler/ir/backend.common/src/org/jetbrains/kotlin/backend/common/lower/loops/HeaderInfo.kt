@@ -3,14 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalUnsignedTypes::class)
-
 package org.jetbrains.kotlin.backend.common.lower.loops
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.loops.handlers.*
-import org.jetbrains.kotlin.backend.common.lower.matchers.IrCallMatcher
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
@@ -189,7 +186,7 @@ class ProgressionHeaderInfo(
  * The internal induction variable used is an Int.
  */
 class IndexedGetHeaderInfo(
-    symbols: Symbols<CommonBackendContext>,
+    symbols: Symbols,
     first: IrExpression,
     last: IrExpression,
     step: IrExpression,
@@ -244,41 +241,24 @@ internal interface HeaderInfoHandler<E : IrExpression, D> {
      * Matches the `iterator()` call that produced the iterable; if the call matches (or the matcher is null),
      * the handler can build a [HeaderInfo] from the iterable.
      */
-    val iteratorCallMatcher: IrCallMatcher?
-        get() = null
+    fun matchIteratorCall(call: IrCall): Boolean = true
 
     /** Builds a [HeaderInfo] from the expression. */
     fun build(expression: E, data: D, scopeOwner: IrSymbol): HeaderInfo?
 
-    fun handle(expression: E, iteratorCall: IrCall?, data: D, scopeOwner: IrSymbol) =
-        if ((iteratorCall == null || iteratorCallMatcher == null || iteratorCallMatcher!!(iteratorCall)) && matchIterable(expression)) {
+    fun handle(expression: E, iteratorCall: IrCall?, data: D, scopeOwner: IrSymbol): HeaderInfo? =
+        if ((iteratorCall == null || matchIteratorCall(iteratorCall)) && matchIterable(expression)) {
             build(expression, data, scopeOwner)
         } else {
             null
         }
 }
 
-internal interface ExpressionHandler : HeaderInfoHandler<IrExpression, Nothing?> {
-    fun build(expression: IrExpression, scopeOwner: IrSymbol): HeaderInfo?
-    override fun build(expression: IrExpression, data: Nothing?, scopeOwner: IrSymbol) = build(expression, scopeOwner)
-}
-
-/** Matches a call to build an iterable and builds a [HeaderInfo] from the call's context. */
-internal interface HeaderInfoFromCallHandler<D> : HeaderInfoHandler<IrCall, D> {
-    val matcher: IrCallMatcher
-
-    override fun matchIterable(expression: IrCall) = matcher(expression)
-}
-
-internal typealias ProgressionHandler = HeaderInfoFromCallHandler<ProgressionType>
-
 internal abstract class HeaderInfoBuilder(
     context: CommonBackendContext,
     private val scopeOwnerSymbol: () -> IrSymbol,
     private val allowUnsignedBounds: Boolean = false
-) :
-    IrElementVisitor<HeaderInfo?, IrCall?> {
-
+) : IrElementVisitor<HeaderInfo?, IrCall?> {
     private val symbols = context.ir.symbols
 
     protected open val progressionHandlers = listOf(
@@ -286,13 +266,14 @@ internal abstract class HeaderInfoBuilder(
         ArrayIndicesHandler(context),
         CharSequenceIndicesHandler(context),
         UntilHandler(context),
+        RangeUntilHandler(context),
         DownToHandler(context),
         RangeToHandler(context),
         StepHandler(context, this)
     )
 
-    protected abstract val callHandlers: List<HeaderInfoFromCallHandler<Nothing?>>
-    protected abstract val expressionHandlers: List<ExpressionHandler>
+    protected abstract val callHandlers: List<HeaderInfoHandler<IrCall, Nothing?>>
+    protected abstract val expressionHandlers: List<HeaderInfoHandler<IrExpression, Nothing?>>
 
     override fun visitElement(element: IrElement, data: IrCall?): HeaderInfo? = null
 

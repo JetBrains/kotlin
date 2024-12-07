@@ -5,28 +5,27 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.fir.analysis.collectors.CheckerRunningDiagnosticCollectorVisitor
-import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.LLFirStructureElementDiagnosticsCollector
+import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
 
-internal class FileStructureElementDiagnosticsCollector private constructor(private val useExtendedCheckers: Boolean) {
-    companion object {
-        val USUAL_COLLECTOR = FileStructureElementDiagnosticsCollector(useExtendedCheckers = false)
-        val EXTENDED_COLLECTOR = FileStructureElementDiagnosticsCollector(useExtendedCheckers = true)
+internal fun collectForStructureElement(
+    firDeclaration: FirDeclaration,
+    filter: DiagnosticCheckerFilter,
+    createVisitor: (components: DiagnosticCollectorComponents) -> CheckerRunningDiagnosticCollectorVisitor,
+): FileStructureElementDiagnosticList {
+    val reporter = LLFirDiagnosticReporter()
+    val collector = LLFirStructureElementDiagnosticsCollector(
+        firDeclaration.moduleData.session,
+        createVisitor,
+        filter,
+    )
+    collector.collectDiagnostics(firDeclaration, reporter)
+    val source = firDeclaration.source
+    if (source != null) {
+        reporter.checkAndCommitReportsOn(source, null)
     }
-
-    fun collectForStructureElement(
-        firDeclaration: FirDeclaration,
-        createVisitor: (components: List<AbstractDiagnosticCollectorComponent>) -> CheckerRunningDiagnosticCollectorVisitor,
-    ): FileStructureElementDiagnosticList {
-        val reporter = LLFirDiagnosticReporter()
-        val collector = LLFirStructureElementDiagnosticsCollector(
-            firDeclaration.moduleData.session,
-            createVisitor,
-            useExtendedCheckers,
-        )
-        collector.collectDiagnostics(firDeclaration, reporter)
-        return FileStructureElementDiagnosticList(reporter.diagnostics)
-    }
+    return FileStructureElementDiagnosticList(reporter.committedDiagnostics)
 }

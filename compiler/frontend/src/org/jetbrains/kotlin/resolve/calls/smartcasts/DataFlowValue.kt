@@ -57,6 +57,13 @@ class DataFlowValue(
         // Should be unstable, but can be used as stable with deprecation warning
         LEGACY_ALIEN_BASE_PROPERTY("alien derived", "property declared in base class from different module"),
 
+        // Protected / public member value from derived class from another module, in case the derived class is non-public API
+        // Should be unstable, but can be used as stable with deprecation warning
+        LEGACY_ALIEN_BASE_PROPERTY_INHERITED_IN_INVISIBLE_CLASS(
+            "alien inherited in invisible",
+            "property declared in base class from different module inherited in non-public API class"
+        ),
+
         // Protected / public member value from another module
         // Smart casts are not safe
         ALIEN_PUBLIC_PROPERTY("alien public", "public API property declared in different module"),
@@ -88,7 +95,8 @@ class DataFlowValue(
             kind == Kind.STABLE_VARIABLE ||
             kind == Kind.STABLE_COMPLEX_EXPRESSION ||
             kind == Kind.LEGACY_STABLE_LOCAL_DELEGATED_PROPERTY ||
-            kind == Kind.LEGACY_ALIEN_BASE_PROPERTY
+            kind == Kind.LEGACY_ALIEN_BASE_PROPERTY ||
+            kind == Kind.LEGACY_ALIEN_BASE_PROPERTY_INHERITED_IN_INVISIBLE_CLASS
 
     val canBeBound get() = identifierInfo.canBeBound
 

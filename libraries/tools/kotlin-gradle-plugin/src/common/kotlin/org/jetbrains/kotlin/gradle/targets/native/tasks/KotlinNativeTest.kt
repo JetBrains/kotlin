@@ -10,22 +10,27 @@ import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.options.Option
 import org.gradle.process.ProcessForkOptions
 import org.gradle.process.internal.DefaultProcessForkOptions
-import org.jetbrains.kotlin.compilerRunner.konanVersion
+import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
-import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor.Companion.TC_PROJECT_PROPERTY
-import org.jetbrains.kotlin.gradle.plugin.mpp.isAtLeast
+import org.jetbrains.kotlin.gradle.targets.native.internal.NativeAppleSimulatorTCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.native.internal.parseKotlinNativeStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
-import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import java.io.File
 import java.util.concurrent.Callable
+import javax.inject.Inject
 
+@DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 abstract class KotlinNativeTest : KotlinTest() {
+    @get:Inject
+    abstract val providerFactory: ProviderFactory
+
     @Suppress("LeakingThis")
     private val processOptions: ProcessForkOptions = DefaultProcessForkOptions(fileResolver)
 
@@ -34,6 +39,7 @@ abstract class KotlinNativeTest : KotlinTest() {
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
     @get:InputFiles // use FileCollection & @InputFiles rather than @InputFile to allow for task dependencies built-into this FileCollection
     @get:SkipWhenEmpty
     @Suppress("UNUSED") // Gradle input
@@ -60,7 +66,7 @@ abstract class KotlinNativeTest : KotlinTest() {
 
     @get:Input
     var workingDir: String
-        get() = processOptions.workingDir.canonicalPath
+        get() = processOptions.workingDir.absolutePath
         set(value) {
             processOptions.workingDir = File(value)
         }
@@ -73,6 +79,7 @@ abstract class KotlinNativeTest : KotlinTest() {
         }
 
     private val trackedEnvironmentVariablesKeys = mutableSetOf<String>()
+
 
     @Suppress("unused")
     @get:Input
@@ -98,7 +105,7 @@ abstract class KotlinNativeTest : KotlinTest() {
     }
 
     fun executable(provider: Provider<File>) {
-        executableProperty.set(provider.map { project.files(it) })
+        executableProperty.set(project.files(provider))
     }
 
     fun executable(provider: Closure<File>) {
@@ -136,18 +143,11 @@ abstract class KotlinNativeTest : KotlinTest() {
             prependSuiteName = targetName != null,
             treatFailedTestOutputAsStacktrace = false,
             stackTraceParser = ::parseKotlinNativeStackTraceAsJvm,
-            escapeTCMessagesInLog = if (isConfigurationCacheAvailable(project.gradle)) {
-                project.providers.gradleProperty(TC_PROJECT_PROPERTY).forUseAtConfigurationTime().isPresent
-            } else {
-                project.hasProperty(TC_PROJECT_PROPERTY)
-            }
         )
 
         // The KotlinTest expects that the exit code is zero even if some tests failed.
         // In this case it can check exit code and distinguish test failures from crashes.
-        // But K/N allows forcing a zero exit code only since 1.3 (which was included in Kotlin 1.3.40).
-        // Thus we check the exit code only for newer versions.
-        val checkExitCode = project.konanVersion.isAtLeast(1, 3, 0)
+        val checkExitCode = true
 
         val cliArgs = testCommand.cliArgs("TEAMCITY", checkExitCode, includePatterns, excludePatterns, args)
 
@@ -198,7 +198,8 @@ abstract class KotlinNativeTest : KotlinTest() {
 /**
  * A task running Kotlin/Native tests on a host machine.
  */
-open class KotlinNativeHostTest : KotlinNativeTest() {
+@DisableCachingByDefault
+abstract class KotlinNativeHostTest : KotlinNativeTest() {
     @get:Internal
     override val testCommand: TestCommand = object : TestCommand() {
         override val executable: String
@@ -217,13 +218,25 @@ open class KotlinNativeHostTest : KotlinNativeTest() {
 /**
  * A task running Kotlin/Native tests on a simulator (iOS/watchOS/tvOS).
  */
-open class KotlinNativeSimulatorTest : KotlinNativeTest() {
-    @Input
-    @Option(option = "device", description = "Sets a simulated device used to execute tests.")
-    lateinit var deviceId: String
+@DisableCachingByDefault
+abstract class KotlinNativeSimulatorTest : KotlinNativeTest() {
+    @Deprecated("Use the property 'device' instead")
+    @get:Internal
+    var deviceId: String
+        get() = device.get()
+        set(value) {
+            device.set(value)
+        }
+
+    @get:Input
+    @get:Option(option = "device", description = "Sets a simulated device used to execute tests.")
+    abstract val device: Property<String>
 
     @Internal
     var debugMode = false
+
+    @get:Input
+    abstract val standalone: Property<Boolean> // disabled standalone means that xcode won't handle simulator boot/shutdown automatically
 
     @get:Internal
     override val testCommand: TestCommand = object : TestCommand() {
@@ -241,11 +254,23 @@ open class KotlinNativeSimulatorTest : KotlinNativeTest() {
                 "simctl",
                 "spawn",
                 "--wait-for-debugger".takeIf { debugMode },
-                "--standalone",
-                deviceId,
+                "--standalone".takeIf { standalone.get() },
+                device.get(),
                 this@KotlinNativeSimulatorTest.executable.absolutePath,
                 "--"
             ) +
                     testArgs(testLogger, checkExitCode, testGradleFilter, testNegativeGradleFilter, userArgs)
+    }
+
+    override fun createTestExecutionSpec(): TCServiceMessagesTestExecutionSpec {
+        val origin = super.createTestExecutionSpec()
+        return NativeAppleSimulatorTCServiceMessagesTestExecutionSpec(
+            origin.forkOptions,
+            origin.args,
+            origin.checkExitCode,
+            origin.clientSettings,
+            origin.dryRunArgs,
+            standalone,
+        )
     }
 }

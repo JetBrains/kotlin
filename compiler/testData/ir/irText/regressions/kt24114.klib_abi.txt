@@ -1,0 +1,10 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /one(): kotlin/Int // /one|one(){}[0]
+final fun /test1(): kotlin/Int // /test1|test1(){}[0]
+final fun /test2(): kotlin/Int // /test2|test2(){}[0]
+final fun /two(): kotlin/Int // /two|two(){}[0]

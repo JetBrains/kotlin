@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package uninitialized_reassigned_variables
 
 fun doSmth(<!UNUSED_PARAMETER!>s<!>: String) {}
@@ -100,6 +101,21 @@ fun t5() {
         <!VAL_REASSIGNMENT!>i<!> += 1
         fun t5() {
             i += 3
+        }
+    }
+}
+
+fun t6() {
+    val i = 0
+    fun t5() {
+        <!VAL_REASSIGNMENT!>i<!> += 3
+    }
+}
+
+fun t7() {
+    for (i in 0..2) {
+        fun t5() {
+            <!VAL_REASSIGNMENT!>i<!> = 3
         }
     }
 }

@@ -1,3 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +MultiPlatformProjects
+
 open class Base(v: String)
 
 expect class Derived(v: String) : Base

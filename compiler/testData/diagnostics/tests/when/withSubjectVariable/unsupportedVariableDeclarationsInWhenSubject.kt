@@ -1,5 +1,6 @@
-// !LANGUAGE: +VariableDeclarationInWhenSubject
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +VariableDeclarationInWhenSubject
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
 fun foo(): Any = 42
 fun String.bar(): Any = 42
@@ -24,5 +25,11 @@ fun testVarInWhenSubject() {
 
 fun testDelegatedValInWhenSubject() {
     when (<!ILLEGAL_DECLARATION_IN_WHEN_SUBJECT!>val y by <!UNRESOLVED_REFERENCE!>lazy<!> { 42 }<!>) {
+    }
+}
+
+fun testExtensionPropertyInWhenSubject() {
+    when (val <!DEBUG_INFO_MISSING_UNRESOLVED, LOCAL_EXTENSION_PROPERTY!>Int<!>.a: String = "") {
+        "" -> a
     }
 }

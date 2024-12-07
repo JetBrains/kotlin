@@ -15,9 +15,9 @@ fun test(x: Any) {
       else -> false
     } -> { // BLOCK
       // COMPOSITE {
-      val tmp0_container: Any = x
-      val x1: Int = tmp0_container /*as IC1 */.component1()
-      val x2: String = tmp0_container /*as IC2 */.component2()
+      val tmp_0: Any = x
+      val x1: Int = tmp_0 /*as IC1 */.component1()
+      val x2: String = tmp_0 /*as IC2 */.component2()
       // }
     }
   }

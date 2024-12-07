@@ -9,7 +9,17 @@ FILE: inLocalClass.kt
             CallsInPlace(e, AT_MOST_ONCE)
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/a|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.AT_MOST_ONCE|)
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/b|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.AT_MOST_ONCE|)
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/c|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.AT_MOST_ONCE|)
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/d|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.AT_MOST_ONCE|)
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/e|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.AT_MOST_ONCE|)
+            }
+            )
+        }
+
         local final class LocalClass : R|kotlin/Any| {
             public final val leakedVal: R|() -> kotlin/Unit| = R|<local>/a|
                 public get(): R|() -> kotlin/Unit|
@@ -17,13 +27,13 @@ FILE: inLocalClass.kt
             public final val leaked: R|kotlin/Any|
                 public get(): R|kotlin/Any|
 
-            public constructor(): R|LocalClass| {
+            public constructor(): R|<local>/LocalClass| {
                 super<R|kotlin/Any|>()
                 R|<local>/b|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
             }
 
             init {
-                this@R|/LocalClass|.R|<local>/leaked| = R|<local>/c|
+                this@R|<local>/LocalClass|.R|<local>/leaked| = R|<local>/c|
             }
 
             public final fun run(): R|kotlin/Unit| {
@@ -32,6 +42,6 @@ FILE: inLocalClass.kt
 
         }
 
-        R|/LocalClass.LocalClass|().R|<local>/run|()
+        R|<local>/LocalClass.LocalClass|().R|<local>/run|()
         R|<local>/e|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }

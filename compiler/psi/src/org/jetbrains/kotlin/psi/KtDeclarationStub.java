@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
@@ -68,14 +68,14 @@ public abstract class KtDeclarationStub<T extends StubElement<?>> extends KtModi
 
     @Override
     public PsiElement getOriginalElement() {
-        KotlinDeclarationNavigationPolicy navigationPolicy = ServiceManager.getService(KotlinDeclarationNavigationPolicy.class);
+        KotlinDeclarationNavigationPolicy navigationPolicy = ApplicationManager.getApplication().getService(KotlinDeclarationNavigationPolicy.class);
         return navigationPolicy != null ? navigationPolicy.getOriginalElement(this) : this;
     }
 
     @NotNull
     @Override
     public PsiElement getNavigationElement() {
-        KotlinDeclarationNavigationPolicy navigationPolicy = ServiceManager.getService(KotlinDeclarationNavigationPolicy.class);
+        KotlinDeclarationNavigationPolicy navigationPolicy = ApplicationManager.getApplication().getService(KotlinDeclarationNavigationPolicy.class);
         return navigationPolicy != null ? navigationPolicy.getNavigationElement(this) : this;
     }
 }

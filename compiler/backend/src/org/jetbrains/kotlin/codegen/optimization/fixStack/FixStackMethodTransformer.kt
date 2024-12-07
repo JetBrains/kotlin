@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.codegen.optimization.fixStack
 
+import org.jetbrains.kotlin.codegen.InsnSequence
 import org.jetbrains.kotlin.codegen.inline.isAfterInlineMarker
 import org.jetbrains.kotlin.codegen.inline.isBeforeInlineMarker
 import org.jetbrains.kotlin.codegen.inline.isInlineMarker
-import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.codegen.pseudoInsns.parsePseudoInsnOrNull
@@ -51,7 +51,7 @@ class FixStackMethodTransformer : MethodTransformer() {
     }
 
     private fun analyzeAndTransformBreakContinueGotos(context: FixStackContext, internalClassName: String, methodNode: MethodNode) {
-        val analyzer = FixStackAnalyzer(internalClassName, methodNode, context)
+        val analyzer = FixStackAnalyzer(internalClassName, methodNode, context, skipBreakContinueGotoEdges = true)
         analyzer.analyze()
 
         methodNode.maxStack = methodNode.maxStack + analyzer.maxExtraStackSize
@@ -218,6 +218,4 @@ class FixStackMethodTransformer : MethodTransformer() {
             actions.add { methodNode.instructions.remove(inlineMarker) }
         }
     }
-
-
 }

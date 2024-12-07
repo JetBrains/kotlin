@@ -40,12 +40,12 @@ open class PartialAnalysisHandlerExtension : AnalysisHandlerExtension {
         get() = false
 
     override fun doAnalysis(
-            project: Project,
-            module: ModuleDescriptor,
-            projectContext: ProjectContext,
-            files: Collection<KtFile>,
-            bindingTrace: BindingTrace,
-            componentProvider: ComponentProvider
+        project: Project,
+        module: ModuleDescriptor,
+        projectContext: ProjectContext,
+        files: Collection<KtFile>,
+        bindingTrace: BindingTrace,
+        componentProvider: ComponentProvider
     ): AnalysisResult? {
         if (!analyzePartially) {
             return null
@@ -57,7 +57,8 @@ open class PartialAnalysisHandlerExtension : AnalysisHandlerExtension {
         val topDownAnalyzer = componentProvider.get<LazyTopDownAnalyzer>()
 
         val topDownAnalysisContext = TopDownAnalysisContext(
-                TopDownAnalysisMode.TopLevelDeclarations, DataFlowInfo.EMPTY, declarationScopeProvider)
+            TopDownAnalysisMode.TopLevelDeclarations, DataFlowInfo.EMPTY, declarationScopeProvider
+        )
 
         for (file in files) {
             ForceResolveUtil.forceResolveAllContents(resolveSession.getFileAnnotations(file))
@@ -81,6 +82,7 @@ open class PartialAnalysisHandlerExtension : AnalysisHandlerExtension {
                         )
                     }
                 }
+
                 is PropertyDescriptor -> {
                     if (declaration is KtProperty) {
                         /* TODO Now we analyse body with anonymous object initializers. Check if we can't avoid it
@@ -88,6 +90,7 @@ open class PartialAnalysisHandlerExtension : AnalysisHandlerExtension {
                         bodyResolver.resolveProperty(topDownAnalysisContext, declaration, descriptor)
                     }
                 }
+
                 is FunctionDescriptor -> {
                     if (declaration is KtPrimaryConstructor && (analyzeDefaultParameterValues || descriptor.isAnnotationConstructor())) {
                         val containingScope = descriptor.containingScope

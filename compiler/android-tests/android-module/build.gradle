@@ -57,26 +57,6 @@ android {
     flavorDimensions "box"
 
     productFlavors {
-        common0 {
-            dimension "box"
-        }
-
-        common1 {
-            dimension "box"
-        }
-
-        common2 {
-            dimension "box"
-        }
-
-        common3 {
-            dimension "box"
-        }
-
-        reflect0 {
-            dimension "box"
-        }
-
         common_ir0 {
             dimension "box"
         }

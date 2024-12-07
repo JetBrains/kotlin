@@ -1,8 +1,8 @@
 fun testForBreak1(ss: List<String>) {
   { // BLOCK
-    val tmp0_iterator: Iterator<String> = ss.iterator()
-    while (tmp0_iterator.hasNext()) { // BLOCK
-      val s: String = tmp0_iterator.next()
+    val tmp_0: Iterator<String> = ss.iterator()
+    while (tmp_0.hasNext()) { // BLOCK
+      val s: String = tmp_0.next()
       { // BLOCK
         break
       }
@@ -12,14 +12,14 @@ fun testForBreak1(ss: List<String>) {
 
 fun testForBreak2(ss: List<String>) {
   { // BLOCK
-    val tmp0_iterator: Iterator<String> = ss.iterator()
-    OUTER@ while (tmp0_iterator.hasNext()) { // BLOCK
-      val s1: String = tmp0_iterator.next()
+    val tmp_1: Iterator<String> = ss.iterator()
+    OUTER@ while (tmp_1.hasNext()) { // BLOCK
+      val s1: String = tmp_1.next()
       { // BLOCK
         { // BLOCK
-          val tmp1_iterator: Iterator<String> = ss.iterator()
-          INNER@ while (tmp1_iterator.hasNext()) { // BLOCK
-            val s2: String = tmp1_iterator.next()
+          val tmp_2: Iterator<String> = ss.iterator()
+          INNER@ while (tmp_2.hasNext()) { // BLOCK
+            val s2: String = tmp_2.next()
             { // BLOCK
               break@OUTER
               break@INNER
@@ -35,9 +35,9 @@ fun testForBreak2(ss: List<String>) {
 
 fun testForContinue1(ss: List<String>) {
   { // BLOCK
-    val tmp0_iterator: Iterator<String> = ss.iterator()
-    while (tmp0_iterator.hasNext()) { // BLOCK
-      val s: String = tmp0_iterator.next()
+    val tmp_3: Iterator<String> = ss.iterator()
+    while (tmp_3.hasNext()) { // BLOCK
+      val s: String = tmp_3.next()
       { // BLOCK
         continue
       }
@@ -47,14 +47,14 @@ fun testForContinue1(ss: List<String>) {
 
 fun testForContinue2(ss: List<String>) {
   { // BLOCK
-    val tmp0_iterator: Iterator<String> = ss.iterator()
-    OUTER@ while (tmp0_iterator.hasNext()) { // BLOCK
-      val s1: String = tmp0_iterator.next()
+    val tmp_4: Iterator<String> = ss.iterator()
+    OUTER@ while (tmp_4.hasNext()) { // BLOCK
+      val s1: String = tmp_4.next()
       { // BLOCK
         { // BLOCK
-          val tmp1_iterator: Iterator<String> = ss.iterator()
-          INNER@ while (tmp1_iterator.hasNext()) { // BLOCK
-            val s2: String = tmp1_iterator.next()
+          val tmp_5: Iterator<String> = ss.iterator()
+          INNER@ while (tmp_5.hasNext()) { // BLOCK
+            val s2: String = tmp_5.next()
             { // BLOCK
               continue@OUTER
               continue@INNER

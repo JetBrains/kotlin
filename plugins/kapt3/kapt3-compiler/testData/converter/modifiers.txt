@@ -1,7 +1,14 @@
 package modifiers;
 
-import java.lang.System;
-
+/**
+ * internal final class modifiers/InternalClass : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class InternalClass {
 
@@ -14,8 +21,12 @@ public final class InternalClass {
 
 package modifiers;
 
-import java.lang.System;
-
+/**
+ * internal abstract interface modifiers/InternalInterface : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface InternalInterface {
 }
@@ -24,15 +35,40 @@ public abstract interface InternalInterface {
 
 package modifiers;
 
-import java.lang.System;
-
+/**
+ * public final class modifiers/Modifiers : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: overloads(Ljava/lang/String;I)Ljava/lang/String;
+ *   public final fun overloads(a: kotlin/String (* = ... *), n: kotlin/Int (* = ... *)): kotlin/String
+ *
+ *   // signature: strictFp()V
+ *   public final fun strictFp(): kotlin/Unit
+ *
+ *   // field: transientField:Ljava/lang/String;
+ *   // getter: getTransientField()Ljava/lang/String;
+ *   public final val transientField: kotlin/String
+ *     public final get
+ *
+ *   // field: volatileField:Ljava/lang/String;
+ *   // getter: getVolatileField()Ljava/lang/String;
+ *   // setter: setVolatileField(Ljava/lang/String;)V
+ *   public final var volatileField: kotlin/String
+ *     public final get
+ *     public final set
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Modifiers {
-    @org.jetbrains.annotations.NotNull()
     @kotlin.jvm.Transient()
-    private final transient java.lang.String transientField = "";
     @org.jetbrains.annotations.NotNull()
+    private final transient java.lang.String transientField = "";
     @kotlin.jvm.Volatile()
+    @org.jetbrains.annotations.NotNull()
     private volatile java.lang.String volatileField = "";
 
     public Modifiers() {
@@ -57,21 +93,21 @@ public final class Modifiers {
     public final strictfp void strictFp() {
     }
 
-    @org.jetbrains.annotations.NotNull()
     @kotlin.jvm.JvmOverloads()
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String overloads() {
         return null;
     }
 
-    @org.jetbrains.annotations.NotNull()
     @kotlin.jvm.JvmOverloads()
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String overloads(@org.jetbrains.annotations.NotNull()
     java.lang.String a) {
         return null;
     }
 
-    @org.jetbrains.annotations.NotNull()
     @kotlin.jvm.JvmOverloads()
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String overloads(@org.jetbrains.annotations.NotNull()
     java.lang.String a, int n) {
         return null;
@@ -82,8 +118,15 @@ public final class Modifiers {
 
 package modifiers;
 
-import java.lang.System;
-
+/**
+ * private final class modifiers/PrivateClass : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 final class PrivateClass {
 
@@ -96,8 +139,12 @@ final class PrivateClass {
 
 package modifiers;
 
-import java.lang.System;
-
+/**
+ * private abstract interface modifiers/PrivateInterface : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 abstract interface PrivateInterface {
 }
@@ -106,8 +153,15 @@ abstract interface PrivateInterface {
 
 package modifiers;
 
-import java.lang.System;
-
+/**
+ * public final class modifiers/PublicClass : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class PublicClass {
 
@@ -120,8 +174,15 @@ public final class PublicClass {
 
 package modifiers;
 
-import java.lang.System;
-
+/**
+ * public abstract class modifiers/PublicClassPrivateConstructor : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   private constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract class PublicClassPrivateConstructor {
 
@@ -134,8 +195,19 @@ public abstract class PublicClassPrivateConstructor {
 
 package modifiers;
 
-import java.lang.System;
-
+/**
+ * public open class modifiers/PublicClassProtectedConstructor : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   protected constructor()
+ *
+ *   // nested class: PrivateInterface
+ *
+ *   // nested class: ProtectedInterface
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public class PublicClassProtectedConstructor {
 
@@ -143,12 +215,24 @@ public class PublicClassProtectedConstructor {
         super();
     }
 
-    @kotlin.Metadata()
-    public static abstract interface ProtectedInterface {
-    }
-
+    /**
+     * private abstract interface modifiers/PublicClassProtectedConstructor.PrivateInterface : kotlin/Any {
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     static abstract interface PrivateInterface {
+    }
+
+    /**
+     * protected abstract interface modifiers/PublicClassProtectedConstructor.ProtectedInterface : kotlin/Any {
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static abstract interface ProtectedInterface {
     }
 }
 
@@ -156,8 +240,12 @@ public class PublicClassProtectedConstructor {
 
 package modifiers;
 
-import java.lang.System;
-
+/**
+ * public abstract interface modifiers/PublicInterface : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface PublicInterface {
 }
@@ -166,8 +254,27 @@ public abstract interface PublicInterface {
 
 package modifiers;
 
-import java.lang.System;
-
+/**
+ * public sealed class modifiers/SealedClass : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   protected constructor()
+ *
+ *   // nested class: Four
+ *
+ *   // nested class: One
+ *
+ *   // nested class: Three
+ *
+ *   // nested class: Two
+ *
+ *   // sealed subclass: modifiers/SealedClass.One
+ *
+ *   // sealed subclass: modifiers/SealedClass.Two
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract class SealedClass {
 
@@ -175,22 +282,48 @@ public abstract class SealedClass {
         super();
     }
 
+    /**
+     * public final class modifiers/SealedClass.Four : modifiers/SealedClass.Three {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Four extends modifiers.SealedClass.Three {
+
+        public Four() {
+            super();
+        }
+    }
+
+    /**
+     * public final class modifiers/SealedClass.One : modifiers/SealedClass {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     public static final class One extends modifiers.SealedClass {
 
         public One() {
-            super();
         }
     }
 
-    @kotlin.Metadata()
-    public static class Two extends modifiers.SealedClass {
-
-        public Two() {
-            super();
-        }
-    }
-
+    /**
+     * public abstract class modifiers/SealedClass.Three : modifiers/SealedClass.Two {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     public static abstract class Three extends modifiers.SealedClass.Two {
 
@@ -199,11 +332,19 @@ public abstract class SealedClass {
         }
     }
 
+    /**
+     * public open class modifiers/SealedClass.Two : modifiers/SealedClass {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
-    public static final class Four extends modifiers.SealedClass.Three {
+    public static class Two extends modifiers.SealedClass {
 
-        public Four() {
-            super();
+        public Two() {
         }
     }
 }

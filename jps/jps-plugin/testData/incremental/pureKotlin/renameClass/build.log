@@ -1,6 +1,6 @@
 ================ Step #1 =================
 
-Marked as dirty by Kotlin:
+After chunkBuildStarted. Marked as dirty by Kotlin:
   src/A.kt
   src/funs.kt
   src/useA.kt
@@ -15,7 +15,7 @@ Compiling files:
   src/funs.kt
   src/useA.kt
 End of files
-Marked as dirty by Kotlin:
+After build round. Marked as dirty by Kotlin:
   src/useB.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------

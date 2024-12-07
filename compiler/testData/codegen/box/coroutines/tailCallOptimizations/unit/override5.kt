@@ -1,10 +1,10 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: questionable bytecode listing difference (open/final methods in final class)
 // TARGET_BACKEND: JVM
+// IGNORE_INLINER: IR
 // FULL_JDK
 // WITH_STDLIB
 // WITH_COROUTINES
 // CHECK_BYTECODE_LISTING
+// FIR_IDENTICAL
 
 import helpers.*
 import kotlin.coroutines.*
@@ -18,7 +18,7 @@ interface Base<T> {
 inline fun inlineMe(crossinline c: suspend () -> Unit) = object : Base<Unit> {
     override suspend fun generic(): Unit {
         c();
-        {}()
+        {}.let { it() }
     }
 }
 

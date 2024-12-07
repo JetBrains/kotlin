@@ -3,25 +3,29 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// Quite big library written in Kotlin:
+// Relatively big library written in Kotlin:
 // - uses Spring boot
 // - uses Kotlin kapt
 @file:BenchmarkProject(
     name = "graphql-kotlin",
     gitUrl = "https://github.com/ExpediaGroup/graphql-kotlin.git",
-    gitCommitSha = "a0a8bad009a4ddbf88ce5c30200f90a091bd3df7"
+    gitCommitSha = "7d1e5a3114e95a4e0d63a8c515e9e8e37d5c504c",
+    stableKotlinVersion = "2.0.20",
 )
 
 import java.io.File
 
-val currentReleasePatch = {
-    "graphql-kotlin-current.patch" to File("benchmarkScripts/files/graphql-kotlin-current.patch")
-        .readText()
-        .run { replace("<kotlin_version>", currentKotlinVersion) }
-        .byteInputStream()
+val repoPatch = {
+    listOf(
+        "graphql-kotlin-current.patch" to File("benchmarkScripts/files/graphql-kotlin-repo.patch")
+            .readText()
+            .run { replace("<kotlin_version>", currentKotlinVersion) }
+            .byteInputStream(),
+    )
 }
 
-runAllBenchmarks(
+runBenchmarks(
+    repoPatch,
     suite {
         scenario {
             title = "Spring server clean build"
@@ -62,9 +66,26 @@ runAllBenchmarks(
             runTasks(":graphql-kotlin-spring-server:assemble")
             applyAbiChangeTo("clients/graphql-kotlin-client/src/main/kotlin/com/expediagroup/graphql/client/GraphQLClient.kt")
         }
-    },
-    mapOf(
-        "1.6.20" to null,
-        "1.7.0" to currentReleasePatch
-    )
+
+        scenario {
+            title = "Dry run configuration time"
+            useGradleArgs("--no-build-cache", "-m")
+
+            runTasks("assemble")
+        }
+
+        scenario {
+            title = "No-op configuration time"
+            useGradleArgs("--no-build-cache")
+
+            runTasks("help")
+        }
+
+        scenario {
+            title = "UP-TO-DATE configuration time"
+            useGradleArgs("--no-build-cache")
+
+            runTasks("assemble")
+        }
+    }
 )

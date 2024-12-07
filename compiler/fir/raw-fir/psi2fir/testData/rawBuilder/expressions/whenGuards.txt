@@ -1,0 +1,155 @@
+FILE: whenGuards.kt
+    public? final? fun GuardMustHaveExpression(x: Any): R|kotlin/Unit| {
+        when (x#) {
+            ($subj$ is Boolean) && ERROR_EXPR(No expression in guard) ->  {
+                SYNTAX#.not#()
+            }
+            ==($subj$, CMP(<, ERROR_EXPR(No operand).not#().compareTo#(ERROR_EXPR(No operand).not#()))) ->  {
+                Unit#
+            }
+            ($subj$ is Boolean) && ERROR_EXPR(No expression in guard) ->  {
+                SYNTAX#.not#()
+            }
+            ==($subj$, CMP(<, ERROR_EXPR(No operand).not#().compareTo#(ERROR_EXPR(No operand).not#()))) ->  {
+                Unit#
+            }
+            ($subj$ is Boolean) && ERROR_EXPR(No expression in guard) ->  {
+                SYNTAX#.not#()
+            }
+            ==($subj$, CMP(<, ERROR_EXPR(No operand).not#().compareTo#(ERROR_EXPR(No operand).not#()))) ->  {
+                Unit#
+            }
+            ($subj$ is Boolean) && ERROR_EXPR(No expression in guard) ->  {
+                SYNTAX#.not#()
+            }
+            ==($subj$, CMP(<, ERROR_EXPR(No operand).not#().compareTo#(ERROR_EXPR(No operand).not#()))) ->  {
+                Unit#
+            }
+            ERROR_EXPR(No expression in guard) ->  {
+                Unit#
+            }
+            ERROR_EXPR(No expression in guard) ->  {
+                Unit#
+            }
+            ERROR_EXPR(No expression in guard) ->  {
+                Unit#
+            }
+            ERROR_EXPR(No expression in guard) ->  {
+                Unit#
+            }
+        }
+
+    }
+    public? final? fun GuardNewlines(x: Any): R|kotlin/Unit| {
+        when (x#) {
+            ($subj$ is Boolean) && ==(x#, Boolean(true)) ->  {
+                Unit#
+            }
+            ($subj$ is Boolean) && ==(x#, Boolean(true)) ->  {
+                Unit#
+            }
+            ($subj$ is Boolean) && ==(x#, Boolean(true)) || ==(x#, Boolean(false)) ->  {
+                Unit#
+            }
+            ($subj$ is Boolean) && ==(x#, Boolean(true)) ->  {
+                Unit#
+            }
+            ($subj$ is Boolean) && ==(x#, Boolean(true)) ->  {
+                Unit#
+            }
+            ($subj$ is Boolean) && ==(x#, Boolean(true)) ->  {
+                Unit#
+            }
+            ($subj$ is Boolean) && ==(x#, Boolean(true)) ->  {
+                Unit#
+            }
+            ($subj$ is Boolean) && ==(x#, Boolean(true)) ->  {
+                Unit#
+            }
+            ($subj$ is Boolean) && ==(x#, Boolean(true)) ->  {
+                Unit#
+            }
+            ($subj$ is Boolean) && ==(x#, Boolean(true)) || ==(x#, Boolean(false)) ->  {
+                Unit#
+            }
+            ($subj$ is Boolean) && ==(x#, Boolean(true)) ->  {
+                Unit#
+            }
+            ($subj$ is Boolean) && ==(x#, Boolean(true)) ->  {
+                Unit#
+            }
+            ($subj$ is Boolean) && ==(x#, Boolean(true)) ->  {
+                Unit#
+            }
+            ($subj$ is Boolean) && ==(x#, Boolean(true)) ->  {
+                Unit#
+            }
+            ==(x#, Boolean(true)) ->  {
+                Unit#
+            }
+            ==(x#, Boolean(true)) ->  {
+                Unit#
+            }
+            ==(x#, Boolean(true)) || ==(x#, Boolean(false)) ->  {
+                Unit#
+            }
+            ==(x#, Boolean(true)) ->  {
+                Unit#
+            }
+            ==(x#, Boolean(true)) ->  {
+                Unit#
+            }
+            ==(x#, Boolean(true)) ->  {
+                Unit#
+            }
+            ==(x#, Boolean(true)) ->  {
+                Unit#
+            }
+            ==(x#, Boolean(true)) ->  {
+                Unit#
+            }
+            ==(x#, Boolean(true)) ->  {
+                Unit#
+            }
+            ==(x#, Boolean(true)) || ==(x#, Boolean(false)) ->  {
+                Unit#
+            }
+            ==(x#, Boolean(true)) ->  {
+                Unit#
+            }
+            ==(x#, Boolean(true)) ->  {
+                Unit#
+            }
+            ==(x#, Boolean(true)) ->  {
+                Unit#
+            }
+            ==(x#, Boolean(true)) ->  {
+                Unit#
+            }
+        }
+
+    }
+    public? final? fun IfExpressionNotGuard(x: Any): R|kotlin/Unit| {
+        when (x#) {
+            ==($subj$, when () {
+                (x# is Boolean) ->  {
+                    Boolean(true)
+                }
+                else ->  {
+                    Boolean(false)
+                }
+            }
+            ) || ==($subj$, when () {
+                (x# is String) ->  {
+                    Boolean(true)
+                }
+                else ->  {
+                    Boolean(false)
+                }
+            }
+            ) ->  {
+                Unit#
+            }
+        }
+
+    }

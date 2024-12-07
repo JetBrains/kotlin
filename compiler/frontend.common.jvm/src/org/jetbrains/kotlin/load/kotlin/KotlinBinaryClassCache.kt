@@ -8,11 +8,10 @@ package org.jetbrains.kotlin.load.kotlin
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaModule
-import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import java.lang.ref.WeakReference
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -59,8 +58,19 @@ class KotlinBinaryClassCache : Disposable {
     }
 
     companion object {
+        @Deprecated(
+            "Please pass metadataVersion explicitly",
+            ReplaceWith(
+                "getKotlinBinaryClassOrClassFileContent(file, MetadataVersion.INSTANCE, fileContent = fileContent)",
+                "org.jetbrains.kotlin.metadata.deserialization.MetadataVersion"
+            )
+        )
         fun getKotlinBinaryClassOrClassFileContent(
-            file: VirtualFile, fileContent: ByteArray? = null
+            file: VirtualFile, fileContent: ByteArray?
+        ) = getKotlinBinaryClassOrClassFileContent(file, metadataVersion = MetadataVersion.INSTANCE, fileContent = fileContent)
+
+        fun getKotlinBinaryClassOrClassFileContent(
+            file: VirtualFile, metadataVersion: MetadataVersion, fileContent: ByteArray? = null
         ): KotlinClassFinder.Result? {
             if (file.extension != JavaClassFileType.INSTANCE.defaultExtension &&
                 file.fileType !== JavaClassFileType.INSTANCE
@@ -68,7 +78,7 @@ class KotlinBinaryClassCache : Disposable {
 
             if (file.name == PsiJavaModule.MODULE_INFO_CLS_FILE) return null
 
-            val service = ServiceManager.getService(KotlinBinaryClassCache::class.java)
+            val service = ApplicationManager.getApplication().getService(KotlinBinaryClassCache::class.java)
             val requestCache = service.cache.get()
 
             if (file.modificationStamp == requestCache.modificationStamp && file == requestCache.virtualFile) {
@@ -76,7 +86,7 @@ class KotlinBinaryClassCache : Disposable {
             }
 
             val aClass = ApplicationManager.getApplication().runReadAction(Computable {
-                VirtualFileKotlinClass.create(file, fileContent)
+                VirtualFileKotlinClass.create(file, metadataVersion, fileContent)
             })
 
             return requestCache.cache(file, aClass)

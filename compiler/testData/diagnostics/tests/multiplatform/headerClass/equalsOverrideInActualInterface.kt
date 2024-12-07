@@ -1,8 +1,9 @@
-// FIR_IDENTICAL
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FRONTEND
 // MODULE: m1-common
 expect interface Base
 
 // MODULE: m1-jvm()()(m1-common)
-actual interface Base {
-    override fun equals(other: Any?): Boolean
+<!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING!>actual interface Base<!> {
+    override fun <!MODALITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING!>equals<!>(other: Any?): Boolean
 }

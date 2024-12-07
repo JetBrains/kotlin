@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.ir.interpreter.state
 
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.interpreter.createCall
 import org.jetbrains.kotlin.ir.interpreter.fqName
@@ -16,10 +13,7 @@ import org.jetbrains.kotlin.ir.interpreter.stack.Field
 import org.jetbrains.kotlin.ir.interpreter.stack.Fields
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.isNullableAny
-import org.jetbrains.kotlin.ir.util.nameForIrSerialization
-import org.jetbrains.kotlin.ir.util.resolveFakeOverride
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.ir.util.*
 
 internal class Common private constructor(override val irClass: IrClass, override val fields: Fields) : Complex, StateWithClosure {
     override val upValues: MutableMap<IrSymbol, Variable> = mutableMapOf()
@@ -42,32 +36,24 @@ internal class Common private constructor(override val irClass: IrClass, overrid
 
     fun getIrFunction(method: java.lang.reflect.Method): IrFunction? {
         val methodName = getKotlinName(method.declaringClass.name, method.name)
-        return when (val declaration = irClass.declarations.singleOrNull { it.nameForIrSerialization.asString() == methodName }) {
+        return when (val declaration =
+            irClass.declarations.singleOrNull { it is IrDeclarationWithName && it.name.asString() == methodName }
+        ) {
             is IrProperty -> declaration.getter
             else -> declaration as? IrFunction
         }
     }
 
     fun getEqualsFunction(): IrSimpleFunction {
-        return irClass.declarations
-            .filterIsInstance<IrSimpleFunction>()
-            .single {
-                it.name == Name.identifier("equals") && it.dispatchReceiverParameter != null
-                        && it.valueParameters.size == 1 && it.valueParameters[0].type.isNullableAny()
-            }
-            .let { it.resolveFakeOverride() as IrSimpleFunction }
+        return irClass.functions.single { it.isEquals() }.target
     }
 
     fun getHashCodeFunction(): IrSimpleFunction {
-        return irClass.declarations.filterIsInstance<IrSimpleFunction>()
-            .single { it.name.asString() == "hashCode" && it.valueParameters.isEmpty() }
-            .let { it.resolveFakeOverride() as IrSimpleFunction }
+        return irClass.functions.single { it.isHashCode() }.target
     }
 
     fun getToStringFunction(): IrSimpleFunction {
-        return irClass.declarations.filterIsInstance<IrSimpleFunction>()
-            .single { it.name.asString() == "toString" && it.valueParameters.isEmpty() }
-            .let { it.resolveFakeOverride() as IrSimpleFunction }
+        return irClass.functions.single { it.isToString() }.target
     }
 
     fun createToStringIrCall(): IrCall {

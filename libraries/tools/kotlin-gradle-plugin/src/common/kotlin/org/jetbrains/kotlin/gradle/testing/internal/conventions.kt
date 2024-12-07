@@ -6,35 +6,31 @@
 package org.jetbrains.kotlin.gradle.testing.internal
 
 import org.gradle.api.Project
-import org.gradle.api.internal.plugins.DslObject
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.Provider
 import org.gradle.api.reporting.ReportingExtension
 import org.gradle.api.tasks.testing.TestTaskReports
 import org.gradle.testing.base.plugins.TestingBasePlugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
-import java.io.File
 
-internal val Project.testResultsDir: File
-    get() = project.buildDir.resolve(TestingBasePlugin.TEST_RESULTS_DIR_NAME)
-internal val Project.reportsDir: File
-    get() = project.extensions.getByType(ReportingExtension::class.java).baseDir
+private val Project.testResultsDir: Provider<Directory>
+    get() = project.layout.buildDirectory.dir(TestingBasePlugin.TEST_RESULTS_DIR_NAME)
+private val Project.reportsDir: DirectoryProperty
+    get() = project.extensions.getByType(ReportingExtension::class.java).baseDirectory
 
-internal val Project.testReportsDir: File
-    get() = reportsDir.resolve(TestingBasePlugin.TESTS_DIR_NAME)
+internal val Project.testReportsDir: Provider<Directory>
+    get() = reportsDir.dir(TestingBasePlugin.TESTS_DIR_NAME)
 
 internal fun KotlinTest.configureConventions() {
     reports.configureConventions(project, name)
 
-    fun binaryResultsDirDefault(): File = project.testResultsDir.resolve("$name/binary")
-    @Suppress("UnstableApiUsage")
-    binaryResultsDirectory.convention(project.layout.buildDirectory.dir(binaryResultsDirDefault().toRelativeString(project.buildDir)))
-
+    binaryResultsDirectory
+        .convention(project.testResultsDir.map { it.dir("$name/binary") })
+        .finalizeValueOnRead()
 }
 
 internal fun TestTaskReports.configureConventions(project: Project, name: String) {
-    val htmlReport = DslObject(html)
-    val xmlReport = DslObject(junitXml)
-
-    xmlReport.conventionMapping.map("destination") { project.testResultsDir.resolve(name) }
-    htmlReport.conventionMapping.map("destination") { project.testReportsDir.resolve(name) }
+    html.outputLocation.convention(project.testReportsDir.map { it.dir(name) }).finalizeValueOnRead()
+    junitXml.outputLocation.convention(project.testResultsDir.map { it.dir(name) }).finalizeValueOnRead()
 }

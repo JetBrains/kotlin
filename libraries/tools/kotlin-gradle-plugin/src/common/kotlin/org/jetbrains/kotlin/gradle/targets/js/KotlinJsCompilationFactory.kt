@@ -6,17 +6,7 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilationFactory
 
-class KotlinJsCompilationFactory(
-    val project: Project,
-    val target: KotlinOnlyTarget<KotlinJsCompilation>,
-    val irTarget: KotlinOnlyTarget<KotlinJsIrCompilation>?
-) : KotlinCompilationFactory<KotlinJsCompilation> {
-    override val itemClass: Class<KotlinJsCompilation>
-        get() = KotlinJsCompilation::class.java
-
-    override fun create(name: String): KotlinJsCompilation =
-        KotlinJsCompilation(target, name)
-}
+@Deprecated("The Kotlin/JS legacy target is deprecated and its support completely discontinued")
+typealias KotlinJsCompilationFactory = KotlinJsIrCompilationFactory

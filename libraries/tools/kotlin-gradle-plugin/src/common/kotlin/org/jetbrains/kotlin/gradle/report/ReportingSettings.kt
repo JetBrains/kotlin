@@ -5,36 +5,32 @@
 
 package org.jetbrains.kotlin.gradle.report
 
+import org.jetbrains.kotlin.build.report.FileReportSettings
+import org.jetbrains.kotlin.build.report.HttpReportSettings
 import java.io.File
 import java.io.Serializable
 
 data class ReportingSettings(
-    val metricsOutputFile: File? = null,
     val buildReportOutputs: List<BuildReportType> = emptyList(),
     val buildReportMode: BuildReportMode = BuildReportMode.NONE,
     val buildReportLabel: String? = null,
     val fileReportSettings: FileReportSettings? = null,
-    val httpReportSettings: HttpReportSettings? = null
+    val httpReportSettings: HttpReportSettings? = null,
+    val buildScanReportSettings: BuildScanSettings? = null,
+    val singleOutputFile: File? = null,
+    val jsonOutputDir: File? = null,
+    val experimentalTryNextConsoleOutput: Boolean = false,
+    val includeCompilerArguments: Boolean = false,
 ) : Serializable {
     companion object {
-        const val serialVersionUID: Long = 1
+        const val serialVersionUID: Long = 2L
     }
 }
 
-data class FileReportSettings(
-    val buildReportDir: File,
-    val includeMetricsInReport: Boolean = false,
-) : Serializable {
-    companion object {
-        const val serialVersionUID: Long = 0
-    }
-}
-
-data class HttpReportSettings(
-    val url: String,
-    val password: String?,
-    val user: String?
-) : Serializable {
+data class BuildScanSettings(
+    val customValueLimit: Int,
+    val metrics: Set<String>?
+): Serializable {
     companion object {
         const val serialVersionUID: Long = 0
     }

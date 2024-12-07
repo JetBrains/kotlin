@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.commonizer
 
 import org.jetbrains.kotlin.commonizer.konan.NativeSensitiveManifestData
 import org.jetbrains.kotlin.library.SerializedMetadata
-import java.io.File
 
 internal fun buildResultsConsumer(init: ResultsConsumerBuilder.() -> Unit): ResultsConsumer {
     return ResultsConsumerBuilder().apply(init).build()
@@ -16,17 +15,9 @@ internal fun buildResultsConsumer(init: ResultsConsumerBuilder.() -> Unit): Resu
 interface ResultsConsumer {
     enum class Status { NOTHING_TO_DO, DONE }
 
-    sealed class ModuleResult {
-        abstract val libraryName: String
-
-        class Missing(val originalLocation: File) : ModuleResult() {
-            override val libraryName: String get() = originalLocation.name
-        }
-
-        class Commonized(
-            override val libraryName: String, val metadata: SerializedMetadata, val manifest: NativeSensitiveManifestData
-        ) : ModuleResult()
-    }
+    class ModuleResult(
+        val libraryName: String, val metadata: SerializedMetadata, val manifest: NativeSensitiveManifestData
+    )
 
     /**
      * Consume a single [ModuleResult] for the specified [CommonizerTarget].

@@ -6,7 +6,8 @@ import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.jvm.isAccessible
 import kotlin.test.assertEquals
 
-inline class S(val value: String?) {
+@JvmInline
+value class S(val value: String?) {
     operator fun plus(other: S): S = S(this.value!! + other.value!!)
 }
 

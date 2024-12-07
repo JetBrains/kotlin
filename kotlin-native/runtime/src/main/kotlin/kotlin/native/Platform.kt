@@ -4,13 +4,14 @@
  */
 package kotlin.native
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.internal.GCUnsafeCall
-import kotlin.native.internal.TypedIntrinsic
-import kotlin.native.internal.IntrinsicType
+import kotlin.native.internal.escapeAnalysis.Escapes
 
 /**
  * Operating system family.
  */
+@ExperimentalNativeApi
 public enum class OsFamily {
     UNKNOWN,
     MACOSX,
@@ -26,7 +27,8 @@ public enum class OsFamily {
 /**
  * Central Processor Unit architecture.
  */
-public enum class CpuArchitecture(val bitness: Int) {
+@ExperimentalNativeApi
+public enum class CpuArchitecture(public val bitness: Int) {
     UNKNOWN(-1),
     ARM32(32),
     ARM64(64),
@@ -41,6 +43,8 @@ public enum class CpuArchitecture(val bitness: Int) {
  * Memory model.
  */
 // NOTE: Must match `MemoryModel` in `Memory.h`
+@ExperimentalNativeApi
+@Deprecated("The only possible value returned in runtime is MemoryModel.EXPERIMENTAL now. The usages of this enum can be safely removed.")
 public enum class MemoryModel {
     STRICT,
     RELAXED,
@@ -50,6 +54,7 @@ public enum class MemoryModel {
 /**
  * Object describing the current platform program executes upon.
  */
+@ExperimentalNativeApi
 public object Platform {
     /**
      * Check if current architecture allows unaligned access to wider than byte locations.
@@ -70,16 +75,18 @@ public object Platform {
         get() = OsFamily.values()[Platform_getOsFamily()]
 
     /**
-     * Architechture of the CPU program executes upon.
+     * Architecture of the CPU program executes upon.
      */
     public val cpuArchitecture: CpuArchitecture
         get() = CpuArchitecture.values()[Platform_getCpuArchitecture()]
 
     /**
-     * Memory model binary was compiled with.
+     * Memory model binary was compiled with. Always [MemoryModel.EXPERIMENTAL].
      */
+    @Deprecated("This propery always returns MemoryModel.EXPERIMENTAL, its usages can be safely removed.", ReplaceWith("MemoryModel.EXPERIMENTAL"))
+    @Suppress("DEPRECATION")
     public val memoryModel: MemoryModel
-        get() = MemoryModel.values()[Platform_getMemoryModel()]
+        get() = MemoryModel.EXPERIMENTAL
 
     /**
      * If binary was compiled in debug mode.
@@ -88,13 +95,19 @@ public object Platform {
         get() = Platform_isDebugBinary()
 
     /**
-     * If freezing is enabled.
-     *
-     * This value would be false, only if binary option `freezing` is equal to `disabled`. This is default when
-     * [memoryModel] is equal to [MemoryModel.EXPERIMENTAL].
+     * If freezing is enabled. Always [false]
      */
+    @Deprecated("Support for the legacy memory manager has been completely removed. Consequently, this property is always `false`.", ReplaceWith("false"))
+    @DeprecatedSinceKotlin(errorSince = "2.1")
     public val isFreezingEnabled: Boolean
-        get() = Platform_isFreezingEnabled()
+        get() = false
+
+    /**
+     * Representation of the name used to invoke the program executable.
+     * [null] if the Kotlin code was compiled to a native library and the executable is not a Kotlin program.
+     */
+    public val programName: String?
+        get() = Platform_getProgramName()
 
     /**
      * If the memory leak checker is activated, by default `true` in debug mode, `false` in release.
@@ -125,7 +138,6 @@ public object Platform {
      * `KOTLIN_NATIVE_AVAILABLE_PROCESSORS` environment variable. When the variable is set and contains a value that is not
      * positive [Int], [IllegalStateException] will be thrown.
      */
-    @ExperimentalStdlibApi
     public fun getAvailableProcessors() : Int {
         val fromEnv = Platform_getAvailableProcessorsEnv()
         if (fromEnv == null) {
@@ -148,14 +160,12 @@ private external fun Platform_getOsFamily(): Int
 @GCUnsafeCall("Konan_Platform_getCpuArchitecture")
 private external fun Platform_getCpuArchitecture(): Int
 
-@GCUnsafeCall("Konan_Platform_getMemoryModel")
-private external fun Platform_getMemoryModel(): Int
-
 @GCUnsafeCall("Konan_Platform_isDebugBinary")
 private external fun Platform_isDebugBinary(): Boolean
 
-@GCUnsafeCall("Konan_Platform_isFreezingEnabled")
-private external fun Platform_isFreezingEnabled(): Boolean
+@GCUnsafeCall("Konan_Platform_getProgramName")
+@Escapes.Nothing
+private external fun Platform_getProgramName(): String?
 
 @GCUnsafeCall("Konan_Platform_getMemoryLeakChecker")
 private external fun Platform_getMemoryLeakChecker(): Boolean
@@ -170,12 +180,12 @@ private external fun Platform_getCleanersLeakChecker(): Boolean
 private external fun Platform_setCleanersLeakChecker(value: Boolean): Unit
 
 @GCUnsafeCall("Konan_Platform_getAvailableProcessorsEnv")
+@Escapes.Nothing
 private external fun Platform_getAvailableProcessorsEnv(): String?
 
 @GCUnsafeCall("Konan_Platform_getAvailableProcessors")
 private external fun Platform_getAvailableProcessors(): Int
 
-
-@TypedIntrinsic(IntrinsicType.IS_EXPERIMENTAL_MM)
 @ExperimentalStdlibApi
-external fun isExperimentalMM(): Boolean
+@Deprecated("This property always returns true, its usages can be safely removed.", ReplaceWith("true"))
+public fun isExperimentalMM(): Boolean = true

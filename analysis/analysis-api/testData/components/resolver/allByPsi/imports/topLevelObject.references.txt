@@ -1,0 +1,127 @@
+KtNameReferenceExpression(41,45): 'main'
+  KtSimpleNameReference:
+    package main
+
+KtNameReferenceExpression(54,57): 'one'
+  KtSimpleNameReference:
+    package one
+
+KtNameReferenceExpression(58,61): 'two'
+  KtSimpleNameReference:
+    package one.two
+
+KtNameReferenceExpression(62,76): 'TopLevelObject'
+  KtSimpleNameReference:
+    (in one.two) object TopLevelObject
+
+KtNameReferenceExpression(77,88): 'NestedClass'
+  KtSimpleNameReference:
+    (in one.two.TopLevelObject) class NestedClass
+
+KtNameReferenceExpression(96,99): 'one'
+  KtSimpleNameReference:
+    package one
+
+KtNameReferenceExpression(100,103): 'two'
+  KtSimpleNameReference:
+    package one.two
+
+KtNameReferenceExpression(104,118): 'TopLevelObject'
+  KtSimpleNameReference:
+    (in one.two) object TopLevelObject
+
+KtNameReferenceExpression(119,131): 'NestedObject'
+  KtSimpleNameReference:
+    (in one.two.TopLevelObject) object NestedObject
+
+KtNameReferenceExpression(139,142): 'one'
+  KtSimpleNameReference:
+    package one
+
+KtNameReferenceExpression(143,146): 'two'
+  KtSimpleNameReference:
+    package one.two
+
+KtNameReferenceExpression(147,161): 'TopLevelObject'
+  KtSimpleNameReference:
+    (in one.two) object TopLevelObject
+
+KtNameReferenceExpression(162,165): 'foo'
+  KtSimpleNameReference:
+    (in one.two.TopLevelObject) fun foo()
+
+KtNameReferenceExpression(173,176): 'one'
+  KtSimpleNameReference:
+    package one
+
+KtNameReferenceExpression(177,180): 'two'
+  KtSimpleNameReference:
+    package one.two
+
+KtNameReferenceExpression(181,195): 'TopLevelObject'
+  KtSimpleNameReference:
+    (in one.two) object TopLevelObject
+
+KtNameReferenceExpression(196,199): 'bar'
+  KtSimpleNameReference:
+    (in one.two.TopLevelObject) val bar: kotlin.String
+
+KtNameReferenceExpression(208,211): 'one'
+  KtSimpleNameReference:
+    package one
+
+KtNameReferenceExpression(212,215): 'two'
+  KtSimpleNameReference:
+    package one.two
+
+KtNameReferenceExpression(216,230): 'TopLevelObject'
+  KtSimpleNameReference:
+    (in one.two) object TopLevelObject
+
+KtNameReferenceExpression(231,243): 'NestedObject'
+  KtSimpleNameReference:
+    (in one.two.TopLevelObject) object NestedObject
+
+KtNameReferenceExpression(244,255): 'NestedClass'
+  KtSimpleNameReference:
+    (in one.two.TopLevelObject.NestedObject) class NestedClass
+
+KtNameReferenceExpression(263,266): 'one'
+  KtSimpleNameReference:
+    package one
+
+KtNameReferenceExpression(267,270): 'two'
+  KtSimpleNameReference:
+    package one.two
+
+KtNameReferenceExpression(271,285): 'TopLevelObject'
+  KtSimpleNameReference:
+    (in one.two) object TopLevelObject
+
+KtNameReferenceExpression(286,298): 'NestedObject'
+  KtSimpleNameReference:
+    (in one.two.TopLevelObject) object NestedObject
+
+KtNameReferenceExpression(299,302): 'foo'
+  KtSimpleNameReference:
+    (in one.two.TopLevelObject.NestedObject) fun foo()
+
+KtNameReferenceExpression(310,313): 'one'
+  KtSimpleNameReference:
+    package one
+
+KtNameReferenceExpression(314,317): 'two'
+  KtSimpleNameReference:
+    package one.two
+
+KtNameReferenceExpression(318,332): 'TopLevelObject'
+  KtSimpleNameReference:
+    (in one.two) object TopLevelObject
+
+KtNameReferenceExpression(333,345): 'NestedObject'
+  KtSimpleNameReference:
+    (in one.two.TopLevelObject) object NestedObject
+
+KtNameReferenceExpression(346,349): 'bar'
+  KtSimpleNameReference:
+    (in one.two.TopLevelObject.NestedObject) val bar: kotlin.String

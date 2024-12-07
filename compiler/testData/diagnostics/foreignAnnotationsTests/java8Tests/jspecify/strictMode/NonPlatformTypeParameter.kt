@@ -1,10 +1,9 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated +TypeEnhancementImprovementsInStrictMode
+// LANGUAGE: +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated +TypeEnhancementImprovementsInStrictMode
 // JSPECIFY_STATE: strict
 // MUTE_FOR_PSI_CLASS_FILES_READING
 
 // FILE: NonPlatformTypeParameter.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 public class NonPlatformTypeParameter<T extends @Nullable Object> {
     public void foo(T t) {}
@@ -28,4 +27,9 @@ fun <T : Test> main(a1: NonPlatformTypeParameter<Any?>, a2: NonPlatformTypeParam
     // jspecify_nullness_mismatch
     a2.bar<T>(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     a2.bar<T>(x)
+}
+
+fun testNullable(a1: NonPlatformTypeParameter<Test>, x: Test?) {
+    // jspecify_nullness_mismatch
+    a1.foo(<!TYPE_MISMATCH!>x<!>)
 }

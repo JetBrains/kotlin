@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1282
-
 
 fun Throwable.className() = this::class.simpleName!!
 

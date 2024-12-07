@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS
-
 private object EmptyList : List<Nothing> {
     override fun contains(element: Nothing): Boolean = false
     override fun containsAll(elements: Collection<Nothing>): Boolean = elements.isEmpty()

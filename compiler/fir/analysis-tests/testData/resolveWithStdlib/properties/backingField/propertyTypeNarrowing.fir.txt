@@ -5,7 +5,7 @@ FILE: propertyTypeNarrowing.kt
         }
 
         public final val it: R|kotlin/Number|
-            private <explicit backing field>: R|kotlin/Int| = Int(4)
+            private final backing field field: R|kotlin/Int| = Int(4)
             public get(): R|kotlin/Number|
 
         public final fun test(): R|kotlin/Int| {
@@ -19,7 +19,7 @@ FILE: propertyTypeNarrowing.kt
 
     }
     public final fun test(): R|kotlin/Unit| {
-        lval c: <ERROR TYPE REF: Unresolved name: plus> = R|/A.A|().R|/A.it|.<Unresolved name: plus>#(Int(1))
+        lval c: <ERROR TYPE REF: Unresolved name: plus (+)> = R|/A.A|().R|/A.it|.<Unresolved name: plus (+)>#(Int(1))
         lval d: R|kotlin/Unit| = R|/test|()
         lval b: R|kotlin/Int| = R|/A.A|().R|/A.p|.R|kotlin/Int.plus|(Int(2))
     }

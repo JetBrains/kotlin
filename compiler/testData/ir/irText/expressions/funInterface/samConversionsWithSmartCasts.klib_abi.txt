@@ -1,0 +1,28 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract fun interface /KRunnable { // /KRunnable|null[0]
+    abstract fun run() // /KRunnable.run|run(){}[0]
+}
+abstract interface /Unrelated // /Unrelated|null[0]
+final fun <#A: kotlin/Any?> /id(#A): #A // /id|id(0:0){0§<kotlin.Any?>}[0]
+final fun /run1(/KRunnable) // /run1|run1(KRunnable){}[0]
+final fun /run2(/KRunnable, /KRunnable) // /run2|run2(KRunnable;KRunnable){}[0]
+final fun <#A: /KRunnable & kotlin/Function0<kotlin/Unit>> /test0(#A) // /test0|test0(0:0){0§<KRunnable&kotlin.Function0<kotlin.Unit>>}[0]
+final fun /test1(kotlin/Function0<kotlin/Unit>) // /test1|test1(kotlin.Function0<kotlin.Unit>){}[0]
+final fun /test10(kotlin/Any) // /test10|test10(kotlin.Any){}[0]
+final fun /test2(/KRunnable) // /test2|test2(KRunnable){}[0]
+final fun /test3(kotlin/Function0<kotlin/Unit>) // /test3|test3(kotlin.Function0<kotlin.Unit>){}[0]
+final fun /test4(kotlin/Function0<kotlin/Unit>, kotlin/Function0<kotlin/Unit>) // /test4|test4(kotlin.Function0<kotlin.Unit>;kotlin.Function0<kotlin.Unit>){}[0]
+final fun /test5(kotlin/Any) // /test5|test5(kotlin.Any){}[0]
+final fun /test5x(kotlin/Any) // /test5x|test5x(kotlin.Any){}[0]
+final fun /test6(kotlin/Any) // /test6|test6(kotlin.Any){}[0]
+final fun /test7(kotlin/Function1<kotlin/Int, kotlin/Int>) // /test7|test7(kotlin.Function1<kotlin.Int,kotlin.Int>){}[0]
+final fun <#A: kotlin/Function1<kotlin/Int, kotlin/Int>> /test7a(#A) // /test7a|test7a(0:0){0§<kotlin.Function1<kotlin.Int,kotlin.Int>>}[0]
+final fun <#A: kotlin/Function0<kotlin/Unit> & kotlin/Function1<kotlin/Int, kotlin/Unit>> /test7b(#A) // /test7b|test7b(0:0){0§<kotlin.Function1<kotlin.Int,kotlin.Unit>&kotlin.Function0<kotlin.Unit>>}[0]
+final fun <#A: /Unrelated & kotlin/Function0<kotlin/Unit>> /test7c(#A) // /test7c|test7c(0:0){0§<Unrelated&kotlin.Function0<kotlin.Unit>>}[0]
+final fun /test8(kotlin/Function0<kotlin/Unit>) // /test8|test8(kotlin.Function0<kotlin.Unit>){}[0]
+final fun /test9() // /test9|test9(){}[0]

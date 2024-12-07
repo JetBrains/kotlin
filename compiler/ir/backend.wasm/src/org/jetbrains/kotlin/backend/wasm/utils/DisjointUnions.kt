@@ -100,4 +100,9 @@ class DisjointUnions<T> {
         check(root.rank == root.leafs.size) { "Invalid tree state after compress" }
         return root.leafs
     }
+
+    fun allUnions(): List<List<T>> {
+        require(!dirty) { "Call compress before getting union" }
+        return leafParents.keys.map { get(it) }
+    }
 }

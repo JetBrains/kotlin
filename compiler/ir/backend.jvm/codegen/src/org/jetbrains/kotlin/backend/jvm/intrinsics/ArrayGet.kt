@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.org.objectweb.asm.Type
 
 object ArrayGet : IntrinsicMethod() {
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
+    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
         val dispatchReceiver = expression.dispatchReceiver!!
         val receiver = dispatchReceiver.accept(codegen, data).materializedAt(dispatchReceiver.type)
         val elementType = AsmUtil.correctElementType(receiver.type)

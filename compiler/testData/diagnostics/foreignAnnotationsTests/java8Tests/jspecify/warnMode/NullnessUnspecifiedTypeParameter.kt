@@ -1,6 +1,7 @@
+// FIR_IDENTICAL
 // JSPECIFY_STATE: warn
 // FILE: NullnessUnspecifiedTypeParameter.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 @NullMarked
 public class NullnessUnspecifiedTypeParameter<T> {

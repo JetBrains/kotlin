@@ -1,5 +1,14 @@
-fun testSimple(): Box<Long> {
-  return Box<Long>(value = 2L.times(other = 3))
+class Box<T : Any?> {
+  val value: T
+    field = value
+    get
+
+  constructor(value: T) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
 
 inline fun <reified T : Any?> testArray(n: Int, crossinline block: Function0<T>): Array<T> {
@@ -9,15 +18,7 @@ inline fun <reified T : Any?> testArray(n: Int, crossinline block: Function0<T>)
 )
 }
 
-class Box<T : Any?> {
-  constructor(value: T) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  val value: T
-    field = value
-    get
-
+fun testSimple(): Box<Long> {
+  return Box<Long>(value = 2L.times(other = 3))
 }
+

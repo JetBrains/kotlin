@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.Context
 
 /**
  * Provides utilities to create static data.
  */
-internal open class StaticData(val module: LLVMModuleRef) {
+internal open class StaticData(val module: LLVMModuleRef, private val llvm: CodegenLlvmHelpers) {
 
     /**
      * Represents the LLVM global variable.
@@ -51,6 +50,11 @@ internal open class StaticData(val module: LLVMModuleRef) {
 
             fun get(staticData: StaticData, name: String): Global? {
                 val llvmGlobal = LLVMGetNamedGlobal(staticData.module, name) ?: return null
+                return Global(llvmGlobal)
+            }
+
+            fun get(module: LLVMModuleRef, name: String): Global? {
+                val llvmGlobal = LLVMGetNamedGlobal(module, name) ?: return null
                 return Global(llvmGlobal)
             }
         }
@@ -138,17 +142,21 @@ internal open class StaticData(val module: LLVMModuleRef) {
         if (elements.isNotEmpty() || isExported) {
             val global = placeGlobalArray(name, elemType, elements, isExported)
             global.setConstant(true)
-            return global.pointer.getElementPtr(0)
+            return global.pointer.getElementPtr(llvm, LLVMArrayType(elemType, elements.size)!!, 0)
         } else {
             return NullPointer(elemType)
         }
     }
 
     internal fun placeCStringLiteral(value: String) : ConstPointer {
-        val chars = value.toByteArray(Charsets.UTF_8).map { Int8(it) } + Int8(0)
+        val chars = value.toByteArray(Charsets.UTF_8).map { llvm.constInt8(it) } + llvm.constInt8(0)
 
-        return placeGlobalConstArray("", int8Type, chars)
+        return placeGlobalConstArray("", llvm.int8Type, chars)
     }
 
     internal fun cStringLiteral(value: String) = cStringLiterals.getOrPut(value) { placeCStringLiteral(value) }
+
+    companion object {
+        fun getGlobal(module: LLVMModuleRef, name: String) = Global.get(module, name)
+    }
 }

@@ -19,5 +19,9 @@ object ConvertibleIntegerOperators {
         "inv", "unaryPlus", "unaryMinus"
     ).toNameSet()
 
+    val binaryOperatorsWithSignedArgument: Set<Name> = listOf(
+        "shl", "shr", "ushr",
+    ).toNameSet()
+
     private fun List<String>.toNameSet(): Set<Name> = mapTo(mutableSetOf()) { Name.identifier(it) }
 }

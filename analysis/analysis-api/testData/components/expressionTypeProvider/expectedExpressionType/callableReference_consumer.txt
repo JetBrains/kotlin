@@ -1,0 +1,13 @@
+expression: consumer::accept
+expected type: KaFunctionType:
+  annotations: []
+  typeArguments: [
+    KaTypeParameterType:
+      annotations: []
+      type: T
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Unit
+  ]
+  type: kotlin/Function1<T, kotlin/Unit>

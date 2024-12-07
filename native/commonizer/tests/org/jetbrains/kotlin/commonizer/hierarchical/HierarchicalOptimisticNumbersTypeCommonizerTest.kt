@@ -940,4 +940,40 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         """.trimIndent()
         )
     }
+
+    fun `test KT-64376 - UnsafeNumber annotation - isn't applied to a commonization type that isn't a number - when commonizing hierarchically`() {
+        val result = commonize {
+            outputTarget("(a, b)", "(a, b, c)")
+            setting(OptimisticNumberCommonizationEnabledKey, true)
+            registerFakeStdlibIntegersDependency("(a, b)", "(a, b, c)")
+            simpleSingleSourceTarget("a", """
+                typealias X = Short
+                fun foo(x: X): X = x
+            """.trimIndent())
+            simpleSingleSourceTarget("b", """
+                typealias X = Int
+                fun foo(x: X): X = x
+            """.trimIndent())
+            simpleSingleSourceTarget("c", """
+                typealias X = Any
+                fun foo(x: X): X = x
+            """.trimIndent())
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                @UnsafeNumber(["a: kotlin.Short", "b: kotlin.Int"])
+                typealias X = Short
+                @UnsafeNumber(["a: kotlin.Short", "b: kotlin.Int"])
+                expect fun foo(x: X): X
+            """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "(a, b, c)", """
+                expect class X
+                expect fun foo(x: X): X
+            """.trimIndent()
+        )
+    }
 }

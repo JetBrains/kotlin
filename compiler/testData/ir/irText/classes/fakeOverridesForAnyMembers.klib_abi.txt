@@ -1,0 +1,19 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open class <#A: kotlin/Any?> /A { // /A|null[0]
+    constructor <init>() // /A.<init>|<init>(){}[0]
+}
+open class <#A: kotlin/Any?> /B : /A<#A> { // /B|null[0]
+    constructor <init>() // /B.<init>|<init>(){}[0]
+    open fun hashCode(): kotlin/Int // /B.hashCode|hashCode(){}[0]
+}
+open class <#A: kotlin/Any?> /C : /B<#A> { // /C|null[0]
+    constructor <init>() // /C.<init>|<init>(){}[0]
+}
+open class <#A: kotlin/Any?> /D : /C<#A> { // /D|null[0]
+    constructor <init>() // /D.<init>|<init>(){}[0]
+}

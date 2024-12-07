@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface FirElement {
     fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R
 

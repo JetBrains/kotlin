@@ -5,24 +5,31 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 
-abstract class FirInlinePropertyChecker : FirPropertyChecker() {
-    abstract val inlineDeclarationChecker: FirInlineDeclarationChecker
-
+object FirInlinePropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.getter?.isInline != true && declaration.setter?.isInline != true) return
 
-        inlineDeclarationChecker.checkCallableDeclaration(declaration, context, reporter)
+        FirInlineDeclarationChecker.checkCallableDeclaration(declaration, context, reporter)
 
         if (declaration.hasBackingField || declaration.delegate != null) {
-            reporter.reportOn(declaration.source, FirErrors.INLINE_PROPERTY_WITH_BACKING_FIELD, context)
+            when (declaration.source?.kind) {
+                KtFakeSourceElementKind.PropertyFromParameter -> reporter.reportOn(
+                    declaration.source, FirErrors.INLINE_PROPERTY_WITH_BACKING_FIELD_DEPRECATION, context
+                )
+                else -> reporter.reportOn(
+                    declaration.source, FirErrors.INLINE_PROPERTY_WITH_BACKING_FIELD, context
+                )
+            }
         }
     }
 }

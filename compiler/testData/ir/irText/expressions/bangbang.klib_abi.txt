@@ -1,0 +1,11 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /test1(kotlin/Any?): kotlin/Any // /test1|test1(kotlin.Any?){}[0]
+final fun /test2(kotlin/Any?): kotlin/Int // /test2|test2(kotlin.Any?){}[0]
+final fun <#A: kotlin/Any?> /test3(#A): #A!! // /test3|test3(0:0){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> /test4(#A) // /test4|test4(0:0){0§<kotlin.Any?>}[0]
+final fun /useString(kotlin/String) // /useString|useString(kotlin.String){}[0]

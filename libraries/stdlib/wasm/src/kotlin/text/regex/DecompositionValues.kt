@@ -350,9 +350,9 @@ private val decompositionValueIndex = shortArrayOf(
 )
 
 internal fun getDecompositionByIndex(index: Int): IntArray {
-    val valueIndex = decompositionValueIndex[index]
-    val size = decompositionValueIndex[index + 1] - valueIndex
-    return IntArray(size) { shift ->
-        decompositionValues[valueIndex + shift]
-    }
+    val startIndex = decompositionValueIndex[index].toInt()
+    val endIndex = decompositionValueIndex[index + 1].toInt()
+    val result = IntArray(endIndex - startIndex)
+    decompositionValues.copyInto(result, startIndex = startIndex, endIndex = endIndex)
+    return result
 }

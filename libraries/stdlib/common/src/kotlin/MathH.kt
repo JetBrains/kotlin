@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -365,8 +365,8 @@ public expect fun max(a: Double, b: Double): Double
  *   - If the argument is infinite, then the result is an infinity with the same sign as the argument.
  *   - If the argument is zero, then the result is a zero with the same sign as the argument.
  */
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("1.8")
+@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun cbrt(x: Double): Double
 
 
@@ -733,7 +733,7 @@ public expect fun log10(x: Float): Float
 public expect fun log2(x: Float): Float
 
 /**
- * Computes `ln(a + 1)`.
+ * Computes `ln(x + 1)`.
  *
  * This function can be implemented to produce more precise result for [x] near zero.
  *
@@ -844,8 +844,8 @@ public expect fun max(a: Float, b: Float): Float
  *   - If the argument is infinite, then the result is an infinity with the same sign as the argument.
  *   - If the argument is zero, then the result is a zero with the same sign as the argument.
  */
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("1.8")
+@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun cbrt(x: Float): Float
 
 

@@ -1,8 +1,3 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE
-
 // WITH_STDLIB
 
 fun unsupported(): Nothing = throw UnsupportedOperationException()
@@ -41,7 +36,7 @@ inline fun asSucceeds(operation: String, cast: () -> Unit) {
 inline fun safeAsReturnsNull(operation: String, cast: () -> Any?) {
     try {
         val x = cast()
-        assert(x == null) { "$operation: should return null, got $x" }
+        require(x == null) { "$operation: should return null, got $x" }
     }
     catch (e: Throwable) {
         throw AssertionError("$operation: should not throw exceptions, got $e")
@@ -51,7 +46,7 @@ inline fun safeAsReturnsNull(operation: String, cast: () -> Any?) {
 inline fun safeAsReturnsNonNull(operation: String, cast: () -> Any?) {
     try {
         val x = cast()
-        assert(x != null) { "$operation: should return non-null" }
+        require(x != null) { "$operation: should return non-null" }
     }
     catch (e: Throwable) {
         throw AssertionError("$operation: should not throw exceptions, got $e")
@@ -111,10 +106,10 @@ inline fun <reified T> reifiedSafeAsReturnsNull(x: Any?, operation: String) {
 fun box(): String {
     val w: Any = Weird()
 
-    assert(w is Iterator<*>) { "w is Iterator<*>" }
-    assert(w !is MutableIterator<*>) { "w !is MutableIterator<*>" }
-    assert(w is MutableIterable<*>) { "w is MutableIterable<*>" }
-    assert(w is MutableMap.MutableEntry<*, *>) { "w is MutableMap.MutableEntry<*, *>" }
+    require(w is Iterator<*>) { "w is Iterator<*>" }
+    require(w !is MutableIterator<*>) { "w !is MutableIterator<*>" }
+    require(w is MutableIterable<*>) { "w is MutableIterable<*>" }
+    require(w is MutableMap.MutableEntry<*, *>) { "w is MutableMap.MutableEntry<*, *>" }
 
     asSucceeds("w as Iterator<*>") { w as Iterator<*> }
     asFailsWithCCE("w as MutableIterator<*>") { w as MutableIterator<*> }
@@ -126,10 +121,10 @@ fun box(): String {
     safeAsReturnsNonNull("w as? MutableIterable<*>") { w as? MutableIterable<*> }
     safeAsReturnsNonNull("w as? MutableMap.MutableEntry<*, *>") { w as? MutableMap.MutableEntry<*, *> }
 
-    assert(reifiedIs<Iterator<*>>(w)) { "reifiedIs<Iterator<*>>(w)" }
-    assert(reifiedIsNot<MutableIterator<*>>(w)) { "reifiedIsNot<MutableIterator<*>>(w)" }
-    assert(reifiedIs<MutableIterable<*>>(w)) { "reifiedIs<MutableIterable<*>>(w)" }
-    assert(reifiedIs<MutableMap.MutableEntry<*, *>>(w)) { "reifiedIs<MutableMap.MutableEntry<*, *>>(w)" }
+    require(reifiedIs<Iterator<*>>(w)) { "reifiedIs<Iterator<*>>(w)" }
+    require(reifiedIsNot<MutableIterator<*>>(w)) { "reifiedIsNot<MutableIterator<*>>(w)" }
+    require(reifiedIs<MutableIterable<*>>(w)) { "reifiedIs<MutableIterable<*>>(w)" }
+    require(reifiedIs<MutableMap.MutableEntry<*, *>>(w)) { "reifiedIs<MutableMap.MutableEntry<*, *>>(w)" }
 
     reifiedAsSucceeds<Iterator<*>>(w, "reified w as Iterator<*>")
     reifiedAsFailsWithCCE<MutableIterator<*>>(w, "reified w as MutableIterator<*>")

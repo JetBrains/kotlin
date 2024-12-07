@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Some(var foo: Int) {
     init {
         if (foo < 0) {

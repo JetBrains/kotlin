@@ -1,0 +1,10 @@
+Diagnostics from elements:
+  for PSI element of type KtNameReferenceExpression at (10,5-12)
+    UNRESOLVED_REFERENCE      text ranges: [(282,289)]
+      PSI: KtNameReferenceExpression at (10,5-12)
+  for PSI element of type KtNameReferenceExpression at (9,5-12)
+    UNRESOLVED_REFERENCE      text ranges: [(255,262)]
+      PSI: KtNameReferenceExpression at (9,5-12)
+  for PSI element of type KtContractEffectList at (4,59) - (8,2)
+    UNSUPPORTED      text ranges: [(116,248)]
+      PSI: KtContractEffectList at (4,59) - (8,2)

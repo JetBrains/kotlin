@@ -1,0 +1,41 @@
+FILE: multiDeclarations.kt
+    public? final? fun foo(): Int {
+        lval prop: <implicit> = String(str)
+        @ForAnno(<strcat>(String(for anno ), prop#))  {
+            lval <iterator>: <implicit> = IntegerLiteral(1).rangeTo#(IntegerLiteral(100)).iterator#()
+            while(R|<local>/<iterator>|.hasNext#()) {
+                @ForParameter(<strcat>(String(for ), prop#)) lval i: <implicit> = R|<local>/<iterator>|.next#()
+                 {
+                }
+
+            }
+
+        }
+
+         {
+            lval <iterator>: <implicit> = bar#().iterator#()
+            while(R|<local>/<iterator>|.hasNext#()) {
+                @ForParameter(<strcat>(String(second for ), prop#)) lval <destruct>: <implicit> = R|<local>/<iterator>|.next#()
+                lval x: <implicit> = R|<local>/<destruct>|.component1#()
+                @NestedParam(<strcat>(String(destructuring in for ), prop#)) lval y: <implicit> = R|<local>/<destruct>|.component2#()
+                 {
+                }
+
+            }
+
+        }
+
+        withLambda#(<L> = withLambda@fun <implicit>.<anonymous>(<destruct>: <implicit>): <implicit> <inline=Unknown>  {
+            @LeftLambda(<strcat>(String(lambda a ), prop#)) lval a: <implicit> = R|<local>/<destruct>|.component1#()
+            @RightLambda(<strcat>(String(lambda b ), prop#)) lval b: <implicit> = R|<local>/<destruct>|.component2#()
+             {
+                ^@withLambda Unit
+            }
+
+        }
+        )
+        @Destructuring(<strcat>(String(destr ), prop#)) lval <destruct>: <implicit> = Pair#(IntegerLiteral(0), IntegerLiteral(1))
+        @LeftDestructuring(<strcat>(String(a ), prop#)) lval a: <implicit> = R|<local>/<destruct>|.component1#()
+        @RightDestructuring(<strcat>(String(b ), prop#)) lval b: <implicit> = R|<local>/<destruct>|.component2#()
+        ^foo a#.plus#(b#)
+    }

@@ -1,5 +1,6 @@
-// !LANGUAGE: +NewInference +MixedNamedArgumentsInTheirOwnPosition
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +MixedNamedArgumentsInTheirOwnPosition
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
 
 fun foo(a: String, b: String) {}

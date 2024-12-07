@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.js.backend.ast;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class JsExpressionStatement extends AbstractNode implements JsStatement {
     @NotNull
@@ -29,18 +30,14 @@ public final class JsExpressionStatement extends AbstractNode implements JsState
         visitor.accept(expression);
     }
 
+    @Nullable
     @Override
-    public Object getSource() {
+    public JsLocationWithSource getSource() {
         return null;
     }
 
     @Override
-    public void setSource(Object info) {
-        throw new IllegalStateException("You must not set source info for JsExpressionStatement, set for expression");
-    }
-
-    @Override
-    public JsNode source(Object info) {
+    public void setSource(@Nullable JsLocationWithSource info) {
         throw new IllegalStateException("You must not set source info for JsExpressionStatement, set for expression");
     }
 

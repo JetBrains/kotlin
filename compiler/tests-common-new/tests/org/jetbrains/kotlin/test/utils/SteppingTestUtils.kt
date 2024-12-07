@@ -6,31 +6,101 @@
 package org.jetbrains.kotlin.test.utils
 
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.model.Directive
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
+import org.jetbrains.kotlin.test.services.impl.valueOfOrNull
 import java.io.File
 
 data class SteppingTestLoggedData(val line: Int, val isSynthetic: Boolean, val expectation: String)
 
+sealed interface LocalValue
+
+class LocalPrimitive(val value: String, val valueType: String) : LocalValue {
+    override fun toString(): String {
+        return "$value:$valueType"
+    }
+}
+
+class LocalReference(val id: String, val referenceType: String) : LocalValue {
+    override fun toString(): String {
+        return referenceType
+    }
+}
+
+object LocalNullValue : LocalValue {
+    override fun toString(): String {
+        return "null"
+    }
+}
+
+class LocalVariableRecord(
+    val variable: String,
+    val variableType: String?,
+    val value: LocalValue
+) {
+    override fun toString(): String = buildString {
+        append(variable)
+        if (variableType != null) {
+            append(":")
+            append(variableType)
+        }
+        append("=")
+        append(value.toString().normalizeIndyLambdas())
+    }
+}
+
+private fun String.normalizeIndyLambdas(): String =
+    // Invokedynamic lambdas have an unstable hash in the name.
+    replace("\\\$Lambda\\\$.*".toRegex(), "<lambda>")
+
 private const val EXPECTATIONS_MARKER = "// EXPECTATIONS"
 private const val FORCE_STEP_INTO_MARKER = "// FORCE_STEP_INTO"
-private const val JVM_EXPECTATIONS_MARKER = "$EXPECTATIONS_MARKER JVM"
-private const val JVM_IR_EXPECTATIONS_MARKER = "$EXPECTATIONS_MARKER JVM_IR"
-private const val CLASSIC_FRONTEND_EXPECTATIONS_MARKER = "$EXPECTATIONS_MARKER CLASSIC_FRONTEND"
-private const val FIR_EXPECTATIONS_MARKER = "$EXPECTATIONS_MARKER FIR"
+private const val DIRECTIVE_MARKER = "+"
+
+data class BackendWithDirectives(val backend: TargetBackend) {
+    companion object {
+        private val directivesToConsider = mutableSetOf(LanguageSettingsDirectives.USE_INLINE_SCOPES_NUMBERS)
+    }
+
+    private val directives = mutableSetOf<Directive>()
+
+    fun addDirectiveIfConsidered(directive: Directive) {
+        if (directive in directivesToConsider) {
+            directives += directive
+        }
+    }
+
+    fun contains(registeredDirectives: RegisteredDirectives, directivesInTestFile: Set<Directive>): Boolean {
+        if (directivesInTestFile.isEmpty()) return true
+        return registeredDirectives.filter { it in directivesToConsider && it in directivesInTestFile }.toSet() == directives
+    }
+}
 
 fun checkSteppingTestResult(
     frontendKind: FrontendKind<*>,
     targetBackend: TargetBackend,
     wholeFile: File,
-    loggedItems: List<SteppingTestLoggedData>
+    loggedItems: List<SteppingTestLoggedData>,
+    directives: RegisteredDirectives
 ) {
     val actual = mutableListOf<String>()
     val lines = wholeFile.readLines()
-    val forceStepInto = lines.any { it.startsWith(FORCE_STEP_INTO_MARKER) }
+    val directivesInTestFile = mutableSetOf<Directive>()
+    var forceStepInto = false
+    for (line in lines) {
+        if (line.contains(DIRECTIVE_MARKER)) {
+            directivesInTestFile.addAll(line.getDeclaredDirectives())
+        }
+        if (line.startsWith(FORCE_STEP_INTO_MARKER)) {
+            forceStepInto = true
+        }
+    }
 
-    val actualLineNumbers = compressSequencesWithoutLinenumber(loggedItems)
+    val actualLineNumbers = compressSequencesWithoutLineNumber(loggedItems)
         .filter {
             // Ignore synthetic code with no line number information unless force step into behavior is requested.
             forceStepInto || !it.isSynthetic
@@ -38,14 +108,19 @@ fun checkSteppingTestResult(
         .map { "// ${it.expectation}" }
     val actualLineNumbersIterator = actualLineNumbers.iterator()
 
-    val lineIterator = lines.iterator()
+    val lineIterator = lines.listIterator()
     for (line in lineIterator) {
+        if (line.startsWith(EXPECTATIONS_MARKER)) {
+            // Rewind the iterator to the first '// EXPECTATIONS' line
+            if (lineIterator.hasPrevious()) lineIterator.previous()
+            break
+        }
         actual.add(line)
-        if (line.startsWith(EXPECTATIONS_MARKER) || line.startsWith(FORCE_STEP_INTO_MARKER)) break
+        if (line.startsWith(FORCE_STEP_INTO_MARKER)) break
     }
 
-    var currentBackend = TargetBackend.ANY
-    var currentFrontend = frontendKind
+    var currentBackends = listOf(BackendWithDirectives(TargetBackend.ANY))
+    var currentFrontends = listOf(frontendKind)
     for (line in lineIterator) {
         if (line.isEmpty()) {
             actual.add(line)
@@ -53,27 +128,41 @@ fun checkSteppingTestResult(
         }
         if (line.startsWith(EXPECTATIONS_MARKER)) {
             actual.add(line)
-            currentBackend = when (line) {
-                EXPECTATIONS_MARKER -> TargetBackend.ANY
-                JVM_EXPECTATIONS_MARKER -> TargetBackend.JVM
-                JVM_IR_EXPECTATIONS_MARKER -> TargetBackend.JVM_IR
-                CLASSIC_FRONTEND_EXPECTATIONS_MARKER -> currentBackend
-                FIR_EXPECTATIONS_MARKER -> currentBackend
-                else -> error("Expected JVM backend: $line")
+            val options = line.removePrefix(EXPECTATIONS_MARKER).splitToSequence(Regex("\\s+")).filter { it.isNotEmpty() }
+            val backends = mutableListOf<BackendWithDirectives>()
+            val frontends = mutableListOf<FrontendKind<*>>()
+            var currentBackendWithDirectives: BackendWithDirectives? = null
+            for (option in options) {
+                val backend = valueOfOrNull<TargetBackend>(option)
+                if (backend != null) {
+                    val backendWithDirectives = BackendWithDirectives(backend)
+                    currentBackendWithDirectives = backendWithDirectives
+                    backends += backendWithDirectives
+                    continue
+                }
+
+                val frontend = FrontendKinds.fromString(option)
+                if (frontend != null) {
+                    frontends += frontend
+                    continue
+                }
+
+                val directive = LanguageSettingsDirectives[option.substringAfter(DIRECTIVE_MARKER)]
+                if (directive != null && currentBackendWithDirectives != null) {
+                    currentBackendWithDirectives.addDirectiveIfConsidered(directive)
+                }
             }
-            currentFrontend = when (line) {
-                EXPECTATIONS_MARKER -> frontendKind
-                JVM_EXPECTATIONS_MARKER -> currentFrontend
-                JVM_IR_EXPECTATIONS_MARKER -> currentFrontend
-                CLASSIC_FRONTEND_EXPECTATIONS_MARKER -> FrontendKinds.ClassicFrontend
-                FIR_EXPECTATIONS_MARKER -> FrontendKinds.FIR
-                else -> error("Expected JVM backend: $line")
-            }
+
+            currentBackends = backends.takeIf { it.isNotEmpty() } ?: listOf(BackendWithDirectives(TargetBackend.ANY))
+            currentFrontends = frontends.takeIf { it.isNotEmpty() } ?: listOf(frontendKind)
             continue
         }
-        if ((currentBackend == TargetBackend.ANY || currentBackend == targetBackend) &&
-            currentFrontend == frontendKind
-        ) {
+
+        val containsBackend =
+            currentBackends.any {
+                it.backend == TargetBackend.ANY || (it.backend == targetBackend && it.contains(directives, directivesInTestFile))
+            }
+        if (containsBackend && currentFrontends.contains(frontendKind)) {
             if (actualLineNumbersIterator.hasNext()) {
                 actual.add(actualLineNumbersIterator.next())
             }
@@ -83,8 +172,15 @@ fun checkSteppingTestResult(
     }
 
     actualLineNumbersIterator.forEach { actual.add(it) }
+    if (actual.last().isNotBlank()) {
+        actual.add("")
+    }
 
     assertEqualsToFile(wholeFile, actual.joinToString("\n"))
+}
+
+private fun String.getDeclaredDirectives(): List<Directive> {
+    return split(Regex("\\s+")).mapNotNull { LanguageSettingsDirectives[it.substringAfter(DIRECTIVE_MARKER)] }
 }
 
 /**
@@ -93,7 +189,7 @@ fun checkSteppingTestResult(
  * print as byte offsets. This avoids overspecifying code generation
  * strategy in debug tests.
  */
-private fun compressSequencesWithoutLinenumber(loggedItems: List<SteppingTestLoggedData>): List<SteppingTestLoggedData> {
+private fun compressSequencesWithoutLineNumber(loggedItems: List<SteppingTestLoggedData>): List<SteppingTestLoggedData> {
     if (loggedItems.isEmpty()) return listOf()
 
     val logIterator = loggedItems.iterator()
@@ -110,7 +206,26 @@ private fun compressSequencesWithoutLinenumber(loggedItems: List<SteppingTestLog
     return result
 }
 
-fun formatAsSteppingTestExpectation(sourceName: String, lineNumber: Int, functionName: String, isSynthetic: Boolean): String {
-    val synthetic = if (isSynthetic) " (synthetic)" else ""
-    return "$sourceName:$lineNumber $functionName$synthetic"
-}
+fun formatAsSteppingTestExpectation(
+    sourceName: String,
+    lineNumber: Int?,
+    functionName: String,
+    isSynthetic: Boolean,
+    visibleVars: List<LocalVariableRecord>? = null
+): String = buildString {
+    append(sourceName)
+    append(':')
+    if (lineNumber != null) {
+        append(lineNumber)
+    } else {
+        append("...")
+    }
+    append(' ')
+    append(functionName)
+    if (isSynthetic)
+        append(" (synthetic)")
+    if (visibleVars != null) {
+        append(": ")
+        visibleVars.joinTo(this)
+    }
+}.trim()

@@ -1,22 +1,21 @@
 plugins {
-    id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>")
-}
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-    maven { setUrl(rootProject.projectDir.resolve("repo")) }
+    id("org.jetbrains.kotlin.multiplatform")
 }
 
 kotlin {
-    ios()
+    iosX64()
+    iosArm64()
 
     // Check that we can reenter the configuration method.
-    ios {
+    iosX64 {
         binaries.framework(listOf(DEBUG))
     }
 
-    sourceSets["iosMain"].dependencies {
+    iosArm64 {
+        binaries.framework(listOf(DEBUG))
+    }
+
+    sourceSets.iosMain.dependencies {
         implementation("common.ios:lib:1.0")
     }
 }

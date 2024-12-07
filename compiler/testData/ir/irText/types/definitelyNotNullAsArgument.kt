@@ -1,4 +1,4 @@
-//!LANGUAGE: +DefinitelyNonNullableTypes
+// LANGUAGE: +DefinitelyNonNullableTypes
 
 interface I<T> {
     fun input(t: T)

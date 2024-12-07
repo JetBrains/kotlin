@@ -1,7 +1,0 @@
-local final inner class Deepest
-
-public constructor Deepest()
-public final fun deep(): test.`DeepInnerChainKt$main$Local$Inner$prop$1$foo$1$DeepLocal`
-public final fun deepest(): test.`DeepInnerChainKt$main$Local$Inner$prop$1$foo$1$DeepLocal`.Deepest?
-public final fun inner(): test.`DeepInnerChainKt$main$Local`.Inner
-public final fun local(): test.`DeepInnerChainKt$main$Local`

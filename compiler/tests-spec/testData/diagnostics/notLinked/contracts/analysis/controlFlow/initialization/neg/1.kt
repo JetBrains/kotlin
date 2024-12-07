@@ -1,4 +1,5 @@
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// FIR_IDENTICAL
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 // SKIP_TXT
 
 /*

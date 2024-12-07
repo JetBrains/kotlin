@@ -7,12 +7,20 @@ package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.scope
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.resolve.calls.InapplicableCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.MissingInnerClassConstructorReceiver
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CandidateCollector
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CandidateFactory
+import org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner
+import org.jetbrains.kotlin.fir.resolve.delegatingConstructorScope
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -20,8 +28,8 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 class FirTowerResolver(
     private val components: BodyResolveComponents,
     resolutionStageRunner: ResolutionStageRunner,
+    private val collector: CandidateCollector = CandidateCollector(components, resolutionStageRunner)
 ) {
-    private val collector = CandidateCollector(components, resolutionStageRunner)
     private val manager = TowerResolveManager(collector)
 
     fun runResolver(
@@ -61,6 +69,7 @@ class FirTowerResolver(
             candidateFactoriesAndCollectors.resultCollector,
             candidateFactoriesAndCollectors.candidateFactory,
         )
+        // unwrapSmartCastExpression() shouldn't be here, otherwise we can get FirResolvedQualifier instead of 'this' (see e.g. kt2811.kt)
         when (val receiver = info.explicitReceiver) {
             is FirResolvedQualifier -> {
                 manager.enqueueResolverTask { mainTask.runResolverForQualifierReceiver(info, receiver) }
@@ -91,16 +100,19 @@ class FirTowerResolver(
     fun runResolverForDelegatingConstructor(
         info: CallInfo,
         constructedType: ConeClassLikeType,
+        derivedClassLookupTag: ConeClassLikeLookupTag,
         context: ResolutionContext
     ): CandidateCollector {
         val outerType = components.outerClassManager.outerType(constructedType)
-        val scope = constructedType.scope(components.session, components.scopeSession, FakeOverrideTypeCalculator.DoNothing) ?: return collector
+        val scope =
+            constructedType.delegatingConstructorScope(components.session, components.scopeSession, derivedClassLookupTag, outerType)
+                ?: return collector
 
         val dispatchReceiver =
             if (outerType != null)
-                components.implicitReceiverStack.receiversAsReversed().drop(1).firstOrNull {
+                components.implicitValueStorage.receiversAsReversed().drop(1).firstOrNull {
                     AbstractTypeChecker.isSubtypeOf(components.session.typeContext, it.type, outerType)
-                } ?: return collector // TODO: report diagnostic about not-found receiver
+                }
             else
                 null
 
@@ -115,9 +127,18 @@ class FirTowerResolver(
                     it,
                     ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
                     scope,
-                    dispatchReceiver,
+                    dispatchReceiver?.receiverExpression,
                     givenExtensionReceiverOptions = emptyList()
-                ),
+                ).apply {
+                    if (outerType != null && dispatchReceiver == null) {
+                        val diagnostic = constructedType
+                            .toRegularClassSymbol(context.session)
+                            ?.let(::MissingInnerClassConstructorReceiver)
+                            ?: InapplicableCandidate
+
+                        addDiagnostic(diagnostic)
+                    }
+                },
                 context
             )
         }

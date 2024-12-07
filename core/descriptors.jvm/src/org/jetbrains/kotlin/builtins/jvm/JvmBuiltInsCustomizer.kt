@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.builtins.jvm
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.DEPRECATED_LIST_METHODS
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.DROP_LIST_METHOD_SIGNATURES
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.HIDDEN_CONSTRUCTOR_SIGNATURES
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.HIDDEN_METHOD_SIGNATURES
@@ -43,7 +44,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.LazyWrappedType
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartSet
-import java.util.*
 
 // This class is worth splitting into two implementations of AdditionalClassPartsProvider and PlatformDependentDeclarationFilter
 // But currently, they shares a piece of code and probably it's better to postpone it
@@ -69,10 +69,22 @@ class JvmBuiltInsCustomizer(
     // Most this properties are lazy because they depends on KotlinBuiltIns initialization that depends on JvmBuiltInsSettings object
     private val notConsideredDeprecation by storageManager.createLazyValue {
         val annotation = moduleDescriptor.builtIns.createDeprecatedAnnotation(
-            "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version"
+            "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version",
+            forcePropagationDeprecationToOverrides = true,
         )
         Annotations.create(listOf(annotation))
     }
+
+    private val deprecationForSomeOfTheListMethods =
+        storageManager.createMemoizedFunction<Pair<String, String>, Annotations> { (methodName, extensionName) ->
+            val annotation = moduleDescriptor.builtIns.createDeprecatedAnnotation(
+                "'$methodName()' member of List is redundant in Kotlin and might be removed soon. Please use '$extensionName()' stdlib extension instead",
+                forcePropagationDeprecationToOverrides = false,
+                level = "HIDDEN",
+                replaceWith = "$extensionName()"
+            )
+            Annotations.create(listOf(annotation))
+        }
 
     private fun StorageManager.createMockJavaIoSerializableType(): KotlinType {
         val mockJavaIoPackageFragment = object : PackageFragmentDescriptorImpl(moduleDescriptor, FqName("java.io")) {
@@ -140,6 +152,16 @@ class JvmBuiltInsCustomizer(
                         // hidden methods in final class can't be overridden or called with 'super'
                         if (classDescriptor.isFinalClass) return@mapNotNull null
                         setHiddenForResolutionEverywhereBesideSupercalls()
+                    }
+
+                    JDKMemberStatus.DEPRECATED_LIST_METHODS -> {
+                        setAdditionalAnnotations(
+                            when (additionalMember.name) {
+                                GET_FIRST_LIST_NAME -> deprecationForSomeOfTheListMethods(additionalMember.name.asString() to "first")
+                                GET_LAST_LIST_NAME -> deprecationForSomeOfTheListMethods(additionalMember.name.asString() to "last")
+                                else -> error("Unexpected name: ${additionalMember.name}")
+                            }
+                        )
                     }
 
                     JDKMemberStatus.NOT_CONSIDERED -> {
@@ -232,8 +254,14 @@ class JvmBuiltInsCustomizer(
                 // Search through mapped supertypes to determine that Set.toArray should be invisible, while we have only
                 // Collection.toArray there explicitly
                 // Note, that we can't find j.u.Collection.toArray within overriddenDescriptors of j.u.Set.toArray
-                it.typeConstructor.supertypes.mapNotNull {
-                    (it.constructor.declarationDescriptor?.original as? ClassDescriptor)?.getJavaAnalogue()
+                it.typeConstructor.supertypes.mapNotNull { supertype ->
+                    val superClassDescriptor =
+                        supertype.constructor.declarationDescriptor?.original as? ClassDescriptor ?: return@mapNotNull null
+
+                    // j.u.List in JDK 8 from Kotlin POV has a supertype kotlin.collections.MutableCollection
+                    // that actually has JavaAnalogue, but since JDK 21 it has j.u.SequencedCollection as a supertype
+                    // so `getJavaAnalogue()` might return null, but we still should continue traversing the supertypes
+                    superClassDescriptor.getJavaAnalogue() ?: superClassDescriptor
                 }
             },
             object : DFS.AbstractNodeHandler<ClassDescriptor, JDKMemberStatus>() {
@@ -242,6 +270,7 @@ class JvmBuiltInsCustomizer(
                     when (signature) {
                         in HIDDEN_METHOD_SIGNATURES -> result = JDKMemberStatus.HIDDEN
                         in VISIBLE_METHOD_SIGNATURES -> result = JDKMemberStatus.VISIBLE
+                        in DEPRECATED_LIST_METHODS -> result = JDKMemberStatus.DEPRECATED_LIST_METHODS
                         in DROP_LIST_METHOD_SIGNATURES -> result = JDKMemberStatus.DROP
                     }
 
@@ -253,7 +282,7 @@ class JvmBuiltInsCustomizer(
     }
 
     private enum class JDKMemberStatus {
-        HIDDEN, VISIBLE, NOT_CONSIDERED, DROP
+        HIDDEN, VISIBLE, DEPRECATED_LIST_METHODS, NOT_CONSIDERED, DROP
     }
 
     private fun ClassDescriptor.getJavaAnalogue(): LazyJavaClassDescriptor? {
@@ -342,3 +371,6 @@ private class FallbackBuiltIns private constructor() : KotlinBuiltIns(LockBasedS
 
     override fun getPlatformDependentDeclarationFilter() = PlatformDependentDeclarationFilter.All
 }
+
+private val GET_FIRST_LIST_NAME = Name.identifier("getFirst")
+private val GET_LAST_LIST_NAME = Name.identifier("getLast")

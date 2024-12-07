@@ -27,18 +27,15 @@ class IrLazyValueParameter(
     override val symbol: IrValueParameterSymbol,
     override val descriptor: ValueParameterDescriptor,
     override var name: Name,
-    override val index: Int,
     kotlinType: KotlinType,
     varargElementKotlinType: KotlinType?,
-    override val isCrossinline: Boolean,
-    override val isNoinline: Boolean,
-    override val isHidden: Boolean,
+    override var isCrossinline: Boolean,
+    override var isNoinline: Boolean,
+    override var isHidden: Boolean,
     override val isAssignable: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
 ) : IrValueParameter(), IrLazyDeclarationBase {
-    override lateinit var parent: IrDeclarationParent
-
     override var defaultValue: IrExpressionBody? = null
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()

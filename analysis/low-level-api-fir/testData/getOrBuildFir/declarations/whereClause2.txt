@@ -1,0 +1,11 @@
+KT element: KtNameReferenceExpression
+FIR element: FirTypeParameterImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+[ResolvedTo(BODY_RESOLVE)] To : R|kotlin/Any|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] whereClause2.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] From : R|To|, [ResolvedTo(BODY_RESOLVE)] To : R|kotlin/Any|> copyNotNull([ResolvedTo(BODY_RESOLVE)] from: R|kotlin/collections/List<From>|, [ResolvedTo(BODY_RESOLVE)] to: R|kotlin/collections/List<To>|): R|kotlin/Unit| {
+    }

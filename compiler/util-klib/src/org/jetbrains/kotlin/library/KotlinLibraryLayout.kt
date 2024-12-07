@@ -68,8 +68,6 @@ interface IrKotlinLibraryLayout : KotlinLibraryLayout {
         get() = File(irDir, "bodies.knb")
     val irFiles
         get() = File(irDir, "files.knf")
-    val dataFlowGraphFile
-        get() = File(irDir, "module_data_flow_graph")
     val irDebugInfo
         get() = File(irDir, "debugInfo.knd")
 

@@ -7,10 +7,7 @@ public abstract class A {
     public method addAll(p0: int, p1: java.util.Collection): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
-    public abstract method contains(p0: java.lang.Object): boolean
     public abstract method getSize(): int
-    public abstract method indexOf(p0: java.lang.Object): int
-    public abstract method lastIndexOf(p0: java.lang.Object): int
     public method listIterator(): java.util.ListIterator
     public method listIterator(p0: int): java.util.ListIterator
     public method remove(p0: int): java.lang.Object

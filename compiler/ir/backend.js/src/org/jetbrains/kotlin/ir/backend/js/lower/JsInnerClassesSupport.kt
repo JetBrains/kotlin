@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.ir.util.copyTypeParametersFrom
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -41,7 +42,7 @@ class JsInnerClassesSupport(mapping: JsMapping, private val irFactory: IrFactory
 
                 irFactory.buildField {
                     origin = IrDeclarationOrigin.FIELD_FOR_OUTER_THIS
-                    name = Name.identifier("\$this")
+                    name = Name.identifier(Namer.SYNTHETIC_RECEIVER_NAME)
                     type = outerClass.defaultType
                     visibility = DescriptorVisibilities.PROTECTED
                     isFinal = true
@@ -89,15 +90,14 @@ class JsInnerClassesSupport(mapping: JsMapping, private val irFactory: IrFactory
         val newValueParameters = mutableListOf(buildValueParameter(newConstructor) {
             origin = SYNTHESIZED_DECLARATION
             name = Name.identifier(Namer.OUTER_NAME)
-            index = 0
             type = outerThisType
         })
 
         for (p in oldConstructor.valueParameters) {
-            newValueParameters += p.copyTo(newConstructor, index = p.index + 1)
+            newValueParameters += p.copyTo(newConstructor)
         }
 
-        newConstructor.valueParameters += newValueParameters
+        newConstructor.valueParameters = newConstructor.valueParameters memoryOptimizedPlus newValueParameters
 
         return newConstructor
     }

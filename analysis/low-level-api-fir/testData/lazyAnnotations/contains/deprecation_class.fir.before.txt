@@ -1,0 +1,1 @@
+@Deprecated[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any|

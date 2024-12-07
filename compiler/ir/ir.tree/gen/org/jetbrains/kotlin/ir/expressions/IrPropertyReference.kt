@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,15 +14,14 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
- * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.propertyReference
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.propertyReference]
  */
 abstract class IrPropertyReference : IrCallableReference<IrPropertySymbol>() {
-    abstract val field: IrFieldSymbol?
+    abstract var field: IrFieldSymbol?
 
-    abstract val getter: IrSimpleFunctionSymbol?
+    abstract var getter: IrSimpleFunctionSymbol?
 
-    abstract val setter: IrSimpleFunctionSymbol?
+    abstract var setter: IrSimpleFunctionSymbol?
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitPropertyReference(this, data)

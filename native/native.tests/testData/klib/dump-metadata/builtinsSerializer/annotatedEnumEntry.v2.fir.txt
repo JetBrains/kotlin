@@ -1,0 +1,60 @@
+library {
+  // module name: <annotatedEnumEntry.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Anno
+    // class name: test/Bnno
+    // class name: test/Eee
+
+    // signature: test/Anno|null[0]
+    public final annotation class test/Anno : kotlin/Annotation {
+
+      // signature: test/Anno.<init>|<init>(kotlin.String;kotlin.Int){}[0]
+      public constructor(value: kotlin/String /* = ... */, x: kotlin/Int /* = ... */)
+
+      // signature: test/Anno.value|{}value[0]
+      public final val value: kotlin/String
+        // signature: test/Anno.value.<get-value>|<get-value>(){}[0]
+        public final get
+
+      // signature: test/Anno.x|{}x[0]
+      public final val x: kotlin/Int
+        // signature: test/Anno.x.<get-x>|<get-x>(){}[0]
+        public final get
+    }
+
+    // signature: test/Bnno|null[0]
+    public final annotation class test/Bnno : kotlin/Annotation {
+
+      // signature: test/Bnno.<init>|<init>(){}[0]
+      public constructor()
+    }
+
+    // signature: test/Eee|null[0]
+    public final enum class test/Eee : kotlin/Enum<test/Eee> {
+
+      // signature: test/Eee.<init>|<init>(){}[0]
+      private constructor()
+
+      // signature: test/Eee.Entry1|null[0]
+      @test/Anno
+      Entry1,
+
+      // signature: test/Eee.Entry2|null[0]
+      Entry2,
+
+      // signature: test/Eee.Entry3|null[0]
+      @test/Anno(value = "3")
+      @test/Bnno
+      Entry3,
+
+      // signature: test/Eee.Entry4|null[0]
+      @test/Anno(value = "4", x = 4)
+      Entry4,
+
+      // has Enum.entries
+    }
+  }
+}

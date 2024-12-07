@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js
 
 import org.gradle.api.Project
-import org.gradle.api.invocation.Gradle
 import org.jetbrains.kotlin.gradle.plugin.BuildFinishedListenerService
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginInMultipleProjectsHolder
 import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING
@@ -34,7 +33,7 @@ private constructor() {
 
         @JvmStatic
         @Synchronized
-        private fun getInstance(gradle: Gradle): MultiplePluginDeclarationDetector {
+        private fun getInstance(project: Project): MultiplePluginDeclarationDetector {
             if (instance != null) {
                 return instance!!
             }
@@ -42,13 +41,13 @@ private constructor() {
             val detector = MultiplePluginDeclarationDetector()
             instance = detector
 
-            BuildFinishedListenerService.getInstance(gradle).onClose { instance = null }
+            BuildFinishedListenerService.getInstance(project).onClose { instance = null }
 
             return detector
         }
 
         fun detect(project: Project) {
-            getInstance(project.gradle).detect(project)
+            getInstance(project).detect(project)
         }
     }
 }

@@ -35,10 +35,6 @@ internal interface Complex : State {
         }
     }
 
-    fun getRealFunction(owner: IrSimpleFunction): IrSimpleFunction {
-        return owner.resolveFakeOverride() as IrSimpleFunction
-    }
-
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? {
         val receiver = expression.superQualifierSymbol?.owner ?: irClass
         val irFunction = getIrFunctionFromGivenClass(receiver, expression.symbol.owner) ?: return null

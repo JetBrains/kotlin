@@ -1,0 +1,23 @@
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -EnumEntries -PrioritizedEnumEntries
+// WITH_STDLIB
+
+package foo
+
+import foo.A.Companion.entries
+
+enum class A {
+    ;
+
+    companion object {
+        val entries = 0
+    }
+}
+
+fun test() {
+    <!DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY!>A.entries<!>
+
+    with(A) {
+        entries
+    }
+}

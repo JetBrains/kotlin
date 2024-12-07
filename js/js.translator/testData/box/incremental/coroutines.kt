@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1302
 // WITH_STDLIB
 // FILE: a.kt
 import kotlin.coroutines.*

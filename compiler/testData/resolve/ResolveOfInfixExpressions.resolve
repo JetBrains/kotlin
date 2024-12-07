@@ -13,7 +13,7 @@ fun f_plus(): Int {
   ~minus~fun minus(t : String) : Int {}
   ~times~fun times(t : String) : Int {}
   ~div~fun div(t : String) : Int {}
-  ~mod~fun mod(t : String) : Int {}
+  ~rem~fun rem(t : String) : Int {}
   ~rangeTo~fun rangeTo(t : String) : Int {}
   ~==~fun equals(a : Any?) : Boolean {}
   ~contains~fun contains(a : Any?) : Boolean {}
@@ -32,7 +32,7 @@ fun f_plus(): Int {
   x `minus`- ""
   x `times`* ""
   x `div`/ ""
-  x `mod`% ""
+  x `rem`% ""
   x `rangeTo`.. ""
   x `==`== ""
   x `==`!= 1

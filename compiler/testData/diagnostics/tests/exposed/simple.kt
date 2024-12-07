@@ -1,3 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
+// RENDER_DIAGNOSTICS_FULL_TEXT
 private interface My
 
 private open class Base

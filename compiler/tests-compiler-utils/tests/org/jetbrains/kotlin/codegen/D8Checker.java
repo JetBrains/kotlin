@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.codegen;
 
 import com.android.tools.r8.*;
 import com.android.tools.r8.origin.PathOrigin;
+import com.android.tools.r8.utils.ExceptionDiagnostic;
+import kotlin.ExceptionsKt;
 import kotlin.Pair;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.test.KtAssert;
@@ -46,19 +48,30 @@ public class D8Checker {
 
     // Compilation with D8 should proceed with no output. There should be no info, warnings, or errors.
     static class TestDiagnosticsHandler implements DiagnosticsHandler {
+        private static String renderDiagnostic(Diagnostic diagnostic) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(diagnostic.getDiagnosticMessage());
+            Throwable cause = (diagnostic instanceof ExceptionDiagnostic) ? ((ExceptionDiagnostic) diagnostic).getCause() : null;
+            if (cause != null) {
+                sb.append("\n");
+                sb.append(ExceptionsKt.stackTraceToString(cause));
+            }
+            return sb.toString();
+        }
+
         @Override
         public void error(Diagnostic diagnostic) {
-            KtAssert.fail("D8 dexing error: " + diagnostic.getDiagnosticMessage());
+            KtAssert.fail("D8 dexing error: " + renderDiagnostic(diagnostic));
         }
 
         @Override
         public void warning(Diagnostic diagnostic) {
-            KtAssert.fail("D8 dexing warning: " + diagnostic.getDiagnosticMessage());
+            KtAssert.fail("D8 dexing warning: " + renderDiagnostic(diagnostic));
         }
 
         @Override
         public void info(Diagnostic diagnostic) {
-            KtAssert.fail("D8 dexing info: " + diagnostic.getDiagnosticMessage());
+            KtAssert.fail("D8 dexing info: " + renderDiagnostic(diagnostic));
         }
     }
 

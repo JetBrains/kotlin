@@ -23,19 +23,28 @@ operator fun MutableMap<String, String>.set(key: DependenciesResolverOptionsName
  */
 enum class DependenciesResolverOptionsName(optionName: String? = null) {
     TRANSITIVE,
+    PARTIAL_RESOLUTION,
     SCOPE,
     USERNAME,
     PASSWORD,
     KEY_FILE,
     KEY_PASSPHRASE,
     CLASSIFIER,
-    EXTENSION;
+    EXTENSION,
+    MAVEN_REPOSITORY_ID;
 
     val key = optionName ?: name.lowercase()
 }
 
 val ExternalDependenciesResolver.Options.transitive
     get() = flag(DependenciesResolverOptionsName.TRANSITIVE)
+
+/**
+ * Enables partial resolution of transitive dependencies.
+ * When this flag is enabled, resolver ignores [transitive] flag.
+ */
+val ExternalDependenciesResolver.Options.partialResolution
+    get() = flag(DependenciesResolverOptionsName.PARTIAL_RESOLUTION)
 
 val ExternalDependenciesResolver.Options.dependencyScopes
     get() = value(DependenciesResolverOptionsName.SCOPE)?.split(",")
@@ -75,3 +84,9 @@ val ExternalDependenciesResolver.Options.classifier
  */
 val ExternalDependenciesResolver.Options.extension
     get() = value(DependenciesResolverOptionsName.EXTENSION)
+
+/**
+ * Id of the repository that is used to match against <server> in maven settings with the same id
+ */
+val ExternalDependenciesResolver.Options.mavenRepoId
+    get() = value(DependenciesResolverOptionsName.MAVEN_REPOSITORY_ID)

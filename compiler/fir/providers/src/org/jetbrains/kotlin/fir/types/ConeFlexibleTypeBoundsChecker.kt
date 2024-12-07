@@ -6,24 +6,13 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds.Collections.baseCollectionToMutableEquivalent
+import org.jetbrains.kotlin.name.StandardClassIds.Collections.mutableCollectionToBaseCollection
 
 object ConeFlexibleTypeBoundsChecker {
-    private val baseTypesToMutableEquivalent = mapOf(
-        StandardClassIds.Iterable to StandardClassIds.MutableIterable,
-        StandardClassIds.Iterator to StandardClassIds.MutableIterator,
-        StandardClassIds.ListIterator to StandardClassIds.MutableListIterator,
-        StandardClassIds.List to StandardClassIds.MutableList,
-        StandardClassIds.Collection to StandardClassIds.MutableCollection,
-        StandardClassIds.Set to StandardClassIds.MutableSet,
-        StandardClassIds.Map to StandardClassIds.MutableMap,
-        StandardClassIds.MapEntry to StandardClassIds.MutableMapEntry
-    )
-    private val mutableToBaseMap = baseTypesToMutableEquivalent.entries.associateBy({ it.value }) { it.key }
-
     fun areTypesMayBeLowerAndUpperBoundsOfSameFlexibleTypeByMutability(a: ConeKotlinType, b: ConeKotlinType): Boolean {
         val classId = a.classId ?: return false
-        val possiblePairBound = (baseTypesToMutableEquivalent[classId] ?: mutableToBaseMap[classId]) ?: return false
+        val possiblePairBound = (baseCollectionToMutableEquivalent[classId] ?: mutableCollectionToBaseCollection[classId]) ?: return false
 
         return possiblePairBound == b.classId
     }
@@ -32,8 +21,8 @@ object ConeFlexibleTypeBoundsChecker {
     fun getBaseBoundFqNameByMutability(a: ConeKotlinType): ClassId? {
         val classId = a.classId ?: return null
 
-        if (classId in baseTypesToMutableEquivalent) return classId
+        if (classId in baseCollectionToMutableEquivalent) return classId
 
-        return mutableToBaseMap[classId]
+        return mutableCollectionToBaseCollection[classId]
     }
 }

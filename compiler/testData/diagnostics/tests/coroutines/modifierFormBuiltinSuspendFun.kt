@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ModifierNonBuiltinSuspendFunError
 // FIR_IDENTICAL
 // SKIP_TXT

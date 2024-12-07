@@ -7,5 +7,6 @@ package org.jetbrains.kotlin.ir.expressions
 
 enum class IrSyntheticBodyKind {
     ENUM_VALUES,
-    ENUM_VALUEOF
+    ENUM_VALUEOF,
+    ENUM_ENTRIES
 }

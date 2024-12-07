@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +QualifiedSupertypeMayBeExtendedByOtherSupertype
+// LANGUAGE: +QualifiedSupertypeMayBeExtendedByOtherSupertype
 interface IBase {
     fun foo() {}
     fun bar() {}

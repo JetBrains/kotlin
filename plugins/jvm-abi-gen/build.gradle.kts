@@ -12,11 +12,10 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-val shadows: Configuration by configurations.creating {
-    isTransitive = false
-}
-configurations.getByName("compileOnly").extendsFrom(shadows)
-configurations.getByName("testApi").extendsFrom(shadows)
+val embedded by configurations
+embedded.isTransitive = false
+configurations.getByName("compileOnly").extendsFrom(embedded)
+configurations.getByName("testApi").extendsFrom(embedded)
 
 dependencies {
     // Should come before dependency on proguarded compiler because StringUtil methods are deleted from it
@@ -32,30 +31,26 @@ dependencies {
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":kotlin-build-common"))
 
-    // Include kotlinx.metadata for metadata stripping.
-    // Note that kotlinx-metadata-jvm already includes kotlinx-metadata, core:metadata, core:metadata.jvm,
-    // and protobuf-lite, so we only need to include kotlinx-metadata-jvm in the shadow jar.
-    compileOnly(project(":kotlinx-metadata"))
-    shadows(commonDependency("org.jetbrains.kotlinx:kotlinx-metadata-jvm"))
+    // Include kotlin.metadata for metadata stripping.
+    // Note that kotlin-metadata-jvm already includes kotlin-metadata, core:metadata, core:metadata.jvm,
+    // and protobuf-lite, so we only need to include kotlin-metadata-jvm in the shadow jar.
+    compileOnly(project(":kotlin-metadata"))
+    embedded(project(":kotlin-metadata-jvm"))
 
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    compileOnly(libs.intellij.asm)
 
-    testImplementation(commonDependency("junit:junit"))
+    testImplementation(libs.junit4)
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":compiler:incremental-compilation-impl"))
 }
 
+optInToExperimentalCompilerApi()
+
 publish()
 
-noDefaultJar()
-
-val shadowJar = runtimeJar(tasks.register<ShadowJar>("shadowJar")) {
-    callGroovy("manifestAttributes", manifest, project)
-    manifest.attributes["Implementation-Version"] = archiveVersion
-
+runtimeJarWithRelocation {
     from(mainSourceSet.output)
-    configurations = listOf(shadows)
     relocate("kotlinx.metadata", "org.jetbrains.kotlin.jvm.abi.kotlinx.metadata")
     mergeServiceFiles() // This is needed to relocate the services files for kotlinx.metadata
 }
@@ -67,7 +62,6 @@ javadocJar()
 projectTest(parallel = true) {
     workingDir = rootDir
     dependsOn(":dist")
-    dependsOn(shadowJar)
 }
 
 testsJar()

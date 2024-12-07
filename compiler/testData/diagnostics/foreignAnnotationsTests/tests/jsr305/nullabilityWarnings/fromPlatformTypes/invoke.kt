@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // JSR305_GLOBAL_REPORT: warn
 
 // FILE: J.java

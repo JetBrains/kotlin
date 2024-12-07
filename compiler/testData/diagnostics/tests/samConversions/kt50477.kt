@@ -1,4 +1,5 @@
-// !LANGUAGE: -SuspendOnlySamConversions
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -SuspendOnlySamConversions
 
 fun interface FI {
     suspend fun call() // suspending now(!!!)

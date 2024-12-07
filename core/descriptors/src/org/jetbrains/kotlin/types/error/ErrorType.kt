@@ -15,7 +15,7 @@ class ErrorType @JvmOverloads internal constructor(
     val kind: ErrorTypeKind,
     override val arguments: List<TypeProjection> = emptyList(),
     override val isMarkedNullable: Boolean = false,
-    private vararg val formatParams: String
+    vararg val formatParams: String
 ) : SimpleType() {
     val debugMessage = String.format(kind.debugMessage, *formatParams)
 
@@ -24,8 +24,11 @@ class ErrorType @JvmOverloads internal constructor(
 
     override fun replaceAttributes(newAttributes: TypeAttributes): SimpleType = this
 
+    fun replaceArguments(newArguments: List<TypeProjection>): ErrorType =
+        ErrorType(constructor, memberScope, kind, newArguments, isMarkedNullable, *formatParams)
+
     override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType =
-            ErrorType(constructor, memberScope, kind, arguments, newNullability, *formatParams)
+        ErrorType(constructor, memberScope, kind, arguments, newNullability, *formatParams)
 
     @TypeRefinement
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner) = this

@@ -1,5 +1,3 @@
-//IGNORE_BACKEND: JS, JS_IR
-
 var sideEffect = ""
 
 open external class E()

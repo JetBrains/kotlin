@@ -1,0 +1,6 @@
+FILE: contextParameterDefaultValue.kt
+    context(x: String = ERROR_EXPR(Context parameters cannot have default values))
+    public? final? fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+    context(x: String = ERROR_EXPR(Context parameters cannot have default values))
+    public? final? val bar: <implicit>
+        public? get(): <implicit> { LAZY_BLOCK }

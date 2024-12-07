@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // KT-668 Failed to resolve generic parameter
 open class A()
 open class B() : A() {

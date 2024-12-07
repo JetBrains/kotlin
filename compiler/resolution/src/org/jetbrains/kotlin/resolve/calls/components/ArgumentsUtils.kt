@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.types.checker.prepareArgumentTypeRegardingCaptureTyp
 import org.jetbrains.kotlin.types.typeUtil.isNullableNothing
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.DFS
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal fun unexpectedArgument(argument: KotlinCallArgument): Nothing =
     error("Unexpected argument type: $argument, ${argument.javaClass.canonicalName}.")
@@ -90,11 +89,11 @@ internal fun KotlinCallArgument.getExpectedType(parameter: ParameterDescriptor, 
     ) {
         parameter.type.unwrap()
     } else {
-        parameter.safeAs<ValueParameterDescriptor>()?.varargElementType?.unwrap() ?: parameter.type.unwrap()
+        (parameter as? ValueParameterDescriptor)?.varargElementType?.unwrap() ?: parameter.type.unwrap()
     }
 
 val ValueParameterDescriptor.isVararg: Boolean get() = varargElementType != null
-val ParameterDescriptor.isVararg: Boolean get() = this.safeAs<ValueParameterDescriptor>()?.isVararg ?: false
+val ParameterDescriptor.isVararg: Boolean get() = (this as? ValueParameterDescriptor)?.isVararg ?: false
 
 /**
  * @return `true` iff the parameter has a default value, i.e. declares it, inherits it by overriding a parameter which has a default value,

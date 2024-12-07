@@ -19,24 +19,25 @@ package org.jetbrains.kotlin.load.java.structure.impl
 import com.intellij.psi.PsiPackage
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementPsiSource
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class JavaPackageImpl(
-    psiPackage: PsiPackage, private val scope: GlobalSearchScope,
+    psiPackageSource: JavaElementPsiSource<PsiPackage>, private val scope: GlobalSearchScope,
     private val mayHaveAnnotations: Boolean = true,
-) : JavaElementImpl<PsiPackage>(psiPackage), JavaPackage, MapBasedJavaAnnotationOwner {
+) : JavaElementImpl<PsiPackage>(psiPackageSource), JavaPackage, MapBasedJavaAnnotationOwner {
 
     override fun getClasses(nameFilter: (Name) -> Boolean): Collection<JavaClass> {
         val psiClasses = psi.getClasses(scope).filter {
             val name = it.name
             name != null && nameFilter(Name.identifier(name))
         }
-        return classes(psiClasses)
+        return classes(psiClasses, sourceFactory)
     }
 
     override val subPackages: Collection<JavaPackage>
-        get() = packages(psi.getSubPackages(scope), scope)
+        get() = packages(psi.getSubPackages(scope), scope, sourceFactory)
 
     override val fqName: FqName
         get() = FqName(psi.qualifiedName)
@@ -44,7 +45,7 @@ class JavaPackageImpl(
     override val annotations: Collection<JavaAnnotation>
         get() =
             if (mayHaveAnnotations)
-                org.jetbrains.kotlin.load.java.structure.impl.annotations(psi.annotationList?.annotations.orEmpty())
+                org.jetbrains.kotlin.load.java.structure.impl.annotations(psi.annotationList?.annotations.orEmpty(), sourceFactory)
             else
                 emptyList()
 

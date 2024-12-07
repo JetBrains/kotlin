@@ -25,13 +25,19 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.lexer.KtToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
+import org.jetbrains.kotlin.psi.psiUtil.isAbstract
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
@@ -95,7 +101,14 @@ class InlineSourceBuilderImpl(private val disposable: Disposable) : InlineSource
             environment.createPackagePartProvider(content.moduleContentScope)
         }
 
-        val errorDiagnostics = analysisResult.bindingContext.diagnostics.noSuppression().filter { it.severity == Severity.ERROR }
+        val errorDiagnostics = analysisResult.bindingContext.diagnostics.noSuppression()
+            .filter { it.severity == Severity.ERROR }
+            .filterNot { diagnostic ->
+                val psiElement = diagnostic.psiElement
+                // Mute KT-60378 problem
+                psiElement is KtClass && psiElement.hasExpectModifier() && !psiElement.hasModifier(KtTokens.OPEN_KEYWORD) &&
+                        diagnostic.factory in listOf(Errors.ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, Errors.ABSTRACT_MEMBER_NOT_IMPLEMENTED)
+            }
         check(errorDiagnostics.isEmpty()) {
             val diagnosticInfos = errorDiagnostics.map { diagnostic ->
                 DiagnosticInfo(diagnostic.psiElement, diagnostic.factoryName)

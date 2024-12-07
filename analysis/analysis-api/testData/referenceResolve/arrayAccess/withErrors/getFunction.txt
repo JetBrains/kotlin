@@ -1,2 +1,0 @@
-Resolved to:
-0: (in ROOT) fun kotlin.Int.get(index: kotlin.Int): kotlin.Int

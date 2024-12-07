@@ -1,12 +1,14 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // COMPARE_WITH_LIGHT_TREE
+// LATEST_LV_DIFFERENCE
 
 fun List<String>.modify() {
-    <!VARIABLE_EXPECTED{PSI}!>this<!> += "Alpha"
-    <!VARIABLE_EXPECTED{PSI}!>this<!> += "Omega"
+    <!VARIABLE_EXPECTED!>this<!> += "Alpha"
+    <!VARIABLE_EXPECTED!>this<!> += "Omega"
 }
 
 fun Any.modify() {
-    (<!VARIABLE_EXPECTED!>this <!UNCHECKED_CAST!>as List<Int><!><!>) += 42
+    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(<!VARIABLE_EXPECTED!>this <!UNCHECKED_CAST!>as List<Int><!><!>)<!> += 42
 }
 
 operator fun <T> Set<T>.plusAssign(x: T) {}

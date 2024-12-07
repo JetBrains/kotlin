@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // Copy of IR test
 
 object A

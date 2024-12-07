@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // See KT-9540 
 
@@ -11,3 +12,12 @@ open class A {
     }
 }
 
+open class Owner {
+    protected open class A : Owner() {
+        protected open class ProtectedInA
+    }
+
+    protected abstract class B : A() {
+        protected abstract fun foo(): ProtectedInA
+    }
+}

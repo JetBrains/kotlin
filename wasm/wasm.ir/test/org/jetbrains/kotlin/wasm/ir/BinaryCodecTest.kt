@@ -30,6 +30,7 @@ class BinaryCodecTest {
         testProposal("function-references")
 
     @Test
+    @Ignore
     fun `reference-types`() =
         testProposal("reference-types", ignoreFiles = listOf("ref_func.wast"))
 

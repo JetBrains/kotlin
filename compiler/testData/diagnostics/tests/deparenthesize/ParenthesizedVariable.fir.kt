@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test() {
-    (d@ val bar = 2)
+    (d@ <!EXPRESSION_EXPECTED!>val bar = 2<!>)
 }

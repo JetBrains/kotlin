@@ -1,10 +1,9 @@
 plugins {
     kotlin("multiplatform")
-    id("com.android.library")
 }
 
 kotlin {
-    android()
+    jvm()
 
     val macosX64 = macosX64()
     val iosX64 = iosX64()
@@ -17,6 +16,9 @@ kotlin {
             }
             framework("custom") {
                 baseName = "lib"
+            }
+            framework("withoutSymbolicLink") {
+                baseName = "withoutSymbolicLink"
             }
         }
     }
@@ -33,14 +35,5 @@ kotlin {
             iosSimulatorArm64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
         }
-    }
-}
-
-android {
-    compileSdkVersion(30)
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-    defaultConfig {
-        minSdkVersion(21)
-        targetSdkVersion(30)
     }
 }

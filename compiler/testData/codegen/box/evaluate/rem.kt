@@ -1,5 +1,5 @@
-// !LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
-// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR, JS_IR, JS_IR_ES6
+// FIR status: KT-46419, ILT conversions to Byte and Short are not supported by design
 // TARGET_BACKEND: JVM
 
 // WITH_STDLIB

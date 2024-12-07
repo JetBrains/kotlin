@@ -1,10 +1,11 @@
+// RUN_PIPELINE_TILL: BACKEND
 class A {
     fun bar() {
         val foo: String.() -> Unit = {} // (1)
         fun String.foo(): Unit {} // (2)
         "1".foo() // resolves to (2)
         with("2") {
-            foo() // BUG: resolves to (1) in old FE, but to (2) in FIR
+            foo() // resolves to (1)
         }
     }
 }

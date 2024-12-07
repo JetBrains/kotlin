@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface Left
 interface Right
 class Bottom : Left, Right

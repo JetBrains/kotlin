@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 var x: Int = 0
     get() {
         var y: Int? = null

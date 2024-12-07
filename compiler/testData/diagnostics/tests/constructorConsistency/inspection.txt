@@ -42,9 +42,9 @@ public final class SecondDerived : Second {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public open class Third {
+public abstract class Third {
     public constructor Third()
-    public open var x: kotlin.String
+    public abstract var x: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

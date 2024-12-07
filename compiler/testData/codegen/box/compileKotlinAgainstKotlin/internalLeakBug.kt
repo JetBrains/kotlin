@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// !LANGUAGE: +ProperInternalVisibilityCheckInImportingScope
+// LANGUAGE: +ProperInternalVisibilityCheckInImportingScope
 // See also: KT-23727
 // WITH_STDLIB
 // MODULE: m1

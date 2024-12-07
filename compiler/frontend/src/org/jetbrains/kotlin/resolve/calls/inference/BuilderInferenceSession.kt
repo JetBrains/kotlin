@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.shouldBeUpdated
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class BuilderInferenceSession(
     psiCallResolver: PSICallResolver,
@@ -218,7 +217,7 @@ class BuilderInferenceSession(
     fun getUsedStubTypes(): Set<StubTypeForBuilderInference> = stubsForPostponedVariables.values.toSet()
 
     fun getCurrentSubstitutor(): NewTypeSubstitutor =
-        commonSystem.buildCurrentSubstitutor().cast<NewTypeSubstitutor>().takeIf { !it.isEmpty } ?: EmptySubstitutor
+        (commonSystem.buildCurrentSubstitutor() as NewTypeSubstitutor).takeIf { !it.isEmpty } ?: EmptySubstitutor
 
     private fun arePostponedVariablesInferred() = commonSystem.notFixedTypeVariables.isEmpty()
 
@@ -267,7 +266,8 @@ class BuilderInferenceSession(
             updateAllCalls(resultingSubstitutor)
         }
 
-        return commonSystem.fixedTypeVariables.cast() // TODO: SUB
+        @Suppress("UNCHECKED_CAST")
+        return commonSystem.fixedTypeVariables as Map<TypeConstructor, UnwrappedType> // TODO: SUB
     }
 
     private fun getNestedBuilderInferenceSessions() = buildList {
@@ -495,8 +495,9 @@ class BuilderInferenceSession(
         val resultingCallSubstitutor = storage.fixedTypeVariables.entries
             .associate { it.key to nonFixedTypesToResultSubstitutor.safeSubstitute(it.value as UnwrappedType) } // TODO: SUB
 
+        @Suppress("UNCHECKED_CAST")
         val resultingSubstitutor =
-            NewTypeSubstitutorByConstructorMap((resultingCallSubstitutor + nonFixedTypesToResult).cast()) // TODO: SUB
+            NewTypeSubstitutorByConstructorMap((resultingCallSubstitutor + nonFixedTypesToResult) as Map<TypeConstructor, UnwrappedType>) // TODO: SUB
 
         val atomCompleter = createResolvedAtomCompleter(
             resultingSubstitutor,
@@ -566,7 +567,8 @@ class BuilderInferenceSession(
         return ResolvedAtomCompleter(
             resultSubstitutor, context, kotlinToResolvedCallTransformer,
             expressionTypingServices, argumentTypeResolver, doubleColonExpressionResolver, builtIns,
-            deprecationResolver, moduleDescriptor, context.dataFlowValueFactory, typeApproximator, missingSupertypesResolver
+            deprecationResolver, moduleDescriptor, context.dataFlowValueFactory, typeApproximator, missingSupertypesResolver,
+            callComponents,
         )
     }
 

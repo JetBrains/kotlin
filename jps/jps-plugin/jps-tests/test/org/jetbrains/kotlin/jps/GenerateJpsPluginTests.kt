@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.jps
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.jps.build.*
+import org.jetbrains.kotlin.jps.incremental.AbstractFirJsProtoComparisonTest
 import org.jetbrains.kotlin.jps.incremental.AbstractJsProtoComparisonTest
 import org.jetbrains.kotlin.jps.incremental.AbstractJvmProtoComparisonTest
 import org.jetbrains.kotlin.test.TargetBackend
@@ -17,14 +18,42 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuite(args) {
         testGroup("jps/jps-plugin/jps-tests/test", "jps/jps-plugin/testData") {
-            testClass<AbstractIncrementalJvmJpsTest> {
+            fun incrementalJvmTestData(targetBackend: TargetBackend, excludePattern: String? = null): TestGroup.TestClass.() -> Unit = {
+                model(
+                    "incremental/pureKotlin",
+                    extension = null,
+                    recursive = false,
+                    targetBackend = targetBackend,
+                    excludedPattern = excludePattern
+                )
+                model(
+                    "incremental/classHierarchyAffected",
+                    extension = null,
+                    recursive = false,
+                    targetBackend = targetBackend,
+                    excludedPattern = excludePattern
+                )
+                model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
+                model("incremental/withJava", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
+                model("incremental/incrementalJvmCompilerOnly", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
+                model("incremental/multiModule/withJavaUsedInKotlin", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
+            }
+
+            // IR
+            testClass<AbstractIncrementalK1JvmJpsTest> {
                 model("incremental/multiModule/common", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR)
                 model("incremental/multiModule/jvm", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR)
                 model(
                     "incremental/multiModule/multiplatform/custom", extension = null, excludeParentDirs = true,
                     targetBackend = TargetBackend.JVM_IR
                 )
-                model("incremental/pureKotlin", extension = null, recursive = false, targetBackend = TargetBackend.JVM_IR)
+                model(
+                    "incremental/pureKotlin",
+                    extension = null,
+                    recursive = false,
+                    targetBackend = TargetBackend.JVM_IR,
+                    excludedPattern = ".*SinceK2"
+                )
                 model("incremental/withJava", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR)
                 model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR)
                 model(
@@ -32,9 +61,25 @@ fun main(args: Array<String>) {
                 )
             }
 
-            testClass<AbstractIncrementalJsJpsTest> {
-                model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
-            }
+            // K2
+            testClass<AbstractIncrementalK2JvmJpsTest>(
+                init = incrementalJvmTestData(
+                    TargetBackend.JVM_IR,
+                    excludePattern = "(^.*Expect.*)|(^companionConstantChanged)"
+                )
+            )
+            testClass<AbstractIncrementalK2LightTreeJvmJpsTest>(
+                init = incrementalJvmTestData(
+                    TargetBackend.JVM_IR,
+                    excludePattern = "(^.*Expect.*)|(^companionConstantChanged)"
+                )
+            )
+            testClass<AbstractIncrementalK2FirICLightTreeJvmJpsTest>(
+                init = incrementalJvmTestData(
+                    TargetBackend.JVM_IR,
+                    excludePattern = "(^.*Expect.*)|(^companionConstantChanged)"
+                )
+            )
 
             testClass<AbstractMultiplatformJpsTestWithGeneratedContent> {
                 model(
@@ -46,8 +91,8 @@ fun main(args: Array<String>) {
             testClass<AbstractJvmLookupTrackerTest> {
                 model("incremental/lookupTracker/jvm", extension = null, recursive = false)
             }
-            testClass<AbstractJsLookupTrackerTest> {
-                model("incremental/lookupTracker/js", extension = null, recursive = false)
+            testClass<AbstractK1JvmLookupTrackerTest> {
+                model("incremental/lookupTracker/jvm", extension = null, recursive = false)
             }
             testClass<AbstractJsKlibLookupTrackerTest> {
                 // todo: investigate why lookups are different from non-klib js
@@ -83,6 +128,11 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractJsProtoComparisonTest> {
+                commonProtoComparisonTests()
+                model("comparison/jsOnly", extension = null, excludeParentDirs = true)
+            }
+
+            testClass<AbstractFirJsProtoComparisonTest> {
                 commonProtoComparisonTests()
                 model("comparison/jsOnly", extension = null, excludeParentDirs = true)
             }

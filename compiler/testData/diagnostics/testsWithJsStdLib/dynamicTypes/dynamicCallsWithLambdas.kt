@@ -1,12 +1,13 @@
-// !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER
-// !CHECK_TYPE
+// FIR_IDENTICAL
+// DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER
+// CHECK_TYPE
 
 fun test(d: dynamic) {
     d.foo {}
 
     d.foo { <!UNRESOLVED_REFERENCE!>it<!> }
 
-    d.foo { x -> }
+    d.foo { x -> x.bar() }
 
     d.foo { x: Int -> "" }
 

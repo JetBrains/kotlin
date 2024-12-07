@@ -16,7 +16,10 @@ class ObjCInteropLauncher: Launcher() {
             "fft" to BenchmarkEntryWithInit.create(::ComplexNumbersBenchmark, { fft() })
     )
     override val extendedBenchmarksSet: MutableMap<String, AbstractBenchmarkEntry> = mutableMapOf(
-            "generateNumbersSequence" to BenchmarkEntryWithInit.create(::ComplexNumbersBenchmark, { generateNumbersSequence() }),
+            "generateNumbersSequence" to BenchmarkEntryWithInit.create(::ComplexNumbersBenchmark, {
+                @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                generateNumbersSequence()
+            }),
             "subComplex" to BenchmarkEntryWithInit.create(::ComplexNumbersBenchmark, { subComplex() }),
             "classInheritance" to BenchmarkEntryWithInit.create(::ComplexNumbersBenchmark, { classInheritance() }),
             "categoryMethods" to BenchmarkEntryWithInit.create(::ComplexNumbersBenchmark, { categoryMethods() }),

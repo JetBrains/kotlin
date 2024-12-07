@@ -1,4 +1,4 @@
-class GenericInv<T : Number> {
+class GenericIn<in T : Number> {
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -7,7 +7,7 @@ class GenericInv<T : Number> {
 
 }
 
-class GenericIn<in T : Number> {
+class GenericInv<T : Number> {
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -25,26 +25,14 @@ class GenericOut<out T : Number> {
 
 }
 
-fun testReturnsRawGenericInv(j: JRaw): @FlexibleNullability @RawType GenericInv<Number>? {
-  return j.returnsRawGenericInv()
-}
-
-fun testReturnsRawGenericIn(j: JRaw): @FlexibleNullability @RawType GenericIn<Number>? {
-  return j.returnsRawGenericIn()
-}
-
-fun testReturnsRawGenericOut(j: JRaw): @FlexibleNullability @RawType GenericOut<Number>? {
-  return j.returnsRawGenericOut()
-}
-
 class KRaw : JRaw {
+  private /* final field */ val $$delegate_0: JRaw = j
   constructor(j: JRaw) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  private /* final field */ val $$delegate_0: JRaw = j
   override fun returnsRawGenericIn(): @FlexibleNullability @RawType GenericIn<Number>? {
     return <this>.#$$delegate_0.returnsRawGenericIn()
   }
@@ -78,3 +66,16 @@ class KRaw : JRaw {
   }
 
 }
+
+fun testReturnsRawGenericIn(j: JRaw): @FlexibleNullability @RawType GenericIn<Number>? {
+  return j.returnsRawGenericIn()
+}
+
+fun testReturnsRawGenericInv(j: JRaw): @FlexibleNullability @RawType GenericInv<Number>? {
+  return j.returnsRawGenericInv()
+}
+
+fun testReturnsRawGenericOut(j: JRaw): @FlexibleNullability @RawType GenericOut<Number>? {
+  return j.returnsRawGenericOut()
+}
+

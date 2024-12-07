@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.scripting.compiler.test
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
+import com.intellij.util.ThrowableRunnable
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.TestDisposable
 import org.jetbrains.kotlin.scripting.compiler.plugin.updateWithBaseCompilerArguments
@@ -19,6 +22,7 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.testFramework.RunAll
 import java.io.File
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
@@ -26,8 +30,15 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 private const val testDataPath = "plugins/scripting/scripting-compiler/testData/compiler/collectDependencies"
 
 class CollectScriptCompilationDependenciesTest : TestCase() {
+    private val testRootDisposable: Disposable =
+        TestDisposable("${CollectScriptCompilationDependenciesTest::class.simpleName}.testRootDisposable")
 
-    protected val testRootDisposable: Disposable = TestDisposable()
+    override fun tearDown() {
+        RunAll(
+            ThrowableRunnable { Disposer.dispose(testRootDisposable) },
+            ThrowableRunnable { super.tearDown() },
+        )
+    }
 
     fun testCascadeImport() {
         runTest("imp_imp_leaf.req1.kts", listOf("imp_leaf.req1.kts", "leaf.req1.kts"))
@@ -70,6 +81,7 @@ class CollectScriptCompilationDependenciesTest : TestCase() {
             )
 
             addKotlinSourceRoot(File(testDataPath, scriptFile).path)
+            put(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS, true)
 
             loadScriptingPlugin(this)
         }

@@ -52,14 +52,14 @@ private const val log10_2lo = 3.69423907715893078616e-13 /* 0x3D59FEF3, 0x11F12B
 
 private const val zero = 0.0
 
-internal fun __ieee754_log10(x: Double): Double {
-    var x: Double = x
-    var y: Double = 0.0
-    var z: Double = 0.0
-    var i: Int = 0
-    var k: Int = 0
-    var hx: Int = 0
-    var lx: UInt = 0U
+internal fun __ieee754_log10(_x: Double): Double {
+    var x: Double = _x
+    var y: Double
+    var z: Double
+    var i: Int
+    var k: Int
+    var hx: Int
+    var lx: UInt
 
     hx = __HI(x)    /* high word of x */
     lx = __LOu(x)    /* low word of x */
@@ -67,8 +67,8 @@ internal fun __ieee754_log10(x: Double): Double {
     k = 0
     if (hx < 0x00100000) {                  /* x < 2**-1022  */
         if (((hx and 0x7fffffff) or lx.toInt()) == 0)
-            return -two54 / zero             /* log(+-0)=-inf */
-        if (hx < 0) return (x - x) / zero        /* log(-#) = NaN */
+            return Double.NEGATIVE_INFINITY             /* log(+-0)=-inf */
+        if (hx < 0) return Double.NaN        /* log(-#) = NaN */
         k -= 54; x *= two54 /* subnormal number, scale up x */
         hx = __HI(x)                /* high word of x */
     }

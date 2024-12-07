@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // SKIP_TXT
-// !LANGUAGE: +PreferJavaFieldOverload
+// LANGUAGE: +PreferJavaFieldOverload
 // FILE: a/JClass.java
 package a;
 public class JClass {

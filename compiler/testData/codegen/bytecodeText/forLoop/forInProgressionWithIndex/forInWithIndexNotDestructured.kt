@@ -23,7 +23,6 @@ fun box(): String {
 // 0 component1
 // 0 component2
 
-// JVM_IR_TEMPLATES
 // 0 ILOAD
 // 0 ISTORE
 // 0 IADD

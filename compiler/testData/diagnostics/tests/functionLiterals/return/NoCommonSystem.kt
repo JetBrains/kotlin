@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> = null!!
 fun <T> listOf(): List<T> = null!!

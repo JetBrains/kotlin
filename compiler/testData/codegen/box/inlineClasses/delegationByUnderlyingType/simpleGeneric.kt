@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_LIGHT_ANALYSIS
 // IGNORE_BACKEND: JVM
 // LANGUAGE: +InlineClassImplementationByDelegation, +GenericInlineClassParameter
 

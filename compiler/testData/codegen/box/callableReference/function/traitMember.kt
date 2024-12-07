@@ -6,4 +6,4 @@ class B : A {
     override fun foo() = "OK"
 }
 
-fun box() = (A::foo)(B())
+fun box() = (A::foo).let { it(B()) }

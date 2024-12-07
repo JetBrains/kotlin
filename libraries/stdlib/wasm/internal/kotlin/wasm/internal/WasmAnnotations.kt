@@ -49,3 +49,12 @@ internal annotation class WasmAutoboxed
 @ExcludedFromCodegen
 internal val implementedAsIntrinsic: Nothing
     get() = null!!
+
+/**
+ * Indicates that annotated constructor is primitive
+ * i.e. has direct layout from it's parameters to object fields (except any's fields) and has no code
+ * In this case no need to call it during an object creation.
+ */
+@Target(AnnotationTarget.CONSTRUCTOR)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class WasmPrimitiveConstructor

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 class A {
     val x: Int
     val useUnitialized = <!UNINITIALIZED_VARIABLE, UNINITIALIZED_VARIABLE!>x<!> + // reported on each secondary constructor

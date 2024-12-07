@@ -1,6 +1,6 @@
-// !LANGUAGE: +StrictJavaNullabilityAssertions
+// LANGUAGE: +StrictJavaNullabilityAssertions
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM, JVM_IR
+// IGNORE_BACKEND_K1: JVM, JVM_IR
 // WITH_STDLIB
 
 // Note: This fails on JVM (non-IR) with "Fail: should throw on get()". The not-null assertion is not generated when assigning to the

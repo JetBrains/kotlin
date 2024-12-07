@@ -12,8 +12,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.types.*
 
-fun checkUnderscoreDiagnostics(
+internal fun checkUnderscoreDiagnostics(
     source: KtSourceElement?,
     context: CheckerContext,
     reporter: DiagnosticReporter,
@@ -36,3 +37,28 @@ fun checkUnderscoreDiagnostics(
 
 val CharSequence.isUnderscore: Boolean
     get() = all { it == '_' }
+
+internal fun checkTypeRefForUnderscore(
+    typeRef: FirTypeRef?,
+    context: CheckerContext,
+    reporter: DiagnosticReporter,
+) {
+    if (typeRef is FirErrorTypeRef) return
+
+    typeRef?.forEachQualifierPart { qualifierPart ->
+        checkUnderscoreDiagnostics(qualifierPart.source, context, reporter, isExpression = true)
+
+        for (typeArgument in qualifierPart.typeArgumentList.typeArguments) {
+            if (typeArgument is FirTypeProjectionWithVariance) {
+                checkTypeRefForUnderscore(typeArgument.typeRef, context, reporter)
+            } else {
+                checkUnderscoreDiagnostics(typeArgument.source, context, reporter, isExpression = true)
+            }
+        }
+    }
+}
+
+private fun FirTypeRef.forEachQualifierPart(block: (FirQualifierPart) -> Unit) {
+    val delegatedTypeRef = (this as? FirResolvedTypeRef)?.delegatedTypeRef
+    (delegatedTypeRef as? FirUserTypeRef)?.qualifier?.forEach(block)
+}

@@ -452,23 +452,27 @@ class MatchResultTest {
      * Regression test for https://github.com/JetBrains/kotlin-native/issues/2297
      */
     @Test fun test2297() {
-        assertTrue(Regex("^(:[0-5]?[0-9])+$").matches(":20:30"))
-        assertTrue(Regex("(.{1,}){2}").matches("aa"))
+        fun testMatches(pattern: String, input: String) {
+            assertTrue(Regex(pattern).matches(input), "\"$pattern\" should match \"$input\"")
+        }
 
-        assertTrue(Regex("(.+b)+").matches("0b0b"))
-        assertTrue(Regex("(.+?b)+").matches("0b0b"))
-        assertTrue(Regex("(.?b)+").matches("0b0b"))
-        assertTrue(Regex("(.??b)+").matches("0b0b"))
-        assertTrue(Regex("(.*b)+").matches("0b0b"))
-        assertTrue(Regex("(.*?b)+").matches("0b0b"))
-        assertTrue(Regex("(.{1,2}b)+").matches("0b00b"))
-        assertTrue(Regex("(.{1,2}?b)+").matches("0b00b"))
+        testMatches("^(:[0-5]?[0-9])+$", input = ":20:30")
+        testMatches("(.{1,}){2}", input = "aa")
 
-        assertTrue(Regex("([0]?[0]?)+").matches("0000"))
-        assertTrue(Regex("([0]?[0]?b)+").matches("00b00b"))
-        assertTrue(Regex("((b{2}){3})+").matches("bbbbbbbbbbbb"))
+        testMatches("(.+b)+", input = "0b0b")
+        testMatches("(.+?b)+", input = "0b0b")
+        testMatches("(.?b)+", input = "0b0b")
+        testMatches("(.??b)+", input = "0b0b")
+        testMatches("(.*b)+", input = "0b0b")
+        testMatches("(.*?b)+", input = "0b0b")
+        testMatches("(.{1,2}b)+", input = "0b00b")
+        testMatches("(.{1,2}?b)+", input = "0b00b")
 
-        assertTrue(Regex("[^a]").matches("b"))
+        testMatches("([0]?[0]?)+", input = "0000")
+        testMatches("([0]?[0]?b)+", input = "00b00b")
+        testMatches("((b{2}){3})+", input = "bbbbbbbbbbbb")
+
+        testMatches("[^a]", input = "b")
     }
 
     @Test fun kt28158() {

@@ -181,6 +181,19 @@ public class IRFactory {
     }
 
     /**
+     * Yield (possibly with expression)
+     */
+    public Node createYield(Node expression, CodePosition location) {
+        Node result = new Node(TokenStream.YIELD, location);
+        if (expression == null) {
+            return result;
+        } else {
+            result.addChildToBack(expression);
+            return result;
+        }
+    }
+
+    /**
      * debugger
      */
     public Node createDebugger(CodePosition location) {
@@ -197,11 +210,11 @@ public class IRFactory {
         return new Node(TokenStream.BLOCK, location);
     }
 
-    public Node createFunction(Node name, Node args, Node statements, CodePosition location) {
+    public Node createFunction(Node name, Node args, Node statements, boolean isGenerator, CodePosition location) {
         if (name == null) {
             name = createName("", location);
         }
-        return new Node(TokenStream.FUNCTION, name, args, statements, location);
+        return new Node(isGenerator ? TokenStream.GENERATOR : TokenStream.FUNCTION, name, args, statements, location);
     }
 
     /**

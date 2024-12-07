@@ -1,0 +1,16 @@
+FILE: annotationOnGetClassCall.kt
+    public final annotation class Ann : R|kotlin/Annotation| {
+        public constructor(x: R|kotlin/Long|, s: R|kotlin/String|): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Long| = R|<local>/x|
+            public get(): R|kotlin/Long|
+
+        public final val s: R|kotlin/String| = R|<local>/s|
+            public get(): R|kotlin/String|
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        @R|Ann|(s = String(hello), x = Long(1)) <getClass>(Q|kotlin/String|)
+    }

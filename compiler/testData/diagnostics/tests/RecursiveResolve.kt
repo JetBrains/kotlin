@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Test(foo: Any?, bar: Any?) {
     val foo = foo ?: <!DEBUG_INFO_LEAKING_THIS!>this<!>
     private val bar = bar ?: <!DEBUG_INFO_LEAKING_THIS!>this<!>

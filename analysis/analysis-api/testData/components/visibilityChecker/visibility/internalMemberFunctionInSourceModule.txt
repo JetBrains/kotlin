@@ -1,0 +1,3 @@
+Declaration: internal fun bar()
+At usage site: println
+Is visible: false

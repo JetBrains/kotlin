@@ -1,0 +1,45 @@
+public final class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final User createFromParcel(android.os.Parcel parcel)
+
+    public java.lang.Object createFromParcel(android.os.Parcel source)
+
+    public final User[] newArray(int size)
+
+    public java.lang.Object[] newArray(int size)
+}
+
+public final class User : java/lang/Object, android/os/Parcelable {
+    public final static android.os.Parcelable$Creator CREATOR
+
+    private final int age
+
+    private final java.lang.String firstName
+
+    private final boolean isProUser
+
+    private final java.lang.String lastName
+
+    static void <clinit>()
+
+    public void <init>(java.lang.String firstName, java.lang.String lastName, int age, boolean isProUser)
+
+    public int describeContents() {
+        LABEL (L0)
+        LINENUMBER (9)
+          BIPUSH (100)
+          IRETURN
+        LABEL (L1)
+    }
+
+    public final int getAge()
+
+    public final java.lang.String getFirstName()
+
+    public final java.lang.String getLastName()
+
+    public final boolean isProUser()
+
+    public final void writeToParcel(android.os.Parcel dest, int flags)
+}

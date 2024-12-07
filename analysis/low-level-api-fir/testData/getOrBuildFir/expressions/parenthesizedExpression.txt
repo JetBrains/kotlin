@@ -1,0 +1,11 @@
+KT element: KtParenthesizedExpression
+FIR element: FirIntegerLiteralOperatorCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+Int(1).R|kotlin/Int.plus|(Int(2))
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] parenthesizedExpression.kt
+    public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(2))
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

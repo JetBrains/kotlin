@@ -1,4 +1,3 @@
-
 fun test1() : Boolean {
     try {
         return true

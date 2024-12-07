@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.resolve.calls.model.SubKotlinCallArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun ConstraintStorage.buildResultingSubstitutor(
     context: TypeSystemInferenceExtensionContext,
@@ -75,7 +74,7 @@ fun PostponedArgumentsAnalyzerContext.addSubsystemFromArgument(argument: KotlinC
         }
 
         is CallableReferenceKotlinCallArgument -> {
-            addSubsystemFromArgument(argument.lhsResult.safeAs<LHSResult.Expression>()?.lshCallArgument)
+            addSubsystemFromArgument((argument.lhsResult as? LHSResult.Expression)?.lshCallArgument)
         }
 
         else -> false

@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 class In<in T>(val x: Any)
 
 typealias InAlias<T> = In<T>

@@ -11,18 +11,19 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
-import java.util.concurrent.ConcurrentHashMap
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
+
+private var IrClass.innerClassOuterThisField: IrField? by irAttribute(followAttributeOwner = false)
+private var IrConstructor.innerClassConstructorWithOuterThisParameter: IrConstructor? by irAttribute(followAttributeOwner = false)
+private var IrClass.innerClassOriginalPrimaryConstructor: IrConstructor? by irAttribute(followAttributeOwner = false)
 
 class JvmInnerClassesSupport(private val irFactory: IrFactory) : InnerClassesSupport {
-    private val outerThisDeclarations = ConcurrentHashMap<IrClass, IrField>()
-    private val innerClassConstructors = ConcurrentHashMap<IrConstructor, IrConstructor>()
-    private val originalInnerClassPrimaryConstructorByClass = ConcurrentHashMap<IrClass, IrConstructor>()
-
     override fun getOuterThisField(innerClass: IrClass): IrField =
-        outerThisDeclarations.getOrPut(innerClass) {
+        innerClass::innerClassOuterThisField.getOrSetIfNull {
             assert(innerClass.isInner) { "Class is not inner: ${innerClass.dump()}" }
             irFactory.buildField {
                 name = Name.identifier("this$0")
@@ -39,19 +40,18 @@ class JvmInnerClassesSupport(private val irFactory: IrFactory) : InnerClassesSup
         val innerClass = innerClassConstructor.parent as IrClass
         assert(innerClass.isInner) { "Class is not inner: ${(innerClassConstructor.parent as IrClass).dump()}" }
 
-        return innerClassConstructors.getOrPut(innerClassConstructor) {
+        return innerClassConstructor::innerClassConstructorWithOuterThisParameter.getOrSetIfNull {
             createInnerClassConstructorWithOuterThisParameter(innerClassConstructor)
         }.also {
             if (innerClassConstructor.isPrimary) {
-                originalInnerClassPrimaryConstructorByClass[innerClass] = innerClassConstructor
+                innerClass.innerClassOriginalPrimaryConstructor = innerClassConstructor
             }
         }
     }
 
     override fun getInnerClassOriginalPrimaryConstructorOrNull(innerClass: IrClass): IrConstructor? {
         assert(innerClass.isInner) { "Class is not inner: $innerClass" }
-
-        return originalInnerClassPrimaryConstructorByClass[innerClass]
+        return innerClass.innerClassOriginalPrimaryConstructor
     }
 
     private fun createInnerClassConstructorWithOuterThisParameter(oldConstructor: IrConstructor): IrConstructor =
@@ -65,12 +65,12 @@ class JvmInnerClassesSupport(private val irFactory: IrFactory) : InnerClassesSup
             copyTypeParametersFrom(oldConstructor)
 
             val outerThisValueParameter = buildValueParameter(this) {
+                kind = IrParameterKind.Regular
                 origin = JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS
                 name = Name.identifier(AsmUtil.CAPTURED_THIS_FIELD)
-                index = 0
                 type = oldConstructor.parentAsClass.parentAsClass.defaultType
             }
-            valueParameters = listOf(outerThisValueParameter) + oldConstructor.valueParameters.map { it.copyTo(this, index = it.index + 1) }
+            parameters = listOf(outerThisValueParameter) + oldConstructor.nonDispatchParameters.map { it.copyTo(this) }
             metadata = oldConstructor.metadata
         }
 }

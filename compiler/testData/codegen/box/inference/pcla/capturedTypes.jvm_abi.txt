@@ -1,0 +1,13 @@
+MODULE main
+	CLASS MainKt$box$2.class
+		Property: class.signature
+			K1
+				Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function1<LTestInterface<Ljava/lang/Object;>;Lkotlin/Unit;>;
+			K2
+				Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function1<LTestInterface<Ljava/lang/String;>;Lkotlin/Unit;>;
+		METHOD invoke(LTestInterface;)V
+			Property: method.signature
+				K1
+					(LTestInterface<Ljava/lang/Object;>;)V
+				K2
+					(LTestInterface<Ljava/lang/String;>;)V

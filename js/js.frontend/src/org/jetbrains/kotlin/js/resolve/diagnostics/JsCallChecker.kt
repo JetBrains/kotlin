@@ -19,12 +19,13 @@ package org.jetbrains.kotlin.js.resolve.diagnostics
 import com.google.gwt.dev.js.parserExceptions.AbortParsingException
 import com.google.gwt.dev.js.rhino.CodePosition
 import com.google.gwt.dev.js.rhino.ErrorReporter
-import com.google.gwt.dev.js.rhino.Utils.isEndOfLine
+import com.google.gwt.dev.js.rhino.offsetOf
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.js.backend.ast.JsFunctionScope
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
@@ -33,15 +34,13 @@ import org.jetbrains.kotlin.js.parser.parseExpressionOrStatement
 import org.jetbrains.kotlin.js.patterns.DescriptorPredicate
 import org.jetbrains.kotlin.js.patterns.PatternBuilder
 import org.jetbrains.kotlin.js.resolve.LEXICAL_SCOPE_FOR_JS
-import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry
-import org.jetbrains.kotlin.psi.KtStringTemplateExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.constants.TypedCompileTimeConstant
@@ -83,6 +82,20 @@ class JsCallChecker(
             context.trace.report(ErrorsJs.JSCODE_ARGUMENT_SHOULD_BE_CONSTANT.on(argument))
             return
         }
+
+        argument.accept(object : KtVisitor<Nothing?, Nothing?>() {
+            override fun visitElement(element: PsiElement) {
+                element.acceptChildren(this)
+            }
+
+            override fun visitSimpleNameExpression(expression: KtSimpleNameExpression, data: Nothing?): Nothing? {
+                val variableAccessing = (expression.getResolvedCall(trace.bindingContext)?.resultingDescriptor as? VariableDescriptor)
+                if (variableAccessing?.isConst == false) {
+                    context.trace.report(ErrorsJs.JSCODE_ARGUMENT_NON_CONST_EXPRESSION.on(expression))
+                }
+                return super.visitSimpleNameExpression(expression, data)
+            }
+        })
 
         trace.commit()
 
@@ -146,35 +159,6 @@ class JsCodeErrorReporter(
             val quotesLength = nodeToReport.firstChild.textLength
             return nodeToReport.textOffset + quotesLength + code.offsetOf(this)
         }
-}
-
-/**
- * Calculates an offset from the start of a text for a position,
- * defined by line and offset in that line.
- */
-private fun String.offsetOf(position: CodePosition): Int {
-    var i = 0
-    var lineCount = 0
-    var offsetInLine = 0
-
-    while (i < length) {
-        val c = this[i]
-
-        if (lineCount == position.line && offsetInLine == position.offset) {
-            return i
-        }
-
-        i++
-        offsetInLine++
-
-        if (isEndOfLine(c.code)) {
-            offsetInLine = 0
-            lineCount++
-            assert(lineCount <= position.line)
-        }
-    }
-
-    return length
 }
 
 private val KtExpression.isConstantStringLiteral: Boolean

@@ -9,5 +9,5 @@ public open class Foo {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public open fun </*0*/ T : kotlin.Any!> gauge(/*0*/ @org.jspecify.nullness.Nullable stateObject: @org.jspecify.nullness.Nullable T!): kotlin.Unit
+    public open fun </*0*/ T : kotlin.Any!> gauge(/*0*/ @org.jspecify.annotations.Nullable stateObject: @org.jspecify.annotations.Nullable T!): kotlin.Unit
 }

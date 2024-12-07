@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-2585 Code in try-finally is incorrectly marked as unreachable
 
 fun foo() {

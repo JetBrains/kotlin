@@ -25,6 +25,7 @@ class AllCodePointsTest {
     fun assertTrue(msg: String, value: Boolean) = assertTrue(value, msg)
     fun assertFalse(msg: String, value: Boolean) = assertFalse(value, msg)
 
+    @OptIn(kotlin.experimental.ExperimentalNativeApi::class)
     fun codePointToString(codePoint: Int): String {
         val charArray = Char.toChars(codePoint)
         return charArray.concatToString(0, charArray.size)

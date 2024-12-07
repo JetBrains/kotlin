@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //FILE:a.kt
 //KT-1080 Don't use previously imported packages while resolving import references
 

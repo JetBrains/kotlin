@@ -19,10 +19,7 @@ version = "1.0.0-SNAPSHOT"
 
 publishing {
     repositories {
-        this.maven {
-            this.name = "build"
-            this.url = rootProject.buildDir.resolve("repo").toURI()
-        }
+        maven("<localRepo>")
     }
 }
 
@@ -34,10 +31,11 @@ kotlin {
     linuxArm64()
 
     macosX64("macos")
-    ios()
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
     mingwX64("windowsX64")
-    mingwX86("windowsX86")
 
     val commonMain by sourceSets.getting
     val concurrentMain by sourceSets.creating
@@ -50,10 +48,11 @@ kotlin {
     val linuxArm64Main by sourceSets.getting
     val appleMain by sourceSets.creating
     val macosMain by sourceSets.getting
-    val iosMain by sourceSets.getting
-    val windowsMain by sourceSets.creating
+    val iosMain by sourceSets.creating
+    val iosX64Main by sourceSets.getting
+    val iosArm64Main by sourceSets.getting
+    val iosSimulatorArm64Main by sourceSets.getting
     val windowsX64Main by sourceSets.getting
-    val windowsX86Main by sourceSets.getting
 
     commonMain {
         -jsMain
@@ -62,7 +61,11 @@ kotlin {
             -nativeMain {
                 -appleAndLinuxMain {
                     -appleMain {
-                        -iosMain
+                        -iosMain {
+                            -iosX64Main
+                            -iosArm64Main
+                            -iosSimulatorArm64Main
+                        }
                         -macosMain
                     }
                     -linuxMain {
@@ -70,10 +73,8 @@ kotlin {
                         -linuxX64Main
                     }
                 }
-                -windowsMain {
-                    -windowsX64Main
-                    -windowsX86Main
-                }
+
+                -windowsX64Main
             }
         }
     }
@@ -86,5 +87,9 @@ kotlin {
         target.compilations.getByName("main").cinterops.create("simple") {
             header(file("libs/simple.h"))
         }
+    }
+
+    sourceSets.all {
+        languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
     }
 }

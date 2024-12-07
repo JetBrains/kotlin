@@ -109,7 +109,10 @@ fun String.capitalizeAsciiOnly(): String {
     if (isEmpty()) return this
     val c = this[0]
     return if (c in 'a'..'z')
-        c.uppercaseChar() + substring(1)
+        buildString(length) {
+            append(c.uppercaseChar())
+            append(this@capitalizeAsciiOnly, 1, this@capitalizeAsciiOnly.length)
+        }
     else
         this
 }

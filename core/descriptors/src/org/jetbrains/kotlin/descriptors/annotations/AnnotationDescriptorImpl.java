@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.types.KotlinType;
 
+import java.util.Collections;
 import java.util.Map;
 
 public class AnnotationDescriptorImpl implements AnnotationDescriptor {

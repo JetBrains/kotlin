@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class U {
     operator fun contains(g: String): Boolean {
         return false
@@ -14,5 +15,5 @@ fun foo(u: U) {
     val w = +i
 
     val g = "" !in u
-    val f = "" !is Boolean
+    val f = <!USELESS_IS_CHECK!>"" !is Boolean<!>
 }

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +AbstractClassMemberNotImplementedWithIntermediateAbstractClass
+// LANGUAGE: +AbstractClassMemberNotImplementedWithIntermediateAbstractClass
 interface A {
     fun foo(): Any
 }

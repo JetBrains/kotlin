@@ -1,4 +1,5 @@
-// !LANGUAGE: +BareArrayClassLiteral
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +BareArrayClassLiteral
 
 import kotlin.reflect.KClass
 

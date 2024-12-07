@@ -51,7 +51,7 @@ class JvmCliScriptEvaluationExtension : AbstractScriptEvaluationExtension() {
 
 private fun getPlatformClassLoader(): ClassLoader? =
     try {
-        ClassLoader::class.java.getDeclaredMethod("getPlatformClassLoader")?.invoke(null)?.let { it as? ClassLoader }
+        ClassLoader::class.java.getDeclaredMethod("getPlatformClassLoader")?.invoke(null) as? ClassLoader?
     } catch (_: Exception) {
         null
     }

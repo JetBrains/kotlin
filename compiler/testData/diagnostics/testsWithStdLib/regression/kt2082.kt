@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(c : Collection<String>) = {
     c.filter{
         val s : String? = bar()

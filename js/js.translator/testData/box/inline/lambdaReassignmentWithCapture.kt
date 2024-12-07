@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1295
 package foo
 
 data class IntPair(public var fst: Int, public var snd: Int)
@@ -7,8 +6,8 @@ inline fun run(func: () -> Int): Int {
     return func()
 }
 
-// CHECK_BREAKS_COUNT: function=bar count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=bar name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=bar count=0
+// CHECK_LABELS_COUNT: function=bar name=$l$block count=0
 fun bar(p: IntPair): Int {
     var f = { -> p.fst++ }
     var get0 = f

@@ -35,12 +35,8 @@ class JsLazyIrModuleDeserializer(
 
     private val descriptorFinder = DescriptorByIdSignatureFinderImpl(moduleDescriptor, JsManglerDesc)
 
-    private fun resolveDescriptor(idSig: IdSignature): DeclarationDescriptor {
-        return descriptorFinder.findDescriptorBySignature(idSig) ?: error("No descriptor found for $idSig")
-    }
-
-    override fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
-        val descriptor = resolveDescriptor(idSig)
+    override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
+        val descriptor = descriptorFinder.findDescriptorBySignature(idSig) ?: return null
 
         val declaration = stubGenerator.run {
             when (symbolKind) {
@@ -56,6 +52,8 @@ class JsLazyIrModuleDeserializer(
 
         return declaration.symbol
     }
+
+    override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No descriptor found for $idSig")
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun declareIrSymbol(symbol: IrSymbol) {
@@ -80,7 +78,7 @@ class JsLazyIrModuleDeserializer(
     }
 
 
-    override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, builtIns, emptyList())
+    override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor)
     override val moduleDependencies: Collection<IrModuleDeserializer> = dependencies
 
     override val kind get() = IrModuleDeserializerKind.SYNTHETIC

@@ -15,35 +15,27 @@ import org.jetbrains.kotlin.ir.util.IdSignatureComposer
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 
-open class IdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMangler) : IdSignatureComposer {
+open class IdSignatureDescriptor(override val mangler: KotlinMangler.DescriptorMangler) : IdSignatureComposer {
 
     protected open fun createSignatureBuilder(type: SpecialDeclarationType): DescriptorBasedSignatureBuilder = DescriptorBasedSignatureBuilder(type)
 
     protected open inner class DescriptorBasedSignatureBuilder(private val type: SpecialDeclarationType) :
-        IdSignatureBuilder<DeclarationDescriptor>(),
+        IdSignatureBuilder<DeclarationDescriptor, KotlinMangler.DescriptorMangler>(),
         DeclarationDescriptorVisitor<Unit, Nothing?> {
+
+        override val mangler: KotlinMangler.DescriptorMangler
+            get() = this@IdSignatureDescriptor.mangler
 
         override fun accept(d: DeclarationDescriptor) {
             d.accept(this, null)
-        }
-
-        private fun createContainer() {
-            container = container?.let {
-                buildContainerSignature(it)
-            } ?: build()
-
-            reset(false)
         }
 
         private fun reportUnexpectedDescriptor(descriptor: DeclarationDescriptor) {
             error("Unexpected descriptor $descriptor")
         }
 
-        private fun setDescription(descriptor: DeclarationDescriptor) {
-            if (container != null) {
-                description = DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(descriptor)
-            }
-        }
+        override fun renderDeclarationForDescription(declaration: DeclarationDescriptor): String =
+            DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(declaration)
 
         private fun collectParents(descriptor: DeclarationDescriptorNonRoot) {
             descriptor.containingDeclaration.accept(this, null)
@@ -71,9 +63,11 @@ open class IdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMa
 
         override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Nothing?) {
             collectParents(descriptor)
-            hashId = mangler.run { descriptor.signatureMangle(compatibleMode = false) }
+            setHashIdAndDescriptionFor(descriptor, isPropertyAccessor = false)
             isTopLevelPrivate = isTopLevelPrivate or descriptor.isTopLevelPrivate
-            setDescription(descriptor)
+
+            // If this is a local function, overwrite `description` with the descriptor's rendered form.
+            setDescriptionIfLocalDeclaration(descriptor)
             setExpected(descriptor.isExpect)
             platformSpecificFunction(descriptor)
         }
@@ -83,8 +77,11 @@ open class IdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMa
             createContainer()
 
             classFqnSegments.add(MangleConstant.TYPE_PARAMETER_MARKER_NAME)
-            hashId = descriptor.index.toLong()
-            description = DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(descriptor)
+            setHashIdAndDescription(
+                descriptor.index.toLong(),
+                DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(descriptor),
+                isPropertyAccessor = false,
+            )
         }
 
         override fun visitClassDescriptor(descriptor: ClassDescriptor, data: Nothing?) {
@@ -97,7 +94,7 @@ open class IdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMa
                 }
             }
 
-            setDescription(descriptor)
+            setDescriptionIfLocalDeclaration(descriptor)
             setExpected(descriptor.isExpect)
             platformSpecificClass(descriptor)
         }
@@ -115,7 +112,7 @@ open class IdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMa
 
         override fun visitConstructorDescriptor(constructorDescriptor: ConstructorDescriptor, data: Nothing?) {
             collectParents(constructorDescriptor)
-            hashId = mangler.run { constructorDescriptor.signatureMangle(compatibleMode = false) }
+            setHashIdAndDescriptionFor(constructorDescriptor, isPropertyAccessor = false)
             platformSpecificConstructor(constructorDescriptor)
         }
 
@@ -131,8 +128,7 @@ open class IdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMa
             collectParents(actualDeclaration)
             isTopLevelPrivate = isTopLevelPrivate or actualDeclaration.isTopLevelPrivate
 
-
-            hashId = mangler.run { actualDeclaration.signatureMangle(compatibleMode = false) }
+            setHashIdAndDescriptionFor(actualDeclaration, isPropertyAccessor = false)
             setExpected(actualDeclaration.isExpect)
             platformSpecificProperty(actualDeclaration)
             if (type == SpecialDeclarationType.BACKING_FIELD) {
@@ -149,7 +145,7 @@ open class IdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMa
 
         override fun visitPropertyGetterDescriptor(descriptor: PropertyGetterDescriptor, data: Nothing?) {
             descriptor.correspondingProperty.accept(this, null)
-            hashIdAcc = mangler.run { descriptor.signatureMangle(compatibleMode = false) }
+            setHashIdAndDescriptionFor(descriptor, isPropertyAccessor = true)
             classFqnSegments.add(descriptor.name.asString())
             setExpected(descriptor.isExpect)
             platformSpecificGetter(descriptor)
@@ -157,7 +153,7 @@ open class IdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMa
 
         override fun visitPropertySetterDescriptor(descriptor: PropertySetterDescriptor, data: Nothing?) {
             descriptor.correspondingProperty.accept(this, null)
-            hashIdAcc = mangler.run { descriptor.signatureMangle(compatibleMode = false) }
+            setHashIdAndDescriptionFor(descriptor, isPropertyAccessor = true)
             classFqnSegments.add(descriptor.name.asString())
             setExpected(descriptor.isExpect)
             platformSpecificSetter(descriptor)

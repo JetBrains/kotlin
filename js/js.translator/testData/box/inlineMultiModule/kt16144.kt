@@ -1,5 +1,3 @@
-// IGNORE_FIR
-// EXPECTED_REACHABLE_NODES: 1304
 // MODULE: m3
 // FILE: m3.kt
 
@@ -28,8 +26,6 @@ class M1 : M2(), M3
 
 // MODULE: main(m1, m2, m3)
 // FILE: main.kt
-
-// CHECK_CONTAINS_NO_CALLS: box except=equals;getKClass TARGET_BACKENDS=JS
 
 fun box(): String {
     if (M1().foo() != 1) return "fail"

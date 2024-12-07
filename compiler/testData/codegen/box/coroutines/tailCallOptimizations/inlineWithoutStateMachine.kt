@@ -1,9 +1,8 @@
 // WITH_STDLIB
 // WITH_COROUTINES
 // CHECK_BYTECODE_LISTING
-// CHECK_NEW_COUNT: function=suspendHere count=0
+// FIR_IDENTICAL
 // FIXME: Coroutine inlining
-// CHECK_NEW_COUNT: function=complexSuspend count=0 TARGET_BACKENDS=JS
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

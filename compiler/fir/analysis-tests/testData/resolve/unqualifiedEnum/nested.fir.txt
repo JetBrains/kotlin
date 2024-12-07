@@ -12,6 +12,9 @@ FILE: nested.kt
         public final static fun valueOf(value: R|kotlin/String|): R|Outer| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<Outer>|
+            public get(): R|kotlin/enums/EnumEntries<Outer>|
+
     }
     public final enum class Inner : R|kotlin/Enum<Inner>| {
         private constructor(): R|Inner| {
@@ -25,6 +28,9 @@ FILE: nested.kt
 
         public final static fun valueOf(value: R|kotlin/String|): R|Inner| {
         }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<Inner>|
+            public get(): R|kotlin/enums/EnumEntries<Inner>|
 
     }
     public final fun foo(o: R|Outer|, i: R|Inner|): R|kotlin/Int| {

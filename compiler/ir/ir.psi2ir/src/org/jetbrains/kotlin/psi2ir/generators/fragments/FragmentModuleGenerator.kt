@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
 class FragmentModuleGenerator(
     override val context: GeneratorContext,
     private val fragmentInfo: EvaluatorFragmentInfo
-) : ModuleGenerator(context, expectDescriptorToSymbol = null) {
+) : ModuleGenerator(context) {
 
     override fun generateModuleFragment(
         ktFiles: Collection<KtFile>,
@@ -26,12 +26,12 @@ class FragmentModuleGenerator(
         assert(ktFiles.singleOrNull { it is KtBlockCodeFragment} != null) {
             "Amongst all files passed to the FragmentModuleGenerator should be exactly one KtBlockCodeFragment"
         }
-        return IrModuleFragmentImpl(context.moduleDescriptor, context.irBuiltIns).also { irModule ->
+        return IrModuleFragmentImpl(context.moduleDescriptor).also { irModule ->
             val irDeclarationGenerator = FragmentDeclarationGenerator(context, fragmentInfo)
             ktFiles.forEach { ktFile ->
                 irModule.files.add(
                     if (ktFile is KtBlockCodeFragment) {
-                        createEmptyIrFile(ktFile).apply {
+                        createEmptyIrFile(ktFile, irModule).apply {
                             declarations.add(
                                 irDeclarationGenerator.generateClassForCodeFragment(ktFile)
                             )
@@ -57,12 +57,13 @@ class FragmentModuleGenerator(
 
         return block(fileContext).also {
             symbolTableDecorator.fragmentInfo = fragmentInfo
+            context.additionalDescriptorStorage.addAllFrom(fileContext.additionalDescriptorStorage)
         }
     }
 
-    private fun createEmptyIrFile(ktFile: KtFile): IrFileImpl {
+    private fun createEmptyIrFile(ktFile: KtFile, irModule: IrModuleFragment): IrFileImpl {
         val fileEntry = PsiIrFileEntry(ktFile)
         val packageFragmentDescriptor = context.moduleDescriptor.findPackageFragmentForFile(ktFile)!!
-        return IrFileImpl(fileEntry, packageFragmentDescriptor)
+        return IrFileImpl(fileEntry, packageFragmentDescriptor, irModule)
     }
 }

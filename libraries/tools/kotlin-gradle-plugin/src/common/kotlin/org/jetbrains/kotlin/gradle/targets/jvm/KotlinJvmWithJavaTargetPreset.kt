@@ -8,34 +8,44 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
+import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
+import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
-import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
+import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 
+@Suppress("DEPRECATION")
+@DeprecatedTargetPresetApi
 class KotlinJvmWithJavaTargetPreset(
     private val project: Project
-) : KotlinTargetPreset<KotlinWithJavaTarget<KotlinJvmOptions>> {
+) : InternalKotlinTargetPreset<KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>> {
 
     override fun getName(): String = PRESET_NAME
 
-    override fun createTarget(name: String): KotlinWithJavaTarget<KotlinJvmOptions> {
-        SingleWarningPerBuild.show(
-            project,
-            DEPRECATION_WARNING
-        )
+    override fun createTargetInternal(name: String): KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions> {
+        project.reportDiagnostic(KotlinToolingDiagnostics.DeprecatedJvmWithJavaPresetDiagnostic())
 
         project.plugins.apply(JavaPlugin::class.java)
 
-        val target = KotlinWithJavaTarget<KotlinJvmOptions>(project, KotlinPlatformType.jvm, name, { KotlinJvmOptionsImpl() }).apply {
-            disambiguationClassifier = name
-            preset = this@KotlinJvmWithJavaTargetPreset
-        }
+        @Suppress("UNCHECKED_CAST", "TYPEALIAS_EXPANSION_DEPRECATION")
+        val target = project.objects.KotlinWithJavaTargetForJvm(project, name)
+            .apply {
+                disambiguationClassifier = name
+                preset = this@KotlinJvmWithJavaTargetPreset
+            }
 
         AbstractKotlinPlugin.configureTarget(target) { compilation ->
-            Kotlin2JvmSourceSetProcessor(KotlinTasksProvider(), compilation)
+            Kotlin2JvmSourceSetProcessor(KotlinTasksProvider(), KotlinCompilationInfo(compilation))
+        }
+
+        target.compilations.configureEach {
+            @Suppress("DEPRECATION")
+            it.compilerOptions.options.moduleName.convention(
+                it.moduleNameForCompilation()
+            )
         }
 
         target.compilations.getByName("test").run {
@@ -43,12 +53,12 @@ class KotlinJvmWithJavaTargetPreset(
 
             compileDependencyFiles = project.files(
                 main.output.allOutputs,
-                project.configurations.maybeCreate(compileDependencyConfigurationName)
+                project.configurations.maybeCreateResolvable(compileDependencyConfigurationName)
             )
             runtimeDependencyFiles = project.files(
                 output.allOutputs,
                 main.output.allOutputs,
-                project.configurations.maybeCreate(runtimeDependencyConfigurationName)
+                project.configurations.maybeCreateResolvable(runtimeDependencyConfigurationName)
             )
         }
 
@@ -57,17 +67,5 @@ class KotlinJvmWithJavaTargetPreset(
 
     companion object {
         const val PRESET_NAME = "jvmWithJava"
-
-        val DEPRECATION_WARNING = "\nThe 'jvmWithJava' preset is deprecated and will be removed soon. " +
-                "Please use an ordinary JVM target with Java support: \n\n" +
-                "    kotlin { \n" +
-                "        jvm { \n" +
-                "            ${KotlinJvmTarget::withJava.name}() \n" +
-                "        } \n" +
-                "    }\n\n" +
-                "After this change, please move the Java sources to the Kotlin source set directories. " +
-                "For example, if the JVM target is given the default name 'jvm':\n" +
-                " * instead of 'src/main/java', use 'src/jvmMain/java'\n" +
-                " * instead of 'src/test/java', use 'src/jvmTest/java'\n"
     }
 }

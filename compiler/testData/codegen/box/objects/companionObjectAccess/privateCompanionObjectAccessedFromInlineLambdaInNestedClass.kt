@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
+// LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
 
 inline fun <T> run(fn: () -> T) = fn()
 

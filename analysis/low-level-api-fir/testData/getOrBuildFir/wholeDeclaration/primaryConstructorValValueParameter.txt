@@ -1,0 +1,18 @@
+KT element: KtParameter
+FIR element: FirValueParameterImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+[ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/X.x] x: R|kotlin/Int|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] primaryConstructorValValueParameter.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class X : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/X.x] x: R|kotlin/Int|): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] get(): R|kotlin/Int|
+
+    }

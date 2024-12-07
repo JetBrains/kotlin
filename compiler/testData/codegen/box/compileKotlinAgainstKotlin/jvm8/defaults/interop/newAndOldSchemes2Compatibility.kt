@@ -1,7 +1,7 @@
 // WITH_STDLIB
 
 // MODULE: lib
-// !JVM_DEFAULT_MODE: disable
+// JVM_DEFAULT_MODE: disable
 // FILE: 1.kt
 
 interface Foo<T> {
@@ -11,7 +11,7 @@ interface Foo<T> {
 }
 
 // MODULE: main(lib)
-// !JVM_DEFAULT_MODE: all-compatibility
+// JVM_DEFAULT_MODE: all-compatibility
 // JVM_TARGET: 1.8
 // FILE: main.kt
 interface Foo2: Foo<String> {

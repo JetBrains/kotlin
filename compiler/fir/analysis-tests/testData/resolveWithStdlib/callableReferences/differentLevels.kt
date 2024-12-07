@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun foo(x: () -> Int, y: Int) {}
 fun bar(x: String): Int = 1
 

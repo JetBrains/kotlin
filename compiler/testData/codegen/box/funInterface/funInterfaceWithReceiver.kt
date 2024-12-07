@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS_IR_ES6
-
 fun interface FunWithReceiver {
     fun String.foo(): String
 }

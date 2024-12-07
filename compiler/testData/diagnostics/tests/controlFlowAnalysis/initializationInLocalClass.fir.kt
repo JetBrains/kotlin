@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
 
 fun foo() {
     var x: String
@@ -27,7 +28,7 @@ fun gav() {
     class B {
         init {
             // Error! See KT-10445
-            x = ""
+            <!CAPTURED_VAL_INITIALIZATION!>x<!> = ""
         }
     }
     // Error! See KT-10042
@@ -36,7 +37,7 @@ fun gav() {
     class C(val s: String) {
         constructor(): this("") {
             // Error!
-            y = s
+            <!CAPTURED_VAL_INITIALIZATION!>y<!> = s
         }
     }
     <!UNINITIALIZED_VARIABLE!>y<!>.length
@@ -77,7 +78,7 @@ class My {
         class Your {
             init {
                 // Error! See KT-10445
-                x = ""
+                <!CAPTURED_VAL_INITIALIZATION!>x<!> = ""
             }
         }
     }
@@ -86,5 +87,5 @@ class My {
 <!MUST_BE_INITIALIZED!>val top: Int<!>
 
 fun init() {
-    top = 1
+    <!VAL_REASSIGNMENT!>top<!> = 1
 }

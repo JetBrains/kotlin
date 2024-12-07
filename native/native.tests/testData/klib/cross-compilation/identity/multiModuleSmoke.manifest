@@ -1,0 +1,36 @@
+// MODULE: lib1
+abi_version = <value sanitized for test data stability>
+builtins_platform = NATIVE
+compiler_version = <value sanitized for test data stability>
+depends = stdlib
+ir_signature_versions = <value sanitized for test data stability>
+metadata_version = <value sanitized for test data stability>
+native_targets = macos_arm64
+unique_name = lib1
+// MODULE: lib2
+abi_version = <value sanitized for test data stability>
+builtins_platform = NATIVE
+compiler_version = <value sanitized for test data stability>
+depends = stdlib
+ir_signature_versions = <value sanitized for test data stability>
+metadata_version = <value sanitized for test data stability>
+native_targets = macos_arm64
+unique_name = lib2
+// MODULE: lib3
+abi_version = <value sanitized for test data stability>
+builtins_platform = NATIVE
+compiler_version = <value sanitized for test data stability>
+depends = stdlib
+ir_signature_versions = <value sanitized for test data stability>
+metadata_version = <value sanitized for test data stability>
+native_targets = macos_arm64
+unique_name = lib3
+// MODULE: app
+abi_version = <value sanitized for test data stability>
+builtins_platform = NATIVE
+compiler_version = <value sanitized for test data stability>
+depends = stdlib
+ir_signature_versions = <value sanitized for test data stability>
+metadata_version = <value sanitized for test data stability>
+native_targets = macos_arm64
+unique_name = app

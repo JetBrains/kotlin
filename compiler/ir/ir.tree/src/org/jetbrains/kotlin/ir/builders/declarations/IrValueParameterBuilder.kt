@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.ir.builders.declarations
 
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.types.IrType
 
 const val UNDEFINED_PARAMETER_INDEX = -1
 
 class IrValueParameterBuilder : IrDeclarationBuilder() {
+    var kind: IrParameterKind? = null
     lateinit var type: IrType
 
-    var index: Int = UNDEFINED_PARAMETER_INDEX
     var varargElementType: IrType? = null
     var isCrossInline = false
     var isNoinline = false
@@ -23,8 +24,10 @@ class IrValueParameterBuilder : IrDeclarationBuilder() {
     fun updateFrom(from: IrValueParameter) {
         super.updateFrom(from)
 
+        if (from._kind != null) {
+            kind = from._kind
+        }
         type = from.type
-        index = from.index
         varargElementType = from.varargElementType
         isCrossInline = from.isCrossinline
         isNoinline = from.isNoinline

@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM
 // MODULE: lib
-// FILE: A.kt
 
+// FILE: A.kt
 abstract class A {
     private val x = object {
         fun foo() = "OK"

@@ -32,7 +32,19 @@ enum class CompilationResultCategory(val code: Int) {
     BUILD_METRICS(3)
 }
 
-interface CompilationResultsAsync {
-    suspend fun add(compilationResultCategory: Int, value: Serializable)
-    val clientSide: CompilationResultsAsync
+data class BuildMetricsValue(
+    val key: CompilationPerformanceMetrics,
+    val value: Long
+): Serializable
+
+enum class CompilationPerformanceMetrics {
+    COMPILER_INITIALIZATION,
+    CODE_ANALYSIS,
+    ANALYZED_LINES_NUMBER,
+    ANALYSIS_LPS,
+    CODE_GENERATION,
+    CODE_GENERATED_LINES_NUMBER,
+    CODE_GENERATION_LPS,
 }
+
+

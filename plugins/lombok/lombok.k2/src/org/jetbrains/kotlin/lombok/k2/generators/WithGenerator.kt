@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -40,7 +40,7 @@ class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(ses
     private val cache: FirCache<FirClassSymbol<*>, Map<Name, FirJavaMethod>?, Nothing?> =
         session.firCachesFactory.createCache(::createWith)
 
-    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {
+    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         if (!classSymbol.isSuitableJavaClass()) return emptySet()
         return cache.getValue(classSymbol)?.keys ?: emptySet()
     }
@@ -57,9 +57,10 @@ class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(ses
         return fieldsWithWith.mapNotNull { (field, withInfo) ->
             val withName = computeWithName(field, withInfo) ?: return@mapNotNull null
             val function = buildJavaMethod {
+                containingClassSymbol = classSymbol
                 moduleData = field.moduleData
                 returnTypeRef = buildResolvedTypeRef {
-                    type = classSymbol.defaultType()
+                    coneType = classSymbol.defaultType()
                 }
 
                 dispatchReceiverType = classSymbol.defaultType()
@@ -70,16 +71,15 @@ class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(ses
 
                 valueParameters += buildJavaValueParameter {
                     moduleData = field.moduleData
+                    containingDeclarationSymbol = this@buildJavaMethod.symbol
                     returnTypeRef = field.returnTypeRef
                     name = field.name
-                    annotationBuilder = { emptyList() }
                     isVararg = false
                     isFromSource = true
                 }
 
                 isStatic = false
                 isFromSource = true
-                annotationBuilder = { emptyList() }
             }
             withName to function
         }.toMap()
@@ -91,14 +91,19 @@ class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(ses
 
         return classSymbol.fir.declarations
             .filterIsInstance<FirJavaField>()
-            .filter { it.isVar }
             .collectWithNotNull { lombokService.getWith(it.symbol) ?: classWith }
             .takeIf { it.isNotEmpty() }
     }
 
     private fun computeWithName(field: FirJavaField, withInfo: With): Name? {
         if (withInfo.visibility == AccessLevel.NONE) return null
-        val functionName = "with" + toPropertyNameCapitalized(field.name.identifier)
+        val rawPropertyName = field.name.identifier
+        val propertyName = if (field.returnTypeRef.isPrimitiveBoolean() && rawPropertyName.startsWith("is")) {
+            rawPropertyName.removePrefix("is")
+        } else {
+            rawPropertyName
+        }
+        val functionName = "with" + toPropertyNameCapitalized(propertyName)
         return Name.identifier(functionName)
     }
 }

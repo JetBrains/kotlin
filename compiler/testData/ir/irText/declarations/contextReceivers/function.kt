@@ -1,4 +1,5 @@
-// !LANGUAGE: +ContextReceivers
+// FIR_IDENTICAL
+// LANGUAGE: +ContextReceivers
 
 class C {
     val c = 42

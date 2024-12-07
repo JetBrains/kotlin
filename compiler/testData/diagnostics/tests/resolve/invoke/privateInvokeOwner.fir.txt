@@ -1,0 +1,15 @@
+FILE: privateInvokeOwner.kt
+    public final class Foo<I, out O> : R|kotlin/Any| {
+        public constructor<I, out O>(transformer: R|(I) -> O|): R|Foo<I, O>| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final val transformer: R|(I) -> O| = R|<local>/transformer|
+            private get(): R|(I) -> O|
+
+        public final fun <I, O> transform(foo: R|Foo<I, O>|, bar: R|I|): R|kotlin/Unit| {
+            R|<local>/foo|.R|SubstitutionOverride</Foo.transformer: R|(I) -> O|>|.R|SubstitutionOverride<kotlin/Function1.invoke: R|O|>|(R|<local>/bar|)
+            R|<local>/foo|.R|SubstitutionOverride</Foo.transformer: R|(I) -> O|>|.R|SubstitutionOverride<kotlin/Function1.invoke: R|O|>|(R|<local>/bar|)
+        }
+
+    }

@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.MultifileFacadeFileEntry
-import org.jetbrains.kotlin.backend.jvm.ir.fileParent
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineOnly
-import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
-import org.jetbrains.kotlin.backend.jvm.ir.isPrivateInlineSuspend
+import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.localClassType
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
 import org.jetbrains.kotlin.backend.jvm.mapping.mapSupertype
@@ -19,8 +17,8 @@ import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.FrameMapBase
-import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.SourceInfo
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -29,20 +27,18 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 
 class IrFrameMap : FrameMapBase<IrSymbol>() {
     private val typeMap = mutableMapOf<IrSymbol, Type>()
@@ -73,7 +69,10 @@ fun IrFrameMap.leave(irDeclaration: IrSymbolOwner): Int {
 }
 
 fun JvmBackendContext.getSourceMapper(declaration: IrClass): SourceMapper {
-    val fileEntry = declaration.fileParent.fileEntry
+    val irFile = declaration.fileParentBeforeInline
+    val type = declaration.getAttributeOwnerBeforeInline()?.localClassType ?: defaultTypeMapper.mapClass(declaration)
+
+    val fileEntry = irFile.fileEntry
     // NOTE: apparently inliner requires the source range to cover the
     //       whole file the class is declared in rather than the class only.
     val endLineNumber = when (fileEntry) {
@@ -82,12 +81,12 @@ fun JvmBackendContext.getSourceMapper(declaration: IrClass): SourceMapper {
     }
     val sourceFileName = when (fileEntry) {
         is MultifileFacadeFileEntry -> fileEntry.partFiles.singleOrNull()?.name
-        else -> declaration.fileParent.name
+        else -> irFile.name
     }
     return SourceMapper(
         SourceInfo(
             sourceFileName,
-            typeMapper.mapClass(declaration).internalName,
+            type.internalName,
             endLineNumber + 1
         )
     )
@@ -106,7 +105,7 @@ private fun IrDeclaration.getVisibilityAccessFlagForAnonymous(): Int =
 
 fun IrClass.calculateInnerClassAccessFlags(context: JvmBackendContext): Int {
     val isLambda = superTypes.any {
-        it.safeAs<IrSimpleType>()?.classifier === context.ir.symbols.lambdaClass
+        it.classOrNull === context.ir.symbols.lambdaClass
     }
     val visibility = when {
         isLambda -> getVisibilityAccessFlagForAnonymous()
@@ -135,8 +134,8 @@ private fun IrClass.innerAccessFlagsForModalityAndKind(): Int {
     return 0
 }
 
-fun IrDeclarationWithVisibility.getVisibilityAccessFlag(kind: OwnerKind? = null): Int {
-    specialCaseVisibility(kind)?.let {
+fun IrDeclarationWithVisibility.getVisibilityAccessFlag(): Int {
+    specialCaseVisibility()?.let {
         return it
     }
     return when (visibility) {
@@ -153,14 +152,10 @@ fun IrDeclarationWithVisibility.getVisibilityAccessFlag(kind: OwnerKind? = null)
     }
 }
 
-private fun IrDeclarationWithVisibility.specialCaseVisibility(kind: OwnerKind?): Int? {
+private fun IrDeclarationWithVisibility.specialCaseVisibility(): Int? {
     if (this is IrClass && DescriptorVisibilities.isPrivate(visibility) && isCompanion && hasInterfaceParent()) {
         // TODO: non-intrinsic
         return Opcodes.ACC_PUBLIC
-    }
-
-    if (this is IrConstructor && parentAsClass.isSingleFieldValueClass && kind === OwnerKind.IMPLEMENTATION) {
-        return Opcodes.ACC_PRIVATE
     }
 
     if (isInlineOnlyPrivateInBytecode()) {
@@ -223,7 +218,7 @@ private val KOTLIN_MARKER_INTERFACES: Map<FqName, String> = run {
     kotlinMarkerInterfaces
 }
 
-internal fun IrTypeMapper.mapClassSignature(irClass: IrClass, type: Type): JvmClassSignature {
+internal fun IrTypeMapper.mapClassSignature(irClass: IrClass, type: Type, generateBodies: Boolean): JvmClassSignature {
     val sw = BothSignatureWriter(BothSignatureWriter.Mode.CLASS)
     writeFormalTypeParameters(irClass.typeParameters, sw)
 
@@ -239,13 +234,17 @@ internal fun IrTypeMapper.mapClassSignature(irClass: IrClass, type: Type): JvmCl
     sw.writeSuperclassEnd()
 
     val kotlinMarkerInterfaces = LinkedHashSet<String>()
-    if (irClass.superTypes.any { it.isSuspendFunction() || it.isKSuspendFunction() }) {
+    if (generateBodies && irClass.superTypes.any { it.isSuspendFunction() || it.isKSuspendFunction() }) {
+        // Do not generate this class in the kapt3 mode (generateBodies=false), because kapt3 transforms supertypes correctly in the
+        // "correctErrorTypes" mode only when the number of supertypes between PSI and bytecode is equal. Otherwise it tries to "correct"
+        // the Function{n} type and fails, because that type doesn't need an import in the Kotlin source (kotlin.Function{n}), but needs one
+        // in the Java source (kotlin.jvm.functions.Function{n}), and kapt3 doesn't perform any Kotlin->Java name lookup.
         kotlinMarkerInterfaces.add("kotlin/coroutines/jvm/internal/SuspendFunction")
     }
 
     val superInterfaces = LinkedHashSet<String>()
     for (superType in irClass.superTypes) {
-        val superClass = superType.safeAs<IrSimpleType>()?.classifier?.safeAs<IrClassSymbol>()?.owner ?: continue
+        val superClass = superType.classOrNull?.owner ?: continue
         if (superClass.isJvmInterface) {
             sw.writeInterface()
             superInterfaces.add(mapSupertype(superType, sw).internalName)
@@ -321,4 +320,40 @@ private fun IrFunction.isAccessorForDeprecatedJvmStaticProperty(context: JvmBack
     val callee = irCall.symbol.owner
     val property = callee.correspondingPropertySymbol?.owner ?: return false
     return property.isDeprecatedCallable(context)
+}
+
+val IrClass.reifiedTypeParameters: ReifiedTypeParametersUsages
+    get() {
+        val tempReifiedTypeParametersUsages = ReifiedTypeParametersUsages()
+        fun processTypeParameters(type: IrType) {
+            for (supertypeArgument in (type as? IrSimpleType)?.arguments ?: emptyList()) {
+                if (supertypeArgument is IrTypeProjection) {
+                    val typeArgument = supertypeArgument.type
+                    if (typeArgument.isReifiedTypeParameter) {
+                        val typeParameter = typeArgument.classifierOrFail as IrTypeParameterSymbol
+                        tempReifiedTypeParametersUsages.addUsedReifiedParameter(typeParameter.owner.name.asString())
+                    } else {
+                        processTypeParameters(typeArgument)
+                    }
+                }
+            }
+        }
+
+        for (type in superTypes) {
+            processTypeParameters(type)
+        }
+
+        return tempReifiedTypeParametersUsages
+    }
+
+internal fun generateExternalEntriesForEnumTypeIfNeeded(type: IrType, containingCodegen: ClassCodegen): FieldInsnNode? {
+    val irClass = type.getClass()
+    if (irClass == null || !irClass.isEnumClassWhichRequiresExternalEntries()) return null
+
+    val mappingsCache = containingCodegen.context.enumEntriesIntrinsicMappingsCache
+    val field = mappingsCache.getEnumEntriesIntrinsicMappings(containingCodegen.irClass, irClass)
+    return FieldInsnNode(
+        Opcodes.GETSTATIC, containingCodegen.typeMapper.mapClass(field.parentAsClass).internalName,
+        field.name.asString(), AsmTypes.ENUM_ENTRIES.descriptor
+    )
 }

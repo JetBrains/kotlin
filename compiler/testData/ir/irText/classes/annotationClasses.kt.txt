@@ -1,51 +1,52 @@
 open annotation class Test1 : Annotation {
+  val x: Int
+    field = x
+    get
+
   constructor(x: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+}
+
+open annotation class Test2 : Annotation {
   val x: Int
     field = x
     get
 
-}
-
-open annotation class Test2 : Annotation {
   constructor(x: Int = 0) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val x: Int
-    field = x
-    get
-
 }
 
 open annotation class Test3 : Annotation {
+  val x: Test1
+    field = x
+    get
+
   constructor(x: Test1) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val x: Test1
-    field = x
-    get
-
 }
 
 open annotation class Test4 : Annotation {
+  val xs: IntArray
+    field = xs
+    get
+
   constructor(vararg xs: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val xs: IntArray
-    field = xs
-    get
-
 }
+

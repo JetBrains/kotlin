@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface FirTypeScope
 
 interface AbstractFirBasedSymbol<E> where E : FirSymbolOwner<E>, E : FirDeclaration {

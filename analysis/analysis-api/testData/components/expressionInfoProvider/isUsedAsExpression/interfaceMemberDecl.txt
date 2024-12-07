@@ -1,0 +1,3 @@
+expression: FUN
+text: fun i(t: T): Int
+isUsedAsExpression: false

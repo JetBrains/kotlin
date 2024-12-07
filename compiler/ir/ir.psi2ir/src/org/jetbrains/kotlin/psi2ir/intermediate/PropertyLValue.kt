@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi2ir.intermediate
@@ -22,14 +11,18 @@ import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImplWithShape
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.addIfNotNull
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 
-abstract class PropertyLValueBase(
+internal abstract class PropertyLValueBase(
     protected val context: GeneratorContext,
     val scope: Scope,
     val startOffset: Int,
@@ -72,7 +65,7 @@ abstract class PropertyLValueBase(
     protected abstract fun withReceiver(dispatchReceiver: VariableLValue?, extensionReceiver: VariableLValue?, contextReceivers: List<VariableLValue>): PropertyLValueBase
 }
 
-class FieldPropertyLValue(
+internal class FieldPropertyLValue(
     context: GeneratorContext,
     scope: Scope,
     startOffset: Int,
@@ -127,7 +120,7 @@ class FieldPropertyLValue(
         )
 }
 
-class AccessorPropertyLValue(
+internal class AccessorPropertyLValue(
     context: GeneratorContext,
     scope: Scope,
     startOffset: Int,
@@ -153,13 +146,17 @@ class AccessorPropertyLValue(
 
     override fun load(): IrExpression =
         callReceiver.adjustForCallee(getterDescriptor!!).call { dispatchReceiverValue, extensionReceiverValue, contextReceiverValues ->
-            IrCallImpl(
+            IrCallImplWithShape(
                 startOffset, endOffset,
                 type,
-                getter!!, typeArgumentsCount,
-                contextReceiverValues.size,
-                origin,
-                superQualifier
+                getter!!,
+                typeArgumentsCount = typeArgumentsCount,
+                valueArgumentsCount = contextReceiverValues.size,
+                contextParameterCount = contextReceiverValues.size,
+                hasDispatchReceiver = dispatchReceiverValue != null,
+                hasExtensionReceiver = extensionReceiverValue != null,
+                origin = origin,
+                superQualifierSymbol = superQualifier
             ).apply {
                 context.callToSubstitutedDescriptorMap[this] = getterDescriptor
                 putTypeArguments()
@@ -173,13 +170,23 @@ class AccessorPropertyLValue(
 
     override fun store(irExpression: IrExpression) =
         callReceiver.adjustForCallee(setterDescriptor!!).call { dispatchReceiverValue, extensionReceiverValue, contextReceiverValues ->
-            IrCallImpl(
+            // We translate getX/setX methods coming from Java into Kotlin properties, even if
+            // the setX call has a non-void return type.
+            val returnType = setterDescriptor.returnType?.let {
+                context.typeTranslator.translateType(it)
+            } ?: context.irBuiltIns.unitType
+
+            IrCallImplWithShape(
                 startOffset, endOffset,
-                context.irBuiltIns.unitType,
-                setter!!, typeArgumentsCount,
-                1 + contextReceiverValues.size,
-                origin,
-                superQualifier
+                returnType,
+                setter!!,
+                typeArgumentsCount = typeArgumentsCount,
+                valueArgumentsCount = 1 + contextReceiverValues.size,
+                contextParameterCount = contextReceiverValues.size,
+                hasDispatchReceiver = dispatchReceiverValue != null,
+                hasExtensionReceiver = extensionReceiverValue != null,
+                origin = origin,
+                superQualifierSymbol = superQualifier
             ).apply {
                 context.callToSubstitutedDescriptorMap[this] = setterDescriptor
                 putTypeArguments()

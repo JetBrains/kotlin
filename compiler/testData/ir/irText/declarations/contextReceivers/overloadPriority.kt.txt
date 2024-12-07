@@ -7,7 +7,7 @@ class Context {
 
 }
 
-fun f(<this>: Context): String {
+fun f($context_receiver_0: Context): String {
   return TODO()
 }
 
@@ -17,7 +17,7 @@ fun f(): Any {
 
 fun test() {
   with<Context, Int>(receiver = Context(), block = local fun Context.<anonymous>(): Int {
-    return f(<this> = $this$with).<get-length>()
+    return f($context_receiver_0 = $this$with).<get-length>()
   }
 ) /*~> Unit */
 }

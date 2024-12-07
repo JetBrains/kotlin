@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.codegen.AsmUtil.numberFunctionOperandType
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
@@ -34,8 +34,8 @@ class BinaryOp(private val opcode: Int) : IntrinsicMethod() {
     override fun toCallable(
         expression: IrFunctionAccessExpression,
         signature: JvmMethodSignature,
-        context: JvmBackendContext
-    ): IrIntrinsicFunction {
+        classCodegen: ClassCodegen
+    ): IntrinsicFunction {
         val returnType = signature.returnType
         val intermediateResultType = numberFunctionOperandType(returnType)
         val argTypes = if (!expression.symbol.owner.parentAsClass.defaultType.isChar()) {
@@ -44,7 +44,7 @@ class BinaryOp(private val opcode: Int) : IntrinsicMethod() {
             listOf(Type.CHAR_TYPE, signature.valueParameters[0].asmType)
         }
 
-        return IrIntrinsicFunction.create(expression, signature, context, argTypes) {
+        return IntrinsicFunction.create(expression, signature, classCodegen, argTypes) {
             it.visitInsn(returnType.getOpcode(opcode))
             StackValue.coerce(intermediateResultType, returnType, it)
         }

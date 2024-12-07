@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.fir.extensions
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.resolve.SessionHolder
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import kotlin.reflect.KClass
 
 abstract class FirExpressionResolutionExtension(session: FirSession) : FirExtension(session) {
     companion object {
-        val NAME = FirExtensionPointName("ExpressionResolutionExtension")
+        val NAME: FirExtensionPointName = FirExtensionPointName("ExpressionResolutionExtension")
     }
 
     final override val name: FirExtensionPointName
@@ -20,7 +22,11 @@ abstract class FirExpressionResolutionExtension(session: FirSession) : FirExtens
 
     final override val extensionType: KClass<out FirExtension> = FirExpressionResolutionExtension::class
 
-    abstract fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType>
+    abstract fun addNewImplicitReceivers(
+        functionCall: FirFunctionCall,
+        sessionHolder: SessionHolder,
+        containingCallableSymbol: FirCallableSymbol<*>,
+    ): List<ImplicitExtensionReceiverValue>
 
     fun interface Factory : FirExtension.Factory<FirExpressionResolutionExtension>
 }

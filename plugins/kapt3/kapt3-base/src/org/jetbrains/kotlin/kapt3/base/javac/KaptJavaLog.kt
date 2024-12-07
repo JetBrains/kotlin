@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.kapt3.base.javac
 
 import com.sun.tools.javac.tree.JCTree
+import com.sun.tools.javac.tree.JCTree.JCImport
 import com.sun.tools.javac.util.*
 import com.sun.tools.javac.util.JCDiagnostic.DiagnosticType
 import org.jetbrains.kotlin.kapt3.base.KaptContext
@@ -40,18 +41,22 @@ class KaptJavaLog(
     noticeWriter: PrintWriter,
     override val interceptorData: KaptJavaLogBase.DiagnosticInterceptorData,
     private val mapDiagnosticLocations: Boolean
-) : Log(context, errWriter, warnWriter, noticeWriter), KaptJavaLogBase {
+) : Log(context), KaptJavaLogBase {
     private val stubLineInfo = KaptStubLineInformation()
     private val javacMessages = JavacMessages.instance(context)
 
     init {
-        context.put(Log.outKey, noticeWriter)
+        setWriter(WriterKind.ERROR, errWriter)
+        setWriter(WriterKind.WARNING, warnWriter)
+        setWriter(WriterKind.NOTICE, noticeWriter)
     }
 
     override val reportedDiagnostics: List<JCDiagnostic>
         get() = _reportedDiagnostics
 
     private val _reportedDiagnostics = mutableListOf<JCDiagnostic>()
+
+    private val jcImportQualidField = JCImport::class.java.declaredFields.single { it.name == "qualid" }
 
     override fun flush(kind: WriterKind?) {
         super.flush(kind)
@@ -195,7 +200,7 @@ class KaptJavaLog(
         val visitor = object : JCTree.Visitor() {
             override fun visitImport(that: JCTree.JCImport) {
                 super.visitImport(that)
-                if (!found) that.qualid.accept(this)
+                if (!found) (jcImportQualidField.get(that) as JCTree).accept(this)
             }
 
             override fun visitSelect(that: JCTree.JCFieldAccess) {
@@ -224,7 +229,6 @@ class KaptJavaLog(
             "compiler.err.annotation.type.not.applicable",
             "compiler.err.doesnt.exist",
             "compiler.err.cant.resolve.location",
-            "compiler.err.duplicate.annotation.missing.container",
             "compiler.err.not.def.access.package.cant.access",
             "compiler.err.package.not.visible",
             "compiler.err.not.def.public.cant.access"
@@ -261,7 +265,15 @@ private fun JCDiagnostic.Factory.errorJava9Aware(
 
         errorMethod.invoke(this, JCDiagnostic.DiagnosticFlag.MANDATORY, source, pos, key, args) as JCDiagnostic
     } else {
-        this.error(source, pos, key, *args)
+        val errorMethod = this::class.java.getDeclaredMethod(
+            "error",
+            DiagnosticSource::class.java,
+            JCDiagnostic.DiagnosticPosition::class.java,
+            String::class.java,
+            Array<Any>::class.java
+        )
+
+        errorMethod.invoke(this, source, pos, key, args) as JCDiagnostic
     }
 }
 

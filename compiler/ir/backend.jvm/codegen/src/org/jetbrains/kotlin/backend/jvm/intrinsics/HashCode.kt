@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.DescriptorAsmUtil
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.render
@@ -34,15 +33,16 @@ object HashCode : IntrinsicMethod() {
         val receiverJvmType = typeMapper.mapType(receiverIrType)
         val receiverValue = receiver.accept(this, data).materialized()
         val receiverType = receiverValue.type
-        val target = context.state.target
+        val target = context.config.target
         when {
             irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
+                    irFunction.origin == JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
                     irFunction.origin == IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER ||
                     irFunction.origin == IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER -> {
-                // TODO generate or lower IR for data class / inline class 'hashCode'?
+                // TODO generate or lower IR for data class / value class 'hashCode'?
                 DescriptorAsmUtil.genHashCode(mv, mv, receiverType, target)
             }
-            target >= JvmTarget.JVM_1_8 && AsmUtil.isPrimitive(receiverJvmType) -> {
+            AsmUtil.isPrimitive(receiverJvmType) -> {
                 val boxedType = AsmUtil.boxPrimitiveType(receiverJvmType)
                     ?: throw AssertionError("Primitive type expected: $receiverJvmType")
                 receiverValue.materializeAt(receiverJvmType, receiverIrType)

@@ -19,15 +19,16 @@ package org.jetbrains.kotlin.load.java.structure.impl;
 import com.intellij.psi.PsiArrayType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.load.java.structure.JavaArrayType;
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementTypeSource;
 
 public class JavaArrayTypeImpl extends JavaTypeImpl<PsiArrayType> implements JavaArrayType {
-    public JavaArrayTypeImpl(@NotNull PsiArrayType psiArrayType) {
-        super(psiArrayType);
+    public JavaArrayTypeImpl(@NotNull JavaElementTypeSource<PsiArrayType> psiArrayTypeSource) {
+        super(psiArrayTypeSource);
     }
 
     @Override
     @NotNull
     public JavaTypeImpl<?> getComponentType() {
-        return JavaTypeImpl.create(getPsi().getComponentType());
+        return JavaTypeImpl.create(createTypeSource(getPsi().getComponentType()));
     }
 }

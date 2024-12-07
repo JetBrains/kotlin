@@ -22,7 +22,7 @@ FILE: jumps.kt
             }
         }
 
-        R|<local>/y|.<Inapplicable(UNSAFE_CALL): kotlin/Int.inc>#()
+        R|<local>/y|.R|kotlin/Int.inc<Inapplicable(UNSAFE_CALL): kotlin/Int.inc>#|()
     }
     public final fun test_3(x: R|kotlin/Int?|): R|kotlin/Unit| {
         while(Boolean(true)) {

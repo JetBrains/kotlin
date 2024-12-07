@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // COMPARE_WITH_LIGHT_TREE
 //KT-328 Local function in function literals cause exceptions
 

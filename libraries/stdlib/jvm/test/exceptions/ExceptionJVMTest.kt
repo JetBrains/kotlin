@@ -6,7 +6,6 @@
 package test.exceptions
 
 import test.collections.assertArrayNotSameButEquals
-import test.testOnJvm7AndAbove
 import java.io.*
 import java.nio.charset.Charset
 import kotlin.test.*
@@ -86,7 +85,19 @@ class ExceptionJVMTest {
     @Test
     fun addSuppressedSelfDoesNotThrow() {
         val e1 = Throwable()
-        e1.addSuppressed(e1) // should not throw
+        e1.addSuppressed(e1) // should not throw, extension hides member
+    }
+
+    @Test
+    fun addSuppressedWorksThroughExtension() {
+        val e1 = Throwable()
+        val e2 = Exception("Suppressed")
+
+        assertTrue(e1.suppressedExceptions.isEmpty())
+        e1.addSuppressed(e2)
+
+        assertSame(e2, e1.suppressed.singleOrNull())
+        assertSame(e2, e1.suppressedExceptions.singleOrNull())
     }
 
     @Test
@@ -96,9 +107,8 @@ class ExceptionJVMTest {
         e1.initCause(e2)
         assertSame(e1, e2.cause)
         assertSame(e2, e1.cause)
-        testOnJvm7AndAbove {
-            val trace = e2.stackTraceToString()
-            assertTrue("CIRCULAR REFERENCE" in trace, trace)
-        }
+
+        val trace = e2.stackTraceToString()
+        assertTrue("CIRCULAR REFERENCE" in trace, trace)
     }
 }

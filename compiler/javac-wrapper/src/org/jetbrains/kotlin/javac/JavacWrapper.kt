@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.javac
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
@@ -74,7 +73,7 @@ class JavacWrapper(
     private val jarFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JAR_PROTOCOL)!!
 
     companion object {
-        fun getInstance(project: Project): JavacWrapper = ServiceManager.getService(project, JavacWrapper::class.java)
+        fun getInstance(project: Project): JavacWrapper = project.getService(JavacWrapper::class.java)
     }
 
     private fun createCommonClassifierType(classId: ClassId) =
@@ -179,7 +178,7 @@ class JavacWrapper(
 
         val outputPath =
             // Includes a hack with 'takeIf' for CLI test, to have stable string here (independent from random test directory)
-            fileManager.getLocation(CLASS_OUTPUT)?.firstOrNull()?.path?.takeIf { "compilerProject_test" !in it } ?: "test directory"
+            fileManager.getLocation(CLASS_OUTPUT)?.firstOrNull()?.path?.takeIf { "tests-integrationProject_test" !in it } ?: "test directory"
         context.get(Log.outKey)?.print("Compiling $javaFilesNumber Java source files to [$outputPath]")
         compile(fileObjects)
         errorCount() == 0
@@ -289,7 +288,7 @@ class JavacWrapper(
             if (uri.scheme == "jar") {
                 jarFileSystem.findFileByPath(uri.schemeSpecificPart.substring("file:".length))
             } else {
-                localFileSystem.findFileByPath(uri.schemeSpecificPart)
+                localFileSystem.findFileByPath(File(uri.schemeSpecificPart).absolutePath)
             }
         }
 

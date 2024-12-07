@@ -6,13 +6,6 @@ class A(val x: String) {
     fun foo2(a: A?, b: A?) = a?.y() ?: b?.y() ?: y() // if (a == null) if (b == null) y() else b.y() else a.y()
 }
 
-// JVM_TEMPLATES
-// Optimization not implemented
-// 4 IFNULL
-// 4 IFNONNULL
-// 2 ACONST_NULL
-
-// JVM_IR_TEMPLATES
 // 4 IFNULL
 // 2 IFNONNULL
 // 0 ACONST_NULL

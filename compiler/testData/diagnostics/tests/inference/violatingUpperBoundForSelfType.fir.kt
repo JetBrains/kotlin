@@ -1,6 +1,7 @@
-// !LANGUAGE: -ProperTypeInferenceConstraintsProcessing
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -ProperTypeInferenceConstraintsProcessing
 // WITH_STDLIB
-// !DIAGNOSTICS: -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS
+// DIAGNOSTICS: -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS
 
 fun <E : Enum<E>> createMap(enumClass: Class<E>) {}
 

@@ -46,7 +46,6 @@ enum class ErrorTypeKind(val debugMessage: String, val isUnresolved: Boolean = f
     DONT_CARE("Special DONT_CARE type"),
     STUB_TYPE("Stub type %s"),
     FUNCTION_PLACEHOLDER_TYPE("Function placeholder type (arguments: %s)"),
-    TYPE_FOR_RESULT("Stubbed 'Result' type"),
     TYPE_FOR_COMPILER_EXCEPTION("Error type for a compiler exception while analyzing %s"),
 
     /* Inconsistent types */

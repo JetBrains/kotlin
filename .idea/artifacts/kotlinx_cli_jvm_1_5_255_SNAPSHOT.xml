@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="kotlinx.cli-jvm-1.5.255-SNAPSHOT">
-    <output-path>$PROJECT_DIR$/kotlin-native/endorsedLibraries/kotlinx.cli/build/libs</output-path>
-    <root id="archive" name="kotlinx.cli-jvm-1.5.255-SNAPSHOT.jar">
-      <element id="module-output" name="kotlin.kotlin-native.endorsedLibraries.kotlinx.cli.jvmMain" />
-    </root>
-  </artifact>
-</component>

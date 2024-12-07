@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
+import org.jetbrains.kotlin.resolve.calls.checkers.NewSchemeOfIntegerOperatorResolutionChecker
 import org.jetbrains.kotlin.resolve.calls.commonSuperType
 import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
@@ -47,7 +48,6 @@ import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.*
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ResolvedAtomCompleter(
     private val resultSubstitutor: NewTypeSubstitutor,
@@ -61,10 +61,11 @@ class ResolvedAtomCompleter(
     private val moduleDescriptor: ModuleDescriptor,
     private val dataFlowValueFactory: DataFlowValueFactory,
     private val typeApproximator: TypeApproximator,
-    private val missingSupertypesResolver: MissingSupertypesResolver
+    private val missingSupertypesResolver: MissingSupertypesResolver,
+    private val callComponents: KotlinCallComponents,
 ) {
     private val topLevelCallCheckerContext = CallCheckerContext(
-        topLevelCallContext, deprecationResolver, moduleDescriptor, missingSupertypesResolver
+        topLevelCallContext, deprecationResolver, moduleDescriptor, missingSupertypesResolver, callComponents,
     )
     private val topLevelTrace = topLevelCallCheckerContext.trace
 
@@ -186,7 +187,8 @@ class ResolvedAtomCompleter(
                 resolutionContextForPartialCall.replaceBindingTrace(topLevelTrace),
                 deprecationResolver,
                 moduleDescriptor,
-                missingSupertypesResolver
+                missingSupertypesResolver,
+                callComponents,
             )
         else
             topLevelCallCheckerContext
@@ -240,7 +242,7 @@ class ResolvedAtomCompleter(
                 ?: return (subResolvedAtoms!!.single() as ResolvedLambdaAtom).isCoercedToUnit
             val returnTypes =
                 resultArgumentsInfo.nonErrorArguments.map {
-                    val type = it.safeAs<SimpleKotlinCallArgument>()?.receiver?.receiverValue?.type ?: return@map null
+                    val type = (it as? SimpleKotlinCallArgument)?.receiver?.receiverValue?.type ?: return@map null
                     val unwrappedType = when (type) {
                         is WrappedType -> type.unwrap()
                         is UnwrappedType -> type
@@ -330,7 +332,10 @@ class ResolvedAtomCompleter(
         }
 
         val descriptor = topLevelTrace.bindingContext.get(BindingContext.FUNCTION, ktFunction) as? SimpleFunctionDescriptorImpl
-            ?: throw AssertionError("No function descriptor for resolved lambda argument")
+            ?:
+            // Normally we should not be here, but in IDE partial resolve mode lambda analysis can be dropped,
+            // and it's possible we don't have any descriptor
+            return
 
         val substitutedLambdaTypes = substituteFunctionLiteralDescriptor(lambda, descriptor, resultSubstitutor)
 
@@ -361,13 +366,17 @@ class ResolvedAtomCompleter(
                 .replaceBindingTrace(topLevelTrace)
             val argumentExpression = resultValueArgument.valueArgument.getArgumentExpression() ?: continue
 
-            kotlinToResolvedCallTransformer.updateRecordedType(
+            val updatedType = kotlinToResolvedCallTransformer.updateRecordedType(
                 argumentExpression,
                 parameter = null,
                 context = newContext,
                 reportErrorForTypeMismatch = true,
                 convertedArgumentType = null
             )
+
+            if (updatedType != null) {
+                NewSchemeOfIntegerOperatorResolutionChecker.checkArgument(updatedType, argumentExpression, topLevelTrace, moduleDescriptor)
+            }
         }
     }
 
@@ -446,7 +455,6 @@ class ResolvedAtomCompleter(
         )
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun KotlinType.replaceFunctionTypeArgumentsByDescriptor(descriptor: CallableDescriptor) =
         when (descriptor) {
             is CallableMemberDescriptor -> {

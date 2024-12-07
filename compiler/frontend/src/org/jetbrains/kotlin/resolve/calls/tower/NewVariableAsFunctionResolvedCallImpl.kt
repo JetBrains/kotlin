@@ -14,13 +14,12 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeApproximator
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class NewVariableAsFunctionResolvedCallImpl(
     override val variableCall: NewAbstractResolvedCall<VariableDescriptor>,
     override val functionCall: NewAbstractResolvedCall<FunctionDescriptor>,
 ) : VariableAsFunctionResolvedCall, NewAbstractResolvedCall<FunctionDescriptor>() {
-    val baseCall: PSIKotlinCallImpl = functionCall.psiKotlinCall.cast<PSIKotlinCallForInvoke>().baseCall
+    val baseCall: PSIKotlinCallImpl = (functionCall.psiKotlinCall as PSIKotlinCallForInvoke).baseCall
 
     override val resolvedCallAtom: ResolvedCallAtom? = functionCall.resolvedCallAtom
     override val psiKotlinCall: PSIKotlinCall = functionCall.psiKotlinCall

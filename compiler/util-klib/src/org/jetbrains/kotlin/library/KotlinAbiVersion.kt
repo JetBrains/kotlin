@@ -26,8 +26,20 @@ fun String.parseKotlinAbiVersion(): KotlinAbiVersion {
     }
 }
 
-// TODO: it would be nice to inherit this one from BinaryVersion,
-// but that requires a module structure refactoring.
+// TODO: consider inheriting this class from BinaryVersion (but that requires a module structure refactoring.)
+//  Advantages: code reuse.
+//  Disadvantages: BinaryVersion is a problematic class, because it doesn't represent any logical entity in the codebase, it's just a
+//  way to reuse common logic for Kotlin versions. But unfortunately, BinaryVersion is used in a lot of API definitions, which makes
+//  code hard to read because it's not obvious which subclasses are supposed to be passed into a particular API.
+/**
+ * The version of the Kotlin IR.
+ *
+ * This version must be bumped when:
+ * - Incompatible changes are made in `KotlinIr.proto`
+ * - Incompatible changes are made in serialization/deserialization logic
+ *
+ * The version bump must obey [org.jetbrains.kotlin.metadata.deserialization.BinaryVersion] rules (See `BinaryVersion` KDoc)
+ */
 data class KotlinAbiVersion(val major: Int, val minor: Int, val patch: Int) {
     // For 1.4 compiler we switched klib abi_version to a triple,
     // but we don't break if we still encounter a single digit from 1.3.
@@ -36,9 +48,7 @@ data class KotlinAbiVersion(val major: Int, val minor: Int, val patch: Int) {
     fun isCompatible(): Boolean = isCompatibleTo(CURRENT)
 
     private fun isCompatibleTo(ourVersion: KotlinAbiVersion): Boolean {
-        // Versions before 1.4.1 were the active development phase.
-        // Starting with 1.4.1 we are trying to maintain some backward compatibility.
-        return if (this.isAtLeast(1, 4, 1))
+        return if (this.isAtLeast(FIRST_WITH_EXPERIMENTAL_BACKWARD_COMPATIBILITY))
             major == ourVersion.major && minor <= ourVersion.minor
         else
             this == ourVersion
@@ -57,9 +67,41 @@ data class KotlinAbiVersion(val major: Int, val minor: Int, val patch: Int) {
         return this.patch >= patch
     }
 
+    fun isAtMost(version: KotlinAbiVersion): Boolean =
+        isAtMost(version.major, version.minor, version.patch)
+
+    fun isAtMost(major: Int, minor: Int, patch: Int): Boolean {
+        if (this.major < major) return true
+        if (this.major > major) return false
+
+        if (this.minor < minor) return true
+        if (this.minor > minor) return false
+
+        return this.patch <= patch
+    }
+
     override fun toString() = "$major.$minor.$patch"
 
     companion object {
-        val CURRENT = KotlinAbiVersion(1, 7, 0)
+        /**
+         * See: [KotlinAbiVersion bump history](compiler/util-klib/KotlinAbiVersionBumpHistory.md)
+         *
+         * Since the release of 2.1.0, the following encoding for [minor] part of ABI version is used.
+         * Kotlin version -> ABI version:
+         * 2.1.0 -> 201
+         * 2.2.0 -> 202
+         * ...
+         * 2.9.0 -> 209
+         * 2.10.0 -> 210
+         * ...
+         * 3.0.0 -> 300
+         */
+        val CURRENT = KotlinAbiVersion(1, 2_01, 0)
+
+        /**
+         * Versions before 1.4.1 were the active development phase.
+         * Starting with 1.4.1 we are trying to maintain experimental backward compatibility.
+         */
+        private val FIRST_WITH_EXPERIMENTAL_BACKWARD_COMPATIBILITY = KotlinAbiVersion(1, 4, 1)
     }
 }

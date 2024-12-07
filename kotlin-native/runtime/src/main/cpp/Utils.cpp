@@ -7,6 +7,9 @@
 
 #include <climits>
 #include <cstdint>
+#include <cstring>
+
+using namespace kotlin;
 
 namespace {
 
@@ -68,4 +71,10 @@ struct HashCompineImpl<64> {
 
 size_t kotlin::CombineHash(size_t seed, size_t value) {
     return HashCompineImpl<sizeof(std::size_t) * CHAR_BIT>::fn(seed, value);
+}
+
+bool kotlin::isZeroed(std_support::span<uint8_t> span) noexcept {
+    if (span.size() == 0) return true;
+    if (span[0] != 0) return false;
+    return memcmp(span.data(), span.data() + 1, span.size() - 1) == 0;
 }

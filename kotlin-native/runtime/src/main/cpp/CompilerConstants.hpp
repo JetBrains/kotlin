@@ -7,18 +7,7 @@
 #define RUNTIME_COMPILER_CONSTANTS_H
 
 #include <cstdint>
-#if __has_include(<string_view>)
 #include <string_view>
-#elif __has_include(<experimental/string_view>)
-// TODO: Remove when wasm32 is gone.
-#include <xlocale.h>
-#include <experimental/string_view>
-namespace std {
-using string_view = std::experimental::string_view;
-}
-#else
-#error "No <string_view>"
-#endif
 
 #include "Common.h"
 
@@ -35,21 +24,16 @@ using string_view = std::experimental::string_view;
  */
 extern "C" const int32_t Kotlin_needDebugInfo;
 extern "C" const int32_t Kotlin_runtimeAssertsMode;
-extern "C" const char* const Kotlin_runtimeLogs;
-extern "C" const int32_t Kotlin_gcSchedulerType;
-extern "C" const int32_t Kotlin_freezingEnabled;
-extern "C" const int32_t Kotlin_freezingChecksEnabled;
+extern "C" const int32_t Kotlin_disableMmap;
+extern "C" const int32_t Kotlin_runtimeLogs[];
+extern "C" const int32_t Kotlin_concurrentWeakSweep;
+extern "C" const int32_t Kotlin_gcMarkSingleThreaded;
+extern "C" const int32_t Kotlin_fixedBlockPageSize;
 
 class SourceInfo;
 
 namespace kotlin {
 namespace compiler {
-
-// Must match DestroyRuntimeMode in DestroyRuntimeMode.kt
-enum class DestroyRuntimeMode : int32_t {
-    kLegacy = 0,
-    kOnShutdown = 1,
-};
 
 // Must match RuntimeAssertsMode in RuntimeAssertsMode.kt
 enum class RuntimeAssertsMode : int32_t {
@@ -58,20 +42,11 @@ enum class RuntimeAssertsMode : int32_t {
     kPanic = 2,
 };
 
-// Must match WorkerExceptionHandling in WorkerExceptionHandling.kt
-enum class WorkerExceptionHandling : int32_t {
-    kLegacy = 0,
-    kUseHook = 1,
-};
-
-// Must match GCSchedulerType in GCSchedulerType.kt
-enum class GCSchedulerType {
+// Must match AppStateTracking in AppStateTracking.kt
+enum class AppStateTracking {
     kDisabled = 0,
-    kWithTimer = 1,
-    kOnSafepoints = 2,
-    kAggressive = 3,
+    kEnabled = 1,
 };
-
 
 ALWAYS_INLINE inline bool shouldContainDebugInfo() noexcept {
     return Kotlin_needDebugInfo != 0;
@@ -81,27 +56,43 @@ ALWAYS_INLINE inline RuntimeAssertsMode runtimeAssertsMode() noexcept {
     return static_cast<RuntimeAssertsMode>(Kotlin_runtimeAssertsMode);
 }
 
-ALWAYS_INLINE inline std::string_view runtimeLogs() noexcept {
-    return Kotlin_runtimeLogs == nullptr ? std::string_view() : std::string_view(Kotlin_runtimeLogs);
+ALWAYS_INLINE inline bool runtimeAssertsEnabled() noexcept {
+    return runtimeAssertsMode() != RuntimeAssertsMode::kIgnore;
 }
 
-ALWAYS_INLINE inline bool freezingEnabled() noexcept {
-    return Kotlin_freezingEnabled != 0;
+ALWAYS_INLINE inline bool disableMmap() noexcept {
+    return Kotlin_disableMmap != 0;
 }
 
-ALWAYS_INLINE inline bool freezingChecksEnabled() noexcept {
-    return Kotlin_freezingChecksEnabled != 0;
+ALWAYS_INLINE inline const int32_t* runtimeLogs() noexcept {
+    return Kotlin_runtimeLogs;
 }
 
-ALWAYS_INLINE inline GCSchedulerType getGCSchedulerType() noexcept {
-    return static_cast<compiler::GCSchedulerType>(Kotlin_gcSchedulerType);
+ALWAYS_INLINE inline bool concurrentWeakSweep() noexcept {
+    return Kotlin_concurrentWeakSweep != 0;
 }
 
+ALWAYS_INLINE inline bool gcMarkSingleThreaded() noexcept {
+    return Kotlin_gcMarkSingleThreaded != 0;
+}
 
-WorkerExceptionHandling workerExceptionHandling() noexcept;
-DestroyRuntimeMode destroyRuntimeMode() noexcept;
+ALWAYS_INLINE inline constexpr int32_t fixedBlockPageSize() noexcept {
+    return Kotlin_fixedBlockPageSize;
+}
+
+bool gcMutatorsCooperate() noexcept;
+uint32_t auxGCThreads() noexcept;
+uint32_t concurrentMarkMaxIterations() noexcept;
 bool suspendFunctionsFromAnyThreadFromObjCEnabled() noexcept;
+AppStateTracking appStateTracking() noexcept;
 int getSourceInfo(void* addr, SourceInfo *result, int result_size) noexcept;
+bool mimallocUseDefaultOptions() noexcept;
+bool mimallocUseCompaction() noexcept;
+bool objcDisposeOnMain() noexcept;
+bool objcDisposeWithRunLoop() noexcept;
+bool enableSafepointSignposts() noexcept;
+bool globalDataLazyInit() noexcept;
+bool swiftExport() noexcept;
 
 #ifdef KONAN_ANDROID
 bool printToAndroidLogcat() noexcept;

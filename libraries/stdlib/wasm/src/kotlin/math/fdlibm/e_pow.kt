@@ -95,38 +95,33 @@ private const val ivln2_h = 1.44269502162933349609e+00 /* 0x3FF71547, 0x60000000
 private const val ivln2_l = 1.92596299112661746887e-08 /* 0x3E54AE0B, 0xF85DDF44 =1/ln2 tail*/
 
 internal fun __ieee754_pow(x: Double, y: Double): Double {
-    var z: Double = 0.0
-    var ax: Double = 0.0
-    var z_h: Double = 0.0
-    var z_l: Double = 0.0
-    var p_h: Double = 0.0
-    var p_l: Double = 0.0
-    var y1: Double = 0.0
-    var t1: Double = 0.0
-    var t2: Double = 0.0
-    var r: Double = 0.0
-    var s: Double = 0.0
-    var t: Double = 0.0
-    var u: Double = 0.0
-    var v: Double = 0.0
-    var w: Double = 0.0
-    var i0: Int = 0
-    var i1: Int = 0
-    var i: Int = 0
-    var j: Int = 0
-    var k: Int = 0
-    var yisint: Int = 0
-    var n = 0
-    var hx: Int = 0
-    var hy: Int = 0
-    var ix: Int = 0
-    var iy: Int = 0
-    var lx: UInt = 0U
-    var ly: UInt = 0U
+    var z: Double
+    var ax: Double
+    var z_h: Double
+    var z_l: Double
+    var p_h: Double
+    var p_l: Double
+    var y1: Double
+    var t1: Double
+    var t2: Double
+    var r: Double
+    var s: Double
+    var t: Double
+    var u: Double
+    var v: Double
+    var w: Double
+    var i: Int
+    var j: Int
+    var k: Int
+    var yisint: Int
+    var n: Int
+    var hx: Int
+    var hy: Int
+    var ix: Int
+    var iy: Int
+    var lx: UInt
+    var ly: UInt
 
-    //i0 = ((*(int*)&one)>>29)^1
-    i0 = 1
-    i1 = 1 - i0
     hx = __HI(x); lx = __LO(x).toUInt()
     hy = __HI(y); ly = __LO(y).toUInt()
     ix = hx and 0x7fffffff; iy = hy and 0x7fffffff
@@ -223,12 +218,12 @@ internal fun __ieee754_pow(x: Double, y: Double): Double {
         t1 = doubleSetWord(d = t1, lo = 0)
         t2 = v - (t1 - u)
     } else {
-        var ss: Double = 0.0
-        var s2: Double = 0.0
-        var s_h: Double = 0.0
-        var s_l: Double = 0.0
-        var t_h: Double = 0.0
-        var t_l: Double = 0.0
+        var ss: Double
+        var s2: Double
+        var s_h: Double
+        var s_l: Double
+        var t_h: Double
+        var t_l: Double
         n = 0
         /* take care subnormal number */
         if (ix < 0x00100000) {
@@ -240,7 +235,7 @@ internal fun __ieee754_pow(x: Double, y: Double): Double {
         if (j <= 0x3988E) k = 0        /* |x|<sqrt(3/2) */
         else if (j < 0xBB67A) k = 1    /* |x|<sqrt(3)   */
         else {
-            k = 0;n += 1;ix -= 0x00100000;
+            k = 0;n += 1;ix -= 0x00100000
         }
         ax = doubleSetWord(d = ax, hi = ix)
 

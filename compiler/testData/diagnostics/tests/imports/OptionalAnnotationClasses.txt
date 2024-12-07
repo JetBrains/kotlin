@@ -1,4 +1,4 @@
 package
 
-@kotlin.native.concurrent.SharedImmutable private val EmptyArray: kotlin.Array<kotlin.Int>
+@kotlin.native.concurrent.ThreadLocal private val EmptyArray: kotlin.Array<kotlin.Int>
 @kotlin.js.JsName(name = "") public fun test(): kotlin.Unit

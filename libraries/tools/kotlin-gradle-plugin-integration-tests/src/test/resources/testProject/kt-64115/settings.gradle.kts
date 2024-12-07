@@ -1,0 +1,2 @@
+include(":foo")
+include(":bar")

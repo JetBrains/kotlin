@@ -23,6 +23,7 @@ import kotlin.script.experimental.jvm.impl.BridgeDependenciesResolver
 import kotlin.script.experimental.util.getOrError
 
 // temporary trick with passing Any as a template and overwriting it below, TODO: fix after introducing new script definitions hierarchy
+@Suppress("DEPRECATION")
 abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinition(Any::class) {
 
     abstract val scriptCompilationConfiguration: ScriptCompilationConfiguration

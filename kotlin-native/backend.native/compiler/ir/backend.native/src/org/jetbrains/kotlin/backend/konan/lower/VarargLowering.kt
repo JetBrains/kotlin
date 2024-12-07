@@ -74,13 +74,13 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
                 log { "call of: ${callee.fqNameForIrSerialization}" }
                 context.createIrBuilder(owner, expression.startOffset, expression.endOffset).apply {
                     callee.valueParameters.forEach {
-                        log { "varargElementType: ${it.varargElementType} expr: ${ir2string(expression.getValueArgument(it.index))}" }
+                        log { "varargElementType: ${it.varargElementType} expr: ${ir2string(expression.getValueArgument(it.indexInOldValueParameters))}" }
                     }
                     callee.valueParameters
-                        .filter { it.varargElementType != null && expression.getValueArgument(it.index) == null }
+                        .filter { it.varargElementType != null && expression.getValueArgument(it.indexInOldValueParameters) == null }
                         .forEach {
                             expression.putValueArgument(
-                                it.index,
+                                it.indexInOldValueParameters,
                                 IrVarargImpl(
                                     startOffset = startOffset,
                                     endOffset = endOffset,
@@ -106,7 +106,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
                 val arrayHandle = arrayType(expression.type)
                 val irBuilder = context.createIrBuilder(owner, expression.startOffset, expression.endOffset)
                 val isConstantVararg = expression.elements.all {
-                    it is IrConst<*> || it is IrConstantValue
+                    it is IrConst || it is IrConstantValue
                 }
                 if (isConstantVararg) {
                     return irBuilder.irCall(
@@ -114,7 +114,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
                     ).apply {
                         extensionReceiver = arrayHandle.createStatic(irBuilder, type, expression.elements.map {
                             when (it) {
-                                is IrConst<*> -> irBuilder.irConstantPrimitive(it)
+                                is IrConst -> irBuilder.irConstantPrimitive(it)
                                 is IrConstantValue -> it
                                 else -> throw IllegalStateException("Try to initialize vararg constantly, when it's impossible")
                             }
@@ -128,13 +128,12 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
                         it to irTemporary(
                                 (it as? IrSpreadElement)?.expression ?: it as IrExpression,
                                 "elem".synthesizedString,
-                                isMutable = true
                         )
                     }.toMap()
                     val arraySize = calculateArraySize(arrayHandle, hasSpreadElement, scope, expression, vars)
                     val array = arrayHandle.createArray(this, expression.varargElementType, arraySize)
 
-                    val arrayTmpVariable = irTemporary(array, "array".synthesizedString, isMutable = true)
+                    val arrayTmpVariable = irTemporary(array, "array".synthesizedString)
                     lateinit var indexTmpVariable: IrVariable
                     if (hasSpreadElement)
                         indexTmpVariable = irTemporary(kIntZero, "index".synthesizedString, isMutable = true)
@@ -337,7 +336,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
 
 }
 
-private fun IrBuilderWithScope.irConstInt(value: Int): IrConst<Int> =
+private fun IrBuilderWithScope.irConstInt(value: Int): IrConst =
     IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, value)
 private val IrBuilderWithScope.kIntZero get() = irConstInt(0)
 private val IrBuilderWithScope.kIntOne get() = irConstInt(1)

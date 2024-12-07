@@ -1,0 +1,32 @@
+FILE: kotlin.kt
+    private open class K2 : R|K1| {
+        public constructor(): R|K2| {
+            super<R|K1|>()
+        }
+
+    }
+    public open class K1 : R|kotlin/Any| {
+        public constructor(): R|K1| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class K3 : R|J2| {
+        public constructor(): R|K3| {
+            super<R|J2|>()
+        }
+
+    }
+    public final class K4 : R|J2| {
+        public constructor(): R|K4| {
+            super<R|J2|>()
+        }
+
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        lval a: R|J1| = R|/J1.J1|()
+        lval b: R|K3| = R|/K3.K3|()
+        R|<local>/b|.R|/J2.foo|()
+        lval c: R|J2| = R|/J2.J2|()
+        R|<local>/c|.R|/J2.foo|()
+    }

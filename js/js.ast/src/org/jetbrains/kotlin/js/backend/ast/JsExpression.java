@@ -38,12 +38,6 @@ public abstract class JsExpression extends SourceInfoAwareJsNode {
         }
     }
 
-    @Override
-    public JsExpression source(Object info) {
-        setSource(info);
-        return this;
-    }
-
     @NotNull
     @Override
     public abstract JsExpression deepCopy();

@@ -1,0 +1,39 @@
+@FIELD:Ann()
+owner -> FirConstructorSymbol /SomeClass.SomeClass
+context -> FirConstructorSymbol /SomeClass.SomeClass
+
+@FIELD:Ann()
+owner -> FirPropertySymbol /SomeClass.simpleProperty
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /SomeClass.simpleProperty
+
+@FIELD:Ann()
+owner -> FirPropertySymbol /SomeClass.simplePropertyWithAnnotationList
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /SomeClass.simplePropertyWithAnnotationList
+
+@FIELD:Ann()
+owner -> FirPropertySymbol /SomeClass.delegatedProperty
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /SomeClass.delegatedProperty
+
+@FIELD:Ann()
+owner -> FirPropertySymbol /SomeClass.propertyWithCustomGetter
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /SomeClass.propertyWithCustomGetter
+
+@FIELD:Ann()
+owner -> FirValueParameterSymbol <local>/s from FirNamedFunctionSymbol /SomeClass.anotherFun
+context -> FirValueParameterSymbol <local>/s from FirNamedFunctionSymbol /SomeClass.anotherFun
+
+@FIELD:Ann()
+owner -> FirNamedFunctionSymbol /SomeClass.anotherFun
+context -> FirPropertySymbol <local>/localVariable from FirNamedFunctionSymbol /SomeClass.anotherFun
+
+@FIELD:Ann()
+owner -> FirNamedFunctionSymbol /SomeClass.anotherFun
+context -> FirNamedFunctionSymbol /SomeClass.anotherFun
+
+@FIELD:Ann()
+owner -> FirRegularClassSymbol SomeClass
+context -> FirRegularClassSymbol SomeClass
+
+@FIELD:Ann()
+owner -> FirPropertySymbol /WithPrimaryConstructor.a
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /WithPrimaryConstructor.a

@@ -9,6 +9,16 @@ import kotlin.SinceKotlin;
 
 @SinceKotlin(version = "1.2")
 public class MagicApiIntrinsics {
+
+    /**
+     * This method is used as a reified marker for plugin-defined compiler intrinsics.
+     * See JvmIrIntrinsicExtension.kt in the compiler:backend:jvm:codegen
+     *
+     * @param data Arbitrary data to pass to plugin. Must be string constant (loaded by LDC instruction).
+     */
+    public static void voidMagicApiCall(Object data) {
+    }
+
     public static <T> T anyMagicApiCall(int id) {
         return null;
     }
@@ -22,9 +32,6 @@ public class MagicApiIntrinsics {
 
     public static <T> T anyMagicApiCall(Object data) {
         return null;
-    }
-
-    public static void voidMagicApiCall(Object data) {
     }
 
     public static int intMagicApiCall(Object data) {

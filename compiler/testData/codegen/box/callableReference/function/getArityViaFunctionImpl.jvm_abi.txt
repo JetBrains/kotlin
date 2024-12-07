@@ -1,0 +1,29 @@
+MODULE main
+	CLASS GetArityViaFunctionImplKt$box$6.class
+		Property: class.signature
+			K1
+				Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function1<Ljava/lang/String;Ljava/lang/Object;>;
+			K2
+				Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function1<Ljava/lang/String;Ljava/lang/String;>;
+		K1
+			invoke(Ljava/lang/String;)Ljava/lang/Object; [public, final]
+		K2
+			---
+		K1
+			---
+		K2
+			invoke(Ljava/lang/String;)Ljava/lang/String; [public, final]
+	CLASS GetArityViaFunctionImplKt$box$9.class
+		Property: class.signature
+			K1
+				Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function1<Ljava/lang/Integer;Ljava/lang/Object;>;
+			K2
+				Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function1<Ljava/lang/Integer;Ljava/lang/Integer;>;
+		K1
+			---
+		K2
+			invoke(I)Ljava/lang/Integer; [public, final]
+		K1
+			invoke(I)Ljava/lang/Object; [public, final]
+		K2
+			---

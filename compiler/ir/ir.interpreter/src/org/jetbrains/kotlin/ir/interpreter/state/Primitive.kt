@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.ir.interpreter.state
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.interpreter.getLastOverridden
+import org.jetbrains.kotlin.ir.interpreter.getFirstNonInterfaceOverridden
 import org.jetbrains.kotlin.ir.interpreter.stack.Fields
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.defaultType
 
-internal class Primitive<T>(val value: T, val type: IrType) : State {
+internal class Primitive(val value: Any?, val type: IrType) : State {
     override val fields: Fields = mutableMapOf()
     override val irClass: IrClass = type.classOrNull!!.owner
 
@@ -23,7 +23,7 @@ internal class Primitive<T>(val value: T, val type: IrType) : State {
 
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction {
         val owner = expression.symbol.owner
-        return if (owner.isFakeOverride) owner.getLastOverridden() else owner
+        return if (owner.isFakeOverride) owner.getFirstNonInterfaceOverridden() else owner
     }
 
     override fun toString(): String {
@@ -31,7 +31,7 @@ internal class Primitive<T>(val value: T, val type: IrType) : State {
     }
 
     companion object {
-        fun nullStateOfType(irType: IrType): Primitive<*> {
+        fun nullStateOfType(irType: IrType): Primitive {
             return Primitive(null, irType)
         }
     }

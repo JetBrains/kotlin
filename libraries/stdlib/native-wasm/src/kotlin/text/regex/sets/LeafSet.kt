@@ -32,6 +32,9 @@ internal abstract class LeafSet : SimpleSet(AbstractSet.TYPE_LEAF) {
     /** Returns "shift", the number of accepted chars. Commonly internal function, but called by quantifiers. */
     abstract fun accepts(startIndex: Int, testString: CharSequence): Int
 
+    override val consumesFixedLength: Boolean
+        get() = true
+
     /**
      * Checks if we can enter this state and pass the control to the next one.
      * Return positive value if match succeeds, negative otherwise.

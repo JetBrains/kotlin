@@ -1,0 +1,35 @@
+packages: 0
+classifiers: 0
+callables: 1
+  KaNamedFunctionSymbol:
+    annotations: []
+    callableId: test/testFun_generated
+    compilerVisibility: Private
+    contextReceivers: []
+    contractEffects: []
+    hasStableParameterNames: true
+    isActual: false
+    isBuiltinFunctionInvoke: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isInfix: false
+    isInline: false
+    isOperator: false
+    isOverride: false
+    isStatic: false
+    isSuspend: true
+    isTailRec: false
+    location: TOP_LEVEL
+    modality: FINAL
+    name: testFun_generated
+    origin: PLUGIN
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Unit
+    typeParameters: []
+    valueParameters: []
+    visibility: PRIVATE
+constructors: 0

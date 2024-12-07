@@ -9,6 +9,19 @@ dependencies {
     api(kotlinStdlib())
     api(project(":kotlin-android-extensions-runtime"))
     compileOnly(commonDependency("com.google.android", "android"))
+
+    val httpClientVersion = libs.versions.http.client.get()
+    val jsonVersion = libs.versions.json.get()
+    configurations.all {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "org.apache.httpcomponents" && requested.name == "httpclient") {
+                useVersion(httpClientVersion)
+            }
+            if (requested.group == "org.json" && requested.name == "json") {
+                useVersion(jsonVersion)
+            }
+        }
+    }
 }
 
 sourceSets {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class C {
     val foo: String?
         @Suppress("REDUNDANT_NULLABLE", "UNNECESSARY_NOT_NULL_ASSERTION")

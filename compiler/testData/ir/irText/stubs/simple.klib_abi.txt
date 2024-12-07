@@ -1,0 +1,8 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final val /test // /test|{}test[0]
+    final fun <get-test>(): kotlin/Int // /test.<get-test>|<get-test>(){}[0]

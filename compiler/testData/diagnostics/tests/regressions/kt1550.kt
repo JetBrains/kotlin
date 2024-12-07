@@ -1,4 +1,5 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
+// LATEST_LV_DIFFERENCE
 package foo
 
 import java.util.*

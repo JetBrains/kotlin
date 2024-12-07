@@ -12,15 +12,11 @@ suspend fun suspendHere(): String = suspendCoroutineUninterceptedOrReturn { x ->
 fun builder(c: suspend () -> Int): Int {
     var res = 0
 
-    c.createCoroutine(object : ContinuationAdapter<Int>() {
+    c.createCoroutine(object : Continuation<Int> {
         override val context = EmptyCoroutineContext
 
-        override fun resume(data: Int) {
-            res = data
-        }
-
-        override fun resumeWithException(exception: Throwable) {
-            throw exception
+        override fun resumeWith(data: Result<Int>) {
+            res = data.getOrThrow()
         }
     }).resume(Unit)
 

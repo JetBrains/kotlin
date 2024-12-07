@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// LAMBDAS: CLASS
 
 import java.util.Date
 

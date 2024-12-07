@@ -34,21 +34,30 @@ import static org.jetbrains.kotlin.parsing.KotlinWhitespaceAndCommentsBindersKt.
 import static org.jetbrains.kotlin.parsing.KotlinWhitespaceAndCommentsBindersKt.TRAILING_ALL_BINDER;
 
 public class KotlinParsing extends AbstractKotlinParsing {
+    private static final TokenSet GT_COMMA_COLON_SET = TokenSet.create(GT, COMMA, COLON);
     private static final Logger LOG = Logger.getInstance(KotlinParsing.class);
 
     private static final TokenSet TOP_LEVEL_DECLARATION_FIRST = TokenSet.create(
             TYPE_ALIAS_KEYWORD, INTERFACE_KEYWORD, CLASS_KEYWORD, OBJECT_KEYWORD,
             FUN_KEYWORD, VAL_KEYWORD, PACKAGE_KEYWORD);
+    private static final TokenSet TOP_LEVEL_DECLARATION_FIRST_SEMICOLON_SET =
+            TokenSet.orSet(TOP_LEVEL_DECLARATION_FIRST, TokenSet.create(SEMICOLON));
+    private static final TokenSet LT_EQ_SEMICOLON_TOP_LEVEL_DECLARATION_FIRST_SET =
+            TokenSet.orSet(TokenSet.create(LT, EQ, SEMICOLON), TOP_LEVEL_DECLARATION_FIRST);
     private static final TokenSet DECLARATION_FIRST = TokenSet.orSet(TOP_LEVEL_DECLARATION_FIRST,
                                                                      TokenSet.create(INIT_KEYWORD, GET_KEYWORD, SET_KEYWORD, CONSTRUCTOR_KEYWORD));
 
     private static final TokenSet CLASS_NAME_RECOVERY_SET = TokenSet.orSet(TokenSet.create(LT, LPAR, COLON, LBRACE),
                                                                            TOP_LEVEL_DECLARATION_FIRST);
     private static final TokenSet TYPE_PARAMETER_GT_RECOVERY_SET = TokenSet.create(WHERE_KEYWORD, LPAR, COLON, LBRACE, GT);
-    private static final TokenSet PARAMETER_NAME_RECOVERY_SET = TokenSet.create(COLON, EQ, COMMA, RPAR, VAL_KEYWORD, VAR_KEYWORD);
+    public static final TokenSet PARAMETER_NAME_RECOVERY_SET = TokenSet.create(COLON, EQ, COMMA, RPAR, VAL_KEYWORD, VAR_KEYWORD);
     private static final TokenSet PACKAGE_NAME_RECOVERY_SET = TokenSet.create(DOT, EOL_OR_SEMICOLON);
     private static final TokenSet IMPORT_RECOVERY_SET = TokenSet.create(AS_KEYWORD, DOT, EOL_OR_SEMICOLON);
     private static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, LPAR, HASH, DYNAMIC_KEYWORD);
+    private static final TokenSet LBRACE_RBRACE_TYPE_REF_FIRST_SET =
+            TokenSet.orSet(TokenSet.create(LBRACE, RBRACE), TYPE_REF_FIRST);
+    private static final TokenSet COLON_COMMA_LBRACE_RBRACE_TYPE_REF_FIRST_SET =
+            TokenSet.orSet(TokenSet.create(COLON, COMMA, LBRACE, RBRACE), TYPE_REF_FIRST);
     private static final TokenSet RECEIVER_TYPE_TERMINATORS = TokenSet.create(DOT, SAFE_ACCESS);
     private static final TokenSet VALUE_PARAMETER_FIRST =
             TokenSet.orSet(
@@ -64,37 +73,97 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private static final TokenSet ANNOTATION_TARGETS = TokenSet.create(
             FILE_KEYWORD, FIELD_KEYWORD, GET_KEYWORD, SET_KEYWORD, PROPERTY_KEYWORD,
             RECEIVER_KEYWORD, PARAM_KEYWORD, SETPARAM_KEYWORD, DELEGATE_KEYWORD);
+    private static final TokenSet BLOCK_DOC_COMMENT_SET = TokenSet.create(BLOCK_COMMENT, DOC_COMMENT);
+    private static final TokenSet SEMICOLON_SET = TokenSet.create(SEMICOLON);
+    private static final TokenSet COMMA_COLON_GT_SET = TokenSet.create(COMMA, COLON, GT);
+    private static final TokenSet IDENTIFIER_RBRACKET_LBRACKET_SET = TokenSet.create(IDENTIFIER, RBRACKET, LBRACKET);
+    private static final TokenSet LBRACE_RBRACE_SET = TokenSet.create(LBRACE, RBRACE);
+    private static final TokenSet COMMA_SEMICOLON_RBRACE_SET = TokenSet.create(COMMA, SEMICOLON, RBRACE);
+    private static final TokenSet VALUE_ARGS_RECOVERY_SET = TokenSet.create(LBRACE, SEMICOLON, RPAR, EOL_OR_SEMICOLON, RBRACE);
+    private static final TokenSet PROPERTY_NAME_FOLLOW_SET =
+      TokenSet.create(COLON, EQ, LBRACE, RBRACE, SEMICOLON, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, CLASS_KEYWORD);
+    private static final TokenSet PROPERTY_NAME_FOLLOW_MULTI_DECLARATION_RECOVERY_SET = TokenSet.orSet(PROPERTY_NAME_FOLLOW_SET, PARAMETER_NAME_RECOVERY_SET);
+    private static final TokenSet PROPERTY_NAME_FOLLOW_FUNCTION_OR_PROPERTY_RECOVERY_SET = TokenSet.orSet(PROPERTY_NAME_FOLLOW_SET, LBRACE_RBRACE_SET, TOP_LEVEL_DECLARATION_FIRST);
+    private static final TokenSet IDENTIFIER_EQ_COLON_SEMICOLON_SET = TokenSet.create(IDENTIFIER, EQ, COLON, SEMICOLON);
+    private static final TokenSet COMMA_RPAR_COLON_EQ_SET = TokenSet.create(COMMA, RPAR, COLON, EQ);
+    private static final TokenSet ACCESSOR_FIRST_OR_PROPERTY_END =
+            TokenSet.orSet(MODIFIER_KEYWORDS, TokenSet.create(AT, GET_KEYWORD, SET_KEYWORD, FIELD_KEYWORD, EOL_OR_SEMICOLON, RBRACE));
+    private static final TokenSet RPAR_IDENTIFIER_COLON_LBRACE_EQ_SET = TokenSet.create(RPAR, IDENTIFIER, COLON, LBRACE, EQ);
+    private static final TokenSet COMMA_COLON_RPAR_SET = TokenSet.create(COMMA, COLON, RPAR);
+    private static final TokenSet RPAR_COLON_LBRACE_EQ_SET = TokenSet.create(RPAR, COLON, LBRACE, EQ);
+    private static final TokenSet LBRACKET_LBRACE_RBRACE_LPAR_SET = TokenSet.create(LBRACKET, LBRACE, RBRACE, LPAR);
+    private static final TokenSet FUNCTION_NAME_FOLLOW_SET = TokenSet.create(LT, LPAR, RPAR, COLON, EQ);
+    private static final TokenSet FUNCTION_NAME_RECOVERY_SET = TokenSet.orSet(TokenSet.create(LT, LPAR, RPAR, COLON, EQ), LBRACE_RBRACE_SET, TOP_LEVEL_DECLARATION_FIRST);
+    private static final TokenSet VALUE_PARAMETERS_FOLLOW_SET = TokenSet.create(EQ, LBRACE, RBRACE, SEMICOLON, RPAR);
+    private static final TokenSet LPAR_VALUE_PARAMETERS_FOLLOW_SET = TokenSet.orSet(TokenSet.create(LPAR), VALUE_PARAMETERS_FOLLOW_SET);
+    private static final TokenSet
+            LPAR_LBRACE_COLON_CONSTRUCTOR_KEYWORD_SET = TokenSet.create(LPAR, LBRACE, COLON, CONSTRUCTOR_KEYWORD);
+    private static final TokenSet definitelyOutOfReceiverSet = TokenSet.orSet(
+            TokenSet.create(EQ, COLON, LBRACE, RBRACE, BY_KEYWORD),
+            TOP_LEVEL_DECLARATION_FIRST
+    );
+    private final static TokenSet EOL_OR_SEMICOLON_RBRACE_SET = TokenSet.create(EOL_OR_SEMICOLON, RBRACE);
+    private final static TokenSet CLASS_INTERFACE_SET = TokenSet.create(CLASS_KEYWORD, INTERFACE_KEYWORD);
 
     static KotlinParsing createForTopLevel(SemanticWhitespaceAwarePsiBuilder builder) {
-        KotlinParsing kotlinParsing = new KotlinParsing(builder);
-        kotlinParsing.myExpressionParsing = new KotlinExpressionParsing(builder, kotlinParsing);
-        return kotlinParsing;
+        return new KotlinParsing(builder, true, true);
     }
 
-    private static KotlinParsing createForByClause(SemanticWhitespaceAwarePsiBuilder builder) {
-        SemanticWhitespaceAwarePsiBuilderForByClause builderForByClause = new SemanticWhitespaceAwarePsiBuilderForByClause(builder);
-        KotlinParsing kotlinParsing = new KotlinParsing(builderForByClause);
-        kotlinParsing.myExpressionParsing = new KotlinExpressionParsing(builderForByClause, kotlinParsing) {
-            @Override
-            protected boolean parseCallWithClosure() {
-                if (builderForByClause.getStackSize() > 0) {
-                    return super.parseCallWithClosure();
+    static KotlinParsing createForTopLevelNonLazy(SemanticWhitespaceAwarePsiBuilder builder) {
+        return new KotlinParsing(builder, true, false);
+    }
+
+    private static KotlinParsing createForByClause(SemanticWhitespaceAwarePsiBuilder builder, boolean isLazy) {
+        return new KotlinParsing(new SemanticWhitespaceAwarePsiBuilderForByClause(builder), false, isLazy);
+    }
+
+    private final KotlinExpressionParsing myExpressionParsing;
+
+    private final FirstBefore lastDotAfterReceiverLParPattern = new FirstBefore(
+            new AtSet(RECEIVER_TYPE_TERMINATORS),
+            new AbstractTokenStreamPredicate() {
+                @Override
+                public boolean matching(boolean topLevel) {
+                    if (topLevel && atSet(definitelyOutOfReceiverSet)) {
+                        return true;
+                    }
+                    return topLevel && !at(QUEST) && !at(LPAR) && !at(RPAR);
                 }
-                return false;
             }
+    );
 
-            @Override
-            protected KotlinParsing create(SemanticWhitespaceAwarePsiBuilder builder) {
-                return createForByClause(builder);
-            }
-        };
-        return kotlinParsing;
-    }
+    private final LastBefore lastDotAfterReceiverNotLParPattern = new LastBefore(
+            new AtSet(RECEIVER_TYPE_TERMINATORS),
+            new AbstractTokenStreamPredicate() {
+                @Override
+                public boolean matching(boolean topLevel) {
+                    if (topLevel && (atSet(definitelyOutOfReceiverSet) || at(LPAR))) return true;
+                    if (topLevel && at(IDENTIFIER)) {
+                        IElementType lookahead = lookahead(1);
+                        return lookahead != LT && lookahead != DOT && lookahead != SAFE_ACCESS && lookahead != QUEST;
+                    }
+                    return false;
+                }
+            });
 
-    private KotlinExpressionParsing myExpressionParsing;
+    private KotlinParsing(SemanticWhitespaceAwarePsiBuilder builder, boolean isTopLevel, boolean isLazy) {
+        super(builder, isLazy);
+        myExpressionParsing = isTopLevel
+                              ? new KotlinExpressionParsing(builder, this, isLazy)
+                              : new KotlinExpressionParsing(builder, this, isLazy) {
+                                  @Override
+                                  protected boolean parseCallWithClosure() {
+                                      if (((SemanticWhitespaceAwarePsiBuilderForByClause) builder).getStackSize() > 0) {
+                                          return super.parseCallWithClosure();
+                                      }
+                                      return false;
+                                  }
 
-    private KotlinParsing(SemanticWhitespaceAwarePsiBuilder builder) {
-        super(builder);
+                                  @Override
+                                  protected KotlinParsing create(SemanticWhitespaceAwarePsiBuilder builder) {
+                                      return createForByClause(builder, isLazy);
+                                  }
+                              };
     }
 
     /*
@@ -116,7 +185,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     private void checkUnclosedBlockComment() {
-        if (TokenSet.create(BLOCK_COMMENT, DOC_COMMENT).contains(myBuilder.rawLookup(-1))) {
+        if (BLOCK_DOC_COMMENT_SET.contains(myBuilder.rawLookup(-1))) {
             int startOffset = myBuilder.rawTokenTypeStart(-1);
             int endOffset = myBuilder.rawTokenTypeStart(0);
             CharSequence tokenChars = myBuilder.getOriginalText().subSequence(startOffset, endOffset);
@@ -220,7 +289,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
          *   ;
          */
         PsiBuilder.Marker packageDirective = mark();
-        parseModifierList(DEFAULT, TokenSet.EMPTY);
+        parseModifierList(TokenSet.EMPTY);
 
         if (at(PACKAGE_KEYWORD)) {
             advance(); // PACKAGE_KEYWORD
@@ -370,7 +439,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             if (closeImportWithErrorIfNewline(importDirective, alias, "Expecting identifier")) {
                 return;
             }
-            expect(IDENTIFIER, "Expecting identifier", TokenSet.create(SEMICOLON));
+            expect(IDENTIFIER, "Expecting identifier", SEMICOLON_SET);
             alias.done(IMPORT_ALIAS);
         }
         consumeIf(SEMICOLON);
@@ -428,7 +497,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
 
         ModifierDetector detector = new ModifierDetector();
-        parseModifierList(detector, DEFAULT, TokenSet.EMPTY);
+        parseModifierList(detector, TokenSet.EMPTY);
 
         IElementType declType = parseCommonDeclaration(detector, NameParsingMode.REQUIRED, DeclarationParsingMode.MEMBER_OR_TOPLEVEL);
 
@@ -457,25 +526,24 @@ public class KotlinParsing extends AbstractKotlinParsing {
             @NotNull NameParsingMode nameParsingModeForObject,
             @NotNull DeclarationParsingMode declarationParsingMode
     ) {
-        IElementType keywordToken = tt();
-
-        if (keywordToken == CLASS_KEYWORD || keywordToken == INTERFACE_KEYWORD) {
-            return parseClass(detector.isEnumDetected(), true);
-        }
-        else if (keywordToken == FUN_KEYWORD) {
-            return parseFunction();
-        }
-        else if (keywordToken == VAL_KEYWORD || keywordToken == VAR_KEYWORD) {
-            return parseProperty(declarationParsingMode);
-        }
-        else if (keywordToken == TYPE_ALIAS_KEYWORD) {
-            return parseTypeAlias();
-        }
-        else if (keywordToken == OBJECT_KEYWORD) {
-            parseObject(nameParsingModeForObject, true);
-            return OBJECT_DECLARATION;
-        } else if (keywordToken == IDENTIFIER && detector.isEnumDetected() && declarationParsingMode.canBeEnumUsedAsSoftKeyword) {
-            return parseClass(true, false);
+        switch (getTokenId()) {
+            case CLASS_KEYWORD_Id:
+            case INTERFACE_KEYWORD_Id:
+                return parseClass(detector.isEnumDetected(), true);
+            case FUN_KEYWORD_Id:
+                return parseFunction();
+            case VAL_KEYWORD_Id:
+            case VAR_KEYWORD_Id:
+                return parseProperty(declarationParsingMode);
+            case TYPE_ALIAS_KEYWORD_Id:
+                return parseTypeAlias();
+            case OBJECT_KEYWORD_Id:
+                parseObject(nameParsingModeForObject, true);
+                return OBJECT_DECLARATION;
+            case IDENTIFIER_Id:
+                if (detector.isEnumDetected() && declarationParsingMode.canBeEnumUsedAsSoftKeyword) {
+                    return parseClass(true, false);
+                }
         }
 
         return null;
@@ -484,46 +552,36 @@ public class KotlinParsing extends AbstractKotlinParsing {
     /*
      * (modifier | annotation)*
      */
-    boolean parseModifierList(
-            @NotNull AnnotationParsingMode annotationParsingMode,
-            @NotNull TokenSet noModifiersBefore
-    ) {
-        return parseModifierList(null, annotationParsingMode, noModifiersBefore);
+    boolean parseModifierList(@NotNull TokenSet noModifiersBefore) {
+        return parseModifierList(null, noModifiersBefore);
     }
 
-    boolean parseAnnotationsList(
-            @NotNull AnnotationParsingMode annotationParsingMode,
-            @NotNull TokenSet noModifiersBefore
-    ) {
-        return doParseModifierList(null, TokenSet.EMPTY, annotationParsingMode, noModifiersBefore);
+    void parseAnnotationsList(@NotNull TokenSet noModifiersBefore) {
+        doParseModifierList(null, TokenSet.EMPTY, AnnotationParsingMode.DEFAULT, noModifiersBefore);
     }
 
     /**
      * (modifier | annotation)*
-     *
+     * <p>
      * Feeds modifiers (not annotations) into the passed consumer, if it is not null
      *
      * @param noModifiersBefore is a token set with elements indicating when met them
      *                          that previous token must be parsed as an identifier rather than modifier
      */
-    boolean parseModifierList(
-            @Nullable Consumer<IElementType> tokenConsumer,
-            @NotNull AnnotationParsingMode annotationParsingMode,
-            @NotNull TokenSet noModifiersBefore
-    ) {
-        return doParseModifierList(tokenConsumer, MODIFIER_KEYWORDS, annotationParsingMode, noModifiersBefore);
+    boolean parseModifierList(@Nullable Consumer<IElementType> tokenConsumer, @NotNull TokenSet noModifiersBefore) {
+        return doParseModifierList(tokenConsumer, MODIFIER_KEYWORDS, AnnotationParsingMode.DEFAULT, noModifiersBefore);
     }
 
-    private boolean parseFunctionTypeValueParameterModifierList() {
-        return doParseModifierList(null, RESERVED_VALUE_PARAMETER_MODIFIER_KEYWORDS, NO_ANNOTATIONS, NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER);
+    private void parseFunctionTypeValueParameterModifierList() {
+        doParseModifierList(null, RESERVED_VALUE_PARAMETER_MODIFIER_KEYWORDS, NO_ANNOTATIONS, NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER);
     }
 
-    private boolean parseTypeModifierList() {
-        return doParseModifierList(null, TYPE_MODIFIER_KEYWORDS, TYPE_CONTEXT, TokenSet.EMPTY);
+    private void parseTypeModifierList() {
+        doParseModifierList(null, TYPE_MODIFIER_KEYWORDS, TYPE_CONTEXT, TokenSet.EMPTY);
     }
 
-    private boolean parseTypeArgumentModifierList() {
-        return doParseModifierList(null, TYPE_ARGUMENT_MODIFIER_KEYWORDS, NO_ANNOTATIONS, TokenSet.create(COMMA, COLON, GT));
+    private void parseTypeArgumentModifierList() {
+        doParseModifierList(null, TYPE_ARGUMENT_MODIFIER_KEYWORDS, NO_ANNOTATIONS, COMMA_COLON_GT_SET);
     }
 
     private boolean doParseModifierListBody(
@@ -621,6 +679,13 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : "context" "(" (contextReceiver{","})+ ")"
      */
     private void parseContextReceiverList() {
+        parseContextReceiverList(true);
+    }
+    /*
+     * contextReceiverList
+     *   : "context" "(" (contextReceiver{","})+ ")"
+     */
+    private void parseContextReceiverList(boolean allowNamed) {
         assert _at(CONTEXT_KEYWORD);
         PsiBuilder.Marker contextReceiverList = mark();
         advance(); // CONTEXT_KEYWORD
@@ -630,7 +695,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 if (at(COMMA)) {
                     errorAndAdvance("Expecting a type reference");
                 }
-                parseContextReceiver();
+                parseContextReceiver(allowNamed);
                 if (at(RPAR)) {
                     advance();
                     break;
@@ -655,7 +720,11 @@ public class KotlinParsing extends AbstractKotlinParsing {
      * contextReceiver
      *   : label? typeReference
      */
-    private void parseContextReceiver() {
+    private void parseContextReceiver(boolean allowNamed) {
+        if (allowNamed && tryParseValueParameter(true)) {
+            return;
+        }
+
         PsiBuilder.Marker contextReceiver = mark();
         if (myExpressionParsing.isAtLabelDefinitionOrMissingIdentifier()) {
             myExpressionParsing.parseLabelDefinition();
@@ -844,7 +913,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             marker.done(ANNOTATION_TARGET);
         }
 
-        expect(COLON, message, TokenSet.create(IDENTIFIER, RBRACKET, LBRACKET));
+        expect(COLON, message, IDENTIFIER_RBRACKET_LBRACKET_SET);
     }
 
     @Nullable
@@ -885,7 +954,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         PsiBuilder.Marker reference = mark();
         PsiBuilder.Marker typeReference = mark();
-        parseUserType(/* allowSimpleIntersectionTypes */ false);
+        parseUserType();
         typeReference.done(TYPE_REFERENCE);
         reference.done(CONSTRUCTOR_CALLEE);
 
@@ -958,7 +1027,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 assert _at(OBJECT_KEYWORD);
             }
             else {
-                assert _atSet(CLASS_KEYWORD, INTERFACE_KEYWORD);
+                assert _atSet(CLASS_INTERFACE_SET);
             }
             advance(); // CLASS_KEYWORD, INTERFACE_KEYWORD or OBJECT_KEYWORD
         }
@@ -987,10 +1056,10 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         PsiBuilder.Marker beforeConstructorModifiers = mark();
         PsiBuilder.Marker primaryConstructorMarker = mark();
-        boolean hasConstructorModifiers = parseModifierList(DEFAULT, TokenSet.EMPTY);
+        boolean hasConstructorModifiers = parseModifierList(TokenSet.EMPTY);
 
         // Some modifiers found, but no parentheses following: class has already ended, and we are looking at something else
-        if (hasConstructorModifiers && !atSet(LPAR, LBRACE, COLON, CONSTRUCTOR_KEYWORD)) {
+        if (hasConstructorModifiers && !atSet(LPAR_LBRACE_COLON_CONSTRUCTOR_KEYWORD_SET)) {
             beforeConstructorModifiers.rollbackTo();
             return object ? OBJECT_DECLARATION : CLASS;
         }
@@ -1004,7 +1073,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
 
         if (at(LPAR)) {
-            parseValueParameterList(false, /* typeRequired  = */ true, TokenSet.create(LBRACE, RBRACE));
+            parseValueParameterList(false, /* typeRequired  = */ true, LBRACE_RBRACE_SET);
             primaryConstructorMarker.done(PRIMARY_CONSTRUCTOR);
         }
         else if (hasConstructorModifiers || hasConstructorKeyword) {
@@ -1126,7 +1195,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private ParseEnumEntryResult parseEnumEntry() {
         PsiBuilder.Marker entry = mark();
 
-        parseModifierList(DEFAULT, TokenSet.create(COMMA, SEMICOLON, RBRACE));
+        parseModifierList(COMMA_SEMICOLON_RBRACE_SET);
 
         if (!atSet(SOFT_KEYWORDS_AT_MEMBER_START) && at(IDENTIFIER)) {
             advance(); // IDENTIFIER
@@ -1235,7 +1304,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
 
         ModifierDetector detector = new ModifierDetector();
-        parseModifierList(detector, DEFAULT, TokenSet.EMPTY);
+        parseModifierList(detector, TokenSet.EMPTY);
 
         IElementType declType = parseMemberDeclarationRest(detector);
 
@@ -1291,12 +1360,11 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         advance(); // CONSTRUCTOR_KEYWORD
 
-        TokenSet valueArgsRecoverySet = TokenSet.create(LBRACE, SEMICOLON, RPAR, EOL_OR_SEMICOLON, RBRACE);
         if (at(LPAR)) {
-            parseValueParameterList(false, /*typeRequired = */ true, valueArgsRecoverySet);
+            parseValueParameterList(false, /*typeRequired = */ true, VALUE_ARGS_RECOVERY_SET);
         }
         else {
-            errorWithRecovery("Expecting '('", TokenSet.orSet(valueArgsRecoverySet, TokenSet.create(COLON)));
+            errorWithRecovery("Expecting '('", TokenSet.orSet(VALUE_ARGS_RECOVERY_SET, TokenSet.create(COLON)));
         }
 
         if (at(COLON)) {
@@ -1360,7 +1428,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         advance(); // TYPE_ALIAS_KEYWORD
 
-        expect(IDENTIFIER, "Type name expected", TokenSet.orSet(TokenSet.create(LT, EQ, SEMICOLON), TOP_LEVEL_DECLARATION_FIRST));
+        expect(IDENTIFIER, "Type name expected", LT_EQ_SEMICOLON_TOP_LEVEL_DECLARATION_FIRST_SET);
 
         parseTypeParameterList(TYPE_PARAMETER_GT_RECOVERY_SET);
 
@@ -1370,7 +1438,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             error.error("Type alias parameters can't have bounds");
         }
 
-        expect(EQ, "Expecting '='", TokenSet.orSet(TOP_LEVEL_DECLARATION_FIRST, TokenSet.create(SEMICOLON)));
+        expect(EQ, "Expecting '='", TOP_LEVEL_DECLARATION_FIRST_SEMICOLON_SET);
 
         parseTypeRef();
 
@@ -1414,14 +1482,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
         assert (at(VAL_KEYWORD) || at(VAR_KEYWORD));
         advance();
 
-        boolean typeParametersDeclared = at(LT) && parseTypeParameterList(TokenSet.create(IDENTIFIER, EQ, COLON, SEMICOLON));
-
-        TokenSet propertyNameFollow = TokenSet.create(COLON, EQ, LBRACE, RBRACE, SEMICOLON, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, CLASS_KEYWORD);
+        boolean typeParametersDeclared = at(LT) && parseTypeParameterList(IDENTIFIER_EQ_COLON_SEMICOLON_SET);
 
         myBuilder.disableJoiningComplexTokens();
 
         PsiBuilder.Marker receiver = mark();
-        boolean receiverTypeDeclared = parseReceiverType("property", propertyNameFollow);
+        boolean receiverTypeDeclared = parseReceiverType("property", PROPERTY_NAME_FOLLOW_SET);
 
         boolean multiDeclaration = at(LPAR);
 
@@ -1432,11 +1498,11 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         if (multiDeclaration) {
             PsiBuilder.Marker multiDecl = mark();
-            parseMultiDeclarationName(propertyNameFollow);
+            parseMultiDeclarationName(PROPERTY_NAME_FOLLOW_SET, PROPERTY_NAME_FOLLOW_MULTI_DECLARATION_RECOVERY_SET);
             errorIf(multiDecl, !mode.destructuringAllowed, "Destructuring declarations are only allowed for local variables/values");
         }
         else {
-            parseFunctionOrPropertyName(receiverTypeDeclared, "property", propertyNameFollow, /*nameRequired = */ true);
+            parseFunctionOrPropertyName(receiverTypeDeclared, "property", PROPERTY_NAME_FOLLOW_SET, PROPERTY_NAME_FOLLOW_FUNCTION_OR_PROPERTY_RECOVERY_SET, /*nameRequired = */ true);
         }
 
         myBuilder.restoreJoiningComplexTokensState();
@@ -1479,7 +1545,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                     propertyComponentKind = parsePropertyComponent(alreadyRead);
                 }
 
-                if (!atSet(EOL_OR_SEMICOLON, RBRACE)) {
+                if (!atSet(EOL_OR_SEMICOLON_RBRACE_SET)) {
                     if (getLastToken() != SEMICOLON) {
                         errorUntil(
                                 "Property getter or setter expected",
@@ -1525,13 +1591,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
     /*
      * (SimpleName (":" type){","})
      */
-    public void parseMultiDeclarationName(TokenSet follow) {
+    public void parseMultiDeclarationName(TokenSet follow, TokenSet recoverySet) {
         // Parsing multi-name, e.g.
         //   val (a, b) = foo()
         myBuilder.disableNewlines();
         advance(); // LPAR
 
-        TokenSet recoverySet = TokenSet.orSet(PARAMETER_NAME_RECOVERY_SET, follow);
         if (!atSet(follow)) {
             while (true) {
                 if (at(COMMA)) {
@@ -1543,7 +1608,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 }
                 PsiBuilder.Marker property = mark();
 
-                parseModifierList(DEFAULT, TokenSet.create(COMMA, RPAR, COLON, EQ));
+                parseModifierList(COMMA_RPAR_COLON_EQ_SET);
 
                 expect(IDENTIFIER, "Expecting a name", recoverySet);
 
@@ -1597,7 +1662,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private PropertyComponentKind parsePropertyComponent(PropertyComponentKind.Collector notAllowedKind) {
         PsiBuilder.Marker propertyComponent = mark();
 
-        parseModifierList(DEFAULT, TokenSet.EMPTY);
+        parseModifierList(TokenSet.EMPTY);
 
         PropertyComponentKind propertyComponentKind;
         if (at(GET_KEYWORD)) {
@@ -1623,7 +1688,6 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         if (!at(LPAR) && propertyComponentKind != PropertyComponentKind.FIELD) {
             // Account for Jet-114 (val a : int get {...})
-            TokenSet ACCESSOR_FIRST_OR_PROPERTY_END = TokenSet.orSet(MODIFIER_KEYWORDS, TokenSet.create(AT, GET_KEYWORD, SET_KEYWORD, FIELD_KEYWORD, EOL_OR_SEMICOLON, RBRACE));
             if (!atSet(ACCESSOR_FIRST_OR_PROPERTY_END)) {
                 errorUntil("Accessor body expected", TokenSet.orSet(ACCESSOR_FIRST_OR_PROPERTY_END, TokenSet.create(LBRACE, LPAR, EQ)));
             }
@@ -1636,12 +1700,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
         myBuilder.disableNewlines();
 
         if (propertyComponentKind != PropertyComponentKind.FIELD) {
-            expect(LPAR, "Expecting '('", TokenSet.create(RPAR, IDENTIFIER, COLON, LBRACE, EQ));
+            PsiBuilder.Marker parameterList = mark();
+            expect(LPAR, "Expecting '('", RPAR_IDENTIFIER_COLON_LBRACE_EQ_SET);
             if (propertyComponentKind == PropertyComponentKind.SET) {
-                PsiBuilder.Marker parameterList = mark();
                 PsiBuilder.Marker setterParameter = mark();
-                parseModifierList(DEFAULT, TokenSet.create(COMMA, COLON, RPAR));
-                expect(IDENTIFIER, "Expecting parameter name", TokenSet.create(RPAR, COLON, LBRACE, EQ));
+                parseModifierList(COMMA_COLON_RPAR_SET);
+                expect(IDENTIFIER, "Expecting parameter name", RPAR_COLON_LBRACE_EQ_SET);
 
                 if (at(COLON)) {
                     advance(); // COLON
@@ -1651,7 +1715,6 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 if (at(COMMA)) {
                     advance(); // COMMA
                 }
-                parameterList.done(VALUE_PARAMETER_LIST);
             }
             if (!at(RPAR)) {
                 errorUntil("Expecting ')'", TokenSet.create(RPAR, COLON, LBRACE, RBRACE, EQ, EOL_OR_SEMICOLON));
@@ -1659,6 +1722,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             if (at(RPAR)) {
                 advance();
             }
+            parameterList.done(VALUE_PARAMETER_LIST);
         }
         myBuilder.restoreNewlinesState();
 
@@ -1687,7 +1751,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     @NotNull
-    IElementType parseFunction() {
+    private IElementType parseFunction() {
         return parseFunction(false);
     }
 
@@ -1715,14 +1779,13 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         boolean typeParameterListOccurred = false;
         if (at(LT)) {
-            parseTypeParameterList(TokenSet.create(LBRACKET, LBRACE, RBRACE, LPAR));
+            parseTypeParameterList(LBRACKET_LBRACE_RBRACE_LPAR_SET);
             typeParameterListOccurred = true;
         }
 
         myBuilder.disableJoiningComplexTokens();
 
-        TokenSet functionNameFollow = TokenSet.create(LT, LPAR, RPAR, COLON, EQ);
-        boolean receiverFound = parseReceiverType("function", functionNameFollow);
+        boolean receiverFound = parseReceiverType("function", FUNCTION_NAME_FOLLOW_SET);
 
         if (at(IDENTIFIER) && failIfIdentifierExists) {
             myBuilder.restoreJoiningComplexTokensState();
@@ -1730,15 +1793,13 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
 
         // function as expression has no name
-        parseFunctionOrPropertyName(receiverFound, "function", functionNameFollow, /*nameRequired = */ false);
+        parseFunctionOrPropertyName(receiverFound, "function", FUNCTION_NAME_FOLLOW_SET, FUNCTION_NAME_RECOVERY_SET, /*nameRequired = */ false);
 
         myBuilder.restoreJoiningComplexTokensState();
 
-        TokenSet valueParametersFollow = TokenSet.create(EQ, LBRACE, RBRACE, SEMICOLON, RPAR);
-
         if (at(LT)) {
             PsiBuilder.Marker error = mark();
-            parseTypeParameterList(TokenSet.orSet(TokenSet.create(LPAR), valueParametersFollow));
+            parseTypeParameterList(LPAR_VALUE_PARAMETERS_FOLLOW_SET);
             if (typeParameterListOccurred) {
                 int finishIndex = myBuilder.rawTokenIndex();
                 error.rollbackTo();
@@ -1753,7 +1814,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
 
         if (at(LPAR)) {
-            parseValueParameterList(false, /* typeRequired  = */ false, valueParametersFollow);
+            parseValueParameterList(false, /* typeRequired  = */ false, VALUE_PARAMETERS_FOLLOW_SET);
         }
         else {
             error("Expecting '('");
@@ -1817,56 +1878,25 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     private int lastDotAfterReceiver() {
-        if (at(LPAR)) {
-            return matchTokenStreamPredicate(
-                    new FirstBefore(
-                            new AtSet(RECEIVER_TYPE_TERMINATORS),
-                            new AbstractTokenStreamPredicate() {
-                                @Override
-                                public boolean matching(boolean topLevel) {
-                                    if (topLevel && definitelyOutOfReceiver()) {
-                                        return true;
-                                    }
-                                    return topLevel && !at(QUEST) && !at(LPAR) && !at(RPAR);
-                                }
-                            }
-                    ));
-        }
-        else {
-            return matchTokenStreamPredicate(
-                    new LastBefore(
-                            new AtSet(RECEIVER_TYPE_TERMINATORS),
-                            new AbstractTokenStreamPredicate() {
-                                @Override
-                                public boolean matching(boolean topLevel) {
-                                    if (topLevel && (definitelyOutOfReceiver() || at(LPAR))) return true;
-                                    if (topLevel && at(IDENTIFIER)) {
-                                        IElementType lookahead = lookahead(1);
-                                        return lookahead != LT && lookahead != DOT && lookahead != SAFE_ACCESS && lookahead != QUEST;
-                                    }
-                                    return false;
-                                }
-                            }));
-        }
-    }
-
-    private boolean definitelyOutOfReceiver() {
-        return atSet(EQ, COLON, LBRACE, RBRACE, BY_KEYWORD) || atSet(TOP_LEVEL_DECLARATION_FIRST);
+        AbstractTokenStreamPattern pattern = at(LPAR) ? lastDotAfterReceiverLParPattern : lastDotAfterReceiverNotLParPattern;
+        pattern.reset();
+        return matchTokenStreamPredicate(pattern);
     }
 
     /*
      * IDENTIFIER
      */
-    private boolean parseFunctionOrPropertyName(boolean receiverFound, String title, TokenSet nameFollow, boolean nameRequired) {
-        if (!nameRequired && atSet(nameFollow)) return true; // no name
+    private void parseFunctionOrPropertyName(boolean receiverFound, String title, TokenSet nameFollow, TokenSet recoverySet, boolean nameRequired) {
+        if (!nameRequired && atSet(nameFollow)) return; // no name
 
-        TokenSet recoverySet = TokenSet.orSet(nameFollow, TokenSet.create(LBRACE, RBRACE), TOP_LEVEL_DECLARATION_FIRST);
-        if (!receiverFound) {
-            return expect(IDENTIFIER, "Expecting " + title + " name or receiver type", recoverySet);
+        if (expect(IDENTIFIER)) {
+            return;
         }
-        else {
-            return expect(IDENTIFIER, "Expecting " + title + " name", recoverySet);
-        }
+
+        errorWithRecovery(
+                "Expecting " + title + " name" + (!receiverFound ? " or receiver type" : ""),
+                recoverySet
+        );
     }
 
     /*
@@ -1899,13 +1929,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     private void parseBlock(boolean collapse) {
-
         PsiBuilder.Marker lazyBlock = mark();
 
         myBuilder.enableNewlines();
 
         boolean hasOpeningBrace = expect(LBRACE, "Expecting '{' to open a block");
-        boolean canCollapse = collapse && hasOpeningBrace;
+        boolean canCollapse = collapse && hasOpeningBrace && isLazy;
 
         if (canCollapse) {
             advanceBalancedBlock();
@@ -1982,7 +2011,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         if (at(BY_KEYWORD)) {
             reference.drop();
             advance(); // BY_KEYWORD
-            createForByClause(myBuilder).myExpressionParsing.parseExpression();
+            createForByClause(myBuilder, isLazy).myExpressionParsing.parseExpression();
             delegator.done(DELEGATED_SUPER_TYPE_ENTRY);
         }
         else if (at(LPAR)) {
@@ -2079,14 +2108,14 @@ public class KotlinParsing extends AbstractKotlinParsing {
         parseAnnotations(DEFAULT);
 
         PsiBuilder.Marker reference = mark();
-        if (expect(IDENTIFIER, "Expecting type parameter name", TokenSet.orSet(TokenSet.create(COLON, COMMA, LBRACE, RBRACE), TYPE_REF_FIRST))) {
+        if (expect(IDENTIFIER, "Expecting type parameter name", COLON_COMMA_LBRACE_RBRACE_TYPE_REF_FIRST_SET)) {
             reference.done(REFERENCE_EXPRESSION);
         }
         else {
             reference.drop();
         }
 
-        expect(COLON, "Expecting ':' before the upper bound", TokenSet.orSet(TokenSet.create(LBRACE, RBRACE), TYPE_REF_FIRST));
+        expect(COLON, "Expecting ':' before the upper bound", LBRACE_RBRACE_TYPE_REF_FIRST_SET);
 
         parseTypeRef();
 
@@ -2114,7 +2143,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         PsiBuilder.Marker mark = mark();
 
-        parseModifierList(DEFAULT, TokenSet.create(GT, COMMA, COLON));
+        parseModifierList(GT_COMMA_COLON_SET);
 
         expect(IDENTIFIER, "Type parameter name expected", TokenSet.EMPTY);
 
@@ -2177,7 +2206,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
         PsiBuilder.Marker contextReceiversStart = mark();
 
         if (withContextReceiver) {
-            parseContextReceiverList();
+            // TODO parse named context parameters in function types and report diagnostic.
+            parseContextReceiverList(/*allowNamed = */ false);
         }
 
         PsiBuilder.Marker typeElementMarker = mark();
@@ -2188,7 +2218,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             dynamicType.done(DYNAMIC_TYPE);
         }
         else if (at(IDENTIFIER) || at(PACKAGE_KEYWORD) || atParenthesizedMutableForPlatformTypes(0)) {
-            parseUserType(allowSimpleIntersectionTypes);
+            parseUserType();
         }
         else if (at(LPAR)) {
             PsiBuilder.Marker functionOrParenthesizedType = mark();
@@ -2302,7 +2332,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *    - (Mutable)List<Foo>!
      *    - Array<(out) Foo>!
      */
-    private void parseUserType(boolean allowSimpleIntersectionTypes) {
+    private void parseUserType() {
         PsiBuilder.Marker userType = mark();
 
         if (at(PACKAGE_KEYWORD)) {
@@ -2395,15 +2425,14 @@ public class KotlinParsing extends AbstractKotlinParsing {
     /*
      *  (optionalProjection type){","}
      */
-    private PsiBuilder.Marker parseTypeArgumentList() {
-        if (!at(LT)) return null;
+    private void parseTypeArgumentList() {
+        if (!at(LT)) return;
 
         PsiBuilder.Marker list = mark();
 
         tryParseTypeArgumentList(TokenSet.EMPTY);
 
         list.done(TYPE_ARGUMENT_LIST);
-        return list;
     }
 
     boolean tryParseTypeArgumentList(TokenSet extraRecoverySet) {
@@ -2545,7 +2574,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private boolean parseValueParameter(boolean rollbackOnFailure, boolean typeRequired) {
         PsiBuilder.Marker parameter = mark();
 
-        parseModifierList(DEFAULT, NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER);
+        parseModifierList(NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER);
 
         if (at(VAR_KEYWORD) || at(VAL_KEYWORD)) {
             advance(); // VAR_KEYWORD | VAL_KEYWORD
@@ -2646,10 +2675,10 @@ public class KotlinParsing extends AbstractKotlinParsing {
         WITH_SIGNIFICANT_WHITESPACE_BEFORE_ARGUMENTS(false, true, true, true),
         NO_ANNOTATIONS(false, false, false, false);
 
-        boolean isFileAnnotationParsingMode;
-        boolean allowAnnotations;
-        boolean withSignificantWhitespaceBeforeArguments;
-        boolean typeContext;
+        final boolean isFileAnnotationParsingMode;
+        final boolean allowAnnotations;
+        final boolean withSignificantWhitespaceBeforeArguments;
+        final boolean typeContext;
 
         AnnotationParsingMode(
                 boolean isFileAnnotationParsingMode,

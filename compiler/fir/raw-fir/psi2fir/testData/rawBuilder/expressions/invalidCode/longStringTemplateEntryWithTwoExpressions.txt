@@ -1,0 +1,8 @@
+FILE: longStringTemplateEntryWithTwoExpressions.kt
+    public? final? fun test(): R|kotlin/Unit| {
+        lval a: <implicit> = IntegerLiteral(1)
+        lval b: <implicit> = <strcat>(a#, fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            ^ Unit
+        }
+        )
+    }

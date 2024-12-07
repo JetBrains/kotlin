@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
+import org.jetbrains.kotlin.ir.util.SKIP_BODIES_ERROR_DESCRIPTION
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -30,16 +30,16 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 @ObsoleteDescriptorBasedAPI
-class FunctionGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
+internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
 
     constructor(context: GeneratorContext) : this(DeclarationGenerator(context))
 
     @JvmOverloads
     fun generateFunctionDeclaration(
         ktFunction: KtNamedFunction,
+        parentLoopResolver: LoopResolver?,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
     ): IrSimpleFunction =
         declareSimpleFunction(
@@ -47,19 +47,21 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             ktFunction.receiverTypeReference,
             ktFunction.contextReceivers.mapNotNull { it.typeReference() },
             origin,
-            getOrFail(BindingContext.FUNCTION, ktFunction)
+            getOrFail(BindingContext.FUNCTION, ktFunction),
+            parentLoopResolver
         ) {
             ktFunction.bodyExpression?.let { generateFunctionBody(it) }
         }
 
-    fun generateLambdaFunctionDeclaration(ktFunction: KtFunctionLiteral): IrSimpleFunction {
+    fun generateLambdaFunctionDeclaration(ktFunction: KtFunctionLiteral, parentLoopResolver: LoopResolver?): IrSimpleFunction {
         val lambdaDescriptor = getOrFail(BindingContext.FUNCTION, ktFunction)
         return declareSimpleFunction(
             ktFunction,
             null,
             emptyList(),
             IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
-            lambdaDescriptor
+            lambdaDescriptor,
+            parentLoopResolver
         ) {
             generateLambdaBody(ktFunction, lambdaDescriptor)
         }
@@ -80,11 +82,20 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         ktContextReceivers: List<KtElement>,
         origin: IrDeclarationOrigin,
         descriptor: FunctionDescriptor,
+        parentLoopResolver: LoopResolver?,
         generateBody: BodyGenerator.() -> IrBody?
     ): IrSimpleFunction =
         declareSimpleFunctionInner(descriptor, ktFunction, origin).buildWithScope { irFunction ->
+            if (descriptor != irFunction.descriptor) {
+                val message = """
+                    |IrSymbolTable contains function with wrong descriptor.
+                    |Expected: $descriptor
+                    |Actual: ${irFunction.descriptor}
+                """.trimMargin()
+                error(message)
+            }
             generateFunctionParameterDeclarationsAndReturnType(irFunction, ktFunction, ktReceiver, ktContextReceivers)
-            irFunction.body = createBodyGenerator(irFunction.symbol).generateBody()
+            irFunction.body = createBodyGenerator(irFunction.symbol, parentLoopResolver).generateBody()
         }
 
     private fun declareSimpleFunctionInner(
@@ -126,14 +137,12 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                 irAccessor, ktAccessor ?: ktProperty, ktProperty.receiverTypeReference,
                 ktProperty.contextReceivers.mapNotNull { it.typeReference() }
             )
-            if (context.configuration.generateBodies) {
-                val ktBodyExpression = ktAccessor?.bodyExpression
-                irAccessor.body =
-                    if (ktBodyExpression != null)
-                        createBodyGenerator(irAccessor.symbol).generateFunctionBody(ktBodyExpression)
-                    else
-                        generateDefaultAccessorBody(descriptor, irAccessor)
-            }
+            val ktBodyExpression = ktAccessor?.bodyExpression
+            irAccessor.body =
+                if (ktBodyExpression != null)
+                    createBodyGenerator(irAccessor.symbol).generateFunctionBody(ktBodyExpression)
+                else
+                    generateDefaultAccessorBody(descriptor, irAccessor)
         }
 
     fun generateDefaultAccessorForPrimaryConstructorParameter(
@@ -151,7 +160,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         accessor: PropertyAccessorDescriptor,
         irAccessor: IrSimpleFunction
     ): IrBlockBody? =
-        if (accessor.modality == Modality.ABSTRACT || accessor.correspondingProperty.isExpect)
+        if (accessor.modality == Modality.ABSTRACT || accessor.correspondingProperty.isExpect || context.configuration.skipBodies)
             null
         else
             when (accessor) {
@@ -178,7 +187,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                 irAccessor.symbol,
                 IrGetFieldImpl(
                     startOffset, endOffset,
-                    context.symbolTable.referenceField(property),
+                    context.symbolTable.descriptorExtension.referenceField(property),
                     property.type.toIrType(),
                     receiver
                 )
@@ -203,7 +212,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         irBody.statements.add(
             IrSetFieldImpl(
                 startOffset, endOffset,
-                context.symbolTable.referenceField(property),
+                context.symbolTable.descriptorExtension.referenceField(property),
                 receiver,
                 IrGetValueImpl(startOffset, endOffset, irValueParameter.type, irValueParameter.symbol),
                 context.irBuiltIns.unitType
@@ -222,7 +231,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                 IrGetValueImpl(
                     irAccessor.startOffset, irAccessor.endOffset,
                     thisAsReceiverParameter.type.toIrType(),
-                    context.symbolTable.referenceValue(thisAsReceiverParameter)
+                    context.symbolTable.descriptorExtension.referenceValue(thisAsReceiverParameter)
                 )
             }
             else -> null
@@ -234,14 +243,14 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         ktClassOrObject: KtPureClassOrObject
     ): IrConstructor =
         declareConstructor(
-            ktClassOrObject,
             ktClassOrObject.primaryConstructor ?: ktClassOrObject,
             ktClassOrObject.contextReceivers.mapNotNull { it.typeReference() },
             primaryConstructorDescriptor
         ) { irConstructor ->
             if (
                 primaryConstructorDescriptor.isExpect ||
-                primaryConstructorDescriptor.constructedClass.isEffectivelyExternal()
+                primaryConstructorDescriptor.constructedClass.isEffectivelyExternal() ||
+                context.configuration.skipBodies
             )
                 null
             else
@@ -251,7 +260,6 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
     fun generateSecondaryConstructor(ktConstructor: KtSecondaryConstructor, ktClassOrObject: KtPureClassOrObject): IrConstructor {
         val constructorDescriptor = getOrFail(BindingContext.CONSTRUCTOR, ktConstructor) as ClassConstructorDescriptor
         return declareConstructor(
-            ktConstructor,
             ktConstructor,
             ktClassOrObject.contextReceivers.mapNotNull { it.typeReference() },
             constructorDescriptor
@@ -271,7 +279,6 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
     private inline fun declareConstructor(
         ktConstructorElement: KtPureElement,
-        ktParametersElement: KtPureElement,
         ktContextReceiversElements: List<KtPureElement>,
         constructorDescriptor: ClassConstructorDescriptor,
         generateBody: BodyGenerator.(IrConstructor) -> IrBody?
@@ -279,20 +286,30 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         val startOffset = ktConstructorElement.getStartOffsetOfConstructorDeclarationKeywordOrNull() ?: ktConstructorElement.pureStartOffset
         val endOffset = ktConstructorElement.pureEndOffset
         val origin = IrDeclarationOrigin.DEFINED
-        return context.symbolTable.declareConstructor(constructorDescriptor) {
+        return context.symbolTable.descriptorExtension.declareConstructor(constructorDescriptor) {
             with(constructorDescriptor) {
                 context.irFactory.createConstructor(
-                    startOffset, endOffset, origin, it, context.symbolTable.nameProvider.nameForDeclaration(this),
-                    visibility, IrUninitializedType, isInline, isEffectivelyExternal(), isPrimary, isExpect
+                    startOffset = startOffset,
+                    endOffset = endOffset,
+                    origin = origin,
+                    name = context.symbolTable.nameProvider.nameForDeclaration(this),
+                    visibility = visibility,
+                    isInline = isInline,
+                    isExpect = isExpect,
+                    returnType = constructorDescriptor.returnType.toIrType(),
+                    symbol = it,
+                    isPrimary = isPrimary,
+                    isExternal = isEffectivelyExternal(),
                 )
             }.apply {
                 metadata = DescriptorMetadataSource.Function(it.descriptor)
                 contextReceiverParametersCount = ktContextReceiversElements.size
             }
         }.buildWithScope { irConstructor ->
-            generateValueParameterDeclarations(irConstructor, ktParametersElement, null, ktContextReceiversElements)
-            irConstructor.body = createBodyGenerator(irConstructor.symbol).generateBody(irConstructor)
-            irConstructor.returnType = constructorDescriptor.returnType.toIrType()
+            generateValueParameterDeclarations(irConstructor, ktConstructorElement, null, ktContextReceiversElements)
+            if (context.configuration.generateBodies) {
+                irConstructor.body = createBodyGenerator(irConstructor.symbol).generateBody(irConstructor)
+            }
         }
     }
 
@@ -348,19 +365,21 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                 val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
                 irValueParameter.defaultValue = ktParameter?.defaultValue?.let { defaultValue ->
                     val inAnnotation =
-                        valueParameterDescriptor.containingDeclaration.safeAs<ConstructorDescriptor>()?.isAnnotationConstructor() ?: false
+                        (valueParameterDescriptor.containingDeclaration as? ConstructorDescriptor)?.isAnnotationConstructor() == true
                     if (inAnnotation) {
                         generateDefaultAnnotationParameterValue(defaultValue, valueParameterDescriptor)
-                    } else if (context.configuration.generateBodies) {
-                        bodyGenerator.generateExpressionBody(defaultValue)
-                    } else context.irFactory.createExpressionBody(
-                        IrErrorExpressionImpl(
-                            defaultValue.startOffsetSkippingComments,
-                            defaultValue.endOffset,
-                            context.irBuiltIns.nothingType,
-                            defaultValue::class.java.simpleName
+                    } else if (context.configuration.skipBodies) {
+                        context.irFactory.createExpressionBody(
+                            IrErrorExpressionImpl(
+                                defaultValue.startOffsetSkippingComments,
+                                defaultValue.endOffset,
+                                context.irBuiltIns.nothingType,
+                                SKIP_BODIES_ERROR_DESCRIPTION,
+                            )
                         )
-                    )
+                    } else {
+                        bodyGenerator.generateExpressionBody(defaultValue)
+                    }
                 }
             }
         }
@@ -421,14 +440,13 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                 origin = IrDeclarationOrigin.DESTRUCTURED_OBJECT_PARAMETER
             }
         }
-        return context.symbolTable.declareValueParameter(
+        return context.symbolTable.descriptorExtension.declareValueParameter(
             ktElement?.pureStartOffset ?: irOwnerElement.startOffset,
             ktElement?.pureEndOffset ?: irOwnerElement.endOffset,
             origin,
             descriptor, descriptor.type.toIrType(),
             (descriptor as? ValueParameterDescriptor)?.varargElementType?.toIrType(),
             name,
-            index,
             isAssignable = (irOwnerElement as? IrSimpleFunction)?.isTailrec == true && context.extensions.parametersAreAssignable
         )
     }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -ProhibitIllegalValueParameterUsageInDefaultArguments
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // WITH_STDLIB
@@ -14,7 +15,7 @@ fun test_2(
 ) {}
 
 fun test_3(
-    x: () -> Any = { y() to <!UNINITIALIZED_PARAMETER!>y<!>.invoke() }, // Error
+    x: () -> Any = { <!UNINITIALIZED_PARAMETER!>y<!>() to <!UNINITIALIZED_PARAMETER!>y<!>.invoke() }, // Error
     y: () -> String = { "OK" }
 ) {}
 

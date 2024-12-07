@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
+import org.gradle.api.Task
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
@@ -12,10 +13,13 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
-import org.gradle.api.tasks.*
+import org.gradle.api.specs.Spec
+import org.gradle.api.tasks.CacheableTask
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.TaskAction
 import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.work.InputChanges
-import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
@@ -24,8 +28,8 @@ import org.jetbrains.kotlin.gradle.internal.kapt.classloaders.rootOrSelf
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChanges
 import org.jetbrains.kotlin.gradle.tasks.Kapt
 import org.jetbrains.kotlin.gradle.tasks.toSingleCompilerPluginOptions
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.listPropertyWithConvention
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.PathUtil
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -34,6 +38,7 @@ import java.net.URL
 import java.net.URLClassLoader
 import javax.inject.Inject
 
+@CacheableTask
 abstract class KaptWithoutKotlincTask @Inject constructor(
     objectFactory: ObjectFactory,
     private val providerFactory: ProviderFactory,
@@ -60,6 +65,17 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
 
     @get:Input
     val kaptProcessJvmArgs: ListProperty<String> = objectFactory.listPropertyWithConvention(emptyList())
+
+    init {
+        // Skip annotation processing if no annotation processors were provided.
+        onlyIf { task ->
+            with(task as KaptWithoutKotlincTask) {
+                val isRunTask = !(annotationProcessorFqNames.get().isEmpty() && kaptClasspath.isEmpty())
+                if (!isRunTask) task.logger.info("No annotation processors provided. Skip KAPT processing.")
+                isRunTask
+            }
+        }
+    }
 
     private fun getAnnotationProcessorOptions(): Map<String, String> {
         val result = mutableMapOf<String, String>()
@@ -93,7 +109,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
         if (addJdkClassesToClasspath.get()) {
             compileClasspath.addAll(
                 0,
-                PathUtil.getJdkClassesRoots(defaultKotlinJavaToolchain.get().providedJvm.get().javaHome)
+                PathUtil.getJdkClassesRoots(defaultKotlinJavaToolchain.get().buildJvm.get().javaHome)
             )
         }
 
@@ -130,12 +146,6 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
             disableClassloaderCacheForProcessors
         )
 
-        // Skip annotation processing if no annotation processors were provided.
-        if (annotationProcessorFqNames.get().isEmpty() && kaptClasspath.isEmpty()) {
-            logger.info("No annotation processors provided. Skip KAPT processing.")
-            return
-        }
-
         val kaptClasspath = kaptJars
         val isolationMode = getWorkerIsolationMode()
         logger.info("Using workers $isolationMode isolation mode to run kapt")
@@ -152,12 +162,12 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
 
     private fun getWorkerIsolationMode(): IsolationMode {
         val toolchainProvider = defaultKotlinJavaToolchain.get()
-        val gradleJvm = toolchainProvider.currentJvm.get()
+        val gradleJvm = toolchainProvider.gradleJvm.get()
         // Ensuring Gradle build JDK is set to kotlin toolchain by also comparing javaExecutable paths,
         // as user may set JDK with same major Java version, but from different vendor
         val isRunningOnGradleJvm = gradleJvm.javaVersion == toolchainProvider.javaVersion.get() &&
                 gradleJvm.javaExecutable.absolutePath == toolchainProvider.javaExecutable.get().asFile.absolutePath
-        val isolationModeStr = getValue("kapt.workers.isolation")?.toLowerCase()
+        val isolationModeStr = getValue("kapt.workers.isolation")?.toLowerCaseAsciiOnly()
         return when {
             (isolationModeStr == null || isolationModeStr == "none") && isRunningOnGradleJvm -> IsolationMode.NONE
             else -> {
@@ -186,7 +196,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
                     .javaExecutable
                     .asFile.get()
                     .absolutePath
-                logger.info("Kapt worker classpath: ${it.classpath}")
+                logger.info("Kapt worker classpath: ${kaptClasspath.toList()}")
             }
             IsolationMode.NONE -> {
                 warnAdditionalJvmArgsAreNotUsed(isolationMode)
@@ -212,18 +222,38 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
         }
     }
 
-    internal fun getValue(propertyName: String): String? =
-        if (isGradleVersionAtLeast(6, 5)) {
-            providerFactory.gradleProperty(propertyName).forUseAtConfigurationTime().orNull
-        } else {
-            project.findProperty(propertyName) as String?
-        }
+    private fun getValue(propertyName: String): String? = providerFactory.gradleProperty(propertyName).orNull
 
     internal interface KaptWorkParameters : WorkParameters {
         val workerOptions: Property<KaptOptionsForWorker>
         val toolsJarURLSpec: Property<String>
         val kaptClasspath: ConfigurableFileCollection
         val classloadersCacheSize: Property<Int>
+    }
+
+    /**
+     * Copied over Gradle deprecated [IsolationMode] enum, so Gradle could remove it.
+     */
+    internal enum class IsolationMode {
+        /**
+         * Let Gradle decide, this is the default.
+         */
+        AUTO,
+
+        /**
+         * Don't attempt to isolate the work, use in-process workers.
+         */
+        NONE,
+
+        /**
+         * Isolate the work in it's own classloader, use in-process workers.
+         */
+        CLASSLOADER,
+
+        /**
+         * Isolate the work in a separate process, use out-of-process workers.
+         */
+        PROCESS
     }
 
     internal abstract class KaptExecutionWorkAction : WorkAction<KaptWorkParameters> {
@@ -257,7 +287,12 @@ private class KaptExecution @Inject constructor(
     private companion object {
         private const val JAVAC_CONTEXT_CLASS = "com.sun.tools.javac.util.Context"
 
-        private fun kaptClass(classLoader: ClassLoader) = Class.forName("org.jetbrains.kotlin.kapt3.base.Kapt", true, classLoader)
+        private fun ClassLoader.kaptClass(simpleName: String): Class<*> =
+            try {
+                Class.forName("org.jetbrains.kotlin.kapt3.base.$simpleName", true, this)
+            } catch (_: ClassNotFoundException) { // in case we have an old plugin version on the classpath
+                Class.forName("org.jetbrains.kotlin.base.kapt3.$simpleName", true, this)
+            }
 
         private var classLoadersCache: ClassLoadersCache? = null
 
@@ -286,7 +321,7 @@ private class KaptExecution @Inject constructor(
             classLoadersCache = ClassLoadersCache(classloadersCacheSize, kaptClassLoader)
         }
 
-        val kaptMethod = kaptClass(kaptClassLoader).declaredMethods.single { it.name == "kapt" }
+        val kaptMethod = kaptClassLoader.kaptClass("Kapt").declaredMethods.single { it.name == "kapt" }
         kaptMethod.invoke(null, createKaptOptions(kaptClassLoader))
     }
 
@@ -298,13 +333,13 @@ private class KaptExecution @Inject constructor(
         }
     }
 
-    private fun createKaptOptions(classLoader: ClassLoader) = with(optionsForWorker) {
-        val flags = kaptClass(classLoader).declaredMethods.single { it.name == "kaptFlags" }.invoke(null, flags)
+    private fun createKaptOptions(classLoader: ClassLoader): Any = with(optionsForWorker) {
+        val flags = classLoader.kaptClass("Kapt").declaredMethods.single { it.name == "kaptFlags" }.invoke(null, flags)
 
-        val mode = Class.forName("org.jetbrains.kotlin.base.kapt3.AptMode", true, classLoader)
+        val mode = classLoader.kaptClass("AptMode")
             .enumConstants.single { (it as Enum<*>).name == "APT_ONLY" }
 
-        val detectMemoryLeaksMode = Class.forName("org.jetbrains.kotlin.base.kapt3.DetectMemoryLeaksMode", true, classLoader)
+        val detectMemoryLeaksMode = classLoader.kaptClass("DetectMemoryLeaksMode")
             .enumConstants.single { (it as Enum<*>).name == "NONE" }
 
         //in case cache was enabled and then disabled
@@ -316,7 +351,7 @@ private class KaptExecution @Inject constructor(
                 null
             }
 
-        Class.forName("org.jetbrains.kotlin.base.kapt3.KaptOptions", true, classLoader).constructors.single().newInstance(
+        classLoader.kaptClass("KaptOptions").constructors.single().newInstance(
             projectBaseDir,
             compileClasspath,
             javaSourceRoots,
@@ -343,7 +378,8 @@ private class KaptExecution @Inject constructor(
 
             processingClassLoader,
             disableClassloaderCacheForProcessors,
-            /*processorsPerfReportFile=*/null
+            /*processorsPerfReportFile=*/null,
+            /*fileReadHistoryReportFile*/null,
         )
     }
 

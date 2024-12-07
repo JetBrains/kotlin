@@ -5,60 +5,60 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
-import org.gradle.api.file.*
-import org.gradle.api.logging.Logger
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import java.io.File
 import java.net.URI
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
-import java.util.zip.*
+import java.util.zip.Deflater
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 internal class TaskOutputsBackup(
-    val fileSystemOperations: FileSystemOperations,
+    private val fileSystemOperations: FileSystemOperations,
     val buildDirectory: DirectoryProperty,
     val snapshotsDir: Provider<Directory>,
 
-    allOutputs: List<File>,
-
     /**
-     * Task outputs that we don't want to back up for performance reasons (e.g., if (1) they are too big, and (2) they are usually updated
-     * only at the end of the task execution--in a failed task run, they are usually unchanged and therefore don't need to be restored).
+     * Task outputs to back up and restore.
      *
-     * NOTE: In `IncrementalCompilerRunner`, if incremental compilation fails, it will try again by cleaning all the outputs and perform
-     * non-incremental compilation. It is important that `IncrementalCompilerRunner` do not clean [outputsToExclude] immediately but only
-     * right before [outputsToExclude] are updated (which is usually at the end of the task execution). This is so that if the fallback
-     * compilation fails, [outputsToExclude] will remain unchanged and the other outputs will be restored, and the next task run can be
-     * incremental.
+     * Note that this could be a subset of all the outputs of a task because there could be task outputs that we don't want to back up and
+     * restore (e.g., if (1) they are too big and (2) they are updated only at the end of the task execution so in a failed task run, they
+     * are usually unchanged and therefore don't need to be restored).
      */
-    outputsToExclude: List<File> = emptyList(),
-    val logger: Logger
+    val outputsToRestore: List<File>,
+
+    val logger: KotlinLogger,
 ) {
-    /** The outputs to back up and restore. Note that this may be a subset of all the outputs of a task (see `outputsToExclude`). */
-    val outputs: List<File> = allOutputs - outputsToExclude.toSet()
 
     fun createSnapshot() {
         // Kotlin JS compilation task declares one file from 'destinationDirectory' output as task `@OutputFile'
         // property. To avoid snapshot sync collisions, each snapshot output directory has also 'index' as prefix.
-        outputs.toSortedSet().forEachIndexed { index, outputPath ->
-            val pathInSnapshot = "$index${File.separator}${outputPath.pathRelativeToBuildDirectory}"
-            if (outputPath.isDirectory && Files.list(outputPath.toPath()).use { it.findFirst().isPresent }) {
-                snapshotsDir
-                    .map { it.file(pathInSnapshot) }
-                    .get()
-                    .asFile
-                    .run {
-                        compressDirectoryToZip(
-                            File(this, DIRECTORY_SNAPSHOT_ARCHIVE_FILE),
-                            outputPath
-                        )
-                    }
+        outputsToRestore.toSortedSet().forEachIndexed { index, outputPath ->
+            if (outputPath.isDirectory && !outputPath.isEmptyDirectory) {
+                val snapshotFile = File(snapshotsDir.get().asFile, index.asSnapshotArchiveName)
+                logger.debug("Packing $outputPath as $snapshotFile to make a backup")
+                compressDirectoryToZip(
+                    snapshotFile,
+                    outputPath
+                )
+            } else if (!outputPath.exists()) {
+                logger.debug("Ignoring $outputPath in making a backup as it does not exist")
+                val markerFile = File(snapshotsDir.get().asFile, index.asNotExistsMarkerFile)
+                markerFile.parentFile.mkdirs()
+                markerFile.createNewFile()
             } else {
+                val snapshotFile = snapshotsDir.map { it.file(index.asSnapshotDirectoryName).asFile }
+                logger.debug("Copying $outputPath as $snapshotFile to make a backup")
                 fileSystemOperations.copy { spec ->
                     spec.from(outputPath)
-                    spec.into(snapshotsDir.map { it.file(pathInSnapshot).asFile.parentFile })
+                    spec.into(snapshotFile)
                 }
             }
         }
@@ -66,14 +66,22 @@ internal class TaskOutputsBackup(
 
     fun restoreOutputs() {
         fileSystemOperations.delete {
-            it.delete(outputs)
+            it.delete(outputsToRestore)
         }
 
-        outputs.toSortedSet().forEachIndexed { index, outputPath ->
-            val pathInSnapshot = "$index${File.separator}${outputPath.pathRelativeToBuildDirectory}"
-            val fileInSnapshot = snapshotsDir.get().file(pathInSnapshot).asFile
-            if (fileInSnapshot.isDirectory) {
-                val snapshotArchive = File(fileInSnapshot, DIRECTORY_SNAPSHOT_ARCHIVE_FILE)
+        outputsToRestore.toSortedSet().forEachIndexed { index, outputPath ->
+            val snapshotDir = snapshotsDir.get().file(index.asSnapshotDirectoryName).asFile
+            if (snapshotDir.isDirectory) {
+                logger.debug("Copying files from $snapshotDir into ${outputPath.parentFile} to restore from backup")
+                fileSystemOperations.copy { spec ->
+                    spec.from(snapshotDir)
+                    spec.into(outputPath.parentFile)
+                }
+            } else if (snapshotsDir.get().file(index.asNotExistsMarkerFile).asFile.exists()) {
+                // do nothing
+            } else {
+                val snapshotArchive = snapshotsDir.get().file(index.asSnapshotArchiveName).asFile
+                logger.debug("Unpacking $snapshotArchive into $outputPath to restore from backup")
                 if (!snapshotArchive.exists()) {
                     logger.warn(
                         """
@@ -84,11 +92,6 @@ internal class TaskOutputsBackup(
                     return
                 }
                 uncompressZipIntoDirectory(snapshotArchive, outputPath)
-            } else {
-                fileSystemOperations.copy { spec ->
-                    spec.from(snapshotsDir.map { it.file(pathInSnapshot).asFile.parentFile })
-                    spec.into(outputPath.parentFile)
-                }
             }
         }
     }
@@ -113,11 +116,14 @@ internal class TaskOutputsBackup(
             zip.setLevel(Deflater.NO_COMPRESSION)
             outputPath
                 .walkTopDown()
-                .filter { !it.isDirectory }
+                .filter { file -> !file.isDirectory || file.isEmptyDirectory }
                 .forEach { file ->
-                    val entry = ZipEntry(file.relativeTo(outputPath).invariantSeparatorsPath)
+                    val suffix = if (file.isDirectory) "/" else ""
+                    val entry = ZipEntry(file.relativeTo(outputPath).invariantSeparatorsPath + suffix)
                     zip.putNextEntry(entry)
-                    file.inputStream().buffered().use { it.copyTo(zip) }
+                    if (!file.isDirectory) {
+                        file.inputStream().buffered().use { it.copyTo(zip) }
+                    }
                     zip.closeEntry()
                 }
             zip.flush()
@@ -145,16 +151,41 @@ internal class TaskOutputsBackup(
         }
     }
 
+    private val File.isEmptyDirectory: Boolean
+        get() = !Files.list(toPath()).use { it.findFirst().isPresent }
+
     private val Path.normalizedToBeRelative: String
         get() = if (toString() == "/") "." else toString().removePrefix("/")
 
-    private val File.pathRelativeToBuildDirectory: String
-        get() {
-            val buildDir = buildDirectory.get().asFile
-            return relativeTo(buildDir).path
-        }
+    private val Int.asSnapshotArchiveName: String
+        get() = "$this.zip"
 
-    companion object {
-        private const val DIRECTORY_SNAPSHOT_ARCHIVE_FILE = "snapshot.zip"
+    private val Int.asNotExistsMarkerFile: String
+        get() = "$this.not-exists"
+
+    private val Int.asSnapshotDirectoryName: String
+        get() = "$this"
+}
+
+internal fun interface BackupRestoreWrapper {
+    fun wrap(restoreAction: () -> Unit)
+}
+
+internal fun TaskOutputsBackup.tryRestoringOnRecoverableException(
+    e: FailedCompilationException,
+    restoreWrapper: BackupRestoreWrapper,
+) {
+    // Restore outputs only in cases where we expect that the user will make some changes to their project:
+    //   - For a compilation error, the user will need to fix their source code
+    //   - For an OOM error, the user will need to increase their memory settings
+    // In the other cases where there is nothing the user can fix in their project, we should not restore the outputs.
+    // Otherwise, the next build(s) will likely fail in exactly the same way as this build because their inputs and outputs are
+    // the same.
+    if (e is CompilationErrorException || e is OOMErrorException) {
+        restoreWrapper.wrap {
+            restoreOutputs()
+        }
     }
 }
+
+internal const val DEFAULT_BACKUP_RESTORE_MESSAGE = "Restoring task outputs to pre-compilation state"

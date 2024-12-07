@@ -9,7 +9,6 @@ import groovy.lang.Closure
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.TestFilter
-import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.execution.KotlinAggregateExecutionSource
 import org.jetbrains.kotlin.gradle.execution.KotlinAggregatingExecution
 import org.jetbrains.kotlin.gradle.plugin.*

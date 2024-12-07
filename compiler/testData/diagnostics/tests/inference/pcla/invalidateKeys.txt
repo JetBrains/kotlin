@@ -1,0 +1,11 @@
+package
+
+public fun foo(/*0*/ libraryInfoCache: LibraryInfoCache<kotlin.String, kotlin.String>, /*1*/ outdated: kotlin.collections.List<kotlin.String>): kotlin.Unit
+
+public final class LibraryInfoCache</*0*/ Key, /*1*/ Value> {
+    public constructor LibraryInfoCache</*0*/ Key, /*1*/ Value>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun invalidateKeys(/*0*/ keys: kotlin.collections.Collection<Key>, /*1*/ validityCondition: ((Key, Value) -> kotlin.Boolean)? = ...): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

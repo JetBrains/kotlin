@@ -1,4 +1,5 @@
-// !OPT_IN: kotlin.RequiresOptIn
+// RUN_PIPELINE_TILL: FRONTEND
+// OPT_IN: kotlin.RequiresOptIn
 // LANGUAGE: -OptInContagiousSignatures
 
 @RequiresOptIn
@@ -65,14 +66,22 @@ class B : I
 typealias MyList = ArrayList<I>
 
 @Marker
+typealias AList = ArrayList<I>
+
+@Marker
 typealias YourList = ArrayList<String>
 
 fun main() {
     val x = <!OPT_IN_USAGE_FUTURE_ERROR!>listOf<!>(A(), B())
     val y = <!OPT_IN_USAGE_FUTURE_ERROR!>MyList<!>()
+    val b = <!OPT_IN_USAGE_FUTURE_ERROR!>AList<!>()
     val z = <!OPT_IN_USAGE_FUTURE_ERROR!>YourList<!>()
     <!OPT_IN_USAGE_FUTURE_ERROR!>YourList<!>().add("")
 }
+
+fun my2(my: <!OPT_IN_USAGE_FUTURE_ERROR!>MyList<!>) {}
+
+fun my3(my: <!OPT_IN_USAGE_ERROR!>YourList<!>) {}
 
 @Marker
 class C {

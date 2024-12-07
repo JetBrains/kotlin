@@ -1,0 +1,3 @@
+expression: STRING_TEMPLATE
+text: "value"
+isUsedAsExpression: false

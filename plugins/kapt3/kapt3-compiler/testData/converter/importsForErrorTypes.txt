@@ -2,12 +2,17 @@ import java.util.concurrent.*;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * package {
+ *
+ *   // signature: test()Ljava/lang/Object;
+ *   public final fun test(): kotlin/Any?
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class ImportsForErrorTypesKt {
-
-    public ImportsForErrorTypesKt() {
-        super();
-    }
 
     @org.jetbrains.annotations.Nullable()
     public static final java.lang.Object test() {

@@ -1,4 +1,5 @@
-// !LANGUAGE: -SuspendFunctionAsSupertype
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -SuspendFunctionAsSupertype
 // SKIP_TXT
 
 import kotlin.reflect.*

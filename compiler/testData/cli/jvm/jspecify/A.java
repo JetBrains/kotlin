@@ -1,7 +1,7 @@
-@org.jspecify.nullness.NullMarked
+@org.jspecify.annotations.NullMarked
 public class A {
     public void foo(String x) {}
 
-    @org.jspecify.nullness.Nullable
+    @org.jspecify.annotations.Nullable
     public String bar() { return null; }
 }

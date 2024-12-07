@@ -1,0 +1,125 @@
+KtFile: 'simple.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(15,27): 'package main'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(23,27): 'main'
+  NO_CANDIDATES
+
+KtImportList(47,247): 'import kotlin.collections.MutableList'
+  NO_CANDIDATES
+
+KtImportDirective(47,84): 'import kotlin.collections.MutableList'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(54,84): 'kotlin.collections.MutableList'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(54,72): 'kotlin.collections'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(54,60): 'kotlin'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(61,72): 'collections'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(73,84): 'MutableList'
+  NO_CANDIDATES
+
+KtImportDirective(85,124): 'import kotlin.collections.mutableListOf'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(92,124): 'kotlin.collections.mutableListOf'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(92,110): 'kotlin.collections'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(92,98): 'kotlin'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(99,110): 'collections'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(111,124): 'mutableListOf'
+  NO_CANDIDATES
+
+KtImportDirective(125,152): 'import kotlin.text.toString'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(132,152): 'kotlin.text.toString'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(132,143): 'kotlin.text'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(132,138): 'kotlin'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(139,143): 'text'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(144,152): 'toString'
+  NO_CANDIDATES
+
+KtImportDirective(170,196): 'import java.util.ArrayList'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(177,196): 'java.util.ArrayList'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(177,186): 'java.util'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(177,181): 'java'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(182,186): 'util'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(187,196): 'ArrayList'
+  NO_CANDIDATES
+
+KtImportDirective(197,221): 'import java.util.HashMap'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(204,221): 'java.util.HashMap'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(204,213): 'java.util'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(204,208): 'java'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(209,213): 'util'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(214,221): 'HashMap'
+  NO_CANDIDATES
+
+KtImportDirective(222,247): 'import java.lang.Math.sin'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(229,247): 'java.lang.Math.sin'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(229,243): 'java.lang.Math'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(229,238): 'java.lang'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(229,233): 'java'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(234,238): 'lang'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(239,243): 'Math'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(244,247): 'sin'
+  NO_CANDIDATES

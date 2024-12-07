@@ -1,0 +1,9 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final inline fun test/foo(kotlin/Function0<kotlin/Unit>) // test/foo|foo(kotlin.Function0<kotlin.Unit>){}[0]
+final fun (kotlin/String).test/id(kotlin/String = ..., kotlin/IntArray...): kotlin/String // test/id|id@kotlin.String(kotlin.String;kotlin.IntArray...){}[0]
+final fun test/test() // test/test|test(){}[0]

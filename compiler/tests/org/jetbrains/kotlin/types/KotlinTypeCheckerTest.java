@@ -27,7 +27,8 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
+import org.jetbrains.kotlin.psi.KtPsiFactory;
+import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.TypeResolver;
@@ -293,7 +294,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         assertSubtype("MDerived_T<Int>", "Base_T<in Int>");
         assertSubtype("ArrayList<Int>", "InvList<in Int>");
 
-//        assertSubtype("java.lang.Integer", "java.lang.Comparable<java.lang.Integer>?");
+        // assertSubtype("java.lang.Integer", "java.lang.Comparable<java.lang.Integer>?");
     }
 
     public void testNullable() {
@@ -337,7 +338,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
 
     public void testThis() {
         assertType("Derived_T<Int>", "this", "Derived_T<Int>");
-//        assertType("Derived_T<Int>", "super<Base_T>", "Base_T<Int>");
+        // assertType("Derived_T<Int>", "super<Base_T>", "Base_T<Int>");
     }
 
     public void testLoops() {
@@ -454,9 +455,9 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         assertType("true && false", "Boolean");
         assertType("true || false", "Boolean");
         assertType("null ?: false", "Boolean");
-//        assertType("WithPredicate()?isValid()", "WithPredicate?");
-//        assertType("WithPredicate()?isValid(1)", "WithPredicate?");
-//        assertType("WithPredicate()?p", "WithPredicate?");
+        // assertType("WithPredicate()?isValid()", "WithPredicate?");
+        // assertType("WithPredicate()?isValid(1)", "WithPredicate?");
+        // assertType("WithPredicate()?p", "WithPredicate?");
     }
 
     public void testSupertypes() {
@@ -480,7 +481,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         assertSubtype("Base_inT<out Any?>", "Base_inT<out Int>");
     }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void assertSupertypes(String typeStr, String... supertypeStrings) {
         Set<KotlinType> allSupertypes = TypeUtils.getAllSupertypes(makeType(scopeWithImports, typeStr));
@@ -506,7 +507,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
             typesToIntersect.add(makeType(type));
         }
         KotlinType result = TypeIntersector.intersectTypes(typesToIntersect);
-//        assertNotNull("Intersection is null for " + typesToIntersect, result);
+        // assertNotNull("Intersection is null for " + typesToIntersect, result);
         assertEquals(makeType(expected), result);
     }
 
@@ -531,7 +532,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
 
     private void assertType(String expression, KotlinType expectedType) {
         Project project = getProject();
-        KtExpression ktExpression = KtPsiFactoryKt.KtPsiFactory(project).createExpression(expression);
+        KtExpression ktExpression = new KtPsiFactory(project).createExpression(expression);
         KotlinType type = expressionTypingServices.getType(
                 scopeWithImports, ktExpression, TypeUtils.NO_EXPECTED_TYPE,
                 DataFlowInfoFactory.EMPTY, InferenceSession.Companion.getDefault(),
@@ -561,11 +562,11 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
 
     private void assertType(LexicalScope scope, String expression, String expectedTypeStr) {
         Project project = getProject();
-        KtExpression ktExpression = KtPsiFactoryKt.KtPsiFactory(project).createExpression(expression);
+        KtExpression ktExpression = new KtPsiFactory(project).createExpression(expression);
         KotlinType type = expressionTypingServices.getType(
                 scope, ktExpression, TypeUtils.NO_EXPECTED_TYPE,
                 DataFlowInfoFactory.EMPTY, InferenceSession.Companion.getDefault(),
-                new BindingTraceContext()
+                new BindingTraceContext(project)
         );
         KotlinType expectedType = expectedTypeStr == null ? null : makeType(expectedTypeStr);
         assertEquals(expectedType, type);
@@ -573,7 +574,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
 
     @NotNull
     private LexicalScope getDeclarationsScope() throws IOException {
-        KtFile ktFile = KotlinTestUtils.loadJetFile(getProject(), new File("compiler/testData/type-checker-test.kt"));
+        KtFile ktFile = KotlinTestUtils.loadKtFile(getProject(), new File("compiler/testData/type-checker-test.kt"));
         AnalysisResult result = JvmResolveUtil.analyze(ktFile, getEnvironment());
         //noinspection ConstantConditions
         return result.getBindingContext().get(BindingContext.LEXICAL_SCOPE, ktFile);
@@ -584,6 +585,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
     }
 
     private KotlinType makeType(LexicalScope scope, String typeStr) {
-        return typeResolver.resolveType(scope, KtPsiFactoryKt.KtPsiFactory(getProject()).createType(typeStr), DummyTraces.DUMMY_TRACE, true);
+        KtTypeReference typeReference = new KtPsiFactory(getProject()).createType(typeStr);
+        return typeResolver.resolveTypeWithPossibleIntersections(scope, typeReference, DummyTraces.DUMMY_TRACE);
     }
 }

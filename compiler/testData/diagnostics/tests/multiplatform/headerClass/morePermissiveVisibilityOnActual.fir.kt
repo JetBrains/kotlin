@@ -1,20 +1,22 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FIR2IR
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // MODULE: m1-common
 // FILE: common.kt
 
-expect open class Container {
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> open class Container {
     fun publicFun()
 
     internal fun internalFun1()
     internal fun internalFun2()
-    internal fun internalFun3()
+    internal fun <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>internalFun3<!>()
 
     protected fun protectedFun1()
     protected fun protectedFun2()
-    protected fun protectedFun3()
+    protected fun <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>protectedFun3<!>()
 
-    open internal fun openInternalFun()
-    open fun openPublicFun()
+    open internal fun <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>openInternalFun<!>()
+    open fun <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>openPublicFun<!>()
 }
 
 // MODULE: m2-jvm()()(m1-common)
@@ -30,9 +32,9 @@ actual open class Container {
     actual fun protectedFun1() {}           // OK: protected -> public
     actual protected fun protectedFun2() {} // OK: protected -> protected
 
-    <!ACTUAL_WITHOUT_EXPECT!>actual internal fun protectedFun3() {}<!>  // BAD: protected -> internal
-    <!ACTUAL_WITHOUT_EXPECT!>actual protected fun internalFun3() {}<!>  // BAD: internal -> protected
+    actual internal fun <!ACTUAL_WITHOUT_EXPECT!>protectedFun3<!>() {}  // BAD: protected -> internal
+    actual protected fun <!ACTUAL_WITHOUT_EXPECT!>internalFun3<!>() {}  // BAD: internal -> protected
 
-    <!ACTUAL_WITHOUT_EXPECT!>actual open fun openInternalFun() {}<!>    // BAD: internal+open -> public
-    <!ACTUAL_WITHOUT_EXPECT!>actual internal fun openPublicFun() {}<!>  // BAD: open+public -> internal
+    actual open fun <!ACTUAL_WITHOUT_EXPECT!>openInternalFun<!>() {}    // BAD: internal+open -> public
+    actual internal fun <!ACTUAL_WITHOUT_EXPECT!>openPublicFun<!>() {}  // BAD: open+public -> internal
 }

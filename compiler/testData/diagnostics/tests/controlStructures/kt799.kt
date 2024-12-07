@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-799 Allow 'return' expressions in conditionals assigned to variables
 
 package kt799

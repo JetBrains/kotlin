@@ -1,0 +1,48 @@
+FILE: annotationsOnDataClassCopy.kt
+    public final annotation class NoTarget : R|kotlin/Annotation| {
+        public constructor(): R|NoTarget| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|)) public final annotation class Param : R|kotlin/Annotation| {
+        public constructor(): R|Param| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|)) public final annotation class Prop : R|kotlin/Annotation| {
+        public constructor(): R|Prop| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|)) public final annotation class Both : R|kotlin/Annotation| {
+        public constructor(): R|Both| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final data class Foo : R|kotlin/Any| {
+        public constructor(@R|NoTarget|() @R|Param|() @R|Both|() p1: R|kotlin/Int|, @CONSTRUCTOR_PARAMETER:R|NoTarget|() @CONSTRUCTOR_PARAMETER:R|Both|() p2: R|kotlin/String|, p3: R|kotlin/Boolean|): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|Prop|() public final val p1: R|kotlin/Int| = R|<local>/p1|
+            public get(): R|kotlin/Int|
+
+        public final val p2: R|kotlin/String| = R|<local>/p2|
+            public get(): R|kotlin/String|
+
+        @PROPERTY:R|NoTarget|() @PROPERTY:R|Both|() public final val p3: R|kotlin/Boolean| = R|<local>/p3|
+            public get(): R|kotlin/Boolean|
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final operator fun component2(): R|kotlin/String|
+
+        public final operator fun component3(): R|kotlin/Boolean|
+
+        public final fun copy(@R|NoTarget|() @R|Param|() @R|Both|() p1: R|kotlin/Int| = this@R|/Foo|.R|/Foo.p1|, @R|NoTarget|() @R|Both|() p2: R|kotlin/String| = this@R|/Foo|.R|/Foo.p2|, p3: R|kotlin/Boolean| = this@R|/Foo|.R|/Foo.p3|): R|Foo|
+
+    }

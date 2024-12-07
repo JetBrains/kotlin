@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,8 +15,9 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitTyp
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.mpp.FirExpectActualMatcherProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.*
+import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 
-class FirTotalResolveProcessor(session: FirSession) {
+class FirTotalResolveProcessor(private val session: FirSession) {
     val scopeSession: ScopeSession = ScopeSession()
 
     private val processors: List<FirResolveProcessor> = createAllCompilerResolveProcessors(
@@ -27,17 +28,22 @@ class FirTotalResolveProcessor(session: FirSession) {
     fun process(files: List<FirFile>) {
         for (processor in processors) {
             processor.beforePhase()
-            when (processor) {
-                is FirTransformerBasedResolveProcessor -> {
-                    for (file in files) {
-                        processor.processFile(file)
+            try {
+                when (processor) {
+                    is FirTransformerBasedResolveProcessor -> {
+                        for (file in files) {
+                            withFileAnalysisExceptionWrapping(file) {
+                                processor.processFile(file)
+                            }
+                        }
+                    }
+                    is FirGlobalResolveProcessor -> {
+                        processor.process(files)
                     }
                 }
-                is FirGlobalResolveProcessor -> {
-                    processor.process(files)
-                }
+            } finally {
+                processor.afterPhase()
             }
-            processor.afterPhase()
         }
     }
 }
@@ -57,9 +63,10 @@ private inline fun <T : FirResolveProcessor> createAllResolveProcessors(
 ): List<T> {
     @Suppress("NAME_SHADOWING")
     val scopeSession = scopeSession ?: ScopeSession()
-    val phases = FirResolvePhase.values().filter {
+    val phases = FirResolvePhase.entries.filter {
         !it.noProcessor
     }
+
     return phases.map { it.creator(scopeSession) }
 }
 
@@ -76,9 +83,10 @@ fun FirResolvePhase.createCompilerProcessorByPhase(
         SEALED_CLASS_INHERITORS -> FirSealedClassInheritorsProcessor(session, scopeSession)
         TYPES -> FirTypeResolveProcessor(session, scopeSession)
         STATUS -> FirStatusResolveProcessor(session, scopeSession)
-        ARGUMENTS_OF_ANNOTATIONS -> FirAnnotationArgumentsResolveProcessor(session, scopeSession)
         CONTRACTS -> FirContractResolveProcessor(session, scopeSession)
         IMPLICIT_TYPES_BODY_RESOLVE -> FirImplicitTypeBodyResolveProcessor(session, scopeSession)
+        CONSTANT_EVALUATION -> FirConstantEvaluationProcessor(session, scopeSession)
+        ANNOTATION_ARGUMENTS -> FirAnnotationArgumentsProcessor(session, scopeSession)
         BODY_RESOLVE -> FirBodyResolveProcessor(session, scopeSession)
         EXPECT_ACTUAL_MATCHING -> FirExpectActualMatcherProcessor(session, scopeSession)
     }

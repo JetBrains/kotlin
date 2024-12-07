@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-3174 Call resolver doesn't understand type is not-nullable after ?. safe call
 package a

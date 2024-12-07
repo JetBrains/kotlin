@@ -1,4 +1,5 @@
-// !LANGUAGE: -RefineTypeCheckingOnAssignmentsToJavaFields
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -RefineTypeCheckingOnAssignmentsToJavaFields
 // WITH_STDLIB
 
 // FILE: Foo.java

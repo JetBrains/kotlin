@@ -29,14 +29,16 @@ class IrLazyConstructor(
     override val descriptor: ClassConstructorDescriptor,
     override var name: Name,
     override var visibility: DescriptorVisibility,
-    override val isInline: Boolean,
-    override val isExternal: Boolean,
-    override val isPrimary: Boolean,
-    override val isExpect: Boolean,
+    override var isInline: Boolean,
+    override var isExternal: Boolean,
+    override var isPrimary: Boolean,
+    override var isExpect: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
 ) : IrConstructor(), IrLazyFunctionBase {
-    override var parent: IrDeclarationParent by createLazyParent()
+    init {
+        this.contextReceiverParametersCount = descriptor.contextReceiverParameters.size
+    }
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 
@@ -45,18 +47,6 @@ class IrLazyConstructor(
     override var returnType: IrType by lazyVar(stubGenerator.lock) { createReturnType() }
 
     override val initialSignatureFunction: IrFunction? by createInitialSignatureFunction()
-
-    override var dispatchReceiverParameter: IrValueParameter? by lazyVar(stubGenerator.lock) {
-        createReceiverParameter(descriptor.dispatchReceiverParameter)
-    }
-
-    override var extensionReceiverParameter: IrValueParameter? by lazyVar(stubGenerator.lock) {
-        createReceiverParameter(descriptor.extensionReceiverParameter)
-    }
-
-    override var valueParameters: List<IrValueParameter> by lazyVar(stubGenerator.lock) { createValueParameters() }
-
-    override var contextReceiverParametersCount: Int = descriptor.contextReceiverParameters.size
 
     override var metadata: MetadataSource?
         get() = null

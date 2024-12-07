@@ -6,7 +6,7 @@ public open class A</*0*/ T : kotlin.Any!> {
     public constructor A</*0*/ T : kotlin.Any!>()
     @androidx.annotation.Nullable public final var field: kotlin.String?
     @androidx.annotation.NonNull public open fun bar(): kotlin.String
-    @androidx.annotation.Nullable public open fun baz(/*0*/ @androidx.annotation.NonNull x: T): T?
+    @androidx.annotation.Nullable public open fun baz(/*0*/ @androidx.annotation.NonNull x: T & Any): T?
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @androidx.annotation.Nullable public open fun foo(/*0*/ @androidx.annotation.NonNull x: kotlin.String, /*1*/ @androidx.annotation.Nullable y: kotlin.CharSequence?): kotlin.String?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

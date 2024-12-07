@@ -1,4 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: JS
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 
 var demoCallCounter = 0
 

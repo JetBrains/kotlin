@@ -1,9 +1,10 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun import() {
     <!FUNCTION_CALL_EXPECTED!>import<!> <!UNRESOLVED_REFERENCE!>a<!><!SYNTAX!>.<!><!UNRESOLVED_REFERENCE!>*<!><!SYNTAX!><!>
 }
 
 fun composite() {
-    val s = 13<!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!><!SYNTAX!>~<!><!UNRESOLVED_REFERENCE!>/<!>12
+    val s = 13+<!SYNTAX!>~<!><!UNRESOLVED_REFERENCE!>/<!>12
 }
 
 fun html() {

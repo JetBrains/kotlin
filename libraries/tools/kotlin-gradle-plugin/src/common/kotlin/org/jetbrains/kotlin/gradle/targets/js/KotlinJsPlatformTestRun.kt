@@ -11,22 +11,22 @@ import org.jetbrains.kotlin.gradle.plugin.CompilationExecutionSource
 import org.jetbrains.kotlin.gradle.plugin.CompilationExecutionSourceSupport
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetTestRun
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmSubTargetContainerDsl
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testing.KotlinReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.testing.KotlinTaskTestRun
 import org.jetbrains.kotlin.gradle.testing.requireCompilationOfTarget
+import javax.inject.Inject
 import kotlin.properties.Delegates
 
-class JsCompilationExecutionSource(override val compilation: KotlinJsCompilation) :
-    CompilationExecutionSource<KotlinJsCompilation>
+class JsCompilationExecutionSource(override val compilation: KotlinJsIrCompilation) :
+    CompilationExecutionSource<KotlinJsIrCompilation>
 
 open class KotlinJsPlatformTestRun(testRunName: String, target: KotlinTarget) :
     KotlinTaskTestRun<JsCompilationExecutionSource, KotlinJsTest>(testRunName, target),
-    CompilationExecutionSourceSupport<KotlinJsCompilation> {
+    CompilationExecutionSourceSupport<KotlinJsIrCompilation> {
 
     private var _executionSource: JsCompilationExecutionSource by Delegates.notNull()
 
@@ -37,7 +37,7 @@ open class KotlinJsPlatformTestRun(testRunName: String, target: KotlinTarget) :
             _executionSource = value
         }
 
-    override fun setExecutionSourceFrom(compilation: KotlinJsCompilation) {
+    override fun setExecutionSourceFrom(compilation: KotlinJsIrCompilation) {
         requireCompilationOfTarget(compilation, target)
 
         executionSource = JsCompilationExecutionSource(compilation)
@@ -51,14 +51,14 @@ class JsAggregatingExecutionSource(private val aggregatingTestRun: KotlinJsRepor
         get() = aggregatingTestRun.getConfiguredExecutions().map { it.executionSource }
 }
 
-open class KotlinJsReportAggregatingTestRun(
+abstract class KotlinJsReportAggregatingTestRun @Inject constructor(
     testRunName: String,
-    override val target: KotlinJsSubTargetContainerDsl
+    override val target: KotlinJsSubTargetContainerDsl,
 ) : KotlinReportAggregatingTestRun<JsCompilationExecutionSource, JsAggregatingExecutionSource, KotlinJsPlatformTestRun>(testRunName),
     KotlinTargetTestRun<JsAggregatingExecutionSource>,
-    CompilationExecutionSourceSupport<KotlinJsCompilation> {
+    CompilationExecutionSourceSupport<KotlinJsIrCompilation> {
 
-    override fun setExecutionSourceFrom(compilation: KotlinJsCompilation) = configureAllExecutions {
+    override fun setExecutionSourceFrom(compilation: KotlinJsIrCompilation) = configureAllExecutions {
         setExecutionSourceFrom(compilation)
     }
 
@@ -68,12 +68,10 @@ open class KotlinJsReportAggregatingTestRun(
     private fun KotlinJsSubTargetDsl.getChildTestExecution() = testRuns.maybeCreate(testRunName)
 
     override fun getConfiguredExecutions(): Iterable<KotlinJsPlatformTestRun> = mutableListOf<KotlinJsPlatformTestRun>().apply {
-        if (target.isNodejsConfigured) {
-            add(target.nodejs.getChildTestExecution())
-        }
-        if (target.isBrowserConfigured) {
-            add(target.browser.getChildTestExecution())
-        }
+        target.subTargets
+            .configureEach { subTarget ->
+                add(subTarget.getChildTestExecution())
+            }
     }
 
     override fun configureAllExecutions(configure: KotlinJsPlatformTestRun.() -> Unit) {
@@ -81,9 +79,9 @@ open class KotlinJsReportAggregatingTestRun(
             configure(getChildTestExecution())
         }
 
-        target.whenBrowserConfigured { doConfigureInChildren(this) }
-        target.whenNodejsConfigured { doConfigureInChildren(this) }
-        (target as? KotlinWasmSubTargetContainerDsl)?.whenD8Configured { doConfigureInChildren(this) }
+        target.subTargets.configureEach { subTarget ->
+            doConfigureInChildren(subTarget)
+        }
     }
 
     override fun filter(configureFilter: Closure<*>) = filter { target.project.configure(this, configureFilter) }

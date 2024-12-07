@@ -6,17 +6,25 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinJvmCompilationAssociator
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinJvmCompilerOptionsFactory
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
-open class KotlinJvmCompilationFactory(
-    val target: KotlinJvmTarget
+open class KotlinJvmCompilationFactory internal constructor(
+    final override val target: KotlinJvmTarget
 ) : KotlinCompilationFactory<KotlinJvmCompilation> {
+
+    private val compilationImplFactory: KotlinCompilationImplFactory =
+        KotlinCompilationImplFactory(
+            compilerOptionsFactory = KotlinJvmCompilerOptionsFactory,
+            compilationAssociator = KotlinJvmCompilationAssociator,
+        )
+
     override val itemClass: Class<KotlinJvmCompilation>
         get() = KotlinJvmCompilation::class.java
 
-    override fun create(name: String): KotlinJvmCompilation =
-        KotlinJvmCompilation(
-            DefaultCompilationDetailsWithRuntime(target, name) { KotlinJvmOptionsImpl() }
-        )
+    override fun create(name: String): KotlinJvmCompilation {
+        return target.project.objects.newInstance(KotlinJvmCompilation::class.java, compilationImplFactory.create(target, name))
+    }
 }

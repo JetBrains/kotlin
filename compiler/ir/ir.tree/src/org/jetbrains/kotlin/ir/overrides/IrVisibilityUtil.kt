@@ -7,32 +7,27 @@ package org.jetbrains.kotlin.ir.overrides
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
-import org.jetbrains.kotlin.ir.declarations.IrOverridableMember
+import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
 
-// The contents of this file is from VisibilityUtil.kt adapted to IR.
-// TODO: The code would better be commonized for descriptors, ir and fir.
+val IrDeclarationWithVisibility.isNonPrivate: Boolean
+    get() = visibility == DescriptorVisibilities.PUBLIC
+            || visibility == DescriptorVisibilities.PROTECTED
+            || visibility == DescriptorVisibilities.INTERNAL
 
-fun isVisibleForOverride(
-    @Suppress("UNUSED_PARAMETER") overriding: IrOverridableMember,
-    fromSuper: IrOverridableMember
-): Boolean {
-    return !DescriptorVisibilities.isPrivate((fromSuper as IrDeclarationWithVisibility).visibility)
-}
+fun IrDeclarationWithVisibility.isEffectivelyPrivate(): Boolean {
+    return when {
+        isNonPrivate -> parentClassOrNull?.isEffectivelyPrivate() ?: false
 
-fun findMemberWithMaxVisibility(members: Collection<IrOverridableMember>): IrOverridableMember {
-    assert(members.isNotEmpty())
+        visibility == DescriptorVisibilities.INVISIBLE_FAKE -> {
+            val overridesOnlyPrivateDeclarations = (this as? IrOverridableDeclaration<*>)
+                ?.overriddenSymbols
+                ?.all { (it.owner as? IrDeclarationWithVisibility)?.isEffectivelyPrivate() == true }
+                ?: false
 
-    var member: IrOverridableMember? = null
-    for (candidate in members) {
-        if (member == null) {
-            member = candidate
-            continue
+            overridesOnlyPrivateDeclarations || (parentClassOrNull?.isEffectivelyPrivate() ?: false)
         }
 
-        val result = DescriptorVisibilities.compare(member.visibility, candidate.visibility)
-        if (result != null && result < 0) {
-            member = candidate
-        }
+        else -> true
     }
-    return member ?: error("Could not find a visible member")
 }

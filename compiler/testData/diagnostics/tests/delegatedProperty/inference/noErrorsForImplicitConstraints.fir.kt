@@ -1,10 +1,11 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package foo
 
 import kotlin.reflect.KProperty
 
 class A {
-    var a5: String by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>MyProperty1()<!>
-    var b5: String by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>getMyProperty1()<!>
+    var a5: String <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> MyProperty1()
+    var b5: String <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> getMyProperty1()
 }
 
 fun <A, B> getMyProperty1() = MyProperty1<A, B>()
@@ -23,8 +24,8 @@ class MyProperty1<T, R> {
 // -----------------
 
 class B {
-    var a5: String by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>MyProperty2()<!>
-    var b5: String by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>getMyProperty2()<!>
+    var a5: String <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> MyProperty2()
+    var b5: String <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> getMyProperty2()
 }
 
 fun <A, B> getMyProperty2() = MyProperty2<A, B>()

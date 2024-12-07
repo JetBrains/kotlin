@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+
 // FILE: delegatedImplementationOfJavaInterface.kt
 
 class Test(private val j: J) : J by j

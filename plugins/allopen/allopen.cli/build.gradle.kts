@@ -24,6 +24,8 @@ dependencies {
     runtimeOnly(kotlinStdlib())
 }
 
+optInToExperimentalCompilerApi()
+
 sourceSets {
     "main" { projectDefault() }
     "test" { none() }

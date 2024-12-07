@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Foo(val bar: String?)
 
 fun test(foo: Foo?) {

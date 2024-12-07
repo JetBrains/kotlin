@@ -1,3 +1,14 @@
+fun testBreakDoWhile() {
+  var k: Int = 0
+  { // BLOCK
+    do// COMPOSITE {
+    when {
+      greater(arg0 = k, arg1 = 2) -> break
+    }
+    // }    while (less(arg0 = k, arg1 = 10))
+  }
+}
+
 fun testBreakFor() {
   val xs: IntArray = IntArray(size = 10, init = local fun <anonymous>(i: Int): Int {
     return i
@@ -5,9 +16,9 @@ fun testBreakFor() {
 )
   var k: Int = 0
   { // BLOCK
-    val tmp0_iterator: IntIterator = xs.iterator()
-    while (tmp0_iterator.hasNext()) { // BLOCK
-      val x: Int = tmp0_iterator.next()
+    val tmp_0: IntIterator = xs.iterator()
+    while (tmp_0.hasNext()) { // BLOCK
+      val x: Int = tmp_0.next()
       { // BLOCK
         when {
           greater(arg0 = k, arg1 = 2) -> break
@@ -22,45 +33,6 @@ fun testBreakWhile() {
   while (less(arg0 = k, arg1 = 10)) { // BLOCK
     when {
       greater(arg0 = k, arg1 = 2) -> break
-    }
-  }
-}
-
-fun testBreakDoWhile() {
-  var k: Int = 0
-  { // BLOCK
-    do// COMPOSITE {
-    when {
-      greater(arg0 = k, arg1 = 2) -> break
-    }
-    // }    while (less(arg0 = k, arg1 = 10))
-  }
-}
-
-fun testContinueFor() {
-  val xs: IntArray = IntArray(size = 10, init = local fun <anonymous>(i: Int): Int {
-    return i
-  }
-)
-  var k: Int = 0
-  { // BLOCK
-    val tmp0_iterator: IntIterator = xs.iterator()
-    while (tmp0_iterator.hasNext()) { // BLOCK
-      val x: Int = tmp0_iterator.next()
-      { // BLOCK
-        when {
-          greater(arg0 = k, arg1 = 2) -> continue
-        }
-      }
-    }
-  }
-}
-
-fun testContinueWhile() {
-  var k: Int = 0
-  while (less(arg0 = k, arg1 = 10)) { // BLOCK
-    when {
-      greater(arg0 = k, arg1 = 2) -> continue
     }
   }
 }
@@ -84,3 +56,32 @@ fun testContinueDoWhile() {
     EQEQ(arg0 = s, arg1 = "1;2;").not() -> throw AssertionError(p0 = s)
   }
 }
+
+fun testContinueFor() {
+  val xs: IntArray = IntArray(size = 10, init = local fun <anonymous>(i: Int): Int {
+    return i
+  }
+)
+  var k: Int = 0
+  { // BLOCK
+    val tmp_1: IntIterator = xs.iterator()
+    while (tmp_1.hasNext()) { // BLOCK
+      val x: Int = tmp_1.next()
+      { // BLOCK
+        when {
+          greater(arg0 = k, arg1 = 2) -> continue
+        }
+      }
+    }
+  }
+}
+
+fun testContinueWhile() {
+  var k: Int = 0
+  while (less(arg0 = k, arg1 = 10)) { // BLOCK
+    when {
+      greater(arg0 = k, arg1 = 2) -> continue
+    }
+  }
+}
+

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE, -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE, -UNUSED_PARAMETER
 
 fun <T> takeFun(f: (T) -> Unit) {}
 fun <T, R> callFun(f: (T) -> R): R = TODO()
@@ -18,7 +19,7 @@ fun test() {
     callFun<String, Wrapper<String>>(::createWrapper)
     callFun<Int, Wrapper<Number>>(::createWrapper)
     callFun<String, Wrapper<*>>(::createWrapper)
-    <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>callFun<!><String, Wrapper<Int>>(::createWrapper)
+    callFun<String, Wrapper<Int>>(::createWrapper)
 
     callFun<Int, Wrapper<Int>>(::createWrapper).baz(::foo)
 }

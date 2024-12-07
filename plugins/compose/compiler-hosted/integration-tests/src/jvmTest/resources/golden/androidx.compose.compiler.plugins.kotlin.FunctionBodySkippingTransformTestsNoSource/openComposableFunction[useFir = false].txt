@@ -1,0 +1,39 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+open class Open {
+    @Composable open fun Test() {}
+}
+
+class Impl : Open() {
+    @Composable override fun Test() {
+        super.Test()
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 1)
+open class Open {
+  @Composable
+  open fun Test(%composer: Composer?, %changed: Int) {
+    %composer.startReplaceGroup(<>)
+    %composer.endReplaceGroup()
+  }
+  static val %stable: Int = 0
+}
+@StabilityInferred(parameters = 1)
+class Impl : Open {
+  @Composable
+  override fun Test(%composer: Composer?, %changed: Int) {
+    %composer.startReplaceGroup(<>)
+    super<Open>.Test(%composer, 0b1110 and %changed)
+    %composer.endReplaceGroup()
+  }
+  static val %stable: Int = 0
+}

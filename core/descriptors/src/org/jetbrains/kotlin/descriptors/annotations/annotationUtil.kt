@@ -29,7 +29,8 @@ import org.jetbrains.kotlin.types.Variance
 fun KotlinBuiltIns.createDeprecatedAnnotation(
         message: String,
         replaceWith: String = "",
-        level: String = "WARNING"
+        level: String = "WARNING",
+        forcePropagationDeprecationToOverrides: Boolean = false,
 ): AnnotationDescriptor {
     val replaceWithAnnotation = BuiltInAnnotationDescriptor(
         this,
@@ -52,7 +53,8 @@ fun KotlinBuiltIns.createDeprecatedAnnotation(
                         ClassId.topLevel(StandardNames.FqNames.deprecationLevel),
                         Name.identifier(level)
                     )
-            )
+            ),
+        forcePropagationDeprecationToOverrides,
     )
 }
 

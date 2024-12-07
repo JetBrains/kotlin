@@ -1,11 +1,13 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.lombok.k2.generators
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -16,10 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
@@ -47,37 +46,39 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
         val staticName = constructorInfo.staticName?.let { Name.identifier(it) }
 
         val substitutor: JavaTypeSubstitutor
+        val constructorSymbol: FirFunctionSymbol<*>
         val builder = if (staticName == null) {
             FirJavaConstructorBuilder().apply {
-                symbol = FirConstructorSymbol(classSymbol.classId.callableIdForConstructor())
+                containingClassSymbol = classSymbol
+                symbol = FirConstructorSymbol(classSymbol.classId.callableIdForConstructor()).also { constructorSymbol = it }
                 classSymbol.fir.typeParameters.mapTo(typeParameters) {
-                    buildConstructedClassTypeParameterRef { symbol = it.symbol }
+                    buildConstructedClassTypeParameterRef { this.symbol = it.symbol }
                 }
                 substitutor = JavaTypeSubstitutor.Empty
                 returnTypeRef = buildResolvedTypeRef {
-                    type = classSymbol.defaultType()
+                    coneType = classSymbol.defaultType()
                 }
                 isInner = classSymbol.isInner
                 isPrimary = false
                 isFromSource = true
-                annotationBuilder = { emptyList() }
             }
         } else {
             FirJavaMethodBuilder().apply {
+                containingClassSymbol = classSymbol
                 name = staticName
-                val methodSymbol = FirNamedFunctionSymbol(CallableId(classSymbol.classId, staticName))
+                val methodSymbol = FirNamedFunctionSymbol(CallableId(classSymbol.classId, staticName)).also { constructorSymbol = it }
                 symbol = methodSymbol
 
                 val classTypeParameterSymbols = classSymbol.fir.typeParameters.map { it.symbol }
                 classTypeParameterSymbols.mapTo(typeParameters) {
                     buildTypeParameterCopy(it.fir) {
-                        symbol = FirTypeParameterSymbol()
+                        this.symbol = FirTypeParameterSymbol()
                         containingDeclarationSymbol = methodSymbol
                     }
                 }
 
                 val javaClass = classSymbol.fir as FirJavaClass
-                val javaTypeParametersFromClass = javaClass.javaTypeParameterStack
+                val javaTypeParametersFromClass = javaClass.classJavaTypeParameterStack
                     .filter { it.value in classTypeParameterSymbols }
                     .map { it.key }
 
@@ -85,7 +86,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                     .associate { (parameter, javaParameter) -> parameter.symbol to JavaTypeParameterStub(javaParameter) }
 
                 for ((parameter, javaParameter) in functionTypeParameterToJavaTypeParameter) {
-                    javaClass.javaTypeParameterStack.addParameter(javaParameter, parameter)
+                    javaClass.classJavaTypeParameterStack.addParameter(javaParameter, parameter)
                 }
 
                 val javaTypeSubstitution: Map<JavaClassifier, JavaType> = javaTypeParametersFromClass
@@ -96,12 +97,11 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
 
                 substitutor = JavaTypeSubstitutorByMap(javaTypeSubstitution)
                 returnTypeRef = buildResolvedTypeRef {
-                    type = classSymbol.classId.defaultType(functionTypeParameterToJavaTypeParameter.keys.toList())
+                    coneType = classSymbol.classId.defaultType(functionTypeParameterToJavaTypeParameter.keys.toList())
                 }
 
                 isStatic = true
                 isFromSource = true
-                annotationBuilder = { emptyList() }
             }
         }
 
@@ -125,11 +125,12 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                         is FirJavaTypeRef -> buildJavaTypeRef {
                             type = substitutor.substituteOrSelf(typeRef.type)
                             annotationBuilder = { emptyList() }
+                            source = classSymbol.source?.fakeElement(KtFakeSourceElementKind.Enhancement)
                         }
                         else -> typeRef
                     }
+                    containingDeclarationSymbol = constructorSymbol
                     name = field.name
-                    annotationBuilder = { emptyList() }
                     isVararg = false
                     isFromSource = true
                 }
@@ -179,7 +180,7 @@ private class JavaClassifierTypeStub(
 }
 
 private class JavaTypeParameterTypeStub(
-    override val classifier: JavaTypeParameter
+    override val classifier: JavaTypeParameter,
 ) : JavaClassifierType {
     override val annotations: Collection<JavaAnnotation>
         get() = emptyList()
@@ -216,7 +217,7 @@ private class JavaTypeSubstitutorByMap(val map: Map<JavaClassifier, JavaType>) :
         var hasNewArguments = false
         val newArguments = type.typeArguments.map { argument ->
             if (argument == null) return@map null
-            val newArgument = substituteOrNull(argument)
+            val newArgument = substituteOrSelf(argument)
             if (newArgument !== argument) {
                 hasNewArguments = true
                 newArgument

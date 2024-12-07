@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// DISABLE_JAVA_FACADE
 // WITH_STDLIB
 // FULL_JDK
 
@@ -5,15 +7,15 @@
 public interface Plugin {}
 
 // FILE: IdeaPlugin.java
-import java.io.File
-import java.util.Set
+import java.io.File;
+import java.util.Set;
 
 public interface IdeaPlugin extends Plugin {
-    Set<File> getExcludeDirs()
+    Set<File> getExcludeDirs();
 }
 
 // FILE: PluginContainer.java
-import javax.annotation.Nullable
+import javax.annotation.Nullable;
 
 public interface PluginContainer {
     @Nullable

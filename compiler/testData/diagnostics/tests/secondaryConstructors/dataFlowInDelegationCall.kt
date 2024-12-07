@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 class A {
     constructor(x: Any, y: Any, z: Any)
     constructor(x: String?, y: String?): this(x!!, <!DEBUG_INFO_SMARTCAST!>x<!>.length.toString() + y!!, "") {

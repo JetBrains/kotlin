@@ -1,6 +1,7 @@
 // -- Module: <m1-common> --
 package
 
+public fun TODO(): kotlin.Nothing
 public fun </*0*/ T> lazy(/*0*/ initializer: () -> T): Lazy<T>
 
 public interface Lazy</*0*/ out T> {
@@ -79,6 +80,7 @@ public expect object OuterObject {
 // -- Module: <m2-jvm> --
 package
 
+public fun TODO(): kotlin.Nothing
 public fun </*0*/ T> lazy(/*0*/ initializer: () -> T): Lazy<T>
 
 public interface Lazy</*0*/ out T> {

@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR
 
 enum class A { V1 }
 
@@ -81,11 +81,7 @@ fun testLambdaResultExpression_throws(a: A) {
             A.V1 -> 1
             // else -> throw
         }
-    }()
+    }.let { it() }
 }
 
-// JVM_TEMPLATES
-// 7 ATHROW
-
-// JVM_IR_TEMPLATES
 // 3 ATHROW

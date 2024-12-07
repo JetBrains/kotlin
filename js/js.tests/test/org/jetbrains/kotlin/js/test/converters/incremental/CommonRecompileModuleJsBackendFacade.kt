@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.converters.incremental
 
+import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.TestRunner
@@ -50,6 +51,9 @@ abstract class CommonRecompileModuleJsBackendFacade<R : ResultingArtifact.Fronte
             configure(module)
         }
 
+        // The incremental configuration creates its own test root disposable. It needs to be properly handled to avoid disposable leaks.
+        Disposer.register(testServices.testConfiguration.rootDisposable, incrementalConfiguration.rootDisposable)
+
         val moduleStructure = testServices.moduleStructure
         val incrementalModule = module.copy(files = filesToRecompile)
         val incrementalModuleStructure = TestModuleStructureImpl(
@@ -71,9 +75,14 @@ abstract class CommonRecompileModuleJsBackendFacade<R : ResultingArtifact.Fronte
 
         incrementalServices.register(module)
 
-        incrementalRunner.processModule(incrementalModule, incrementalDependencyProvider)
-        incrementalRunner.reportFailures(incrementalServices)
-        val incrementalArtifact = incrementalDependencyProvider.getArtifact(incrementalModule, ArtifactKinds.Js)
+        val incrementalArtifact = try {
+            incrementalRunner.processModule(incrementalModule, incrementalDependencyProvider)
+            incrementalRunner.reportFailures(incrementalServices)
+            incrementalDependencyProvider.getArtifact(incrementalModule, ArtifactKinds.Js)
+        } finally {
+            Disposer.dispose(incrementalConfiguration.rootDisposable)
+        }
+
         return BinaryArtifacts.Js.IncrementalJsArtifact(inputArtifact, incrementalArtifact)
     }
 

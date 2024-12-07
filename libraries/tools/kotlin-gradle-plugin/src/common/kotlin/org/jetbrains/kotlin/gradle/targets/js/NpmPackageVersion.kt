@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
-import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 
 data class NpmPackageVersion(val name: String, var version: String) : RequiredKotlinJsDependency {
-    override fun createDependency(project: Project, scope: NpmDependency.Scope): Dependency =
-        NpmDependency(project, name, version, scope)
+    override fun createDependency(objectFactory: ObjectFactory, scope: NpmDependency.Scope): Dependency =
+        NpmDependency(objectFactory, scope, name, version)
 }

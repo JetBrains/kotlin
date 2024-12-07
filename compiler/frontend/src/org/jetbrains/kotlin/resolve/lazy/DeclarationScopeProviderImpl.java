@@ -47,7 +47,7 @@ public class DeclarationScopeProviderImpl implements DeclarationScopeProvider {
         KtDeclaration ktDeclaration = KtStubbedPsiUtil.getPsiOrStubParent(elementOfDeclaration, KtDeclaration.class, false);
 
         assert !(elementOfDeclaration instanceof KtDeclaration) || ktDeclaration == elementOfDeclaration :
-                "For JetDeclaration element getParentOfType() should return itself.";
+                "For KtDeclaration element getParentOfType() should return itself.";
         assert ktDeclaration != null : "Should be contained inside declaration.";
 
         KtDeclaration parentDeclaration = KtStubbedPsiUtil.getContainingDeclaration(ktDeclaration);

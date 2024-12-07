@@ -1,5 +1,14 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // constructor vs. fun overload
 
+// FILE: constructorVsFun/J.java
+package constructorVsFun;
+
+public class J {
+    public J(String s) {}
+}
+
+// FILE: test.kt
 package constructorVsFun
 
 class a<!CONFLICTING_OVERLOADS!>()<!> { }
@@ -27,3 +36,5 @@ class Rtyu {
         class ololo() { }
     }
 }
+
+fun J(s: String) { }

@@ -8,9 +8,8 @@ plugins {
 dependencies {
     embedded(project(":kotlin-compiler-runner-unshaded")) { isTransitive = false }
 
-    api(project(":kotlin-build-common"))
     api(project(":kotlin-daemon-client"))
-    api(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+    api(libs.kotlinx.coroutines.core) { isTransitive = false }
 
     runtimeOnly(project(":kotlin-compiler-embeddable"))
 }

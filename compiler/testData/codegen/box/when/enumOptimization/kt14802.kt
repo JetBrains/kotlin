@@ -1,8 +1,3 @@
-// CHECK_CASES_COUNT: function=crash count=2 TARGET_BACKENDS=JS
-// CHECK_CASES_COUNT: function=crash count=0 IGNORED_BACKENDS=JS
-// CHECK_IF_COUNT: function=crash count=1 TARGET_BACKENDS=JS
-// CHECK_IF_COUNT: function=crash count=3 IGNORED_BACKENDS=JS
-
 class EncapsulatedEnum<T : Enum<T>>(val value: T)
 
 enum class MyEnum(val value: String) {

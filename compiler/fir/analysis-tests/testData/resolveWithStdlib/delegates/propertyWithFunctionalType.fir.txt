@@ -18,7 +18,7 @@ FILE: propertyWithFunctionalType.kt
                 ^ this@R|/A|.D|/A.conventer|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|(B) -> B|>|(this@R|/A|, ::R|/A.conventer|)
             }
             public set(<set-?>: R|(B) -> B|): R|kotlin/Unit| {
-                this@R|/A|.D|/A.conventer|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/A|, ::R|/A.conventer|, R|<local>/conventer|)
+                ^ this@R|/A|.D|/A.conventer|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/A|, ::R|/A.conventer|, R|<local>/conventer|)
             }
 
         public final var conventerWithExpectedType: R|(B) -> B|by this@R|/A|.R|/A.property|<R|(B) -> B|>(property@fun <anonymous>(it: R|B|): R|B| <inline=NoInline>  {
@@ -26,10 +26,10 @@ FILE: propertyWithFunctionalType.kt
         }
         )
             public get(): R|(B) -> B| {
-                ^ this@R|/A|.D|/A.conventerWithExpectedType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|Stub (chain inference): TypeVariable(_T)|>|(this@R|/A|, ::R|/A.conventerWithExpectedType|)
+                ^ this@R|/A|.D|/A.conventerWithExpectedType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|(B) -> B|>|(this@R|/A|, ::R|/A.conventerWithExpectedType|)
             }
             public set(<set-?>: R|(B) -> B|): R|kotlin/Unit| {
-                this@R|/A|.D|/A.conventerWithExpectedType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/A|, ::R|/A.conventerWithExpectedType|, R|<local>/conventerWithExpectedType|)
+                ^ this@R|/A|.D|/A.conventerWithExpectedType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/A|, ::R|/A.conventerWithExpectedType|, R|<local>/conventerWithExpectedType|)
             }
 
     }

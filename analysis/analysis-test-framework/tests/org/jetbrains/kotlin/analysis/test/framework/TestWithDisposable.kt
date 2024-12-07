@@ -12,16 +12,16 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
 
 abstract class TestWithDisposable {
-    private var _disposable: Disposable? = null
+    private var _disposable: Disposable? = Disposer.newDisposable("Disposable for Analysis Api tests")
     protected val disposable: Disposable get() = _disposable!!
 
     @BeforeEach
-    private fun initDisposable(testInfo: TestInfo) {
+    fun initDisposable(testInfo: TestInfo) {
         _disposable = Disposer.newDisposable("disposable for ${testInfo.displayName}")
     }
 
     @AfterEach
-    private fun disposeDisposable() {
+    fun disposeDisposable() {
         _disposable?.let { Disposer.dispose(it) }
         _disposable = null
     }

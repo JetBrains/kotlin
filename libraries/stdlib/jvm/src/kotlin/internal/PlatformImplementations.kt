@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -47,28 +47,8 @@ internal open class PlatformImplementations {
 
 
 @JvmField
-internal val IMPLEMENTATIONS: PlatformImplementations = run {
-    val version = getJavaVersion()
-    if (version >= 0x10008 || version < 0x10000) {
-        try {
-            return@run castToBaseType<PlatformImplementations>(Class.forName("kotlin.internal.jdk8.JDK8PlatformImplementations").newInstance())
-        } catch (e: ClassNotFoundException) { }
-        try {
-            return@run castToBaseType<PlatformImplementations>(Class.forName("kotlin.internal.JRE8PlatformImplementations").newInstance())
-        } catch (e: ClassNotFoundException) { }
-    }
-
-    if (version >= 0x10007 || version < 0x10000) {
-        try {
-            return@run castToBaseType<PlatformImplementations>(Class.forName("kotlin.internal.jdk7.JDK7PlatformImplementations").newInstance())
-        } catch (e: ClassNotFoundException) { }
-        try {
-            return@run castToBaseType<PlatformImplementations>(Class.forName("kotlin.internal.JRE7PlatformImplementations").newInstance())
-        } catch (e: ClassNotFoundException) { }
-    }
-
-    PlatformImplementations()
-}
+internal val IMPLEMENTATIONS: PlatformImplementations =
+    castToBaseType<PlatformImplementations>(kotlin.internal.jdk8.JDK8PlatformImplementations())
 
 @kotlin.internal.InlineOnly
 private inline fun <reified T : Any> castToBaseType(instance: Any): T {
@@ -84,25 +64,6 @@ private inline fun <reified T : Any> castToBaseType(instance: Any): T {
     }
 }
 
-private fun getJavaVersion(): Int {
-    val default = 0x10006
-    val version = System.getProperty("java.specification.version") ?: return default
-    val firstDot = version.indexOf('.')
-    if (firstDot < 0)
-        return try { version.toInt() * 0x10000 } catch (e: NumberFormatException) { default }
-
-    var secondDot = version.indexOf('.', firstDot + 1)
-    if (secondDot < 0) secondDot = version.length
-
-    val firstPart = version.substring(0, firstDot)
-    val secondPart = version.substring(firstDot + 1, secondDot)
-    return try {
-        firstPart.toInt() * 0x10000 + secondPart.toInt()
-    } catch (e: NumberFormatException) {
-        default
-    }
-}
-
 /**
  * Constant check of api version used during compilation
  *
@@ -113,5 +74,5 @@ private fun getJavaVersion(): Int {
  */
 @PublishedApi
 @SinceKotlin("1.2")
-internal fun apiVersionIsAtLeast(major: Int, minor: Int, patch: Int) =
+internal fun apiVersionIsAtLeast(major: Int, minor: Int, patch: Int): Boolean =
     KotlinVersion.CURRENT.isAtLeast(major, minor, patch)

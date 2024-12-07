@@ -6,37 +6,50 @@
 package org.jetbrains.kotlin.test.runners.codegen
 
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 
-open class AbstractBlackBoxInlineCodegenTest : AbstractBlackBoxCodegenTest() {
+open class AbstractIrBlackBoxInlineCodegenWithBytecodeInlinerTest : AbstractIrBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.useInlineHandlers()
     }
 }
 
-open class AbstractIrBlackBoxInlineCodegenTest : AbstractIrBlackBoxCodegenTest() {
+open class AbstractIrBlackBoxInlineCodegenWithIrInlinerTest : AbstractIrBlackBoxCodegenTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.useInlineHandlers()
+        builder.useIrInliner()
+    }
+}
+
+open class AbstractFirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTest : AbstractFirLightTreeBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.useInlineHandlers()
     }
 }
 
-open class AbstractFirBlackBoxInlineCodegenTest : AbstractFirBlackBoxCodegenTest() {
+open class AbstractFirLightTreeBlackBoxInlineCodegenWithIrInlinerTest : AbstractFirLightTreeBlackBoxCodegenTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.useInlineHandlers()
+        builder.useIrInliner()
+    }
+}
+
+@FirPsiCodegenTest
+open class AbstractFirPsiBlackBoxInlineCodegenWithBytecodeInlinerTest : AbstractFirPsiBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.useInlineHandlers()
     }
 }
 
-open class AbstractFirLightTreeBlackBoxInlineCodegenTest : AbstractFirBlackBoxCodegenTest() {
+@FirPsiCodegenTest
+open class AbstractFirPsiBlackBoxInlineCodegenWithIrInlinerTest : AbstractFirPsiBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        with(builder) {
-            useInlineHandlers()
-            defaultDirectives {
-                +FirDiagnosticsDirectives.USE_LIGHT_TREE
-            }
-        }
+        builder.useInlineHandlers()
+        builder.useIrInliner()
     }
 }

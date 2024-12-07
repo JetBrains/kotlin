@@ -10,10 +10,13 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -21,7 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 
-object FirSealedSupertypeChecker : FirClassChecker() {
+object FirSealedSupertypeChecker : FirClassChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         // only the file declaration is present
         if (declaration.classId.isLocal) {
@@ -34,7 +37,7 @@ object FirSealedSupertypeChecker : FirClassChecker() {
     private fun checkGlobalDeclaration(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val subclassPackage = declaration.classId.packageFqName
         for (superTypeRef in declaration.superTypeRefs) {
-            val superClassId = superTypeRef.coneType.classId ?: continue
+            val superClassId = superTypeRef.coneType.fullyExpandedClassId(context.session) ?: continue
 
             if (superClassId.isLocal) {
                 continue
@@ -51,8 +54,7 @@ object FirSealedSupertypeChecker : FirClassChecker() {
             if (superClassPackage != subclassPackage) {
                 reporter.reportOn(superTypeRef.source, FirErrors.SEALED_INHERITOR_IN_DIFFERENT_PACKAGE, context)
             }
-            if (superClass.moduleData != declaration.moduleData) {
-                // TODO: implement logic like in org.jetbrains.kotlin.resolve.checkers.SealedInheritorInSameModuleChecker for MPP support.
+            if (superClass.moduleData != declaration.moduleData && !superClass.isExpect) {
                 reporter.reportOn(superTypeRef.source, FirErrors.SEALED_INHERITOR_IN_DIFFERENT_MODULE, context)
             }
         }
@@ -60,7 +62,7 @@ object FirSealedSupertypeChecker : FirClassChecker() {
 
     private fun checkLocalDeclaration(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         for (it in declaration.superTypeRefs) {
-            val classId = it.coneType.classId ?: continue
+            val classId = it.coneType.fullyExpandedClassId(context.session) ?: continue
 
             if (classId.isLocal) {
                 continue

@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // JSPECIFY_STATE: warn
-// !LANGUAGE: +TypeEnhancementImprovementsInStrictMode
+// LANGUAGE: +TypeEnhancementImprovementsInStrictMode
 // FILE: J1.java
 import org.jetbrains.annotations.Nullable;
 
@@ -10,7 +10,7 @@ public interface J1<T> {
 }
 
 // FILE: J2.java
-import org.jspecify.nullness.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public interface J2<V extends @Nullable Object> extends J1<V> { }
 

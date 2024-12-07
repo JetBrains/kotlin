@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 @file:JvmName("MultifileClass")
 @file:JvmMultifileClass
 <!ANNOTATION_IS_NOT_APPLICABLE_TO_MULTIFILE_CLASSES!>@file:FileAnn<!>

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 public fun bar(s: String) {
     System.out.println("Length of $s is ${s.length}")
 }

@@ -1,5 +1,4 @@
 // WITH_REFLECT
-// IGNORE_BACKEND_FIR: JVM_IR
 // ISSUE: KT-47760
 
 // FILE: MyRecord.java

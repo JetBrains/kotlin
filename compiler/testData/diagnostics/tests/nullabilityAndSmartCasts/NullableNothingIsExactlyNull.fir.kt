@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun test() {
   val out : Int? = null
   val x : Nothing? = null

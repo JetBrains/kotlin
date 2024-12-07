@@ -1,0 +1,39 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+fun Example(a: A) {
+    used(a)
+    Example { it -> a.compute(it) }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+fun Example(a: A) {
+  used(a)
+  Example(<block>{
+    class <no name provided> : A {
+      @Composable
+      override fun compute(it: Int, %composer: Composer?, %changed: Int) {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "C(compute)<comput...>:Test.kt")
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %changed, -1, <>)
+        }
+        a.compute(it, %composer, 0b1110 and %changed)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+        %composer.endReplaceGroup()
+      }
+    }
+    <no name provided>()
+  })
+}

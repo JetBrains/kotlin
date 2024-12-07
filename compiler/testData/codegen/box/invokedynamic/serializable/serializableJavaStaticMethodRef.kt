@@ -4,7 +4,6 @@
 // FULL_JDK
 
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 2 java/lang/invoke/LambdaMetafactory
 
 // FILE: serializableJavaStaticMethodRef.kt

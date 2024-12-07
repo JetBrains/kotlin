@@ -1,0 +1,24 @@
+appleMain
+  project :lib
+appleTest
+  project :lib
+commonMain
+  project :lib
+commonTest
+  project :lib
+iosArm64Main
+  project :lib
+iosArm64Test
+  project :lib
+iosMain
+  project :lib
+iosTest
+  project :lib
+jvmMain
+  project :lib
+jvmTest
+  project :lib
+nativeMain
+  project :lib
+nativeTest
+  project :lib

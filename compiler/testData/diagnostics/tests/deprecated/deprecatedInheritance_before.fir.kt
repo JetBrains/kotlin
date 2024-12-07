@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -StopPropagatingDeprecationThroughOverrides
 package foo
 
@@ -78,7 +79,7 @@ open class NWEH: NotDeprecated, WarningDeprecated, ErrorDeprecated, HiddenDeprec
 
 class WE2: WE()
 
-<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class NWE2<!>: WE(), NotDeprecated
+<!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class NWE2<!>: WE(), NotDeprecated
 
 class NWE3: WE(), NotDeprecated {
     override fun f() {

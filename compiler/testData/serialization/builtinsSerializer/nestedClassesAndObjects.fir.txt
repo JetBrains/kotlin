@@ -1,0 +1,40 @@
+package test
+
+public final class ClassA {
+    public constructor ClassA()
+
+    public companion object Companion {
+        private constructor Companion()
+        public final val stat: kotlin.Int
+
+        public final class D {
+            public constructor D()
+            public final val memberFromD: kotlin.Int
+        }
+    }
+
+    public object ObjA {
+        private constructor ObjA()
+        public final val memberFromObjA: kotlin.Int
+    }
+
+    public final class classB {
+        public constructor classB()
+        public final fun memberFromB(): kotlin.Int
+
+        public final class BC {
+            public constructor BC()
+            public final val memberFromBB: kotlin.Int
+        }
+
+        public object BO {
+            private constructor BO()
+            public final val memberFromBO: kotlin.Int
+        }
+    }
+
+    public final inner class classC {
+        public constructor classC()
+        public final val memberFromC: kotlin.Int
+    }
+}

@@ -15,21 +15,53 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.wasm.ir.*
 
 internal class WasmUsefulDeclarationProcessor(
     override val context: WasmBackendContext,
-    printReachabilityInfo: Boolean
-) : UsefulDeclarationProcessor(printReachabilityInfo, removeUnusedAssociatedObjects = false) {
+    printReachabilityInfo: Boolean,
+    dumpReachabilityInfoToFile: String?,
+) : UsefulDeclarationProcessor(printReachabilityInfo, removeUnusedAssociatedObjects = false, dumpReachabilityInfoToFile) {
 
-    private val unitGetInstance: IrSimpleFunction = context.findUnitGetInstanceFunction()
+    // The mapping from function for wrapping a kotlin closure/lambda with JS closure to function used to call a kotlin closure from JS side.
+    private val kotlinClosureToJsClosureConvertFunToKotlinClosureCallFun = context.fileContexts.mapValues { (_, fileContext) ->
+        fileContext.kotlinClosureToJsConverters.entries.associate { (k, v) -> v to fileContext.closureCallExports[k] }
+    }
 
     override val bodyVisitor: BodyVisitorBase = object : BodyVisitorBase() {
-        override fun visitConst(expression: IrConst<*>, data: IrDeclaration) = when (expression.kind) {
+        override fun visitConst(expression: IrConst, data: IrDeclaration) = when (expression.kind) {
             is IrConstKind.Null -> expression.type.enqueueType(data, "expression type")
             is IrConstKind.String -> context.wasmSymbols.stringGetLiteral.owner
                 .enqueue(data, "String literal intrinsic getter stringGetLiteral")
             else -> Unit
+        }
+
+        override fun visitVariable(declaration: IrVariable, data: IrDeclaration) {
+            declaration.type.enqueueType(data, "local variable type")
+            super.visitVariable(declaration, data)
+        }
+
+        override fun visitVararg(expression: IrVararg, data: IrDeclaration) {
+            expression.type.getClass()!!
+                .constructors
+                .firstOrNull { it.hasWasmPrimitiveConstructorAnnotation() }
+                ?.enqueue(data, "implicit vararg constructor")
+            super.visitVararg(expression, data)
+        }
+
+        override fun visitSetField(expression: IrSetField, data: IrDeclaration) {
+            if (!expression.symbol.owner.isObjectInstanceField()) {
+                super.visitSetField(expression, data)
+            }
+        }
+
+        override fun visitGetField(expression: IrGetField, data: IrDeclaration) {
+            val field = expression.symbol.owner
+
+            if (field.isObjectInstanceField()) {
+                field.type.classOrFail.owner.primaryConstructor?.enqueue(field, "object lazy initialization")
+            }
+
+            super.visitGetField(expression, data)
         }
 
         private fun tryToProcessIntrinsicCall(from: IrDeclaration, call: IrCall): Boolean = when (call.symbol) {
@@ -43,56 +75,38 @@ internal class WasmUsefulDeclarationProcessor(
                 }
                 true
             }
-            context.wasmSymbols.wasmClassId,
-            context.wasmSymbols.wasmInterfaceId,
-            context.wasmSymbols.refCast,
-            context.wasmSymbols.refTest -> {
-                call.getTypeArgument(0)?.getClass()?.enqueue(from, "generic intrinsic ${call.symbol.owner.name}")
+
+            context.wasmSymbols.wasmTypeId,
+            context.wasmSymbols.refCastNull,
+            context.wasmSymbols.refTest,
+            context.wasmSymbols.wasmArrayCopy -> {
+                call.getTypeArgument(0)?.enqueueRuntimeClassOrAny(from, "intrinsic ${call.symbol.owner.name}")
+                true
+            }
+            context.wasmSymbols.boxIntrinsic -> {
+                val type = call.getTypeArgument(0)!!
+                if (type == context.irBuiltIns.booleanType) {
+                    context.wasmSymbols.getBoxedBoolean.owner.enqueue(from, "intrinsic boxIntrinsic")
+                } else {
+                    type.enqueueRuntimeClassOrAny(from, "intrinsic boxIntrinsic")
+                }
+                true
+            }
+            context.wasmSymbols.boxBoolean -> {
+                context.irBuiltIns.booleanType.enqueueRuntimeClassOrAny(from, "intrinsic boxBoolean")
                 true
             }
             else -> false
         }
 
-        private fun tryToProcessWasmOpIntrinsicCall(from: IrDeclaration, call: IrCall, function: IrFunction): Boolean {
-            if (function.hasWasmNoOpCastAnnotation()) {
-                return true
-            }
-
-            val opString = function.getWasmOpAnnotation()
-            if (opString != null) {
-                val op = WasmOp.valueOf(opString)
-                when (op.immediates.size) {
-                    0 -> {
-                        if (op == WasmOp.REF_TEST || op == WasmOp.REF_TEST_STATIC) {
-                            call.getTypeArgument(0)?.enqueueRuntimeClassOrAny(from, "REF_TEST/REF_TEST_STATIC")
-                        }
-                    }
-                    1 -> {
-                        if (op.immediates.firstOrNull() == WasmImmediateKind.STRUCT_TYPE_IDX) {
-                            function.dispatchReceiverParameter?.type?.classOrNull?.owner?.enqueue(from, "STRUCT_TYPE_IDX")
-                        }
-                    }
-                }
-                return true
-            }
-            return false
-        }
-
         override fun visitCall(expression: IrCall, data: IrDeclaration) {
             super.visitCall(expression, data)
 
-            if (expression.symbol == context.wasmSymbols.boxIntrinsic) {
-                expression.getTypeArgument(0)?.enqueueRuntimeClassOrAny(data, "boxIntrinsic")
-                return
-            }
-
             val function: IrFunction = expression.symbol.owner.realOverrideTarget
-            if (function.returnType == context.irBuiltIns.unitType) {
-                unitGetInstance.enqueue(data, "function Unit return type")
-            }
 
             if (tryToProcessIntrinsicCall(data, expression)) return
-            if (tryToProcessWasmOpIntrinsicCall(data, expression, function)) return
+            if (function.hasWasmNoOpCastAnnotation()) return
+            if (function.getWasmOpAnnotation() != null) return
 
             val isSuperCall = expression.superQualifierSymbol != null
             if (function is IrSimpleFunction && function.isOverridable && !isSuperCall) {
@@ -105,20 +119,32 @@ internal class WasmUsefulDeclarationProcessor(
         }
     }
 
+    override fun handleAssociatedObjects() {
+        for (klass in classesWithObjectAssociations) {
+            if (removeUnusedAssociatedObjects && !klass.isReachable()) continue
+
+            for (annotation in klass.annotations) {
+                val annotationClass = annotation.symbol.owner.constructedClass
+                if (removeUnusedAssociatedObjects && !annotationClass.isReachable()) continue
+
+                annotation.associatedObject()?.let { obj ->
+                    context.mapping.objectToGetInstanceFunction[obj]?.enqueue(klass, "associated object factory")
+                }
+            }
+        }
+    }
+
     private fun IrType.getInlinedValueTypeIfAny(): IrType? = when (this) {
         context.irBuiltIns.booleanType,
         context.irBuiltIns.byteType,
         context.irBuiltIns.shortType,
         context.irBuiltIns.charType,
-        context.irBuiltIns.booleanType,
-        context.irBuiltIns.byteType,
-        context.irBuiltIns.shortType,
         context.irBuiltIns.intType,
-        context.irBuiltIns.charType,
         context.irBuiltIns.longType,
         context.irBuiltIns.floatType,
         context.irBuiltIns.doubleType,
         context.irBuiltIns.nothingType,
+        context.irBuiltIns.nothingNType,
         context.wasmSymbols.voidType -> null
         else -> when {
             isBuiltInWasmRefType(this) -> null
@@ -178,25 +204,36 @@ internal class WasmUsefulDeclarationProcessor(
 
         irFunction.getEffectiveValueParameters().forEach { it.enqueueValueParameterType(irFunction) }
         irFunction.returnType.enqueueType(irFunction, "function return type")
+
+        kotlinClosureToJsClosureConvertFunToKotlinClosureCallFun[irFunction.fileOrNull]?.get(irFunction)?.enqueue(
+            irFunction,
+            "kotlin closure to JS closure conversion",
+            false
+        )
     }
 
     override fun processSimpleFunction(irFunction: IrSimpleFunction) {
         super.processSimpleFunction(irFunction)
         irFunction.enqueueParentClass()
-        if (irFunction.isFakeOverride) {
-            irFunction.overriddenSymbols.forEach { overridden ->
-                overridden.owner.enqueue(irFunction, "original for fake-override")
-            }
-        }
         processIrFunction(irFunction)
     }
 
     override fun processConstructor(irConstructor: IrConstructor) {
         super.processConstructor(irConstructor)
-        if (!context.inlineClassesUtils.isClassInlineLike(irConstructor.parentAsClass)) {
+        val constructedClass = irConstructor.constructedClass
+        if (!context.inlineClassesUtils.isClassInlineLike(constructedClass)) {
             processIrFunction(irConstructor)
+        }
+
+        // Primitive constructors has no body, since that such constructors implicitly initialize all fields, so we have to preserve them
+        if (irConstructor.hasWasmPrimitiveConstructorAnnotation()) {
+            constructedClass.declarations.forEach { declaration ->
+                if (declaration is IrField) {
+                    declaration.enqueue(constructedClass, "preserve all fields for primitive constructors")
+                }
+            }
         }
     }
 
-    override fun isExported(declaration: IrDeclaration): Boolean = declaration.isJsExport()
+    override fun isExported(declaration: IrDeclaration): Boolean = (declaration is IrFunction && declaration.isExported())
 }

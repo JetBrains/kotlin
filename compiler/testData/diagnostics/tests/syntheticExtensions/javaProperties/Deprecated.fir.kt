@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass) {
     javaClass.<!DEPRECATION!>something1<!>
@@ -14,9 +15,9 @@ fun foo(javaClass: JavaClass) {
     javaClass.<!DEPRECATION!>something4<!> = 1
     javaClass.<!DEPRECATION, DEPRECATION!>something4<!>++
 
-    javaClass.something5
-    javaClass.something5 = 1
-    javaClass.something5++
+    javaClass.<!DEPRECATION!>something5<!>
+    javaClass.<!DEPRECATION!>something5<!> = 1
+    javaClass.<!DEPRECATION, DEPRECATION!>something5<!>++
 }
 
 // FILE: JavaClass.java

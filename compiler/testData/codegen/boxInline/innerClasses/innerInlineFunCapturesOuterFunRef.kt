@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 // FILE: 1.kt
 class E(val x: String) {
     fun bar() = x

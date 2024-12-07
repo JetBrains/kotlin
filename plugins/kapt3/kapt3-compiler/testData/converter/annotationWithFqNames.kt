@@ -1,14 +1,13 @@
 // CORRECT_ERROR_TYPES
-// NO_VALIDATION
 
-//FILE: lib/Anno.java
+// FILE: lib/Anno.java
 package lib;
 
 public @interface Anno {
     Class<?>[] impls() default {};
 }
 
-//FILE: lib/impl/Impl.java
+// FILE: lib/impl/Impl.java
 package lib.impl;
 
 public class Impl {}

@@ -1,4 +1,6 @@
+// FIR_IDENTICAL
 // TARGET_BACKEND: JVM
+
 // FILE: rawTypeInSignature.kt
 
 class GenericInv<T : Number>

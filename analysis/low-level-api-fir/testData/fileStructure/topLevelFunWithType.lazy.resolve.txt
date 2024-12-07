@@ -1,0 +1,5 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] topLevelFunWithType.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
+        <Unresolved name: println>#(String())
+        ^foo Int(10)
+    }

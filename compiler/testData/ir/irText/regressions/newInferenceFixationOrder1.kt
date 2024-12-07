@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+
 fun <X, Y> foo(): (X) -> Y = TODO()
 
 interface Inv2<A, B>

@@ -5,17 +5,19 @@
 
 package org.jetbrains.kotlin.diagnostics
 
+import com.google.common.annotations.VisibleForTesting
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticParameterRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
 import org.jetbrains.kotlin.diagnostics.rendering.renderParameter
 import java.text.MessageFormat
 
 sealed interface KtDiagnosticRenderer {
+    @VisibleForTesting val message: String
     fun render(diagnostic: KtDiagnostic): String
     fun renderParameters(diagnostic: KtDiagnostic): Array<out Any?>
 }
 
-class SimpleKtDiagnosticRenderer(private val message: String) : KtDiagnosticRenderer {
+class SimpleKtDiagnosticRenderer(override val message: String) : KtDiagnosticRenderer {
     override fun render(diagnostic: KtDiagnostic): String {
         require(diagnostic is KtSimpleDiagnostic)
         return message
@@ -28,7 +30,7 @@ class SimpleKtDiagnosticRenderer(private val message: String) : KtDiagnosticRend
 }
 
 sealed class AbstractKtDiagnosticWithParametersRenderer(
-    protected val message: String
+    final override val message: String
 ) : KtDiagnosticRenderer {
     private val messageFormat = MessageFormat(message)
 

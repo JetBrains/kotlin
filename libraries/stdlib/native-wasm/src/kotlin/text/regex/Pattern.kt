@@ -23,6 +23,8 @@
 @file:Suppress("DEPRECATION") // Char.toInt()
 package kotlin.text.regex
 
+import kotlin.experimental.ExperimentalNativeApi
+
 /** Represents a compiled pattern used by [Regex] for matching, searching, or replacing strings. */
 internal class Pattern(val pattern: String, flags: Int = 0) {
 
@@ -194,6 +196,7 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
     /**
      * T->aaa
      */
+    @OptIn(ExperimentalNativeApi::class)
     private fun processSequence(): AbstractSet {
         val substring = StringBuilder()
         while (!lexemes.isEmpty()
@@ -349,115 +352,68 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
         return cur
     }
 
+    private fun quantifierFromLexerToken(quant: Int): Quantifier {
+        return when (quant) {
+            Lexer.QUANT_COMP, Lexer.QUANT_COMP_R, Lexer.QUANT_COMP_P -> {
+                lexemes.nextSpecial() as Quantifier
+            }
+            else -> {
+                lexemes.next()
+                Quantifier.fromLexerToken(quant)
+            }
+        }
+    }
+
     /**
      * Q->T(*|+|?...) also do some optimizations.
      */
     private fun processQuantifier(last: AbstractSet, term: AbstractSet): AbstractSet {
         val quant = lexemes.currentChar
 
-        if (term !is LeafSet) {
-            return when (quant) {
-                Lexer.QUANT_STAR, Lexer.QUANT_PLUS -> {
-                    val q: QuantifierSet
+        if (term.type == AbstractSet.TYPE_DOTSET && (quant == Lexer.QUANT_STAR || quant == Lexer.QUANT_PLUS)) {
+            lexemes.next()
+            return DotQuantifierSet(term, last, quant, AbstractLineTerminator.getInstance(flags), hasFlag(Pattern.DOTALL))
+        }
 
-                    lexemes.next()
-                    if (term.type == AbstractSet.TYPE_DOTSET) {
-                        q = DotQuantifierSet(term, last, quant, AbstractLineTerminator.getInstance(flags), hasFlag(Pattern.DOTALL))
-                    } else {
-                        q = GroupQuantifierSet(Quantifier.fromLexerToken(quant), term, last, quant, groupQuantifierCount++)
-                    }
-                    term.next = q
-                    q
+        return when (quant) {
+
+            Lexer.QUANT_STAR, Lexer.QUANT_PLUS, Lexer.QUANT_ALT, Lexer.QUANT_COMP -> {
+                val quantifier = quantifierFromLexerToken(quant)
+                when {
+                    term is LeafSet ->
+                        LeafQuantifierSet(quantifier, term, last, quant)
+                    term.consumesFixedLength ->
+                        FixedLengthQuantifierSet(quantifier, term, last, quant)
+                    else ->
+                        GroupQuantifierSet(quantifier, term, last, quant, groupQuantifierCount++)
                 }
-
-                Lexer.QUANT_ALT -> {
-                    lexemes.next()
-                    val q = GroupQuantifierSet(Quantifier.fromLexerToken(quant), term, last, quant, groupQuantifierCount++)
-                    term.next = q
-                    q
-                }
-
-                Lexer.QUANT_STAR_R, Lexer.QUANT_PLUS_R, Lexer.QUANT_ALT_R -> {
-                    lexemes.next()
-                    val q = ReluctantGroupQuantifierSet(Quantifier.fromLexerToken(quant), term, last, quant, groupQuantifierCount++)
-                    term.next = q
-                    q
-                }
-
-                Lexer.QUANT_PLUS_P, Lexer.QUANT_STAR_P, Lexer.QUANT_ALT_P  -> {
-                    lexemes.next()
-                    PossessiveGroupQuantifierSet(Quantifier.fromLexerToken(quant), term, last, quant, groupQuantifierCount++)
-                }
-
-                Lexer.QUANT_COMP -> {
-                    val q = GroupQuantifierSet(lexemes.nextSpecial() as Quantifier, term, last, Lexer.QUANT_ALT, groupQuantifierCount++)
-                    term.next = q
-                    q
-                }
-
-                Lexer.QUANT_COMP_R -> {
-                    val q = ReluctantGroupQuantifierSet(lexemes.nextSpecial() as Quantifier, term, last, Lexer.QUANT_ALT, groupQuantifierCount++)
-                    term.next = q
-                    q
-                }
-
-                Lexer.QUANT_COMP_P -> {
-                    return PossessiveGroupQuantifierSet(lexemes.nextSpecial() as Quantifier, term, last, Lexer.QUANT_ALT, groupQuantifierCount++)
-                }
-
-                else -> term
             }
-        } else {
-            val leaf: LeafSet = term
-            return when (quant) {
-                Lexer.QUANT_STAR, Lexer.QUANT_PLUS -> {
-                    lexemes.next()
-                    val q = LeafQuantifierSet(Quantifier.fromLexerToken(quant), leaf, last, quant)
-                    leaf.next = q
-                    q
-                }
 
-                Lexer.QUANT_STAR_R, Lexer.QUANT_PLUS_R -> {
-                    lexemes.next()
-                    val q = ReluctantLeafQuantifierSet(Quantifier.fromLexerToken(quant), leaf, last, quant)
-                    leaf.next = q
-                    q
+            Lexer.QUANT_STAR_R, Lexer.QUANT_PLUS_R, Lexer.QUANT_ALT_R, Lexer.QUANT_COMP_R -> {
+                val quantifier = quantifierFromLexerToken(quant)
+                when {
+                    term is LeafSet ->
+                        ReluctantLeafQuantifierSet(quantifier, term, last, quant)
+                    term.consumesFixedLength ->
+                        ReluctantFixedLengthQuantifierSet(quantifier, term, last, quant)
+                    else ->
+                        ReluctantGroupQuantifierSet(quantifier, term, last, quant, groupQuantifierCount++)
                 }
-
-                Lexer.QUANT_PLUS_P, Lexer.QUANT_STAR_P -> {
-                    lexemes.next()
-                    val q = PossessiveLeafQuantifierSet(Quantifier.fromLexerToken(quant), leaf, last, quant)
-                    leaf.next = q
-                    q
-                }
-
-                Lexer.QUANT_ALT -> {
-                    lexemes.next()
-                    LeafQuantifierSet(Quantifier.altQuantifier, leaf, last, Lexer.QUANT_ALT)
-                }
-
-                Lexer.QUANT_ALT_R -> {
-                    lexemes.next()
-                    ReluctantLeafQuantifierSet(Quantifier.altQuantifier, leaf, last, Lexer.QUANT_ALT_R)
-                }
-
-                Lexer.QUANT_ALT_P -> {
-                    lexemes.next()
-                    PossessiveLeafQuantifierSet(Quantifier.altQuantifier, leaf, last, Lexer.QUANT_ALT_P)
-                }
-
-                Lexer.QUANT_COMP -> {
-                    LeafQuantifierSet(lexemes.nextSpecial() as Quantifier, leaf, last, Lexer.QUANT_COMP)
-                }
-                Lexer.QUANT_COMP_R -> {
-                    ReluctantLeafQuantifierSet(lexemes.nextSpecial() as Quantifier, leaf, last, Lexer.QUANT_COMP_R)
-                }
-                Lexer.QUANT_COMP_P -> {
-                    ReluctantLeafQuantifierSet(lexemes.nextSpecial() as Quantifier, leaf, last, Lexer.QUANT_COMP_P)
-                }
-
-                else -> term
             }
+
+            Lexer.QUANT_PLUS_P, Lexer.QUANT_STAR_P, Lexer.QUANT_ALT_P, Lexer.QUANT_COMP_P -> {
+                val quantifier = quantifierFromLexerToken(quant)
+                when {
+                    term is LeafSet ->
+                        PossessiveLeafQuantifierSet(quantifier, term, last, quant)
+                    term.consumesFixedLength ->
+                        PossessiveFixedLengthQuantifierSet(quantifier, term, last, quant)
+                    else ->
+                        PossessiveGroupQuantifierSet(quantifier, term, last, quant, groupQuantifierCount++)
+                }
+            }
+
+            else -> term
         }
     }
 
@@ -834,6 +790,7 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
         return RangeSet(charClass, hasFlag(CASE_INSENSITIVE))
     }
 
+    @OptIn(ExperimentalNativeApi::class)
     private fun processCharSet(ch: Int): AbstractSet {
         val isSupplCodePoint = Char.isSupplementaryCodePoint(ch)
 
@@ -852,50 +809,50 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
          * This constant specifies that a pattern matches Unix line endings ('\n')
          * only against the '.', '^', and '$' meta characters.
          */
-        val UNIX_LINES = 1 shl 0
+        const val UNIX_LINES = 1 shl 0
 
         /**
          * This constant specifies that a `Pattern` is matched
          * case-insensitively. That is, the patterns "a+" and "A+" would both match
          * the string "aAaAaA".
          */
-        val CASE_INSENSITIVE = 1 shl 1
+        const val CASE_INSENSITIVE = 1 shl 1
 
         /**
          * This constant specifies that a `Pattern` may contain whitespace or
          * comments. Otherwise comments and whitespace are taken as literal
          * characters.
          */
-        val COMMENTS = 1 shl 2
+        const val COMMENTS = 1 shl 2
 
         /**
          * This constant specifies that the meta characters '^' and '$' match only
          * the beginning and end end of an input line, respectively. Normally, they
          * match the beginning and the end of the complete input.
          */
-        val MULTILINE = 1 shl 3
+        const val MULTILINE = 1 shl 3
 
         /**
          * This constant specifies that the whole `Pattern` is to be taken
          * literally, that is, all meta characters lose their meanings.
          */
-        val LITERAL = 1 shl 4
+        const val LITERAL = 1 shl 4
 
         /**
          * This constant specifies that the '.' meta character matches arbitrary
          * characters, including line endings, which is normally not the case.
          */
-        val DOTALL = 1 shl 5
+        const val DOTALL = 1 shl 5
 
         /**
          * This constant specifies that a character in a `Pattern` and a
          * character in the input string only match if they are canonically
          * equivalent.
          */
-        val CANON_EQ = 1 shl 6
+        const val CANON_EQ = 1 shl 6
 
         /** A bit mask that includes all defined match flags */
-        internal val flagsBitMask = Pattern.UNIX_LINES or
+        internal const val flagsBitMask = Pattern.UNIX_LINES or
                 Pattern.CASE_INSENSITIVE or
                 Pattern.COMMENTS or
                 Pattern.MULTILINE or

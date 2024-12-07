@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.jvm.abi
 
-import kotlinx.metadata.*
-import kotlinx.metadata.jvm.JvmClassExtensionVisitor
-import kotlinx.metadata.jvm.JvmPackageExtensionVisitor
-import kotlinx.metadata.jvm.KotlinClassHeader
-import kotlinx.metadata.jvm.KotlinClassMetadata
+import kotlin.metadata.*
+import kotlin.metadata.jvm.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -18,7 +15,14 @@ import org.jetbrains.org.objectweb.asm.Opcodes
  * Wrap the visitor for a Kotlin Metadata annotation to strip out private and local
  * functions, properties, and type aliases as well as local delegated properties.
  */
-fun abiMetadataProcessor(annotationVisitor: AnnotationVisitor): AnnotationVisitor =
+fun abiMetadataProcessor(
+    annotationVisitor: AnnotationVisitor,
+    removeDataClassCopyIfConstructorIsPrivate: Boolean,
+    preserveDeclarationOrder: Boolean,
+    classesToBeDeleted: Set<String>,
+    pruneClass: Boolean,
+    treatInternalAsPrivate: Boolean,
+): AnnotationVisitor =
     kotlinClassHeaderVisitor { header ->
         // kotlinx-metadata only supports writing Kotlin metadata of version >= 1.4, so we need to
         // update the metadata version if we encounter older metadata annotations.
@@ -28,23 +32,46 @@ fun abiMetadataProcessor(annotationVisitor: AnnotationVisitor): AnnotationVisito
             major > 1 || major == 1 && minor >= 4
         } ?: intArrayOf(1, 4)
 
-        val newHeader = when (val metadata = KotlinClassMetadata.read(header)) {
-            is KotlinClassMetadata.Class -> {
-                val writer = KotlinClassMetadata.Class.Writer()
-                metadata.accept(AbiKmClassVisitor(writer))
-                writer.write(metadataVersion, header.extraInt).header
+        val newHeader = runCatching {
+            KotlinClassMetadata.transform(header) { metadata ->
+                when (metadata) {
+                    is KotlinClassMetadata.Class -> {
+                        metadata.kmClass.removePrivateDeclarations(
+                            removeDataClassCopyIfConstructorIsPrivate,
+                            preserveDeclarationOrder,
+                            classesToBeDeleted,
+                            pruneClass,
+                            treatInternalAsPrivate,
+                        )
+                    }
+                    is KotlinClassMetadata.FileFacade -> {
+                        metadata.kmPackage.removePrivateDeclarations(preserveDeclarationOrder, pruneClass, treatInternalAsPrivate)
+                    }
+                    is KotlinClassMetadata.MultiFileClassPart -> {
+                        metadata.kmPackage.removePrivateDeclarations(preserveDeclarationOrder, pruneClass, treatInternalAsPrivate)
+                    }
+                    else -> Unit
+                }
             }
-            is KotlinClassMetadata.FileFacade -> {
-                val writer = KotlinClassMetadata.FileFacade.Writer()
-                metadata.accept(AbiKmPackageVisitor(writer))
-                writer.write(metadataVersion, header.extraInt).header
+        }.getOrElse { cause ->
+            // TODO: maybe jvm-abi-gen should throw this exception by default, and not only in tests.
+            if (System.getProperty("idea.is.unit.test").toBoolean()) {
+                val actual = "${metadataVersion[0]}.${metadataVersion[1]}"
+                val expected = JvmMetadataVersion.LATEST_STABLE_SUPPORTED.toString()
+                throw AssertionError(
+                    "jvm-abi-gen can't process class file with the new metadata version because the version of kotlinx-metadata-jvm " +
+                            "it depends on is too old.\n" +
+                            "Class file has metadata version $actual, but default metadata version of kotlinx-metadata-jvm is " +
+                            "$expected, so it can process class files with metadata version up to +1 from that (because of " +
+                            "Kotlin/JVM's one-version forward compatibility policy).\n" +
+                            "To fix this error, ensure that jvm-abi-gen depends on the latest version of kotlinx-metadata-jvm.\n" +
+                            "If this happens during the update of the default language version in the project, make sure that " +
+                            "a version of kotlinx-metadata-jvm has been published that supports this version, and update " +
+                            "\"versions.kotlinx-metadata-jvm\" in `gradle/versions.properties`.",
+                    cause
+                )
             }
-            is KotlinClassMetadata.MultiFileClassPart -> {
-                val writer = KotlinClassMetadata.MultiFileClassPart.Writer()
-                metadata.accept(AbiKmPackageVisitor(writer))
-                writer.write(metadata.facadeClassName, metadataVersion, header.extraInt).header
-            }
-            else -> header
+            header
         }
 
         // Write out the stripped annotation
@@ -54,7 +81,7 @@ fun abiMetadataProcessor(annotationVisitor: AnnotationVisitor): AnnotationVisito
 /**
  * Parse a KotlinClassHeader from an existing Kotlin Metadata annotation visitor.
  */
-private fun kotlinClassHeaderVisitor(body: (KotlinClassHeader) -> Unit): AnnotationVisitor =
+private fun kotlinClassHeaderVisitor(body: (Metadata) -> Unit): AnnotationVisitor =
     object : AnnotationVisitor(Opcodes.API_VERSION) {
         var kind: Int = 1
         var metadataVersion: IntArray = intArrayOf()
@@ -89,7 +116,7 @@ private fun kotlinClassHeaderVisitor(body: (KotlinClassHeader) -> Unit): Annotat
 
         override fun visitEnd() {
             body(
-                KotlinClassHeader(
+                Metadata(
                     kind,
                     metadataVersion,
                     data1.toTypedArray(),
@@ -105,7 +132,7 @@ private fun kotlinClassHeaderVisitor(body: (KotlinClassHeader) -> Unit): Annotat
 /**
  * Serialize a KotlinClassHeader to an existing Kotlin Metadata annotation visitor.
  */
-private fun AnnotationVisitor.visitKotlinMetadata(header: KotlinClassHeader) {
+private fun AnnotationVisitor.visitKotlinMetadata(header: Metadata) {
     visit(KIND_FIELD_NAME, header.kind)
     visit(METADATA_VERSION_FIELD_NAME, header.metadataVersion)
     if (header.data1.isNotEmpty()) {
@@ -132,79 +159,64 @@ private fun AnnotationVisitor.visitKotlinMetadata(header: KotlinClassHeader) {
     visitEnd()
 }
 
-/**
- * Class metadata adapter which removes private functions, properties, type aliases,
- * and local delegated properties.
- */
-private class AbiKmClassVisitor(delegate: KmClassVisitor) : KmClassVisitor(delegate) {
-    override fun visitConstructor(flags: Flags): KmConstructorVisitor? {
-        if (!isPrivateDeclaration(flags))
-            return super.visitConstructor(flags)
-        return null
+private fun KmClass.removePrivateDeclarations(
+    removeCopyAlongWithConstructor: Boolean,
+    preserveDeclarationOrder: Boolean,
+    classesToBeDeleted: Set<String>,
+    pruneClass: Boolean,
+    treatInternalAsPrivate: Boolean,
+) {
+    constructors.removeIf { pruneClass || it.visibility.shouldRemove(treatInternalAsPrivate) }
+    (this as KmDeclarationContainer).removePrivateDeclarations(
+        copyFunShouldBeDeleted(removeCopyAlongWithConstructor),
+        preserveDeclarationOrder,
+        pruneClass,
+        treatInternalAsPrivate,
+    )
+    nestedClasses.removeIf { "$name\$$it" in classesToBeDeleted }
+    companionObject = companionObject.takeUnless { "$name\$$it" in classesToBeDeleted }
+    localDelegatedProperties.clear()
+    // TODO: do not serialize private type aliases once KT-17229 is fixed.
+}
+
+private fun KmPackage.removePrivateDeclarations(
+    preserveDeclarationOrder: Boolean,
+    pruneClass: Boolean,
+    treatInternalAsPrivate: Boolean,
+) {
+    (this as KmDeclarationContainer).removePrivateDeclarations(false, preserveDeclarationOrder, pruneClass, treatInternalAsPrivate)
+    localDelegatedProperties.clear()
+    // TODO: do not serialize private type aliases once KT-17229 is fixed.
+}
+
+private fun KmDeclarationContainer.removePrivateDeclarations(
+    copyFunShouldBeDeleted: Boolean,
+    preserveDeclarationOrder: Boolean,
+    pruneClass: Boolean,
+    treatInternalAsPrivate: Boolean,
+) {
+    functions.removeIf { pruneClass || it.visibility.shouldRemove(treatInternalAsPrivate) || (copyFunShouldBeDeleted && it.name == "copy") }
+    properties.removeIf { pruneClass || it.visibility.shouldRemove(treatInternalAsPrivate) }
+
+    if (!preserveDeclarationOrder) {
+        functions.sortWith(compareBy(KmFunction::name, { it.signature.toString() }))
+        properties.sortWith(compareBy(KmProperty::name, { it.getterSignature.toString() }))
     }
 
-    override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? {
-        if (!isPrivateDeclaration(flags))
-            return super.visitFunction(flags, name)
-        return null
-    }
-
-    override fun visitProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor? {
-        if (!isPrivateDeclaration(flags))
-            return super.visitProperty(flags, name, getterFlags, setterFlags)
-        return null
-    }
-
-    override fun visitTypeAlias(flags: Flags, name: String): KmTypeAliasVisitor? {
-        if (!isPrivateDeclaration(flags))
-            return super.visitTypeAlias(flags, name)
-        return null
-    }
-
-    override fun visitExtensions(type: KmExtensionType): KmClassExtensionVisitor? {
-        val delegate = super.visitExtensions(type)
-        if (type != JvmClassExtensionVisitor.TYPE) return delegate
-        return object : JvmClassExtensionVisitor(delegate as JvmClassExtensionVisitor?) {
-            override fun visitLocalDelegatedProperty(
-                flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags
-            ): KmPropertyVisitor? = null
+    for (property in properties) {
+        // Whether or not the *non-const* property is initialized by a compile-time constant is not a part of the ABI.
+        if (!property.isConst) {
+            property.hasConstant = false
         }
     }
 }
 
-/**
- * Class metadata adapter which removes private functions, properties, type aliases,
- * and local delegated properties.
- */
-private class AbiKmPackageVisitor(delegate: KmPackageVisitor) : KmPackageVisitor(delegate) {
-    override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? {
-        if (!isPrivateDeclaration(flags))
-            return super.visitFunction(flags, name)
-        return null
-    }
+private fun KmClass.copyFunShouldBeDeleted(removeDataClassCopy: Boolean): Boolean =
+    removeDataClassCopy && isData && constructors.none { !it.isSecondary }
 
-    override fun visitProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor? {
-        if (!isPrivateDeclaration(flags))
-            return super.visitProperty(flags, name, getterFlags, setterFlags)
-        return null
-    }
-
-    override fun visitTypeAlias(flags: Flags, name: String): KmTypeAliasVisitor? {
-        if (!isPrivateDeclaration(flags))
-            return super.visitTypeAlias(flags, name)
-        return null
-    }
-
-    override fun visitExtensions(type: KmExtensionType): KmPackageExtensionVisitor? {
-        val delegate = super.visitExtensions(type)
-        if (type != JvmPackageExtensionVisitor.TYPE) return delegate
-        return object : JvmPackageExtensionVisitor(delegate as JvmPackageExtensionVisitor?) {
-            override fun visitLocalDelegatedProperty(
-                flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags
-            ): KmPropertyVisitor? = null
-        }
-    }
+private fun Visibility.shouldRemove(treatInternalAsPrivate: Boolean): Boolean {
+    return this == Visibility.PRIVATE ||
+            this == Visibility.PRIVATE_TO_THIS ||
+            this == Visibility.LOCAL ||
+            (treatInternalAsPrivate && this == Visibility.INTERNAL)
 }
-
-private fun isPrivateDeclaration(flags: Flags): Boolean =
-    Flag.IS_PRIVATE(flags) || Flag.IS_PRIVATE_TO_THIS(flags) || Flag.IS_LOCAL(flags)

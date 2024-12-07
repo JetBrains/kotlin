@@ -16,6 +16,7 @@ public open class EnumArgumentWithCustomToString {
         public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.EnumArgumentWithCustomToString.E!>!
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.EnumArgumentWithCustomToString.E>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.EnumArgumentWithCustomToString.E
         public final /*synthesized*/ fun values(): kotlin.Array<test.EnumArgumentWithCustomToString.E>
     }

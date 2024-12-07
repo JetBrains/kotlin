@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ConfigurationContainer
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -23,19 +24,21 @@ internal enum class KotlinDependencyScope(val scopeName: String) {
     RUNTIME_ONLY_SCOPE(RUNTIME_ONLY);
 
     companion object {
-        val compileScopes = listOf(KotlinDependencyScope.API_SCOPE, KotlinDependencyScope.IMPLEMENTATION_SCOPE, KotlinDependencyScope.COMPILE_ONLY_SCOPE)
+        val compileScopes = listOf(API_SCOPE, IMPLEMENTATION_SCOPE, COMPILE_ONLY_SCOPE)
     }
 }
 
-internal fun Project.sourceSetDependencyConfigurationByScope(sourceSet: HasKotlinDependencies, scope: KotlinDependencyScope): Configuration =
-    project.configurations.getByName(
-        when (scope) {
-            API_SCOPE -> sourceSet.apiConfigurationName
-            IMPLEMENTATION_SCOPE -> sourceSet.implementationConfigurationName
-            COMPILE_ONLY_SCOPE -> sourceSet.compileOnlyConfigurationName
-            RUNTIME_ONLY_SCOPE -> sourceSet.runtimeOnlyConfigurationName
-        }
-    )
+internal fun ConfigurationContainer.sourceSetDependencyConfigurationByScope(
+    kotlinDependenciesContainer: HasKotlinDependencies,
+    scope: KotlinDependencyScope
+): Configuration = getByName(
+    when (scope) {
+        API_SCOPE -> kotlinDependenciesContainer.apiConfigurationName
+        IMPLEMENTATION_SCOPE -> kotlinDependenciesContainer.implementationConfigurationName
+        COMPILE_ONLY_SCOPE -> kotlinDependenciesContainer.compileOnlyConfigurationName
+        RUNTIME_ONLY_SCOPE -> kotlinDependenciesContainer.runtimeOnlyConfigurationName
+    }
+)
 
 internal fun Project.compilationDependencyConfigurationByScope(
     compilation: KotlinCompilation<*>,
@@ -47,15 +50,5 @@ internal fun Project.compilationDependencyConfigurationByScope(
             IMPLEMENTATION_SCOPE -> compilation.implementationConfigurationName
             COMPILE_ONLY_SCOPE -> compilation.compileOnlyConfigurationName
             RUNTIME_ONLY_SCOPE -> compilation.runtimeOnlyConfigurationName
-        }
-    )
-
-internal fun Project.sourceSetMetadataConfigurationByScope(sourceSet: KotlinSourceSet, scope: KotlinDependencyScope): Configuration =
-    project.configurations.getByName(
-        when (scope) {
-            API_SCOPE -> sourceSet.apiMetadataConfigurationName
-            IMPLEMENTATION_SCOPE -> sourceSet.implementationMetadataConfigurationName
-            COMPILE_ONLY_SCOPE -> sourceSet.compileOnlyMetadataConfigurationName
-            RUNTIME_ONLY_SCOPE -> sourceSet.runtimeOnlyMetadataConfigurationName
         }
     )

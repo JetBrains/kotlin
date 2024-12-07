@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 var longWords = 0
 val smallWords = hashSetOf<String>()
 

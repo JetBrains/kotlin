@@ -1,0 +1,13 @@
+@kotlin.Metadata
+public final class SynchronizedObjectTest {
+    // source: 'SynchronizedObjectTest.kt'
+    public method <init>(): void
+    private final method bar(): java.lang.String
+    public final method testSync(): void
+}
+
+@kotlin.Metadata
+public final class SynchronizedObjectTestKt {
+    // source: 'SynchronizedObjectTest.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

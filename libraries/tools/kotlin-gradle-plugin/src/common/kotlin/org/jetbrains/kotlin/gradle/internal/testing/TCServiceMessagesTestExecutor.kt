@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.internal.testing
 import org.gradle.api.internal.tasks.testing.TestExecuter
 import org.gradle.api.internal.tasks.testing.TestExecutionSpec
 import org.gradle.api.internal.tasks.testing.TestResultProcessor
-import org.gradle.internal.operations.BuildOperationExecutor
 import org.gradle.process.ExecResult
 import org.gradle.process.ProcessForkOptions
 import org.gradle.process.internal.ExecHandle
@@ -24,7 +23,10 @@ open class TCServiceMessagesTestExecutionSpec(
     val clientSettings: TCServiceMessagesClientSettings,
     val dryRunArgs: List<String>? = null,
 ) : TestExecutionSpec {
-    internal open fun createClient(testResultProcessor: TestResultProcessor, log: Logger): TCServiceMessagesClient =
+    internal open fun createClient(
+        testResultProcessor: TestResultProcessor,
+        log: Logger,
+    ): TCServiceMessagesClient =
         TCServiceMessagesClient(testResultProcessor, clientSettings, log)
 
     internal open fun wrapExecute(body: () -> Unit) = body()
@@ -35,10 +37,9 @@ private val log = LoggerFactory.getLogger("org.jetbrains.kotlin.gradle.tasks.tes
 
 class TCServiceMessagesTestExecutor(
     val execHandleFactory: ExecHandleFactory,
-    val buildOperationExecutor: BuildOperationExecutor,
     val runListeners: MutableList<KotlinTestRunnerListener>,
     val ignoreTcsmOverflow: Boolean,
-    val ignoreRunFailures: Boolean
+    val ignoreRunFailures: Boolean,
 ) : TestExecuter<TCServiceMessagesTestExecutionSpec> {
     private lateinit var execHandle: ExecHandle
     var outputReaderThread: Thread? = null
@@ -46,25 +47,18 @@ class TCServiceMessagesTestExecutor(
 
     override fun execute(spec: TCServiceMessagesTestExecutionSpec, testResultProcessor: TestResultProcessor) {
         spec.wrapExecute {
-            val rootOperation = buildOperationExecutor.currentOperation.parentId!!
-
             val client = spec.createClient(testResultProcessor, log)
 
             if (spec.dryRunArgs != null) {
                 val exec = execHandleFactory.newExec()
                 spec.forkOptions.copyTo(exec)
-                exec.args = spec.dryRunArgs
-                // We do not need output by dry run of tests
+                // get rid of redundant output during dry-run
                 exec.standardOutput = object : OutputStream() {
                     override fun write(b: Int) {
                         // do nothing
                     }
                 }
-                exec.errorOutput = object : OutputStream() {
-                    override fun write(b: Int) {
-                        // do nothing
-                    }
-                }
+                exec.args = spec.dryRunArgs
                 execHandle = exec.build()
 
                 execHandle.start()
@@ -93,7 +87,7 @@ class TCServiceMessagesTestExecutor(
                 execHandle = exec.build()
 
                 lateinit var result: ExecResult
-                client.root(rootOperation) {
+                client.root {
                     execHandle.start()
                     result = execHandle.waitForFinish()
                 }
@@ -125,9 +119,5 @@ class TCServiceMessagesTestExecutor(
             execHandle.abort()
         }
         outputReaderThread?.join()
-    }
-
-    companion object {
-        const val TC_PROJECT_PROPERTY = "teamcity"
     }
 }

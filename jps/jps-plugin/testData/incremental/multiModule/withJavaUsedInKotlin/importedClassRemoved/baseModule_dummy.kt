@@ -1,0 +1,3 @@
+package packageInBase
+
+fun dummy() {}

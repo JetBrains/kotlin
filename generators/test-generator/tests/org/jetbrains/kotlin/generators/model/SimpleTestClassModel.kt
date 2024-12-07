@@ -33,6 +33,9 @@ class SimpleTestClassModel(
     override val annotations: Collection<AnnotationModel>,
     override val tags: List<String>,
     private val additionalMethods: Collection<MethodModel>,
+    val skipSpecificFile: (File) -> Boolean,
+    val skipTestAllFilesCheck: Boolean,
+    val generateEmptyTestClasses: Boolean,
 ) : TestClassModel() {
     override val name: String
         get() = testClassName
@@ -69,6 +72,9 @@ class SimpleTestClassModel(
                         annotations,
                         extractTagsFromDirectory(file),
                         additionalMethods.filter { it.shouldBeGeneratedForInnerTestClass() },
+                        skipSpecificFile,
+                        skipTestAllFilesCheck,
+                        generateEmptyTestClasses,
                     )
                 )
             }
@@ -104,22 +110,38 @@ class SimpleTestClassModel(
         }
         val result = mutableListOf<MethodModel>()
         result.add(RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName, additionalRunnerArguments))
-        result.add(TestAllFilesPresentMethodModel())
+        if (!skipTestAllFilesCheck) {
+            result.add(TestAllFilesPresentMethodModel())
+        }
         result.addAll(additionalMethods)
         val listFiles = rootFile.listFiles()
         if (listFiles != null && (deep == null || deep == 0)) {
             for (file in listFiles) {
-                val excluded = excludePattern != null && excludePattern.matcher(file.name).matches()
-                if (filenamePattern.matcher(file.name).matches() && !excluded) {
+                val excluded = let {
+                    val name = file.name
+                    val byPattern = excludePattern != null && excludePattern.matcher(name).matches()
+                    val byDirectory = file.isDirectory && (name in excludeDirs || name in excludeDirsRecursively)
+                    return@let byPattern || byDirectory
+                }
+                if (!excluded && filenamePattern.matcher(file.name).matches()) {
                     if (file.isDirectory && excludeParentDirs && dirHasSubDirs(file)) {
                         continue
                     }
-                    result.addAll(
-                        methodModelLocator(
-                            rootFile, file, filenamePattern,
-                            checkFilenameStartsLowerCase, targetBackend, skipIgnored, extractTagsFromTestFile(file)
+                    if (file.isDirectory && !dirHasFilesInside(file)) {
+                        throw IllegalStateException(
+                            "testData directory $file is empty. " +
+                                    "This might be due to git branch switching removed the contents but left directory intact. " +
+                                    "Consider removing empty directory or revert removing of its' contents."
                         )
-                    )
+                    }
+                    if (!skipSpecificFile(file)) {
+                        result.addAll(
+                            methodModelLocator(
+                                rootFile, file, filenamePattern,
+                                checkFilenameStartsLowerCase, targetBackend, skipIgnored, extractTagsFromTestFile(file)
+                            )
+                        )
+                    }
                 }
             }
         }

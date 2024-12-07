@@ -1,0 +1,25 @@
+Module: lib
+FILE: module_lib_emittedMetadata.kt
+    @R|org/jetbrains/kotlin/plugin/sandbox/EmitMetadata|(value = Int(5)) public final class Some : R|kotlin/Any| {
+        public constructor(): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+Module: main
+FILE: module_main_emittedMetadata.kt
+    @R|org/jetbrains/kotlin/plugin/sandbox/GenerateBodyUsingEmittedMetadata|() public final fun test(s: R|Some|): R|kotlin/Int| {
+        ^test Int(-1)
+    }
+    public final fun box(): R|kotlin/String| {
+        lval x: R|kotlin/Int| = R|/test|(R|/Some.Some|())
+        ^box when (R|<local>/x|) {
+            ==($subj$, Int(5)) ->  {
+                String(OK)
+            }
+            else ->  {
+                <strcat>(String(Error: ), R|<local>/x|)
+            }
+        }
+
+    }

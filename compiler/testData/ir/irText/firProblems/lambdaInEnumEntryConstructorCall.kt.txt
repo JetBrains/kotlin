@@ -1,14 +1,14 @@
 class Wrapper {
+  var baseUrl: String
+    field = baseUrl
+    get
+    set
+
   constructor(baseUrl: String) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  var baseUrl: String
-    field = baseUrl
-    get
-    set
 
 }
 
@@ -25,8 +25,12 @@ enum class ConfigurationParameter : Enum<ConfigurationParameter> {
 
   }
 
-  fun values(): Array<ConfigurationParameter> /* Synthetic body for ENUM_VALUES */
+  /* static */ fun valueOf(value: String): ConfigurationParameter /* Synthetic body for ENUM_VALUEOF */
 
-  fun valueOf(value: String): ConfigurationParameter /* Synthetic body for ENUM_VALUEOF */
+  /* static */ fun values(): Array<ConfigurationParameter> /* Synthetic body for ENUM_VALUES */
+
+  /* static */ val entries: EnumEntries<ConfigurationParameter>
+    get(): EnumEntries<ConfigurationParameter> /* Synthetic body for ENUM_ENTRIES */
 
 }
+

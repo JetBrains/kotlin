@@ -1,6 +1,0 @@
-KT element: KtBinaryExpression
-FIR element: FirFunctionCallImpl
-FIR source kind: DesugaredCompoundAssignment
-
-FIR element rendered:
-R|<local>/m|.R|SubstitutionOverride</MyMap.get: R|A|>|(String(a)).R|/A.plusAssign|(Int(1))

@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 fun find2(): Any? {
     fun visit(element: Any) {
         <!RETURN_NOT_ALLOWED!>return@find2<!> element

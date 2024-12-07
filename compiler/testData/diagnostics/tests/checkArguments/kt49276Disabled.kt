@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +DisableCheckingChangedProgressionsResolve
+// LANGUAGE: +DisableCheckingChangedProgressionsResolve
 // WITH_STDLIB
 
 fun <E> SmartList(x: E) {}

@@ -1,0 +1,58 @@
+Module: common
+FILE: common.kt
+    public open expect class AbstractMutableList : R|kotlin/Any| {
+        public final expect var modCount: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+FILE: jvm.kt
+    public open actual class AbstractMutableList : R|Jaba| {
+        public constructor(): R|AbstractMutableList| {
+            super<R|Jaba|>()
+        }
+
+        @R|kotlin/Deprecated|(message = String(), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final actual var modCount: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ Int(42)
+            }
+            public set(value: R|kotlin/Int|): R|kotlin/Unit| {
+            }
+
+        public final fun added(): R|kotlin/Unit| {
+            lval x: R|kotlin/Int| = this@R|/AbstractMutableList|.R|/Jaba.modCount|
+        }
+
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/AbstractMutableList.AbstractMutableList|().R|/AbstractMutableList.added|()
+    }
+Module: jvm
+FILE: common.kt
+    public open expect class AbstractMutableList : R|kotlin/Any| {
+        public final expect var modCount: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+FILE: jvm.kt
+    public open actual class AbstractMutableList : R|Jaba| {
+        public constructor(): R|AbstractMutableList| {
+            super<R|Jaba|>()
+        }
+
+        @R|kotlin/Deprecated|(message = String(), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final actual var modCount: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ Int(42)
+            }
+            public set(value: R|kotlin/Int|): R|kotlin/Unit| {
+            }
+
+        public final fun added(): R|kotlin/Unit| {
+            lval x: R|kotlin/Int| = this@R|/AbstractMutableList|.R|/Jaba.modCount|
+        }
+
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/AbstractMutableList.AbstractMutableList|().R|/AbstractMutableList.added|()
+    }

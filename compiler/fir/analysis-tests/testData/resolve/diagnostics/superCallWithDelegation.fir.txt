@@ -8,7 +8,7 @@ FILE: superCallWithDelegation.kt
             super<R|kotlin/Any|>()
         }
 
-        local final field <$$delegate_0>: R|A| = R|<local>/a|
+        private final field $$delegate_0: R|A| = R|<local>/a|
 
         private final val a: R|A| = R|<local>/a|
             private get(): R|A|
@@ -19,8 +19,8 @@ FILE: superCallWithDelegation.kt
             super<R|B|>(R|<local>/a|)
         }
 
-        public final override fun foo(): R|kotlin/Unit| {
-            this@R|/C|.super<R|B|>.R|/A.foo|()
+        public open override fun foo(): R|kotlin/Unit| {
+            this@R|/C|.super<R|B|>.R|/B.foo|()
         }
 
     }

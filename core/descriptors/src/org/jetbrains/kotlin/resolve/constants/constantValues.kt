@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 
 abstract class ConstantValue<out T>(open val value: T) {
@@ -68,6 +68,8 @@ open class ArrayValue(
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitArrayValue(this, data)
 }
+
+class TypedArrayValue(value: List<ConstantValue<*>>, val type: KotlinType) : ArrayValue(value, { type })
 
 class BooleanValue(value: Boolean) : ConstantValue<Boolean>(value) {
     override fun getType(module: ModuleDescriptor) = module.builtIns.booleanType

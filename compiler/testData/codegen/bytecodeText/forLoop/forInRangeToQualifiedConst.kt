@@ -27,15 +27,9 @@ fun test(): Int {
 // 0 getLast
 // 0 getStep
 
-// JVM_TEMPLATES
-// 1 IF_ICMPGT
-// 1 IF
-
-// JVM_IR_TEMPLATES
 // 1 IF_ICMPGE
 // 1 IF
 
-// JVM_IR_TEMPLATES
 // 4 ILOAD
 // 3 ISTORE
 // 1 IADD

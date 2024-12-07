@@ -1,0 +1,3 @@
+rootProject.name = "kotlin-js-ir-ic-rebuild-after-error"
+
+include("app")

@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 fun <T> Array<T>.foo() {}
 
 fun test(array: Array<out Int>) {

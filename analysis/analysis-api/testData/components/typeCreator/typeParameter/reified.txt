@@ -1,2 +1,2 @@
-expression: reified T
-ktType: T
+KtTypeParameter: reified T
+KaType: T

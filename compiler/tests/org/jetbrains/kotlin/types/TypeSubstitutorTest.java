@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
+import org.jetbrains.kotlin.psi.KtPsiFactory;
 import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.*;
@@ -80,7 +80,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
     private LexicalScope getContextScope() throws IOException {
         // todo comments
         String text = FileUtil.loadFile(new File("compiler/testData/type-substitutor.kt"), true);
-        KtFile ktFile = KtPsiFactoryKt.KtPsiFactory(getProject()).createFile(text);
+        KtFile ktFile = new KtPsiFactory(getProject()).createFile(text);
         AnalysisResult analysisResult = JvmResolveUtil.analyze(ktFile, getEnvironment());
         ModuleDescriptor module = analysisResult.getModuleDescriptor();
 
@@ -145,10 +145,10 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
     }
 
     private KotlinType resolveType(String typeStr) {
-        KtTypeReference jetTypeReference = KtPsiFactoryKt.KtPsiFactory(getProject()).createType(typeStr);
-        AnalyzingUtils.checkForSyntacticErrors(jetTypeReference);
-        BindingTrace trace = new BindingTraceContext();
-        KotlinType type = container.getTypeResolver().resolveType(scope, jetTypeReference, trace, true);
+        KtTypeReference ktTypeReference = new KtPsiFactory(getProject()).createType(typeStr);
+        AnalyzingUtils.checkForSyntacticErrors(ktTypeReference);
+        BindingTrace trace = new BindingTraceContext(getProject());
+        KotlinType type = container.getTypeResolver().resolveType(scope, ktTypeReference, trace, true);
         if (!trace.getBindingContext().getDiagnostics().isEmpty()) {
             fail("Errors:\n" + StringUtil.join(trace.getBindingContext().getDiagnostics(), DefaultErrorMessages::render, "\n"));
         }
@@ -402,5 +402,4 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
                 map("T", "String")
         );
     }
-
 }

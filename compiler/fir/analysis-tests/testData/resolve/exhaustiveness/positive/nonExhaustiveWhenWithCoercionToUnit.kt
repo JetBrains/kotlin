@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun <T> run(block: () -> T): T = block()
 
 fun test(a: Any, b: Boolean) {

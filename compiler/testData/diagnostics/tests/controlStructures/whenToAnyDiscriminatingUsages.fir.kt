@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 fun println() {}
 fun foo(x: Any) {}
@@ -24,7 +25,7 @@ fun testResultOfLambda2() =
             }
         }
 
-fun testReturn1() =
+fun <!IMPLICIT_NOTHING_RETURN_TYPE!>testReturn1<!>() =
         run {
             return <!RETURN_TYPE_MISMATCH!>when {
                 true -> 42
@@ -32,7 +33,7 @@ fun testReturn1() =
             }<!>
         }
 
-fun testReturn2() =
+fun <!IMPLICIT_NOTHING_RETURN_TYPE!>testReturn2<!>() =
         run {
             return <!RETURN_TYPE_MISMATCH!>when {
                 true -> 42

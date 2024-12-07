@@ -1,0 +1,21 @@
+public abstract interface SubstitutedClassParameters : R|kotlin/Any| {
+    public abstract interface Super1<T> : R|kotlin/Any| {
+        public abstract fun foo(): R|T|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
+
+    public abstract interface Super2<E> : R|kotlin/Any| {
+        public abstract fun foo(): R|E|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
+
+    public abstract interface Sub : R|test/SubstitutedClassParameters.Super1<kotlin/String>|, R|test/SubstitutedClassParameters.Super2<kotlin/String>| {
+        public abstract fun foo(): R|kotlin/String|
+
+    }
+
+}

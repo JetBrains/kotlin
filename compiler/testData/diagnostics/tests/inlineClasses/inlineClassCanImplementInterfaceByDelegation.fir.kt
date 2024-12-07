@@ -1,4 +1,6 @@
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses, +InlineClassImplementationByDelegation
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +InlineClasses, +InlineClassImplementationByDelegation
+// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 // SKIP_TXT
 
 interface IFoo

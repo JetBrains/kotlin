@@ -1,0 +1,71 @@
+FILE: inlineability.kt
+    public final inline fun baseInline(f: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+        ^baseInline R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+    }
+    public final inline fun baseNoInline(noinline f: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+        ^baseNoInline R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+    }
+    public final inline fun myInlineable(f: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>|): R|kotlin/Unit| {
+        ^myInlineable R|<local>/f|.R|SubstitutionOverride<some/MyInlineableFunction0.invoke: R|kotlin/Unit|>|()
+    }
+    public final inline fun myNotInlineable(f: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyNotInlineable|()  some/MyNotInlineableFunction0<kotlin/Unit>|): R|kotlin/Unit| {
+        ^myNotInlineable R|<local>/f|.R|SubstitutionOverride<some/MyNotInlineableFunction0.invoke: R|kotlin/Unit|>|()
+    }
+    public final inline fun testUsageNotInlineable(regularInline: R|() -> kotlin/Unit|, noinline regularNoinline: R|() -> kotlin/Unit|, myInline: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>|, myNoinline: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyNotInlineable|()  some/MyNotInlineableFunction0<kotlin/Unit>|): R|kotlin/Any?| {
+        ^testUsageNotInlineable when (Int(1)) {
+            ==($subj$, Int(1)) ->  {
+                R|<local>/regularInline|
+            }
+            ==($subj$, Int(2)) ->  {
+                R|<local>/regularNoinline|
+            }
+            ==($subj$, Int(3)) ->  {
+                R|<local>/myInline|
+            }
+            ==($subj$, Int(4)) ->  {
+                R|<local>/myNoinline|
+            }
+            else ->  {
+                Null(null)
+            }
+        }
+
+    }
+    public final fun testReturns(b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        R|/baseInline|(<L> = baseInline@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+            when () {
+                R|<local>/b| ->  {
+                    ^testReturns Unit
+                }
+            }
+
+        }
+        )
+        R|/baseNoInline|(<L> = baseNoInline@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            when () {
+                R|<local>/b| ->  {
+                    ^testReturns Unit
+                }
+            }
+
+        }
+        )
+        R|/myInlineable|(<L> = myInlineable@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+            when () {
+                R|<local>/b| ->  {
+                    ^testReturns Unit
+                }
+            }
+
+        }
+        )
+        R|/myNotInlineable|(<L> = myNotInlineable@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline, kind=UNKNOWN>  {
+            when () {
+                R|<local>/b| ->  {
+                    ^testReturns Unit
+                }
+            }
+
+        }
+        )
+    }

@@ -1,4 +1,5 @@
-// !LANGUAGE: +JvmInlineValueClasses
+// FIR_IDENTICAL
+// LANGUAGE: +JvmInlineValueClasses
 // WITH_STDLIB
 
 package kotlin.jvm

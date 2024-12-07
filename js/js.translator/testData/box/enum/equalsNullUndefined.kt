@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1297
 enum class A {
     X,
     Y

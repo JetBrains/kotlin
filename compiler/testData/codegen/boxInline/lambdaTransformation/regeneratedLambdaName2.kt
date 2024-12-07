@@ -1,10 +1,13 @@
 // NO_CHECK_LAMBDA_INLINING
 // CHECK_BYTECODE_LISTING
+// FIR_IDENTICAL
+// IGNORE_INLINER: IR
+
 // FILE: 1.kt
 package test
 
 inline fun <R> call(crossinline f: () -> R) : R {
-    return { f() }()
+    return { f() }.let { it() }
 }
 
 // FILE: 2.kt

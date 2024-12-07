@@ -1,11 +1,3 @@
-interface CPointed {
-
-}
-
-inline fun <reified T : CPointed> CPointed.reinterpret(): T {
-  return TODO()
-}
-
 class CInt32VarX<T : Any?> : CPointed {
   constructor() /* primary */ {
     super/*Any*/()
@@ -15,7 +7,30 @@ class CInt32VarX<T : Any?> : CPointed {
 
 }
 
-typealias CInt32Var = CInt32VarX<Int>
+class IdType : CPointed {
+  val value: Int
+    field = value
+    get
+
+  constructor(value: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+interface CPointed {
+}
+
+fun foo(value: IdType, cv: CInt32VarX<Int>) {
+  cv.<set-value><Int>(value = value.<get-value>())
+}
+
+inline fun <reified T : CPointed> CPointed.reinterpret(): T {
+  return TODO()
+}
+
 var <T_INT : Int> CInt32VarX<T_INT>.value: T_INT
   get(): T_INT {
     return TODO()
@@ -23,19 +38,4 @@ var <T_INT : Int> CInt32VarX<T_INT>.value: T_INT
   set(value: T_INT) {
   }
 
-class IdType : CPointed {
-  constructor(value: Int) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  val value: Int
-    field = value
-    get
-
-}
-
-fun foo(value: IdType, cv: CInt32VarX<Int>) {
-  cv.<set-value><Int>(value = value.<get-value>())
-}
+typealias CInt32Var = CInt32VarX<Int>

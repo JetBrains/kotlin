@@ -1,7 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1284
 package foo
-
-// CHECK_CONTAINS_NO_CALLS: multiplyInline except=imul TARGET_BACKENDS=JS
 
 // CHECK_FUNCTION_EXISTS: runNoinline
 // CHECK_NOT_CALLED: runNoinline

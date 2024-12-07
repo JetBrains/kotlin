@@ -1,0 +1,9 @@
+KtNameReferenceExpression(138,146): 'variable'
+  KtSimpleNameReference:
+    (in ROOT) var variable: MyClass
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

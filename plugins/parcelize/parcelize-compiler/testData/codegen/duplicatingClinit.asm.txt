@@ -9,13 +9,13 @@ public final class User$Companion : java/lang/Object {
 public final class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final User createFromParcel(android.os.Parcel in)
+    public final User createFromParcel(android.os.Parcel parcel)
 
-    public java.lang.Object createFromParcel(android.os.Parcel p0)
+    public java.lang.Object createFromParcel(android.os.Parcel source)
 
     public final User[] newArray(int size)
 
-    public java.lang.Object[] newArray(int p0)
+    public java.lang.Object[] newArray(int size)
 }
 
 public final class User : java/lang/Object, android/os/Parcelable {
@@ -33,16 +33,17 @@ public final class User : java/lang/Object, android/os/Parcelable {
           ACONST_NULL
           INVOKESPECIAL (User$Companion, <init>, (Lkotlin/jvm/internal/DefaultConstructorMarker;)V)
           PUTSTATIC (User, Companion, LUser$Companion;)
+          NEW (User$Creator)
+          DUP
+          INVOKESPECIAL (User$Creator, <init>, ()V)
+          CHECKCAST (android/os/Parcelable$Creator)
+          PUTSTATIC (User, CREATOR, Landroid/os/Parcelable$Creator;)
         LABEL (L0)
         LINENUMBER (12)
           NEW (java/lang/StringBuilder)
           DUP
           INVOKESPECIAL (java/lang/StringBuilder, <init>, ()V)
           PUTSTATIC (User, test, Ljava/lang/StringBuilder;)
-          NEW (User$Creator)
-          DUP
-          INVOKESPECIAL (User$Creator, <init>, ()V)
-          PUTSTATIC (User, CREATOR, Landroid/os/Parcelable$Creator;)
           RETURN
     }
 
@@ -52,5 +53,5 @@ public final class User : java/lang/Object, android/os/Parcelable {
 
     public final java.lang.String getFirstName()
 
-    public void writeToParcel(android.os.Parcel parcel, int flags)
+    public void writeToParcel(android.os.Parcel out, int flags)
 }

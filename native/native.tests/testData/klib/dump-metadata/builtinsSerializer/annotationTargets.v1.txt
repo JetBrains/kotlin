@@ -1,0 +1,98 @@
+library {
+  // module name: <annotationTargets.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/C1
+    // class name: test/C1.C2
+    // class name: test/C1.Companion
+    // class name: test/anno
+
+    // signature: test/C1|null[0]
+    @test/anno(x = "top level class")
+    public final class test/C1 : kotlin/Any {
+
+      // signature: test/C1.<init>|-5645683436151566731[0]
+      @test/anno(x = "constructor")
+      public constructor()
+
+      // signature: test/C1.f3|-21944318592270529[0]
+      @test/anno(x = "member function")
+      public final fun f3(@test/anno(x = "member function parameter") p: kotlin/Int): kotlin/Unit
+
+      // signature: test/C1.f4|229292746020934047[0]
+      @test/anno(x = "member extension function")
+      public final fun kotlin/String.f4(): kotlin/Unit
+
+      // signature: test/C1.p3|-373830470709388280[0]
+      @test/anno(x = "member property")
+      public final val p3: kotlin/Nothing?
+        // signature: test/C1.p3.<get-p3>|-2557278263413792822[0]
+        public final get
+
+      // signature: test/C1.v4|-38532081724949562[0]
+      @test/anno(x = "member extension property")
+      public final val kotlin/Int.v4: kotlin/Int
+        // signature: test/C1.v4.<get-v4>|8055377869057184256[0]
+        public final /* non-default */ get
+
+      // companion object: Companion
+
+      // nested class: C2
+
+      // nested class: Companion
+    }
+
+    // signature: test/C1.C2|null[0]
+    @test/anno(x = "nested class")
+    public final class test/C1.C2 : kotlin/Any {
+
+      // signature: test/C1.C2.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: test/C1.Companion|null[0]
+    @test/anno(x = "companion object")
+    public final companion object test/C1.Companion : kotlin/Any {
+
+      // signature: test/C1.Companion.<init>|-5645683436151566731[0]
+      private constructor()
+    }
+
+    // signature: test/anno|null[0]
+    public final annotation class test/anno : kotlin/Annotation {
+
+      // signature: test/anno.<init>|1280618353163213788[0]
+      public constructor(x: kotlin/String)
+
+      // signature: test/anno.x|-8060530855978347579[0]
+      public final val x: kotlin/String
+        // signature: test/anno.x.<get-x>|1482705010654679335[0]
+        public final get
+    }
+
+    package {
+
+      // signature: test/f1|7367719253560189071[0]
+      @test/anno(x = "top level function")
+      public final fun f1(@test/anno(x = "top level function parameter") p: kotlin/Int): kotlin/Unit
+
+      // signature: test/f2|6524047282310410984[0]
+      @test/anno(x = "extension function")
+      public final fun kotlin/Long.f2(@test/anno(x = "extension function parameter") p: kotlin/Int): kotlin/Unit
+
+      // signature: test/p1|7711764890799440087[0]
+      @test/anno(x = "top level property")
+      public final val p1: kotlin/Nothing?
+        // signature: test/p1.<get-p1>|419663188770843259[0]
+        public final get
+
+      // signature: test/p2|8934898181461715514[0]
+      @test/anno(x = "extension property")
+      public final val kotlin/Double.p2: kotlin/Double
+        // signature: test/p2.<get-p2>|-4908997596127971814[0]
+        public final /* non-default */ get
+    }
+  }
+}

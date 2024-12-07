@@ -1,45 +1,26 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
+import com.intellij.psi.augment.PsiAugmentProvider
 import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.PsiImplUtil
-import com.intellij.psi.impl.PsiSuperMethodImplUtil
-import com.intellij.psi.impl.compiled.ClsClassImpl
-import com.intellij.psi.impl.compiled.InnerClassSourceStrategy
-import com.intellij.psi.impl.compiled.StubBuildingVisitor
-import com.intellij.psi.impl.java.stubs.PsiClassStub
-import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl
-import com.intellij.psi.impl.light.*
-import com.intellij.psi.javadoc.PsiDocComment
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.stubs.StubElement
-import com.intellij.psi.util.*
+import com.intellij.psi.util.PsiUtil
 import com.intellij.util.ArrayUtil
-import com.intellij.util.IncorrectOperationException
-import gnu.trove.THashMap
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.asJava.elements.KtLightParameter
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtParameter
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.org.objectweb.asm.Opcodes
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 class KotlinClassInnerStuffCache(
     private val myClass: KtExtensibleLightClass,
     private val dependencies: List<Any>,
     private val lazyCreator: LazyCreator,
+    private val generateEnumMethods: Boolean = true,
 ) {
     abstract class LazyCreator {
         abstract fun <T : Any> get(initializer: () -> T, dependencies: List<Any>): Lazy<T>
@@ -64,13 +45,14 @@ class KotlinClassInnerStuffCache(
     private val methodsCache = cache {
         val own = myClass.ownMethods
         var ext = collectAugments(myClass, PsiMethod::class.java)
-        if (myClass.isEnum) {
+        if (generateEnumMethods && myClass.isEnum) {
             ext = ArrayList<PsiMethod>(ext.size + 2).also {
                 it += ext
                 it.addIfNotNull(getValuesMethod())
                 it.addIfNotNull(getValueOfMethod())
             }
         }
+
         ArrayUtil.mergeCollections(own, ext, PsiMethod.ARRAY_FACTORY)
     }
 
@@ -86,17 +68,9 @@ class KotlinClassInnerStuffCache(
     val innerClasses: Array<out PsiClass>
         get() = copy(innerClassesCache.value)
 
-    private val recordComponentsCache = cache {
-        val header = myClass.recordHeader
-        header?.recordComponents ?: PsiRecordComponent.EMPTY_ARRAY
-    }
-
-    val recordComponents: Array<PsiRecordComponent>
-        get() = copy(recordComponentsCache.value)
-
     private val fieldByNameCache = cache {
         val fields = this.fields.takeIf { it.isNotEmpty() } ?: return@cache emptyMap()
-        Collections.unmodifiableMap(THashMap<String, PsiField>(fields.size).apply {
+        Collections.unmodifiableMap(Object2ObjectOpenHashMap<String, PsiField>(fields.size).apply {
             for (field in fields) {
                 putIfAbsent(field.name, field)
             }
@@ -113,7 +87,7 @@ class KotlinClassInnerStuffCache(
 
     private val methodByNameCache = cache {
         val methods = this.methods.takeIf { it.isNotEmpty() } ?: return@cache emptyMap()
-        Collections.unmodifiableMap(THashMap<String, Array<PsiMethod>>().apply {
+        Collections.unmodifiableMap(Object2ObjectOpenHashMap<String, Array<PsiMethod>>().apply {
             for ((key, list) in methods.groupByTo(HashMap()) { it.name }) {
                 put(key, list.toTypedArray())
             }
@@ -131,11 +105,11 @@ class KotlinClassInnerStuffCache(
     private val innerClassByNameCache = cache {
         val classes = this.innerClasses.takeIf { it.isNotEmpty() } ?: return@cache emptyMap()
 
-        Collections.unmodifiableMap(THashMap<String, PsiClass>().apply {
+        Collections.unmodifiableMap(Object2ObjectOpenHashMap<String, PsiClass>().apply {
             for (psiClass in classes) {
                 val name = psiClass.name
                 if (name == null) {
-                    Logger.getInstance(KotlinClassInnerStuffCache::class.java).error(psiClass)
+                    Logger.getInstance(KotlinClassInnerStuffCache::class.java).error("$psiClass has no name")
                 } else if (psiClass !is ExternallyDefinedPsiElement || !containsKey(name)) {
                     put(name, psiClass)
                 }
@@ -151,7 +125,7 @@ class KotlinClassInnerStuffCache(
         }
     }
 
-    private val valuesMethodCache = cache { KotlinEnumSyntheticMethod(myClass, KotlinEnumSyntheticMethod.Kind.VALUES) }
+    private val valuesMethodCache = cache { getEnumValuesPsiMethod(myClass) }
 
     private fun getValuesMethod(): PsiMethod? {
         if (myClass.isEnum && !myClass.isAnonymous && !isClassNameSealed()) {
@@ -161,7 +135,7 @@ class KotlinClassInnerStuffCache(
         return null
     }
 
-    private val valueOfMethodCache = cache { KotlinEnumSyntheticMethod(myClass, KotlinEnumSyntheticMethod.Kind.VALUE_OF) }
+    private val valueOfMethodCache = cache { getEnumValueOfPsiMethod(myClass) }
 
     fun getValueOfMethod(): PsiMethod? {
         if (myClass.isEnum && !myClass.isAnonymous) {
@@ -176,175 +150,13 @@ class KotlinClassInnerStuffCache(
     }
 }
 
-private class KotlinEnumSyntheticMethod(
-    private val enumClass: KtExtensibleLightClass,
-    private val kind: Kind
-) : LightElement(enumClass.manager, enumClass.language), KtLightMethod, SyntheticElement {
-    enum class Kind(val methodName: String) {
-        VALUE_OF("valueOf"), VALUES("values")
-    }
-
-    private val returnType = run {
-        val enumType = JavaPsiFacade.getElementFactory(project).createType(enumClass)
-            .annotate { arrayOf(makeNotNullAnnotation(enumClass)) }
-
-        when (kind) {
-            Kind.VALUE_OF -> enumType
-            Kind.VALUES -> enumType.createArrayType().annotate { arrayOf(makeNotNullAnnotation(enumClass)) }
-        }
-    }
-
-    private val parameterList = LightParameterListBuilder(manager, language).apply {
-        if (kind == Kind.VALUE_OF) {
-            val stringType = PsiType.getJavaLangString(manager, GlobalSearchScope.allScope(project))
-            val nameParameter = object : LightParameter("name", stringType, this, language, false), KtLightParameter {
-                override val method: KtLightMethod get() = this@KotlinEnumSyntheticMethod
-                override val kotlinOrigin: KtParameter? get() = null
-                override val clsDelegate: PsiParameter get() = this@KotlinEnumSyntheticMethod.clsDelegate.parameterList.parameters.single()
-
-                override fun getParent(): PsiElement = this@KotlinEnumSyntheticMethod
-                override fun getContainingFile(): PsiFile = this@KotlinEnumSyntheticMethod.containingFile
-
-                override fun getText(): String = name
-                override fun getTextRange(): TextRange = TextRange.EMPTY_RANGE
-            }
-            nameParameter.setModifierList(NotNullModifierList(manager))
-            addParameter(nameParameter)
-        }
-    }
-
-    private val modifierList = object : LightModifierList(manager, language, PsiModifier.PUBLIC, PsiModifier.STATIC) {
-        override fun getParent() = this@KotlinEnumSyntheticMethod
-
-        private val annotations = arrayOf(makeNotNullAnnotation(enumClass))
-
-        override fun findAnnotation(fqn: String): PsiAnnotation? = annotations.firstOrNull { it.hasQualifiedName(fqn) }
-        override fun getAnnotations(): Array<PsiAnnotation> = copy(annotations)
-    }
-
-    override fun getTextOffset(): Int = enumClass.textOffset
-    override fun toString(): String = enumClass.toString()
-
-    override fun equals(other: Any?): Boolean {
-        return this === other || (other is KotlinEnumSyntheticMethod && enumClass == other.enumClass && kind == other.kind)
-    }
-
-    override fun hashCode() = Objects.hash(enumClass, kind)
-
-    override fun isDeprecated(): Boolean = false
-    override fun getDocComment(): PsiDocComment? = null
-    override fun getReturnType(): PsiType = returnType
-    override fun getReturnTypeElement(): PsiTypeElement? = null
-    override fun getParameterList(): PsiParameterList = parameterList
-
-    override fun getThrowsList(): PsiReferenceList {
-        return LightReferenceListBuilder(manager, language, PsiReferenceList.Role.THROWS_LIST).apply {
-            if (kind == Kind.VALUE_OF) {
-                addReference("java.lang.IllegalArgumentException")
-            }
-        }
-    }
-
-    override fun getParent(): PsiElement = enumClass
-    override fun getContainingClass(): KtExtensibleLightClass = enumClass
-    override fun getContainingFile(): PsiFile = enumClass.containingFile
-
-    override fun getBody(): PsiCodeBlock? = null
-    override fun isConstructor(): Boolean = false
-    override fun isVarArgs(): Boolean = false
-    override fun getSignature(substitutor: PsiSubstitutor): MethodSignature = MethodSignatureBackedByPsiMethod.create(this, substitutor)
-    override fun getNameIdentifier(): PsiIdentifier = LightIdentifier(manager, name)
-    override fun getName() = kind.methodName
-
-    override fun findSuperMethods(): Array<PsiMethod> = PsiSuperMethodImplUtil.findSuperMethods(this)
-    override fun findSuperMethods(checkAccess: Boolean): Array<PsiMethod> = PsiSuperMethodImplUtil.findSuperMethods(this, checkAccess)
-    override fun findSuperMethods(parentClass: PsiClass): Array<PsiMethod> = PsiSuperMethodImplUtil.findSuperMethods(this, parentClass)
-
-    override fun findSuperMethodSignaturesIncludingStatic(checkAccess: Boolean): List<MethodSignatureBackedByPsiMethod> {
-        return PsiSuperMethodImplUtil.findSuperMethodSignaturesIncludingStatic(this, checkAccess)
-    }
-
-    @Suppress("OVERRIDE_DEPRECATION")
-    override fun findDeepestSuperMethod(): PsiMethod? = PsiSuperMethodImplUtil.findDeepestSuperMethod(this)
-
-    override fun findDeepestSuperMethods(): Array<PsiMethod> = PsiMethod.EMPTY_ARRAY
-    override fun getModifierList(): PsiModifierList = modifierList
-    override fun hasModifierProperty(name: String) = name == PsiModifier.PUBLIC || name == PsiModifier.STATIC
-    override fun setName(name: String): PsiElement = throw IncorrectOperationException()
-    override fun getHierarchicalMethodSignature() = PsiSuperMethodImplUtil.getHierarchicalMethodSignature(this)
-    override fun getDefaultValue(): PsiAnnotationMemberValue? = null
-
-    override fun hasTypeParameters(): Boolean = false
-    override fun getTypeParameterList(): PsiTypeParameterList? = null
-    override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
-
-    override val isMangled: Boolean get() = false
-    override val lightMemberOrigin: LightMemberOrigin? get() = null
-    override val kotlinOrigin: KtDeclaration? get() = null
-
-    override fun getText(): String = ""
-    override fun getTextRange(): TextRange = TextRange.EMPTY_RANGE
-
-    // As you can see, the implementation is quite dumb, yet it is still better than throwing an exception,
-    // as 'clsDelegate' is used for verifying light class consistency.
-    // See 'org.jetbrains.kotlin.idea.caches.resolve.LightClassLazinessChecker.LazinessInfo#checkConsistency' for more information.
-    override val clsDelegate: PsiMethod by lazy {
-        val emptyStrategy = object : InnerClassSourceStrategy<PsiClass> {
-            override fun findInnerClass(innerName: String, outerClass: PsiClass): PsiClass? = null
-            override fun accept(innerClass: PsiClass, visitor: StubBuildingVisitor<PsiClass>) {}
-        }
-
-        val containingFile = enumClass.containingFile as PsiJavaFile
-        var parent = PsiJavaFileStubImpl(containingFile, containingFile.packageName, null, true) as StubElement<*>
-
-        fun process(clazz: PsiClass): PsiClassStub<*> {
-            clazz.containingClass?.let { process(it) }
-
-            val access = getAccess(clazz)
-            val superName = clazz.superClass?.let { ClassUtil.getJVMClassName(it) } ?: "java/lang/Object"
-            val interfaceNames = clazz.interfaces.mapNotNull { ClassUtil.getJVMClassName(it) }.toTypedArray()
-
-            val stub = StubBuildingVisitor(clazz, emptyStrategy, parent, access, clazz.name).apply {
-                visit(Opcodes.V1_8, access, ClassUtil.getJVMClassName(clazz), null, superName, interfaceNames)
-                visitEnd()
-            }.result
-
-            parent = stub
-            return stub
-        }
-
-        ClsClassImpl(process(enumClass)).methods.single { it.name == name }
-    }
-
-    private companion object {
-        private fun getAccess(clazz: PsiClass): Int {
-            var result = 0
-            if (clazz.hasModifierProperty(PsiModifier.PUBLIC)) result = result or Opcodes.ACC_PUBLIC
-            if (clazz.hasModifierProperty(PsiModifier.PROTECTED)) result = result or Opcodes.ACC_PROTECTED
-            if (clazz.hasModifierProperty(PsiModifier.PRIVATE)) result = result or Opcodes.ACC_PRIVATE
-            if (clazz.hasModifierProperty(PsiModifier.FINAL)) result = result or Opcodes.ACC_FINAL
-            if (clazz.hasModifierProperty(PsiModifier.ABSTRACT)) result = result or Opcodes.ACC_ABSTRACT
-            if (clazz.isDeprecated) result = result or Opcodes.ACC_DEPRECATED
-            if (clazz.isEnum) result = result or Opcodes.ACC_ENUM
-            if (clazz.isAnnotationType) result = result or Opcodes.ACC_ANNOTATION
-            if (clazz.isInterface) result = result or Opcodes.ACC_INTERFACE
-            return result
-        }
-
-        private fun makeNotNullAnnotation(context: PsiClass): PsiAnnotation {
-            return PsiElementFactory.getInstance(context.project).createAnnotationFromText("@" + NotNull::class.java.name, context)
-        }
-    }
-}
-
 private val PsiClass.isAnonymous: Boolean
     get() = name == null || this is PsiAnonymousClass
 
-private class NotNullModifierList(manager: PsiManager) : LightModifierList(manager) {
-    private val annotation = PsiElementFactory.getInstance(project).createAnnotationFromText("@" + NotNull::class.java.name, context)
-    override fun getAnnotations() = arrayOf(annotation)
-}
-
 private fun <T> copy(value: Array<T>): Array<T> {
     return if (value.isEmpty()) value else value.clone()
+}
+
+private fun <Psi : PsiElement> collectAugments(element: PsiElement, type: Class<out Psi>): List<Psi> {
+    return PsiAugmentProvider.collectAugments(element, type, null)
 }

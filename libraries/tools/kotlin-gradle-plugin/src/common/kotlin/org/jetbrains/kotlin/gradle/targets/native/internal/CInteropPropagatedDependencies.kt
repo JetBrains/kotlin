@@ -7,12 +7,15 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.jetbrains.kotlin.gradle.artifacts.maybeCreateKlibPackingTask
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForKlibCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import java.io.File
@@ -55,22 +58,33 @@ internal fun Project.setupCInteropPropagatedDependencies() {
     }
 }
 
-private fun Project.getPropagatedCInteropDependenciesOrEmpty(sourceSet: DefaultKotlinSourceSet): FileCollection {
+internal fun Project.getPropagatedCInteropDependenciesOrEmpty(sourceSet: DefaultKotlinSourceSet): FileCollection =
+    getPlatformCinteropDependenciesOrEmpty(sourceSet) { relevantCompilation ->
+        /* Source Set is directly included in compilation -> No need to add dependency again (when looking for propagated dependencies) */
+        sourceSet !in relevantCompilation.kotlinSourceSets
+    }
+
+internal fun Project.getPlatformCinteropDependenciesOrEmpty(
+    sourceSet: DefaultKotlinSourceSet,
+    compilationFilter: (KotlinNativeCompilation) -> Boolean = { true },
+): FileCollection {
     return filesProvider files@{
         /*
         compatibility metadata variant will still register
         a 'KotlinMetadataCompilation for 'commonMain' which is irrelevant here
         */
-        val compilations = CompilationSourceSetUtil.compilationsBySourceSets(this)[sourceSet].orEmpty()
+        val compilations = sourceSet.internal.compilations
             .filter { compilation -> compilation !is KotlinMetadataCompilation }
 
         /* Participating in multiple compilations? -> can't propagate -> should be commonized */
         val compilation = compilations.singleOrNull() as? KotlinNativeCompilation ?: return@files emptySet<File>()
 
-        (compilation.associateWith + compilation)
+        /* Apple-specific cinterops can't be produced on non-MacOs machines, so just return an empty dependencies collection */
+        if (!compilation.target.konanTarget.enabledOnCurrentHostForKlibCompilation(kotlinPropertiesProvider)) return@files emptySet<File>()
+
+        (compilation.associatedCompilations + compilation)
             .filterIsInstance<KotlinNativeCompilation>()
-            /* Source Set is directly included in compilation -> No need to add dependency again (will be handled already) */
-            .filter { relevantCompilation -> sourceSet !in relevantCompilation.kotlinSourceSets }
+            .filter(compilationFilter)
             .map { relevantCompilation -> getAllCInteropOutputFiles(relevantCompilation) }
     }
 }
@@ -85,6 +99,18 @@ private fun Project.getAllCInteropOutputFiles(compilation: KotlinNativeCompilati
     val cinteropTasks = compilation.cinterops.map { interop -> interop.interopProcessingTaskName }
         .mapNotNull { taskName -> tasks.findByName(taskName) as? CInteropProcess }
 
-    return project.filesProvider { cinteropTasks.map { it.outputFile } }
+    if (project.kotlinPropertiesProvider.useNonPackedKlibs) {
+        // this part of import isn't ready for working with unpackaged klibs: KTIJ-31053
+        return project.filesProvider {
+            cinteropTasks.map { interopTask ->
+                compilation.maybeCreateKlibPackingTask(
+                    interopTask.settings.classifier,
+                    interopTask.klibDirectory,
+                    interopTask
+                )
+            }
+        }
+    }
+    return project.filesProvider { cinteropTasks.map { it.klibFile } }
         .builtBy(*cinteropTasks.toTypedArray())
 }

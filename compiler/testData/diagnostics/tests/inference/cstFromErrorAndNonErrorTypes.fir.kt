@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference
+// RUN_PIPELINE_TILL: FRONTEND
 
 fun test() {
     run {

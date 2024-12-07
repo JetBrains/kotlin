@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun foo(
     x1: String,
     x2: Collection<CharSequence>,

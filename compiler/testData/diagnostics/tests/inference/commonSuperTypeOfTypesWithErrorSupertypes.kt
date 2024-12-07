@@ -1,5 +1,5 @@
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface Foo<F> {
     fun getSum(): F = TODO()

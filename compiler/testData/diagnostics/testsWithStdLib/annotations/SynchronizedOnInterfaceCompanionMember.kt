@@ -1,6 +1,7 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: +JvmStaticInInterface
-// !JVM_TARGET: 1.8
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +JvmStaticInInterface
+// JVM_TARGET: 1.8
 
 interface I {
     companion object {

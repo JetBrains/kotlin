@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
-// !LANGUAGE: +QualifiedSupertypeMayBeExtendedByOtherSupertype
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
+// LANGUAGE: +QualifiedSupertypeMayBeExtendedByOtherSupertype
 
 // FILE: main.kt
 open class AndroidTargetConfigurator :

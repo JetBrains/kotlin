@@ -3,42 +3,39 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
+@file:Suppress("PackageDirectoryMismatch", "UNCHECKED_CAST") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
+import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.utils.named
+import javax.inject.Inject
 
-class KotlinWithJavaCompilation<KotlinOptionsType : KotlinCommonOptions>(
-    target: KotlinWithJavaTarget<KotlinOptionsType>,
-    name: String,
-    kotlinOptions: KotlinOptionsType
-) : AbstractKotlinCompilationToRunnableFiles<KotlinOptionsType>(WithJavaCompilationDetails(target, name) { kotlinOptions }),
-    KotlinCompilationWithResources<KotlinOptionsType> {
-    lateinit var javaSourceSet: SourceSet
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
+open class KotlinWithJavaCompilation<KotlinOptionsType : KotlinCommonOptions, CO : KotlinCommonCompilerOptions> @Inject internal constructor(
+    compilation: KotlinCompilationImpl,
+    val javaSourceSet: SourceSet,
+) : DeprecatedAbstractKotlinCompilationToRunnableFiles<KotlinOptionsType>(compilation),
+    DeprecatedKotlinCompilationWithResources<KotlinOptionsType> {
+
+    @Deprecated(
+        "To configure compilation compiler options use 'compileTaskProvider':\ncompilation.compileTaskProvider.configure{\n" +
+                "    compilerOptions {}\n}"
+    )
+    @Suppress("UNCHECKED_CAST", "DEPRECATION")
+    override val compilerOptions: DeprecatedHasCompilerOptions<CO> =
+        compilation.compilerOptions as DeprecatedHasCompilerOptions<CO>
+
+    val compileJavaTaskProvider: TaskProvider<out JavaCompile>
+        get() = target.project.tasks.withType(JavaCompile::class.java).named(javaSourceSet.compileJavaTaskName)
 
     override val processResourcesTaskName: String
-        get() = javaSourceSet.processResourcesTaskName
-
-    override val runtimeOnlyConfigurationName: String
-        get() = javaSourceSet.runtimeOnlyConfigurationName
-
-    override val implementationConfigurationName: String
-        get() = javaSourceSet.implementationConfigurationName
-
-    override val apiConfigurationName: String
-        get() = javaSourceSet.apiConfigurationName
-
-    override val compileOnlyConfigurationName: String
-        get() = javaSourceSet.compileOnlyConfigurationName
-
-    override val compileAllTaskName: String
-        get() = javaSourceSet.classesTaskName
+        get() = compilation.processResourcesTaskName ?: error("Missing 'processResourcesTaskName'")
 
     fun source(javaSourceSet: SourceSet) {
         with(target.project) {
@@ -49,7 +46,4 @@ class KotlinWithJavaCompilation<KotlinOptionsType : KotlinCommonOptions>(
             }
         }
     }
-
-    val compileJavaTaskProvider: TaskProvider<out JavaCompile>
-        get() = target.project.tasks.withType(JavaCompile::class.java).named(javaSourceSet.compileJavaTaskName)
 }

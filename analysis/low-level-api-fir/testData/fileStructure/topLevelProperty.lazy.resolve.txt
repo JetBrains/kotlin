@@ -1,0 +1,13 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] topLevelProperty.kt
+    public final [ResolvedTo(BODY_RESOLVE)] var x: R|kotlin/Int|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+            ^ F|/x|
+        }
+        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
+            F|/x| = R|<local>/value|
+        }
+    public final [ResolvedTo(BODY_RESOLVE)] val y: R|kotlin/Int| = Int(42)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] var z: R|kotlin/Int| = Int(15)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|

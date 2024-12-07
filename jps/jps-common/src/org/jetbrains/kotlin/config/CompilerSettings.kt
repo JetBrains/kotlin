@@ -19,17 +19,39 @@ package org.jetbrains.kotlin.config
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.arguments.Freezable
 
-class CompilerSettings : Freezable() {
-    var additionalArguments: String by FreezableVar(DEFAULT_ADDITIONAL_ARGUMENTS)
-    var scriptTemplates: String by FreezableVar("")
-    var scriptTemplatesClasspath: String by FreezableVar("")
-    var copyJsLibraryFiles: Boolean by FreezableVar(true)
-    var outputDirectoryForJsLibraryFiles: String by FreezableVar(DEFAULT_OUTPUT_DIRECTORY)
+open class CompilerSettings : Freezable() {
+    open var additionalArguments: String = DEFAULT_ADDITIONAL_ARGUMENTS
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+    open var scriptTemplates: String = ""
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+    open var scriptTemplatesClasspath: String = ""
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+    open var copyJsLibraryFiles = true
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+    open var outputDirectoryForJsLibraryFiles: String = DEFAULT_OUTPUT_DIRECTORY
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     companion object {
-        val DEFAULT_ADDITIONAL_ARGUMENTS = "-version"
-        private val DEFAULT_OUTPUT_DIRECTORY = "lib"
+        val DEFAULT_ADDITIONAL_ARGUMENTS = ""
+        val DEFAULT_OUTPUT_DIRECTORY = "lib"
     }
+
+    override fun copyOf(): Freezable = copyCompilerSettings(this, CompilerSettings())
 }
 
 val CompilerSettings.additionalArgumentsAsList: List<String>

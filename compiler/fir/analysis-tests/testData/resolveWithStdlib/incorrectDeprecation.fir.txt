@@ -1,0 +1,2 @@
+FILE: incorrectDeprecation.kt
+    @R|kotlin/Deprecated|(message = ERROR_EXPR(Argument is absent)) public final fun foo(): R|kotlin/Unit|

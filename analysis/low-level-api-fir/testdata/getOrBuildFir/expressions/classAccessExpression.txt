@@ -1,6 +1,0 @@
-KT element: KtClassLiteralExpression
-FIR element: FirGetClassCallImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-<getClass>(Q|kotlin/Int|)

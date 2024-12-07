@@ -9,7 +9,7 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest.DependencyAwareInlineSourceTestFactory
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest.Parameters
-import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult.Commonized
+import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult
 import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.utils.*
 import kotlin.test.assertIs
@@ -226,7 +226,7 @@ fun HierarchicalCommonizationResult.assertCommonized(
     val module = getTarget(target).firstOrNull { moduleResult -> moduleResult.libraryName == referenceModule.name }
         ?: fail("Missing ${referenceModule.name} in target $target")
 
-    val commonizedModule = assertIs<Commonized>(module, "Expected ${module.libraryName} to be 'Commonized'")
+    val commonizedModule = assertIs<ResultsConsumer.ModuleResult>(module, "Expected ${module.libraryName} to be 'Commonized'")
 
     assertModulesAreEqual(
         inlineSourceTest.createMetadata(referenceModule), commonizedModule.metadata, target
@@ -247,7 +247,7 @@ fun HierarchicalCommonizationResult.assertCommonized(
     moduleBuilder: InlineSourceBuilder.ModuleBuilder.() -> Unit
 ) = assertCommonized(parseCommonizerTarget(target), moduleBuilder)
 
-fun Collection<ResultsConsumer.ModuleResult>.assertSingleCommonizedModule(): Commonized {
+fun Collection<ResultsConsumer.ModuleResult>.assertSingleCommonizedModule(): ResultsConsumer.ModuleResult {
     kotlin.test.assertEquals(1, size, "Expected exactly one module. Found: ${this.map { it.libraryName }}")
     return assertIs(single(), "Expected single module to be 'Commonized'")
 }

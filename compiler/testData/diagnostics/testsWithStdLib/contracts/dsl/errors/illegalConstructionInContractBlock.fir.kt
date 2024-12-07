@@ -1,6 +1,7 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -NOTHING_TO_INLINE -ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS -ABSTRACT_FUNCTION_WITH_BODY -UNUSED_PARAMETER -UNUSED_VARIABLE -EXPERIMENTAL_FEATURE_WARNING
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -NOTHING_TO_INLINE -ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS -ABSTRACT_FUNCTION_WITH_BODY -UNUSED_PARAMETER -UNUSED_VARIABLE -EXPERIMENTAL_FEATURE_WARNING
 
 import kotlin.contracts.*
 
@@ -25,9 +26,9 @@ fun whenInContract(x: Any?, boolean: Boolean) {
 
 fun forInContract(x: Any?) {
     contract {
-        for (i in <!HAS_NEXT_MISSING!>0..1<!>) {
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>for (i in 0..1) {
             returns() implies (x is String)
-        }
+        }<!>
     }
 }
 
@@ -48,8 +49,8 @@ fun doWhileInContract(x: Any?) {
 }
 
 fun localValInContract(x: Any?) {
-    <!WRONG_IMPLIES_CONDITION!>contract {
+    contract {
         <!ERROR_IN_CONTRACT_DESCRIPTION!>val y: Int = 42<!>
         returns() implies (x is String)
-    }<!>
+    }
 }

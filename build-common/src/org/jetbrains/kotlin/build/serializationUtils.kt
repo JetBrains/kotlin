@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.build
 
+import org.jetbrains.kotlin.cli.common.arguments.collectProperties
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
@@ -38,12 +39,12 @@ inline fun <reified T : Any> deserializeFromPlainText(str: String): T? = deseria
 fun <T : Any> deserializeFromPlainText(str: String, klass: KClass<T>): T? {
     val args = ArrayList<Any?>()
     val properties = str
-            .split("\n")
-            .filter(String::isNotBlank)
-            .associate { it.substringBefore("=") to it.substringAfter("=") }
+        .split("\n")
+        .filter(String::isNotBlank)
+        .associate { it.substringBefore("=") to it.substringAfter("=") }
 
     val primaryConstructor = klass.primaryConstructor
-                             ?: throw IllegalStateException("${klass.java} does not have primary constructor")
+        ?: throw IllegalStateException("${klass.java} does not have primary constructor")
     for (param in primaryConstructor.parameters.sortedBy { it.index }) {
         val argumentString = properties[param.name]
 
@@ -51,8 +52,7 @@ fun <T : Any> deserializeFromPlainText(str: String, klass: KClass<T>): T? {
             if (param.type.isMarkedNullable) {
                 args.add(null)
                 continue
-            }
-            else {
+            } else {
                 return null
             }
         }
@@ -68,4 +68,27 @@ fun <T : Any> deserializeFromPlainText(str: String, klass: KClass<T>): T? {
     }
 
     return primaryConstructor.call(*args.toTypedArray())
+}
+
+@Suppress("UNCHECKED_CAST")
+fun <T : Any> transformClassToPropertiesMap(classToTransform: T, excludedProperties: List<String> = emptyList()) =
+    collectProperties(classToTransform::class as KClass<T>, false)
+        .filter { property -> property.name !in excludedProperties }
+        .associateBy(
+            keySelector = { property -> property.name },
+            valueTransform = { property ->
+                property.get(classToTransform).let { value ->
+                    if (value is Array<*>) {
+                        (property.get(classToTransform) as Array<*>).joinToString(",")
+                    } else {
+                        property.get(classToTransform).toString()
+                    }
+                }
+            })
+
+fun List<String>.joinToReadableString(): String = when {
+    size > 5 -> take(5).joinToString() + " and ${size - 5} more"
+    size > 1 -> dropLast(1).joinToString() + " and ${last()}"
+    size == 1 -> single()
+    else -> ""
 }

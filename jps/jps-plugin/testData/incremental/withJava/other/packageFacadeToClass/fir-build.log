@@ -15,26 +15,33 @@ Cleaning output files:
 End of files
 Compiling files:
   src/A.kt
-  src/useAA.kt
   src/useF.kt
   src/useG.kt
 End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-Unresolved reference: f
-Unresolved reference: g
 
 ================ Step #2 =================
 
 Compiling files:
   src/A.kt
-  src/useAA.kt
   src/useF.kt
   src/useG.kt
 End of files
-Exit code: OK
+After build round. Marked as dirty by Kotlin:
+  src/useAA.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
 Compiling files:
   src/UseFJava.java
 End of files
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/UseAAKt.class
+End of files
+Compiling files:
+  src/useAA.kt
+End of files
+Exit code: OK
+------------------------------------------

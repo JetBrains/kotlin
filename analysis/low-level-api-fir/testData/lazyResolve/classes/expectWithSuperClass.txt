@@ -1,0 +1,223 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] expectWithSuperClass.kt
+    public open expect [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Foo.obj] obj: Any): R|Foo|
+
+        public? final? expect [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val obj: Any = R|<local>/obj|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): Any
+
+    }
+    public final? expect [ResolvedTo(RAW_FIR)] class Bar : Foo {
+        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor([ResolvedTo(RAW_FIR)] obj: Any): R|Bar| {
+            LAZY_super<Foo>
+        }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] expectWithSuperClass.kt
+    public open expect [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Foo.obj] obj: Any): R|Foo|
+
+        public? final? expect [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val obj: Any = R|<local>/obj|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): Any
+
+    }
+    public final? expect [ResolvedTo(RAW_FIR)] class Bar : Foo {
+        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor([ResolvedTo(RAW_FIR)] obj: Any): R|Bar| {
+            LAZY_super<Foo>
+        }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] expectWithSuperClass.kt
+    public open expect [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Foo.obj] obj: Any): R|Foo|
+
+        public? final? expect [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val obj: Any = R|<local>/obj|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): Any
+
+    }
+    public final? expect [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Bar : Foo {
+        public? expect [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Bar] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] obj: Any): R|Bar| {
+            LAZY_super<Foo>
+        }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] expectWithSuperClass.kt
+    public open expect [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Foo.obj] obj: Any): R|Foo|
+
+        public? final? expect [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val obj: Any = R|<local>/obj|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): Any
+
+    }
+    public final? expect [ResolvedTo(COMPANION_GENERATION)] class Bar : Foo {
+        public? expect [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Bar] constructor([ResolvedTo(COMPANION_GENERATION)] obj: Any): R|Bar| {
+            LAZY_super<Foo>
+        }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] expectWithSuperClass.kt
+    public open expect [ResolvedTo(SUPER_TYPES)] class Foo : R|kotlin/Any| {
+        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Foo.obj] obj: Any): R|Foo|
+
+        public? final? expect [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val obj: Any = R|<local>/obj|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): Any
+
+    }
+    public final? expect [ResolvedTo(SUPER_TYPES)] class Bar : R|Foo| {
+        public? expect [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Bar] constructor([ResolvedTo(SUPER_TYPES)] obj: Any): R|Bar| {
+            LAZY_super<Foo>
+        }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] expectWithSuperClass.kt
+    public open expect [ResolvedTo(SUPER_TYPES)] class Foo : R|kotlin/Any| {
+        public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Foo.obj] obj: Any): R|Foo|
+
+        public? final? expect [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val obj: Any = R|<local>/obj|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): Any
+
+    }
+    public final? expect [ResolvedTo(TYPES)] class Bar : R|Foo| {
+        public? expect [ResolvedTo(TYPES)] [ContainingClassKey=Bar] constructor([ResolvedTo(TYPES)] obj: R|kotlin/Any|): R|Bar| {
+            LAZY_super<R|Foo|>
+        }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] expectWithSuperClass.kt
+    public open expect [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public expect [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Foo.obj] obj: R|kotlin/Any|): R|Foo|
+
+        public final expect [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val obj: R|kotlin/Any| = R|<local>/obj|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] get(): R|kotlin/Any|
+
+    }
+    public final expect [ResolvedTo(STATUS)] class Bar : R|Foo| {
+        public expect [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor([ResolvedTo(STATUS)] obj: R|kotlin/Any|): R|Bar| {
+            LAZY_super<R|Foo|>
+        }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] expectWithSuperClass.kt
+    public open expect [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public expect [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Foo.obj] obj: R|kotlin/Any|): R|Foo|
+
+        public final expect [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val obj: R|kotlin/Any| = R|<local>/obj|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] get(): R|kotlin/Any|
+
+    }
+    public final expect [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Bar : R|Foo| {
+        public expect [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Bar] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] obj: R|kotlin/Any|): R|Bar| {
+            LAZY_super<R|Foo|>
+        }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] expectWithSuperClass.kt
+    public open expect [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public expect [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Foo.obj] obj: R|kotlin/Any|): R|Foo|
+
+        public final expect [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val obj: R|kotlin/Any| = R|<local>/obj|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] get(): R|kotlin/Any|
+
+    }
+    public final expect [ResolvedTo(CONTRACTS)] class Bar : R|Foo| {
+        public expect [ResolvedTo(CONTRACTS)] [ContainingClassKey=Bar] constructor([ResolvedTo(CONTRACTS)] obj: R|kotlin/Any|): R|Bar| {
+            LAZY_super<R|Foo|>
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] expectWithSuperClass.kt
+    public open expect [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public expect [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Foo.obj] obj: R|kotlin/Any|): R|Foo|
+
+        public final expect [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val obj: R|kotlin/Any| = R|<local>/obj|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] get(): R|kotlin/Any|
+
+    }
+    public final expect [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Bar : R|Foo| {
+        public expect [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Bar] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] obj: R|kotlin/Any|): R|Bar| {
+            LAZY_super<R|Foo|>
+        }
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] expectWithSuperClass.kt
+    public open expect [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public expect [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Foo.obj] obj: R|kotlin/Any|): R|Foo|
+
+        public final expect [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val obj: R|kotlin/Any| = R|<local>/obj|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] get(): R|kotlin/Any|
+
+    }
+    public final expect [ResolvedTo(CONSTANT_EVALUATION)] class Bar : R|Foo| {
+        public expect [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Bar] constructor([ResolvedTo(CONSTANT_EVALUATION)] obj: R|kotlin/Any|): R|Bar| {
+            LAZY_super<R|Foo|>
+        }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] expectWithSuperClass.kt
+    public open expect [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public expect [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Foo.obj] obj: R|kotlin/Any|): R|Foo|
+
+        public final expect [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val obj: R|kotlin/Any| = R|<local>/obj|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] get(): R|kotlin/Any|
+
+    }
+    public final expect [ResolvedTo(ANNOTATION_ARGUMENTS)] class Bar : R|Foo| {
+        public expect [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Bar] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] obj: R|kotlin/Any|): R|Bar| {
+            LAZY_super<R|Foo|>
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] expectWithSuperClass.kt
+    public open expect [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public expect [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Foo.obj] obj: R|kotlin/Any|): R|Foo|
+
+        public final expect [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val obj: R|kotlin/Any| = R|<local>/obj|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] get(): R|kotlin/Any|
+
+    }
+    public final expect [ResolvedTo(ANNOTATION_ARGUMENTS)] class Bar : R|Foo| {
+        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Bar] constructor([ResolvedTo(BODY_RESOLVE)] obj: R|kotlin/Any|): R|Bar| {
+            super<R|Foo|>(R|<local>/obj|)
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] expectWithSuperClass.kt
+    public open expect [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Foo.obj] obj: R|kotlin/Any|): R|Foo|
+
+        public final expect [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val obj: R|kotlin/Any| = R|<local>/obj|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/Any|
+
+    }
+    public final expect [ResolvedTo(BODY_RESOLVE)] class Bar : R|Foo| {
+        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Bar] constructor([ResolvedTo(BODY_RESOLVE)] obj: R|kotlin/Any|): R|Bar| {
+            super<R|Foo|>(R|<local>/obj|)
+        }
+
+    }

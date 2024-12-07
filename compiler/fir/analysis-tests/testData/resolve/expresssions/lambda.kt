@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun foo(block: () -> Unit) {}
 fun bar(block: () -> String) {}
 fun itIs(block: (String) -> String) {}

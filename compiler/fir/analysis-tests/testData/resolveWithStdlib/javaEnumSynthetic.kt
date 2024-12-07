@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: JavaEnum.java
 public enum JavaEnum {
     X, Y

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
@@ -20,17 +19,13 @@ import org.apache.log4j.Logger
 import org.apache.log4j.PatternLayout
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.api.CanceledStatus
-import org.jetbrains.jps.builders.BuildResult
-import org.jetbrains.jps.builders.CompileScopeTestBuilder
 import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
 import org.jetbrains.jps.builders.impl.logging.ProjectBuilderLoggerBase
-import org.jetbrains.jps.builders.java.dependencyView.Callbacks
 import org.jetbrains.jps.builders.logging.BuildLoggingManager
 import org.jetbrains.jps.cmdline.ProjectDescriptor
 import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.model.JpsDummyElement
-import org.jetbrains.jps.model.JpsModuleRootModificationUtil
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.library.sdk.JpsSdk
 import org.jetbrains.jps.util.JpsPathUtil
@@ -40,6 +35,8 @@ import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.testingUtils.*
+import org.jetbrains.kotlin.incremental.utils.TestLookupTracker
+import org.jetbrains.kotlin.jps.build.KotlinBuilder.Companion.useDependencyGraph
 import org.jetbrains.kotlin.jps.build.dependeciestxt.ModulesTxt
 import org.jetbrains.kotlin.jps.build.dependeciestxt.ModulesTxtBuilder
 import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
@@ -54,7 +51,7 @@ import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.platform.impl.isJavaScript
 import org.jetbrains.kotlin.platform.impl.isJvm
-import org.jetbrains.kotlin.platform.orDefault
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.Printer
 import java.io.ByteArrayInputStream
@@ -245,7 +242,7 @@ abstract class AbstractIncrementalJpsTest(
         return build(null, CompileScopeTestBuilder.rebuild().allModules())
     }
 
-    private fun updateCommandLineArguments(arguments: CommonCompilerArguments) {
+    protected open fun updateCommandLineArguments(arguments: CommonCompilerArguments) {
         parseCommandLineArguments(additionalCommandLineArguments, arguments)
     }
 
@@ -281,7 +278,7 @@ abstract class AbstractIncrementalJpsTest(
     }
 
     private fun clearCachesRebuildAndCheckOutput(makeOverallResult: MakeResult) {
-        FileUtil.delete(BuildDataPathsImpl(myDataStorageRoot).dataStorageRoot!!)
+        FileUtil.delete(BuildDataPathsImpl(myDataStorageRoot).dataStorageRoot)
 
         rebuildAndCheckOutput(makeOverallResult)
     }
@@ -337,11 +334,24 @@ abstract class AbstractIncrementalJpsTest(
 
         buildLogFile?.let {
             val logs = createBuildLog(otherMakeResults)
-            UsefulTestCase.assertSameLinesWithFile(buildLogFile.absolutePath, logs)
+            val buildLog = File(buildLogFile.absolutePath).readText()
+            val expected = excludeCompilerErrorMessagesFromLog(buildLog)
+            val actual = excludeCompilerErrorMessagesFromLog(logs)
 
+            if(expected.trimEnd() != actual.trimEnd()) {
+                assertSameLinesWithFile(it.absolutePath, logs)
+            }
             val lastMakeResult = otherMakeResults.last()
             clearCachesRebuildAndCheckOutput(lastMakeResult)
         }
+    }
+
+    private fun excludeCompilerErrorMessagesFromLog(log: String): String {
+        return if (!log.contains("COMPILATION FAILED")) log
+        else log.split("COMPILATION FAILED").mapIndexed { index, s ->
+            if (index == 0) return@mapIndexed s
+            return@mapIndexed if(s.indexOf("=") > 0) s.substring(s.indexOf("=")) else ""
+        }.joinToString("COMPILATION FAILED\n\n")
     }
 
     protected data class MakeResult(
@@ -447,6 +457,9 @@ abstract class AbstractIncrementalJpsTest(
             val kotlinFacetSettings = module.kotlinFacetSettings
             if (kotlinFacetSettings != null) {
                 val compilerArguments = kotlinFacetSettings.compilerArguments
+                if(compilerArguments != null) {
+                    updateCommandLineArguments(compilerArguments)
+                }
                 if (compilerArguments is K2MetadataCompilerArguments) {
                     val out = getAbsolutePath("${module.name}/out")
                     File(out).mkdirs()
@@ -483,7 +496,8 @@ abstract class AbstractIncrementalJpsTest(
 
     private fun configureRequiredLibraries() {
         myProject.modules.forEach { module ->
-            val platformKind = module.kotlinFacet?.settings?.targetPlatform?.idePlatformKind.orDefault()
+            val platformKind = module.kotlinFacet?.settings?.targetPlatform?.idePlatformKind
+                ?: JvmPlatforms.defaultJvmPlatform.idePlatformKind
 
             when {
                 platformKind.isJvm -> {
@@ -532,7 +546,10 @@ abstract class AbstractIncrementalJpsTest(
         }
 
         override fun chunkBuildStarted(context: CompileContext, chunk: ModuleChunk) {
-            logDirtyFiles(markedDirtyBeforeRound) // files can be marked as dirty during build start (KotlinCompileContext initialization)
+            logDirtyFiles(
+                markedDirtyBeforeRound,
+                "ChunkBuildStarted"
+            ) // files can be marked as dirty during build start (KotlinCompileContext initialization)
 
             if (!chunk.isDummy(context) && context.projectDescriptor.project.modules.size > 1) {
                 logLine("Building ${chunk.modules.sortedBy { it.name }.joinToString { it.name }}")
@@ -540,7 +557,11 @@ abstract class AbstractIncrementalJpsTest(
         }
 
         override fun afterChunkBuildStarted(context: CompileContext, chunk: ModuleChunk) {
-            logDirtyFiles(markedDirtyBeforeRound)
+            logDirtyFiles(markedDirtyBeforeRound, "After chunkBuildStarted")
+        }
+
+        override fun markedAsComplementaryFiles(files: Collection<File>) {
+            logDirtyFiles(ArrayList(files), "Complementary files")
         }
 
         override fun addCustomMessage(message: String) {
@@ -552,15 +573,15 @@ abstract class AbstractIncrementalJpsTest(
                 logLine(it)
             }
             customMessages.clear()
-            logDirtyFiles(markedDirtyAfterRound)
+            logDirtyFiles(markedDirtyAfterRound, "After build round")
             logLine("Exit code: $exitCode")
             logLine("------------------------------------------")
         }
 
-        private fun logDirtyFiles(files: MutableList<File>) {
+        private fun logDirtyFiles(files: MutableList<File>, phase: String) {
             if (files.isEmpty()) return
 
-            logLine("Marked as dirty by Kotlin:")
+            logLine("$phase. Marked as dirty by Kotlin:")
             files.apply {
                 map { FileUtil.toSystemIndependentName(it.path) }
                     .sorted()
@@ -595,10 +616,11 @@ abstract class AbstractIncrementalJpsTest(
 private fun createMappingsDump(
     project: ProjectDescriptor,
     kotlinContext: KotlinCompileContext,
-    lookupsDuringTest: Set<LookupSymbol>
-) = createKotlinCachesDump(project, kotlinContext, lookupsDuringTest) + "\n\n\n" +
-        createCommonMappingsDump(project) + "\n\n\n" +
-        createJavaMappingsDump(project)
+    lookupsDuringTest: Set<LookupSymbol>,
+) = if (useDependencyGraph) "" else
+    createKotlinCachesDump(project, kotlinContext, lookupsDuringTest) + "\n\n\n" +
+            createCommonMappingsDump(project) + "\n\n\n" +
+            createJavaMappingsDump(project)
 
 internal fun createKotlinCachesDump(
     project: ProjectDescriptor,

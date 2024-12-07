@@ -1,3 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
+
 package lvalue_assignment
 
 open class B() {
@@ -11,18 +14,18 @@ class C() : B() {
         this.x = 34
         this.b = 123
         super.b = 23
-        this.c = 34
-        super.c = 3535 //repeat for 'c'
+        this.<!VAL_REASSIGNMENT!>c<!> = 34
+        super.<!VAL_REASSIGNMENT!>c<!> = 3535 //repeat for 'c'
 
         <!VARIABLE_EXPECTED!>getInt()<!> = 12
     }
 
     fun foo1(c: C) {
-        super.c = 34
+        super.<!VAL_REASSIGNMENT!>c<!> = 34
     }
 
     fun bar(c: C) {
-        this = c  //should be an error
+        <!VARIABLE_EXPECTED!>this<!> = c  //should be an error
     }
 }
 
@@ -31,7 +34,7 @@ fun getInt() = 0
 class D() {
     inner class B() {
         fun foo() {
-            this@D = D()
+            <!VARIABLE_EXPECTED!>this@D<!> = D()
         }
     }
 }
@@ -45,8 +48,8 @@ fun cannotBe() {
     <!VARIABLE_EXPECTED!>""<!> = "";
     <!VARIABLE_EXPECTED!>foo()<!> = Unit;
 
-    (<!VARIABLE_EXPECTED!>i as Int<!>) = 34
-    (<!VARIABLE_EXPECTED!>i is Int<!>) = false
+    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(<!VARIABLE_EXPECTED!>i <!USELESS_CAST!>as Int<!><!>)<!> = 34
+    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(<!USELESS_IS_CHECK, VARIABLE_EXPECTED!>i is Int<!>)<!> = false
     <!VARIABLE_EXPECTED!>A()<!> = A()
     <!VARIABLE_EXPECTED!>5<!> = 34
 }
@@ -57,19 +60,19 @@ annotation class Ann
 
 fun canBe(i0: Int, j: Int) {
     var i = i0
-    (label@ i) = 34
+    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(label@ i)<!> = 34
 
-    (label@ <!VAL_REASSIGNMENT!>j<!>) = 34 //repeat for j
+    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(label@ <!VAL_REASSIGNMENT!>j<!>)<!> = 34 //repeat for j
 
     val a = A()
-    (l@ a.a) = 3894
+    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(l@ a.a)<!> = 3894
 
     @Ann
-    l@ (i) = 123
+    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>l@ (i)<!> = 123
 }
 
 fun canBe2(j: Int) {
-    (label@ <!VAL_REASSIGNMENT!>j<!>) = 34
+    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(label@ <!VAL_REASSIGNMENT!>j<!>)<!> = 34
 }
 
 class A() {
@@ -79,21 +82,21 @@ class A() {
 class Test() {
     fun testIllegalValues() {
         <!VARIABLE_EXPECTED!>1<!> += 23
-        (l@ <!VARIABLE_EXPECTED!>1<!>) += 23
+        <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(l@ <!VARIABLE_EXPECTED!>1<!>)<!> += 23
 
         <!VARIABLE_EXPECTED!>getInt()<!> += 343
-        (f@ <!VARIABLE_EXPECTED!>getInt()<!>) += 343
+        <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(f@ <!VARIABLE_EXPECTED!>getInt()<!>)<!> += 343
 
         <!VARIABLE_EXPECTED!>1<!>++
-        (r@ <!VARIABLE_EXPECTED!>1<!>)--
+        <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(r@ <!VARIABLE_EXPECTED!>1<!>)<!>--
 
         <!VARIABLE_EXPECTED!>getInt()<!>++
-        (m@ <!VARIABLE_EXPECTED!>getInt()<!>)--
+        <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(m@ <!VARIABLE_EXPECTED!>getInt()<!>)<!>--
 
         ++<!VARIABLE_EXPECTED!>2<!>
-        --(r@ <!VARIABLE_EXPECTED!>2<!>)
+        --<!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(r@ <!VARIABLE_EXPECTED!>2<!>)<!>
 
-        this<!UNRESOLVED_REFERENCE!>++<!>
+        <!VARIABLE_EXPECTED!>this<!><!UNRESOLVED_REFERENCE!>++<!>
 
         var s : String = "r"
         s += "ss"
@@ -101,12 +104,12 @@ class Test() {
         s += (a@ 2)
 
         @Ann
-        l@ (<!VARIABLE_EXPECTED!>1<!>) = 123
+        <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>l@ (<!VARIABLE_EXPECTED!>1<!>)<!> = 123
     }
 
     fun testIncompleteSyntax() {
         val s = "s"
-        <!UNRESOLVED_REFERENCE!>++<!>s.<!SYNTAX!><!>
+        <!UNRESOLVED_REFERENCE!>++<!><!VARIABLE_EXPECTED!>s<!>.<!SYNTAX!><!>
     }
 
     fun testVariables() {
@@ -114,24 +117,24 @@ class Test() {
         val b: Int = 34
 
         a += 34
-        (l@ a) += 34
+        <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(l@ a)<!> += 34
 
         <!VAL_REASSIGNMENT!>b<!> += 34
 
         a++
-        (@Ann l@ a)--
-        (a)++
+        <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(@Ann l@ a)<!>--
+        <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(a)<!>++
         --a
-        ++(@Ann l@ a)
-        --(a)
+        ++<!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(@Ann l@ a)<!>
+        --<!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(a)<!>
     }
 
     fun testVariables1() {
         val b: Int = 34
 
-        (l@ <!VAL_REASSIGNMENT!>b<!>) += 34
+        <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(l@ <!VAL_REASSIGNMENT!>b<!>)<!> += 34
         //repeat for b
-        (<!VAL_REASSIGNMENT!>b<!>) += 3
+        <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(<!VAL_REASSIGNMENT!>b<!>)<!> += 3
     }
 
     fun testArrays(a: Array<Int>, ab: Ab) {

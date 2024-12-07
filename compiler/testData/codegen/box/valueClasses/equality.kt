@@ -1,27 +1,27 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM_IR
-// WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
+// CHECK_BYTECODE_LISTING
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class F1(val x: Int)
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class F2(val x: UInt)
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class F3(val x: F1, val y: F2)
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class F4(val x: Int)
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class F5(val x: UInt)
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class F6(val x: String)
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class A(
     val f1: F1,
     val f2: F2,
@@ -34,7 +34,7 @@ value class A(
     val f9: String,
 )
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class B(val a1: A, val a2: A) {
     override fun toString(): String {
         return "OverridenBToString(a1 = $a1, a2 = $a2)"

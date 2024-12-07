@@ -1,0 +1,144 @@
+KtClass:
+  line: 1
+  name: A
+  qualifier: A
+  light: SymbolLightClassForClassOrObject
+    name: A
+    qualifier: A
+    superTypes: [
+      PsiType:Object
+    ]
+    superClass: ClsClassImpl: Object (java.lang.Object)
+    interfaces: []
+    supers: [
+      ClsClassImpl: Object (java.lang.Object)
+    ]
+
+KtClass:
+  line: 8
+  name: InnerInA
+  qualifier: A.InnerInA
+  light: SymbolLightClassForClassOrObject
+    name: InnerInA
+    qualifier: A.InnerInA
+    superTypes: [
+      PsiType:Object
+    ]
+    superClass: ClsClassImpl: Object (java.lang.Object)
+    interfaces: []
+    supers: [
+      ClsClassImpl: Object (java.lang.Object)
+    ]
+
+KtClass:
+  line: 9
+  name: InnerInInnerInA
+  qualifier: A.InnerInA.InnerInInnerInA
+  light: SymbolLightClassForClassOrObject
+    name: InnerInInnerInA
+    qualifier: A.InnerInA.InnerInInnerInA
+    superTypes: [
+      PsiType:Object
+    ]
+    superClass: ClsClassImpl: Object (java.lang.Object)
+    interfaces: []
+    supers: [
+      ClsClassImpl: Object (java.lang.Object)
+    ]
+
+KtClass:
+  line: 2
+  name: NestedInA
+  qualifier: A.NestedInA
+  light: SymbolLightClassForClassOrObject
+    name: NestedInA
+    qualifier: A.NestedInA
+    superTypes: [
+      PsiType:Object
+    ]
+    superClass: ClsClassImpl: Object (java.lang.Object)
+    interfaces: []
+    supers: [
+      ClsClassImpl: Object (java.lang.Object)
+    ]
+
+KtClass:
+  line: 5
+  name: InnerInNestedInA
+  qualifier: A.NestedInA.InnerInNestedInA
+  light: SymbolLightClassForClassOrObject
+    name: InnerInNestedInA
+    qualifier: A.NestedInA.InnerInNestedInA
+    superTypes: [
+      PsiType:Object
+    ]
+    superClass: ClsClassImpl: Object (java.lang.Object)
+    interfaces: []
+    supers: [
+      ClsClassImpl: Object (java.lang.Object)
+    ]
+
+KtClass:
+  line: 3
+  name: NestedInNestedInA
+  qualifier: A.NestedInA.NestedInNestedInA
+  light: SymbolLightClassForClassOrObject
+    name: NestedInNestedInA
+    qualifier: A.NestedInA.NestedInNestedInA
+    superTypes: [
+      PsiType:Object
+    ]
+    superClass: ClsClassImpl: Object (java.lang.Object)
+    interfaces: []
+    supers: [
+      ClsClassImpl: Object (java.lang.Object)
+    ]
+
+KtClass:
+  line: 13
+  name: B
+  qualifier: B
+  light: SymbolLightClassForClassOrObject
+    name: B
+    qualifier: B
+    superTypes: [
+      PsiType:A
+    ]
+    superClass: SymbolLightClassForClassOrObject: A (A)
+    interfaces: []
+    supers: [
+      SymbolLightClassForClassOrObject: A (A)
+    ]
+
+KtClass:
+  line: 16
+  name: InnerInB
+  qualifier: B.InnerInB
+  light: SymbolLightClassForClassOrObject
+    name: InnerInB
+    qualifier: B.InnerInB
+    superTypes: [
+      PsiType:Object
+    ]
+    superClass: ClsClassImpl: Object (java.lang.Object)
+    interfaces: []
+    supers: [
+      ClsClassImpl: Object (java.lang.Object)
+    ]
+
+KtClass:
+  line: 14
+  name: NestedInB
+  qualifier: B.NestedInB
+  light: SymbolLightClassForClassOrObject
+    name: NestedInB
+    qualifier: B.NestedInB
+    superTypes: [
+      PsiType:NestedInNestedInA
+    ]
+    superClass: SymbolLightClassForClassOrObject: NestedInNestedInA (A.NestedInA.NestedInNestedInA)
+    interfaces: []
+    supers: [
+      SymbolLightClassForClassOrObject: NestedInNestedInA (A.NestedInA.NestedInNestedInA)
+    ]
+

@@ -1,0 +1,7 @@
+FILE: noParameterTypRefInLambda.kt
+    public? final? fun foo(): R|kotlin/Unit| {
+        IntegerLiteral(1).let#(<L> = let@fun <implicit>.<anonymous>(i: <implicit>): <implicit> <inline=Unknown>  {
+            i#
+        }
+        )
+    }

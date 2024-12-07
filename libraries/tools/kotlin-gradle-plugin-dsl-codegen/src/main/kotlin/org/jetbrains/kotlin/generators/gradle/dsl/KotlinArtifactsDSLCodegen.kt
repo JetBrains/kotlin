@@ -24,7 +24,9 @@ private fun generateAbstractKotlinArtifactsExtensionImplementation() {
         import org.jetbrains.kotlin.gradle.dsl.KotlinArtifactConfig
         import org.jetbrains.kotlin.gradle.dsl.KotlinArtifactsExtension
         import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
+        import org.jetbrains.kotlin.gradle.plugin.mpp.BITCODE_EMBEDDING_DEPRECATION_MESSAGE
         import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+        import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE
         import org.jetbrains.kotlin.konan.target.KonanTarget
         import javax.inject.Inject
     """.trimIndent()
@@ -43,26 +45,28 @@ private fun generateAbstractKotlinArtifactsExtensionImplementation() {
 
     val bitcodeModeConstants = BitcodeEmbeddingMode.values().joinToString(
         separator = "\n",
-        prefix = "class BitcodeEmbeddingModeDsl {\n",
+        prefix = "@Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)\nclass BitcodeEmbeddingModeDsl {\n",
         postfix = "\n}"
     ) {
         "val ${it.name} = BitcodeEmbeddingMode.${it.name}".indented(4)
     }.indented(4)
 
     val bitcodeMode = listOf(
+        "@Suppress(\"DEPRECATION\")",
+        "@Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)",
         "@JvmField",
         "val EmbedBitcodeMode = BitcodeEmbeddingModeDsl()"
     ).joinToString("\n").indented(4)
 
-    val konanTargetConstants = KonanTarget.predefinedTargets.values.joinToString("\n") {
-        val nameParts = it.name.split("_")
-        val name = nameParts.drop(1).joinToString(
-            separator = "",
-            prefix = nameParts.first(),
-            transform = String::capitalizeUS
-        )
-        "val $name = KonanTarget.${it.name.uppercase(Locale.US)}"
-    }.indented(4)
+    val konanTargetConstants = KonanTarget.predefinedTargets.values.filter { !KonanTarget.deprecatedTargets.contains(it) }
+        .joinToString("\n") {
+            it.generateKonanTargetVal()
+        }.indented(4)
+
+    val deprecatedKonanTargetConstants = KonanTarget.predefinedTargets.values.filter { KonanTarget.deprecatedTargets.contains(it) }
+        .joinToString("\n") {
+            "\n@Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)\n" + it.generateKonanTargetVal()
+        }.indented(4)
 
     val code = listOf(
         "package ${className.packageName()}",
@@ -74,9 +78,20 @@ private fun generateAbstractKotlinArtifactsExtensionImplementation() {
         bitcodeModeConstants,
         bitcodeMode,
         konanTargetConstants,
+        deprecatedKonanTargetConstants,
         "}"
     ).joinToString(separator = "\n\n")
 
-    val targetFile = File("$outputSourceRoot/${className.fqName.replace(".", "/")}.kt")
+    val targetFile = File("$kotlinGradlePluginSourceRoot/${className.fqName.replace(".", "/")}.kt")
     targetFile.writeText(code)
+}
+
+private fun KonanTarget.generateKonanTargetVal(): String {
+    val nameParts = this.name.split("_")
+    val name = nameParts.drop(1).joinToString(
+        separator = "",
+        prefix = nameParts.first(),
+        transform = String::capitalizeUS
+    )
+    return "val $name = KonanTarget.${this.name.uppercase(Locale.US)}"
 }

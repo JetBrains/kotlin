@@ -1,40 +1,37 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.navigation.ItemPresentationProviders
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiField
+import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiMethod
 import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.light.AbstractLightClass
-import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
-import org.jetbrains.kotlin.asJava.elements.KtLightFieldImpl
-import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
 abstract class KtLightClassBase protected constructor(
     manager: PsiManager
 ) : AbstractLightClass(manager, KotlinLanguage.INSTANCE), KtExtensibleLightClass {
-    protected open val myInnersCache = KotlinClassInnerStuffCache(
-        myClass = this,
-        dependencies = listOf(KotlinModificationTrackerService.getInstance(manager.project).outOfBlockModificationTracker),
-        lazyCreator = LightClassesLazyCreator(project)
+    private val myInnersCache by lazyPub {
+        KotlinClassInnerStuffCache(
+            myClass = this,
+            dependencies = cacheDependencies(),
+            lazyCreator = LightClassesLazyCreator(project)
+        )
+    }
+
+    protected open fun cacheDependencies(): List<Any> = listOf(
+        KotlinAsJavaSupportBase.getInstance(project).outOfBlockModificationTracker(this)
     )
 
-    override fun getDelegate() = clsDelegate
+    override fun getDelegate() =
+        throw UnsupportedOperationException("Cls delegate shouldn't be loaded for ultra-light classes!")
 
     override fun getFields() = myInnersCache.fields
 
@@ -56,14 +53,10 @@ abstract class KtLightClassBase protected constructor(
 
     override fun findInnerClassByName(name: String, checkBases: Boolean) = myInnersCache.findInnerClassByName(name, checkBases)
 
-    override fun getOwnFields(): List<PsiField> = KtLightFieldImpl.fromClsFields(delegate, this)
+    abstract override fun getOwnFields(): List<PsiField>
+    abstract override fun getOwnMethods(): List<PsiMethod>
 
-    override fun getOwnMethods(): List<PsiMethod> = KtLightMethodImpl.fromClsMethods(delegate, this)
-
-    override fun getText(): String {
-        val origin = kotlinOrigin
-        return if (origin == null) "" else origin.text
-    }
+    override fun getText(): String = kotlinOrigin?.text ?: ""
 
     override fun getLanguage() = KotlinLanguage.INSTANCE
 

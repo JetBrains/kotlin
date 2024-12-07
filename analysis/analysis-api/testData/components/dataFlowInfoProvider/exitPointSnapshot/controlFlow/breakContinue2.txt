@@ -1,0 +1,15 @@
+KaDataFlowExitPointSnapshot:
+  defaultExpressionInfo = DefaultExpressionInfo:
+    expression = if (a - b > 0) continue@loop1
+    type = kotlin.Unit
+  hasEscapingJumps = true
+  hasJumps = true
+  hasMultipleJumpKinds = true
+  hasMultipleJumpTargets = false
+  jumpExpressions = [
+    break@loop2,
+    continue@loop1
+  ]
+  returnValueType = null
+  valuedReturnExpressions = []
+  variableReassignments = []

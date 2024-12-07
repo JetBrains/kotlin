@@ -30,8 +30,8 @@ object B {
 
 fun B.test() {
   // COMPOSITE {
-  val tmp0_container: A = A
-  val x: Int = (<this>, tmp0_container).component1()
-  val z: Int = (<this>, tmp0_container).component3()
+  val tmp_0: A = A
+  val x: Int = (<this>, tmp_0).component1()
+  val z: Int = (<this>, tmp_0).component3()
   // }
 }

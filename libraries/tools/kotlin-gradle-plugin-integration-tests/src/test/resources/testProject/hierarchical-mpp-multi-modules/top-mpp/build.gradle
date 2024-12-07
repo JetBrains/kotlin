@@ -21,6 +21,7 @@ repositories {
 def complexLibAttribute = Attribute.of('org.jetbrains.qa.complexlib', String)
 
 kotlin {
+    jvmToolchain(8)
     jvm("jvm18") {
         withJava()
         attributes { attribute(complexLibAttribute, 'jvmWithJava') }
@@ -69,7 +70,7 @@ kotlin {
     targets.all {
         compilations.all {
             kotlinOptions {
-                freeCompilerArgs += ["-progressive", "-XXLanguage:+NewInference", "-XXLanguage:+SamConversionForKotlinFunctions", "-opt-in=kotlin.ExperimentalMultiplatform"]
+                freeCompilerArgs += ["-progressive", "-XXLanguage:+SamConversionForKotlinFunctions", "-opt-in=kotlin.ExperimentalMultiplatform"]
             }
         }
     }

@@ -10,12 +10,9 @@ import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.testing.Test
-import org.gradle.api.tasks.testing.TestFilter
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinTestRun
 
 @CacheableTask
-open class KotlinJvmTest : Test() {
+abstract class KotlinJvmTest : Test() {
     @Input
     @Optional
     var targetName: String? = null
@@ -23,25 +20,28 @@ open class KotlinJvmTest : Test() {
     override fun createTestExecuter(): TestExecuter<JvmTestExecutionSpec> =
         if (targetName != null) Executor(
             super.createTestExecuter(),
-            targetName!!
+            targetName!!,
         )
         else super.createTestExecuter()
 
     class Executor(
         private val delegate: TestExecuter<JvmTestExecutionSpec>,
-        private val targetName: String
+        private val targetName: String,
     ) : TestExecuter<JvmTestExecutionSpec> by delegate {
         override fun execute(testExecutionSpec: JvmTestExecutionSpec, testResultProcessor: TestResultProcessor) {
-            delegate.execute(testExecutionSpec, object : TestResultProcessor by testResultProcessor {
-                override fun started(test: TestDescriptorInternal, event: TestStartEvent) {
-                    val myTest = object : TestDescriptorInternal by test {
-                        override fun getDisplayName(): String = "${test.displayName}[$targetName]"
-                        override fun getClassName(): String? = test.className?.replace('$', '.')
-                        override fun getClassDisplayName(): String? = test.classDisplayName?.replace('$', '.')
+            delegate.execute(
+                testExecutionSpec,
+                object : TestResultProcessor by testResultProcessor {
+                    override fun started(test: TestDescriptorInternal, event: TestStartEvent) {
+                        val myTest = object : TestDescriptorInternal by test {
+                            override fun getDisplayName(): String = "${test.displayName}[$targetName]"
+                            override fun getClassName(): String? = test.className?.replace('$', '.')
+                            override fun getClassDisplayName(): String? = test.classDisplayName?.replace('$', '.')
+                        }
+                        testResultProcessor.started(myTest, event)
                     }
-                    testResultProcessor.started(myTest, event)
                 }
-            })
+            )
         }
     }
 }

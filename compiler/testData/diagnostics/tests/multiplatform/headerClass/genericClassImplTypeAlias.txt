@@ -64,12 +64,29 @@ public expect interface C9</*0*/ K> {
 // -- Module: <m2-jvm> --
 package
 
+public final class A</*0*/ T : A<T>> {
+    public constructor A</*0*/ T : A<T>>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class B</*0*/ T> {
+    public constructor B</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
 public actual typealias C1 = kotlin.String
 public actual typealias C10</*0*/ L> = Tmp<L>
 public actual typealias C2</*0*/ A> = kotlin.collections.List<kotlin.String>
 public actual typealias C3</*0*/ B> = kotlin.collections.List<B>
 public actual typealias C4</*0*/ D, /*1*/ E> = kotlin.collections.MutableMap<D, E>
 public actual typealias C5</*0*/ F, /*1*/ G> = kotlin.collections.MutableMap<G, F>
+public actual typealias C51 = kotlin.collections.MutableMap<kotlin.String, kotlin.String>
+public actual typealias C52</*0*/ F> = kotlin.collections.MutableMap<F, kotlin.String>
+public actual typealias C53</*0*/ T> = A<A<T>>
+public actual typealias C54</*0*/ T> = B<kotlin.collections.List<kotlin.String>>
 public actual typealias C6</*0*/ H> = kotlin.collections.MutableList<H>
 public actual typealias C7</*0*/ I> = kotlin.collections.MutableList<out I>
 public actual typealias C8</*0*/ J> = kotlin.collections.MutableList<*>

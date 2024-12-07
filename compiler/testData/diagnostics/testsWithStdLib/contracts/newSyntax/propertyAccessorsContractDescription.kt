@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ContractSyntaxV2
 import kotlin.contracts.*
 
 class A {

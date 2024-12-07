@@ -27,7 +27,6 @@ fun box(): String {
 }
 
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 1 INVOKEVIRTUAL java/lang/StringBuilder\.append \(Z\)Ljava/lang/StringBuilder;
 // 3 INVOKEVIRTUAL java/lang/StringBuilder\.append \(I\)Ljava/lang/StringBuilder;
 // 1 INVOKEVIRTUAL java/lang/StringBuilder\.append \(J\)Ljava/lang/StringBuilder;

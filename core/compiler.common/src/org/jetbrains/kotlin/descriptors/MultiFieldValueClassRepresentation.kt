@@ -6,16 +6,17 @@
 package org.jetbrains.kotlin.descriptors
 
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.model.RigidTypeMarker
 
-class MultiFieldValueClassRepresentation<Type : SimpleTypeMarker>(
+class MultiFieldValueClassRepresentation<Type : RigidTypeMarker>(
     override val underlyingPropertyNamesToTypes: List<Pair<Name, Type>>
 ) : ValueClassRepresentation<Type>() {
 
-    private val map = underlyingPropertyNamesToTypes.toMap().also {
-        require(it.size == underlyingPropertyNamesToTypes.size) { "Some properties have the same names" }
-    }
+    private val map = underlyingPropertyNamesToTypes.toMap()
 
     override fun containsPropertyWithName(name: Name): Boolean = name in map
     override fun getPropertyTypeByName(name: Name): Type? = map[name]
+
+    override fun toString(): String =
+        "MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=$underlyingPropertyNamesToTypes)"
 }

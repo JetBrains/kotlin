@@ -1,0 +1,10 @@
+KT element: KtPrimaryConstructor
+KT element text:
+public constructor()
+FIR element: FirPrimaryConstructor
+FIR source kind: KtRealSourceElementKind
+FIR container source: null
+File name: 0_test.knm
+
+FIR element rendered:
+public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|test/MyClass|

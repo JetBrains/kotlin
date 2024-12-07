@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendContext
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -14,10 +15,10 @@ import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.MutableModuleContextImpl
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
-import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
+import org.jetbrains.kotlin.descriptors.impl.ModuleDependenciesImpl
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
-import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
-import org.jetbrains.kotlin.library.metadata.NativeTypeTransformer
+import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
@@ -27,11 +28,11 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProvid
 
 internal object TopDownAnalyzerFacadeForKonan {
 
-    private val nativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer, NativeTypeTransformer())
+    private val nativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
 
-    fun analyzeFiles(files: Collection<KtFile>, context: Context): AnalysisResult {
+    fun analyzeFiles(files: Collection<KtFile>, context: FrontendContext): AnalysisResult {
         val config = context.config
-        val moduleName = Name.special("<${config.moduleId}>") 
+        val moduleName = Name.special("<${config.moduleId}>")
 
         val projectContext = ProjectContext(config.project, "TopDownAnalyzer for Konan")
 
@@ -41,13 +42,19 @@ internal object TopDownAnalyzerFacadeForKonan {
 
         val resolvedModuleDescriptors = nativeFactories.DefaultResolvedDescriptorsFactory.createResolved(
                 config.resolvedLibraries, projectContext.storageManager, module.builtIns, config.languageVersionSettings,
-                config.friendModuleFiles, config.resolve.includedLibraries.map { it.libraryFile }.toSet(), listOf(module),
+                config.friendModuleFiles, config.refinesModuleFiles,
+                config.resolve.includedLibraries.map { it.libraryFile }.toSet(), listOf(module),
                 isForMetadataCompilation = config.metadataKlib)
 
         val additionalPackages = mutableListOf<PackageFragmentProvider>()
         if (!module.isNativeStdlib()) {
-            val dependencies = listOf(module) + resolvedModuleDescriptors.resolvedDescriptors + resolvedModuleDescriptors.forwardDeclarationsModule
-            module.setDependencies(dependencies, resolvedModuleDescriptors.friendModules)
+            module.setDependencies(ModuleDependenciesImpl(
+                    allDependencies =
+                    listOf(module) + resolvedModuleDescriptors.resolvedDescriptors + resolvedModuleDescriptors.forwardDeclarationsModule,
+                    modulesWhoseInternalsAreVisible = resolvedModuleDescriptors.friendModules,
+                    directExpectedByDependencies = resolvedModuleDescriptors.refinesModules.toList(),
+                    allExpectedByDependencies = resolvedModuleDescriptors.refinesModules
+            ))
         } else {
             assert(resolvedModuleDescriptors.resolvedDescriptors.isEmpty())
             moduleContext.setDependencies(module)
@@ -55,14 +62,14 @@ internal object TopDownAnalyzerFacadeForKonan {
             additionalPackages += functionInterfacePackageFragmentProvider(projectContext.storageManager, module)
         }
 
-        return analyzeFilesWithGivenTrace(files, BindingTraceContext(), moduleContext, context, projectContext, additionalPackages)
+        return analyzeFilesWithGivenTrace(files, BindingTraceContext(projectContext.project), moduleContext, context, projectContext, additionalPackages)
     }
 
     fun analyzeFilesWithGivenTrace(
             files: Collection<KtFile>,
             trace: BindingTrace,
             moduleContext: ModuleContext,
-            context: Context,
+            context: FrontendContext,
             projectContext: ProjectContext,
             additionalPackages: List<PackageFragmentProvider> = emptyList()
     ): AnalysisResult {
@@ -70,7 +77,7 @@ internal object TopDownAnalyzerFacadeForKonan {
         // we print out each file we compile if frontend phase is verbose
         files.takeIf {
             context.shouldPrintFiles()
-        } ?.forEach(::println)
+        }?.forEach(::println)
 
         val container = createTopDownAnalyzerProviderForKonan(
                 moduleContext, trace,

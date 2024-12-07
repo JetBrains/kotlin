@@ -1,14 +1,22 @@
 package
 
 public fun </*0*/ _> bar(): Foo<_>
+public fun </*0*/ _> bar1(): Foo<Foo<_>>
 public fun </*0*/ K, /*1*/ T> foo(/*0*/ x: (K) -> T): kotlin.Pair<K, T>
 public fun foo1(/*0*/ x: [Error type: Unresolved type for _]): kotlin.Unit
 public fun foo2(/*0*/ x: Foo<[Error type: Unresolved type for _]>): kotlin.Unit
+public fun foo21(/*0*/ x: Foo<Foo<[Error type: Unresolved type for _]>>): kotlin.Unit
 public fun foo3(): [Error type: Unresolved type for _]
-public fun foo5(): Foo<[Error type: Unresolved type for _]>
+public fun foo4(): Foo<[Error type: Unresolved type for _]>
+public fun foo5(): Foo<Foo<[Error type: Unresolved type for _]>>
 public fun </*0*/ K, /*1*/ _> foo6(): Foo<_>
-public fun </*0*/ K : _, /*1*/ _> foo7(): Foo<_>
+public fun </*0*/ K : _, /*1*/ _> foo7(): _
+public fun </*0*/ K : Foo<_>, /*1*/ _> foo8(): Foo<_>
+public fun </*0*/ K : Foo<Foo<_>>, /*1*/ _> foo9(): Foo<Foo<_>>
 public fun test(): kotlin.Unit
+public fun [Error type: Unresolved type for _].foo10(): kotlin.Unit
+public fun Foo<[Error type: Unresolved type for _]>.foo11(): kotlin.Unit
+public fun Foo<Foo<[Error type: Unresolved type for _]>>.foo12(): kotlin.Unit
 
 public final class AA1 {
     public constructor AA1()
@@ -74,6 +82,8 @@ public final class Foo</*0*/ K> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 public typealias A1</*0*/ _> = _
+public typealias A11</*0*/ _> = Foo<_>
+public typealias A12</*0*/ _> = Foo<Foo<_>>
 public typealias A2</*0*/ T> = Foo<[Error type: Unresolved type for _]>
 public typealias A3</*0*/ T> = ([Error type: Unresolved type for _]) -> T
 public typealias A4</*0*/ T> = (T) -> () -> [Error type: Unresolved type for _]

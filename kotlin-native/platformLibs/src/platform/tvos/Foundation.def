@@ -1,7 +1,9 @@
-depends = CFNetwork CoreFoundation Security darwin posix
+depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase Security darwin posix
 language = Objective-C
 package = platform.Foundation
 modules = Foundation
 
 compilerOpts = -framework Foundation
 linkerOpts = -framework Foundation
+
+objcClassesIncludingCategories = NSURL

@@ -62,8 +62,9 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
         return 0
     }
 
-    private fun compare(a: ConeNullability, b: ConeNullability): Int {
-        return a.ordinal - b.ordinal
+    private fun compareNullability(a: ConeKotlinType, b: ConeKotlinType): Int {
+        // true compares as lower, therefore, the arguments are swapped.
+        return b.isMarkedNullable.compareTo(a.isMarkedNullable)
     }
 
     override fun compare(a: ConeKotlinType, b: ConeKotlinType): Int {
@@ -75,19 +76,19 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
         when (a) {
             is ConeErrorType -> {
                 require(b is ConeErrorType) {
-                    "priority is inconsistent: ${a.render()} v.s. ${b.render()}"
+                    "priority is inconsistent: ${a.renderForDebugging()} v.s. ${b.renderForDebugging()}"
                 }
                 return a.hashCode() - b.hashCode()
             }
             is ConeLookupTagBasedType -> {
                 require(b is ConeLookupTagBasedType) {
-                    "priority is inconsistent: ${a.render()} v.s. ${b.render()}"
+                    "priority is inconsistent: ${a.renderForDebugging()} v.s. ${b.renderForDebugging()}"
                 }
                 val nameDiff = a.lookupTag.name.compareTo(b.lookupTag.name)
                 if (nameDiff != 0) {
                     return nameDiff
                 }
-                val nullabilityDiff = compare(a.nullability, b.nullability)
+                val nullabilityDiff = compareNullability(a, b)
                 if (nullabilityDiff != 0) {
                     return nullabilityDiff
                 }
@@ -95,7 +96,7 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
             }
             is ConeFlexibleType -> {
                 require(b is ConeFlexibleType) {
-                    "priority is inconsistent: ${a.render()} v.s. ${b.render()}"
+                    "priority is inconsistent: ${a.renderForDebugging()} v.s. ${b.renderForDebugging()}"
                 }
                 val lowerBoundDiff = compare(a.lowerBound, b.lowerBound)
                 if (lowerBoundDiff != 0) {
@@ -105,7 +106,7 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
             }
             is ConeCapturedType -> {
                 require(b is ConeCapturedType) {
-                    "priority is inconsistent: ${a.render()} v.s. ${b.render()}"
+                    "priority is inconsistent: ${a.renderForDebugging()} v.s. ${b.renderForDebugging()}"
                 }
                 val aHasLowerType = if (a.lowerType != null) 1 else 0
                 val bHasLowerType = if (b.lowerType != null) 1 else 0
@@ -119,7 +120,7 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
                         return lowerTypeDiff
                     }
                 }
-                val nullabilityDiff = compare(a.nullability, b.nullability)
+                val nullabilityDiff = compareNullability(a, b)
                 if (nullabilityDiff != 0) {
                     return nullabilityDiff
                 }
@@ -127,13 +128,13 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
             }
             is ConeDefinitelyNotNullType -> {
                 require(b is ConeDefinitelyNotNullType) {
-                    "priority is inconsistent: ${a.render()} v.s. ${b.render()}"
+                    "priority is inconsistent: ${a.renderForDebugging()} v.s. ${b.renderForDebugging()}"
                 }
                 return compare(a.original, b.original)
             }
             is ConeIntersectionType -> {
                 require(b is ConeIntersectionType) {
-                    "priority is inconsistent: ${a.render()} v.s. ${b.render()}"
+                    "priority is inconsistent: ${a.renderForDebugging()} v.s. ${b.renderForDebugging()}"
                 }
                 val sizeDiff = a.intersectedTypes.size - b.intersectedTypes.size
                 if (sizeDiff != 0) {
@@ -144,23 +145,23 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
             }
             is ConeStubType -> {
                 require(b is ConeStubType) {
-                    "priority is inconsistent: ${a.render()} v.s. ${b.render()}"
+                    "priority is inconsistent: ${a.renderForDebugging()} v.s. ${b.renderForDebugging()}"
                 }
                 val nameDiff = a.constructor.variable.typeConstructor.name.compareTo(b.constructor.variable.typeConstructor.name)
                 if (nameDiff != 0) {
                     return nameDiff
                 }
-                return compare(a.nullability, b.nullability)
+                return compareNullability(a, b)
             }
             is ConeIntegerLiteralConstantType -> {
                 require(b is ConeIntegerLiteralConstantType) {
-                    "priority is inconsistent: ${a.render()} v.s. ${b.render()}"
+                    "priority is inconsistent: ${a.renderForDebugging()} v.s. ${b.renderForDebugging()}"
                 }
                 val valueDiff = a.value - b.value
                 if (valueDiff != 0L) {
                     return valueDiff.toInt()
                 }
-                val nullabilityDiff = compare(a.nullability, b.nullability)
+                val nullabilityDiff = compareNullability(a, b)
                 if (nullabilityDiff != 0) {
                     return nullabilityDiff
                 }
@@ -168,10 +169,10 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
                 return a.hashCode() - b.hashCode()
             }
             is ConeIntegerConstantOperatorType -> {
-                return compare(a.nullability, b.nullability)
+                return compareNullability(a, b)
             }
             else ->
-                error("Unsupported type comparison: ${a.render()} v.s. ${b.render()}")
+                error("Unsupported type comparison: ${a.renderForDebugging()} v.s. ${b.renderForDebugging()}")
         }
     }
 }

@@ -1,0 +1,5 @@
+object ConsumerACommon {
+    init {
+        ProducerACommon
+    }
+}

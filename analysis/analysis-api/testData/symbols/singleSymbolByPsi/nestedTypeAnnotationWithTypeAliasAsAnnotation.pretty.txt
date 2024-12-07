@@ -1,0 +1,1 @@
+fun <T> T.foo2(): kotlin.collections.List<kotlin.collections.List<@BaseAnnotation T>>?

@@ -1,0 +1,10 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /testForBreak1(kotlin.collections/List<kotlin/String>) // /testForBreak1|testForBreak1(kotlin.collections.List<kotlin.String>){}[0]
+final fun /testForBreak2(kotlin.collections/List<kotlin/String>) // /testForBreak2|testForBreak2(kotlin.collections.List<kotlin.String>){}[0]
+final fun /testForContinue1(kotlin.collections/List<kotlin/String>) // /testForContinue1|testForContinue1(kotlin.collections.List<kotlin.String>){}[0]
+final fun /testForContinue2(kotlin.collections/List<kotlin/String>) // /testForContinue2|testForContinue2(kotlin.collections.List<kotlin.String>){}[0]

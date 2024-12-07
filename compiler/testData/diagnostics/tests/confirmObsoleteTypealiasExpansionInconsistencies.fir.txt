@@ -1,0 +1,31 @@
+FILE: confirmObsoleteTypealiasExpansionInconsistencies.kt
+    public final class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class GenericContainer<G> : R|kotlin/Any| {
+        public constructor<G>(): R|GenericContainer<G>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final typealias FooAlias = R|Foo|
+    public final class Test : R|kotlin/Any| {
+        public constructor(): R|Test| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final lateinit var lib: R|{FooAlias=} Foo|
+            public get(): R|{FooAlias=} Foo|
+            public set(value: R|{FooAlias=} Foo|): R|kotlin/Unit|
+
+        public final val containerCall: R|GenericContainer<{FooAlias=} Foo>| = R|/GenericContainer.GenericContainer|<R|{FooAlias=} Foo|>()
+            public get(): R|GenericContainer<{FooAlias=} Foo>|
+
+        public final lateinit var containerType: R|GenericContainer<{FooAlias=} Foo>|
+            public get(): R|GenericContainer<{FooAlias=} Foo>|
+            public set(value: R|GenericContainer<{FooAlias=} Foo>|): R|kotlin/Unit|
+
+    }

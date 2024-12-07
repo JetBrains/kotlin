@@ -1,0 +1,40 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] danglingAnnotationClassLevel.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] @R|kotlin/Suppress|[Types](names = vararg(String())) @R|kotlin/annotation/MustBeDocumented|[Types]() <DANGLING MODIFIER: Top level declaration expected>
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class Bar : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|Bar| {
+            super<R|kotlin/Any|>()
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] @R|kotlin/Suppress|[Types](names = vararg(String())) @R|kotlin/annotation/MustBeDocumented|[Types]() <DANGLING MODIFIER: Top level declaration expected>
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class Outer : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] class Inner : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor(): R|Outer.Inner| {
+                super<R|kotlin/Any|>()
+            }
+
+            [ResolvedTo(BODY_RESOLVE)] @R|kotlin/Suppress|[Types](names = vararg(String())) @R|kotlin/annotation/MustBeDocumented|[Types]() <DANGLING MODIFIER: Top level declaration expected>
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+            local final [ResolvedTo(BODY_RESOLVE)] class Local : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] constructor(): R|<local>/Local| {
+                    super<R|kotlin/Any|>()
+                }
+
+                [ResolvedTo(BODY_RESOLVE)] @R|kotlin/Suppress|[Types](names = vararg(String())) @R|kotlin/annotation/MustBeDocumented|[Types]() <DANGLING MODIFIER: Top level declaration expected>
+            }
+
+        }
+
+    }

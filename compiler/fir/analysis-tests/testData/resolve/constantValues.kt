@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 abstract class ConstantValue<out T>(open val value: T)
 
 data class ClassLiteralValue(val classId: ClassId, val arrayNestedness: Int)

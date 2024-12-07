@@ -6,100 +6,22 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.copyWithNewSourceKind
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
-internal object StoreType : FirDefaultTransformer<FirTypeRef>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirTypeRef): E {
-        return element
-    }
-
-    override fun transformTypeRef(typeRef: FirTypeRef, data: FirTypeRef): FirTypeRef {
-        return data
-    }
-}
-
-internal object TransformImplicitType : FirDefaultTransformer<FirTypeRef>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirTypeRef): E {
-        return element
-    }
-
-    override fun transformImplicitTypeRef(
-        implicitTypeRef: FirImplicitTypeRef,
-        data: FirTypeRef
-    ): FirTypeRef {
-        return data
-    }
-}
-
-
-internal object StoreNameReference : FirDefaultTransformer<FirNamedReference>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirNamedReference): E {
-        return element
-    }
-
-    override fun transformNamedReference(
-        namedReference: FirNamedReference,
-        data: FirNamedReference
-    ): FirNamedReference {
-        return data
-    }
-
-    override fun transformThisReference(thisReference: FirThisReference, data: FirNamedReference): FirReference {
-        return data
-    }
-
-    override fun transformSuperReference(
-        superReference: FirSuperReference,
-        data: FirNamedReference
-    ): FirReference {
-        return data
-    }
-}
-
-internal object StoreCalleeReference : FirTransformer<FirNamedReference>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirNamedReference): E {
-        return element
-    }
-
-    override fun transformNamedReference(
-        namedReference: FirNamedReference,
-        data: FirNamedReference
-    ): FirNamedReference {
-        return data
-    }
-
-    override fun transformResolvedNamedReference(
-        resolvedNamedReference: FirResolvedNamedReference,
-        data: FirNamedReference
-    ): FirNamedReference {
-        return data
-    }
-}
-
-internal object StoreReceiver : FirTransformer<FirExpression>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirExpression): E {
-        @Suppress("UNCHECKED_CAST")
-        return (data as E)
-    }
-}
-
-internal fun FirValueParameter.transformVarargTypeToArrayType() {
+internal fun FirValueParameter.transformVarargTypeToArrayType(session: FirSession) {
     if (isVararg) {
-        this.transformTypeToArrayType()
+        this.transformTypeToArrayType(session)
     }
 }
 
-internal fun FirCallableDeclaration.transformTypeToArrayType() {
+internal fun FirCallableDeclaration.transformTypeToArrayType(session: FirSession) {
     val returnTypeRef = this.returnTypeRef
     require(returnTypeRef is FirResolvedTypeRef)
     // If the delegated type is already resolved, it means we have already created a resolved array type for this vararg type declaration.
@@ -107,18 +29,42 @@ internal fun FirCallableDeclaration.transformTypeToArrayType() {
     if (returnTypeRef.delegatedTypeRef is FirResolvedTypeRef &&
         returnTypeRef.delegatedTypeRef?.source?.kind == KtFakeSourceElementKind.ArrayTypeFromVarargParameter
     ) return
-    val returnType = returnTypeRef.coneType
+    val returnType = returnTypeRef.coneType.fullyExpandedType(session)
 
-    transformReturnTypeRef(
-        StoreType,
+    replaceReturnTypeRef(
         buildResolvedTypeRef {
             source = returnTypeRef.source
-            type = ConeKotlinTypeProjectionOut(returnType).createArrayType()
+            coneType = ConeKotlinTypeProjectionOut(returnType).createArrayType()
             annotations += returnTypeRef.annotations
             // ? do we really need replacing source of nested delegatedTypeRef ?
             delegatedTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ArrayTypeFromVarargParameter)
         }
     )
+}
+
+val FirBasedSymbol<*>.isArrayConstructorWithLambda: Boolean
+    get() {
+        val constructor = (this as? FirConstructorSymbol)?.fir ?: return false
+        if (constructor.valueParameters.size != 2) return false
+        return constructor.returnTypeRef.coneType.isArrayOrPrimitiveArray
+    }
+
+
+fun FirAnonymousFunction.transformInlineStatus(
+    parameter: FirValueParameter,
+    functionIsInline: Boolean,
+    session: FirSession,
+) {
+    val functionalKindOfParameter = parameter.returnTypeRef.coneType.functionTypeKind(session)
+    val inlineStatus = when {
+        functionalKindOfParameter == null -> InlineStatus.NoInline
+        !functionalKindOfParameter.isInlineable -> InlineStatus.NoInline
+        parameter.isNoinline -> InlineStatus.NoInline
+        parameter.isCrossinline && functionIsInline -> InlineStatus.CrossInline
+        functionIsInline -> InlineStatus.Inline
+        else -> InlineStatus.NoInline
+    }
+    replaceInlineStatus(inlineStatus)
 }
 
 inline fun <T> withScopeCleanup(scopes: MutableList<*>, l: () -> T): T {

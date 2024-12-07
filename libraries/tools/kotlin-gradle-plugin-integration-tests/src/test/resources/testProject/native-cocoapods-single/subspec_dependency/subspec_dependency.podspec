@@ -12,4 +12,6 @@ Pod::Spec.new do |spec|
         core.source_files = "src/*"
         core.public_header_files = "src/*.h"
     end
+
+    spec.ios.deployment_target = '11.0'
 end

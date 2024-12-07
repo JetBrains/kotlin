@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.codegen.state
 
-import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspendFunction
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.resolve.isInlineClass
+import org.jetbrains.kotlin.resolve.isValueClass
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForParameterTypes
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
 import org.jetbrains.kotlin.types.KotlinType
@@ -24,7 +23,7 @@ const val NOT_INLINE_CLASS_PARAMETER_PLACEHOLDER = "_"
 
 class InfoForMangling(
     val fqName: FqNameUnsafe,
-    val isInline: Boolean,
+    val isValue: Boolean,
     val isNullable: Boolean
 )
 
@@ -36,7 +35,7 @@ fun collectFunctionSignatureForManglingSuffix(
 ): String? {
     fun getSignatureElementForMangling(info: InfoForMangling?): String = buildString {
         if (info == null) return ""
-        if (useOldManglingRules || info.isInline) {
+        if (useOldManglingRules || info.isValue) {
             append('L')
             append(info.fqName)
             if (info.isNullable) append('?')
@@ -92,8 +91,6 @@ fun getManglingSuffixBasedOnKotlinSignature(
     // Some stdlib functions ('Result.success', 'Result.failure') are annotated with '@JvmName' as a workaround for forward compatibility.
     if (DescriptorUtils.hasJvmNameAnnotation(descriptor)) return null
 
-    val unwrappedDescriptor = descriptor.unwrapInitialDescriptorForSuspendFunction()
-
     val resultNew = collectFunctionSignatureForManglingSuffix(
         useOldManglingRules = useOldManglingRules,
         requiresFunctionNameManglingForParameterTypes = requiresFunctionNameManglingForParameterTypes(descriptor),
@@ -101,8 +98,8 @@ fun getManglingSuffixBasedOnKotlinSignature(
         (listOfNotNull(descriptor.extensionReceiverParameter?.type) + descriptor.valueParameters.map { it.type })
             .map { getInfoForMangling(it) },
         returnTypeInfo =
-        if (shouldMangleByReturnType && requiresFunctionNameManglingForReturnType(unwrappedDescriptor))
-            getInfoForMangling(unwrappedDescriptor.returnType!!)
+        if (shouldMangleByReturnType && requiresFunctionNameManglingForReturnType(descriptor))
+            getInfoForMangling(descriptor.returnType!!)
         else null
     )
 
@@ -112,7 +109,7 @@ fun getManglingSuffixBasedOnKotlinSignature(
 private fun getInfoForMangling(type: KotlinType): InfoForMangling? {
     val descriptor = type.constructor.declarationDescriptor ?: return null
     return when (descriptor) {
-        is ClassDescriptor -> InfoForMangling(descriptor.fqNameUnsafe, descriptor.isInlineClass(), type.isMarkedNullable)
+        is ClassDescriptor -> InfoForMangling(descriptor.fqNameUnsafe, descriptor.isValueClass(), type.isMarkedNullable)
 
         is TypeParameterDescriptor -> {
             getInfoForMangling(descriptor.representativeUpperBound)

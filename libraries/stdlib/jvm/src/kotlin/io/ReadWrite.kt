@@ -11,6 +11,8 @@ import java.io.*
 import java.nio.charset.Charset
 import java.net.URL
 import java.util.NoSuchElementException
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.internal.*
 
 
@@ -48,9 +50,12 @@ public fun Reader.readLines(): List<String> {
  * the processing is complete.
  * @return the value returned by [block].
  */
-@RequireKotlin("1.2", versionKind = RequireKotlinVersionKind.COMPILER_VERSION, message = "Requires newer compiler version to be inlined correctly.")
-public inline fun <T> Reader.useLines(block: (Sequence<String>) -> T): T =
-    buffered().use { block(it.lineSequence()) }
+public inline fun <T> Reader.useLines(block: (Sequence<String>) -> T): T {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return buffered().use { block(it.lineSequence()) }
+}
 
 /** Creates a new reader for the string. */
 @kotlin.internal.InlineOnly
@@ -60,8 +65,8 @@ public inline fun String.reader(): StringReader = StringReader(this)
  * Returns a sequence of corresponding file lines.
  *
  * *Note*: the caller must close the underlying `BufferedReader`
- * when the iteration is finished; as the user may not complete the iteration loop (e.g. using a method like find() or any() on the iterator
- * may terminate the iteration early.
+ * when the iteration is finished, as the user may not complete the iteration loop (e.g. using a method like find() or any() on the iterator
+ * may terminate the iteration early).
  *
  * We suggest you try the method [useLines] instead which closes the stream when the processing is complete.
  *

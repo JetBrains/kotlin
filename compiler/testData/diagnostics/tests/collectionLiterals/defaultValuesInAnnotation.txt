@@ -31,10 +31,11 @@ public final annotation class Err : kotlin.Annotation {
 }
 
 public final annotation class Foo : kotlin.Annotation {
-    public constructor Foo(/*0*/ a: kotlin.Array<kotlin.String> = ..., /*1*/ b: kotlin.Array<kotlin.String> = ..., /*2*/ c: kotlin.Array<kotlin.String> = ...)
+    public constructor Foo(/*0*/ a: kotlin.Array<kotlin.String> = ..., /*1*/ b: kotlin.Array<kotlin.String> = ..., /*2*/ c: kotlin.Array<kotlin.String> = ..., /*3*/ d: kotlin.Array<kotlin.reflect.KClass<*>> = ...)
     public final val a: kotlin.Array<kotlin.String>
     public final val b: kotlin.Array<kotlin.String>
     public final val c: kotlin.Array<kotlin.String>
+    public final val d: kotlin.Array<kotlin.reflect.KClass<*>>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

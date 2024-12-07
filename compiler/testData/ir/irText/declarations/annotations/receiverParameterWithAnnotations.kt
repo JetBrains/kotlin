@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+
 annotation class Ann
 
 class A {

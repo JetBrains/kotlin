@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: KotlinFile.kt
 package k
 
@@ -8,7 +9,7 @@ fun foo(javaClass: JavaClass) {
     javaClass.<!INVISIBLE_REFERENCE!>somethingProtected<!>
     javaClass.<!INVISIBLE_REFERENCE!>somethingPrivate<!>
     javaClass.<!INVISIBLE_REFERENCE!>somethingPackage<!>
-    <!INVISIBLE_SETTER!>javaClass.somethingPublic<!> = 1
+    javaClass.<!INVISIBLE_SETTER!>somethingPublic<!> = 1
 }
 
 // FILE: JavaClass.java

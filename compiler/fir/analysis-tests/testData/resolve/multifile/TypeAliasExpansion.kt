@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: B.kt
 
 package b
@@ -12,4 +13,4 @@ package a
 
 import b.TA
 
-class MyClass : TA()
+class MyClass : <!FINAL_SUPERTYPE!>TA<!>()

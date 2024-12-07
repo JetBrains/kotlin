@@ -1,0 +1,7 @@
+PROJECT: <root>
+
+
+PROJECT: subproject
+[TEST_DIAGNOSTIC_ONE_PER_BUILD | WARNING] This is a test diagnostics that should be reported once per build
+
+It has multiple lines of text

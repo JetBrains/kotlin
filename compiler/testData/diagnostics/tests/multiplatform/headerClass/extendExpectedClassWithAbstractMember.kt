@@ -1,3 +1,5 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -59,3 +61,13 @@ expect interface BaseF {
     fun foo()
 }
 expect class BaseFImpl() : BaseF
+
+
+
+expect abstract class BaseG() {
+    abstract fun foo()
+}
+expect open class BaseGImpl() : BaseG {
+    override fun foo()
+}
+class DerivedG1 : BaseGImpl()

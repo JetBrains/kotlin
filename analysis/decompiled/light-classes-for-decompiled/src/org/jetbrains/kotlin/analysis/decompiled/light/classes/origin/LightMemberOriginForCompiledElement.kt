@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.analysis.decompiled.light.classes.origin
 
 
@@ -8,10 +13,8 @@ import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.load.kotlin.MemberSignature
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
-import org.jetbrains.kotlin.type.MapPsiToAsmDesc
 
 interface LightMemberOriginForCompiledElement<T : PsiMember> : LightMemberOrigin {
     val member: T
@@ -30,7 +33,6 @@ interface LightMemberOriginForCompiledElement<T : PsiMember> : LightMemberOrigin
     override fun isValid(): Boolean = member.isValid
 }
 
-
 data class LightMemberOriginForCompiledField(val psiField: PsiField, val file: KtClsFile) : LightMemberOriginForCompiledElement<PsiField> {
     override val member: PsiField
         get() = psiField
@@ -45,9 +47,7 @@ data class LightMemberOriginForCompiledField(val psiField: PsiField, val file: K
     }
 
     override val originalElement: KtDeclaration? by lazyPub {
-        val desc = MapPsiToAsmDesc.typeDesc(psiField.type)
-        val signature = MemberSignature.fromFieldNameAndDesc(psiField.name, desc)
-        KotlinDeclarationInCompiledFileSearcher.getInstance().findDeclarationInCompiledFile(file, psiField, signature)
+        KotlinDeclarationInCompiledFileSearcher.getInstance().findDeclarationInCompiledFile(file, psiField)
     }
 }
 
@@ -67,9 +67,6 @@ data class LightMemberOriginForCompiledMethod(val psiMethod: PsiMethod, val file
     }
 
     override val originalElement: KtDeclaration? by lazyPub {
-        val desc = MapPsiToAsmDesc.methodDesc(psiMethod)
-        val name = if (psiMethod.isConstructor) "<init>" else psiMethod.name
-        val signature = MemberSignature.fromMethodNameAndDesc(name, desc)
-        KotlinDeclarationInCompiledFileSearcher.getInstance().findDeclarationInCompiledFile(file, psiMethod, signature)
+        KotlinDeclarationInCompiledFileSearcher.getInstance().findDeclarationInCompiledFile(file, psiMethod)
     }
 }

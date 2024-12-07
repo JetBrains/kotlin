@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 fun main() {
     val list: List<Int.() -> Unit> = listOf({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})

@@ -20,5 +20,9 @@ fun loadScriptingPlugin(configuration: CompilerConfiguration) {
             KOTLIN_SCRIPTING_JVM_JAR
         ).map { File(libPath, it).path }
     }
-    PluginCliParser.loadPluginsSafe(pluginClasspath, null, configuration)
+    PluginCliParser.loadPluginsSafe(pluginClasspath, emptyList(), emptyList(), configuration)
+}
+
+fun loadScriptingPlugin(configuration: CompilerConfiguration, pluginClasspath: Collection<String>) {
+    PluginCliParser.loadPluginsSafe(pluginClasspath, emptyList(), emptyList(), configuration)
 }

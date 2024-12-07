@@ -1,0 +1,1 @@
+val prop: Int g<caret>et() = 42

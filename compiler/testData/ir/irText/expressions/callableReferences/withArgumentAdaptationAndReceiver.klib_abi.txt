@@ -1,0 +1,16 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /Host { // /Host|null[0]
+    constructor <init>() // /Host.<init>|<init>(){}[0]
+    final fun testBoundReceiverExpression() // /Host.testBoundReceiverExpression|testBoundReceiverExpression(){}[0]
+    final fun testBoundReceiverLocalVal() // /Host.testBoundReceiverLocalVal|testBoundReceiverLocalVal(){}[0]
+    final fun testBoundReceiverLocalVar() // /Host.testBoundReceiverLocalVar|testBoundReceiverLocalVar(){}[0]
+    final fun testBoundReceiverParameter(/Host) // /Host.testBoundReceiverParameter|testBoundReceiverParameter(Host){}[0]
+    final fun testImplicitThis() // /Host.testImplicitThis|testImplicitThis(){}[0]
+    final fun withVararg(kotlin/IntArray...): kotlin/String // /Host.withVararg|withVararg(kotlin.IntArray...){}[0]
+}
+final fun /use(kotlin/Function1<kotlin/Int, kotlin/Unit>) // /use|use(kotlin.Function1<kotlin.Int,kotlin.Unit>){}[0]

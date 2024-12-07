@@ -1,0 +1,12 @@
+Before shortening: x.y.z.Outer.Inner.VALUE0 > x.y.z.Outer.Inner.VALUE1
+with default settings:
+[qualifier] x.y.z.Outer
+[qualifier] x.y.z.Outer
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+with SHORTEN_AND_IMPORT:
+[qualifier] x.y.z.Outer.Inner.VALUE0
+[qualifier] x.y.z.Outer.Inner.VALUE1
+with SHORTEN_AND_STAR_IMPORT:
+[qualifier] x.y.z.Outer.Inner.VALUE0
+[qualifier] x.y.z.Outer.Inner.VALUE1

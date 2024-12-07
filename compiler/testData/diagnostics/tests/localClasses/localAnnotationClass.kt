@@ -1,4 +1,5 @@
-// !LANGUAGE: -ProhibitLocalAnnotations
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ProhibitLocalAnnotations
 
 fun f() {
     <!LOCAL_ANNOTATION_CLASS_WARNING!>annotation class Anno<!>

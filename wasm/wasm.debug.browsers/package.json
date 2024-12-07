@@ -1,0 +1,10 @@
+{
+  "name": "custom-devtools-formatters",
+  "version": "0.0.1",
+  "description": "Simple Kotlin/Wasm devtools formatters",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "rollup": "^4.8.0",
+    "@rollup/plugin-terser": "^0.4.4"
+  }
+}

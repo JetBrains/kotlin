@@ -5,15 +5,20 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.builtins.PlatformSpecificCastChecker
 import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.resolve.calls.checkers.*
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.checkers.*
+import org.jetbrains.kotlin.resolve.lazy.AbsentDescriptorHandler
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
 private val DEFAULT_DECLARATION_CHECKERS = listOf(
+    ExpectActualInTheSameModuleChecker,
+    ActualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker,
+    ExpectActualClassifiersAreInBetaChecker,
     DataClassDeclarationChecker(),
     ConstModifierChecker,
     UnderscoreChecker,
@@ -26,11 +31,12 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     DelegationChecker(),
     KClassWithIncorrectTypeArgumentChecker,
     SuspendLimitationsChecker,
-    InlineClassDeclarationChecker,
-    PropertiesWithBackingFieldsInsideInlineClass(),
-    InnerClassInsideInlineClass(),
+    ValueClassDeclarationChecker,
+    MultiFieldValueClassAnnotationsChecker,
+    PropertiesWithBackingFieldsInsideValueClass(),
+    InnerClassInsideValueClass(),
     AnnotationClassTargetAndRetentionChecker(),
-    ReservedMembersAndConstructsForInlineClass(),
+    ReservedMembersAndConstructsForValueClass(),
     ResultClassInReturnTypeChecker(),
     LocalVariableTypeParametersChecker(),
     ExplicitApiDeclarationChecker(),
@@ -52,6 +58,11 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     ValueParameterUsageInDefaultArgumentChecker,
     CyclicAnnotationsChecker,
     UnsupportedUntilRangeDeclarationChecker,
+    DataObjectContentChecker,
+    EnumEntriesRedeclarationChecker,
+    VolatileAnnotationChecker,
+    ActualTypealiasToSpecialAnnotationChecker,
+    StubForBuilderInferenceParameterTypeChecker,
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(
@@ -59,7 +70,7 @@ private val DEFAULT_CALL_CHECKERS = listOf(
     DeprecatedCallChecker, CallReturnsArrayOfNothingChecker(), InfixCallChecker(), OperatorCallChecker(),
     ConstructorHeaderCallChecker, ProtectedConstructorCallChecker, ApiVersionCallChecker,
     CoroutineSuspendCallChecker, BuilderFunctionsCallChecker, DslScopeViolationCallChecker, MissingDependencyClassChecker,
-    CallableReferenceCompatibilityChecker(), LateinitIntrinsicApplicabilityChecker,
+    CallableReferenceCompatibilityChecker(),
     UnderscoreUsageChecker, AssigningNamedArgumentToVarargChecker(), ImplicitNothingAsTypeParameterCallChecker,
     PrimitiveNumericComparisonCallChecker, LambdaWithSuspendModifierCallChecker,
     UselessElvisCallChecker(), ResultTypeWithNullableOperatorsChecker(), NullableVarargArgumentCallChecker,
@@ -68,7 +79,9 @@ private val DEFAULT_CALL_CHECKERS = listOf(
     UnitConversionCallChecker, FunInterfaceConstructorReferenceChecker, NullableExtensionOperatorWithSafeCallChecker,
     ReferencingToUnderscoreNamedParameterOfCatchBlockChecker, VarargWrongExecutionOrderChecker, SelfCallInNestedObjectConstructorChecker,
     NewSchemeOfIntegerOperatorResolutionChecker, EnumEntryVsCompanionPriorityCallChecker, CompanionInParenthesesLHSCallChecker,
-    ResolutionToPrivateConstructorOfSealedClassChecker, EqualityCallChecker, UnsupportedUntilOperatorChecker
+    ResolutionToPrivateConstructorOfSealedClassChecker, EqualityCallChecker, UnsupportedUntilOperatorChecker,
+    BuilderInferenceAssignmentChecker, IncorrectCapturedApproximationCallChecker, CompanionIncorrectlyUnboundedWhenUsedAsLHSCallChecker,
+    CustomEnumEntriesMigrationCallChecker, EnumEntriesUnsupportedChecker,
 )
 private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
 private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = listOf(
@@ -88,7 +101,11 @@ private val DEFAULT_CLASH_RESOLVERS = listOf<PlatformExtensionsClashResolver<*>>
      */
     PlatformExtensionsClashResolver.FallbackToDefault(TypeSpecificityComparator.NONE, TypeSpecificityComparator::class.java),
 
-    PlatformExtensionsClashResolver.FallbackToDefault(DynamicTypesSettings(), DynamicTypesSettings::class.java)
+    PlatformExtensionsClashResolver.FallbackToDefault(DynamicTypesSettings(), DynamicTypesSettings::class.java),
+
+    PlatformExtensionsClashResolver.FirstWins(AbsentDescriptorHandler::class.java),
+
+    PlatformDiagnosticSuppressorClashesResolver()
 )
 
 fun StorageComponentContainer.configureDefaultCheckers() {
@@ -105,6 +122,7 @@ abstract class PlatformConfiguratorBase(
     private val dynamicTypesSettings: DynamicTypesSettings? = null,
     private val additionalDeclarationCheckers: List<DeclarationChecker> = emptyList(),
     private val additionalCallCheckers: List<CallChecker> = emptyList(),
+    private val additionalAssignmentCheckers: List<AssignmentChecker> = emptyList(),
     private val additionalTypeCheckers: List<AdditionalTypeChecker> = emptyList(),
     private val additionalClassifierUsageCheckers: List<ClassifierUsageChecker> = emptyList(),
     private val additionalAnnotationCheckers: List<AdditionalAnnotationChecker> = emptyList(),
@@ -112,6 +130,7 @@ abstract class PlatformConfiguratorBase(
     private val identifierChecker: IdentifierChecker? = null,
     private val overloadFilter: OverloadFilter? = null,
     private val platformToKotlinClassMapper: PlatformToKotlinClassMapper? = null,
+    private val platformSpecificCastChecker: PlatformSpecificCastChecker? = null,
     private val delegationFilter: DelegationFilter? = null,
     private val overridesBackwardCompatibilityHelper: OverridesBackwardCompatibilityHelper? = null,
     private val declarationReturnTypeSanitizer: DeclarationReturnTypeSanitizer? = null
@@ -130,6 +149,7 @@ abstract class PlatformConfiguratorBase(
             useInstanceIfNotNull(dynamicTypesSettings)
             additionalDeclarationCheckers.forEach { useInstance(it) }
             additionalCallCheckers.forEach { useInstance(it) }
+            additionalAssignmentCheckers.forEach { useInstance(it) }
             additionalTypeCheckers.forEach { useInstance(it) }
             additionalClassifierUsageCheckers.forEach { useInstance(it) }
             additionalAnnotationCheckers.forEach { useInstance(it) }
@@ -137,6 +157,7 @@ abstract class PlatformConfiguratorBase(
             useInstanceIfNotNull(identifierChecker)
             useInstanceIfNotNull(overloadFilter)
             useInstanceIfNotNull(platformToKotlinClassMapper)
+            useInstanceIfNotNull(platformSpecificCastChecker)
             useInstanceIfNotNull(delegationFilter)
             useInstanceIfNotNull(overridesBackwardCompatibilityHelper)
             useInstanceIfNotNull(declarationReturnTypeSanitizer)

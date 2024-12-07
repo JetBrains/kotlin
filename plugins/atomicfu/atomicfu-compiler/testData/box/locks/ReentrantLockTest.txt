@@ -1,0 +1,14 @@
+@kotlin.Metadata
+public final class ReentrantLockFieldTest {
+    // source: 'ReentrantLockTest.kt'
+    private final @org.jetbrains.annotations.NotNull field lock: java.util.concurrent.locks.ReentrantLock
+    private field state: int
+    public method <init>(): void
+    public final method testLock(): void
+}
+
+@kotlin.Metadata
+public final class ReentrantLockTestKt {
+    // source: 'ReentrantLockTest.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

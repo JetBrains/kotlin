@@ -1,13 +1,13 @@
 class C<T : Any?> {
+  val t: T
+    field = t
+    get
+
   constructor(t: T) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val t: T
-    field = t
-    get
 
   override fun hashCode(): Int {
     return <this>.<get-t>() as Int
@@ -16,37 +16,37 @@ class C<T : Any?> {
 }
 
 value class IC<TT : Any?> {
+  val c: C<TT>
+    field = c
+    get
+
   constructor(c: C<TT>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val c: C<TT>
-    field = c
-    get
-
-  fun foo(): Int {
-    return <this>.<get-c>().hashCode()
-  }
-
-  override fun toString(): String {
-    return "IC(" + "c=" + <this>.#c + ")"
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      other !is IC<TT> -> return false
+    }
+    val tmp_0: IC<TT> = other as IC<TT>
+    when {
+      EQEQ(arg0 = <this>.#c, arg1 = tmp_0.#c).not() -> return false
+    }
+    return true
   }
 
   override fun hashCode(): Int {
     return <this>.#c.hashCode()
   }
 
-  override operator fun equals(other: Any?): Boolean {
-    when {
-      other !is IC<TT> -> return false
-    }
-    val tmp0_other_with_cast: IC<TT> = other as IC<TT>
-    when {
-      EQEQ(arg0 = <this>.#c, arg1 = tmp0_other_with_cast.#c).not() -> return false
-    }
-    return true
+  override fun toString(): String {
+    return "IC(" + "c=" + <this>.#c + ")"
+  }
+
+  fun foo(): Int {
+    return <this>.<get-c>().hashCode()
   }
 
 }
@@ -58,3 +58,4 @@ fun box(): String {
   }
   return "OK"
 }
+

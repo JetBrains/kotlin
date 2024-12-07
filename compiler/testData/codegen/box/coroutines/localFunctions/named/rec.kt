@@ -44,7 +44,7 @@ suspend fun fooCallableReference(until: Int): String {
     val k = "K"
     val dot = "."
     suspend fun bar(x: Int): String =
-        if (x == until) dot else if (x < until) o + (::bar)(x * 2) else k + (::bar)(x - 1)
+        if (x == until) dot else if (x < until) o + (::bar).let { it(x * 2) } else k + (::bar).let { it(x - 1) }
     return bar(1)
 }
 
@@ -53,8 +53,8 @@ suspend fun fooCallableReferenceIndirectRecursion(until: Int): String {
     val k = "K"
     val dot = "."
     suspend fun bar(x: Int): String {
-        suspend fun innerO() = o + (::bar)(x * 2)
-        suspend fun innerK() = k + (::bar)(x - 1)
+        suspend fun innerO() = o + (::bar).let { it(x * 2) }
+        suspend fun innerK() = k + (::bar).let { it(x - 1) }
         return if (x == until) dot else if (x < until) innerO() else innerK()
     }
     return bar(1)

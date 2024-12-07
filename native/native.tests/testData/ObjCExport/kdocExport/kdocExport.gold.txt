@@ -1,0 +1,14 @@
+ * `Summary class` [KDocExport]. // EXPORT_KDOC
+ * @property xyzzy Doc for property xyzzy // EXPORT_KDOC
+ * @property zzz See below. // EXPORT_KDOC
+/** Non-primary ctor KDoc: // EXPORT_KDOC */
+/** @property xyzzy KDoc for foo? // EXPORT_KDOC */
+ * @param xyzzy is documented. // EXPORT_KDOC
+ * This is multi-line KDoc. See a blank line above. // EXPORT_KDOC
+/** @property foo KDoc for yxxyz? // EXPORT_KDOC */
+ * Kdoc for a property // EXPORT_KDOC
+ * Useless function [whatever] // EXPORT_KDOC
+ * This kdoc has some additional formatting. // EXPORT_KDOC
+ * @param a keep intact and return // EXPORT_KDOC
+ * @return value of [a] // EXPORT_KDOC
+ * Check for additional comment (note) below // EXPORT_KDOC

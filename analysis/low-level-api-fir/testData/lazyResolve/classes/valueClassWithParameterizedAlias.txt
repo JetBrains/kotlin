@@ -1,0 +1,181 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] valueClassWithParameterizedAlias.kt
+    public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias<[ResolvedTo(RAW_FIR)] T> = List<T>
+    @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] class ValueClass<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/ValueClass.value] value: MyTypeAlias<T>): R|pack/ValueClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: MyTypeAlias<T> = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] get(): MyTypeAlias<T>
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] valueClassWithParameterizedAlias.kt
+    public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias<[ResolvedTo(RAW_FIR)] T> = List<T>
+    @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] class ValueClass<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/ValueClass.value] value: MyTypeAlias<T>): R|pack/ValueClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: MyTypeAlias<T> = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] get(): MyTypeAlias<T>
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] valueClassWithParameterizedAlias.kt
+    public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias<[ResolvedTo(RAW_FIR)] T> = List<T>
+    @JvmInline[Unresolved]() public final? inline [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class ValueClass<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/ValueClass.value] value: MyTypeAlias<T>): R|pack/ValueClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: MyTypeAlias<T> = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] get(): MyTypeAlias<T>
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] valueClassWithParameterizedAlias.kt
+    public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias<[ResolvedTo(RAW_FIR)] T> = List<T>
+    @JvmInline[Unresolved]() public final? inline [ResolvedTo(COMPANION_GENERATION)] class ValueClass<[ResolvedTo(COMPANION_GENERATION)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] constructor<[ResolvedTo(COMPANION_GENERATION)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/ValueClass.value] value: MyTypeAlias<T>): R|pack/ValueClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: MyTypeAlias<T> = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] get(): MyTypeAlias<T>
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] valueClassWithParameterizedAlias.kt
+    public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias<[ResolvedTo(RAW_FIR)] T> = List<T>
+    @JvmInline[Unresolved]() public final? inline [ResolvedTo(SUPER_TYPES)] class ValueClass<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] constructor<[ResolvedTo(SUPER_TYPES)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/ValueClass.value] value: MyTypeAlias<T>): R|pack/ValueClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: MyTypeAlias<T> = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] get(): MyTypeAlias<T>
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] valueClassWithParameterizedAlias.kt
+    public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias<[ResolvedTo(RAW_FIR)] T> = List<T>
+    @R|kotlin/jvm/JvmInline|[Types]() public final? inline [ResolvedTo(TYPES)] class ValueClass<[ResolvedTo(TYPES)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] constructor<[ResolvedTo(TYPES)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/ValueClass.value] value: MyTypeAlias<T>): R|pack/ValueClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: MyTypeAlias<T> = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] get(): MyTypeAlias<T>
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] valueClassWithParameterizedAlias.kt
+    public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias<[ResolvedTo(SUPER_TYPES)] T> = R|kotlin/collections/List<T>|
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType={pack/MyTypeAlias<T>=} kotlin/collections/List<T>)] class ValueClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=ValueClass] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/ValueClass.value] value: R|{pack/MyTypeAlias<T>=} kotlin/collections/List<T>|): R|pack/ValueClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: MyTypeAlias<R|T|> = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] get(): MyTypeAlias<R|T|>
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] valueClassWithParameterizedAlias.kt
+    public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias<[ResolvedTo(SUPER_TYPES)] T> = R|kotlin/collections/List<T>|
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType={pack/MyTypeAlias<T>=} kotlin/collections/List<T>)] class ValueClass<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=ValueClass] constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/ValueClass.value] value: R|{pack/MyTypeAlias<T>=} kotlin/collections/List<T>|): R|pack/ValueClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: MyTypeAlias<R|T|> = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] get(): MyTypeAlias<R|T|>
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] valueClassWithParameterizedAlias.kt
+    public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias<[ResolvedTo(SUPER_TYPES)] T> = R|kotlin/collections/List<T>|
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(CONTRACTS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType={pack/MyTypeAlias<T>=} kotlin/collections/List<T>)] class ValueClass<[ResolvedTo(CONTRACTS)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=ValueClass] constructor<[ResolvedTo(CONTRACTS)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/ValueClass.value] value: R|{pack/MyTypeAlias<T>=} kotlin/collections/List<T>|): R|pack/ValueClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: MyTypeAlias<R|T|> = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] get(): MyTypeAlias<R|T|>
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] valueClassWithParameterizedAlias.kt
+    public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias<[ResolvedTo(SUPER_TYPES)] T> = R|kotlin/collections/List<T>|
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType={pack/MyTypeAlias<T>=} kotlin/collections/List<T>)] class ValueClass<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=ValueClass] constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/ValueClass.value] value: R|{pack/MyTypeAlias<T>=} kotlin/collections/List<T>|): R|pack/ValueClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: MyTypeAlias<R|T|> = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] get(): MyTypeAlias<R|T|>
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] valueClassWithParameterizedAlias.kt
+    public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias<[ResolvedTo(SUPER_TYPES)] T> = R|kotlin/collections/List<T>|
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(CONSTANT_EVALUATION)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType={pack/MyTypeAlias<T>=} kotlin/collections/List<T>)] class ValueClass<[ResolvedTo(CONSTANT_EVALUATION)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=ValueClass] constructor<[ResolvedTo(CONSTANT_EVALUATION)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/ValueClass.value] value: R|{pack/MyTypeAlias<T>=} kotlin/collections/List<T>|): R|pack/ValueClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: MyTypeAlias<R|T|> = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] get(): MyTypeAlias<R|T|>
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] valueClassWithParameterizedAlias.kt
+    public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias<[ResolvedTo(SUPER_TYPES)] T> = R|kotlin/collections/List<T>|
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType={pack/MyTypeAlias<T>=} kotlin/collections/List<T>)] class ValueClass<[ResolvedTo(ANNOTATION_ARGUMENTS)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=ValueClass] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/ValueClass.value] value: R|{pack/MyTypeAlias<T>=} kotlin/collections/List<T>|): R|pack/ValueClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: MyTypeAlias<R|T|> = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] get(): MyTypeAlias<R|T|>
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] valueClassWithParameterizedAlias.kt
+    public final [ResolvedTo(SUPER_TYPES)] typealias MyTypeAlias<[ResolvedTo(SUPER_TYPES)] T> = R|kotlin/collections/List<T>|
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType={pack/MyTypeAlias<T>=} kotlin/collections/List<T>)] class ValueClass<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ValueClass] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/ValueClass.value] value: R|{pack/MyTypeAlias<T>=} kotlin/collections/List<T>|): R|pack/ValueClass<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val value: R|{pack/MyTypeAlias<T>=} kotlin/collections/List<T>| = R|<local>/value|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ValueClass] get(): R|{pack/MyTypeAlias<T>=} kotlin/collections/List<T>|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] valueClassWithParameterizedAlias.kt
+    public final [ResolvedTo(BODY_RESOLVE)] typealias MyTypeAlias<[ResolvedTo(BODY_RESOLVE)] T> = R|kotlin/collections/List<T>|
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType={pack/MyTypeAlias<T>=} kotlin/collections/List<T>)] class ValueClass<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ValueClass] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/ValueClass.value] value: R|{pack/MyTypeAlias<T>=} kotlin/collections/List<T>|): R|pack/ValueClass<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val value: R|{pack/MyTypeAlias<T>=} kotlin/collections/List<T>| = R|<local>/value|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ValueClass] get(): R|{pack/MyTypeAlias<T>=} kotlin/collections/List<T>|
+
+    }

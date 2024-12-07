@@ -5,24 +5,33 @@
 
 package org.jetbrains.kotlin.gradle.logging
 
-import org.jetbrains.kotlin.compilerRunner.KotlinLogger
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.slf4j.Logger
 
-internal class SL4JKotlinLogger(private val log: Logger) : KotlinLogger {
-    override fun debug(msg: String) {
-        log.debug(msg)
+internal class SL4JKotlinLogger(private val log: Logger, private val prefix: String? = null) : KotlinLogger {
+    private fun transformMessage(msg: String): String {
+        if (prefix.isNullOrBlank()) return msg
+        return prefix + msg
     }
 
-    override fun error(msg: String) {
-        log.error(msg)
+    override fun debug(msg: String) {
+        log.debug(transformMessage(msg))
+    }
+
+    override fun lifecycle(msg: String) {
+        log.info(transformMessage(msg))
+    }
+
+    override fun error(msg: String, throwable: Throwable?) {
+        log.error(transformMessage(msg), throwable)
     }
 
     override fun info(msg: String) {
-        log.info(msg)
+        log.info(transformMessage(msg))
     }
 
     override fun warn(msg: String) {
-        log.warn(msg)
+        log.warn(transformMessage(msg))
     }
 
     override val isDebugEnabled: Boolean

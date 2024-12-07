@@ -7,13 +7,16 @@ val test1: Int /* by */
     return #test1$delegate.getValue<Int>(thisRef = null, property = ::test1)
   }
 
-class C {
-  constructor(map: MutableMap<String, Any>) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
+var test4: Any /* by */
+  field = hashMapOf<String, Any>()
+  get(): Any {
+    return #test4$delegate.getValue<Any, Any>(thisRef = null, property = ::test4)
+  }
+  set(<set-?>: Any) {
+    return #test4$delegate.setValue<Any>(thisRef = null, property = ::test4, value = <set-?>)
   }
 
+class C {
   val map: MutableMap<String, Any>
     field = map
     get
@@ -36,13 +39,11 @@ class C {
       return <this>.#test3$delegate.setValue<Any>(thisRef = <this>, property = C::test3, value = <set-?>)
     }
 
+  constructor(map: MutableMap<String, Any>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
 
-var test4: Any /* by */
-  field = hashMapOf<String, Any>()
-  get(): Any {
-    return #test4$delegate.getValue<Any, Any>(thisRef = null, property = ::test4)
-  }
-  set(<set-?>: Any) {
-    return #test4$delegate.setValue<Any>(thisRef = null, property = ::test4, value = <set-?>)
-  }

@@ -1,0 +1,48 @@
+FILE: initWithLocalDeclarations.kt
+    public final? class A : R|kotlin/Any| {
+        public? [ContainingClassKey=A] constructor(): R|util/A| {
+            super<R|kotlin/Any|>()
+        }
+
+        init {
+            local final? class OuterIntoLocal : R|kotlin/Any| {
+                public? [ContainingClassKey=OuterIntoLocal] constructor(): R|<local>/OuterIntoLocal| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public? final? fun doo(): <implicit> {
+                    ^doo foo#()
+                }
+
+                public? final? fun foo(): <implicit> {
+                    ^foo bar#()
+                }
+
+                public? final? fun baz(): <implicit> {
+                    ^baz foo#()
+                }
+
+            }
+
+            local final? class LocalIntoLocal : R|kotlin/Any| {
+                public? [ContainingClassKey=LocalIntoLocal] constructor(): R|<local>/LocalIntoLocal| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public? final? fun foo(): <implicit> {
+                    ^foo bar#()
+                }
+
+                public? final? fun bar(): @Anno(<strcat>(String(bar ), prop#)) List<@Anno(<strcat>(String(nested bar ), prop#)) Collection<@Anno(<strcat>(String(nested nested bar ), prop#)) Int>>? {
+                    ^bar Null(null)
+                }
+
+                public? final? fun foo2(): <implicit> {
+                    ^foo2 bar#()
+                }
+
+            }
+
+        }
+
+    }

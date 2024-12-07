@@ -1,0 +1,24 @@
+public final class A : R|kotlin/Any| {
+    public constructor(): R|test/A|
+
+    public final companion object Companion : R|kotlin/Any| {
+        private constructor(): R|test/A.Companion|
+
+    }
+
+    public final enum class E : R|kotlin/Enum<test/A.E>| {
+        private constructor(): R|test/A.E|
+
+        public final static enum entry ENTRY: R|test/A.E|
+        public final static fun values(): R|kotlin/Array<test/A.E>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|test/A.E| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<test/A.E>|
+            public get(): R|kotlin/enums/EnumEntries<test/A.E>|
+
+    }
+
+}

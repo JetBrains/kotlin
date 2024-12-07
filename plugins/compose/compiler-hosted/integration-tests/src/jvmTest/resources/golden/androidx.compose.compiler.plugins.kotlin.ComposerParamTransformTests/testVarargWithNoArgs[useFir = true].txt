@@ -1,0 +1,81 @@
+//
+// Source
+// ------------------------------------------
+
+@file:OptIn(
+  InternalComposeApi::class,
+)
+package test
+
+import androidx.compose.runtime.InternalComposeApi
+import androidx.compose.runtime.ComposeCompilerApi
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+
+
+@Composable
+fun VarArgsFirst(vararg foo: Any?) {
+    println(foo)
+}
+
+@Composable
+fun VarArgsCaller() {
+    VarArgsFirst()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun VarArgsFirst(foo: Array<out Any?>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(VarArgsFirst):Test.kt#2487m")
+  val %dirty = %changed
+  %composer.startMovableGroup(<>, foo.size)
+  val <iterator> = foo.iterator()
+  while (<iterator>.hasNext()) {
+    val value = <iterator>.next()
+    %dirty = %dirty or if (%composer.changedInstance(value)) 0b0100 else 0
+  }
+  %composer.endMovableGroup()
+  if (%dirty and 0b1110 == 0) {
+    %dirty = %dirty or 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    println(foo)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    VarArgsFirst(*foo, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun VarArgsCaller(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(VarArgsCaller)<VarArg...>:Test.kt#2487m")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    VarArgsFirst(
+      %composer = %composer,
+      %changed = 0
+    )
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    VarArgsCaller(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

@@ -1,0 +1,6 @@
+ExtensionReceiver[name: dumbWith; isMutated: false; displayText: this@dumbWith]
+    <explicit receiver parameter>: R|kotlin/Any?|
+    R|kotlin/Any?|
+ExtensionReceiver[name: dumbWith; isMutated: false; displayText: this@dumbWith]
+    <explicit receiver parameter>: R|kotlin/Any?|
+    R|kotlin/Any?|

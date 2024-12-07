@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.load.kotlin.signatures
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import java.io.Serializable
-import java.util.*
 
 object JvmBuiltInsSignatures {
     val DROP_LIST_METHOD_SIGNATURES: Set<String> =
@@ -24,7 +23,12 @@ object JvmBuiltInsSignatures {
         signatures {
             buildPrimitiveValueMethodsSet() +
 
-                    inJavaUtil("List", "sort(Ljava/util/Comparator;)V") +
+                    inJavaUtil(
+                        "List",
+                        "sort(Ljava/util/Comparator;)V",
+                        // From JDK 21
+                        "reversed()Ljava/util/List;",
+                    ) +
 
                     inJavaLang(
                         "String",
@@ -63,6 +67,14 @@ object JvmBuiltInsSignatures {
             }
         }
 
+    val DEPRECATED_LIST_METHODS: Set<String> =
+        signatures {
+            inJavaUtil(
+                "List",
+                "getFirst()Ljava/lang/Object;",
+                "getLast()Ljava/lang/Object;",
+            )
+        }
 
     val VISIBLE_METHOD_SIGNATURES: Set<String> =
         signatures {
@@ -98,7 +110,12 @@ object JvmBuiltInsSignatures {
 
                     inJavaUtil(
                         "List",
-                        "replaceAll(Ljava/util/function/UnaryOperator;)V"
+                        "replaceAll(Ljava/util/function/UnaryOperator;)V",
+                        // From JDK 21
+                        "addFirst(Ljava/lang/Object;)V",
+                        "addLast(Ljava/lang/Object;)V",
+                        "removeFirst()Ljava/lang/Object;",
+                        "removeLast()Ljava/lang/Object;",
                     ) +
 
                     inJavaUtil(
@@ -119,7 +136,15 @@ object JvmBuiltInsSignatures {
         signatures {
             inJavaUtil("Collection", "removeIf(Ljava/util/function/Predicate;)Z") +
 
-                    inJavaUtil("List", "replaceAll(Ljava/util/function/UnaryOperator;)V", "sort(Ljava/util/Comparator;)V") +
+                    inJavaUtil(
+                        "List",
+                        "replaceAll(Ljava/util/function/UnaryOperator;)V",
+                        "sort(Ljava/util/Comparator;)V",
+                        "addFirst(Ljava/lang/Object;)V",
+                        "addLast(Ljava/lang/Object;)V",
+                        "removeFirst()Ljava/lang/Object;",
+                        "removeLast()Ljava/lang/Object;",
+                    ) +
 
                     inJavaUtil(
                         "Map",

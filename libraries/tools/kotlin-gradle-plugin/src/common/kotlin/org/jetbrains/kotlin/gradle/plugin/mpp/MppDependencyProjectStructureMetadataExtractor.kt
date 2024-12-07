@@ -5,14 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.gradle.api.Project
-import org.gradle.api.artifacts.component.ProjectComponentIdentifier
-import org.gradle.api.artifacts.result.ResolvedComponentResult
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.dsl.topLevelExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.kpmModules
-import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
 import java.io.File
 import java.io.InputStream
 import java.util.zip.ZipFile
@@ -24,25 +16,33 @@ sealed class MppDependencyProjectStructureMetadataExtractor {
     companion object Factory
 }
 
-internal class ProjectMppDependencyProjectStructureMetadataExtractor(
-    val moduleIdentifier: KpmModuleIdentifier,
-    val dependencyProject: Project
-) : MppDependencyProjectStructureMetadataExtractor() {
+internal abstract class AbstractProjectMppDependencyProjectStructureMetadataExtractor(
+    val projectPath: String?,
+) : MppDependencyProjectStructureMetadataExtractor()
 
-    override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? {
-        return when {
-            dependencyProject.topLevelExtensionOrNull == null -> null
-            dependencyProject.hasKpmModel -> buildProjectStructureMetadata(
-                dependencyProject.kpmModules.single { it.moduleIdentifier == moduleIdentifier }
-            )
+@Deprecated(
+    message = "This class is not compatible with gradle project Isolation",
+    replaceWith = ReplaceWith("ProjectMppDependencyProjectStructureMetadataExtractor")
+)
+internal class ProjectMppDependencyProjectStructureMetadataExtractorDeprecated(
+    projectPath: String,
+    private val projectStructureMetadataProvider: () -> KotlinProjectStructureMetadata?,
+) : AbstractProjectMppDependencyProjectStructureMetadataExtractor(projectPath) {
 
-            else -> dependencyProject.multiplatformExtensionOrNull?.kotlinProjectStructureMetadata
-        }
+    override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? = projectStructureMetadataProvider()
+}
+
+internal class ProjectStructureMetadataFileExtractor(
+    private val projectStructureMetadataFile: File,
+) : AbstractProjectMppDependencyProjectStructureMetadataExtractor(null) {
+
+    override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata {
+        return parseKotlinSourceSetMetadataFromJson(projectStructureMetadataFile.readText())
     }
 }
 
 internal open class JarMppDependencyProjectStructureMetadataExtractor(
-    val primaryArtifactFile: File
+    val primaryArtifactFile: File,
 ) : MppDependencyProjectStructureMetadataExtractor() {
 
     private fun parseJsonProjectStructureMetadata(input: InputStream) =
@@ -64,20 +64,8 @@ internal open class JarMppDependencyProjectStructureMetadataExtractor(
 }
 
 internal class IncludedBuildMppDependencyProjectStructureMetadataExtractor(
-    private val project: Project,
-    dependency: ResolvedComponentResult,
-    primaryArtifact: File
+    primaryArtifact: File,
+    private val projectStructureMetadataProvider: () -> KotlinProjectStructureMetadata?,
 ) : JarMppDependencyProjectStructureMetadataExtractor(primaryArtifact) {
-
-    private val id: ProjectComponentIdentifier
-
-    init {
-        val id = dependency.id
-        require(id is ProjectComponentIdentifier) { "dependency should resolve to a project" }
-        require(!id.build.isCurrentBuild) { "should be a project from an included build" }
-        this.id = id
-    }
-
-    override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? =
-        GlobalProjectStructureMetadataStorage.getProjectStructureMetadata(project, id.build.name, id.projectPath)
+    override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? = projectStructureMetadataProvider()
 }

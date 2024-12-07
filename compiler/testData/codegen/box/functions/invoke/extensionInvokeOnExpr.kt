@@ -13,8 +13,8 @@ fun B.test(): String {
     if (foo()() != "##") return "fail3"
     if (foo()(42) != "#42") return "fail4"
     if ((foo())(42) != "#42") return "fail5"
-    if ({ -> A()}()() != "##") return "fail6"
-    if ({ -> A()}()(37) != "#37") return "fail7"
+    if ({ -> A()}.let { it() }() != "##") return "fail6"
+    if ({ -> A()}.let { it() }(37) != "#37") return "fail7"
     return "OK"
 }
 

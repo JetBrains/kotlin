@@ -5,7 +5,7 @@ package a {
     package a.b {
         public val test2: kotlin.String
         public val test3: kotlin.String
-        public fun </*0*/ S> generate(/*0*/ @kotlin.BuilderInference g: a.b.Scope<S>.() -> kotlin.Unit): S
+        public fun </*0*/ S> generate(/*0*/ g: a.b.Scope<S>.() -> kotlin.Unit): S
         public fun test1(): kotlin.Unit
 
         public final class BatchInfo1 {

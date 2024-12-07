@@ -19,6 +19,10 @@ package org.jetbrains.kotlin.types
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.replaceArguments
+import org.jetbrains.kotlin.types.error.ErrorType
+import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.types.model.typeConstructor
 
 abstract class TypeSubstitution {
     companion object {
@@ -169,6 +173,10 @@ fun SimpleType.replace(
 
     if (newArguments.isEmpty()) {
         return replaceAttributes(newAttributes)
+    }
+
+    if (this is ErrorType) {
+        return replaceArguments(newArguments)
     }
 
     return KotlinTypeFactory.simpleType(

@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/extraCheckers.kt
+-Wextra
+-d
+$TEMP_DIR$

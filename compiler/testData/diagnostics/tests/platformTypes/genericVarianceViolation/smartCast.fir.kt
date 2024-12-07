@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: A.java
 
 import java.util.*;
@@ -11,6 +12,6 @@ public class A {
 fun main(a: A, ml: Any) {
     if (ml is <!CANNOT_CHECK_FOR_ERASED!>MutableList<String><!>) {
         a.foo(<!JAVA_TYPE_MISMATCH!>ml<!>)
-        a.foo(ml <!UNCHECKED_CAST!>as List<Any><!>)
+        a.foo(ml as List<Any>)
     }
 }

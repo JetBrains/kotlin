@@ -1,0 +1,17 @@
+Before shortening: fun usage(
+        first: test.OuterClass.Nested,
+        second: test.OuterClass.NestedObject.Nested,
+    ) {}
+with default settings:
+[type] test.OuterClass.Nested
+[type] test.OuterClass.NestedObject
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[type] test.OuterClass.Nested
+[type] test.OuterClass.NestedObject
+with SHORTEN_AND_IMPORT:
+[type] test.OuterClass.Nested
+[type] test.OuterClass.NestedObject
+with SHORTEN_AND_STAR_IMPORT:
+[type] test.OuterClass.Nested
+[type] test.OuterClass.NestedObject

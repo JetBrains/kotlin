@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.konan.target.SanitizerKind
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
 
@@ -13,6 +14,8 @@ import kotlin.properties.ReadOnlyProperty
 // users can pass these options using a -Xbinary=name=value compiler argument or corresponding Gradle DSL.
 object BinaryOptions : BinaryOptionRegistry() {
     val runtimeAssertionsMode by option<RuntimeAssertsMode>()
+
+    val checkStateAtExternalCalls by booleanOption()
 
     val memoryModel by option<MemoryModel>()
 
@@ -28,9 +31,73 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val objcExportSuspendFunctionLaunchThreadRestriction by option<ObjCExportSuspendFunctionLaunchThreadRestriction>()
 
-    val gcSchedulerType by option<GCSchedulerType>()
+    val objcExportDisableSwiftMemberNameMangling by booleanOption()
 
-    val linkRuntime by option<RuntimeLinkageStrategyBinaryOption>()
+    val objcExportIgnoreInterfaceMethodCollisions by booleanOption()
+
+    val objcExportReportNameCollisions by booleanOption()
+
+    val objcExportErrorOnNameCollisions by booleanOption()
+
+    val objcExportEntryPointsPath by stringOption()
+
+    val gc by option<GC>(shortcut = { it.shortcut })
+
+    val gcSchedulerType by option<GCSchedulerType>(hideValue = { it.deprecatedWithReplacement != null })
+
+    val gcMarkSingleThreaded by booleanOption()
+
+    val fixedBlockPageSize by uintOption()
+
+    val concurrentWeakSweep by booleanOption()
+
+    val concurrentMarkMaxIterations by uintOption()
+
+    val gcMutatorsCooperate by booleanOption()
+
+    val auxGCThreads by uintOption()
+
+    val linkRuntime by option<RuntimeLinkageStrategy>()
+
+    val bundleId by stringOption()
+    val bundleShortVersionString by stringOption()
+    val bundleVersion by stringOption()
+
+    val appStateTracking by option<AppStateTracking>()
+
+    val sanitizer by option<SanitizerKind>()
+
+    val mimallocUseDefaultOptions by booleanOption()
+
+    val mimallocUseCompaction by booleanOption()
+
+    val compileBitcodeWithXcodeLlvm by booleanOption()
+
+    val objcDisposeOnMain by booleanOption()
+
+    val objcDisposeWithRunLoop by booleanOption()
+
+    val disableMmap by booleanOption()
+
+    val enableSafepointSignposts by booleanOption()
+
+    val packFields by booleanOption()
+
+    val cInterfaceMode by option<CInterfaceGenerationMode>()
+
+    val globalDataLazyInit by booleanOption()
+
+    val swiftExport by booleanOption()
+
+    val genericSafeCasts by booleanOption()
+
+    val smallBinary by booleanOption()
+
+    val preCodegenInlineThreshold by uintOption()
+
+    val enableDebugTransparentStepping by booleanOption()
+
+    val debugCompilationDir by stringOption()
 }
 
 open class BinaryOption<T : Any>(
@@ -66,9 +133,27 @@ open class BinaryOptionRegistry {
                 }
             }
 
-    protected inline fun <reified T : Enum<T>> option(): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<T>>> =
+    protected fun uintOption(): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<UInt>>> =
             PropertyDelegateProvider { _, property ->
-                val option = BinaryOption(property.name, EnumValueParser(enumValues<T>().toList()))
+                val option = BinaryOption(property.name, UIntValueParser)
+                register(option)
+                ReadOnlyProperty { _, _ ->
+                    option.compilerConfigurationKey
+                }
+            }
+
+    protected fun stringOption(): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<String>>> =
+            PropertyDelegateProvider { _, property ->
+                val option = BinaryOption(property.name, StringValueParser)
+                register(option)
+                ReadOnlyProperty { _, _ ->
+                    option.compilerConfigurationKey
+                }
+            }
+
+    protected inline fun <reified T : Enum<T>> option(noinline shortcut : (T) -> String? = { null }, noinline hideValue: (T) -> Boolean = { false }): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<T>>> =
+            PropertyDelegateProvider { _, property ->
+                val option = BinaryOption(property.name, EnumValueParser(enumValues<T>().toList(), shortcut, hideValue))
                 register(option)
                 ReadOnlyProperty { _, _ ->
                     option.compilerConfigurationKey
@@ -83,11 +168,35 @@ private object BooleanValueParser : BinaryOption.ValueParser<Boolean> {
         get() = "true|false"
 }
 
-@PublishedApi
-internal class EnumValueParser<T : Enum<T>>(val values: List<T>) : BinaryOption.ValueParser<T> {
-    // TODO: should we really ignore case here?
-    override fun parse(value: String): T? = values.firstOrNull { it.name.equals(value, ignoreCase = true) }
+private object UIntValueParser : BinaryOption.ValueParser<UInt> {
+    override fun parse(value: String): UInt? = value.toUIntOrNull()
 
     override val validValuesHint: String?
-        get() = values.joinToString("|")
+        get() = "non-negative-number"
+}
+
+private object StringValueParser : BinaryOption.ValueParser<String> {
+    override fun parse(value: String) = value
+    override val validValuesHint: String?
+        get() = null
+}
+
+@PublishedApi
+internal class EnumValueParser<T : Enum<T>>(
+    val values: List<T>,
+    val shortcut: (T) -> String?,
+    val hideValue: (T) -> Boolean,
+) : BinaryOption.ValueParser<T> {
+    override fun parse(value: String): T? = values.firstOrNull {
+        // TODO: should we really ignore case here?
+        it.name.equals(value, ignoreCase = true) || (shortcut(it)?.equals(value, ignoreCase = true) ?: false)
+    }
+
+    override val validValuesHint: String?
+        get() = values.filter { !hideValue(it) }.map {
+            val fullName = "$it".lowercase()
+            shortcut(it)?.let { short ->
+                "$fullName (or: $short)"
+            } ?: fullName
+        }.joinToString("|")
 }

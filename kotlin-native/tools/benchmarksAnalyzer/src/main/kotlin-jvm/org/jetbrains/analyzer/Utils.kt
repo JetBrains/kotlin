@@ -62,3 +62,5 @@ actual fun sendGetRequest(url: String, user: String?, password: String?, followL
     redirect.connect()
     return redirect.inputStream.use { it.reader().use { reader -> reader.readText() } }
 }
+
+actual fun getDefaultPerformanceServerUrl() : String? = null

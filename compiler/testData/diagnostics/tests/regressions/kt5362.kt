@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 // KT-5362 Compiler crashes on access to extension method from nested class
 class Outer {
     class Nested{
@@ -24,7 +26,7 @@ public class Manager {
 
     class Task(val callback: Manager.() -> Unit) : Runnable {
         override public fun run() {
-            callback(<!NO_VALUE_FOR_PARAMETER!>)<!> // Manager is not accessible here, but no error is shown
+            callback<!NO_VALUE_FOR_PARAMETER!>()<!> // Manager is not accessible here, but no error is shown
         }
     }
 }

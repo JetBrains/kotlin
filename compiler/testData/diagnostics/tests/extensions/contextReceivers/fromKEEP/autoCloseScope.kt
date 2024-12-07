@@ -1,5 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
 // FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 
 class File(name: String)
 interface InputStream
@@ -19,7 +21,7 @@ fun File.open(): InputStream = TODO()
 fun withAutoClose(block: context(AutoCloseScope) () -> Unit) {
     val scope = AutoCloseScopeImpl() // Not shown here
     try {
-        with(scope) { block(<!NO_VALUE_FOR_PARAMETER!>)<!> }
+        with(scope) { block<!NO_VALUE_FOR_PARAMETER!>()<!> }
     } finally {
         scope.close()
     }

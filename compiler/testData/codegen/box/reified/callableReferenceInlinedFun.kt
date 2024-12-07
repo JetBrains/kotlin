@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: NATIVE
 
 inline fun <reified T> baz(value: T): String = "OK" + value
 
@@ -67,6 +66,21 @@ class F<T1> {
     inline fun <reified T2> foo(x: T1, y: T2): Any? = "OK" + x + y
 }
 
+inline fun <reified T, K> bam(value1: K?, value2: T?): String = "OK" + value1.toString() + value2.toString()
+
+fun <T> test10(): String {
+    val f: (T?, String?) -> String = ::bam
+    return f(null, "abc")
+}
+
+inline fun <T> test11Impl() : String {
+    val f: (T?, String?) -> String = ::bam
+    return f(null, "def")
+}
+
+fun <T> test11() = test11Impl<T>()
+
+
 fun box(): String {
     val test1 = test()
     if (test1 != "OK1") return "fail1: $test1"
@@ -86,6 +100,10 @@ fun box(): String {
     if (test8 != "OK56") return "fail8: $test8"
     val test9 = F<Int>().foo(65, "hello")
     if (test9 != "OK65hello") return "fail9: $test9"
+    val test10 = test10<Int>()
+    if (test10 != "OKnullabc") return "fail10: $test10"
+    val test11 = test11<Int>()
+    if (test11 != "OKnulldef") return "fail11: $test11"
 
     return "OK"
 }

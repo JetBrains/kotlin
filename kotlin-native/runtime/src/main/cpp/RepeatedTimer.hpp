@@ -5,15 +5,13 @@
 
 #pragma once
 
-#ifndef KONAN_NO_THREADS
-
 #include <condition_variable>
 #include <mutex>
 #include <string_view>
 
 #include "Clock.hpp"
 #include "KAssert.h"
-#include "ScopedThread.hpp"
+#include "concurrent/UtilityThread.hpp"
 #include "Utils.hpp"
 
 namespace kotlin {
@@ -25,7 +23,7 @@ public:
     RepeatedTimer(std::string_view name, std::chrono::duration<Rep, Period> interval, F&& f) noexcept :
         interval_(interval),
         next_(Clock::now() + interval_),
-        thread_(ScopedThread::attributes().name(name), &RepeatedTimer::Run<F>, this, std::forward<F>(f)) {}
+        thread_(name, &RepeatedTimer::Run<F>, this, std::forward<F>(f)) {}
 
     template <typename Rep, typename Period, typename F>
     RepeatedTimer(std::chrono::duration<Rep, Period> interval, F&& f) noexcept :
@@ -76,9 +74,7 @@ private:
     typename Clock::duration interval_;
     std::chrono::time_point<Clock> next_;
     bool scheduledInterrupt_ = false;
-    ScopedThread thread_;
+    UtilityThread thread_;
 };
 
 } // namespace kotlin
-
-#endif // !KONAN_NO_THREADS

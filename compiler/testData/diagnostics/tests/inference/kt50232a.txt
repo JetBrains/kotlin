@@ -1,0 +1,19 @@
+package
+
+public fun acceptMyRecursive(/*0*/ value: MyRecursive?): kotlin.Unit
+public fun </*0*/ R : Recursive<R>?> inferType(): R
+public fun test(): kotlin.Unit
+
+public final class MyRecursive : Recursive<MyRecursive> {
+    public constructor MyRecursive()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class Recursive</*0*/ R> {
+    public constructor Recursive</*0*/ R>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

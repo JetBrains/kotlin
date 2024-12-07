@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 
 fun <A, B> Either<A, B>.recover(f: (A) -> B): Either<A, B> = when (this) {
     is Either.Left -> f(<!DEBUG_INFO_SMARTCAST!>this<!>.a).right()

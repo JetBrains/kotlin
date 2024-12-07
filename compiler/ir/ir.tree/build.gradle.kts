@@ -1,8 +1,9 @@
-import org.jetbrains.kotlin.ideaExt.idea
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("generated-sources")
 }
 
 dependencies {
@@ -12,57 +13,29 @@ dependencies {
     implementation(project(":compiler:util"))
     implementation(project(":compiler:config"))
 
-    compileOnly(project("tree-generator")) // Provided, so that IDEA can recognize references to this module in KDoc.
+    if (kotlinBuildProperties.isInIdeaSync) {
+        compileOnly(project("tree-generator")) // Provided, so that IDEA can recognize references to this module in KDoc.
+    }
     compileOnly(intellijCore())
 }
 
+optInToUnsafeDuringIrConstructionAPI()
+
+
 sourceSets {
-    "main" {
-        projectDefault()
-        this.java.srcDir("gen")
-    }
+    "main" { projectDefault() }
     "test" {}
 }
 
-val generatorClasspath by configurations.creating
-
-dependencies {
-    generatorClasspath(project("tree-generator"))
+tasks.withType<KotlinJvmCompile> {
+    compilerOptions.freeCompilerArgs.add("-Xinline-classes")
+    compilerOptions.freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
 }
 
-val generationRoot = projectDir.resolve("gen")
+generatedSourcesTask(
+    taskName = "generateTree",
+    generatorProject = ":compiler:ir.tree:tree-generator",
+    generatorRoot = "compiler/ir/ir.tree/tree-generator/src/",
+    generatorMainClass = "org.jetbrains.kotlin.ir.generator.MainKt",
+)
 
-val generateTree by tasks.registering(NoDebugJavaExec::class) {
-
-    val generatorRoot = "$projectDir/tree-generator/src/"
-
-    val generatorConfigurationFiles = fileTree(generatorRoot) {
-        include("**/*.kt")
-    }
-
-    inputs.files(generatorConfigurationFiles)
-    outputs.dirs(generationRoot)
-
-    args(generationRoot)
-    workingDir = rootDir
-    classpath = generatorClasspath
-    main = "org.jetbrains.kotlin.ir.generator.MainKt"
-    systemProperties["line.separator"] = "\n"
-}
-
-val compileKotlin by tasks
-
-compileKotlin.dependsOn(generateTree)
-
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-    kotlinOptions {
-        freeCompilerArgs += "-Xinline-classes"
-    }
-}
-
-if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    apply(plugin = "idea")
-    idea {
-        this.module.generatedSourceDirs.add(generationRoot)
-    }
-}

@@ -1,0 +1,15 @@
+@Target(AnnotationTarget#.TYPE#)
+owner -> FirRegularClassSymbol util/Anno
+context -> FirRegularClassSymbol util/Anno
+
+@Anno(<strcat>(String(nested nested super type ref ), prop#))
+owner -> FirRegularClassSymbol util/MyClass
+context -> FirRegularClassSymbol util/MyClass
+
+@Anno(<strcat>(String(nested super type ref ), prop#))
+owner -> FirRegularClassSymbol util/MyClass
+context -> FirRegularClassSymbol util/MyClass
+
+@Anno(<strcat>(String(super type call ), prop#))
+owner -> FirRegularClassSymbol util/MyClass
+context -> FirRegularClassSymbol util/MyClass

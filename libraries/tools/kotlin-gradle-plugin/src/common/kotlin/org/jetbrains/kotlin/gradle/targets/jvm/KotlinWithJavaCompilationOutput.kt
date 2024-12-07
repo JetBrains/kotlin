@@ -8,28 +8,35 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.SourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput
 import java.io.File
 import java.util.concurrent.Callable
 
-class KotlinWithJavaCompilationOutput(
-    internal val compilation: KotlinWithJavaCompilation<*>
+class KotlinWithJavaCompilationOutput internal constructor(
+    private val javaSourceSet: SourceSet
 ) : KotlinCompilationOutput, Callable<FileCollection> {
 
     private val javaSourceSetOutput
-        get() = compilation.javaSourceSet.output
+        get() = javaSourceSet.output
 
     override val resourcesDir: File
         get() = javaSourceSetOutput.resourcesDir!!
 
+    @Deprecated(
+        "Changing resource output for Kotlin compilation is deprecated. " +
+                "Please either use 'resourcesDir' to get the resource location or 'KotlinSourceSet.resources' to configure additional " +
+                "resources location for compilation.",
+        replaceWith = ReplaceWith("resourcesDir"),
+    )
     override var resourcesDirProvider: Any
         get() = javaSourceSetOutput.resourcesDir!!
         set(value) {
             javaSourceSetOutput.setResourcesDir(value)
         }
 
-    override val classesDirs: ConfigurableFileCollection =
-        javaSourceSetOutput.classesDirs as ConfigurableFileCollection
+    override val classesDirs: ConfigurableFileCollection
+        get() = javaSourceSetOutput.classesDirs as ConfigurableFileCollection
 
     override val allOutputs: FileCollection
         get() = javaSourceSetOutput

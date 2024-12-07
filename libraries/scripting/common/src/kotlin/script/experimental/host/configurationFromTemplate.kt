@@ -157,9 +157,12 @@ private fun ScriptCompilationConfiguration.Builder.propertiesFromTemplate(
     baseClass.replaceOnlyDefault(if (templateClass == baseClassType.fromClass) baseClassType else KotlinType(templateClass))
     fileExtension.replaceOnlyDefault(mainAnnotation.fileExtension)
     // TODO: remove this exception when gradle switches to the new definitions and sets the property accordingly
-    if (get(fileExtension) == "gradle.kts") {
+    // possible gradle script extensions - see PrecompiledScriptTemplates.kt in the gradle repository
+    if (get(fileExtension) in arrayOf("gradle.kts", "init.gradle.kts", "settings.gradle.kts")) {
         isStandalone(false)
     }
+    @Suppress("DEPRECATION_ERROR")
+    fileNamePattern.replaceOnlyDefault(mainAnnotation.filePathPattern)
     filePathPattern.replaceOnlyDefault(mainAnnotation.filePathPattern)
     displayName.replaceOnlyDefault(mainAnnotation.displayName)
 }
@@ -196,6 +199,12 @@ private inline fun <reified T : Annotation> KClass<*>.findAnnotation(): T? =
 private inline fun <reified T : PropertiesCollection> scriptConfigInstance(kclass: KClass<out T>): T? =
     kclass.objectInstance ?: run {
         val noArgsConstructor = kclass.java.constructors.singleOrNull { it.parameters.isEmpty() }
-        noArgsConstructor?.let { it.newInstance() as T }
+        noArgsConstructor?.let {
+            try {
+                it.isAccessible = true
+            } catch (_: RuntimeException) {
+            }
+            it.newInstance() as T
+        }
     }
 

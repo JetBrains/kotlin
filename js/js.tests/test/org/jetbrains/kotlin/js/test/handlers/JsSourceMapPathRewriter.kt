@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.js.test.handlers
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.parser.sourcemaps.*
+import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.jsLibraryProvider
+import org.jetbrains.kotlin.test.services.libraryProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import java.io.File
 
@@ -22,10 +23,10 @@ class JsSourceMapPathRewriter(testServices: TestServices) : AbstractJsArtifactsC
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val supportedTranslationModes = arrayOf(
-            TranslationMode.FULL,
-            TranslationMode.FULL_DCE_MINIMIZED_NAMES,
-            TranslationMode.PER_MODULE,
-            TranslationMode.PER_MODULE_DCE_MINIMIZED_NAMES,
+            TranslationMode.FULL_DEV,
+            TranslationMode.FULL_PROD_MINIMIZED_NAMES,
+            TranslationMode.PER_MODULE_DEV,
+            TranslationMode.PER_MODULE_PROD_MINIMIZED_NAMES,
         )
         val testModules = testServices.moduleStructure.modules
         val allTestFiles = testModules.flatMap { it.files }
@@ -37,18 +38,19 @@ class JsSourceMapPathRewriter(testServices: TestServices) : AbstractJsArtifactsC
 
                 val dependencies = JsEnvironmentConfigurator.getAllRecursiveDependenciesFor(module, testServices)
                 SourceMap.replaceSources(sourceMapFile) { path ->
-                    allTestFiles.find { it.name == path }?.originalFile?.absolutePath?.let {
-                        return@replaceSources it
-                    }
-
-                    tryToMapLibrarySourceFile(dependencies, path)?.let {
-                        return@replaceSources it
-                    }
-
-                    path
+                    tryToMapTestFile(allTestFiles, path)
+                        ?: tryToMapLibrarySourceFile(dependencies, path)
+                        ?: path
                 }
             }
         }
+    }
+
+    private fun tryToMapTestFile(allTestFiles: Iterable<TestFile>, sourceMapPath: String): String? {
+        val testFile = allTestFiles.find { it.name == sourceMapPath }
+            ?: allTestFiles.find { "/${it.name}" == sourceMapPath }
+            ?: return null
+        return testFile.originalFile.absolutePath
     }
 
     /**
@@ -58,7 +60,7 @@ class JsSourceMapPathRewriter(testServices: TestServices) : AbstractJsArtifactsC
     private fun tryToMapLibrarySourceFile(dependencies: Iterable<ModuleDescriptor>, sourceMapPath: String): String? {
         for (dependency in dependencies) {
             val libraryFile = try {
-                File(testServices.jsLibraryProvider.getPathByDescriptor(dependency))
+                File(testServices.libraryProvider.getPathByDescriptor(dependency))
             } catch (e: NoSuchElementException) {
                 continue
             }

@@ -8,14 +8,14 @@ dependencies {
     testApi(project(":compiler:cli"))
     testApi(intellijCore())
 
-    testCompileOnly(project(":kotlin-reflect-api"))
-    testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
     testImplementation(projectTests(":compiler:test-infrastructure-utils"))
 
-    testRuntimeOnly(commonDependency("net.java.dev.jna:jna"))
+    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
 }
+
+optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { none() }

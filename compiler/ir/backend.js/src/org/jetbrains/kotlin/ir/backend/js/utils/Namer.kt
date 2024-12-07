@@ -15,10 +15,13 @@ object Namer {
 
     val OUTER_NAME = "\$outer"
     val UNREACHABLE_NAME = "\$unreachable"
+    val THROWABLE_CONSTRUCTOR = "\$throwableCtor"
 
     val DELEGATE = "\$delegate"
 
     val IMPLICIT_RECEIVER_NAME = "this"
+    val SYNTHETIC_RECEIVER_NAME = "\$this"
+    val ES6_BOX_PARAMETER_NAME = "\$box"
 
     val ARGUMENTS = JsNameRef("arguments")
 
@@ -27,12 +30,7 @@ object Namer {
 
     val JS_ERROR = JsNameRef("Error")
 
-    val JS_OBJECT = JsNameRef("Object")
-    val JS_UNDEFINED = JsNameRef("undefined")
-    val JS_OBJECT_CREATE_FUNCTION = JsNameRef("create", JS_OBJECT)
-
     val METADATA = "\$metadata\$"
-    val METADATA_INTERFACE_ID = "interfaceId"
 
     val KCALLABLE_GET_NAME = "<get-name>"
     val KCALLABLE_NAME = "callableName"

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +ForbidUsingExtensionPropertyTypeParameterInDelegate
+// LANGUAGE: +ForbidUsingExtensionPropertyTypeParameterInDelegate
 
 class Delegate<T : Any> {
     private var v: T? = null

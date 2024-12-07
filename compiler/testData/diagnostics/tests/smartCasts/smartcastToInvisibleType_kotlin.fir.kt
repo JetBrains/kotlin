@@ -1,5 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // INFERENCE_HELPERS
-// ISSUE: KT-44802
+// ISSUES: KT-44802, KT-56744
+// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedOrVararg
 // FILE: a.kt
 
 package foo
@@ -14,7 +16,7 @@ class B : PrivateInterface
 
 fun testSmartcast(x: Any) {
     if (x is A || x is B) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & foo.PrivateInterface")!>x<!>.foo()
+        <!DEBUG_INFO_EXPRESSION_TYPE("foo.PrivateInterface")!>x<!>.foo()
     }
 }
 
@@ -38,6 +40,6 @@ fun testSmartcast(x: Any) {
 }
 
 fun testInference(a: A, b: B) {
-    val x = <!DEBUG_INFO_EXPRESSION_TYPE("foo.PrivateInterface")!>select(a, b)<!>
+    val x = <!DEBUG_INFO_EXPRESSION_TYPE("foo.PrivateInterface")!><!INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT_WARNING!>select<!>(a, b)<!>
     x.<!INVISIBLE_REFERENCE!>foo<!>()
 }

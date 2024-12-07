@@ -32,21 +32,22 @@ import java.util.*
 
 open class LookupStorage(
     targetDataDir: File,
-    pathConverter: FileToPathConverter,
-    storeFullFqNames: Boolean = false,
-    private val trackChanges: Boolean = false
+    private val icContext: IncrementalCompilationContext,
 ) : BasicMapsOwner(targetDataDir) {
     val LOG = Logger.getInstance("#org.jetbrains.kotlin.jps.build.KotlinBuilder")
 
     companion object {
-        private val DELETED_TO_SIZE_TRESHOLD = 0.5
-        private val MINIMUM_GARBAGE_COLLECTIBLE_SIZE = 10000
+        private const val DELETED_TO_SIZE_THRESHOLD = 0.5
+        private const val MINIMUM_GARBAGE_COLLECTIBLE_SIZE = 10000
     }
 
+    private val trackChanges
+        get() = icContext.trackChangesInLookupCache
+
     private val countersFile = "counters".storageFile
-    private val idToFile = registerMap(IdToFileMap("id-to-file".storageFile, pathConverter))
-    private val fileToId = registerMap(FileToIdMap("file-to-id".storageFile, pathConverter))
-    private val lookupMap = TrackedLookupMap(registerMap(LookupMap("lookups".storageFile, storeFullFqNames)), trackChanges)
+    private val idToFile = registerMap(IdToFileMap("id-to-file".storageFile, icContext))
+    private val fileToId = registerMap(FileToIdMap("file-to-id".storageFile, icContext))
+    private val lookupMap = TrackedLookupMap(registerMap(LookupMap("lookups".storageFile, icContext)), trackChanges)
 
     @Volatile
     private var size: Int = 0
@@ -56,8 +57,9 @@ open class LookupStorage(
         try {
             if (countersFile.exists()) {
                 val lines = countersFile.readLines()
-                size = lines.firstOrNull()?.toIntOrNull() ?: throw IOException("$countersFile exists, but it is empty. " +
-                                                                                       "Counters file is corrupted"
+                size = lines.firstOrNull()?.toIntOrNull() ?: throw IOException(
+                    "$countersFile exists, but it is empty. " +
+                            "Counters file is corrupted"
                 )
                 oldSize = size
             }
@@ -103,7 +105,7 @@ open class LookupStorage(
 
         }
 
-        if (size > MINIMUM_GARBAGE_COLLECTIBLE_SIZE && filtered.size.toDouble() / fileIds.size.toDouble() < DELETED_TO_SIZE_TRESHOLD) {
+        if (size > MINIMUM_GARBAGE_COLLECTIBLE_SIZE && filtered.size.toDouble() / fileIds.size.toDouble() < DELETED_TO_SIZE_THRESHOLD) {
             lookupMap[key] = filtered
         }
 
@@ -133,31 +135,24 @@ open class LookupStorage(
     }
 
     @Synchronized
-    override fun clean() {
-        if (countersFile.exists()) {
-            countersFile.delete()
-        }
+    override fun deleteStorageFiles() {
+        icContext.transaction.deleteFile(countersFile.toPath())
 
         size = 0
 
-        super.clean()
+        super.deleteStorageFiles()
     }
 
     @Synchronized
-    override fun flush(memoryCachesOnly: Boolean) {
+    override fun close() {
         try {
             if (size != oldSize) {
                 if (size > 0) {
-                    if (!countersFile.exists()) {
-                        countersFile.parentFile.mkdirs()
-                        countersFile.createNewFile()
-                    }
-
-                    countersFile.writeText("$size\n0")
+                    icContext.transaction.writeText(countersFile.toPath(), "$size\n0")
                 }
             }
         } finally {
-            super.flush(memoryCachesOnly)
+            super.close()
         }
     }
 
@@ -176,10 +171,10 @@ open class LookupStorage(
             lookupMap[hash] = lookupMap[hash]!!.filter { it in idToFile }.toSet()
         }
 
-        val oldFileToId = fileToId.toMap()
+        val oldFileToId = fileToId.keys.associateWith { fileToId[it]!! }
         val oldIdToNewId = HashMap<Int, Int>(oldFileToId.size)
-        idToFile.clean()
-        fileToId.clean()
+        idToFile.clear()
+        fileToId.clear()
         size = 0
 
         for ((file, oldId) in oldFileToId.entries.sortedBy { it.key.path }) {
@@ -202,12 +197,12 @@ open class LookupStorage(
     @TestOnly
     fun forceGC() {
         removeGarbageForTests()
-        flush(false)
+        flush()
     }
 
     @TestOnly
     fun dump(lookupSymbols: Set<LookupSymbol>): String {
-        flush(false)
+        flush()
 
         val sb = StringBuilder()
         val p = Printer(sb)
@@ -276,6 +271,15 @@ class LookupTrackerImpl(private val delegate: LookupTracker) : LookupTracker {
             delegate.record(prevFilePath, position, prevScopeFqName, scopeKind, prevName)
         }
     }
+
+    override fun clear() {
+        lookups.clear()
+        prevFilePath = ""
+        prevPosition = null
+        prevScopeFqName = ""
+        prevScopeKind = null
+        prevName = ""
+    }
 }
 
 data class LookupSymbol(val name: String, val scope: String) : Comparable<LookupSymbol> {
@@ -298,17 +302,17 @@ private class TrackedLookupMap(private val lookupMap: LookupMap, private val tra
     val addedKeys = if (trackChanges) mutableSetOf<LookupSymbolKey>() else null
     val removedKeys = if (trackChanges) mutableSetOf<LookupSymbolKey>() else null
 
-    val keys: Collection<LookupSymbolKey>
+    val keys: Set<LookupSymbolKey>
         get() = lookupMap.keys
 
-    operator fun get(key: LookupSymbolKey): Collection<Int>? = lookupMap[key]
+    operator fun get(key: LookupSymbolKey): Set<Int>? = lookupMap[key]
 
     operator fun set(key: LookupSymbolKey, fileIds: Set<Int>) {
         recordSet(key)
         lookupMap[key] = fileIds
     }
 
-    fun append(key: LookupSymbolKey, fileIds: Collection<Int>) {
+    fun append(key: LookupSymbolKey, fileIds: Set<Int>) {
         recordSet(key)
         lookupMap.append(key, fileIds)
     }
@@ -320,23 +324,19 @@ private class TrackedLookupMap(private val lookupMap: LookupMap, private val tra
 
     private fun recordSet(key: LookupSymbolKey) {
         if (!trackChanges) return
-        if (lookupMap[key] == null) {
-            if (key in removedKeys!!) {
-                removedKeys.remove(key)
-            } else {
-                addedKeys!!.add(key)
-            }
+        when (key) {
+            in lookupMap -> Unit
+            in removedKeys!! -> removedKeys.remove(key)
+            else -> addedKeys!!.add(key)
         }
     }
 
     private fun recordRemove(key: LookupSymbolKey) {
         if (!trackChanges) return
-        if (lookupMap[key] != null) {
-            if (key in addedKeys!!) {
-                addedKeys.remove(key)
-            } else {
-                removedKeys!!.add(key)
-            }
+        when (key) {
+            !in lookupMap -> Unit
+            in addedKeys!! -> addedKeys.remove(key)
+            else -> removedKeys!!.add(key)
         }
     }
 }

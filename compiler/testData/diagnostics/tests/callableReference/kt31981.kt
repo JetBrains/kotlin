@@ -1,5 +1,5 @@
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KMutableProperty1

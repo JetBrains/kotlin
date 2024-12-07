@@ -1,1 +1,2 @@
-sealed interface A
+@JvmInline
+value class Holder<T>(val value: T)

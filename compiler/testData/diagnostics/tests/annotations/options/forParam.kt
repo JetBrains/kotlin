@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 // See KT-9145
 
 @Target(AnnotationTarget.CLASS)

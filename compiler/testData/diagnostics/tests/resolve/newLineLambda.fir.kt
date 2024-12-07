@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun noArgs() {}
 fun oneLambdaArg(fn: () -> Unit) {}
@@ -28,7 +29,7 @@ fun testNoArgs() {
 }
 
 fun testLambdaArg() {
-    oneLambdaArg(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    oneLambdaArg<!NO_VALUE_FOR_PARAMETER!>()<!>
     oneLambdaArg {}
     oneLambdaArg()
     {}
@@ -40,7 +41,7 @@ fun testLambdaArg() {
         <!TOO_MANY_ARGUMENTS!>{}<!>
     )
     oneLambdaArg() {}
-    oneLambdaArg(<!NO_VALUE_FOR_PARAMETER!>)<!> // {}
+    oneLambdaArg<!NO_VALUE_FOR_PARAMETER!>()<!> // {}
     oneLambdaArg() /* */ {}
     oneLambdaArg() /*
         block
@@ -82,8 +83,8 @@ fun testVararg() {
     varargFn(1,2,3) // comment
     // comment
     <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
-    varargFn(1,2,3) {} <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
-    varargFn(1,2,3) {}
+    varargFn(1,2,3) <!VARARG_OUTSIDE_PARENTHESES!>{}<!> <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
+    varargFn(1,2,3) <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
     <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
 }
 
@@ -95,23 +96,23 @@ fun testTwoLambdas() {
     )
 
     fun bar(): () -> Unit {
-        twoLambdaArgs(<!NO_VALUE_FOR_PARAMETER!>)<!>
+        twoLambdaArgs<!NO_VALUE_FOR_PARAMETER!>()<!>
         {}
         <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
 
-        return if (true) {
+        return <!RETURN_TYPE_MISMATCH!>if (true) {
             twoLambdaArgs({})
             {}
             <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
         } else {
             {}
-        }
+        }<!>
     }
 }
 
 fun f1(): (() -> Unit) -> (() -> Unit) -> Unit {
     return <!RETURN_TYPE_MISMATCH!>{ l1 ->
         l1()
-        <!TOO_MANY_ARGUMENTS!>{ l2 -> <!UNRESOLVED_REFERENCE!>l2<!>() }<!>
+        <!TOO_MANY_ARGUMENTS!>{ <!CANNOT_INFER_PARAMETER_TYPE!>l2<!> -> <!UNRESOLVED_REFERENCE!>l2<!>() }<!>
     }<!>
 }

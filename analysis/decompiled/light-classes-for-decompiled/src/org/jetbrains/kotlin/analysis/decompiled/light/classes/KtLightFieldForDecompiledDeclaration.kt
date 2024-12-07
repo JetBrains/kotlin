@@ -1,4 +1,7 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/*
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
 package org.jetbrains.kotlin.analysis.decompiled.light.classes
 
@@ -52,9 +55,11 @@ open class KtLightFieldForDecompiledDeclaration(
 
     override fun computeConstantValue(): Any? = fldDelegate.computeConstantValue()
 
-    override fun computeConstantValue(visitedVars: MutableSet<PsiVariable>?): Any? = (fldDelegate as? PsiVariableEx)?.computeConstantValue(visitedVars)
+    override fun computeConstantValue(visitedVars: MutableSet<PsiVariable>?): Any? =
+        (fldDelegate as? PsiVariableEx)?.computeConstantValue(visitedVars)
 
-    override fun equals(other: Any?): Boolean = other is KtLightFieldForDecompiledDeclaration &&
+    override fun equals(other: Any?): Boolean = other === this ||
+            other is KtLightFieldForDecompiledDeclaration &&
             name == other.name &&
             fldParent == other.fldParent &&
             fldDelegate == other.fldDelegate
@@ -67,7 +72,19 @@ open class KtLightFieldForDecompiledDeclaration(
 
     override fun toString(): String = "${this.javaClass.simpleName} of $fldParent"
 
-    override val clsDelegate: PsiField = fldDelegate
-
     override fun isValid(): Boolean = parent.isValid
+
+    override fun isEquivalentTo(another: PsiElement?): Boolean {
+        return this == another ||
+                another is KtLightFieldForDecompiledDeclaration && fldDelegate.isEquivalentTo(another.fldDelegate) ||
+                fldDelegate.isEquivalentTo(another)
+    }
+
+    override fun accept(visitor: PsiElementVisitor) {
+        if (visitor is JavaElementVisitor) {
+            visitor.visitField(this)
+        } else {
+            visitor.visitElement(this)
+        }
+    }
 }

@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.KtNodeTypes;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt.isKtFile;
+
 @SuppressWarnings("deprecation")
 public abstract class KtFunctionNotStubbed extends KtTypeParameterListOwnerNotStubbed implements KtFunction {
 
@@ -90,6 +92,6 @@ public abstract class KtFunctionNotStubbed extends KtTypeParameterListOwnerNotSt
     @Override
     public boolean isLocal() {
         PsiElement parent = getParent();
-        return !(parent instanceof KtFile || parent instanceof KtClassBody);
+        return !(isKtFile(parent) || parent instanceof KtClassBody);
     }
 }

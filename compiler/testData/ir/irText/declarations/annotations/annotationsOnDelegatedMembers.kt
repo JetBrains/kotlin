@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 annotation class Ann
 
 interface IFoo {

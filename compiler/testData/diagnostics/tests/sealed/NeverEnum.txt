@@ -30,6 +30,7 @@ public sealed enum class SealedEnum : kotlin.Enum<SealedEnum> {
     }
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<SealedEnum>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): SealedEnum
     public final /*synthesized*/ fun values(): kotlin.Array<SealedEnum>
 }

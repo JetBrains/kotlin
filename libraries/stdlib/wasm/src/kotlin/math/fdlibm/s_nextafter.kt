@@ -19,15 +19,15 @@
 
 package kotlin.math.fdlibm
 
-internal fun nextafter(x: Double, y: Double): Double {
-    var x: Double = x
-    var y: Double = y
-    var hx: Int = 0
-    var hy: Int = 0
-    var ix: Int = 0
-    var iy: Int = 0
-    var lx: UInt = 0U
-    var ly: UInt = 0U
+internal fun nextafter(_x: Double, _y: Double): Double {
+    var x: Double = _x
+    var y: Double = _y
+    var hx: Int
+    var hy: Int
+    var ix: Int
+    var iy: Int
+    var lx: UInt
+    var ly: UInt
 
     hx = __HI(x)        /* high word of x */
     lx = __LOu(x)        /* low  word of x */

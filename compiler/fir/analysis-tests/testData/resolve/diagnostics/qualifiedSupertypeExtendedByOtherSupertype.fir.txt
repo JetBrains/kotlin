@@ -8,7 +8,7 @@ FILE: qualifiedSupertypeExtendedByOtherSupertype.kt
 
     }
     public final typealias AliasedIBase1 = R|IBase<kotlin/String>|
-    public final typealias AliasedIBase = R|AliasedIBase1|
+    public final typealias AliasedIBase = R|{AliasedIBase1=} IBase<kotlin/String>|
     public abstract interface IDerived<T> : R|IBase<T>| {
         public open override fun foo(): R|kotlin/Unit| {
         }
@@ -31,16 +31,16 @@ FILE: qualifiedSupertypeExtendedByOtherSupertype.kt
         }
 
     }
-    public final class Test2 : R|IDerived<kotlin/String>|, R|AliasedIBase| {
+    public final class Test2 : R|IDerived<kotlin/String>|, R|{AliasedIBase=} IBase<kotlin/String>| {
         public constructor(): R|Test2| {
             super<R|kotlin/Any|>()
         }
 
         public final fun test(): R|kotlin/Unit| {
-            this@R|/Test2|.super<R|IBase<kotlin/String>|>.R|SubstitutionOverride</IBase.foo: R|kotlin/Unit|>|()
-            this@R|/Test2|.super<R|IBase<kotlin/String>|>.R|SubstitutionOverride</IBase.bar: R|kotlin/Unit|>|()
-            this@R|/Test2|.super<R|IBase<kotlin/String>|>.R|SubstitutionOverride</IBase.foo: R|kotlin/Unit|>|()
-            this@R|/Test2|.super<R|IBase<kotlin/String>|>.R|SubstitutionOverride</IBase.bar: R|kotlin/Unit|>|()
+            this@R|/Test2|.super<R|{AliasedIBase=} IBase<kotlin/String>|>.R|SubstitutionOverride</IBase.foo: R|kotlin/Unit|>|()
+            this@R|/Test2|.super<R|{AliasedIBase=} IBase<kotlin/String>|>.R|SubstitutionOverride</IBase.bar: R|kotlin/Unit|>|()
+            this@R|/Test2|.super<R|{AliasedIBase=} IBase<kotlin/String>|>.R|SubstitutionOverride</IBase.foo: R|kotlin/Unit|>|()
+            this@R|/Test2|.super<R|{AliasedIBase=} IBase<kotlin/String>|>.R|SubstitutionOverride</IBase.bar: R|kotlin/Unit|>|()
             this@R|/Test2|.super<R|IDerived<kotlin/String>|>.R|SubstitutionOverride</IDerived.foo: R|kotlin/Unit|>|()
             this@R|/Test2|.super<R|IDerived<kotlin/String>|>.R|SubstitutionOverride</IDerived.bar: R|kotlin/Unit|>|()
             this@R|/Test2|.super<R|IDerived<kotlin/String>|>.R|SubstitutionOverride</IDerived.qux: R|kotlin/Unit|>|()

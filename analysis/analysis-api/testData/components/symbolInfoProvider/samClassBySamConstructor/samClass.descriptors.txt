@@ -1,0 +1,212 @@
+CONSTRUCTOR:
+  KaSamConstructorSymbol:
+  annotations: []
+  callableId: /IntPredicate
+  compilerVisibility: Public
+  contextReceivers: []
+  hasStableParameterNames: true
+  isActual: false
+  isExpect: false
+  isExtension: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: IntPredicate
+  origin: SAM_CONSTRUCTOR
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: IntPredicate
+    nullability: NON_NULLABLE
+    qualifiers: [
+      qualifier:
+        name: IntPredicate
+        symbol: KaNamedClassSymbol(IntPredicate)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(IntPredicate)
+    typeArguments: []
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Local
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: function
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaFunctionType:
+        abbreviation: null
+        annotations: []
+        arity: 1
+        classId: kotlin/Function1
+        contextReceivers: []
+        hasContextReceivers: false
+        hasReceiver: false
+        isReflectType: false
+        isSuspend: false
+        nullability: NON_NULLABLE
+        parameterTypes: [
+          KaUsualClassType:
+            abbreviation: null
+            annotations: [
+              kotlin/ParameterName(name = "i")
+                psi: null
+            ]
+            classId: kotlin/Int
+            nullability: NON_NULLABLE
+            qualifiers: [
+              qualifier:
+                name: Int
+                symbol: KaNamedClassSymbol(kotlin/Int)
+                typeArguments: []
+            ]
+            symbol: KaNamedClassSymbol(kotlin/Int)
+            typeArguments: []
+        ]
+        qualifiers: [
+          qualifier:
+            name: Function1
+            symbol: KaNamedClassSymbol(kotlin/Function1)
+            typeArguments: [
+              KaUsualClassType:
+                abbreviation: null
+                annotations: [
+                  kotlin/ParameterName(name = "i")
+                    psi: null
+                ]
+                classId: kotlin/Int
+                nullability: NON_NULLABLE
+                qualifiers: [
+                  qualifier:
+                    name: Int
+                    symbol: KaNamedClassSymbol(kotlin/Int)
+                    typeArguments: []
+                ]
+                symbol: KaNamedClassSymbol(kotlin/Int)
+                typeArguments: []
+              KaUsualClassType:
+                abbreviation: null
+                annotations: []
+                classId: kotlin/Boolean
+                nullability: NON_NULLABLE
+                qualifiers: [
+                  qualifier:
+                    name: Boolean
+                    symbol: KaNamedClassSymbol(kotlin/Boolean)
+                    typeArguments: []
+                ]
+                symbol: KaNamedClassSymbol(kotlin/Boolean)
+                typeArguments: []
+            ]
+        ]
+        receiverType: null
+        returnType: KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Boolean
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: Boolean
+              symbol: KaNamedClassSymbol(kotlin/Boolean)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Boolean)
+          typeArguments: []
+        symbol: KaNamedClassSymbol(kotlin/Function1)
+        typeArguments: [
+          KaUsualClassType:
+            abbreviation: null
+            annotations: [
+              kotlin/ParameterName(name = "i")
+                psi: null
+            ]
+            classId: kotlin/Int
+            nullability: NON_NULLABLE
+            qualifiers: [
+              qualifier:
+                name: Int
+                symbol: KaNamedClassSymbol(kotlin/Int)
+                typeArguments: []
+            ]
+            symbol: KaNamedClassSymbol(kotlin/Int)
+            typeArguments: []
+          KaUsualClassType:
+            abbreviation: null
+            annotations: []
+            classId: kotlin/Boolean
+            nullability: NON_NULLABLE
+            qualifiers: [
+              qualifier:
+                name: Boolean
+                symbol: KaNamedClassSymbol(kotlin/Boolean)
+                typeArguments: []
+            ]
+            symbol: KaNamedClassSymbol(kotlin/Boolean)
+            typeArguments: []
+        ]
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(samClass.kt)
+      getContainingJvmClassName: SamClassKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(samClass.kt)
+  getContainingJvmClassName: SamClassKt
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+CLASS:
+  KaNamedClassSymbol:
+  annotations: []
+  classId: IntPredicate
+  classKind: INTERFACE
+  companionObject: null
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: true
+  isInline: false
+  isInner: false
+  location: TOP_LEVEL
+  modality: ABSTRACT
+  name: IntPredicate
+  origin: SOURCE
+  superTypes: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/Any
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: Any
+          symbol: KaNamedClassSymbol(kotlin/Any)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Any)
+      typeArguments: []
+  ]
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(samClass.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null

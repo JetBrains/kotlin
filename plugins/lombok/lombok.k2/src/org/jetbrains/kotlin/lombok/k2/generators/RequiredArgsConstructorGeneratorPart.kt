@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.lombok.k2.generators
 
 import com.intellij.psi.PsiField
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.expressions.classId
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -29,10 +30,12 @@ class RequiredArgsConstructorGeneratorPart(session: FirSession) : AbstractConstr
     }
 
     private fun FirJavaField.isFieldRequired(): Boolean {
+        if (isStatic) return false
+
         // TODO: consider adding `hasInitializer` property directly to java model
         val hasInitializer = (source?.psi as? PsiField)?.hasInitializer() ?: false
         if (hasInitializer) return false
         if (isVal) return true
-        return annotations.any { it.classId?.asSingleFqName() in LombokNames.NON_NULL_ANNOTATIONS }
+        return annotations.any { it.unexpandedClassId?.asSingleFqName() in LombokNames.NON_NULL_ANNOTATIONS }
     }
 }

@@ -9,7 +9,11 @@ import org.jetbrains.kotlin.js.util.AstUtil;
 /**
  * Represents a JavaScript block which could not be rendered into a material one.
  */
-class JsCompositeBlock(statements: List<JsStatement> = mutableListOf()) : JsBlock(statements) {
+class JsCompositeBlock : JsBlock {
+    constructor() : super()
+    constructor(statement: JsStatement) : super(statement)
+    constructor(statements: List<JsStatement>) : super(statements)
+
     override fun isTransparent(): Boolean {
         return true
     }

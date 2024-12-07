@@ -1,6 +1,14 @@
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 14
+ * DESCRIPTION: Raw data flow analysis test
+ * HELPERS: classes, objects, typealiases, functions, enumClasses, interfaces, sealedClasses
+ */
 
 // TESTCASE NUMBER: 1
 fun case_1(x: Int?) {
@@ -20,7 +28,7 @@ fun case_2(x: Int?) {
 
 // TESTCASE NUMBER: 3
 fun case_3(x: Boolean?) {
-    if (x ?: (x != null)) {
+    if (x ?: (<!SENSELESS_COMPARISON!>x != null<!>)) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!><!UNSAFE_CALL!>.<!>not()
     }

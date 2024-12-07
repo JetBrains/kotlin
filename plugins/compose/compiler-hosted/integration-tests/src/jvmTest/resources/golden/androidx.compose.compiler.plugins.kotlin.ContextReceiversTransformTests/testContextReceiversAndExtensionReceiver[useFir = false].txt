@@ -1,0 +1,55 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+
+
+context(Foo, Bar)
+@Composable
+fun String.A() { }
+
+context(Foo, Bar, FooBar)
+@Composable
+fun String.B() { }
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun String.A(%context_receiver_0: Foo, %context_receiver_1: Bar, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(A):Test.kt")
+  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    A(%context_receiver_0, %context_receiver_1, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun String.B(%context_receiver_0: Foo, %context_receiver_1: Bar, %context_receiver_2: FooBar, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(B):Test.kt")
+  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    B(%context_receiver_0, %context_receiver_1, %context_receiver_2, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

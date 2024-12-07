@@ -1,7 +1,1 @@
-compiler/testData/cli/jvm/unrestrictedBuilderInference.kt:3:9: warning: variable 'x' is never used
-    val x = buildMap {
-        ^
-compiler/testData/cli/jvm/unrestrictedBuilderInference.kt:4:13: warning: variable 'y' is never used
-        val y = put(1, "")
-            ^
 OK

@@ -1,10 +1,11 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-50875
 
 interface A {
     fun foo()
 }
 
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 fun <K> checkNotNull(x: K?, y: K): @kotlin.internal.Exact K {
     return x ?: y
 }

@@ -22,6 +22,7 @@ public final enum class EnumValues : kotlin.Enum<test.EnumValues!> {
     public final /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.EnumValues!>!
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.EnumValues>
     public final /*synthesized*/ fun valueOf(/*0*/ kotlin.String): test.EnumValues
     public final /*synthesized*/ fun values(): kotlin.Array<test.EnumValues>
 }

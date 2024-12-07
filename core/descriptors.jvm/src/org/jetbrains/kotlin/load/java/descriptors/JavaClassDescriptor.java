@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.load.java.descriptors;
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.mpp.MppJavaImplicitActualizatorMarker;
 
-public interface JavaClassDescriptor extends ClassDescriptor {
+public interface JavaClassDescriptor extends ClassDescriptor, MppJavaImplicitActualizatorMarker {
     boolean isRecord();
 }

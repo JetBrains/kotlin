@@ -17,8 +17,9 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
@@ -32,7 +33,10 @@ import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.util.zip.ZipFile
 import kotlin.io.path.*
-import kotlin.test.*
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 @DisplayName("Basic Kotlin/JVM plugin tests")
 @JvmGradlePluginTests
@@ -246,12 +250,13 @@ class KotlinGradleIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(incremental = true)
         ) {
             build("assemble")
+            val buildOptions = buildOptions.copy(
+                kotlinVersion = TestVersions.Kotlin.STABLE_RELEASE
+            )
             build(
                 "clean",
                 "assemble",
-                buildOptions = buildOptions.copy(
-                    kotlinVersion = TestVersions.Kotlin.STABLE_RELEASE
-                )
+                buildOptions = buildOptions
             )
         }
     }
@@ -287,22 +292,22 @@ class KotlinGradleIT : KGPBaseTest() {
 
             // check the arguments are not passed by default (they are inferred by the compiler)
             build("clean", "compileKotlin") {
-                assertOutputDoesNotContain("-language-version")
-                assertOutputDoesNotContain("-api-version")
+                assertOutputDoesNotContain(CommonCompilerArguments::languageVersion.cliArgument)
+                assertOutputDoesNotContain(CommonCompilerArguments::apiVersion.cliArgument)
                 assertNoBuildWarnings()
             }
 
             // check the arguments are always passed if specified explicitly
             updateBuildGradle("1.6", "1.6")
             build("clean", "compileKotlin") {
-                assertOutputContains("-language-version 1.6")
-                assertOutputContains("-api-version 1.6")
+                assertOutputContains("${CommonCompilerArguments::languageVersion.cliArgument} 1.6")
+                assertOutputContains("${CommonCompilerArguments::apiVersion.cliArgument} 1.6")
             }
 
             updateBuildGradle("1.7", "1.7")
             build("clean", "compileKotlin") {
-                assertOutputContains("-language-version 1.7")
-                assertOutputContains("-api-version 1.7")
+                assertOutputContains("${CommonCompilerArguments::languageVersion.cliArgument} 1.7")
+                assertOutputContains("${CommonCompilerArguments::apiVersion.cliArgument} 1.7")
             }
         }
     }
@@ -336,7 +341,7 @@ class KotlinGradleIT : KGPBaseTest() {
     fun testArchiveBaseNameForModuleName(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             val archivesBaseName = "myArchivesBaseName"
-            buildGradle.appendText("\narchivesBaseName = '$archivesBaseName'")
+            addArchivesBaseNameCompat(archivesBaseName)
 
             // Add top-level members to force generation of the *.kotlin_module files for the two source sets
             val mainHelloWorldKt = kotlinSourcesDir().resolve("helloWorld.kt")
@@ -417,9 +422,9 @@ class KotlinGradleIT : KGPBaseTest() {
             buildGradle.appendText(
                 """
                 
-                task sourcesJar(type: Jar) {
+                tasks.register("sourcesJar", Jar) {
                     from sourceSets.main.allSource
-                    classifier 'source'
+                    archiveClassifier = 'source'
                     duplicatesStrategy = 'fail' // fail in case of Java source duplication, see KT-17564
                 }
 
@@ -439,15 +444,15 @@ class KotlinGradleIT : KGPBaseTest() {
     @GradleTest
     fun testModuleNameFiltering(gradleVersion: GradleVersion) {
         project("typeAlias", gradleVersion) { // Use a Project with a top-level typealias
+            addArchivesBaseNameCompat("""a/really\\trick\n\rmodule\tname""")
+
             buildGradle.appendText(
                 """
-                                    
-                archivesBaseName = 'a/really\\trick\n\rmodule\tname'
-                
-                tasks.withType(Jar.class).configureEach {
-                    archiveBaseName.set('typeAlias')
-                }
-                """.trimIndent()
+                |
+                |tasks.withType(Jar.class).configureEach {
+                |    archiveBaseName.set('typeAlias')
+                |}
+                """.trimMargin()
             )
 
             build("classes") {
@@ -485,6 +490,7 @@ class KotlinGradleIT : KGPBaseTest() {
     }
 
     @DisplayName("KGP dependencies in buildSrc module")
+    @GradleTestVersions
     @GradleTest
     fun testKotlinPluginDependenciesInBuildSrc(gradleVersion: GradleVersion) {
         project("kotlinPluginDepsInBuildSrc", gradleVersion) {
@@ -509,7 +515,7 @@ class KotlinGradleIT : KGPBaseTest() {
     @GradleTest
     fun symlinkedBuildDir(
         gradleVersion: GradleVersion,
-        @TempDir tempDir: Path
+        @TempDir tempDir: Path,
     ) {
         project("internalTest", gradleVersion) {
             val externalBuildDir = tempDir.resolve("externalBuild")
@@ -550,48 +556,12 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Kotlin source directories are available in Java source directories")
-    @GradleTest
-    fun testKotlinSourceInJavaSourceSet(gradleVersion: GradleVersion) {
-        project("multiplatformProject", gradleVersion) {
-            val srcDirPrefix = "srcDir: "
-
-            buildGradle.appendText(
-                """
-                
-                subprojects { project ->
-                    project.afterEvaluate {
-                        project.sourceSets.each { sourceSet ->
-                            sourceSet.allJava.srcDirs.each { srcDir ->
-                                println "$srcDirPrefix" + srcDir.canonicalPath
-                            }
-                        }
-                    }
-                }
-                """.trimIndent()
-            )
-            val srcDirRegex = "$srcDirPrefix(.*)".toRegex()
-
-            build("help") {
-                val reportedSrcDirs = srcDirRegex.findAll(output).map { it.groupValues[1] }.toSet()
-
-                val expectedKotlinDirs = listOf("lib", "libJvm", "libJs").flatMap { module ->
-                    listOf("main", "test").map { sourceSet ->
-                        projectPath.resolve("$module/src/$sourceSet/kotlin").toFile().absolutePath
-                    }
-                }
-
-                expectedKotlinDirs.forEach { assertTrue(it in reportedSrcDirs, "$it should be included into the Java source sets") }
-            }
-        }
-    }
-
     @DisplayName("Default Kotlin version is not affected by transitive dependencies")
     @GradleTest
     fun testDefaultKotlinVersionIsNotAffectedByTransitiveDependencies(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             // Add a dependency with an explicit lower Kotlin version that has a kotlin-stdlib transitive dependency:
-            buildGradle.appendText("\ndependencies { implementation 'org.jetbrains.kotlin:kotlin-reflect:1.5.32' }")
+            buildScriptInjection { dependencies.add("implementation", "org.jetbrains.kotlin:kotlin-reflect:1.5.32") }
             testResolveAllConfigurations { unresolvedConfigurations, buildResult ->
                 assertTrue("Unresolved configurations: $unresolvedConfigurations") { unresolvedConfigurations.isEmpty() }
                 buildResult.assertOutputContains(">> :compileClasspath --> kotlin-reflect-1.5.32.jar")
@@ -647,8 +617,8 @@ class KotlinGradleIT : KGPBaseTest() {
                 val publishedPom = moduleDir.resolve("new-model-1.0.pom")
                 val kotlinVersion = buildOptions.kotlinVersion
                 val pomText = publishedPom.readText().replace(Regex("\\s+"), "")
-                assertTrue { "kotlin-gradle-plugin-api</artifactId><version>$kotlinVersion</version><scope>compile</scope>" in pomText }
-                assertTrue { "kotlin-stdlib-jdk8</artifactId><version>$kotlinVersion</version><scope>runtime</scope>" in pomText }
+                assertTrue { "kotlin-gradle-plugin-api</artifactId><scope>compile</scope>" in pomText }
+                assertTrue { "kotlin-stdlib-jdk8</artifactId><scope>runtime</scope>" in pomText }
 
                 assertFileExists(moduleDir.resolve("new-model-1.0-sources.jar"))
             }
@@ -684,25 +654,42 @@ class KotlinGradleIT : KGPBaseTest() {
             subProject("projB").buildGradle.appendText("\nkotlin.target.attributes.attribute(targetAttribute, \"bar\")")
             buildAndFail(":projB:compileKotlin") {
                 when {
-                    gradleVersion < GradleVersion.version("6.8.4") -> {
-                        assertOutputContains(
-                            "No matching variant of project :projA was found. The consumer was configured to find an API of a library " +
-                                    "compatible with Java 8, preferably in the form of class files, " +
-                                    "and its dependencies declared externally, " +
-                                    "as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm', " +
-                                    "attribute 'com.example.compilation' with value 'foo', " +
-                                    "attribute 'com.example.target' with value 'bar' but:"
+                    gradleVersion <= GradleVersion.version(TestVersions.Gradle.G_7_6) -> {
+                        // Attributes may change order in the build output message
+                        val expectedLine = output.lines().find {
+                            it.contains(
+                                "No matching variant of project :projA was found. The consumer was configured to find an API of a library " +
+                                        "compatible with Java 17, preferably in the form of class files, " +
+                                        "preferably optimized for standard JVMs, " +
+                                        "and its dependencies declared externally, " +
+                                        "as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm', "
+                            )
+                        }
+
+                        assertNotNull(expectedLine, "Expected variant failure was not found in the build logs.\n${printBuildOutput()}")
+                        assertTrue(
+                            expectedLine.contains("attribute 'com.example.compilation' with value 'foo'"),
+                            "$expectedLine does not contain expected attribute 'com.example.compilation' with value 'foo'"
+                        )
+                        assertTrue(
+                            expectedLine.contains("attribute 'com.example.target' with value 'bar'"),
+                            "$expectedLine does not contain expected attribute 'com.example.target' with value 'bar'"
                         )
                     }
                     else -> {
-                        assertOutputContains(
-                            "No matching variant of project :projA was found. The consumer was configured to find an API of a library " +
-                                    "compatible with Java 8, preferably in the form of class files, " +
-                                    "preferably optimized for standard JVMs, and its dependencies declared externally, " +
-                                    "as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm', " +
-                                    "attribute 'com.example.compilation' with value 'foo', " +
-                                    "attribute 'com.example.target' with value 'bar' but:"
-                        )
+                        // Attributes may come in random order
+                        val attributeMatchingString = output.lineSequence().find {
+                            it.trimStart().startsWith(
+                                "> No matching variant of project :projA was found. " +
+                                        "The consumer was configured to find a library for use during compile-time, " +
+                                        "compatible with Java 17, preferably in the form of class files, " +
+                                        "preferably optimized for standard JVMs, and its dependencies declared externally, "
+                            )
+                        }
+                        assertNotNull(attributeMatchingString, "Expected variant mismatch string is not found")
+                        assertTrue(attributeMatchingString.contains("attribute 'com.example.compilation' with value 'foo'"))
+                        assertTrue(attributeMatchingString.contains("attribute 'com.example.target' with value 'bar'"))
+                        assertTrue(attributeMatchingString.contains("attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm'"))
                     }
                 }
             }
@@ -717,24 +704,42 @@ class KotlinGradleIT : KGPBaseTest() {
             )
             buildAndFail(":projB:compileKotlin") {
                 when {
-                    gradleVersion < GradleVersion.version("6.8.4") -> {
-                        assertOutputContains(
-                            "No matching variant of project :projA was found. The consumer was configured to find an API of a library " +
-                                    "compatible with Java 8, preferably in the form of class files, and its dependencies declared externally, " +
-                                    "as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm', " +
-                                    "attribute 'com.example.compilation' with value 'bar', " +
-                                    "attribute 'com.example.target' with value 'foo' but:"
+                    gradleVersion <= GradleVersion.version(TestVersions.Gradle.G_7_6) -> {
+                        // Attributes may change order in the build output message
+                        val expectedLine = output.lines().find {
+                            it.contains(
+                                "No matching variant of project :projA was found. The consumer was configured to find an API of a library " +
+                                        "compatible with Java 17, preferably in the form of class files, " +
+                                        "preferably optimized for standard JVMs, " +
+                                        "and its dependencies declared externally, " +
+                                        "as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm', "
+                            )
+                        }
+
+                        assertNotNull(expectedLine, "Expected variant failure was not found in the build logs.\n${printBuildOutput()}")
+                        assertTrue(
+                            expectedLine.contains("attribute 'com.example.compilation' with value 'bar'"),
+                            "$expectedLine does not contain expected attribute 'com.example.compilation' with value 'bar'"
+                        )
+                        assertTrue(
+                            expectedLine.contains("attribute 'com.example.target' with value 'foo'"),
+                            "$expectedLine does not contain expected attribute 'com.example.target' with value 'foo'"
                         )
                     }
                     else -> {
-                        assertOutputContains(
-                            "No matching variant of project :projA was found. The consumer was configured to find an API of a library " +
-                                    "compatible with Java 8, preferably in the form of class files, preferably optimized for standard JVMs, " +
-                                    "and its dependencies declared externally, " +
-                                    "as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm', " +
-                                    "attribute 'com.example.compilation' with value 'bar', " +
-                                    "attribute 'com.example.target' with value 'foo' but:"
-                        )
+                        // Attributes may come in random order
+                        val attributeMatchingString = output.lineSequence().find {
+                            it.contains(
+                                "No matching variant of project :projA was found. " +
+                                        "The consumer was configured to find a library for use during compile-time, " +
+                                        "compatible with Java 17, preferably in the form of class files, " +
+                                        "preferably optimized for standard JVMs, and its dependencies declared externally, "
+                            )
+                        }
+                        assertNotNull(attributeMatchingString, "Expected variant mismatch string is not found")
+                        assertTrue(attributeMatchingString.contains("attribute 'com.example.compilation' with value 'bar'"))
+                        assertTrue(attributeMatchingString.contains("attribute 'com.example.target' with value 'foo'"))
+                        assertTrue(attributeMatchingString.contains("attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm'"))
                     }
                 }
             }
@@ -766,7 +771,12 @@ class KotlinGradleIT : KGPBaseTest() {
 
             buildGradle.modify {
                 val reorderedClasspath = run {
-                    val (kotlinCompilerEmbeddable, others) = classpath.partition { "kotlin-compiler-embeddable" in it }
+                    val (kotlinCompilerEmbeddable, others) = classpath.partition {
+                        "kotlin-compiler-embeddable" in it ||
+                                // build-common should be loaded prior compiler-embedable, otherwise we could depend on old version of
+                                // serializer classes and fail with NSME
+                                "kotlin-build-common" in it
+                    }
                     others + kotlinCompilerEmbeddable
                 }
                 val newClasspathString = "classpath files(\n" + reorderedClasspath.joinToString(",\n") { "'$it'" } + "\n)"
@@ -783,8 +793,7 @@ class KotlinGradleIT : KGPBaseTest() {
     fun testNoDeprecationOnAssociatedDep(gradleVersion: GradleVersion) {
         project(
             "associatedDependencies",
-            gradleVersion,
-            buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Fail)
+            gradleVersion
         ) {
             build("tasks")
         }
@@ -798,6 +807,40 @@ class KotlinGradleIT : KGPBaseTest() {
             gradleVersion
         ) {
             build(":consumer:aggregate")
+        }
+    }
+
+    @DisplayName("KT-61273: task output backup works correctly if the first output is absent")
+    @GradleTest
+    fun taskOutputBackupWorksIfFirstOutputIsAbsent(gradleVersion: GradleVersion) {
+        project("kotlinProject", gradleVersion) {
+            buildGradle.append(
+                //language=Gradle
+                """
+                tasks.named("compileKotlin", org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configure {
+                    Provider<Directory> dir = project.layout.buildDirectory.dir(".a") // name it that's way so it will be the first output in an ordered set
+                    outputs.dir(dir)
+                    doFirst {
+                        dir.get().getAsFile().delete()
+                    }
+                }
+                """.trimIndent()
+            )
+
+            build("compileKotlin") {
+                assertTasksExecuted(":compileKotlin")
+            }
+
+            kotlinSourcesDir().resolve("Dummy.kt").append(
+                """
+                fun foo() {}
+                """.trimIndent()
+            )
+
+
+            build("compileKotlin") {
+                assertTasksExecuted(":compileKotlin")
+            }
         }
     }
 }

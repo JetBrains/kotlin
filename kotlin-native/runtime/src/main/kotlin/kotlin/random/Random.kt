@@ -2,9 +2,12 @@
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
+
+@file:OptIn(ExperimentalStdlibApi::class)
+
 package kotlin.random
 
-import kotlin.native.concurrent.AtomicLong
+import kotlin.concurrent.AtomicLong
 import kotlin.system.getTimeNanos
 
 /**
@@ -12,18 +15,19 @@ import kotlin.system.getTimeNanos
  */
 internal object NativeRandom : Random() {
     private const val MULTIPLIER = 0x5deece66dL
+    @Suppress("DEPRECATION_ERROR")
     private val _seed = AtomicLong(mult(getTimeNanos()))
 
     /**
      * Random generator seed value.
      */
     private val seed: Long
-        get() = _seed.value
+        get() = _seed.load()
 
     private fun mult(value: Long) = (value xor MULTIPLIER) and ((1L shl 48) - 1)
 
     private fun update(seed: Long): Unit {
-        _seed.value = seed
+        _seed.store(seed)
     }
 
     override fun nextBits(bitCount: Int): Int {

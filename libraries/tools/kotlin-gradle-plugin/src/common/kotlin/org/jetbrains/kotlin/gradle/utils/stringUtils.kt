@@ -5,15 +5,20 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
-import java.util.*
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal fun lowerCamelCaseName(vararg nameParts: String?): String {
     val nonEmptyParts = nameParts.mapNotNull { it?.takeIf(String::isNotEmpty) }
     return nonEmptyParts.drop(1).joinToString(
         separator = "",
         prefix = nonEmptyParts.firstOrNull().orEmpty(),
-        transform = String::capitalize
+        transform = String::capitalizeAsciiOnly
     )
+}
+
+internal fun dashSeparatedToUpperCamelCase(name: String): String {
+    return name.split("-").joinToString("") { it.capitalize() }
 }
 
 internal fun dashSeparatedName(nameParts: Iterable<String?>) = dashSeparatedName(*nameParts.toList().toTypedArray())
@@ -23,18 +28,10 @@ internal fun dashSeparatedName(vararg nameParts: String?): String {
     return nonEmptyParts.joinToString(separator = "-")
 }
 
-internal fun dashSeparatedLowercaseName(nameParts: Iterable<String?>) =
-    dashSeparatedLowercaseName(*nameParts.toList().toTypedArray())
-
-internal fun dashSeparatedLowercaseName(vararg nameParts: String?): String {
-    val nonEmptyParts = nameParts.mapNotNull { it?.takeIf(String::isNotEmpty)?.toLowerCase(Locale.ENGLISH) }
-    return nonEmptyParts.joinToString(separator = "-")
-}
-
 internal fun String.decamelize(): String {
     return replace(upperCaseRegex) {
         val (first) = it.destructured
-        "-${first.toLowerCase()}"
+        "-${first.toLowerCaseAsciiOnly()}"
     }
 }
 
@@ -58,3 +55,5 @@ internal fun Appendable.appendLine(value: Any?): Appendable =
 
 internal fun Appendable.appendLine(): Appendable =
     append('\n')
+
+internal fun String.removingTrailingNewline(): String = this.dropLastWhile { it == '\n' }

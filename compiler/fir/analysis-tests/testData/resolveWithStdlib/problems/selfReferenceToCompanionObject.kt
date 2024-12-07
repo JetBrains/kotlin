@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 abstract class Base(val fn: () -> String)
 
 class Host {

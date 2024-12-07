@@ -1,6 +1,6 @@
-// FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !OPT_IN: kotlin.RequiresOptIn
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// OPT_IN: kotlin.RequiresOptIn
 // NI_EXPECTED_FILE
 
 @file:OptIn(ExperimentalTypeInference::class)
@@ -17,8 +17,8 @@ interface SpecificController<T> : Base<String> {
     suspend fun yield(t: T) {}
 }
 
-fun <S> generate(@BuilderInference g: suspend Controller<S>.() -> Unit): S = TODO()
-fun <S> generateSpecific(@BuilderInference g: suspend SpecificController<S>.() -> Unit): S = TODO()
+fun <S> generate(g: suspend Controller<S>.() -> Unit): S = TODO()
+fun <S> generateSpecific(g: suspend SpecificController<S>.() -> Unit): S = TODO()
 
 fun Base<*>.starBase() {}
 fun Base<String>.stringBase() {}

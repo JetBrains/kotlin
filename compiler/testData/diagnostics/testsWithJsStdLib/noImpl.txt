@@ -2,6 +2,7 @@ package
 
 public val prop: kotlin.String
 public val prop2: kotlin.String
+private fun exposeClassS(): exposeClassS.`<anonymous>`.S
 public fun foo(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String = ...): kotlin.Unit
 
 public open class A {
@@ -21,3 +22,4 @@ public open class B : A {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

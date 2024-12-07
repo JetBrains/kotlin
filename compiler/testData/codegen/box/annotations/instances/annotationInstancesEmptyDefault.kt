@@ -1,9 +1,8 @@
 // IGNORE_BACKEND: JVM
 // IGNORE_BACKEND: WASM
-// DONT_TARGET_EXACT_BACKEND: JS
 
 // WITH_STDLIB
-// !LANGUAGE: +InstantiationOfAnnotationClasses
+// LANGUAGE: +InstantiationOfAnnotationClasses
 
 package test
 
@@ -27,6 +26,13 @@ annotation class C(
     val aI: IntArray = intArrayOf(1, 2)
 )
 
+annotation class EmptyDefaultArrays(
+    val kClassArray: Array<KClass<*>> = [],
+    val intArray: IntArray = [],
+    val stringArray: Array<String> = [],
+    val enumArray : Array<E> = []
+)
+
 annotation class Partial(
     val i: Int = 42,
     val s: String = "foo",
@@ -46,5 +52,10 @@ fun box(): String {
     assertEquals(42, p.i)
     assertEquals("bar", p.s)
     assertEquals(E.B, p.e)
+    val eda = EmptyDefaultArrays()
+    assertEquals(0, eda.intArray.size)
+    assertEquals(0, eda.kClassArray.size)
+    assertEquals(0, eda.stringArray.size)
+    assertEquals(0, eda.enumArray.size)
     return "OK"
 }

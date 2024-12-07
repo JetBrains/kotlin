@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.checkReservedPrefixWord
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.SMARTCAST
 import org.jetbrains.kotlin.resolve.BindingContext.VARIABLE
@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import java.util.*
 
 
 val List<WhenMissingCase>.hasUnknown: Boolean
@@ -218,7 +217,8 @@ internal abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChe
         return if (classDescriptor.kind != ClassKind.ENUM_ENTRY) {
             WhenMissingCase.IsTypeCheckIsMissing(
                 classId = DescriptorUtils.getClassIdForNonLocalClass(classDescriptor),
-                isSingleton = classDescriptor.kind.isSingleton
+                isSingleton = classDescriptor.kind.isSingleton,
+                ownTypeParametersCount = classDescriptor.declaredTypeParameters.size,
             )
         } else {
             val enumClassId = classId.outerClassId ?: error("Enum should have class id")
@@ -228,7 +228,6 @@ internal abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChe
 }
 
 private object WhenOnEnumExhaustivenessChecker : WhenOnClassExhaustivenessChecker() {
-    @OptIn(ExperimentalStdlibApi::class)
     override fun getMissingCases(
         expression: KtWhenExpression,
         context: BindingContext,
@@ -249,7 +248,6 @@ private object WhenOnEnumExhaustivenessChecker : WhenOnClassExhaustivenessChecke
 }
 
 internal object WhenOnSealedExhaustivenessChecker : WhenOnClassExhaustivenessChecker() {
-    @OptIn(ExperimentalStdlibApi::class)
     override fun getMissingCases(
         expression: KtWhenExpression,
         context: BindingContext,
@@ -283,10 +281,6 @@ object WhenChecker {
     )
 
     @JvmStatic
-    fun getClassIdForEnumSubject(expression: KtWhenExpression, context: BindingContext) =
-        getClassIdForTypeIfEnum(whenSubjectType(expression, context))
-
-    @JvmStatic
     fun getClassIdForTypeIfEnum(type: KotlinType?) =
         getClassDescriptorOfTypeIfEnum(type)?.classId
 
@@ -311,16 +305,6 @@ object WhenChecker {
         return when {
             subjectVariable != null -> context.get(VARIABLE, subjectVariable)?.type
             subjectExpression != null -> context.get(SMARTCAST, subjectExpression)?.defaultType ?: context.getType(subjectExpression)
-            else -> null
-        }
-    }
-
-    fun whenSubjectTypeWithoutSmartCasts(expression: KtWhenExpression, context: BindingContext): KotlinType? {
-        val subjectVariable = expression.subjectVariable
-        val subjectExpression = expression.subjectExpression
-        return when {
-            subjectVariable != null -> context.get(VARIABLE, subjectVariable)?.type
-            subjectExpression != null -> context.getType(subjectExpression)
             else -> null
         }
     }
@@ -479,7 +463,9 @@ object WhenChecker {
         }
     }
 
-    fun checkReservedPrefix(trace: BindingTrace, expression: KtWhenExpression) {
-        checkReservedPrefixWord(trace, expression.whenKeyword, "sealed", "sealed when")
+    fun checkSealedWhenIsReserved(sink: DiagnosticSink, element: PsiElement) {
+        KtPsiUtil.getPreviousWord(element, "sealed")?.let {
+            sink.report(Errors.UNSUPPORTED_SEALED_WHEN.on(it))
+        }
     }
 }

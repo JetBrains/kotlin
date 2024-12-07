@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 
-internal fun llvmLinkModules2(context: Context, dest: LLVMModuleRef, src: LLVMModuleRef): LLVMBool {
-    val diagnosticHandler = DefaultLlvmDiagnosticHandler(context, object : DefaultLlvmDiagnosticHandler.Policy {
+internal fun llvmLinkModules2(generationState: NativeGenerationState, dest: LLVMModuleRef, src: LLVMModuleRef): LLVMBool {
+    val diagnosticHandler = DefaultLlvmDiagnosticHandler(generationState, generationState.messageCollector, object : DefaultLlvmDiagnosticHandler.Policy {
         override fun suppressWarning(diagnostic: LlvmDiagnostic): Boolean {
             if (super.suppressWarning(diagnostic)) return true
 
@@ -24,7 +25,7 @@ internal fun llvmLinkModules2(context: Context, dest: LLVMModuleRef, src: LLVMMo
         }
     })
 
-    return withLlvmDiagnosticHandler(diagnosticHandler) {
+    return withLlvmDiagnosticHandler(generationState.llvmContext, diagnosticHandler) {
         LLVMLinkModules2(dest, src)
     }
 }

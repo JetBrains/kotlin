@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
-class DescriptorStorageForContextReceivers {
+internal class DescriptorStorageForContextReceivers {
     private val syntheticFieldStorage: MutableMap<ReceiverValue, IrField> = mutableMapOf()
 
     fun put(receiverValue: ReceiverValue, irField: IrField) {
@@ -17,4 +17,8 @@ class DescriptorStorageForContextReceivers {
 
     fun getSyntheticField(receiverValue: ReceiverValue) =
         syntheticFieldStorage[receiverValue] ?: error("No synthetic field for receiver value $receiverValue")
+
+    fun addAllFrom(storage: DescriptorStorageForContextReceivers) {
+        syntheticFieldStorage.putAll(storage.syntheticFieldStorage)
+    }
 }

@@ -1,0 +1,10 @@
+A:
+  [Enhancement]: public open fun foo(t: R|kotlin/Any!|): R|kotlin/Unit| from Use site scope of /A [id: 0]
+    [Enhancement]: public open fun foo(t: R|kotlin/Any!|): R|kotlin/Unit| from Java enhancement scope for /Java2 [id: 0]
+  [SubstitutionOverride(DeclarationSite)]: public open override fun foo(t: R|kotlin/Number!|): R|kotlin/Unit| from Use site scope of /A [id: 0]
+    [SubstitutionOverride(DeclarationSite)]: public open override fun foo(t: R|kotlin/Number!|): R|kotlin/Unit| from Java enhancement scope for /Java2 [id: 0]
+      [SubstitutionOverride(DeclarationSite)]: public open override fun foo(t: R|kotlin/Number!|): R|kotlin/Unit| from Substitution scope for [Use site scope of /KotlinClass] for type Java2 [id: 0]
+        [SubstitutionOverride(DeclarationSite)]: public open override fun foo(t: R|T!|): R|kotlin/Unit| from Use site scope of /KotlinClass [id: 1]
+          [SubstitutionOverride(DeclarationSite)]: public open override fun foo(t: R|T!|): R|kotlin/Unit| from Substitution scope for [Java enhancement scope for /Java1] for type KotlinClass<T> [id: 1]
+            [Enhancement]: public open fun foo(t: R|T!|): R|kotlin/Unit| from Java enhancement scope for /Java1 [id: 2]
+

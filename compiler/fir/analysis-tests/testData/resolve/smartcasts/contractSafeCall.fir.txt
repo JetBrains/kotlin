@@ -1,0 +1,10 @@
+FILE: contractSafeCall.kt
+    public final fun test(list: R|kotlin/collections/List<kotlin/Any>?|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/list|?.{ $subj$.R|kotlin/collections/isNullOrEmpty|<R|kotlin/Any|>() }, Boolean(true)) ->  {
+                ^test Unit
+            }
+        }
+
+        R|<local>/list|.R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|><Inapplicable(UNSAFE_CALL): kotlin/collections/List.size>#|
+    }

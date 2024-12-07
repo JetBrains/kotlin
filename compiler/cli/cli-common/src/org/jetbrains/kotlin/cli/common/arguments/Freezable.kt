@@ -16,31 +16,17 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import java.io.Serializable
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
-
 abstract class Freezable {
-    protected open inner class FreezableVar<T>(private var value: T) : ReadWriteProperty<Any, T>, Serializable {
-        override fun getValue(thisRef: Any, property: KProperty<*>) = value
-
-        override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
-            if (frozen) throw IllegalStateException("Instance of ${this::class} is frozen")
-            this.value = value
-        }
-    }
-
-    protected inner class NullableStringFreezableVar(value: String?) : FreezableVar<String?>(value) {
-        private val defaultValue = value
-
-        override fun setValue(thisRef: Any, property: KProperty<*>, value: String?) {
-            super.setValue(thisRef, property, if (value.isNullOrEmpty()) defaultValue else value)
-        }
+    protected fun checkFrozen() {
+        if (frozen) throw IllegalStateException("Instance of ${this::class} is frozen")
     }
 
     private var frozen: Boolean = false
 
-    internal fun getInstanceWithFreezeStatus(value: Boolean) = if (value == frozen) this else copyBean(this).apply { frozen = value }
+    protected open fun copyOf(): Freezable = copyBean(this)
+
+    internal fun copyOfInternal(): Freezable = copyOf()
+    internal fun getInstanceWithFreezeStatus(value: Boolean) = if (value == frozen) this else copyOf().apply { frozen = value }
 
     @Deprecated(level = DeprecationLevel.HIDDEN, message = "Please use type safe extension functions")
     fun frozen() = getInstanceWithFreezeStatus(true)
@@ -49,9 +35,13 @@ abstract class Freezable {
     fun unfrozen() = getInstanceWithFreezeStatus(false)
 }
 
+@Suppress("UNCHECKED_CAST")
+fun <T : Freezable> T.copyOf(): T = copyOfInternal() as T
+
 @Suppress(
     "UNCHECKED_CAST",
-    "EXTENSION_SHADOWED_BY_MEMBER" // It's false positive shadowed warning KT-21598
+    "EXTENSION_SHADOWED_BY_MEMBER", // It's false positive shadowed warning KT-21598
+    "unused" //used from kotlin plugin
 )
 fun <T : Freezable> T.frozen(): T = getInstanceWithFreezeStatus(true) as T
 @Suppress(

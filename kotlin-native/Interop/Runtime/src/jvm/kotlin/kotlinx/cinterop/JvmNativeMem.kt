@@ -16,7 +16,7 @@
 
 package kotlinx.cinterop
 
-import org.jetbrains.kotlin.konan.util.nativeMemoryAllocator
+import org.jetbrains.kotlin.utils.nativeMemoryAllocator
 import sun.misc.Unsafe
 
 private val NativePointed.address: Long

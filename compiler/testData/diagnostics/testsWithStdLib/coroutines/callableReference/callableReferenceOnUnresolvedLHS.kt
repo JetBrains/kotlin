@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference
+// RUN_PIPELINE_TILL: FRONTEND
 
 interface Inv
 class Impl : Inv

@@ -1,0 +1,9 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /testExcl(dynamic): dynamic // /testExcl|testExcl(<dynamic>){}[0]
+final fun /testUnaryMinus(dynamic): dynamic // /testUnaryMinus|testUnaryMinus(<dynamic>){}[0]
+final fun /testUnaryPlus(dynamic): dynamic // /testUnaryPlus|testUnaryPlus(<dynamic>){}[0]

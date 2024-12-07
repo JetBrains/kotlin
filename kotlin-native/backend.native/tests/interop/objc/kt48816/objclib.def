@@ -1,2 +1,0 @@
-language = Objective-C
-headerFilter = **/objclib.h **/NSObject.h **/NSDate.h **/NSUUID.h

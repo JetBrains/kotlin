@@ -1,4 +1,8 @@
 data class A {
+  val runA: @ExtensionFunctionType Function2<A, String, Unit>
+    field = runA
+    get
+
   constructor(runA: @ExtensionFunctionType Function2<A, String, Unit> = local fun A.<anonymous>(it: String) {
     return Unit
   }
@@ -8,24 +12,12 @@ data class A {
 
   }
 
-  val runA: @ExtensionFunctionType Function2<A, String, Unit>
-    field = runA
-    get
-
   operator fun component1(): @ExtensionFunctionType Function2<A, String, Unit> {
     return <this>.#runA
   }
 
   fun copy(runA: @ExtensionFunctionType Function2<A, String, Unit> = <this>.#runA): A {
     return A(runA = runA)
-  }
-
-  override fun toString(): String {
-    return "A(" + "runA=" + <this>.#runA + ")"
-  }
-
-  override fun hashCode(): Int {
-    return <this>.#runA.hashCode()
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -35,16 +27,28 @@ data class A {
     when {
       other !is A -> return false
     }
-    val tmp0_other_with_cast: A = other as A
+    val tmp_0: A = other as A
     when {
-      EQEQ(arg0 = <this>.#runA, arg1 = tmp0_other_with_cast.#runA).not() -> return false
+      EQEQ(arg0 = <this>.#runA, arg1 = tmp_0.#runA).not() -> return false
     }
     return true
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#runA.hashCode()
+  }
+
+  override fun toString(): String {
+    return "A(" + "runA=" + <this>.#runA + ")"
   }
 
 }
 
 data class B {
+  val x: Any
+    field = x
+    get
+
   constructor(x: Any = { // BLOCK
     local class <no name provided> {
       constructor() /* primary */ {
@@ -62,24 +66,12 @@ data class B {
 
   }
 
-  val x: Any
-    field = x
-    get
-
   operator fun component1(): Any {
     return <this>.#x
   }
 
   fun copy(x: Any = <this>.#x): B {
     return B(x = x)
-  }
-
-  override fun toString(): String {
-    return "B(" + "x=" + <this>.#x + ")"
-  }
-
-  override fun hashCode(): Int {
-    return <this>.#x.hashCode()
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -89,11 +81,20 @@ data class B {
     when {
       other !is B -> return false
     }
-    val tmp0_other_with_cast: B = other as B
+    val tmp_1: B = other as B
     when {
-      EQEQ(arg0 = <this>.#x, arg1 = tmp0_other_with_cast.#x).not() -> return false
+      EQEQ(arg0 = <this>.#x, arg1 = tmp_1.#x).not() -> return false
     }
     return true
   }
 
+  override fun hashCode(): Int {
+    return <this>.#x.hashCode()
+  }
+
+  override fun toString(): String {
+    return "B(" + "x=" + <this>.#x + ")"
+  }
+
 }
+

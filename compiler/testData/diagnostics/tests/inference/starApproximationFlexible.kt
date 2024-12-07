@@ -1,6 +1,7 @@
+// DISABLE_JAVA_FACADE
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
-// !LANGUAGE: +NewInference
 
 // FILE: JavaClass.java
 public class JavaClass {

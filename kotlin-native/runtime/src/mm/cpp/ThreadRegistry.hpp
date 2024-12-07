@@ -39,15 +39,30 @@ public:
     // (2) TLS gets deallocated before our thread destruction hooks run.
     // Using this after `Unregister` for the thread has been called is undefined behaviour.
     // Using this by a thread which is not attached to the Kotlin runtime is undefined behaviour.
-    ALWAYS_INLINE ThreadData* CurrentThreadData() const noexcept;
+    ThreadData* CurrentThreadData() const noexcept;
     Node* CurrentThreadDataNode() const noexcept {
         RuntimeAssert(currentThreadDataNode_ != nullptr, "Thread is not attached to the runtime");
         return currentThreadDataNode_;
     }
+    Node* CurrentThreadDataNodeOrNull() const noexcept { return currentThreadDataNode_; }
 
-    bool IsCurrentThreadRegistered() const noexcept { return currentThreadDataNode_ != nullptr; }
+    static bool IsCurrentThreadRegistered() noexcept { return currentThreadDataNode_ != nullptr; }
 
     static void ClearCurrentThreadData() { currentThreadDataNode_ = nullptr; }
+
+    // TODO(KT-72121): Remove this hack.
+    static void SetCurrentThreadDataNode(Node* node) noexcept { currentThreadDataNode_ = node; }
+
+    template <typename F>
+    void waitAllThreads(F&& f) noexcept {
+        // Disable new threads coming and going.
+        auto iter = LockForIter();
+        while (!std::all_of(iter.begin(), iter.end(), std::forward<F>(f))) {
+            std::this_thread::yield();
+        }
+    }
+
+    void PublishAll() noexcept;
 
 private:
     friend class GlobalData;

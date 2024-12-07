@@ -5,24 +5,20 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.util.prefixBaseNameIfNot
-import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.util.suffixIfNot
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.util.visibleName
 import kotlin.random.Random
 
 
 /**
  * Creates and stores terminal compiler outputs.
  */
-class OutputFiles(outputPath: String?, target: KonanTarget, val produce: CompilerOutputKind) {
+class OutputFiles(val outputName: String, target: KonanTarget, val produce: CompilerOutputKind) {
 
     private val prefix = produce.prefix(target)
     private val suffix = produce.suffix(target)
-
-    val outputName = outputPath?.removeSuffixIfPresent(suffix) ?: produce.visibleName
 
     fun klibOutputFileName(isPacked: Boolean): String =
             if (isPacked) "$outputName$suffix" else outputName
@@ -34,44 +30,50 @@ class OutputFiles(outputPath: String?, target: KonanTarget, val produce: Compile
     val cAdapterDef    by lazy { File("${outputName}.def") }
 
     /**
-     * Main compiler's output file.
+     * Compiler's main output file.
      */
-    val mainFile =
+    val mainFileName =
             if (produce.isCache)
                 outputName
             else
                 outputName.fullOutputName()
 
-    private val cacheFile = File(outputName.fullOutputName()).absoluteFile.name
+    val mainFile = File(mainFileName)
 
-    val dynamicCacheInstallName = File(outputName).child(cacheFile).absolutePath
+    val perFileCacheFileName = File(outputName).absoluteFile.name
+
+    val cacheFileName = File((outputName).fullOutputName()).absoluteFile.name
+
+    private fun File.cacheBinaryPart() = this.child(CachedLibraries.PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME)
+
+    private fun File.cacheIrPart() = this.child(CachedLibraries.PER_FILE_CACHE_IR_LEVEL_DIR_NAME)
+
+    val dynamicCacheInstallName = File(outputName).cacheBinaryPart().child(cacheFileName).absolutePath
 
     val tempCacheDirectory =
             if (produce.isCache)
                 File(outputName + Random.nextLong().toString())
             else null
 
-    val nativeBinaryFile =
-            if (produce.isCache)
-                tempCacheDirectory!!.child(cacheFile).absolutePath
-            else mainFile
+    fun prepareTempDirectories() {
+        tempCacheDirectory?.mkdirs()
+        tempCacheDirectory?.cacheBinaryPart()?.mkdirs()
+        tempCacheDirectory?.cacheIrPart()?.mkdirs()
+    }
+
+    val nativeBinaryFile = tempCacheDirectory?.cacheBinaryPart()?.child(cacheFileName)?.absolutePath ?: mainFileName
 
     val symbolicInfoFile = "$nativeBinaryFile.dSYM"
 
-    val bitcodeDependenciesFile =
-            if (produce.isCache)
-                tempCacheDirectory!!.child(CachedLibraries.BITCODE_DEPENDENCIES_FILE_NAME).absolutePath
-            else null
+    val hashFile = tempCacheDirectory?.child(CachedLibraries.HASH_FILE_NAME)
 
-    val inlineFunctionBodiesFile =
-            if (produce.isCache)
-                tempCacheDirectory!!.child(CachedLibraries.INLINE_FUNCTION_BODIES_FILE_NAME).absolutePath
-            else null
+    val bitcodeDependenciesFile = tempCacheDirectory?.cacheBinaryPart()?.child(CachedLibraries.BITCODE_DEPENDENCIES_FILE_NAME)
 
-    val classFieldsFile =
-            if (produce.isCache)
-                tempCacheDirectory!!.child(CachedLibraries.CLASS_FIELDS_FILE_NAME).absolutePath
-            else null
+    val inlineFunctionBodiesFile = tempCacheDirectory?.cacheIrPart()?.child(CachedLibraries.INLINE_FUNCTION_BODIES_FILE_NAME)
+
+    val classFieldsFile = tempCacheDirectory?.cacheIrPart()?.child(CachedLibraries.CLASS_FIELDS_FILE_NAME)
+
+    val eagerInitializedPropertiesFile = tempCacheDirectory?.cacheIrPart()?.child(CachedLibraries.EAGER_INITIALIZED_PROPERTIES_FILE_NAME)
 
     private fun String.fullOutputName() = prefixBaseNameIfNeeded(prefix).suffixIfNeeded(suffix)
 

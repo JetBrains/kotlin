@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses +MangleClassMembersReturningInlineClasses
+// LANGUAGE: +InlineClasses +MangleClassMembersReturningInlineClasses
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
 

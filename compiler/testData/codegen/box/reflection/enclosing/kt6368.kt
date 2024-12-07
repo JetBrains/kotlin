@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-
+// LAMBDAS: CLASS
 // WITH_REFLECT
 
 import java.util.HashMap

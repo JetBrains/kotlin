@@ -6,72 +6,92 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import groovy.lang.Closure
 import org.gradle.api.Action
-import org.gradle.api.Project
+import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.internal.file.FileOperations
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.util.ConfigureUtil
+import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.plugin.CInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.CInteropSettings.IncludeDirectories
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmNativeVariantCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropIdentifier
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.io.File
 import javax.inject.Inject
 
-open class DefaultCInteropSettings @Inject constructor(
-    private val project: Project,
-    private val name: String,
-    override val compilation: KotlinNativeCompilationData<*>
+abstract class DefaultCInteropSettings @Inject internal constructor(
+    private val params: Params,
 ) : CInteropSettings {
 
-    inner class DefaultIncludeDirectories : CInteropSettings.IncludeDirectories {
-        var allHeadersDirs: FileCollection = project.files()
-        var headerFilterDirs: FileCollection = project.files()
+    internal data class Params(
+        val name: String,
+        val identifier: CInteropIdentifier,
+        val dependencyConfigurationName: String,
+        val interopProcessingTaskName: String,
+        val services: Services,
+    ) {
+        open class Services @Inject constructor(
+            val providerFactory: ProviderFactory,
+            val objectFactory: ObjectFactory,
+            val projectLayout: ProjectLayout,
+            val fileOperations: FileOperations,
+        )
+    }
+
+    private fun files() = params.services.objectFactory.fileCollection()
+    private fun files(vararg paths: Any) = params.services.objectFactory.fileCollection().from(*paths)
+
+    inner class DefaultIncludeDirectories : IncludeDirectories {
+        var allHeadersDirs: FileCollection = files()
+        var headerFilterDirs: FileCollection = files()
 
         override fun allHeaders(vararg includeDirs: Any) = allHeaders(includeDirs.toList())
         override fun allHeaders(includeDirs: Collection<Any>) {
-            allHeadersDirs += project.files(*includeDirs.toTypedArray())
+            allHeadersDirs += files(*includeDirs.toTypedArray())
         }
 
         override fun headerFilterOnly(vararg includeDirs: Any) = headerFilterOnly(includeDirs.toList())
         override fun headerFilterOnly(includeDirs: Collection<Any>) {
-            headerFilterDirs += project.files(*includeDirs.toTypedArray())
+            headerFilterDirs += files(*includeDirs.toTypedArray())
         }
     }
 
-    override fun getName(): String = name
+    override fun getName(): String = params.name
 
-    internal val identifier: CInteropIdentifier
-        get() = CInteropIdentifier(CInteropIdentifier.Scope.create(compilation), name)
+    internal val classifier: String
+        get() = "cinterop-${name}"
 
-    val target: KotlinNativeTarget?
-        get() = (compilation as? KotlinNativeCompilation?)?.target
+    internal val identifier = params.identifier
 
-    override val dependencyConfigurationName: String
-        get() = compilation.disambiguateName("${name.capitalize()}CInterop")
+    override var dependencyFiles: FileCollection = files()
 
-    override var dependencyFiles: FileCollection = project.files()
+    val interopProcessingTaskName get() = params.interopProcessingTaskName
 
-    val interopProcessingTaskName: String
-        get() = lowerCamelCaseName(
-            "cinterop",
-            compilation.compilationPurpose.takeIf { it != "main" }.orEmpty(),
-            name,
-            target?.disambiguationClassifier ?: compilation.compilationClassifier
-        )
 
-    val defFileProperty: Property<File> = project.objects.property(File::class.java)
-        .apply { set(project.projectDir.resolve("src/nativeInterop/cinterop/$name.def")) }
+    @Deprecated("Deprecated. Please, use definitionFile.", ReplaceWith("definitionFile"))
+    val defFileProperty: Property<File> = params.services.objectFactory.property<File>().convention(
+        getDefaultCinteropDefinitionFile().takeIf { it.exists() }
+    )
 
+    private fun getDefaultCinteropDefinitionFile(): File = params.services.projectLayout.projectDirectory.file("src/nativeInterop/cinterop/$name.def").asFile
+
+    val definitionFile: RegularFileProperty = params.services.objectFactory.fileProperty().convention(
+        @Suppress("DEPRECATION") // deprecated property is used intentionally during deprecation period
+        params.services.projectLayout.file(defFileProperty)
+    )
+
+    @Deprecated("Deprecated because it is a non-lazy property.", ReplaceWith("definitionFile"))
     var defFile: File
-        get() = defFileProperty.get()
+        get() = definitionFile.getFile()
         set(value) {
+            @Suppress("DEPRECATION") // deprecated property is used intentionally during deprecation period
             defFileProperty.set(value)
         }
 
@@ -81,26 +101,27 @@ open class DefaultCInteropSettings @Inject constructor(
             _packageNameProp.set(value)
         }
 
-    internal val _packageNameProp: Property<String> = project.objects.property(String::class.java)
+    internal val _packageNameProp: Property<String> = params.services.objectFactory.property(String::class.java)
 
     val compilerOpts = mutableListOf<String>()
     val linkerOpts = mutableListOf<String>()
     var extraOpts: List<String>
         get() = _extraOptsProp.get()
         set(value) {
-            _extraOptsProp = project.objects.listProperty(String::class.java)
+            _extraOptsProp = params.services.objectFactory.listProperty(String::class.java)
             extraOpts(value)
         }
 
-    internal var _extraOptsProp: ListProperty<String> = project.objects.listProperty(String::class.java)
+    internal var _extraOptsProp: ListProperty<String> = params.services.objectFactory.listProperty(String::class.java)
 
     val includeDirs = DefaultIncludeDirectories()
-    var headers: FileCollection = project.files()
+    var headers: FileCollection = files()
 
     // DSL methods.
 
     override fun defFile(file: Any) {
-        defFileProperty.set(project.file(file))
+        @Suppress("DEPRECATION")
+        defFileProperty.set(params.services.fileOperations.file(file))
     }
 
     override fun packageName(value: String) {
@@ -108,13 +129,12 @@ open class DefaultCInteropSettings @Inject constructor(
     }
 
     override fun header(file: Any) = headers(file)
-    override fun headers(vararg files: Any) = headers(project.files(files))
+    override fun headers(vararg files: Any) = headers(files(files))
     override fun headers(files: FileCollection) {
         headers += files
     }
 
     override fun includeDirs(vararg values: Any) = includeDirs.allHeaders(values.toList())
-    override fun includeDirs(closure: Closure<Unit>) = includeDirs(ConfigureUtil.configureUsing(closure))
     override fun includeDirs(action: Action<IncludeDirectories>) = includeDirs { action.execute(this) }
     override fun includeDirs(configure: IncludeDirectories.() -> Unit) = includeDirs.configure()
 
@@ -130,16 +150,26 @@ open class DefaultCInteropSettings @Inject constructor(
 
     override fun extraOpts(vararg values: Any) = extraOpts(values.toList())
     override fun extraOpts(values: List<Any>) {
-        _extraOptsProp.addAll(project.provider { values.map { it.toString() } })
+        _extraOptsProp.addAll(params.services.providerFactory.provider { values.map { it.toString() } })
     }
 }
 
-private fun KotlinNativeCompilationData<*>.disambiguateName(simpleName: String): String = when (this) {
-    is AbstractKotlinNativeCompilation -> (this as AbstractKotlinCompilation<*>).disambiguateName(simpleName)
-    is GradleKpmNativeVariantCompilationData -> owner.disambiguateName(simpleName)
-    else -> lowerCamelCaseName(
-        this.compilationClassifier,
-        this.compilationPurpose.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
-        simpleName
-    )
+internal class DefaultCInteropSettingsFactory(private val compilation: KotlinCompilation<*>) :
+    NamedDomainObjectFactory<DefaultCInteropSettings> {
+    override fun create(name: String): DefaultCInteropSettings {
+        val params = DefaultCInteropSettings.Params(
+            name = name,
+            identifier = CInteropIdentifier(CInteropIdentifier.Scope.create(compilation), name),
+            dependencyConfigurationName = compilation.disambiguateName("${name.capitalizeAsciiOnly()}CInterop"),
+            interopProcessingTaskName = lowerCamelCaseName(
+                "cinterop",
+                compilation.name.takeIf { it != "main" }.orEmpty(),
+                name,
+                compilation.target.disambiguationClassifier
+            ),
+            services = compilation.project.objects.newInstance()
+        )
+
+        return compilation.project.objects.newInstance(params)
+    }
 }

@@ -1,10 +1,10 @@
-// IGNORE_BACKEND: JS_IR, JS, NATIVE, WASM
-// IGNORE_BACKEND: JS_IR_ES6
+// TARGET_BACKEND: JVM
 // WITH_REFLECT
 
 import kotlin.test.assertEquals
 
-inline class S(val value: String) {
+@JvmInline
+value class S(val value: String) {
     operator fun plus(other: S): S = S(this.value + other.value)
 }
 

@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.scripting.definitions
 
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.util.io.FileUtilRt
-import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
-import java.io.File
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -17,10 +15,10 @@ import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.jvm
 
 // Transitional class/implementation - migrating to the new API
-// TODO: deprecate KotlinScriptDefinition
 // TODO: name could be confused with KotlinScriptDefinition, discuss naming
 abstract class ScriptDefinition : UserDataHolderBase() {
 
+    @Suppress("DEPRECATION")
     @Deprecated("Use configurations instead")
     abstract val legacyDefinition: KotlinScriptDefinition
     abstract val hostConfiguration: ScriptingHostConfiguration
@@ -76,9 +74,8 @@ abstract class ScriptDefinition : UserDataHolderBase() {
         }
 
         override val evaluationConfiguration by lazy {
-            ScriptEvaluationConfigurationFromDefinition(
-                hostConfiguration,
-                legacyDefinition
+            ScriptEvaluationConfigurationFromHostConfiguration(
+                hostConfiguration
             )
         }
 
@@ -110,21 +107,6 @@ abstract class ScriptDefinition : UserDataHolderBase() {
         override fun hashCode(): Int = legacyDefinition.hashCode()
     }
 
-    open class FromLegacyTemplate(
-        hostConfiguration: ScriptingHostConfiguration,
-        template: KClass<*>,
-        templateClasspath: List<File> = emptyList(),
-        defaultCompilerOptions: Iterable<String> = emptyList()
-    ) : FromLegacy(
-        hostConfiguration,
-        KotlinScriptDefinitionFromAnnotatedTemplate(
-            template,
-            hostConfiguration[ScriptingHostConfiguration.getEnvironment]?.invoke(),
-            templateClasspath
-        ),
-        defaultCompilerOptions
-    )
-
     abstract class FromConfigurationsBase() : ScriptDefinition() {
 
         @Suppress("OverridingDeprecatedMember", "DEPRECATION", "OVERRIDE_DEPRECATION")
@@ -138,13 +120,22 @@ abstract class ScriptDefinition : UserDataHolderBase() {
         val filePathPattern by lazy {
             compilationConfiguration[ScriptCompilationConfiguration.filePathPattern]?.takeIf { it.isNotBlank() }
         }
+        val fileNamePattern by lazy {
+            @Suppress("DEPRECATION_ERROR")
+            compilationConfiguration[ScriptCompilationConfiguration.fileNamePattern]?.takeIf { it.isNotBlank() }
+        }
 
         override fun isScript(script: SourceCode): Boolean {
             val extension = ".$fileExtension"
             val location = script.locationId ?: return false
-            return (script.name?.endsWith(extension) == true || location.endsWith(extension)) && filePathPattern?.let {
-                Regex(it).matches(FileUtilRt.toSystemIndependentName(location))
-            } != false
+            val systemIndependentName = FileUtilRt.toSystemIndependentName(location)
+
+            if (script.name?.endsWith(extension) != true && !location.endsWith(extension)) return false
+
+            if (filePathPattern != null) return Regex(filePathPattern!!).matches(systemIndependentName)
+            if (fileNamePattern != null) return Regex(fileNamePattern!!).matches(systemIndependentName.substringAfterLast('/'))
+
+            return true
         }
 
         override val fileExtension: String get() = compilationConfiguration[ScriptCompilationConfiguration.fileExtension]!!
@@ -216,7 +207,11 @@ abstract class ScriptDefinition : UserDataHolderBase() {
 
     companion object {
         fun getDefault(hostConfiguration: ScriptingHostConfiguration) =
-            object : FromLegacy(hostConfiguration, StandardScriptDefinition) {
+            object : FromConfigurations(
+                hostConfiguration,
+                ScriptCompilationConfigurationFromDefinition(hostConfiguration, StandardScriptDefinition),
+                ScriptEvaluationConfigurationFromHostConfiguration(hostConfiguration)
+            ) {
                 override val isDefault = true
             }
     }

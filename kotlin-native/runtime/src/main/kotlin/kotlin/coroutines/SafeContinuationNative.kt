@@ -3,17 +3,18 @@
  * that can be found in the LICENSE file.
  */
 
+@file:OptIn(ExperimentalStdlibApi::class)
+
 package kotlin.coroutines
 
 import kotlin.*
-import kotlin.native.concurrent.*
+import kotlin.concurrent.*
 import kotlin.coroutines.intrinsics.CoroutineSingletons.*
 import kotlin.coroutines.intrinsics.*
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 
 @PublishedApi
 @SinceKotlin("1.3")
-@OptIn(FreezingIsDeprecated::class)
 internal actual class SafeContinuation<in T>
 internal actual constructor(
         private val delegate: Continuation<T>,
@@ -25,11 +26,11 @@ internal actual constructor(
     public actual override val context: CoroutineContext
         get() = delegate.context
 
-    private var resultRef = FreezableAtomicReference<Any?>(initialResult)
+    private var resultRef = AtomicReference<Any?>(initialResult)
 
     public actual override fun resumeWith(result: Result<T>) {
         while (true) {
-            val cur = resultRef.value
+            val cur = resultRef.load()
             when {
                 cur === UNDECIDED -> if (resultRef.compareAndSet(UNDECIDED, result.value)) return
                 cur === COROUTINE_SUSPENDED -> if (resultRef.compareAndSet(COROUTINE_SUSPENDED, RESUMED)) {
@@ -43,10 +44,10 @@ internal actual constructor(
 
     @PublishedApi
     internal actual fun getOrThrow(): Any? {
-        var result = resultRef.value
+        var result = resultRef.load()
         if (result === UNDECIDED) {
             if (resultRef.compareAndSet(UNDECIDED, COROUTINE_SUSPENDED)) return COROUTINE_SUSPENDED
-            result = resultRef.value
+            result = resultRef.load()
         }
         return when {
             result === RESUMED -> COROUTINE_SUSPENDED // already called continuation, indicate COROUTINE_SUSPENDED upstream

@@ -51,6 +51,30 @@ public expect annotation class JvmName(val name: String)
 @OptionalExpectation
 public expect annotation class JvmMultifileClass()
 
+/**
+ * This annotation marks Kotlin `expect` declarations that are implicitly actualized by Java.
+ *
+ * ## Safety Risks
+ *
+ * Implicit actualization bypasses safety features, potentially leading to errors or unexpected behavior. If you use this annotation, some
+ * of the expect-actual invariants are not checked.
+ *
+ * Use this annotation only as a last resort. The annotation might stop working in future Kotlin versions without prior notice.
+ *
+ * If you use this annotation, consider describing your use cases in [KT-58545](https://youtrack.jetbrains.com/issue/KT-58545) comments.
+ *
+ * ## Migration
+ *
+ * Rewrite the code using explicit `actual typealias`. Unfortunately, it requires you to move your expect declarations into another
+ * package. Refer to [KT-58545](https://youtrack.jetbrains.com/issue/KT-58545) for more detailed migration example.
+ */
+@Retention(AnnotationRetention.BINARY)
+@Target(AnnotationTarget.CLASS)
+@ExperimentalMultiplatform
+@MustBeDocumented
+@SinceKotlin("1.9")
+@OptionalExpectation
+public expect annotation class ImplicitlyActualizedByJvmDeclaration()
 
 /**
  * Instructs the Kotlin compiler not to generate getters/setters for this property and expose it as a field.
@@ -122,12 +146,22 @@ public expect annotation class JvmInline()
 public expect annotation class JvmRecord()
 
 /**
- * Marks the JVM backing field of the annotated property as `volatile`, meaning that writes to this field
- * are immediately made visible to other threads.
+ * Marks the JVM backing field of the annotated `var` property as `volatile`, meaning that reads and writes to this field
+ * are atomic and writes are always made visible to other threads. If another thread reads the value of this field (e.g. through its accessor),
+ * it sees not only that value, but all side effects that led to writing that value.
+ *
+ * This annotation has effect only in Kotlin/JVM. It's recommended to use [kotlin.concurrent.Volatile] annotation instead
+ * in multiplatform projects.
+ *
+ * Note that only _backing field_ operations are atomic when the field is annotated with `Volatile`.
+ * For example, if the property getter or setter make several operations with the backing field,
+ * a _property_ operation, i.e. reading or setting it through these accessors, is not guaranteed to be atomic.
  */
 @Target(FIELD)
 @MustBeDocumented
 @OptionalExpectation
+@Deprecated("Use kotlin.concurrent.Volatile annotation in multiplatform code instead.", ReplaceWith("kotlin.concurrent.Volatile", "kotlin.concurrent.Volatile"))
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 public expect annotation class Volatile()
 
 /**
@@ -153,10 +187,15 @@ public expect annotation class Strictfp()
  * Marks the JVM method generated from the annotated function as `synchronized`, meaning that the method
  * will be protected from concurrent execution by multiple threads by the monitor of the instance (or,
  * for static methods, the class) on which the method is defined.
+ *
+ * Note that for an extension function, the monitor of the facade class, where it gets compiled to a static method, is used.
+ * Therefore, this annotation is recommended to be applied only to member functions and properties.
  */
 @Target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
 @MustBeDocumented
 @OptionalExpectation
+@Deprecated("Synchronizing methods on a class instance is not supported on platforms other than JVM. If you need to annotate a common method as JVM-synchronized, introduce your own optional-expectation annotation and actualize it with a typealias to kotlin.jvm.Synchronized.")
+@DeprecatedSinceKotlin(warningSince = "1.8", errorSince = "2.1")
 public expect annotation class Synchronized()
 
 
@@ -166,3 +205,14 @@ public expect annotation class Synchronized()
 @SinceKotlin("1.2")
 @OptionalExpectation
 internal expect annotation class JvmPackageName(val name: String)
+
+
+/**
+ * Makes the annotated lambda function implement `java.io.Serializable`,
+ * generates a pretty `toString` implementation and adds reflection metadata.
+ */
+@Target(EXPRESSION)
+@Retention(AnnotationRetention.SOURCE)
+@SinceKotlin("1.8")
+@OptionalExpectation
+public expect annotation class JvmSerializableLambda()

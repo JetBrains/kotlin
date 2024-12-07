@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// WITH_STDLIB
 
 import java.io.*
 
@@ -13,7 +14,7 @@ fun box(): String {
     var c = '1'
     var z = true
 
-    val lambda = fun(): String {
+    val lambda = @JvmSerializableLambda fun(): String {
         o = "OK"
         b++; d++; f++; i++; j++; s++; c++
         z = false

@@ -1,0 +1,3 @@
+MODULE main
+	Missing in K1
+		Kt15806Kt$WhenMappings.class

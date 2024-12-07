@@ -57,7 +57,7 @@ public interface ClassBuilder {
     @NotNull
     AnnotationVisitor newAnnotation(@NotNull String desc, boolean visible);
 
-    void done();
+    void done(boolean generateSmapCopyToAnnotation);
 
     @NotNull
     ClassVisitor getVisitor();

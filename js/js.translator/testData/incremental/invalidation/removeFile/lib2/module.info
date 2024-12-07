@@ -5,3 +5,4 @@ STEP 1:
     dependencies: lib1
     modifications:
         D : l2_1.kt
+    removed file: l2_1.kt

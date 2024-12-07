@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 
 enum class ProjectionKind {
@@ -15,7 +16,7 @@ sealed class ConeTypeProjection : TypeArgumentMarker {
     abstract val kind: ProjectionKind
 
     companion object {
-        val EMPTY_ARRAY = arrayOf<ConeTypeProjection>()
+        val EMPTY_ARRAY: Array<ConeTypeProjection> = arrayOf()
     }
 }
 
@@ -61,8 +62,34 @@ val ConeTypeProjection.type: ConeKotlinType?
     get() = when (this) {
         ConeStarProjection -> null
         is ConeKotlinTypeProjection -> type
-        is ConeKotlinType -> this
     }
 
 val ConeTypeProjection.isStarProjection: Boolean
     get() = this == ConeStarProjection
+
+fun ConeTypeProjection.replaceType(newType: ConeKotlinType?): ConeTypeProjection {
+    return when (this) {
+        is ConeStarProjection -> this
+        is ConeKotlinTypeProjection -> {
+            requireNotNull(newType) { "Type for non star projection should be not null" }
+            replaceType(newType)
+        }
+    }
+}
+
+fun ConeKotlinTypeProjection.replaceType(newType: ConeKotlinType): ConeKotlinTypeProjection {
+    return when (this) {
+        is ConeKotlinType -> newType
+        is ConeKotlinTypeProjectionIn -> ConeKotlinTypeProjectionIn(newType)
+        is ConeKotlinTypeProjectionOut -> ConeKotlinTypeProjectionOut(newType)
+        is ConeKotlinTypeConflictingProjection -> ConeKotlinTypeConflictingProjection(newType)
+    }
+}
+
+val ConeTypeProjection.variance: Variance
+    get() = when (this.kind) {
+        ProjectionKind.STAR -> Variance.OUT_VARIANCE
+        ProjectionKind.IN -> Variance.IN_VARIANCE
+        ProjectionKind.OUT -> Variance.OUT_VARIANCE
+        ProjectionKind.INVARIANT -> Variance.INVARIANT
+    }

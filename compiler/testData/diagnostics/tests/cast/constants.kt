@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
 fun asCall() {
     1 <!USELESS_CAST!>as Int<!>
     1 <!CAST_NEVER_SUCCEEDS!>as<!> Byte

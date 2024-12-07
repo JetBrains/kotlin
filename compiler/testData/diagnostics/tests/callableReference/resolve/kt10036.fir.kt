@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER
 // KT-10036 Ambiguous overload cannot be resolved when using a member function reference in Beta 2, that worked in Beta 1
 
 class OverloadTest {

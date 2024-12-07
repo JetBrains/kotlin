@@ -1,5 +1,3 @@
-// SKIP_IN_FIR_TEST
-
 package test;
 
 import java.lang.String;

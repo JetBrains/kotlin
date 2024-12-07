@@ -1,0 +1,12 @@
+enum class MyEnumClass {
+  FirstEntry {
+    val a: kotlin.Int
+  },
+  SecondEntry,
+  ThirdEntry {
+    val b: kotlin.Int
+
+    val kotlin.Int.d: kotlin.Int
+      get()
+  }
+}

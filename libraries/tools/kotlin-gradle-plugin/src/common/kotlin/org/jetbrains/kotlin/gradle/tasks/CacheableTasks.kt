@@ -17,12 +17,13 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Task
-import org.jetbrains.kotlin.gradle.utils.getSystemProperty
-
-private fun Task.isBuildCacheEnabledForKotlin(): Boolean = project.getSystemProperty(KOTLIN_CACHING_ENABLED_PROPERTY)?.toBoolean() ?: true
+import org.jetbrains.kotlin.gradle.utils.readSystemPropertyAtConfigurationTime
 
 internal fun <T : Task> T.cacheOnlyIfEnabledForKotlin() {
-    outputs.cacheIf { isBuildCacheEnabledForKotlin() }
+    // It's actually read at execution time, but the read should be declared for Gradle < 7.4 when KGP is used in buildSrc / includedBuild
+    // because it's interpreted as configuration time for the main project
+    val kotlinCachingEnabled = project.readSystemPropertyAtConfigurationTime(KOTLIN_CACHING_ENABLED_PROPERTY)
+    outputs.cacheIf { kotlinCachingEnabled.map { it.toBoolean() }.orNull ?: true }
 }
 
 private const val KOTLIN_CACHING_ENABLED_PROPERTY = "kotlin.caching.enabled"

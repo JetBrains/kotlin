@@ -1,7 +1,3 @@
-
-// KT-40686
-
-
 class Outer(val o: String, val oo: String) {
     inner class InnerArg(val i: String) {
         val result: String get() = o + i

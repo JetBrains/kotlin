@@ -1,0 +1,12 @@
+public final class NamedClassObject : R|kotlin/Any| {
+    public constructor(): R|test/NamedClassObject|
+
+    public final companion object Named : R|kotlin/Any| {
+        public final fun f(): R|kotlin/Int|
+
+        private constructor(): R|test/NamedClassObject.Named|
+
+    }
+
+}
+

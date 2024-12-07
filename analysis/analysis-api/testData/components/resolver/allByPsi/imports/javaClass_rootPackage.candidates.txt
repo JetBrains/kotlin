@@ -1,0 +1,83 @@
+KtFile: 'main.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(28,40): 'package main'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(36,40): 'main'
+  NO_CANDIDATES
+
+KtImportList(42,179): 'import JavaClass.foo'
+  NO_CANDIDATES
+
+KtImportDirective(42,62): 'import JavaClass.foo'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(49,62): 'JavaClass.foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(49,58): 'JavaClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(59,62): 'foo'
+  NO_CANDIDATES
+
+KtImportDirective(63,83): 'import JavaClass.bar'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(70,83): 'JavaClass.bar'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(70,79): 'JavaClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(80,83): 'bar'
+  NO_CANDIDATES
+
+KtImportDirective(85,113): 'import JavaClass.NestedClass'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(92,113): 'JavaClass.NestedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(92,101): 'JavaClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(102,113): 'NestedClass'
+  NO_CANDIDATES
+
+KtImportDirective(114,146): 'import JavaClass.NestedClass.foo'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(121,146): 'JavaClass.NestedClass.foo'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(121,142): 'JavaClass.NestedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(121,130): 'JavaClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(131,142): 'NestedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(143,146): 'foo'
+  NO_CANDIDATES
+
+KtImportDirective(147,179): 'import JavaClass.NestedClass.bar'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(154,179): 'JavaClass.NestedClass.bar'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(154,175): 'JavaClass.NestedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(154,163): 'JavaClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(164,175): 'NestedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(176,179): 'bar'
+  NO_CANDIDATES

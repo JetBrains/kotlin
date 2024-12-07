@@ -1,0 +1,3 @@
+KtNameReferenceExpression(68,76): 'Conflict'
+  KtSimpleNameReference:
+    (in test) object Conflict

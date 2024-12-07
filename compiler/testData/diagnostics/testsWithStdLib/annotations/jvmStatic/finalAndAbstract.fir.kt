@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 abstract class A {
 
     open fun a() {}
@@ -10,11 +11,11 @@ abstract class A {
 
 object B: A() {
 
-    <!OVERRIDE_CANNOT_BE_STATIC!>@JvmStatic override fun a() {}<!>
+    <!OVERRIDE_CANNOT_BE_STATIC!>@JvmStatic<!> override fun a() {}
 
-    <!OVERRIDE_CANNOT_BE_STATIC!>@JvmStatic override fun b() {}<!>
+    <!OVERRIDE_CANNOT_BE_STATIC!>@JvmStatic<!> override fun b() {}
 
-    <!OVERRIDE_CANNOT_BE_STATIC!>@JvmStatic final override fun c() {}<!>
+    <!OVERRIDE_CANNOT_BE_STATIC!>@JvmStatic<!> final override fun c() {}
 
     @JvmStatic <!NON_FINAL_MEMBER_IN_OBJECT!>open<!> fun d() {}
 }

@@ -5,19 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import com.android.build.gradle.BaseExtension
-import org.gradle.api.Named
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
-import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessorG6
-import org.jetbrains.kotlin.gradle.plugin.internal.MavenPluginConfigurator
-import org.jetbrains.kotlin.gradle.plugin.internal.MavenPluginConfiguratorG6
+import org.jetbrains.kotlin.gradle.plugin.internal.*
 import javax.inject.Inject
 
-private const val PLUGIN_VARIANT_NAME = "main"
+private const val PLUGIN_VARIANT_NAME = "gradle76"
 
 open class KotlinPluginWrapper @Inject constructor(
     registry: ToolingModelBuilderRegistry
@@ -31,34 +24,9 @@ open class KotlinPluginWrapper @Inject constructor(
     }
 }
 
-open class KotlinCommonPluginWrapper @Inject constructor(
-    registry: ToolingModelBuilderRegistry
-) : AbstractKotlinCommonPluginWrapper(registry) {
-
-    override val pluginVariant: String = PLUGIN_VARIANT_NAME
-
-    override fun apply(project: Project) {
-        project.registerVariantImplementations()
-        super.apply(project)
-    }
-}
-
 open class KotlinAndroidPluginWrapper @Inject constructor(
     registry: ToolingModelBuilderRegistry
 ) : AbstractKotlinAndroidPluginWrapper(registry) {
-
-    override val pluginVariant: String = PLUGIN_VARIANT_NAME
-
-    override fun apply(project: Project) {
-        project.registerVariantImplementations()
-        super.apply(project)
-    }
-}
-
-@Suppress("DEPRECATION_ERROR")
-open class Kotlin2JsPluginWrapper @Inject constructor(
-    registry: ToolingModelBuilderRegistry
-) : AbstractKotlin2JsPluginWrapper(registry) {
 
     override val pluginVariant: String = PLUGIN_VARIANT_NAME
 
@@ -88,11 +56,7 @@ open class KotlinJsPluginWrapper : AbstractKotlinJsPluginWrapper() {
     }
 }
 
-open class KotlinPm20PluginWrapper @Inject constructor(
-    objectFactory: ObjectFactory
-) : AbstractKotlinPm20PluginWrapper(objectFactory) {
-
-    override val pluginVariant: String = PLUGIN_VARIANT_NAME
+open class KotlinApiPlugin : KotlinBaseApiPlugin() {
 
     override fun apply(project: Project) {
         project.registerVariantImplementations()
@@ -100,50 +64,14 @@ open class KotlinPm20PluginWrapper @Inject constructor(
     }
 }
 
-open class KotlinPlatformJvmPlugin : KotlinPlatformImplementationPluginBase("jvm") {
-    override fun apply(project: Project) {
-        project.applyPlugin<KotlinPluginWrapper>()
-        super.apply(project)
-    }
-}
-
-open class KotlinPlatformJsPlugin : KotlinPlatformImplementationPluginBase("js") {
-    override fun apply(project: Project) {
-        @Suppress("DEPRECATION_ERROR")
-        project.applyPlugin<Kotlin2JsPluginWrapper>()
-        super.apply(project)
-    }
-}
-
-open class KotlinPlatformAndroidPlugin : KotlinPlatformImplementationPluginBase("android") {
-    override fun apply(project: Project) {
-        project.applyPlugin<KotlinAndroidPluginWrapper>()
-        super.apply(project)
-    }
-
-    override fun namedSourceSetsContainer(project: Project): NamedDomainObjectContainer<*> =
-        (project.extensions.getByName("android") as BaseExtension).sourceSets
-
-    override fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: Named, platformProject: Project) {
-        val androidExtension = platformProject.extensions.getByName("android") as BaseExtension
-        val androidSourceSet = androidExtension.sourceSets.findByName(commonSourceSet.name) ?: return
-        val kotlinSourceSet = androidSourceSet.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet
-            ?: return
-        kotlinSourceSet.kotlin.source(getKotlinSourceDirectorySetSafe(commonSourceSet)!!)
-    }
-}
-
-open class KotlinPlatformCommonPlugin : KotlinPlatformPluginBase("common") {
-    override fun apply(project: Project) {
-        warnAboutKotlin12xMppDeprecation(project)
-        project.applyPlugin<KotlinCommonPluginWrapper>()
-    }
-}
-
 private fun Project.registerVariantImplementations() {
-    val factories = VariantImplementationFactories.get(gradle)
-    factories[MavenPluginConfigurator.MavenPluginConfiguratorVariantFactory::class] =
-        MavenPluginConfiguratorG6.Gradle6MavenPluginConfiguratorVariantFactory()
-    factories[JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory::class] =
-        JavaSourceSetsAccessorG6.JavaSourceSetAccessorVariantFactoryG70()
+    val factories = VariantImplementationFactoriesConfigurator.get(gradle)
+    factories[ProjectIsolationStartParameterAccessor.Factory::class] =
+        ProjectIsolationStartParameterAccessorG76.Factory()
+    factories[CompatibilityConventionRegistrar.Factory::class] =
+        CompatibilityConventionRegistrarG76.Factory()
+    factories[ConfigurationCacheStartParameterAccessor.Factory::class] =
+        ConfigurationCacheStartParameterAccessorG76.Factory()
+    factories[MavenPublicationComponentAccessor.Factory::class] =
+        MavenPublicationComponentAccessorG76.Factory()
 }

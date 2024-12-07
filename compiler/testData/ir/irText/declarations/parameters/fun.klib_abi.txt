@@ -1,0 +1,15 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /Host { // /Host|null[0]
+    constructor <init>() // /Host.<init>|<init>(){}[0]
+    final fun (kotlin/String).testMembetExt1(kotlin/Int, kotlin/String) // /Host.testMembetExt1|testMembetExt1@kotlin.String(kotlin.Int;kotlin.String){}[0]
+    final fun <#A1: kotlin/Any?> (kotlin/String).testMembetExt2(kotlin/Int, #A1) // /Host.testMembetExt2|testMembetExt2@kotlin.String(kotlin.Int;0:0){0§<kotlin.Any?>}[0]
+}
+final fun <#A: kotlin/Any?> /test1(kotlin/Int, #A) // /test1|test1(kotlin.Int;0:0){0§<kotlin.Any?>}[0]
+final fun /test2(kotlin/Int = ..., kotlin/String = ...) // /test2|test2(kotlin.Int;kotlin.String){}[0]
+final fun /test3(kotlin/Array<out kotlin/String>...) // /test3|test3(kotlin.Array<out|kotlin.String>...){}[0]
+final fun (kotlin/String)./textExt1(kotlin/Int, kotlin/String) // /textExt1|textExt1@kotlin.String(kotlin.Int;kotlin.String){}[0]

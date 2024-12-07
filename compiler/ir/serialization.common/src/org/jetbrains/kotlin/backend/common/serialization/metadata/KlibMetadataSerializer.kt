@@ -11,12 +11,14 @@ import org.jetbrains.kotlin.backend.common.serialization.isSerializableExpectCla
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.library.metadata.KlibMetadataHeaderFlags
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
+import org.jetbrains.kotlin.library.metadata.buildKlibPackageFragment
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.ApproximatingStringTable
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
@@ -32,9 +34,10 @@ abstract class KlibMetadataSerializer(
     val metadataVersion: BinaryVersion,
     val project: Project?,
     val exportKDoc: Boolean = false,
-    val skipExpects: Boolean = false,
+    val skipExpects: Boolean,
     val includeOnlyModuleContent: Boolean = false,
-    private val allowErrorTypes: Boolean
+    private val allowErrorTypes: Boolean,
+    val produceHeaderKlib: Boolean = false,
 ) {
 
     lateinit var serializerContext: SerializerContext
@@ -52,11 +55,12 @@ abstract class KlibMetadataSerializer(
             metadataVersion,
             ApproximatingStringTable(),
             allowErrorTypes,
-            exportKDoc
+            exportKDoc,
+            produceHeaderKlib
         )
         return SerializerContext(
             extension,
-            DescriptorSerializer.createTopLevel(extension, project)
+            DescriptorSerializer.createTopLevel(extension, languageVersionSettings, project)
         )
     }
 
@@ -66,36 +70,12 @@ abstract class KlibMetadataSerializer(
     }
 
 
-    private fun SerializerContext.buildFragment(
-        packageProto: ProtoBuf.Package,
-        classesProto: List<Pair<ProtoBuf.Class, Int>>,
-        fqName: FqName,
-        isEmpty: Boolean
-    ): ProtoBuf.PackageFragment {
-
-        val (stringTableProto, nameTableProto) = serializerExtension.stringTable.buildProto()
-
-        return ProtoBuf.PackageFragment.newBuilder()
-            .setPackage(packageProto)
-            .addAllClass_(classesProto.map { it.first })
-            .setStrings(stringTableProto)
-            .setQualifiedNames(nameTableProto)
-            .also { packageFragment ->
-                classesProto.forEach {
-                    packageFragment.addExtension(KlibMetadataProtoBuf.className, it.second )
-                }
-                packageFragment.setExtension(KlibMetadataProtoBuf.isEmpty, isEmpty)
-                packageFragment.setExtension(KlibMetadataProtoBuf.fqName, fqName.asString())
-            }
-            .build()
-    }
-
     private fun serializeClass(packageName: FqName,
                                classDescriptor: ClassDescriptor): List<Pair<ProtoBuf.Class, Int>> {
         with(serializerContext) {
             val previousSerializer = classSerializer
 
-            classSerializer = DescriptorSerializer.create(classDescriptor, serializerExtension, classSerializer, project)
+            classSerializer = DescriptorSerializer.create(classDescriptor, serializerExtension, classSerializer, languageVersionSettings, project)
             val classProto = classSerializer.classProto(classDescriptor).build() ?: error("Class not serialized: $classDescriptor")
             //builder.addClass(classProto)
 
@@ -116,8 +96,8 @@ abstract class KlibMetadataSerializer(
     // TODO: we filter out expects with present actuals.
     // This is done because deserialized member scope doesn't give us actuals
     // when it has a choice
-    private fun List<DeclarationDescriptor>.filterOutExpectsWithActuals(): List<DeclarationDescriptor> {
-        val actualClassIds = this.filter{ !it.isExpectMember }.map { ClassId.topLevel(it.fqNameSafe) }
+    private fun Sequence<DeclarationDescriptor>.filterOutExpectsWithActuals(): Sequence<DeclarationDescriptor> {
+        val actualClassIds = this.filter { !it.isExpectMember }.map { ClassId.topLevel(it.fqNameSafe) }
         return this.filterNot {
             // TODO: this only filters classes for now.
             // Need to do the same for functions etc
@@ -125,11 +105,20 @@ abstract class KlibMetadataSerializer(
         }
     }
 
-    protected fun List<DeclarationDescriptor>.filterOutExpects(): List<DeclarationDescriptor> =
+    private fun Sequence<DeclarationDescriptor>.filterOutExpects(): Sequence<DeclarationDescriptor> =
         if (skipExpects)
             this.filterNot { it.isExpectMember && !it.isSerializableExpectClass }
         else
             this.filterOutExpectsWithActuals()
+
+    private fun Sequence<DeclarationDescriptor>.filterPrivate(): Sequence<DeclarationDescriptor> =
+        if (produceHeaderKlib) {
+            this.filter {
+                val isPublicOrInternal = it is DeclarationDescriptorWithVisibility
+                        && (it.visibility.isPublicAPI || it.visibility.delegate == Visibilities.Internal)
+                it is ClassDescriptor && it.kind.isInterface || isPublicOrInternal
+            }
+        } else this
 
     private fun serializeClasses(packageName: FqName,
                                  //builder: ProtoBuf.PackageFragment.Builder,
@@ -153,8 +142,8 @@ abstract class KlibMetadataSerializer(
         allTopLevelDescriptors: List<DeclarationDescriptor>
     ): List<ProtoBuf.PackageFragment> {
 
-        val classifierDescriptors = allClassifierDescriptors.filterOutExpects()
-        val topLevelDescriptors = allTopLevelDescriptors.filterOutExpects()
+        val classifierDescriptors = allClassifierDescriptors.asSequence().filterOutExpects().filterPrivate().toList()
+        val topLevelDescriptors = allTopLevelDescriptors.asSequence().filterOutExpects().filterPrivate().toList()
 
         if (TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE == null &&
             TOP_LEVEL_DECLARATION_COUNT_PER_FILE == null) {
@@ -169,11 +158,12 @@ abstract class KlibMetadataSerializer(
                     else
                         buildPackageProto(fqName, nonCassDescriptors)
 
-                    buildFragment(
+                    buildKlibPackageFragment(
                         packageProto,
                         serializeClasses(fqName, classifierDescriptors),
                         fqName,
-                        topLevelDescriptors.isEmpty() && classifierDescriptors.isEmpty()
+                        topLevelDescriptors.isEmpty() && classifierDescriptors.isEmpty(),
+                        serializerExtension.stringTable
                     )
                 }
             )
@@ -195,33 +185,36 @@ abstract class KlibMetadataSerializer(
                     if (typeAliases.isNotEmpty()) buildPackageProto(fqName, typeAliases)
                     else emptyPackageProto()
 
-                buildFragment(
+                buildKlibPackageFragment(
                     packageProto,
                     classesProto,
                     fqName,
-                    descriptors.isEmpty()
+                    descriptors.isEmpty(),
+                    serializerExtension.stringTable
                 )
             }
         }
 
         result += topLevelDescriptors.maybeChunked(TOP_LEVEL_DECLARATION_COUNT_PER_FILE) { descriptors ->
             withNewContext {
-                buildFragment(
+                buildKlibPackageFragment(
                     buildPackageProto(fqName, descriptors),
                     emptyList(),
                     fqName,
-                    descriptors.isEmpty()
+                    descriptors.isEmpty(),
+                    serializerExtension.stringTable
                 )
             }
         }
 
         if (result.isEmpty()) {
             result += withNewContext {
-                buildFragment(
+                buildKlibPackageFragment(
                     emptyPackageProto(),
                     emptyList(),
                     fqName,
-                    true
+                    true,
+                    serializerExtension.stringTable
                 )
             }
         }
@@ -253,22 +246,7 @@ abstract class KlibMetadataSerializer(
         fragmentNames: List<String>,
         emptyPackages: List<String>
     ): KlibMetadataProtoBuf.Header {
-        val header = KlibMetadataProtoBuf.Header.newBuilder()
-
-        header.moduleName = moduleDescriptor.name.asString()
-
-        if (languageVersionSettings.isPreRelease()) {
-            header.flags = 1
-        }
-
-        fragmentNames.forEach {
-            header.addPackageFragmentName(it)
-        }
-        emptyPackages.forEach {
-            header.addEmptyPackage(it)
-        }
-
-        return header.build()
+        return serializeKlibHeader(languageVersionSettings, moduleDescriptor, fragmentNames, emptyPackages)
     }
 
     // For platform libraries we get HUGE files.
@@ -276,6 +254,42 @@ abstract class KlibMetadataSerializer(
     // So we split them into chunks.
     abstract protected val TOP_LEVEL_DECLARATION_COUNT_PER_FILE: Int?
     abstract protected val TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE: Int?
+}
+
+fun serializeKlibHeader(
+    languageVersionSettings: LanguageVersionSettings,
+    moduleDescriptor: ModuleDescriptor,
+    fragmentNames: List<String>,
+    emptyPackages: List<String>
+) = serializeKlibHeader(
+    languageVersionSettings,
+    moduleDescriptor.name.asString(),
+    fragmentNames,
+    emptyPackages,
+)
+
+fun serializeKlibHeader(
+    languageVersionSettings: LanguageVersionSettings,
+    moduleName: String,
+    fragmentNames: List<String>,
+    emptyPackages: List<String>
+): KlibMetadataProtoBuf.Header {
+    val header = KlibMetadataProtoBuf.Header.newBuilder()
+
+    header.moduleName = moduleName
+
+    if (languageVersionSettings.isPreRelease()) {
+        header.flags = KlibMetadataHeaderFlags.PRE_RELEASE
+    }
+
+    fragmentNames.forEach {
+        header.addPackageFragmentName(it)
+    }
+    emptyPackages.forEach {
+        header.addEmptyPackage(it)
+    }
+
+    return header.build()
 }
 
 fun DeclarationDescriptor.extractFileId(): Int? = when (this) {

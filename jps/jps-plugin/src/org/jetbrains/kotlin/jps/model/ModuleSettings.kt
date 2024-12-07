@@ -10,7 +10,9 @@ import org.jetbrains.jps.model.ex.JpsElementChildRoleBase
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.kotlin.cli.common.arguments.*
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.config.KotlinFacetSettings
+import org.jetbrains.kotlin.config.KotlinModuleKind
 import org.jetbrains.kotlin.platform.TargetPlatform
 
 val JpsModule.kotlinFacet: JpsKotlinFacetModuleExtension?
@@ -70,7 +72,7 @@ val JpsModule.testOutputFilePath: String?
 
 val JpsModule.kotlinCompilerSettings: CompilerSettings
     get() {
-        val defaultSettings = copyBean(project.kotlinCompilerSettings)
+        val defaultSettings = project.kotlinCompilerSettings.copyOf()
         val facetSettings = kotlinFacet?.settings ?: return defaultSettings
         if (facetSettings.useProjectSettings) return defaultSettings
         return facetSettings.compilerSettings ?: defaultSettings
@@ -90,7 +92,7 @@ val JpsModule.k2JvmCompilerArguments
 
 private inline fun <reified T : CommonCompilerArguments> JpsModule.getCompilerArguments(): T {
     val projectSettings = project.kotlinCompilerSettingsContainer[T::class.java]
-    val projectSettingsCopy = copyBean(projectSettings)
+    val projectSettingsCopy = projectSettings.copyOf()
 
     val facetSettings = kotlinFacet?.settings ?: return projectSettingsCopy
     if (facetSettings.useProjectSettings) return projectSettingsCopy

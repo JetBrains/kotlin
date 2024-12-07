@@ -18,14 +18,14 @@ object ModuleStructureDirectives : SimpleDirectivesContainer() {
 
     val DEPENDENCY by stringDirective(
         """
-            Usage: // DEPENDENCY: {name} [SOURCE|KLIB|BINARY]
+            Usage: // DEPENDENCY: {name} [Source|Klib|Binary]
             Declares simple dependency on other module 
         """.trimIndent()
     )
 
     val DEPENDS_ON by stringDirective(
         """
-            Usage: // DEPENDS_ON: {name} [SOURCE|KLIB|BINARY]
+            Usage: // DEPENDS_ON: {name} [Source|Klib|Binary]
             Declares dependency on other module witch may contains `expect`
              declarations which has corresponding `expect` declarations
              in current module
@@ -36,6 +36,19 @@ object ModuleStructureDirectives : SimpleDirectivesContainer() {
         """
             Usage: // FILE: name.{kt|java}
             Declares file with specified name in current module
+        """.trimIndent()
+    )
+
+    val SNIPPET by directive(
+        """
+            Usage: // SNIPPET
+            Declares (next) snippet with auto-incremented number
+        """.trimIndent()
+    )
+
+    val ALLOW_FILES_WITH_SAME_NAMES by directive(
+        """
+        Allows specifying test files with the same names using the // FILE directive.
         """.trimIndent()
     )
 

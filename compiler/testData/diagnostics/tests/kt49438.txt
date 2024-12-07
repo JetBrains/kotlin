@@ -1,4 +1,8 @@
 package
 
-public val x: kotlin.Unit
+public val x1: kotlin.Unit
+public val x2: kotlin.Unit
+public val x3: kotlin.Unit
+public val x4: kotlin.Unit
+public fun </*0*/ T> bar(): kotlin.Unit
 public fun </*0*/ K> foo(/*0*/ x: K): kotlin.Unit

@@ -10,6 +10,7 @@ output/javaClasses
 output/sources
 
 # kotlinc
+-language-version 1.9
 -cp %KOTLIN_STDLIB%
 -d output/ap
 ap/Processor.kt
@@ -19,6 +20,7 @@ ap/Processor.kt
 output/ap/META-INF/services/javax.annotation.processing.Processor
 
 # kapt
+-language-version 1.9
 -Kapt-stubs=output/stubs
 -Kapt-classes=output/classes
 -Kapt-sources=output/sources

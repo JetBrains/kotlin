@@ -1,0 +1,23 @@
+public final class CodeFragment$run$Bar {
+    // source: 'fragment.kt'
+    enclosing method CodeFragment.run()V
+    inner (local) class CodeFragment$run$Bar Bar
+    inner (local) class CodeFragment$run$Foo Foo
+    public method <init>(): void
+}
+
+public class CodeFragment$run$Foo {
+    // source: 'fragment.kt'
+    enclosing method CodeFragment.run()V
+    inner (local) class CodeFragment$run$Foo Foo
+    public method <init>(): void
+    public method call(): void
+}
+
+public final class CodeFragment {
+    // source: 'fragment.kt'
+    inner (local) class CodeFragment$run$Bar Bar
+    inner (local) class CodeFragment$run$Foo Foo
+    public method <init>(): void
+    public final static method run(): void
+}

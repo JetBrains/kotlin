@@ -1,0 +1,78 @@
+FILE: smartcastToExhaustiveInterface.kt
+    public sealed interface I1 : R|kotlin/Any| {
+        public abstract interface B : R|I1| {
+        }
+
+        public abstract interface C : R|I1| {
+        }
+
+    }
+    public sealed interface I2 : R|kotlin/Any| {
+        public abstract interface B : R|I2| {
+        }
+
+        public abstract interface C : R|I2| {
+        }
+
+    }
+    public final fun test_1(x: R|I1|): R|kotlin/Unit| {
+        lval a: R|kotlin/Int| = when (R|<local>/x|) {
+            ($subj$ is R|I1.B|) ->  {
+                Int(1)
+            }
+            ($subj$ is R|I1.C|) ->  {
+                Int(1)
+            }
+        }
+
+        R|kotlin/require|((R|<local>/x| is R|I2|))
+        lval b: R|kotlin/Int| = when (R|<local>/x|) {
+            ($subj$ is R|I1.B|) ->  {
+                Int(1)
+            }
+            ($subj$ is R|I1.C|) ->  {
+                Int(1)
+            }
+        }
+
+        lval c: R|kotlin/Int| = when (R|<local>/x|) {
+            ($subj$ is R|I2.B|) ->  {
+                Int(1)
+            }
+            ($subj$ is R|I2.C|) ->  {
+                Int(1)
+            }
+        }
+
+    }
+    public final fun test_2(x: R|kotlin/Any|): R|kotlin/Unit| {
+        R|kotlin/require|((R|<local>/x| is R|I1|))
+        lval a: R|kotlin/Int| = when (R|<local>/x|) {
+            ($subj$ is R|I1.B|) ->  {
+                Int(1)
+            }
+            ($subj$ is R|I1.C|) ->  {
+                Int(1)
+            }
+        }
+
+        R|kotlin/require|((R|<local>/x| is R|I2|))
+        lval b: R|kotlin/Int| = when (R|<local>/x|) {
+            ($subj$ is R|I1.B|) ->  {
+                Int(1)
+            }
+            ($subj$ is R|I1.C|) ->  {
+                Int(1)
+            }
+        }
+
+        lval c: R|kotlin/Int| = when (R|<local>/x|) {
+            ($subj$ is R|I2.B|) ->  {
+                Int(1)
+            }
+            ($subj$ is R|I2.C|) ->  {
+                Int(1)
+            }
+        }
+
+    }

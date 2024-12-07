@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: AbstractClass.java
 
 public abstract class AbstractClass {

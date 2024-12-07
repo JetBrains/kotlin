@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 
-class AnonymousInitializerGenerator(
+internal class AnonymousInitializerGenerator(
     declarationGenerator: DeclarationGenerator
 ) : DeclarationGeneratorExtension(declarationGenerator) {
 
@@ -32,7 +32,7 @@ class AnonymousInitializerGenerator(
         ktAnonymousInitializer: KtAnonymousInitializer,
         irClass: IrClass
     ): IrAnonymousInitializer =
-        context.symbolTable.declareAnonymousInitializer(
+        context.symbolTable.descriptorExtension.declareAnonymousInitializer(
             ktAnonymousInitializer.startOffsetSkippingComments, ktAnonymousInitializer.endOffset,
             IrDeclarationOrigin.DEFINED, irClass.descriptor
         ).buildWithScope { irAnonymousInitializer ->

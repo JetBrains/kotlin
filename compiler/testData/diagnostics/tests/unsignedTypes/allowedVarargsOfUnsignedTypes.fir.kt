@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun ubyte(vararg a: <!OPT_IN_USAGE!>UByte<!>) {}
 fun ushort(vararg a: <!OPT_IN_USAGE!>UShort<!>) {}

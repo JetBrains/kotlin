@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun use(fn: (Int) -> Unit) { fn(1) }
 
 class Host {

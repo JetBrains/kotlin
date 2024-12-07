@@ -1,0 +1,24 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /ArgumentsBuilder { // /ArgumentsBuilder|null[0]
+    final val arguments // /ArgumentsBuilder.arguments|{}arguments[0]
+        final fun <get-arguments>(): kotlin.collections/MutableList</Expression> // /ArgumentsBuilder.arguments.<get-arguments>|<get-arguments>(){}[0]
+    constructor <init>() // /ArgumentsBuilder.<init>|<init>(){}[0]
+    final fun (/Expression).unaryPlus() // /ArgumentsBuilder.unaryPlus|unaryPlus@Expression(){}[0]
+}
+final class /Column { // /Column|null[0]
+    constructor <init>() // /Column.<init>|<init>(){}[0]
+}
+final class /Expression { // /Expression|null[0]
+    constructor <init>() // /Expression.<init>|<init>(){}[0]
+}
+final val /spentTime // /spentTime|{}spentTime[0]
+    final fun <get-spentTime>(): /Column // /spentTime.<get-spentTime>|<get-spentTime>(){}[0]
+final fun <#A: kotlin/Any?> /id(#A): #A // /id|id(0:0){0§<kotlin.Any?>}[0]
+final fun /integer(kotlin/String): /Column // /integer|integer(kotlin.String){}[0]
+final fun <#A: kotlin/Comparable<#A>> (/Column)./lessEq(#A): /Expression // /lessEq|lessEq@Column(0:0){0§<kotlin.Comparable<0:0>>}[0]
+final fun <#A: kotlin/Comparable<#A>> (/Column)./select(#A, #A): /Expression // /select|select@Column(0:0;0:0){0§<kotlin.Comparable<0:0>>}[0]

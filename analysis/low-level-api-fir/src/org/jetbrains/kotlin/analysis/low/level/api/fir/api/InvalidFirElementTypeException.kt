@@ -6,15 +6,34 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments
+import org.jetbrains.kotlin.utils.exceptions.buildAttachment
 import java.util.*
 import kotlin.reflect.KClass
 
 class InvalidFirElementTypeException(
-    actualFirClass: KClass<*>?,
+    actualFirElement: Any?,
     ktElement: KtElement?,
     expectedFirClasses: List<KClass<*>>,
-) : IllegalStateException() {
+) : KotlinIllegalArgumentExceptionWithAttachments("") {
+    init {
+        buildAttachment {
+            when (actualFirElement) {
+                is FirElement -> withFirEntry("firElement", actualFirElement)
+                is FirBasedSymbol<*> -> withFirSymbolEntry("firSymbol", actualFirElement)
+                is ConeKotlinType -> withConeTypeEntry("coneType", actualFirElement)
+                null -> {}
+                else -> withEntry("element", actualFirElement) { it.toString() }
+            }
+        }
+    }
+
     override val message: String = buildString {
         if (ktElement != null) {
             append("For $ktElement with text `${ktElement.text}`, ")
@@ -25,8 +44,8 @@ class InvalidFirElementTypeException(
             else -> "One of [${expectedFirClasses.joinToString()}] element types expected, but"
         }
         append(if (ktElement == null) message else message.replaceFirstChar { it.lowercase(Locale.getDefault()) })
-        if (actualFirClass != null) {
-            append(" ${actualFirClass.simpleName} found")
+        if (actualFirElement != null) {
+            append(" ${actualFirElement::class.simpleName} found")
         } else {
             append(" no element found")
         }
@@ -39,5 +58,5 @@ fun throwUnexpectedFirElementError(
     ktElement: KtElement? = null,
     vararg expectedFirClasses: KClass<*>
 ): Nothing {
-    throw InvalidFirElementTypeException(firElement?.let { it::class }, ktElement, expectedFirClasses.toList())
+    throw InvalidFirElementTypeException(firElement, ktElement, expectedFirClasses.toList())
 }

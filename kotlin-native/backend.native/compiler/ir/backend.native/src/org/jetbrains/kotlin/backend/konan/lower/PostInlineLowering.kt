@@ -6,27 +6,25 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.llvm.ConstantConstructorIntrinsicType
-import org.jetbrains.kotlin.backend.konan.llvm.tryGetConstantConstructorIntrinsicType
 import org.jetbrains.kotlin.backend.konan.renderCompilerError
-import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.util.irCall
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 /**
  * This pass runs after inlining and performs the following additional transformations over some operations:
+ *     - Convert expanded typeOf calls to IrConstantValue nodes as performance optimization
  *     - Convert immutableBlobOf() arguments to special IrConst.
  *     - Convert `obj::class` and `Class::class` to calls.
  */
@@ -36,7 +34,13 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val irFile = container.file
-        irBody.transformChildren(object : IrElementTransformer<IrBuilderWithScope> {
+        val classesToTransformToConstants = listOf(
+                symbols.kTypeImpl,
+                symbols.kTypeProjectionList,
+                symbols.kTypeParameterImpl,
+                symbols.kTypeImplForTypeParametersWithRecursiveBounds
+        )
+        irBody.transformChildren(object : IrTransformer<IrBuilderWithScope>() {
             override fun visitDeclaration(declaration: IrDeclarationBase, data: IrBuilderWithScope) =
                     super.visitDeclaration(declaration,
                             data = (declaration as? IrSymbolOwner)?.let { context.createIrBuilder(it.symbol, it.startOffset, it.endOffset) }
@@ -46,19 +50,41 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
             override fun visitClassReference(expression: IrClassReference, data: IrBuilderWithScope): IrExpression {
                 expression.transformChildren(this, data)
 
-                return data.at(expression).run {
-                    (expression.symbol as? IrClassSymbol)?.let { irKClass(this@PostInlineLowering.context, it) }
-                            ?:
-                            // E.g. for `T::class` in a body of an inline function itself.
-                            irCall(symbols.throwNullPointerException.owner)
+                val irClassSymbol = expression.symbol as? IrClassSymbol
+                return if (irClassSymbol == null) {
+                    data.at(expression).irCall(symbols.throwNullPointerException.owner)
+                } else {
+                    data.toNativeConstantReflectionBuilder(symbols).at(expression).irKClass(irClassSymbol)
                 }
+            }
+
+            override fun visitConstructorCall(expression: IrConstructorCall, data: IrBuilderWithScope): IrElement {
+                super.visitConstructorCall(expression, data)
+                val clazz = expression.symbol.owner.constructedClass
+                if (clazz.symbol in classesToTransformToConstants) {
+                    fun IrElement.isConvertibleToConst() : Boolean = this is IrConstantValue || this is IrConst || (this is IrVararg  && elements.all { it.isConvertibleToConst() })
+                    fun IrElement.convertToConst() : IrConstantValue = when (this) {
+                        is IrConstantValue -> this
+                        is IrConst -> data.irConstantPrimitive(this)
+                        is IrVararg -> data.irConstantArray(type, elements.map { e -> e.convertToConst() })
+                        else -> shouldNotBeCalled()
+                    }
+                    val arguments = (0 until expression.valueArgumentsCount).map { expression.getValueArgument(it)!! }
+                    if (arguments.all { it.isConvertibleToConst() }) {
+                        return data.at(expression).irConstantObject(expression.symbol,
+                                arguments.map { it.convertToConst() },
+                                (0 until expression.typeArgumentsCount).map { expression.getTypeArgument(it)!! }
+                        )
+                    }
+                }
+                return expression
             }
 
             override fun visitGetClass(expression: IrGetClass, data: IrBuilderWithScope): IrExpression {
                 expression.transformChildren(this, data)
 
                 return data.at(expression).run {
-                    irCall(symbols.kClassImplConstructor, listOf(expression.argument.type)).apply {
+                    irCallWithSubstitutedType(symbols.kClassImplConstructor, listOf(expression.argument.type)).apply {
                         val typeInfo = irCall(symbols.getObjectTypeInfo).apply {
                             putValueArgument(0, expression.argument)
                         }
@@ -75,14 +101,14 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
                 // and unbound symbol replacement is happening later.
                 // So we compare descriptors for now.
                 if (expression.symbol == symbols.immutableBlobOf) {
-                    // Convert arguments of the binary blob to special IrConst<String> structure, so that
+                    // Convert arguments of the binary blob to special IrConst structure, so that
                     // vararg lowering will not affect it.
                     val args = expression.getValueArgument(0) as? IrVararg
                             ?: error("varargs shall not be lowered yet")
                     val builder = StringBuilder()
                     args.elements.forEach {
-                        require(it is IrConst<*>) { renderCompilerError(irFile, it, "expected const") }
-                        val value = (it as? IrConst<*>)?.value
+                        require(it is IrConst) { renderCompilerError(irFile, it, "expected const") }
+                        val value = it.value
                         require(value is Short && value >= 0 && value <= 0xff) {
                             renderCompilerError(irFile, it, "incorrect value for binary data: $value")
                         }
@@ -91,25 +117,12 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
                         // Basic Multilingual Plane, so we could just append data "as is".
                         builder.append(value.toInt().toChar())
                     }
-                    expression.putValueArgument(0, IrConstImpl(
-                            expression.startOffset, expression.endOffset,
-                            context.irBuiltIns.stringType,
-                            IrConstKind.String, builder.toString()))
+                    return data.irCall(context.ir.symbols.immutableBlobOfImpl).apply {
+                        putValueArgument(0, data.irString(builder.toString()))
+                    }
                 }
 
                 return expression
-            }
-
-            override fun visitConstantObject(expression: IrConstantObject, data: IrBuilderWithScope): IrConstantValue {
-                return if (tryGetConstantConstructorIntrinsicType(expression.constructor) == ConstantConstructorIntrinsicType.KTYPE_IMPL) {
-                    // Inline functions themselves are not called (they have been inlined at all call sites),
-                    // so it is ok not to build exact type parameters for them.
-                    val needExactTypeParameters = (container as? IrSimpleFunction)?.isInline != true
-                    with(KTypeGenerator(context, irFile, expression, needExactTypeParameters)) {
-                        data.at(expression).irKType(expression.typeArguments[0], leaveReifiedForLater = false)
-                    }
-                } else
-                    super.visitConstantObject(expression, data)
             }
 
         }, data = context.createIrBuilder((container as IrSymbolOwner).symbol, irBody.startOffset, irBody.endOffset))

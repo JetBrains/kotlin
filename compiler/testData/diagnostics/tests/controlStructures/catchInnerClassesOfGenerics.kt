@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +ProhibitInnerClassesOfGenericClassExtendingThrowable
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// LANGUAGE: +ProhibitInnerClassesOfGenericClassExtendingThrowable
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // JAVAC_EXPECTED_FILE
 
 class OuterGeneric<T> {

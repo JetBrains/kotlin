@@ -1,0 +1,3 @@
+expression: DESTRUCTURING_DECLARATION
+text: val (one, two) = b to !b
+isUsedAsExpression: false

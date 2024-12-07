@@ -181,7 +181,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         checkNull(expression, context, typeInfo.getType());
 
         components.constantExpressionEvaluator.evaluateExpression(
-                expression, context.trace, context.expectedType, evaluateIntegerConstantInIndependentMode(context)
+                expression, context.trace, context.expectedType
         );
         return components.dataFlowAnalyzer.checkType(typeInfo, expression, context); // TODO : Extensions to this
     }
@@ -217,7 +217,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         CompileTimeConstant<?> compileTimeConstant = components.constantExpressionEvaluator.evaluateExpression(
-                expression, context.trace, context.expectedType, evaluateIntegerConstantInIndependentMode(context)
+                expression, context.trace, context.expectedType
         );
 
         if (compileTimeConstant instanceof UnsignedErrorValueTypeConstant) {
@@ -376,7 +376,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return;
         }
 
-        if (!TypeUtilsKt.isStubType(actualType) && !CastDiagnosticsUtil.isCastPossible(actualType, targetType, components.platformToKotlinClassMapper)) {
+        if (!TypeUtilsKt.isStubType(actualType) && !CastDiagnosticsUtil.isCastPossible(actualType, targetType, components.platformToKotlinClassMapper, components.platformSpecificCastChecker)) {
             context.trace.report(CAST_NEVER_SUCCEEDS.on(expression.getOperationReference()));
             return;
         }
@@ -830,7 +830,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         CompileTimeConstant<?> value = components.constantExpressionEvaluator.evaluateExpression(
-                expression, contextWithExpectedType.trace, contextWithExpectedType.expectedType, evaluateIntegerConstantInIndependentMode(context)
+                expression, contextWithExpectedType.trace, contextWithExpectedType.expectedType
         );
         if (value != null) {
             return components.dataFlowAnalyzer.createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType);
@@ -978,6 +978,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                                     components.deprecationResolver,
                                     components.moduleDescriptor,
                                     components.missingSupertypesResolver,
+                                    components.callComponents,
                                     trace
                             );
                     for (CallChecker checker : components.callCheckers) {
@@ -1064,7 +1065,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 context,
                 components.deprecationResolver,
                 components.moduleDescriptor,
-                components.missingSupertypesResolver
+                components.missingSupertypesResolver,
+                components.callComponents
         );
     }
 
@@ -1124,7 +1126,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             result = TypeInfoFactoryKt.noTypeInfo(context);
         }
         CompileTimeConstant<?> value = components.constantExpressionEvaluator.evaluateExpression(
-                expression, contextWithExpectedType.trace, contextWithExpectedType.expectedType, evaluateIntegerConstantInIndependentMode(context)
+                expression, contextWithExpectedType.trace, contextWithExpectedType.expectedType
         );
         if (value != null) {
             return components.dataFlowAnalyzer.createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType);
@@ -1575,6 +1577,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         checkLiteralPrefixAndSuffix(expression, context);
 
+        PsiElement interpolationPrefix = expression.getInterpolationPrefix();
+        if (interpolationPrefix != null && !interpolationPrefix.getText().isEmpty()) {
+            context.trace.report(Errors.UNSUPPORTED_FEATURE.on(expression, new Pair<>(LanguageFeature.MultiDollarInterpolation, context.languageVersionSettings)));
+        }
+
         class StringTemplateVisitor extends KtVisitorVoid {
             private KotlinTypeInfo typeInfo = TypeInfoFactoryKt.noTypeInfo(context);
 
@@ -1600,7 +1607,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         for (KtStringTemplateEntry entry : expression.getEntries()) {
             entry.accept(visitor);
         }
-        components.constantExpressionEvaluator.evaluateExpression(expression, context.trace, contextWithExpectedType.expectedType, evaluateIntegerConstantInIndependentMode(context));
+        components.constantExpressionEvaluator.evaluateExpression(expression, context.trace, contextWithExpectedType.expectedType);
         return components.dataFlowAnalyzer.checkType(visitor.typeInfo.replaceType(components.builtIns.getStringType()),
                                                      expression,
                                                      contextWithExpectedType);
@@ -1802,9 +1809,5 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         } else {
             return BindingContextUtils.getRecordedTypeInfo(expression, context.trace.getBindingContext());
         }
-    }
-
-    private boolean evaluateIntegerConstantInIndependentMode(ExpressionTypingContext context) {
-        return context.contextDependency == INDEPENDENT && context.languageVersionSettings.supportsFeature(LanguageFeature.ApproximateIntegerLiteralTypesInReceiverPosition);
     }
 }

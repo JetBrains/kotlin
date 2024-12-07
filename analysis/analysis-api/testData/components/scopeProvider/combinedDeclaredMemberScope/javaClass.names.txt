@@ -1,0 +1,9 @@
+Classifier names:
+  InnerClass
+  NestedClass
+
+Callable names:
+  bar
+  field
+  foo
+  hello

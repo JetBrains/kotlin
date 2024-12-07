@@ -1,14 +1,14 @@
 fun <T : Any?> elvisLike(x: T, y: (T & Any)): (T & Any) {
   return { // BLOCK
-    val tmp0_elvis_lhs: T = x
+    val tmp_0: T = x
     when {
-      EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> y
-      else -> tmp0_elvis_lhs
+      EQEQ(arg0 = tmp_0, arg1 = null) -> y
+      else -> tmp_0
     }
   }
 }
 
-fun main() {
+fun runMe() {
   elvisLike<String>(x = "", y = "").<get-length>() /*~> Unit */
   elvisLike<String?>(x = null, y = "").<get-length>() /*~> Unit */
   elvisLike<String>(x = "", y = "").<get-length>() /*~> Unit */

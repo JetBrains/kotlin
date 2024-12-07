@@ -1,4 +1,5 @@
-// !LANGUAGE: -ReadDeserializedContracts -UseCallsInPlaceEffect
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ReadDeserializedContracts -UseCallsInPlaceEffect
 // See KT-17479
 
 class Test {

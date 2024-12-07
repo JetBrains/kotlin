@@ -12,8 +12,8 @@ package androidx.annotation;
 
 import java.lang.annotation.*;
 
-@Retention(value = RetentionPolicy.CLASS)
-@Target(value = {ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD})
+@Retention(RetentionPolicy.CLASS)
+@Target({ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD})
 @interface RecentlyNullable {
 }
 
@@ -21,8 +21,23 @@ import java.lang.annotation.*;
 
 package app;
 
-import java.lang.System;
-
+/**
+ * public final class app/KBox : androidx/annotation/Box {
+ *
+ *   // signature: <init>(Landroidx/annotation/Box;)V
+ *   public constructor(delegate: androidx/annotation/Box)
+ *
+ *   // signature: foo()Ljava/lang/String;
+ *   public open (* delegation *) fun foo(): kotlin/String!
+ *
+ *   // field: delegate:Landroidx/annotation/Box;
+ *   // getter: getDelegate()Landroidx/annotation/Box;
+ *   public final val delegate: androidx/annotation/Box
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class KBox implements androidx.annotation.Box {
     @org.jetbrains.annotations.NotNull()
@@ -38,8 +53,8 @@ public final class KBox implements androidx.annotation.Box {
         return null;
     }
 
-    @androidx.annotation.RecentlyNullable()
     @java.lang.Override()
+    @androidx.annotation.RecentlyNullable()
     public java.lang.String foo() {
         return null;
     }

@@ -28,7 +28,7 @@ FILE: returnTypeMismatchOnOverride.kt
             super<R|A|>()
         }
 
-        public final override fun test(): R|kotlin/String| {
+        public open override fun test(): R|kotlin/String| {
             ^test String(Test)
         }
 
@@ -51,7 +51,7 @@ FILE: returnTypeMismatchOnOverride.kt
         public final val value: R|T| = R|<local>/value|
             public get(): R|T|
 
-        public final override fun test(): R|T| {
+        public open override fun test(): R|T| {
             ^test this@R|/E|.R|/E.value|
         }
 
@@ -77,7 +77,7 @@ FILE: returnTypeMismatchOnOverride.kt
         public final val balue: R|E| = R|<local>/balue|
             public get(): R|E|
 
-        public final override fun rest(): R|E| {
+        public open override fun rest(): R|E| {
             ^rest this@R|/G|.R|/G.balue|
         }
 
@@ -90,7 +90,7 @@ FILE: returnTypeMismatchOnOverride.kt
         public final val balue: R|E| = R|<local>/balue|
             public get(): R|E|
 
-        public final override fun rest(): R|E| {
+        public open override fun rest(): R|E| {
             ^rest this@R|/H|.R|/H.balue|
         }
 
@@ -103,7 +103,7 @@ FILE: returnTypeMismatchOnOverride.kt
         public final val balue: R|E| = R|<local>/balue|
             public get(): R|E|
 
-        public final override fun rest(): R|E| {
+        public open override fun rest(): R|E| {
             ^rest this@R|/M|.R|/M.balue|
         }
 
@@ -180,7 +180,7 @@ FILE: returnTypeMismatchOnOverride.kt
         }
 
         public open fun kek(): R|Z| {
-            ^kek <CS errors: /Z.Z>#()
+            ^kek R|/Z.Z|()
         }
 
     }

@@ -7,17 +7,20 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.ICReporter
+import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 
-class ClasspathSnapshotBuildReporter(private val buildReporter: BuildReporter) :
-    ICReporter by buildReporter, BuildMetricsReporter by buildReporter {
+class ClasspathSnapshotBuildReporter(private val buildReporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>) :
+    ICReporter by buildReporter, BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric> by buildReporter {
 
-    override fun reportVerbose(message: () -> String) {
-        buildReporter.reportVerbose { "[ClasspathSnapshot] ${message()}" }
+    override fun report(message: () -> String, severity: ICReporter.ReportSeverity) {
+        buildReporter.report({ "[ClasspathSnapshot] ${message()}" }, severity)
     }
 
     fun reportVerboseWithLimit(maxLength: Int = 1000, message: () -> String) {
-        reportVerbose {
+        debug {
             message().let {
                 if (it.length > maxLength) {
                     it.substring(0, maxLength) + "... (string too long, showing $maxLength / ${it.length} chars)"

@@ -14,13 +14,14 @@
   * limitations under the License.
   */
 
+#include <cstdlib>
+
 #include "KString.h"
 #include "Memory.h"
 #include "Natives.h"
 #include "Porting.h"
 #include "Runtime.h"
 #include "Types.h"
-#include "std_support/CStdlib.hpp"
 
 #ifdef KONAN_ANDROID
 
@@ -85,7 +86,7 @@ void launchMain() {
   }
 
   // TODO: Can we shutdown runtime here?
-  Kotlin_deinitRuntimeIfNeeded();
+  deinitRuntimeIfNeeded();
 }
 
 void* entry(void* param) {
@@ -214,11 +215,11 @@ void onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue) {
 }
 }
 
-extern "C" void RUNTIME_USED Konan_main(
+extern "C" void RUNTIME_EXPORT Konan_main(
     ANativeActivity* activity, void* savedState, size_t savedStateSize) {
   bool launchThread = activity->instance == nullptr;
   if (launchThread) {
-    launcherState = (LauncherState*)std_support::calloc(sizeof(LauncherState), 1);
+    launcherState = (LauncherState*)std::calloc(sizeof(LauncherState), 1);
     launcherState->nativeActivityState = {activity, savedState, savedStateSize, nullptr};
     activity->instance = launcherState;
     activity->callbacks->onDestroy = onDestroy;

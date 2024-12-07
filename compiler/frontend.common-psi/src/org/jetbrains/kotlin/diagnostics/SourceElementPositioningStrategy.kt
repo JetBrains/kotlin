@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtPsiSourceElement
 
+@OptIn(DiagnosticLossRisk::class)
 class SourceElementPositioningStrategy(
     private val lightTreeStrategy: LightTreePositioningStrategy,
     private val psiStrategy: PositioningStrategy<*>,

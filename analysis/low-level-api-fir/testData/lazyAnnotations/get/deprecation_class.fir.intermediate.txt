@@ -1,0 +1,1 @@
+@R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(deprecated class), ReplaceWith#(String(1).plus#(String(2)))) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Foo : R|kotlin/Any|

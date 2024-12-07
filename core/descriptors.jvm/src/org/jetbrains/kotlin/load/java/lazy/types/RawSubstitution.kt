@@ -75,7 +75,7 @@ internal class RawSubstitution(typeParameterUpperBoundEraser: TypeParameterUpper
             },
             type.isMarkedNullable, memberScope
         ) factory@{ kotlinTypeRefiner ->
-            val classId = (declaration as? ClassDescriptor)?.classId ?: return@factory null
+            val classId = declaration.classId ?: return@factory null
 
             @OptIn(TypeRefinement::class)
             val refinedClassDescriptor = kotlinTypeRefiner.findClassAcrossModuleDependencies(classId) ?: return@factory null

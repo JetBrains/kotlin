@@ -1,0 +1,70 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+
+class SomeClass {
+    var a = "Test"
+    fun onCreate() {
+        setContent {
+            B(a)
+            B(a)
+        }
+    }
+}
+
+fun Test() {
+    var a = "Test"
+    setContent {
+        B(a)
+        B(a)
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 0)
+class SomeClass {
+  var a: String = "Test"
+  fun onCreate() {
+    setContent(composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
+      sourceInformation(%composer, "C<B(a)>,<B(a)>:Test.kt")
+      if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %changed, -1, "SomeClass.onCreate.<anonymous> (Test.kt:7)")
+        }
+        B(a, %composer, 0)
+        B(a, %composer, 0)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+      } else {
+        %composer.skipToGroupEnd()
+      }
+    }
+    )
+  }
+  static val %stable: Int = 8
+}
+fun Test() {
+  var a = "Test"
+  setContent(composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C<B(a)>,<B(a)>:Test.kt")
+    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, "Test.<anonymous> (Test.kt:16)")
+      }
+      B(a, %composer, 0)
+      B(a, %composer, 0)
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+  )
+}

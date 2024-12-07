@@ -1,4 +1,4 @@
-// !LANGUAGE: +JavaSamConversionEqualsHashCode
+// LANGUAGE: +JavaSamConversionEqualsHashCode
 // TARGET_BACKEND: JVM_IR
 // FULL_JDK
 

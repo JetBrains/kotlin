@@ -13,7 +13,8 @@ internal inline fun <reified T : Any> ExtraPropertiesExtension.getOrPut(key: Str
         if (!has(key)) {
             set(key, provideValue())
         }
-        get(key) as T
+        val value = get(key) ?: throw NullPointerException("Null extra in for $key")
+        value.castIsolatedKotlinPluginClassLoaderAware()
     }
 }
 

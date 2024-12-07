@@ -5,24 +5,26 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.DomainObjectSet
 import org.gradle.api.Project
-import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import javax.inject.Inject
 
-abstract class KotlinTargetWithBinaries<T : KotlinCompilation<*>, out R : DomainObjectSet<*>>(
+interface HasBinaries<out T : DomainObjectSet<*>> {
+    val binaries: T
+}
+
+abstract class KotlinTargetWithBinaries<T : KotlinCompilation<*>, out R : DomainObjectSet<*>> @Inject constructor(
     project: Project,
     platformType: KotlinPlatformType
-) : KotlinOnlyTarget<T>(project, platformType) {
-    abstract val binaries: R
-
+) : KotlinOnlyTarget<T>(project, platformType), HasBinaries<R> {
     fun binaries(configure: R.() -> Unit) {
         binaries.configure()
     }
 
-    fun binaries(configure: Closure<*>) {
-        ConfigureUtil.configure(configure, binaries)
+    fun binaries(configure: Action<@UnsafeVariance R>) {
+        configure.execute(binaries)
     }
 }

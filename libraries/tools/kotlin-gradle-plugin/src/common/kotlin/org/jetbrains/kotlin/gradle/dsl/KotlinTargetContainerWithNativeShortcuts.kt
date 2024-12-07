@@ -3,10 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION", "DeprecatedCallableAddReplaceWith")
+
 package org.jetbrains.kotlin.gradle.dsl
 
-import groovy.lang.Closure
-import org.gradle.util.ConfigureUtil
+import org.gradle.api.Action
+import org.jetbrains.kotlin.gradle.dsl.NativeTargetShortcutTrace.Companion.nativeTargetShortcutTrace
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -14,7 +16,17 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.Companion.COMMON_MAIN_
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.Companion.COMMON_TEST_SOURCE_SET_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerProject
+import org.jetbrains.kotlin.tooling.core.extrasReadWriteProperty
 
+
+private const val SHORTCUTS_DEPRECATION_MESSAGE = "Use applyDefaultHierarchyTemplate() instead. " +
+        "Deprecated since 1.9.20, scheduled for removal in 2.2"
+
+@KotlinGradlePluginPublicDsl
+@Deprecated(SHORTCUTS_DEPRECATION_MESSAGE)
 interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPresetFunctions, KotlinSourceSetContainer {
 
     private data class DefaultSourceSets(val main: KotlinSourceSet, val test: KotlinSourceSet)
@@ -35,7 +47,7 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
     private fun createIntermediateSourceSet(
         name: String,
         children: List<KotlinSourceSet>,
-        parent: KotlinSourceSet? = null
+        parent: KotlinSourceSet? = null,
     ): KotlinSourceSet =
         sourceSets.maybeCreate(name).apply {
             parent?.let { dependsOn(parent) }
@@ -45,74 +57,236 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
         }
 
     private fun createIntermediateSourceSets(
+        trace: NativeTargetShortcutTrace,
         namePrefix: String,
         children: List<DefaultSourceSets>,
-        parent: DefaultSourceSets? = null
+        parent: DefaultSourceSets? = null,
     ): DefaultSourceSets {
         val main = createIntermediateSourceSet("${namePrefix}Main", children.map { it.main }, parent?.main)
         val test = createIntermediateSourceSet("${namePrefix}Test", children.map { it.test }, parent?.test)
+
+        main.nativeTargetShortcutTrace = trace
+        test.nativeTargetShortcutTrace = trace
+
+        children.forEach { child ->
+            child.main.nativeTargetShortcutTrace = trace
+            child.test.nativeTargetShortcutTrace = trace
+        }
+
         return DefaultSourceSets(main, test)
     }
 
+    @Deprecated(SHORTCUTS_DEPRECATION_MESSAGE)
     fun ios(
         namePrefix: String = "ios",
-        configure: KotlinNativeTarget.() -> Unit = {}
+        configure: KotlinNativeTarget.() -> Unit = {},
     ) {
         val targets = listOf(
             iosArm64("${namePrefix}Arm64"),
             iosX64("${namePrefix}X64")
         )
-        createIntermediateSourceSets(namePrefix, targets.defaultSourceSets(), mostCommonSourceSets())
-        targets.forEach { it.configure() }
+        val trace = NativeTargetShortcutTrace("ios")
+        createIntermediateSourceSets(
+            trace,
+            namePrefix,
+            targets.defaultSourceSets(),
+            mostCommonSourceSets()
+        )
+        targets.forEach {
+            it.configure()
+            it.reportUnsupportedTargetShortcutError(UnsupportedTargetShortcut.IOS, trace)
+        }
     }
 
+    /**
+     * Deprecated:
+     * Declare targets explicitly like
+     * ```kotlin
+     * kotlin {
+     *     applyDefaultHierarchyTemplate() /* <- optional; is applied by default, when compatible */
+     *
+     *     iosX64()
+     *     iosArm64()
+     *     iosSimulatorArm64() // <- Note: This target was previously not registered by the ios() shortcut!
+     *
+     *     /* ... more targets! */
+     * }
+     * ```
+     */
+    @Deprecated(SHORTCUTS_DEPRECATION_MESSAGE)
     fun ios() = ios("ios") { }
-    fun ios(namePrefix: String) = ios(namePrefix) { }
-    fun ios(namePrefix: String, configure: Closure<*>) = ios(namePrefix) { ConfigureUtil.configure(configure, this) }
-    fun ios(configure: Closure<*>) = ios { ConfigureUtil.configure(configure, this) }
 
+    @Deprecated(SHORTCUTS_DEPRECATION_MESSAGE)
+    fun ios(namePrefix: String) = ios(namePrefix) { }
+
+    @Deprecated(SHORTCUTS_DEPRECATION_MESSAGE)
+    fun ios(namePrefix: String, configure: Action<KotlinNativeTarget>) = ios(namePrefix) { configure.execute(this) }
+
+    @Deprecated(SHORTCUTS_DEPRECATION_MESSAGE)
+    fun ios(configure: Action<KotlinNativeTarget>) = ios { configure.execute(this) }
+
+    @Deprecated(SHORTCUTS_DEPRECATION_MESSAGE)
     fun tvos(
         namePrefix: String = "tvos",
-        configure: KotlinNativeTarget.() -> Unit
+        configure: KotlinNativeTarget.() -> Unit,
     ) {
         val targets = listOf(
             tvosArm64("${namePrefix}Arm64"),
             tvosX64("${namePrefix}X64")
         )
-        createIntermediateSourceSets(namePrefix, targets.defaultSourceSets(), mostCommonSourceSets())
-        targets.forEach { it.configure() }
+        val trace = NativeTargetShortcutTrace("tvos")
+        createIntermediateSourceSets(
+            trace,
+            namePrefix, targets.defaultSourceSets(), mostCommonSourceSets()
+        )
+        targets.forEach {
+            it.configure()
+            it.reportUnsupportedTargetShortcutError(UnsupportedTargetShortcut.TVOS, trace)
+        }
     }
 
+    /**
+     * Deprecated:
+     * Declare targets explicitly like
+     * ```kotlin
+     * kotlin {
+     *     applyDefaultHierarchyTemplate() /* <- optional; is applied by default, when compatible */
+     *
+     *     tvosArm64()
+     *     tvosX64()
+     *     tvosSimulatorArm64() // <- Note: This target was previously not registered by the tvos() shortcut!
+     *
+     *     /* ... more targets! */
+     * }
+     * ```
+     */
+    @Deprecated(SHORTCUTS_DEPRECATION_MESSAGE)
     fun tvos() = tvos("tvos") { }
-    fun tvos(namePrefix: String) = tvos(namePrefix) { }
-    fun tvos(namePrefix: String, configure: Closure<*>) = tvos(namePrefix) { ConfigureUtil.configure(configure, this) }
-    fun tvos(configure: Closure<*>) = tvos { ConfigureUtil.configure(configure, this) }
 
+    @Deprecated(SHORTCUTS_DEPRECATION_MESSAGE)
+    fun tvos(namePrefix: String) = tvos(namePrefix) { }
+
+    @Deprecated(SHORTCUTS_DEPRECATION_MESSAGE)
+    fun tvos(namePrefix: String, configure: Action<KotlinNativeTarget>) = tvos(namePrefix) { configure.execute(this) }
+
+    @Deprecated(SHORTCUTS_DEPRECATION_MESSAGE)
+    fun tvos(configure: Action<KotlinNativeTarget>) = tvos { configure.execute(this) }
+
+    @Deprecated(SHORTCUTS_DEPRECATION_MESSAGE)
     fun watchos(
         namePrefix: String = "watchos",
-        configure: KotlinNativeTarget.() -> Unit = {}
+        configure: KotlinNativeTarget.() -> Unit = {},
     ) {
         val device32 = watchosArm32("${namePrefix}Arm32")
         val device64 = watchosArm64("${namePrefix}Arm64")
         val simulatorX64 = watchosX64("${namePrefix}X64")
         val deviceTargets = listOf(device32, device64)
 
+        val trace = NativeTargetShortcutTrace("watchos")
+
         val deviceSourceSets = createIntermediateSourceSets(
+            trace,
             "${namePrefix}Device",
             deviceTargets.defaultSourceSets()
         )
 
         createIntermediateSourceSets(
+            trace,
             namePrefix,
             listOf(deviceSourceSets, simulatorX64.defaultSourceSets()),
             mostCommonSourceSets()
         )
 
-        listOf(device32, device64, simulatorX64).forEach { it.configure() }
+        listOf(device32, device64, simulatorX64).forEach {
+            it.configure()
+            it.reportUnsupportedTargetShortcutError(UnsupportedTargetShortcut.WATCHOS, trace)
+        }
     }
 
+    /**
+     * Deprecated:
+     * Declare targets explicitly like
+     * ```kotlin
+     * kotlin {
+     *     applyDefaultHierarchyTemplate() /* <- optional; is applied by default, when compatible */
+     *
+     *     watchosArm64()
+     *     watchosX64()
+     *     watchosDeviceArm64() // <- Note: This target was previously not registered by the watchos() shortcut!
+     *     watchosSimulatorArm64() // <- Note: This target was previously not registered by the watchos() shortcut!
+     *     watchosArm32() //<- Note: This target was previously applied, but is likely not needed anymore
+     *
+     *
+     *     /* ... more targets! */
+     * }
+     * ```
+     */
+    @Deprecated(SHORTCUTS_DEPRECATION_MESSAGE)
     fun watchos() = watchos("watchos") { }
+
+    @Deprecated(SHORTCUTS_DEPRECATION_MESSAGE)
     fun watchos(namePrefix: String) = watchos(namePrefix) { }
-    fun watchos(namePrefix: String, configure: Closure<*>) = watchos(namePrefix) { ConfigureUtil.configure(configure, this) }
-    fun watchos(configure: Closure<*>) = watchos { ConfigureUtil.configure(configure, this) }
+
+    @Deprecated(SHORTCUTS_DEPRECATION_MESSAGE)
+    fun watchos(namePrefix: String, configure: Action<KotlinNativeTarget>) = watchos(namePrefix) { configure.execute(this) }
+
+    @Deprecated(SHORTCUTS_DEPRECATION_MESSAGE)
+    fun watchos(configure: Action<KotlinNativeTarget>) = watchos { configure.execute(this) }
+}
+
+private enum class UnsupportedTargetShortcut {
+    IOS,
+    WATCHOS,
+    TVOS;
+
+    fun shortcutName() = when (this) {
+        IOS -> "ios()"
+        WATCHOS -> "watchos()"
+        TVOS -> "tvos()"
+    }
+
+    fun declareTargets() = when (this) {
+        IOS -> """
+        kotlin {
+            iosX64()
+            iosArm64()
+            iosSimulatorArm64()
+        }
+        """.trimIndent()
+        WATCHOS -> """
+        kotlin {
+            watchosX64()
+            watchosArm64()
+            watchosDeviceArm64()
+            watchosSimulatorArm64()
+            watchosArm32()
+        }
+        """.trimIndent()
+        TVOS -> """
+        kotlin {
+            tvosX64()
+            tvosArm64()
+            tvosSimulatorArm64()
+        }
+        """.trimIndent()
+    }
+}
+
+private fun KotlinNativeTarget.reportUnsupportedTargetShortcutError(
+    shortcut: UnsupportedTargetShortcut,
+    trace: Throwable,
+) {
+    project.reportDiagnosticOncePerProject(
+        KotlinToolingDiagnostics.UnsupportedTargetShortcutError(
+            shortcut.shortcutName(),
+            shortcut.declareTargets(),
+            trace
+        )
+    )
+}
+
+internal class NativeTargetShortcutTrace(val shortcut: String) : Throwable() {
+    companion object {
+        var KotlinSourceSet.nativeTargetShortcutTrace by extrasReadWriteProperty<NativeTargetShortcutTrace>()
+    }
 }

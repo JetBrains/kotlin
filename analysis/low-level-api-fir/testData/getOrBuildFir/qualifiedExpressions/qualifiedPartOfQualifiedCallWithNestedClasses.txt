@@ -1,0 +1,35 @@
+KT element: KtDotQualifiedExpression
+FIR element: FirResolvedQualifierImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+Q|A.B|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] qualifiedPartOfQualifiedCallWithNestedClasses.kt
+    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] class B : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|A.B| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] class C : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|A.B.C| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val x: R|kotlin/Int| = Int(10)
+                    public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=C] get(): R|kotlin/Int|
+
+            }
+
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit| {
+        Q|A.B|.R|/A.B.C.C|().R|/A.B.C.x|
+    }

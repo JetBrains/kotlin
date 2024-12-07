@@ -1,5 +1,6 @@
-// !LANGUAGE: -FunctionTypesWithBigArity
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -FunctionTypesWithBigArity
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
 
 class A {

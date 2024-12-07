@@ -1,0 +1,13 @@
+MODULE main
+	CLASS SpreadOperatorInAnnotationArgumentsKt.class
+		METHOD box()Ljava/lang/String;
+			Annotation: method.visibleAnnotations
+				K1
+					@LA;( xs: #{ #{ O }, K } )
+				K2
+					@LA;( xs: #{ O, K } )
+			Annotation: method.visibleAnnotations
+				K1
+					@LB;( xa: #{ #{ AnnotationEntry(desc=LA;, values=[(xs, [O, [K]])]) }, AnnotationEntry(desc=LA;, values=[(xs, [])]) } )
+				K2
+					@LB;( xa: #{ AnnotationEntry(desc=LA;, values=[(xs, [O, K])]), AnnotationEntry(desc=LA;, values=[(xs, [])]) } )

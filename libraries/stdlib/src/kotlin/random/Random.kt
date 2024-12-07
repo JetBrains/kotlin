@@ -267,7 +267,7 @@ public abstract class Random {
      *
      * @sample samples.random.Randoms.defaultRandom
      */
-    companion object Default : Random(), Serializable {
+    public companion object Default : Random(), Serializable {
         private val defaultRandom: Random = defaultPlatformRandom()
 
         private object Serialized : Serializable {

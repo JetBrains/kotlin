@@ -1,11 +1,12 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package aa
 
-val a : Int = b
-val b : Int = a + b
+val a : Int = <!UNINITIALIZED_VARIABLE!>b<!>
+val b : Int = a + <!UNINITIALIZED_VARIABLE!>b<!>
 
 class C {
-    val a : Int = b
-    val b : Int = a + b
+    val a : Int = <!UNINITIALIZED_VARIABLE!>b<!>
+    val b : Int = a + <!UNINITIALIZED_VARIABLE!>b<!>
 }
 
 fun foo() {

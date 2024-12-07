@@ -22,6 +22,12 @@ internal interface Caller<out M : Member?> {
     }
 
     fun call(args: Array<*>): Any?
+
+    /**
+     * @see [CallerImpl.Method.BoundStatic.isCallByToValueClassMangledMethod]
+     */
+    val isBoundInstanceCallWithValueClasses: Boolean
+        get() = false
 }
 
 internal val Caller<*>.arity: Int

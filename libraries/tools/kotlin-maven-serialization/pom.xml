@@ -5,16 +5,13 @@
 
     <modelVersion>4.0.0</modelVersion>
     <properties>
-        <maven.version>3.0.5</maven.version>
-        <serialization.src>${basedir}/../../../plugins/kotlin-serialization/kotlin-serialization-compiler/src/</serialization.src>
-        <serialization.resources>${basedir}/../../../plugins/kotlin-serialization/kotlin-serialization-compiler/resources/</serialization.resources>
         <serialization.maven.plugin.src>${basedir}/src/main/kotlin</serialization.maven.plugin.src>
     </properties>
 
     <parent>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-project</artifactId>
-        <version>1.7.255-SNAPSHOT</version>
+        <version>2.1.255-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -36,13 +33,21 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>${maven.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-serialization-compiler-plugin</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
-        <resources>
-            <resource><directory>${serialization.resources}</directory></resource>
-        </resources>
-
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -53,7 +58,6 @@
                         <goals><goal>add-source</goal></goals>
                         <configuration>
                             <sources>
-                                <source>${serialization.src}</source>
                                 <source>${serialization.maven.plugin.src}</source>
                             </sources>
                         </configuration>
@@ -75,31 +79,14 @@
                 <configuration>
                     <jvmTarget>1.8</jvmTarget>
                     <args>
-                        <arg>-Xjvm-default=enable</arg>
-                        <arg>-opt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI</arg>
+                        <arg>-Xjvm-default=all</arg>
                     </args>
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
-                <executions>
-                    <execution>
-                        <id>default-compile</id>
-                        <phase>none</phase>
-                    </execution>
-                    <execution>
-                        <id>java-compile</id>
-                        <phase>compile</phase>
-                        <goals> <goal>compile</goal> </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-component-metadata</artifactId>
-                <version>1.7.1</version>
+                <version>2.1.0</version>
                 <executions>
                     <execution>
                         <id>process-classes</id>
@@ -111,6 +98,27 @@
                         <id>process-test-classes</id>
                         <goals>
                             <goal>generate-test-metadata</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Shadowing kotlin-serialization-compiler-plugin into maven plugin without removing the dependency -->
+            <!-- Required for backward compatibility for Kotlin/IDEA plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
                         </goals>
                     </execution>
                 </executions>

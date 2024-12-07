@@ -1,0 +1,6 @@
+[RedundantDependsOnEdgesFound | WARNING] Redundant dependsOn edges between Kotlin Source Sets found.
+Please remove the following dependsOn invocations from your build scripts:
+ * x64Main.dependsOn(commonMain)
+ * linuxX64Main.dependsOn(x64Main)
+ * mingwX64Main.dependsOn(x64Main)
+They are already added from Kotlin Target Hierarchy template https://kotl.in/hierarchy-template

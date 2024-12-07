@@ -1,0 +1,7 @@
+@kotlin.Metadata
+public final class Kt49226Kt {
+    // source: 'kt49226.kt'
+    private synthetic final static method box$arrayOf(p0: java.lang.String): java.lang.String[]
+    private final static method box$arrayOf__proxy(p0: java.lang.String): java.lang.String[]
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

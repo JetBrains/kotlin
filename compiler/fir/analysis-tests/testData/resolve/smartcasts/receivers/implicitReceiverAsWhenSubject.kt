@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: BACKEND
+// DUMP_CFG
 fun Any.test_1(): Int = when (this) {
     is List<*> -> this.size
     is String -> length

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A() {
     var x: Int = 0
         get() = <!RETURN_TYPE_MISMATCH!>"s"<!>
@@ -5,7 +6,7 @@ class A() {
             field = <!ASSIGNMENT_TYPE_MISMATCH!>value<!>
         }
     val y: Int
-        get(): <!WRONG_GETTER_RETURN_TYPE("kotlin/Int; kotlin/String")!>String<!> = "s"
+        get(): <!WRONG_GETTER_RETURN_TYPE("kotlin.Int; kotlin.String")!>String<!> = "s"
     val z: Int
         get() {
             return <!RETURN_TYPE_MISMATCH!>"s"<!>

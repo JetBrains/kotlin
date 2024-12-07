@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// FIR_IDENTICAL
+// DIAGNOSTICS: -UNUSED_VARIABLE
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)

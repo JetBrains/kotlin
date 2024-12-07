@@ -1,0 +1,293 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] recursiveValueClass2.kt
+    @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] class ValueClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/ValueClass.value] value: AnotherValueClass): R|pack/ValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: AnotherValueClass = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] get(): AnotherValueClass
+
+    }
+    @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] class AnotherValueClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherValueClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/AnotherValueClass.value] value: ValueClass): R|pack/AnotherValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: ValueClass = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherValueClass] get(): ValueClass
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] recursiveValueClass2.kt
+    @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] class ValueClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/ValueClass.value] value: AnotherValueClass): R|pack/ValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: AnotherValueClass = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] get(): AnotherValueClass
+
+    }
+    @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] class AnotherValueClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherValueClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/AnotherValueClass.value] value: ValueClass): R|pack/AnotherValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: ValueClass = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherValueClass] get(): ValueClass
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] recursiveValueClass2.kt
+    @JvmInline[Unresolved]() public final? inline [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class ValueClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/ValueClass.value] value: AnotherValueClass): R|pack/ValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: AnotherValueClass = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] get(): AnotherValueClass
+
+    }
+    @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] class AnotherValueClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherValueClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/AnotherValueClass.value] value: ValueClass): R|pack/AnotherValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: ValueClass = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherValueClass] get(): ValueClass
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] recursiveValueClass2.kt
+    @JvmInline[Unresolved]() public final? inline [ResolvedTo(COMPANION_GENERATION)] class ValueClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/ValueClass.value] value: AnotherValueClass): R|pack/ValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: AnotherValueClass = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] get(): AnotherValueClass
+
+    }
+    @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] class AnotherValueClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherValueClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/AnotherValueClass.value] value: ValueClass): R|pack/AnotherValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: ValueClass = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherValueClass] get(): ValueClass
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] recursiveValueClass2.kt
+    @JvmInline[Unresolved]() public final? inline [ResolvedTo(SUPER_TYPES)] class ValueClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/ValueClass.value] value: AnotherValueClass): R|pack/ValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: AnotherValueClass = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] get(): AnotherValueClass
+
+    }
+    @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] class AnotherValueClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherValueClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/AnotherValueClass.value] value: ValueClass): R|pack/AnotherValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: ValueClass = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherValueClass] get(): ValueClass
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] recursiveValueClass2.kt
+    @R|kotlin/jvm/JvmInline|[Types]() public final? inline [ResolvedTo(TYPES)] class ValueClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/ValueClass.value] value: AnotherValueClass): R|pack/ValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: AnotherValueClass = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] get(): AnotherValueClass
+
+    }
+    @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] class AnotherValueClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherValueClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/AnotherValueClass.value] value: ValueClass): R|pack/AnotherValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: ValueClass = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherValueClass] get(): ValueClass
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] recursiveValueClass2.kt
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=pack/AnotherValueClass)] class ValueClass : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=ValueClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/ValueClass.value] value: R|pack/AnotherValueClass|): R|pack/ValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: AnotherValueClass = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] get(): AnotherValueClass
+
+    }
+    @R|kotlin/jvm/JvmInline|[Types]() public final? inline [ResolvedTo(TYPES)] class AnotherValueClass : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=AnotherValueClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/AnotherValueClass.value] value: R|pack/ValueClass|): R|pack/AnotherValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: ValueClass = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherValueClass] get(): ValueClass
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] recursiveValueClass2.kt
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=pack/AnotherValueClass)] class ValueClass : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=ValueClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/ValueClass.value] value: R|pack/AnotherValueClass|): R|pack/ValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: AnotherValueClass = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] get(): AnotherValueClass
+
+    }
+    @R|kotlin/jvm/JvmInline|[Types]() public final? inline [ResolvedTo(TYPES)] class AnotherValueClass : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=AnotherValueClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/AnotherValueClass.value] value: R|pack/ValueClass|): R|pack/AnotherValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: ValueClass = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherValueClass] get(): ValueClass
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] recursiveValueClass2.kt
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(CONTRACTS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=pack/AnotherValueClass)] class ValueClass : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=ValueClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/ValueClass.value] value: R|pack/AnotherValueClass|): R|pack/ValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: AnotherValueClass = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] get(): AnotherValueClass
+
+    }
+    @R|kotlin/jvm/JvmInline|[Types]() public final? inline [ResolvedTo(TYPES)] class AnotherValueClass : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=AnotherValueClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/AnotherValueClass.value] value: R|pack/ValueClass|): R|pack/AnotherValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: ValueClass = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherValueClass] get(): ValueClass
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] recursiveValueClass2.kt
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=pack/AnotherValueClass)] class ValueClass : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=ValueClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/ValueClass.value] value: R|pack/AnotherValueClass|): R|pack/ValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: AnotherValueClass = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] get(): AnotherValueClass
+
+    }
+    @R|kotlin/jvm/JvmInline|[Types]() public final? inline [ResolvedTo(TYPES)] class AnotherValueClass : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=AnotherValueClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/AnotherValueClass.value] value: R|pack/ValueClass|): R|pack/AnotherValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: ValueClass = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherValueClass] get(): ValueClass
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] recursiveValueClass2.kt
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(CONSTANT_EVALUATION)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=pack/AnotherValueClass)] class ValueClass : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=ValueClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/ValueClass.value] value: R|pack/AnotherValueClass|): R|pack/ValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: AnotherValueClass = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] get(): AnotherValueClass
+
+    }
+    @R|kotlin/jvm/JvmInline|[Types]() public final? inline [ResolvedTo(TYPES)] class AnotherValueClass : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=AnotherValueClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/AnotherValueClass.value] value: R|pack/ValueClass|): R|pack/AnotherValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: ValueClass = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherValueClass] get(): ValueClass
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] recursiveValueClass2.kt
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=pack/AnotherValueClass)] class ValueClass : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=ValueClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/ValueClass.value] value: R|pack/AnotherValueClass|): R|pack/ValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: AnotherValueClass = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] get(): AnotherValueClass
+
+    }
+    @R|kotlin/jvm/JvmInline|[Types]() public final? inline [ResolvedTo(TYPES)] class AnotherValueClass : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=AnotherValueClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/AnotherValueClass.value] value: R|pack/ValueClass|): R|pack/AnotherValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: ValueClass = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherValueClass] get(): ValueClass
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] recursiveValueClass2.kt
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=pack/AnotherValueClass)] class ValueClass : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ValueClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/ValueClass.value] value: R|pack/AnotherValueClass|): R|pack/ValueClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val value: R|pack/AnotherValueClass| = R|<local>/value|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ValueClass] get(): R|pack/AnotherValueClass|
+
+    }
+    @R|kotlin/jvm/JvmInline|[Types]() public final? inline [ResolvedTo(TYPES)] class AnotherValueClass : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=AnotherValueClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/AnotherValueClass.value] value: R|pack/ValueClass|): R|pack/AnotherValueClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: ValueClass = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherValueClass] get(): ValueClass
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] recursiveValueClass2.kt
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=pack/AnotherValueClass)] class ValueClass : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ValueClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/ValueClass.value] value: R|pack/AnotherValueClass|): R|pack/ValueClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val value: R|pack/AnotherValueClass| = R|<local>/value|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ValueClass] get(): R|pack/AnotherValueClass|
+
+    }
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=pack/ValueClass)] class AnotherValueClass : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnotherValueClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/AnotherValueClass.value] value: R|pack/ValueClass|): R|pack/AnotherValueClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val value: R|pack/ValueClass| = R|<local>/value|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnotherValueClass] get(): R|pack/ValueClass|
+
+    }

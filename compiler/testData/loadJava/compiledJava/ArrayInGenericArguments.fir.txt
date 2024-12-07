@@ -1,14 +1,14 @@
 public open class ArrayInGenericArguments : R|kotlin/Any| {
-    public final static field X: R|ft<ArrayInGenericArguments.DataKey<ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<out ft<kotlin/String, kotlin/String?>>?>>, ArrayInGenericArguments.DataKey<ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<out ft<kotlin/String, kotlin/String?>>?>>?>|
+    public final static field X: R|ft<ArrayInGenericArguments.DataKey<ft<kotlin/Array<kotlin/String!>, kotlin/Array<out kotlin/String!>?>>, ArrayInGenericArguments.DataKey<ft<kotlin/Array<kotlin/String!>, kotlin/Array<out kotlin/String!>?>>?>|
 
-    public final static field Y: R|ft<ArrayInGenericArguments.DataKey<ft<kotlin/IntArray, kotlin/IntArray?>>, ArrayInGenericArguments.DataKey<ft<kotlin/IntArray, kotlin/IntArray?>>?>|
+    public final static field Y: R|ft<ArrayInGenericArguments.DataKey<kotlin/IntArray!>, ArrayInGenericArguments.DataKey<kotlin/IntArray!>?>|
 
-    public final static field Z: R|ft<ArrayInGenericArguments.DataKey<out ft<kotlin/Array<ft<kotlin/CharSequence, kotlin/CharSequence?>>, kotlin/Array<out ft<kotlin/CharSequence, kotlin/CharSequence?>>?>>, ArrayInGenericArguments.DataKey<out ft<kotlin/Array<ft<kotlin/CharSequence, kotlin/CharSequence?>>, kotlin/Array<out ft<kotlin/CharSequence, kotlin/CharSequence?>>?>>?>|
+    public final static field Z: R|ft<ArrayInGenericArguments.DataKey<out ft<kotlin/Array<kotlin/CharSequence!>, kotlin/Array<out kotlin/CharSequence!>?>>, ArrayInGenericArguments.DataKey<out ft<kotlin/Array<kotlin/CharSequence!>, kotlin/Array<out kotlin/CharSequence!>?>>?>|
 
     public constructor(): R|ArrayInGenericArguments|
 
-    public open class DataKey<T : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
-        public constructor<T : R|ft<kotlin/Any, kotlin/Any?>|>(): R|ArrayInGenericArguments.DataKey<T>|
+    public open class DataKey<T : R|kotlin/Any!|> : R|kotlin/Any| {
+        public constructor<T : R|kotlin/Any!|>(): R|ArrayInGenericArguments.DataKey<T>|
 
     }
 }

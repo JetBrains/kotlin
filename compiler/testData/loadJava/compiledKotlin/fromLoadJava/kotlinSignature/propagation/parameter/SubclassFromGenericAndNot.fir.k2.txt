@@ -1,0 +1,21 @@
+public abstract interface SubclassFromGenericAndNot : R|kotlin/Any| {
+    public abstract interface NonGeneric : R|kotlin/Any| {
+        public abstract fun foo(p0: R|kotlin/String|): R|kotlin/Unit|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
+
+    public abstract interface Generic<T> : R|kotlin/Any| {
+        public abstract fun foo(key: R|T|): R|kotlin/Unit|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
+
+    public abstract interface Sub : R|test/SubclassFromGenericAndNot.NonGeneric|, R|test/SubclassFromGenericAndNot.Generic<kotlin/String>| {
+        public abstract fun foo(key: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+
+}

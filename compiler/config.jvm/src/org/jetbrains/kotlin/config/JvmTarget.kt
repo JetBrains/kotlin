@@ -35,6 +35,11 @@ enum class JvmTarget(
     JVM_16("16", Opcodes.V16),
     JVM_17("17", Opcodes.V16 + 1),
     JVM_18("18", Opcodes.V16 + 2),
+    JVM_19("19", Opcodes.V16 + 3),
+    JVM_20("20", Opcodes.V16 + 4),
+    JVM_21("21", Opcodes.V16 + 5),
+    JVM_22("22", Opcodes.V16 + 6),
+    JVM_23("23", Opcodes.V16 + 7),
     ;
 
     override fun toString() = description
@@ -44,10 +49,10 @@ enum class JvmTarget(
         val DEFAULT = JVM_1_8
 
         @JvmStatic
-        fun fromString(string: String) = values().find { it.description == string }
+        fun fromString(string: String) = entries.find { it.description == string }
 
         fun getDescription(majorVersion: Int): String {
-            val platformDescription = values().find { it.majorVersion == majorVersion }?.description ?: when (majorVersion) {
+            val platformDescription = entries.find { it.majorVersion == majorVersion }?.description ?: when (majorVersion) {
                 Opcodes.V1_7 -> "1.7"
                 else -> null
             }
@@ -57,13 +62,13 @@ enum class JvmTarget(
         }
 
         fun supportedValues(): List<JvmTarget> =
-            values().asList() - JVM_1_6
+            entries - JVM_1_6
 
         const val SUPPORTED_VERSIONS_DESCRIPTION =
-            "1.8, 9, 10, ..., 18"
+            "1.8 and 9–23"
 
         init {
-            check(SUPPORTED_VERSIONS_DESCRIPTION == "1.8, 9, 10, ..., ${values().last().description}") {
+            check(SUPPORTED_VERSIONS_DESCRIPTION == "1.8 and 9–${entries.last().description}") {
                 "Please update the value of the constant JvmTarget.SUPPORTED_VERSIONS_DESCRIPTION."
             }
         }

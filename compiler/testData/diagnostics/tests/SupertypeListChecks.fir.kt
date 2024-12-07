@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-286 Check supertype lists
 
 /*
@@ -21,7 +22,7 @@ interface T1 {}
 
 interface T2<T> {}
 
-interface <!CONSTRUCTOR_IN_INTERFACE!>Test()<!> {
+interface Test<!CONSTRUCTOR_IN_INTERFACE!>()<!> {
 }
 
 interface Test1 : <!INTERFACE_WITH_SUPERCLASS, SUPERTYPE_INITIALIZED_IN_INTERFACE!>C2<!>() {}

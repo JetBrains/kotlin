@@ -1,4 +1,5 @@
-// !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 
 open class A {
     inner class B {
@@ -35,10 +36,10 @@ class E: A() {
 
     object Z {
         init {
-            <!RESOLUTION_TO_CLASSIFIER!>B<!>().<!UNRESOLVED_REFERENCE!>foo<!>()
-            <!RESOLUTION_TO_CLASSIFIER!>B<!>().<!UNRESOLVED_REFERENCE!>bar<!>()
+            <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>B<!>().<!UNRESOLVED_REFERENCE!>foo<!>()
+            <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>B<!>().<!UNRESOLVED_REFERENCE!>bar<!>()
 
-            <!RESOLUTION_TO_CLASSIFIER!>D<!>()
+            <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>D<!>()
             <!UNRESOLVED_REFERENCE!>C<!>()
         }
     }
@@ -60,7 +61,7 @@ class F: A() {
     companion object {
         init {
             B().fas()
-            <!RESOLUTION_TO_CLASSIFIER!>D<!>().<!UNRESOLVED_REFERENCE!>f<!>()
+            <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>D<!>().<!UNRESOLVED_REFERENCE!>f<!>()
         }
     }
 }

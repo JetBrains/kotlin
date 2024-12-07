@@ -1,7 +1,7 @@
 @kotlin.Metadata
 public final class Test1 {
     // source: 'kt44233.kt'
-    private final field received: java.util.concurrent.ConcurrentSkipListSet
+    private final @org.jetbrains.annotations.NotNull field received: java.util.concurrent.ConcurrentSkipListSet
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method iterator(): java.util.Iterator
 }
@@ -9,7 +9,7 @@ public final class Test1 {
 @kotlin.Metadata
 public final class Test2 {
     // source: 'kt44233.kt'
-    private final field received: java.lang.String[]
+    private final @org.jetbrains.annotations.NotNull field received: java.lang.String[]
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method iterator(): java.util.Iterator
 }

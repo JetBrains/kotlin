@@ -18,7 +18,7 @@ internal fun Project.ideaImportDependsOn(task: TaskProvider<*>) {
     prepareKotlinIdeaImportTask.dependsOn(task)
 }
 
-@UnsafeApi("Use 'ideaImportDependsOn' instead")
+@Idea222Api
 internal val Project.prepareKotlinIdeaImportTask: TaskProvider<Task>
     get() = locateOrRegisterTask(
         "prepareKotlinIdeaImport",

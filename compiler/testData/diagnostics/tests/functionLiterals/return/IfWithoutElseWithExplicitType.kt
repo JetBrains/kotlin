@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 val flag = true
 
 val a: () -> Int = l@ {

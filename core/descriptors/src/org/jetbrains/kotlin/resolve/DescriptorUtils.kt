@@ -135,6 +135,13 @@ val DeclarationDescriptor.isInsidePrivateClass: Boolean
         return parent != null && DescriptorVisibilities.isPrivate(parent.visibility)
     }
 
+val DeclarationDescriptor.isMemberOfCompanionOfPrivateClass: Boolean
+    get() {
+        val parent = containingDeclaration as? ClassDescriptor ?: return false
+        if (!parent.isCompanionObject) return false
+        return parent.isInsidePrivateClass
+    }
+
 val DeclarationDescriptor.isInsideInterface: Boolean
     get() {
         val parent = containingDeclaration as? ClassDescriptor
@@ -207,9 +214,6 @@ fun ValueParameterDescriptor.declaresOrInheritsDefaultValue(): Boolean {
 // See JvmPlatformAnnotationFeaturesSupport.
 fun Annotated.isAnnotatedWithKotlinRepeatable(): Boolean =
     annotations.findAnnotation(StandardNames.FqNames.repeatable) != null
-
-fun Annotated.isDocumentedAnnotation(): Boolean =
-    annotations.findAnnotation(StandardNames.FqNames.mustBeDocumented) != null
 
 fun Annotated.getAnnotationRetention(): KotlinRetention? {
     return annotations.findAnnotation(StandardNames.FqNames.retention)?.getAnnotationRetention()
@@ -363,6 +367,10 @@ val DeclarationDescriptor.isExtensionProperty: Boolean
 fun ClassDescriptor.getAllSuperclassesWithoutAny() =
     generateSequence(getSuperClassNotAny(), ClassDescriptor::getSuperClassNotAny).toCollection(SmartList<ClassDescriptor>())
 
+/**
+ * Returns a sequence of all super classifiers (both classes and interfaces) for [this] classifier,
+ * including [this] classifier itself.
+ */
 fun ClassifierDescriptor.getAllSuperClassifiers(): Sequence<ClassifierDescriptor> {
     val set = hashSetOf<ClassifierDescriptor>()
 

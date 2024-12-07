@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // WITH_COROUTINES
+
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
@@ -25,28 +26,24 @@ suspend fun suspendWithExceptionIntercepted(): String = suspendCoroutineUninterc
     COROUTINE_SUSPENDED
 }
 
-fun builder(expectedCount: Int, c: suspend () -> String): String {
+fun builder(testNum: Int, expectedCount: Int, c: suspend () -> String): String {
     var fromSuspension: String? = null
     var counter = 0
 
-    val result = try {
-        c.startCoroutineUninterceptedOrReturn(object: ContinuationAdapter<String>() {
-            override val context: CoroutineContext
-                get() =  ContinuationDispatcher { counter++ }
+    c.startCoroutineUninterceptedOrReturn(object : Continuation<String> {
+        override val context: CoroutineContext
+            get() = ContinuationDispatcher { counter++ }
 
-            override fun resumeWithException(exception: Throwable) {
-                fromSuspension = "Exception: " + exception.message!!
+        override fun resumeWith(value: Result<String>) {
+            fromSuspension = try {
+                value.getOrThrow()
+            } catch (exception: Throwable) {
+                "Exception: " + exception.message!!
             }
+        }
+    })
 
-            override fun resume(value: String) {
-                fromSuspension = value
-            }
-        })
-    } catch (e: Exception) {
-        "Exception: ${e.message}"
-    }
-
-    if (counter != expectedCount) throw RuntimeException("fail 0")
+    if (counter != expectedCount) throw RuntimeException("fail 0 $testNum $counter != $expectedCount")
     return fromSuspension!!
 }
 
@@ -57,26 +54,45 @@ class ContinuationDispatcher(val dispatcher: () -> Unit) : AbstractCoroutineCont
 private class DispatchedContinuation<T>(
         val dispatcher: () -> Unit,
         val continuation: Continuation<T>
-): ContinuationAdapter<T>() {
+): Continuation<T> {
     override val context: CoroutineContext = continuation.context
 
-    override fun resume(value: T) {
+    override fun resumeWith(value: Result<T>) {
         dispatcher()
-        continuation.resume(value)
-    }
-
-    override fun resumeWithException(exception: Throwable) {
-        dispatcher()
-        continuation.resumeWithException(exception)
+        continuation.resumeWith(value)
     }
 }
 
 fun box(): String {
-    if (builder(0) { suspendHereUnintercepted() } != "OK") return "fail 2"
-    if (builder(1) { suspendHereIntercepted() } != "OK") return "fail 3"
+    if (builder(0, 0) { suspendHereUnintercepted() } != "OK") return "fail 2"
+    if (builder(1, 1) { suspendHereIntercepted() } != "OK") return "fail 3"
 
-    if (builder(0) { suspendWithExceptionUnintercepted() } != "Exception: OK") return "fail 4"
-    if (builder(1) { suspendWithExceptionIntercepted() } != "Exception: OK") return "fail 5"
+    if (builder(2, 0) { suspendWithExceptionUnintercepted() } != "Exception: OK") return "fail 4"
+    if (builder(3, 1) { suspendWithExceptionIntercepted() } != "Exception: OK") return "fail 5"
+
+    if (builder(4, 0, ::suspendHereUnintercepted) != "OK") return "fail 6"
+    if (builder(5, 1, ::suspendHereIntercepted) != "OK") return "fail 7"
+
+    if (builder(6, 0, ::suspendWithExceptionUnintercepted) != "Exception: OK") return "fail 8"
+    if (builder(7, 1, ::suspendWithExceptionIntercepted) != "Exception: OK") return "fail 9"
+
+    if (builder(8, 0) {
+            suspend {}()
+            suspendHereUnintercepted()
+    } != "OK") return "fail 21"
+    if (builder(9, 1) {
+            suspend {}()
+            suspendHereIntercepted()
+    } != "OK") return "fail 31"
+
+    if (builder(10, 0) {
+            suspend {}()
+            suspendWithExceptionUnintercepted()
+    } != "Exception: OK") return "fail 41"
+    if (builder(11, 1) {
+            suspend {}()
+            suspendWithExceptionIntercepted()
+    } != "Exception: OK") return "fail 51"
 
     return "OK"
 }

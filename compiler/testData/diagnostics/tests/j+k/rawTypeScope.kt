@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
 // SKIP_TXT
 // FILE: A.java
 
@@ -13,5 +15,5 @@ public class B<E> {
 
 // FILE: main.kt
 fun main(x: Map<Any, Any>) {
-    A.getB().foo(x) // OK in FE1.0 ( but probably shouldn't), ARGUMENT_TYPE_MISMATCH at FIR
+    A.getB().foo(x)
 }

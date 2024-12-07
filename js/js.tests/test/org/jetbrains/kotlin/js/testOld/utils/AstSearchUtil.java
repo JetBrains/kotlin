@@ -16,13 +16,9 @@
 
 package org.jetbrains.kotlin.js.testOld.utils;
 
-import org.jetbrains.kotlin.js.backend.ast.JsExpression;
-import org.jetbrains.kotlin.js.backend.ast.JsFunction;
-import org.jetbrains.kotlin.js.backend.ast.JsName;
-import org.jetbrains.kotlin.js.backend.ast.JsNode;
+import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
 
 import java.util.List;
 import java.util.Map;
@@ -31,6 +27,30 @@ import java.util.stream.Collectors;
 import static org.jetbrains.kotlin.js.inline.util.CollectUtilsKt.collectNamedFunctions;
 
 public class AstSearchUtil {
+    @NotNull
+    public static JsClass getClass(@NotNull JsNode searchRoot, @NotNull String name) {
+        JsClass[] jsClass = {null};
+        searchRoot.accept(
+                new JsVisitor() {
+                    @Override
+                    protected void visitElement(@NotNull JsNode node) {
+                        node.acceptChildren(this);
+                    }
+
+                    @Override
+                    public void visitClass(@NotNull JsClass x) {
+                        if (x.getName() != null && x.getName().getIdent().equals(name)) {
+                            jsClass[0] = x;
+                        } else {
+                            x.acceptChildren(this);
+                        }
+                    }
+                }
+        );
+        assert jsClass[0] != null: "Class `" + name + "` was not found";
+        return jsClass[0];
+    }
+
     @NotNull
     public static JsFunction getFunction(@NotNull JsNode searchRoot, @NotNull String name) {
         JsFunction function = findByIdent(collectNamedFunctions(searchRoot), name);
@@ -48,13 +68,6 @@ public class AstSearchUtil {
                 .filter(e -> e.getKey().getIdent().equals(name))
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toList());
-    }
-
-    @NotNull
-    public static JsExpression getMetadataOrFunction(@NotNull JsNode searchRoot, @NotNull String name) {
-        JsExpression property = findByIdent(CollectUtilsKt.collectNamedFunctionsOrMetadata(searchRoot), name);
-        assert property != null: "Property `" + name + "` was not found";
-        return property;
     }
 
     @Nullable

@@ -11,9 +11,6 @@ import org.gradle.api.plugins.ExtraPropertiesExtension
 internal class KotlinPluginInMultipleProjectsHolder(
     private val trackPluginVersionsSeparately: Boolean
 ) {
-    // Storing this property here might be considered the reason
-    // why the corresponding warning message is just shown in the first build
-    // https://youtrack.jetbrains.com/issue/KT-50598
     private var loadedInProjectPath: String? = null
 
     fun addProject(

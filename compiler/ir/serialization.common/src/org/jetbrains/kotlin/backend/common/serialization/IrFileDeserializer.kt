@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
+import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -17,11 +18,13 @@ import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.encodings.WobblyTF8
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall as ProtoConstructorCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression as ProtoExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
+import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement as ProtoStatement
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
 
@@ -61,31 +64,18 @@ class FileDeserializationState(
     val file: IrFile,
     val fileReader: IrLibraryFileFromBytes,
     fileProto: ProtoFile,
-    deserializeBodies: Boolean,
-    allowErrorNodes: Boolean,
-    deserializeInlineFunctions: Boolean,
+    settings: IrDeserializationSettings,
     moduleDeserializer: IrModuleDeserializer
 ) {
 
     val symbolDeserializer =
         IrSymbolDeserializer(
             linker.symbolTable, fileReader, file.symbol,
-            fileProto.actualList,
             ::addIdSignature,
-            linker::handleExpectActualMapping,
             symbolProcessor = linker.symbolProcessor,
-        ) { idSig, symbolKind ->
-
-            val topLevelSig = idSig.topLevelSignature()
-            val actualModuleDeserializer = moduleDeserializer.findModuleDeserializerForTopLevelId(topLevelSig)
-                ?: run {
-                    // The symbol might be gone in newer version of dependency KLIB. Then the KLIB that was compiled against
-                    // the older version of dependency KLIB will still have a reference to non-existing symbol. And the linker will have to
-                    // handle such situation appropriately. See KT-41378.
-                    linker.handleSignatureIdNotFoundInModuleWithDependencies(idSig, moduleDeserializer)
-                }
-
-            actualModuleDeserializer.deserializeIrSymbol(idSig, symbolKind)
+            irInterner = linker.irInterner
+        ) { idSignature, symbolKind ->
+            linker.deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(idSignature, symbolKind, moduleDeserializer)
         }
 
     val declarationDeserializer = IrDeclarationDeserializer(
@@ -94,13 +84,26 @@ class FileDeserializationState(
         linker.symbolTable.irFactory,
         fileReader,
         file,
-        allowErrorNodes,
-        deserializeInlineFunctions,
-        deserializeBodies,
+        settings,
         symbolDeserializer,
-        linker.fakeOverrideBuilder.platformSpecificClassFilter,
-        linker.fakeOverrideBuilder,
-        compatibilityMode = moduleDeserializer.compatibilityMode
+        onDeserializedClass = { clazz, signature ->
+            linker.fakeOverrideBuilder.enqueueClass(clazz, signature, moduleDeserializer.compatibilityMode)
+        },
+        needToDeserializeFakeOverrides = { clazz ->
+            !linker.fakeOverrideBuilder.platformSpecificClassFilter.needToConstructFakeOverrides(clazz)
+        },
+        specialProcessingForMismatchedSymbolKind = runIf(linker.partialLinkageSupport.isEnabled) {
+            { deserializedSymbol, fallbackSymbolKind ->
+                referenceDeserializedSymbol(
+                    symbolTable = linker.symbolTable,
+                    fileSymbol = null,
+                    symbolKind = fallbackSymbolKind ?: error("No fallback symbol kind specified for symbol $deserializedSymbol"),
+                    idSig = deserializedSymbol.signature?.takeIf { it.isPubliclyVisible }
+                        ?: error("No public signature for symbol $deserializedSymbol")
+                )
+            }
+        },
+        irInterner = linker.irInterner,
     )
 
     val fileDeserializer = IrFileDeserializer(file, fileReader, fileProto, symbolDeserializer, declarationDeserializer)
@@ -193,14 +196,18 @@ class IrKlibBytesSource(private val klib: IrLibrary, private val fileIndex: Int)
     override fun debugInfo(index: Int): ByteArray? = klib.debugInfo(index, fileIndex)
 }
 
-internal fun IrLibraryFile.deserializeFqName(fqn: List<Int>): String =
+fun IrLibraryFile.deserializeFqName(fqn: List<Int>): String =
     fqn.joinToString(".", transform = ::string)
 
 fun IrLibraryFile.createFile(module: IrModuleFragment, fileProto: ProtoFile): IrFile {
-    val fileName = fileProto.fileEntry.name
-    val fileEntry = NaiveSourceBasedFileEntryImpl(fileName, fileProto.fileEntry.lineStartOffsetList.toIntArray())
+    val fileEntry = deserializeFileEntry(fileProto.fileEntry)
     val fqName = FqName(deserializeFqName(fileProto.fqNameList))
     val packageFragmentDescriptor = EmptyPackageFragmentDescriptor(module.descriptor, fqName)
     val symbol = IrFileSymbolImpl(packageFragmentDescriptor)
     return IrFileImpl(fileEntry, symbol, fqName, module)
+}
+
+internal fun deserializeFileEntry(fileEntryProto: ProtoFileEntry): IrFileEntry {
+    val fileName = fileEntryProto.name
+    return NaiveSourceBasedFileEntryImpl(fileName, fileEntryProto.lineStartOffsetList.toIntArray())
 }

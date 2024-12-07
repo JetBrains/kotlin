@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-1703 Reference to label is unresolved
 
 fun test() {

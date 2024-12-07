@@ -7,22 +7,18 @@
 package org.jetbrains.kotlin.gradle.internal
 
 import com.android.build.gradle.BaseExtension
-import com.android.build.gradle.api.AndroidSourceSet
-import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.api.TestVariant
 import com.android.build.gradle.internal.variant.TestVariantData
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.file.FileCollection
+import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.model.builder.KotlinAndroidExtensionModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.utils.*
 import org.w3c.dom.Document
 import java.io.File
 import java.util.concurrent.Callable
@@ -38,8 +34,8 @@ class AndroidExtensionsSubpluginIndicator @Inject internal constructor(private v
         registry.register(KotlinAndroidExtensionModelBuilder())
         project.plugins.apply(AndroidSubplugin::class.java)
 
-        project.logger.warn(
-            "Warning: The 'kotlin-android-extensions' Gradle plugin is deprecated. " +
+        project.logger.error(
+            "Error: The 'kotlin-android-extensions' Gradle plugin is no longer supported. " +
                     "Please use this migration guide (https://goo.gle/kotlin-android-extensions-deprecation) to start " +
                     "working with View Binding (https://developer.android.com/topic/libraries/view-binding) " +
                     "and the 'kotlin-parcelize' plugin."
@@ -48,19 +44,7 @@ class AndroidExtensionsSubpluginIndicator @Inject internal constructor(private v
 
     private fun addAndroidExtensionsRuntime(project: Project) {
         val kotlinPluginVersion = project.getKotlinPluginVersion()
-
-        project.configurations.all { configuration ->
-            val name = configuration.name
-            if (name != "implementation" && name != "compile") return@all
-
-            androidPluginVersion ?: return@all
-            val requiredConfigurationName = when {
-                compareVersionNumbers(androidPluginVersion, "2.5") > 0 -> "implementation"
-                else -> "compile"
-            }
-
-            if (name != requiredConfigurationName) return@all
-
+        project.configurations.matching { it.name == "implementation" }.all { configuration ->
             configuration.dependencies.add(
                 project.dependencies.create(
                     "org.jetbrains.kotlin:kotlin-android-extensions-runtime:$kotlinPluginVersion"
@@ -96,17 +80,23 @@ class AndroidSubplugin : KotlinCompilerPluginSupportPlugin {
         val androidExtensionsExtension = project.extensions.getByType(AndroidExtensionsExtension::class.java)
 
         if (androidExtensionsExtension.isExperimental) {
+            @Suppress("UNCHECKED_CAST")
             return applyExperimental(
-                kotlinCompilation.compileKotlinTaskProvider, androidExtension, androidExtensionsExtension,
-                project, kotlinCompilation.androidVariant
+                kotlinCompilation.compileTaskProvider as TaskProvider<KotlinCompile>,
+                androidExtension,
+                androidExtensionsExtension,
+                project,
+                kotlinCompilation.androidVariant
             )
         }
 
         val sourceSets = androidExtension.sourceSets
 
         val pluginOptions = arrayListOf<SubpluginOption>()
-        pluginOptions += SubpluginOption("features",
-                                         AndroidExtensionsFeature.parseFeatures(androidExtensionsExtension.features).joinToString(",") { it.featureName })
+        pluginOptions += SubpluginOption(
+            "features",
+            AndroidExtensionsFeature.parseFeatures(androidExtensionsExtension.features).joinToString(",") { it.featureName }
+        )
 
         val mainSourceSet = sourceSets.getByName("main")
         val manifestFile = mainSourceSet.manifest.srcFile
@@ -118,7 +108,7 @@ class AndroidSubplugin : KotlinCompilerPluginSupportPlugin {
         }
         pluginOptions += SubpluginOption("package", applicationPackage)
 
-        fun addVariant(sourceSet: AndroidSourceSet) {
+        fun addVariant(@Suppress("TYPEALIAS_EXPANSION_DEPRECATION") sourceSet: DeprecatedAndroidSourceSet) {
             val optionValue = lazy {
                 sourceSet.name + ';' + sourceSet.res.srcDirs.joinToString(";") { it.absolutePath }
             }
@@ -129,32 +119,32 @@ class AndroidSubplugin : KotlinCompilerPluginSupportPlugin {
                     FilesSubpluginOption("resDirs", project.files(Callable { sourceSet.res.srcDirs }))
                 )
             )
-            kotlinCompilation.compileKotlinTaskProvider.configure {
-                it.androidLayoutResourceFiles.from(getLayoutDirectories(project, sourceSet.res.srcDirs))
+            @Suppress("UNCHECKED_CAST")
+            (kotlinCompilation.compileTaskProvider as TaskProvider<KotlinCompile>).configure {
+                it.androidLayoutResourceFiles.from(
+                    sourceSet.res.getSourceDirectoryTrees().layoutDirectories
+                )
             }
         }
 
         addVariant(mainSourceSet)
 
-        val flavorSourceSets = androidExtension.productFlavors
-            .mapNotNull { androidExtension.sourceSets.findByName(it.name) }
-
-        for (sourceSet in flavorSourceSets) {
-            addVariant(sourceSet)
+        androidExtension.productFlavors.configureEach { flavor ->
+            androidExtension.sourceSets.findByName(flavor.name)?.let {
+                addVariant(it)
+            }
         }
 
         return project.provider { wrapPluginOptions(pluginOptions, "configuration") }
     }
 
-    private fun getLayoutDirectories(project: Project, resDirectories: Iterable<File>): FileCollection {
-        fun isLayoutDirectory(file: File) = file.name == "layout" || file.name.startsWith("layout-")
-
-        return project.files(Callable {
-            resDirectories.flatMap { resDir ->
-                (resDir.listFiles(::isLayoutDirectory)).orEmpty().asList()
+    private val List<ConfigurableFileTree>.layoutDirectories
+        get() = map { tree ->
+            tree.matching {
+                it.include("**/layout/**")
+                it.include("**/layout-*/**")
             }
-        })
-    }
+        }
 
     private fun applyExperimental(
         kotlinCompile: TaskProvider<out KotlinCompile>,
@@ -178,55 +168,39 @@ class AndroidSubplugin : KotlinCompilerPluginSupportPlugin {
         val mainSourceSet = androidExtension.sourceSets.getByName("main")
         pluginOptions += SubpluginOption("package", getApplicationPackage(androidExtension, project, mainSourceSet))
 
-        fun addVariant(name: String, resDirectories: FileCollection) {
+        fun addVariant(name: String, resDirectories: List<ConfigurableFileTree>) {
             val optionValue = lazy {
                 buildString {
                     append(name)
                     append(';')
-                    resDirectories.joinTo(this, separator = ";") { it.canonicalPath }
+                    resDirectories.map { it.dir }.joinTo(this, separator = ";") { it.normalize().absolutePath }
                 }
             }
             pluginOptions += CompositeSubpluginOption(
                 "variant", optionValue, listOf(
                     SubpluginOption("variantName", name),
                     // use INTERNAL option kind since the resources are tracked as sources (see below)
-                    FilesSubpluginOption("resDirs", resDirectories)
+                    FilesSubpluginOption(
+                        "resDirs",
+                        resDirectories.map { it.dir }
+                    )
                 )
             )
 
             kotlinCompile.configure {
-                it.inputs.files(getLayoutDirectories(project, resDirectories))
-                    .withPathSensitivity(PathSensitivity.RELATIVE)
-                    .withPropertyName("androidExtensionLayoutsFrom$name")
-                    .skipWhenEmpty(true)
-                    .run {
-                        if (GradleVersion.current() >= GradleVersion.version("6.8")) {
-                            ignoreEmptyDirectories()
-                        } else {
-                            this!!
-                        }
-                    }
+                it.androidLayoutResourceFiles.from(resDirectories.layoutDirectories)
             }
         }
 
         fun addSourceSetAsVariant(name: String) {
             val sourceSet = androidExtension.sourceSets.findByName(name) ?: return
-            val srcDirs = sourceSet.res.srcDirs.toList()
+            val srcDirs = sourceSet.res.getSourceDirectoryTrees()
             if (srcDirs.isNotEmpty()) {
-                addVariant(sourceSet.name, project.files(srcDirs))
+                addVariant(sourceSet.name, srcDirs)
             }
         }
 
-        val resDirectoriesForAllVariants = mutableListOf<FileCollection>()
-
-        forEachVariant(project) { variant ->
-            if (getTestedVariantData(variant) != null) return@forEachVariant
-            resDirectoriesForAllVariants += variant.getResDirectories()
-        }
-
-        val commonResDirectories = getCommonResDirectories(project, resDirectoriesForAllVariants)
-
-        addVariant("main", commonResDirectories)
+        addSourceSetAsVariant("main")
 
         getVariantComponentNames(variantData)?.let { (variantName, flavorName, buildTypeName) ->
             addSourceSetAsVariant(buildTypeName)
@@ -243,29 +217,21 @@ class AndroidSubplugin : KotlinCompilerPluginSupportPlugin {
         return project.provider { wrapPluginOptions(pluginOptions, "configuration") }
     }
 
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
     private fun getVariantComponentNames(flavorData: Any?): VariantComponentNames? = when (flavorData) {
         is TestVariantData -> getVariantComponentNames(flavorData.testedVariantData)
-        is TestVariant -> getVariantComponentNames(flavorData.testedVariant)
-        is BaseVariant -> VariantComponentNames(flavorData.name, flavorData.flavorName, flavorData.buildType.name)
+        is DeprecatedAndroidTestVariant -> getVariantComponentNames(flavorData.testedVariant)
+        is DeprecatedAndroidBaseVariant -> VariantComponentNames(flavorData.name, flavorData.flavorName, flavorData.buildType.name)
         else -> null
     }
 
     private data class VariantComponentNames(val variantName: String, val flavorName: String, val buildTypeName: String)
 
-    private fun getCommonResDirectories(project: Project, resDirectories: List<FileCollection>): FileCollection {
-        val lazyFiles = lazy {
-            if (resDirectories.isEmpty()) {
-                emptySet<File>()
-            } else {
-                resDirectories.first().toMutableSet().apply {
-                    resDirectories.drop(1).forEach { retainAll(it) }
-                }
-            }
-        }
-        return project.files(Callable { lazyFiles.value })
-    }
-
-    private fun getApplicationPackage(androidExtension: BaseExtension, project: Project, mainSourceSet: AndroidSourceSet): String {
+    private fun getApplicationPackage(
+        androidExtension: BaseExtension,
+        project: Project,
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") mainSourceSet: DeprecatedAndroidSourceSet
+    ): String {
         val manifestFile = mainSourceSet.manifest.srcFile
         val applicationPackage = getApplicationPackage(androidExtension, manifestFile)
 
@@ -309,10 +275,10 @@ class AndroidSubplugin : KotlinCompilerPluginSupportPlugin {
 
         // Didn't find the namespace getter, or it was not set. Try parsing the
         // manifest to find the "package" attribute from there.
-        try {
-            return manifestFile.parseXml().documentElement.getAttribute("package")
+        return try {
+            manifestFile.parseXml().documentElement.getAttribute("package")
         } catch (e: Exception) {
-            return null
+            null
         }
     }
 

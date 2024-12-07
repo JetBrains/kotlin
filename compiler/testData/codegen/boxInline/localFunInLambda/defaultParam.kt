@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 // NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 
@@ -47,7 +46,7 @@ fun fooLongCallableReference(): String {
     val r = "O"
     val a = run {
         fun f(x: Long, y: String? = null): String = r + x + y
-        (::f)(4, "K")
+        (::f).let { it(4, "K") }
     }
     return a
 }
@@ -59,7 +58,7 @@ class A {
                 override fun run(captured: String): String {
                     return {
                         callPrivate(capt, captured)
-                    }()
+                    }.let { it() }
                 }
 
                 private fun callPrivate(x: Int, y: String?): String = "O" + x + y

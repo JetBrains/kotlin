@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.jvm.internal.TypeParameterReference
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
@@ -74,9 +73,11 @@ internal class KTypeParameterImpl(
         toJavaClass()?.kotlin as KClassImpl<*>?
             ?: throw KotlinReflectionInternalError("Type parameter container is not resolved: $containingDeclaration")
 
-    private fun DeserializedMemberDescriptor.getContainerClass(): Class<*> =
-        containerSource.safeAs<JvmPackagePartSource>()?.knownJvmBinaryClass.safeAs<ReflectKotlinClass>()?.klass
+    private fun DeserializedMemberDescriptor.getContainerClass(): Class<*> {
+        val jvmPackagePartSource = containerSource as? JvmPackagePartSource
+        return (jvmPackagePartSource?.knownJvmBinaryClass as? ReflectKotlinClass)?.klass
             ?: throw KotlinReflectionInternalError("Container of deserialized member is not resolved: $this")
+    }
 
     override fun equals(other: Any?) =
         other is KTypeParameterImpl && container == other.container && name == other.name

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class C {
     fun xf1(){}
     fun xf1(s: String){}

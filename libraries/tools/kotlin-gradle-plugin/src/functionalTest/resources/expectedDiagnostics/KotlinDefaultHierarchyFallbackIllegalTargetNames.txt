@@ -1,0 +1,9 @@
+[KotlinDefaultHierarchyFallbackIllegalTargetNames | WARNING] The Default Kotlin Hierarchy Template was not applied to 'root project 'test'':
+Source sets created by the following targets will clash with source sets created by the template:
+[Native, linux]
+
+Consider renaming the targets or disabling the default template by adding
+    'kotlin.mpp.applyDefaultHierarchyTemplate=false'
+to your gradle.properties
+
+Learn more about hierarchy templates: https://kotl.in/hierarchy-template

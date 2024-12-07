@@ -1,4 +1,5 @@
-// !LANGUAGE: +RestrictReturnStatementTarget
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +RestrictReturnStatementTarget
 
 @Target(AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)
@@ -30,12 +31,12 @@ fun testAnnotatedLambdaLabel() =
     }
 
 fun testLambdaMultipleLabels1() =
-    lambda1@ lambda2@ {
+    <!MULTIPLE_LABELS_ARE_FORBIDDEN!>lambda1@<!> lambda2@ {
         <!NOT_A_FUNCTION_LABEL!>return@lambda1<!>
     }
 
 fun testLambdaMultipleLabels2() =
-    lambda1@ lambda2@ {
+    <!MULTIPLE_LABELS_ARE_FORBIDDEN!>lambda1@<!> lambda2@ {
         return@lambda2
     }
 
@@ -62,7 +63,7 @@ fun testHighOrderFunctionCallLabelInReturn() {
 }
 
 fun testMultipleLabelsWithNestedLambda() {
-    l1@ l2@{
+    <!MULTIPLE_LABELS_ARE_FORBIDDEN!>l1@<!> l2@{
         {
             <!NOT_A_FUNCTION_LABEL!>return@l1<!>
         }

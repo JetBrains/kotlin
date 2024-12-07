@@ -94,6 +94,10 @@ open class JvmStringTable(nameResolver: JvmNameResolver? = null) : StringTable {
         return index
     }
 
+    override fun getPackageFqNameIndexByString(fqName: String): Int {
+        error("JvmStringTable does not contain package FQ names (requested FQ name: $fqName)")
+    }
+
     fun serializeTo(output: OutputStream) {
         with(JvmProtoBuf.StringTableTypes.newBuilder()) {
             addAllRecord(records.map { it.build() })

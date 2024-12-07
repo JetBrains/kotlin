@@ -1,0 +1,17 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class <#A: kotlin/Float> /F { // /F|null[0]
+    constructor <init>() // /F.<init>|<init>(){}[0]
+    final fun testCapturedType(#A, kotlin/Any): kotlin/Boolean // /F.testCapturedType|testCapturedType(1:0;kotlin.Any){}[0]
+}
+final fun <#A: kotlin/Any?> /test0(kotlin/Any, #A): kotlin/Boolean // /test0|test0(kotlin.Any;0:0){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Float> /test1(kotlin/Any, #A): kotlin/Boolean // /test1|test1(kotlin.Any;0:0){0§<kotlin.Float>}[0]
+final fun <#A: kotlin/Double> /test2(kotlin/Any, #A): kotlin/Boolean // /test2|test2(kotlin.Any;0:0){0§<kotlin.Double>}[0]
+final fun <#A: kotlin/Float> /test3(kotlin/Any, #A): kotlin/Boolean // /test3|test3(kotlin.Any;0:0){0§<kotlin.Float>}[0]
+final fun <#A: kotlin/Float?> /test4(kotlin/Any, #A): kotlin/Boolean // /test4|test4(kotlin.Any;0:0){0§<kotlin.Float?>}[0]
+final fun <#A: kotlin/Float?, #B: #A> /test5(kotlin/Any, #B): kotlin/Boolean // /test5|test5(kotlin.Any;0:1){0§<kotlin.Float?>;1§<0:0>}[0]
+final fun <#A: kotlin/Number> /test6(kotlin/Any, #A): kotlin/Boolean // /test6|test6(kotlin.Any;0:0){0§<kotlin.Number>}[0]

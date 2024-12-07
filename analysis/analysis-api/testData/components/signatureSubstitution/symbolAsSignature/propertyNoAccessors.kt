@@ -1,0 +1,1 @@
+val f<caret>oo: Int = 10

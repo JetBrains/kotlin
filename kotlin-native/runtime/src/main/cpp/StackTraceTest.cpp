@@ -5,7 +5,9 @@
 
 #include "StackTrace.hpp"
 
+#include <cstdlib>
 #include <signal.h>
+#include <unordered_set>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -13,9 +15,6 @@
 #include "Common.h"
 #include "Porting.h"
 #include "TestSupport.hpp"
-#include "std_support/UnorderedSet.hpp"
-
-#include <iostream>
 
 using namespace kotlin;
 
@@ -50,7 +49,7 @@ OPTNONE StackTrace<Capacity> GetDeepStackTrace(size_t depth) {
 
 NO_INLINE void AbortWithStackTrace(int) {
     PrintStackTraceStderr();
-    konan::abort();
+    std::abort();
 }
 
 } // namespace
@@ -144,7 +143,7 @@ TEST(StackTraceTest, DeepStackTrace) {
     auto stackTrace = GetDeepStackTrace(knownStackDepth);
     auto symbolicStackTrace = GetStackTraceStrings(stackTrace.data());
 
-#if USE_GCC_UNWIND
+#if USE_GCC_UNWIND || USE_WINAPI_UNWIND
     EXPECT_GE(stackTrace.size(), knownStackDepth);
     size_t lastKnownIndex = knownStackDepth - 1;
 #else
@@ -177,7 +176,7 @@ TEST(StackTraceTest, StackAllocatedDeepTraceWithEnoughCapacity) {
     constexpr size_t capacity = 150;
     auto stackTrace = GetDeepStackTrace<capacity>(knownStackDepth);
 
-#if USE_GCC_UNWIND
+#if USE_GCC_UNWIND || USE_WINAPI_UNWIND
     EXPECT_GE(stackTrace.size(), knownStackDepth);
 #else
     // For platforms where the libc unwind is used (e.g. MacOS) the size of a collected trace is limited (see StackTrace::maxDepth).
@@ -188,7 +187,7 @@ TEST(StackTraceTest, StackAllocatedDeepTraceWithEnoughCapacity) {
 TEST(StackTraceTest, Iteration) {
     auto stackTrace = GetStackTrace2();
 
-    std_support::vector<void*> actualAddresses;
+    std::vector<void*> actualAddresses;
     for (auto addr : stackTrace) {
         actualAddresses.push_back(addr);
     }
@@ -204,7 +203,7 @@ TEST(StackTraceTest, Iteration) {
 TEST(StackTraceTest, StackAllocatedIteration) {
     auto stackTrace = GetStackTrace2<2>();
 
-    std_support::vector<void*> actualAddresses;
+    std::vector<void*> actualAddresses;
     for (auto addr : stackTrace) {
         actualAddresses.push_back(addr);
     }
@@ -220,7 +219,7 @@ TEST(StackTraceTest, StackAllocatedIteration) {
 TEST(StackTraceTest, IndexedAccess) {
     auto stackTrace = GetStackTrace2();
 
-    std_support::vector<void*> actualAddresses;
+    std::vector<void*> actualAddresses;
     for (size_t i = 0; i < stackTrace.size(); i++) {
         actualAddresses.push_back(stackTrace[i]);
     }
@@ -234,7 +233,7 @@ TEST(StackTraceTest, IndexedAccess) {
 TEST(StackTraceTest, StackAllocatedIndexedAccess) {
     auto stackTrace = GetStackTrace2<2>();
 
-    std_support::vector<void*> actualAddresses;
+    std::vector<void*> actualAddresses;
     for (size_t i = 0; i < stackTrace.size(); i++) {
         actualAddresses.push_back(stackTrace[i]);
     }
@@ -335,7 +334,7 @@ TEST(StackTraceTest, StackAllocatedEqualsAndHash) {
 
 TEST(StackTraceTest, StoreInHashSet) {
     constexpr size_t capacity = 10;
-    std_support::unordered_set<StackTrace<capacity>> set;
+    std::unordered_set<StackTrace<capacity>> set;
     StackTrace<capacity> empty;
     StackTrace<capacity> trace1 = GetStackTrace1<capacity>();
     StackTrace<capacity> trace2 = GetStackTrace2<capacity>();
@@ -360,7 +359,7 @@ TEST(StackTraceTest, StoreInHashSet) {
 }
 
 TEST(StackTraceTest, StackAllocatedStoreInHashSet) {
-    std_support::unordered_set<StackTrace<>> set;
+    std::unordered_set<StackTrace<>> set;
     StackTrace<> empty;
     StackTrace<> trace1 = GetStackTrace1();
     StackTrace<> trace2 = GetStackTrace2();

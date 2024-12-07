@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 fun <T> assertEquals(a: T, b: T) {
     if (a != b) throw AssertionError("$a != $b")
 }

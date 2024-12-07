@@ -33,13 +33,13 @@ class JvmNameResolverTest : KtUsefulTestCase() {
         val strings = ArrayList<String>()
 
         fun string(
-                string: String?,
-                range: Int? = null,
-                predefinedIndex: Int? = null,
-                internalString: String? = null,
-                operation: Record.Operation? = null,
-                substringIndex: List<Int>? = null,
-                replaceChar: List<Char>? = null
+            string: String?,
+            range: Int? = null,
+            predefinedIndex: Int? = null,
+            internalString: String? = null,
+            operation: Record.Operation? = null,
+            substringIndex: List<Int>? = null,
+            replaceChar: List<Char>? = null
         ) {
             types.addRecord(Record.newBuilder().apply {
                 range?.let { setRange(it) }
@@ -71,8 +71,8 @@ class JvmNameResolverTest : KtUsefulTestCase() {
 
     fun testSimpleClassId() {
         assertEquals(
-                ClassId.topLevel(FqName("foo.bar.Baz")),
-                create { string("Lfoo/bar/Baz;", operation = DESC_TO_CLASS_ID) }.getClassId(0)
+            ClassId.topLevel(FqName("foo.bar.Baz")),
+            create { string("Lfoo/bar/Baz;", operation = DESC_TO_CLASS_ID) }.getClassId(0)
         )
     }
 

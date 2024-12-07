@@ -110,6 +110,18 @@ class AssertContainsTest {
     }
 
     @Test
+    @OptIn(ExperimentalStdlibApi::class)
+    fun assertContainsOpenRange() {
+        val range = 0.0.rangeUntil(1.0) // TODO: replace with ..< by 1.8
+        assertContains(range, 0.99)
+
+        val one = 1.0
+        testFailureMessage("Expected the range <$range> to contain the value <$one>.") {
+            assertContains(range, one)
+        }
+    }
+
+    @Test
     fun testAssertContainsMap() {
         val map = mapOf(
             "apple" to "green",

@@ -1,0 +1,53 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable
+fun Wat() {}
+
+@Composable
+fun Foo(x: Int) {
+    Wat()
+    @Composable fun goo() { Wat() }
+    class Bar {
+        @Composable fun baz() { Wat() }
+    }
+    goo()
+    Bar().baz()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public final class TestKt {
+  public final static Wat(Landroidx/compose/runtime/Composer;I)V
+  public final static Foo(ILandroidx/compose/runtime/Composer;I)V
+  private final static Foo%goo(Landroidx/compose/runtime/Composer;I)V
+  final static INNERCLASS TestKt%Foo%1 null null
+  public final static INNERCLASS TestKt%Foo%Bar null Bar
+  final static INNERCLASS TestKt%Wat%1 null null
+}
+final class TestKt%Wat%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+  <init>(I)V
+  public final invoke(Landroidx/compose/runtime/Composer;I)V
+  public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+  final synthetic I %%changed
+  OUTERCLASS TestKt Wat (Landroidx/compose/runtime/Composer;I)V
+  final static INNERCLASS TestKt%Wat%1 null null
+}
+public final class TestKt%Foo%Bar {
+  public <init>()V
+  public final baz(Landroidx/compose/runtime/Composer;I)V
+  OUTERCLASS TestKt Foo (ILandroidx/compose/runtime/Composer;I)V
+  public final static INNERCLASS TestKt%Foo%Bar null Bar
+}
+final class TestKt%Foo%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+  <init>(II)V
+  public final invoke(Landroidx/compose/runtime/Composer;I)V
+  public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+  final synthetic I %x
+  final synthetic I %%changed
+  OUTERCLASS TestKt Foo (ILandroidx/compose/runtime/Composer;I)V
+  final static INNERCLASS TestKt%Foo%1 null null
+}

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.util.SmartFMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -101,5 +102,11 @@ public class ObservableBindingTrace implements BindingTrace {
     @Override
     public String toString() {
         return "ObservableTrace over " + originalTrace.toString();
+    }
+
+    @Nullable
+    @Override
+    public Project getProject() {
+        return originalTrace.getProject();
     }
 }

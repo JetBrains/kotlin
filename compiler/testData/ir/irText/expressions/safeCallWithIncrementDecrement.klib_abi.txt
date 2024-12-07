@@ -1,0 +1,17 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class test/C { // test/C|null[0]
+    constructor <init>() // test/C.<init>|<init>(){}[0]
+}
+final var test/p // test/p|@test.C?{}p[0]
+    final fun (test/C?).<get-p>(): kotlin/Int // test/p.<get-p>|<get-p>@test.C?(){}[0]
+    final fun (test/C?).<set-p>(kotlin/Int) // test/p.<set-p>|<set-p>@test.C?(kotlin.Int){}[0]
+final fun (kotlin/Int?).test/get(kotlin/Int): kotlin/Int // test/get|get@kotlin.Int?(kotlin.Int){}[0]
+final fun (kotlin/Int?).test/inc(): kotlin/Int? // test/inc|inc@kotlin.Int?(){}[0]
+final fun (kotlin/Int?).test/set(kotlin/Int, kotlin/Int) // test/set|set@kotlin.Int?(kotlin.Int;kotlin.Int){}[0]
+final fun test/testArrayAccess(test/C?) // test/testArrayAccess|testArrayAccess(test.C?){}[0]
+final fun test/testProperty(test/C?) // test/testProperty|testProperty(test.C?){}[0]

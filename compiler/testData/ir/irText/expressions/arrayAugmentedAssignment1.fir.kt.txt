@@ -1,45 +1,46 @@
-fun foo(): IntArray {
-  return intArrayOf(elements = [1, 2, 3])
-}
-
-fun bar(): Int {
-  return 42
-}
-
 class C {
+  val x: IntArray
+    field = x
+    get
+
   constructor(x: IntArray) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val x: IntArray
-    field = x
-    get
+}
 
+fun bar(): Int {
+  return 42
+}
+
+fun foo(): IntArray {
+  return intArrayOf(elements = [1, 2, 3])
+}
+
+fun testCall() {
+  { // BLOCK
+    val tmp_0: IntArray = foo()
+    val tmp_1: Int = bar()
+    tmp_0.set(index = tmp_1, value = tmp_0.get(index = tmp_1).times(other = 2))
+  }
+}
+
+fun testMember(c: C) {
+  val tmp_2: IntArray = c.<get-x>()
+  val tmp_3: Int = 0
+  val tmp_4: Int = tmp_2.get(index = tmp_3)
+  tmp_2.set(index = tmp_3, value = tmp_4.inc())
+  tmp_4 /*~> Unit */
 }
 
 fun testVariable() {
   var x: IntArray = foo()
   { // BLOCK
-    val <array>: IntArray = x
-    val <index_0>: Int = 0
-    <array>.set(index = <index_0>, value = <array>.get(index = <index_0>).plus(other = 1))
+    val tmp_5: IntArray = x
+    val tmp_6: Int = 0
+    tmp_5.set(index = tmp_6, value = tmp_5.get(index = tmp_6).plus(other = 1))
   }
 }
 
-fun testCall() {
-  { // BLOCK
-    val <array>: IntArray = foo()
-    val <index_0>: Int = bar()
-    <array>.set(index = <index_0>, value = <array>.get(index = <index_0>).times(other = 2))
-  }
-}
-
-fun testMember(c: C) {
-  val <array>: IntArray = c.<get-x>()
-  val <index_0>: Int = 0
-  val <unary>: Int = <array>.get(index = <index_0>)
-  <array>.set(index = <index_0>, value = <unary>.inc())
-  <unary> /*~> Unit */
-}

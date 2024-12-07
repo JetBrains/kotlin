@@ -3,30 +3,26 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kapt3.base.incremental;
+package org.jetbrains.kotlin.kapt3.base.incremental
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.jetbrains.kotlin.kapt3.base.newCompiledSourcesFolder
+import org.jetbrains.kotlin.kapt3.base.newFolder
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 class JavaClassCacheManagerTest {
-
-    @Rule
-    @JvmField
-    var tmp = TemporaryFolder()
-
     private lateinit var cache: JavaClassCacheManager
     private lateinit var cacheDir: File
     private lateinit var compiledSources: List<File>
 
-    @Before
-    fun setUp() {
-        cacheDir = tmp.newFolder()
-        compiledSources = listOf(tmp.newFolder().also { it.resolve(TEST_PACKAGE_NAME).mkdir() })
+    @BeforeEach
+    fun setUp(@TempDir tmp: File) {
+        cacheDir = tmp.newFolder("cacheDir")
+        compiledSources = listOf(tmp.newCompiledSourcesFolder().also { it.resolve(TEST_PACKAGE_NAME).mkdir() })
         cache = JavaClassCacheManager(cacheDir)
     }
 
@@ -60,8 +56,10 @@ class JavaClassCacheManagerTest {
         }
         prepareForIncremental()
 
-        val dirtyFiles =
-            cache.invalidateAndGetDirtyFiles(listOf(File("Mentioned.java").absoluteFile), emptyList(), compiledSources) as SourcesToReprocess.Incremental
+        val dirtyFiles = cache.invalidateAndGetDirtyFiles(
+            listOf(File("Mentioned.java").absoluteFile),
+            emptyList(), compiledSources
+        ) as SourcesToReprocess.Incremental
         assertEquals(
             listOf(
                 File("Mentioned.java").absoluteFile,
@@ -93,7 +91,11 @@ class JavaClassCacheManagerTest {
         prepareForIncremental()
 
         val dirtyFiles =
-            cache.invalidateAndGetDirtyFiles(listOf(File("Mentioned.java").absoluteFile), emptyList(), compiledSources) as SourcesToReprocess.Incremental
+            cache.invalidateAndGetDirtyFiles(
+                listOf(File("Mentioned.java").absoluteFile),
+                emptyList(),
+                compiledSources
+            ) as SourcesToReprocess.Incremental
         assertEquals(
             listOf(
                 File("Mentioned.java").absoluteFile,
@@ -126,7 +128,11 @@ class JavaClassCacheManagerTest {
         prepareForIncremental()
 
         val dirtyFiles =
-            cache.invalidateAndGetDirtyFiles(listOf(File("TwoTypes.java").absoluteFile), emptyList(), compiledSources) as SourcesToReprocess.Incremental
+            cache.invalidateAndGetDirtyFiles(
+                listOf(File("TwoTypes.java").absoluteFile),
+                emptyList(),
+                compiledSources
+            ) as SourcesToReprocess.Incremental
         assertEquals(
             listOf(
                 File("TwoTypes.java").absoluteFile,
@@ -146,7 +152,8 @@ class JavaClassCacheManagerTest {
         }
         prepareForIncremental()
 
-        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(), listOf("test/Mentioned"), compiledSources) as SourcesToReprocess.Incremental
+        val dirtyFiles =
+            cache.invalidateAndGetDirtyFiles(listOf(), listOf("test/Mentioned"), compiledSources) as SourcesToReprocess.Incremental
         assertEquals(listOf(File("Src.java").absoluteFile), dirtyFiles.toReprocess)
     }
 

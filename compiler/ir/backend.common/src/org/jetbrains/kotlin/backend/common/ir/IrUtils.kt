@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.ir.builders.declarations.IrValueParameterBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
@@ -16,6 +17,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.name.StandardClassIds
 
 fun IrReturnTarget.returnType(context: CommonBackendContext) =
     when (this) {
@@ -28,7 +31,6 @@ fun IrReturnTarget.returnType(context: CommonBackendContext) =
 inline fun IrSimpleFunction.addDispatchReceiver(builder: IrValueParameterBuilder.() -> Unit): IrValueParameter =
     IrValueParameterBuilder().run {
         builder()
-        index = -1
         name = "this".synthesizedName
         factory.buildValueParameter(this, this@addDispatchReceiver).also { receiver ->
             dispatchReceiverParameter = receiver
@@ -39,7 +41,6 @@ fun IrSimpleFunction.addExtensionReceiver(type: IrType, origin: IrDeclarationOri
     IrValueParameterBuilder().run {
         this.type = type
         this.origin = origin
-        this.index = -1
         this.name = "receiver".synthesizedName
         factory.buildValueParameter(this, this@addExtensionReceiver).also { receiver ->
             extensionReceiverParameter = receiver
@@ -50,13 +51,13 @@ fun IrSimpleFunction.addExtensionReceiver(type: IrType, origin: IrDeclarationOri
 fun IrExpression?.isPure(
     anyVariable: Boolean,
     checkFields: Boolean = true,
-    context: CommonBackendContext? = null
+    symbols: Symbols? = null
 ): Boolean {
     if (this == null) return true
 
     fun IrExpression.isPureImpl(): Boolean {
         return when (this) {
-            is IrConst<*> -> true
+            is IrConst -> true
             is IrGetValue -> {
                 if (anyVariable) return true
                 val valueDeclaration = symbol.owner
@@ -68,16 +69,16 @@ fun IrExpression?.isPure(
                         operator == IrTypeOperator.INSTANCEOF ||
                                 operator == IrTypeOperator.REINTERPRET_CAST ||
                                 operator == IrTypeOperator.NOT_INSTANCEOF
-                        ) && argument.isPure(anyVariable, checkFields, context)
-            is IrCall -> if (context?.isSideEffectFree(this) == true) {
+                        ) && argument.isPure(anyVariable, checkFields, symbols)
+            is IrCall -> if (symbols?.isSideEffectFree(this) == true) {
                 for (i in 0 until valueArgumentsCount) {
                     val valueArgument = getValueArgument(i)
-                    if (!valueArgument.isPure(anyVariable, checkFields, context)) return false
+                    if (!valueArgument.isPure(anyVariable, checkFields, symbols)) return false
                 }
                 true
             } else false
             is IrGetObjectValue -> type.isUnit()
-            is IrVararg -> elements.all { (it as? IrExpression)?.isPure(anyVariable, checkFields, context) == true }
+            is IrVararg -> elements.all { (it as? IrExpression)?.isPure(anyVariable, checkFields, symbols) == true }
             else -> false
         }
     }
@@ -112,10 +113,20 @@ fun CommonBackendContext.createArrayOfExpression(
         endOffset,
         arrayType,
         ir.symbols.arrayOf,
-        1,
-        1
+        typeArgumentsCount = 1,
     ).apply {
         putTypeArgument(0, arrayElementType)
         putValueArgument(0, arg0)
     }
 }
+
+fun IrFunction.isInlineFunWithReifiedParameter() = isInline && typeParameters.any { it.isReified }
+
+fun IrBranch.isUnconditional(): Boolean = (condition as? IrConst)?.value == true
+
+fun syntheticBodyIsNotSupported(declaration: IrDeclaration): Nothing =
+    compilationException("${IrSyntheticBody::class.java.simpleName} is not supported here", declaration)
+
+val IrFile.isJvmBuiltin: Boolean get() = hasAnnotation(StandardClassIds.Annotations.JvmBuiltin)
+
+val IrFile.isBytecodeGenerationSuppressed: Boolean get() = hasAnnotation(StandardClassIds.Annotations.SuppressBytecodeGeneration)

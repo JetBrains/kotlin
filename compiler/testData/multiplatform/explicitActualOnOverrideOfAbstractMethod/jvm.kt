@@ -3,5 +3,5 @@ actual abstract class Base {
 }
 
 actual class DerivedImplicit : Base() {
-    override fun foo() {}
+    actual override fun foo() {}
 }

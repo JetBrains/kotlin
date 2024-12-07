@@ -1,3 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-56744
+// SKIP_TXT
+
 fun test() {
     var a: Any? = null
     var b = a
@@ -62,4 +66,21 @@ fun test2() {
     a = 3
     <!DEBUG_INFO_SMARTCAST!>b<!>.length // OK
     b.<!UNRESOLVED_REFERENCE!>unaryPlus<!>() // error
+}
+
+fun test3() {
+    var a: Any? = null
+    val b = a
+    val c = a
+    if (a is String) {
+        <!DEBUG_INFO_SMARTCAST!>a<!>.length // ok
+        b.<!UNRESOLVED_REFERENCE!>length<!> // ok
+        c.<!UNRESOLVED_REFERENCE!>length<!> // ok
+    }
+    a = null // b and c are still aliases to the same old value
+    if (b is String) {
+        a.<!UNRESOLVED_REFERENCE!>length<!> // error
+        <!DEBUG_INFO_SMARTCAST!>b<!>.length // ok
+        c.<!UNRESOLVED_REFERENCE!>length<!> // ok
+    }
 }

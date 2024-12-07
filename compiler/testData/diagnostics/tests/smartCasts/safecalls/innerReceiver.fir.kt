@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(x: String): String? = x
 
 fun calc(x: String?, y: String?): Int {

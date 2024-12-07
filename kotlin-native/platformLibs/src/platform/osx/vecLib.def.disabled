@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.vecLib
+
+modules = vecLib
+compilerOpts = -framework vecLib
+linkerOpts = -framework vecLib
+#Disabled: Unavailable

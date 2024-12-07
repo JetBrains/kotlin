@@ -7,7 +7,7 @@ Building module2
 Compiling files:
   module2/src/A.kt
 End of files
-Marked as dirty by Kotlin:
+After build round. Marked as dirty by Kotlin:
   module2/src/B.kt
   module2/src/createA.kt
   module2/src/createB.kt

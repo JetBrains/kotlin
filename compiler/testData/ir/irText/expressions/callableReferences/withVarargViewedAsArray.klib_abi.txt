@@ -1,0 +1,17 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /nsum(kotlin/Array<out kotlin/Number>...): kotlin/Int // /nsum|nsum(kotlin.Array<out|kotlin.Number>...){}[0]
+final fun /sum(kotlin/IntArray...): kotlin/Int // /sum|sum(kotlin.IntArray...){}[0]
+final fun /testArrayAndDefaults() // /testArrayAndDefaults|testArrayAndDefaults(){}[0]
+final fun /testArrayAsVararg() // /testArrayAsVararg|testArrayAsVararg(){}[0]
+final fun /testPlainArgs() // /testPlainArgs|testPlainArgs(){}[0]
+final fun /testPrimitiveArrayAsVararg() // /testPrimitiveArrayAsVararg|testPrimitiveArrayAsVararg(){}[0]
+final fun /useArray(kotlin/Function1<kotlin/Array<kotlin/Int>, kotlin/Int>) // /useArray|useArray(kotlin.Function1<kotlin.Array<kotlin.Int>,kotlin.Int>){}[0]
+final fun /usePlainArgs(kotlin/Function2<kotlin/Int, kotlin/Int, kotlin/Int>) // /usePlainArgs|usePlainArgs(kotlin.Function2<kotlin.Int,kotlin.Int,kotlin.Int>){}[0]
+final fun /usePrimitiveArray(kotlin/Function1<kotlin/IntArray, kotlin/Int>) // /usePrimitiveArray|usePrimitiveArray(kotlin.Function1<kotlin.IntArray,kotlin.Int>){}[0]
+final fun /useStringArray(kotlin/Function1<kotlin/Array<kotlin/String>, kotlin/Unit>) // /useStringArray|useStringArray(kotlin.Function1<kotlin.Array<kotlin.String>,kotlin.Unit>){}[0]
+final fun /zap(kotlin/Array<out kotlin/String>..., kotlin/Int = ...) // /zap|zap(kotlin.Array<out|kotlin.String>...;kotlin.Int){}[0]

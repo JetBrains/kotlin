@@ -1,25 +1,38 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import plugins.KotlinBuildPublishingPlugin.Companion.ADHOC_COMPONENT_NAME
 
 plugins {
     kotlin("jvm")
     `java-test-fixtures`
     `maven-publish`
+    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
+@Suppress("DEPRECATION", "DEPRECATION_ERROR")
+tasks.withType<KotlinCompilationTask<*>>().configureEach {
+    compilerOptions {
+        apiVersion.value(KotlinVersion.KOTLIN_1_5).finalizeValueOnRead()
+        languageVersion.value(KotlinVersion.KOTLIN_1_5).finalizeValueOnRead()
+        freeCompilerArgs.add("-Xsuppress-version-warnings")
+    }
+}
+
+configureRunViaKotlinBuildToolsApi()
+
 kotlin.sourceSets.configureEach {
-    languageSettings.apiVersion = "1.4"
-    languageSettings.languageVersion = "1.4"
-    languageSettings.optIn("org.jetbrains.kotlin.gradle.kpm.idea.InternalKotlinGradlePluginApi")
+    languageSettings.optIn("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
 }
 
 dependencies {
     api(project(":kotlin-tooling-core"))
-    implementation(kotlinStdlib())
+    api(project(":kotlin-gradle-plugin-annotations"))
+    compileOnly(kotlinStdlib())
     testImplementation(gradleApi())
     testImplementation(gradleKotlinDsl())
     testImplementation(project(":kotlin-gradle-plugin"))
     testImplementation(project(":kotlin-gradle-plugin-idea-proto"))
-    testImplementation(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(kotlinTest("junit"))
 
     testImplementation("org.reflections:reflections:0.10.2") {
         because("Tests on the object graph are performed. This library will find implementations of interfaces at runtime")
@@ -29,7 +42,7 @@ dependencies {
     testFixturesImplementation(gradleKotlinDsl())
     testFixturesImplementation(project(":kotlin-tooling-core"))
     testFixturesImplementation(project(":kotlin-gradle-plugin-idea-proto"))
-    testFixturesImplementation(project(":kotlin-test:kotlin-test-junit"))
+    testFixturesImplementation(kotlinTest()) // no test annotations, only assertions are needed
 }
 
 
@@ -45,18 +58,30 @@ publish(moduleMetadata = true) {
     val kotlinLibraryComponent = components[ADHOC_COMPONENT_NAME] as AdhocComponentWithVariants
 
     kotlinLibraryComponent.addVariantsFromConfiguration(configurations.testFixturesApiElements.get()) {
-        mapToMavenScope("compile")
         skipUnpublishable()
+        mapToMavenScope("compile")
+        mapToOptional()
     }
 
     kotlinLibraryComponent.addVariantsFromConfiguration(configurations.testFixturesRuntimeElements.get()) {
-        mapToMavenScope("runtime")
         skipUnpublishable()
+        mapToMavenScope("runtime")
+        mapToOptional()
     }
 }
 
 javadocJar()
 sourcesJar()
+
+apiValidation {
+    nonPublicMarkers += "org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi"
+}
+
+tasks {
+    apiBuild {
+        inputJar.value(jar.flatMap { it.archiveFile })
+    }
+}
 
 //region Setup: Backwards compatibility tests
 

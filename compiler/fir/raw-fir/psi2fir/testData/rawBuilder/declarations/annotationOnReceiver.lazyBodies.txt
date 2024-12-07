@@ -1,0 +1,27 @@
+FILE: annotationOnReceiver.kt
+    public? final? fun @RECEIVER:FunctionReceiverAnnotation(LAZY_EXPRESSION) @ReceiverTypeAnnotation(LAZY_EXPRESSION) List<@ReceiverNestedTypeAnnotation(LAZY_EXPRESSION) String>.function(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? val @RECEIVER:PropertyReceiverAnnotation(LAZY_EXPRESSION) @ReceiverTypeAnnotation(LAZY_EXPRESSION) List<@ReceiverNestedTypeAnnotation(LAZY_EXPRESSION) String>.property: <implicit>
+        public? get(): <implicit> { LAZY_BLOCK }
+    context(List<@ContextReceiverAnnotation(LAZY_EXPRESSION) Int>, List<@ContextReceiverAnnotation() String>)
+    public? final? fun functionWithContextReceivers(): R|kotlin/Unit| { LAZY_BLOCK }
+    context(List<@ContextReceiverAnnotation(LAZY_EXPRESSION) Long>, List<@ContextReceiverAnnotation() Boolean>)
+    public? final? val propertyWithContextReceivers: <implicit>
+        public? get(): <implicit> { LAZY_BLOCK }
+    context(List<@ContextReceiverAnnotation(LAZY_EXPRESSION) Short>, List<@ContextReceiverAnnotation() UInt>)
+    public final? class MyClass : R|kotlin/Any| {
+        public? constructor(): R|MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    context(List<@ContextReceiverAnnotation(LAZY_EXPRESSION) Short>, List<@ContextReceiverAnnotation() UInt>)
+    public final? class MyClassWithExplicitConstructor : R|kotlin/Any| {
+        public? constructor(): R|MyClassWithExplicitConstructor| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? constructor(i: Int): R|MyClassWithExplicitConstructor| {
+            LAZY_this<R|MyClassWithExplicitConstructor|>
+        }
+
+    }

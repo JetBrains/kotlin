@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.incremental
 
-import com.intellij.util.io.EnumeratorStringDescriptor
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
@@ -46,20 +45,22 @@ interface IncrementalCacheCommon {
 }
 
 /**
- * Incremental cache common for JVM and JS for specifit ClassName type
+ * Incremental cache common for JVM and JS for specific ClassName type
  */
 abstract class AbstractIncrementalCache<ClassName>(
     workingDir: File,
-    protected val pathConverter: FileToPathConverter
+    protected val icContext: IncrementalCompilationContext,
 ) : BasicMapsOwner(workingDir), IncrementalCacheCommon {
     companion object {
-        private val CLASS_ATTRIBUTES = "class-attributes"
-        private val SUBTYPES = "subtypes"
-        private val SUPERTYPES = "supertypes"
-        private val CLASS_FQ_NAME_TO_SOURCE = "class-fq-name-to-source"
-        private val COMPLEMENTARY_FILES = "complementary-files"
+        private const val CLASS_ATTRIBUTES = "class-attributes"
+        private const val SUBTYPES = "subtypes"
+        private const val SUPERTYPES = "supertypes"
+        private const val CLASS_FQ_NAME_TO_SOURCE = "class-fq-name-to-source"
+        private const val COMPLEMENTARY_FILES = "complementary-files"
+
         @JvmStatic
         protected val SOURCE_TO_CLASSES = "source-to-classes"
+
         @JvmStatic
         protected val DIRTY_OUTPUT_CLASSES = "dirty-output-classes"
     }
@@ -75,28 +76,29 @@ abstract class AbstractIncrementalCache<ClassName>(
         result
     }
 
-    internal val classAttributesMap = registerMap(ClassAttributesMap(CLASS_ATTRIBUTES.storageFile))
-    private val subtypesMap = registerMap(SubtypesMap(SUBTYPES.storageFile))
-    private val supertypesMap = registerMap(SupertypesMap(SUPERTYPES.storageFile))
-    protected val classFqNameToSourceMap = registerMap(ClassFqNameToSourceMap(CLASS_FQ_NAME_TO_SOURCE.storageFile, pathConverter))
+    internal val classAttributesMap = registerMap(ClassAttributesMap(CLASS_ATTRIBUTES.storageFile, icContext))
+    private val subtypesMap = registerMap(SubtypesMap(SUBTYPES.storageFile, icContext))
+    private val supertypesMap = registerMap(SupertypesMap(SUPERTYPES.storageFile, icContext))
+    protected val classFqNameToSourceMap = registerMap(ClassFqNameToSourceMap(CLASS_FQ_NAME_TO_SOURCE.storageFile, icContext))
     internal abstract val sourceToClassesMap: AbstractSourceToOutputMap<ClassName>
     internal abstract val dirtyOutputClassesMap: AbstractDirtyClassesMap<ClassName>
+
     /**
      * A file X is a complementary to a file Y if they contain corresponding expect/actual declarations.
      * Complementary files should be compiled together during IC so the compiler does not complain
      * about missing parts.
      * TODO: provide a better solution (maintain an index of expect/actual declarations akin to IncrementalPackagePartProvider)
      */
-    private val complementaryFilesMap = registerMap(ComplementarySourceFilesMap(COMPLEMENTARY_FILES.storageFile, pathConverter))
+    private val complementaryFilesMap = registerMap(ComplementarySourceFilesMap(COMPLEMENTARY_FILES.storageFile, icContext))
 
     override fun classesFqNamesBySources(files: Iterable<File>): Collection<FqName> =
-        files.flatMapTo(HashSet()) { sourceToClassesMap.getFqNames(it) }
+        files.flatMapTo(mutableSetOf()) { sourceToClassesMap.getFqNames(it).orEmpty() }
 
     override fun getSubtypesOf(className: FqName): Sequence<FqName> =
-        subtypesMap[className].asSequence()
+        subtypesMap[className].orEmpty().asSequence()
 
     override fun getSupertypesOf(className: FqName): Sequence<FqName> {
-        return supertypesMap[className].asSequence()
+        return supertypesMap[className].orEmpty().asSequence()
     }
 
     override fun isSealed(className: FqName): Boolean? {
@@ -108,10 +110,10 @@ abstract class AbstractIncrementalCache<ClassName>(
 
     override fun markDirty(removedAndCompiledSources: Collection<File>) {
         for (sourceFile in removedAndCompiledSources) {
-            sourceToClassesMap[sourceFile].forEach { className ->
+            sourceToClassesMap[sourceFile]?.forEach { className ->
                 markDirty(className)
             }
-            sourceToClassesMap.clearOutputsForSource(sourceFile)
+            sourceToClassesMap.remove(sourceFile)
         }
     }
 
@@ -124,7 +126,7 @@ abstract class AbstractIncrementalCache<ClassName>(
      *
      * The `srcFile` argument may be `null` (e.g., if we are processing .class files in jars where source files are not available).
      */
-    protected fun addToClassStorage(classProtoData: ClassProtoData, srcFile: File?) {
+    protected fun addToClassStorage(classProtoData: ClassProtoData, srcFile: File?, useCompilerMapsOnly: Boolean = false) {
         val (proto, nameResolver) = classProtoData
 
         val supertypes = proto.supertypes(TypeTable(proto.typeTable))
@@ -133,17 +135,23 @@ abstract class AbstractIncrementalCache<ClassName>(
             .toSet()
         val child = nameResolver.getClassId(proto.fqName).asSingleFqName()
 
-        parents.forEach { subtypesMap.add(it, child) }
+        parents.forEach { subtypesMap.append(it, child) }
 
-        val removedSupertypes = supertypesMap[child].filter { it !in parents }
+        val removedSupertypes = supertypesMap[child].orEmpty().filter { it !in parents }
         removedSupertypes.forEach { subtypesMap.removeValues(it, setOf(child)) }
 
         supertypesMap[child] = parents
-        srcFile?.let { classFqNameToSourceMap[child] = it }
-        classAttributesMap[child] = ICClassesAttributes(ProtoBuf.Modality.SEALED == Flags.MODALITY.get(proto.flags))
+        if (!useCompilerMapsOnly) {
+            srcFile?.let { classFqNameToSourceMap[child] = it }
+            classAttributesMap[child] = ICClassesAttributes(ProtoBuf.Modality.SEALED == Flags.MODALITY.get(proto.flags))
+        }
     }
 
-    protected fun removeAllFromClassStorage(removedClasses: Collection<FqName>, changesCollector: ChangesCollector) {
+    protected fun removeAllFromClassStorage(
+        removedClasses: Collection<FqName>,
+        changesCollector: ChangesCollector,
+        useCompilerMapsOnly: Boolean = false,
+    ) {
         if (removedClasses.isEmpty()) return
 
         val removedFqNames = removedClasses.toSet()
@@ -159,8 +167,8 @@ abstract class AbstractIncrementalCache<ClassName>(
             val childrenFqNames = hashSetOf<FqName>()
 
             for (removedFqName in removedFqNames) {
-                parentsFqNames.addAll(cache.supertypesMap[removedFqName])
-                childrenFqNames.addAll(cache.subtypesMap[removedFqName])
+                parentsFqNames.addAll(cache.supertypesMap[removedFqName].orEmpty())
+                childrenFqNames.addAll(cache.subtypesMap[removedFqName].orEmpty())
 
                 cache.supertypesMap.remove(removedFqName)
                 cache.subtypesMap.remove(removedFqName)
@@ -175,40 +183,55 @@ abstract class AbstractIncrementalCache<ClassName>(
             }
         }
 
-        removedFqNames.forEach {
-            classFqNameToSourceMap.remove(it)
-            classAttributesMap.remove(it)
+        if (!useCompilerMapsOnly) {
+            removedFqNames.forEach {
+                classFqNameToSourceMap.remove(it)
+                classAttributesMap.remove(it)
+            }
         }
     }
 
     protected class ClassFqNameToSourceMap(
         storageFile: File,
-        private val pathConverter: FileToPathConverter
-    ) : BasicStringMap<String>(storageFile, EnumeratorStringDescriptor(), PathStringDescriptor) {
-
-        operator fun set(fqName: FqName, sourceFile: File) {
-            storage[fqName.asString()] = pathConverter.toPath(sourceFile)
-        }
-
-        operator fun get(fqName: FqName): File? =
-            storage[fqName.asString()]?.let(pathConverter::toFile)
-
-        fun remove(fqName: FqName) {
-            storage.remove(fqName.asString())
-        }
-
-        override fun dumpValue(value: String) = value
-    }
+        icContext: IncrementalCompilationContext,
+    ) : AbstractBasicMap<FqName, File>(
+        storageFile,
+        FqNameExternalizer.toDescriptor(),
+        icContext.fileDescriptorForSourceFiles,
+        icContext
+    )
 
     override fun getComplementaryFilesRecursive(dirtyFiles: Collection<File>): Collection<File> {
         val complementaryFiles = HashSet<File>()
         val filesQueue = ArrayDeque(dirtyFiles)
+
+        val processedClasses = HashSet<FqName>()
+        val processedFiles = HashSet<File>()
+
         while (filesQueue.isNotEmpty()) {
             val file = filesQueue.pollFirst()
-            complementaryFilesMap[file].forEach {
-                if (complementaryFiles.add(it)) filesQueue.add(it)
+            if (processedFiles.contains(file)) {
+                continue
             }
+            processedFiles.add(file)
+            complementaryFilesMap[file]?.forEach {
+                if (complementaryFiles.add(it) && !processedFiles.contains(it)) filesQueue.add(it)
+            }
+            val classes2recompile = sourceToClassesMap.getFqNames(file).orEmpty()
+            classes2recompile.filter { !processedClasses.contains(it) }.forEach { class2recompile ->
+                processedClasses.add(class2recompile)
+                val sealedClasses = findSealedSupertypes(class2recompile, listOf(this))
+                val allSubtypes = sealedClasses.flatMap { withSubtypes(it, listOf(this)) }.also {
+                    // there could be only one sealed class in hierarchy
+                    processedClasses.addAll(it)
+                }
+                val files2add = allSubtypes.mapNotNull { classFqNameToSourceMap[it] }.filter { !processedFiles.contains(it) }
+                filesQueue.addAll(files2add)
+            }
+
+
         }
+        complementaryFiles.addAll(processedFiles)
         complementaryFiles.removeAll(dirtyFiles)
         return complementaryFiles
     }
@@ -223,11 +246,11 @@ abstract class AbstractIncrementalCache<ClassName>(
             for (actual in actuals) {
                 actualToExpect.getOrPut(actual) { hashSetOf() }.add(expect)
             }
-            complementaryFilesMap[expect] = actuals
+            complementaryFilesMap[expect] = actuals.union(complementaryFilesMap[expect].orEmpty())
         }
 
         for ((actual, expects) in actualToExpect) {
-            complementaryFilesMap[actual] = expects
+            complementaryFilesMap[actual] = expects.union(complementaryFilesMap[actual].orEmpty())
         }
     }
 }

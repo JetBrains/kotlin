@@ -42,7 +42,7 @@ class AnnotationsCommonizerTest : AbstractCommonizerTest<List<CirAnnotation>, Li
 
     @Test
     fun noRelevantAnnotations3() = doTestSuccess(
-        expected = emptyList(),
+        expected = listOf(mockAnnotation("org/sample/Foo")),
         listOf(mockAnnotation("org/sample/Foo")),
         listOf(mockAnnotation("org/sample/Foo")),
         listOf(mockAnnotation("org/sample/Foo"))
@@ -58,7 +58,7 @@ class AnnotationsCommonizerTest : AbstractCommonizerTest<List<CirAnnotation>, Li
 
     @Test
     fun noRelevantAnnotations5() = doTestSuccess(
-        expected = emptyList(),
+        expected = listOf(mockAnnotation("kotlin/PublishedApi")),
         listOf(mockAnnotation("kotlin/PublishedApi")),
         listOf(mockAnnotation("kotlin/PublishedApi")),
         listOf(mockAnnotation("kotlin/PublishedApi"))
@@ -74,7 +74,7 @@ class AnnotationsCommonizerTest : AbstractCommonizerTest<List<CirAnnotation>, Li
 
     @Test
     fun differentMessages() = doTestSuccess(
-        expected = listOf(mockDeprecated(message = AnnotationsCommonizer.FALLBACK_MESSAGE)),
+        expected = listOf(mockDeprecated(message = DeprecationAnnotationCommonizer.FALLBACK_MESSAGE)),
         listOf(mockDeprecated(message = "please don't use it because ...")),
         listOf(mockDeprecated(message = "it should not be used due to ...")),
         listOf(mockDeprecated(message = "please don't use it because ..."))
@@ -276,7 +276,7 @@ class AnnotationsCommonizerTest : AbstractCommonizerTest<List<CirAnnotation>, Li
         )
     )
 
-    override fun createCommonizer() = AnnotationsCommonizer()
+    override fun createCommonizer() = AnnotationsCommonizer.asCommonizer()
 }
 
 private fun mockAnnotation(

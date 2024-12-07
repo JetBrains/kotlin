@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 <!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>@SinceKotlin("")<!>
 fun f01() {}
 

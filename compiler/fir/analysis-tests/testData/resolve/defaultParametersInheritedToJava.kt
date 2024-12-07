@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: main.kt
 
 fun foo(j: MyJavaClass) {

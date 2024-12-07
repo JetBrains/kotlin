@@ -1,0 +1,2 @@
+@org.jetbrains.kotlin.plugin.sandbox.AllOpen
+open class Foo

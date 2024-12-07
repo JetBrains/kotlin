@@ -1,12 +1,12 @@
 @kotlin.Metadata
 public final class test/A {
     // source: 'test.kt'
-    public final @kotlin.jvm.JvmField field b: int
     public field a: java.lang.String
+    public final @kotlin.jvm.JvmField field b: int
     public method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method getA(): java.lang.String
-    public final method setA(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
-    public final method g(): void
     public final method f(): void
+    public final method g(): void
+    public final @org.jetbrains.annotations.NotNull method getA(): java.lang.String
     public final method h(): void
+    public final method setA(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }

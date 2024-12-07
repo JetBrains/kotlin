@@ -87,7 +87,7 @@ fun box(): String {
                 suspendHere()
                 result = "OK"
             }
-        }()
+        }.let { it() }
     }
 
     return "OK"

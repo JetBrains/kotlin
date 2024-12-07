@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 package d
 
@@ -13,6 +14,6 @@ fun <T: Any> joinT(x: Comparable<*>, y: T): T? {
 }
 
 fun test() {
-    val x2 = <!NONE_APPLICABLE!>joinT<!>(Unit, "2")
-    checkSubtype<String?>(<!ARGUMENT_TYPE_MISMATCH!>x2<!>)
+    val x2 = joinT(<!ARGUMENT_TYPE_MISMATCH!>Unit<!>, "2")
+    checkSubtype<String?>(x2)
 }

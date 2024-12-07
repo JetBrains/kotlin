@@ -1,5 +1,7 @@
+// RUN_PIPELINE_TILL: FIR2IR
+// DISABLE_NEXT_TIER_SUGGESTION: Disabling `RepeatableAnnotations` and `RepeatableAnnotationContainerConstraints` is not normal operation mode
 // FIR_IDENTICAL
-// !LANGUAGE: -RepeatableAnnotations -RepeatableAnnotationContainerConstraints
+// LANGUAGE: -RepeatableAnnotations -RepeatableAnnotationContainerConstraints
 // FULL_JDK
 
 <!REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER_WARNING!>@Repeatable<!>
@@ -14,7 +16,7 @@ annotation class B1 {
 }
 annotation class D1(val value: Array<B1>)
 
-@Repeatable
+<!REDUNDANT_REPEATABLE_ANNOTATION!>@Repeatable<!>
 @java.lang.annotation.Repeatable(D2::class)
 annotation class B2 {
     class Container

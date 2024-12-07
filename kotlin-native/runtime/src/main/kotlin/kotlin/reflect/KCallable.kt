@@ -5,8 +5,6 @@
 
 package kotlin.reflect
 
-import kotlin.native.internal.FixmeReflection
-
 /**
  * Represents a callable entity, such as a function or a property.
  *
@@ -21,6 +19,7 @@ public actual interface KCallable<out R> : KAnnotatedElement {
      * - property accessors: the getter for a property named "foo" will have the name "<get-foo>",
      *   the setter, similarly, will have the name "<set-foo>".
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual val name: String
 
     /**

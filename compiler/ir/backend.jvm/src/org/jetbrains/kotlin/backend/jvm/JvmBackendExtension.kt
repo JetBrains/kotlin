@@ -5,20 +5,25 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import org.jetbrains.kotlin.backend.jvm.metadata.BuiltinsSerializer
 import org.jetbrains.kotlin.backend.jvm.metadata.DescriptorMetadataSerializer
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
+import org.jetbrains.kotlin.codegen.JvmOptionalAnnotationSerializerExtension
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.config.JvmAbiStability
+import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.serialization.DescriptorSerializer
+import org.jetbrains.kotlin.serialization.StringTableImpl
 import org.jetbrains.org.objectweb.asm.Type
 
 interface JvmBackendExtension {
     fun createSerializer(
         context: JvmBackendContext, klass: IrClass, type: Type, bindings: JvmSerializationBindings, parentSerializer: MetadataSerializer?
     ): MetadataSerializer
-
-    fun generateMetadataExtraFlags(abiStability: JvmAbiStability?): Int
 
     object Default : JvmBackendExtension {
         override fun createSerializer(
@@ -31,8 +36,27 @@ interface JvmBackendExtension {
             return DescriptorMetadataSerializer(context, klass, type, bindings, parentSerializer)
         }
 
-        override fun generateMetadataExtraFlags(abiStability: JvmAbiStability?): Int =
+        override fun createModuleMetadataSerializer(context: JvmBackendContext) = object : ModuleMetadataSerializer {
+            override fun serializeOptionalAnnotationClass(metadata: MetadataSource.Class, stringTable: StringTableImpl): ProtoBuf.Class {
+                require(metadata is DescriptorMetadataSource.Class)
+                return DescriptorSerializer.createTopLevel(
+                    JvmOptionalAnnotationSerializerExtension(stringTable), context.state.config.languageVersionSettings,
+                ).classProto(metadata.descriptor).build()
+            }
+        }
+
+        override fun createBuiltinsSerializer() = error("JVM backend builtins serialization is not supported in K1")
+
+        fun generateMetadataExtraFlags(abiStability: JvmAbiStability?): Int =
             JvmAnnotationNames.METADATA_JVM_IR_FLAG or
                     (if (abiStability != JvmAbiStability.UNSTABLE) JvmAnnotationNames.METADATA_JVM_IR_STABLE_ABI_FLAG else 0)
     }
+
+    fun createModuleMetadataSerializer(context: JvmBackendContext): ModuleMetadataSerializer
+
+    fun createBuiltinsSerializer(): BuiltinsSerializer
+}
+
+interface ModuleMetadataSerializer {
+    fun serializeOptionalAnnotationClass(metadata: MetadataSource.Class, stringTable: StringTableImpl): ProtoBuf.Class
 }

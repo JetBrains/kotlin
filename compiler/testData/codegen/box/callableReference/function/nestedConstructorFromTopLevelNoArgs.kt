@@ -4,4 +4,4 @@ class A {
     }
 }
 
-fun box() = (A::Nested)().result
+fun box() = (A::Nested).let { it() }.result

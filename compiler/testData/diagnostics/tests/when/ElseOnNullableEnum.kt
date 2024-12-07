@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-2902 Check for null should be required when match nullable enum element
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
@@ -21,6 +22,18 @@ fun withNull(e: E?) = when (e) {
     E.A -> 3
     E.B -> 4
     null -> null
+}
+
+fun withNullableNothingCheck(e: E?) = <!NO_ELSE_IN_WHEN!>when<!> (e) {
+    E.A -> 3
+    E.B -> 4
+    is Nothing? -> null
+}
+
+fun withWrongNullableNothingCheck(e: E?) = <!NO_ELSE_IN_WHEN!>when<!> (e) {
+    E.A -> 3
+    E.B -> 4
+    !is Nothing? -> null
 }
 
 fun nullableNothing(): Nothing? = null

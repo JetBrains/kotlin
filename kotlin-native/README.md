@@ -29,16 +29,29 @@ and [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html).
 
 On macOS Kotlin/Native requires Xcode 12.5 or newer.
 
+## Contributing
+
+You can contribute to Kotlin/Native in many ways.
+See the relevant page [on the website](https://kotlinlang.org/docs/contribute.html).
+
+See also the general [contribution guidelines](../docs/contributing.md) for this repository.
+
 ## Building from source
 
 Prerequisites:
 *   configure Kotlin build as [specified in main readme](../ReadMe.md#build-environment-requirements)
 *   at the root directory of the repository,
     create `local.properties` file with `kotlin.native.enabled=true` line
-*   macOS: Xcode 13.1 or newer
+*   macOS: Xcode 16.0 or newer
+    * on `MacOS aarch64`, CInterop functionality is available only using aarch64 JDK builds, e.g.
+[Eclipse Temurin 17.0.5](https://github.com/adoptium/temurin17-binaries/releases) or
+[Azul Zulu JDK8](https://www.azul.com/downloads/?version=java-8-lts&os=macos&architecture=arm-64-bit&package=jdk)
+
+      Note: using `JDK x86_64` on `MacOS aarch64` will cause `java.lang.UnsatisfiedLinkError` for `libclang.dylib`
 *   Linux: glibc 2.23 or newer
 *   Windows:
-    * Microsoft C++ build tools for Visual Studio 2019 14.29 or newer
+    * Microsoft C++ build tools for Visual Studio 2019 14.29.
+      It might work with other VS2019 versions, but this was never tested.
     * Windows SDK 10.0.18362.0 or newer
 
 The commands below should be run from either repository root or this (`kotlin-native/`) directory.
@@ -60,7 +73,7 @@ To run the full build:
     ./gradlew :kotlin-native:bundle
 
 This will produce compiler and libraries for all supported targets.
-The full build can take about an hour on a Macbook Pro.
+The full build can take about an hour on a Macbook Pro, but the duration can vary based on your system configuration.
 
 After any of the commands above, `./dist` will contain Kotlin/Native distribution.
 You can use it like a distribution of
@@ -84,8 +97,18 @@ For an optimized compilation, use `-opt`:
 To import a C or Objective-C library, use `./dist/bin/cinterop` tool.
 See the [documentation](https://kotlinlang.org/docs/native-c-interop.html) for more details.
 
+Note: on MacOS aarch64, [JDK aarch64 is required](./README.md#building-from-source)
+
+
 ### Running tests
 
 For tests, use `./gradlew :native:native.tests:codegenBoxTest` and `./gradlew :kotlin-native:backend.native:tests:run`.
 
+Note: on MacOS aarch64, for target-specific tests, [JDK aarch64 is required](./README.md#building-from-source)
+
 For more details see [Testing](HACKING.md#Testing).
+
+## More tips and tricks
+
+More tips and tricks that might be useful when developing or debugging Kotlin/Native
+can be found in [HACKING.md](HACKING.md)

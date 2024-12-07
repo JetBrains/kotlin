@@ -11,13 +11,13 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import kotlin.test.Test
 
-class CliCommonizerTest {
+public class CliCommonizerTest {
 
     @get:Rule
-    val temporaryOutputDirectory = TemporaryFolder()
+    public val temporaryOutputDirectory: TemporaryFolder = TemporaryFolder()
 
     @Test
-    fun invokeCliWithEmptyArguments() {
+    public fun invokeCliWithEmptyArguments() {
         val commonizer = CliCommonizer(this::class.java.classLoader)
         commonizer.commonizeLibraries(
             konanHome = konanHome,

@@ -70,16 +70,16 @@ private val pio4lo = xxx[15]
 private val T = xxx
 /* INDENT ON */
 
-internal fun __kernel_tan(x: Double, y: Double, iy: Int): Double {
-    var x: Double = x
-    var y: Double = y
-    var z: Double = 0.0
-    var r: Double = 0.0
-    var v: Double = 0.0
-    var w: Double = 0.0
-    var s: Double = 0.0
-    var ix: Int = 0
-    var hx: Int = 0
+internal fun __kernel_tan(_x: Double, _y: Double, iy: Int): Double {
+    var x: Double = _x
+    var y: Double = _y
+    var z: Double
+    var r: Double
+    var v: Double
+    var w: Double
+    var s: Double
+    var ix: Int
+    var hx: Int
 
     hx = __HI(x)        /* high word of x */
     ix = hx and 0x7fffffff            /* high word of |x| */
@@ -91,8 +91,8 @@ internal fun __kernel_tan(x: Double, y: Double, iy: Int): Double {
                 if (iy == 1) {
                     return x
                 } else {    /* compute -1 / (x+y) carefully */
-                    var a: Double = 0.0
-                    var t: Double = 0.0
+                    var a: Double
+                    var t: Double
                     w = x + y
                     z = w
                     z = doubleSetWord(d = z, lo = 0)
@@ -144,8 +144,8 @@ internal fun __kernel_tan(x: Double, y: Double, iy: Int): Double {
          * -1.0 / (x+r) here
          */
         /* compute -1.0 / (x+r) accurately */
-        var a: Double = 0.0
-        var t: Double = 0.0
+        var a: Double
+        var t: Double
         z = w
         z = doubleSetWord(d = z, lo = 0)
         v = r - (z - x)    /* z+v = r+x */

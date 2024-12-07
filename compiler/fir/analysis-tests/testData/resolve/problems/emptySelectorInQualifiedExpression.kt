@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(action: () -> Unit = {}): Int = 0
 
 fun usageResolved1() {

@@ -18,14 +18,14 @@ public open class Derived : Base {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@org.jspecify.nullness.NullMarked public open class IgnoreAnnotations {
+@org.jspecify.annotations.NullMarked public open class IgnoreAnnotations {
     public constructor IgnoreAnnotations()
-    @org.jspecify.nullness.Nullable public final var field: @org.jspecify.nullness.Nullable Derived?
+    @org.jspecify.annotations.Nullable public final var field: @org.jspecify.annotations.Nullable Derived?
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open fun everythingNotNullable(/*0*/ x: Derived): Derived
-    @org.jspecify.nullness.Nullable public open fun everythingNullable(/*0*/ @org.jspecify.nullness.Nullable x: @org.jspecify.nullness.Nullable Derived?): @org.jspecify.nullness.Nullable Derived?
-    @org.jspecify.nullness.NullnessUnspecified public open fun everythingUnknown(/*0*/ @org.jspecify.nullness.NullnessUnspecified x: @org.jspecify.nullness.NullnessUnspecified Derived!): @org.jspecify.nullness.NullnessUnspecified Derived!
-    @org.jspecify.nullness.Nullable public open fun foo(/*0*/ x: Derived, /*1*/ @org.jspecify.nullness.NullnessUnspecified y: @org.jspecify.nullness.NullnessUnspecified Base!): @org.jspecify.nullness.Nullable Derived?
+    @org.jspecify.annotations.Nullable public open fun everythingNullable(/*0*/ @org.jspecify.annotations.Nullable x: @org.jspecify.annotations.Nullable Derived?): @org.jspecify.annotations.Nullable Derived?
+    @org.jspecify.annotations.NullnessUnspecified public open fun everythingUnknown(/*0*/ @org.jspecify.annotations.NullnessUnspecified x: @org.jspecify.annotations.NullnessUnspecified Derived!): @org.jspecify.annotations.NullnessUnspecified Derived!
+    @org.jspecify.annotations.Nullable public open fun foo(/*0*/ x: Derived, /*1*/ @org.jspecify.annotations.NullnessUnspecified y: @org.jspecify.annotations.NullnessUnspecified Base!): @org.jspecify.annotations.Nullable Derived?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

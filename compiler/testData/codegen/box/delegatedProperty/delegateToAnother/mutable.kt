@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS
+
 class C(var x: String)
 
 var x = "fail"

@@ -1,31 +1,32 @@
 value class Test {
+  val x: Int
+    field = x
+    get
+
   constructor(x: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val x: Int
-    field = x
-    get
-
-  override fun toString(): String {
-    return "Test(" + "x=" + <this>.#x + ")"
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      other !is Test -> return false
+    }
+    val tmp_0: Test = other as Test
+    when {
+      EQEQ(arg0 = <this>.#x, arg1 = tmp_0.#x).not() -> return false
+    }
+    return true
   }
 
   override fun hashCode(): Int {
     return <this>.#x.hashCode()
   }
 
-  override operator fun equals(other: Any?): Boolean {
-    when {
-      other !is Test -> return false
-    }
-    val tmp0_other_with_cast: Test = other as Test
-    when {
-      EQEQ(arg0 = <this>.#x, arg1 = tmp0_other_with_cast.#x).not() -> return false
-    }
-    return true
+  override fun toString(): String {
+    return "Test(" + "x=" + <this>.#x + ")"
   }
 
 }
+

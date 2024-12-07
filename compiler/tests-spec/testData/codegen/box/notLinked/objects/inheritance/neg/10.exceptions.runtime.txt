@@ -1,2 +1,2 @@
 java.lang.ExceptionInInitializerError
-Foo$A.<init>(10.kt:13)
+Foo$A.<init>(10.kt:14)

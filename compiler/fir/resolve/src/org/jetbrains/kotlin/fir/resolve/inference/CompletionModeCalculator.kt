@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
-import org.jetbrains.kotlin.fir.resolve.calls.Candidate
-import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
+import org.jetbrains.kotlin.fir.extensions.originalCallDataForPluginRefinedCall
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.calls.ConePostponedResolvedAtom
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
@@ -21,18 +23,21 @@ import java.util.*
 
 fun Candidate.computeCompletionMode(
     components: InferenceComponents,
-    expectedType: FirTypeRef?,
+    resolutionMode: ResolutionMode,
     currentReturnType: ConeKotlinType?
 ): ConstraintSystemCompletionMode {
     return when {
-        // Presence of expected type means that we are trying to complete outermost call => completion mode should be full
-        expectedType != null -> ConstraintSystemCompletionMode.FULL
+        // Expected type is present or call is being resolved in independent context
+        resolutionMode.forceFullCompletion -> ConstraintSystemCompletionMode.FULL
 
         // This is questionable as null return type can be only for error call
         currentReturnType == null -> ConstraintSystemCompletionMode.PARTIAL
 
         // Full if return type for call has no type variables
         csBuilder.isProperType(currentReturnType) -> ConstraintSystemCompletionMode.FULL
+
+        // Plugins need fully complete calls. Calls that cannot be completed should not be modified, forcing completion will produce type inference error
+        currentReturnType.toRegularClassSymbol(components.session)?.fir?.originalCallDataForPluginRefinedCall != null -> ConstraintSystemCompletionMode.FULL
 
         else -> CalculatorForNestedCall(
             this, currentReturnType, csBuilder, components.trivialConstraintTypeInferenceOracle
@@ -57,10 +62,31 @@ private class CalculatorForNestedCall(
     private val variablesWithQueuedConstraints = mutableSetOf<TypeVariableMarker>()
     private val typesToProcess: Queue<KotlinTypeMarker> = ArrayDeque()
 
-    private val postponedAtoms: List<PostponedResolvedAtom> by lazy {
-        candidate.postponedAtoms.filterNot { it.analyzed }
+    private val postponedAtoms: List<ConePostponedResolvedAtom> by lazy {
+        ConstraintSystemCompleter.getOrderedNotAnalyzedPostponedArguments(candidate)
     }
 
+    /**
+     * Let's imagine we've got a call `foo(bar())` and currently we're about to compute the completion mode for `bar()`
+     * If it has a return type ReturnType<a_1,.., a_n>, let's compute a collection of pairs: (TypeVariable, Direction)
+     * where Direction is either TO_SUBTYPE or EQUALITY.
+     *
+     * Direction in a pair is equal to TO_SUBTYPE when the type variable might be only constrained with upper constraint
+     * when processing subtyping relation ReturnType<a_1, .., a_n> <: ExpectedType
+     *
+     * For example, for type T, it would be just [(T, TO_SUBTYPE)]
+     * For Out<T> --> [(T, TO_SUBTYPE)]
+     * For Triple<out X, in Y, Z> --> [(X, TO_SUBTYPE), (Y, EQUALITY), (Z, EQUALITY)]
+     *
+     * After that, for each variable, we check that if it either:
+     * - Has a lower proper constraint _and_ TO_SUBTYPE direction
+     * - Has at least one equals proper constraint
+     *
+     * If the condition is satisfied for all the pairs from the collection, we suggest FULL completion
+     *
+     * The intuition behind this is that if for some TV E, only E <: OtherType constraints might be added from the expected type,
+     * _and_ we've got lower constraint SomeLowerType <: E, it's safe just to fix E to SomeLowerType.
+     */
     fun computeCompletionMode(): ConstraintSystemCompletionMode = with(context) {
         // Add fixation directions for variables based on effective variance in type
         typesToProcess.add(returnType)
@@ -127,16 +153,13 @@ private class CalculatorForNestedCall(
     ) {
         val unwrappedType = type.lowerBoundIfFlexible()
         val typeArgumentsCount = unwrappedType.argumentsCount()
-        if (typeArgumentsCount > 0) {
+        if (typeArgumentsCount > 0 && !unwrappedType.isError() && typeArgumentsCount == unwrappedType.typeConstructor().parametersCount()) {
             for (position in 0 until typeArgumentsCount) {
                 val argument = unwrappedType.getArgument(position)
                 val parameter = unwrappedType.typeConstructor().getParameter(position)
 
-                if (argument.isStarProjection())
-                    continue
-
                 collectRequiredDirectionsForVariables(
-                    argument.getType(),
+                    argument.getType() ?: continue,
                     compositeVariance(outerVariance, argument, parameter),
                     fixationDirectionsCollector
                 )

@@ -1,0 +1,13 @@
+var field: kotlin.Int
+
+open fun bar(): kotlin.String!
+
+var foo: kotlin.Int
+
+open fun hello()
+
+open inner class InnerClass
+
+open class NestedClass
+
+constructor()

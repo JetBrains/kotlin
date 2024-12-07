@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+
 // FILE: implicitNotNullInDestructuringAssignment.kt
 
 // NB extension receiver is nullable

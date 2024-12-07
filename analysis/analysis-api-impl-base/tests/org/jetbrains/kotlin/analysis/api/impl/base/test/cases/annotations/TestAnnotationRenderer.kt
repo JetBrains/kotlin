@@ -5,16 +5,45 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.test.framework.utils.indented
+import org.jetbrains.kotlin.name.ClassId
 
 object TestAnnotationRenderer {
-    fun renderAnnotations(annotations: KtAnnotationsList) = buildString {
-        appendLine("annotations: [")
-        for (annotation in annotations.annotations) {
-            appendLine(DebugSymbolRenderer.renderAnnotationApplication(annotation).indented(indent = 2))
+    fun renderAnnotations(analysisSession: KaSession, annotations: KaAnnotationList) = buildString {
+        renderAnnotationsRecursive(analysisSession, annotations, currentMetaAnnotations = null, indent = 0)
+    }
+
+    fun renderAnnotationsWithMeta(analysisSession: KaSession, annotations: KaAnnotationList) = buildString {
+        renderAnnotationsRecursive(analysisSession, annotations, currentMetaAnnotations = setOf(), indent = 0)
+    }
+
+    private fun StringBuilder.renderAnnotationsRecursive(
+        analysisSession: KaSession,
+        annotations: KaAnnotationList,
+        currentMetaAnnotations: Set<ClassId>?,
+        indent: Int
+    ) {
+        appendLine("annotations: [".indented(indent))
+        for (annotation in annotations) {
+            appendLine(DebugSymbolRenderer().renderAnnotationApplication(analysisSession, annotation).indented(indent = indent + 2))
+            if (currentMetaAnnotations != null) {
+                val classId = annotation.classId ?: continue
+                if (classId in currentMetaAnnotations) {
+                    appendLine("<recursive meta-annotation ${classId}>".indented(indent + 4))
+                    continue
+                }
+
+                val metaAnnotations = with(analysisSession) { findClass(classId)?.annotations }
+                if (metaAnnotations != null) {
+                    renderAnnotationsRecursive(analysisSession, metaAnnotations, currentMetaAnnotations + classId, indent = indent + 4)
+                } else {
+                    appendLine("<unknown meta-annotation ${classId}>".indented(indent + 4))
+                }
+            }
         }
-        appendLine("]")
+        appendLine("]".indented(indent))
     }
 }

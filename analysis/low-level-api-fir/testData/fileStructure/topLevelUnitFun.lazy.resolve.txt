@@ -1,0 +1,4 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] topLevelUnitFun.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        <Unresolved name: println>#(String())
+    }

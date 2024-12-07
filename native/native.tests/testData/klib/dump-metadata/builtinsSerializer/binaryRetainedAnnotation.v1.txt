@@ -1,0 +1,61 @@
+library {
+  // module name: <binaryRetainedAnnotation.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+    // class name: test/Enum
+    // class name: test/Enum.ENTRY
+    // class name: test/Klass
+
+    // signature: test/A|null[0]
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.BINARY)
+    @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.VALUE_PARAMETER, kotlin/annotation/AnnotationTarget.TYPE, kotlin/annotation/AnnotationTarget.TYPE_PARAMETER])
+    public final annotation class test/A : kotlin/Annotation {
+
+      // signature: test/A.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: test/Enum|null[0]
+    public final enum class test/Enum : kotlin/Enum<test/Enum> {
+
+      // signature: test/Enum.<init>|-5645683436151566731[0]
+      private constructor()
+
+      // signature: test/Enum.ENTRY|null[0]
+      @test/A
+      ENTRY,
+
+      // has Enum.entries
+    }
+
+    // signature: test/Enum.ENTRY|null[0]
+    @test/A
+    public final enum entry test/Enum.ENTRY : test/Enum {
+    }
+
+    // signature: test/Klass|null[0]
+    @test/A
+    public final class test/Klass : kotlin/Any {
+
+      // signature: test/Klass.<init>|-5645683436151566731[0]
+      @test/A
+      public constructor()
+    }
+
+    package {
+
+      // signature: test/function|5623997416410866984[0]
+      @test/A
+      public final fun <@test/A T#0 /* T */> function(@test/A param: kotlin/Unit): @test/A kotlin/Unit
+
+      // signature: test/property|4634558160746314112[0]
+      @test/A
+      public final val property: kotlin/Unit
+        // signature: test/property.<get-property>|4838831487146901942[0]
+        public final get
+    }
+  }
+}

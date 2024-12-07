@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 class In<in T>() {
     fun f(t : T) : Unit {}
@@ -19,30 +20,30 @@ class Inv<T>() {
 
 fun testInOut() {
     In<String>().f("1");
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> In<in String>).f("1")
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> In<<!REDUNDANT_PROJECTION!>in<!> String>).f("1")
     (null <!CAST_NEVER_SUCCEEDS!>as<!> In<*>).<!NONE_APPLICABLE!>f<!>("1") // Wrong Arg
 
     In<String>().f(1);
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> In<in String>).f(1)
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> In<<!REDUNDANT_PROJECTION!>in<!> String>).f(1)
     (null <!CAST_NEVER_SUCCEEDS!>as<!> In<*>).f(1);
 
     Out<Int>().f(1)
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Out<out Int>).f(1)
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Out<<!REDUNDANT_PROJECTION!>out<!> Int>).f(1)
     (null <!CAST_NEVER_SUCCEEDS!>as<!> Out<*>).f(1)
 
     Out<Int>().f()
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Out<out Int>).f()
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Out<<!REDUNDANT_PROJECTION!>out<!> Int>).f()
     (null <!CAST_NEVER_SUCCEEDS!>as<!> Out<*>).f()
 
     Inv<Int>().f(1)
     (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<in Int>).f(1)
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).f(<!ARGUMENT_TYPE_MISMATCH!>1<!>) // !!
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).f(<!ARGUMENT_TYPE_MISMATCH!>1<!>) // !!
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).f(<!MEMBER_PROJECTED_OUT!>1<!>) // !!
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).f(<!MEMBER_PROJECTED_OUT!>1<!>) // !!
 
     Inv<Int>().inf(1)
     (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<in Int>).inf(1)
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).inf(<!ARGUMENT_TYPE_MISMATCH!>1<!>) // !!
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).inf(<!ARGUMENT_TYPE_MISMATCH!>1<!>) // !!
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).inf(<!MEMBER_PROJECTED_OUT!>1<!>) // !!
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).inf(<!MEMBER_PROJECTED_OUT!>1<!>) // !!
 
     Inv<Int>().outf()
     checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>(null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<in Int>).outf()<!>) // Type mismatch

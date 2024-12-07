@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 typealias MyT<X> = HashMap<X, Int>
 
 fun <X> MyT<X>.add(x: X, y: Int) {}

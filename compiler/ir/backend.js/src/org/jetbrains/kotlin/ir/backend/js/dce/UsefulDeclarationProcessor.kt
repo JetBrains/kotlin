@@ -15,18 +15,20 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import java.io.File
 import java.util.*
 
 abstract class UsefulDeclarationProcessor(
     private val printReachabilityInfo: Boolean,
-    protected val removeUnusedAssociatedObjects: Boolean
+    protected val removeUnusedAssociatedObjects: Boolean,
+    private val dumpReachabilityInfoToFile: String? = null
 ) {
     abstract val context: JsCommonBackendContext
 
     protected fun getMethodOfAny(name: String): IrDeclaration =
         context.irBuiltIns.anyClass.owner.declarations.filterIsInstance<IrFunction>().single { it.name.asString() == name }
 
-    protected val toStringMethod: IrDeclaration by lazy { getMethodOfAny("toString") }
+    protected val toStringMethod: IrDeclaration by lazy(LazyThreadSafetyMode.NONE) { getMethodOfAny("toString") }
     protected abstract fun isExported(declaration: IrDeclaration): Boolean
     protected abstract val bodyVisitor: BodyVisitorBase
 
@@ -50,10 +52,9 @@ abstract class UsefulDeclarationProcessor(
             expression.symbol.owner.enqueue(data, "raw function access")
         }
 
-        override fun visitBlock(expression: IrBlock, data: IrDeclaration) {
-            super.visitBlock(expression, data)
-            if (expression !is IrReturnableBlock) return
-            expression.inlineFunctionSymbol?.owner?.enqueue(data, "inline function usage")
+        override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: IrDeclaration) {
+            super.visitInlinedFunctionBlock(inlinedBlock, data)
+            inlinedBlock.inlineFunctionSymbol?.owner?.addToUsefulPolyfilledDeclarations()
         }
 
         override fun visitFieldAccess(expression: IrFieldAccessExpression, data: IrDeclaration) {
@@ -79,20 +80,15 @@ abstract class UsefulDeclarationProcessor(
     private fun addReachabilityInfoIfNeeded(
         from: IrDeclaration,
         to: IrDeclaration,
-        description: String?,
+        description: String,
         isContagiousOverridableDeclaration: Boolean,
     ) {
-        if (!printReachabilityInfo) return
-        val fromFqn = (from as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString() ?: "<unknown>"
-        val toFqn = (to as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString() ?: "<unknown>"
-        val comment = (description ?: "") + (if (isContagiousOverridableDeclaration) "[CONTAGIOUS!]" else "")
-        val info = "\"$fromFqn\" -> \"$toFqn\"" + (if (comment.isBlank()) "" else " // $comment")
-        reachabilityInfo.add(info)
+        reachabilityInfos?.add(ReachabilityInfo(from, to, description, isContagiousOverridableDeclaration))
     }
 
     protected fun IrDeclaration.enqueue(
         from: IrDeclaration,
-        description: String?,
+        description: String,
         isContagious: Boolean = true,
     ) {
         // Ignore non-external IrProperty because we don't want to generate code for them and codegen doesn't support it.
@@ -105,12 +101,20 @@ abstract class UsefulDeclarationProcessor(
         addReachabilityInfoIfNeeded(from, this, description, isContagiousOverridableDeclaration)
 
         if (isContagiousOverridableDeclaration) {
-            contagiousReachableDeclarations.add(this as IrOverridableDeclaration<*>)
+            contagiousReachableDeclarations.add(this)
         }
 
-        if (this !in result) {
+        if (!isReachable()) {
             result.add(this)
             queue.addLast(this)
+
+            addToUsefulPolyfilledDeclarations()
+        }
+    }
+
+    private fun IrDeclaration.addToUsefulPolyfilledDeclarations() {
+        if (hasJsPolyfill() && this !in usefulPolyfilledDeclarations) {
+            usefulPolyfilledDeclarations.add(this)
         }
     }
 
@@ -122,18 +126,23 @@ abstract class UsefulDeclarationProcessor(
     //
     // The collection must be a subset of [result] set.
     private val contagiousReachableDeclarations = hashSetOf<IrOverridableDeclaration<*>>()
-    protected val constructedClasses = hashSetOf<IrClass>()
-    private val reachabilityInfo: MutableSet<String> = if (printReachabilityInfo) linkedSetOf() else Collections.emptySet()
+    protected val constructedClasses = linkedSetOf<IrClass>()
+    private val reachabilityInfos =
+        if (printReachabilityInfo || dumpReachabilityInfoToFile != null) mutableListOf<ReachabilityInfo>() else null
     private val queue = ArrayDeque<IrDeclaration>()
     protected val result = hashSetOf<IrDeclaration>()
-    protected val classesWithObjectAssociations = hashSetOf<IrClass>()
+    protected val classesWithObjectAssociations = linkedSetOf<IrClass>()
+
+    val usefulPolyfilledDeclarations = hashSetOf<IrDeclaration>()
+
+    protected open fun addConstructedClass(irClass: IrClass) {
+        constructedClasses += irClass
+    }
 
     protected open fun processField(irField: IrField): Unit = Unit
 
     protected open fun processClass(irClass: IrClass) {
-        irClass.superTypes.forEach {
-            (it.classifierOrNull as? IrClassSymbol)?.owner?.enqueue(irClass, "superTypes")
-        }
+        processSuperTypes(irClass)
 
         if (irClass.isObject && isExported(irClass)) {
             context.mapping.objectToGetInstanceFunction[irClass]
@@ -149,9 +158,17 @@ abstract class UsefulDeclarationProcessor(
         }
     }
 
+    protected open fun processSuperTypes(irClass: IrClass) {
+        irClass.superTypes.forEach {
+            (it.classifierOrNull as? IrClassSymbol)?.owner?.enqueue(irClass, "superTypes")
+        }
+    }
+
     protected open fun processSimpleFunction(irFunction: IrSimpleFunction) {
         if (irFunction.isFakeOverride) {
-            irFunction.resolveFakeOverride()?.enqueue(irFunction, "real overridden fun", isContagious = false)
+            irFunction.overriddenSymbols.forEach {
+                it.owner.enqueue(irFunction, "overridden by a useful fake override", isContagious = false)
+            }
         }
     }
 
@@ -159,12 +176,12 @@ abstract class UsefulDeclarationProcessor(
         // Collect instantiated classes.
         irConstructor.constructedClass.let {
             it.enqueue(irConstructor, "constructed class")
-            constructedClasses += it
+            addConstructedClass(it)
         }
     }
 
     protected open fun processConstructedClassDeclaration(declaration: IrDeclaration) {
-        if (declaration in result) return
+        if (declaration.isReachable()) return
 
         fun IrOverridableDeclaration<*>.findOverriddenContagiousDeclaration(): IrOverridableDeclaration<*>? {
             for (overriddenSymbol in this.overriddenSymbols) {
@@ -185,6 +202,10 @@ abstract class UsefulDeclarationProcessor(
             }
         }
 
+        if (declaration is IrSimpleFunction && declaration.isAccessorForOverriddenExternalField()) {
+            declaration.enqueue(declaration.correspondingPropertySymbol!!.owner, "overrides external property")
+        }
+
         // A hack to enforce property lowering.
         // Until a getter is accessed it doesn't get moved to the declaration list.
         if (declaration is IrProperty) {
@@ -197,9 +218,20 @@ abstract class UsefulDeclarationProcessor(
         }
     }
 
+    protected fun IrSimpleFunction.isAccessorForOverriddenExternalField(): Boolean {
+        return correspondingPropertySymbol?.owner?.isExternalOrOverriddenExternal() ?: false
+    }
+
+    protected fun IrProperty.isExternalOrOverriddenExternal(): Boolean {
+        return isEffectivelyExternal() || isOverriddenExternal()
+    }
+
+    protected fun IrProperty.isOverriddenExternal(): Boolean =
+        overriddenSymbols.any { it.owner.isExternalOrOverriddenExternal() }
+
     protected open fun handleAssociatedObjects(): Unit = Unit
 
-    fun collectDeclarations(rootDeclarations: Iterable<IrDeclaration>): Set<IrDeclaration> {
+    fun collectDeclarations(rootDeclarations: Iterable<IrDeclaration>, dceDumpNameCache: DceDumpNameCache): Set<IrDeclaration> {
 
         rootDeclarations.forEach {
             it.enqueue(it, "<ROOT>")
@@ -236,10 +268,76 @@ abstract class UsefulDeclarationProcessor(
             }
         }
 
-        if (printReachabilityInfo) {
-            reachabilityInfo.forEach(::println)
+        if (reachabilityInfos != null) {
+            if (printReachabilityInfo) {
+                println(transformToDotLikeString(reachabilityInfos, dceDumpNameCache))
+            }
+
+            if (dumpReachabilityInfoToFile != null) {
+                val out = File(dumpReachabilityInfoToFile)
+                val stringify = when (out.extension) {
+                    "json" -> ::transformToJsonString
+                    "js" -> ::transformToJsConstDeclaration
+                    else -> ::transformToDotLikeString
+                }
+
+                out.writeText(stringify(reachabilityInfos, dceDumpNameCache))
+            }
         }
 
         return result
     }
+
+    protected fun IrDeclaration.isReachable(): Boolean = this in result
+}
+
+private data class ReachabilityInfo(
+    val source: IrDeclaration,
+    val target: IrDeclaration,
+    val description: String,
+    val isTargetContagious: Boolean
+)
+
+private fun transformToStringBy(
+    reachabilityInfos: List<ReachabilityInfo>,
+    separator: String,
+    dceDumpNameCache: DceDumpNameCache,
+    transformer: (sourceFqn: String, targetFqn: String, description: String, isTargetContagious: Boolean) -> String,
+): String {
+    return reachabilityInfos
+        .map {
+            transformer(
+                dceDumpNameCache.getOrPut(it.source),
+                dceDumpNameCache.getOrPut(it.target),
+                it.description,
+                it.isTargetContagious
+            )
+        }
+        .distinct()
+        .joinToString(separator)
+}
+
+private fun transformToDotLikeString(reachabilityInfos: List<ReachabilityInfo>, dceDumpNameCache: DceDumpNameCache): String {
+    return transformToStringBy(reachabilityInfos, "\n", dceDumpNameCache) { sourceFqn, targetFqn, description, isTargetContagious ->
+        val comment = description + (if (isTargetContagious) "[CONTAGIOUS!]" else "")
+        val info = "\"$sourceFqn\" -> \"$targetFqn\"" + (if (comment.isBlank()) "" else " // $comment")
+
+        info
+    }
+}
+
+private fun transformToJsonString(reachabilityInfos: List<ReachabilityInfo>, dceDumpNameCache: DceDumpNameCache): String {
+    return "[\n" + transformToStringBy(reachabilityInfos, ",\n", dceDumpNameCache) { sourceFqn, targetFqn, description, isTargetContagious ->
+        """
+        |    {
+        |        "source" : "${sourceFqn.removeQuotes()}",
+        |        "target" : "${targetFqn.removeQuotes()}",
+        |        "description" : "${description.removeQuotes()}",
+        |        "isTargetContagious" : $isTargetContagious
+        |    }""".trimMargin()
+    } + "\n]"
+}
+
+private fun transformToJsConstDeclaration(reachabilityInfos: List<ReachabilityInfo>, dceDumpNameCache: DceDumpNameCache): String {
+    return "export const kotlinReachabilityInfos = " + transformToJsonString(reachabilityInfos, dceDumpNameCache) + ";"
 }

@@ -1,0 +1,146 @@
+A.class:
+  KtClass:
+    line: 4
+    name: A
+    qualifier: A
+    light: KtLightClassForDecompiledDeclaration
+      name: A
+      qualifier: A
+      superTypes: [
+        PsiType:Object
+      ]
+      superClass: ClsClassImpl: Object (java.lang.Object)
+      interfaces: []
+      supers: [
+        ClsClassImpl: Object (java.lang.Object)
+      ]
+
+  KtClass:
+    line: 5
+    name: NestedInA
+    qualifier: A.NestedInA
+    light: KtLightClassForDecompiledDeclaration
+      name: NestedInA
+      qualifier: A.NestedInA
+      superTypes: [
+        PsiType:Object
+      ]
+      superClass: ClsClassImpl: Object (java.lang.Object)
+      interfaces: []
+      supers: [
+        ClsClassImpl: Object (java.lang.Object)
+      ]
+
+  KtClass:
+    line: 6
+    name: NestedInNestedInA
+    qualifier: A.NestedInA.NestedInNestedInA
+    light: KtLightClassForDecompiledDeclaration
+      name: NestedInNestedInA
+      qualifier: A.NestedInA.NestedInNestedInA
+      superTypes: [
+        PsiType:Object
+      ]
+      superClass: ClsClassImpl: Object (java.lang.Object)
+      interfaces: []
+      supers: [
+        ClsClassImpl: Object (java.lang.Object)
+      ]
+
+  KtClass:
+    line: 9
+    name: InnerInNestedInA
+    qualifier: A.NestedInA.InnerInNestedInA
+    light: KtLightClassForDecompiledDeclaration
+      name: InnerInNestedInA
+      qualifier: A.NestedInA.InnerInNestedInA
+      superTypes: [
+        PsiType:Object
+      ]
+      superClass: ClsClassImpl: Object (java.lang.Object)
+      interfaces: []
+      supers: [
+        ClsClassImpl: Object (java.lang.Object)
+      ]
+
+  KtClass:
+    line: 13
+    name: InnerInA
+    qualifier: A.InnerInA
+    light: KtLightClassForDecompiledDeclaration
+      name: InnerInA
+      qualifier: A.InnerInA
+      superTypes: [
+        PsiType:Object
+      ]
+      superClass: ClsClassImpl: Object (java.lang.Object)
+      interfaces: []
+      supers: [
+        ClsClassImpl: Object (java.lang.Object)
+      ]
+
+  KtClass:
+    line: 14
+    name: InnerInInnerInA
+    qualifier: A.InnerInA.InnerInInnerInA
+    light: KtLightClassForDecompiledDeclaration
+      name: InnerInInnerInA
+      qualifier: A.InnerInA.InnerInInnerInA
+      superTypes: [
+        PsiType:Object
+      ]
+      superClass: ClsClassImpl: Object (java.lang.Object)
+      interfaces: []
+      supers: [
+        ClsClassImpl: Object (java.lang.Object)
+      ]
+
+B.class:
+  KtClass:
+    line: 4
+    name: B
+    qualifier: B
+    light: KtLightClassForDecompiledDeclaration
+      name: B
+      qualifier: B
+      superTypes: [
+        PsiType:A
+      ]
+      superClass: KtLightClassForDecompiledDeclaration: A (A)
+      interfaces: []
+      supers: [
+        KtLightClassForDecompiledDeclaration: A (A)
+      ]
+
+  KtClass:
+    line: 5
+    name: NestedInB
+    qualifier: B.NestedInB
+    light: KtLightClassForDecompiledDeclaration
+      name: NestedInB
+      qualifier: B.NestedInB
+      superTypes: [
+        PsiType:NestedInNestedInA
+      ]
+      superClass: KtLightClassForDecompiledDeclaration: NestedInNestedInA (A.NestedInA.NestedInNestedInA)
+      interfaces: []
+      supers: [
+        KtLightClassForDecompiledDeclaration: NestedInNestedInA (A.NestedInA.NestedInNestedInA)
+      ]
+
+  KtClass:
+    line: 8
+    name: InnerInB
+    qualifier: B.InnerInB
+    light: KtLightClassForDecompiledDeclaration
+      name: InnerInB
+      qualifier: B.InnerInB
+      superTypes: [
+        PsiType:Object
+      ]
+      superClass: ClsClassImpl: Object (java.lang.Object)
+      interfaces: []
+      supers: [
+        ClsClassImpl: Object (java.lang.Object)
+      ]
+

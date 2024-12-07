@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 interface A {
     fun visit(a:Int, b:String="") : String = b + a

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
@@ -14,26 +15,29 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
+import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.coneTypeOrNull
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 
-fun FirVariable.toQualifiedAccess(): FirQualifiedAccessExpression = buildPropertyAccessExpression {
-    val fakeSource = this@toQualifiedAccess.source?.fakeElement(KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
+fun FirVariable.toQualifiedAccess(
+    fakeSource: KtSourceElement? = source?.fakeElement(KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess),
+    typeRef: FirTypeRef = returnTypeRef
+): FirQualifiedAccessExpression = buildPropertyAccessExpression {
     source = fakeSource
     calleeReference = buildResolvedNamedReference {
         source = fakeSource
         name = this@toQualifiedAccess.name
         resolvedSymbol = this@toQualifiedAccess.symbol
     }
-    typeRef = this@toQualifiedAccess.returnTypeRef
+    this.coneTypeOrNull = typeRef.coneTypeOrNull
 }
 
 fun generateTemporaryVariable(
@@ -42,21 +46,19 @@ fun generateTemporaryVariable(
     name: Name,
     initializer: FirExpression,
     typeRef: FirTypeRef? = null,
-    extractedAnnotations: Collection<FirAnnotation>? = null,
+    extractedAnnotations: Collection<FirAnnotation>? = null
 ): FirProperty =
     buildProperty {
         this.source = source
         this.moduleData = moduleData
         origin = FirDeclarationOrigin.Source
-        returnTypeRef = typeRef ?: buildImplicitTypeRef {
-            this.source = source
-        }
+        returnTypeRef = typeRef ?: FirImplicitTypeRefImplWithoutSource
         this.name = name
         this.initializer = initializer
         symbol = FirPropertySymbol(name)
         isVar = false
         isLocal = true
-        status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+        status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
         if (extractedAnnotations != null) {
             // LT extracts annotations ahead.
             // PSI extracts annotations on demand. Use a similar util in [PsiConversionUtils]
@@ -64,18 +66,38 @@ fun generateTemporaryVariable(
         }
     }
 
-fun generateTemporaryVariable(
-    moduleData: FirModuleData,
+fun generateExplicitReceiverTemporaryVariable(
+    session: FirSession,
+    expression: FirExpression,
     source: KtSourceElement?,
-    specialName: String,
-    initializer: FirExpression,
-    extractedAnnotations: Collection<FirAnnotation>? = null,
-): FirProperty =
-    generateTemporaryVariable(
-        moduleData,
-        source,
-        Name.special("<$specialName>"),
-        initializer,
-        null,
-        extractedAnnotations,
-    )
+): FirProperty? {
+    return (expression as? FirQualifiedAccessExpression)?.explicitReceiver
+        ?.takeIf {
+            // If a receiver x exists, write it to a temporary variable to prevent multiple calls to it.
+            // Exceptions: ResolvedQualifiers, ThisReceivers, and SuperReference as they can't have side effects when called.
+            it !is FirResolvedQualifier
+                    && it !is FirThisReceiverExpression
+                    && !(it is FirQualifiedAccessExpression && it.calleeReference is FirSuperReference)
+        }
+        ?.let { receiver ->
+            // val <receiver> = x
+            @OptIn(UnresolvedExpressionTypeAccess::class)
+            generateTemporaryVariable(
+                moduleData = session.moduleData,
+                source = source,
+                name = SpecialNames.RECEIVER,
+                initializer = receiver,
+                typeRef = receiver.coneTypeOrNull?.toFirResolvedTypeRef(source)
+            ).also { property ->
+                // Change the expression from x.a to <receiver>.a
+                val newReceiverAccess = property.toQualifiedAccess(fakeSource = receiver.source)
+
+                if (expression.explicitReceiver == expression.dispatchReceiver) {
+                    expression.replaceDispatchReceiver(newReceiverAccess)
+                } else {
+                    expression.replaceExtensionReceiver(newReceiverAccess)
+                }
+                expression.replaceExplicitReceiver(newReceiverAccess)
+            }
+        }
+}

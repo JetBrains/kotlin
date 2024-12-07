@@ -12,8 +12,15 @@ public object DelegateTest {
 public object DelegateTest2 {
     private constructor DelegateTest2()
     public final val f: kotlin.String
+    public final val i1: kotlin.Int
+    public final val i2: kotlin.Int
+    public final val i3: kotlin.Int
+    public final val i4: kotlin.Int
+    public final val i5: kotlin.Int
+    public final var intResult: kotlin.Int
     public final var result: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

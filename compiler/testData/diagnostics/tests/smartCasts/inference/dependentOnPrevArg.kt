@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 package a
 
 fun <T> foo(u: T, v: T): T = u

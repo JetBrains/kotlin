@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS
-
 interface A {
     private fun foo() = "OK"
 

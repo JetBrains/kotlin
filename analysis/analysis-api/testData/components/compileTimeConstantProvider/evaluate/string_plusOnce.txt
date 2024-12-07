@@ -1,0 +1,3 @@
+expression: "nananananananana " + "batman"
+constant: "nananananananana batman"
+constantValueKind: StringValue

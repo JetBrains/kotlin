@@ -5,16 +5,18 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
-import org.jetbrains.kotlin.codegen.DefaultParameterValueSubstitutor
 import org.jetbrains.kotlin.codegen.getClassFiles
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.CHECK_ASM_LIKE_INSTRUCTIONS
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.CURIOUS_ABOUT
-import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.IR_DIFFERENCE
+import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.FIR_DIFFERENCE
+import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.INLINE_SCOPES_DIFFERENCE
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.LOCAL_VARIABLE_TABLE
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.RENDER_ANNOTATIONS
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.USE_INLINE_SCOPES_NUMBERS
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -34,6 +36,8 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
     companion object {
         const val DUMP_EXTENSION = "asm.txt"
         const val IR_DUMP_EXTENSION = "asm.ir.txt"
+        const val INLINE_SCOPES_DUMP_EXTENSION = "asm.scopes.txt"
+        const val FIR_DUMP_EXTENSION = "asm.fir.txt"
         const val LINE_SEPARATOR = "\n"
 
         val IGNORED_CLASS_VISIBLE_ANNOTATIONS = setOf(
@@ -267,12 +271,7 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
     }
 
     private fun getParameterName(index: Int, method: MethodNode): String {
-        val localVariableIndexOffset = when {
-            (method.access and Opcodes.ACC_STATIC) != 0 -> 0
-            method.isJvmOverloadsGenerated() -> 0
-            else -> 1
-        }
-
+        val localVariableIndexOffset = if ((method.access and Opcodes.ACC_STATIC) != 0) 0 else 1
         val actualIndex = index + localVariableIndexOffset
         val localVariables = method.localVariables
         return localVariables?.firstOrNull {
@@ -370,37 +369,38 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
         }
     }
 
-    private fun MethodNode.isJvmOverloadsGenerated(): Boolean {
-        fun AnnotationNode.isJvmOverloadsGenerated() =
-            this.desc == DefaultParameterValueSubstitutor.ANNOTATION_TYPE_DESCRIPTOR_FOR_JVM_OVERLOADS_GENERATED_METHODS
-
-        return (visibleAnnotations?.any { it.isJvmOverloadsGenerated() } ?: false)
-                || (invisibleAnnotations?.any { it.isJvmOverloadsGenerated() } ?: false)
-    }
-
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        if (baseDumper.isEmpty()) return
+        val firDifference = FIR_DIFFERENCE in testServices.moduleStructure.allDirectives
+        val inlineScopesDifference = INLINE_SCOPES_DIFFERENCE in testServices.moduleStructure.allDirectives
 
-        val irDifference = IR_DIFFERENCE in testServices.moduleStructure.allDirectives
+        val firstModule = testServices.moduleStructure.modules.first()
 
-        val extension = when (irDifference) {
-            false -> DUMP_EXTENSION
-            true -> when (testServices.moduleStructure.modules.first().targetBackend?.isIR) {
-                true -> IR_DUMP_EXTENSION
-                else -> DUMP_EXTENSION
-            }
+        val inlineScopesNumbersEnabled = firstModule.directives.contains(USE_INLINE_SCOPES_NUMBERS)
+        val extension = when {
+            inlineScopesNumbersEnabled && inlineScopesDifference ->
+                INLINE_SCOPES_DUMP_EXTENSION
+            firDifference && firstModule.frontendKind == FrontendKinds.FIR ->
+                FIR_DUMP_EXTENSION
+            else ->
+                DUMP_EXTENSION
         }
 
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         val file = testDataFile.withExtension(extension)
+
+        if (baseDumper.isEmpty()) {
+            assertions.assertFileDoesntExist(file, CHECK_ASM_LIKE_INSTRUCTIONS)
+            return
+        }
+
         assertions.assertEqualsToFile(file, baseDumper.generateResultingDump())
 
-        if (irDifference) {
-            val noIrDump = testDataFile.withExtension(DUMP_EXTENSION)
+        if (firDifference) {
             val irDump = testDataFile.withExtension(IR_DUMP_EXTENSION)
-            if (noIrDump.exists() && irDump.exists()) {
-                assertions.assertFalse(noIrDump.readText().trim() == irDump.readText().trim()) {
-                    "Dumps for IR backend and classic backend are identical. Please remove IR_DIFFERENCE directive and ${irDump.name} file"
+            val firDump = testDataFile.withExtension(FIR_DUMP_EXTENSION)
+            if (irDump.exists() && firDump.exists()) {
+                assertions.assertFalse(irDump.readText().trim() == firDump.readText().trim()) {
+                    "Dumps for classic frontend and FIR are identical. Please remove $FIR_DIFFERENCE directive and ${firDump.name} file"
                 }
             }
         }

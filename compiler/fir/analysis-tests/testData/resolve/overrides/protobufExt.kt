@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface Ext<M : Message<M>, T>
 interface Message<M : Message<M>> {
     fun <T> ext(e: Ext<M, T>): T

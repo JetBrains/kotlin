@@ -1,1 +1,1 @@
-interface A : suspend () -> Unit
+value class Holder<T>(val value: T)

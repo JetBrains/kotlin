@@ -1,20 +1,14 @@
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.pill.PillExtension
 
 plugins {
     java
     kotlin("jvm")
-    id("jps-compatible")
-}
-
-pill {
-    variant = PillExtension.Variant.FULL
 }
 
 dependencies {
     api(kotlinStdlib())
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    compileOnly(libs.intellij.asm)
 }
 
 sourceSets {

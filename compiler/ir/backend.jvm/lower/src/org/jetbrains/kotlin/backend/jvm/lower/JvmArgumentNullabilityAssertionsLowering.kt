@@ -7,36 +7,36 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.SpecialBridgeMethods
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.hasPlatformDependent
+import org.jetbrains.kotlin.backend.jvm.lower.JvmArgumentNullabilityAssertionsLowering.AssertionScope
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
-val jvmArgumentNullabilityAssertions = makeIrFilePhase(
-    ::JvmArgumentNullabilityAssertionsLowering,
+/**
+ * Transforms nullability assertions on arguments according to the compiler settings.
+ */
+@PhaseDescription(
     name = "ArgumentNullabilityAssertions",
-    description = "Transform nullability assertions on arguments according to the compiler settings",
-    // jvmStringConcatenationLowering may remove IMPLICIT_NOTNULL casts.
-    prerequisite = setOf(jvmStringConcatenationLowering)
+    // JvmStringConcatenationLowering may remove IMPLICIT_NOTNULL casts.
+    prerequisite = [JvmStringConcatenationLowering::class]
 )
+internal class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContext) : FileLoweringPass,
+    IrTransformer<AssertionScope>() {
 
-private enum class AssertionScope {
-    Enabled, Disabled
-}
+    enum class AssertionScope {
+        Enabled, Disabled
+    }
 
-private class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContext) : FileLoweringPass,
-    IrElementTransformer<AssertionScope> {
-
-    private val isWithUnifiedNullChecks = context.state.unifiedNullChecks
-    private val isCallAssertionsDisabled = context.state.isCallAssertionsDisabled
-    private val isReceiverAssertionsDisabled = context.state.isReceiverAssertionsDisabled
+    private val isWithUnifiedNullChecks = context.config.unifiedNullChecks
+    private val isCallAssertionsDisabled = context.config.isCallAssertionsDisabled
+    private val isReceiverAssertionsDisabled = context.config.isReceiverAssertionsDisabled
 
     private val specialBridgeMethods = SpecialBridgeMethods(context)
 
@@ -92,7 +92,7 @@ private class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContex
     }
 
     private fun isCallToMethodWithTypeCheckBarrier(expression: IrMemberAccessExpression<*>): Boolean =
-        expression.symbol.owner.safeAs<IrSimpleFunction>()
+        (expression.symbol.owner as? IrSimpleFunction)
             ?.let {
                 val bridgeInfo = specialBridgeMethods.findSpecialWithOverride(it, includeSelf = true)
                 // The JVM BE adds null checks around platform dependent special bridge methods (Map.getOrDefault and the version of

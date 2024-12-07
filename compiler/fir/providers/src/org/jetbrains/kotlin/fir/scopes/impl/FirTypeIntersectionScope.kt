@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -16,13 +17,10 @@ class FirTypeIntersectionScope private constructor(
     session: FirSession,
     overrideChecker: FirOverrideChecker,
     private val scopes: List<FirTypeScope>,
-    dispatchReceiverType: ConeSimpleKotlinType,
+    private val dispatchReceiverType: ConeSimpleKotlinType,
 ) : AbstractFirOverrideScope(session, overrideChecker) {
-    private val intersectionContext = FirTypeIntersectionScopeContext(session, overrideChecker, scopes, dispatchReceiverType)
-
-    private val absentFunctions: MutableSet<Name> = mutableSetOf()
-    private val absentProperties: MutableSet<Name> = mutableSetOf()
-    private val absentClassifiers: MutableSet<Name> = mutableSetOf()
+    private val intersectionContext =
+        FirTypeIntersectionScopeContext(session, overrideChecker, scopes, dispatchReceiverType, forClassUseSiteScope = false)
 
     private val overriddenSymbols: MutableMap<FirCallableSymbol<*>, Collection<MemberWithBaseScope<FirCallableSymbol<*>>>> = mutableMapOf()
 
@@ -30,30 +28,28 @@ class FirTypeIntersectionScope private constructor(
         scopes.flatMapTo(mutableSetOf()) { it.getCallableNames() }
     }
 
+    private val classifiersNamesCached by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        scopes.flatMapTo(hashSetOf()) { it.getClassifierNames() }
+    }
+
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        processCallablesByName(name, processor, absentFunctions, FirScope::processFunctionsByName)
+        // Important optimization: avoid creating cache keys for names that are definitely absent
+        if (name !in getCallableNames()) return
+        processCallablesByName(name, processor, FirScope::processFunctionsByName)
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
-        processCallablesByName(name, processor, absentProperties, FirScope::processPropertiesByName)
+        // Important optimization: avoid creating cache keys for names that are definitely absent
+        if (name !in getCallableNames()) return
+        processCallablesByName(name, processor, FirScope::processPropertiesByName)
     }
 
     private inline fun <D : FirCallableSymbol<*>> processCallablesByName(
         name: Name,
         noinline processor: (D) -> Unit,
-        absentNames: MutableSet<Name>,
         processCallables: FirScope.(Name, (D) -> Unit) -> Unit
     ) {
-        if (name in absentNames) {
-            return
-        }
-
         val callablesWithOverridden = intersectionContext.collectIntersectionResultsForCallables(name, processCallables)
-
-        if (callablesWithOverridden.isEmpty()) {
-            absentNames.add(name)
-            return
-        }
 
         for (resultOfIntersection in callablesWithOverridden) {
             val symbol = resultOfIntersection.chosenSymbol
@@ -63,7 +59,9 @@ class FirTypeIntersectionScope private constructor(
     }
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
-        intersectionContext.processClassifiersByNameWithSubstitution(name, absentClassifiers, processor)
+        // Important optimization: avoid creating cache keys for names that are definitely absent
+        if (name !in getClassifierNames()) return
+        intersectionContext.processClassifiersByNameWithSubstitution(name, processor)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -111,12 +109,20 @@ class FirTypeIntersectionScope private constructor(
 
     override fun getCallableNames(): Set<Name> = callableNamesCached
 
-    override fun getClassifierNames(): Set<Name> {
-        return scopes.flatMapTo(hashSetOf()) { it.getClassifierNames() }
-    }
+    override fun getClassifierNames(): Set<Name> = classifiersNamesCached
 
     override fun toString(): String {
         return "Intersection of [${scopes.joinToString(", ")}]"
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(
+        newSession: FirSession,
+        newScopeSession: ScopeSession
+    ): FirTypeIntersectionScope {
+        return FirTypeIntersectionScope(
+            newSession, overrideChecker, scopes.withReplacedSessionOrNull(newSession, newScopeSession) ?: scopes, dispatchReceiverType
+        )
     }
 
     companion object {

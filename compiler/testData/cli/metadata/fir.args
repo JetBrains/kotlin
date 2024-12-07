@@ -1,4 +1,0 @@
-$TESTDATA_DIR$/fir.kt
--Xuse-k2
--d
-$TEMP_DIR$

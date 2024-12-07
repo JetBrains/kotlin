@@ -1,6 +1,6 @@
 // This test depends on line numbers
+// IGNORE_INLINER: IR
 // WITH_STDLIB
-
 // FILE: 1.kt
 package test
 

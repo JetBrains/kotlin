@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 @file:OptIn(ExperimentalTypeInference::class)
 
@@ -11,7 +12,7 @@ interface ProducerScope<E> {
 }
 
 @OptIn(ExperimentalTypeInference::class)
-fun <E> produce(@BuilderInference block: ProducerScope<E>.() -> Unit): ProducerScope<E> = TODO()
+fun <E> produce(block: ProducerScope<E>.() -> Unit): ProducerScope<E> = TODO()
 
 fun <K> filter(e: K, predicate: (K) -> Boolean) =
     produce {

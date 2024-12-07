@@ -7,26 +7,37 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import javax.inject.Inject
 
+@DisableCachingByDefault
 open class NodeJsExec
 @Inject
 constructor(
     @Internal
-    override val compilation: KotlinJsCompilation
+    @Transient
+    final override val compilation: KotlinJsIrCompilation,
 ) : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), RequiresNpmDependencies {
     @Transient
     @get:Internal
-    lateinit var nodeJs: NodeJsRootExtension
+    lateinit var nodeJsRoot: NodeJsRootExtension
+
+    @Internal
+    val npmProject = compilation.npmProject
 
     init {
-        onlyIf {
+        this.onlyIf {
             !inputFileProperty.isPresent || inputFileProperty.asFile.map {
                 it.exists()
             }.get()
@@ -42,17 +53,14 @@ constructor(
     @Optional
     @PathSensitive(PathSensitivity.ABSOLUTE)
     @InputFile
+    @NormalizeLineEndings
     val inputFileProperty: RegularFileProperty = project.newFileProperty()
-
-    @get:Internal
-    override val nodeModulesRequired: Boolean
-        get() = true
 
     @get:Internal
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> by lazy {
         mutableSetOf<RequiredKotlinJsDependency>().also {
             if (sourceMapStackTraces) {
-                it.add(nodeJs.versions.sourceMapSupport)
+                it.add(nodeJsRoot.versions.sourceMapSupport)
             }
         }
     }
@@ -61,7 +69,7 @@ constructor(
         val newArgs = mutableListOf<String>()
         newArgs.addAll(nodeArgs)
         if (inputFileProperty.isPresent) {
-            newArgs.add(inputFileProperty.asFile.get().canonicalPath)
+            newArgs.add(inputFileProperty.asFile.get().normalize().absolutePath)
         }
         args?.let { newArgs.addAll(it) }
         args = newArgs
@@ -69,7 +77,7 @@ constructor(
         if (sourceMapStackTraces) {
             val sourceMapSupportArgs = mutableListOf(
                 "--require",
-                compilation.npmProject.require("source-map-support/register.js")
+                npmProject.require("source-map-support/register.js")
             )
 
             args?.let { sourceMapSupportArgs.addAll(it) }
@@ -81,29 +89,63 @@ constructor(
     }
 
     companion object {
-        fun create(
-            compilation: KotlinJsCompilation,
+        fun register(
+            compilation: KotlinJsIrCompilation,
             name: String,
-            configuration: NodeJsExec.() -> Unit = {}
+            configuration: NodeJsExec.() -> Unit = {},
         ): TaskProvider<NodeJsExec> {
             val target = compilation.target
             val project = target.project
-            val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
+            val nodeJsRoot = NodeJsRootPlugin.apply(project.rootProject)
+            val nodeJs = NodeJsPlugin.apply(project)
+            val nodeJsTaskProviders = project.rootProject.kotlinNodeJsRootExtension
             val npmProject = compilation.npmProject
 
             return project.registerTask(
                 name,
                 listOf(compilation)
             ) {
-                it.nodeJs = nodeJs
-                it.executable = nodeJs.requireConfigured().nodeExecutable
-                it.workingDir = npmProject.dir
-                it.dependsOn(nodeJs.npmInstallTaskProvider)
-
-                it.dependsOn(nodeJs.npmInstallTaskProvider, compilation.compileKotlinTaskProvider)
-
+                it.nodeJsRoot = nodeJsRoot
+                it.executable = nodeJs.executable.get()
+                if ((compilation.target as? KotlinJsIrTarget)?.wasmTargetType != KotlinWasmTargetType.WASI) {
+                    it.workingDir(npmProject.dir)
+                    it.dependsOn(
+                        nodeJsTaskProviders.npmInstallTaskProvider,
+                    )
+                    it.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
+                }
+                with(nodeJs) {
+                    it.dependsOn(project.nodeJsSetupTaskProvider)
+                }
+                it.dependsOn(compilation.compileTaskProvider)
                 it.configuration()
             }
         }
+
+        @Deprecated(
+            "Use create(KotlinJsIrCompilation, name, configuration)",
+            replaceWith = ReplaceWith("create(compilation, name, configuration)"),
+            level = DeprecationLevel.HIDDEN
+        )
+        fun create(
+            compilation: KotlinJsCompilation,
+            name: String,
+            configuration: NodeJsExec.() -> Unit = {},
+        ): TaskProvider<NodeJsExec> =
+            register(
+                compilation as KotlinJsIrCompilation,
+                name,
+                configuration
+            )
+
+        @Deprecated(
+            "Use register instead",
+            ReplaceWith("register(compilation, name, configuration)")
+        )
+        fun create(
+            compilation: KotlinJsIrCompilation,
+            name: String,
+            configuration: NodeJsExec.() -> Unit = {},
+        ): TaskProvider<NodeJsExec> = register(compilation, name, configuration)
     }
 }

@@ -1,4 +1,4 @@
-// !LANGUAGE: +RepeatableAnnotations
+// LANGUAGE: +RepeatableAnnotations
 // TARGET_BACKEND: JVM_IR
 // JVM_TARGET: 1.8
 // FULL_JDK
@@ -6,6 +6,10 @@
 
 // Android doesn't have @Repeatable before API level 24, so findAnnotations can't unpack repeatable annotations.
 // IGNORE_BACKEND: ANDROID
+
+// In light analysis mode, repeated annotations are not wrapped into the container. This is by design, so that in kapt stubs repeated
+// annotations will be visible unwrapped.
+// IGNORE_LIGHT_ANALYSIS
 
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.findAnnotations

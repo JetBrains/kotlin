@@ -19,13 +19,20 @@ package org.jetbrains.kotlin.jps.build
 import com.intellij.testFramework.RunAll
 import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
+import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
+import org.jetbrains.kotlin.jps.build.KotlinJpsBuildTestBase.LibraryDependency.JVM_FULL_RUNTIME
 import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
+import org.jetbrains.kotlin.jps.model.JpsKotlinFacetModuleExtension
 import org.jetbrains.kotlin.jps.model.kotlinCommonCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerArguments
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 import kotlin.reflect.KMutableProperty1
 
 class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
@@ -43,15 +50,82 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         ).run()
     }
 
-    fun testKotlinJavaScriptChangePackage() {
-        initProject(LibraryDependency.JS_STDLIB)
-        buildAllModules().assertSuccessful()
+    fun testJpsBuildReportIC() {
 
-        val class2Kt = File(workDir, "src/Class2.kt")
-        val newClass2KtContent = class2Kt.readText().replace("package2", "package1")
-        change(class2Kt.path, newClass2KtContent)
-        buildAllModules().assertSuccessful()
-        checkOutputFilesList(File(workDir, "out/production"))
+        val reportDir = workDir.resolve("buildReport")
+
+        @Suppress("UNREACHABLE_CODE")
+        fun getReportFile(): File {
+            return Files.list(reportDir.toPath()).let {
+                val files = it.toArray()
+                val singleFile = (files.singleOrNull() as Path?).also {
+                    it ?: fail("The directory must contain a single file, but got: $files")
+                }
+
+                return singleFile?.toFile()!!
+            }
+        }
+
+        fun assertFileContains(
+            file: File,
+            vararg expectedText: String,
+        ) {
+            val text = file.readText()
+            val textNotInTheFile = expectedText.filterNot { text.contains(it) }
+            assert(textNotInTheFile.isEmpty()) {
+                """
+                |$file does not contain:
+                |${textNotInTheFile.joinToString(separator = "\n")}
+                |
+                |actual file content:
+                |"$text"
+                |       
+                """.trimMargin()
+            }
+        }
+
+        fun validateAndDeleteReportFile(vararg expectedText: String) {
+            assertTrue(reportDir.exists())
+            val reportFile = getReportFile()
+            assertFileContains(reportFile, *expectedText)
+            reportFile.delete()
+        }
+
+        val reportMetricsList = arrayOf(
+            "Task 'kotlinProject' finished in",
+            "Task info:",
+            "Kotlin language version: " + LanguageVersion.LATEST_STABLE,
+            "Time metrics:",
+            "Jps iteration:",
+            "Compiler code analysis:",
+            "Compiler code generation:"
+        )
+
+        fun testImpl() {
+            assertTrue("Daemon was not enabled!", isDaemonEnabled())
+            doTest()
+
+            validateAndDeleteReportFile(
+                *reportMetricsList,
+                "Changed files: [${workDir.resolve("src/Foo.kt").path}, ${workDir.resolve("src/main.kt").path}]"
+            )
+
+            val mainKt = File(workDir, "src/main.kt")
+            change(mainKt.path, "fun main() {}")
+
+            buildAllModules().assertSuccessful()
+
+            validateAndDeleteReportFile(
+                *reportMetricsList,
+                "Changed files: [${workDir.resolve("src/main.kt").path}]"
+            )
+        }
+
+        withDaemon {
+            withSystemProperty("kotlin.build.report.file.output_dir", reportDir.path) {
+                testImpl()
+            }
+        }
     }
 
     fun testJpsDaemonIC() {
@@ -86,20 +160,20 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         val module = myProject.modules[0]
         assertFilesExistInOutput(module, "foo/MainKt.class", "boo/BooKt.class", "foo/Bar.class")
 
-        checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
-        checkWhen(touch("src/Bar.kt"), arrayOf("src/Bar.kt"), arrayOf(module("kotlinProject"), klass("kotlinProject", "foo.Bar")))
+        checkWhen(createTouchAction("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
+        checkWhen(createTouchAction("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
+        checkWhen(createTouchAction("src/Bar.kt"), arrayOf("src/Bar.kt"), arrayOf(module("kotlinProject"), klass("kotlinProject", "foo.Bar")))
 
         checkWhen(
-            del("src/main.kt"),
+            createDeleteAction("src/main.kt"),
             pathsToCompile = null,
             pathsToDelete = packageClasses("kotlinProject", "src/main.kt", "foo.MainKt")
         )
         assertFilesExistInOutput(module, "boo/BooKt.class", "foo/Bar.class")
         assertFilesNotExistInOutput(module, "foo/MainKt.class")
 
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
-        checkWhen(touch("src/Bar.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "foo.Bar")))
+        checkWhen(createTouchAction("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
+        checkWhen(createTouchAction("src/Bar.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "foo.Bar")))
     }
 
     fun testManyFilesForPackage() {
@@ -108,10 +182,10 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         val module = myProject.modules[0]
         assertFilesExistInOutput(module, "foo/MainKt.class", "boo/BooKt.class", "foo/Bar.class")
 
-        checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
+        checkWhen(createTouchAction("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
+        checkWhen(createTouchAction("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
         checkWhen(
-            touch("src/Bar.kt"),
+            createTouchAction("src/Bar.kt"),
             arrayOf("src/Bar.kt"),
             arrayOf(
                 klass("kotlinProject", "foo.Bar"),
@@ -121,15 +195,15 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         )
 
         checkWhen(
-            del("src/main.kt"),
+            createDeleteAction("src/main.kt"),
             pathsToCompile = null,
             pathsToDelete = packageClasses("kotlinProject", "src/main.kt", "foo.MainKt")
         )
         assertFilesExistInOutput(module, "boo/BooKt.class", "foo/Bar.class")
 
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
+        checkWhen(createTouchAction("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
         checkWhen(
-            touch("src/Bar.kt"), null,
+            createTouchAction("src/Bar.kt"), null,
             arrayOf(
                 klass("kotlinProject", "foo.Bar"),
                 packagePartClass("kotlinProject", "src/Bar.kt", "foo.MainKt"),
@@ -157,7 +231,7 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         // Try to set Language version to Stable+2 (there is no promises that metadata will be supported)
         val experimentalLevelVersion: LanguageVersion
         try {
-            experimentalLevelVersion = LanguageVersion.values()[LanguageVersion.LATEST_STABLE.ordinal+2]
+            experimentalLevelVersion = LanguageVersion.values()[LanguageVersion.LATEST_STABLE.ordinal + 2]
         } catch (e: ArrayIndexOutOfBoundsException) {
             // there is no Stable+2 version for now, skiping test
             return
@@ -167,6 +241,54 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
 
         buildAllModules().assertSuccessful()
         assertCompiled(KotlinBuilder.KOTLIN_BUILDER_NAME, "src/Bar.kt", "src/Foo.kt")
+    }
+
+    /*
+     * This test checks the correct work of caches after clean.
+     * Let's imagine that we have `module2` and it depends on `module1`.
+     * We change the function name in `Base` class of `module1` -- this counted as removal and adding new function
+     * Such change leads to removing any mentions in caches of `module2` (which depends on `module1`)
+     * In fact during the compilation of `module1` it will open caches of `module2`
+     * So if we also have changed facet configuration of `module2` - it will be marked for recompilation and will try to clean its caches.
+     * Such `clean` action of opened maps will lead to "storage is already closed" exception if maps are not reopened properly
+     */
+    fun testRebuildAfterCachesOpened() {
+        assertTrue(IncrementalCompilation.isEnabledForJvm())
+
+        // Init and rebuild
+        initProject(JVM_FULL_RUNTIME)
+        rebuildAllModules()
+
+        // Change facet of Derived module and change function name of Base class in Base module
+        val facet = KotlinFacetSettings()
+        facet.useProjectSettings = false
+        facet.compilerArguments = K2JVMCompilerArguments()
+        findModule("module2").let {
+            (facet.compilerArguments as K2JVMCompilerArguments).lambdas = null // "class" value was here before from iml file
+
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
+        }
+
+        // Change foo() to bar()
+        val newContent = """
+            open class Base {
+                fun bar() = "boo"
+            }
+        """.trimIndent()
+        checkWhen(createChangeAction("module1/src/Base.kt", newContent), null, null)
+    }
+
+    fun testUseSerializationPluginWithClassesInOut() {
+        assertTrue(IncrementalCompilation.isEnabledForJvm())
+        initProject(LibraryDependency.SERIALIZATION)
+        rebuildAllModules()
+        val jpsCaches = myDataStorageRoot.resolve("targets/java-production")
+        assertExists(jpsCaches)
+        assertTrue(jpsCaches.deleteRecursively())
+        checkWhen(createTouchAction("src/Bar.kt"), null, null)
     }
 
     private fun languageOrApiVersionChanged(versionProperty: KMutableProperty1<CommonCompilerArguments, String?>) {
@@ -188,7 +310,7 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         buildAllModules().assertSuccessful()
         assertCompiled(KotlinBuilder.KOTLIN_BUILDER_NAME)
 
-        setVersion(LanguageVersion.KOTLIN_1_5.versionString)
+        setVersion(LanguageVersion.KOTLIN_1_6.versionString)
         buildAllModules().assertSuccessful()
         assertCompiled(KotlinBuilder.KOTLIN_BUILDER_NAME, "src/Bar.kt", "src/Foo.kt")
     }

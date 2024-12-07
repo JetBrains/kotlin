@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 class Something {
     public val publicVal1 = object { override fun toString() = "!" }

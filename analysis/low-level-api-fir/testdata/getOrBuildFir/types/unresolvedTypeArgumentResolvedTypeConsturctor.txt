@@ -1,6 +1,0 @@
-KT element: KtTypeReference
-FIR element: FirResolvedTypeRefImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-R|kotlin/collections/List<ERROR CLASS: Symbol not found for UNRESOVLED>|

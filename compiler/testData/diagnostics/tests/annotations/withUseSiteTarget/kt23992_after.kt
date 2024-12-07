@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +ProhibitUseSiteTargetAnnotationsOnSuperTypes
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ProhibitUseSiteTargetAnnotationsOnSuperTypes
 
 interface Foo
 

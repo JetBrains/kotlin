@@ -1,0 +1,6 @@
+public final class CodeFragment {
+    // source: 'fragment.kt'
+    public method <init>(): void
+    private final static method run$ext(p0: java.lang.String): java.lang.String
+    public final static method run(): java.lang.String
+}

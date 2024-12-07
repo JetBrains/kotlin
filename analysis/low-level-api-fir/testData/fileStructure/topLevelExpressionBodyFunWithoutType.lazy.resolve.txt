@@ -1,0 +1,4 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] topLevelExpressionBodyFunWithoutType.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
+        ^foo Int(42)
+    }

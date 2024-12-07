@@ -18,12 +18,19 @@ package org.jetbrains.kotlin.codegen.optimization.boxing
 
 import com.intellij.openapi.util.Pair
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.AsmUtil.isBoxedPrimitiveType
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.GenerationState.MultiFieldValueClassUnboxInfo
 import org.jetbrains.kotlin.resolve.isInlineClass
+import org.jetbrains.kotlin.resolve.isMultiFieldValueClass
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
+import org.jetbrains.org.objectweb.asm.tree.InsnList
+import org.jetbrains.org.objectweb.asm.tree.InsnNode
+import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 
 abstract class BoxedBasicValue(type: Type) : StrictBasicValue(type) {
     abstract val descriptor: BoxedValueDescriptor
@@ -55,21 +62,32 @@ class TaintedBoxedValue(private val boxedBasicValue: CleanBoxedValue) : BoxedBas
 
 
 class BoxedValueDescriptor(
-    boxedType: Type,
+    val boxedType: Type,
     val boxingInsn: AbstractInsnNode,
     val progressionIterator: ProgressionIteratorBasicValue?,
     val generationState: GenerationState
 ) {
-    private val associatedInsns = HashSet<AbstractInsnNode>()
-    private val unboxingWithCastInsns = HashSet<Pair<AbstractInsnNode, Type>>()
+    private val associatedInsns = LinkedHashSet<AbstractInsnNode>()
+    private val unboxingWithCastInsns = LinkedHashSet<Pair<AbstractInsnNode, Type>>()
     private val associatedVariables = HashSet<Int>()
     private val mergedWith = HashSet<BoxedValueDescriptor>()
 
     var isSafeToRemove = true; private set
-    val unboxedType: Type = getUnboxedType(boxedType, generationState)
-    val isInlineClassValue = isInlineClassValue(boxedType)
+    val multiFieldValueClassUnboxInfo = getMultiFieldValueClassUnboxInfo(boxedType, generationState)
+    val unboxedTypes: List<Type> = getUnboxedTypes(boxedType, generationState, multiFieldValueClassUnboxInfo)
+
+    fun getUnboxTypeOrOtherwiseMethodReturnType(methodInsnNode: MethodInsnNode?) =
+        unboxedTypes.singleOrNull() ?: Type.getReturnType(methodInsnNode!!.desc)
+
+    val isValueClassValue = !isBoxedPrimitiveType(boxedType)
 
     fun getAssociatedInsns() = associatedInsns.toList()
+
+    fun sortAssociatedInsns(indexes: Map<AbstractInsnNode, Int>) {
+        val newOrder = associatedInsns.sortedBy { indexes[it]!! }
+        associatedInsns.clear()
+        associatedInsns.addAll(newOrder)
+    }
 
     fun addInsn(insnNode: AbstractInsnNode) {
         associatedInsns.add(insnNode)
@@ -93,7 +111,7 @@ class BoxedValueDescriptor(
         isSafeToRemove = false
     }
 
-    fun isDoubleSize() = unboxedType.size == 2
+    fun getTotalUnboxSize() = unboxedTypes.sumOf { it.size }
 
     fun isFromProgressionIterator() = progressionIterator != null
 
@@ -103,16 +121,51 @@ class BoxedValueDescriptor(
 
     fun getUnboxingWithCastInsns(): Set<Pair<AbstractInsnNode, Type>> =
         unboxingWithCastInsns
+
+    fun sortUnboxingWithCastInsns(indexes: Map<AbstractInsnNode, Int>) {
+        val newInsnsAndResultTypes = unboxingWithCastInsns.sortedBy { insnAndResultType -> indexes[insnAndResultType.first]!! }
+        unboxingWithCastInsns.clear()
+        unboxingWithCastInsns.addAll(newInsnsAndResultTypes)
+    }
+}
+
+internal fun makePops(unboxedTypes: List<Type>) = InsnList().apply {
+    var restSingleSize = false
+    for (unboxType in unboxedTypes.asReversed()) {
+        restSingleSize = when (unboxType.size) {
+            1 -> {
+                if (restSingleSize) add(InsnNode(Opcodes.POP2))
+                !restSingleSize
+            }
+
+            2 -> {
+                if (restSingleSize) add(InsnNode(Opcodes.POP))
+                add(InsnNode(Opcodes.POP2))
+                false
+            }
+
+            else -> error("Illegal type size: ${unboxType.size}")
+        }
+    }
+
+    if (restSingleSize) {
+        add(InsnNode(Opcodes.POP))
+    }
 }
 
 
-fun getUnboxedType(boxedType: Type, state: GenerationState): Type {
+fun getUnboxedTypes(
+    boxedType: Type,
+    state: GenerationState,
+    multiFieldValueClassUnboxInfo: MultiFieldValueClassUnboxInfo?
+): List<Type> {
     val primitiveType = AsmUtil.unboxPrimitiveTypeOrNull(boxedType)
-    if (primitiveType != null) return primitiveType
+    if (primitiveType != null) return listOf(primitiveType)
 
-    if (boxedType == AsmTypes.K_CLASS_TYPE) return AsmTypes.JAVA_CLASS_TYPE
+    if (boxedType == AsmTypes.K_CLASS_TYPE) return listOf(AsmTypes.JAVA_CLASS_TYPE)
 
-    unboxedTypeOfInlineClass(boxedType, state)?.let { return it }
+    unboxedTypeOfInlineClass(boxedType, state)?.let { return listOf(it) }
+    multiFieldValueClassUnboxInfo?.let { return it.unboxedTypes }
 
     throw IllegalArgumentException("Expected primitive type wrapper or KClass or inline class wrapper, got: $boxedType")
 }
@@ -123,6 +176,11 @@ fun unboxedTypeOfInlineClass(boxedType: Type, state: GenerationState): Type? {
     return state.mapInlineClass(descriptor)
 }
 
-private fun isInlineClassValue(boxedType: Type): Boolean {
-    return !AsmUtil.isBoxedPrimitiveType(boxedType) && boxedType != AsmTypes.K_CLASS_TYPE
+fun getMultiFieldValueClassUnboxInfo(boxedType: Type, state: GenerationState): MultiFieldValueClassUnboxInfo? {
+    if (!state.config.supportMultiFieldValueClasses) return null
+
+    val descriptor =
+        state.jvmBackendClassResolver.resolveToClassDescriptors(boxedType).singleOrNull()?.takeIf { it.isMultiFieldValueClass() }
+            ?: return null
+    return state.multiFieldValueClassUnboxInfo(descriptor)
 }

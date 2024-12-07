@@ -14,6 +14,6 @@ FILE: typeAliasConstructor.kt
     }
     public final typealias BB<U> = R|B<U>|
     public final fun main(): R|kotlin/Unit| {
-        lval x: R|A| = R|/A.A|(Int(1))
-        lval y: R|B<kotlin/String>| = R|/B.B|<R|kotlin/String|>(String(bb))
+        lval x: R|{AA=} A| = R|/A.A|(Int(1))
+        lval y: R|{BB<kotlin/String>=} B<kotlin/String>| = R|/B.B|<R|kotlin/String|>(String(bb))
     }

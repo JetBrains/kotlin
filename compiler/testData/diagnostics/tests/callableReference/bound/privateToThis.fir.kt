@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 class Foo<out T>(name: T) {
     private var prop: T = name
@@ -9,7 +10,7 @@ class Foo<out T>(name: T) {
         val ok2 = this@Foo::prop
         val ok3 = object { val y: Any = this@Foo::prop }
 
-        val fail1 = Foo(prop)::prop
+        val fail1 = Foo(prop)::<!INVISIBLE_REFERENCE!>prop<!>
     }
 
     fun testFunc() {
@@ -17,7 +18,7 @@ class Foo<out T>(name: T) {
         val ok2 = this@Foo::func
         val ok3 = object { val y: Any = this@Foo::func }
 
-        val fail1 = Foo(prop)::func
+        val fail1 = Foo(prop)::<!INVISIBLE_REFERENCE!>func<!>
     }
 
     private fun func(t: T): T = t

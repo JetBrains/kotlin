@@ -6,23 +6,26 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendContext
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportLazy
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportLazyImpl
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportProblemCollector
 import org.jetbrains.kotlin.backend.konan.objcexport.dumpObjCHeader
 import org.jetbrains.kotlin.container.*
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
 internal fun StorageComponentContainer.initContainer(config: KonanConfig) {
     useImpl<FrontendServices>()
 
-    if (config.configuration.get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE) != null) {
+    if (!config.configuration.get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE).isNullOrEmpty()) {
         useImpl<ObjCExportLazyImpl>()
         useInstance(object : ObjCExportProblemCollector {
             override fun reportWarning(text: String) {}
-            override fun reportWarning(method: FunctionDescriptor, text: String) {}
+            override fun reportWarning(declaration: DeclarationDescriptor, text: String) {}
+            override fun reportError(text: String) {}
+            override fun reportError(declaration: DeclarationDescriptor, text: String) {}
             override fun reportException(throwable: Throwable) = throw throwable
         })
 
@@ -39,16 +42,22 @@ internal fun StorageComponentContainer.initContainer(config: KonanConfig) {
             override val objcGenerics: Boolean
                 get() = config.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
 
+            override val disableSwiftMemberNameMangling: Boolean
+                get() = config.configuration.getBoolean(BinaryOptions.objcExportDisableSwiftMemberNameMangling)
+
             override val unitSuspendFunctionExport: UnitSuspendFunctionObjCExport
                 get() = config.unitSuspendFunctionObjCExport
+
+            override val ignoreInterfaceMethodCollisions: Boolean
+                get() = config.configuration.getBoolean(BinaryOptions.objcExportIgnoreInterfaceMethodCollisions)
         })
     }
 }
 
-internal fun ComponentProvider.postprocessComponents(context: Context, files: Collection<KtFile>) {
+internal fun ComponentProvider.postprocessComponents(context: FrontendContext, files: Collection<KtFile>) {
     context.frontendServices = this.get<FrontendServices>()
 
-    context.config.configuration.get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE)?.let {
+    context.config.configuration.get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE)?.takeIf { it.isNotEmpty() }?.let {
         this.get<ObjCExportLazy>().dumpObjCHeader(files, it, context.shouldExportKDoc())
     }
 }

@@ -1,0 +1,335 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class Foo : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|org/example/Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] usage.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class FooImpl : Foo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
+            LAZY_super<Foo>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun usage([ResolvedTo(RAW_FIR)] f: FooImpl): <implicit> { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class Foo : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|org/example/Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class FooImpl : Foo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
+            LAZY_super<Foo>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun usage([ResolvedTo(RAW_FIR)] f: FooImpl): <implicit> { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class Foo : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|org/example/Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class FooImpl : Foo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
+            LAZY_super<Foo>
+        }
+
+    }
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun usage([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] f: FooImpl): <implicit> { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class Foo : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|org/example/Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class FooImpl : Foo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
+            LAZY_super<Foo>
+        }
+
+    }
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun usage([ResolvedTo(COMPANION_GENERATION)] f: FooImpl): <implicit> { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class Foo : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|org/example/Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class FooImpl : Foo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
+            LAZY_super<Foo>
+        }
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] fun usage([ResolvedTo(SUPER_TYPES)] f: FooImpl): <implicit> { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class Foo : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|org/example/Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class FooImpl : Foo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
+            LAZY_super<Foo>
+        }
+
+    }
+    public? final? [ResolvedTo(TYPES)] fun usage([ResolvedTo(TYPES)] f: R|org/example/FooImpl|): <implicit> { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class Foo : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|org/example/Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class FooImpl : Foo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
+            LAZY_super<Foo>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] fun usage([ResolvedTo(STATUS)] f: R|org/example/FooImpl|): <implicit> { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class Foo : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|org/example/Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class FooImpl : Foo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
+            LAZY_super<Foo>
+        }
+
+    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun usage([ResolvedTo(EXPECT_ACTUAL_MATCHING)] f: R|org/example/FooImpl|): <implicit> { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class Foo : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|org/example/Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class FooImpl : Foo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
+            LAZY_super<Foo>
+        }
+
+    }
+    public final [ResolvedTo(CONTRACTS)] fun usage([ResolvedTo(CONTRACTS)] f: R|org/example/FooImpl|): <implicit> { LAZY_BLOCK }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] dependency.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    }
+    public abstract [ResolvedTo(STATUS)] class Foo : R|org/example/Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|org/example/Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(CONTRACTS)] fun bar(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(STATUS)] class FooImpl : R|org/example/Foo| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
+            LAZY_super<R|org/example/Foo|>
+        }
+
+    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun usage([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] f: R|org/example/FooImpl|): R|kotlin/Unit| {
+        ^usage R|<local>/f|.R|org/example/Base.bar|()
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] dependency.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    }
+    public abstract [ResolvedTo(STATUS)] class Foo : R|org/example/Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|org/example/Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(CONTRACTS)] fun bar(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(STATUS)] class FooImpl : R|org/example/Foo| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
+            LAZY_super<R|org/example/Foo|>
+        }
+
+    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun usage([ResolvedTo(CONSTANT_EVALUATION)] f: R|org/example/FooImpl|): R|kotlin/Unit| {
+        ^usage R|<local>/f|.R|org/example/Base.bar|()
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] dependency.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    }
+    public abstract [ResolvedTo(STATUS)] class Foo : R|org/example/Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|org/example/Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(CONTRACTS)] fun bar(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(STATUS)] class FooImpl : R|org/example/Foo| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
+            LAZY_super<R|org/example/Foo|>
+        }
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun usage([ResolvedTo(ANNOTATION_ARGUMENTS)] f: R|org/example/FooImpl|): R|kotlin/Unit| {
+        ^usage R|<local>/f|.R|org/example/Base.bar|()
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] dependency.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    }
+    public abstract [ResolvedTo(STATUS)] class Foo : R|org/example/Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|org/example/Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(CONTRACTS)] fun bar(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(STATUS)] class FooImpl : R|org/example/Foo| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
+            LAZY_super<R|org/example/Foo|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage([ResolvedTo(BODY_RESOLVE)] f: R|org/example/FooImpl|): R|kotlin/Unit| {
+        ^usage R|<local>/f|.R|org/example/Base.bar|()
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] usage.kt
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] fun bar(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] class FooImpl : R|org/example/Foo| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
+            super<R|org/example/Foo|>()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage([ResolvedTo(BODY_RESOLVE)] f: R|org/example/FooImpl|): R|kotlin/Unit| {
+        ^usage R|<local>/f|.R|org/example/Base.bar|()
+    }

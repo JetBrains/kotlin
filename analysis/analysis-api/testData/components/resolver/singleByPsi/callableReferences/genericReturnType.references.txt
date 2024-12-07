@@ -1,0 +1,7 @@
+KtNameReferenceExpression(64,67): 'Foo'
+  KtSimpleNameReference:
+    (in ROOT) interface Foo<T>
+
+KtCallExpression(56,78): 'consume(Foo<Int>::foo)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)

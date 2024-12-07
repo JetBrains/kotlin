@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.psi.stubs.impl
 
-import com.intellij.psi.PsiClass
-import com.intellij.psi.impl.java.stubs.PsiClassStub
-import com.intellij.psi.stubs.PsiClassHolderFileStub
 import com.intellij.psi.stubs.PsiFileStubImpl
 import com.intellij.psi.tree.IStubFileElementType
 import org.jetbrains.kotlin.name.FqName
@@ -27,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 import org.jetbrains.kotlin.psi.stubs.KotlinImportAliasStub
 import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.FILE
+import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.IMPORT_LIST
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -38,10 +35,10 @@ class KotlinFileStubImpl(
     private val facadeFqNameString: String?,
     val partSimpleName: String?,
     val facadePartSimpleNames: List<String>?,
-) : PsiFileStubImpl<KtFile>(ktFile), KotlinFileStub, PsiClassHolderFileStub<KtFile> {
+) : PsiFileStubImpl<KtFile>(ktFile), KotlinFileStub {
 
-    constructor(jetFile: KtFile?, packageName: String, isScript: Boolean) : this(
-        jetFile,
+    constructor(ktFile: KtFile?, packageName: String, isScript: Boolean) : this(
+        ktFile,
         packageName,
         isScript,
         facadeFqNameString = null,
@@ -59,13 +56,9 @@ class KotlinFileStubImpl(
 
     override fun getPackageFqName(): FqName = FqName(packageName)
     override fun isScript(): Boolean = isScript
-    override fun getType(): IStubFileElementType<KotlinFileStub> = FILE
+    override fun getType(): IStubFileElementType<KotlinFileStub> = KtFileElementType.INSTANCE
 
     override fun toString(): String = "PsiJetFileStubImpl[" + "package=" + getPackageFqName().asString() + "]"
-
-    override fun getClasses(): Array<PsiClass> {
-        return childrenStubs.filterIsInstance<PsiClassStub<*>>().map { it.psi }.toTypedArray()
-    }
 
     override fun findImportsByAlias(alias: String): List<KotlinImportDirectiveStub> {
         val importList = childrenStubs.firstOrNull { it.stubType == IMPORT_LIST } ?: return emptyList()

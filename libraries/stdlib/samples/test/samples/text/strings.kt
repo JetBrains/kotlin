@@ -518,4 +518,115 @@ class Strings {
 
         assertPrints(mixedColor, "brown&blue")
     }
+
+    @Sample
+    fun formatStatic() {
+        // format negative number in parentheses
+        val negativeNumberInParentheses = String.format("%(d means %1\$d", -31416)
+        assertPrints(negativeNumberInParentheses, "(31416) means -31416")
+    }
+
+    @Sample
+    fun formatExtension() {
+        // format negative number in parentheses
+        val negativeNumberInParentheses = "%(d means %1\$d".format(-31416)
+        assertPrints(negativeNumberInParentheses, "(31416) means -31416")
+    }
+
+    @Sample
+    fun formatWithLocaleStatic() {
+        // format with German conventions
+        val withGermanThousandsSeparator = String.format(Locale.GERMANY, "%,d", 12345)
+        assertPrints(withGermanThousandsSeparator, "12.345")
+
+        // format with US conventions
+        val withUSThousandsSeparator = String.format(Locale.US, "%,d", 12345)
+        assertPrints(withUSThousandsSeparator, "12,345")
+    }
+
+    @Sample
+    fun formatWithLocaleExtension() {
+        // format with German conventions
+        val withGermanThousandsSeparator = "%,d".format(Locale.GERMANY, 12345)
+        assertPrints(withGermanThousandsSeparator, "12.345")
+        // 12.345
+
+        // format with US conventions
+        val withUSThousandsSeparator = "%,d".format(Locale.US, 12345)
+        assertPrints(withUSThousandsSeparator, "12,345")
+    }
+
+    @Sample
+    fun replaceWithExpression() {
+        val text = "The events are on 15-09-2024 and 16-10-2024."
+        // Regex to match dates in dd-mm-yyyy format
+        val dateRegex = "(?<day>\\d{2})-(?<month>\\d{2})-(?<year>\\d{4})".toRegex()
+        // Replacement expression that puts day, month and year values in the ISO 8601 recommended yyyy-mm-dd format
+        val replacement = "\${year}-\${month}-\${day}"
+
+        // Replacing all occurrences of dates from dd-mm-yyyy to yyyy-mm-dd format
+        assertPrints(text.replace(dateRegex, replacement), "The events are on 2024-09-15 and 2024-10-16.")
+
+        // One can also reference the matched groups by index
+        assertPrints(text.replace(dateRegex, "$3-$2-$1"), "The events are on 2024-09-15 and 2024-10-16.")
+
+        // Using a backslash to include the special character '$' as a literal in the result
+        assertPrints(text.replace(dateRegex, "$3-\\$2-$1"), "The events are on 2024-\$2-15 and 2024-\$2-16.")
+    }
+
+    @Sample
+    fun replaceFirstWithExpression() {
+        val text = "The events are on 15-09-2024 and 16-10-2024."
+        // Regex to match dates in dd-mm-yyyy format
+        val dateRegex = "(?<day>\\d{2})-(?<month>\\d{2})-(?<year>\\d{4})".toRegex()
+        // Replacement expression that puts day, month and year values in the ISO 8601 recommended yyyy-mm-dd format
+        val replacement = "\${year}-\${month}-\${day}"
+
+        // Replacing the first occurrence of a date from dd-mm-yyyy to yyyy-mm-dd format
+        assertPrints(text.replaceFirst(dateRegex, replacement), "The events are on 2024-09-15 and 16-10-2024.")
+
+        // One can also reference the matched groups by index
+        assertPrints(text.replaceFirst(dateRegex, "$3-$2-$1"), "The events are on 2024-09-15 and 16-10-2024.")
+
+        // Using a backslash to include the special character '$' as a literal in the result
+        assertPrints(text.replaceFirst(dateRegex, "$3-\\$2-$1"), "The events are on 2024-\$2-15 and 16-10-2024.")
+    }
+
+    @Sample
+    fun removeRangeString() {
+        val text = "Hello, world!"
+
+        // Removing the range that correspond to the "world" substring
+        assertPrints(text.removeRange(startIndex = 7, endIndex = 12), "Hello, !")
+
+        // Also possible to remove using a Range
+        assertPrints(text.removeRange(7..11), "Hello, !")
+
+        // The original string is not changed
+        assertPrints(text, "Hello, world!")
+
+        // Throws if startIndex is greater than endIndex
+        assertFails { text.removeRange(startIndex = 7, endIndex = 4) }
+        // Throws if startIndex or endIndex is out of range of the string indices
+        assertFails { text.removeRange(startIndex = 7, endIndex = 20) }
+    }
+
+    @Sample
+    fun removeRangeCharSequence() {
+        val text = StringBuilder("Hello, world!")
+
+        // Removing the range that correspond to the "world" subsequence
+        assertPrints(text.removeRange(startIndex = 7, endIndex = 12), "Hello, !")
+
+        // Also possible to remove using a Range
+        assertPrints(text.removeRange(7..11), "Hello, !")
+
+        // The original char sequence is not changed
+        assertPrints(text, "Hello, world!")
+
+        // Throws if startIndex is greater than endIndex
+        assertFails { text.removeRange(startIndex = 7, endIndex = 4) }
+        // Throws if startIndex or endIndex is out of range of the char sequence indices
+        assertFails { text.removeRange(startIndex = 7, endIndex = 20) }
+    }
 }

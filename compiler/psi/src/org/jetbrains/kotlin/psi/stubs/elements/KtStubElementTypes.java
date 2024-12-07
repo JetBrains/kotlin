@@ -20,8 +20,6 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.kotlin.psi.*;
 
 public interface KtStubElementTypes {
-    KtFileElementType FILE = KtFileElementType.INSTANCE;
-
     KtClassElementType CLASS = new KtClassElementType("CLASS");
     KtFunctionElementType FUNCTION = new KtFunctionElementType("FUN");
     KtPropertyElementType PROPERTY = new KtPropertyElementType("PROPERTY");
@@ -33,10 +31,10 @@ public interface KtStubElementTypes {
     KtObjectElementType OBJECT_DECLARATION = new KtObjectElementType("OBJECT_DECLARATION");
     KtPlaceHolderStubElementType<KtClassInitializer> CLASS_INITIALIZER =
             new KtPlaceHolderStubElementType<>("CLASS_INITIALIZER", KtClassInitializer.class);
-    KtPlaceHolderStubElementType<KtSecondaryConstructor> SECONDARY_CONSTRUCTOR =
-            new KtPlaceHolderStubElementType<>("SECONDARY_CONSTRUCTOR", KtSecondaryConstructor.class);
-    KtPlaceHolderStubElementType<KtPrimaryConstructor> PRIMARY_CONSTRUCTOR =
-            new KtPlaceHolderStubElementType<>("PRIMARY_CONSTRUCTOR", KtPrimaryConstructor.class);
+    KtSecondaryConstructorElementType SECONDARY_CONSTRUCTOR =
+            new KtSecondaryConstructorElementType("SECONDARY_CONSTRUCTOR");
+    KtPrimaryConstructorElementType PRIMARY_CONSTRUCTOR =
+            new KtPrimaryConstructorElementType("PRIMARY_CONSTRUCTOR");
 
     KtParameterElementType VALUE_PARAMETER = new KtParameterElementType("VALUE_PARAMETER");
     KtPlaceHolderStubElementType<KtParameterList> VALUE_PARAMETER_LIST =
@@ -90,8 +88,7 @@ public interface KtStubElementTypes {
     KtPlaceHolderStubElementType<KtDynamicType> DYNAMIC_TYPE =
             new KtPlaceHolderStubElementType<>("DYNAMIC_TYPE", KtDynamicType.class);
 
-    KtPlaceHolderStubElementType<KtFunctionType> FUNCTION_TYPE =
-            new KtPlaceHolderStubElementType<>("FUNCTION_TYPE", KtFunctionType.class);
+    KtFunctionTypeElementType FUNCTION_TYPE = new KtFunctionTypeElementType("FUNCTION_TYPE");
 
     KtTypeCodeFragmentType TYPE_CODE_FRAGMENT = new KtTypeCodeFragmentType();
     KtExpressionCodeFragmentType EXPRESSION_CODE_FRAGMENT = new KtExpressionCodeFragmentType();
@@ -105,7 +102,8 @@ public interface KtStubElementTypes {
     KtNameReferenceExpressionElementType REFERENCE_EXPRESSION = new KtNameReferenceExpressionElementType("REFERENCE_EXPRESSION");
     KtDotQualifiedExpressionElementType DOT_QUALIFIED_EXPRESSION = new KtDotQualifiedExpressionElementType("DOT_QUALIFIED_EXPRESSION");
     KtEnumEntrySuperClassReferenceExpressionElementType
-            ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION = new KtEnumEntrySuperClassReferenceExpressionElementType("ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION");
+            ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION =
+            new KtEnumEntrySuperClassReferenceExpressionElementType("ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION");
     KtPlaceHolderStubElementType<KtTypeArgumentList> TYPE_ARGUMENT_LIST =
             new KtPlaceHolderStubElementType<>("TYPE_ARGUMENT_LIST", KtTypeArgumentList.class);
 
@@ -143,8 +141,7 @@ public interface KtStubElementTypes {
     KtPlaceHolderStubElementType<KtConstructorCalleeExpression> CONSTRUCTOR_CALLEE =
             new KtPlaceHolderStubElementType<>("CONSTRUCTOR_CALLEE", KtConstructorCalleeExpression.class);
 
-    KtPlaceHolderStubElementType<KtContextReceiver> CONTEXT_RECEIVER =
-            new KtPlaceHolderStubElementType<>("CONTEXT_RECEIVER", KtContextReceiver.class);
+    KtContextReceiverElementType CONTEXT_RECEIVER = new KtContextReceiverElementType("CONTEXT_RECEIVER");
     KtPlaceHolderStubElementType<KtContextReceiverList> CONTEXT_RECEIVER_LIST =
             new KtPlaceHolderStubElementType<>("CONTEXT_RECEIVER_LIST", KtContextReceiverList.class);
 
@@ -153,9 +150,28 @@ public interface KtStubElementTypes {
     KtConstantExpressionElementType FLOAT_CONSTANT      = new KtConstantExpressionElementType("FLOAT_CONSTANT");
     KtConstantExpressionElementType CHARACTER_CONSTANT  = new KtConstantExpressionElementType("CHARACTER_CONSTANT");
     KtConstantExpressionElementType INTEGER_CONSTANT    = new KtConstantExpressionElementType("INTEGER_CONSTANT");
+    KtClassLiteralExpressionElementType CLASS_LITERAL_EXPRESSION = new KtClassLiteralExpressionElementType("CLASS_LITERAL_EXPRESSION");
+    KtCollectionLiteralExpressionElementType COLLECTION_LITERAL_EXPRESSION = new KtCollectionLiteralExpressionElementType("COLLECTION_LITERAL_EXPRESSION");
 
     KtPlaceHolderStubElementType<KtStringTemplateExpression> STRING_TEMPLATE =
             new KtStringTemplateExpressionElementType("STRING_TEMPLATE");
+
+    TokenSet CONSTANT_EXPRESSIONS_TYPES = TokenSet.create(
+            NULL,
+            BOOLEAN_CONSTANT,
+            FLOAT_CONSTANT,
+            CHARACTER_CONSTANT,
+            INTEGER_CONSTANT,
+
+            REFERENCE_EXPRESSION,
+            DOT_QUALIFIED_EXPRESSION,
+
+            STRING_TEMPLATE,
+
+            CLASS_LITERAL_EXPRESSION,
+
+            COLLECTION_LITERAL_EXPRESSION
+    );
 
     KtPlaceHolderWithTextStubElementType<KtBlockStringTemplateEntry> LONG_STRING_TEMPLATE_ENTRY =
             new KtPlaceHolderWithTextStubElementType<>("LONG_STRING_TEMPLATE_ENTRY", KtBlockStringTemplateEntry.class);
@@ -170,13 +186,4 @@ public interface KtStubElementTypes {
             new KtPlaceHolderWithTextStubElementType<>("ESCAPE_STRING_TEMPLATE_ENTRY", KtEscapeStringTemplateEntry.class);
 
     KtScriptElementType SCRIPT = new KtScriptElementType("SCRIPT");
-
-    TokenSet DECLARATION_TYPES =
-            TokenSet.create(CLASS, OBJECT_DECLARATION, FUNCTION, PROPERTY, TYPEALIAS, CLASS_INITIALIZER, SECONDARY_CONSTRUCTOR, ENUM_ENTRY);
-
-    TokenSet SUPER_TYPE_LIST_ENTRIES = TokenSet.create(DELEGATED_SUPER_TYPE_ENTRY, SUPER_TYPE_CALL_ENTRY, SUPER_TYPE_ENTRY);
-
-    TokenSet TYPE_ELEMENT_TYPES = TokenSet.create(USER_TYPE, NULLABLE_TYPE, FUNCTION_TYPE, DYNAMIC_TYPE, INTERSECTION_TYPE);
-
-    TokenSet INSIDE_DIRECTIVE_EXPRESSIONS = TokenSet.create(REFERENCE_EXPRESSION, DOT_QUALIFIED_EXPRESSION);
 }

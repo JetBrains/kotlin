@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 
 val a0: Any = 1u
 

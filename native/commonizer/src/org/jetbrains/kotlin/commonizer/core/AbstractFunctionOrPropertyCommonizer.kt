@@ -31,7 +31,7 @@ class FunctionOrPropertyBaseCommonizer(
         val extensionReceiver: CirExtensionReceiver?,
         val returnType: CirType,
         val typeParameters: List<CirTypeParameter>,
-        val additionalAnnotations: List<CirAnnotation>,
+        val annotations: List<CirAnnotation>,
     )
 
     override fun invoke(values: List<CirFunctionOrProperty>): FunctionOrProperty? {
@@ -57,6 +57,9 @@ class FunctionOrPropertyBaseCommonizer(
             commonizedType = returnType,
         )
 
+        val annotations = AnnotationsCommonizer.commonize(values.map { it.annotations }).orEmpty()
+            .plus(listOfNotNull(unsafeNumberAnnotation))
+
         return FunctionOrProperty(
             name = values.first().name,
             kind = values.singleDistinctValueOrNull { it.kind } ?: return null,
@@ -65,7 +68,7 @@ class FunctionOrPropertyBaseCommonizer(
             extensionReceiver = (extensionReceiverCommonizer(values.map { it.extensionReceiver }) ?: return null).receiver,
             returnType = returnTypeCommonizer(values) ?: return null,
             typeParameters = TypeParameterListCommonizer(typeCommonizer).commonize(values.map { it.typeParameters }) ?: return null,
-            additionalAnnotations = listOfNotNull(unsafeNumberAnnotation)
+            annotations = annotations
         )
     }
 }

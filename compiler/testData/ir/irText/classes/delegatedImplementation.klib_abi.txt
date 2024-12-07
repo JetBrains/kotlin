@@ -1,0 +1,51 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final object /BaseImpl : /IBase { // /BaseImpl|null[0]
+    final fun bar(): kotlin/Int // /BaseImpl.bar|bar(){}[0]
+    final fun foo(kotlin/Int, kotlin/String) // /BaseImpl.foo|foo(kotlin.Int;kotlin.String){}[0]
+    final fun (kotlin/String).qux() // /BaseImpl.qux|qux@kotlin.String(){}[0]
+}
+abstract interface /IBase { // /IBase|null[0]
+    abstract fun bar(): kotlin/Int // /IBase.bar|bar(){}[0]
+    abstract fun foo(kotlin/Int, kotlin/String) // /IBase.foo|foo(kotlin.Int;kotlin.String){}[0]
+    abstract fun (kotlin/String).qux() // /IBase.qux|qux@kotlin.String(){}[0]
+}
+abstract interface /IOther { // /IOther|null[0]
+    abstract val x // /IOther.x|{}x[0]
+        abstract fun <get-x>(): kotlin/String // /IOther.x.<get-x>|<get-x>(){}[0]
+    abstract var y // /IOther.y|{}y[0]
+        abstract fun <get-y>(): kotlin/Int // /IOther.y.<get-y>|<get-y>(){}[0]
+        abstract fun <set-y>(kotlin/Int) // /IOther.y.<set-y>|<set-y>(kotlin.Int){}[0]
+    abstract val z1 // /IOther.z1|@kotlin.Byte{}z1[0]
+        abstract fun (kotlin/Byte).<get-z1>(): kotlin/Int // /IOther.z1.<get-z1>|<get-z1>@kotlin.Byte(){}[0]
+    abstract var z2 // /IOther.z2|@kotlin.Byte{}z2[0]
+        abstract fun (kotlin/Byte).<get-z2>(): kotlin/Int // /IOther.z2.<get-z2>|<get-z2>@kotlin.Byte(){}[0]
+        abstract fun (kotlin/Byte).<set-z2>(kotlin/Int) // /IOther.z2.<set-z2>|<set-z2>@kotlin.Byte(kotlin.Int){}[0]
+}
+final class /Test1 : /IBase { // /Test1|null[0]
+    constructor <init>() // /Test1.<init>|<init>(){}[0]
+    final fun bar(): kotlin/Int // /Test1.bar|bar(){}[0]
+    final fun foo(kotlin/Int, kotlin/String) // /Test1.foo|foo(kotlin.Int;kotlin.String){}[0]
+    final fun (kotlin/String).qux() // /Test1.qux|qux@kotlin.String(){}[0]
+}
+final class /Test2 : /IBase, /IOther { // /Test2|null[0]
+    final val x // /Test2.x|{}x[0]
+        final fun <get-x>(): kotlin/String // /Test2.x.<get-x>|<get-x>(){}[0]
+    final var y // /Test2.y|{}y[0]
+        final fun <get-y>(): kotlin/Int // /Test2.y.<get-y>|<get-y>(){}[0]
+        final fun <set-y>(kotlin/Int) // /Test2.y.<set-y>|<set-y>(kotlin.Int){}[0]
+    final val z1 // /Test2.z1|@kotlin.Byte{}z1[0]
+        final fun (kotlin/Byte).<get-z1>(): kotlin/Int // /Test2.z1.<get-z1>|<get-z1>@kotlin.Byte(){}[0]
+    final var z2 // /Test2.z2|@kotlin.Byte{}z2[0]
+        final fun (kotlin/Byte).<get-z2>(): kotlin/Int // /Test2.z2.<get-z2>|<get-z2>@kotlin.Byte(){}[0]
+        final fun (kotlin/Byte).<set-z2>(kotlin/Int) // /Test2.z2.<set-z2>|<set-z2>@kotlin.Byte(kotlin.Int){}[0]
+    constructor <init>() // /Test2.<init>|<init>(){}[0]
+    final fun bar(): kotlin/Int // /Test2.bar|bar(){}[0]
+    final fun foo(kotlin/Int, kotlin/String) // /Test2.foo|foo(kotlin.Int;kotlin.String){}[0]
+    final fun (kotlin/String).qux() // /Test2.qux|qux@kotlin.String(){}[0]
+}
+final fun /otherImpl(kotlin/String, kotlin/Int): /IOther // /otherImpl|otherImpl(kotlin.String;kotlin.Int){}[0]

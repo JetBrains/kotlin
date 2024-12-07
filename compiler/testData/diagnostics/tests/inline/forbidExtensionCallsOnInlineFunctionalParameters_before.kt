@@ -1,4 +1,5 @@
-// !LANGUAGE: -ForbidExtensionCallsOnInlineFunctionalParameters
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ForbidExtensionCallsOnInlineFunctionalParameters
 
 fun main() {
     test { }

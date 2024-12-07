@@ -5,6 +5,10 @@ fun test1(a: Boolean, b: Boolean): Boolean {
   }
 }
 
+fun test1x(a: Boolean, b: Boolean): Boolean {
+  return a.and(other = b)
+}
+
 fun test2(a: Boolean, b: Boolean): Boolean {
   return when {
     a -> true
@@ -12,10 +16,7 @@ fun test2(a: Boolean, b: Boolean): Boolean {
   }
 }
 
-fun test1x(a: Boolean, b: Boolean): Boolean {
-  return a.and(other = b)
-}
-
 fun test2x(a: Boolean, b: Boolean): Boolean {
   return a.or(other = b)
 }
+

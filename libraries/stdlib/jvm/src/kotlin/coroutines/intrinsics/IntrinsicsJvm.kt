@@ -29,7 +29,19 @@ import kotlin.internal.InlineOnly
 @InlineOnly
 public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
     completion: Continuation<T>
-): Any? = (this as Function1<Continuation<T>, Any?>).invoke(completion)
+): Any? =
+    // Wrap with ContinuationImpl, otherwise the coroutine will not be interceptable. See KT-55869
+    if (this !is BaseContinuationImpl) wrapWithContinuationImpl(completion)
+    else (this as Function1<Continuation<T>, Any?>).invoke(completion)
+
+// Work around private and internal visibilities of functions used: [createCoroutineFromSuspendFunction] and [probeCoroutineCreated].
+@PublishedApi
+internal fun <T> (suspend () -> T).wrapWithContinuationImpl(
+    completion: Continuation<T>
+): Any? {
+    val newCompletion = createSimpleCoroutineForSuspendFunction(probeCoroutineCreated(completion))
+    return (this as Function1<Continuation<T>, Any?>).invoke(newCompletion)
+}
 
 /**
  * Starts an unintercepted coroutine with receiver type [R] and result type [T] and executes it until its first suspension.
@@ -48,14 +60,41 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
 public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
     receiver: R,
     completion: Continuation<T>
-): Any? = (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
+): Any? =
+    // Wrap with ContinuationImpl, otherwise the coroutine will not be interceptable. See KT-55869
+    if (this !is BaseContinuationImpl) wrapWithContinuationImpl(receiver, completion)
+    else (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
+
+// Work around private and internal visibilities of functions used: [createCoroutineFromSuspendFunction] and [probeCoroutineCreated].
+@PublishedApi
+internal fun <R, T> (suspend R.() -> T).wrapWithContinuationImpl(
+    receiver: R,
+    completion: Continuation<T>
+): Any? {
+    val newCompletion = createSimpleCoroutineForSuspendFunction(probeCoroutineCreated(completion))
+    return (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, newCompletion)
+}
 
 @InlineOnly
 internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterceptedOrReturn(
     receiver: R,
     param: P,
     completion: Continuation<T>
-): Any? = (this as Function3<R, P, Continuation<T>, Any?>).invoke(receiver, param, completion)
+): Any? =
+    // Wrap with ContinuationImpl, otherwise the coroutine will not be interceptable. See KT-55869
+    if (this !is BaseContinuationImpl) wrapWithContinuationImpl(receiver, param, completion)
+    else (this as Function3<R, P, Continuation<T>, Any?>).invoke(receiver, param, completion)
+
+// Work around private and internal visibilities of functions used: [createCoroutineFromSuspendFunction] and [probeCoroutineCreated].
+@PublishedApi
+internal fun <R, P, T> (suspend R.(P) -> T).wrapWithContinuationImpl(
+    receiver: R,
+    param: P,
+    completion: Continuation<T>
+): Any? {
+    val newCompletion = createSimpleCoroutineForSuspendFunction(probeCoroutineCreated(completion))
+    return (this as Function3<R, P, Continuation<T>, Any?>).invoke(receiver, param, newCompletion)
+}
 
 // JVM declarations
 
@@ -199,5 +238,32 @@ private inline fun <T> createCoroutineFromSuspendFunction(
                     }
                     else -> error("This coroutine had already completed")
                 }
+        }
+}
+
+/**
+ * This function is used when [startCoroutineUninterceptedOrReturn] encounters suspending lambda that does not extend BaseContinuationImpl.
+ *
+ * It happens in two cases:
+ *   1. Callable reference to suspending function or tail-call lambdas,
+ *   2. Suspending function reference implemented by Java code.
+ *
+ * This function is the same as above, but does not run lambda itself - the caller is expected to call [invoke] manually.
+ */
+private fun <T> createSimpleCoroutineForSuspendFunction(
+    completion: Continuation<T>
+): Continuation<T> {
+    val context = completion.context
+    return if (context === EmptyCoroutineContext)
+        object : RestrictedContinuationImpl(completion as Continuation<Any?>) {
+            override fun invokeSuspend(result: Result<Any?>): Any? {
+                return result.getOrThrow()
+            }
+        }
+    else
+        object : ContinuationImpl(completion as Continuation<Any?>, context) {
+            override fun invokeSuspend(result: Result<Any?>): Any? {
+                return result.getOrThrow()
+            }
         }
 }

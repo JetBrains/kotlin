@@ -30,35 +30,20 @@ interface IrLazyDeclarationBase : IrDeclaration {
 
     fun ReceiverParameterDescriptor.generateReceiverParameterStub(): IrValueParameter =
         factory.createValueParameter(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, IrValueParameterSymbolImpl(this),
-            name, -1, type.toIrType(), null, isCrossinline = false, isNoinline = false,
-            isHidden = false, isAssignable = false
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            origin = origin,
+            name = name,
+            type = type.toIrType(),
+            isAssignable = false,
+            symbol = IrValueParameterSymbolImpl(this),
+            varargElementType = null,
+            isCrossinline = false,
+            isNoinline = false,
+            isHidden = false,
         )
 
     fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrConstructorCall>> = lazyVar(stubGenerator.lock) {
         descriptor.annotations.mapNotNull(typeTranslator.constantValueGenerator::generateAnnotationConstructorCall).toMutableList()
-    }
-
-    fun createLazyParent(): ReadWriteProperty<Any?, IrDeclarationParent> = lazyVar(stubGenerator.lock, ::lazyParent)
-
-    fun lazyParent(): IrDeclarationParent {
-        val currentDescriptor = descriptor
-
-        val containingDeclaration =
-            ((currentDescriptor as? PropertyAccessorDescriptor)?.correspondingProperty ?: currentDescriptor).containingDeclaration
-
-        return when (containingDeclaration) {
-            is PackageFragmentDescriptor -> run {
-                val parent = this.takeUnless { it is IrClass }?.let {
-                    stubGenerator.generateOrGetFacadeClass(descriptor)
-                } ?: stubGenerator.generateOrGetEmptyExternalPackageFragmentStub(containingDeclaration)
-                parent.declarations.add(this)
-                parent
-            }
-            is ClassDescriptor -> stubGenerator.generateClassStub(containingDeclaration)
-            is FunctionDescriptor -> stubGenerator.generateFunctionStub(containingDeclaration)
-            is PropertyDescriptor -> stubGenerator.generateFunctionStub(containingDeclaration.run { getter ?: setter!! })
-            else -> throw AssertionError("Package or class expected: $containingDeclaration; for $currentDescriptor")
-        }
     }
 }

@@ -66,14 +66,14 @@ private const val qS4 = 7.70381505559019352791e-02 /* 0x3FB3B8C5, 0xB12E9282 */
 
 internal fun __ieee754_asin(x: Double): Double {
     var t: Double = 0.0
-    var w: Double = 0.0
-    var p: Double = 0.0
-    var q: Double = 0.0
-    var c: Double = 0.0
-    var r: Double = 0.0
-    var s: Double = 0.0
-    var hx: Int = 0
-    var ix: Int = 0
+    var w: Double
+    var p: Double
+    var q: Double
+    var c: Double
+    var r: Double
+    var s: Double
+    var hx: Int
+    var ix: Int
     hx = __HI(x)
     ix = hx and 0x7fffffff
     if (ix >= 0x3ff00000) {        /* |x|>= 1 */

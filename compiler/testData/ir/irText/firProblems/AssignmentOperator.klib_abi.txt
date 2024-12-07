@@ -1,0 +1,21 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class foo/A { // foo/A|null[0]
+    final var prop // foo/A.prop|{}prop[0]
+        final fun <get-prop>(): kotlin/Int // foo/A.prop.<get-prop>|<get-prop>(){}[0]
+        final fun <set-prop>(kotlin/Int) // foo/A.prop.<set-prop>|<set-prop>(kotlin.Int){}[0]
+    constructor <init>() // foo/A.<init>|<init>(){}[0]
+}
+final object foo/B { // foo/B|null[0]
+    final var prop // foo/B.prop|{}prop[0]
+        final fun <get-prop>(): kotlin/Int // foo/B.prop.<get-prop>|<get-prop>(){}[0]
+        final fun <set-prop>(kotlin/Int) // foo/B.prop.<set-prop>|<set-prop>(kotlin.Int){}[0]
+}
+final val foo/array // foo/array|{}array[0]
+    final fun <get-array>(): kotlin/Array<kotlin/Int> // foo/array.<get-array>|<get-array>(){}[0]
+final fun <#A: kotlin/Any?> foo/id(#A): #A // foo/id|id(0:0){0§<kotlin.Any?>}[0]
+final fun foo/runMe() // foo/runMe|runMe(){}[0]

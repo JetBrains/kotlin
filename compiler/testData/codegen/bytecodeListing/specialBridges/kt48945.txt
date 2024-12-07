@@ -22,19 +22,25 @@ public final class Test_GMStringString_AbstractMapStringString {
     public bridge final method containsValue(p0: java.lang.Object): boolean
     public bridge method containsValue(p0: java.lang.String): boolean
     public bridge final method entrySet(): java.util.Set
-    public bridge final method get(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge final method get(p0: java.lang.Object): java.lang.Object
+    public bridge final method get(p0: java.lang.Object): java.lang.String
     public bridge method get(p0: java.lang.String): java.lang.String
     public @org.jetbrains.annotations.NotNull method getEntries(): java.util.Set
     public bridge method getKeys(): java.util.Set
+    public synthetic bridge final method getOrDefault(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public bridge final method getOrDefault(p0: java.lang.Object, p1: java.lang.String): java.lang.String
+    public bridge method getOrDefault(p0: java.lang.String, p1: java.lang.String): java.lang.String
     public bridge method getSize(): int
     public bridge method getValues(): java.util.Collection
     public bridge final method keySet(): java.util.Set
-    public bridge final method remove(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge final method remove(p0: java.lang.Object): java.lang.Object
+    public bridge final method remove(p0: java.lang.Object): java.lang.String
     public bridge final method remove(p0: java.lang.Object, p1: java.lang.Object): boolean
     public bridge method remove(p0: java.lang.String): java.lang.String
     public bridge method remove(p0: java.lang.String, p1: java.lang.String): boolean
     public bridge final method size(): int
     public bridge final method values(): java.util.Collection
+    public inner class java/util/Map$Entry
 }
 
 @kotlin.Metadata
@@ -46,19 +52,23 @@ public final class Test_GMStringString_JMapFinalRemove {
     public bridge final method containsValue(p0: java.lang.Object): boolean
     public bridge method containsValue(p0: java.lang.String): boolean
     public bridge final method entrySet(): java.util.Set
-    public bridge final method get(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge final method get(p0: java.lang.Object): java.lang.Object
+    public bridge final method get(p0: java.lang.Object): java.lang.String
     public bridge method get(p0: java.lang.String): java.lang.String
     public @org.jetbrains.annotations.NotNull method getEntries(): java.util.Set
     public bridge method getKeys(): java.util.Set
+    public synthetic bridge final method getOrDefault(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public bridge final method getOrDefault(p0: java.lang.Object, p1: java.lang.String): java.lang.String
+    public bridge method getOrDefault(p0: java.lang.String, p1: java.lang.String): java.lang.String
     public bridge method getSize(): int
     public bridge method getValues(): java.util.Collection
     public bridge final method keySet(): java.util.Set
-    public bridge final method remove(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method remove(p0: java.lang.Object): java.lang.Object
     public bridge final method remove(p0: java.lang.Object, p1: java.lang.Object): boolean
-    public bridge method remove(p0: java.lang.String): java.lang.String
     public bridge method remove(p0: java.lang.String, p1: java.lang.String): boolean
     public bridge final method size(): int
     public bridge final method values(): java.util.Collection
+    public inner class java/util/Map$Entry
 }
 
 @kotlin.Metadata
@@ -70,19 +80,25 @@ public final class Test_MSS_AbstractMapStringString {
     public bridge final method containsValue(p0: java.lang.Object): boolean
     public bridge method containsValue(p0: java.lang.String): boolean
     public bridge final method entrySet(): java.util.Set
-    public bridge final method get(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge final method get(p0: java.lang.Object): java.lang.Object
+    public bridge final method get(p0: java.lang.Object): java.lang.String
     public bridge method get(p0: java.lang.String): java.lang.String
     public @org.jetbrains.annotations.NotNull method getEntries(): java.util.Set
     public bridge method getKeys(): java.util.Set
+    public synthetic bridge final method getOrDefault(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public bridge final method getOrDefault(p0: java.lang.Object, p1: java.lang.String): java.lang.String
+    public bridge method getOrDefault(p0: java.lang.String, p1: java.lang.String): java.lang.String
     public bridge method getSize(): int
     public bridge method getValues(): java.util.Collection
     public bridge final method keySet(): java.util.Set
-    public bridge final method remove(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge final method remove(p0: java.lang.Object): java.lang.Object
+    public bridge final method remove(p0: java.lang.Object): java.lang.String
     public bridge final method remove(p0: java.lang.Object, p1: java.lang.Object): boolean
     public bridge method remove(p0: java.lang.String): java.lang.String
     public bridge method remove(p0: java.lang.String, p1: java.lang.String): boolean
     public bridge final method size(): int
     public bridge final method values(): java.util.Collection
+    public inner class java/util/Map$Entry
 }
 
 @kotlin.Metadata
@@ -94,19 +110,23 @@ public final class Test_MSS_JMapFinalRemove {
     public bridge final method containsValue(p0: java.lang.Object): boolean
     public bridge method containsValue(p0: java.lang.String): boolean
     public bridge final method entrySet(): java.util.Set
-    public bridge final method get(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge final method get(p0: java.lang.Object): java.lang.Object
+    public bridge final method get(p0: java.lang.Object): java.lang.String
     public bridge method get(p0: java.lang.String): java.lang.String
     public @org.jetbrains.annotations.NotNull method getEntries(): java.util.Set
     public bridge method getKeys(): java.util.Set
+    public synthetic bridge final method getOrDefault(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public bridge final method getOrDefault(p0: java.lang.Object, p1: java.lang.String): java.lang.String
+    public bridge method getOrDefault(p0: java.lang.String, p1: java.lang.String): java.lang.String
     public bridge method getSize(): int
     public bridge method getValues(): java.util.Collection
     public bridge final method keySet(): java.util.Set
-    public bridge final method remove(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method remove(p0: java.lang.Object): java.lang.Object
     public bridge final method remove(p0: java.lang.Object, p1: java.lang.Object): boolean
-    public bridge method remove(p0: java.lang.String): java.lang.String
     public bridge method remove(p0: java.lang.String, p1: java.lang.String): boolean
     public bridge final method size(): int
     public bridge final method values(): java.util.Collection
+    public inner class java/util/Map$Entry
 }
 
 @kotlin.Metadata
@@ -118,19 +138,25 @@ public final class Test_MapStringString_AbstractMapStringString {
     public bridge final method containsValue(p0: java.lang.Object): boolean
     public bridge method containsValue(p0: java.lang.String): boolean
     public bridge final method entrySet(): java.util.Set
-    public bridge final method get(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge final method get(p0: java.lang.Object): java.lang.Object
+    public bridge final method get(p0: java.lang.Object): java.lang.String
     public bridge method get(p0: java.lang.String): java.lang.String
     public @org.jetbrains.annotations.NotNull method getEntries(): java.util.Set
     public bridge method getKeys(): java.util.Set
+    public synthetic bridge final method getOrDefault(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public bridge final method getOrDefault(p0: java.lang.Object, p1: java.lang.String): java.lang.String
+    public bridge method getOrDefault(p0: java.lang.String, p1: java.lang.String): java.lang.String
     public bridge method getSize(): int
     public bridge method getValues(): java.util.Collection
     public bridge final method keySet(): java.util.Set
-    public bridge final method remove(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge final method remove(p0: java.lang.Object): java.lang.Object
+    public bridge final method remove(p0: java.lang.Object): java.lang.String
     public bridge final method remove(p0: java.lang.Object, p1: java.lang.Object): boolean
     public bridge method remove(p0: java.lang.String): java.lang.String
     public bridge method remove(p0: java.lang.String, p1: java.lang.String): boolean
     public bridge final method size(): int
     public bridge final method values(): java.util.Collection
+    public inner class java/util/Map$Entry
 }
 
 @kotlin.Metadata
@@ -142,19 +168,23 @@ public final class Test_MapStringString_JMapFinalRemove {
     public bridge final method containsValue(p0: java.lang.Object): boolean
     public bridge method containsValue(p0: java.lang.String): boolean
     public bridge final method entrySet(): java.util.Set
-    public bridge final method get(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge final method get(p0: java.lang.Object): java.lang.Object
+    public bridge final method get(p0: java.lang.Object): java.lang.String
     public bridge method get(p0: java.lang.String): java.lang.String
     public @org.jetbrains.annotations.NotNull method getEntries(): java.util.Set
     public bridge method getKeys(): java.util.Set
+    public synthetic bridge final method getOrDefault(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public bridge final method getOrDefault(p0: java.lang.Object, p1: java.lang.String): java.lang.String
+    public bridge method getOrDefault(p0: java.lang.String, p1: java.lang.String): java.lang.String
     public bridge method getSize(): int
     public bridge method getValues(): java.util.Collection
     public bridge final method keySet(): java.util.Set
-    public bridge final method remove(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method remove(p0: java.lang.Object): java.lang.Object
     public bridge final method remove(p0: java.lang.Object, p1: java.lang.Object): boolean
-    public bridge method remove(p0: java.lang.String): java.lang.String
     public bridge method remove(p0: java.lang.String, p1: java.lang.String): boolean
     public bridge final method size(): int
     public bridge final method values(): java.util.Collection
+    public inner class java/util/Map$Entry
 }
 
 @kotlin.Metadata
@@ -166,19 +196,25 @@ public final class Test_SMSS_AbstractMapStringString {
     public bridge final method containsValue(p0: java.lang.Object): boolean
     public bridge method containsValue(p0: java.lang.String): boolean
     public bridge final method entrySet(): java.util.Set
-    public bridge final method get(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge final method get(p0: java.lang.Object): java.lang.Object
+    public bridge final method get(p0: java.lang.Object): java.lang.String
     public bridge method get(p0: java.lang.String): java.lang.String
     public @org.jetbrains.annotations.NotNull method getEntries(): java.util.Set
     public bridge method getKeys(): java.util.Set
+    public synthetic bridge final method getOrDefault(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public bridge final method getOrDefault(p0: java.lang.Object, p1: java.lang.String): java.lang.String
+    public bridge method getOrDefault(p0: java.lang.String, p1: java.lang.String): java.lang.String
     public bridge method getSize(): int
     public bridge method getValues(): java.util.Collection
     public bridge final method keySet(): java.util.Set
-    public bridge final method remove(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge final method remove(p0: java.lang.Object): java.lang.Object
+    public bridge final method remove(p0: java.lang.Object): java.lang.String
     public bridge final method remove(p0: java.lang.Object, p1: java.lang.Object): boolean
     public bridge method remove(p0: java.lang.String): java.lang.String
     public bridge method remove(p0: java.lang.String, p1: java.lang.String): boolean
     public bridge final method size(): int
     public bridge final method values(): java.util.Collection
+    public inner class java/util/Map$Entry
 }
 
 @kotlin.Metadata
@@ -190,17 +226,21 @@ public final class Test_SMSS_JMapFinalRemove {
     public bridge final method containsValue(p0: java.lang.Object): boolean
     public bridge method containsValue(p0: java.lang.String): boolean
     public bridge final method entrySet(): java.util.Set
-    public bridge final method get(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge final method get(p0: java.lang.Object): java.lang.Object
+    public bridge final method get(p0: java.lang.Object): java.lang.String
     public bridge method get(p0: java.lang.String): java.lang.String
     public @org.jetbrains.annotations.NotNull method getEntries(): java.util.Set
     public bridge method getKeys(): java.util.Set
+    public synthetic bridge final method getOrDefault(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public bridge final method getOrDefault(p0: java.lang.Object, p1: java.lang.String): java.lang.String
+    public bridge method getOrDefault(p0: java.lang.String, p1: java.lang.String): java.lang.String
     public bridge method getSize(): int
     public bridge method getValues(): java.util.Collection
     public bridge final method keySet(): java.util.Set
-    public bridge final method remove(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method remove(p0: java.lang.Object): java.lang.Object
     public bridge final method remove(p0: java.lang.Object, p1: java.lang.Object): boolean
-    public bridge method remove(p0: java.lang.String): java.lang.String
     public bridge method remove(p0: java.lang.String, p1: java.lang.String): boolean
     public bridge final method size(): int
     public bridge final method values(): java.util.Collection
+    public inner class java/util/Map$Entry
 }

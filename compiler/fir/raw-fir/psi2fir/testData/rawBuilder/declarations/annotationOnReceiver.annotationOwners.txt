@@ -1,0 +1,79 @@
+@ReceiverNestedTypeAnnotation(IntegerLiteral(3))
+owner -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /function
+context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /function
+
+@ReceiverTypeAnnotation(IntegerLiteral(2))
+owner -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /function
+context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /function
+
+@RECEIVER:FunctionReceiverAnnotation(IntegerLiteral(1))
+owner -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /function
+context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /function
+
+@ReceiverNestedTypeAnnotation(IntegerLiteral(6))
+owner -> FirReceiverParameterSymbol from FirPropertySymbol /property
+context -> FirReceiverParameterSymbol from FirPropertySymbol /property
+
+@ReceiverTypeAnnotation(IntegerLiteral(5))
+owner -> FirReceiverParameterSymbol from FirPropertySymbol /property
+context -> FirReceiverParameterSymbol from FirPropertySymbol /property
+
+@RECEIVER:PropertyReceiverAnnotation(IntegerLiteral(4))
+owner -> FirReceiverParameterSymbol from FirPropertySymbol /property
+context -> FirReceiverParameterSymbol from FirPropertySymbol /property
+
+@ContextReceiverAnnotation(IntegerLiteral(7))
+owner -> FirValueParameterSymbol <local>/List from FirNamedFunctionSymbol /functionWithContextReceivers
+context -> FirValueParameterSymbol <local>/List from FirNamedFunctionSymbol /functionWithContextReceivers
+
+@ContextReceiverAnnotation()
+owner -> FirValueParameterSymbol <local>/List from FirNamedFunctionSymbol /functionWithContextReceivers
+context -> FirValueParameterSymbol <local>/List from FirNamedFunctionSymbol /functionWithContextReceivers
+
+@ContextReceiverAnnotation(IntegerLiteral(8))
+owner -> FirValueParameterSymbol <local>/List from FirPropertySymbol /propertyWithContextReceivers
+context -> FirValueParameterSymbol <local>/List from FirPropertySymbol /propertyWithContextReceivers
+
+@ContextReceiverAnnotation()
+owner -> FirValueParameterSymbol <local>/List from FirPropertySymbol /propertyWithContextReceivers
+context -> FirValueParameterSymbol <local>/List from FirPropertySymbol /propertyWithContextReceivers
+
+@ContextReceiverAnnotation(IntegerLiteral(9))
+owner -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClass.MyClass
+context -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClass.MyClass
+
+@ContextReceiverAnnotation()
+owner -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClass.MyClass
+context -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClass.MyClass
+
+@ContextReceiverAnnotation(IntegerLiteral(9))
+owner -> FirValueParameterSymbol <local>/List from FirRegularClassSymbol MyClass
+context -> FirValueParameterSymbol <local>/List from FirRegularClassSymbol MyClass
+
+@ContextReceiverAnnotation()
+owner -> FirValueParameterSymbol <local>/List from FirRegularClassSymbol MyClass
+context -> FirValueParameterSymbol <local>/List from FirRegularClassSymbol MyClass
+
+@ContextReceiverAnnotation(IntegerLiteral(10))
+owner -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClassWithExplicitConstructor.MyClassWithExplicitConstructor
+context -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClassWithExplicitConstructor.MyClassWithExplicitConstructor
+
+@ContextReceiverAnnotation()
+owner -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClassWithExplicitConstructor.MyClassWithExplicitConstructor
+context -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClassWithExplicitConstructor.MyClassWithExplicitConstructor
+
+@ContextReceiverAnnotation(IntegerLiteral(10))
+owner -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClassWithExplicitConstructor.MyClassWithExplicitConstructor
+context -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClassWithExplicitConstructor.MyClassWithExplicitConstructor
+
+@ContextReceiverAnnotation()
+owner -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClassWithExplicitConstructor.MyClassWithExplicitConstructor
+context -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClassWithExplicitConstructor.MyClassWithExplicitConstructor
+
+@ContextReceiverAnnotation(IntegerLiteral(10))
+owner -> FirValueParameterSymbol <local>/List from FirRegularClassSymbol MyClassWithExplicitConstructor
+context -> FirValueParameterSymbol <local>/List from FirRegularClassSymbol MyClassWithExplicitConstructor
+
+@ContextReceiverAnnotation()
+owner -> FirValueParameterSymbol <local>/List from FirRegularClassSymbol MyClassWithExplicitConstructor
+context -> FirValueParameterSymbol <local>/List from FirRegularClassSymbol MyClassWithExplicitConstructor

@@ -5,32 +5,59 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
+import org.gradle.api.Action
+import org.gradle.api.file.Directory
+import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8Exec
-import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.d8.D8Plugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmD8Dsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinWasmD8
-import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.withType
 import javax.inject.Inject
 
-open class KotlinD8Ir @Inject constructor(target: KotlinJsIrTarget) :
-    KotlinJsIrSubTargetBase(target, "d8"),
+@OptIn(ExperimentalWasmDsl::class)
+abstract class KotlinD8Ir @Inject constructor(target: KotlinJsIrTarget) :
+    KotlinJsIrSubTarget(target, "d8"),
     KotlinWasmD8Dsl {
 
-    private val d8 = D8RootPlugin.apply(project.rootProject)
+    private val d8 = D8Plugin.applyWithEnvSpec(project)
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside d8 using the builtin test framework"
 
-    override fun runTask(body: D8Exec.() -> Unit) {
-        project.tasks.withType<D8Exec>().named(runTaskName).configure(body)
+    override fun runTask(body: Action<D8Exec>) {
+        subTargetConfigurators
+            .withType<D8EnvironmentConfigurator>()
+            .configureEach {
+                it.configureRun(body)
+            }
     }
 
     override fun configureDefaultTestFramework(test: KotlinJsTest) {
         test.testFramework = KotlinWasmD8(test)
     }
 
-    override fun configureTestDependencies(test: KotlinJsTest) {
-        test.dependsOn(d8.setupTaskProvider)
+    override fun configureTestDependencies(test: KotlinJsTest, binary: JsIrBinary) {
+        with(d8) {
+            test.dependsOn(project.d8SetupTaskProvider)
+        }
+    }
+
+    override fun binaryInputFile(binary: JsIrBinary): Provider<RegularFile> {
+        return binary.mainFileSyncPath
+    }
+
+    override fun binarySyncTaskName(binary: JsIrBinary): String {
+        return binary.linkSyncTaskName
+    }
+
+    override fun binarySyncOutput(binary: JsIrBinary): Provider<Directory> {
+        return project.objects.directoryProperty().fileProvider(
+            binary.linkTask.map { it.destinationDirectory.getFile().parentFile.resolve(disambiguationClassifier) }
+        )
     }
 }

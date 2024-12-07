@@ -1,0 +1,46 @@
+FILE: script.kts
+    SCRIPT: <script-script.kts>
+
+        public final? class Builder : R|kotlin/Any| {
+            public? constructor(): R|Builder| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? var version: String = LAZY_EXPRESSION
+                public? get(): String
+                public? set(value: String): R|kotlin/Unit|
+
+            public? final? fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            public final? class Nested : R|kotlin/Any| {
+                public? constructor(): R|Builder.Nested| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+                public? final? fun boo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+            }
+
+        }
+
+        public? final? fun build(action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+
+        public? final? fun build2(action: ( Builder.() -> Unit )): Builder { LAZY_BLOCK }
+
+        init { LAZY_BLOCK }
+
+        init { LAZY_BLOCK }
+
+        public? final? val builder: <implicit> = LAZY_EXPRESSION
+            public? get(): <implicit>
+
+        init { LAZY_BLOCK }
+
+        init { LAZY_BLOCK }
+
+        init {
+            builder#.execute#()
+        }
+

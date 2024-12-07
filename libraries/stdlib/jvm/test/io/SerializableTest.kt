@@ -31,7 +31,7 @@ private class OldSchoolSingleton private constructor() : Serializable {
 class SerializableTest {
     @Test fun testClosure() {
         val tuple = Triple("Ivan", 12, Serial("serial"))
-        val fn = { tuple.toString() }
+        val fn = @JvmSerializableLambda { tuple.toString() }
         val deserialized = serializeAndDeserialize(fn)
 
         assertEquals(fn(), deserialized())
@@ -39,8 +39,8 @@ class SerializableTest {
 
     @Test fun testComplexClosure() {
         val y = 12
-        val fn1 = { x: Int -> (x + y).toString() }
-        val fn2: Int.(Int) -> String = { fn1(this + it) }
+        val fn1 = @JvmSerializableLambda { x: Int -> (x + y).toString() }
+        val fn2: Int.(Int) -> String = @JvmSerializableLambda { fn1(this + it) }
         val deserialized = serializeAndDeserialize(fn2)
 
         assertEquals(5.fn2(10), 5.deserialized(10))

@@ -1,0 +1,28 @@
+FILE: boundSmartcastWithProjection.kt
+    public final class Inv<T> : R|kotlin/Any| {
+        public constructor<T>(data: R|T|): R|Inv<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val data: R|T| = R|<local>/data|
+            public get(): R|T|
+
+    }
+    public final fun test1(x: R|Inv<out kotlin/String?>|): R|kotlin/Unit| {
+        lval y: R|kotlin/String?| = R|<local>/x|.R|SubstitutionOverride</Inv.data: R|CapturedType(out kotlin/String?)|>|
+        when (R|<local>/y|) {
+            ($subj$ is R|kotlin/String|) ->  {
+                R|<local>/x|.R|SubstitutionOverride</Inv.data: R|CapturedType(out kotlin/String?)|>|.R|kotlin/String.length|
+            }
+        }
+
+    }
+    public final fun test2(x: R|Inv<out kotlin/Any?>|): R|kotlin/Unit| {
+        lval y: R|kotlin/Any?| = R|<local>/x|.R|SubstitutionOverride</Inv.data: R|CapturedType(out kotlin/Any?)|>|
+        when (R|<local>/y|) {
+            ($subj$ is R|kotlin/String|) ->  {
+                R|<local>/x|.R|SubstitutionOverride</Inv.data: R|CapturedType(out kotlin/Any?)|>|.R|kotlin/String.length|
+            }
+        }
+
+    }

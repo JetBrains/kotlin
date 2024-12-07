@@ -1,0 +1,23 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract fun interface <#A: kotlin/Any?> /KConsumer { // /KConsumer|null[0]
+    abstract fun accept(#A) // /KConsumer.accept|accept(1:0){}[0]
+}
+abstract fun interface /KRunnable { // /KRunnable|null[0]
+    abstract fun run() // /KRunnable.run|run(){}[0]
+}
+abstract fun interface <#A: kotlin/Any?> /KSupplier { // /KSupplier|null[0]
+    abstract fun get(): #A // /KSupplier.get|get(){}[0]
+}
+final fun /test1(): kotlin.reflect/KFunction1<kotlin/Function0<kotlin/Unit>, /KRunnable> // /test1|test1(){}[0]
+final fun /test1a(): kotlin.reflect/KFunction1<kotlin/Function0<kotlin/Unit>, /KRunnable> // /test1a|test1a(){}[0]
+final fun /test1b(): kotlin.reflect/KFunction</KRunnable> // /test1b|test1b(){}[0]
+final fun /test2(): kotlin/Function1<kotlin/Function0<kotlin/String>, /KSupplier<kotlin/String>> // /test2|test2(){}[0]
+final fun /test2a(): kotlin/Function1<kotlin/Function0<kotlin/String>, /KSupplier<kotlin/String>> // /test2a|test2a(){}[0]
+final fun /test3(): kotlin/Function1<kotlin/Function1<kotlin/String, kotlin/Unit>, /KConsumer<kotlin/String>> // /test3|test3(){}[0]
+final fun /test3a(): kotlin/Function1<kotlin/Function1<kotlin/String, kotlin/Unit>, /KConsumer<kotlin/String>> // /test3a|test3a(){}[0]
+final fun /test3b(): kotlin.reflect/KFunction</KConsumer<kotlin/String>> // /test3b|test3b(){}[0]

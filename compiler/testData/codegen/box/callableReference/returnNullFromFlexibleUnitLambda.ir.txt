@@ -1,0 +1,33 @@
+FILE fqName:<root> fileName:/main.kt
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:foo type:@[EnhancedNullability] kotlin.Function0<@[FlexibleNullability] kotlin.Unit?> visibility:public [static] declared in <root>.A' type=kotlin.Unit superQualifierSymbol=<root>.A origin=EQ
+        value: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.box'
+                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                  CONST Null type=kotlin.Nothing? value=null
+      CALL 'public final fun assertNotNull <T> (actual: T of kotlin.test.assertNotNull?, message: kotlin.String?): T of kotlin.test.assertNotNull declared in kotlin.test' type=kotlin.Unit origin=null
+        <T>: kotlin.Unit
+        actual: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=@[FlexibleNullability] kotlin.Unit? origin=INVOKE
+          $this: TYPE_OP type=kotlin.Function0<@[FlexibleNullability] kotlin.Unit?> origin=IMPLICIT_NOTNULL typeOperand=kotlin.Function0<@[FlexibleNullability] kotlin.Unit?>
+            GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:foo type:@[EnhancedNullability] kotlin.Function0<@[FlexibleNullability] kotlin.Unit?> visibility:public [static] declared in <root>.A' type=@[EnhancedNullability] kotlin.Function0<@[FlexibleNullability] kotlin.Unit?> superQualifierSymbol=<root>.A origin=null
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:foo type:@[EnhancedNullability] kotlin.Function0<@[FlexibleNullability] kotlin.Unit?> visibility:public [static] declared in <root>.A' type=kotlin.Unit superQualifierSymbol=<root>.A origin=EQ
+        value: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.box'
+                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                  CALL 'public final fun nullableUnit (): kotlin.Unit? declared in <root>' type=kotlin.Unit? origin=null
+      CALL 'public final fun assertNotNull <T> (actual: T of kotlin.test.assertNotNull?, message: kotlin.String?): T of kotlin.test.assertNotNull declared in kotlin.test' type=kotlin.Unit origin=null
+        <T>: kotlin.Unit
+        actual: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=@[FlexibleNullability] kotlin.Unit? origin=INVOKE
+          $this: TYPE_OP type=kotlin.Function0<@[FlexibleNullability] kotlin.Unit?> origin=IMPLICIT_NOTNULL typeOperand=kotlin.Function0<@[FlexibleNullability] kotlin.Unit?>
+            GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:foo type:@[EnhancedNullability] kotlin.Function0<@[FlexibleNullability] kotlin.Unit?> visibility:public [static] declared in <root>.A' type=@[EnhancedNullability] kotlin.Function0<@[FlexibleNullability] kotlin.Unit?> superQualifierSymbol=<root>.A origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
+  FUN name:nullableUnit visibility:public modality:FINAL <> () returnType:kotlin.Unit?
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun nullableUnit (): kotlin.Unit? declared in <root>'
+        CONST Null type=kotlin.Nothing? value=null

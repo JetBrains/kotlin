@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface B {
   fun bar() {}
 }
@@ -9,7 +10,7 @@ class C() {
 
 fun test(a : Any?) {
   if (a is B) {
-      if (a is C) {
+      if (<!USELESS_IS_CHECK!>a is C<!>) {
           a.bar();
       }
   }

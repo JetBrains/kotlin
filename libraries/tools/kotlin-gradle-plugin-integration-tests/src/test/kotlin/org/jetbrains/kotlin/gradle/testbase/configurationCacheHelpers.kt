@@ -5,12 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
-import org.jetbrains.kotlin.gradle.BaseGradleIT
-import java.net.URI
-import java.nio.file.Path
-import kotlin.io.path.ExperimentalPathApi
-import kotlin.io.path.name
-import kotlin.test.fail
+import org.gradle.testkit.runner.BuildResult
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheProblems
 
 /**
  * Tests whether configuration cache for the tasks specified by [buildArguments] works on simple scenario when project is built twice non-incrementally.
@@ -27,10 +24,17 @@ fun TestProject.assertSimpleConfigurationCacheScenarioWorks(
 
     build(*buildArguments, buildOptions = buildOptions) {
         assertTasksExecuted(*executedTask.toTypedArray())
-        assertOutputContains(
-            "Calculating task graph as no configuration cache is available for tasks: ${buildArguments.joinToString(separator = " ")}"
-        )
-        assertConfigurationCacheSucceeded()
+        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_5)) {
+            assertOutputContains(
+                "Calculating task graph as no configuration cache is available for tasks: ${buildArguments.joinToString(separator = " ")}"
+            )
+        } else {
+            assertOutputContains(
+                "Calculating task graph as no cached configuration is available for tasks: ${buildArguments.joinToString(separator = " ")}"
+            )
+        }
+
+        assertConfigurationCacheStored()
     }
 
     build("clean", buildOptions = buildOptions)
@@ -38,7 +42,7 @@ fun TestProject.assertSimpleConfigurationCacheScenarioWorks(
     // Then run a build where tasks states are deserialized to check that they work correctly in this mode
     build(*buildArguments, buildOptions = buildOptions) {
         assertTasksExecuted(*executedTask.toTypedArray())
-        assertOutputContains("Reusing configuration cache.")
+        assertConfigurationCacheReused()
     }
 
     if (checkUpToDateOnRebuild) {
@@ -48,36 +52,16 @@ fun TestProject.assertSimpleConfigurationCacheScenarioWorks(
     }
 }
 
-/**
- * Copies all files from the directory containing the given [htmlReportFile] to a
- * fresh temp dir and returns a reference to the copied [htmlReportFile] in the new
- * directory.
- */
-@OptIn(ExperimentalPathApi::class)
-private fun copyReportToTempDir(htmlReportFile: Path): Path =
-    createTempDirDeleteOnExit("report").let { tempDir ->
-        htmlReportFile.parent.toFile().copyRecursively(tempDir.toFile())
-        tempDir.resolve(htmlReportFile.name)
-    }
+fun BuildResult.assertConfigurationCacheStored() {
+    assertOutputContains("Configuration cache entry stored.")
+}
 
-/**
- * The configuration cache report file, if exists, indicates problems were
- * found while caching the task graph.
- */
-private val GradleProject.configurationCacheReportFile
-    get() = projectPath
-        .resolve("build")
-        .findInPath("configuration-cache-report.html")
-        ?.let { copyReportToTempDir(it) }
-
-private val Path.asClickableFileUrl
-    get() = URI("file", "", toUri().path, null, null).toString()
-
-private fun GradleProject.assertConfigurationCacheSucceeded() {
-    configurationCacheReportFile?.let { htmlReportFile ->
-        fail("Configuration cache problems were found, check ${htmlReportFile.asClickableFileUrl} for details.")
-    }
+fun BuildResult.assertConfigurationCacheReused() {
+    assertOutputContains("Reusing configuration cache.")
 }
 
 val BuildOptions.withConfigurationCache: BuildOptions
-    get() = copy(configurationCache = true, configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL)
+    get() = copy(
+        configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+        configurationCacheProblems = ConfigurationCacheProblems.FAIL
+    )

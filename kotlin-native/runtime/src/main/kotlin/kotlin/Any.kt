@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.identityHashCode
 import kotlin.native.internal.fullName
 import kotlin.native.internal.ExportTypeInfo
@@ -14,7 +15,7 @@ import kotlin.native.internal.GCUnsafeCall
  * The root of the Kotlin class hierarchy. Every Kotlin class has [Any] as a superclass.
  */
 @ExportTypeInfo("theAnyTypeInfo")
-public open class Any {
+public actual open class Any {
     /**
      * Indicates whether some other object is "equal to" this one. Implementations must fulfil the following
      * requirements:
@@ -27,8 +28,7 @@ public open class Any {
      *
      * Read more about [equality](https://kotlinlang.org/docs/reference/equality.html) in Kotlin.
      */
-    @GCUnsafeCall("Kotlin_Any_equals")
-    external public open operator fun equals(other: Any?): Boolean
+    public actual open operator fun equals(other: Any?): Boolean = this === other
 
     /**
      * Returns a hash code value for the object.  The general contract of `hashCode` is:
@@ -36,12 +36,13 @@ public open class Any {
      * * Whenever it is invoked on the same object more than once, the `hashCode` method must consistently return the same integer, provided no information used in `equals` comparisons on the object is modified.
      * * If two objects are equal according to the `equals()` method, then calling the `hashCode` method on each of the two objects must produce the same integer result.
      */
-    public open fun hashCode(): Int = this.identityHashCode()
+    @OptIn(ExperimentalNativeApi::class)
+    public actual open fun hashCode(): Int = this.identityHashCode()
 
     /**
      * Returns a string representation of the object.
      */
-    public open fun toString(): String {
+    public actual open fun toString(): String {
         val className = this::class.fullName ?: "<object>"
         // TODO: consider using [identityHashCode].
         val unsignedHashCode = this.hashCode().toLong() and 0xffffffffL

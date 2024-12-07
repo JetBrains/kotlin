@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1282
 package foo
 
 const val x = '2'

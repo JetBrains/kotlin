@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,17 +17,15 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
- * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.typeAlias
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.typeAlias]
  */
-abstract class IrTypeAlias : IrDeclarationBase(), IrDeclarationWithName,
-        IrDeclarationWithVisibility, IrTypeParametersContainer {
+abstract class IrTypeAlias : IrDeclarationBase(), IrDeclarationWithName, IrDeclarationWithVisibility, IrTypeParametersContainer, IrMetadataSourceOwner {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: TypeAliasDescriptor
 
     abstract override val symbol: IrTypeAliasSymbol
 
-    abstract val isActual: Boolean
+    abstract var isActual: Boolean
 
     abstract var expandedType: IrType
 

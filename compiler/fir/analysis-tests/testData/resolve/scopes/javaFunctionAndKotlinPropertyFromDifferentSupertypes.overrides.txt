@@ -1,4 +1,4 @@
 C:
-  [Synthetic]: public open val foo: R|kotlin/Int| from Java enhancement scope for /C [id: 0]
+  [JavaProperty]: public open val foo: R|kotlin/Int| from Java enhancement scope for /C [id: 0]
     [Source]: public abstract val foo: R|kotlin/Int| from Use site scope of /B [id: 1]
 

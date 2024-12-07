@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi2ir.intermediate.VariableLValue
 import org.jetbrains.kotlin.psi2ir.intermediate.setExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class LoopExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
+internal class LoopExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
     fun generateWhileLoop(ktWhile: KtWhileExpression): IrExpression {
         val irLoop = IrWhileLoopImpl(
             ktWhile.startOffsetSkippingComments, ktWhile.endOffset,
@@ -192,7 +192,7 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
         val irLoopParameter =
             if (ktLoopParameter != null && ktLoopDestructuringDeclaration == null) {
                 val loopParameter = getOrFail(BindingContext.VALUE_PARAMETER, ktLoopParameter)
-                context.symbolTable.declareVariable(
+                context.symbolTable.descriptorExtension.declareVariable(
                     ktLoopParameter.startOffsetSkippingComments, ktLoopParameter.endOffset, IrDeclarationOrigin.FOR_LOOP_VARIABLE,
                     loopParameter, loopParameter.type.toIrType(),
                     irNextCall

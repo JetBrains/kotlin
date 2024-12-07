@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 package test
 
 object ClassMemberMarker
@@ -17,12 +18,14 @@ class Test {
     val <T> List<T>.a: Int get() = size
     val <T> List<T>.b: Int? get() = size
 
-    fun <T> List<T>.testCallable1(): () -> Unit = <!RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS!>a<T><!>::foo
+    fun <T> List<T>.testCallable1(): () -> Unit = a::foo
+    fun <T> List<T>.testCallable1a(): () -> Unit = <!RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS!>a<T><!>::foo
     fun <T> List<T>.testCallable2(): () -> Unit = <!RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS!>b<!>?::<!TYPE_MISMATCH, UNSAFE_CALL!>foo<!>
     fun <T> List<T>.testCallable3(): () -> Unit = <!RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS!>b<T, Any><!>::<!TYPE_MISMATCH, UNSAFE_CALL!>foo<!>
     fun <T> List<T>.testCallable4(): () -> Unit = <!RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS!>b<T><!>?::<!TYPE_MISMATCH, UNSAFE_CALL!>foo<!>
 
-    fun <T> List<T>.testClassLiteral1() = <!RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS!>a<T><!>::class
+    fun <T> List<T>.testClassLiteral1() = a::class
+    fun <T> List<T>.testClassLiteral1a() = <!RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS!>a<T><!>::class
     fun <T> List<T>.testClassLiteral2() = <!EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS, RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS!>b<!>?::class
     fun <T> List<T>.testClassLiteral3() = <!EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS, RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS!>b<T, Any><!>::class
 

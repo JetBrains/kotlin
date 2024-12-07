@@ -9,8 +9,14 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import java.io.File
 
 interface ICReporter {
-    fun report(message: () -> String)
-    fun reportVerbose(message: () -> String)
+
+    enum class ReportSeverity(val level: Int) {
+        WARNING(3),
+        INFO(2),
+        DEBUG(1);
+    }
+
+    fun report(message: () -> String, severity: ReportSeverity)
 
     fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode)
     fun reportMarkDirtyClass(affectedFiles: Iterable<File>, classFqName: String)
@@ -18,11 +24,16 @@ interface ICReporter {
     fun reportMarkDirty(affectedFiles: Iterable<File>, reason: String)
 }
 
+//TODO check and remove?
+fun ICReporter.warn(message: () -> String) = report(message, severity = ICReporter.ReportSeverity.WARNING)
+fun ICReporter.info(message: () -> String) = report(message, severity = ICReporter.ReportSeverity.INFO)
+fun ICReporter.debug(message: () -> String) = report(message, severity = ICReporter.ReportSeverity.DEBUG)
+
 object DoNothingICReporter : ICReporter {
-    override fun report(message: () -> String) {}
-    override fun reportVerbose(message: () -> String) {}
+    override fun report(message: () -> String, severity: ICReporter.ReportSeverity) {}
     override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {}
     override fun reportMarkDirtyClass(affectedFiles: Iterable<File>, classFqName: String) {}
     override fun reportMarkDirtyMember(affectedFiles: Iterable<File>, scope: String, name: String) {}
     override fun reportMarkDirty(affectedFiles: Iterable<File>, reason: String) {}
 }
+

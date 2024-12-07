@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.fileOrNull
+import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
+import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.library.KotlinLibrary
 
 internal abstract class LlvmModuleSpecificationBase(protected val cachedLibraries: CachedLibraries) : LlvmModuleSpecification {
@@ -29,8 +29,20 @@ internal abstract class LlvmModuleSpecificationBase(protected val cachedLibrarie
     override fun containsPackageFragment(packageFragment: IrPackageFragment): Boolean =
             packageFragment.konanLibrary.let { it == null || containsLibrary(it) }
 
-    override fun containsDeclaration(declaration: IrDeclaration): Boolean =
-            declaration.konanLibrary.let { it == null || containsLibrary(it) }
+    private val containsCache = mutableMapOf<IrDeclaration, Boolean>()
+
+    // This is essentially memoizing the IrDeclaration.konanLibrary property -- so much of the implementation
+    // is inlined here to take greater advantage of the cache.
+    override fun containsDeclaration(declaration: IrDeclaration): Boolean = containsCache.getOrPut(declaration) {
+        val metadata = ((declaration as? IrMetadataSourceOwner)?.metadata as? KonanMetadata)
+        if (metadata != null) {
+            (metadata.konanLibrary == null || containsLibrary(metadata.konanLibrary)) && declaration.getPackageFragment() !is IrExternalPackageFragment
+        } else when (val parent = declaration.parent) {
+            is IrPackageFragment -> parent.konanLibrary.let { it == null || containsLibrary(it) } && parent !is IrExternalPackageFragment
+            is IrDeclaration -> containsDeclaration(parent)
+            else -> TODO("Unexpected declaration parent: $parent")
+        }
+    }
 }
 
 internal class DefaultLlvmModuleSpecification(cachedLibraries: CachedLibraries)
@@ -42,9 +54,18 @@ internal class DefaultLlvmModuleSpecification(cachedLibraries: CachedLibraries)
 
 internal class CacheLlvmModuleSpecification(
         cachedLibraries: CachedLibraries,
-        private val librariesToCache: Set<KotlinLibrary>
+        private val libraryToCache: PartialCacheInfo,
+        private val containsStdlib: Boolean,
 ) : LlvmModuleSpecificationBase(cachedLibraries) {
     override val isFinal = false
 
-    override fun containsLibrary(library: KotlinLibrary): Boolean = library in librariesToCache
+    override fun containsLibrary(library: KotlinLibrary): Boolean = library == libraryToCache.klib
+
+    override fun containsDeclaration(declaration: IrDeclaration): Boolean {
+        if (containsStdlib && libraryToCache.strategy.containsKFunctionImpl && declaration.getPackageFragment().isFunctionInterfaceFile)
+            return true
+        if (!super.containsDeclaration(declaration)) return false
+        return (libraryToCache.strategy as? CacheDeserializationStrategy.SingleFile)
+                ?.filePath.let { it == null || it == declaration.fileOrNull?.path }
+    }
 }

@@ -1,0 +1,73 @@
+//
+// Source
+// ------------------------------------------
+
+@file:OptIn(
+  InternalComposeApi::class,
+)
+package test
+
+import androidx.compose.runtime.InternalComposeApi
+import androidx.compose.runtime.ComposeCompilerApi
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+
+
+    @Composable
+    fun composeVector(
+        composable: @Composable () -> Unit
+    ) {
+        emit {
+            emit {
+                composable()
+            }
+        }
+    }
+    @Composable
+    inline fun emit(composable: @Composable () -> Unit) {
+        composable()
+    }
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+fun composeVector(composable: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(composeVector)<emit>:Test.kt#2487m")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(composable)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    emit({ %composer: Composer?, %changed: Int ->
+      sourceInformationMarkerStart(%composer, <>, "C<emit>:Test.kt#2487m")
+      emit({ %composer: Composer?, %changed: Int ->
+        sourceInformationMarkerStart(%composer, <>, "C<compos...>:Test.kt#2487m")
+        composable(%composer, 0b1110 and %dirty)
+        sourceInformationMarkerEnd(%composer)
+      }, %composer, 0)
+      sourceInformationMarkerEnd(%composer)
+    }, %composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    composeVector(composable, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+fun emit(composable: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "CC(emit)<compos...>:Test.kt#2487m")
+  composable(%composer, 0b1110 and %changed)
+  sourceInformationMarkerEnd(%composer)
+}

@@ -1,4 +1,6 @@
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
+// FIR_IDENTICAL
+// LANGUAGE: +InlineClasses, -JsAllowValueClassesInExternals, -JsExternalPropertyParameters
+// DIAGNOSTICS: -OPT_IN_USAGE, -INLINE_CLASS_DEPRECATED
 
 // FILE: uint.kt
 

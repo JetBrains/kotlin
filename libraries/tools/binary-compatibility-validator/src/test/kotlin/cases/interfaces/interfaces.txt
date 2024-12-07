@@ -1,24 +1,12 @@
 public abstract interface class cases/interfaces/BaseWithImpl {
-	public abstract fun foo ()I
-}
-
-public final class cases/interfaces/BaseWithImpl$DefaultImpls {
-	public static fun foo (Lcases/interfaces/BaseWithImpl;)I
+	public fun foo ()I
 }
 
 public abstract interface class cases/interfaces/DerivedWithImpl : cases/interfaces/BaseWithImpl {
-	public abstract fun foo ()I
-}
-
-public final class cases/interfaces/DerivedWithImpl$DefaultImpls {
-	public static fun foo (Lcases/interfaces/DerivedWithImpl;)I
+	public fun foo ()I
 }
 
 public abstract interface class cases/interfaces/DerivedWithoutImpl : cases/interfaces/BaseWithImpl {
-}
-
-public final class cases/interfaces/DerivedWithoutImpl$DefaultImpls {
-	public static fun foo (Lcases/interfaces/DerivedWithoutImpl;)I
 }
 
 public abstract interface class cases/interfaces/EmptyImpls {

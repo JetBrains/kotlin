@@ -21,20 +21,32 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory;
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementTypeSource;
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaFixedElementSourceFactory;
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaSourceFactoryOwner;
 import org.jetbrains.kotlin.name.FqName;
 
 import java.util.Collection;
+import java.util.function.Function;
 
-public abstract class JavaTypeImpl<Psi extends PsiType> implements JavaType, JavaAnnotationOwnerImpl {
-    private final Psi psiType;
+public abstract class JavaTypeImpl<Psi extends PsiType> implements JavaType, JavaAnnotationOwnerImpl, JavaSourceFactoryOwner {
+    private final JavaElementTypeSource<Psi> psiType;
 
-    public JavaTypeImpl(@NotNull Psi psiType) {
-        this.psiType = psiType;
+    public JavaTypeImpl(@NotNull JavaElementTypeSource<Psi> psiTypeSource) {
+        this.psiType = psiTypeSource;
     }
+
+    @Override
+    @NotNull
+    public JavaElementSourceFactory getSourceFactory() {
+        return psiType.getFactory();
+    }
+
 
     @NotNull
     public Psi getPsi() {
-        return psiType;
+        return psiType.getType();
     }
 
     @Nullable
@@ -44,8 +56,26 @@ public abstract class JavaTypeImpl<Psi extends PsiType> implements JavaType, Jav
     }
 
     @NotNull
-    public static JavaTypeImpl<?> create(@NotNull PsiType psiType) {
+    public static JavaTypeImpl<?> create(JavaElementTypeSource<? extends PsiType> psiTypeSource) {
+        return create(psiTypeSource.getType(), psiTypeSource);
+    }
+
+    /**
+     * @deprecated used only for a source/binary compatibility with existing 3rd party tools. Should not be used from Analysis API, Kotlin compiler, or from any other place in the Kotlin repository.
+     */
+    @NotNull
+    @Deprecated
+    public static JavaTypeImpl<?> create(PsiType psiType) {
+        // The JavaFixedElementSourceFactory is directly created here.
+        // Instead, the `JavaElementSourceFactory.getInstance(project)` should be called, but in order to do this we need a `com.intellij.openapi.project.Project` instance
+        return create(new JavaFixedElementSourceFactory().createTypeSource(psiType));
+    }
+
+
+    @NotNull
+    public static JavaTypeImpl<?> create(@NotNull PsiType psiType, JavaElementTypeSource<? extends PsiType> psiTypeSource) {
         return psiType.accept(new PsiTypeVisitor<JavaTypeImpl<?>>() {
+
             @Nullable
             @Override
             public JavaTypeImpl<?> visitType(@NotNull PsiType type) {
@@ -54,26 +84,30 @@ public abstract class JavaTypeImpl<Psi extends PsiType> implements JavaType, Jav
 
             @Nullable
             @Override
+            @SuppressWarnings("unchecked")
             public JavaTypeImpl<?> visitPrimitiveType(@NotNull PsiPrimitiveType primitiveType) {
-                return new JavaPrimitiveTypeImpl(primitiveType);
+                return new JavaPrimitiveTypeImpl((JavaElementTypeSource<PsiPrimitiveType>)psiTypeSource );
             }
 
             @Nullable
             @Override
+            @SuppressWarnings("unchecked")
             public JavaTypeImpl<?> visitArrayType(@NotNull PsiArrayType arrayType) {
-                return new JavaArrayTypeImpl(arrayType);
+                return new JavaArrayTypeImpl((JavaElementTypeSource<PsiArrayType>) psiTypeSource);
             }
 
             @Nullable
             @Override
+            @SuppressWarnings("unchecked")
             public JavaTypeImpl<?> visitClassType(@NotNull PsiClassType classType) {
-                return new JavaClassifierTypeImpl(classType);
+                return new JavaClassifierTypeImpl((JavaElementTypeSource<PsiClassType>) psiTypeSource);
             }
 
             @Nullable
             @Override
+            @SuppressWarnings("unchecked")
             public JavaTypeImpl<?> visitWildcardType(@NotNull PsiWildcardType wildcardType) {
-                return new JavaWildcardTypeImpl(wildcardType);
+                return new JavaWildcardTypeImpl((JavaElementTypeSource<PsiWildcardType>) psiTypeSource);
             }
         });
     }
@@ -81,13 +115,13 @@ public abstract class JavaTypeImpl<Psi extends PsiType> implements JavaType, Jav
     @NotNull
     @Override
     public Collection<JavaAnnotation> getAnnotations() {
-        return JavaElementUtil.getAnnotations(this);
+        return JavaElementUtil.getAnnotations(this, getSourceFactory());
     }
 
     @Nullable
     @Override
     public JavaAnnotation findAnnotation(@NotNull FqName fqName) {
-        return JavaElementUtil.findAnnotation(this, fqName);
+        return JavaElementUtil.findAnnotation(this, fqName, getSourceFactory());
     }
 
     @Override

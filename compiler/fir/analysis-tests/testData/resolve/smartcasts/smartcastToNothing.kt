@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 fun getNothing(): Nothing = throw Exception()
 fun getNullableNothing(): Nothing? = null
 

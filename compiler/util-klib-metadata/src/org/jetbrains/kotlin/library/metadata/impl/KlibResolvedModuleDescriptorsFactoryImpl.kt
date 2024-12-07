@@ -1,37 +1,38 @@
-package org.jetbrains.kotlin.serialization.konan.impl
+/*
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
-import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataModuleDescriptorFactory
+package org.jetbrains.kotlin.library.metadata.impl
+
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
-import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
-import org.jetbrains.kotlin.descriptors.konan.SyntheticModulesOrigin
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.library.metadata.*
+import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
-import org.jetbrains.kotlin.serialization.konan.KlibResolvedModuleDescriptorsFactory
-import org.jetbrains.kotlin.serialization.konan.KotlinResolvedModuleDescriptors
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
+import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.Printer
 
 // TODO: eliminate Native specifics.
 class KlibResolvedModuleDescriptorsFactoryImpl(
     override val moduleDescriptorFactory: KlibMetadataModuleDescriptorFactory
-): KlibResolvedModuleDescriptorsFactory {
+) : KlibResolvedModuleDescriptorsFactory {
 
     override fun createResolved(
         resolvedLibraries: KotlinLibraryResolveResult,
@@ -39,6 +40,7 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         builtIns: KotlinBuiltIns?,
         languageVersionSettings: LanguageVersionSettings,
         friendModuleFiles: Set<File>,
+        refinesModuleFiles: Set<File>,
         includedLibraryFiles: Set<File>,
         additionalDependencyModules: Iterable<ModuleDescriptorImpl>,
         isForMetadataCompilation: Boolean,
@@ -50,6 +52,7 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         var builtIns = builtIns
 
         val friendModuleDescriptors = mutableSetOf<ModuleDescriptorImpl>()
+        val refinesModuleDescriptors = mutableSetOf<ModuleDescriptorImpl>()
         val includedLibraryDescriptors = mutableSetOf<ModuleDescriptorImpl>()
 
         // Build module descriptors.
@@ -63,6 +66,8 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
                 builtIns = moduleDescriptor.builtIns
                 moduleDescriptors.add(moduleDescriptor)
 
+                if (refinesModuleFiles.contains(library.libraryFile))
+                    refinesModuleDescriptors.add(moduleDescriptor)
                 if (friendModuleFiles.contains(library.libraryFile))
                     friendModuleDescriptors.add(moduleDescriptor)
                 if (includedLibraryFiles.contains(library.libraryFile))
@@ -86,18 +91,31 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         )
 
         // Set inter-dependencies between module descriptors, add forwarding declarations module.
+        val additionalDependencyModulesCopy = additionalDependencyModules.toSet()
+        val friendsForNonIncludedModule = additionalDependencyModulesCopy
+        val friendsForIncludedModule = buildSet<ModuleDescriptorImpl> {
+            this += friendsForNonIncludedModule
+            this += friendModuleDescriptors
+            this += refinesModuleDescriptors
+        }
+        val allDependencies = moduleDescriptors + additionalDependencyModulesCopy + forwardDeclarationsModule
         for (module in moduleDescriptors) {
-            val friends = additionalDependencyModules.toMutableSet()
-            if (module in includedLibraryDescriptors)
-                friends.addAll(friendModuleDescriptors)
-            module.setDependencies(
-                // Yes, just to all of them.
-                moduleDescriptors + additionalDependencyModules + forwardDeclarationsModule,
-                friends
-            )
+            val friends = if (module in includedLibraryDescriptors) {
+                friendsForIncludedModule
+            } else {
+                friendsForNonIncludedModule
+            }
+
+            // Yes, just to all of them.
+            module.setDependencies(allDependencies, friends)
         }
 
-        return KotlinResolvedModuleDescriptors(moduleDescriptors, forwardDeclarationsModule, friendModuleDescriptors)
+        return KotlinResolvedModuleDescriptors(
+            resolvedDescriptors = moduleDescriptors,
+            forwardDeclarationsModule = forwardDeclarationsModule,
+            friendModules = friendModuleDescriptors,
+            refinesModules = refinesModuleDescriptors
+        )
     }
 
     fun createForwardDeclarationsModule(
@@ -108,22 +126,18 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
 
         val module = createDescriptorOptionalBuiltsIns(FORWARD_DECLARATIONS_MODULE_NAME, storageManager, builtIns, SyntheticModulesOrigin)
 
-        fun createPackage(fqName: FqName, supertypeName: String, classKind: ClassKind) =
+        fun createPackage(forwardDeclarationKind: NativeForwardDeclarationKind) =
             ForwardDeclarationsPackageFragmentDescriptor(
                 storageManager,
                 module,
-                fqName,
-                Name.identifier(supertypeName),
-                classKind,
+                forwardDeclarationKind.packageFqName,
+                forwardDeclarationKind.superClassName,
+                forwardDeclarationKind.classKind,
                 isExpect
             )
 
         val packageFragmentProvider = PackageFragmentProviderImpl(
-            listOf(
-                createPackage(ForwardDeclarationsFqNames.cNamesStructs, "COpaque", ClassKind.CLASS),
-                createPackage(ForwardDeclarationsFqNames.objCNamesClasses, "ObjCObjectBase", ClassKind.CLASS),
-                createPackage(ForwardDeclarationsFqNames.objCNamesProtocols, "ObjCObject", ClassKind.INTERFACE)
-            )
+            NativeForwardDeclarationKind.entries.map { createPackage(it) }
         )
 
         module.initialize(packageFragmentProvider)
@@ -133,21 +147,21 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
     }
 
     private fun createDescriptorOptionalBuiltsIns(
-            name: Name,
-            storageManager: StorageManager,
-            builtIns: KotlinBuiltIns?,
-            moduleOrigin: KlibModuleOrigin
+        name: Name,
+        storageManager: StorageManager,
+        builtIns: KotlinBuiltIns?,
+        moduleOrigin: KlibModuleOrigin
     ) = if (builtIns != null)
         moduleDescriptorFactory.descriptorFactory.createDescriptor(name, storageManager, builtIns, moduleOrigin)
     else
         moduleDescriptorFactory.descriptorFactory.createDescriptorAndNewBuiltIns(name, storageManager, moduleOrigin)
 
     private fun createDescriptorOptionalBuiltsIns(
-            library: KotlinLibrary,
-            languageVersionSettings: LanguageVersionSettings,
-            storageManager: StorageManager,
-            builtIns: KotlinBuiltIns?,
-            packageAccessHandler: PackageAccessHandler?
+        library: KotlinLibrary,
+        languageVersionSettings: LanguageVersionSettings,
+        storageManager: StorageManager,
+        builtIns: KotlinBuiltIns?,
+        packageAccessHandler: PackageAccessHandler?
     ) = if (builtIns != null)
         moduleDescriptorFactory.createDescriptor(library, languageVersionSettings, storageManager, builtIns, packageAccessHandler)
     else
@@ -175,14 +189,39 @@ class ForwardDeclarationsPackageFragmentDescriptor(
         private val declarations = storageManager.createMemoizedFunction(this::createDeclaration)
 
         private val supertype by storageManager.createLazyValue {
-            val descriptor = builtIns.builtInsModule.getPackage(ForwardDeclarationsFqNames.cInterop)
-                .memberScope
-                .getContributedClassifier(supertypeName, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
+            findCinteropClass(supertypeName).defaultType
+        }
 
-            descriptor.defaultType
+        /**
+         * Normally, this can't be null. But it's possible inside IDE, if one uses new IDE with
+         * old compiler in a project. In that case, IDE would try to generate synthetic declaration
+         * but would fail to find annotation class.
+         *
+         * A better way to do this would be introducing language feature, but unfortunately, we can't
+         * do it between 1.9.0 and 1.9.20.
+         */
+        private val experimentalAnnotationType by storageManager.createNullableLazyValue {
+            findCinteropClassOrNull(NativeStandardInteropNames.ExperimentalForeignApi)?.defaultType
+        }
+
+        private fun findCinteropClass(name: Name): ClassDescriptor = findCinteropClassOrNull(name) ?:
+          error("Class $name is not found")
+
+        private fun findCinteropClassOrNull(name: Name): ClassDescriptor? {
+            return builtIns.builtInsModule.getPackage(NativeStandardInteropNames.cInteropPackage)
+                .memberScope
+                .getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor?
         }
 
         private fun createDeclaration(name: Name): ClassDescriptor {
+            val experimentalAnnotation = experimentalAnnotationType?.let {
+                AnnotationDescriptorImpl(
+                    it,
+                    emptyMap(),
+                    SourceElement.NO_SOURCE
+                )
+            }
+
             return object : ClassDescriptorImpl(
                 this@ForwardDeclarationsPackageFragmentDescriptor,
                 name,
@@ -194,6 +233,7 @@ class ForwardDeclarationsPackageFragmentDescriptor(
                 LockBasedStorageManager.NO_LOCKS
             ) {
                 override fun isExpect(): Boolean = isExpect
+                override val annotations: Annotations = Annotations.create(listOfNotNull(experimentalAnnotation))
             }.apply {
                 this.initialize(MemberScope.Empty, emptySet(), null)
             }
@@ -209,17 +249,18 @@ class ForwardDeclarationsPackageFragmentDescriptor(
     override fun getMemberScope(): MemberScope = memberScope
 }
 
-// TODO decouple and move interop-specific logic back to Kotlin/Native.
+
+@Deprecated(
+    level = DeprecationLevel.ERROR,
+    message = "This class was moved to org.jetbrains.kotlin.name.NativeStandardInteropNames.ForwardDeclarations",
+)
 object ForwardDeclarationsFqNames {
 
-    internal val cInterop = FqName("kotlinx.cinterop")
+    internal val cInterop = NativeStandardInteropNames.cInteropPackage
 
-    private val cNames = FqName("cnames")
-    internal val cNamesStructs = cNames.child(Name.identifier("structs"))
+    internal val cNamesStructs = NativeStandardInteropNames.ForwardDeclarations.cNamesStructsPackage
+    internal val objCNamesClasses = NativeStandardInteropNames.ForwardDeclarations.objCNamesClassesPackage
+    internal val objCNamesProtocols = NativeStandardInteropNames.ForwardDeclarations.objCNamesProtocolsPackage
 
-    private val objCNames = FqName("objcnames")
-    internal val objCNamesClasses = objCNames.child(Name.identifier("classes"))
-    internal val objCNamesProtocols = objCNames.child(Name.identifier("protocols"))
-
-    val syntheticPackages = setOf(cNames, objCNames)
+    val syntheticPackages = NativeStandardInteropNames.ForwardDeclarations.syntheticPackages
 }

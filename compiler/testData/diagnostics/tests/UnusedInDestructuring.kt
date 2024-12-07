@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: +UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: +UNUSED_VARIABLE
 
 data class D(val x: Int, val y: Int, val z: Int)
 fun foo(): Int {

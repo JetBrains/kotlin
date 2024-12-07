@@ -3,20 +3,19 @@ plugins {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-client-cio:1.4.0")
-    implementation(commonDependency("com.google.code.gson:gson"))
-    implementation("org.apache.velocity:velocity:1.7")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0-RC")
+    implementation(kotlinStdlib("jdk8"))
+    implementation(libs.ktor.client.cio)
+    implementation(libs.gson)
+    implementation("org.apache.velocity:velocity-engine-core:2.3")
+    implementation(libs.kotlinx.serialization.core)
 }
 
 val generateNpmVersions by generator(
     "org.jetbrains.kotlin.generators.gradle.targets.js.MainKt",
     sourceSets["main"]
-)
-
-listOf(generateNpmVersions).forEach {
-    it.systemProperty(
+) {
+    systemProperty(
         "org.jetbrains.kotlin.generators.gradle.targets.js.outputSourceRoot",
-        project(":kotlin-gradle-plugin").projectDir.resolve("src/main/kotlin").absolutePath
+        project(":kotlin-gradle-plugin").projectDir.resolve("src/common/kotlin").absolutePath
     )
 }

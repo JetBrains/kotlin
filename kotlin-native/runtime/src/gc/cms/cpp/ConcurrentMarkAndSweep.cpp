@@ -5,115 +5,95 @@
 
 #include "ConcurrentMarkAndSweep.hpp"
 
-#include <cinttypes>
+#include <optional>
+#include <string_view>
 
+#include "AllocatorImpl.hpp"
+#include "CallsChecker.hpp"
 #include "CompilerConstants.hpp"
-#include "GlobalData.hpp"
 #include "Logging.hpp"
 #include "MarkAndSweepUtils.hpp"
 #include "Memory.h"
-#include "RootSet.hpp"
-#include "Runtime.h"
 #include "ThreadData.hpp"
-#include "ThreadRegistry.hpp"
 #include "ThreadSuspension.hpp"
 #include "GCState.hpp"
-#include "FinalizerProcessor.hpp"
+#include "GCStatistics.hpp"
+#include "concurrent/UtilityThread.hpp"
 
 using namespace kotlin;
 
 namespace {
 
-struct MarkTraits {
-    using MarkQueue = gc::ConcurrentMarkAndSweep::MarkQueue;
+template <typename Body>
+UtilityThread createGCThread(const char* name, Body&& body) {
+    return UtilityThread(std::string_view(name), [name, body] {
+        RuntimeLogDebug({kTagGC}, "%s %" PRIuPTR " starts execution", name, konan::currentThreadId());
+        body();
+        RuntimeLogDebug({kTagGC}, "%s %" PRIuPTR " finishes execution", name, konan::currentThreadId());
+    });
+}
 
-    static bool isEmpty(const MarkQueue& queue) noexcept {
-        return queue.empty();
+#ifndef CUSTOM_ALLOCATOR
+// TODO move to common
+[[maybe_unused]] inline void checkMarkCorrectness(alloc::ObjectFactoryImpl::Iterable& heap) {
+    if (compiler::runtimeAssertsMode() == compiler::RuntimeAssertsMode::kIgnore) return;
+    for (auto objRef : heap) {
+        auto obj = objRef.GetObjHeader();
+        auto& objData = objRef.ObjectData();
+        if (objData.marked()) {
+            traverseReferredObjects(obj, [obj](ObjHeader* field) {
+                if (field->heap()) {
+                    auto& fieldObjData = alloc::ObjectFactoryImpl::NodeRef::From(field).ObjectData();
+                    RuntimeAssert(fieldObjData.marked(), "Field %p of an alive obj %p must be alive", field, obj);
+                }
+            });
+        }
     }
-
-    static void clear(MarkQueue& queue) noexcept {
-        queue.clear();
-    }
-
-    static ObjHeader* dequeue(MarkQueue& queue) noexcept {
-        auto& top = queue.front();
-        queue.pop_front();
-        auto node = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(top);
-        return node->GetObjHeader();
-    }
-
-    static void enqueue(MarkQueue& queue, ObjHeader* object) noexcept {
-        auto& objectData = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(object).ObjectData();
-        if (objectData.color() == gc::ConcurrentMarkAndSweep::ObjectData::Color::kBlack) return;
-        objectData.setColor(gc::ConcurrentMarkAndSweep::ObjectData::Color::kBlack);
-        queue.push_front(objectData);
-    }
-};
-
-struct SweepTraits {
-    using ObjectFactory = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>;
-    using ExtraObjectsFactory = mm::ExtraObjectDataFactory;
-
-    static bool IsMarkedByExtraObject(mm::ExtraObjectData &object) noexcept {
-        auto *baseObject = object.GetBaseObject();
-        if (!baseObject->heap()) return true;
-        auto& objectData = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(baseObject).ObjectData();
-        return objectData.color() == gc::ConcurrentMarkAndSweep::ObjectData::Color::kBlack;
-    }
-
-    static bool TryResetMark(ObjectFactory::NodeRef node) noexcept {
-        auto& objectData = node.ObjectData();
-        if (objectData.color() == gc::ConcurrentMarkAndSweep::ObjectData::Color::kWhite) return false;
-        objectData.setColor(gc::ConcurrentMarkAndSweep::ObjectData::Color::kWhite);
-        return true;
-    }
-};
+}
+#endif
 
 } // namespace
 
-void gc::ConcurrentMarkAndSweep::ThreadData::SafePointAllocation(size_t size) noexcept {
-    gcScheduler_.OnSafePointAllocation(size);
-    mm::SuspendIfRequested();
-}
-void gc::ConcurrentMarkAndSweep::ThreadData::ScheduleAndWaitFullGC() noexcept {
-    ThreadStateGuard guard(ThreadState::kNative);
-    auto scheduled_epoch = gc_.state_.schedule();
-    gc_.state_.waitEpochFinished(scheduled_epoch);
+void gc::ConcurrentMarkAndSweep::ThreadData::OnSuspendForGC() noexcept {
+    gc_.markDispatcher_.runOnMutator(commonThreadData());
 }
 
-void gc::ConcurrentMarkAndSweep::ThreadData::ScheduleAndWaitFullGCWithFinalizers() noexcept {
-    ThreadStateGuard guard(ThreadState::kNative);
-    auto scheduled_epoch = gc_.state_.schedule();
-    gc_.state_.waitEpochFinalized(scheduled_epoch);
+bool gc::ConcurrentMarkAndSweep::ThreadData::tryLockRootSet() {
+    bool expected = false;
+    bool locked = rootSetLocked_.compare_exchange_strong(expected, true, std::memory_order_acq_rel);
+    if (locked) {
+        RuntimeLogDebug(
+                {kTagGC}, "Thread %" PRIuPTR " have exclusively acquired thread %" PRIuPTR "'s root set", konan::currentThreadId(), threadData_.threadId());
+    }
+    return locked;
 }
 
-void gc::ConcurrentMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
-    RuntimeLogDebug({kTagGC}, "Attempt to GC on OOM at size=%zu", size);
-    ScheduleAndWaitFullGC();
+void gc::ConcurrentMarkAndSweep::ThreadData::publish() {
+    threadData_.Publish();
+    published_.store(true, std::memory_order_release);
+}
+
+bool gc::ConcurrentMarkAndSweep::ThreadData::published() const {
+    return published_.load(std::memory_order_acquire);
+}
+
+void gc::ConcurrentMarkAndSweep::ThreadData::clearMarkFlags() {
+    published_.store(false, std::memory_order_relaxed);
+    rootSetLocked_.store(false, std::memory_order_release);
 }
 
 gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
-        mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory, GCScheduler& gcScheduler) noexcept :
-    objectFactory_(objectFactory),
+        alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler, bool mutatorsCooperate, std::size_t auxGCThreads) noexcept :
+    allocator_(allocator),
     gcScheduler_(gcScheduler),
-    finalizerProcessor_(std_support::make_unique<FinalizerProcessor>([this](int64_t epoch) { state_.finalized(epoch); })) {
-    gcScheduler_.SetScheduleGC([this]() NO_INLINE {
-        RuntimeLogDebug({kTagGC}, "Scheduling GC by thread %d", konan::currentThreadId());
-        // This call acquires a lock, so we need to ensure that we're in the safe state.
-        NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
-        state_.schedule();
-    });
-    gcThread_ = ScopedThread(ScopedThread::attributes().name("GC thread"), [this] {
-        while (true) {
-            auto epoch = state_.waitScheduled();
-            if (epoch.has_value()) {
-                PerformFullGC(*epoch);
-            } else {
-                break;
-            }
-        }
-    });
-    RuntimeLogDebug({kTagGC}, "Concurrent Mark & Sweep GC initialized");
+    finalizerProcessor_([this](int64_t epoch) {
+        GCHandle::getByEpoch(epoch).finalizersDone();
+        state_.finalized(epoch);
+    }),
+    mainThread_(createGCThread("Main GC thread", [this] { mainGCThreadBody(); })) {
+    RuntimeAssert(!mutatorsCooperate, "Cooperative mutators aren't supported yet");
+    RuntimeAssert(auxGCThreads == 0, "Auxiliary GC threads aren't supported yet");
+    RuntimeLogInfo({kTagGC}, "Concurrent Mark & Sweep GC initialized");
 }
 
 gc::ConcurrentMarkAndSweep::~ConcurrentMarkAndSweep() {
@@ -122,83 +102,94 @@ gc::ConcurrentMarkAndSweep::~ConcurrentMarkAndSweep() {
 
 void gc::ConcurrentMarkAndSweep::StartFinalizerThreadIfNeeded() noexcept {
     NativeOrUnregisteredThreadGuard guard(true);
-    finalizerProcessor_->StartFinalizerThreadIfNone();
-    finalizerProcessor_->WaitFinalizerThreadInitialized();
+    finalizerProcessor_.StartFinalizerThreadIfNone();
+    finalizerProcessor_.WaitFinalizerThreadInitialized();
 }
 
 void gc::ConcurrentMarkAndSweep::StopFinalizerThreadIfRunning() noexcept {
     NativeOrUnregisteredThreadGuard guard(true);
-    finalizerProcessor_->StopFinalizerThread();
+    finalizerProcessor_.StopFinalizerThread();
 }
 
 bool gc::ConcurrentMarkAndSweep::FinalizersThreadIsRunning() noexcept {
-    return finalizerProcessor_->IsRunning();
+    return finalizerProcessor_.IsRunning();
 }
 
-bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
-    RuntimeLogDebug({kTagGC}, "Attempt to suspend threads by thread %d", konan::currentThreadId());
-    auto timeStartUs = konan::getTimeMicros();
-    bool didSuspend = mm::RequestThreadsSuspension();
-    RuntimeAssert(didSuspend, "Only GC thread can request suspension");
-    RuntimeLogDebug({kTagGC}, "Requested thread suspension by thread %d", konan::currentThreadId());
+void gc::ConcurrentMarkAndSweep::mainGCThreadBody() {
+    RuntimeLogWarning({kTagGC}, "Initializing Concurrent Mark and Sweep GC.");
+    while (true) {
+        auto epoch = state_.waitScheduled();
+        if (epoch.has_value()) {
+            PerformFullGC(*epoch);
+        } else {
+            break;
+        }
+    }
+}
 
-    RuntimeAssert(!kotlin::mm::IsCurrentThreadRegistered(), "Concurrent GC must run on unregistered thread");
+void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
+    auto mainGCLock = mm::GlobalData::Instance().gc().gcLock();
 
-    mm::WaitForThreadsSuspension();
-    auto timeSuspendUs = konan::getTimeMicros();
-    RuntimeLogDebug({kTagGC}, "Suspended all threads in %" PRIu64 " microseconds", timeSuspendUs - timeStartUs);
+    auto gcHandle = GCHandle::create(epoch);
+
+    markDispatcher_.beginMarkingEpoch(gcHandle);
+    GCLogDebug(epoch, "Main GC requested marking in mutators");
+
+    stopTheWorld(gcHandle, "GC stop the world #1: collect root set");
 
     auto& scheduler = gcScheduler_;
-    scheduler.gcData().OnPerformFullGC();
+    scheduler.onGCStart();
 
     state_.start(epoch);
-    RuntimeLogInfo(
-            {kTagGC}, "Started GC epoch %" PRId64 ". Time since last GC %" PRIu64 " microseconds", epoch, timeStartUs - lastGCTimestampUs_);
-    gc::collectRootSet<MarkTraits>(markQueue_);
-    auto timeRootSetUs = konan::getTimeMicros();
-    // Can be unsafe, because we've stopped the world.
 
-    auto objectsCountBefore = objectFactory_.GetSizeUnsafe();
-    RuntimeLogInfo(
-            {kTagGC}, "Collected root set of size %zu in %" PRIu64 " microseconds", markQueue_.size(),
-            timeRootSetUs - timeSuspendUs);
-    auto markStats = gc::Mark<MarkTraits>(markQueue_);
-    auto timeMarkUs = konan::getTimeMicros();
-    RuntimeLogDebug({kTagGC}, "Marked %zu objects in %" PRIu64 " microseconds", markStats.aliveHeapSet, timeMarkUs - timeRootSetUs);
-    scheduler.gcData().UpdateAliveSetBytes(markStats.aliveHeapSetBytes);
-    gc::SweepExtraObjects<SweepTraits>(mm::GlobalData::Instance().extraObjectDataFactory());
-    auto timeSweepExtraObjectsUs = konan::getTimeMicros();
-    RuntimeLogDebug({kTagGC}, "Sweeped extra objects in %" PRIu64 " microseconds", timeSweepExtraObjectsUs - timeMarkUs);
+    markDispatcher_.runMainInSTW();
 
-    auto objectFactoryIterable = objectFactory_.LockForIter();
+    // TODO outline as mark_.isolateMarkedHeapAndFinishMark()
+    // By this point all the alive heap must be marked.
+    // All the mutations (incl. allocations) after this method will be subject for the next GC.
 
-    mm::ResumeThreads();
-    auto timeResumeUs = konan::getTimeMicros();
+    // This should really be done by each individual thread while waiting
+    for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
+        thread.allocator().prepareForGC();
+    }
+    allocator_.prepareForGC();
 
-    RuntimeLogDebug({kTagGC},
-                    "Resumed threads in %" PRIu64 " microseconds. Total pause for most threads is %"  PRIu64" microseconds",
-                    timeResumeUs - timeSweepExtraObjectsUs, timeResumeUs - timeStartUs);
+#ifndef CUSTOM_ALLOCATOR
+    // Taking the locks before the pause is completed. So that any destroying thread
+    // would not publish into the global state at an unexpected time.
+    std::optional objectFactoryIterable = allocator_.impl().objectFactory().LockForIter();
+    std::optional extraObjectFactoryIterable = allocator_.impl().extraObjectDataFactory().LockForIter();
 
-    auto finalizerQueue = gc::Sweep<SweepTraits>(objectFactoryIterable);
-    auto timeSweepUs = konan::getTimeMicros();
-    RuntimeLogDebug({kTagGC}, "Swept in %" PRIu64 " microseconds", timeSweepUs - timeResumeUs);
+    checkMarkCorrectness(*objectFactoryIterable);
+#endif
 
-    // Can be unsafe, because we have a lock in objectFactoryIterable
-    auto objectsCountAfter = objectFactory_.GetSizeUnsafe();
-    auto extraObjectsCountAfter = mm::GlobalData::Instance().extraObjectDataFactory().GetSizeUnsafe();
+    resumeTheWorld(gcHandle);
 
-    auto finalizersCount = finalizerQueue.size();
-    auto collectedCount = objectsCountBefore - objectsCountAfter - finalizersCount;
-
+#ifndef CUSTOM_ALLOCATOR
+    alloc::SweepExtraObjects<alloc::DefaultSweepTraits<alloc::ObjectFactoryImpl>>(gcHandle, *extraObjectFactoryIterable);
+    extraObjectFactoryIterable = std::nullopt;
+    auto finalizerQueue = alloc::Sweep<alloc::DefaultSweepTraits<alloc::ObjectFactoryImpl>>(gcHandle, *objectFactoryIterable);
+    objectFactoryIterable = std::nullopt;
+    alloc::compactObjectPoolInMainThread();
+#else
+    // also sweeps extraObjects
+    auto finalizerQueue = allocator_.impl().heap().Sweep(gcHandle);
+    for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
+        finalizerQueue.mergeFrom(thread.allocator().impl().alloc().ExtractFinalizerQueue());
+    }
+    finalizerQueue.mergeFrom(allocator_.impl().heap().ExtractFinalizerQueue());
+#endif
+    scheduler.onGCFinish(epoch, gcHandle.getKeptSizeBytes());
     state_.finish(epoch);
-    finalizerProcessor_->ScheduleTasks(std::move(finalizerQueue), epoch);
+    gcHandle.finalizersScheduled(finalizerQueue.size());
+    gcHandle.finished();
 
-    RuntimeLogInfo(
-            {kTagGC},
-            "Finished GC epoch %" PRId64 ". Collected %zu objects, to be finalized %zu objects, %zu objects and %zd extra data objects remain. Total pause time %" PRIu64
-            " microseconds",
-            epoch, collectedCount, finalizersCount, objectsCountAfter, extraObjectsCountAfter, timeSweepUs - timeStartUs);
-    lastGCTimestampUs_ = timeResumeUs;
-    return true;
+    if (!mainThreadFinalizerProcessor_.available()) {
+        finalizerQueue.mergeIntoRegular();
+    }
+    // This may start a new thread. On some pthreads implementations, this may block waiting for concurrent thread
+    // destructors running. So, it must ensured that no locks are held by this point.
+    // TODO: Consider having an always on sleeping finalizer thread.
+    finalizerProcessor_.ScheduleTasks(std::move(finalizerQueue.regular), epoch);
+    mainThreadFinalizerProcessor_.schedule(std::move(finalizerQueue.mainThread), epoch);
 }
-

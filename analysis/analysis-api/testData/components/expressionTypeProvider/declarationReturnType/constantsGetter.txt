@@ -1,0 +1,40 @@
+int@(1,1) : kotlin.Int
+  KtPropertyAccessor@(2,9) : kotlin.Int
+string@(3,1) : kotlin.String
+  KtPropertyAccessor@(3,12) : kotlin.String
+boolean@(4,1) : kotlin.Boolean
+  KtPropertyAccessor@(4,13) : kotlin.Boolean
+double@(5,1) : kotlin.Double
+  KtPropertyAccessor@(5,12) : kotlin.Double
+float@(6,1) : kotlin.Float
+  KtPropertyAccessor@(6,11) : kotlin.Float
+char@(7,1) : kotlin.Char
+  KtPropertyAccessor@(7,10) : kotlin.Char
+long@(8,1) : kotlin.Long
+  KtPropertyAccessor@(8,10) : kotlin.Long
+uint@(9,1) : kotlin.UInt
+  KtPropertyAccessor@(9,10) : kotlin.UInt
+ulong@(10,1) : kotlin.ULong
+  KtPropertyAccessor@(10,11) : kotlin.ULong
+ulong2@(11,1) : kotlin.ULong
+  KtPropertyAccessor@(11,12) : kotlin.ULong
+intExplicit@(13,1) : kotlin.Int?
+  KtPropertyAccessor@(13,23) : kotlin.Int?
+stringExplicit@(14,1) : kotlin.String?
+  KtPropertyAccessor@(14,29) : kotlin.String?
+booleanExplicit@(15,1) : kotlin.Boolean?
+  KtPropertyAccessor@(15,31) : kotlin.Boolean?
+doubleExplicit@(16,1) : kotlin.Double?
+  KtPropertyAccessor@(16,29) : kotlin.Double?
+floatExplicit@(17,1) : kotlin.Float?
+  KtPropertyAccessor@(17,27) : kotlin.Float?
+charExplicit@(18,1) : kotlin.Char?
+  KtPropertyAccessor@(18,25) : kotlin.Char?
+longExplicit@(19,1) : kotlin.Long?
+  KtPropertyAccessor@(19,25) : kotlin.Long?
+uintExplicit@(20,1) : kotlin.UInt?
+  KtPropertyAccessor@(20,25) : kotlin.UInt?
+ulongExplicit@(21,1) : kotlin.ULong?
+  KtPropertyAccessor@(21,27) : kotlin.ULong?
+ulong2Explicit@(22,1) : kotlin.ULong?
+  KtPropertyAccessor@(22,28) : kotlin.ULong?

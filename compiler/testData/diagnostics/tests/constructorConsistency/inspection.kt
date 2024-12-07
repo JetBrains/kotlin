@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class First {
     val x: String
 
@@ -33,8 +34,8 @@ class SecondDerived : Second() {
     override fun foo() = y
 }
 
-open class Third {
-    open var x: String
+abstract class Third {
+    abstract var x: String
 
     constructor() {
         <!DEBUG_INFO_LEAKING_THIS!>x<!> = "X" // Non-final property access

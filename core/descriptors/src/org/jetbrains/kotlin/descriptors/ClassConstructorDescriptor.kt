@@ -16,10 +16,11 @@
 
 package org.jetbrains.kotlin.descriptors
 
+import org.jetbrains.kotlin.mpp.ConstructorSymbolMarker
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
 
-interface ClassConstructorDescriptor : ConstructorDescriptor {
+interface ClassConstructorDescriptor : ConstructorDescriptor, ConstructorSymbolMarker {
     override fun getContainingDeclaration(): ClassDescriptor
 
     override fun getOriginal(): ClassConstructorDescriptor

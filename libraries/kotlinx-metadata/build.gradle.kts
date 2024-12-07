@@ -15,3 +15,10 @@ dependencies {
     compileOnly(project(":core:metadata"))
     compileOnly(protobufLite())
 }
+
+kotlin {
+    explicitApi()
+    compilerOptions {
+        freeCompilerArgs.add("-Xallow-kotlin-package")
+    }
+}

@@ -1,0 +1,1 @@
+val globalVal = "1"

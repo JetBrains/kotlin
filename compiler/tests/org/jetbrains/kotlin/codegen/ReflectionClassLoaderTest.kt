@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.test.ConfigurationKind
 
-class ReflectionClassLoaderTest : CodegenTestCase() {
+open class ReflectionClassLoaderTest : CodegenTestCase() {
     override fun getPrefix() = "reflection/classLoaders"
 
     override fun setUp() {
@@ -75,6 +75,19 @@ class ReflectionClassLoaderTest : CodegenTestCase() {
         doTest(
             parent,
             ChildClassLoader(parent)
+        )
+    }
+
+    fun testKTypeEquality() {
+        /*
+         * Check that typeOf<List<Clz>>() when clz is loaded by different classloaders
+         * differs in both its `equals` and its `classifier`.
+         * It is important in the face of KType caching
+         */
+        loadFile("$prefix/kTypeEquality.kt")
+        doTest(
+            createClassLoader(),
+            createClassLoader()
         )
     }
 }

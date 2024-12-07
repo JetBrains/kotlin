@@ -121,7 +121,7 @@ open class SingletonTypeComponentDescriptor(container: ComponentContainer, val k
     override fun getRegistrations(): Iterable<Type> = klass.getInfo().registrations
 
     private fun createInstanceOf(klass: Class<*>, context: ValueResolveContext): Any {
-        val binding = klass.bindToConstructor(context)
+        val binding = klass.bindToConstructor(container.containerId, context)
         state = ComponentState.Initializing
         for (argumentDescriptor in binding.argumentDescriptors) {
             if (argumentDescriptor is Closeable && argumentDescriptor !is SingletonDescriptor) {
@@ -139,7 +139,14 @@ open class SingletonTypeComponentDescriptor(container: ComponentContainer, val k
 
     override fun getDependencies(context: ValueResolveContext): Collection<Type> {
         val classInfo = klass.getInfo()
-        return classInfo.constructorInfo?.parameters.orEmpty() + classInfo.setterInfos.flatMap { it.parameters }
+        val constructorParameters = classInfo.constructorInfo?.parameters.orEmpty()
+        val setterInfos = classInfo.setterInfos
+
+        // In most cases, setterInfos is empty (KT-52756)
+        return if (setterInfos.isEmpty())
+            constructorParameters
+        else
+            constructorParameters + setterInfos.flatMap { it.parameters }
     }
 
     override fun toString(): String = "Singleton: ${klass.simpleName}"

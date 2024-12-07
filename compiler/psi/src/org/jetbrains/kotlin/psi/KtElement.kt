@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.psi.NavigatablePsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
 
 interface KtElement : NavigatablePsiElement, KtPureElement {
@@ -24,13 +25,13 @@ interface KtElement : NavigatablePsiElement, KtPureElement {
 
     fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R
 
-    @Deprecated("Don't use getReference() on JetElement for the choice is unpredictable")
+    @Deprecated("Don't use getReference() on KtElement for the choice is unpredictable")
     override fun getReference(): PsiReference?
 }
 
 fun KtElement.getModificationStamp(): Long {
     return when (this) {
-        is KtFile -> this.modificationStamp
+        is PsiFile -> this.modificationStamp
         is KtDeclarationStub<*> -> this.modificationStamp
         is KtSuperTypeList -> this.modificationStamp
         is KtScriptInitializer -> this.getModificationStamp()

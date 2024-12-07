@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 open class S(val a: Any, val b: Any, val c: Any) {}
 

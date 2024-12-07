@@ -1,4 +1,5 @@
-// !LANGUAGE: -SafeCallsAreAlwaysNullable
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -SafeCallsAreAlwaysNullable
 // See KT-10913 Bogus unreachable code warning
 
 fun fn() : String? = null
@@ -8,6 +9,6 @@ fun foo(): String {
 }
 fun bar(): String {
     val x = fn() ?: return ""
-    val y = x<!SAFE_CALL_WILL_CHANGE_NULLABILITY!><!UNNECESSARY_SAFE_CALL!>?.<!>let { throw Exception() }<!> <!USELESS_ELVIS!>?: "unreachable"<!>
+    val y = x<!SAFE_CALL_WILL_CHANGE_NULLABILITY!><!UNNECESSARY_SAFE_CALL!>?.<!>let { throw Exception() }<!> ?: "unreachable"
     return y
 }

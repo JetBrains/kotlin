@@ -1,0 +1,14 @@
+Before shortening: val prop: JavaBaseClass.Nested = JavaBaseClass.Nested()
+with default settings:
+[type] JavaBaseClass.Nested
+[qualifier] JavaBaseClass.Nested()
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[type] JavaBaseClass.Nested
+[qualifier] JavaBaseClass.Nested()
+with SHORTEN_AND_IMPORT:
+[type] JavaBaseClass.Nested
+[qualifier] JavaBaseClass.Nested()
+with SHORTEN_AND_STAR_IMPORT:
+[type] JavaBaseClass.Nested
+[qualifier] JavaBaseClass.Nested()

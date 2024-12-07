@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.services
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
+import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.ServicesAndDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 
@@ -22,7 +24,8 @@ abstract class AbstractEnvironmentConfigurator : ServicesAndDirectivesContainer 
 
     abstract fun provideAdditionalAnalysisFlags(directives: RegisteredDirectives, languageVersion: LanguageVersion): Map<AnalysisFlag<*>, Any?>
 
-    abstract fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration)
+    abstract fun legacyRegisterCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration)
+    abstract fun ExtensionStorage.registerCompilerExtensions( module: TestModule, configuration: CompilerConfiguration)
 }
 
 class EnvironmentConfiguratorsProvider(internal val environmentConfigurators: List<AbstractEnvironmentConfigurator>) : TestService
@@ -49,6 +52,12 @@ abstract class EnvironmentConfigurator(protected val testServices: TestServices)
 
     open fun DirectiveToConfigurationKeyExtractor.provideConfigurationKeys() {}
 
+    fun TestModule.allTransitiveDependencies(): Set<DependencyDescription> {
+        val modules = testServices.moduleStructure.modules
+        return regularDependencies.toSet() +
+                regularDependencies.flatMap { modules.single { module -> module.name == it.moduleName }.allTransitiveDependencies() }
+    }
+
     override fun provideAdditionalAnalysisFlags(
         directives: RegisteredDirectives,
         languageVersion: LanguageVersion
@@ -56,7 +65,9 @@ abstract class EnvironmentConfigurator(protected val testServices: TestServices)
         return emptyMap()
     }
 
-    override fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {}
+    override fun legacyRegisterCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {}
+
+    override fun ExtensionStorage.registerCompilerExtensions(module: TestModule, configuration: CompilerConfiguration) {}
 }
 
 class DirectiveToConfigurationKeyExtractor {

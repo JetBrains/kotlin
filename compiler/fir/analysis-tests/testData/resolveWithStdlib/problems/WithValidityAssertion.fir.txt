@@ -26,7 +26,7 @@ FILE: WithValidityAssertion.kt
         private final val lazyValue: R|kotlin/Lazy<T>| = R|kotlin/lazy|<R|T|>(Q|kotlin/LazyThreadSafetyMode|.R|kotlin/LazyThreadSafetyMode.PUBLICATION|, R|<local>/init|)
             private get(): R|kotlin/Lazy<T>|
 
-        @R|kotlin/Suppress|(names = vararg(String(UNCHECKED_CAST))) public final override operator fun getValue(thisRef: R|kotlin/Any|, property: R|kotlin/reflect/KProperty<*>|): R|T| {
+        @R|kotlin/Suppress|(names = vararg(String(UNCHECKED_CAST))) public open override operator fun getValue(thisRef: R|kotlin/Any|, property: R|kotlin/reflect/KProperty<*>|): R|T| {
             this@R|/ValidityAwareCachedValue|.R|/ValidityAwareCachedValue.token|.R|/KtLifetimeToken.assertIsValid|()
             ^getValue this@R|/ValidityAwareCachedValue|.R|/ValidityAwareCachedValue.lazyValue|.R|SubstitutionOverride<kotlin/Lazy.value: R|T|>|
         }
@@ -61,10 +61,10 @@ FILE: WithValidityAssertion.kt
         }
         )
             private get(): R|kotlin/collections/List<kotlin/String>| {
-                ^ this@R|/KtFirNonStarImportingScope|.D|/KtFirNonStarImportingScope.imports|.R|SubstitutionOverride</ValidityAwareCachedValue.getValue: R|Stub (chain inference): TypeVariable(_T)|>|(this@R|/KtFirNonStarImportingScope|, ::R|/KtFirNonStarImportingScope.imports|)
+                ^ this@R|/KtFirNonStarImportingScope|.D|/KtFirNonStarImportingScope.imports|.R|SubstitutionOverride</ValidityAwareCachedValue.getValue: R|kotlin/collections/List<kotlin/String>|>|(this@R|/KtFirNonStarImportingScope|, ::R|/KtFirNonStarImportingScope.imports|)
             }
 
-        public final fun getCallableSymbols(nameFilter: R|KtScopeNameFilter|): R|kotlin/sequences/Sequence<KtCallableSymbol>| {
+        public final fun getCallableSymbols(nameFilter: R|{KtScopeNameFilter=} (kotlin/String) -> kotlin/Boolean|): R|kotlin/sequences/Sequence<KtCallableSymbol>| {
             ^getCallableSymbols this@R|/KtFirNonStarImportingScope|.R|/withValidityAssertion|<R|kotlin/sequences/Sequence<KtCallableSymbol>|>(<L> = withValidityAssertion@fun <anonymous>(): R|kotlin/sequences/Sequence<KtCallableSymbol>| <inline=Inline, kind=UNKNOWN>  {
                 ^ this@R|/KtFirNonStarImportingScope|.R|/KtFirNonStarImportingScope.firScope|.R|/FirScope.getCallableSymbols|(this@R|/KtFirNonStarImportingScope|.R|/KtFirNonStarImportingScope.getCallableNames|().R|kotlin/collections/filter|<R|kotlin/String|>(R|<local>/nameFilter|), this@R|/KtFirNonStarImportingScope|.R|/KtFirNonStarImportingScope.builder|)
             }

@@ -1,0 +1,3 @@
+expression: IF
+text: if (b) { 45 } else { "OK" }
+isUsedAsExpression: true

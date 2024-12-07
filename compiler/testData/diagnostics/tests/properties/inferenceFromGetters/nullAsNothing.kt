@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 val x get() = null
 val <!IMPLICIT_NOTHING_PROPERTY_TYPE!>y<!> get() = null!!
 

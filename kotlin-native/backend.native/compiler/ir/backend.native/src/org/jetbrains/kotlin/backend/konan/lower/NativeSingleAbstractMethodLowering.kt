@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
+import org.jetbrains.kotlin.backend.common.suspendFunction
 import org.jetbrains.kotlin.backend.common.lower.SingleAbstractMethodLowering
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -24,4 +26,7 @@ internal class NativeSingleAbstractMethodLowering(context: Context) : SingleAbst
     }
 
     override val IrType.needEqualsHashCodeMethods get() = true
+
+    override fun getSuspendFunctionWithoutContinuation(function: IrSimpleFunction) =
+        function.suspendFunction ?: function
 }

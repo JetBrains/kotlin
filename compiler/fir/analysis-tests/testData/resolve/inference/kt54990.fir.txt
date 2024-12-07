@@ -1,0 +1,26 @@
+FILE: kt54990.kt
+    public final class A<T1, T2 : R|B<T1, kotlin/Double>|> : R|kotlin/Any| {
+        public constructor<T1, T2 : R|B<T1, kotlin/Double>|>(): R|A<T1, T2>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B<T1, T2> : R|kotlin/Any| {
+        public constructor<T1, T2>(): R|B<T1, T2>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class C<L> : R|kotlin/Any| {
+        public constructor<L>(x: R|A<out L, out B<L, kotlin/Double>>|): R|C<L>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|A<out L, out B<L, kotlin/Double>>| = R|<local>/x|
+            public get(): R|A<out L, out B<L, kotlin/Double>>|
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval x: R|A<out kotlin/Any, out B<kotlin/Any, kotlin/Double>>| = R|/A.A|<R|kotlin/Any|, R|B<kotlin/Any, kotlin/Double>|>()
+        R|/C.C|<R|kotlin/Any|>(R|<local>/x|)
+    }

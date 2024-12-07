@@ -1,6 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 package test
 import kotlin.reflect.KProperty1
@@ -15,5 +15,5 @@ fun <K, V> B<K>.foo(p: KProperty1<K, V>) {}
 class C : A
 
 fun <R : A> B<R>.test(){
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(C::<!UNRESOLVED_REFERENCE!>bla<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(C::<!INAPPLICABLE_CANDIDATE!>bla<!>)
 }

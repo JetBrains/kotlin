@@ -24,6 +24,7 @@ public/*package*/ interface Interface {
         public final /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.Interface.Kind!>!
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.Interface.Kind>
         public final /*synthesized*/ fun valueOf(/*0*/ kotlin.String): test.Interface.Kind
         public final /*synthesized*/ fun values(): kotlin.Array<test.Interface.Kind>
     }

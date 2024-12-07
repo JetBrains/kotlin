@@ -1,6 +1,6 @@
 FILE: propertyWithBackingField.kt
     public? final? fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? val property: Int
-        private <explicit backing field>: Int = LAZY_EXPRESSION
+        private final? backing field field: Int = LAZY_EXPRESSION
         public? get(): Int
     public? final? fun receive(s: Int): R|kotlin/Unit| { LAZY_BLOCK }

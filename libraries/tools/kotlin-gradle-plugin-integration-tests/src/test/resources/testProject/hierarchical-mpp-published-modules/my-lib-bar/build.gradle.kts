@@ -3,12 +3,6 @@ plugins {
     `maven-publish`
 }
 
-repositories {
-    mavenLocal()
-    maven("<localRepo>")
-    mavenCentral()
-}
-
 group = "com.example.bar"
 version = "1.0"
 
@@ -22,7 +16,6 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api("com.example.foo:my-lib-foo:1.0")
-                implementation(kotlin("stdlib-common"))
             }
         }
 

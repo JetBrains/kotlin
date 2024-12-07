@@ -14,3 +14,4 @@ import org.jetbrains.kotlin.psi.UserDataProperty
  * This setting only makes sense in the compiler, not in the IDE where sources from common modules are analyzed as common
  */
 var KtFile.isCommonSource: Boolean? by UserDataProperty(Key.create("IS_COMMON_SOURCE"))
+var KtFile.hmppModuleName: String? by UserDataProperty(Key.create("HMPP_MODULE_NAME"))

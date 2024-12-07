@@ -6,14 +6,11 @@ inline fun String.inlineFun(crossinline lambda: () -> String = { { this }() }): 
     return {
         {
             this + lambda()
-        }()
-    }()
+        }.let { it() }
+    }.let { it() }
 }
 
 // FILE: 2.kt
-// CHECK_CALLED_IN_SCOPE: function=inlineFun$lambda scope=box TARGET_BACKENDS=JS
-// CHECK_CALLED_IN_SCOPE: function=inlineFun$lambda_0 scope=box TARGET_BACKENDS=JS
-
 import test.*
 
 fun box(): String {

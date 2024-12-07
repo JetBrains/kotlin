@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +NewInference +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun interface Foo {
     fun invoke()

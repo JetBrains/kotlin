@@ -6,51 +6,58 @@
 package org.jetbrains.kotlin.gradle.targets.js.d8
 
 import org.gradle.api.Project
-import org.gradle.api.tasks.Copy
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.internal.ConfigurationPhaseAware
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
-import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
-import java.io.Serializable
-import java.net.URL
+import org.jetbrains.kotlin.gradle.targets.js.AbstractSettings
+import org.jetbrains.kotlin.gradle.utils.property
 
-open class D8RootExtension(@Transient val rootProject: Project) : ConfigurationPhaseAware<D8Env>(), Serializable {
-    init {
-        check(rootProject.rootProject == rootProject)
+@OptIn(ExperimentalWasmDsl::class)
+open class D8RootExtension(
+    @Transient val project: Project,
+    private val d8EnvSpec: D8EnvSpec,
+) : AbstractSettings<D8Env>() {
+
+    private val gradleHome = project.gradle.gradleUserHomeDir.also {
+        project.logger.kotlinInfo("Storing cached files in $it")
     }
 
-    private val gradleHome = rootProject.gradle.gradleUserHomeDir.also {
-        rootProject.logger.kotlinInfo("Storing cached files in $it")
-    }
+    override val downloadProperty: org.gradle.api.provider.Property<Boolean> = project.objects.property<Boolean>()
+        .convention(true)
 
-    var installationPath by Property(gradleHome.resolve("d8"))
-    var downloadBaseUrl by Property("https://storage.googleapis.com/chromium-v8/official/canary/")
-    var version by Property("10.2.9")
-    var edition by Property("rel") // rel or dbg
+    // value not convention because this property can be nullable to not add repository
+    override val downloadBaseUrlProperty: org.gradle.api.provider.Property<String> = project.objects.property<String>()
+        .value("https://storage.googleapis.com/chromium-v8/official/canary")
 
-    val setupTaskProvider: TaskProvider<out Copy>
-        get() = rootProject.tasks.withType(Copy::class.java).named(D8RootPlugin.INSTALL_TASK_NAME)
+    override val installationDirectory: DirectoryProperty = project.objects.directoryProperty()
+        .fileValue(gradleHome.resolve("d8"))
+
+    /**
+     * The same as in [D8EnvSpec.version]
+     */
+    override val versionProperty: org.gradle.api.provider.Property<String> = project.objects.property<String>()
+        .convention("11.9.85")
+
+    /**
+     * Specify the edition of the D8.
+     *
+     * Valid options for bundled version are `rel` (release variant) and `dbg` (debug variant).
+     */
+    val edition: org.gradle.api.provider.Property<String> = project.objects.property<String>()
+        .convention("rel")
+
+    override val commandProperty: org.gradle.api.provider.Property<String> = project.objects.property<String>()
+        .convention("d8")
 
     override fun finalizeConfiguration(): D8Env {
-        val platform = D8Platform.name
-        val architecture = D8Platform.architecture
-        val d8osString = platform + architecture
-
-        val requiredVersionName = "v8-$d8osString-$edition-$version"
-        val requiredZipName = "$requiredVersionName.zip"
-        val cleanableStore = CleanableStore[installationPath.absolutePath]
-        val targetPath = cleanableStore[requiredVersionName].use()
-        val isWindows = D8Platform.name == D8Platform.WIN
-
-        return D8Env(
-            cleanableStore = cleanableStore,
-            zipPath = cleanableStore[requiredZipName].use(),
-            targetPath = targetPath,
-            executablePath = targetPath.resolve(if (isWindows) "d8.exe" else "d8"),
-            isWindows = isWindows,
-            downloadUrl = URL("${downloadBaseUrl.trimEnd('/')}/$requiredZipName"),
-        )
+        return d8EnvSpec.env.get()
     }
+
+    val setupTaskProvider: TaskProvider<out D8SetupTask>
+        get() = with(d8EnvSpec) {
+            project.d8SetupTaskProvider
+        }
 
     companion object {
         const val EXTENSION_NAME: String = "kotlinD8"

@@ -6,14 +6,15 @@
 package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.WHITE_SPACE
+import org.jetbrains.kotlin.util.getChildren
 
 open class LightTreePositioningStrategy {
     open fun markKtDiagnostic(element: KtSourceElement, diagnostic: KtDiagnostic): List<TextRange> {
@@ -29,6 +30,7 @@ open class LightTreePositioningStrategy {
         return markElement(node, startOffset, endOffset, tree)
     }
 
+    @DiagnosticLossRisk
     open fun isValid(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
         return !hasSyntaxErrors(node, tree)
     }
@@ -87,17 +89,24 @@ private fun LighterASTNode.nonFillerFirstChildOrSelf(tree: FlyweightCapableTreeS
 internal fun LighterASTNode.nonFillerLastChildOrSelf(tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode =
     getChildren(tree).lastOrNull { !it.isFiller() } ?: this
 
-internal fun LighterASTNode.isFiller() = tokenType in FILLER_TOKENS
+fun LighterASTNode.isFiller(): Boolean = tokenType in FILLER_TOKENS
 
 private fun hasSyntaxErrors(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
     if (node.tokenType == TokenType.ERROR_ELEMENT) return true
 
-    val childrenRef = Ref<Array<LighterASTNode?>?>()
-    tree.getChildren(node, childrenRef)
-    val children = childrenRef.get() ?: return false
-    return children.filterNotNull().lastOrNull {
+    val children = node.getChildren(tree)
+    return children.lastOrNull {
         val tokenType = it.tokenType
         tokenType !is KtSingleValueToken && tokenType !in DOC_AND_COMMENT_TOKENS
     }?.let { hasSyntaxErrors(it, tree) } == true
 }
 
+val KtLightSourceElement.startOffsetSkippingComments: Int
+    get() {
+        val children = lighterASTNode.getChildren(treeStructure)
+
+        // The solution to find first non comment children will not work here. `treeStructure` can have different root
+        // than original program. Because of that `startOffset` is relative and not in absolute value.
+        val comments = children.takeWhile { it.tokenType in FILLER_TOKENS }
+        return startOffset + comments.sumOf { it.textLength }
+    }

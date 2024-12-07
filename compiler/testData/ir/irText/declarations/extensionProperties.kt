@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+
 val String.test1 get() = 42
 
 var String.test2

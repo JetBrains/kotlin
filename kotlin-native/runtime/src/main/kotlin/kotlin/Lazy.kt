@@ -6,9 +6,6 @@
 package kotlin
 
 import kotlin.native.concurrent.*
-import kotlin.native.internal.FixmeConcurrency
-import kotlin.reflect.KProperty
-import kotlin.native.isExperimentalMM
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer]
@@ -17,15 +14,12 @@ import kotlin.native.isExperimentalMM
  * If the initialization of a value throws an exception, it will attempt to reinitialize the value at next access.
  *
  * Note that the returned instance uses itself to synchronize on. Do not synchronize from external code on
- * the returned instance as it may cause accidental deadlock. Also this behavior can be changed in the future.
+ * the returned instance as it may cause accidental deadlock. This behavior might be changed in the future.
+ *
+ * @sample samples.lazy.LazySamples.lazySample
  */
-@OptIn(kotlin.ExperimentalStdlibApi::class, FreezingIsDeprecated::class)
-public actual fun <T> lazy(initializer: () -> T): Lazy<T> =
-        if (isExperimentalMM())
-            SynchronizedLazyImpl(initializer)
-        else
-            FreezeAwareLazyImpl(initializer)
-
+@OptIn(kotlin.ExperimentalStdlibApi::class)
+public actual fun <T> lazy(initializer: () -> T): Lazy<T> = SynchronizedLazyImpl(initializer)
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer]
@@ -33,16 +27,14 @@ public actual fun <T> lazy(initializer: () -> T): Lazy<T> =
  *
  * If the initialization of a value throws an exception, it will attempt to reinitialize the value at next access.
  *
- * Note that when the [LazyThreadSafetyMode.SYNCHRONIZED] mode is specified the returned instance uses itself
- * to synchronize on. Do not synchronize from external code on the returned instance as it may cause accidental deadlock.
- * Also this behavior can be changed in the future.
+ * @sample samples.lazy.LazySamples.lazySynchronizedSample
+ * @sample samples.lazy.LazySamples.lazySafePublicationSample
  */
-@FixmeConcurrency
-@OptIn(kotlin.ExperimentalStdlibApi::class, FreezingIsDeprecated::class)
+@OptIn(kotlin.ExperimentalStdlibApi::class)
 public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> =
         when (mode) {
-            LazyThreadSafetyMode.SYNCHRONIZED -> if (isExperimentalMM()) SynchronizedLazyImpl(initializer) else throw UnsupportedOperationException()
-            LazyThreadSafetyMode.PUBLICATION -> if (isExperimentalMM()) SafePublicationLazyImpl(initializer) else FreezeAwareLazyImpl(initializer)
+            LazyThreadSafetyMode.SYNCHRONIZED -> SynchronizedLazyImpl(initializer)
+            LazyThreadSafetyMode.PUBLICATION -> SafePublicationLazyImpl(initializer)
             LazyThreadSafetyMode.NONE -> UnsafeLazyImpl(initializer)
         }
 
@@ -53,10 +45,8 @@ public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): La
  * If the initialization of a value throws an exception, it will attempt to reinitialize the value at next access.
  *
  * The returned instance uses the specified [lock] object to synchronize on.
- * When the [lock] is not specified the instance uses itself to synchronize on,
- * in this case do not synchronize from external code on the returned instance as it may cause accidental deadlock.
- * Also this behavior can be changed in the future.
  */
-@FixmeConcurrency
 @Suppress("UNUSED_PARAMETER")
+@Deprecated("Synchronization on Any? object is not supported.", ReplaceWith("lazy(initializer)"))
+@DeprecatedSinceKotlin(errorSince = "1.9", hiddenSince = "2.1")
 public actual fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = throw UnsupportedOperationException()

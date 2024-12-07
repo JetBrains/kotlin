@@ -30,7 +30,7 @@ class TasksRequirements : Serializable {
 
         val requiredNpmDependencies = requirements
             .asSequence()
-            .map { it.createDependency(task.compilation.target.project) }
+            .map { it.createDependency(task.compilation.target.project.objects) }
             .filterIsInstance<NpmDependency>()
             .toMutableSet()
 

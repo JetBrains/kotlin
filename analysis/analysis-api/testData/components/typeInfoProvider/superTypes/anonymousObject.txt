@@ -1,17 +1,11 @@
 [direct super types]
-A
-B
+kotlin.Any
 
 [approximated direct super types]
-A
-B
+kotlin.Any
 
 [all super types]
-A
-B
 kotlin.Any
 
 [approximated all super types]
-A
-B
 kotlin.Any

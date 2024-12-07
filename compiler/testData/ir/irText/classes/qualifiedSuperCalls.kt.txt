@@ -1,3 +1,22 @@
+class CBoth : ILeft, IRight {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun foo() {
+    super<ILeft>.foo()
+    super<IRight>.foo()
+  }
+
+  override val bar: Int
+    override get(): Int {
+      return super<ILeft>.<get-bar>().plus(other = super<IRight>.<get-bar>())
+    }
+
+}
+
 interface ILeft {
   fun foo() {
   }
@@ -16,25 +35,6 @@ interface IRight {
   val bar: Int
     get(): Int {
       return 2
-    }
-
-}
-
-class CBoth : ILeft, IRight {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  override fun foo() {
-    super<ILeft>.foo()
-    super<IRight>.foo()
-  }
-
-  override val bar: Int
-    override get(): Int {
-      return super<ILeft>.<get-bar>().plus(other = super<IRight>.<get-bar>())
     }
 
 }

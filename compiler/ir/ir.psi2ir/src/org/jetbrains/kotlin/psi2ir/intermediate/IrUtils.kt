@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 
-fun IrVariable.loadAt(startOffset: Int, endOffset: Int): IrExpression =
+internal fun IrVariable.loadAt(startOffset: Int, endOffset: Int): IrExpression =
     IrGetValueImpl(startOffset, endOffset, type, symbol)
 
-fun CallReceiver.adjustForCallee(callee: CallableMemberDescriptor): CallReceiver =
+internal fun CallReceiver.adjustForCallee(callee: CallableMemberDescriptor): CallReceiver =
     object : CallReceiver {
         override fun call(builder: CallExpressionBuilder): IrExpression =
             this@adjustForCallee.call { dispatchReceiverValue, extensionReceiverValue, contextReceiverValues ->
@@ -51,7 +51,7 @@ fun CallReceiver.adjustForCallee(callee: CallableMemberDescriptor): CallReceiver
     }
 
 
-fun computeSubstitutedSyntheticAccessor(
+internal fun computeSubstitutedSyntheticAccessor(
     propertyDescriptor: PropertyDescriptor,
     accessorFunctionDescriptor: FunctionDescriptor,
     substitutedExtensionAccessorDescriptor: PropertyAccessorDescriptor

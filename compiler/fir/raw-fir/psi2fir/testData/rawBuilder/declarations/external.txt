@@ -1,5 +1,5 @@
 FILE: external.kt
-    public? final? external class External : R|kotlin/Any| {
+    public final? external class External : R|kotlin/Any| {
         public? [ContainingClassKey=External] constructor(): R|External| {
             super<R|kotlin/Any|>()
         }
@@ -8,7 +8,7 @@ FILE: external.kt
     public? final? external fun foo(): String
     public? final? external val x: Int
         public? external get(): Int
-    public? final? class NotExternal : R|kotlin/Any| {
+    public final? class NotExternal : R|kotlin/Any| {
         public? [ContainingClassKey=NotExternal] constructor(): R|NotExternal| {
             super<R|kotlin/Any|>()
         }
@@ -16,8 +16,8 @@ FILE: external.kt
         public? final? external fun bar(): String
 
         public? final? var y: Int
-            [ContainingClassKey=NotExternal] public? external get(): Int
-            [ContainingClassKey=NotExternal] public? set(value: Int): R|kotlin/Unit| {
+            public? external [ContainingClassKey=NotExternal] get(): Int
+            public? [ContainingClassKey=NotExternal] set(value: Int): R|kotlin/Unit| {
             }
 
     }

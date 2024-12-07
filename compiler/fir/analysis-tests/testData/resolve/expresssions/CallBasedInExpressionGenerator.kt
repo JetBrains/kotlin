@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package org.jetbrains.kotlin.codegen.range.inExpression
 
 interface ExpressionCodegen
@@ -33,8 +34,8 @@ class CallBasedInExpressionGenerator(
             }
 
             private fun invokeFunction(v: InstructionAdapter) {
-                val result = codegen.<!UNRESOLVED_REFERENCE!>invokeFunction<!>(resolvedCall.<!UNRESOLVED_REFERENCE!>call<!>, resolvedCall, <!UNRESOLVED_REFERENCE!>none<!>())
-                result.<!UNRESOLVED_REFERENCE!>put<!>(result.<!UNRESOLVED_REFERENCE!>type<!>, result.<!UNRESOLVED_REFERENCE!>kotlinType<!>, v)
+                val result = codegen.<!UNRESOLVED_REFERENCE!>invokeFunction<!>(resolvedCall.call, resolvedCall, <!UNRESOLVED_REFERENCE!>none<!>())
+                result.put(result.type, result.kotlinType, v)
             }
         }
 }

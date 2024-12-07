@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 // ISSUE: KT-37070
 
 class KotlinClass(private val name: String) : Comparable<KotlinClass> {

@@ -18,7 +18,7 @@ class A {
     inline fun test(crossinline l: () -> String): String {
         return {
             l() + callK()
-        }()
+        }.let { it() }
     }
 }
 

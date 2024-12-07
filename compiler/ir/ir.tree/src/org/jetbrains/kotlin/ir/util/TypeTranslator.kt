@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,18 +10,19 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.descriptors.IrBasedTypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.threadLocal
 import java.util.*
 
@@ -83,7 +84,7 @@ abstract class TypeTranslator(
         }
         val originalTypeParameter = typeParameterDescriptor.originalTypeParameter
         return typeParametersResolver.resolveScopedTypeParameter(originalTypeParameter)
-            ?: symbolTable.referenceTypeParameter(originalTypeParameter)
+            ?: symbolTable.descriptorExtension.referenceTypeParameter(originalTypeParameter)
     }
 
     fun translateType(kotlinType: KotlinType): IrType {
@@ -95,9 +96,14 @@ abstract class TypeTranslator(
 
         when {
             approximatedType.isError ->
-                return IrErrorTypeImpl(approximatedType, translateTypeAnnotations(approximatedType), variance)
+                return IrErrorTypeImpl(
+                    approximatedType,
+                    translateTypeAnnotations(approximatedType),
+                    variance,
+                    isMarkedNullable = approximatedType.isMarkedNullable,
+                )
             approximatedType.isDynamic() ->
-                return IrDynamicTypeImpl(approximatedType, translateTypeAnnotations(approximatedType), variance)
+                return IrDynamicTypeWithOriginalKotlinTypeImpl(approximatedType, translateTypeAnnotations(approximatedType), variance)
             supportDefinitelyNotNullTypes && approximatedType is DefinitelyNotNullType ->
                 return makeTypeProjection(translateType(approximatedType.original).makeNotNull(), variance)
         }
@@ -120,7 +126,6 @@ abstract class TypeTranslator(
         return IrSimpleTypeBuilder().apply {
             this.kotlinType = approximatedType
             this.nullability = SimpleTypeNullability.fromHasQuestionMark(upperType.isMarkedNullable)
-            this.variance = variance
             this.abbreviation = upperType.getAbbreviation()?.toIrTypeAbbreviation()
 
             when (upperTypeDescriptor) {
@@ -130,7 +135,7 @@ abstract class TypeTranslator(
                 }
 
                 is ScriptDescriptor -> {
-                    classifier = symbolTable.referenceScript(upperTypeDescriptor)
+                    classifier = symbolTable.descriptorExtension.referenceScript(upperTypeDescriptor)
                 }
                 is ClassDescriptor -> {
                     // Types such as 'java.util.Collection<? extends CharSequence>' are treated as
@@ -148,7 +153,7 @@ abstract class TypeTranslator(
                         lowerType.constructor.declarationDescriptor as? ClassDescriptor
                             ?: throw AssertionError("No class descriptor for lower type $lowerType of $approximatedType")
                     annotations = translateTypeAnnotations(upperType, approximatedType)
-                    classifier = symbolTable.referenceClass(lowerTypeDescriptor)
+                    classifier = symbolTable.descriptorExtension.referenceClass(lowerTypeDescriptor)
                     arguments = when {
                         approximatedType is RawType ->
                             translateTypeArguments(approximatedType.arguments)
@@ -163,7 +168,7 @@ abstract class TypeTranslator(
                 else ->
                     throw AssertionError("Unexpected type descriptor $upperTypeDescriptor :: ${upperTypeDescriptor::class}")
             }
-        }.buildTypeProjection()
+        }.buildTypeProjection(variance)
     }
 
     private fun approximateUpperBounds(upperBounds: Collection<KotlinType>, variance: Variance): IrTypeProjection {
@@ -180,7 +185,7 @@ abstract class TypeTranslator(
         if (!isTypeAliasAccessibleHere(typeAliasDescriptor)) return null
 
         return IrTypeAbbreviationImpl(
-            symbolTable.referenceTypeAlias(typeAliasDescriptor),
+            symbolTable.descriptorExtension.referenceTypeAlias(typeAliasDescriptor),
             isMarkedNullable,
             translateTypeArguments(this.arguments),
             translateTypeAnnotations(this)
@@ -262,18 +267,18 @@ abstract class TypeTranslator(
         // EnhancedNullability annotation is not present in 'annotations', see 'EnhancedTypeAnnotations::iterator()'.
         // Also, EnhancedTypeAnnotationDescriptor is not a "real" annotation descriptor, there's no corresponding ClassDescriptor, etc.
         if (extensions.enhancedNullability.hasEnhancedNullability(kotlinType)) {
-            irAnnotations.addSpecialAnnotation(extensions.enhancedNullabilityAnnotationConstructor)
+            irAnnotations.addIfNotNull(extensions.generateEnhancedNullabilityAnnotationCall())
         }
 
         if (flexibleType.isNullabilityFlexible()) {
-            irAnnotations.addSpecialAnnotation(extensions.flexibleNullabilityAnnotationConstructor)
+            irAnnotations.addIfNotNull(extensions.generateFlexibleNullabilityAnnotationCall())
         }
         if (flexibleType.isMutabilityFlexible()) {
-            irAnnotations.addSpecialAnnotation(extensions.flexibleMutabilityAnnotationConstructor)
+            irAnnotations.addIfNotNull(extensions.generateFlexibleMutabilityAnnotationCall())
         }
 
         if (flexibleType is RawType) {
-            irAnnotations.addSpecialAnnotation(extensions.rawTypeAnnotationConstructor)
+            irAnnotations.addIfNotNull(extensions.generateRawTypeAnnotationCall())
         }
 
         return irAnnotations
@@ -286,21 +291,8 @@ abstract class TypeTranslator(
                 FlexibleTypeBoundsChecker.getBaseBoundFqNameByMutability(flexibility.upperBound)
     }
 
-    private fun MutableList<IrConstructorCall>.addSpecialAnnotation(irConstructor: IrConstructor?) {
-        if (irConstructor != null) {
-            add(
-                IrConstructorCallImpl.fromSymbolOwner(
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    irConstructor.constructedClassType,
-                    irConstructor.symbol
-                )
-            )
-        }
-    }
-
     private fun translateTypeArguments(arguments: List<TypeProjection>) =
-        arguments.map {
+        arguments.memoryOptimizedMap {
             if (it.isStarProjection)
                 IrStarProjectionImpl
             else

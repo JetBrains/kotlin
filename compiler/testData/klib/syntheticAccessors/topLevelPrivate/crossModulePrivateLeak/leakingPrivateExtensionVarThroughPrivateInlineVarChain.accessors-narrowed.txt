@@ -1,0 +1,26 @@
+/* MODULE name=<lib> */
+
+/* FILE package=<root> fileName=a.kt */
+
+internal var Int.inlineVar: Int
+    internal inline fun Int.<get-inlineVar>(): Int
+        /* ACCESSOR use-site */ access$<get-privateVar>$tAKt($receiver = this)
+    internal inline fun Int.<set-inlineVar>(value: Int)
+        /* ACCESSOR use-site */ access$<set-privateVar>$tAKt($receiver = this, value = value)
+private var Int.privateInlineVar2: Int
+    private inline fun Int.<get-privateInlineVar2>(): Int
+        /* TARGET use-site */ this.<get-privateVar>()
+    private inline fun Int.<set-privateInlineVar2>(value: Int)
+        /* TARGET use-site */ this.<set-privateVar>(value = value)
+private var Int.privateInlineVar1: Int
+    private inline fun Int.<get-privateInlineVar1>(): Int
+        /* TARGET use-site */ <this>.<get-privateVar>()
+    private inline fun Int.<set-privateInlineVar1>(value: Int)
+        /* TARGET use-site */ <this>.<set-privateVar>(value = value)
+private var Int.privateVar: Int
+    /* TARGET declaration */ private fun Int.<get-privateVar>(): Int
+    /* TARGET declaration */ private fun Int.<set-privateVar>(value: Int)
+/* ACCESSOR declaration */ internal fun access$<get-privateVar>$tAKt($receiver: Int): Int
+    /* TARGET use-site */ $receiver.<get-privateVar>()
+/* ACCESSOR declaration */ internal fun access$<set-privateVar>$tAKt($receiver: Int, value: Int)
+    /* TARGET use-site */ $receiver.<set-privateVar>(value = value)

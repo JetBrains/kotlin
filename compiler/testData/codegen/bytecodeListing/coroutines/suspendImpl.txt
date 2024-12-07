@@ -2,10 +2,10 @@
 public abstract class A {
     // source: 'suspendImpl.kt'
     public method <init>(): void
-    synthetic static method internal$main$suspendImpl(p0: A, p1: java.lang.Object): java.lang.Object
-    public @org.jetbrains.annotations.Nullable method internal$main(@org.jetbrains.annotations.Nullable p0: java.lang.Object): java.lang.Object
-    synthetic static method protected$suspendImpl(p0: A, p1: java.lang.Object): java.lang.Object
-    protected @org.jetbrains.annotations.Nullable method protected(@org.jetbrains.annotations.Nullable p0: java.lang.Object): java.lang.Object
-    synthetic static method public$suspendImpl(p0: A, p1: java.lang.Object): java.lang.Object
-    public @org.jetbrains.annotations.Nullable method public(@org.jetbrains.annotations.Nullable p0: java.lang.Object): java.lang.Object
+    public @org.jetbrains.annotations.Nullable method internal$main(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    synthetic static method internal$suspendImpl(p0: A, p1: kotlin.coroutines.Continuation): java.lang.Object
+    synthetic static method protected$suspendImpl(p0: A, p1: kotlin.coroutines.Continuation): java.lang.Object
+    protected @org.jetbrains.annotations.Nullable method protected(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    synthetic static method public$suspendImpl(p0: A, p1: kotlin.coroutines.Continuation): java.lang.Object
+    public @org.jetbrains.annotations.Nullable method public(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
 }

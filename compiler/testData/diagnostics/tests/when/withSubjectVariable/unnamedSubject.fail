@@ -1,0 +1,4 @@
+java.lang.NullPointerException
+	at org.jetbrains.kotlin.types.expressions.PatternMatchingTypingVisitor$Subject$Variable.makeValueArgument(PatternMatchingTypingVisitor.kt:149)
+	at org.jetbrains.kotlin.types.expressions.PatternMatchingTypingVisitor$checkWhenCondition$1.visitWhenConditionInRange(PatternMatchingTypingVisitor.kt:509)
+	at org.jetbrains.kotlin.psi.KtVisitorVoid.visitWhenConditionInRange(KtVisitorVoid.java:1015)

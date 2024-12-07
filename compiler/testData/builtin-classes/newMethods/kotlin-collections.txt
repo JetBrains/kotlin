@@ -67,6 +67,7 @@ public interface List</*0*/ out E> : kotlin.collections.Collection<E> {
     public abstract override /*1*/ fun contains(/*0*/ element: E): kotlin.Boolean
     public abstract override /*1*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<E>): kotlin.Boolean
     public abstract operator fun get(/*0*/ index: kotlin.Int): E
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public abstract fun getSomethingNonExisting(): kotlin.String!
     public abstract fun indexOf(/*0*/ element: E): kotlin.Int
     public abstract override /*1*/ fun isEmpty(): kotlin.Boolean
     public abstract override /*1*/ fun iterator(): kotlin.collections.Iterator<E>
@@ -152,6 +153,7 @@ public interface MutableList</*0*/ E> : kotlin.collections.List<E>, kotlin.colle
     public abstract override /*2*/ /*fake_override*/ fun contains(/*0*/ element: E): kotlin.Boolean
     public abstract override /*2*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<E>): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ index: kotlin.Int): E
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public abstract override /*1*/ /*fake_override*/ fun getSomethingNonExisting(): kotlin.String!
     public abstract override /*1*/ /*fake_override*/ fun indexOf(/*0*/ element: E): kotlin.Int
     public abstract override /*2*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public abstract override /*2*/ /*fake_override*/ fun iterator(): kotlin.collections.MutableIterator<E>

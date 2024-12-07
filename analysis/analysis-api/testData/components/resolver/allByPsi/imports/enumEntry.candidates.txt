@@ -1,0 +1,95 @@
+KtFile: 'main.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(22,34): 'package main'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(30,34): 'main'
+  NO_CANDIDATES
+
+KtImportList(36,133): 'import one.two.Color'
+  NO_CANDIDATES
+
+KtImportDirective(36,56): 'import one.two.Color'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(43,56): 'one.two.Color'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(43,50): 'one.two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(43,46): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(47,50): 'two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(51,56): 'Color'
+  NO_CANDIDATES
+
+KtImportDirective(57,83): 'import one.two.Color.Black'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(64,83): 'one.two.Color.Black'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(64,77): 'one.two.Color'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(64,71): 'one.two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(64,67): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(68,71): 'two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(72,77): 'Color'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(78,83): 'Black'
+  NO_CANDIDATES
+
+KtImportDirective(84,110): 'import one.two.Color.Green'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(91,110): 'one.two.Color.Green'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(91,104): 'one.two.Color'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(91,98): 'one.two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(91,94): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(95,98): 'two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(99,104): 'Color'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(105,110): 'Green'
+  NO_CANDIDATES
+
+KtImportDirective(111,133): 'import one.two.Color.*'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(118,131): 'one.two.Color'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(118,125): 'one.two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(118,121): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(122,125): 'two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(126,131): 'Color'
+  NO_CANDIDATES

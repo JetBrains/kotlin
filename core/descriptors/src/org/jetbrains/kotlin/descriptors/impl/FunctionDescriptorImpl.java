@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationsKt;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitContextReceiver;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.utils.SmartList;
 
@@ -303,6 +304,11 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             throw new IllegalStateException("typeParameters == null for " + this);
         }
         return parameters;
+    }
+
+    @Override
+    public void validate() {
+        getTypeParameters();
     }
 
     @Override
@@ -627,6 +633,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
         List<ReceiverParameterDescriptor> substitutedContextReceiverParameters = new ArrayList<ReceiverParameterDescriptor>();
         if (!configuration.newContextReceiverParameters.isEmpty()) {
+            int index = 0;
             for (ReceiverParameterDescriptor newContextReceiverParameter : configuration.newContextReceiverParameters) {
                 KotlinType substitutedContextReceiverType =
                         substitutor.substitute(newContextReceiverParameter.getType(), Variance.IN_VARIANCE);
@@ -635,7 +642,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                 }
                 ReceiverParameterDescriptor substitutedContextReceiverParameter =
                         DescriptorFactory.createContextReceiverParameterForCallable(substitutedDescriptor, substitutedContextReceiverType,
-                                                                                    newContextReceiverParameter.getAnnotations());
+                                                                                    ((ImplicitContextReceiver)newContextReceiverParameter.getValue()).getCustomLabelName(),
+                                                                                    newContextReceiverParameter.getAnnotations(),
+                                                                                    index++);
                 substitutedContextReceiverParameters.add(substitutedContextReceiverParameter);
 
                 wereChanges[0] |= substitutedContextReceiverType != newContextReceiverParameter.getType();

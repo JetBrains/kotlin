@@ -1,0 +1,33 @@
+package
+
+public fun bar(/*0*/ y: FieldOrRef<*>): AbstractField<*>
+public fun foo(/*0*/ x: ElementOrRef<*, *>): AbstractElement<*, *>
+
+public abstract class AbstractElement</*0*/ EE : AbstractElement<EE, EF>, /*1*/ EF : AbstractField<EF>> {
+    public constructor AbstractElement</*0*/ EE : AbstractElement<EE, EF>, /*1*/ EF : AbstractField<EF>>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class AbstractField</*0*/ out F : AbstractField<F>> {
+    public constructor AbstractField</*0*/ out F : AbstractField<F>>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface ElementOrRef</*0*/ RE : AbstractElement<RE, RF>, /*1*/ RF : AbstractField<RF>> {
+    public abstract val element: RE
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface FieldOrRef</*0*/ FF : AbstractField<FF>> {
+    public abstract val field: FF
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

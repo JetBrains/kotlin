@@ -3,7 +3,7 @@ package foo
 
 interface MyInterface
 
-@org.jetbrains.kotlin.fir.plugin.MyInterfaceSupertype
+@org.jetbrains.kotlin.plugin.sandbox.MyInterfaceSupertype
 class MyClass
 
 // class: foo/MyClass

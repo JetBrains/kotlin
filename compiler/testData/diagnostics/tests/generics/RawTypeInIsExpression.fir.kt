@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package p
 
 public fun foo(a: Any) {

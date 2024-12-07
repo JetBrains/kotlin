@@ -1,24 +1,10 @@
 @kotlin.Metadata
-final class<Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function1<TT;Lkotlin/Unit;>;>  A$B$C$f$1 {
-    // source: 'genericInnerClass.kt'
-    public final <(TT;)V> method invoke(p0: java.lang.Object): void
-    static <null> method <clinit>(): void
-    <null> method <init>(): void
-    public synthetic bridge <null> method invoke(p0: java.lang.Object): java.lang.Object
-    enclosing method A$B$C.f()V
-    public final static field <null> INSTANCE: A$B$C$f$1
-    inner (anonymous) class A$B$C$f$1
-    public final inner class A$B
-    public final inner class A$B$C
-}
-
-@kotlin.Metadata
 public final class<null>  A$B$C {
     // source: 'genericInnerClass.kt'
     public <()V> method <init>(p0: A$B): void
+    private final static <<T:Ljava/lang/Object;>(TT;)V> method f$g(p0: java.lang.Object): void
     public final <null> method f(): void
-    synthetic final field <null> this$0: A$B
-    inner (anonymous) class A$B$C$f$1
+    synthetic final field <LA<TT;>.B;> this$0: A$B
     public final inner class A$B
     public final inner class A$B$C
 }
@@ -27,7 +13,7 @@ public final class<null>  A$B$C {
 public final class<null>  A$B {
     // source: 'genericInnerClass.kt'
     public <()V> method <init>(p0: A): void
-    synthetic final field <null> this$0: A
+    synthetic final field <LA<TT;>;> this$0: A
     public final inner class A$B
     public final inner class A$B$C
 }

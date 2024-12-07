@@ -1,0 +1,3 @@
+expression: PARENTHESIZED
+text: (a + a)
+isUsedAsExpression: true

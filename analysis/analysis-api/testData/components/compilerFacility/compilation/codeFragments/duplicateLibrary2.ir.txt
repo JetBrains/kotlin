@@ -1,0 +1,18 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:module_main_duplicateLibrary2.kt
+    CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CodeFragment
+      CONSTRUCTOR visibility:public <> () returnType:<root>.CodeFragment [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+      FUN name:run visibility:public modality:FINAL <> () returnType:kotlin.Int
+        EXPRESSION_BODY
+          BLOCK type=kotlin.Int origin=null
+            CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+              $this: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                $this: CALL 'public final fun foo (a: kotlin.String): kotlin.Int declared in lib' type=kotlin.Int origin=null
+                  a: CONST String type=kotlin.String value="x"
+                other: CALL 'public final fun foo (n: kotlin.Int): kotlin.Int declared in lib' type=kotlin.Int origin=null
+                  n: CONST Int type=kotlin.Int value=1
+              other: CALL 'public final fun foo (n: kotlin.Char): kotlin.Int declared in lib' type=kotlin.Int origin=null
+                n: CONST Char type=kotlin.Char value='c'

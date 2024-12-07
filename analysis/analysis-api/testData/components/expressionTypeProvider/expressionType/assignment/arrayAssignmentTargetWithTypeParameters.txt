@@ -1,0 +1,2 @@
+expression: a[1]
+type: kotlin.String

@@ -1,5 +1,6 @@
-// !LANGUAGE: -ProperForInArrayLoopRangeVariableAssignmentSemantic
-// !DIAGNOSTICS: -UNUSED_VALUE
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -ProperForInArrayLoopRangeVariableAssignmentSemantic
+// DIAGNOSTICS: -UNUSED_VALUE
 // SKIP_TXT
 
 fun testObjectArray() {

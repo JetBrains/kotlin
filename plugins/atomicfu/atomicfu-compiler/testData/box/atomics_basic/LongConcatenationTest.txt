@@ -1,0 +1,17 @@
+@kotlin.Metadata
+public final class LongConcatenationTest {
+    // source: 'LongConcatenationTest.kt'
+    private final @org.jetbrains.annotations.NotNull field arg1: java.lang.String
+    private final @org.jetbrains.annotations.NotNull field arg2: java.lang.String
+    private final @org.jetbrains.annotations.NotNull field arg3: java.lang.String
+    private final @org.jetbrains.annotations.NotNull field arg4: java.lang.String
+    private final @org.jetbrains.annotations.NotNull field arg5: java.lang.String
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method loooongConcatenation(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class LongConcatenationTestKt {
+    // source: 'LongConcatenationTest.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

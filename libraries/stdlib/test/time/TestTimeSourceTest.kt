@@ -3,7 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalTime::class)
 package test.time
 
 import kotlin.test.*
@@ -41,8 +40,10 @@ class TestTimeSourceTest {
         run {
             val timeSource = TestTimeSource()
             timeSource += moderatePositiveDuration
+            val mark = timeSource.markNow()
             // does not overflow even if duration doesn't fit in long, but the result fits
             timeSource += -moderatePositiveDuration - Long.MAX_VALUE.nanoseconds
+            assertEquals(-(moderatePositiveDuration + Long.MAX_VALUE.nanoseconds), mark.elapsedNow())
         }
     }
 

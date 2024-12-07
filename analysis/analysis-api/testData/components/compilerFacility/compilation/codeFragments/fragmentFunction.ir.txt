@@ -1,0 +1,19 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:fragment.kt
+    CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CodeFragment
+      CONSTRUCTOR visibility:public <> () returnType:<root>.CodeFragment [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+      FUN name:run visibility:public modality:FINAL <> () returnType:kotlin.String
+        EXPRESSION_BODY
+          BLOCK type=kotlin.String origin=null
+            FUN LOCAL_FUNCTION name:ext visibility:local modality:FINAL <> ($receiver:kotlin.String) returnType:kotlin.String
+              $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun ext (): kotlin.String declared in <root>.CodeFragment.run'
+                  CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
+                    $this: GET_VAR '<this>: kotlin.String declared in <root>.CodeFragment.run.ext' type=kotlin.String origin=null
+                    other: CONST String type=kotlin.String value="EXT"
+            CALL 'local final fun ext (): kotlin.String declared in <root>.CodeFragment.run' type=kotlin.String origin=null
+              $receiver: CONST String type=kotlin.String value="base"

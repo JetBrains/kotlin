@@ -1,8 +1,9 @@
+fun String.test5(): String {
+  return <this>.<get-okext>()
+}
+
 val String.okext: String
   get(): String {
     return "OK"
   }
 
-fun String.test5(): String {
-  return <this>.<get-okext>()
-}

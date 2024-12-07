@@ -1,5 +1,4 @@
 // KT-44050
-
 enum class Enum {
     Entry1() {
         fun bogus() = 42

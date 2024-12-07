@@ -1,0 +1,4 @@
+Module names of invalidated sessions:
+fragment1.kt
+sourceModule
+unrelatedModule

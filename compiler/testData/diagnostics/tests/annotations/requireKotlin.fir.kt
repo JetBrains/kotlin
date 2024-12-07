@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package kotlin.io
 
 import kotlin.internal.*

@@ -1,19 +1,25 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
-import org.jetbrains.kotlin.ir.types.impl.IrTypeBase
+import org.jetbrains.kotlin.mpp.TypeRefMarker
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.*
 
-abstract class IrType : KotlinTypeMarker, IrAnnotationContainer {
+sealed class IrType : IrTypeProjection, KotlinTypeMarker, TypeRefMarker, IrAnnotationContainer {
+    final override val type: IrType
+        get() = this
+
+    open val originalKotlinType: KotlinType?
+        get() = null
 
     /**
      * @return true if this type is equal to [other] symbolically. Note that this is NOT EQUIVALENT to the full type checking algorithm
@@ -28,9 +34,15 @@ abstract class IrType : KotlinTypeMarker, IrAnnotationContainer {
     abstract override fun hashCode(): Int
 }
 
-abstract class IrErrorType(kotlinType: KotlinType?) : IrTypeBase(kotlinType)
+abstract class IrErrorType(
+    private val errorClassStubSymbol: IrClassSymbol,
+    val isMarkedNullable: Boolean = false
+) : IrType(), SimpleTypeMarker {
+    val symbol: IrClassSymbol
+        get() = errorClassStubSymbol
+}
 
-abstract class IrDynamicType(kotlinType: KotlinType?) : IrTypeBase(kotlinType), DynamicTypeMarker
+abstract class IrDynamicType : IrType(), DynamicTypeMarker
 
 enum class SimpleTypeNullability {
     MARKED_NULLABLE,
@@ -42,7 +54,7 @@ enum class SimpleTypeNullability {
     }
 }
 
-abstract class IrSimpleType(kotlinType: KotlinType?) : IrTypeBase(kotlinType), SimpleTypeMarker, TypeArgumentListMarker {
+abstract class IrSimpleType : IrType(), SimpleTypeMarker, TypeArgumentListMarker {
     abstract val classifier: IrClassifierSymbol
 
     /**
@@ -69,22 +81,14 @@ abstract class IrSimpleType(kotlinType: KotlinType?) : IrTypeBase(kotlinType), S
     abstract val arguments: List<IrTypeArgument>
     abstract val abbreviation: IrTypeAbbreviation?
 
-    /**
-     * This property was deprecated and replaced with [nullability] property.
-     *
-     * Anyway, in most cases one of utils function would be more suitable, than direct usage.
-     *
-     * Check [nullability] property documentation for details
-     */
-    @Deprecated(
-        level = DeprecationLevel.WARNING,
-        message = "hasQuestionMark has ambiguous meaning. Use isNullable() or isMarkedNullable() instead.",
-    )
-    val hasQuestionMark: Boolean
-        get() = nullability == SimpleTypeNullability.MARKED_NULLABLE
+    override val variance: Variance
+        get() = Variance.INVARIANT
 }
 
-interface IrTypeArgument : TypeArgumentMarker {
+/**
+ * An argument for a generic parameter. Can be either [IrTypeProjection], or [IrStarProjection].
+ */
+sealed interface IrTypeArgument : TypeArgumentMarker {
     override fun equals(other: Any?): Boolean
     override fun hashCode(): Int
 }

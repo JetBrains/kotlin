@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: -RestrictionOfValReassignmentViaBackingField
+// LANGUAGE: -RestrictionOfValReassignmentViaBackingField
 
 package a
 

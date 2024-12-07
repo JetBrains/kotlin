@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-303 Stack overflow on a cyclic class hierarchy
 
 open class Foo() : <!CYCLIC_INHERITANCE_HIERARCHY!>Bar<!>() {

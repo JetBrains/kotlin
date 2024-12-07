@@ -42,7 +42,7 @@ abstract class AndroidPackageFragmentProviderExtension : PackageFragmentProvider
 
     protected abstract fun isExperimental(moduleInfo: ModuleInfo?): Boolean
 
-    protected open fun <T> createLazyValue(value: () -> T): () -> T {
+    protected open fun <T : Any> createLazyValue(value: () -> T): () -> T {
         // The default (CLI) implementation is not lazy
         val evaluatedValue = value()
         return { evaluatedValue }

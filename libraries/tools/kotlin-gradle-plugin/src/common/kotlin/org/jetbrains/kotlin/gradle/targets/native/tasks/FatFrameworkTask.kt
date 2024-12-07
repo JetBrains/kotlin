@@ -7,21 +7,36 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.FileTree
+import org.gradle.api.file.*
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.process.ExecOperations
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.ModuleMapGenerator
 import org.jetbrains.kotlin.gradle.utils.appendLine
+import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.listProperty
+import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.util.visibleName
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.Serializable
+import java.nio.file.Files
+import javax.inject.Inject
 
 class FrameworkDsymLayout(val rootDir: File) {
     init {
@@ -41,27 +56,47 @@ class FrameworkDsymLayout(val rootDir: File) {
     fun exists() = rootDir.exists()
 }
 
-class FrameworkLayout(val rootDir: File) {
+class FrameworkLayout(
+    val rootDir: File,
+    val isMacosFramework: Boolean
+) {
     init {
         require(rootDir.extension == "framework")
     }
 
     private val frameworkName = rootDir.nameWithoutExtension
+    private val macosVersionsDir = rootDir.resolve("Versions")
+    private val macosADir = macosVersionsDir.resolve("A")
+    private val macosResourcesDir = macosADir.resolve("Resources")
+    private val contentDir = if (isMacosFramework) macosADir else rootDir
 
-    val headerDir = rootDir.resolve("Headers")
-    val modulesDir = rootDir.resolve("Modules")
+    val headerDir = contentDir.resolve("Headers")
+    val modulesDir = contentDir.resolve("Modules")
 
-    val binary = rootDir.resolve(frameworkName)
+    val binary = contentDir.resolve(frameworkName)
     val header = headerDir.resolve("$frameworkName.h")
     val moduleFile = modulesDir.resolve("module.modulemap")
-    val infoPlist = rootDir.resolve("Info.plist")
+    val infoPlist = (if (isMacosFramework) macosResourcesDir else rootDir).resolve("Info.plist")
 
     val dSYM = FrameworkDsymLayout(rootDir.parentFile.resolve("$frameworkName.framework.dSYM"))
 
     fun mkdirs() {
         rootDir.mkdirs()
-        headerDir.mkdir()
-        modulesDir.mkdir()
+        headerDir.mkdirs()
+        modulesDir.mkdirs()
+        if (isMacosFramework) {
+            macosResourcesDir.mkdirs()
+
+            val currentVersion = macosVersionsDir.resolve("Current")
+            Files.createSymbolicLink(currentVersion.toPath(), macosADir.relativeTo(macosVersionsDir).toPath())
+
+            val root = rootDir.toPath()
+            val current = currentVersion.relativeTo(rootDir).toPath()
+            Files.createSymbolicLink(root.resolve("Headers"), current.resolve("Headers"))
+            Files.createSymbolicLink(root.resolve("Modules"), current.resolve("Modules"))
+            Files.createSymbolicLink(root.resolve("Resources"), current.resolve("Resources"))
+            Files.createSymbolicLink(root.resolve(frameworkName), current.resolve(frameworkName))
+        }
     }
 
     fun exists() = rootDir.exists()
@@ -71,7 +106,7 @@ class FrameworkDescriptor(
     val file: File,
     val isStatic: Boolean,
     val target: KonanTarget
-) {
+) : Serializable {
     constructor(framework: Framework) : this(
         framework.outputFile,
         framework.isStatic,
@@ -82,19 +117,32 @@ class FrameworkDescriptor(
         require(NativeOutputKind.FRAMEWORK.availableFor(target))
     }
 
-    val name = file.nameWithoutExtension
-    val files = FrameworkLayout(file)
+    val name get() = file.nameWithoutExtension
+    val files get() = FrameworkLayout(file, target.family == Family.OSX)
 }
 
 /**
  * Task running lipo to create a fat framework from several simple frameworks. It also merges headers, plists and module files.
  */
-open class FatFrameworkTask : DefaultTask() {
+@DisableCachingByDefault
+open class FatFrameworkTask
+@Inject
+internal constructor(
+    private val execOperations: ExecOperations,
+    private val fileOperations: FileSystemOperations,
+    private val objectFactory: ObjectFactory,
+    projectLayout: ProjectLayout,
+) : DefaultTask() {
     init {
         onlyIf { HostManager.hostIsMac }
     }
 
-    private val archToFramework: MutableMap<Architecture, FrameworkDescriptor> = mutableMapOf()
+    @get:Input
+    protected val archToFrameworkProvider: MapProperty<AppleArchitecture, FrameworkDescriptor> = objectFactory.mapProperty(
+        AppleArchitecture::class.java,
+        FrameworkDescriptor::class.java,
+    )
+    private val archToFramework: Map<AppleArchitecture, FrameworkDescriptor> get() = archToFrameworkProvider.get().mapValues { it.value }
 
     //region DSL properties.
     /**
@@ -110,11 +158,22 @@ open class FatFrameworkTask : DefaultTask() {
     @Input
     var baseName: String = project.name
 
+    @get:Internal
+    internal val defaultDestinationDir: Provider<Directory> = projectLayout.buildDirectory.dir("fat-framework")
+
+    @OutputDirectory
+    val destinationDirProperty: DirectoryProperty = objectFactory
+        .directoryProperty()
+        .convention(defaultDestinationDir)
+
     /**
      * A parent directory for the fat framework.
      */
-    @OutputDirectory
-    var destinationDir: File = project.buildDir.resolve("fat-framework")
+    @get:Internal
+    @Deprecated("please use destinationDirProperty", replaceWith = ReplaceWith("destinationDirProperty"))
+    var destinationDir: File
+        get() = destinationDirProperty.get().asFile
+        set(value) = destinationDirProperty.set(value)
 
     @get:Internal
     val fatFrameworkName: String
@@ -122,17 +181,18 @@ open class FatFrameworkTask : DefaultTask() {
 
     @get:Internal
     val fatFramework: File
-        get() = destinationDir.resolve(fatFrameworkName + ".framework")
+        get() = destinationDirProperty.file(fatFrameworkName + ".framework").getFile()
 
-    private val fatFrameworkLayout: FrameworkLayout
-        get() = FrameworkLayout(fatFramework)
+    @get:Internal
+    internal val frameworkLayout: FrameworkLayout
+        get() = FrameworkLayout(fatFramework, getFatFrameworkFamily() == Family.OSX)
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:IgnoreEmptyDirectories
     @get:InputFiles
     @get:SkipWhenEmpty
     protected val inputFrameworkFiles: Iterable<FileTree>
-        get() = frameworks.map { project.fileTree(it.file) }
+        get() = frameworks.map { objectFactory.fileTree().from(it.file) }
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:IgnoreEmptyDirectories
@@ -142,8 +202,28 @@ open class FatFrameworkTask : DefaultTask() {
             framework.files.dSYM.takeIf {
                 it.exists()
             }?.rootDir?.let {
-                project.fileTree(it)
+                objectFactory.fileTree().from(it)
             }
+        }
+
+    protected enum class AppleArchitecture(val clangMacro: String) {
+        X64("__x86_64__"),
+        X86("__i386__"),
+        ARM32("__arm__"),
+        // We need to distinguish between variants of aarch64, because there are two WatchOS ARM64 targets that we support
+        // watchOsArm64 that compiles to arm64_32 architecture
+        // watchOsDeviceArm64 that compiles to arm64 architecture
+        // https://github.com/apple/llvm-project/blob/6698c7d5889280d336f4aa8bf665d6e3c0c13ea0/clang/lib/Basic/Targets/AArch64.cpp#L1041
+        ARM64_32("__ARM64_ARCH_8_32__"),
+        ARM64("__ARM64_ARCH_8__"),
+    }
+
+    private val KonanTarget.appleArchitecture: AppleArchitecture get() =
+        when (architecture) {
+            Architecture.X64 -> AppleArchitecture.X64
+            Architecture.X86 -> AppleArchitecture.X86
+            Architecture.ARM64 -> if (this == WATCHOS_ARM64) AppleArchitecture.ARM64_32 else AppleArchitecture.ARM64
+            Architecture.ARM32 -> AppleArchitecture.ARM32
         }
 
     // region DSL methods.
@@ -156,16 +236,28 @@ open class FatFrameworkTask : DefaultTask() {
      * Adds the specified frameworks in this fat framework.
      */
     fun from(frameworks: Iterable<Framework>) {
-        fromFrameworkDescriptors(frameworks.map { FrameworkDescriptor(it) })
-        frameworks.forEach { dependsOn(it.linkTask) }
+        fromFrameworkDescriptorProviders(
+            frameworks.map { framework ->
+                framework.linkTaskProvider.map {
+                    FrameworkDescriptor(framework)
+                }
+            }
+        )
     }
+
+    fun fromFrameworkDescriptors(frameworks: Iterable<FrameworkDescriptor>) = fromFrameworkDescriptorProviders(
+        frameworks.map { framework ->
+            project.provider { framework }
+        }
+    )
 
     /**
      * Adds the specified frameworks in this fat framework.
      */
-    fun fromFrameworkDescriptors(frameworks: Iterable<FrameworkDescriptor>) {
-        frameworks.forEach { framework ->
-            val arch = framework.target.architecture
+    internal fun fromFrameworkDescriptorProviders(frameworks: Iterable<Provider<FrameworkDescriptor>>) {
+        frameworks.forEach { frameworkProvider ->
+            val framework = frameworkProvider.get()
+            val arch = framework.target.appleArchitecture
             val family = framework.target.family
             val fatFrameworkFamily = getFatFrameworkFamily()
             require(fatFrameworkFamily == null || family == fatFrameworkFamily) {
@@ -176,7 +268,7 @@ open class FatFrameworkTask : DefaultTask() {
 
             require(!archToFramework.containsKey(arch)) {
                 val alreadyAdded = archToFramework.getValue(arch)
-                "This fat framework already has a binary for architecture `${arch.name.toLowerCase()}` " +
+                "This fat framework already has a binary for architecture `${arch.name.toLowerCaseAsciiOnly()}` " +
                         "(${alreadyAdded.name} for target `${alreadyAdded.target.name}`)"
             }
 
@@ -185,13 +277,15 @@ open class FatFrameworkTask : DefaultTask() {
 
                 buildString {
                     append("Cannot create a fat framework from:\n")
-                    archToFramework.forEach { append("${it.value.name} - ${it.key.name.toLowerCase()} - ${staticName(it.value.isStatic)}\n") }
-                    append("${framework.name} - ${arch.name.toLowerCase()} - ${staticName(framework.isStatic)}\n")
+                    archToFramework.forEach {
+                        append("${it.value.name} - ${it.key.name.toLowerCaseAsciiOnly()} - ${staticName(it.value.isStatic)}\n")
+                    }
+                    append("${framework.name} - ${arch.name.toLowerCaseAsciiOnly()} - ${staticName(framework.isStatic)}\n")
                     append("All input frameworks must be either static or dynamic")
                 }
             }
 
-            archToFramework[arch] = framework
+            archToFrameworkProvider.put(arch, frameworkProvider)
         }
     }
     // endregion.
@@ -201,20 +295,14 @@ open class FatFrameworkTask : DefaultTask() {
         return archToFramework.values.firstOrNull()?.target?.family
     }
 
-    private val Architecture.clangMacro: String
-        get() = when (this) {
-            Architecture.X86 -> "__i386__"
-            Architecture.X64 -> "__x86_64__"
-            Architecture.ARM32 -> "__arm__"
-            Architecture.ARM64 -> "__aarch64__"
-            else -> error("Fat frameworks are not supported for architecture `$name`")
-        }
-
     private val FrameworkDescriptor.plistPlatform: String
         get() = when (target) {
-            IOS_ARM32, IOS_ARM64, IOS_X64, IOS_SIMULATOR_ARM64 -> "iPhoneOS"
-            TVOS_ARM64, TVOS_X64, TVOS_SIMULATOR_ARM64 -> "AppleTVOS"
-            WATCHOS_ARM32, WATCHOS_ARM64, WATCHOS_X86, WATCHOS_X64, WATCHOS_SIMULATOR_ARM64 -> "WatchOS"
+            // remove `is ...` after Gradle Configuration Cache deserialization for Objects of a Sealed Class is fixed
+            // https://github.com/gradle/gradle/issues/22347
+            is MACOS_X64, is MACOS_ARM64 -> "MacOSX"
+            is IOS_ARM64, is IOS_X64, is IOS_SIMULATOR_ARM64 -> "iPhoneOS"
+            is TVOS_ARM64, is TVOS_X64, is TVOS_SIMULATOR_ARM64 -> "AppleTVOS"
+            is WATCHOS_ARM32, is WATCHOS_ARM64, is WATCHOS_X64, is WATCHOS_SIMULATOR_ARM64, is WATCHOS_DEVICE_ARM64 -> "WatchOS"
             else -> error("Fat frameworks are not supported for platform `${target.visibleName}`")
         }
 
@@ -230,7 +318,7 @@ open class FatFrameworkTask : DefaultTask() {
         val commands = mutableListOf<String>()
         var ignoreExitValue = false
 
-        fun run() = project.exec { exec ->
+        fun run() = execOperations.exec { exec ->
             exec.executable = "/usr/libexec/PlistBuddy"
             commands.forEach {
                 exec.args("-c", it)
@@ -249,7 +337,7 @@ open class FatFrameworkTask : DefaultTask() {
     }
 
     private fun runLipo(inputFiles: Collection<File>, outputFile: File) =
-        project.exec { exec ->
+        execOperations.exec { exec ->
             exec.executable = "/usr/bin/lipo"
             exec.args = listOf(
                 "-create",
@@ -259,7 +347,7 @@ open class FatFrameworkTask : DefaultTask() {
         }
 
     private fun runInstallNameTool(file: File, frameworkName: String) {
-        project.exec { exec ->
+        execOperations.exec { exec ->
             exec.executable = "install_name_tool"
             exec.args = listOf(
                 "-id",
@@ -309,14 +397,17 @@ open class FatFrameworkTask : DefaultTask() {
     }
 
     private fun createModuleFile(outputFile: File, frameworkName: String) {
-        outputFile.writeText("""
-            framework module $frameworkName {
-                umbrella header "$frameworkName.h"
+        outputFile.writeText(
+            ModuleMapGenerator.generateModuleMap {
+                isFramework = true
+                isUmbrellaHeader = true
 
-                export *
-                module * { export * }
+                name = frameworkName
+                export = "*"
+                umbrella = "$frameworkName.h"
+                module = "* { export * }"
             }
-        """.trimIndent())
+        )
     }
 
     private fun mergePlists(outputFile: File, frameworkName: String) {
@@ -326,7 +417,7 @@ open class FatFrameworkTask : DefaultTask() {
 
         // Use Info.plist of one of the frameworks to get basic data.
         val baseInfo = frameworks.first().files.infoPlist
-        project.copy {
+        fileOperations.copy {
             it.from(baseInfo)
             it.into(outputFile.parentFile)
         }
@@ -358,7 +449,7 @@ open class FatFrameworkTask : DefaultTask() {
         }
     }
 
-    private fun mergeDSYM() {
+    private fun mergeDSYM(fatDsym: FrameworkDsymLayout) {
         val dsymInputs = archToFramework.mapValues { (_, framework) ->
             framework.files.dSYM
         }.filterValues {
@@ -369,7 +460,6 @@ open class FatFrameworkTask : DefaultTask() {
             return
         }
 
-        val fatDsym = fatFrameworkLayout.dSYM
         fatDsym.mkdirs()
 
         // Merge dSYM binary.
@@ -378,7 +468,7 @@ open class FatFrameworkTask : DefaultTask() {
         // Copy dSYM's Info.plist.
         // It doesn't contain target-specific info or framework names except the bundle id so there is no need to edit it.
         // TODO: handle bundle id.
-        project.copy {
+        fileOperations.copy {
             it.from(dsymInputs.values.first().infoPlist)
             it.into(fatDsym.infoPlist.parentFile)
         }
@@ -386,21 +476,23 @@ open class FatFrameworkTask : DefaultTask() {
 
     @TaskAction
     protected fun createFatFramework() {
-        val outFramework = fatFrameworkLayout
+        val outFramework = frameworkLayout
+        if (outFramework.exists()) outFramework.rootDir.deleteRecursively()
 
         outFramework.mkdirs()
         mergeBinaries(outFramework.binary)
         mergeHeaders(outFramework.header)
         createModuleFile(outFramework.moduleFile, fatFrameworkName)
         mergePlists(outFramework.infoPlist, fatFrameworkName)
-        mergeDSYM()
+        mergeDSYM(outFramework.dSYM)
     }
 
     companion object {
         private val supportedTargets = listOf(
-            IOS_ARM32, IOS_ARM64, IOS_X64,
-            WATCHOS_ARM32, WATCHOS_ARM64, WATCHOS_X86, WATCHOS_X64,
-            TVOS_ARM64, TVOS_X64
+            IOS_ARM64, IOS_X64,
+            WATCHOS_ARM32, WATCHOS_ARM64, WATCHOS_X64, WATCHOS_DEVICE_ARM64,
+            TVOS_ARM64, TVOS_X64,
+            MACOS_X64, MACOS_ARM64
         )
 
         fun isSupportedTarget(target: KotlinNativeTarget): Boolean {

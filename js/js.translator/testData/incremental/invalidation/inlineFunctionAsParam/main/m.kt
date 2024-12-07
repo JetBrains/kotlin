@@ -4,7 +4,7 @@ inline fun test1(x: () -> Any) = x()
 fun test2(x: () -> Any) = x()
 inline fun test3(x: () -> Any) = x()
 
-fun box(stepId: Int): String {
+fun box(stepId: Int, isWasm: Boolean): String {
     when (stepId) {
         0 -> {
             isEqual(test1(::foo1), "foo1") ?: return "Fail foo1"

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface Expr
 class BinOp(val operator : String) : Expr
 

@@ -5,17 +5,18 @@
 
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model
 
-import org.jetbrains.kotlin.fir.checkers.generator.collectClassNamesTo
-import org.jetbrains.kotlin.fir.checkers.generator.inBracketsWithIndent
-import org.jetbrains.kotlin.fir.checkers.generator.printImports
-import org.jetbrains.kotlin.fir.tree.generator.printer.printCopyright
-import org.jetbrains.kotlin.fir.tree.generator.printer.printGeneratedMessage
 import org.jetbrains.kotlin.fir.tree.generator.util.writeToFileUsingSmartPrinterIfFileContentChanged
-import org.jetbrains.kotlin.util.SmartPrinter
+import org.jetbrains.kotlin.generators.tree.printer.printKDoc
+import org.jetbrains.kotlin.generators.util.printBlock
+import org.jetbrains.kotlin.generators.util.printCopyright
+import org.jetbrains.kotlin.generators.util.printImports
+import org.jetbrains.kotlin.utils.SmartPrinter
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.File
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
+import kotlin.reflect.KVariance
 
 object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
     const val BASE_PACKAGE = "org.jetbrains.kotlin.fir.analysis.diagnostics"
@@ -41,17 +42,18 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
         println("package $packageName")
         println()
         collectAndPrintImports(diagnosticList, packageName, starImportsToAdd)
-        printGeneratedMessage()
+        printKDoc(diagnosticList.extendedKDoc())
         printErrorsObject(diagnosticList)
     }
 
     private fun SmartPrinter.printErrorsObject(diagnosticList: DiagnosticList) {
-        inBracketsWithIndent("object ${diagnosticList.objectName}") {
+        println("""@Suppress("IncorrectFormatting")""")
+        printBlock("object ${diagnosticList.objectName}") {
             for (group in diagnosticList.groups) {
                 printDiagnosticGroup(group.name, group.diagnostics)
                 println()
             }
-            inBracketsWithIndent("init") {
+            printBlock("init") {
                 println("RootDiagnosticRendererFactory.registerFactory(${diagnosticList.objectName}DefaultMessages)")
             }
         }
@@ -68,30 +70,21 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
     }
 
     private fun SmartPrinter.printDiagnostic(diagnostic: DiagnosticData) {
-        print("val ${diagnostic.name} by ${diagnostic.getFactoryFunction()}")
-        printTypeArguments(diagnostic.getAllTypeArguments())
-        printPositioningStrategyAndLanguageFeature(diagnostic)
-        println()
-    }
-
-    @OptIn(ExperimentalStdlibApi::class)
-    private fun SmartPrinter.printPositioningStrategyAndLanguageFeature(diagnostic: DiagnosticData) {
-        val argumentsList = buildList {
-            if (diagnostic is DeprecationDiagnosticData) {
-                add(diagnostic.featureForError.name)
-            }
-            if (!diagnostic.hasDefaultPositioningStrategy()) {
-                add(diagnostic.positioningStrategy.expressionToCreate)
-            }
+        val type = diagnostic.getProperType()
+        val escapedName = "\"${diagnostic.name}\""
+        val severityOrFeatureForError = when (diagnostic) {
+            is RegularDiagnosticData -> diagnostic.severity.name
+            is DeprecationDiagnosticData -> diagnostic.featureForError.name
         }
-        print(argumentsList.joinToString(", ", prefix = "(", postfix = ")"))
-    }
+        val positioningStrategy = diagnostic.positioningStrategy.expressionToCreate
+        val psiTypeClass = "${diagnostic.psiType.kClass.simpleName!!}::class"
 
-
-    @OptIn(ExperimentalStdlibApi::class)
-    private fun DiagnosticData.getAllTypeArguments(): List<KType> = buildList {
-        add(psiType)
-        parameters.mapTo(this) { it.type }
+        print("val ${diagnostic.name}: $type")
+        diagnostic.parameters.map { it.type }.ifNotEmpty { printTypeArguments(this) }
+        print(" = $type(")
+        printSeparatedWithComma(listOf(escapedName, severityOrFeatureForError, positioningStrategy, psiTypeClass)) { print(it) }
+        print(")")
+        println()
     }
 
     private fun SmartPrinter.printTypeArguments(typeArguments: List<KType>) {
@@ -121,48 +114,51 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
         if (typeArgumentType == null) {
             print("*")
         } else {
+            when (typeArgument.variance) {
+                KVariance.INVARIANT, null -> {}
+                KVariance.IN -> print("in ")
+                KVariance.OUT -> print("out ")
+            }
             printType(typeArgumentType)
         }
     }
 
     private fun SmartPrinter.collectAndPrintImports(diagnosticList: DiagnosticList, packageName: String, starImportsToAdd: Set<String>) {
-        val imports = collectImports(diagnosticList, packageName, starImportsToAdd)
-        printImports(imports)
-        println()
-    }
+        val importableTypes = diagnosticList.allDiagnostics.flatMap {
+            buildList {
+                add(it.psiType)
+                addAll(it.parameters.map { it.type })
+            }
+        }
 
-    @OptIn(ExperimentalStdlibApi::class)
-    private fun collectImports(
-        diagnosticList: DiagnosticList,
-        packageName: String,
-        starImportsToAdd: Set<String>
-    ): Collection<String> = buildSet {
-        for (starImport in starImportsToAdd) {
-            if (starImport != packageName) {
-                add("$starImport.*")
+        val simpleImports = buildList {
+            diagnosticList.allDiagnostics.forEach { diagnostic ->
+                add("org.jetbrains.kotlin.diagnostics." + diagnostic.getProperType())
+                when (diagnostic) {
+                    is RegularDiagnosticData ->
+                        add("org.jetbrains.kotlin.diagnostics.Severity.${diagnostic.severity.name}")
+                    is DeprecationDiagnosticData ->
+                        add("org.jetbrains.kotlin.config.LanguageFeature.${diagnostic.featureForError.name}")
+                }
             }
+            add(PositioningStrategy.importToAdd)
+            add("org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory")
         }
-        diagnosticList.allDiagnostics.forEach { diagnostic ->
-            for (typeArgument in diagnostic.getAllTypeArguments()) {
-                typeArgument.collectClassNamesTo(this)
-            }
-            if (!diagnostic.hasDefaultPositioningStrategy()) {
-                add(PositioningStrategy.importToAdd)
-            }
-        }
-        for (deprecationDiagnostic in diagnosticList.allDiagnostics.filterIsInstance<DeprecationDiagnosticData>()) {
-            add("org.jetbrains.kotlin.config.LanguageFeature.${deprecationDiagnostic.featureForError.name}")
-        }
-        add("org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory")
-    }
 
+        printImports(
+            packageName = packageName,
+            importableTypes,
+            simpleImports,
+            starImportsToAdd
+        )
+    }
 
     private val KType.kClass: KClass<*>
         get() = classifier as KClass<*>
 
-    private fun DiagnosticData.getFactoryFunction(): String = when (this) {
-        is RegularDiagnosticData -> severity.name.lowercase()
-        is DeprecationDiagnosticData -> "deprecationError"
+    private fun DiagnosticData.getProperType(): String = when (this) {
+        is RegularDiagnosticData -> "KtDiagnosticFactory"
+        is DeprecationDiagnosticData -> "KtDiagnosticFactoryForDeprecation"
     } + parameters.size
 }
 

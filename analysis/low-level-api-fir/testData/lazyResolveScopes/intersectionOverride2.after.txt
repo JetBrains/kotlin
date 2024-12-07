@@ -1,0 +1,23 @@
+public open override [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|): R|kotlin/Unit| {
+}
+
+public abstract override [ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOriginalKey=/C.foo] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|): R|kotlin/Unit|
+
+public abstract [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|): R|kotlin/Unit|
+
+public abstract [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|): R|kotlin/Unit|
+
+public open override [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/String|): R|kotlin/Unit| {
+}
+
+public abstract override [ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOriginalKey=/C.foo] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/String|): R|kotlin/Unit|
+
+public abstract [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/String|): R|kotlin/Unit|
+
+public abstract [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/String|): R|kotlin/Unit|
+
+public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|
+
+public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String|

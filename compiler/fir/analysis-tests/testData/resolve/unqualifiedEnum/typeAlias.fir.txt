@@ -12,9 +12,12 @@ FILE: typeAlias.kt
         public final static fun valueOf(value: R|kotlin/String|): R|Some| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<Some>|
+            public get(): R|kotlin/enums/EnumEntries<Some>|
+
     }
     public final typealias Other = R|Some|
-    public final fun foo(o: R|Other|): R|kotlin/Int| {
+    public final fun foo(o: R|{Other=} Some|): R|kotlin/Int| {
         ^foo when (R|<local>/o|) {
             ==($subj$, R|/Some.FIRST|) ->  {
                 Int(1)

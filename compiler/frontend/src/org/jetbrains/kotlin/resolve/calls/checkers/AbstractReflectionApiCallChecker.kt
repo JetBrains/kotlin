@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.builtins.ReflectionTypes
+import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -96,7 +96,6 @@ abstract class AbstractReflectionApiCallChecker(
 
     private fun isReflectionSource(reportOn: PsiElement): Boolean {
         val file = reportOn.containingFile as? KtFile ?: return false
-        val fqName = file.packageFqName.toUnsafe()
-        return fqName == KOTLIN_REFLECT_FQ_NAME.toUnsafe() || fqName.asString().startsWith(KOTLIN_REFLECT_FQ_NAME.asString() + ".")
+        return file.packageFqName.startsWith(KOTLIN_REFLECT_FQ_NAME)
     }
 }

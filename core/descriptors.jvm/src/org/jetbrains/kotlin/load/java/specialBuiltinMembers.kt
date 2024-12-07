@@ -54,11 +54,6 @@ object BuiltinMethodsWithSpecialGenericSignature : SpecialGenericSignatures() {
     val Name.sameAsBuiltinMethodWithErasedValueParameters: Boolean
         get() = this in ERASED_VALUE_PARAMETERS_SHORT_NAMES
 
-    fun CallableMemberDescriptor.isBuiltinWithSpecialDescriptorInJvm(): Boolean {
-        if (!KotlinBuiltIns.isBuiltIn(this)) return false
-        return getSpecialSignatureInfo()?.isObjectReplacedWithTypeParameter ?: false || doesOverrideBuiltinWithDifferentJvmName()
-    }
-
     @JvmStatic
     fun CallableMemberDescriptor.getSpecialSignatureInfo(): SpecialSignatureInfo? {
         if (name !in ERASED_VALUE_PARAMETERS_SHORT_NAMES) return null

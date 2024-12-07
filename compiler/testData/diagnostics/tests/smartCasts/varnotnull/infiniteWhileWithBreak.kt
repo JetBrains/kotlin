@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 data class SomeObject(val n: SomeObject?) {
     fun doSomething(): Boolean = true
     fun next(): SomeObject? = n    

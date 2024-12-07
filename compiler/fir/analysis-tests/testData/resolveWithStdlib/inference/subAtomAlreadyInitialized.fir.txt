@@ -1,0 +1,10 @@
+FILE: subAtomAlreadyInitialized.kt
+    public final fun testIt(l: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/Unit| {
+        R|<local>/l|.R|kotlin/collections/flatMap<CS errors: kotlin/collections/flatMap>#|<R|kotlin/Int|, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(<L> = flatMap@fun <anonymous>(f: R|kotlin/Int|): R|kotlin/collections/Iterable<ERROR CLASS: Cannot infer argument for type parameter R>| <inline=Inline, kind=UNKNOWN>  {
+            ^ flatMap@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                ^@flatMap Unit
+            }
+
+        }
+        )
+    }

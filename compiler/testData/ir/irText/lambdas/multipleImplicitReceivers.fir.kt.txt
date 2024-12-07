@@ -1,3 +1,18 @@
+interface IFoo {
+  val A.foo: B
+    get(): B {
+      return B
+    }
+
+}
+
+interface IInvoke {
+  operator fun B.invoke(): Int {
+    return 42
+  }
+
+}
+
 object A {
   private constructor() /* primary */ {
     super/*Any*/()
@@ -12,21 +27,6 @@ object B {
     super/*Any*/()
     /* <init>() */
 
-  }
-
-}
-
-interface IFoo {
-  val A.foo: B
-    get(): B {
-      return B
-    }
-
-}
-
-interface IInvoke {
-  operator fun B.invoke(): Int {
-    return 42
   }
 
 }

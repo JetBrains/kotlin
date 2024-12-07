@@ -1,5 +1,6 @@
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 fun foo() {
     val s: String? = if (true) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>materialize()<!> else null

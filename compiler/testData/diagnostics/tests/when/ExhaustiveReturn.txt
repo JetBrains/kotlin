@@ -23,6 +23,7 @@ public final enum class Direction : kotlin.Enum<Direction> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<Direction>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Direction
     public final /*synthesized*/ fun values(): kotlin.Array<Direction>
 }

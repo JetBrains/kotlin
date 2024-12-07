@@ -1,0 +1,12 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract fun interface /IRunnable { // /IRunnable|null[0]
+    abstract fun run() // /IRunnable.run|run(){}[0]
+}
+final fun /foo1(/IRunnable, kotlin/Array<out kotlin/String>...) // /foo1|foo1(IRunnable;kotlin.Array<out|kotlin.String>...){}[0]
+final fun /foo2(/IRunnable, /IRunnable, kotlin/Array<out kotlin/String>...) // /foo2|foo2(IRunnable;IRunnable;kotlin.Array<out|kotlin.String>...){}[0]
+final fun /test(kotlin/Function0<kotlin/Unit>, /IRunnable, kotlin/String, kotlin/Array<kotlin/String>) // /test|test(kotlin.Function0<kotlin.Unit>;IRunnable;kotlin.String;kotlin.Array<kotlin.String>){}[0]

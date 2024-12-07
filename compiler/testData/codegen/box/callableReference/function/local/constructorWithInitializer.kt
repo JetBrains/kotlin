@@ -6,5 +6,5 @@ fun box(): String {
         }
     }
 
-    return (::A)().result
+    return (::A).let { it() }.result
 }

@@ -20,6 +20,7 @@ internal class NonStarImport(
     override val relativeClassName: FqName?,
     override val resolvedClassId: ClassId?,
     val callableName: Name?,
+    val aliasName: Name?,
 ) : Import()
 
 internal class StarImport(

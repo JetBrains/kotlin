@@ -1,0 +1,1 @@
+public final fun ff(p: R|kotlin/collections/List<kotlin/CharSequence?>|): R|kotlin/Int|

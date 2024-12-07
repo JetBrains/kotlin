@@ -1,4 +1,5 @@
-// RENDER_DIAGNOSTICS_FULL_TEXT
+// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
 class Foo<T>
 
 class Bar<T> {
@@ -10,5 +11,5 @@ class Inv<O>
 
 fun <K : In<Inv<Number>>> main() {
     val foo = Foo<K>()
-    Bar<In<Inv<Int>>>().<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>takeFoo<!>(foo) // error in 1.3.72, no error in 1.4.31
+    Bar<In<Inv<Int>>>().takeFoo(foo) // error in 1.3.72, no error in 1.4.31
 }

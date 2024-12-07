@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.types.*
 
-object FirPropertyFieldTypeChecker : FirPropertyChecker() {
+object FirPropertyFieldTypeChecker : FirPropertyChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         val backingField = declaration.backingField ?: return
 
@@ -44,7 +45,7 @@ object FirPropertyFieldTypeChecker : FirPropertyChecker() {
             reporter.reportOn(backingField.source, FirErrors.LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER, context)
         }
 
-        if (backingField.isLateInit && backingField.isNullable) {
+        if (backingField.isLateInit && backingField.returnTypeRef.coneType.canBeNull(context.session)) {
             reporter.reportOn(backingField.source, FirErrors.LATEINIT_NULLABLE_BACKING_FIELD, context)
         }
 
@@ -65,12 +66,6 @@ object FirPropertyFieldTypeChecker : FirPropertyChecker() {
             checkAsPropertyNotSubtype(declaration, context, reporter)
         }
     }
-
-    private val FirBackingField.isNullable
-        get() = when (val type = returnTypeRef.coneType) {
-            is ConeTypeParameterType -> type.isNullable || type.lookupTag.typeParameterSymbol.resolvedBounds.any { it.coneType.isNullable }
-            else -> type.isNullable
-        }
 
     private val FirPropertyAccessor?.isNotExplicit
         get() = this == null || this is FirDefaultPropertyAccessor

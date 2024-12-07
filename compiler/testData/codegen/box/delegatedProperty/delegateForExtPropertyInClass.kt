@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 import kotlin.reflect.KProperty
 
 class Delegate {

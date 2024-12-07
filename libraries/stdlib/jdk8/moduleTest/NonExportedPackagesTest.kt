@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package test.jdk9
@@ -18,22 +18,20 @@ class NonExportedPackagesTest {
             "kotlin.collections.builders",
             "kotlin.js",
             "kotlin.jvm.internal.unsafe",
+            "kotlin.internal.jdk7",
+            "kotlin.internal.jdk8",
+            "kotlin.random.jdk8",
         ))
     }
 
     @Test
     fun stdlibJdk7() {
-        checkNonExportedPackages("kotlin-stdlib-jdk7", setOf(
-            "kotlin.internal.jdk7",
-        ))
+        checkNonExportedPackages("kotlin-stdlib-jdk7", setOf())
     }
 
     @Test
     fun stdlibJdk8() {
-        checkNonExportedPackages("kotlin-stdlib-jdk8", setOf(
-            "kotlin.internal.jdk8",
-            "kotlin.random.jdk8",
-        ))
+        checkNonExportedPackages("kotlin-stdlib-jdk8", setOf())
     }
 
     private fun checkNonExportedPackages(jarShortName: String, expectedPackages: Set<String>) {

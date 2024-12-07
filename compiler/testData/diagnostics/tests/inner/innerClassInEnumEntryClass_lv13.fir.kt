@@ -1,4 +1,5 @@
-// !LANGUAGE: +InnerClassInEnumEntryClass +NestedClassesInEnumEntryShouldBeInner
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +InnerClassInEnumEntryClass +NestedClassesInEnumEntryShouldBeInner
 
 enum class Enum {
     ENTRY_WITH_CLASS {
@@ -6,7 +7,7 @@ enum class Enum {
 
         <!NESTED_CLASS_NOT_ALLOWED!>class TestNested<!>
 
-        <!LOCAL_INTERFACE_NOT_ALLOWED, NESTED_CLASS_NOT_ALLOWED!>interface TestInterface<!>
+        <!NESTED_CLASS_NOT_ALLOWED!>interface TestInterface<!>
 
         <!LOCAL_OBJECT_NOT_ALLOWED!>object TestObject<!>
 

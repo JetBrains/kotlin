@@ -8,27 +8,27 @@ package org.jetbrains.kotlin.gradle.report
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.gradle.internal.build.metrics.GradleBuildMetricsData
 import org.jetbrains.kotlin.gradle.internal.build.metrics.BuildOperationData
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
-import org.jetbrains.kotlin.gradle.report.data.BuildExecutionDataProcessor
 import java.io.File
 import java.io.ObjectOutputStream
 import java.io.Serializable
 
 internal class MetricsWriter(
     private val outputFile: File,
-) : BuildExecutionDataProcessor, Serializable {
-    override fun process(build: BuildExecutionData, log: Logger) {
+): Serializable {
+    fun process(build: BuildExecutionData, log: Logger) {
         if (build.failureMessages.isNotEmpty()) return
 
         try {
             outputFile.parentFile?.apply { mkdirs() }
 
             val buildMetricsData = GradleBuildMetricsData()
-            for (metric in BuildTime.values()) {
-                buildMetricsData.parentMetric[metric.name] = metric.parent?.name
+            for (metric in GradleBuildTime.values()) {
+                buildMetricsData.parentMetric[metric.name] = metric.getParent()?.getName()
             }
             for (attr in BuildAttribute.values()) {
                 buildMetricsData.buildAttributeKind[attr.name] = attr.kind.name

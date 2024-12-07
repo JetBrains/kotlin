@@ -1,0 +1,7 @@
+var field2: kotlin.String!
+
+var field: kotlin.Int
+
+open fun foo(): kotlin.String!
+
+constructor()

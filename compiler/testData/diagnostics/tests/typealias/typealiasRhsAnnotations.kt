@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: -ForbidExtensionFunctionTypeOnNonFunctionTypes
+// LANGUAGE: -ForbidExtensionFunctionTypeOnNonFunctionTypes
 @Target(AnnotationTarget.TYPE)
 annotation class Ann1
 

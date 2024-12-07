@@ -15,12 +15,6 @@ val testValWithExplicitDefaultGet: Int
   get
 
 @Deprecated(message = "")
-val testValWithExplicitGet: Int
-  get(): Int {
-    return 1
-  }
-
-@Deprecated(message = "")
 var testVarWithExplicitDefaultGet: Int
   field = 1
   get
@@ -39,14 +33,6 @@ var testVarWithExplicitDefaultGetSet: Int
   set
 
 @Deprecated(message = "")
-var testVarWithExplicitGetSet: Int
-  get(): Int {
-    return 1
-  }
-  set(v: Int) {
-  }
-
-@Deprecated(message = "")
 lateinit var testLateinitVar: Any
   get
   set
@@ -58,9 +44,24 @@ val Any.testExtVal: Int
   }
 
 @Deprecated(message = "")
+val testValWithExplicitGet: Int
+  get(): Int {
+    return 1
+  }
+
+@Deprecated(message = "")
+var testVarWithExplicitGetSet: Int
+  get(): Int {
+    return 1
+  }
+  set(v: Int) {
+  }
+
+@Deprecated(message = "")
 var Any.textExtVar: Int
   get(): Int {
     return 1
   }
   set(v: Int) {
   }
+

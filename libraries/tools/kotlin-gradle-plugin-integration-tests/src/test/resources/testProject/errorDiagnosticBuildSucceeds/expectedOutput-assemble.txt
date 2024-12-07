@@ -1,0 +1,11 @@
+> Configure project :
+e: [NoKotlinTargetsDeclared | ERROR] Please initialize at least one Kotlin target in 'diagnostics-rendering-smoke (:)'.
+Read more https://kotl.in/set-up-targets
+#diagnostic-end
+
+w: [UnusedSourceSetsWarning | WARNING] The following Kotlin source sets were configured but not added to any Kotlin compilation:
+ * commonMain
+ * commonTest
+You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.
+See https://kotl.in/connecting-source-sets
+#diagnostic-end

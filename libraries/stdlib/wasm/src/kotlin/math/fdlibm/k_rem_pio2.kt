@@ -149,22 +149,22 @@ private const val two24 = 1.67772160000000000000e+07 /* 0x41700000, 0x00000000 *
 private const val twon24 = 5.96046447753906250000e-08 /* 0x3E700000, 0x00000000 */
 
 internal fun __kernel_rem_pio2(x: DoubleArray, y: DoubleArray, e0: Int, nx: Int, prec: Int, ipio2: IntArray): Int {
-    var jz: Int = 0
-    var jx: Int = 0
-    var jv: Int = 0
-    var jp: Int = 0
-    var jk: Int = 0
-    var carry: Int = 0
-    var n: Int = 0
+    var jz: Int
+    var jx: Int
+    var jv: Int
+    var jp: Int
+    var jk: Int
+    var carry: Int
+    var n: Int
     var iq: IntArray = IntArray(20)
-    var i: Int = 0
-    var j: Int = 0
-    var k: Int = 0
-    var m: Int = 0
-    var q0: Int = 0
-    var ih: Int = 0
-    var z: Double = 0.0
-    var fw: Double = 0.0
+    var i: Int
+    var j: Int
+    var k: Int
+    var m: Int
+    var q0: Int
+    var ih: Int
+    var z: Double
+    var fw: Double
     var f: DoubleArray = DoubleArray(20)
     var fq: DoubleArray = DoubleArray(20)
     var q: DoubleArray = DoubleArray(20)

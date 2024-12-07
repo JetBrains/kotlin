@@ -28,7 +28,6 @@ fun <T : CirSimpleType> T.makeNullable(): T {
             index = index,
             isMarkedNullable = true
         )
-        else -> error("Unsupported type: $this")
     }
 
     @Suppress("UNCHECKED_CAST")

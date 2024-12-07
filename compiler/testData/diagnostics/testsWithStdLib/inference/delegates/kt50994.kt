@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_DUMP
 // WITH_REFLECT
 
 import kotlin.properties.ReadWriteProperty

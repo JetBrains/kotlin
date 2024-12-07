@@ -1,5 +1,6 @@
+import java.util.concurrent.CountDownLatch
 plugins {
-    id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>").apply(false)
+    id("org.jetbrains.kotlin.multiplatform").apply(false)
 }
 
 allprojects {

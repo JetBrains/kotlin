@@ -1,0 +1,18 @@
+public abstract interface A : R|kotlin/Any| {
+    public open fun foo(): R|kotlin/Unit|
+
+    public open fun bar(): R|kotlin/Unit|
+
+}
+
+public open class B : R|test/A| {
+    public constructor(): R|test/B|
+
+}
+
+public final class C : R|test/B| {
+    public open fun bar(): R|kotlin/Unit|
+
+    public constructor(): R|test/C|
+
+}

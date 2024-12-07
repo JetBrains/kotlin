@@ -3,13 +3,13 @@
 fun box(): String {
     val a = intArrayOf(1, 2)
     val b = arrayOf("OK")
-    if ((a::component2)() != 2) {
+    if ((a::component2).let { it() } != 2) {
         return "fail"
     }
 
-    if ((a::get)(1) != 2) {
+    if ((a::get).let { it(1) } != 2) {
         return "fail"
     }
 
-    return (b::get)(0)
+    return (b::get).let { it(0) }
 }

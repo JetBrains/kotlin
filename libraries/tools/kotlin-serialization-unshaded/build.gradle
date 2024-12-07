@@ -1,11 +1,11 @@
 apply plugin: 'kotlin'
 
-configurePublishing(project)
+RepoArtifacts.publish(project)
 
 dependencies {
     embedded(project(":kotlinx-serialization-compiler-plugin")) { transitive = false }
 }
 
-ArtifactsKt.runtimeJar(project, {})
-configureSourcesJar()
-configureJavadocJar()
+RepoArtifacts.runtimeJar(project, {})
+RepoArtifacts.sourcesJar(project)
+RepoArtifacts.javadocJar(project)

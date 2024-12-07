@@ -2,7 +2,7 @@ val Int.getter: Int
     get() {
         return {
             this@getter
-        }.invoke()
+        }.let { it.invoke() }
     }
 
 fun box(): String {

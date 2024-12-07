@@ -1,6 +1,4 @@
-// IGNORE_FIR
 // NO_COMMON_FILES
-// EXPECTED_REACHABLE_NODES: 1282
 // MODULE: lib
 // FILE: lib.kt
 fun foo() = "OK"

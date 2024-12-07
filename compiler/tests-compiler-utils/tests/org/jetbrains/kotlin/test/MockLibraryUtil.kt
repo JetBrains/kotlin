@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,8 +9,11 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.io.ZipUtil
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.preloading.ClassPreloadingUtils
 import org.jetbrains.kotlin.preloading.Preloader
 import org.jetbrains.kotlin.test.KtAssert.assertTrue
@@ -55,7 +58,6 @@ object MockLibraryUtil {
             extraClasspath,
             extraModulepath,
             useJava11,
-            assertions
         )
     }
 
@@ -93,7 +95,6 @@ object MockLibraryUtil {
         extraClasspath: List<String> = emptyList(),
         extraModulepath: List<String> = emptyList(),
         useJava11: Boolean = false,
-        assertions: Assertions
     ): File {
         assertTrue("Module path can be used only for compilation using javac 9 and higher", useJava11 || extraModulepath.isEmpty())
 
@@ -129,30 +130,15 @@ object MockLibraryUtil {
                     add("--module-path")
                     add(extraModulepath.joinToString(File.pathSeparator))
                 }
+                add("-encoding")
+                add("utf8")
             }
 
-            val compile =
-                if (useJava11) ::compileJavaFilesExternallyWithJava11
-                else { files, opts -> compileJavaFiles(files, opts, assertions = assertions) }
-
-            val success = compile(javaFiles, options)
-            if (!success) {
-                throw AssertionError("Java files are not compiled successfully")
-            }
+            val jdkHome = if (useJava11) KtTestUtil.getJdk11Home() else null
+            compileJavaFiles(javaFiles, options, jdkHome).assertSuccessful()
         }
 
         return createJarFile(contentDir, classesDir, jarName, sourcesPath.takeIf { addSources })
-    }
-
-    @JvmStatic
-    fun compileJsLibraryToJar(sourcesPath: String, jarName: String, addSources: Boolean, extraOptions: List<String> = emptyList()): File {
-        val contentDir = KtTestUtil.tmpDirForReusableFolder("testLibrary-$jarName")
-
-        val outDir = File(contentDir, "out")
-        val outputFile = File(outDir, "$jarName.js")
-        compileKotlin2JS(sourcesPath, outputFile, extraOptions)
-
-        return createJarFile(contentDir, outDir, jarName, sourcesPath.takeIf { addSources })
     }
 
     @JvmStatic
@@ -173,8 +159,12 @@ object MockLibraryUtil {
         runCompiler(compiler2JVMClass, args)
     }
 
-    private fun runJsCompiler(args: List<String>) {
+    fun runJsCompiler(args: List<String>) {
         runCompiler(compiler2JSClass, args)
+    }
+
+    fun runMetadataCompiler(args: List<String>) {
+        runCompiler(compiler2MetadataClass, args)
     }
 
     // Runs compiler in custom class loader to avoid effects caused by replacing Application with another one created in compiler.
@@ -202,19 +192,15 @@ object MockLibraryUtil {
 
         val args = mutableListOf(
             sourcesPath,
-            "-d", outDir.absolutePath,
-            "-classpath", classpath.joinToString(File.pathSeparator)
+            K2JVMCompilerArguments::destination.cliArgument, outDir.absolutePath,
+            K2JVMCompilerArguments::classpath.cliArgument, classpath.joinToString(File.pathSeparator)
         ) + extraOptions
 
         runJvmCompiler(args)
     }
 
-    private fun compileKotlin2JS(sourcesPath: String, outputFile: File, extraOptions: List<String>) {
-        runJsCompiler(listOf("-meta-info", "-output", outputFile.absolutePath, sourcesPath, *extraOptions.toTypedArray()))
-    }
-
     fun compileKotlinModule(buildFilePath: String) {
-        runJvmCompiler(listOf("-no-stdlib", "-Xbuild-file", buildFilePath))
+        runJvmCompiler(listOf(K2JVMCompilerArguments::noStdlib.cliArgument, K2JVMCompilerArguments::buildFile.cliArgument, buildFilePath))
     }
 
     private val compiler2JVMClass: Class<*>
@@ -222,6 +208,9 @@ object MockLibraryUtil {
 
     private val compiler2JSClass: Class<*>
         @Synchronized get() = loadCompilerClass(K2JSCompiler::class)
+
+    private val compiler2MetadataClass: Class<*>
+        @Synchronized get() = loadCompilerClass(KotlinMetadataCompiler::class)
 
     @Synchronized
     private fun loadCompilerClass(compilerClass: KClass<out CLICompiler<*>>): Class<*> {

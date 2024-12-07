@@ -11,7 +11,7 @@ package kotlin.jvm.internal
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS)
 @SinceKotlin("1.6")
-annotation class SerializedIr(
+public annotation class SerializedIr(
     @get:JvmName("b")
     val bytes: Array<String> = []
 )

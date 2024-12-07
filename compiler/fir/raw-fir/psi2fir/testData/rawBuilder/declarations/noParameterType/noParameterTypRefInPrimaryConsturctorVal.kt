@@ -1,0 +1,1 @@
+class X(val x) {}

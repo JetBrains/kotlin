@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.types
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.signature.AsmTypeFactory
 import org.jetbrains.kotlin.load.kotlin.JvmDescriptorTypeWriter
+import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.mapBuiltInType
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -27,15 +28,16 @@ interface TypeMappingContext<Writer : JvmDescriptorTypeWriter<Type>> {
 object AbstractTypeMapper {
     fun <Writer : JvmDescriptorTypeWriter<Type>> mapClass(
         context: TypeMappingContext<Writer>,
-        typeConstructor: TypeConstructorMarker
+        typeConstructor: TypeConstructorMarker,
+        materialized: Boolean
     ): Type {
         return with(context.typeContext) {
             when {
                 typeConstructor.isClassTypeConstructor() -> {
-                    mapType(context, typeConstructor.defaultType(), TypeMappingMode.CLASS_DECLARATION)
+                    mapType(context, typeConstructor.defaultType(), TypeMappingMode.CLASS_DECLARATION, materialized = materialized)
                 }
                 typeConstructor.isTypeParameter() -> {
-                    mapType(context, typeConstructor.defaultType())
+                    mapType(context, typeConstructor.defaultType(), materialized = materialized)
                 }
                 else -> error("Unknown type constructor: $typeConstructor")
             }
@@ -46,19 +48,28 @@ object AbstractTypeMapper {
         context: TypeMappingContext<Writer>,
         type: KotlinTypeMarker,
         mode: TypeMappingMode = TypeMappingMode.DEFAULT,
-        sw: Writer? = null
-    ): Type = context.typeContext.mapType(context, type, mode, sw)
+        sw: Writer? = null,
+        materialized: Boolean = true,
+    ): Type = context.typeContext.mapType(context, type, mode, sw, materialized)
 
     // NB: The counterpart, [descriptorBasedTypeSignatureMapping#mapType] doesn't have restriction on [type].
     private fun <Writer : JvmDescriptorTypeWriter<Type>> TypeSystemCommonBackendContextForTypeMapping.mapType(
         context: TypeMappingContext<Writer>,
         type: KotlinTypeMarker,
-        mode: TypeMappingMode = TypeMappingMode.DEFAULT,
-        sw: Writer? = null
+        mode: TypeMappingMode,
+        sw: Writer?,
+        materialized: Boolean,
     ): Type {
+        if (type.isError()) {
+            val name = type.getNameForErrorType() ?: NON_EXISTENT_CLASS_NAME
+            val jvmType = Type.getObjectType(name)
+            with(context) { sw?.writeGenericType(type, jvmType, mode) }
+            return jvmType
+        }
+
         val typeConstructor = type.typeConstructor()
 
-        if (type is SimpleTypeMarker) {
+        if (type is RigidTypeMarker) {
             val builtInType = mapBuiltInType(type, AsmTypeFactory, mode)
             if (builtInType != null) {
                 val asmType = boxTypeIfNeeded(builtInType, mode.needPrimitiveBoxing)
@@ -67,15 +78,15 @@ object AbstractTypeMapper {
             }
 
             if (type.isSuspendFunction()) {
-                return mapSuspendFunctionType(type, context, mode, sw)
+                return mapSuspendFunctionType(type, context, mode, sw, materialized)
             }
 
             if (type.isArrayOrNullableArray()) {
-                return mapArrayType(type, sw, context, mode)
+                return mapArrayType(type, sw, context, mode, materialized)
             }
 
             if (typeConstructor.isClassTypeConstructor()) {
-                return mapClassType(typeConstructor, mode, type, context, sw)
+                return mapClassType(typeConstructor, mode, type, context, sw, materialized)
             }
         }
 
@@ -89,17 +100,17 @@ object AbstractTypeMapper {
                     upperBound.makeNullable()
                 else upperBound
 
-                val asmType = mapType(context, newType, mode, null)
+                val asmType = mapType(context, newType, mode, null, materialized)
                 sw?.writeTypeVariable(typeParameter.getName(), asmType)
                 asmType
             }
 
             type.isFlexible() -> {
-                mapType(context, type.upperBoundIfFlexible(), mode, sw)
+                mapType(context, type.upperBoundIfFlexible(), mode, sw, materialized)
             }
 
             type is DefinitelyNotNullTypeMarker ->
-                mapType(context, type.original(), mode, sw)
+                mapType(context, type.original(), mode, sw, materialized)
 
             typeConstructor.isScript() ->
                 Type.getObjectType(context.getScriptInternalName(typeConstructor)).let {
@@ -113,10 +124,11 @@ object AbstractTypeMapper {
     }
 
     private fun <Writer : JvmDescriptorTypeWriter<Type>> TypeSystemCommonBackendContextForTypeMapping.mapSuspendFunctionType(
-        type: SimpleTypeMarker,
+        type: RigidTypeMarker,
         context: TypeMappingContext<Writer>,
         mode: TypeMappingMode,
-        sw: Writer?
+        sw: Writer?,
+        materialized: Boolean,
     ): Type {
         val argumentsCount = type.argumentsCount()
         val argumentsList = type.asArgumentList()
@@ -128,21 +140,28 @@ object AbstractTypeMapper {
             this += nullableAnyType()
         }
         val runtimeFunctionType = functionNTypeConstructor(arguments.size - 1).typeWithArguments(arguments)
-        return mapType(context, runtimeFunctionType, mode, sw)
+        return mapType(context, runtimeFunctionType, mode, sw, materialized)
     }
 
     private fun <Writer : JvmDescriptorTypeWriter<Type>> TypeSystemCommonBackendContextForTypeMapping.mapArrayType(
-        type: SimpleTypeMarker,
+        type: RigidTypeMarker,
         sw: Writer?,
         context: TypeMappingContext<Writer>,
-        mode: TypeMappingMode
+        mode: TypeMappingMode,
+        materialized: Boolean
     ): Type {
         val typeArgument = type.asArgumentList()[0]
-        val (variance, memberType) = when {
-            typeArgument.isStarProjection() -> Variance.OUT_VARIANCE to nullableAnyType()
-            else -> typeArgument.getVariance().toVariance() to typeArgument.getType()
+        val variance: Variance
+        val memberType: KotlinTypeMarker
+
+        val type = typeArgument.getType()
+        if (type == null) {
+            variance = Variance.OUT_VARIANCE
+            memberType = nullableAnyType()
+        } else {
+            variance = typeArgument.getVariance().toVariance()
+            memberType = type
         }
-        require(memberType is SimpleTypeMarker)
 
         val arrayElementType: Type
         sw?.writeArrayType()
@@ -150,7 +169,7 @@ object AbstractTypeMapper {
             arrayElementType = AsmTypes.OBJECT_TYPE
             sw?.writeClass(arrayElementType)
         } else {
-            arrayElementType = mapType(context, memberType, mode.toGenericArgumentMode(variance, ofArray = true), sw)
+            arrayElementType = mapType(context, memberType, mode.toGenericArgumentMode(variance, ofArray = true), sw, materialized)
         }
         sw?.writeArrayEnd()
         return AsmUtil.getArrayType(arrayElementType)
@@ -159,15 +178,16 @@ object AbstractTypeMapper {
     private fun <Writer : JvmDescriptorTypeWriter<Type>> TypeSystemCommonBackendContextForTypeMapping.mapClassType(
         typeConstructor: TypeConstructorMarker,
         mode: TypeMappingMode,
-        type: SimpleTypeMarker,
+        type: RigidTypeMarker,
         context: TypeMappingContext<Writer>,
-        sw: Writer?
+        sw: Writer?,
+        materialized: Boolean
     ): Type {
         if (typeConstructor.isInlineClass() && !mode.needInlineClassWrapping) {
             val expandedType = computeExpandedTypeForInlineClass(type)
-            require(expandedType is SimpleTypeMarker?)
+            require(expandedType is RigidTypeMarker?)
             if (expandedType != null) {
-                return mapType(context, expandedType, mode.wrapInlineClassesMode(), sw)
+                return mapType(context, expandedType, mode.wrapInlineClassesMode(), sw, materialized)
             }
         }
 
@@ -188,4 +208,14 @@ object AbstractTypeMapper {
         TypeVariance.OUT -> Variance.OUT_VARIANCE
         TypeVariance.INV -> Variance.INVARIANT
     }
+
+    fun <Writer : JvmDescriptorTypeWriter<Type>> isPrimitiveBacked(
+        context: TypeMappingContext<Writer>,
+        type: KotlinTypeMarker
+    ): Boolean = context.typeContext.isPrimitiveBacked(type)
+
+    private fun TypeSystemCommonBackendContext.isPrimitiveBacked(type: KotlinTypeMarker): Boolean =
+        !type.isNullableType() &&
+                (type is SimpleTypeMarker && type.isPrimitiveType() ||
+                        type.typeConstructor().getValueClassProperties()?.singleOrNull()?.let { isPrimitiveBacked(it.second) } == true)
 }

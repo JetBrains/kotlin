@@ -26,15 +26,6 @@ fun case_2(value_1: Number, value_2: Int) {
     }
 }
 
-// TESTCASE NUMBER: 3
-fun case_3(value_1: Boolean, value_2: Boolean, value_3: Long) {
-    when (value_1) {
-        value_2, !value_2, <!CONFUSING_BRANCH_CONDITION_WARNING!>getBoolean() && value_2<!>, <!CONFUSING_BRANCH_CONDITION_WARNING!>getChar() != 'a'<!> -> {}
-        <!CONFUSING_BRANCH_CONDITION_WARNING!>getList() === getAny()<!>, <!CONFUSING_BRANCH_CONDITION_WARNING!>value_3 <= 11<!> -> {}
-        else -> {}
-    }
-}
-
 // TESTCASE NUMBER: 4
 fun case_4(value_1: String, value_2: String, value_3: String) {
     when (value_1) {

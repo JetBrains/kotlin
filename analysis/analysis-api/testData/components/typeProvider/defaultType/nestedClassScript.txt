@@ -1,0 +1,4 @@
+KaUsualClassType:
+  annotations: []
+  typeArguments: []
+  type: pack/Foo.NestedClass

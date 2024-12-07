@@ -1,6 +1,0 @@
-$TESTDATA_DIR$/resultInReturnType.kt
--d
-$TEMP_DIR$
--Xinline-classes
--language-version
-1.4

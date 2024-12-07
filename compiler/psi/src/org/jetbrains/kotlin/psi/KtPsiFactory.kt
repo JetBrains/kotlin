@@ -21,13 +21,26 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.checkWithAttachment
 
 @JvmOverloads
+@JvmName("KtPsiFactory")
+@Suppress("unused")
+@Deprecated(
+    "Use 'KtPsiFactory' constructor instead",
+    level = DeprecationLevel.WARNING,
+    replaceWith = ReplaceWith("KtPsiFactory(project!!, markGenerated)", "org.jetbrains.kotlin.psi.KtPsiFactory")
+)
 fun KtPsiFactory(project: Project?, markGenerated: Boolean = true): KtPsiFactory = KtPsiFactory(project!!, markGenerated)
 
 @JvmOverloads
+@JvmName("KtPsiFactory")
+@Suppress("unused")
+@Deprecated(
+    "Use 'KtPsiFactory' constructor instead",
+    level = DeprecationLevel.WARNING,
+    replaceWith = ReplaceWith("KtPsiFactory(elementForProject.project, markGenerated)", "org.jetbrains.kotlin.psi.KtPsiFactory")
+)
 fun KtPsiFactory(elementForProject: PsiElement, markGenerated: Boolean = true): KtPsiFactory =
     KtPsiFactory(elementForProject.project, markGenerated)
 
@@ -43,7 +56,31 @@ var KtFile.analysisContext: PsiElement? by UserDataProperty(Key.create("ANALYSIS
  * to be inserted in the user source code (this ensures that the elements will be formatted correctly). In other cases, `markGenerated`
  * should be false, which saves time and memory.
  */
-class KtPsiFactory @JvmOverloads constructor(private val project: Project, val markGenerated: Boolean = true) {
+class KtPsiFactory private constructor(
+    private val project: Project,
+    private val markGenerated: Boolean,
+    private val context: PsiElement?,
+    private val eventSystemEnabled: Boolean,
+) {
+    companion object {
+        @JvmStatic
+        @JvmOverloads
+        fun contextual(context: PsiElement, markGenerated: Boolean = true, eventSystemEnabled: Boolean = false): KtPsiFactory {
+            return KtPsiFactory(context.project, markGenerated, context, eventSystemEnabled)
+        }
+    }
+
+    @JvmOverloads
+    constructor(project: Project, markGenerated: Boolean = true) :
+            this(project, markGenerated, context = null, eventSystemEnabled = false)
+
+    constructor(project: Project, markGenerated: Boolean = true, eventSystemEnabled: Boolean) :
+            this(project, markGenerated, context = null, eventSystemEnabled = eventSystemEnabled)
+
+
+    @JvmOverloads
+    @Deprecated("Use 'KtPsiFactory(project, markGenerated)' or 'KtPsiFactory.contextual(context, markGenerated)' instead")
+    constructor(element: KtElement, markGenerated: Boolean = true) : this(element.project, markGenerated, context = null, eventSystemEnabled = false)
 
     fun createValKeyword(): PsiElement {
         val property = createProperty("val x = 1")
@@ -69,7 +106,11 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
     }
 
     fun createExpressionIfPossible(@NonNls text: String): KtExpression? {
-        val expression = doCreateExpression(text) ?: return null
+        val expression = try {
+            doCreateExpression(text) ?: return null
+        } catch (ignored: Throwable) {
+            return null
+        }
         return if (expression.text == text) expression else null
     }
 
@@ -205,7 +246,7 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
             KotlinFileType.INSTANCE,
             text,
             LocalTimeCounter.currentTime(),
-            false,
+            eventSystemEnabled,
             markGenerated
         ) as KtFile
     }
@@ -213,17 +254,24 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
     fun createFile(@NonNls fileName: String, @NonNls text: String): KtFile {
         val file = doCreateFile(fileName, text)
 
-        file.doNotAnalyze = DO_NOT_ANALYZE_NOTIFICATION
+        val analysisContext = this@KtPsiFactory.context
+        if (analysisContext != null) {
+            file.analysisContext = analysisContext
+        } else {
+            file.doNotAnalyze = DO_NOT_ANALYZE_NOTIFICATION
+        }
 
         return file
     }
 
+    @Deprecated("Call 'createFile()' on a contextual 'KtPsiFactory' instead")
     fun createAnalyzableFile(@NonNls fileName: String, @NonNls text: String, contextToAnalyzeIn: PsiElement): KtFile {
         val file = doCreateFile(fileName, text)
         file.analysisContext = contextToAnalyzeIn
         return file
     }
 
+    @Deprecated("Call 'createPhysicalFile() on a contextual 'KtPsiFactory' instead")
     fun createFileWithLightClassSupport(@NonNls fileName: String, @NonNls text: String, contextToAnalyzeIn: PsiElement): KtFile {
         val file = createPhysicalFile(fileName, text)
         file.analysisContext = contextToAnalyzeIn
@@ -231,13 +279,10 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
     }
 
     fun createPhysicalFile(@NonNls fileName: String, @NonNls text: String): KtFile {
-        return PsiFileFactory.getInstance(project).createFileFromText(
-            fileName,
-            KotlinFileType.INSTANCE,
-            text,
-            LocalTimeCounter.currentTime(),
-            true
-        ) as KtFile
+        val time = LocalTimeCounter.currentTime()
+        val file = PsiFileFactory.getInstance(project).createFileFromText(fileName, KotlinFileType.INSTANCE, text, time, true) as KtFile
+        file.analysisContext = this@KtPsiFactory.context
+        return file
     }
 
     fun createProperty(
@@ -312,7 +357,7 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         checkWithAttachment(declarations.size == 1, { "unexpected ${declarations.size} declarations" }) {
             it.withAttachment("text.kt", text)
             for (d in declarations.withIndex()) {
-                it.withAttachment("declaration${d.index}.kt", d.value.text)
+                it.withPsiAttachment("declaration${d.index}.kt", d.value)
             }
         }
         @Suppress("UNCHECKED_CAST")
@@ -350,7 +395,7 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
     }
 
     fun createModifierList(@NonNls text: String): KtModifierList {
-        return createProperty("$text val x").modifierList!!
+        return createClass("$text interface x").modifierList!!
     }
 
     fun createEmptyModifierList() = createModifierList(KtTokens.PRIVATE_KEYWORD).apply { firstChild.delete() }
@@ -431,9 +476,32 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         return stringTemplateExpression.entries[0] as KtStringTemplateEntryWithExpression
     }
 
+    /**
+     * @param expression expression in curly braces
+     * @param prefixLength interpolation prefix length
+     */
+    fun createMultiDollarBlockStringTemplateEntry(expression: KtExpression, prefixLength: Int): KtStringTemplateEntryWithExpression {
+        checkInterpolationPrefixLength(prefixLength)
+        // '$' is a special character, the second '$' is necessary for escaping it in the pattern. See createExpressionByPattern
+        val prefix = "$$".repeat(prefixLength)
+        val stringTemplateExpression =
+            createExpressionByPattern("$prefix\"$prefix{$0}\"", expression, reformat = false) as KtStringTemplateExpression
+        return stringTemplateExpression.entries[0] as KtStringTemplateEntryWithExpression
+    }
+
     fun createSimpleNameStringTemplateEntry(@NonNls name: String): KtSimpleNameStringTemplateEntry {
         val stringTemplateExpression = createExpression("\"\$$name\"") as KtStringTemplateExpression
         return stringTemplateExpression.entries[0] as KtSimpleNameStringTemplateEntry
+    }
+
+    /**
+     * @param name name expression string
+     * @param prefixLength interpolation prefix length
+     */
+    fun createMultiDollarSimpleNameStringTemplateEntry(@NonNls name: String, prefixLength: Int): KtSimpleNameStringTemplateEntry {
+        checkInterpolationPrefixLength(prefixLength)
+        val prefix = "$".repeat(prefixLength)
+        return createMultiDollarStringTemplate("$prefix$name", prefixLength).entries[0] as KtSimpleNameStringTemplateEntry
     }
 
     fun createLiteralStringTemplateEntry(@NonNls literal: String): KtLiteralStringTemplateEntry {
@@ -442,6 +510,31 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
     }
 
     fun createStringTemplate(@NonNls content: String) = createExpression("\"$content\"") as KtStringTemplateExpression
+
+    fun createRawStringTemplate(@NonNls content: String): KtStringTemplateExpression {
+        val quote = "\"\"\""
+        return createExpression("$quote$content$quote") as KtStringTemplateExpression
+    }
+
+    /**
+     * @param content string template content
+     * @param prefixLength interpolation prefix length
+     * @param forceMultiQuoted if set to `true`, a triple-quoted string will be created even for single-line content
+     */
+    fun createMultiDollarStringTemplate(
+        @NonNls content: String,
+        prefixLength: Int,
+        forceMultiQuoted: Boolean = false,
+    ): KtStringTemplateExpression {
+        checkInterpolationPrefixLength(prefixLength)
+        val quote = if (content.lines().size > 1 || forceMultiQuoted) "\"\"\"" else "\""
+        val prefix = "$".repeat(prefixLength)
+        return createExpression("$prefix$quote$content$quote") as KtStringTemplateExpression
+    }
+
+    private fun checkInterpolationPrefixLength(prefixLength: Int) {
+        check(prefixLength > 0) { "Interpolation prefix length should be more than 0, got $prefixLength" }
+    }
 
     fun createPackageDirective(fqName: FqName): KtPackageDirective {
         return createFile("package ${fqName.asString()}").packageDirective!!

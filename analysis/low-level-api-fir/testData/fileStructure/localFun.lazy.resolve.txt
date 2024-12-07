@@ -1,0 +1,18 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] localFun.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit| {
+        local final [ResolvedTo(BODY_RESOLVE)] fun y(): R|kotlin/Unit| {
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun z(): R|kotlin/Unit| {
+            local final [ResolvedTo(BODY_RESOLVE)] fun q(): R|kotlin/Unit| {
+            }
+
+        }
+
+    }

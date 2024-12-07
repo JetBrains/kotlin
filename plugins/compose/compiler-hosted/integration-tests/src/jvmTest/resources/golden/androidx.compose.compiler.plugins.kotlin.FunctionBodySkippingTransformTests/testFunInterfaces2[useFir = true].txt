@@ -1,0 +1,94 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+@Composable
+fun Button(colors: ButtonColors) {
+    Text("hello world", color = colors.getColor())
+}
+@Composable
+fun Test() {
+    Button {
+        if (condition()) Color.Red else Color.Blue
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+fun Button(colors: ButtonColors, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Button)<getCol...>,<Text("...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
+      %composer.changed(colors)
+    } else {
+      %composer.changedInstance(colors)
+    }
+    ) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    Text("hello world", colors.getColor(%composer, 0b1110 and %dirty), false, 0, 0, %composer, 0b0110, 0b00011100)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Button(colors, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<Button>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    Button(<block>{
+      class <no name provided> : ButtonColors {
+        @Composable
+        override fun getColor(%composer: Composer?, %changed: Int): Color {
+          %composer.startReplaceGroup(<>)
+          sourceInformation(%composer, "C(getColor)<condit...>:Test.kt")
+          if (isTraceInProgress()) {
+            traceEventStart(<>, %changed, -1, <>)
+          }
+          val tmp0 = if (condition(%composer, 0)) {
+            Companion.Red
+          } else {
+            Companion.Blue
+          }
+          if (isTraceInProgress()) {
+            traceEventEnd()
+          }
+          %composer.endReplaceGroup()
+          return tmp0
+        }
+      }
+      <no name provided>()
+    }, %composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

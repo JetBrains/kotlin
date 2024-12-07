@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class Foo<T : Number>(var x: T) {
     fun setX1(y: T): T {
         this.x = y

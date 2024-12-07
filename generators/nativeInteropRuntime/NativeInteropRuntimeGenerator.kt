@@ -31,6 +31,7 @@ fun FileWriter.generateAllocWithValue(type: PrimitiveInteropType) {
          * Allocates variable with given value type and initializes it with given value.
          */
         @Suppress("FINAL_UPPER_BOUND")
+        @ExperimentalForeignApi
         public fun <T : $typeName> NativePlacement.alloc(value: T): ${typeName}VarOf<T> =
                 alloc<${typeName}VarOf<T>> { this.value = value }
     """.trimIndent()

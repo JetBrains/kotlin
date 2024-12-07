@@ -1,13 +1,15 @@
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
 // TODO: .fir.kt version is just a stub.
-expect interface My {
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> interface My {
     open fun openFunPositive()
-    open fun openFunNegative()
+    open fun <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>openFunNegative<!>()
     abstract fun abstractFun()
 
     open val openValPositive: Int
-    open val openValNegative: Int
+    open val <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>openValNegative<!>: Int
     abstract val abstractVal: Int
 }
 
@@ -15,10 +17,10 @@ expect interface My {
 // FILE: jvm.kt
 actual interface My {
     actual fun openFunPositive() = Unit
-    <!ACTUAL_WITHOUT_EXPECT!>actual fun openFunNegative()<!>
+    actual fun <!ACTUAL_WITHOUT_EXPECT!>openFunNegative<!>()
     actual fun abstractFun()
 
     actual val openValPositive: Int get() = 0
-    <!ACTUAL_WITHOUT_EXPECT!>actual val openValNegative: Int<!>
+    actual val <!ACTUAL_WITHOUT_EXPECT!>openValNegative<!>: Int
     actual val abstractVal: Int
 }

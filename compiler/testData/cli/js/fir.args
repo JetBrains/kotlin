@@ -1,4 +1,7 @@
 $TESTDATA_DIR$/fir.kt
--Xuse-k2
--output
+-ir-output-dir
 $TEMP_DIR$
+-ir-output-name
+fir
+-libraries
+libraries/stdlib/build/classes/kotlin/js/main

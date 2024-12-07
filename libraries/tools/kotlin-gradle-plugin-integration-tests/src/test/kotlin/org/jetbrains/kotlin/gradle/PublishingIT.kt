@@ -5,18 +5,16 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.addDefaultSettingsToSettingsGradle
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.condition.DisabledOnOs
-import org.junit.jupiter.api.condition.OS
-import org.junit.jupiter.api.io.TempDir
-import java.nio.file.Path
 import kotlin.io.path.appendText
 import kotlin.io.path.readLines
 import kotlin.io.path.readText
 import kotlin.test.assertTrue
+import kotlin.test.assertEquals
 
 @DisplayName("Artifacts publication")
 @JvmGradlePluginTests
@@ -64,7 +62,6 @@ class PublishingIT : KGPBaseTest() {
                     pomText.contains(
                         "<groupId>org.jetbrains.kotlin</groupId>" +
                                 "<artifactId>kotlin-reflect</artifactId>" +
-                                "<version>${buildOptions.kotlinVersion}</version>" +
                                 "<scope>compile</scope>"
                     )
                 }
@@ -106,50 +103,43 @@ class PublishingIT : KGPBaseTest() {
             ) {
                 assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
                 val pomLines = projectPath.resolve("build/publications/myLibrary/pom-default.xml").readLines()
-                val stdlibVersionLineNumber = pomLines.indexOfFirst { "<artifactId>kotlin-stdlib-jdk8</artifactId>" in it } + 1
+                val stdlibVersionLineNumber = pomLines.indexOfFirst { "<artifactId>kotlin-stdlib</artifactId>" in it } + 1
                 val versionLine = pomLines[stdlibVersionLineNumber]
                 assertTrue { "<version>${buildOptions.kotlinVersion}</version>" in versionLine }
             }
         }
     }
 
-    @DisplayName("Publication with old 'maven' plugin is working")
+    @DisplayName("KT-69974: pom rewriting with substitutions and included builds")
+    @TestMetadata("pom-rewriter")
     @GradleTest
-    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_6_9)
-    @DisabledOnOs(OS.WINDOWS)
-    fun testOldMavenPublishing(
-        gradleVersion: GradleVersion,
-        @TempDir localRepoDir: Path
-    ) {
+    fun testPomRewriter(gradleVersion: GradleVersion) {
+        val localRepo = defaultLocalRepo(gradleVersion)
         project(
-            projectName = "old-maven-publish",
-            gradleVersion = gradleVersion,
-            localRepoDir = localRepoDir,
-            buildOptions = defaultBuildOptions.copy(
-                warningMode = WarningMode.Summary // 'maven' is deprecated
-            )
+            "pom-rewriter",
+            gradleVersion,
+            localRepoDir = localRepo,
         ) {
-            build("uploadArchives") {
-                val publishingDir = localRepoDir.resolve("org.jetbrains.kotlin.example").resolve("1.0.0")
-                assertDirectoryExists(publishingDir)
-                assertFileExists(publishingDir.resolve("org.jetbrains.kotlin.example-1.0.0.jar"))
-                val pomFile = publishingDir.resolve("org.jetbrains.kotlin.example-1.0.0.pom")
-                assertFileExists(pomFile)
-                assertFileContains(
-                    pomFile,
-                    """
-                    |  <dependencies>
-                    |    <dependency>
-                    |      <groupId>org.jetbrains.kotlin</groupId>
-                    |      <artifactId>kotlin-stdlib</artifactId>
-                    |      <version>${buildOptions.kotlinVersion}</version>
-                    |      <scope>compile</scope>
-                    |    </dependency>
-                    |  </dependencies>
-                    """.trimMargin()
-                )
+
+            projectPath.resolve("included").addDefaultSettingsToSettingsGradle(
+                gradleVersion,
+                DependencyManagement.DefaultDependencyManagement(),
+                localRepo,
+                true
+            )
+
+            build("publishJvmPublicationToCustomRepository") {
+                val actualPomContent = localRepo.resolve("pom-rewriter")
+                    .resolve("pom-rewriter-root-jvm")
+                    .resolve("1.0.0")
+                    .resolve("pom-rewriter-root-jvm-1.0.0.pom")
+                    .readText()
+                    .replace(buildOptions.kotlinVersion, "{kotlin_version}")
+
+                val expectedPomFile = projectPath.resolve("expected-pom.xml").toFile()
+
+                assertEqualsToFile(expectedPomFile, actualPomContent)
             }
         }
     }
-
 }

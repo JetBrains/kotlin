@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.scripting.definitions.MessageReporter
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.jvm.javaField
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.ScriptDiagnostic
 import kotlin.script.experimental.api.SourceCode
@@ -133,9 +133,6 @@ internal fun reportArgumentsNotAllowed(
         messageCollector,
         reportingState,
         K2JVMCompilerArguments::useJavac,
-        K2JVMCompilerArguments::useIR,
-        K2JVMCompilerArguments::useOldBackend,
-        K2JVMCompilerArguments::useK2
     )
 
 internal fun reportArgumentsIgnoredGenerally(
@@ -161,7 +158,6 @@ internal fun reportArgumentsIgnoredGenerally(
         K2JVMCompilerArguments::disableStandardScript,
         K2JVMCompilerArguments::defaultScriptExtension,
         K2JVMCompilerArguments::disableDefaultScriptingPlugin,
-        K2JVMCompilerArguments::pluginClasspaths,
         K2JVMCompilerArguments::useJavac,
         K2JVMCompilerArguments::compileJava,
         K2JVMCompilerArguments::reportPerf,
@@ -182,7 +178,10 @@ internal fun reportArgumentsIgnoredFromRefinement(
         K2JVMCompilerArguments::javaModulePath,
         K2JVMCompilerArguments::classpath,
         K2JVMCompilerArguments::noStdlib,
-        K2JVMCompilerArguments::noReflect
+        K2JVMCompilerArguments::noReflect,
+        K2JVMCompilerArguments::pluginClasspaths,
+        K2JVMCompilerArguments::pluginOptions,
+        K2JVMCompilerArguments::pluginConfigurations,
     )
 
 
@@ -194,7 +193,7 @@ private fun reportInvalidArguments(
 ): Boolean {
     val invalidArgKeys = toIgnore.mapNotNull { argProperty ->
         if (argProperty.get(arguments) != argProperty.get(reportingState.currentArguments)) {
-            argProperty.annotations.firstIsInstanceOrNull<Argument>()?.value
+            argProperty.javaField?.getAnnotation(Argument::class.java)?.value
                 ?: throw IllegalStateException("unknown compiler argument property: $argProperty: no Argument annotation found")
         } else null
     }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // See KT-10223
 
 inline fun <T> using(input: Any?, f: (Any?) -> T): T = f(input)

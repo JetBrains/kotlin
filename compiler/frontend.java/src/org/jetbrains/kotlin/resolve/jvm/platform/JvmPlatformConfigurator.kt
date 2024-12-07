@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.load.java.sam.JvmSamConversionOracle
 import org.jetbrains.kotlin.resolve.PlatformConfiguratorBase
 import org.jetbrains.kotlin.resolve.checkers.BigFunctionTypeAvailabilityChecker
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
+import org.jetbrains.kotlin.resolve.calls.checkers.LateinitIntrinsicApplicabilityChecker
 import org.jetbrains.kotlin.resolve.jvm.*
 import org.jetbrains.kotlin.resolve.jvm.checkers.*
 import org.jetbrains.kotlin.resolve.jvm.multiplatform.JavaActualAnnotationArgumentExtractor
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.types.expressions.GenericArrayClassLiteralSupport
 object JvmPlatformConfigurator : PlatformConfiguratorBase(
     additionalDeclarationCheckers = listOf(
         JvmNameAnnotationChecker(),
-        VolatileAnnotationChecker(),
         SynchronizedAnnotationChecker(),
         LocalFunInlineChecker(),
         ExternalFunChecker(),
@@ -61,6 +61,13 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         PolymorphicSignatureCallChecker,
         SamInterfaceConstructorReferenceCallChecker,
         EnumDeclaringClassDeprecationChecker,
+        UpperBoundViolatedInTypealiasConstructorChecker,
+        LateinitIntrinsicApplicabilityChecker(isWarningInPre19 = false),
+        JvmPropertyVsFieldAmbiguityCallChecker,
+    ),
+
+    additionalAssignmentCheckers = listOf(
+        JvmSyntheticAssignmentChecker,
     ),
 
     additionalTypeCheckers = listOf(
@@ -119,6 +126,7 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         container.useInstance(FunctionWithBigAritySupport.LanguageVersionDependent)
         container.useInstance(GenericArrayClassLiteralSupport.Enabled)
         container.useInstance(JavaActualAnnotationArgumentExtractor())
+        container.useInstance(JvmSerializableLambdaAnnotationChecker)
     }
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {

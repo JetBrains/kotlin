@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProperIeee754Comparisons
+// LANGUAGE: +ProperIeee754Comparisons
 
 fun box(): String {
     if (-0.0 < 0.0) return "Fail 1"

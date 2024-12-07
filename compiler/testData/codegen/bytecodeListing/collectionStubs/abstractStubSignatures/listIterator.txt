@@ -3,13 +3,13 @@ public abstract class<Ljava/lang/Object;Ljava/util/ListIterator<Ljava/lang/Doubl
     // source: 'listIterator.kt'
     public <null> method <init>(): void
     public <null> method add(p0: double): void
-    public synthetic <null> method add(p0: java.lang.Object): void
+    public synthetic bridge <null> method add(p0: java.lang.Object): void
     public <null> method hasNext(): boolean
     public <null> method next(): java.lang.Double
-    public synthetic <null> method next(): java.lang.Object
+    public synthetic bridge <null> method next(): java.lang.Object
     public <null> method remove(): void
     public <null> method set(p0: double): void
-    public synthetic <null> method set(p0: java.lang.Object): void
+    public synthetic bridge <null> method set(p0: java.lang.Object): void
 }
 
 @kotlin.Metadata
@@ -27,12 +27,12 @@ public abstract class<<T:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/ListIte
 public abstract class<Ljava/lang/Object;Ljava/util/ListIterator<Ljava/lang/String;>;Lkotlin/jvm/internal/markers/KMappedMarker;>  StringListIterator {
     // source: 'listIterator.kt'
     public <null> method <init>(): void
-    public synthetic <null> method add(p0: java.lang.Object): void
+    public synthetic bridge <null> method add(p0: java.lang.Object): void
     public <null> method add(p0: java.lang.String): void
     public <null> method hasNext(): boolean
-    public synthetic <null> method next(): java.lang.Object
+    public synthetic bridge <null> method next(): java.lang.Object
     public <null> method next(): java.lang.String
     public <null> method remove(): void
-    public synthetic <null> method set(p0: java.lang.Object): void
+    public synthetic bridge <null> method set(p0: java.lang.Object): void
     public <null> method set(p0: java.lang.String): void
 }

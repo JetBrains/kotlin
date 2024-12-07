@@ -1,0 +1,36 @@
+package
+
+public fun test(): kotlin.Int
+
+package java {
+
+    package java.util {
+
+        package java.util.concurrent {
+
+            public open class Semaphore {
+                public constructor Semaphore()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+    }
+}
+
+package kotlinx {
+
+    package kotlinx.coroutines {
+
+        package kotlinx.coroutines.sync {
+            public fun Semaphore(/*0*/ arg0: kotlin.Int, /*1*/ arg: kotlin.Int = ...): kotlin.Int
+
+            public interface Semaphore {
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+    }
+}
+

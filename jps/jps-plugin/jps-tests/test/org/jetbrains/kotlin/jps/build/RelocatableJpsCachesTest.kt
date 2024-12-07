@@ -11,11 +11,17 @@ import org.jetbrains.jps.builders.*
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
 import org.jetbrains.jps.cmdline.ProjectDescriptor
 import org.jetbrains.jps.incremental.ModuleBuildTarget
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.incremental.KOTLIN_CACHE_DIRECTORY_NAME
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
 import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
 import org.jetbrains.kotlin.jps.incremental.KotlinDataContainerTarget
+import org.jetbrains.kotlin.jps.model.JpsKotlinFacetModuleExtension
+import org.jetbrains.kotlin.test.MockLibraryUtilExt
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createTempDirectory
 import kotlin.reflect.KFunction1
@@ -41,6 +47,11 @@ class RelocatableJpsCachesTest : BaseKotlinJpsBuildTestCase() {
 
     fun testRelocatableCaches() {
         buildTwiceAndCompare(RelocatableCacheTestCase::testRelocatableCaches)
+    }
+
+
+    fun testRelocatablePluginClasspath() {
+        buildTwiceAndCompare(RelocatableCacheTestCase::testRelocatablePluginClasspath)
     }
 
     private fun buildTwiceAndCompare(testMethod: KFunction1<RelocatableCacheTestCase, Unit>) {
@@ -91,6 +102,40 @@ abstract class RelocatableCacheTestCase(
         )
     }
 
+    @WorkingDir("KotlinProject")
+    fun testRelocatablePluginClasspath() {
+        initProject(LibraryDependency.JVM_FULL_RUNTIME)
+
+        //create lib
+        val libraryName = "module1-1.0-SNAPSHOT"
+        val libraryJar = MockLibraryUtilExt.compileJvmLibraryToJar(workDir.resolve("non-existent-folder").absolutePath, libraryName)
+        val module1Lib = this.workDir.resolve("lib").resolve("$libraryName.jar")
+        Files.createDirectories(module1Lib.parentFile.toPath())
+        Files.copy(libraryJar.toPath(), module1Lib.toPath(), StandardCopyOption.REPLACE_EXISTING)
+        assert(module1Lib.exists())
+
+        // Add facet
+        myProject.modules.forEach {
+            val facet = KotlinFacetSettings()
+            facet.useProjectSettings = false
+            facet.compilerArguments = K2JVMCompilerArguments().apply {
+                // Add both libraries inside and outside project
+                pluginClasspaths = arrayOf(module1Lib.absolutePath, libraryJar.absolutePath)
+            }
+
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
+        }
+        buildAllModules().assertSuccessful()
+
+        assertFilesExistInOutput(
+            myProject.modules.single(),
+            "Test1Kt.class"
+        )
+    }
+
     override fun copyTestDataToTmpDir(testDataDir: File): File {
         testDataDir.copyRecursively(projectWorkingDir)
         return projectWorkingDir
@@ -115,6 +160,8 @@ abstract class RelocatableCacheTestCase(
             kotlinDataPaths.add(kotlinDataRoot)
         }
 
+        findFileInDirectory(descriptor.dataManager.dataPaths.dataStorageRoot, "jvm-build-meta-info.txt")!!.also { kotlinDataPaths.add(it) }
+
         dirToCopyKotlinCaches.deleteRecursively()
         val originalStorageRoot = descriptor.dataManager.dataPaths.dataStorageRoot
         for (kotlinCacheRoot in kotlinDataPaths) {
@@ -123,6 +170,27 @@ abstract class RelocatableCacheTestCase(
             targetDir.parentFile.mkdirs()
             kotlinCacheRoot.copyRecursively(targetDir)
         }
+    }
+
+    private fun findFileInDirectory(directory: File, fileNameToFind: String): File? {
+        val foundFiles = directory.listFiles { file ->
+            file.isFile && file.name == fileNameToFind
+        } ?: return null
+
+        if (foundFiles.isNotEmpty()) {
+            return foundFiles.firstOrNull()
+        }
+
+        val subdirectories = directory.listFiles { file -> file.isDirectory } ?: return null
+
+        for (subdirectory in subdirectories) {
+            val foundFile = findFileInDirectory(subdirectory, fileNameToFind)
+            if (foundFile != null) {
+                return foundFile
+            }
+        }
+
+        return null
     }
 
     private fun BuildTarget<*>.isKotlinTarget(descriptor: ProjectDescriptor): Boolean {

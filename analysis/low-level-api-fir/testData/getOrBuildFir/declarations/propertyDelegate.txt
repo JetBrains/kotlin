@@ -1,0 +1,19 @@
+KT element: KtPropertyDelegate
+FIR element: FirFunctionCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|kotlin/lazy|<R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+    ^ Int(1)
+}
+)
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] propertyDelegate.kt
+    public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int|by R|kotlin/lazy|<R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+        ^ Int(1)
+    }
+    )
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+            ^ D|/x|.R|kotlin/getValue|<R|kotlin/Int|>(Null(null), ::R|/x|)
+        }

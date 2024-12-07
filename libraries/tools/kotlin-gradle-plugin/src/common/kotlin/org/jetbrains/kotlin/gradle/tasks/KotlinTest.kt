@@ -12,12 +12,14 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.process.internal.ExecHandleFactory
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.internal.testing.KotlinTestRunnerListener
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.utils.injected
 import javax.inject.Inject
 
+@DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 abstract class KotlinTest : AbstractTestTask() {
     @Input
     @Optional
@@ -51,7 +53,7 @@ abstract class KotlinTest : AbstractTestTask() {
 
     private val runListeners = mutableListOf<KotlinTestRunnerListener>()
 
-    @Input
+    @Internal
     var ignoreRunFailures: Boolean = false
 
     fun addRunListener(listener: KotlinTestRunnerListener) {
@@ -64,9 +66,8 @@ abstract class KotlinTest : AbstractTestTask() {
 
     override fun createTestExecuter() = TCServiceMessagesTestExecutor(
         execHandleFactory,
-        buildOperationExecutor,
         runListeners,
         ignoreTcsmOverflow,
-        ignoreRunFailures
+        ignoreRunFailures,
     )
 }

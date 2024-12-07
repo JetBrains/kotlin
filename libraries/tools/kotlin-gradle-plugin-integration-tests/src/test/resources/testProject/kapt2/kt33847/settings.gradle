@@ -1,0 +1,5 @@
+rootProject.name = 'kapt3-issues'
+include ':api'
+include ':processor'
+include ':library'
+include ':app'

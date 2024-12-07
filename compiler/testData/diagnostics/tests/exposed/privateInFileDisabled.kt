@@ -1,4 +1,5 @@
-// !LANGUAGE: -PrivateInFileEffectiveVisibility
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -PrivateInFileEffectiveVisibility
 
 class Public {
     private open class NestedPrivate

@@ -4,19 +4,16 @@
 
 #include <CAPIExtensions.h>
 #include <llvm/ProfileData/Coverage/CoverageMapping.h>
-#include <llvm/ADT/Triple.h>
+#include <llvm/Analysis/TargetLibraryInfo.h>
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/Instructions.h>
 #include <llvm/IR/LegacyPassManager.h>
 #include <llvm/Transforms/ObjCARC.h>
 #include <llvm/Transforms/Utils/Cloning.h>
+#include <llvm/Transforms/Instrumentation/ThreadSanitizer.h>
+#include <llvm/Support/Timer.h>
 
 using namespace llvm;
-
-void LLVMAddObjCARCContractPass(LLVMPassManagerRef passManagerRef) {
-    legacy::PassManagerBase *passManager = unwrap(passManagerRef);
-    passManager->add(createObjCARCContractPass());
-}
 
 void LLVMKotlinInitializeTargets() {
 #define INIT_LLVM_TARGET(TargetName) \
@@ -52,4 +49,16 @@ void LLVMSetNoTailCall(LLVMValueRef Call) {
 int LLVMInlineCall(LLVMValueRef call) {
   InlineFunctionInfo IFI;
   return InlineFunction(*unwrap<CallBase>(call), IFI).isSuccess();
+}
+
+void LLVMSetTimePasses(int enabled) {
+    llvm::TimePassesIsEnabled = static_cast<bool>(enabled);
+}
+
+void LLVMPrintAllTimersToStdOut() {
+    llvm::TimerGroup::printAll(llvm::outs());
+}
+
+void LLVMClearAllTimers() {
+    llvm::TimerGroup::clearAll();
 }

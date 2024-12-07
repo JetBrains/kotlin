@@ -376,6 +376,8 @@ enum dwarf_unit_type {
   DW_UT_hi_user = 0xff
 };
 
+const char * const KN_nodebug_prefix = "<NODEBUG>";
+
 #if !defined(HAVE_DECL_STRNLEN) || !HAVE_DECL_STRNLEN
 
 /* If strnlen is not declared, provide our own version.  */
@@ -601,6 +603,8 @@ struct function
   /* If this is an inlined function, the column of the call
      site.  */
   int caller_column;
+  /* Whether the funciton should be hidden from user-level debug output (e.g. from Kotlin stack traces).  */
+  int is_nodebug;
   /* Map PC ranges to inlined functions.  */
   struct function_addrs *function_addrs;
   size_t function_addrs_count;
@@ -3675,15 +3679,22 @@ read_function_entry (struct backtrace_state *state, struct dwarf_data *ddata,
 
 		case DW_AT_name:
 		  /* Third name preference: don't override.  */
-		  if (function->name != NULL)
+          {
+            const char *n = NULL;
+            if (!resolve_string (&ddata->dwarf_sections, u->is_dwarf64,
+                         ddata->is_bigendian,
+                         u->str_offsets_base, &val,
+                         error_callback, data, &n))
+              return 0;
+            if (n != NULL) {
+              if (function->name == NULL)
+                function->name = n;
+              /* nodebug prefix may not be mangled in other name variants */
+              if (strncmp(n, KN_nodebug_prefix, strlen(KN_nodebug_prefix)) == 0)
+                function->is_nodebug = 1;
+            }
 		    break;
-		  if (!resolve_string (&ddata->dwarf_sections, u->is_dwarf64,
-				       ddata->is_bigendian,
-				       u->str_offsets_base, &val,
-				       error_callback, data, &function->name))
-		    return 0;
-		  break;
-
+          }
 		case DW_AT_linkage_name:
 		case DW_AT_MIPS_linkage_name:
 		  /* First name preference: override all.  */
@@ -3954,7 +3965,7 @@ report_inlined_functions (uintptr_t pc, struct function *function,
     return ret;
 
   /* Report this inlined call.  */
-  ret = callback (data, pc, *filename, *lineno, *column, inlined->name);
+  ret = callback (data, pc, *filename, *lineno, *column, inlined->name, inlined->is_nodebug);
   if (ret != 0)
     return ret;
 
@@ -4131,7 +4142,7 @@ dwarf_lookup_pc (struct backtrace_state *state, struct dwarf_data *ddata,
       if (new_data)
 	return dwarf_lookup_pc (state, ddata, pc, callback, error_callback,
 				data, found);
-      return callback (data, pc, NULL, 0, 0, NULL);
+      return callback (data, pc, NULL, 0, 0, NULL, 0);
     }
 
   /* Search for PC within this unit.  */
@@ -4178,13 +4189,13 @@ dwarf_lookup_pc (struct backtrace_state *state, struct dwarf_data *ddata,
 	  entry->u->abs_filename = filename;
 	}
 
-      return callback (data, pc, entry->u->abs_filename, 0, 0, NULL);
+      return callback (data, pc, entry->u->abs_filename, 0, 0, NULL, 0);
     }
 
   /* Search for function name within this unit.  */
 
   if (entry->u->function_addrs_count == 0)
-    return callback (data, pc, ln->filename, ln->lineno, ln->column, NULL);
+    return callback (data, pc, ln->filename, ln->lineno, ln->column, NULL, 0);
 
   p = ((struct function_addrs *)
        bsearch (&pc, entry->u->function_addrs,
@@ -4192,7 +4203,7 @@ dwarf_lookup_pc (struct backtrace_state *state, struct dwarf_data *ddata,
 		sizeof (struct function_addrs),
 		function_addrs_search));
   if (p == NULL)
-    return callback (data, pc, ln->filename, ln->lineno, ln->column, NULL);
+    return callback (data, pc, ln->filename, ln->lineno, ln->column, NULL, 0);
 
   /* Here pc >= p->low && pc < (p + 1)->low.  The function_addrs are
      sorted by low, so if pc > p->low we are at the end of a range of
@@ -4216,7 +4227,7 @@ dwarf_lookup_pc (struct backtrace_state *state, struct dwarf_data *ddata,
       --p;
     }
   if (fmatch == NULL)
-    return callback (data, pc, ln->filename, ln->lineno, ln->column, NULL);
+    return callback (data, pc, ln->filename, ln->lineno, ln->column, NULL, 0);
 
   function = fmatch->function;
 
@@ -4229,7 +4240,7 @@ dwarf_lookup_pc (struct backtrace_state *state, struct dwarf_data *ddata,
   if (ret != 0)
     return ret;
 
-  return callback (data, pc, filename, lineno, column, function->name);
+  return callback (data, pc, filename, lineno, column, function->name, function->is_nodebug);
 }
 
 
@@ -4279,7 +4290,7 @@ dwarf_fileline (struct backtrace_state *state, uintptr_t pc,
 
   /* FIXME: See if any libraries have been dlopen'ed.  */
 
-  return callback (data, pc, NULL, 0, 0, NULL);
+  return callback (data, pc, NULL, 0, 0, NULL, 0);
 }
 
 /* Initialize our data structures from the DWARF debug info for a

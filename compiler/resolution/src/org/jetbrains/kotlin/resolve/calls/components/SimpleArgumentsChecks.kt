@@ -35,6 +35,7 @@ class ReceiverInfo(
     val isReceiver: Boolean,
     val shouldReportUnsafeCall: Boolean, // should not report if unsafe implicit invoke has been reported already
     val reportUnsafeCallAsUnsafeImplicitInvoke: Boolean,
+    val selectorCall: KotlinCall? = null,
 ) {
     init {
         assert(!reportUnsafeCallAsUnsafeImplicitInvoke || shouldReportUnsafeCall) { "Inconsistent receiver info" }
@@ -52,11 +53,15 @@ fun checkSimpleArgument(
     diagnosticsHolder: KotlinDiagnosticsHolder,
     receiverInfo: ReceiverInfo,
     convertedType: UnwrappedType?,
-    inferenceSession: InferenceSession?
+    inferenceSession: InferenceSession?,
+    selectorCall: KotlinCall?
 ): ResolvedAtom = when (argument) {
-    is ExpressionKotlinCallArgument -> checkExpressionArgument(csBuilder, argument, expectedType, diagnosticsHolder, receiverInfo.isReceiver, convertedType)
-    is SubKotlinCallArgument -> checkSubCallArgument(csBuilder, argument, expectedType, diagnosticsHolder, receiverInfo, inferenceSession)
-    else -> unexpectedArgument(argument)
+    is ExpressionKotlinCallArgument ->
+        checkExpressionArgument(csBuilder, argument, expectedType, diagnosticsHolder, receiverInfo.isReceiver, convertedType, selectorCall)
+    is SubKotlinCallArgument ->
+        checkSubCallArgument(csBuilder, argument, expectedType, diagnosticsHolder, receiverInfo, inferenceSession)
+    else ->
+        unexpectedArgument(argument)
 }
 
 private fun checkExpressionArgument(
@@ -65,7 +70,8 @@ private fun checkExpressionArgument(
     expectedType: UnwrappedType?,
     diagnosticsHolder: KotlinDiagnosticsHolder,
     isReceiver: Boolean,
-    convertedType: UnwrappedType?
+    convertedType: UnwrappedType?,
+    selectorCall: KotlinCall?
 ): ResolvedAtom {
     val resolvedExpression = ResolvedExpressionAtom(expressionArgument)
     if (expectedType == null) return resolvedExpression
@@ -93,7 +99,9 @@ private fun checkExpressionArgument(
         return null
     }
 
-    val position = if (isReceiver) ReceiverConstraintPositionImpl(expressionArgument) else ArgumentConstraintPositionImpl(expressionArgument)
+    val position =
+        if (isReceiver) ReceiverConstraintPositionImpl(expressionArgument, selectorCall)
+        else ArgumentConstraintPositionImpl(expressionArgument)
 
     // Used only for arguments with @NotNull annotation
     if (expectedType is NotNullTypeParameter && argumentType.isMarkedNullable) {
@@ -188,7 +196,9 @@ private fun checkSubCallArgument(
     if (expectedType == null) return subCallResult
 
     val expectedNullableType = expectedType.makeNullableAsSpecified(true)
-    val position = if (receiverInfo.isReceiver) ReceiverConstraintPositionImpl(subCallArgument) else ArgumentConstraintPositionImpl(subCallArgument)
+    val position =
+        if (receiverInfo.isReceiver) ReceiverConstraintPositionImpl(subCallArgument, subCallArgument.callResult.resultCallAtom.atom)
+        else ArgumentConstraintPositionImpl(subCallArgument)
 
     // subArgument cannot has stable smartcast
     // return type can contains fixed type variables

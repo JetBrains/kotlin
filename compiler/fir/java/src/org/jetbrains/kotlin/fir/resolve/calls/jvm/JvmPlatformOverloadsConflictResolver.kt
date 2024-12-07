@@ -6,46 +6,76 @@
 package org.jetbrains.kotlin.fir.resolve.calls.jvm
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.calls.AbstractConeCallConflictResolver
-import org.jetbrains.kotlin.fir.resolve.calls.Candidate
-import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
-import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolver
+import org.jetbrains.kotlin.fir.resolve.isSubclassOf
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 
-class JvmPlatformOverloadsConflictResolver(
-    specificityComparator: TypeSpecificityComparator,
-    inferenceComponents: InferenceComponents,
-    transformerComponents: BodyResolveComponents
-) : AbstractConeCallConflictResolver(specificityComparator, inferenceComponents, transformerComponents) {
+class JvmPlatformOverloadsConflictResolver(private val session: FirSession) : ConeCallConflictResolver() {
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
-        discriminateGenerics: Boolean,
         discriminateAbstracts: Boolean
     ): Set<Candidate> {
-        if (!inferenceComponents.session.languageVersionSettings.supportsFeature(LanguageFeature.PreferJavaFieldOverload)) {
+        if (!session.languageVersionSettings.supportsFeature(LanguageFeature.PreferJavaFieldOverload)) {
             return candidates
         }
         val result = mutableSetOf<Candidate>()
-        outerLoop@ for (myCandidate in candidates) {
-            val me = myCandidate.symbol.fir
-            if (me is FirProperty && me.symbol.containingClass() != null) {
-                for (otherCandidate in candidates) {
-                    val other = otherCandidate.symbol.fir
-                    if (other is FirField && other.symbol.containingClass() != null) {
-                        // NB: FE 1.0 does class equivalence check here
-                        // However, in FIR container classes aren't the same for our samples (see fieldPropertyOverloads.kt)
-                        // E.g. we can have SomeConcreteJavaEnum for field and kotlin.Enum for static property 'name'
-                        continue@outerLoop
-                    }
+        for (myCandidate in candidates) {
+            when (val me = myCandidate.symbol.fir) {
+                is FirProperty -> if (!me.isShadowedByFieldCandidate(candidates)) {
+                    result += myCandidate
                 }
+                is FirField -> if (!me.isShadowedByPropertyCandidate(candidates)) {
+                    result += myCandidate
+                }
+                else -> result += myCandidate
             }
-            result += myCandidate
         }
         return result
+    }
+
+    private fun FirProperty.isShadowedByFieldCandidate(candidates: Set<Candidate>): Boolean {
+        val propertyContainingClassLookupTag = unwrapSubstitutionOverrides().symbol.containingClassLookupTag() ?: return false
+        for (otherCandidate in candidates) {
+            val field = otherCandidate.symbol.fir as? FirField ?: continue
+            val fieldContainingClassLookupTag = field.unwrapFakeOverrides().symbol.containingClassLookupTag()
+            if (fieldContainingClassLookupTag != null &&
+                !propertyContainingClassLookupTag.strictlyDerivedFrom(fieldContainingClassLookupTag)
+            ) {
+                // NB: FE 1.0 does class equivalence check here ^^^
+                // However, in FIR container classes aren't the same for our samples (see fieldPropertyOverloads.kt)
+                // E.g. we can have SomeConcreteJavaEnum for field and kotlin.Enum for static property 'name'
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun FirField.isShadowedByPropertyCandidate(candidates: Set<Candidate>): Boolean {
+        val fieldContainingClassLookupTag = unwrapFakeOverrides().symbol.containingClassLookupTag() ?: return false
+        for (otherCandidate in candidates) {
+            val property = otherCandidate.symbol.fir as? FirProperty ?: continue
+            val propertyContainingClassLookupTag = property.unwrapSubstitutionOverrides().symbol.containingClassLookupTag()
+            if (propertyContainingClassLookupTag != null &&
+                propertyContainingClassLookupTag.strictlyDerivedFrom(fieldContainingClassLookupTag)
+            ) {
+                // NB: FE 1.0 does class equivalence check here ^^^
+                // However, in FIR container classes aren't the same for our samples (see fieldPropertyOverloads.kt)
+                // E.g. we can have SomeConcreteJavaEnum for field and kotlin.Enum for static property 'name'
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun ConeClassLikeLookupTag.strictlyDerivedFrom(other: ConeClassLikeLookupTag): Boolean {
+        if (this == other) return false
+        val thisClass = this.toClassSymbol(session)?.fir ?: return false
+
+        return thisClass.isSubclassOf(other, session, isStrict = true)
     }
 }

@@ -80,24 +80,6 @@ public class Slices {
         }
     };
 
-    // For Boolean-valued slices modelling set-membership, this policy
-    // implements constructing a set by element-wise inclusion, conservatively:
-    // allow rewriting false->true but not true->false.
-    //
-    // Used in growing the set of `USED_AS_EXPRESSION` in CFG analysis.
-    public static final RewritePolicy CONSERVATIVE_SET_INCLUSION_SEMANTICS = new RewritePolicy() {
-        @Override
-        public <K> boolean rewriteProcessingNeeded(K key) {
-            return true;
-        }
-
-        @Override
-        public <K, V> boolean processRewrite(WritableSlice<K, V> slice, K key, V oldValue, V newValue) {
-            assert (newValue instanceof Boolean);
-            return (Boolean)newValue;
-        }
-    };
-
     private Slices() {
     }
 

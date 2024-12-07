@@ -1,0 +1,17 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /test1d(kotlin/Double, kotlin/Double): kotlin/Int // /test1d|test1d(kotlin.Double;kotlin.Double){}[0]
+final fun /test1f(kotlin/Float, kotlin/Float): kotlin/Int // /test1f|test1f(kotlin.Float;kotlin.Float){}[0]
+final fun (kotlin/Float)./test1fr(kotlin/Float): kotlin/Int // /test1fr|test1fr@kotlin.Float(kotlin.Float){}[0]
+final fun /test2d(kotlin/Double, kotlin/Any): kotlin/Boolean // /test2d|test2d(kotlin.Double;kotlin.Any){}[0]
+final fun /test2f(kotlin/Float, kotlin/Any): kotlin/Boolean // /test2f|test2f(kotlin.Float;kotlin.Any){}[0]
+final fun (kotlin/Float)./test2fr(kotlin/Any): kotlin/Boolean // /test2fr|test2fr@kotlin.Float(kotlin.Any){}[0]
+final fun /test3d(kotlin/Any, kotlin/Any): kotlin/Boolean // /test3d|test3d(kotlin.Any;kotlin.Any){}[0]
+final fun /test3f(kotlin/Any, kotlin/Any): kotlin/Boolean // /test3f|test3f(kotlin.Any;kotlin.Any){}[0]
+final fun (kotlin/Float)./test3fr(kotlin/Any): kotlin/Boolean // /test3fr|test3fr@kotlin.Float(kotlin.Any){}[0]
+final fun /testDF(kotlin/Any, kotlin/Any): kotlin/Boolean // /testDF|testDF(kotlin.Any;kotlin.Any){}[0]
+final fun /testFD(kotlin/Any, kotlin/Any): kotlin/Boolean // /testFD|testFD(kotlin.Any;kotlin.Any){}[0]

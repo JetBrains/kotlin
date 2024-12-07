@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.idea.references
 
-import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.resolve.ResolveCache
+import org.jetbrains.kotlin.asJava.canHaveSyntheticAccessors
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getLabeledParent
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
+import org.jetbrains.kotlin.psi.psiUtil.isInImportDirective
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 interface KtReference : PsiPolyVariantReference {
@@ -31,7 +32,7 @@ abstract class AbstractKtReference<T : KtElement>(element: T) : PsiPolyVariantRe
     override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> =
         ResolveCache.getInstance(expression.project).resolveWithCaching(this, resolver, false, incompleteCode)
 
-    override fun getCanonicalText(): String = "<TBD>"
+    override fun getCanonicalText(): String = expression.text
 
     open fun canRename(): Boolean = false
     override fun handleElementRename(newElementName: String): PsiElement? =
@@ -44,7 +45,7 @@ abstract class AbstractKtReference<T : KtElement>(element: T) : PsiPolyVariantRe
         getKtReferenceMutateService().bindToElement(this, element)
 
     protected fun getKtReferenceMutateService(): KtReferenceMutateService =
-        ServiceManager.getService(KtReferenceMutateService::class.java)
+        ApplicationManager.getApplication().getService(KtReferenceMutateService::class.java)
             ?: throw IllegalStateException("Cannot handle element rename because KtReferenceMutateService is missing")
 
     @Suppress("UNCHECKED_CAST")
@@ -54,10 +55,8 @@ abstract class AbstractKtReference<T : KtElement>(element: T) : PsiPolyVariantRe
 
     override fun toString() = this::class.java.simpleName + ": " + expression.text
 
-    @Suppress("UNUSED_PARAMETER")
     protected open fun canBeReferenceTo(candidateTarget: PsiElement): Boolean = true
 
-    @Suppress("UNUSED_PARAMETER")
     protected open fun isReferenceToImportAlias(alias: KtImportAlias): Boolean = false
 
     override fun isReferenceTo(candidateTarget: PsiElement): Boolean {
@@ -78,7 +77,7 @@ abstract class AbstractKtReference<T : KtElement>(element: T) : PsiPolyVariantRe
                 if (candidateTarget !is KtNamedFunction && candidateTarget !is KtParameter && candidateTarget !is PsiMethod) return false
             }
             is KtSimpleNameReference -> {
-                if (unwrappedCandidate is PsiMethod && !canBePsiMethodReference()) return false
+                if (unwrappedCandidate is PsiMethod && isAccessorReference() && !unwrappedCandidate.canHaveSyntheticAccessors) return false
             }
         }
 
@@ -124,32 +123,12 @@ abstract class AbstractKtReference<T : KtElement>(element: T) : PsiPolyVariantRe
         }
     }
 
-    private fun KtSimpleNameReference.canBePsiMethodReference(): Boolean {
-        // NOTE: Accessor references are handled separately, see SyntheticPropertyAccessorReference
-        if (element == (element.parent as? KtCallExpression)?.calleeExpression) return true
-
-        val callableReference = element.getParentOfTypeAndBranch<KtCallableReferenceExpression> { callableReference }
-        if (callableReference != null) return true
-
-        val binaryOperator = element.getParentOfTypeAndBranch<KtBinaryExpression> { operationReference }
-        if (binaryOperator != null) return true
-
-        val unaryOperator = element.getParentOfTypeAndBranch<KtUnaryExpression> { operationReference }
-        if (unaryOperator != null) return true
-
-        if (element.getNonStrictParentOfType<KtImportDirective>() != null) return true
-
-        return false
+    private fun KtSimpleNameReference.isAccessorReference(): Boolean {
+        return element !is KtOperationReferenceExpression
+                && element.parent !is KtCallableReferenceExpression
+                && element.parent !is KtCallExpression
+                && !element.isInImportDirective()
     }
-
-    private fun PsiElement.isConstructorOf(unwrappedCandidate: PsiElement) =
-        when {
-            // call to Java constructor
-            this is PsiMethod && isConstructor && containingClass == unwrappedCandidate -> true
-            // call to Kotlin constructor
-            this is KtConstructor<*> && getContainingClassOrObject().isEquivalentTo(unwrappedCandidate) -> true
-            else -> false
-        }
 }
 
 abstract class KtSimpleReference<T : KtReferenceExpression>(expression: T) : AbstractKtReference<T>(expression)

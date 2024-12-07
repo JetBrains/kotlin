@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.descriptors
 
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.model.RigidTypeMarker
 
-class InlineClassRepresentation<Type : SimpleTypeMarker> constructor(
+class InlineClassRepresentation<Type : RigidTypeMarker> constructor(
     val underlyingPropertyName: Name,
     val underlyingType: Type,
 ) : ValueClassRepresentation<Type>() {
@@ -19,4 +19,7 @@ class InlineClassRepresentation<Type : SimpleTypeMarker> constructor(
     override fun containsPropertyWithName(name: Name): Boolean = underlyingPropertyName == name
 
     override fun getPropertyTypeByName(name: Name): Type? = underlyingType.takeIf { containsPropertyWithName(name) }
+
+    override fun toString(): String =
+        "InlineClassRepresentation(underlyingPropertyName=$underlyingPropertyName, underlyingType=$underlyingType)"
 }

@@ -4,7 +4,7 @@ FILE: innerTypes.kt
             super<R|kotlin/Any|>()
         }
 
-        public final inner class Inner<K, T> : R|kotlin/Any| {
+        public final inner class Inner<K, Outer(T)> : R|kotlin/Any| {
             public Outer<T>.constructor<K>(): R|Outer.Inner<K, T>| {
                 super<R|kotlin/Any|>()
             }
@@ -29,9 +29,9 @@ FILE: innerTypes.kt
     public final val rrq: R|Outer.Inner<kotlin/Int, kotlin/String>| = R|/Boxed.Boxed|<R|kotlin/String|>().R|SubstitutionOverride</Boxed.substitute: R|Outer.Inner<kotlin/Int, kotlin/String>|>|()
         public get(): R|Outer.Inner<kotlin/Int, kotlin/String>|
     public final fun check(): R|kotlin/Unit| {
-        <Inapplicable(INAPPLICABLE): /accept>#(R|/Outer.Outer|<R|kotlin/Int|>().R|SubstitutionOverride</Outer.Inner.Inner>|<R|kotlin/Int|>())
-        <Inapplicable(INAPPLICABLE): /accept>#(R|/Outer.Outer|<R|kotlin/String|>().R|SubstitutionOverride</Outer.Inner.Inner>|<R|kotlin/String|>())
+        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|(R|/Outer.Outer|<R|kotlin/Int|>().R|SubstitutionOverride</Outer.Inner.Inner>|<R|kotlin/Int|>())
+        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|(R|/Outer.Outer|<R|kotlin/String|>().R|SubstitutionOverride</Outer.Inner.Inner>|<R|kotlin/String|>())
         R|/accept|(R|/Outer.Outer|<R|kotlin/String|>().R|SubstitutionOverride</Outer.Inner.Inner>|<R|kotlin/Int|>())
-        <Inapplicable(INAPPLICABLE): /accept>#(R|/Boxed.Boxed|<R|kotlin/Int|>().R|SubstitutionOverride</Boxed.substitute: R|Outer.Inner<kotlin/Int, kotlin/Int>|>|())
+        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|(R|/Boxed.Boxed|<R|kotlin/Int|>().R|SubstitutionOverride</Boxed.substitute: R|Outer.Inner<kotlin/Int, kotlin/Int>|>|())
         R|/accept|(R|/Boxed.Boxed|<R|kotlin/String|>().R|SubstitutionOverride</Boxed.substitute: R|Outer.Inner<kotlin/Int, kotlin/String>|>|())
     }

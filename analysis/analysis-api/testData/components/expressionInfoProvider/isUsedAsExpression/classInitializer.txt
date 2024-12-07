@@ -1,0 +1,5 @@
+expression: CLASS_INITIALIZER
+text: init {
+        "value"
+    }
+isUsedAsExpression: false

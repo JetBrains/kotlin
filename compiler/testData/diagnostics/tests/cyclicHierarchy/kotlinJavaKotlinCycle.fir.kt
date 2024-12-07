@@ -1,4 +1,4 @@
-// FIR_IDE_IGNORE
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: I.kt
 
 open class I : K() {

@@ -4,7 +4,6 @@ fun test(xs: IntArray, dx: Int) {
     }
 }
 
-// JVM_IR_TEMPLATES
 // 5 ALOAD
 // 6 ILOAD
 

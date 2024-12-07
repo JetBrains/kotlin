@@ -1,0 +1,14 @@
+package
+
+@kotlin.OptIn(markerClass = {kotlin.time.ExperimentalTime::class}) public fun foo(/*0*/ duration: kotlin.time.Duration = ...): kotlin.Unit
+public fun test(): kotlin.Unit
+
+@kotlin.OptIn(markerClass = {kotlin.time.ExperimentalTime::class}) public final data class Some {
+    public constructor Some(/*0*/ duration: kotlin.time.Duration = ...)
+    public final val duration: kotlin.time.Duration
+    public final operator /*synthesized*/ fun component1(): kotlin.time.Duration
+    public final /*synthesized*/ fun copy(/*0*/ duration: kotlin.time.Duration = ...): Some
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}

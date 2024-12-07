@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 // FILE: test.kt
 inline class A(val x: String)
 class B(val y: A)

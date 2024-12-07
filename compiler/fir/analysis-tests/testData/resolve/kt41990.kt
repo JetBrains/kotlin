@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-41990
 
 fun getLambda(): String.() -> Unit = null!!

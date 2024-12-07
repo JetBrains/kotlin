@@ -1,6 +1,6 @@
 ================ Step #1 =================
 
-Marked as dirty by Kotlin:
+After chunkBuildStarted. Marked as dirty by Kotlin:
   src/other.kt
   src/usage.kt
 Cleaning output files:

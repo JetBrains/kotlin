@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 /*
  * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-37091
@@ -106,6 +107,6 @@ fun case9() {
         A.A1 -> B()
         A.A2 -> B()
     }
-    val x1 = C(<!ARGUMENT_TYPE_MISMATCH!>l1<!>)
+    val x1 = C(l1)
 }
 

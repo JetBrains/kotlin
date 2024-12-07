@@ -36,7 +36,7 @@ internal fun makeCompiledModule(generationState: GenerationState) =
 inline fun <T> withMessageCollectorAndDisposable(
     script: SourceCode? = null,
     parentMessageCollector: MessageCollector? = null,
-    disposable: Disposable = Disposer.newDisposable(),
+    disposable: Disposable = Disposer.newDisposable("Default disposable for scripting compiler"),
     disposeOnSuccess: Boolean = true,
     body: (ScriptDiagnosticsMessageCollector, Disposable) -> ResultWithDiagnostics<T>
 ): ResultWithDiagnostics<T> {

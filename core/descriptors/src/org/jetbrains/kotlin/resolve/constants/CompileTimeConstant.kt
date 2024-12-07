@@ -28,7 +28,7 @@ interface CompileTimeConstant<out T> {
     val isError: Boolean
         get() = false
 
-    val parameters: CompileTimeConstant.Parameters
+    val parameters: Parameters
 
     val moduleDescriptor: ModuleDescriptor
 
@@ -57,9 +57,9 @@ interface CompileTimeConstant<out T> {
         val isUnsignedLongNumberLiteral: Boolean,
         val usesVariableAsConstant: Boolean,
         val usesNonConstValAsConstant: Boolean,
-        // `isConvertableConstVal` means that this is `const val` that has `ImplicitIntegerCoercion` annotation
-        val isConvertableConstVal: Boolean,
-        val dontCreateILT: Boolean
+        // `isConvertableConstVal` means that this is `const val` that can participate in signed to unsigned conversion
+        // see LanguageFeature.ImplicitSignedToUnsignedIntegerConversion
+        val isConvertableConstVal: Boolean
     )
 
     override fun equals(other: Any?): Boolean
@@ -150,8 +150,7 @@ class IntegerValueTypeConstant(
                 isUnsignedLongNumberLiteral = parameters.isUnsignedLongNumberLiteral,
                 usesVariableAsConstant = parameters.usesVariableAsConstant,
                 usesNonConstValAsConstant = parameters.usesNonConstValAsConstant,
-                isConvertableConstVal = parameters.isConvertableConstVal,
-                dontCreateILT = false
+                isConvertableConstVal = parameters.isConvertableConstVal
             )
 
             return IntegerValueTypeConstant(value, module, newParameters, newInferenceEnabled, convertedFromSigned = true)
@@ -165,8 +164,7 @@ class IntegerValueTypeConstant(
                 isUnsignedLongNumberLiteral = parameters.isUnsignedLongNumberLiteral,
                 usesVariableAsConstant = parameters.usesVariableAsConstant,
                 usesNonConstValAsConstant = parameters.usesNonConstValAsConstant,
-                isConvertableConstVal = parameters.isConvertableConstVal,
-                dontCreateILT = false
+                isConvertableConstVal = parameters.isConvertableConstVal
             )
 
             return IntegerValueTypeConstant(value, module, newParameters, newInferenceEnabled, convertedFromSigned = true)

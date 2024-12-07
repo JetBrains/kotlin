@@ -1,0 +1,73 @@
+FILE: primaryConstructorParameterWithoutReturnType.kt
+    public final data class NoParameterNameAndReturnType : R|kotlin/Any| {
+        public constructor(<ERROR TYPE REF: No type for parameter>): R|NoParameterNameAndReturnType| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val <no name provided>: <ERROR TYPE REF: No type for parameter> = R|<local>/<no name provided>|
+            public get(): <ERROR TYPE REF: No type for parameter>
+
+        public final operator fun component1(): <ERROR TYPE REF: No type for parameter>
+
+        public final fun copy(<ERROR TYPE REF: No type for parameter> = this@R|/NoParameterNameAndReturnType|.R|/NoParameterNameAndReturnType.<no name provided>|): R|NoParameterNameAndReturnType|
+
+    }
+    public final data class NoParameterReturnTypeInTheMiddle : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|, <ERROR TYPE REF: No type for parameter>, z: R|kotlin/Int|): R|NoParameterReturnTypeInTheMiddle| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public final val <no name provided>: <ERROR TYPE REF: No type for parameter> = R|<local>/<no name provided>|
+            public get(): <ERROR TYPE REF: No type for parameter>
+
+        public final val z: R|kotlin/Int| = R|<local>/z|
+            public get(): R|kotlin/Int|
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final operator fun component2(): <ERROR TYPE REF: No type for parameter>
+
+        public final operator fun component3(): R|kotlin/Int|
+
+        public final fun copy(x: R|kotlin/Int| = this@R|/NoParameterReturnTypeInTheMiddle|.R|/NoParameterReturnTypeInTheMiddle.x|, <ERROR TYPE REF: No type for parameter> = this@R|/NoParameterReturnTypeInTheMiddle|.R|/NoParameterReturnTypeInTheMiddle.<no name provided>|, z: R|kotlin/Int| = this@R|/NoParameterReturnTypeInTheMiddle|.R|/NoParameterReturnTypeInTheMiddle.z|): R|NoParameterReturnTypeInTheMiddle|
+
+    }
+    public final data class NoParameterReturnType : R|kotlin/Any| {
+        public constructor(x: <ERROR TYPE REF: No type for parameter>): R|NoParameterReturnType| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: <ERROR TYPE REF: No type for parameter> = R|<local>/x|
+            public get(): <ERROR TYPE REF: No type for parameter>
+
+        public final operator fun component1(): <ERROR TYPE REF: No type for parameter>
+
+        public final fun copy(x: <ERROR TYPE REF: No type for parameter> = this@R|/NoParameterReturnType|.R|/NoParameterReturnType.x|): R|NoParameterReturnType|
+
+    }
+    public final data class NoParameterReturnTypeInTheMiddle : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|, y: <ERROR TYPE REF: No type for parameter>, z: R|kotlin/Int|): R|NoParameterReturnTypeInTheMiddle| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public final val y: <ERROR TYPE REF: No type for parameter> = R|<local>/y|
+            public get(): <ERROR TYPE REF: No type for parameter>
+
+        public final val z: R|kotlin/Int| = R|<local>/z|
+            public get(): R|kotlin/Int|
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final operator fun component2(): <ERROR TYPE REF: No type for parameter>
+
+        public final operator fun component3(): R|kotlin/Int|
+
+        public final fun copy(x: R|kotlin/Int| = this@R|/NoParameterReturnTypeInTheMiddle|.R|/NoParameterReturnTypeInTheMiddle.x|, y: <ERROR TYPE REF: No type for parameter> = this@R|/NoParameterReturnTypeInTheMiddle|.R|/NoParameterReturnTypeInTheMiddle.y|, z: R|kotlin/Int| = this@R|/NoParameterReturnTypeInTheMiddle|.R|/NoParameterReturnTypeInTheMiddle.z|): R|NoParameterReturnTypeInTheMiddle|
+
+    }

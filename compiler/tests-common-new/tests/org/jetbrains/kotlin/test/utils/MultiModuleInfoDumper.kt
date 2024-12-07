@@ -9,23 +9,36 @@ import org.jetbrains.kotlin.test.model.TestModule
 
 // TODO: consider about tests with multiple testdata files
 class MultiModuleInfoDumper(private val moduleHeaderTemplate: String? = "Module: %s") {
-    private val builderByModule = LinkedHashMap<TestModule, StringBuilder>()
+    private val builderByModule = LinkedHashMap<String, StringBuilder>()
 
-    fun builderForModule(module: TestModule): StringBuilder {
-        return builderByModule.getOrPut(module, ::StringBuilder)
+    fun builderForModule(module: TestModule): StringBuilder = builderForModule(module.name)
+
+    fun builderForModule(moduleName: String): StringBuilder {
+        return builderByModule.getOrPut(moduleName, ::StringBuilder)
     }
 
     fun generateResultingDump(): String {
-        builderByModule.values.singleOrNull()?.let { return it.toString() }
+        builderByModule.values.singleOrNull()?.let {
+            it.addNewLineIfNeeded()
+            return it.toString()
+        }
         return buildString {
-            for ((module, builder) in builderByModule) {
-                moduleHeaderTemplate?.let { appendLine(String.format(it, module.name)) }
+            for ((moduleName, builder) in builderByModule) {
+                moduleHeaderTemplate?.let { appendLine(String.format(it, moduleName)) }
                 append(builder)
             }
+            addNewLineIfNeeded()
         }
     }
 
     fun isEmpty(): Boolean {
         return builderByModule.isEmpty()
+    }
+
+    private fun StringBuilder.addNewLineIfNeeded() {
+        if (this.isEmpty()) return
+        if (last() != '\n') {
+            appendLine()
+        }
     }
 }

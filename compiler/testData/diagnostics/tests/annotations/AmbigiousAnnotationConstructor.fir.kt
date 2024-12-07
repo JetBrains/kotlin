@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import java.util.ArrayList
 
 @<!NOT_AN_ANNOTATION_CLASS!>ArrayList<!><Int>(1, 1) fun b() {}

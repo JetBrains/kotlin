@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS
 
 import kotlin.test.assertEquals
 
@@ -90,7 +89,7 @@ fun trimMarginConstantCustomPrefixInterpolatedUsingConstant(): String {
     """.trimMargin(marginPrefix = "$OCTOTHORPE@$OCTOTHORPE")
 }
 
-// CHECK_CALLED_IN_SCOPE: function=trimMargin$default scope=trimMarginNotConstant
+// CHECK_CALLED_IN_SCOPE: function=trimMargin scope=trimMarginNotConstant
 fun trimMarginNotConstant(arg: String): String {
     return arg.trimMargin()
 }
@@ -100,7 +99,7 @@ fun trimMarginNotConstantCustomPrefix(arg: String): String {
     return arg.trimMargin("###")
 }
 
-// CHECK_CALLED_IN_SCOPE: function=trimMargin$default scope=trimMarginInterpolated
+// CHECK_CALLED_IN_SCOPE: function=trimMargin scope=trimMarginInterpolated
 fun trimMarginInterpolated(arg: Int): String {
     return """
         |Hello,

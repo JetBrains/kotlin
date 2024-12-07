@@ -5,22 +5,52 @@
 
 package org.jetbrains.kotlin.fir.caches
 
+import kotlin.time.Duration
+
 object FirThreadUnsafeCachesFactory : FirCachesFactory() {
     override fun <K : Any, V, CONTEXT> createCache(createValue: (K, CONTEXT) -> V): FirCache<K, V, CONTEXT> =
-        FirThreadUnsafeCache(createValue)
+        FirThreadUnsafeCache(createValue = createValue)
+
+    override fun <K : Any, V, CONTEXT> createCache(
+        initialCapacity: Int,
+        loadFactor: Float,
+        createValue: (K, CONTEXT) -> V
+    ): FirCache<K, V, CONTEXT> =
+        FirThreadUnsafeCache(
+            NullableMap(HashMap(initialCapacity, loadFactor)),
+            createValue
+        )
 
     override fun <K : Any, V, CONTEXT, DATA> createCacheWithPostCompute(
         createValue: (K, CONTEXT) -> Pair<V, DATA>,
         postCompute: (K, V, DATA) -> Unit
     ): FirCache<K, V, CONTEXT> =
         FirThreadUnsafeCacheWithPostCompute(createValue, postCompute)
+
+    override fun <K : Any, V, CONTEXT> createCacheWithSuggestedLimits(
+        expirationAfterAccess: Duration?,
+        maximumSize: Long?,
+        keyStrength: KeyReferenceStrength,
+        valueStrength: ValueReferenceStrength,
+        createValue: (K, CONTEXT) -> V
+    ): FirCache<K, V, CONTEXT> = createCache(createValue)
+
+    override fun <V> createLazyValue(createValue: () -> V): FirLazyValue<V> =
+        FirThreadUnsafeValue(createValue)
+
+    override fun <V> createPossiblySoftLazyValue(createValue: () -> V): FirLazyValue<V> =
+        createLazyValue(createValue)
+
+    @PerformanceWise
+    override val isThreadSafe: Boolean
+        get() = false
 }
 
 @Suppress("UNCHECKED_CAST")
 private class FirThreadUnsafeCache<K : Any, V, CONTEXT>(
+    private val map: NullableMap<K, V> = NullableMap<K, V>(),
     private val createValue: (K, CONTEXT) -> V
 ) : FirCache<K, V, CONTEXT>() {
-    private val map = NullableMap<K, V>()
 
     override fun getValue(key: K, context: CONTEXT): V =
         map.getOrElse(key) {
@@ -52,4 +82,9 @@ private class FirThreadUnsafeCacheWithPostCompute<K : Any, V, CONTEXT, DATA>(
     @Suppress("UNCHECKED_CAST")
     override fun getValueIfComputed(key: K): V? =
         map.getOrElse(key) { null as V }
+}
+
+private class FirThreadUnsafeValue<V>(createValue: () -> V) : FirLazyValue<V>() {
+    private val lazyValue by lazy(LazyThreadSafetyMode.NONE, createValue)
+    override fun getValue(): V = lazyValue
 }

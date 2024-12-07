@@ -62,7 +62,7 @@ class KaptModelIT : KGPBaseTest() {
     @DisplayName("Model is not available when plugin is not applied")
     @GradleTest
     fun testNonJvmProjects(gradleVersion: GradleVersion) {
-        project("kotlin2JsProject", gradleVersion) {
+        project("kotlin-js-plugin-project", gradleVersion) {
             getModels<Kapt> {
                 assertNull(getModel(":"))
                 assertNull(getModel(":libraryProject"))

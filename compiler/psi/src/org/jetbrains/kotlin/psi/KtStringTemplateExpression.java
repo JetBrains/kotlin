@@ -21,6 +21,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
@@ -53,6 +54,11 @@ public class KtStringTemplateExpression extends KtElementImplStub<KotlinPlaceHol
             KtStubElementTypes.LITERAL_STRING_TEMPLATE_ENTRY,
             KtStubElementTypes.ESCAPE_STRING_TEMPLATE_ENTRY
     );
+
+    @Nullable
+    public PsiElement getInterpolationPrefix() {
+        return findChildByType(KtTokens.INTERPOLATION_PREFIX);
+    }
 
     @NotNull
     public KtStringTemplateEntry[] getEntries() {

@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.fir.FirRenderer
-import org.jetbrains.kotlin.fir.createSessionForTests
+import org.jetbrains.kotlin.fir.FirTestSessionFactoryHelper
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.name.ClassId
@@ -60,8 +60,18 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
         super.tearDown()
     }
 
-    private fun createJarWithForeignAnnotations(): File =
-        MockLibraryUtilExt.compileJavaFilesLibraryToJar(FOREIGN_ANNOTATIONS_SOURCES_PATH, "foreign-annotations")
+    private fun createJarWithForeignAnnotations(): List<File> {
+        val jsr305Jar =
+            MockLibraryUtilExt.compileJavaFilesLibraryToJar(JSR_305_SOURCES_PATH, "jsr305")
+
+        return listOf(
+            MockLibraryUtilExt.compileJavaFilesLibraryToJar(
+                FOREIGN_ANNOTATIONS_SOURCES_PATH, "foreign-annotations",
+                extraClasspath = listOf(jsr305Jar.absolutePath),
+            ),
+            jsr305Jar,
+        )
+    }
 
     private fun createEnvironment(content: String): KotlinCoreEnvironment {
         val classpath = mutableListOf(getAnnotationsJar(), ForTestCompileRuntime.runtimeJarForTests())
@@ -69,7 +79,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
             classpath.add(ForTestCompileRuntime.jvmAnnotationsForTests())
         }
         if (InTextDirectivesUtils.isDirectiveDefined(content, "FOREIGN_ANNOTATIONS")) {
-            classpath.add(createJarWithForeignAnnotations())
+            classpath.addAll(createJarWithForeignAnnotations())
         }
         return KotlinCoreEnvironment.createForTests(
             testRootDisposable,
@@ -87,83 +97,91 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
         val javaFile = File(path)
         val javaLines = javaFile.readLines()
         val content = javaLines.joinToString(separator = "\n")
-        if (InTextDirectivesUtils.isDirectiveDefined(content, "SKIP_IN_FIR_TEST")) return
+        val hasSkipDirective = InTextDirectivesUtils.isDirectiveDefined(content, "SKIP_IN_FIR_TEST")
 
-        val srcFiles = TestFiles.createTestFiles(
-            javaFile.name, FileUtil.loadFile(javaFile, true),
-            object : TestFiles.TestFileFactoryNoModules<File>() {
-                override fun create(fileName: String, text: String, directives: Directives): File {
-                    var currentDir = javaFilesDir
-                    if ("/" !in fileName) {
-                        val packageFqName =
-                            text.split("\n").firstOrNull {
-                                it.startsWith("package")
-                            }?.substringAfter("package")?.trim()?.substringBefore(";")?.let { name ->
-                                FqName(name)
-                            } ?: FqName.ROOT
-                        for (segment in packageFqName.pathSegments()) {
-                            currentDir = File(currentDir, segment.asString()).apply { mkdir() }
+        try {
+            val srcFiles = TestFiles.createTestFiles(
+                javaFile.name, FileUtil.loadFile(javaFile, true),
+                object : TestFiles.TestFileFactoryNoModules<File>() {
+                    override fun create(fileName: String, text: String, directives: Directives): File {
+                        var currentDir = javaFilesDir
+                        if ("/" !in fileName) {
+                            val packageFqName =
+                                text.split("\n").firstOrNull {
+                                    it.startsWith("package")
+                                }?.substringAfter("package")?.trim()?.substringBefore(";")?.let { name ->
+                                    FqName(name)
+                                } ?: FqName.ROOT
+                            for (segment in packageFqName.pathSegments()) {
+                                currentDir = File(currentDir, segment.asString()).apply { mkdir() }
+                            }
+                        }
+                        val targetFile = File(currentDir, fileName)
+                        try {
+                            FileUtil.writeToFile(targetFile, text)
+                        } catch (e: IOException) {
+                            throw AssertionError(e)
+                        }
+
+                        return targetFile
+                    }
+                }
+            )
+            environment = createEnvironment(content)
+            val virtualFiles = srcFiles.map {
+                object : LightVirtualFile(
+                    it.name, JavaLanguage.INSTANCE, StringUtilRt.convertLineSeparators(it.readText())
+                ) {
+                    override fun getPath(): String {
+                        //TODO: patch LightVirtualFile
+                        return "/${it.name}"
+                    }
+                }
+            }
+            val factory = PsiFileFactory.getInstance(project) as PsiFileFactoryImpl
+            val psiFiles = virtualFiles.map { factory.trySetupPsiForFile(it, JavaLanguage.INSTANCE, true, false)!! }
+
+            val scope = GlobalSearchScope.filesScope(project, virtualFiles)
+                .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
+            val session = FirTestSessionFactoryHelper.createSessionForTests(
+                environment.toVfsBasedProjectEnvironment(),
+                scope.toAbstractProjectFileSearchScope()
+            )
+
+            val topPsiClasses = psiFiles.flatMap { it.getChildrenOfType<PsiClass>().toList() }
+
+            val javaFirDump = StringBuilder().also { builder ->
+                val renderer = FirRenderer(builder, renderVarargTypes = true)
+                val processedJavaClasses = mutableSetOf<FirJavaClass>()
+                fun processClassWithChildren(psiClass: PsiClass, parentFqName: FqName) {
+                    val classId = psiClass.classId(parentFqName)
+                    val javaClass = session.symbolProvider.getClassLikeSymbolByClassId(classId)?.fir
+                        ?: throw AssertionError(classId.asString())
+                    if (javaClass !is FirJavaClass || javaClass in processedJavaClasses) {
+                        return
+                    }
+                    processedJavaClasses += javaClass
+                    renderJavaClass(renderer, javaClass, session) {
+                        for (innerClass in psiClass.innerClasses.sortedBy { it.name }) {
+                            processClassWithChildren(innerClass, classId.relativeClassName)
                         }
                     }
-                    val targetFile = File(currentDir, fileName)
-                    try {
-                        FileUtil.writeToFile(targetFile, text)
-                    } catch (e: IOException) {
-                        throw AssertionError(e)
-                    }
 
-                    return targetFile
                 }
-            }
-        )
-        environment = createEnvironment(content)
-        val virtualFiles = srcFiles.map {
-            object : LightVirtualFile(
-                it.name, JavaLanguage.INSTANCE, StringUtilRt.convertLineSeparators(it.readText())
-            ) {
-                override fun getPath(): String {
-                    //TODO: patch LightVirtualFile
-                    return "/${it.name}"
+                for (psiClass in topPsiClasses.sortedBy { it.name }) {
+                    processClassWithChildren(psiClass, FqName.ROOT)
                 }
-            }
+            }.toString()
+
+            val expectedFile = File(javaFile.absolutePath.replace(".java", ".fir.txt"))
+            KotlinTestUtils.assertEqualsToFile(expectedFile, javaFirDump)
+        } catch (e: Throwable) {
+            if (!hasSkipDirective) throw e
+            else return
         }
-        val factory = PsiFileFactory.getInstance(project) as PsiFileFactoryImpl
-        val psiFiles = virtualFiles.map { factory.trySetupPsiForFile(it, JavaLanguage.INSTANCE, true, false)!! }
-
-        val scope = GlobalSearchScope.filesScope(project, virtualFiles)
-            .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
-        val session = createSessionForTests(
-            environment.toAbstractProjectEnvironment(),
-            scope.toAbstractProjectFileSearchScope()
-        )
-
-        val topPsiClasses = psiFiles.flatMap { it.getChildrenOfType<PsiClass>().toList() }
-
-        val javaFirDump = StringBuilder().also { builder ->
-            val renderer = FirRenderer(builder)
-            val processedJavaClasses = mutableSetOf<FirJavaClass>()
-            fun processClassWithChildren(psiClass: PsiClass, parentFqName: FqName) {
-                val classId = psiClass.classId(parentFqName)
-                val javaClass = session.symbolProvider.getClassLikeSymbolByClassId(classId)?.fir
-                    ?: throw AssertionError(classId.asString())
-                if (javaClass !is FirJavaClass || javaClass in processedJavaClasses) {
-                    return
-                }
-                processedJavaClasses += javaClass
-                renderJavaClass(renderer, javaClass, session) {
-                    for (innerClass in psiClass.innerClasses.sortedBy { it.name }) {
-                        processClassWithChildren(innerClass, classId.relativeClassName)
-                    }
-                }
-
-            }
-            for (psiClass in topPsiClasses.sortedBy { it.name }) {
-                processClassWithChildren(psiClass, FqName.ROOT)
-            }
-        }.toString()
-
-        val expectedFile = File(javaFile.absolutePath.replace(".java", ".fir.txt"))
-        KotlinTestUtils.assertEqualsToFile(expectedFile, javaFirDump)
+        if (hasSkipDirective) {
+            throw AssertionError("Looks like this test can be unmuted, please remove // SKIP_IN_FIR_TEST")
+        }
     }
 
     private fun PsiClass.classId(parentFqName: FqName): ClassId {
@@ -171,11 +189,12 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
         val packageStatement = psiFile.children.filterIsInstance<PsiPackageStatement>().firstOrNull()
         val packageName = packageStatement?.packageName
         val fqName = parentFqName.child(Name.identifier(this.name!!))
-        return ClassId(packageName?.let { FqName(it) } ?: FqName.ROOT, fqName, false)
+        return ClassId(packageName?.let { FqName(it) } ?: FqName.ROOT, fqName, isLocal = false)
     }
 
     companion object {
         private const val FOREIGN_ANNOTATIONS_SOURCES_PATH = "third-party/annotations"
+        private const val JSR_305_SOURCES_PATH = "third-party/jsr305"
     }
 }
 

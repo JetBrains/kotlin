@@ -13,28 +13,28 @@ val range3 = emptyObjectArray.indices
 
 val element0 = (-1).toByte()
 val element1 = (-1).toShort()
-val element2 = (-1)
-val element3 = (-1).toLong()
+val element2 = -1
+val element3 = -1L
 val element4 = 0.toByte()
 val element5 = 0.toShort()
 val element6 = 0
-val element7 = 0.toLong()
+val element7 = 0L
 val element8 = 1.toByte()
 val element9 = 1.toShort()
 val element10 = 1
-val element11 = 1.toLong()
+val element11 = 1L
 val element12 = 2.toByte()
 val element13 = 2.toShort()
 val element14 = 2
-val element15 = 2.toLong()
+val element15 = 2L
 val element16 = 3.toByte()
 val element17 = 3.toShort()
 val element18 = 3
-val element19 = 3.toLong()
+val element19 = 3L
 val element20 = 4.toByte()
 val element21 = 4.toShort()
 val element22 = 4
-val element23 = 4.toLong()
+val element23 = 4L
 
 fun box(): String {
     testR0xE0()
@@ -164,10 +164,10 @@ fun testR0xE1() {
 
 fun testR0xE2() {
     // with possible local optimizations
-    if ((-1) in intArray.indices != range0.contains((-1))) throw AssertionError()
-    if ((-1) !in intArray.indices != !range0.contains((-1))) throw AssertionError()
-    if (!((-1) in intArray.indices) != !range0.contains((-1))) throw AssertionError()
-    if (!((-1) !in intArray.indices) != range0.contains((-1))) throw AssertionError()
+    if (-1 in intArray.indices != range0.contains(-1)) throw AssertionError()
+    if (-1 !in intArray.indices != !range0.contains(-1)) throw AssertionError()
+    if (!(-1 in intArray.indices) != !range0.contains(-1)) throw AssertionError()
+    if (!(-1 !in intArray.indices) != range0.contains(-1)) throw AssertionError()
     // no local optimizations
     if (element2 in intArray.indices != range0.contains(element2)) throw AssertionError()
     if (element2 !in intArray.indices != !range0.contains(element2)) throw AssertionError()
@@ -177,10 +177,10 @@ fun testR0xE2() {
 
 fun testR0xE3() {
     // with possible local optimizations
-    if ((-1).toLong() in intArray.indices != range0.contains((-1).toLong())) throw AssertionError()
-    if ((-1).toLong() !in intArray.indices != !range0.contains((-1).toLong())) throw AssertionError()
-    if (!((-1).toLong() in intArray.indices) != !range0.contains((-1).toLong())) throw AssertionError()
-    if (!((-1).toLong() !in intArray.indices) != range0.contains((-1).toLong())) throw AssertionError()
+    if (-1L in intArray.indices != range0.contains(-1L)) throw AssertionError()
+    if (-1L !in intArray.indices != !range0.contains(-1L)) throw AssertionError()
+    if (!(-1L in intArray.indices) != !range0.contains(-1L)) throw AssertionError()
+    if (!(-1L !in intArray.indices) != range0.contains(-1L)) throw AssertionError()
     // no local optimizations
     if (element3 in intArray.indices != range0.contains(element3)) throw AssertionError()
     if (element3 !in intArray.indices != !range0.contains(element3)) throw AssertionError()
@@ -229,10 +229,10 @@ fun testR0xE6() {
 
 fun testR0xE7() {
     // with possible local optimizations
-    if (0.toLong() in intArray.indices != range0.contains(0.toLong())) throw AssertionError()
-    if (0.toLong() !in intArray.indices != !range0.contains(0.toLong())) throw AssertionError()
-    if (!(0.toLong() in intArray.indices) != !range0.contains(0.toLong())) throw AssertionError()
-    if (!(0.toLong() !in intArray.indices) != range0.contains(0.toLong())) throw AssertionError()
+    if (0L in intArray.indices != range0.contains(0L)) throw AssertionError()
+    if (0L !in intArray.indices != !range0.contains(0L)) throw AssertionError()
+    if (!(0L in intArray.indices) != !range0.contains(0L)) throw AssertionError()
+    if (!(0L !in intArray.indices) != range0.contains(0L)) throw AssertionError()
     // no local optimizations
     if (element7 in intArray.indices != range0.contains(element7)) throw AssertionError()
     if (element7 !in intArray.indices != !range0.contains(element7)) throw AssertionError()
@@ -281,10 +281,10 @@ fun testR0xE10() {
 
 fun testR0xE11() {
     // with possible local optimizations
-    if (1.toLong() in intArray.indices != range0.contains(1.toLong())) throw AssertionError()
-    if (1.toLong() !in intArray.indices != !range0.contains(1.toLong())) throw AssertionError()
-    if (!(1.toLong() in intArray.indices) != !range0.contains(1.toLong())) throw AssertionError()
-    if (!(1.toLong() !in intArray.indices) != range0.contains(1.toLong())) throw AssertionError()
+    if (1L in intArray.indices != range0.contains(1L)) throw AssertionError()
+    if (1L !in intArray.indices != !range0.contains(1L)) throw AssertionError()
+    if (!(1L in intArray.indices) != !range0.contains(1L)) throw AssertionError()
+    if (!(1L !in intArray.indices) != range0.contains(1L)) throw AssertionError()
     // no local optimizations
     if (element11 in intArray.indices != range0.contains(element11)) throw AssertionError()
     if (element11 !in intArray.indices != !range0.contains(element11)) throw AssertionError()
@@ -333,10 +333,10 @@ fun testR0xE14() {
 
 fun testR0xE15() {
     // with possible local optimizations
-    if (2.toLong() in intArray.indices != range0.contains(2.toLong())) throw AssertionError()
-    if (2.toLong() !in intArray.indices != !range0.contains(2.toLong())) throw AssertionError()
-    if (!(2.toLong() in intArray.indices) != !range0.contains(2.toLong())) throw AssertionError()
-    if (!(2.toLong() !in intArray.indices) != range0.contains(2.toLong())) throw AssertionError()
+    if (2L in intArray.indices != range0.contains(2L)) throw AssertionError()
+    if (2L !in intArray.indices != !range0.contains(2L)) throw AssertionError()
+    if (!(2L in intArray.indices) != !range0.contains(2L)) throw AssertionError()
+    if (!(2L !in intArray.indices) != range0.contains(2L)) throw AssertionError()
     // no local optimizations
     if (element15 in intArray.indices != range0.contains(element15)) throw AssertionError()
     if (element15 !in intArray.indices != !range0.contains(element15)) throw AssertionError()
@@ -385,10 +385,10 @@ fun testR0xE18() {
 
 fun testR0xE19() {
     // with possible local optimizations
-    if (3.toLong() in intArray.indices != range0.contains(3.toLong())) throw AssertionError()
-    if (3.toLong() !in intArray.indices != !range0.contains(3.toLong())) throw AssertionError()
-    if (!(3.toLong() in intArray.indices) != !range0.contains(3.toLong())) throw AssertionError()
-    if (!(3.toLong() !in intArray.indices) != range0.contains(3.toLong())) throw AssertionError()
+    if (3L in intArray.indices != range0.contains(3L)) throw AssertionError()
+    if (3L !in intArray.indices != !range0.contains(3L)) throw AssertionError()
+    if (!(3L in intArray.indices) != !range0.contains(3L)) throw AssertionError()
+    if (!(3L !in intArray.indices) != range0.contains(3L)) throw AssertionError()
     // no local optimizations
     if (element19 in intArray.indices != range0.contains(element19)) throw AssertionError()
     if (element19 !in intArray.indices != !range0.contains(element19)) throw AssertionError()
@@ -437,10 +437,10 @@ fun testR0xE22() {
 
 fun testR0xE23() {
     // with possible local optimizations
-    if (4.toLong() in intArray.indices != range0.contains(4.toLong())) throw AssertionError()
-    if (4.toLong() !in intArray.indices != !range0.contains(4.toLong())) throw AssertionError()
-    if (!(4.toLong() in intArray.indices) != !range0.contains(4.toLong())) throw AssertionError()
-    if (!(4.toLong() !in intArray.indices) != range0.contains(4.toLong())) throw AssertionError()
+    if (4L in intArray.indices != range0.contains(4L)) throw AssertionError()
+    if (4L !in intArray.indices != !range0.contains(4L)) throw AssertionError()
+    if (!(4L in intArray.indices) != !range0.contains(4L)) throw AssertionError()
+    if (!(4L !in intArray.indices) != range0.contains(4L)) throw AssertionError()
     // no local optimizations
     if (element23 in intArray.indices != range0.contains(element23)) throw AssertionError()
     if (element23 !in intArray.indices != !range0.contains(element23)) throw AssertionError()
@@ -476,10 +476,10 @@ fun testR1xE1() {
 
 fun testR1xE2() {
     // with possible local optimizations
-    if ((-1) in objectArray.indices != range1.contains((-1))) throw AssertionError()
-    if ((-1) !in objectArray.indices != !range1.contains((-1))) throw AssertionError()
-    if (!((-1) in objectArray.indices) != !range1.contains((-1))) throw AssertionError()
-    if (!((-1) !in objectArray.indices) != range1.contains((-1))) throw AssertionError()
+    if (-1 in objectArray.indices != range1.contains(-1)) throw AssertionError()
+    if (-1 !in objectArray.indices != !range1.contains(-1)) throw AssertionError()
+    if (!(-1 in objectArray.indices) != !range1.contains(-1)) throw AssertionError()
+    if (!(-1 !in objectArray.indices) != range1.contains(-1)) throw AssertionError()
     // no local optimizations
     if (element2 in objectArray.indices != range1.contains(element2)) throw AssertionError()
     if (element2 !in objectArray.indices != !range1.contains(element2)) throw AssertionError()
@@ -489,10 +489,10 @@ fun testR1xE2() {
 
 fun testR1xE3() {
     // with possible local optimizations
-    if ((-1).toLong() in objectArray.indices != range1.contains((-1).toLong())) throw AssertionError()
-    if ((-1).toLong() !in objectArray.indices != !range1.contains((-1).toLong())) throw AssertionError()
-    if (!((-1).toLong() in objectArray.indices) != !range1.contains((-1).toLong())) throw AssertionError()
-    if (!((-1).toLong() !in objectArray.indices) != range1.contains((-1).toLong())) throw AssertionError()
+    if (-1L in objectArray.indices != range1.contains(-1L)) throw AssertionError()
+    if (-1L !in objectArray.indices != !range1.contains(-1L)) throw AssertionError()
+    if (!(-1L in objectArray.indices) != !range1.contains(-1L)) throw AssertionError()
+    if (!(-1L !in objectArray.indices) != range1.contains(-1L)) throw AssertionError()
     // no local optimizations
     if (element3 in objectArray.indices != range1.contains(element3)) throw AssertionError()
     if (element3 !in objectArray.indices != !range1.contains(element3)) throw AssertionError()
@@ -541,10 +541,10 @@ fun testR1xE6() {
 
 fun testR1xE7() {
     // with possible local optimizations
-    if (0.toLong() in objectArray.indices != range1.contains(0.toLong())) throw AssertionError()
-    if (0.toLong() !in objectArray.indices != !range1.contains(0.toLong())) throw AssertionError()
-    if (!(0.toLong() in objectArray.indices) != !range1.contains(0.toLong())) throw AssertionError()
-    if (!(0.toLong() !in objectArray.indices) != range1.contains(0.toLong())) throw AssertionError()
+    if (0L in objectArray.indices != range1.contains(0L)) throw AssertionError()
+    if (0L !in objectArray.indices != !range1.contains(0L)) throw AssertionError()
+    if (!(0L in objectArray.indices) != !range1.contains(0L)) throw AssertionError()
+    if (!(0L !in objectArray.indices) != range1.contains(0L)) throw AssertionError()
     // no local optimizations
     if (element7 in objectArray.indices != range1.contains(element7)) throw AssertionError()
     if (element7 !in objectArray.indices != !range1.contains(element7)) throw AssertionError()
@@ -593,10 +593,10 @@ fun testR1xE10() {
 
 fun testR1xE11() {
     // with possible local optimizations
-    if (1.toLong() in objectArray.indices != range1.contains(1.toLong())) throw AssertionError()
-    if (1.toLong() !in objectArray.indices != !range1.contains(1.toLong())) throw AssertionError()
-    if (!(1.toLong() in objectArray.indices) != !range1.contains(1.toLong())) throw AssertionError()
-    if (!(1.toLong() !in objectArray.indices) != range1.contains(1.toLong())) throw AssertionError()
+    if (1L in objectArray.indices != range1.contains(1L)) throw AssertionError()
+    if (1L !in objectArray.indices != !range1.contains(1L)) throw AssertionError()
+    if (!(1L in objectArray.indices) != !range1.contains(1L)) throw AssertionError()
+    if (!(1L !in objectArray.indices) != range1.contains(1L)) throw AssertionError()
     // no local optimizations
     if (element11 in objectArray.indices != range1.contains(element11)) throw AssertionError()
     if (element11 !in objectArray.indices != !range1.contains(element11)) throw AssertionError()
@@ -645,10 +645,10 @@ fun testR1xE14() {
 
 fun testR1xE15() {
     // with possible local optimizations
-    if (2.toLong() in objectArray.indices != range1.contains(2.toLong())) throw AssertionError()
-    if (2.toLong() !in objectArray.indices != !range1.contains(2.toLong())) throw AssertionError()
-    if (!(2.toLong() in objectArray.indices) != !range1.contains(2.toLong())) throw AssertionError()
-    if (!(2.toLong() !in objectArray.indices) != range1.contains(2.toLong())) throw AssertionError()
+    if (2L in objectArray.indices != range1.contains(2L)) throw AssertionError()
+    if (2L !in objectArray.indices != !range1.contains(2L)) throw AssertionError()
+    if (!(2L in objectArray.indices) != !range1.contains(2L)) throw AssertionError()
+    if (!(2L !in objectArray.indices) != range1.contains(2L)) throw AssertionError()
     // no local optimizations
     if (element15 in objectArray.indices != range1.contains(element15)) throw AssertionError()
     if (element15 !in objectArray.indices != !range1.contains(element15)) throw AssertionError()
@@ -697,10 +697,10 @@ fun testR1xE18() {
 
 fun testR1xE19() {
     // with possible local optimizations
-    if (3.toLong() in objectArray.indices != range1.contains(3.toLong())) throw AssertionError()
-    if (3.toLong() !in objectArray.indices != !range1.contains(3.toLong())) throw AssertionError()
-    if (!(3.toLong() in objectArray.indices) != !range1.contains(3.toLong())) throw AssertionError()
-    if (!(3.toLong() !in objectArray.indices) != range1.contains(3.toLong())) throw AssertionError()
+    if (3L in objectArray.indices != range1.contains(3L)) throw AssertionError()
+    if (3L !in objectArray.indices != !range1.contains(3L)) throw AssertionError()
+    if (!(3L in objectArray.indices) != !range1.contains(3L)) throw AssertionError()
+    if (!(3L !in objectArray.indices) != range1.contains(3L)) throw AssertionError()
     // no local optimizations
     if (element19 in objectArray.indices != range1.contains(element19)) throw AssertionError()
     if (element19 !in objectArray.indices != !range1.contains(element19)) throw AssertionError()
@@ -749,10 +749,10 @@ fun testR1xE22() {
 
 fun testR1xE23() {
     // with possible local optimizations
-    if (4.toLong() in objectArray.indices != range1.contains(4.toLong())) throw AssertionError()
-    if (4.toLong() !in objectArray.indices != !range1.contains(4.toLong())) throw AssertionError()
-    if (!(4.toLong() in objectArray.indices) != !range1.contains(4.toLong())) throw AssertionError()
-    if (!(4.toLong() !in objectArray.indices) != range1.contains(4.toLong())) throw AssertionError()
+    if (4L in objectArray.indices != range1.contains(4L)) throw AssertionError()
+    if (4L !in objectArray.indices != !range1.contains(4L)) throw AssertionError()
+    if (!(4L in objectArray.indices) != !range1.contains(4L)) throw AssertionError()
+    if (!(4L !in objectArray.indices) != range1.contains(4L)) throw AssertionError()
     // no local optimizations
     if (element23 in objectArray.indices != range1.contains(element23)) throw AssertionError()
     if (element23 !in objectArray.indices != !range1.contains(element23)) throw AssertionError()
@@ -788,10 +788,10 @@ fun testR2xE1() {
 
 fun testR2xE2() {
     // with possible local optimizations
-    if ((-1) in emptyIntArray.indices != range2.contains((-1))) throw AssertionError()
-    if ((-1) !in emptyIntArray.indices != !range2.contains((-1))) throw AssertionError()
-    if (!((-1) in emptyIntArray.indices) != !range2.contains((-1))) throw AssertionError()
-    if (!((-1) !in emptyIntArray.indices) != range2.contains((-1))) throw AssertionError()
+    if (-1 in emptyIntArray.indices != range2.contains(-1)) throw AssertionError()
+    if (-1 !in emptyIntArray.indices != !range2.contains(-1)) throw AssertionError()
+    if (!(-1 in emptyIntArray.indices) != !range2.contains(-1)) throw AssertionError()
+    if (!(-1 !in emptyIntArray.indices) != range2.contains(-1)) throw AssertionError()
     // no local optimizations
     if (element2 in emptyIntArray.indices != range2.contains(element2)) throw AssertionError()
     if (element2 !in emptyIntArray.indices != !range2.contains(element2)) throw AssertionError()
@@ -801,10 +801,10 @@ fun testR2xE2() {
 
 fun testR2xE3() {
     // with possible local optimizations
-    if ((-1).toLong() in emptyIntArray.indices != range2.contains((-1).toLong())) throw AssertionError()
-    if ((-1).toLong() !in emptyIntArray.indices != !range2.contains((-1).toLong())) throw AssertionError()
-    if (!((-1).toLong() in emptyIntArray.indices) != !range2.contains((-1).toLong())) throw AssertionError()
-    if (!((-1).toLong() !in emptyIntArray.indices) != range2.contains((-1).toLong())) throw AssertionError()
+    if (-1L in emptyIntArray.indices != range2.contains(-1L)) throw AssertionError()
+    if (-1L !in emptyIntArray.indices != !range2.contains(-1L)) throw AssertionError()
+    if (!(-1L in emptyIntArray.indices) != !range2.contains(-1L)) throw AssertionError()
+    if (!(-1L !in emptyIntArray.indices) != range2.contains(-1L)) throw AssertionError()
     // no local optimizations
     if (element3 in emptyIntArray.indices != range2.contains(element3)) throw AssertionError()
     if (element3 !in emptyIntArray.indices != !range2.contains(element3)) throw AssertionError()
@@ -853,10 +853,10 @@ fun testR2xE6() {
 
 fun testR2xE7() {
     // with possible local optimizations
-    if (0.toLong() in emptyIntArray.indices != range2.contains(0.toLong())) throw AssertionError()
-    if (0.toLong() !in emptyIntArray.indices != !range2.contains(0.toLong())) throw AssertionError()
-    if (!(0.toLong() in emptyIntArray.indices) != !range2.contains(0.toLong())) throw AssertionError()
-    if (!(0.toLong() !in emptyIntArray.indices) != range2.contains(0.toLong())) throw AssertionError()
+    if (0L in emptyIntArray.indices != range2.contains(0L)) throw AssertionError()
+    if (0L !in emptyIntArray.indices != !range2.contains(0L)) throw AssertionError()
+    if (!(0L in emptyIntArray.indices) != !range2.contains(0L)) throw AssertionError()
+    if (!(0L !in emptyIntArray.indices) != range2.contains(0L)) throw AssertionError()
     // no local optimizations
     if (element7 in emptyIntArray.indices != range2.contains(element7)) throw AssertionError()
     if (element7 !in emptyIntArray.indices != !range2.contains(element7)) throw AssertionError()
@@ -905,10 +905,10 @@ fun testR2xE10() {
 
 fun testR2xE11() {
     // with possible local optimizations
-    if (1.toLong() in emptyIntArray.indices != range2.contains(1.toLong())) throw AssertionError()
-    if (1.toLong() !in emptyIntArray.indices != !range2.contains(1.toLong())) throw AssertionError()
-    if (!(1.toLong() in emptyIntArray.indices) != !range2.contains(1.toLong())) throw AssertionError()
-    if (!(1.toLong() !in emptyIntArray.indices) != range2.contains(1.toLong())) throw AssertionError()
+    if (1L in emptyIntArray.indices != range2.contains(1L)) throw AssertionError()
+    if (1L !in emptyIntArray.indices != !range2.contains(1L)) throw AssertionError()
+    if (!(1L in emptyIntArray.indices) != !range2.contains(1L)) throw AssertionError()
+    if (!(1L !in emptyIntArray.indices) != range2.contains(1L)) throw AssertionError()
     // no local optimizations
     if (element11 in emptyIntArray.indices != range2.contains(element11)) throw AssertionError()
     if (element11 !in emptyIntArray.indices != !range2.contains(element11)) throw AssertionError()
@@ -957,10 +957,10 @@ fun testR2xE14() {
 
 fun testR2xE15() {
     // with possible local optimizations
-    if (2.toLong() in emptyIntArray.indices != range2.contains(2.toLong())) throw AssertionError()
-    if (2.toLong() !in emptyIntArray.indices != !range2.contains(2.toLong())) throw AssertionError()
-    if (!(2.toLong() in emptyIntArray.indices) != !range2.contains(2.toLong())) throw AssertionError()
-    if (!(2.toLong() !in emptyIntArray.indices) != range2.contains(2.toLong())) throw AssertionError()
+    if (2L in emptyIntArray.indices != range2.contains(2L)) throw AssertionError()
+    if (2L !in emptyIntArray.indices != !range2.contains(2L)) throw AssertionError()
+    if (!(2L in emptyIntArray.indices) != !range2.contains(2L)) throw AssertionError()
+    if (!(2L !in emptyIntArray.indices) != range2.contains(2L)) throw AssertionError()
     // no local optimizations
     if (element15 in emptyIntArray.indices != range2.contains(element15)) throw AssertionError()
     if (element15 !in emptyIntArray.indices != !range2.contains(element15)) throw AssertionError()
@@ -1009,10 +1009,10 @@ fun testR2xE18() {
 
 fun testR2xE19() {
     // with possible local optimizations
-    if (3.toLong() in emptyIntArray.indices != range2.contains(3.toLong())) throw AssertionError()
-    if (3.toLong() !in emptyIntArray.indices != !range2.contains(3.toLong())) throw AssertionError()
-    if (!(3.toLong() in emptyIntArray.indices) != !range2.contains(3.toLong())) throw AssertionError()
-    if (!(3.toLong() !in emptyIntArray.indices) != range2.contains(3.toLong())) throw AssertionError()
+    if (3L in emptyIntArray.indices != range2.contains(3L)) throw AssertionError()
+    if (3L !in emptyIntArray.indices != !range2.contains(3L)) throw AssertionError()
+    if (!(3L in emptyIntArray.indices) != !range2.contains(3L)) throw AssertionError()
+    if (!(3L !in emptyIntArray.indices) != range2.contains(3L)) throw AssertionError()
     // no local optimizations
     if (element19 in emptyIntArray.indices != range2.contains(element19)) throw AssertionError()
     if (element19 !in emptyIntArray.indices != !range2.contains(element19)) throw AssertionError()
@@ -1061,10 +1061,10 @@ fun testR2xE22() {
 
 fun testR2xE23() {
     // with possible local optimizations
-    if (4.toLong() in emptyIntArray.indices != range2.contains(4.toLong())) throw AssertionError()
-    if (4.toLong() !in emptyIntArray.indices != !range2.contains(4.toLong())) throw AssertionError()
-    if (!(4.toLong() in emptyIntArray.indices) != !range2.contains(4.toLong())) throw AssertionError()
-    if (!(4.toLong() !in emptyIntArray.indices) != range2.contains(4.toLong())) throw AssertionError()
+    if (4L in emptyIntArray.indices != range2.contains(4L)) throw AssertionError()
+    if (4L !in emptyIntArray.indices != !range2.contains(4L)) throw AssertionError()
+    if (!(4L in emptyIntArray.indices) != !range2.contains(4L)) throw AssertionError()
+    if (!(4L !in emptyIntArray.indices) != range2.contains(4L)) throw AssertionError()
     // no local optimizations
     if (element23 in emptyIntArray.indices != range2.contains(element23)) throw AssertionError()
     if (element23 !in emptyIntArray.indices != !range2.contains(element23)) throw AssertionError()
@@ -1100,10 +1100,10 @@ fun testR3xE1() {
 
 fun testR3xE2() {
     // with possible local optimizations
-    if ((-1) in emptyObjectArray.indices != range3.contains((-1))) throw AssertionError()
-    if ((-1) !in emptyObjectArray.indices != !range3.contains((-1))) throw AssertionError()
-    if (!((-1) in emptyObjectArray.indices) != !range3.contains((-1))) throw AssertionError()
-    if (!((-1) !in emptyObjectArray.indices) != range3.contains((-1))) throw AssertionError()
+    if (-1 in emptyObjectArray.indices != range3.contains(-1)) throw AssertionError()
+    if (-1 !in emptyObjectArray.indices != !range3.contains(-1)) throw AssertionError()
+    if (!(-1 in emptyObjectArray.indices) != !range3.contains(-1)) throw AssertionError()
+    if (!(-1 !in emptyObjectArray.indices) != range3.contains(-1)) throw AssertionError()
     // no local optimizations
     if (element2 in emptyObjectArray.indices != range3.contains(element2)) throw AssertionError()
     if (element2 !in emptyObjectArray.indices != !range3.contains(element2)) throw AssertionError()
@@ -1113,10 +1113,10 @@ fun testR3xE2() {
 
 fun testR3xE3() {
     // with possible local optimizations
-    if ((-1).toLong() in emptyObjectArray.indices != range3.contains((-1).toLong())) throw AssertionError()
-    if ((-1).toLong() !in emptyObjectArray.indices != !range3.contains((-1).toLong())) throw AssertionError()
-    if (!((-1).toLong() in emptyObjectArray.indices) != !range3.contains((-1).toLong())) throw AssertionError()
-    if (!((-1).toLong() !in emptyObjectArray.indices) != range3.contains((-1).toLong())) throw AssertionError()
+    if (-1L in emptyObjectArray.indices != range3.contains(-1L)) throw AssertionError()
+    if (-1L !in emptyObjectArray.indices != !range3.contains(-1L)) throw AssertionError()
+    if (!(-1L in emptyObjectArray.indices) != !range3.contains(-1L)) throw AssertionError()
+    if (!(-1L !in emptyObjectArray.indices) != range3.contains(-1L)) throw AssertionError()
     // no local optimizations
     if (element3 in emptyObjectArray.indices != range3.contains(element3)) throw AssertionError()
     if (element3 !in emptyObjectArray.indices != !range3.contains(element3)) throw AssertionError()
@@ -1165,10 +1165,10 @@ fun testR3xE6() {
 
 fun testR3xE7() {
     // with possible local optimizations
-    if (0.toLong() in emptyObjectArray.indices != range3.contains(0.toLong())) throw AssertionError()
-    if (0.toLong() !in emptyObjectArray.indices != !range3.contains(0.toLong())) throw AssertionError()
-    if (!(0.toLong() in emptyObjectArray.indices) != !range3.contains(0.toLong())) throw AssertionError()
-    if (!(0.toLong() !in emptyObjectArray.indices) != range3.contains(0.toLong())) throw AssertionError()
+    if (0L in emptyObjectArray.indices != range3.contains(0L)) throw AssertionError()
+    if (0L !in emptyObjectArray.indices != !range3.contains(0L)) throw AssertionError()
+    if (!(0L in emptyObjectArray.indices) != !range3.contains(0L)) throw AssertionError()
+    if (!(0L !in emptyObjectArray.indices) != range3.contains(0L)) throw AssertionError()
     // no local optimizations
     if (element7 in emptyObjectArray.indices != range3.contains(element7)) throw AssertionError()
     if (element7 !in emptyObjectArray.indices != !range3.contains(element7)) throw AssertionError()
@@ -1217,10 +1217,10 @@ fun testR3xE10() {
 
 fun testR3xE11() {
     // with possible local optimizations
-    if (1.toLong() in emptyObjectArray.indices != range3.contains(1.toLong())) throw AssertionError()
-    if (1.toLong() !in emptyObjectArray.indices != !range3.contains(1.toLong())) throw AssertionError()
-    if (!(1.toLong() in emptyObjectArray.indices) != !range3.contains(1.toLong())) throw AssertionError()
-    if (!(1.toLong() !in emptyObjectArray.indices) != range3.contains(1.toLong())) throw AssertionError()
+    if (1L in emptyObjectArray.indices != range3.contains(1L)) throw AssertionError()
+    if (1L !in emptyObjectArray.indices != !range3.contains(1L)) throw AssertionError()
+    if (!(1L in emptyObjectArray.indices) != !range3.contains(1L)) throw AssertionError()
+    if (!(1L !in emptyObjectArray.indices) != range3.contains(1L)) throw AssertionError()
     // no local optimizations
     if (element11 in emptyObjectArray.indices != range3.contains(element11)) throw AssertionError()
     if (element11 !in emptyObjectArray.indices != !range3.contains(element11)) throw AssertionError()
@@ -1269,10 +1269,10 @@ fun testR3xE14() {
 
 fun testR3xE15() {
     // with possible local optimizations
-    if (2.toLong() in emptyObjectArray.indices != range3.contains(2.toLong())) throw AssertionError()
-    if (2.toLong() !in emptyObjectArray.indices != !range3.contains(2.toLong())) throw AssertionError()
-    if (!(2.toLong() in emptyObjectArray.indices) != !range3.contains(2.toLong())) throw AssertionError()
-    if (!(2.toLong() !in emptyObjectArray.indices) != range3.contains(2.toLong())) throw AssertionError()
+    if (2L in emptyObjectArray.indices != range3.contains(2L)) throw AssertionError()
+    if (2L !in emptyObjectArray.indices != !range3.contains(2L)) throw AssertionError()
+    if (!(2L in emptyObjectArray.indices) != !range3.contains(2L)) throw AssertionError()
+    if (!(2L !in emptyObjectArray.indices) != range3.contains(2L)) throw AssertionError()
     // no local optimizations
     if (element15 in emptyObjectArray.indices != range3.contains(element15)) throw AssertionError()
     if (element15 !in emptyObjectArray.indices != !range3.contains(element15)) throw AssertionError()
@@ -1321,10 +1321,10 @@ fun testR3xE18() {
 
 fun testR3xE19() {
     // with possible local optimizations
-    if (3.toLong() in emptyObjectArray.indices != range3.contains(3.toLong())) throw AssertionError()
-    if (3.toLong() !in emptyObjectArray.indices != !range3.contains(3.toLong())) throw AssertionError()
-    if (!(3.toLong() in emptyObjectArray.indices) != !range3.contains(3.toLong())) throw AssertionError()
-    if (!(3.toLong() !in emptyObjectArray.indices) != range3.contains(3.toLong())) throw AssertionError()
+    if (3L in emptyObjectArray.indices != range3.contains(3L)) throw AssertionError()
+    if (3L !in emptyObjectArray.indices != !range3.contains(3L)) throw AssertionError()
+    if (!(3L in emptyObjectArray.indices) != !range3.contains(3L)) throw AssertionError()
+    if (!(3L !in emptyObjectArray.indices) != range3.contains(3L)) throw AssertionError()
     // no local optimizations
     if (element19 in emptyObjectArray.indices != range3.contains(element19)) throw AssertionError()
     if (element19 !in emptyObjectArray.indices != !range3.contains(element19)) throw AssertionError()
@@ -1373,10 +1373,10 @@ fun testR3xE22() {
 
 fun testR3xE23() {
     // with possible local optimizations
-    if (4.toLong() in emptyObjectArray.indices != range3.contains(4.toLong())) throw AssertionError()
-    if (4.toLong() !in emptyObjectArray.indices != !range3.contains(4.toLong())) throw AssertionError()
-    if (!(4.toLong() in emptyObjectArray.indices) != !range3.contains(4.toLong())) throw AssertionError()
-    if (!(4.toLong() !in emptyObjectArray.indices) != range3.contains(4.toLong())) throw AssertionError()
+    if (4L in emptyObjectArray.indices != range3.contains(4L)) throw AssertionError()
+    if (4L !in emptyObjectArray.indices != !range3.contains(4L)) throw AssertionError()
+    if (!(4L in emptyObjectArray.indices) != !range3.contains(4L)) throw AssertionError()
+    if (!(4L !in emptyObjectArray.indices) != range3.contains(4L)) throw AssertionError()
     // no local optimizations
     if (element23 in emptyObjectArray.indices != range3.contains(element23)) throw AssertionError()
     if (element23 !in emptyObjectArray.indices != !range3.contains(element23)) throw AssertionError()

@@ -5,6 +5,7 @@
 
 #include "Utils.hpp"
 
+#include <array>
 #include <type_traits>
 
 #include "gmock/gmock.h"
@@ -72,4 +73,27 @@ TEST(UtilsTest, OwnerOf) {
     Container c;
     EXPECT_THAT(&c, &Container::fromX(c.x()));
     EXPECT_THAT(&c, &Container::fromY(c.y()));
+}
+
+TEST(UtilsTest, IsZeroed) {
+    std::array<uint8_t, 0> empty;
+    EXPECT_TRUE(isZeroed(empty));
+
+    std::array<uint8_t, 1> zeroed1 = {0};
+    EXPECT_TRUE(isZeroed(zeroed1));
+
+    std::array<uint8_t, 1> notZeroed1 = {1};
+    EXPECT_FALSE(isZeroed(notZeroed1));
+
+    std::array<uint8_t, 3> zeroed3 = {0, 0, 0};
+    EXPECT_TRUE(isZeroed(zeroed3));
+
+    std::array<uint8_t, 3> notZeroed3_0 = {1, 0, 0};
+    EXPECT_FALSE(isZeroed(notZeroed3_0));
+
+    std::array<uint8_t, 3> notZeroed3_1 = {0, 1, 0};
+    EXPECT_FALSE(isZeroed(notZeroed3_1));
+
+    std::array<uint8_t, 3> notZeroed3_2 = {0, 0, 1};
+    EXPECT_FALSE(isZeroed(notZeroed3_2));
 }

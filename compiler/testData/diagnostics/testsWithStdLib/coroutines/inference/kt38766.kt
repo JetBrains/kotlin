@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.experimental.ExperimentalTypeInference
 
@@ -13,7 +14,7 @@ inline fun <reified T, R> emptyFlow(crossinline transform: (Array<T>) -> R): Flo
 fun <T> flowOf1(value: T): Flow1<T> = TODO()
 
 @OptIn(ExperimentalTypeInference::class)
-fun <T> flow1(@BuilderInference block: suspend FlowCollector1<T>.() -> Unit): Flow1<T> = TODO()
+fun <T> flow1(block: suspend FlowCollector1<T>.() -> Unit): Flow1<T> = TODO()
 
 interface FlowCollector1<in T> {
     suspend fun emit(value: T)

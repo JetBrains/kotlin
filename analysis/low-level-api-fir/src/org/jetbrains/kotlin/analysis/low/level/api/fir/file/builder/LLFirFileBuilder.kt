@@ -1,35 +1,44 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
-import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.ThreadSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
-import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
+import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.utils.ThreadSafe
 
 /**
- * Responsible for building [FirFile] by [KtFile]
+ * Responsble for building [FirFile] by [KtFile]
  */
 @ThreadSafe
-internal class LLFirFileBuilder(
-    val moduleComponents: LLFirModuleResolveComponents,
-) {
+internal class LLFirFileBuilder(val moduleComponents: LLFirModuleResolveComponents) {
+    private val projectStructureProvider by lazy { KotlinProjectStructureProvider.getInstance(moduleComponents.session.project) }
+
     fun buildRawFirFileWithCaching(ktFile: KtFile): FirFile = moduleComponents.cache.fileCached(ktFile) {
-        RawFirBuilder(
+        val contextualModule = moduleComponents.module
+        val actualFileModule = projectStructureProvider.getModule(ktFile, contextualModule)
+
+        checkWithAttachment(actualFileModule == contextualModule, { "Modules are inconsistent" }) {
+            withEntry("file", ktFile.name)
+            withEntry("file module", actualFileModule) {
+                it.toString()
+            }
+            withEntry("components module", contextualModule) {
+                it.toString()
+            }
+        }
+
+        PsiRawFirBuilder(
             moduleComponents.session,
             moduleComponents.scopeProvider,
-            psiMode = PsiHandlingMode.IDE,
             bodyBuildingMode = BodyBuildingMode.LAZY_BODIES
         ).buildFirFile(ktFile)
     }
 }
-
-

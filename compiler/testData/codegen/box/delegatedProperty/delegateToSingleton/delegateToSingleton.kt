@@ -1,6 +1,7 @@
 // WITH_STDLIB
 // CHECK_BYTECODE_LISTING
-// IGNORE_BACKEND: JS_IR
+// FIR_IDENTICAL
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 
 import kotlin.reflect.KProperty
 import kotlin.test.assertEquals

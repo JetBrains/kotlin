@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,8 +15,8 @@ import java.io.File
 class NullabilityAnnotationSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
         return listOf(
-            "analysis/symbol-light-classes/testdata/additionalFiles/NotNull.java",
-            "analysis/symbol-light-classes/testdata/additionalFiles/Nullable.java",
+            "analysis/symbol-light-classes/testData/additionalFiles/NotNull.java",
+            "analysis/symbol-light-classes/testData/additionalFiles/Nullable.java",
         ).map { path ->
             File(path).toTestFile(relativePath = "org/jetbrains/annotations")
         }

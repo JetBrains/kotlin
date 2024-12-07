@@ -1,4 +1,5 @@
-// !MARK_DYNAMIC_CALLS
+// RUN_PIPELINE_TILL: FRONTEND
+// MARK_DYNAMIC_CALLS
 
 // FILE: p/J.java
 
@@ -20,11 +21,11 @@ public class J {
 import p.*
 
 class K: J.C() {
-    fun <!UNSUPPORTED!>dynamic<!>.test() {
+    fun <!DYNAMIC_RECEIVER_NOT_ALLOWED, UNSUPPORTED!>dynamic<!>.test() {
         sam(null)
         sam(
             name = null,
-            name = null
+            <!ARGUMENT_PASSED_TWICE!>name<!> = null
         )
     }
 

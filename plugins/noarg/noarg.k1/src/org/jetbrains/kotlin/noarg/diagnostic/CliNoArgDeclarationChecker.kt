@@ -19,23 +19,22 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 
 class CliNoArgDeclarationChecker(
     private val noArgAnnotationFqNames: List<String>,
-    useIr: Boolean,
-) : AbstractNoArgDeclarationChecker(useIr) {
+) : AbstractNoArgDeclarationChecker() {
     override fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner?): List<String> = noArgAnnotationFqNames
 }
 
-abstract class AbstractNoArgDeclarationChecker(private val useIr: Boolean) : DeclarationChecker, AnnotationBasedExtension {
+abstract class AbstractNoArgDeclarationChecker(
+    @Suppress("unused") useIr: Boolean = true, // Used from intellij
+) : DeclarationChecker, AnnotationBasedExtension {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is ClassDescriptor || declaration !is KtClass) return
         if (descriptor.kind != ClassKind.CLASS) return
         if (!descriptor.hasSpecialAnnotation(declaration)) return
 
         if (descriptor.isInner) {
-            val diagnostic = if (useIr) NOARG_ON_INNER_CLASS_ERROR else NOARG_ON_INNER_CLASS
-            context.trace.report(diagnostic.on(declaration.reportTarget))
+            context.trace.report(NOARG_ON_INNER_CLASS_ERROR.on(declaration.reportTarget))
         } else if (DescriptorUtils.isLocal(descriptor)) {
-            val diagnostic = if (useIr) NOARG_ON_LOCAL_CLASS_ERROR else NOARG_ON_LOCAL_CLASS
-            context.trace.report(diagnostic.on(declaration.reportTarget))
+            context.trace.report(NOARG_ON_LOCAL_CLASS_ERROR.on(declaration.reportTarget))
         }
 
         val superClass = descriptor.getSuperClassOrAny()

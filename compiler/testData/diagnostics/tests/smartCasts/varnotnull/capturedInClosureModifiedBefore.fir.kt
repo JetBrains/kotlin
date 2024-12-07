@@ -1,4 +1,5 @@
-// !LANGUAGE: +CapturedInClosureSmartCasts
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +CapturedInClosureSmartCasts
 
 fun run(f: () -> Unit) = f()
 
@@ -30,7 +31,7 @@ fun baz(s: String?) {
             <!SMARTCAST_IMPOSSIBLE!>x<!>.hashCode()
         }
         run {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.hashCode()
+            x<!UNSAFE_CALL!>.<!>hashCode()
             x = null
         }
     }
@@ -40,7 +41,7 @@ fun gaz(s: String?) {
     var x = s
     if (x != null) {
         run {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.hashCode()
+            x<!UNSAFE_CALL!>.<!>hashCode()
             x = null
         }
         run {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 val a1: Int = 1<!WRONG_LONG_SUFFIX!>l<!>
 val a2: Int = 0x1<!WRONG_LONG_SUFFIX!>l<!>

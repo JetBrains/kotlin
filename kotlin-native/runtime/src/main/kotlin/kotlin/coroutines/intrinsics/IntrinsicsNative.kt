@@ -25,7 +25,26 @@ import kotlin.native.internal.*
 @kotlin.internal.InlineOnly
 public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
         completion: Continuation<T>
-): Any? = (this as Function1<Continuation<T>, Any?>).invoke(completion)
+): Any? {
+    val wrappedCompletion = wrapWithContinuationImpl(completion)
+    val function = this as? Function1<Continuation<T>, Any?>
+    return if (function == null)
+        startCoroutineUninterceptedOrReturnFallback(this, wrappedCompletion)
+    else
+        function.invoke(wrappedCompletion)
+}
+
+@Suppress("UNCHECKED_CAST")
+@PublishedApi
+internal fun <T> startCoroutineUninterceptedOrReturnFallback(
+        function: suspend () -> T,
+        completion: Continuation<T>
+): Any? {
+    // Unlike `function`, `wrapper` class is generated and lowered entirely by Kotlin compiler,
+    // so the cast below will succeed.
+    val wrapper: suspend () -> T = { function() }
+    return (wrapper as Function1<Continuation<T>, Any?>).invoke(completion)
+}
 
 /**
  * Starts an unintercepted coroutine with receiver type [R] and result type [T] and executes it until its first suspension.
@@ -44,7 +63,27 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
 public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
         receiver: R,
         completion: Continuation<T>
-): Any? = (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
+): Any? {
+    val wrappedCompletion = wrapWithContinuationImpl(completion)
+    val function = this as? Function2<R, Continuation<T>, Any?>
+    return if (function == null)
+        startCoroutineUninterceptedOrReturnFallback(this, receiver, wrappedCompletion)
+    else
+        function.invoke(receiver, wrappedCompletion)
+}
+
+@Suppress("UNCHECKED_CAST")
+@PublishedApi
+internal fun <R, T> startCoroutineUninterceptedOrReturnFallback(
+        function: suspend R.() -> T,
+        receiver: R,
+        completion: Continuation<T>
+): Any? {
+    // Unlike `function`, `wrapper` class is generated and lowered entirely by Kotlin compiler,
+    // so the cast below will succeed.
+    val wrapper: suspend R.() -> T = { this.function() }
+    return (wrapper as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
+}
 
 @Suppress("UNCHECKED_CAST")
 @kotlin.internal.InlineOnly
@@ -52,7 +91,27 @@ internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterc
         receiver: R,
         param: P,
         completion: Continuation<T>
-): Any? = (this as Function3<R, P, Continuation<T>, Any?>).invoke(receiver, param, completion)
+): Any? {
+    val wrappedCompletion = wrapWithContinuationImpl(completion)
+    val function = this as? Function3<R, P, Continuation<T>, Any?>
+    return if (function == null)
+        startCoroutineUninterceptedOrReturnFallback(this, receiver, param, wrappedCompletion)
+    else
+        function.invoke(receiver, param, wrappedCompletion)
+}
+
+@Suppress("UNCHECKED_CAST")
+internal fun <R, P, T> startCoroutineUninterceptedOrReturnFallback(
+        function: suspend R.(P) -> T,
+        receiver: R,
+        param: P,
+        completion: Continuation<T>
+): Any? {
+    // Unlike `function`, `wrapper` class is generated and lowered entirely by Kotlin compiler,
+    // so the cast below will succeed.
+    val wrapper: suspend R.(P) -> T = { this.function(it) }
+    return (wrapper as Function3<R, P, Continuation<T>, Any?>).invoke(receiver, param, completion)
+}
 
 private object CoroutineSuspendedMarker
 
@@ -88,7 +147,7 @@ public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
         create(probeCompletion)
     else
         createCoroutineFromSuspendFunction(probeCompletion) {
-            (this as Function1<Continuation<T>, Any?>).invoke(it)
+            this.startCoroutineUninterceptedOrReturn(it)
         }
 }
 
@@ -124,7 +183,7 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
         create(receiver, probeCompletion)
     else {
         createCoroutineFromSuspendFunction(probeCompletion) {
-            (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, it)
+            this.startCoroutineUninterceptedOrReturn(receiver, it)
         }
     }
 }
@@ -232,4 +291,34 @@ internal inline fun createContinuationArgumentFromCallback(
 
         return Unit // Not suspended.
     }
+}
+
+@PublishedApi
+internal fun <T> wrapWithContinuationImpl(completion: Continuation<T>): Continuation<T> =
+        createSimpleCoroutineForSuspendFunction(probeCoroutineCreated(completion))
+
+/**
+ * This function is used when [startCoroutineUninterceptedOrReturn] encounters suspending lambda that does not extend BaseContinuationImpl.
+ *
+ * It happens in two cases: callable reference to suspending function or tail-call lambdas.
+ *
+ * This function is the same as above, but does not run lambda itself - the caller is expected to call [invoke] manually.
+ */
+@Suppress("UNCHECKED_CAST")
+private fun <T> createSimpleCoroutineForSuspendFunction(
+        completion: Continuation<T>
+): Continuation<T> {
+    val context = completion.context
+    return if (context === EmptyCoroutineContext)
+        object : RestrictedContinuationImpl(completion as Continuation<Any?>) {
+            override fun invokeSuspend(result: Result<Any?>): Any? {
+                return result.getOrThrow()
+            }
+        }
+    else
+        object : ContinuationImpl(completion as Continuation<Any?>, context) {
+            override fun invokeSuspend(result: Result<Any?>): Any? {
+                return result.getOrThrow()
+            }
+        }
 }

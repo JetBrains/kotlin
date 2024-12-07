@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
@@ -21,13 +22,18 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-// Create primary constructor if it doesn't exist
+val IrDeclaration.isSyntheticPrimaryConstructor: Boolean
+    get() = origin == PrimaryConstructorLowering.SYNTHETIC_PRIMARY_CONSTRUCTOR
+
+/**
+ * Creates a primary constructor if it doesn't exist.
+ */
 class PrimaryConstructorLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
 
     private var IrClass.syntheticPrimaryConstructor by context.mapping.classToSyntheticPrimaryConstructor
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        if (declaration is IrClass) {
+        if (declaration is IrClass && declaration.kind != ClassKind.INTERFACE) {
             val constructors = declaration.constructors
 
             if (constructors.any { it.isPrimary }) return null
@@ -38,7 +44,9 @@ class PrimaryConstructorLowering(val context: JsCommonBackendContext) : Declarat
         return null
     }
 
-    object SYNTHETIC_PRIMARY_CONSTRUCTOR : IrDeclarationOriginImpl("SYNTHETIC_PRIMARY_CONSTRUCTOR")
+    companion object {
+        val SYNTHETIC_PRIMARY_CONSTRUCTOR by IrDeclarationOriginImpl
+    }
 
     private val unitType = context.irBuiltIns.unitType
 
@@ -57,6 +65,9 @@ class PrimaryConstructorLowering(val context: JsCommonBackendContext) : Declarat
     }
 }
 
+/**
+ * Generates a delegating constructor to the synthetic primary constructor.
+ */
 class DelegateToSyntheticPrimaryConstructor(context: JsCommonBackendContext) : BodyLoweringPass {
 
     private var IrClass.syntheticPrimaryConstructor by context.mapping.classToSyntheticPrimaryConstructor
@@ -71,7 +82,6 @@ class DelegateToSyntheticPrimaryConstructor(context: JsCommonBackendContext) : B
                         IrDelegatingConstructorCallImpl(
                             startOffset, endOffset, type,
                             primary.symbol,
-                            valueArgumentsCount = primary.valueParameters.size,
                             typeArgumentsCount = primary.typeParameters.size
                         )
                     }

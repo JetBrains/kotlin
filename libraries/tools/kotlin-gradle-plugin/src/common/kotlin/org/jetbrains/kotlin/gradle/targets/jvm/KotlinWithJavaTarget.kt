@@ -8,27 +8,52 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Dependency
 import org.gradle.api.file.Directory
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Provider
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_BUILD_DIR_NAME
+import org.jetbrains.kotlin.gradle.utils.KotlinJvmCompilerOptionsDefault
+import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.File
+import javax.inject.Inject
 
-open class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions>(
+@Suppress("UNCHECKED_CAST", "TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
+internal fun ObjectFactory.KotlinWithJavaTargetForJvm(
+    project: Project,
+    targetName: String = "",
+): KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions> = newInstance(
+    KotlinWithJavaTarget::class.java,
+    project,
+    KotlinPlatformType.jvm,
+    targetName,
+    {
+        object : DeprecatedHasCompilerOptions<KotlinJvmCompilerOptions> {
+            override val options: KotlinJvmCompilerOptions =
+                project.objects.KotlinJvmCompilerOptionsDefault(project)
+        }
+    },
+    { compilerOptions: KotlinJvmCompilerOptions ->
+        object : KotlinJvmOptions {
+            override val options: KotlinJvmCompilerOptions get() = compilerOptions
+        }
+    }
+) as KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>
+
+@Suppress("DEPRECATION")
+abstract class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions, CO : KotlinCommonCompilerOptions> @Inject constructor(
     project: Project,
     override val platformType: KotlinPlatformType,
     override val targetName: String,
-    kotlinOptionsFactory: () -> KotlinOptionsType
-) : AbstractKotlinTarget(project) {
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") compilerOptionsFactory: () -> DeprecatedHasCompilerOptions<CO>,
+    kotlinOptionsFactory: (CO) -> KotlinOptionsType
+) : AbstractKotlinTarget(project),
+    HasConfigurableKotlinCompilerOptions<KotlinJvmCompilerOptions> {
     override var disambiguationClassifier: String? = null
         internal set
-
-    override val defaultConfigurationName: String
-        get() = Dependency.DEFAULT_CONFIGURATION
 
     override val apiElementsConfigurationName: String
         get() = JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME
@@ -39,11 +64,11 @@ open class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions>(
     override val artifactsTaskName: String
         get() = JavaPlugin.JAR_TASK_NAME
 
-    override val compilations: NamedDomainObjectContainer<KotlinWithJavaCompilation<KotlinOptionsType>> =
+    override val compilations: NamedDomainObjectContainer<KotlinWithJavaCompilation<KotlinOptionsType, CO>> =
         @Suppress("UNCHECKED_CAST")
         project.container(
-            KotlinWithJavaCompilation::class.java as Class<KotlinWithJavaCompilation<KotlinOptionsType>>,
-            KotlinWithJavaCompilationFactory(project, this, kotlinOptionsFactory)
+            KotlinWithJavaCompilation::class.java as Class<KotlinWithJavaCompilation<KotlinOptionsType, CO>>,
+            KotlinWithJavaCompilationFactory(this, compilerOptionsFactory, kotlinOptionsFactory)
         )
 
     private val layout = project.layout
@@ -55,6 +80,9 @@ open class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions>(
         }
 
     internal val buildDir: Provider<Directory> = layout.buildDirectory.dir(KOTLIN_BUILD_DIR_NAME)
+
+    override val compilerOptions: KotlinJvmCompilerOptions = project.objects
+        .newInstance<KotlinJvmCompilerOptionsDefault>()
 }
 
 private fun sanitizeFileName(candidate: String): String = candidate.filter { it.isLetterOrDigit() }

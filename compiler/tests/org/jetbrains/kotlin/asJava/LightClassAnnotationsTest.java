@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class LightClassAnnotationsTest extends KotlinAsJavaTestBase {
-    private final File testDir = new File("compiler/testData/asJava/annotations");
+    private final File testDir = new File("compiler/testData/asJava/lightClasses/annotations");
 
     @Override
     protected List<File> getKotlinSourceRoots() {

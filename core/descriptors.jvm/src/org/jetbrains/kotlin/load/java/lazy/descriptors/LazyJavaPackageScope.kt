@@ -30,12 +30,12 @@ import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.findKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.storage.NullableLazyValue
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.alwaysTrue
 import java.util.*
 
@@ -50,6 +50,10 @@ class LazyJavaPackageScope(
         c.components.finder.knownClassNamesInPackage(ownerDescriptor.fqName)
     }
 
+    private val metadataVersion: MetadataVersion
+        get() = c.components.deserializedDescriptorResolver.components.configuration.metadataVersion
+
+
     private val classes =
         c.storageManager.createMemoizedFunctionWithNullableValues<FindClassRequest, ClassDescriptor> classByRequest@{ request ->
             val requestClassId = ClassId(ownerDescriptor.fqName, request.name)
@@ -57,9 +61,9 @@ class LazyJavaPackageScope(
             val kotlinClassOrClassFileContent =
                 // These branches should be semantically equal, but the first one could be faster
                 if (request.javaClass != null)
-                    c.components.kotlinClassFinder.findKotlinClassOrContent(request.javaClass)
+                    c.components.kotlinClassFinder.findKotlinClassOrContent(request.javaClass, metadataVersion)
                 else
-                    c.components.kotlinClassFinder.findKotlinClassOrContent(requestClassId)
+                    c.components.kotlinClassFinder.findKotlinClassOrContent(requestClassId, metadataVersion)
 
             val kotlinBinaryClass = kotlinClassOrClassFileContent?.toKotlinJvmBinaryClass()
 
@@ -76,8 +80,7 @@ class LazyJavaPackageScope(
                         request.javaClass ?: c.components.finder.findClass(
                             JavaClassFinder.Request(
                                 requestClassId,
-                                kotlinClassOrClassFileContent?.safeAs<KotlinClassFinder.Result.ClassFileContent>()
-                                    ?.content
+                                (kotlinClassOrClassFileContent as? KotlinClassFinder.Result.ClassFileContent)?.content
                             )
                         )
 
@@ -86,8 +89,8 @@ class LazyJavaPackageScope(
                             "Couldn't find kotlin binary class for light class created by kotlin binary file\n" +
                                     "JavaClass: $javaClass\n" +
                                     "ClassId: $requestClassId\n" +
-                                    "findKotlinClass(JavaClass) = ${c.components.kotlinClassFinder.findKotlinClass(javaClass)}\n" +
-                                    "findKotlinClass(ClassId) = ${c.components.kotlinClassFinder.findKotlinClass(requestClassId)}\n"
+                                    "findKotlinClass(JavaClass) = ${c.components.kotlinClassFinder.findKotlinClass(javaClass, metadataVersion)}\n" +
+                                    "findKotlinClass(ClassId) = ${c.components.kotlinClassFinder.findKotlinClass(requestClassId, metadataVersion)}\n"
                         )
                     }
 

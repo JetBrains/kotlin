@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.commonizer.metadata
 
-import gnu.trove.TIntObjectHashMap
-import kotlinx.metadata.KmTypeParameter
+import kotlin.metadata.KmTypeParameter
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirProvided
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
 import org.jetbrains.kotlin.commonizer.tree.deserializer.ClassesToProcess
+import org.jetbrains.kotlin.commonizer.utils.CommonizerIntObjectMap
 
 typealias TypeParameterId = Int
 typealias TypeParameterIndex = Int
@@ -42,10 +42,10 @@ abstract class CirTypeResolver : CirTypeParameterResolver {
 
     private class Nested(
         private val parent: CirTypeResolver,
-        private val typeParameterMapping: TIntObjectHashMap<TypeParameterInfo>
+        private val typeParameterMapping: CommonizerIntObjectMap<TypeParameterInfo>
     ) : CirTypeResolver() {
         override val providedClassifiers get() = parent.providedClassifiers
-        override val typeParameterIndexOffset = typeParameterMapping.size() + parent.typeParameterIndexOffset
+        override val typeParameterIndexOffset = typeParameterMapping.size + parent.typeParameterIndexOffset
 
         override fun resolveTypeParameterIndex(id: TypeParameterId) =
             typeParameterMapping[id]?.index ?: parent.resolveTypeParameterIndex(id)
@@ -60,7 +60,7 @@ abstract class CirTypeResolver : CirTypeParameterResolver {
         if (typeParameters.isEmpty())
             this
         else {
-            val mapping = TIntObjectHashMap<TypeParameterInfo>(typeParameters.size * 2)
+            val mapping = CommonizerIntObjectMap<TypeParameterInfo>(typeParameters.size * 2)
             typeParameters.forEachIndexed { localIndex, typeParameter ->
                 val typeParameterInfo = TypeParameterInfo(
                     index = localIndex + typeParameterIndexOffset,

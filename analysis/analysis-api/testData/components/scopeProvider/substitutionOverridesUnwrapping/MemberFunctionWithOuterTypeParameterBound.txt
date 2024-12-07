@@ -1,0 +1,28 @@
+KaNamedFunctionSymbol:
+  callableId: test/MyClass.funWithOuterAndOwnGenericsAndBounds
+  name: funWithOuterAndOwnGenericsAndBounds
+  origin: SUBSTITUTION_OVERRIDE
+
+KaKotlinPropertySymbol:
+  callableId: test/MyClass.propWithOuterAndOwnGenericsAndBounds
+  name: propWithOuterAndOwnGenericsAndBounds
+  origin: SUBSTITUTION_OVERRIDE
+
+KaNamedFunctionSymbol:
+  callableId: kotlin/Any.equals
+  name: equals
+  origin: LIBRARY
+
+KaNamedFunctionSymbol:
+  callableId: kotlin/Any.hashCode
+  name: hashCode
+  origin: LIBRARY
+
+KaNamedFunctionSymbol:
+  callableId: kotlin/Any.toString
+  name: toString
+  origin: LIBRARY
+
+KaConstructorSymbol:
+  callableId: null
+  origin: SOURCE_MEMBER_GENERATED

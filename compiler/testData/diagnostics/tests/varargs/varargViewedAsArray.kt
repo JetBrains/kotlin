@@ -1,5 +1,5 @@
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun stringVararg(vararg args: String) {}
 fun intVararg(vararg args: Int) {}

@@ -6,34 +6,145 @@
 package org.jetbrains.kotlin.resolve.calls.tower
 
 enum class CandidateApplicability {
-    RESOLVED_TO_SAM_WITH_VARARG, // migration warning up to 1.5 (when resolve to function with SAM conversion and array without spread as vararg)
-    HIDDEN, // removed from resolve
-    VISIBILITY_ERROR, // problems with visibility
-    UNSUPPORTED, // unsupported feature
-    INAPPLICABLE_WRONG_RECEIVER, // receiver not matched
-    INAPPLICABLE_ARGUMENTS_MAPPING_ERROR, // arguments not mapped to parameters (i.e. different size of arguments and parameters)
-    INAPPLICABLE, // arguments have wrong types
-    INAPPLICABLE_MODIFIER, // no expected modifier (eg infix call on non-infix function)
-    NO_COMPANION_OBJECT, // Classifier does not have a companion object
-    IMPOSSIBLE_TO_GENERATE, // access to outer class from nested
-    RUNTIME_ERROR, // TODO: FE 1.0 uses this as catch-all for all other errors. Consider re-assigning those diagnostics.
-    UNSAFE_CALL, // receiver or argument nullability doesn't match
-    UNSTABLE_SMARTCAST, // unstable smart cast
-    CONVENTION_ERROR, // missing infix, operator etc
+    /**
+     * Special applicability for migration warning up to 1.5.
+     * Used when resolved to function with SAM conversion and array without spread as vararg.
+     */
+    K1_RESOLVED_TO_SAM_WITH_VARARG,
 
-    // Below has shouldStopResolve = true
-    DSL_SCOPE_VIOLATION, // Skip other levels for DSL_SCOPE_VIOLATION because if the candidate is marked DSL_SCOPE_VIOLATION with an inner receiver, one should not keep going to outer receivers.
+    /**
+     * Candidate is removed from resolve due to SinceKotlin with later version or Deprecation with hidden level.
+     * Note that SinceKotlin does not filter out classifier symbols and property accessors. Those
+     * should lead to API_NOT_AVAILABLE.
+     * Provokes UNRESOLVED_REFERENCE.
+     */
+    HIDDEN,
 
-    // Below has isSuccess = true
+    /**
+     * Candidate could be successful but requires an unsupported feature.
+     * Reported for references to local variables in K2.
+     * Provokes UNSUPPORTED.
+     */
+    K2_UNSUPPORTED,
+
+    /**
+     * Candidate could be successful but receiver isn't matched
+     */
+    INAPPLICABLE_WRONG_RECEIVER,
+
+    /**
+     * Candidate could be successful but arguments not mapped to parameters (i.e. different size of arguments and parameters)
+     */
+    INAPPLICABLE_ARGUMENTS_MAPPING_ERROR,
+
+    /**
+     * Candidate could be successful but arguments have wrong types (or other general inapplicability)
+     */
+    INAPPLICABLE,
+
+    /**
+     * Candidate could be successful but uses some non-object classifier without companion object as a variable.
+     */
+    K2_NO_COMPANION_OBJECT,
+
+    /**
+     * Candidate could be successful but requires access to outer class from nested (non-inner)
+     */
+    K1_IMPOSSIBLE_TO_GENERATE,
+
+    // TODO: Consider re-assigning this diagnostics (K1_RUNTIME_ERROR)
+
+    /**
+     * This applicability is used in K1 as a catch-all for all other errors.
+     */
+    K1_RUNTIME_ERROR,
+
+    /**
+     * Candidate isn't visible. Provokes INVISIBLE_REFERENCE.
+     */
+    K2_VISIBILITY_ERROR,
+
+    /**
+     * Candidate could be successful but receiver (or argument?) nullability doesn't match
+     */
+    UNSAFE_CALL,
+
+    /**
+     * Candidate could be successful but requires unstable smart cast.
+     */
+    UNSTABLE_SMARTCAST,
+
+    /**
+     * Candidate could be successful but does not obey conventions.
+     * E.g. infix / operator / etc are missed (= no expected modifier).
+     */
+    CONVENTION_ERROR,
+
+    // Everything below has isSuccess = true (RESOLVED_WITH_ERROR is an exception)
+
+    /**
+     * Candidate is successful but has low priority.
+     * Tower resolve proceeds to next levels.
+     */
     RESOLVED_LOW_PRIORITY,
-    PROPERTY_AS_OPERATOR, // using property of functional type as an operator. From resolution perspective, this is considered successful.
-    RESOLVED_NEED_PRESERVE_COMPATIBILITY, // call resolved successfully, but using new features that changes resolve
-    RESOLVED_WITH_ERROR, // call has error, but it is still successful from resolution perspective
-    RESOLVED, // call success or has uncompleted inference or in other words possible successful candidate
+
+    /**
+     * Candidate is successful but uses property or object of functional type as an operator.
+     * Tower resolve proceeds to next levels.
+     */
+    K2_NOT_FUNCTION_AS_OPERATOR,
+
+    /**
+     * Candidate is successful but uses new features that change resolve.
+     * Tower resolve proceeds to next levels.
+     */
+    RESOLVED_NEED_PRESERVE_COMPATIBILITY,
+
+    // Everything below has shouldStopResolve = true
+    // (Tower resolve does not go to further scopes if candidate with applicability below is found)
+
+    /**
+     * Successful but synthetic candidate.
+     * Used in K2 for (Java) synthetic discrimination at the same level.
+     */
+    K2_SYNTHETIC_RESOLVED,
+
+    /**
+     * Candidate has some error, but it is still successful from resolution perspective.
+     * This means that tower resolve stops with this applicability.
+     * However, error will be reported.
+     * This is the only applicability that stops resolve but provokes an error.
+     */
+    RESOLVED_WITH_ERROR,
+
+    /**
+     * Candidate is successful or has uncompleted inference (so possibly successful).
+     */
+    RESOLVED,
 }
 
-val CandidateApplicability.isSuccess: Boolean
-    get() = this >= CandidateApplicability.RESOLVED_LOW_PRIORITY
+/**
+ * Introduced for `CandidateApplicability.isSuccess` specifically.
+ * Warns about accidental uses of `CandidateApplicability.isSuccess`
+ * instead of `Candidate.isSuccessful`.
+ */
+@RequiresOptIn
+annotation class ApplicabilityDetail
 
+/**
+ * Determines if this individual applicability is successful.
+ * Note that it does not necessarily mean tower resolve should stop on this candidate,
+ * and neither the value of `true` is enough to consider a candidate successful
+ * because there is [CandidateApplicability.RESOLVED_WITH_ERROR].
+ * Consider using [org.jetbrains.kotlin.fir.resolve.calls.Candidate.isSuccessful] if possible.
+ */
+@ApplicabilityDetail
+val CandidateApplicability.isSuccess: Boolean
+    get() = this >= CandidateApplicability.RESOLVED_LOW_PRIORITY && this != CandidateApplicability.RESOLVED_WITH_ERROR
+
+/**
+ * This property determines that tower resolve should stop on the candidate/group with this applicability
+ * and should not go to further scope levels. Note that candidate can still have error(s).
+ */
 val CandidateApplicability.shouldStopResolve: Boolean
-    get() = this >= CandidateApplicability.DSL_SCOPE_VIOLATION
+    get() = this >= CandidateApplicability.K2_SYNTHETIC_RESOLVED

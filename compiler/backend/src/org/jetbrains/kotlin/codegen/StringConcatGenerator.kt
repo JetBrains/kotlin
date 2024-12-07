@@ -17,7 +17,6 @@ import org.jetbrains.org.objectweb.asm.Handle
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-import java.lang.StringBuilder
 
 class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapter) {
 
@@ -44,17 +43,6 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
     private val items = arrayListOf<Item>()
     private var paramSlots = 0
     private var justFlushed = false
-
-    @JvmOverloads
-    fun genStringBuilderConstructorIfNeded(swap: Boolean = false) {
-        if (mode.isDynamic) return
-        mv.visitTypeInsn(Opcodes.NEW, "java/lang/StringBuilder")
-        mv.dup()
-        mv.invokespecial("java/lang/StringBuilder", "<init>", "()V", false)
-        if (swap) {
-            mv.swap()
-        }
-    }
 
     @JvmOverloads
     fun putValueOrProcessConstant(stackValue: StackValue, type: Type = stackValue.type, kotlinType: KotlinType? = stackValue.kotlinType) {
@@ -84,10 +72,6 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
         }
         stackValue.put(type, kotlinType, mv)
         invokeAppend(type)
-    }
-
-    fun addStringConstant(value: String) {
-        putValueOrProcessConstant(StackValue.constant(value, JAVA_STRING_TYPE, null))
     }
 
     fun invokeAppend(type: Type) {
@@ -236,7 +220,6 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
         }
 
         fun create(state: GenerationState, mv: InstructionAdapter) =
-            StringConcatGenerator(state.runtimeStringConcat, mv)
-
+            StringConcatGenerator(state.config.runtimeStringConcat, mv)
     }
 }

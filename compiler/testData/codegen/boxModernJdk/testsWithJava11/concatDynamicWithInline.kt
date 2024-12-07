@@ -2,7 +2,7 @@
 inline fun test(crossinline s: (String) -> String): String {
     var result = "1" + s("2") + "3" + 4 + {
         "5" + s("6") + "7"
-    }()
+    }.let { it() }
 
     result += object  {
         fun run() = "8" + s("9") + "10"

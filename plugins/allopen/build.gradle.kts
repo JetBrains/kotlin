@@ -20,18 +20,22 @@ dependencies {
     testImplementation(project(":compiler:cli"))
 
     testImplementation(intellijCore())
+    testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
+    testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
 
-    testApiJUnit5()
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":compiler:test-infrastructure"))
     testImplementation(projectTests(":compiler:test-infrastructure-utils"))
     testImplementation(project(":compiler:fir:checkers"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 
-    testCompileOnly(project(":kotlin-reflect-api"))
-    testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
 }
+
+optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { none() }
@@ -41,12 +45,15 @@ sourceSets {
     }
 }
 
+publish()
+
 runtimeJar()
 sourcesJar()
 javadocJar()
 testsJar()
 
 projectTest(parallel = true) {
+    dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()
 }

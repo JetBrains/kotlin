@@ -591,6 +591,11 @@ public class BodyResolver {
                 ) {
                     trace.report(SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE.on(typeReference));
                 }
+                else if (FunctionTypesKt.isSuspendExtensionFunctionType(supertype) &&
+                         !languageVersionSettings.supportsFeature(LanguageFeature.FunctionalTypeWithExtensionAsSupertype) &&
+                         languageVersionSettings.supportsFeature(LanguageFeature.SuspendFunctionAsSupertype)) {
+                    trace.report(SUPERTYPE_IS_SUSPEND_EXTENSION_FUNCTION_TYPE.on(typeReference));
+                }
                 else if (FunctionTypesKt.isSuspendFunctionType(supertype) &&
                          !languageVersionSettings.supportsFeature(LanguageFeature.SuspendFunctionAsSupertype)
                 ) {

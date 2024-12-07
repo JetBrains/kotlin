@@ -1,0 +1,16 @@
+FILE: expectedSetForLambdaParameter.kt
+    public final fun test(): R|kotlin/Unit| {
+        R|/build|<R|kotlin/String|, R|kotlin/String|>(<L> = build@fun <anonymous>(ids: R|kotlin/collections/Set<kotlin/String>|): R|kotlin/collections/Map<kotlin/String, kotlin/String?>| <inline=NoInline>  {
+            lval f: R|kotlin/collections/Set<kotlin/String>| = R|<local>/ids|
+            ^ R|<local>/ids|.R|kotlin/collections/associateWith|<R|kotlin/String|, R|kotlin/String|>(<L> = associateWith@fun <anonymous>(p: R|kotlin/String|): R|kotlin/String| <inline=Inline, kind=UNKNOWN>  {
+                ^ R|<local>/f|.R|kotlin/collections/first|<R|kotlin/String|>(<L> = first@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {
+                    ^ Boolean(true)
+                }
+                )
+            }
+            )
+        }
+        )
+    }
+    public final fun <BK, BV> build(transformer: R|(kotlin/collections/Set<BK>) -> kotlin/collections/Map<BK, BV?>|): R|kotlin/Unit| {
+    }

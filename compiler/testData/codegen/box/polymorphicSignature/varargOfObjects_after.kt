@@ -1,6 +1,4 @@
-// !LANGUAGE: +PolymorphicSignature
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: Fail 9
+// LANGUAGE: +PolymorphicSignature
 // TARGET_BACKEND: JVM
 // FULL_JDK
 // SKIP_JDK6

@@ -5,30 +5,42 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import org.jetbrains.kotlin.fir.canHaveDeferredReturnTypeCalculation
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 
-object ReturnTypeCalculatorForFullBodyResolve : ReturnTypeCalculator() {
-    override val fakeOverrideTypeCalculator: FakeOverrideTypeCalculator
-        get() = FakeOverrideTypeCalculator.Forced
+class ReturnTypeCalculatorForFullBodyResolve private constructor(
+    private val diagnosticKind: DiagnosticKind,
+    private val reason: String,
+) : ReturnTypeCalculator() {
+    companion object {
+        // It's actual only for local functions because simple members are being resolved at another phase.
+        // Local properties are just unresolved if they are used recursively.
+        val Default: ReturnTypeCalculatorForFullBodyResolve = ReturnTypeCalculatorForFullBodyResolve(
+            DiagnosticKind.RecursionInImplicitTypes,
+            "Recursion with local function"
+        )
+        val Contract: ReturnTypeCalculatorForFullBodyResolve = ReturnTypeCalculatorForFullBodyResolve(
+            DiagnosticKind.InferenceError,
+            "Cannot calculate return type during full-body resolution (local class/object?)"
+        )
+    }
+
+    override val callableCopyTypeCalculator: CallableCopyTypeCalculator
+        get() = CallableCopyTypeCalculator.Forced
 
     override fun tryCalculateReturnTypeOrNull(declaration: FirCallableDeclaration): FirResolvedTypeRef? {
         val returnTypeRef = declaration.returnTypeRef
         if (returnTypeRef is FirResolvedTypeRef) return returnTypeRef
-        if (declaration.origin.fromSupertypes) {
-            return FakeOverrideTypeCalculator.Forced.computeReturnType(declaration)
+        if (declaration.canHaveDeferredReturnTypeCalculation) {
+            return CallableCopyTypeCalculator.Forced.computeReturnType(declaration)
         }
 
-        return buildErrorTypeRef {
-            diagnostic = ConeSimpleDiagnostic(
-                "Cannot calculate return type during full-body resolution (local class/object?): ${declaration.render()}",
-                DiagnosticKind.InferenceError
-            )
-        }
+        return buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("$reason: ${declaration.render()}", diagnosticKind) }
     }
 }

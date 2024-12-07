@@ -1,0 +1,3 @@
+KDocName(8,12): 'this'
+  KDocReference:
+    (in <local>: foo) extension receiver with type AAA

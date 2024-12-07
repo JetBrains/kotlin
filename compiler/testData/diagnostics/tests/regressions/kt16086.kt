@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // JAVAC_EXPECTED_FILE
 // FILE: com/winterbe/domain/IEntity.java

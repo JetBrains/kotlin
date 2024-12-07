@@ -1,0 +1,2 @@
+override var bar: kotlin.Int
+  private set(`<set-?>`: kotlin.Int)

@@ -44,3 +44,8 @@ actual class IntMatrixBenchmark actual constructor() {
     }
 }
 
+actual class PinnedArrayBenchmark actual constructor() {
+    actual fun pinnedArrayBenchmark() {
+        error("Benchmark pinnedArrayBenchmark is unsupported on JVM!")
+    }
+}

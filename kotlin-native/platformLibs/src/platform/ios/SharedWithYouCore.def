@@ -1,0 +1,7 @@
+depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase Foundation Security darwin posix
+language = Objective-C
+package = platform.SharedWithYouCore
+
+modules = SharedWithYouCore
+compilerOpts = -framework SharedWithYouCore
+linkerOpts = -framework SharedWithYouCore

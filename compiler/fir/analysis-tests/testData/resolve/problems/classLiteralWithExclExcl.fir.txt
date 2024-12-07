@@ -1,0 +1,9 @@
+FILE: classLiteralWithExclExcl.kt
+    public final class B<T> : R|kotlin/Any| {
+        public constructor<T>(): R|B<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final val any2: R|kotlin/reflect/KClass<ERROR CLASS: Unresolved name: invoke>| = <getClass>(Q|B|!!.<Unresolved name: invoke>#<<ERROR TYPE REF: Symbol not found for T>>)
+        public get(): R|kotlin/reflect/KClass<ERROR CLASS: Unresolved name: invoke>|

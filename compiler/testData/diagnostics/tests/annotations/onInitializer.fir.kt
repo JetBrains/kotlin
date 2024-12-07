@@ -1,11 +1,12 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A {
-    @ann init {}
-    @aaa init {}
+    <!WRONG_ANNOTATION_TARGET!>@ann<!> init {}
+    @<!UNRESOLVED_REFERENCE!>aaa<!> init {}
 }
 
 interface T {
-    @ann <!ANONYMOUS_INITIALIZER_IN_INTERFACE!>init<!> {}
-    @aaa <!ANONYMOUS_INITIALIZER_IN_INTERFACE!>init<!> {}
+    <!WRONG_ANNOTATION_TARGET!>@ann<!> <!ANONYMOUS_INITIALIZER_IN_INTERFACE!>init<!> {}
+    @<!UNRESOLVED_REFERENCE!>aaa<!> <!ANONYMOUS_INITIALIZER_IN_INTERFACE!>init<!> {}
 }
 
 annotation class ann

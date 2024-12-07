@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import java.io.Closeable
 import java.io.File
 import java.io.InputStreamReader
+import java.util.TreeSet
 
 object FirDiagnosticsCompilerResultsReporter {
     fun reportToMessageCollector(
@@ -24,6 +26,13 @@ object FirDiagnosticsCompilerResultsReporter {
     ): Boolean {
         return reportByFile(diagnosticsCollector) { diagnostic, location ->
             reportDiagnosticToMessageCollector(diagnostic, location, messageCollector, renderDiagnosticName)
+        }.also {
+            AnalyzerWithCompilerReport.reportSpecialErrors(
+                diagnosticsCollector.diagnostics.any { it.factory == FirErrors.INCOMPATIBLE_CLASS },
+                diagnosticsCollector.diagnostics.any { it.factory == FirErrors.PRE_RELEASE_CLASS },
+                diagnosticsCollector.diagnostics.any { it.factory == FirErrors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS },
+                messageCollector,
+            )
         }
     }
 
@@ -35,17 +44,34 @@ object FirDiagnosticsCompilerResultsReporter {
         }
     }
 
-    fun reportByFile(
+    private fun reportByFile(
         diagnosticsCollector: BaseDiagnosticsCollector, report: (KtDiagnostic, CompilerMessageSourceLocation) -> Unit
     ): Boolean {
         var hasErrors = false
         for (filePath in diagnosticsCollector.diagnosticsByFilePath.keys) {
-            val positionFinder: SequentialFilePositionFinder? by lazy(LazyThreadSafetyMode.NONE) {
-                filePath?.let(::File)?.takeIf { it.isFile }?.let(::SequentialFilePositionFinder)
+            val positionFinder = lazy {
+                val file = filePath?.let(::File)
+                if (file != null && file.isFile) SequentialFilePositionFinder(file) else null
             }
-            @Suppress("ConvertTryFinallyToUseCall")
+
             try {
-                for (diagnostic in diagnosticsCollector.diagnosticsByFilePath[filePath].orEmpty().sortedWith(InFileDiagnosticsComparator)) {
+                val diagnosticList = diagnosticsCollector.diagnosticsByFilePath[filePath].orEmpty()
+
+                // Precomputing positions of the offsets in the ascending order of the offsets
+                val offsetsToPositions = positionFinder.value?.let { finder ->
+                    val sortedOffsets = TreeSet<Int>().apply {
+                        for (diagnostic in diagnosticList) {
+                            if (diagnostic !is KtPsiDiagnostic) {
+                                val range = DiagnosticUtils.firstRange(diagnostic.textRanges)
+                                add(range.startOffset)
+                                add(range.endOffset)
+                            }
+                        }
+                    }
+                    sortedOffsets.associateWith { finder.findNextPosition(it) }
+                }
+
+                for (diagnostic in diagnosticList.sortedWith(InFileDiagnosticsComparator)) {
                     when (diagnostic) {
                         is KtPsiDiagnostic -> {
                             val file = diagnostic.element.psi.containingFile
@@ -59,9 +85,13 @@ object FirDiagnosticsCompilerResultsReporter {
                             // TODO: bring KtSourceFile and KtSourceFileLinesMapping here and rewrite reporting via it to avoid code duplication
                             // NOTE: SequentialPositionFinder relies on the ascending order of the input offsets, so the code relies
                             // on the the appropriate sorting above
-                            // Also the end offset is ignored, as it is irrelevant for the CLI reporting
-                            positionFinder?.findNextPosition(DiagnosticUtils.firstRange(diagnostic.textRanges).startOffset)?.let { pos ->
-                                MessageUtil.createMessageLocation(filePath, pos.lineContent, pos.line, pos.column, -1, -1)
+                            offsetsToPositions?.let {
+                                val range = DiagnosticUtils.firstRange(diagnostic.textRanges)
+                                val start = offsetsToPositions[range.startOffset]!!
+                                val end = offsetsToPositions[range.endOffset]!!
+                                MessageUtil.createMessageLocation(
+                                    filePath, start.lineContent, start.line, start.column, end.line, end.column
+                                )
                             }
                         }
                     }?.let { location ->
@@ -70,23 +100,12 @@ object FirDiagnosticsCompilerResultsReporter {
                     }
                 }
             } finally {
-                positionFinder?.close()
+                if (positionFinder.isInitialized()) {
+                    positionFinder.value?.close()
+                }
             }
         }
-        // TODO: for uncommenting, see comment in reportSpecialErrors
-//        reportSpecialErrors(diagnostics)
         return hasErrors
-    }
-
-    @Suppress("UNUSED_PARAMETER", "unused")
-    private fun reportSpecialErrors(diagnostics: Collection<KtDiagnostic>) {
-        /*
-         * TODO: handle next diagnostics when they will be supported in FIR:
-         *  - INCOMPATIBLE_CLASS
-         *  - PRE_RELEASE_CLASS
-         *  - IR_WITH_UNSTABLE_ABI_COMPILED_CLASS
-         *  - FIR_COMPILED_CLASS
-         */
     }
 
     private fun reportDiagnosticToMessageCollector(
@@ -136,19 +155,29 @@ fun BaseDiagnosticsCollector.reportToMessageCollector(messageCollector: MessageC
     FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(this, messageCollector, renderDiagnosticName)
 }
 
-private class KtSourceFilePos(val line: Int, val column: Int, val lineContent: String?) {
+// public only because of tests
+class KtSourceFileDiagnosticPos(val line: Int, val column: Int, val lineContent: String?) {
 
     // NOTE: This method is used for presenting positions to the user
     override fun toString(): String = if (line < 0) "(offset: $column line unknown)" else "($line,$column)"
 
     companion object {
-        val NONE = KtSourceFilePos(-1, -1, null)
+        val NONE = KtSourceFileDiagnosticPos(-1, -1, null)
     }
 }
 
-private class SequentialFilePositionFinder(file: File) : Closeable {
+private class SequentialFilePositionFinder private constructor(private val reader: InputStreamReader)
+    : Closeable, SequentialPositionFinder(reader)
+{
+    constructor(file: File) : this(file.reader(/* TODO: select proper charset */))
 
-    private var reader: InputStreamReader = file.reader(/* TODO: select proper charset */)
+    override fun close() {
+        reader.close()
+    }
+}
+
+// public only for tests
+open class SequentialPositionFinder(private val reader: InputStreamReader) {
 
     private var currentLineContent: String? = null
     private val buffer = CharArray(255)
@@ -161,13 +190,13 @@ private class SequentialFilePositionFinder(file: File) : Closeable {
     private var currentLine = 0
 
     // assuming that if called multiple times, calls should be sorted by ascending offset
-    fun findNextPosition(offset: Int, withLineContents: Boolean = true): KtSourceFilePos {
-        assert(offset >= charsRead - (currentLineContent?.length ?: 0))
+    fun findNextPosition(offset: Int, withLineContents: Boolean = true): KtSourceFileDiagnosticPos {
 
-        fun posInCurrentLine(): KtSourceFilePos? {
+        fun posInCurrentLine(): KtSourceFileDiagnosticPos? {
             val col = offset - (charsRead - currentLineContent!!.length - 1)/* beginning of line offset */ + 1 /* col is 1-based */
-            return if (col <= currentLineContent!!.length)
-                KtSourceFilePos(currentLine, col, if (withLineContents) currentLineContent else null)
+            assert(col > 0)
+            return if (col <= currentLineContent!!.length + 1 /* accounting for a report on EOL (e.g. syntax errors) */)
+                KtSourceFileDiagnosticPos(currentLine, col, if (withLineContents) currentLineContent else null)
             else null
         }
 
@@ -182,7 +211,7 @@ private class SequentialFilePositionFinder(file: File) : Closeable {
 
             posInCurrentLine()?.let { return@findNextPosition it }
 
-            if (endOfStream) return KtSourceFilePos(-1, offset, if (withLineContents) currentLineContent else null)
+            if (endOfStream) return KtSourceFileDiagnosticPos(-1, offset, if (withLineContents) currentLineContent else null)
 
             currentLineContent = null
         }
@@ -195,6 +224,8 @@ private class SequentialFilePositionFinder(file: File) : Closeable {
                 bufPos = 0
                 if (bufLength < 0) {
                     endOfStream = true
+                    currentLine++
+                    charsRead++ // assuming virtual EOL at EOF for calculations
                     break
                 }
             } else {
@@ -202,6 +233,7 @@ private class SequentialFilePositionFinder(file: File) : Closeable {
                 charsRead++
                 when {
                     c == '\n' && skipNextLf -> {
+                        charsRead--
                         skipNextLf = false
                     }
                     c == '\n' || c == '\r' -> {
@@ -216,9 +248,5 @@ private class SequentialFilePositionFinder(file: File) : Closeable {
                 }
             }
         }
-    }
-
-    override fun close() {
-        reader.close()
     }
 }

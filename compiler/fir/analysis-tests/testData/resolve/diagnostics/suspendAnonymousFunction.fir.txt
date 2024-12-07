@@ -1,0 +1,13 @@
+FILE: suspendAnonymousFunction.kt
+    public final fun take(f: R|suspend () -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun test_1(): R|kotlin/Unit| {
+        suspend fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        }
+
+    }
+    public final fun test_2(): R|kotlin/Unit| {
+        R|/take<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /take>#|(<Unresolved name: suspend>#, fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        }
+        )
+    }

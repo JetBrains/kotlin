@@ -1,0 +1,17 @@
+class XAlign {
+  val bits: Long
+    field = bits
+    get
+
+  constructor() {
+    this/*XAlign*/(bits = 1.shl(bitCount = 1).toLong())
+  }
+
+  constructor(bits: Long) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+

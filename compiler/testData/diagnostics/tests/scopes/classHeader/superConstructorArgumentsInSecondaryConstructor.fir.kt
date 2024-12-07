@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 open class S(
         n: A.Nested,
@@ -17,13 +18,13 @@ class A : S {
     constructor() : super(
             foo(),
             Nested(),
-            <!RESOLUTION_TO_CLASSIFIER!>Inner<!>(),
+            <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>Inner<!>(),
             CONST,
             Companion.CONST,
             Nested.CONST,
             Interface.CONST,
-            <!UNRESOLVED_REFERENCE!>a<!>,
-            <!UNRESOLVED_REFERENCE!>b<!>()
+            <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>a<!>,
+            <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>b<!>()
     )
 
     class Nested {

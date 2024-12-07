@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1295
 package foo
 
 class A {

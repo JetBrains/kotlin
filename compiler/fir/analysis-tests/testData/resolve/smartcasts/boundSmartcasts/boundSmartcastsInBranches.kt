@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 class A {
     val s: String = ""
 }
@@ -159,5 +160,19 @@ fun test_8() {
         x.length // OK
         y<!UNSAFE_CALL!>.<!>length // Bad
         z.length // OK
+    }
+}
+
+fun test_9() {
+    var a: String? = null
+    val b: String?
+    if (a != null) {
+        b = a
+    } else {
+        b = a
+    }
+    b<!UNSAFE_CALL!>.<!>length // bad
+    if (a != null) {
+        b.length // ok
     }
 }

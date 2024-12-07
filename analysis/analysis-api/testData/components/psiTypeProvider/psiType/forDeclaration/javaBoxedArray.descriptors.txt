@@ -1,0 +1,2 @@
+KaType: (kotlin.Array<kotlin.Int!>..kotlin.Array<out kotlin.Int!>?)
+PsiType: java.lang.Integer[]

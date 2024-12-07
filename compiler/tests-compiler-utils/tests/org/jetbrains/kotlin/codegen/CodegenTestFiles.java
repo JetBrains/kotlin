@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -78,25 +77,6 @@ public class CodegenTestFiles {
     public static CodegenTestFiles create(@NotNull List<KtFile> ktFiles) {
         assert !ktFiles.isEmpty() : "List should have at least one file";
         return new CodegenTestFiles(ktFiles, Collections.emptyList(), Collections.emptyList());
-    }
-
-    public static CodegenTestFiles create(Project project, String[] names) {
-        return create(project, names, KtTestUtil.getTestDataPathBase());
-    }
-
-    public static CodegenTestFiles create(Project project, String[] names, String testDataPath) {
-        List<KtFile> files = new ArrayList<>(names.length);
-        for (String name : names) {
-            try {
-                String content = KtTestUtil.doLoadFile(testDataPath + "/codegen/", name);
-                KtFile file = KtTestUtil.createFile(name, content, project);
-                files.add(file);
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return create(files);
     }
 
     @NotNull

@@ -1,0 +1,8 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /testAugmentedMemberAssignment(dynamic) // /testAugmentedMemberAssignment|testAugmentedMemberAssignment(<dynamic>){}[0]
+final fun /testSafeAugmentedMemberAssignment(dynamic) // /testSafeAugmentedMemberAssignment|testSafeAugmentedMemberAssignment(<dynamic>){}[0]

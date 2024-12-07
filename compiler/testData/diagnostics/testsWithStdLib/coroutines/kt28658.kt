@@ -1,7 +1,6 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +NewInference
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 import kotlin.experimental.ExperimentalTypeInference
 
@@ -20,7 +19,7 @@ class Foo<T>
 fun <T> f1(f: Foo<T>.() -> Unit) {}
 
 @OptIn(ExperimentalTypeInference::class)
-fun <T> f2(@BuilderInference f: Foo<T>.() -> Unit) {
+fun <T> f2(f: Foo<T>.() -> Unit) {
 }
 
 fun test3() {

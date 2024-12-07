@@ -23,7 +23,7 @@ FILE: inplaceLambdaInControlFlowExpressions.kt
             }
             )
         }
-        catch (e: R|kotlin/Exception|) {
+        catch (e: R|{kotlin/Exception=} java/lang/Exception|) {
             String()
         }
 

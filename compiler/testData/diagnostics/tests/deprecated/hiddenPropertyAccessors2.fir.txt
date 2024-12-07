@@ -1,0 +1,74 @@
+FILE: hiddenPropertyAccessors2.fir.kt
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val v1: R|kotlin/String|
+            @R|kotlin/Deprecated|(message = String(), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public get(): R|kotlin/String| {
+                ^ String()
+            }
+
+        @R|kotlin/Deprecated|(message = String(), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final val v2: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+        public final var v3: R|kotlin/String|
+            @R|kotlin/Deprecated|(message = String(), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public get(): R|kotlin/String| {
+                ^ String()
+            }
+            public set(value: R|kotlin/String|): R|kotlin/Unit| {
+            }
+
+        public final var v4: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String()
+            }
+            @R|kotlin/Deprecated|(message = String(), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public set(value: R|kotlin/String|): R|kotlin/Unit| {
+            }
+
+        public final var v5: R|kotlin/String|
+            @R|kotlin/Deprecated|(message = String(), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public get(): R|kotlin/String| {
+                ^ String()
+            }
+            @R|kotlin/Deprecated|(message = String(), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public set(value: R|kotlin/String|): R|kotlin/Unit| {
+            }
+
+        @R|kotlin/Deprecated|(message = String(), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final var v6: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String()
+            }
+            public set(value: R|kotlin/String|): R|kotlin/Unit| {
+            }
+
+    }
+    public final val v1: R|kotlin/String| = String()
+        public get(): R|kotlin/String|
+    public final val v2: R|kotlin/String| = String()
+        public get(): R|kotlin/String|
+    public final var v3: R|kotlin/String| = String()
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): R|kotlin/Unit|
+    public final var v4: R|kotlin/String| = String()
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): R|kotlin/Unit|
+    public final var v5: R|kotlin/String| = String()
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): R|kotlin/Unit|
+    public final var v6: R|kotlin/String| = String()
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): R|kotlin/Unit|
+    public final fun test(c: R|C|): R|kotlin/Unit| {
+        R|kotlin/with|<R|C|, R|kotlin/Unit|>(R|<local>/c|, <L> = with@fun R|C|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/v1|
+            R|/v2|
+            R|/v3|
+            this@R|special/anonymous|.R|/C.v3| = String()
+            this@R|special/anonymous|.R|/C.v4|
+            R|/v4| = String()
+            R|/v5|
+            R|/v5| = String()
+            R|/v6|
+            R|/v6| = String()
+        }
+        )
+    }

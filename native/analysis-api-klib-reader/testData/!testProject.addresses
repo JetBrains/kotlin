@@ -1,0 +1,142 @@
+Property (rootPkgProperty)
+  Source File Name : "RootPkgCallables.kt"
+  Package Name     : ""
+  Property Name    : "rootPkgProperty"
+
+Function (rootPkgFunction)
+  Source File Name : "RootPkgCallables.kt"
+  Package Name     : ""
+  Function Name    : "rootPkgFunction"
+
+Class (RootPkgClass)
+  Source File Name : "RootPkgClass.kt"
+  Package Name     : ""
+  ClassId          : "RootPkgClass"
+
+Property (org.jetbrains.sample.constantInt)
+  Source File Name : "Constants.kt"
+  Package Name     : "org.jetbrains.sample"
+  Property Name    : "constantInt"
+
+Property (org.jetbrains.sample.constantString)
+  Source File Name : "Constants.kt"
+  Package Name     : "org.jetbrains.sample"
+  Property Name    : "constantString"
+
+Property (org.jetbrains.sample.aExtensionProperty)
+  Source File Name : "Extensions.kt"
+  Package Name     : "org.jetbrains.sample"
+  Property Name    : "aExtensionProperty"
+
+Function (org.jetbrains.sample.aExtensionFun)
+  Source File Name : "Extensions.kt"
+  Package Name     : "org.jetbrains.sample"
+  Function Name    : "aExtensionFun"
+
+Class (org.jetbrains.sample.GenericClass)
+  Source File Name : "Generics.kt"
+  Package Name     : "org.jetbrains.sample"
+  ClassId          : "org/jetbrains/sample/GenericClass"
+
+Property (org.jetbrains.sample.genericProperty)
+  Source File Name : "Generics.kt"
+  Package Name     : "org.jetbrains.sample"
+  Property Name    : "genericProperty"
+
+Function (org.jetbrains.sample.genericFun)
+  Source File Name : "Generics.kt"
+  Package Name     : "org.jetbrains.sample"
+  Function Name    : "genericFun"
+
+Class (org.jetbrains.sample.PrivateClass)
+  Source File Name : "SymbolsWithDifferentVisibilities.kt"
+  Package Name     : "org.jetbrains.sample"
+  ClassId          : "org/jetbrains/sample/PrivateClass"
+
+Class (org.jetbrains.sample.InternalClass)
+  Source File Name : "SymbolsWithDifferentVisibilities.kt"
+  Package Name     : "org.jetbrains.sample"
+  ClassId          : "org/jetbrains/sample/InternalClass"
+
+Class (org.jetbrains.sample.PublicClass)
+  Source File Name : "SymbolsWithDifferentVisibilities.kt"
+  Package Name     : "org.jetbrains.sample"
+  ClassId          : "org/jetbrains/sample/PublicClass"
+
+Function (org.jetbrains.sample.privateFun)
+  Source File Name : "SymbolsWithDifferentVisibilities.kt"
+  Package Name     : "org.jetbrains.sample"
+  Function Name    : "privateFun"
+
+Function (org.jetbrains.sample.internalFun)
+  Source File Name : "SymbolsWithDifferentVisibilities.kt"
+  Package Name     : "org.jetbrains.sample"
+  Function Name    : "internalFun"
+
+Function (org.jetbrains.sample.publicFun)
+  Source File Name : "SymbolsWithDifferentVisibilities.kt"
+  Package Name     : "org.jetbrains.sample"
+  Function Name    : "publicFun"
+
+TypeAlias (org.jetbrains.sample.TypeAliasA)
+  Package Name     : "org.jetbrains.sample"
+  ClassId          : "org/jetbrains/sample/TypeAliasA"
+
+TypeAlias (org.jetbrains.sample.TypeAliasB)
+  Package Name     : "org.jetbrains.sample"
+  ClassId          : "org/jetbrains/sample/TypeAliasB"
+
+Property (org.jetbrains.sample.a.aProperty)
+  Source File Name : "ACallables.kt"
+  Package Name     : "org.jetbrains.sample.a"
+  Property Name    : "aProperty"
+
+Function (org.jetbrains.sample.a.aFunction)
+  Source File Name : "ACallables.kt"
+  Package Name     : "org.jetbrains.sample.a"
+  Function Name    : "aFunction"
+
+Class (org.jetbrains.sample.a.AClass)
+  Source File Name : "AClass.kt"
+  Package Name     : "org.jetbrains.sample.a"
+  ClassId          : "org/jetbrains/sample/a/AClass"
+
+Class (org.jetbrains.sample.a.AObject)
+  Source File Name : "AObject.kt"
+  Package Name     : "org.jetbrains.sample.a"
+  ClassId          : "org/jetbrains/sample/a/AObject"
+
+Class (org.jetbrains.sample.b.BClass)
+  Source File Name : "BClass.kt"
+  Package Name     : "org.jetbrains.sample.b"
+  ClassId          : "org/jetbrains/sample/b/BClass"
+
+Class (org.jetbrains.sample.filePrivateSymbolsClash.A)
+  Source File Name : "A.kt"
+  Package Name     : "org.jetbrains.sample.filePrivateSymbolsClash"
+  ClassId          : "org/jetbrains/sample/filePrivateSymbolsClash/A"
+
+Property (org.jetbrains.sample.filePrivateSymbolsClash.fooProperty)
+  Source File Name : "A.kt"
+  Package Name     : "org.jetbrains.sample.filePrivateSymbolsClash"
+  Property Name    : "fooProperty"
+
+Function (org.jetbrains.sample.filePrivateSymbolsClash.foo)
+  Source File Name : "A.kt"
+  Package Name     : "org.jetbrains.sample.filePrivateSymbolsClash"
+  Function Name    : "foo"
+
+Class (org.jetbrains.sample.filePrivateSymbolsClash.B)
+  Source File Name : "B.kt"
+  Package Name     : "org.jetbrains.sample.filePrivateSymbolsClash"
+  ClassId          : "org/jetbrains/sample/filePrivateSymbolsClash/B"
+
+Property (org.jetbrains.sample.filePrivateSymbolsClash.fooProperty)
+  Source File Name : "B.kt"
+  Package Name     : "org.jetbrains.sample.filePrivateSymbolsClash"
+  Property Name    : "fooProperty"
+
+Function (org.jetbrains.sample.filePrivateSymbolsClash.foo)
+  Source File Name : "B.kt"
+  Package Name     : "org.jetbrains.sample.filePrivateSymbolsClash"
+  Function Name    : "foo"

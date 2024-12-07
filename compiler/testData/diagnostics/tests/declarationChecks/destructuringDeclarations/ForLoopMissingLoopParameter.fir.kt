@@ -1,14 +1,15 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun useDeclaredVariables() {
-    for ((a, b)<!SYNTAX!><!>) {
+    <!ITERATOR_MISSING!>for ((a, b)<!SYNTAX!><!>) {
         a
         b
-    }
+    }<!>
 }
 
 fun checkersShouldRun() {
-    for ((@A a, _)<!SYNTAX!><!>) {
+    <!ITERATOR_MISSING!>for ((@A a, _)<!SYNTAX!><!>) {
 
-    }
+    }<!>
 }
 
 annotation class A

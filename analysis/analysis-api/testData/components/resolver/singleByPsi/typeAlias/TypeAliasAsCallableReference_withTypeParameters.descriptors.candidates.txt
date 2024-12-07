@@ -1,0 +1,25 @@
+KtNameReferenceExpression(134,141): 'MyAlias'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = test.MyAlias<kotlin.String>
+          symbol = <constructor>(t: TT): test.MyClass<TT>
+          valueParameters = [
+            KaVariableSignature:
+              name = t
+              receiverType = null
+              returnType = kotlin.String
+              symbol = t: TT
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+    isInBestCandidates = true

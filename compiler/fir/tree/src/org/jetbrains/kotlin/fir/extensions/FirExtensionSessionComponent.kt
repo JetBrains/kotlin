@@ -11,7 +11,7 @@ import kotlin.reflect.KClass
 
 abstract class FirExtensionSessionComponent(session: FirSession) : FirExtension(session), FirSessionComponent {
     companion object {
-        val NAME = FirExtensionPointName("ExtensionSessionComponent")
+        val NAME: FirExtensionPointName = FirExtensionPointName("ExtensionSessionComponent")
     }
 
     final override val name: FirExtensionPointName

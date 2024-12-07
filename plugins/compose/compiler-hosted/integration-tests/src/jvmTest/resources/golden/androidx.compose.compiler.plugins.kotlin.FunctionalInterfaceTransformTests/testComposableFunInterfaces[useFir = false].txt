@@ -1,0 +1,41 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+fun interface A {
+    @Composable fun compute(value: Int): Unit
+}
+fun Example(a: A) {
+    Example { it -> a.compute(it) }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+interface A {
+  @Composable
+  abstract fun compute(value: Int, %composer: Composer?, %changed: Int)
+}
+fun Example(a: A) {
+  Example(<block>{
+    class <no name provided> : A {
+      @Composable
+      override fun compute(it: Int, %composer: Composer?, %changed: Int) {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "C(compute)<comput...>:Test.kt")
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %changed, -1, <>)
+        }
+        a.compute(it, %composer, 0b1110 and %changed)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+        %composer.endReplaceGroup()
+      }
+    }
+    <no name provided>()
+  })
+}

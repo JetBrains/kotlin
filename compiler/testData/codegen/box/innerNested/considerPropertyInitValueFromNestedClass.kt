@@ -1,4 +1,3 @@
-// ISSUE: KT-52057
 // MODULE: lib
 // FILE: Class.kt
 

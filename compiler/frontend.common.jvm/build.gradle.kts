@@ -9,9 +9,10 @@ dependencies {
     api(project(":core:deserialization.common.jvm"))
     implementation(project(":core:compiler.common.jvm"))
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    compileOnly(libs.intellij.asm)
 
     implementation(project(":core:descriptors.jvm"))
+    api(project(":compiler:psi"))
 
 }
 

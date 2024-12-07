@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test_1(cond: Boolean) {
     val x = <!NO_ELSE_IN_WHEN!>when<!> (cond) {
         true -> 1
@@ -19,7 +20,7 @@ fun test_2(cond: Boolean?) {
         false -> 2
     }
 
-    val x = when (cond) {
+    val y = when (cond) {
         true -> 1
         false -> 2
         null -> 3

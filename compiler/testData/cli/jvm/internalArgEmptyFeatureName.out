@@ -1,5 +1,2 @@
 warning: empty language feature name for internal argument '-XXLanguage:+'
-compiler/testData/cli/jvm/legacySmartCastsAfterTry.kt:8:9: error: only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type String?
-    some.length
-        ^
-COMPILATION_ERROR
+OK

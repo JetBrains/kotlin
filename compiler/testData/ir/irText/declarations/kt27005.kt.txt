@@ -1,7 +1,3 @@
-suspend fun foo() {
-  return baz<Unit>()
-}
-
 suspend fun bar(): Any {
   return baz<Any>()
 }
@@ -9,3 +5,8 @@ suspend fun bar(): Any {
 suspend fun <T : Any?> baz(): T {
   TODO()
 }
+
+suspend fun foo() {
+  return baz<Unit>()
+}
+

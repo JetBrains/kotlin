@@ -16,6 +16,7 @@ package test {
         public final val test1: () -> test.Right
         public final val test1a: () -> test.Right
         public final val test2: () -> test.Right
+        public final val test2a: () -> test.Right
         public final val </*0*/ T> kotlin.collections.List<T>.b: kotlin.Int
         public final val kotlin.Int.c: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

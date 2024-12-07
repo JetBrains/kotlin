@@ -1,0 +1,113 @@
+KtFile: 'main.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(31,43): 'package main'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(39,43): 'main'
+  NO_CANDIDATES
+
+KtImportList(45,291): 'import TopLevelObject.NestedClass'
+  NO_CANDIDATES
+
+KtImportDirective(45,78): 'import TopLevelObject.NestedClass'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(52,78): 'TopLevelObject.NestedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(52,66): 'TopLevelObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(67,78): 'NestedClass'
+  NO_CANDIDATES
+
+KtImportDirective(79,113): 'import TopLevelObject.NestedObject'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(86,113): 'TopLevelObject.NestedObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(86,100): 'TopLevelObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(101,113): 'NestedObject'
+  NO_CANDIDATES
+
+KtImportDirective(114,139): 'import TopLevelObject.foo'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(121,139): 'TopLevelObject.foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(121,135): 'TopLevelObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(136,139): 'foo'
+  NO_CANDIDATES
+
+KtImportDirective(140,165): 'import TopLevelObject.bar'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(147,165): 'TopLevelObject.bar'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(147,161): 'TopLevelObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(162,165): 'bar'
+  NO_CANDIDATES
+
+KtImportDirective(167,213): 'import TopLevelObject.NestedObject.NestedClass'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(174,213): 'TopLevelObject.NestedObject.NestedClass'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(174,201): 'TopLevelObject.NestedObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(174,188): 'TopLevelObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(189,201): 'NestedObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(202,213): 'NestedClass'
+  NO_CANDIDATES
+
+KtImportDirective(214,252): 'import TopLevelObject.NestedObject.foo'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(221,252): 'TopLevelObject.NestedObject.foo'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(221,248): 'TopLevelObject.NestedObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(221,235): 'TopLevelObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(236,248): 'NestedObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(249,252): 'foo'
+  NO_CANDIDATES
+
+KtImportDirective(253,291): 'import TopLevelObject.NestedObject.bar'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(260,291): 'TopLevelObject.NestedObject.bar'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(260,287): 'TopLevelObject.NestedObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(260,274): 'TopLevelObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(275,287): 'NestedObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(288,291): 'bar'
+  NO_CANDIDATES

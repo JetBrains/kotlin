@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.util.ConeTypeRegistry
 import org.jetbrains.kotlin.util.ArrayMap
 import org.jetbrains.kotlin.util.AttributeArrayOwner
@@ -18,11 +19,13 @@ abstract class FirDeclarationDataKey
 
 /**
  * Please note that FirDeclarationAttributes itself is thread unsafe, so when you read
- *   or write some attribute you need to ensure that this operation is safe and there
+ *   or write some attribute, you need to ensure that this operation is safe and there
  *   won't be any race condition. You can achieve this by
- * - setting attribute to declaration before it's publication (e.g. in scopes)
- * - setting attribute in one phase and reading it only in following ones (using `ensureResolve` on symbol)
- * - resetting attribute under lock over specific attribute value
+ * - setting attribute to declaration before its publication (e.g., in scopes)
+ * - setting/resetting attribute in one phase and reading it only in following ones (using [org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase] on a symbol)
+ * - custom lock schema
+ *
+ * @see AttributeArrayOwner
  */
 class FirDeclarationAttributes : AttributeArrayOwner<FirDeclarationDataKey, Any> {
     override val typeRegistry: TypeRegistry<FirDeclarationDataKey, Any>
@@ -54,6 +57,11 @@ object FirDeclarationDataRegistry : ConeTypeRegistry<FirDeclarationDataKey, Any>
         return DeclarationDataAccessor(generateAnyNullableAccessor(kClass), kClass)
     }
 
+    fun <K : FirDeclarationDataKey> symbolAccessor(key: K): SymbolDataAccessor {
+        val kClass = key::class
+        return SymbolDataAccessor(generateAnyNullableAccessor(kClass), kClass)
+    }
+
     fun <K : FirDeclarationDataKey, V : Any> attributesAccessor(key: K): ReadWriteProperty<FirDeclarationAttributes, V?> {
         val kClass = key::class
         return AttributeDataAccessor(generateNullableAccessor(kClass), kClass)
@@ -70,6 +78,16 @@ object FirDeclarationDataRegistry : ConeTypeRegistry<FirDeclarationDataKey, Any>
 
         operator fun <V> setValue(thisRef: FirDeclaration, property: KProperty<*>, value: V?) {
             thisRef.attributes[key] = value
+        }
+    }
+
+    class SymbolDataAccessor(
+        private val dataAccessor: NullableArrayMapAccessor<FirDeclarationDataKey, Any, *>,
+        val key: KClass<out FirDeclarationDataKey>
+    ) {
+        operator fun <V> getValue(thisRef: FirBasedSymbol<*>, property: KProperty<*>): V? {
+            @Suppress("UNCHECKED_CAST")
+            return dataAccessor.getValue(thisRef.fir.attributes, property) as? V
         }
     }
 

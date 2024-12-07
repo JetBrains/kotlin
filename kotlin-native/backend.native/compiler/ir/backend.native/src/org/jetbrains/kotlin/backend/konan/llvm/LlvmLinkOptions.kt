@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.LLVMAddNamedMetadataOperand
+import llvm.LLVMContextRef
 import llvm.LLVMModuleRef
 
-fun embedLlvmLinkOptions(module: LLVMModuleRef, options: List<List<String>>) {
+fun embedLlvmLinkOptions(llvmContext: LLVMContextRef, module: LLVMModuleRef, options: List<List<String>>) {
     options.forEach {
-        val node = node(*it.map { it.mdString() }.toTypedArray())
+        val node = node(llvmContext, *it.map { it.mdString(llvmContext) }.toTypedArray())
         LLVMAddNamedMetadataOperand(module, "llvm.linker.options", node)
     }
 }

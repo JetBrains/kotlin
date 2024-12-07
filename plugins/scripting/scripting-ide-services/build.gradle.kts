@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 description = "Kotlin Scripting Compiler extension providing code completion and static analysis"
 
@@ -18,11 +19,11 @@ dependencies {
     api(project(":kotlin-scripting-jvm"))
     compileOnly(project(":kotlin-scripting-compiler"))
     compileOnly(project(":compiler:cli"))
-    compileOnly(project(":kotlin-reflect-api"))
+    compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     compileOnly(intellijCore())
     publishedRuntime(project(":kotlin-compiler"))
     publishedRuntime(project(":kotlin-scripting-compiler"))
-    publishedRuntime(project(":kotlin-reflect"))
+    publishedRuntime(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     publishedRuntime(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
 }
 
@@ -31,11 +32,13 @@ sourceSets {
     "test" { }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-    kotlinOptions {
-        freeCompilerArgs += "-Xskip-metadata-version-check"
-        freeCompilerArgs += "-Xallow-kotlin-package"
-    }
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.addAll(
+        listOf(
+            "-Xskip-metadata-version-check",
+            "-Xallow-kotlin-package",
+        )
+    )
 }
 
 standardPublicJars()

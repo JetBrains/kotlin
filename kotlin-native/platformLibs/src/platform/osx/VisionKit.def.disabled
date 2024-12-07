@@ -1,0 +1,9 @@
+depends = posix
+language = Objective-C
+package = platform.VisionKit
+
+modules = VisionKit
+compilerOpts = -framework VisionKit
+linkerOpts = -framework VisionKit
+
+# Not available in Xcode 14 RC.

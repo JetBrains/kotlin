@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM
+
 // FILE: test.kt
 fun shouldContinue(i: Int) = i < 1
 
@@ -16,7 +16,7 @@ fun box() {
   } while (x < z)
 }
 
-// EXPECTATIONS
+// EXPECTATIONS JVM_IR
 // test.kt:6 box:
 // test.kt:8 box: x:int=0:int
 // test.kt:9 box: x:int=0:int, z:int=2:int
@@ -31,3 +31,21 @@ fun box() {
 // test.kt:15 box: x:int=2:int, z:int=2:int
 // test.kt:16 box: x:int=2:int, z:int=2:int
 // test.kt:17 box: x:int=2:int
+
+// EXPECTATIONS JS_IR
+// test.kt:6 box:
+// test.kt:8 box: x=0:number
+// test.kt:9 box: x=0:number, z=2:number
+// test.kt:9 box: x=0:number, z=2:number
+// test.kt:9 box: x=1:number, z=2:number
+// test.kt:3 shouldContinue: i=0:number
+// test.kt:10 box: x=1:number, z=2:number
+// test.kt:16 box: x=1:number, z=2:number
+// test.kt:8 box: x=1:number, z=2:number
+// test.kt:9 box: x=1:number, z=2:number
+// test.kt:9 box: x=1:number, z=2:number
+// test.kt:9 box: x=2:number, z=2:number
+// test.kt:3 shouldContinue: i=1:number
+// test.kt:15 box: x=2:number, z=2:number
+// test.kt:16 box: x=2:number, z=2:number, y=12:number
+// test.kt:17 box: x=2:number, z=2:number, y=12:number

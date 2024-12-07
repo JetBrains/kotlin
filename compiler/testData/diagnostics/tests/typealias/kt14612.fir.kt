@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-14612
 
-typealias S = @S Suppress
+typealias S = <!RECURSIVE_TYPEALIAS_EXPANSION!>@S Suppress<!>

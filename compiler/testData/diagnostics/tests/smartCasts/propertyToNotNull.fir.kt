@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class Immutable(val x: String?) {
     fun foo(): String {
         if (x != null) return x

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.classId
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder.Result.KotlinClass
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import java.io.InputStream
@@ -18,15 +19,16 @@ class DirectoryBasedClassFinder(
     val packageDirectory: VirtualFile,
     val directoryPackageFqName: FqName
 ) : KotlinClassFinder {
-    override fun findKotlinClassOrContent(javaClass: JavaClass): KotlinClassFinder.Result? = findKotlinClassOrContent(javaClass.classId!!)
+    override fun findKotlinClassOrContent(javaClass: JavaClass, metadataVersion: MetadataVersion): KotlinClassFinder.Result? =
+        findKotlinClassOrContent(javaClass.classId!!, metadataVersion)
 
-    override fun findKotlinClassOrContent(classId: ClassId): KotlinClassFinder.Result? {
+    override fun findKotlinClassOrContent(classId: ClassId, metadataVersion: MetadataVersion): KotlinClassFinder.Result? {
         if (classId.packageFqName != directoryPackageFqName) {
             return null
         }
         val targetName = classId.relativeClassName.pathSegments().joinToString("$", postfix = ".class")
         val virtualFile = packageDirectory.findChild(targetName)
-        if (virtualFile != null && isKotlinWithCompatibleAbiVersion(virtualFile)) {
+        if (virtualFile != null && isKotlinWithCompatibleAbiVersion(virtualFile, metadataVersion)) {
             return ClsKotlinBinaryClassCache.getInstance().getKotlinBinaryClass(virtualFile)?.let(::KotlinClass)
         }
         return null
@@ -34,6 +36,9 @@ class DirectoryBasedClassFinder(
 
     // TODO
     override fun findMetadata(classId: ClassId): InputStream? = null
+
+    // TODO
+    override fun findMetadataTopLevelClassesInPackage(packageFqName: FqName): Set<String>? = null
 
     // TODO
     override fun hasMetadataPackage(fqName: FqName): Boolean = false
@@ -45,12 +50,12 @@ class DirectoryBasedClassFinder(
 /**
  * Checks if this file is a compiled Kotlin class file ABI-compatible with the current plugin
  */
-private fun isKotlinWithCompatibleAbiVersion(file: VirtualFile): Boolean {
+private fun isKotlinWithCompatibleAbiVersion(file: VirtualFile, metadataVersion: MetadataVersion): Boolean {
     val clsKotlinBinaryClassCache = ClsKotlinBinaryClassCache.getInstance()
     if (!clsKotlinBinaryClassCache.isKotlinJvmCompiledFile(file)) return false
 
     val kotlinClass = clsKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(file)
-    return kotlinClass != null && kotlinClass.metadataVersion.isCompatible()
+    return kotlinClass != null && kotlinClass.metadataVersion.isCompatible(metadataVersion)
 }
 
 

@@ -1,5 +1,5 @@
 FILE: enumValuesDeserialized.kt
     public final fun test(): R|kotlin/Unit| {
-        lval values: R|kotlin/Array<kotlin/annotation/AnnotationTarget>| = Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.values|()
-        lval entry: R|kotlin/annotation/AnnotationTarget| = Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.valueOf|(String(CLASS))
+        lval values: R|kotlin/Array<kotlin/annotation/AnnotationTarget>| = Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.values*s|()
+        lval entry: R|kotlin/annotation/AnnotationTarget| = Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.valueOf*s|(String(CLASS))
     }

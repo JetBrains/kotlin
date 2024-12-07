@@ -5,9 +5,7 @@ annotation class base
 annotation class derived
 
 @base
-class correct {
-  constructor(@base x: Int)
-
+class correct(x: Int) {
   @base
   constructor()
 
@@ -17,8 +15,8 @@ class correct {
 
 @base
 enum class My {
-  FIRST,
-  SECOND
+  @base FIRST,
+  @base SECOND
 }
 
 @base

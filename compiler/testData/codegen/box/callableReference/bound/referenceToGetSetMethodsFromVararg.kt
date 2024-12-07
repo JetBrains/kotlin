@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
+// JVM_ABI_K1_K2_DIFF: KT-70625 K2 generates more correct signatures of callable references
 
 import kotlin.test.assertEquals
 

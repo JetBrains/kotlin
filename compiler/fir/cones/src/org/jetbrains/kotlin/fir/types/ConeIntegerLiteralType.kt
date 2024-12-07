@@ -5,16 +5,14 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
-
 sealed class ConeIntegerLiteralType(
     val isUnsigned: Boolean,
-    final override val nullability: ConeNullability
-) : ConeSimpleKotlinType(), TypeConstructorMarker {
+    val isMarkedNullable: Boolean,
+) : ConeSimpleKotlinType(), ConeTypeConstructorMarker {
     abstract val possibleTypes: Collection<ConeClassLikeType>
     abstract val supertypes: List<ConeClassLikeType>
 
-    final override val typeArguments: Array<out ConeTypeProjection> = emptyArray()
+    final override val typeArguments: Array<out ConeTypeProjection> get() = EMPTY_ARRAY
     final override val attributes: ConeAttributes get() = ConeAttributes.Empty
 
     abstract fun getApproximatedType(expectedType: ConeKotlinType? = null): ConeClassLikeType
@@ -27,13 +25,13 @@ sealed class ConeIntegerLiteralType(
 
         if (isUnsigned != other.isUnsigned) return false
         if (possibleTypes != other.possibleTypes) return false
-        if (nullability != other.nullability) return false
+        if (isMarkedNullable != other.isMarkedNullable) return false
 
         return true
     }
 
     final override fun hashCode(): Int {
-        return 31 * possibleTypes.hashCode() + nullability.hashCode()
+        return 31 * possibleTypes.hashCode() + isMarkedNullable.hashCode()
     }
 
     companion object
@@ -42,10 +40,10 @@ sealed class ConeIntegerLiteralType(
 abstract class ConeIntegerLiteralConstantType(
     val value: Long,
     isUnsigned: Boolean,
-    nullability: ConeNullability
-) : ConeIntegerLiteralType(isUnsigned, nullability)
+    isMarkedNullable: Boolean
+) : ConeIntegerLiteralType(isUnsigned, isMarkedNullable)
 
 abstract class ConeIntegerConstantOperatorType(
     isUnsigned: Boolean,
-    nullability: ConeNullability
-) : ConeIntegerLiteralType(isUnsigned, nullability)
+    isMarkedNullable: Boolean
+) : ConeIntegerLiteralType(isUnsigned, isMarkedNullable)

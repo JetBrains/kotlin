@@ -36,6 +36,31 @@ swiftLauncher.addBase(name: "createMultigraphOfInt", benchmark: companion.create
         lambda: { ($0 as! SwiftInteropBenchmarks).stringInterop() }))
     swiftLauncher.addBase(name: "simpleFunction", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).simpleFunction() }))
+swiftLauncher.addBase(
+    name: "WeakRefBenchmark.aliveReference",
+    benchmark: BenchmarkEntryWithInitAndValidation.companion.create(
+        ctor: { return WeakRefBenchmark() },
+        benchmark: { ($0 as! WeakRefBenchmark).aliveReference() },
+        validation: { ($0 as! WeakRefBenchmark).clean() }
+    )
+)
+swiftLauncher.addBase(
+    name: "WeakRefBenchmark.deadReference",
+    benchmark: BenchmarkEntryWithInitAndValidation.companion.create(
+        ctor: { return WeakRefBenchmark() },
+        benchmark: { ($0 as! WeakRefBenchmark).deadReference() },
+        validation: { ($0 as! WeakRefBenchmark).clean() }
+    )
+)
+swiftLauncher.addBase(
+    name: "WeakRefBenchmark.dyingReference",
+    benchmark: BenchmarkEntryWithInitAndValidation.companion.create(
+        ctor: { return WeakRefBenchmark() },
+        benchmark: { ($0 as! WeakRefBenchmark).dyingReference() },
+        validation: { ($0 as! WeakRefBenchmark).clean() }
+    )
+)
+
 runner.runBenchmarks(args: args, run: { (arguments: BenchmarkArguments) -> [BenchmarkResult] in
     if arguments is BaseBenchmarkArguments {
         let argumentsList: BaseBenchmarkArguments = arguments as! BaseBenchmarkArguments

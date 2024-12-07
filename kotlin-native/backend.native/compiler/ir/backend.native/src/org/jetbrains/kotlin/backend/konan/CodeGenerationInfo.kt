@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
 
 /**
  * We don't need to generate RTTI in some cases, e.g. Objective-C external classes.

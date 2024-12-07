@@ -9,9 +9,15 @@ import org.jetbrains.kotlin.wasm.ir.WasmOp
 import java.io.File
 import java.io.FileWriter
 
+fun main() {
+    val targetDir = File("libraries/stdlib/wasm/src/generated/wasm/internal/")
+    generateWasmOps(targetDir)
+    generateWasmArrays(targetDir)
+}
 
-fun FileWriter.generateStandardWasmInternalHeader() {
-    appendLine(File("license/COPYRIGHT.txt").readText())
+private fun FileWriter.generateStandardWasmInternalHeader() {
+    appendLine(File("license/COPYRIGHT_HEADER.txt").readText())
+    appendLine()
     appendLine("package kotlin.wasm.internal")
     appendLine()
     appendLine("//")
@@ -20,7 +26,7 @@ fun FileWriter.generateStandardWasmInternalHeader() {
     appendLine()
 }
 
-fun generateWasmOps(targetDir: File) {
+private fun generateWasmOps(targetDir: File) {
     FileWriter(targetDir.resolve("_WasmOp.kt")).use { writer ->
         writer.generateStandardWasmInternalHeader()
         writer.appendLine(
@@ -45,7 +51,7 @@ fun generateWasmOps(targetDir: File) {
     }
 }
 
-fun generateWasmArrays(targetDir: File) {
+private fun generateWasmArrays(targetDir: File) {
     FileWriter(targetDir.resolve("_WasmArrays.kt")).use { writer ->
         writer.generateStandardWasmInternalHeader()
 
@@ -78,7 +84,7 @@ fun generateWasmArrays(targetDir: File) {
     }
 }
 
-fun wasmArrayForType(
+private fun wasmArrayForType(
     klass: String,
     isNullable: Boolean,
     isPacked: Boolean = false,
@@ -92,6 +98,7 @@ fun wasmArrayForType(
         else -> ""
     }
     return """
+            @Suppress("UNUSED_PARAMETER")
             @WasmArrayOf($klass::class, isNullable = $isNullable)
             internal class $name(size: Int) {
                 @WasmOp(WasmOp.ARRAY_GET${getSuffix})
@@ -106,6 +113,11 @@ fun wasmArrayForType(
                 fun len(): Int =
                     implementedAsIntrinsic
             }
+            
+            @Suppress("NOTHING_TO_INLINE")
+            internal inline fun copyWasmArray(source: $name, destination: $name, sourceIndex: Int, destinationIndex: Int, length: Int) {
+                wasm_array_copy<$name>(destination, destinationIndex, source, sourceIndex, length)
+            }
     
             internal inline fun $name.fill(size: Int, init: (Int) -> $type) {
                 var i = 0
@@ -116,10 +128,4 @@ fun wasmArrayForType(
             }
             
             """.trimIndent()
-}
-
-fun main() {
-    val targetDir = File("libraries/stdlib/wasm/src/generated")
-    generateWasmOps(targetDir)
-    generateWasmArrays(targetDir)
 }

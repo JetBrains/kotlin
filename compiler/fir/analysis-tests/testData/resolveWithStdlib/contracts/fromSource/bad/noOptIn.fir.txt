@@ -1,0 +1,29 @@
+FILE: noOptIn.kt
+    public final fun checkIsString(x: R|kotlin/Any|): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(TRUE) -> x is kotlin/String
+            Returns(FALSE) -> x !is kotlin/String
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|((R|<local>/x| is R|kotlin/String|))
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(false)).R|kotlin/contracts/SimpleEffect.implies|((R|<local>/x| !is R|kotlin/String|))
+            }
+            )
+        }
+
+        ^checkIsString (R|<local>/x| is R|kotlin/String|)
+    }
+    public final fun test(x: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            R|/checkIsString|(R|<local>/x|) ->  {
+                R|<local>/x|.R|kotlin/String.length|
+            }
+            else ->  {
+                R|<local>/x|.<Unresolved name: length>#
+            }
+        }
+
+    }

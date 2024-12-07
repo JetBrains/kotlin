@@ -1,0 +1,30 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : l2.0.kt -> l2.kt
+    added file: l2.kt
+STEP 1..2:
+    dependencies: lib1
+    updated imports: l2.kt
+STEP 3:
+    dependencies: lib1
+    modifications:
+        U : l2.3.kt -> l2.kt
+    modified ir: l2.kt
+    expected dts: l2.3.d.ts
+STEP 4:
+    dependencies: lib1
+    updated imports: l2.kt
+    expected dts: l2.3.d.ts
+STEP 5:
+    dependencies: lib1
+    modifications:
+        U : l2.5.kt -> l2.kt
+    modified ir: l2.kt
+    expected dts: l2.5.d.ts
+STEP 6:
+    dependencies: lib1
+    modifications:
+        U : l2.6.kt -> l2.kt
+    modified ir: l2.kt
+    expected dts: l2.6.d.ts

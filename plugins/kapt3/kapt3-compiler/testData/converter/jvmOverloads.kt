@@ -1,4 +1,3 @@
-
 class State @JvmOverloads constructor(
         val someInt: Int,
         val someLong: Long,

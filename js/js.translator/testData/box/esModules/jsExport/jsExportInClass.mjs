@@ -1,4 +1,4 @@
-import { A, B } from "./main/index.js";
+import { A, B } from "./jsExportInClass_v5.mjs";
 
 export default function() {
     return {

@@ -7,28 +7,36 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:util"))
-    api(project(":compiler:cli"))
-    api(project(":compiler:backend"))
-    api(project(":compiler:frontend"))
-    api(project(":compiler:frontend.java"))
-    api(project(":compiler:plugin-api"))
-    implementation(project(":compiler:backend.jvm.entrypoint"))
-
-    compileOnly(toolsJarApi())
+    compileOnly(project(":compiler:util"))
+    compileOnly(project(":compiler:cli"))
+    compileOnly(project(":compiler:backend"))
+    compileOnly(project(":compiler:backend.jvm.entrypoint"))
+    compileOnly(project(":compiler:frontend"))
+    compileOnly(project(":compiler:frontend.java"))
+    compileOnly(project(":compiler:plugin-api"))
+    compileOnly(project(":compiler:fir:fir2ir:jvm-backend"))
     compileOnly(project(":kotlin-annotation-processing-cli"))
     compileOnly(project(":kotlin-annotation-processing-base"))
     compileOnly(project(":kotlin-annotation-processing-runtime"))
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    compileOnly(toolsJarApi())
+    compileOnly(libs.intellij.asm)
 
     testImplementation(intellijCore())
     testRuntimeOnly(intellijResources()) { isTransitive = false }
 
-    testApi(projectTests(":compiler:tests-common"))
+    testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
+    testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
+
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testApi(projectTests(":compiler:tests-common-new"))
+    testApi(projectTests(":compiler:test-infrastructure"))
+    testApi(projectTests(":compiler:test-infrastructure-utils"))
+
     testApi(project(":kotlin-annotation-processing-base"))
     testApi(projectTests(":kotlin-annotation-processing-base"))
-    testApi(commonDependency("junit:junit"))
     testApi(project(":kotlin-annotation-processing-runtime"))
 
     testCompileOnly(toolsJarApi())
@@ -37,23 +45,43 @@ dependencies {
     embedded(project(":kotlin-annotation-processing-runtime")) { isTransitive = false }
     embedded(project(":kotlin-annotation-processing-cli")) { isTransitive = false }
     embedded(project(":kotlin-annotation-processing-base")) { isTransitive = false }
+
+    testApi(project(":tools:kotlinp-jvm"))
+    testApi(project(":kotlin-metadata-jvm"))
 }
+
+optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" {
+        projectDefault()
+        generatedTestDir()
+    }
 }
 
 testsJar {}
 
-projectTest(parallel = true) {
-    workingDir = rootDir
-    dependsOn(":dist")
+kaptTestTask("test", JavaLanguageVersion.of(8))
+kaptTestTask("testJdk11", JavaLanguageVersion.of(11))
+kaptTestTask("testJdk17", JavaLanguageVersion.of(17))
+kaptTestTask("testJdk21", JavaLanguageVersion.of(21))
+
+fun Project.kaptTestTask(name: String, javaLanguageVersion: JavaLanguageVersion) {
+    val service = extensions.getByType<JavaToolchainService>()
+
+    projectTest(taskName = name, parallel = true) {
+        useJUnitPlatform {
+            excludeTags = setOf("IgnoreJDK11")
+        }
+        workingDir = rootDir
+        dependsOn(":dist")
+        javaLauncher.set(service.launcherFor { languageVersion.set(javaLanguageVersion) })
+    }
 }
 
 publish()
 
 runtimeJar()
-
 sourcesJar()
 javadocJar()

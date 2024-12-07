@@ -182,6 +182,10 @@ internal open class ProcessedFilesCache(
         file: File,
         compute: () -> File?
     ): String? {
+        if (!file.exists()) {
+            return null
+        }
+
         val hash = fileHasher.hash(file).toByteArray()
         val old = state[hash]
 
@@ -198,7 +202,7 @@ internal open class ProcessedFilesCache(
                 state.remove(existedTarget)
             }
         }
-        state[hash] = Element(file.canonicalPath, key)
+        state[hash] = Element(file.normalize().absolutePath, key)
 
         return key
     }

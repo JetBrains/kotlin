@@ -4,8 +4,6 @@ plugins {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    
-    implementation 'com.google.dagger:dagger:2.9'
-    kapt 'com.google.dagger:dagger-compiler:2.9'
+    implementation 'com.google.dagger:dagger:2.52'
+    kapt 'com.google.dagger:dagger-compiler:2.52'
 }

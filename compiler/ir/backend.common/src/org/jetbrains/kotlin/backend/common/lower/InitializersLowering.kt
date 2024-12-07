@@ -23,7 +23,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-class InitializersLowering(context: CommonBackendContext) : InitializersLoweringBase(context), BodyLoweringPass {
+/**
+ * Merges init block and field initializers into constructors.
+ */
+open class InitializersLowering(context: CommonBackendContext) : InitializersLoweringBase(context), BodyLoweringPass {
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile, true)
     }
@@ -90,8 +93,10 @@ abstract class InitializersLoweringBase(open val context: CommonBackendContext) 
         }
 }
 
-// Remove anonymous initializers and set field initializers to `null`
-class InitializersCleanupLowering(
+/**
+ * Removes anonymous initializers and sets field initializers to `null`.
+ */
+open class InitializersCleanupLowering(
     val context: CommonBackendContext,
     private val shouldEraseFieldInitializer: (IrField) -> Boolean = { it.correspondingPropertySymbol?.owner?.isConst != true }
 ) : DeclarationTransformer {
@@ -106,9 +111,11 @@ class InitializersCleanupLowering(
             } else {
                 declaration.initializer?.let {
                     declaration.initializer =
-                        context.irFactory.createExpressionBody(it.startOffset, it.endOffset) {
-                            expression = it.expression.deepCopyWithSymbols()
-                        }
+                        context.irFactory.createExpressionBody(
+                            startOffset = it.startOffset,
+                            endOffset = it.endOffset,
+                            expression = it.expression.deepCopyWithSymbols(),
+                        )
                 }
             }
         }

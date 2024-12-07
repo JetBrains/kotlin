@@ -7,6 +7,7 @@ apply plugin: 'maven-publish'
 def complexLibAttribute = Attribute.of('org.jetbrains.qa.complexlib', String)
 
 kotlin {
+    jvmToolchain(8)
     jvm("jvmWithJava") {
         withJava()
         attributes { attribute(complexLibAttribute, 'jvmWithJava') }
@@ -23,7 +24,7 @@ kotlin {
         }
     }
     // This is for iPhone emulator
-    // Switch here to iosArm64 (or iosArm32) to build library for iPhone device
+    // Switch here to iosArm64 to build library for iPhone device
     iosX64("iosSimLib") {
         binaries {
             // framework()
@@ -39,7 +40,7 @@ kotlin {
     targets.all {
         compilations.all {
             kotlinOptions {
-                freeCompilerArgs += ["-progressive", "-XXLanguage:+NewInference", "-XXLanguage:+SamConversionForKotlinFunctions", "-opt-in=kotlin.ExperimentalMultiplatform", "-Xskip-prerelease-check"]
+                freeCompilerArgs += ["-progressive", "-XXLanguage:+SamConversionForKotlinFunctions", "-opt-in=kotlin.ExperimentalMultiplatform", "-Xskip-prerelease-check"]
             }
         }
     }

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // MODULE: m1
 // FILE: a.kt
 
@@ -31,6 +32,7 @@ import p.*
 
 fun test(a: A) {
     a.m1()
+    a.<!UNRESOLVED_REFERENCE!>m2<!>()
 
     M1().a.m1()
 

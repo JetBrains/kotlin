@@ -1,5 +1,6 @@
 // IGNORE_BACKEND: JVM
 // KT-44234
+// JVM_ABI_K1_K2_DIFF: KT-63850, KT-63984
 
 class App {
     val context: Context = Context()

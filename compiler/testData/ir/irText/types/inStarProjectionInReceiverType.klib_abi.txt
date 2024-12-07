@@ -1,0 +1,14 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract interface <#A: in kotlin/Any?> /Foo { // /Foo|null[0]
+    abstract val x // /Foo.x|{}x[0]
+        abstract fun <get-x>(): kotlin/Int // /Foo.x.<get-x>|<get-x>(){}[0]
+    abstract fun foo(#A) // /Foo.foo|foo(1:0){}[0]
+}
+final fun (/Foo<*>)./testReceiver(): kotlin/Int // /testReceiver|testReceiver@Foo<*>(){}[0]
+final fun (/Foo<*>)./testSmartCastOnExtensionReceiver() // /testSmartCastOnExtensionReceiver|testSmartCastOnExtensionReceiver@Foo<*>(){}[0]
+final fun /testValueParameter(/Foo<*>): kotlin/Int // /testValueParameter|testValueParameter(Foo<*>){}[0]

@@ -1,4 +1,3 @@
-// DONT_TARGET_EXACT_BACKEND: JS
 
 import kotlin.js.Console
 

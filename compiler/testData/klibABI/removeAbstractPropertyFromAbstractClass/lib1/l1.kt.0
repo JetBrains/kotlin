@@ -1,5 +1,0 @@
-package lib1
-
-abstract class A {
-    abstract val foo: Int
-}

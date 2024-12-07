@@ -26,11 +26,11 @@ private const val twom54 = 5.55111512312578270212e-17 /* 0x3C900000, 0x00000000 
 private const val huge = 1.0e+300
 private const val tiny = 1.0e-300
 
-internal fun scalbn(x: Double, n: Int): Double {
-    var x: Double = x
-    var k: Int = 0
-    var hx: Int = 0
-    var lx: Int = 0
+internal fun scalbn(_x: Double, n: Int): Double {
+    var x: Double = _x
+    var k: Int
+    var hx: Int
+    var lx: Int
     hx = __HI(x)
     lx = __LO(x)
     k = ((hx and 0x7ff00000) shr 20)        /* extract exponent */

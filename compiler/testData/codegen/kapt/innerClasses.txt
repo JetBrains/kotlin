@@ -2,6 +2,7 @@
 public final class test/TopLevel$Companion {
     // source: 'innerClasses.kt'
     private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final method a(): void
     public synthetic deprecated static @kotlin.jvm.JvmStatic method getQ$annotations(): void
     public final @org.jetbrains.annotations.NotNull method getQ(): java.lang.String
@@ -18,6 +19,7 @@ public interface test/TopLevel$InnerInterface {
 public final class test/TopLevel$InnerObject {
     // source: 'innerClasses.kt'
     public final static @org.jetbrains.annotations.NotNull field INSTANCE: test.TopLevel$InnerObject
+    static method <clinit>(): void
     private method <init>(): void
     public final inner class test/TopLevel$InnerObject
 }
@@ -46,6 +48,7 @@ public final class test/TopLevel {
     private final static @org.jetbrains.annotations.NotNull field q: java.lang.String
     private final @org.jetbrains.annotations.NotNull field x: java.lang.String
     private final field y: int
+    static method <clinit>(): void
     public method <init>(): void
     public final method b(): void
     public final static @org.jetbrains.annotations.NotNull method getQ(): java.lang.String

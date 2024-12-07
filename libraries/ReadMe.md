@@ -20,8 +20,6 @@ You can work with the maven modules of this maven project in IDEA from the [root
 
 ### Building
 
-You need to install a recent (at least 3.3) [Maven](https://maven.apache.org/) distribution.
-
 Before building this Maven project you need to build and install the required artifacts built with Gradle to the local maven repository, by issuing the following command in the root project:
 
     ./gradlew install
@@ -34,7 +32,7 @@ See also [root ReadMe.md, section "Building"](../ReadMe.md#building).
 
 Then you can build maven artifacts with Maven:
 
-    mvn install
+    ./mvnw install
 
 If your maven build is failing with Out-Of-Memory errors, set JVM options for maven in `MAVEN_OPTS` environment variable like this:
 

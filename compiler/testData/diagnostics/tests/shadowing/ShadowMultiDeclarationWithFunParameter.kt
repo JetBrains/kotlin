@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class A {
     operator fun component1() = 42
     operator fun component2() = 42

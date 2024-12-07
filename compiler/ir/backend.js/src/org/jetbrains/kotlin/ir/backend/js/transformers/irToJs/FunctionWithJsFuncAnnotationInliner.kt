@@ -6,70 +6,46 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.compilationException
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsFunAnnotation
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.js.backend.ast.*
 
 class FunctionWithJsFuncAnnotationInliner(private val jsFuncCall: IrCall, private val context: JsGenerationContext) {
     private val function = getJsFunctionImplementation()
     private val replacements = collectReplacementsForCall()
 
-    fun generateResultStatement(): List<JsStatement> {
-        return function.body.statements
-            .run {
-                SimpleJsCodeInliner(replacements)
-                    .apply { acceptList(this@run) }
-                    .withTemporaryVariablesForExpressions(this)
-            }
-    }
+    fun generateResultStatement(): List<JsStatement> =
+        function.body.statements.also {
+            JsNameRemappingTransformer(replacements).apply { acceptList(it) }
+        }
 
-    private fun getJsFunctionImplementation(): JsFunction {
-        val code = jsFuncCall.symbol.owner.getJsFunAnnotation() ?: compilationException("JsFun annotation is expected", jsFuncCall)
-        val statements = parseJsCode(code) ?: compilationException("Cannot compute js code", jsFuncCall)
-        return statements.singleOrNull()
-            ?.let { it as? JsExpressionStatement }
-            ?.let { it.expression as? JsFunction } ?: compilationException("Provided js code is not a js function", jsFuncCall.symbol.owner)
-    }
+    private fun getJsFunctionImplementation(): JsFunction =
+        context.staticContext.backendContext.getJsCodeForFunction(jsFuncCall.symbol)?.deepCopy()
+            ?: compilationException("JS function not found", jsFuncCall)
 
     private fun collectReplacementsForCall(): Map<JsName, JsExpression> {
-        val translatedArguments = Array(jsFuncCall.valueArgumentsCount) {
-            jsFuncCall.getValueArgument(it)!!.accept(IrElementToJsExpressionTransformer(), context)
+        val translatedArguments = List(jsFuncCall.valueArgumentsCount) {
+            jsFuncCall.getValueArgument(it)!!
+                .accept(IrElementToJsExpressionTransformer(), context)
         }
         return function.parameters
-            .mapIndexed { i, param -> param.name to translatedArguments[i] }
+            .map { it.name }
+            .zip(translatedArguments)
             .toMap()
     }
 }
 
-private class SimpleJsCodeInliner(private val replacements: Map<JsName, JsExpression>): RecursiveJsVisitor() {
-    private val temporaryNamesForExpressions = mutableMapOf<JsName, JsExpression>()
+private class JsNameRemappingTransformer(private val replacements: Map<JsName, JsExpression>) : JsVisitorWithContextImpl() {
+    private val JsName.replacement: JsExpression? get() = replacements[this]
 
-    fun withTemporaryVariablesForExpressions(statements: List<JsStatement>): List<JsStatement> {
-        if (temporaryNamesForExpressions.isEmpty()) {
-            return statements
+    override fun visit(nameRef: JsNameRef, ctx: JsContext<JsNode>): Boolean {
+        super.visit(nameRef, ctx)
+        if (nameRef.qualifier != null) return true
+        val replacement = nameRef.name?.replacement ?: return true
+        if (replacement.source == null) {
+            replacement.source = nameRef.source
         }
-
-        val variableDeclarations = temporaryNamesForExpressions.map { JsVars(JsVars.JsVar(it.key, it.value)) }
-        return variableDeclarations + statements
-    }
-
-    override fun visitNameRef(nameRef: JsNameRef) {
-        super.visitNameRef(nameRef)
-        if (nameRef.qualifier != null) return
-        nameRef.name = nameRef.name?.getReplacement() ?: return
-    }
-
-    private fun JsName.declareNewTemporaryFor(expression: JsExpression): JsName {
-        return JsName(ident, true)
-            .also { temporaryNamesForExpressions[it] = expression }
-    }
-
-    private fun JsName.getReplacement(): JsName? {
-        val expression = replacements[this] ?: return null
-        return when {
-            expression is JsNameRef && expression.qualifier == null -> expression.name!!
-            else -> declareNewTemporaryFor(expression)
-        }
+        ctx.replaceMe(replacement)
+        return false
     }
 }

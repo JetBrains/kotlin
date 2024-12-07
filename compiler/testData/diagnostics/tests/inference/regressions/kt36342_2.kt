@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun <K> id(arg: K): K = arg
 fun <M> materialize(): M = TODO()
 

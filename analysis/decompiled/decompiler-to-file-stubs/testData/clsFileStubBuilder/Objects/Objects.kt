@@ -5,6 +5,8 @@ public object Objects {
     fun f() {
     }
 
+    fun g() = 1
+
     private object InnerObject : A {
         val c = 0
 

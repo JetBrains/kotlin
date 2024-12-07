@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface IrElement
 
 fun IrElement.dumpKotlinLike(options: String = ""): String = ""

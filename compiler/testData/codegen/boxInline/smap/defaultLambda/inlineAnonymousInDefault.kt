@@ -1,7 +1,6 @@
 // SEPARATE_SMAP_DUMPS
 // SKIP_INLINE_CHECK_IN: lParams$default
-// IGNORE_BACKEND: JS
-
+// IGNORE_INLINER: IR
 // FILE: 1.kt
 
 package test
@@ -28,8 +27,9 @@ package test
 //A lot of blank lines [Don't delete]
 //A lot of blank lines [Don't delete]
 //A lot of blank lines [Don't delete]
+//A lot of blank lines [Don't delete]
 
-inline fun kValue(crossinline s: () -> String) = { s() + "K" }()
+inline fun kValue(crossinline s: () -> String): String { val lambda = { s() + "K" }; return lambda() }
 
 inline fun lParams(initParams: () -> String = {
     "" + kValue { "O" }

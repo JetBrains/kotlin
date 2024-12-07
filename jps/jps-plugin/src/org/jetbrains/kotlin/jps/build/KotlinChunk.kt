@@ -135,14 +135,12 @@ class KotlinChunk internal constructor(val context: KotlinCompileContext, val ta
     }
 
     val isEnabled: Boolean by lazy {
-        representativeTarget.isEnabled(compilerArguments)
+        representativeTarget.isEnabled(lazy { compilerArguments })
     }
 
     fun shouldRebuild(): Boolean {
-        val buildMetaInfo = representativeTarget.buildMetaInfoFactory.create(compilerArguments)
-
         targets.forEach { target ->
-            if (target.isVersionChanged(this, buildMetaInfo)) {
+            if (target.isVersionChanged(this, compilerArguments)) {
                 KotlinBuilder.LOG.info("$target version changed, rebuilding $this")
                 return true
             }
@@ -157,10 +155,10 @@ class KotlinChunk internal constructor(val context: KotlinCompileContext, val ta
         return false
     }
 
-    fun buildMetaInfoFile(target: ModuleBuildTarget): Path = context.dataPaths
+    fun compilerArgumentsFile(target: ModuleBuildTarget): Path = context.dataPaths
         .getTargetDataRoot(target)
         .toPath()
-        .resolve(representativeTarget.buildMetaInfoFileName)
+        .resolve(representativeTarget.compilerArgumentsFileName)
 
     fun saveVersions() {
         context.ensureLookupsCacheAttributesSaved()
@@ -169,10 +167,10 @@ class KotlinChunk internal constructor(val context: KotlinCompileContext, val ta
             it.initialLocalCacheAttributesDiff.manager.writeVersion()
         }
 
-        val serializedMetaInfo = representativeTarget.buildMetaInfoFactory.serializeToString(compilerArguments)
-
+        val serializedCompilerArguments = representativeTarget.buildMetaInfo.serializeArgsToString(compilerArguments)
         targets.forEach { target ->
-            Files.newOutputStream(buildMetaInfoFile(target.jpsModuleBuildTarget)).bufferedWriter().use { it.append(serializedMetaInfo) }
+            Files.newOutputStream(compilerArgumentsFile(target.jpsModuleBuildTarget)).bufferedWriter()
+                .use { it.append(serializedCompilerArguments) }
         }
     }
 

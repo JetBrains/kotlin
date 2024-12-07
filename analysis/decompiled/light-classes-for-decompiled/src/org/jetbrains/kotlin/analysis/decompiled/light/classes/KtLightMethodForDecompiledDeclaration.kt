@@ -1,4 +1,7 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/*
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
 package org.jetbrains.kotlin.analysis.decompiled.light.classes
 
@@ -8,12 +11,11 @@ import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.LightMemberOriginForCompiledMethod
+import org.jetbrains.kotlin.asJava.checkIsMangled
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.asJava.propertyNameByAccessor
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.psi.KtDeclaration
 
 class KtLightMethodForDecompiledDeclaration(
@@ -69,7 +71,8 @@ class KtLightMethodForDecompiledDeclaration(
     override fun findSuperMethodSignaturesIncludingStatic(checkAccess: Boolean): List<MethodSignatureBackedByPsiMethod> =
         PsiSuperMethodImplUtil.findSuperMethodSignaturesIncludingStatic(this, checkAccess)
 
-    override fun findDeepestSuperMethod() = PsiSuperMethodImplUtil.findDeepestSuperMethod(this)
+    @Deprecated("Deprecated in Java")
+    override fun findDeepestSuperMethod(): PsiMethod? = PsiSuperMethodImplUtil.findDeepestSuperMethod(this)
 
     override fun findDeepestSuperMethods(): Array<out PsiMethod> = PsiSuperMethodImplUtil.findDeepestSuperMethods(this)
 
@@ -84,7 +87,8 @@ class KtLightMethodForDecompiledDeclaration(
     override fun getSignature(substitutor: PsiSubstitutor): MethodSignature =
         MethodSignatureBackedByPsiMethod.create(this, substitutor)
 
-    override fun equals(other: Any?): Boolean = other is KtLightMethodForDecompiledDeclaration &&
+    override fun equals(other: Any?): Boolean = other === this ||
+            other is KtLightMethodForDecompiledDeclaration &&
             name == other.name &&
             funParent == other.funParent &&
             funDelegate == other.funDelegate
@@ -97,13 +101,21 @@ class KtLightMethodForDecompiledDeclaration(
 
     override fun toString(): String = "${this.javaClass.simpleName} of $funParent"
 
-    override val clsDelegate: PsiMethod = funDelegate
-
     override fun isValid(): Boolean = parent.isValid
-}
 
-private fun KtLightMethod.checkIsMangled(): Boolean {
-    val demangledName = KotlinTypeMapper.InternalNameMapper.demangleInternalName(name) ?: return false
-    val originalName = propertyNameByAccessor(demangledName, this) ?: demangledName
-    return originalName == kotlinOrigin?.name
+    override fun getOriginalElement() = funDelegate
+
+    override fun isEquivalentTo(another: PsiElement?): Boolean {
+        return this == another ||
+                another is KtLightMethodForDecompiledDeclaration && funDelegate.isEquivalentTo(another.funDelegate) ||
+                funDelegate.isEquivalentTo(another)
+    }
+
+    override fun accept(visitor: PsiElementVisitor) {
+        if (visitor is JavaElementVisitor) {
+            visitor.visitMethod(this)
+        } else {
+            visitor.visitElement(this)
+        }
+    }
 }

@@ -6,12 +6,15 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":compiler:backend"))
-    compileOnly(project(":compiler:ir.backend.common"))
+    api(project(":compiler:ir.backend.common"))
+    api(project(":core:descriptors"))
+    implementation(project(":compiler:frontend.java"))
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    compileOnly(libs.intellij.asm)
     implementation(kotlinStdlib())
 }
+
+optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
     "main" { projectDefault() }

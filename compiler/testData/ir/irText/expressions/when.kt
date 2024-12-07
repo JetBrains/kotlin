@@ -1,5 +1,4 @@
 // WITH_STDLIB
-
 object A
 
 fun testWithSubject(x: Any?) =

@@ -8,13 +8,20 @@ description = "Common klib reader and writer"
 dependencies {
     api(kotlinStdlib())
     api(project(":kotlin-util-io"))
-    testImplementation(commonDependency("junit:junit"))
+
+    compileOnly(project(":core:metadata"))
+
+    embedded(project(":core:metadata")) { isTransitive = false }
+
+    testImplementation(libs.junit4)
 }
 
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
 }
+
+configureKotlinCompileTasksGradleCompatibility()
 
 publish()
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,81 +20,21 @@ package kotlin.collections
  */
 public actual abstract class AbstractMutableMap<K, V> protected actual constructor() : AbstractMap<K, V>(), MutableMap<K, V> {
 
-    /**
-     * A mutable [Map.Entry] shared by several [Map] implementations.
-     */
-    internal open class SimpleEntry<K, V>(override val key: K, value: V) : MutableMap.MutableEntry<K, V> {
-        constructor(entry: Map.Entry<K, V>) : this(entry.key, entry.value)
+    internal open fun createKeysView(): MutableSet<K> = HashMapKeysDefault(this)
+    internal open fun createValuesView(): MutableCollection<V> = HashMapValuesDefault(this)
 
-        private var _value = value
+    private var keysView: MutableSet<K>? = null
+    private var valuesView: MutableCollection<V>? = null
 
-        override val value: V get() = _value
+    actual override val keys: MutableSet<K>
+        get() = keysView ?: createKeysView().also { keysView = it }
 
-        override fun setValue(newValue: V): V {
-            // Should check if the map containing this entry is mutable.
-            // However, to not increase entry memory footprint it might be worthwhile not to check it here and
-            // force subclasses that implement `build()` (freezing) operation to implement their own `MutableEntry`.
-//            this@AbstractMutableMap.checkIsMutable()
-            val oldValue = this._value
-            this._value = newValue
-            return oldValue
-        }
-
-        override fun hashCode(): Int = entryHashCode(this)
-        override fun toString(): String = entryToString(this)
-        override fun equals(other: Any?): Boolean = entryEquals(this, other)
-
-    }
-
-    // intermediate abstract class to workaround KT-43321
-    internal abstract class AbstractEntrySet<E : Map.Entry<K, V>, K, V> : AbstractMutableSet<E>() {
-        final override fun contains(element: E): Boolean = containsEntry(element)
-        abstract fun containsEntry(element: Map.Entry<K, V>): Boolean
-        final override fun remove(element: E): Boolean = removeEntry(element)
-        abstract fun removeEntry(element: Map.Entry<K, V>): Boolean
-    }
+    actual override val values: MutableCollection<V>
+        get() = valuesView ?: createValuesView().also { valuesView = it }
 
     actual override fun clear() {
         entries.clear()
     }
-
-    private var _keys: MutableSet<K>? = null
-    actual override val keys: MutableSet<K>
-        get() {
-            if (_keys == null) {
-                _keys = object : AbstractMutableSet<K>() {
-                    override fun add(element: K): Boolean = throw UnsupportedOperationException("Add is not supported on keys")
-                    override fun clear() {
-                        this@AbstractMutableMap.clear()
-                    }
-
-                    override operator fun contains(element: K): Boolean = containsKey(element)
-
-                    override operator fun iterator(): MutableIterator<K> {
-                        val entryIterator = entries.iterator()
-                        return object : MutableIterator<K> {
-                            override fun hasNext(): Boolean = entryIterator.hasNext()
-                            override fun next(): K = entryIterator.next().key
-                            override fun remove() = entryIterator.remove()
-                        }
-                    }
-
-                    override fun remove(element: K): Boolean {
-                        checkIsMutable()
-                        if (containsKey(element)) {
-                            this@AbstractMutableMap.remove(element)
-                            return true
-                        }
-                        return false
-                    }
-
-                    override val size: Int get() = this@AbstractMutableMap.size
-
-                    override fun checkIsMutable(): Unit = this@AbstractMutableMap.checkIsMutable()
-                }
-            }
-            return _keys!!
-        }
 
     actual abstract override fun put(key: K, value: V): V?
 
@@ -104,33 +44,6 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
             put(key, value)
         }
     }
-
-    private var _values: MutableCollection<V>? = null
-    actual override val values: MutableCollection<V>
-        get() {
-            if (_values == null) {
-                _values = object : AbstractMutableCollection<V>() {
-                    override fun add(element: V): Boolean = throw UnsupportedOperationException("Add is not supported on values")
-                    override fun clear() = this@AbstractMutableMap.clear()
-
-                    override operator fun contains(element: V): Boolean = containsValue(element)
-
-                    override operator fun iterator(): MutableIterator<V> {
-                        val entryIterator = entries.iterator()
-                        return object : MutableIterator<V> {
-                            override fun hasNext(): Boolean = entryIterator.hasNext()
-                            override fun next(): V = entryIterator.next().value
-                            override fun remove() = entryIterator.remove()
-                        }
-                    }
-
-                    override val size: Int get() = this@AbstractMutableMap.size
-
-                    override fun checkIsMutable(): Unit = this@AbstractMutableMap.checkIsMutable()
-                }
-            }
-            return _values!!
-        }
 
     actual override fun remove(key: K): V? {
         checkIsMutable()
@@ -152,5 +65,5 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
      * This method is called every time when a mutating method is called on this mutable map.
      * Mutable maps that are built (frozen) must throw `UnsupportedOperationException`.
      */
-    internal open fun checkIsMutable(): Unit {}
+    internal open fun checkIsMutable() {}
 }

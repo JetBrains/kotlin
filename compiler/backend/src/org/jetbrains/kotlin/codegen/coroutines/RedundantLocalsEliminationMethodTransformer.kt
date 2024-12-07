@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.codegen.coroutines
 
+import org.jetbrains.kotlin.codegen.asSequence
 import org.jetbrains.kotlin.codegen.optimization.boxing.isUnitInstance
 import org.jetbrains.kotlin.codegen.optimization.common.FastMethodAnalyzer
-import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.common.removeAll
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.LabelNode
@@ -73,8 +72,9 @@ private class UnitSourceInterpreter(private val localVariables: Set<Int>) : Basi
     // Map from unit values to ASTORE/POP use-sites.
     val unitUsageInformation = mutableMapOf<AbstractInsnNode, MutableSet<AbstractInsnNode>>()
 
-    private fun markUnspillable(value: BasicValue?) =
-        value?.safeAs<UnitValue>()?.let { unspillableUnitValues += it.insns }
+    private fun markUnspillable(value: BasicValue?) {
+        (value as? UnitValue)?.let { unspillableUnitValues += it.insns }
+    }
 
     private fun collectUnitUsage(use: AbstractInsnNode, value: UnitValue) {
         for (def in value.insns) {
@@ -90,7 +90,9 @@ private class UnitSourceInterpreter(private val localVariables: Set<Int>) : Basi
         for ((insn, frame) in methodNode.instructions.asSequence().zip(frames.asSequence())) {
             if (frame != null && insn.opcode == Opcodes.POP) {
                 val value = frame.top()
-                value.safeAs<UnitValue>()?.let { collectUnitUsage(insn, it) }
+                if (value is UnitValue) {
+                    collectUnitUsage(insn, value)
+                }
             }
         }
         return frames

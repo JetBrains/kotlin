@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -33,7 +34,9 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
 ) {
     private val annotationDeserializer = AnnotationDeserializer(module, notFoundClasses)
 
-    override fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): AnnotationDescriptor =
+    override var metadataVersion: MetadataVersion = MetadataVersion.INSTANCE
+
+    override fun loadAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): AnnotationDescriptor =
         annotationDeserializer.deserializeAnnotation(proto, nameResolver)
 
     override fun loadConstant(desc: String, initializer: Any): ConstantValue<*>? {
@@ -50,7 +53,7 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
             initializer
         }
 
-        return ConstantValueFactory.createConstantValue(normalizedValue)
+        return ConstantValueFactory.createConstantValue(normalizedValue, module)
     }
 
     override fun transformToUnsignedConstant(constant: ConstantValue<*>): ConstantValue<*>? {
@@ -216,11 +219,26 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
     }
 
     private fun createConstant(name: Name?, value: Any?): ConstantValue<*> {
-        return ConstantValueFactory.createConstantValue(value)
+        return ConstantValueFactory.createConstantValue(value, module)
             ?: ErrorValue.create("Unsupported annotation argument: $name")
     }
 
     private fun resolveClass(classId: ClassId): ClassDescriptor {
         return module.findNonGenericClassAcrossDependencies(classId, notFoundClasses)
     }
+}
+
+// Note: this function is needed because we cannot pass MetadataVersion
+// directly to the BinaryClassAnnotationAndConstantLoaderImpl constructor.
+// This constructor is used by dependency injection.
+fun createBinaryClassAnnotationAndConstantLoader(
+    module: ModuleDescriptor,
+    notFoundClasses: NotFoundClasses,
+    storageManager: StorageManager,
+    kotlinClassFinder: KotlinClassFinder,
+    metadataVersion: MetadataVersion
+): BinaryClassAnnotationAndConstantLoaderImpl = BinaryClassAnnotationAndConstantLoaderImpl(
+    module, notFoundClasses, storageManager, kotlinClassFinder
+).apply {
+    this.metadataVersion = metadataVersion
 }

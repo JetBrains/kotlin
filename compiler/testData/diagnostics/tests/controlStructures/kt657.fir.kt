@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-657 Semantic checks for when without condition
 package kt657
 
@@ -9,9 +10,9 @@ fun foo() =
         cond2() -> 2
         <!CONDITION_TYPE_MISMATCH!>4<!> -> 34
         <!CONDITION_TYPE_MISMATCH, TYPE_MISMATCH!>Pair(1, 2)<!> -> 3
-        <!EXPECTED_CONDITION!>in 1..10<!> -> 34
+        <!ARGUMENT_TYPE_MISMATCH, EXPECTED_CONDITION!>in 1..10<!> -> 34
         <!CONDITION_TYPE_MISMATCH!>4<!> -> 38
-        <!EXPECTED_CONDITION!>is Int<!> -> 33
+        <!EXPECTED_CONDITION, USELESS_IS_CHECK!>is Int<!> -> 33
         else -> 34
     }
 

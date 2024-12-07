@@ -5,17 +5,15 @@
 
 package org.jetbrains.kotlin.lombok
 
-import com.intellij.mock.MockProject
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.lombok.LombokConfigurationKeys.CONFIG_FILE
 import org.jetbrains.kotlin.lombok.LombokPluginNames.CONFIG_OPTION_NAME
 import org.jetbrains.kotlin.lombok.LombokPluginNames.PLUGIN_ID
@@ -23,26 +21,28 @@ import org.jetbrains.kotlin.lombok.k2.FirLombokRegistrar
 import org.jetbrains.kotlin.resolve.jvm.extensions.SyntheticJavaResolveExtension
 import java.io.File
 
-class LombokComponentRegistrar : ComponentRegistrar {
-
+class LombokComponentRegistrar : CompilerPluginRegistrar() {
     companion object {
-        fun registerComponents(project: Project, compilerConfiguration: CompilerConfiguration) {
+        fun registerComponents(extensionStorage: ExtensionStorage, compilerConfiguration: CompilerConfiguration) = with(extensionStorage) {
             val configFile = compilerConfiguration[CONFIG_FILE]
             val config = LombokPluginConfig(configFile)
-            SyntheticJavaResolveExtension.registerExtension(project, LombokResolveExtension(config))
-            FirExtensionRegistrar.registerExtension(project, FirLombokRegistrar(configFile))
+            SyntheticJavaResolveExtension.registerExtension(LombokResolveExtension(config))
+            FirExtensionRegistrarAdapter.registerExtension(FirLombokRegistrar(configFile))
         }
     }
 
-    override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-            ?.report(
+    override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
+        configuration.messageCollector
+            .report(
                 CompilerMessageSeverity.WARNING,
                 "Lombok Kotlin compiler plugin is an experimental feature." +
                         " See: https://kotlinlang.org/docs/components-stability.html."
             )
-        registerComponents(project, configuration)
+        registerComponents(this, configuration)
     }
+
+    override val supportsK2: Boolean
+        get() = true
 }
 
 object LombokConfigurationKeys {

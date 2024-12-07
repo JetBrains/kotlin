@@ -17,6 +17,7 @@ kotlin {
         useCommonJs()
         binaries.executable()
         nodejs {
+            passProcessArgvToMainFunction()
         }
     }
 }

@@ -42,13 +42,14 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
-import org.jetbrains.kotlin.resolve.calls.util.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
+import org.jetbrains.kotlin.resolve.calls.util.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
@@ -68,6 +69,7 @@ import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
@@ -365,7 +367,7 @@ public class DescriptorResolver {
             // of containing class where, it can not find a descriptor with special name.
             // Thus, to preserve behavior, we don't use a special name for val/var.
             parameterName = !valueParameter.hasValOrVar() && UnderscoreUtilKt.isSingleUnderscore(valueParameter)
-                            ? Name.special("<anonymous parameter " + index + ">")
+                            ? SpecialNames.anonymousParameterName(index)
                             : KtPsiUtil.safeName(valueParameter.getName());
         }
         else {
@@ -975,18 +977,18 @@ public class DescriptorResolver {
         }
 
         List<KtContextReceiver> contextReceivers = variableDeclaration.getContextReceivers();
-        List<ReceiverParameterDescriptor> contextReceiverDescriptors = contextReceivers.stream()
-                .map(contextReceiver -> {
-                    KtTypeReference typeReference = contextReceiver.typeReference();
-                    if (typeReference == null) {
-                        return null;
-                    }
-                    KotlinType type = typeResolver.resolveType(scopeForDeclarationResolutionWithTypeParameters, typeReference, trace, true);
-                    AnnotationSplitter splitter = new AnnotationSplitter(storageManager, type.getAnnotations(), EnumSet.of(RECEIVER));
-                    return DescriptorFactory.createContextReceiverParameterForCallable(
-                            propertyDescriptor, type, splitter.getAnnotationsForTarget(RECEIVER)
-                    );
-                }).collect(Collectors.toList());
+        List<ReceiverParameterDescriptor> contextReceiverDescriptors = IntStream.range(0, contextReceivers.size()).mapToObj(index -> {
+            KtContextReceiver contextReceiver = contextReceivers.get(index);
+            KtTypeReference typeReference = contextReceiver.typeReference();
+            if (typeReference == null) {
+                return null;
+            }
+            KotlinType type = typeResolver.resolveType(scopeForDeclarationResolutionWithTypeParameters, typeReference, trace, true);
+            AnnotationSplitter splitter = new AnnotationSplitter(storageManager, type.getAnnotations(), EnumSet.of(RECEIVER));
+            return DescriptorFactory.createContextReceiverParameterForCallable(
+                    propertyDescriptor, type, contextReceiver.labelNameAsName(), splitter.getAnnotationsForTarget(RECEIVER), index
+            );
+        }).collect(Collectors.toList());
 
         if (languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
             Multimap<String, ReceiverParameterDescriptor> nameToReceiverMap = HashMultimap.create();
@@ -1094,6 +1096,23 @@ public class DescriptorResolver {
                     substitutedSuperType = approximatingSuperType;
                 }
 
+                UnwrappedType unwrapped = type.unwrap();
+                boolean lowerNullable = FlexibleTypesKt.lowerIfFlexible(unwrapped).isMarkedNullable();
+                boolean upperNullable = FlexibleTypesKt.upperIfFlexible(unwrapped).isMarkedNullable();
+                if (languageVersionSettings.supportsFeature(LanguageFeature.KeepNullabilityWhenApproximatingLocalType)) {
+                    if (lowerNullable != upperNullable) {
+                        return KotlinTypeFactory.flexibleType(
+                                FlexibleTypesKt.lowerIfFlexible(substitutedSuperType),
+                                FlexibleTypesKt.upperIfFlexible(substitutedSuperType).makeNullableAsSpecified(true));
+                    }
+                    return TypeUtils.makeNullableIfNeeded(substitutedSuperType, upperNullable);
+                } else if (upperNullable) {
+                    if (lowerNullable) {
+                        trace.report(APPROXIMATED_LOCAL_TYPE_WILL_BECOME_NULLABLE.on(declaration, substitutedSuperType));
+                    } else {
+                        trace.report(APPROXIMATED_LOCAL_TYPE_WILL_BECOME_FLEXIBLE.on(declaration, substitutedSuperType));
+                    }
+                }
                 return substitutedSuperType;
             }
             else {
@@ -1223,7 +1242,6 @@ public class DescriptorResolver {
             getterType = determineGetterReturnType(
                     scopeForDeclarationResolution, trace, getterDescriptor, getter, propertyTypeIfKnown, inferenceSession
             );
-            trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
         }
         else {
             getterDescriptor = DescriptorFactory.createGetter(
@@ -1235,6 +1253,10 @@ public class DescriptorResolver {
         }
 
         getterDescriptor.initialize(getterType != null ? getterType : VariableTypeAndInitializerResolver.getTypeForPropertyWithoutReturnType(propertyDescriptor.getName().asString()));
+
+        if (getter != null) {
+            trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
+        }
 
         return getterDescriptor;
     }

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.typeUtil.builtIns
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 private val EXPERIMENTAL_CONTINUATION_FQ_NAME = FqName("kotlin.coroutines.experimental.Continuation")
@@ -126,7 +125,8 @@ class TypeDeserializer(
             else ->
                 KotlinTypeFactory.simpleType(attributes, constructor, arguments, proto.nullable).let {
                     if (Flags.DEFINITELY_NOT_NULL_TYPE.get(proto.flags))
-                        DefinitelyNotNullType.makeDefinitelyNotNull(it) ?: error("null DefinitelyNotNullType for '$it'")
+                        DefinitelyNotNullType.makeDefinitelyNotNull(it, useCorrectedNullabilityForTypeParameters = true)
+                            ?: error("null DefinitelyNotNullType for '$it'")
                     else
                         it
                 }
@@ -137,11 +137,6 @@ class TypeDeserializer(
             simpleType.withAbbreviation(simpleType(it, expandTypeAliases = false))
         } ?: simpleType
 
-        if (proto.hasClassName()) {
-            val classId = c.nameResolver.getClassId(proto.className)
-            return c.components.platformDependentTypeTransformer.transformPlatformType(classId, computedType)
-        }
-
         return computedType
     }
 
@@ -149,7 +144,7 @@ class TypeDeserializer(
         fun notFoundClass(classIdIndex: Int): ClassDescriptor {
             val classId = c.nameResolver.getClassId(classIdIndex)
             val typeParametersCount = generateSequence(proto) { it.outerType(c.typeTable) }.map { it.argumentCount }.toMutableList()
-            val classNestingLevel = generateSequence(classId, ClassId::getOuterClassId).count()
+            val classNestingLevel = generateSequence(classId, ClassId::outerClassId).count()
             while (typeParametersCount.size < classNestingLevel) {
                 typeParametersCount.add(0)
             }
@@ -232,7 +227,7 @@ class TypeDeserializer(
         val suspendReturnType = continuationArgumentType.arguments.single().type
 
         // Load kotlin.suspend as accepting and returning suspend function type independent of its version requirement
-        if (c.containingDeclaration.safeAs<CallableDescriptor>()?.fqNameOrNull() == KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME) {
+        if ((c.containingDeclaration as? CallableDescriptor)?.fqNameOrNull() == KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME) {
             return createSimpleSuspendFunctionType(funType, suspendReturnType)
         }
 

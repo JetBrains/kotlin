@@ -1,0 +1,14 @@
+KaUsualClassType:
+  annotations: []
+  typeArguments: [
+    KaTypeParameterType:
+      annotations: []
+      type: D
+    KaTypeParameterType:
+      annotations: []
+      type: E
+    KaTypeParameterType:
+      annotations: []
+      type: F
+  ]
+  type: <local>/LocalClass.LocalInner1.LocalInner2<D, E, F, B, C, A>

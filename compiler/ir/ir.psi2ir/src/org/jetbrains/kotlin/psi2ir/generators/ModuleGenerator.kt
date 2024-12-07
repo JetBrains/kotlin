@@ -17,30 +17,28 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.ir.PsiIrFileEntry
+import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.linkage.IrProvider
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.transformations.insertImplicitCasts
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-open class ModuleGenerator(
-    override val context: GeneratorContext,
-    private val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>? = null
-) : Generator {
+open class ModuleGenerator(override val context: GeneratorContext) : Generator {
 
     open fun generateModuleFragment(ktFiles: Collection<KtFile>): IrModuleFragment =
-        IrModuleFragmentImpl(context.moduleDescriptor, context.irBuiltIns).also { irModule ->
+        IrModuleFragmentImpl(context.moduleDescriptor).also { irModule ->
             ktFiles.toSet().mapTo(irModule.files) { ktFile ->
                 val fileContext = context.createFileScopeContext(ktFile)
                 val irDeclarationGenerator = DeclarationGenerator(fileContext)
@@ -69,11 +67,14 @@ open class ModuleGenerator(
 
         irFile.patchDeclarationParents()
 
-        if (expectDescriptorToSymbol != null) {
-            referenceExpectsForUsedActuals(expectDescriptorToSymbol, context.symbolTable, irFile)
-        }
-
         IrSyntheticDeclarationGenerator(context).generateSyntheticDeclarations(irFile)
+
+        if (context.configuration.skipBodies) {
+            // In KAPT3 mode (skipBodies = true), we create stub IR for error class, so that it would be possible to have annotations
+            // with unresolved types in the IR and they could survive all transformations up until the codegen.
+            // This is a hack which should preferably be removed as soon as KAPT3 is no longer used.
+            createStubIrForErrorClass()
+        }
 
         insertImplicitCasts(irFile, context)
         context.callToSubstitutedDescriptorMap.clear()
@@ -85,11 +86,33 @@ open class ModuleGenerator(
         return irFile
     }
 
-     fun createEmptyIrFile(ktFile: KtFile, module: IrModuleFragment): IrFileImpl {
+    private fun createEmptyIrFile(ktFile: KtFile, module: IrModuleFragment): IrFileImpl {
         val fileEntry = PsiIrFileEntry(ktFile)
         val packageFragmentDescriptor = context.moduleDescriptor.findPackageFragmentForFile(ktFile)!!
         return IrFileImpl(fileEntry, packageFragmentDescriptor, module).apply {
             metadata = DescriptorMetadataSource.File(CodegenUtil.getMemberDescriptorsToGenerate(ktFile, context.bindingContext))
         }
+    }
+
+    private fun createStubIrForErrorClass() {
+        val fakeFileEntry = object : IrFileEntry {
+            override val name: String = "<error-class>"
+            override val maxOffset: Int = UNDEFINED_OFFSET
+
+            override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo = TODO("Not yet implemented")
+            override fun getLineNumber(offset: Int): Int = TODO("Not yet implemented")
+            override fun getColumnNumber(offset: Int): Int = TODO("Not yet implemented")
+            override fun getLineAndColumnNumbers(offset: Int): LineAndColumn = TODO("Not yet implemented")
+        }
+        val fakeFile = IrFileImpl(
+            fakeFileEntry,
+            EmptyPackageFragmentDescriptor(context.moduleDescriptor, FqName(fakeFileEntry.name)),
+        )
+        val gen = SyntheticDeclarationsGenerator(context)
+        gen.visitClassDescriptor(ErrorUtils.errorClass, fakeFile)
+        gen.visitConstructorDescriptor(
+            ErrorUtils.errorClass.unsubstitutedPrimaryConstructor!!,
+            context.symbolTable.descriptorExtension.referenceClass(ErrorUtils.errorClass).owner,
+        )
     }
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 fun f(a: Array<out Number>) = a.isArrayOf<Int>()
 

@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.jps.targets
 import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.kotlin.build.BuildMetaInfo
-import org.jetbrains.kotlin.build.BuildMetaInfoFactory
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.jps.build.KotlinCompileContext
 import org.jetbrains.kotlin.jps.build.KotlinDirtySourceFilesHolder
 import org.jetbrains.kotlin.jps.incremental.JpsIncrementalCache
 import org.jetbrains.kotlin.jps.model.platform
+import org.jetbrains.kotlin.jps.statistic.JpsBuilderMetricReporter
 import org.jetbrains.kotlin.platform.idePlatformKind
 
 class KotlinUnsupportedModuleBuildTarget(
@@ -25,7 +25,7 @@ class KotlinUnsupportedModuleBuildTarget(
 
     private fun shouldNotBeCalled(): Nothing = error("Should not be called")
 
-    override fun isEnabled(chunkCompilerArguments: CommonCompilerArguments): Boolean {
+    override fun isEnabled(chunkCompilerArguments: Lazy<CommonCompilerArguments>): Boolean {
         return false
     }
 
@@ -41,7 +41,8 @@ class KotlinUnsupportedModuleBuildTarget(
     override fun compileModuleChunk(
         commonArguments: CommonCompilerArguments,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
-        environment: JpsCompilerEnvironment
+        environment: JpsCompilerEnvironment,
+        buildMetricReporter: JpsBuilderMetricReporter?
     ): Boolean {
         shouldNotBeCalled()
     }
@@ -50,9 +51,9 @@ class KotlinUnsupportedModuleBuildTarget(
         shouldNotBeCalled()
     }
 
-    override val buildMetaInfoFactory: BuildMetaInfoFactory<BuildMetaInfo>
+    override val compilerArgumentsFileName: String
         get() = shouldNotBeCalled()
 
-    override val buildMetaInfoFileName: String
+    override val buildMetaInfo: BuildMetaInfo
         get() = shouldNotBeCalled()
 }

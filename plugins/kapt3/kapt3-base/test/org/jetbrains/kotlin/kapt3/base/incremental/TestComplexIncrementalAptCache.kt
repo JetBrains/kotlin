@@ -3,16 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kapt.base.test.org.jetbrains.kotlin.kapt3.base.incremental
+package org.jetbrains.kotlin.kapt3.base.incremental
 
-import org.jetbrains.kotlin.kapt3.base.incremental.JavaClassCacheManager
-import org.jetbrains.kotlin.kapt3.base.incremental.MentionedTypesTaskListener
-import org.jetbrains.kotlin.kapt3.base.incremental.SourceFileStructure
-import org.junit.Assert.assertEquals
-import org.junit.BeforeClass
-import org.junit.ClassRule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.jetbrains.kotlin.kapt3.base.newCacheFolder
+import org.jetbrains.kotlin.kapt3.base.newGeneratedSourcesFolder
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 private val MY_TEST_DIR = File("plugins/kapt3/kapt3-base/testData/runner/incremental/complex")
@@ -20,18 +18,14 @@ private val MY_TEST_DIR = File("plugins/kapt3/kapt3-base/testData/runner/increme
 class TestComplexIncrementalAptCache {
 
     companion object {
-        @ClassRule
-        @JvmField
-        var tmp = TemporaryFolder()
-
         private lateinit var cache: JavaClassCacheManager
         private lateinit var generatedSources: File
 
         @JvmStatic
-        @BeforeClass
-        fun setUp() {
-            cache = JavaClassCacheManager(tmp.newFolder())
-            generatedSources = tmp.newFolder()
+        @BeforeAll
+        fun setUp(@TempDir tmp: File) {
+            cache = JavaClassCacheManager(tmp.newCacheFolder())
+            generatedSources = tmp.newGeneratedSourcesFolder()
             cache.close()
             val processor = SimpleProcessor().toAggregating()
             val srcFiles = listOf(

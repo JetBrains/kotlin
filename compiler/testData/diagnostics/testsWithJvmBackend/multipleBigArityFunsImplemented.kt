@@ -1,5 +1,6 @@
-// TARGET_BACKEND: JVM_OLD
-class <!CONFLICTING_JVM_DECLARATIONS!>Fun<!> :
+// FIR_IDENTICAL
+
+<!CONFLICTING_INHERITED_JVM_DECLARATIONS!>class Fun :
         (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int,
          Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) -> Int,
         (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int,
@@ -17,4 +18,4 @@ class <!CONFLICTING_JVM_DECLARATIONS!>Fun<!> :
         p20: Int, p21: Int, p22: Int, p23: Int, p24: Int, p25: Int, p26: Int, p27: Int, p28: Int, p29: Int,
         p30: Int, p31: Int, p32: Int
     ): Int = 333
-}
+}<!>

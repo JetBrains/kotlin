@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 open class Outer<T> {
     class Nested<U> : Outer<U>() {

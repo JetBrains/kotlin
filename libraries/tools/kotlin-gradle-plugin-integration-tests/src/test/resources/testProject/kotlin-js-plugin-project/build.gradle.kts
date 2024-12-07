@@ -43,7 +43,7 @@ kotlin.target.compilations.create("benchmark") {
     defaultSourceSet.dependencies {
         val main by kotlin.target.compilations
         implementation(main.compileDependencyFiles + main.output.classesDirs)
-        runtimeOnly(main.runtimeDependencyFiles)
+        runtimeOnly(files(main.runtimeDependencyFiles))
     }
 }
 
@@ -51,7 +51,6 @@ publishing {
     publications {
         create("default", MavenPublication::class.java) {
             from(components.getByName("kotlin"))
-            artifact(tasks.getByName("kotlinSourcesJar"))
         }
     }
     repositories {

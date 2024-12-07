@@ -33,7 +33,7 @@ class AllOpenGradleSubplugin
             return project.extensions.getByType(AllOpenExtension::class.java)
         }
 
-        private const val ALLOPEN_ARTIFACT_NAME = "kotlin-allopen"
+        private const val ALLOPEN_ARTIFACT_NAME = "kotlin-allopen-compiler-plugin-embeddable"
 
         private const val ANNOTATION_ARG_NAME = "annotation"
         private const val PRESET_ARG_NAME = "preset"

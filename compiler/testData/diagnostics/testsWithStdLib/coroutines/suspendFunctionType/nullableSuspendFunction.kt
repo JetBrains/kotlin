@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 val test1: (suspend () -> Unit)? = null
 val test2: <!WRONG_MODIFIER_TARGET!>suspend<!> (() -> Unit)? = null

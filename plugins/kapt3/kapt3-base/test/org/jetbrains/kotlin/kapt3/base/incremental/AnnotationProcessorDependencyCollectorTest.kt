@@ -3,13 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kapt.base.test.org.jetbrains.kotlin.kapt3.base.incremental
+package org.jetbrains.kotlin.kapt3.base.incremental
 
-import org.jetbrains.kotlin.kapt3.base.incremental.AnnotationProcessorDependencyCollector
-import org.jetbrains.kotlin.kapt3.base.incremental.RuntimeProcType
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import java.io.File
 
 class AnnotationProcessorDependencyCollectorTest {
@@ -30,7 +28,7 @@ class AnnotationProcessorDependencyCollectorTest {
         isolating.add(File("GeneratedA.java").toURI(), emptyArray(), null)
 
         assertEquals(isolating.getRuntimeType(), RuntimeProcType.NON_INCREMENTAL)
-        assertEquals(isolating.getGeneratedToSources(), emptyMap<File, File?>())
+        assertEquals(isolating.getGeneratedToSources(), emptyMap<File, String?>())
         assertTrue(warnings.single().contains("Expected 1 originating source file when generating"))
     }
 
@@ -41,7 +39,7 @@ class AnnotationProcessorDependencyCollectorTest {
         nonIncremental.add(File("GeneratedB.java").toURI(), emptyArray(), null)
 
         assertEquals(nonIncremental.getRuntimeType(), RuntimeProcType.NON_INCREMENTAL)
-        assertEquals(nonIncremental.getGeneratedToSources(), emptyMap<File, File?>())
+        assertEquals(nonIncremental.getGeneratedToSources(), emptyMap<File, String?>())
     }
 }
 

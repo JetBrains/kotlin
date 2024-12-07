@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //  Anonymous object's initialization does not affect smart casts
 
 abstract class A(val s: String) {

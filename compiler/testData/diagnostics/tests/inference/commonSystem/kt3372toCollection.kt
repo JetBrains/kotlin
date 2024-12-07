@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// CHECK_TYPE
 // KT-3372 Use upper bound in type argument inference
 
 import java.util.HashSet

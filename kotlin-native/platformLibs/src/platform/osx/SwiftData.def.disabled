@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.SwiftData
+
+modules = SwiftData
+compilerOpts = -framework SwiftData
+linkerOpts = -framework SwiftData
+#Disabled: Swift-only framework

@@ -1,0 +1,17 @@
+public final class Inheritor2 : R|test/SealedInterface| {
+    public constructor(): R|test/Inheritor2|
+
+}
+
+public final class Inheritor3 : R|test/SealedInterface| {
+    public constructor(): R|test/Inheritor3|
+
+}
+
+public sealed interface SealedInterface : R|kotlin/Any| {
+    public final class Inheritor1 : R|test/SealedInterface| {
+        public constructor(): R|test/SealedInterface.Inheritor1|
+
+    }
+
+}

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface N { fun foo() = 1 }
 
 class WithClassObject {

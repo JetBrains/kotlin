@@ -1,0 +1,10 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /test1(kotlin.collections/List<kotlin/Int>): kotlin.collections/List<kotlin/Int> // /test1|test1(kotlin.collections.List<kotlin.Int>){}[0]
+final fun /test2(kotlin.collections/List<kotlin.collections/List<kotlin/Int>>): kotlin.collections/List<kotlin.collections/List<kotlin/Int>> // /test2|test2(kotlin.collections.List<kotlin.collections.List<kotlin.Int>>){}[0]
+final fun /test3(kotlin.collections/List<kotlin.collections/List<kotlin/Int>>): kotlin.collections/List<kotlin.collections/List<kotlin/Int>> // /test3|test3(kotlin.collections.List<kotlin.collections.List<kotlin.Int>>){}[0]
+final fun /test4(kotlin.collections/List<kotlin.collections/List<kotlin/Int>>): kotlin.collections/List<kotlin.collections/List<kotlin/Int>> // /test4|test4(kotlin.collections.List<kotlin.collections.List<kotlin.Int>>){}[0]

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS, JS_IR_ES6
-
 var a = 12
 
 object C {

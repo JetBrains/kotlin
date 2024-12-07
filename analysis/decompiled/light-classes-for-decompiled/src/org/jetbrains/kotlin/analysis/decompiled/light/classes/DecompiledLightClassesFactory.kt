@@ -1,13 +1,15 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.decompiled.light.classes
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.ClassFileViewProvider
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.compiled.ClsClassImpl
@@ -15,13 +17,21 @@ import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.utils.checkWithAttachment
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 object DecompiledLightClassesFactory {
+    private val checkInconsistency: Boolean
+        get() = Registry.`is`(
+            /* key = */ "kotlin.decompiled.light.classes.check.inconsistency",
+            /* defaultValue = */ false,
+        )
+
     fun getLightClassForDecompiledClassOrObject(
         decompiledClassOrObject: KtClassOrObject,
         project: Project
@@ -50,19 +60,27 @@ object DecompiledLightClassesFactory {
         while (iterator.hasNext()) {
             val name = iterator.next()
             val innerClass = current.findInnerClassByName(name.asString(), false)
-            checkWithAttachment(
-                innerClass != null,
-                { "Could not find corresponding inner/nested class " + relativeFqName + " in class " + decompiledClassOrObject.fqName + "\nFile: " + decompiledClassOrObject.containingKtFile.virtualFile.name },
-                {
-                    it.withAttachment("decompiledClassOrObject", decompiledClassOrObject.text)
-                    it.withAttachment("fileClass", decompiledClassOrObject.containingFile::class)
-                    it.withAttachment("file", decompiledClassOrObject.containingFile.text)
-                    it.withAttachment("root", rootLightClassForDecompiledFile.text)
-                },
-            )
+            current = when {
+                innerClass != null -> innerClass as KtLightClassForDecompiledDeclaration
+                checkInconsistency -> {
+                    throw KotlinExceptionWithAttachments("Could not find corresponding inner/nested class")
+                        .withAttachment("relativeFqName.txt", relativeFqName)
+                        .withAttachment("decompiledClassOrObjectFqName.txt", decompiledClassOrObject.fqName)
+                        .withAttachment("decompiledFileName.txt", decompiledClassOrObject.containingKtFile.virtualFile.name)
+                        .withPsiAttachment("decompiledClassOrObject.txt", decompiledClassOrObject)
+                        .withAttachment("fileClass.txt", decompiledClassOrObject.containingFile::class)
+                        .withPsiAttachment("file.txt", decompiledClassOrObject.containingFile)
+                        .withPsiAttachment("root.txt", rootLightClassForDecompiledFile)
+                        .withAttachment("currentName.txt", current.name)
+                        .withPsiAttachment("current.txt", current)
+                        .withAttachment("innerClasses.txt", current.innerClasses.map { psiClass -> psiClass.name })
+                        .withAttachment("innerName.txt", name.asString())
+                }
 
-            current = innerClass as KtLightClassForDecompiledDeclaration
+                else -> return null
+            }
         }
+
         return current
     }
 
@@ -81,17 +99,40 @@ object DecompiledLightClassesFactory {
     }
 
     fun createLightClassForDecompiledKotlinFile(file: KtClsFile, project: Project): KtLightClassForDecompiledDeclaration? {
+        return createLightClassForDecompiledKotlinFile(project, file) { kotlinClsFile, javaClsClass, classOrObject ->
+            KtLightClassForDecompiledDeclaration(javaClsClass, javaClsClass.parent, kotlinClsFile, classOrObject)
+        }
+    }
+
+    private fun <T> createLightClassForDecompiledKotlinFile(
+        project: Project,
+        file: KtClsFile,
+        builder: (kotlinClsFile: KtClsFile, javaClsClass: PsiClass, classOrObject: KtClassOrObject?) -> T
+    ): T? {
         val virtualFile = file.virtualFile ?: return null
-
         val classOrObject = file.declarations.filterIsInstance<KtClassOrObject>().singleOrNull()
-
         val javaClsClass = createClsJavaClassFromVirtualFile(
-            file, virtualFile,
+            mirrorFile = file,
+            classFile = virtualFile,
             correspondingClassOrObject = classOrObject,
-            project,
+            project = project,
         ) ?: return null
 
-        return KtLightClassForDecompiledDeclaration(javaClsClass, javaClsClass.parent, file, classOrObject)
+        return builder(file, javaClsClass, classOrObject)
+    }
+
+    fun createLightFacadeForDecompiledKotlinFile(
+        project: Project,
+        facadeClassFqName: FqName,
+        files: List<KtFile>,
+    ): KtLightClassForFacade? {
+        assert(files.all(KtFile::isCompiled))
+        val file = files.firstOrNull { it.javaFileFacadeFqName == facadeClassFqName } as? KtClsFile
+            ?: error("Can't find the representative decompiled file for $facadeClassFqName in ${files.map { it.name }}")
+
+        return createLightClassForDecompiledKotlinFile(project, file) { kotlinClsFile, javaClsClass, classOrObject ->
+            KtLightClassForDecompiledFacade(javaClsClass, javaClsClass.parent, kotlinClsFile, classOrObject, files)
+        }
     }
 
     fun createClsJavaClassFromVirtualFile(

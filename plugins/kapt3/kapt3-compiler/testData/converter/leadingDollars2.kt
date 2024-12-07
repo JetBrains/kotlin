@@ -1,7 +1,6 @@
-// IGNORE_BACKEND: JVM_IR
 // CORRECT_ERROR_TYPES
 
-// FILE: te/st/a/JavaClass
+// FILE: te/st/a/JavaClass.java
 package te.st.a;
 
 public class JavaClass {}

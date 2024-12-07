@@ -1,5 +1,5 @@
 // LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
 
 /*
@@ -55,16 +55,12 @@ fun case_4(value_1: Int, value_2: String, value_3: String) {
 }
 
 // TESTCASE NUMBER: 5
-fun case_5(value_1: Int, value_2: Int, value_3: Boolean?) {
+fun case_5(value_1: Int, <!UNUSED_PARAMETER!>value_2<!>: Int, value_3: Boolean?) {
     when (value_1) {
         1 -> when (value_3) {
-            <!CONFUSING_BRANCH_CONDITION_WARNING!>value_2 > 1000<!> -> "1"
-            <!CONFUSING_BRANCH_CONDITION_WARNING!>value_2 > 100<!> -> "2"
             else -> "3"
         }
         2 -> when (value_3) {
-            <!CONFUSING_BRANCH_CONDITION_WARNING!>value_2 > 1000<!> -> "1"
-            <!CONFUSING_BRANCH_CONDITION_WARNING!>value_2 > 100<!> -> "2"
             else -> ""
         }
         3 -> when (value_3) {
@@ -87,10 +83,8 @@ fun case_5(value_1: Int, value_2: Int, value_3: Boolean?) {
 }
 
 // TESTCASE NUMBER: 6
-fun case_6(value_1: Int, value_2: Int, value_3: Boolean?) = when (value_1) {
+fun case_6(value_1: Int, <!UNUSED_PARAMETER!>value_2<!>: Int, value_3: Boolean?) = when (value_1) {
     1 -> when (value_3) {
-        <!CONFUSING_BRANCH_CONDITION_WARNING!>value_2 > 1000<!> -> 1
-        <!CONFUSING_BRANCH_CONDITION_WARNING!>value_2 > 100<!> -> 2
         else -> 3
     }
     else -> when (value_3) {

@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +ContextSensitiveEnumResolutionInWhen
 enum class Some {
     FIRST,
     SECOND;

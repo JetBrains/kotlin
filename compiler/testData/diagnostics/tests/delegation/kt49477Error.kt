@@ -1,4 +1,5 @@
-// !LANGUAGE: +ForbidRecursiveDelegateExpressions
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ForbidRecursiveDelegateExpressions
 // WITH_STDLIB
 
 import kotlin.properties.ReadWriteProperty

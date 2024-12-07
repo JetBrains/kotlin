@@ -10,7 +10,7 @@ interface Builder<T : Any> {
     fun filter(filter: (T) -> Boolean)
 }
 
-fun <T : Any> build(@BuilderInference block: Builder<T>.() -> Unit): T {
+fun <T : Any> build(block: Builder<T>.() -> Unit): T {
     val o = object : Builder<T> {
         override fun filter(filter: (T) -> Boolean) {
 

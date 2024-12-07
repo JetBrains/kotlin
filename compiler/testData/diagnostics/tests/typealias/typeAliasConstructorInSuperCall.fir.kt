@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 open class MyBase protected constructor() {
     protected constructor(x: Nothing?): this()
 }

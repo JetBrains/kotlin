@@ -1,9 +1,6 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: IGNORED_IN_JS
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 //KT-3190 Compiler crash if function called 'invoke' calls a closure
-// IGNORE_BACKEND: JS
 // JS backend does not allow to implement Function{N} interfaces
 
 fun box(): String {

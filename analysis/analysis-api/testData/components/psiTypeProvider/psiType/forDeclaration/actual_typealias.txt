@@ -1,0 +1,2 @@
+KaType: Foo
+PsiType: int

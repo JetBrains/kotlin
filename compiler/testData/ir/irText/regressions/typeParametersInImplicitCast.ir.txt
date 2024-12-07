@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/typeParametersInImplicitCast.kt
     VALUE_PARAMETER name:lss index:0 type:kotlin.collections.List<kotlin.collections.List<T of <root>.problematic>>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun problematic <T> (lss: kotlin.collections.List<kotlin.collections.List<T of <root>.problematic>>): kotlin.collections.List<T of <root>.problematic> declared in <root>'
-        CALL 'public final fun flatMap <T, R> (transform: kotlin.Function1<T of kotlin.collections.CollectionsKt.flatMap, kotlin.collections.Iterable<R of kotlin.collections.CollectionsKt.flatMap>>): kotlin.collections.List<R of kotlin.collections.CollectionsKt.flatMap> [inline] declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<@[FlexibleNullability] T of <root>.problematic?> origin=null
+        CALL 'public final fun flatMap <T, R> (transform: kotlin.Function1<T of kotlin.collections.flatMap, kotlin.collections.Iterable<R of kotlin.collections.flatMap>>): kotlin.collections.List<R of kotlin.collections.flatMap> declared in kotlin.collections' type=kotlin.collections.List<@[FlexibleNullability] T of <root>.problematic?> origin=null
           <T>: kotlin.collections.List<T of <root>.problematic>
           <R>: @[FlexibleNullability] T of <root>.problematic?
           $receiver: GET_VAR 'lss: kotlin.collections.List<kotlin.collections.List<T of <root>.problematic>> declared in <root>.problematic' type=kotlin.collections.List<kotlin.collections.List<T of <root>.problematic>> origin=null

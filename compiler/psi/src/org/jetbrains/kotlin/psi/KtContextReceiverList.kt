@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
@@ -18,7 +17,9 @@ class KtContextReceiverList : KtElementImplStub<KotlinPlaceHolderStub<KtContextR
         return visitor.visitContextReceiverList(this, data)
     }
 
-    fun contextReceivers(): List<KtContextReceiver> = findChildrenByType(KtNodeTypes.CONTEXT_RECEIVER)
+    fun contextReceivers(): List<KtContextReceiver> = getStubOrPsiChildrenAsList(KtStubElementTypes.CONTEXT_RECEIVER)
+
+    fun contextParameters(): List<KtParameter> = getStubOrPsiChildrenAsList(KtStubElementTypes.VALUE_PARAMETER)
 
     fun typeReferences(): List<KtTypeReference> = contextReceivers().mapNotNull { it.typeReference() }
 

@@ -10,9 +10,9 @@
         "fqName": "SimpleClass"
       }
     },
-    "local": false
+    "isLocal": false
   },
-  "classAbiHash": -6515999856905133685,
+  "classAbiHash": 2881075740228300324,
   "classMemberLevelSnapshot": {
     "classAbiExcludingMembers": {
       "name": "com/example/SimpleClass",
@@ -21,17 +21,17 @@
     "fieldsAbi": [
       {
         "name": "publicField",
-        "abiHash": 8370167348140025367
+        "abiHash": -2698261112133196916
       }
     ],
     "methodsAbi": [
       {
         "name": "\u003cinit\u003e",
-        "abiHash": 2413123887428571534
+        "abiHash": 6894913661751208844
       },
       {
         "name": "publicMethod",
-        "abiHash": 7574889098198027162
+        "abiHash": -3018578973377534537
       }
     ]
   },

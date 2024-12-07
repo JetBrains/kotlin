@@ -14,9 +14,8 @@ dependencies {
     api(project(":compiler:frontend.common.jvm"))
 
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
-    compileOnly(commonDependency("com.google.guava:guava"))
+    compileOnly(libs.intellij.asm)
+    compileOnly(libs.guava)
 }
 
 sourceSets {

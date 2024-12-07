@@ -1,9 +1,11 @@
+// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
 class A {
-    <!UNSUPPORTED_FEATURE("The feature "range until operator" is only available since language version 1.8")!>operator<!> fun rangeUntil(other: A): Iterable<A> = TODO()
+    operator fun rangeUntil(other: A): Iterable<A> = TODO()
 }
 
 fun main(n: A, f: A) {
-    for (i in f<!UNSUPPORTED_FEATURE("The feature "range until operator" is only available since language version 1.8")!>..<<!>n) {
+    for (i in f..<n) {
 
     }
 }

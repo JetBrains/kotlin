@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1273
 // KJS_WITH_FULL_RUNTIME
 
 // Copy of stdlib test test.collections.ArraysTest.plusInference

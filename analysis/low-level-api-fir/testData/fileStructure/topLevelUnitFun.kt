@@ -1,0 +1,4 @@
+fun foo() {/* DeclarationStructureElement */
+    println("")
+}
+

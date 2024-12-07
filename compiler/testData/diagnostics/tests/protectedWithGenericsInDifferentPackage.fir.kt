@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: foo/Super.java
 package foo
 
@@ -28,7 +29,7 @@ fun test(s: bar.Sub<String>) {
     s.<!INVISIBLE_REFERENCE!>name<!>
     s.<!INVISIBLE_REFERENCE!>name<!> = ""
     s.name2
-    <!INVISIBLE_SETTER!>s.name2<!> = ""
+    s.name2 = ""
     s.<!INVISIBLE_REFERENCE!>doSomething<!>()
     s.doSomething2()
     val s2: Super<String> = s

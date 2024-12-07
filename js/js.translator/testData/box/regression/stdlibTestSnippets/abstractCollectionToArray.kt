@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1700
 // KJS_WITH_FULL_RUNTIME
 
 fun abstractCollectionToArray() {
@@ -24,7 +23,7 @@ fun abstractCollectionToArray() {
     assertTrue("toArray1" in coll.invocations || "toArray2" in coll.invocations)
 
     val arr2: Array<String> = coll.toArray(Array(coll.size + 1) { "" })
-    assertEquals(data + listOf(null), arr2.asList())
+    assertEquals(data + listOf(""), arr2.asList())
 }
 
 fun box(): String {

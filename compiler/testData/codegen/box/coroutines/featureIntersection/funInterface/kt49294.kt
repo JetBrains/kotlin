@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JVM
-// IGNORE_LIGHT_ANALYSIS
 // FILE: 1.kt
 
 @file:OptIn(ExperimentalTypeInference::class)
@@ -23,7 +22,7 @@ suspend fun <T> Flow<T>.toList(): List<T> {
     return destination
 }
 
-fun <T> flow(@BuilderInference block: suspend FlowCollector<T>.() -> Unit): Flow<T> = SafeFlow(block)
+fun <T> flow(block: suspend FlowCollector<T>.() -> Unit): Flow<T> = SafeFlow(block)
 
 private class SafeFlow<T>(private val block: suspend FlowCollector<T>.() -> Unit) : Flow<T> {
     override suspend fun collect(collector: FlowCollector<T>) {
@@ -31,7 +30,7 @@ private class SafeFlow<T>(private val block: suspend FlowCollector<T>.() -> Unit
     }
 }
 
-fun <T> channelFlow(@BuilderInference block: suspend SendChannel<T>.() -> Unit): Flow<T> =
+fun <T> channelFlow(block: suspend SendChannel<T>.() -> Unit): Flow<T> =
     ChannelFlowBuilder(block)
 
 private open class ChannelFlowBuilder<T>(

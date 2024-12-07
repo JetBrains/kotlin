@@ -7,25 +7,20 @@ package org.jetbrains.kotlin.ir.interpreter
 
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
-import org.jetbrains.kotlin.ir.interpreter.state.Common
-import org.jetbrains.kotlin.ir.interpreter.state.Complex
-import org.jetbrains.kotlin.ir.interpreter.state.ExceptionState
-import org.jetbrains.kotlin.ir.interpreter.state.Primitive
-import org.jetbrains.kotlin.ir.interpreter.state.State
-import org.jetbrains.kotlin.ir.interpreter.state.Wrapper
+import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.isSubclassOf
-import org.jetbrains.kotlin.ir.util.nameForIrSerialization
+import org.jetbrains.kotlin.ir.util.properties
+import org.jetbrains.kotlin.ir.util.toIrConst
+import org.jetbrains.kotlin.platform.isJs
 
 class IrInterpreterEnvironment(
     val irBuiltIns: IrBuiltIns,
@@ -41,11 +36,7 @@ class IrInterpreterEnvironment(
     internal val kTypeParameterClass by lazy { irBuiltIns.kClassClass.getIrClassOfReflectionFromList("typeParameters")!! }
     internal val kParameterClass by lazy { irBuiltIns.kFunctionClass.getIrClassOfReflectionFromList("parameters")!! }
     internal val kTypeProjectionClass by lazy { kTypeClass.getIrClassOfReflectionFromList("arguments")!! }
-    internal val kTypeClass: IrClassSymbol by lazy {
-        // here we use fallback to `Any` because `KType` cannot be found on JS/Native by this way
-        // but still this class is used to represent type arguments in interpreter
-        irBuiltIns.kClassClass.getIrClassOfReflectionFromList("supertypes") ?: irBuiltIns.anyClass
-    }
+    internal val kTypeClass: IrClassSymbol by lazy { irBuiltIns.kTypeClass }
 
     init {
         mapOfObjects[irBuiltIns.unitClass] = Common(irBuiltIns.unitClass.owner)
@@ -67,15 +58,6 @@ class IrInterpreterEnvironment(
         irExceptions.addAll(environment.irExceptions)
         mapOfEnums = environment.mapOfEnums
         mapOfObjects = environment.mapOfObjects
-    }
-
-    constructor(irModule: IrModuleFragment) : this(irModule.irBuiltins) {
-        irExceptions.addAll(
-            irModule.files
-                .flatMap { it.declarations }
-                .filterIsInstance<IrClass>()
-                .filter { it.isSubclassOf(irBuiltIns.throwableClass.owner) }
-        )
     }
 
     fun copyWithNewCallStack(): IrInterpreterEnvironment {
@@ -122,12 +104,12 @@ class IrInterpreterEnvironment(
         val end = original.endOffset
         val type = original.type.makeNotNull()
         return when (state) {
-            is Primitive<*> ->
-                when {
-                    state.value == null -> state.value.toIrConst(type, start, end)
-                    type.isPrimitiveType() || type.isString() -> state.value.toIrConst(type, start, end)
-                    else -> original // TODO support for arrays
-                }
+            is Primitive -> when {
+                configuration.platform.isJs() && state.value is Float -> IrConstImpl.float(start, end, type, state.value)
+                configuration.platform.isJs() && state.value is Double -> IrConstImpl.double(start, end, type, state.value)
+                state.value == null || type.isPrimitiveType() || type.isString() -> state.value.toIrConst(type, start, end)
+                else -> original // TODO support for arrays
+            }
             is ExceptionState -> {
                 val message = if (configuration.printOnlyExceptionMessage) state.getShortDescription() else "\n" + state.getFullDescription()
                 IrErrorExpressionImpl(original.startOffset, original.endOffset, original.type, message)
@@ -135,7 +117,7 @@ class IrInterpreterEnvironment(
             is Complex -> {
                 val stateType = state.irClass.defaultType
                 when {
-                    stateType.isUnsignedType() -> (state.fields.values.single() as Primitive<*>).value.toIrConst(type, start, end)
+                    stateType.isUnsignedType() -> (state.fields.values.single() as Primitive).value.toIrConst(type, start, end)
                     else -> original
                 }
             }
@@ -144,7 +126,7 @@ class IrInterpreterEnvironment(
     }
 
     private fun IrClassSymbol.getIrClassOfReflectionFromList(name: String): IrClassSymbol? {
-        val property = this.owner.declarations.singleOrNull { it.nameForIrSerialization.asString() == name } as? IrProperty
+        val property = this.owner.properties.singleOrNull { it.name.asString() == name }
         val list = property?.getter?.returnType as? IrSimpleType
         return list?.arguments?.single()?.typeOrNull?.classOrNull
     }

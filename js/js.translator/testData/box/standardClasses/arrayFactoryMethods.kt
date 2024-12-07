@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1293
-
 package foo
 
 class Fail(message: String) : Exception(message)

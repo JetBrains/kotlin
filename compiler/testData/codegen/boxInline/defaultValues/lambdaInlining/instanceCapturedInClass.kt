@@ -13,7 +13,6 @@ class A(val value: String) {
 
 import test.*
 
-// CHECK_CONTAINS_NO_CALLS: box TARGET_BACKENDS=JS
 fun box(): String {
     return A("OK").inlineFun()
 }

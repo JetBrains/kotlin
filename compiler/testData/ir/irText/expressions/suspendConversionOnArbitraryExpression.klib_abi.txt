@@ -1,0 +1,30 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /produceFun(): kotlin/Function0<kotlin/Unit> // /produceFun|produceFun(){}[0]
+final fun /testExtAsExt(kotlin/Function1<kotlin/Int, kotlin/Unit>) // /testExtAsExt|testExtAsExt(kotlin.Function1<kotlin.Int,kotlin.Unit>){}[0]
+final fun /testExtAsExtT(kotlin/Function1<kotlin/Int, kotlin/Unit>) // /testExtAsExtT|testExtAsExtT(kotlin.Function1<kotlin.Int,kotlin.Unit>){}[0]
+final fun /testExtAsSimple(kotlin/Function1<kotlin/Int, kotlin/Unit>) // /testExtAsSimple|testExtAsSimple(kotlin.Function1<kotlin.Int,kotlin.Unit>){}[0]
+final fun /testExtAsSimpleT(kotlin/Function1<kotlin/Int, kotlin/Unit>) // /testExtAsSimpleT|testExtAsSimpleT(kotlin.Function1<kotlin.Int,kotlin.Unit>){}[0]
+final fun <#A: kotlin/Any?> /testExtSAsExtT(kotlin/Function1<#A, kotlin/Unit>) // /testExtSAsExtT|testExtSAsExtT(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> /testExtSAsSimpleT(kotlin/Function1<#A, kotlin/Unit>) // /testExtSAsSimpleT|testExtSAsSimpleT(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin.coroutines/SuspendFunction0<kotlin/Unit> & kotlin/Function0<kotlin/Unit>> /testIntersectionVsSuspendConversion(#A) // /testIntersectionVsSuspendConversion|testIntersectionVsSuspendConversion(0:0){0§<kotlin.Function0<kotlin.Unit>&kotlin.coroutines.SuspendFunction0<kotlin.Unit>>}[0]
+final fun /testSimple(kotlin/Function0<kotlin/Unit>) // /testSimple|testSimple(kotlin.Function0<kotlin.Unit>){}[0]
+final fun /testSimpleAsExt(kotlin/Function1<kotlin/Int, kotlin/Unit>) // /testSimpleAsExt|testSimpleAsExt(kotlin.Function1<kotlin.Int,kotlin.Unit>){}[0]
+final fun /testSimpleAsExtT(kotlin/Function1<kotlin/Int, kotlin/Unit>) // /testSimpleAsExtT|testSimpleAsExtT(kotlin.Function1<kotlin.Int,kotlin.Unit>){}[0]
+final fun /testSimpleAsSimpleT(kotlin/Function1<kotlin/Int, kotlin/Unit>) // /testSimpleAsSimpleT|testSimpleAsSimpleT(kotlin.Function1<kotlin.Int,kotlin.Unit>){}[0]
+final fun /testSimpleNonVal() // /testSimpleNonVal|testSimpleNonVal(){}[0]
+final fun <#A: kotlin/Any?> /testSimpleSAsExtT(kotlin/Function1<#A, kotlin/Unit>) // /testSimpleSAsExtT|testSimpleSAsExtT(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> /testSimpleSAsSimpleT(kotlin/Function1<#A, kotlin/Unit>) // /testSimpleSAsSimpleT|testSimpleSAsSimpleT(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
+final fun /testSmartCastOnVarVsSuspendConversion(kotlin/Function0<kotlin/Unit>) // /testSmartCastOnVarVsSuspendConversion|testSmartCastOnVarVsSuspendConversion(kotlin.Function0<kotlin.Unit>){}[0]
+final fun /testSmartCastOnVarWithSuspendConversion(kotlin/Any) // /testSmartCastOnVarWithSuspendConversion|testSmartCastOnVarWithSuspendConversion(kotlin.Any){}[0]
+final fun /testSmartCastVsSuspendConversion(kotlin/Function0<kotlin/Unit>) // /testSmartCastVsSuspendConversion|testSmartCastVsSuspendConversion(kotlin.Function0<kotlin.Unit>){}[0]
+final fun /testSmartCastWithSuspendConversion(kotlin/Any) // /testSmartCastWithSuspendConversion|testSmartCastWithSuspendConversion(kotlin.Any){}[0]
+final fun /useSuspend(kotlin.coroutines/SuspendFunction0<kotlin/Unit>) // /useSuspend|useSuspend(kotlin.coroutines.SuspendFunction0<kotlin.Unit>){}[0]
+final fun /useSuspendArg(kotlin.coroutines/SuspendFunction1<kotlin/Int, kotlin/Unit>) // /useSuspendArg|useSuspendArg(kotlin.coroutines.SuspendFunction1<kotlin.Int,kotlin.Unit>){}[0]
+final fun <#A: kotlin/Any?> /useSuspendArgT(kotlin.coroutines/SuspendFunction1<#A, kotlin/Unit>) // /useSuspendArgT|useSuspendArgT(kotlin.coroutines.SuspendFunction1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
+final fun /useSuspendExt(kotlin.coroutines/SuspendFunction1<kotlin/Int, kotlin/Unit>) // /useSuspendExt|useSuspendExt(kotlin.coroutines.SuspendFunction1<kotlin.Int,kotlin.Unit>){}[0]
+final fun <#A: kotlin/Any?> /useSuspendExtT(kotlin.coroutines/SuspendFunction1<#A, kotlin/Unit>) // /useSuspendExtT|useSuspendExtT(kotlin.coroutines.SuspendFunction1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]

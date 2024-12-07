@@ -1,0 +1,3 @@
+org.jetbrains:annotations:13.0 => [compile]
+project : => [androidFlavor1DebugCompileClasspath]
+sample.gradle_max:AndroidOnly_kgp_snapshot_agp_max:1.0 => [flavor1DebugVariantDefaultApiPublication]

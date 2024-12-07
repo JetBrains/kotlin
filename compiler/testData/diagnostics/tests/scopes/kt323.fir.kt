@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-323 Handle visibility interactions with overriding
 package kt323
 

@@ -7,23 +7,18 @@ package org.jetbrains.kotlin.gradle.targets.js.d8
 
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
-import javax.inject.Inject
 
-open class D8Exec
-@Inject
-constructor(
-    private val compilation: KotlinJsCompilation
-) : AbstractExecTask<D8Exec>(D8Exec::class.java) {
-    @Transient
-    @get:Internal
-    lateinit var d8: D8RootExtension
-
+@ExperimentalWasmDsl
+@DisableCachingByDefault
+open class D8Exec : AbstractExecTask<D8Exec>(D8Exec::class.java) {
     init {
-        onlyIf {
+        this.onlyIf {
             !inputFileProperty.isPresent || inputFileProperty.asFile.map { it.exists() }.get()
         }
     }
@@ -34,6 +29,7 @@ constructor(
     @Optional
     @PathSensitive(PathSensitivity.ABSOLUTE)
     @InputFile
+    @NormalizeLineEndings
     val inputFileProperty: RegularFileProperty = project.newFileProperty()
 
     override fun exec() {
@@ -42,10 +38,8 @@ constructor(
         if (inputFileProperty.isPresent) {
             val inputFile = inputFileProperty.asFile.get()
             workingDir = inputFile.parentFile
-            if (compilation.target.platformType == KotlinPlatformType.wasm) {
-                newArgs.add("--module")
-            }
-            newArgs.add(inputFile.canonicalPath)
+            newArgs.add("--module")
+            newArgs.add(inputFile.absolutePath)
         }
         args?.let {
             if (it.isNotEmpty()) {
@@ -58,24 +52,31 @@ constructor(
     }
 
     companion object {
-        fun create(
-            compilation: KotlinJsCompilation,
+        fun register(
+            compilation: KotlinJsIrCompilation,
             name: String,
-            configuration: D8Exec.() -> Unit = {}
+            configuration: D8Exec.() -> Unit = {},
         ): TaskProvider<D8Exec> {
             val target = compilation.target
             val project = target.project
-            val d8 = D8RootPlugin.apply(project.rootProject)
+            val d8 = D8Plugin.applyWithEnvSpec(project)
             return project.registerTask(
-                name,
-                listOf(compilation)
+                name
             ) {
-                it.d8 = d8
-                it.executable = d8.requireConfigured().executablePath.absolutePath
-                it.dependsOn(d8.setupTaskProvider)
-                it.dependsOn(compilation.compileKotlinTaskProvider)
+                it.executable = d8.executable.get()
+                with(d8) {
+                    it.dependsOn(project.d8SetupTaskProvider)
+                }
+                it.dependsOn(compilation.compileTaskProvider)
                 it.configuration()
             }
         }
+
+        @Deprecated("Use register instead", ReplaceWith("register(compilation, name, configuration)"))
+        fun create(
+            compilation: KotlinJsIrCompilation,
+            name: String,
+            configuration: D8Exec.() -> Unit = {},
+        ): TaskProvider<D8Exec> = register(compilation, name, configuration)
     }
 }

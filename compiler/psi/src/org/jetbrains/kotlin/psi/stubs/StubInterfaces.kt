@@ -58,6 +58,12 @@ interface KotlinClassOrObjectStub<T : KtClassOrObject> : KotlinClassifierStub, K
 interface KotlinClassStub : KotlinClassOrObjectStub<KtClass> {
     fun isInterface(): Boolean
     fun isEnumEntry(): Boolean
+
+    /**
+     * When we build [KotlinClassStub] for source stubs, this function always returns `false`. For binary stubs, it returns whether
+     * the binary class was compiled with `-Xjvm-default={all|all-compatibility}` option or not.
+     */
+    fun isClsStubCompiledToJvmDefaultImplementation(): Boolean
 }
 
 interface KotlinObjectStub : KotlinClassOrObjectStub<KtObjectDeclaration> {
@@ -85,6 +91,13 @@ interface KotlinFunctionStub : KotlinCallableStubBase<KtNamedFunction> {
     fun hasBody(): Boolean
     fun hasTypeParameterListBeforeFunctionName(): Boolean
     fun mayHaveContract(): Boolean
+}
+
+interface KotlinConstructorStub<T : KtConstructor<T>> :
+    KotlinCallableStubBase<T> {
+    fun hasBody(): Boolean
+    fun isDelegatedCallToThis(): Boolean
+    fun isExplicitDelegationCall(): Boolean
 }
 
 interface KotlinImportAliasStub : StubElement<KtImportAlias> {
@@ -121,7 +134,9 @@ interface KotlinPropertyAccessorStub : StubElement<KtPropertyAccessor> {
     fun hasBlockBody(): Boolean
 }
 
-interface KotlinBackingFieldStub : StubElement<KtBackingField>
+interface KotlinBackingFieldStub : StubElement<KtBackingField> {
+    fun hasInitializer(): Boolean
+}
 
 interface KotlinPropertyStub : KotlinCallableStubBase<KtProperty> {
     fun isVar(): Boolean
@@ -154,12 +169,21 @@ interface KotlinConstantExpressionStub : StubElement<KtConstantExpression> {
     fun value(): String
 }
 
+interface KotlinClassLiteralExpressionStub : StubElement<KtClassLiteralExpression>
+interface KotlinCollectionLiteralExpressionStub : StubElement<KtCollectionLiteralExpression>
+
 interface KotlinTypeProjectionStub : StubElement<KtTypeProjection> {
     fun getProjectionKind(): KtProjectionKind
 }
 
 interface KotlinUserTypeStub : StubElement<KtUserType>
 
+interface KotlinFunctionTypeStub : StubElement<KtFunctionType>
+
 interface KotlinScriptStub : KotlinStubWithFqName<KtScript> {
     override fun getFqName(): FqName
+}
+
+interface KotlinContextReceiverStub : StubElement<KtContextReceiver> {
+    fun getLabel(): String?
 }

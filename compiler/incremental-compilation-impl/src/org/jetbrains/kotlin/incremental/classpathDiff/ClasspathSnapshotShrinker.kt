@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.incremental.classpathDiff
 
-import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.BuildTime
-import org.jetbrains.kotlin.build.report.metrics.measure
+import org.jetbrains.kotlin.build.report.debug
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.ToBeComputedByIncrementalCompiler
@@ -16,6 +14,7 @@ import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnable
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun
 import org.jetbrains.kotlin.incremental.LookupStorage
 import org.jetbrains.kotlin.incremental.LookupSymbol
+import org.jetbrains.kotlin.incremental.classpathDiff.BreadthFirstSearch.findReachableNodes
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotShrinker.shrinkClasses
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotShrinker.shrinkClasspath
 import org.jetbrains.kotlin.incremental.storage.ListExternalizer
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.incremental.storage.LookupSymbolKey
 import org.jetbrains.kotlin.incremental.storage.loadFromFile
 import org.jetbrains.kotlin.incremental.storage.saveToFile
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
 object ClasspathSnapshotShrinker {
 
@@ -41,7 +39,12 @@ object ClasspathSnapshotShrinker {
         return shrinkClasses(allClasses, lookupSymbols, metrics)
     }
 
-    /** Shrinks the given classes by retaining only classes that are referenced by the given lookup symbols. */
+    /**
+     * Shrinks the given classes by retaining only classes that are referenced by the given lookup symbols.
+     *
+     * Note: We need to retain both directly and transitively referenced classes to compute the impact of classpath changes correctly (see
+     * [ClasspathChangesComputer.computeChangedAndImpactedSet]).
+     */
     fun shrinkClasses(
         allClasses: List<AccessibleClassSnapshot>,
         lookupSymbols: Collection<LookupSymbolKey>,
@@ -56,7 +59,7 @@ object ClasspathSnapshotShrinker {
     }
 
     /**
-     * Finds classes that are referenced by the given lookup symbols.
+     * Finds classes that are *directly* referenced by the given lookup symbols.
      *
      * Note: It's okay to over-approximate the result.
      */
@@ -89,31 +92,19 @@ object ClasspathSnapshotShrinker {
     }
 
     /**
-     * Finds classes that are transitively referenced. For example, if a subclass is referenced, its supertypes will potentially be
-     * referenced.
+     * Finds classes that are *transitively* referenced from the given classes. For example, if a subclass is referenced, its supertypes
+     * will be transitively referenced.
      *
-     * The returned list includes the given referenced classes plus the transitively referenced ones.
+     * The returned list is *inclusive* (it contains the given list + the transitively referenced ones).
      */
     private fun findTransitivelyReferencedClasses(
         allClasses: List<AccessibleClassSnapshot>,
         referencedClasses: List<AccessibleClassSnapshot>
     ): List<AccessibleClassSnapshot> {
-        val classIdToClassSnapshot = allClasses.associateBy { it.classId }
-        val classIds: Set<ClassId> = classIdToClassSnapshot.keys // Use Set for presence check
-        val classNameToClassId = classIds.associateBy { JvmClassName.byClassId(it) }
-        val classNameToClassIdResolver = { className: JvmClassName -> classNameToClassId[className] }
-
-        val supertypesResolver = { classId: ClassId ->
-            // No need to collect supertypes outside the given set of classes (e.g., "java/lang/Object")
-            @Suppress("SimpleRedundantLet")
-            classIdToClassSnapshot[classId]?.let {
-                it.getSupertypes(classNameToClassIdResolver).intersect(classIds)
-            } ?: emptySet()
-        }
-
-        val referencedClassIds = referencedClasses.mapTo(mutableSetOf()) { it.classId }
-        val transitivelyReferencedClassIds: Set<ClassId> = /* Use Set for presence check */
-            ImpactAnalysis.findImpactedClassesInclusive(referencedClassIds, supertypesResolver)
+        val referencedClassIds = referencedClasses.map { it.classId }
+        val impactingClassesResolver = AllImpacts.getReverseResolver(allClasses)
+        val transitivelyReferencedClassIds: Set<ClassId> = /* Must be a Set for the presence check below */
+            findReachableNodes(referencedClassIds, impactingClassesResolver::getImpactingClasses)
 
         return allClasses.filter { it.classId in transitivelyReferencedClassIds }
     }
@@ -123,10 +114,10 @@ object ClasspathSnapshotShrinker {
      * record different [BuildTime]s (because the [BuildTime.parent]s are different).
      */
     class MetricsReporter(
-        private val metrics: BuildMetricsReporter? = null,
-        private val getLookupSymbols: BuildTime? = null,
-        private val findReferencedClasses: BuildTime? = null,
-        private val findTransitivelyReferencedClasses: BuildTime? = null
+        private val metrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>? = null,
+        private val getLookupSymbols: GradleBuildTime? = null,
+        private val findReferencedClasses: GradleBuildTime? = null,
+        private val findTransitivelyReferencedClasses: GradleBuildTime? = null
     ) {
         fun <T> getLookupSymbols(fn: () -> T) = metrics?.measure(getLookupSymbols!!, fn) ?: fn()
         fun <T> findReferencedClasses(fn: () -> T) = metrics?.measure(findReferencedClasses!!, fn) ?: fn()
@@ -199,6 +190,7 @@ private sealed class ShrinkMode {
 }
 
 internal fun shrinkAndSaveClasspathSnapshot(
+    compilationWasIncremental: Boolean,
     classpathChanges: ClasspathChanges.ClasspathSnapshotEnabled,
     lookupStorage: LookupStorage,
     currentClasspathSnapshot: List<AccessibleClassSnapshot>?, // Not null iff classpathChanges is ToBeComputedByIncrementalCompiler
@@ -209,7 +201,9 @@ internal fun shrinkAndSaveClasspathSnapshot(
     // For incremental shrinking, we currently use only lookupStorage.addedLookupSymbols, not lookupStorage.removedLookupSymbols. It is
     // because updating the shrunk classpath snapshot for removedLookupSymbols is expensive. Therefore, the shrunk classpath snapshot may be
     // larger than necessary (and non-deterministic), but it is okay for it to be an over-approximation.
-    val shrinkMode = when (classpathChanges) {
+    val shrinkMode = if (!compilationWasIncremental) {
+        ShrinkMode.NonIncremental
+    } else when (classpathChanges) {
         is NoChanges -> {
             val addedLookupSymbols = lookupStorage.addedLookupSymbols
             if (addedLookupSymbols.isEmpty()) {
@@ -233,7 +227,8 @@ internal fun shrinkAndSaveClasspathSnapshot(
                 )
             }
         }
-        is NotAvailableDueToMissingClasspathSnapshot, is NotAvailableForNonIncrementalRun -> ShrinkMode.NonIncremental
+        is NotAvailableDueToMissingClasspathSnapshot -> ShrinkMode.NonIncremental
+        is NotAvailableForNonIncrementalRun -> error("NotAvailableForNonIncrementalRun is not expected as compilationWasIncremental==true")
     }
 
     // Shrink current classpath against current lookups
@@ -248,9 +243,9 @@ internal fun shrinkAndSaveClasspathSnapshot(
             // shrunkCurrentClasspathAgainst[*Current*]Lookups == shrunkCurrentClasspathAgainst[*Previous*]Lookups
             shrinkMode.currentClasspathSnapshot to shrinkMode.shrunkCurrentClasspathAgainstPreviousLookups
         }
-        is ShrinkMode.ChangedLookups -> reporter.measure(BuildTime.INCREMENTAL_SHRINK_CURRENT_CLASSPATH_SNAPSHOT) {
+        is ShrinkMode.ChangedLookups -> reporter.measure(GradleBuildTime.INCREMENTAL_SHRINK_CURRENT_CLASSPATH_SNAPSHOT) {
             // There are changes in the lookups, so we will shrink incrementally.
-            val currentClasspath = reporter.measure(BuildTime.INCREMENTAL_LOAD_CURRENT_CLASSPATH_SNAPSHOT) {
+            val currentClasspath = reporter.measure(GradleBuildTime.INCREMENTAL_LOAD_CURRENT_CLASSPATH_SNAPSHOT) {
                 when (shrinkMode) {
                     is ShrinkMode.ChangedLookupsUnchangedClasspath ->
                         CachedClasspathSnapshotSerializer
@@ -260,7 +255,7 @@ internal fun shrinkAndSaveClasspathSnapshot(
                 }
             }
             val shrunkCurrentClasspathAgainstPrevLookups =
-                reporter.measure(BuildTime.INCREMENTAL_LOAD_SHRUNK_CURRENT_CLASSPATH_SNAPSHOT_AGAINST_PREVIOUS_LOOKUPS) {
+                reporter.measure(GradleBuildTime.INCREMENTAL_LOAD_SHRUNK_CURRENT_CLASSPATH_SNAPSHOT_AGAINST_PREVIOUS_LOOKUPS) {
                     when (shrinkMode) {
                         is ShrinkMode.ChangedLookupsUnchangedClasspath -> {
                             // There are no changes in the classpath, so
@@ -281,8 +276,8 @@ internal fun shrinkAndSaveClasspathSnapshot(
         }
         is ShrinkMode.NonIncremental -> {
             // Changes in the lookups and classpath are not available, so we will shrink non-incrementally.
-            reporter.measure(BuildTime.NON_INCREMENTAL_SHRINK_CURRENT_CLASSPATH_SNAPSHOT) {
-                val currentClasspath = reporter.measure(BuildTime.NON_INCREMENTAL_LOAD_CURRENT_CLASSPATH_SNAPSHOT) {
+            reporter.measure(GradleBuildTime.NON_INCREMENTAL_SHRINK_CURRENT_CLASSPATH_SNAPSHOT) {
+                val currentClasspath = reporter.measure(GradleBuildTime.NON_INCREMENTAL_LOAD_CURRENT_CLASSPATH_SNAPSHOT) {
                     CachedClasspathSnapshotSerializer
                         .load(classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles, reporter)
                         .removeDuplicateAndInaccessibleClasses()
@@ -300,7 +295,7 @@ internal fun shrinkAndSaveClasspathSnapshot(
             "File '${classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.path}' does not exist"
         }
     } else {
-        reporter.measure(BuildTime.SAVE_SHRUNK_CURRENT_CLASSPATH_SNAPSHOT) {
+        reporter.measure(GradleBuildTime.SAVE_SHRUNK_CURRENT_CLASSPATH_SNAPSHOT) {
             ListExternalizer(AccessibleClassSnapshotExternalizer).saveToFile(
                 classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile,
                 shrunkCurrentClasspath!!
@@ -308,24 +303,24 @@ internal fun shrinkAndSaveClasspathSnapshot(
         }
     }
 
-    reporter.reportVerbose {
+    reporter.debug {
         "Shrunk current classpath snapshot after compilation (shrink mode = ${shrinkMode::class.simpleName})" + when (shrinkMode) {
             is ShrinkMode.UnchangedLookupsUnchangedClasspath -> ", no updates since previous run"
             else -> ", retained ${shrunkCurrentClasspath!!.size} / ${currentClasspath!!.size} classes"
         }
     }
 
-    reporter.addMetric(BuildPerformanceMetric.SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT, 1)
+    reporter.addMetric(GradleBuildPerformanceMetric.SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT, 1)
     reporter.addMetric(
-        BuildPerformanceMetric.CLASSPATH_ENTRY_COUNT,
+        GradleBuildPerformanceMetric.CLASSPATH_ENTRY_COUNT,
         classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles.size.toLong()
     )
     reporter.addMetric(
-        BuildPerformanceMetric.CLASSPATH_SNAPSHOT_SIZE,
+        GradleBuildPerformanceMetric.CLASSPATH_SNAPSHOT_SIZE,
         classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles.sumOf { it.length() }
     )
     reporter.addMetric(
-        BuildPerformanceMetric.SHRUNK_CLASSPATH_SNAPSHOT_SIZE,
+        GradleBuildPerformanceMetric.SHRUNK_CLASSPATH_SNAPSHOT_SIZE,
         classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.length()
     )
 }

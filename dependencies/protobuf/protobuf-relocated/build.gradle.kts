@@ -8,7 +8,7 @@ plugins {
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 val baseProtobuf by configurations.creating
@@ -26,9 +26,9 @@ dependencies {
 }
 
 val prepare = tasks.register<ShadowJar>("prepare") {
-    destinationDir = File(outputJarsPath)
-    version = protobufVersion
-    classifier = ""
+    destinationDirectory.set(File(outputJarsPath))
+    archiveVersion.set(protobufVersion)
+    archiveClassifier.set("")
     from(
         provider {
             baseProtobuf.files.find { it.name.startsWith("protobuf-java") }?.canonicalPath
@@ -56,9 +56,9 @@ val relocateSources = task<Copy>("relocateSources") {
 }
 
 val prepareSources = task<Jar>("prepareSources") {
-    destinationDir = File(outputJarsPath)
-    version = protobufVersion
-    classifier = "sources"
+    destinationDirectory.set(File(outputJarsPath))
+    archiveVersion.set(protobufVersion)
+    archiveClassifier.set("sources")
     from(relocateSources)
 }
 
@@ -75,6 +75,11 @@ publishing {
     repositories {
         maven {
             url = uri("${rootProject.buildDir}/internal/repo")
+        }
+        maven {
+            name = "kotlinSpace"
+            url = uri("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
+            credentials(org.gradle.api.artifacts.repositories.PasswordCredentials::class)
         }
     }
 }

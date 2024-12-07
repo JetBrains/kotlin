@@ -1,10 +1,11 @@
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
 // SAM_CONVERSIONS: INDY
+// LAMBDAS: CLASS
 
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
-// 1 java/lang/invoke/LambdaMetafactory
+// 0 java/lang/invoke/LambdaMetafactory
+// TODO: restore indy for SAM types with contravariant projections. See KT-52428 for more info.
 
 fun interface Cmp<T> {
     fun compare(a: T, b: T): Int

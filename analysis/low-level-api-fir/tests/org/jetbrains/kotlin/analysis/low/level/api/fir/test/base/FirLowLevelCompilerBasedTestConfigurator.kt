@@ -6,40 +6,44 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.test.base
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
-import com.intellij.psi.search.ProjectScope
-import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.SealedClassesInheritorsCaclulatorPreAnalysisHandler
-import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiIdeModeTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.FirStandaloneServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependenciesOfType
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KaScriptModuleByCompilerConfiguration
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KaSourceModuleByCompilerConfiguration
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.TestModuleStructureFactory
+import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
+import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiIndexingConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
-import org.jetbrains.kotlin.analysis.project.structure.allDirectDependenciesOfType
-import org.jetbrains.kotlin.analysis.test.framework.base.registerAnalysisApiBaseTestServices
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtLibraryModuleImpl
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleByCompilerConfiguration
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.TestModuleStructureFactory
-import org.jetbrains.kotlin.platform.TargetPlatform
 
 object FirLowLevelCompilerBasedTestConfigurator : AnalysisApiTestConfigurator() {
     override val analyseInDependentSession: Boolean get() = false
+    override val frontendKind: FrontendKind get() = FrontendKind.Fir
 
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         builder.apply {
+            useAdditionalService { AnalysisApiIndexingConfiguration(AnalysisApiBinaryLibraryIndexingMode.INDEX_STUBS) }
         }
     }
 
-    override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar> = listOf(
+    override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>> = listOf(
         AnalysisApiBaseTestServiceRegistrar,
+        AnalysisApiIdeModeTestServiceRegistrar,
+        AnalysisApiDecompiledCodeTestServiceRegistrar,
+        FirStandaloneServiceRegistrar,
         AnalysisApiFirTestServiceRegistrar,
     )
 
@@ -47,37 +51,34 @@ object FirLowLevelCompilerBasedTestConfigurator : AnalysisApiTestConfigurator() 
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
         project: Project
-    ): KtModuleProjectStructure {
+    ): KtTestModuleStructure {
         val mainModules = moduleStructure.modules.map { testModule ->
             val files = TestModuleStructureFactory.createSourcePsiFiles(testModule, testServices, project)
-            KtModuleWithFiles(
-                KtSourceModuleByCompilerConfiguration(project, testModule, files, testServices),
-                files
-            )
-        }
-        return KtModuleProjectStructure(
-            mainModules = mainModules,
-            binaryModules = mainModules.asSequence().flatMap { it.ktModule.allDirectDependenciesOfType<KtLibraryModule>() }.asIterable(),
-            stdlibFor = { module ->
-                createFakeStdlibModule(module, project)
+            val scriptFile = files.singleOrNull() as? KtFile
+
+            val (ktModule, testModuleKind) = if (scriptFile?.isScript() == true) {
+                Pair(
+                    KaScriptModuleByCompilerConfiguration(project, testModule, scriptFile, testServices),
+                    TestModuleKind.ScriptSource,
+                )
+            } else {
+                Pair(
+                    KaSourceModuleByCompilerConfiguration(project, testModule, files, testServices),
+                    TestModuleKind.Source,
+                )
             }
+
+            KtTestModule(testModuleKind, testModule, ktModule, files)
+        }
+
+        return KtTestModuleStructure(
+            testModuleStructure = moduleStructure,
+            mainModules = mainModules,
+            binaryModules = mainModules.asSequence().flatMap { it.ktModule.allDirectDependenciesOfType<KaLibraryModule>() }.asIterable(),
         )
     }
 
-    private fun createFakeStdlibModule(
-        module: KtModule,
-        project: Project
-    ): KtLibraryModule = KtLibraryModuleImpl(
-        libraryName = "fake-std-lib",
-        platform = module.platform,
-        contentScope = ProjectScope.getLibrariesScope(project),
-        project = project,
-        binaryRoots = emptyList(),
-        librarySources = null,
-        isBuitinsContainingStdlib = true
-    )
-
-    override fun doOutOfBlockModification(file: KtFile) {
+    override fun doGlobalModuleStateModification(project: Project) {
         error("Should not be called for compiler based tests")
     }
 }

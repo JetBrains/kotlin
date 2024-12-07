@@ -16,21 +16,34 @@
 
 package org.jetbrains.kotlin.incremental.storage
 
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.containers.hash.EqualityPolicy
 import com.intellij.util.io.DataExternalizer
-import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
+import org.jetbrains.kotlin.inline.InlineFunction
+import org.jetbrains.kotlin.inline.InlineFunctionOrAccessor
+import org.jetbrains.kotlin.inline.InlinePropertyAccessor
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.*
 
+class DefaultEqualityPolicy<T> : EqualityPolicy<T> {
+    override fun getHashCode(value: T): Int = value.hashCode()
+    override fun isEqual(value1: T, value2: T): Boolean = (value1 == value2)
+}
+
+fun <T> DataExternalizer<T>.toDescriptor(): KeyDescriptor<T> =
+    object : KeyDescriptor<T>,
+        DataExternalizer<T> by this,
+        EqualityPolicy<T> by DefaultEqualityPolicy<T>() {
+    }
+
 class LookupSymbolKeyDescriptor(
     /** If `true`, original values are saved; if `false`, only hashes are saved. */
     private val storeFullFqNames: Boolean = false
-) : KeyDescriptor<LookupSymbolKey> {
+) : KeyDescriptor<LookupSymbolKey>, EqualityPolicy<LookupSymbolKey> by DefaultEqualityPolicy() {
 
     override fun read(input: DataInput): LookupSymbolKey {
         // Note: The value of the storeFullFqNames variable below may or may not be the same as LookupSymbolKeyDescriptor.storeFullFqNames.
@@ -63,10 +76,6 @@ class LookupSymbolKeyDescriptor(
             output.writeInt(value.scopeHash)
         }
     }
-
-    override fun getHashCode(value: LookupSymbolKey): Int = value.hashCode()
-
-    override fun isEqual(val1: LookupSymbolKey, val2: LookupSymbolKey): Boolean = val1 == val2
 }
 
 object FqNameExternalizer : DataExternalizer<FqName> {
@@ -90,9 +99,9 @@ object ClassIdExternalizer : DataExternalizer<ClassId> {
 
     override fun read(input: DataInput): ClassId {
         return ClassId(
-            /* packageFqName */ FqNameExternalizer.read(input),
-            /* relativeClassName */ FqNameExternalizer.read(input),
-            /* isLocal */ input.readBoolean()
+            packageFqName = FqNameExternalizer.read(input),
+            relativeClassName = FqNameExternalizer.read(input),
+            isLocal = input.readBoolean()
         )
     }
 }
@@ -165,53 +174,6 @@ object StringToLongMapExternalizer : StringMapExternalizer<Long>() {
     }
 }
 
-/** [DataExternalizer] for a Kotlin constant. */
-object ConstantExternalizer : DataExternalizer<Any> {
-
-    override fun save(output: DataOutput, value: Any) {
-        when (value) {
-            is Int -> {
-                output.writeByte(Kind.INT.ordinal)
-                output.writeInt(value)
-            }
-            is Float -> {
-                output.writeByte(Kind.FLOAT.ordinal)
-                output.writeFloat(value)
-            }
-            is Long -> {
-                output.writeByte(Kind.LONG.ordinal)
-                output.writeLong(value)
-            }
-            is Double -> {
-                output.writeByte(Kind.DOUBLE.ordinal)
-                output.writeDouble(value)
-            }
-            is String -> {
-                output.writeByte(Kind.STRING.ordinal)
-                output.writeString(value)
-            }
-            else -> throw IllegalStateException("Unexpected constant class: ${value::class.java}")
-        }
-    }
-
-    override fun read(input: DataInput): Any {
-        return when (Kind.values()[input.readByte().toInt()]) {
-            Kind.INT -> input.readInt()
-            Kind.FLOAT -> input.readFloat()
-            Kind.LONG -> input.readLong()
-            Kind.DOUBLE -> input.readDouble()
-            Kind.STRING -> input.readString()
-        }
-    }
-
-    // The constants' values are provided by ASM, so their types can only be the following.
-    // See https://asm.ow2.io/javadoc/org/objectweb/asm/ClassVisitor.html#visitField(int,java.lang.String,java.lang.String,java.lang.String,java.lang.Object)
-    // (Note: Boolean constants have Integer (0, 1) values in ASM.)
-    private enum class Kind {
-        INT, FLOAT, LONG, DOUBLE, STRING
-    }
-}
-
 fun <T> DataExternalizer<T>.saveToFile(file: File, value: T) {
     return DataOutputStream(FileOutputStream(file).buffered()).use {
         save(it, value)
@@ -248,68 +210,46 @@ object LongExternalizer : DataExternalizer<Long> {
     override fun read(input: DataInput): Long = input.readLong()
 }
 
+object FloatExternalizer : DataExternalizer<Float> {
+    override fun save(output: DataOutput, value: Float) = output.writeFloat(value)
+    override fun read(input: DataInput): Float = input.readFloat()
+}
+
+object DoubleExternalizer : DataExternalizer<Double> {
+    override fun save(output: DataOutput, value: Double) = output.writeDouble(value)
+    override fun read(input: DataInput): Double = input.readDouble()
+}
+
 object StringExternalizer : DataExternalizer<String> {
     override fun save(output: DataOutput, value: String) = IOUtil.writeString(value, output)
     override fun read(input: DataInput): String = IOUtil.readString(input)
 }
 
-// Should be consistent with org.jetbrains.jps.incremental.storage.PathStringDescriptor for correct work of portable caches
-object PathStringDescriptor : EnumeratorStringDescriptor() {
-    private const val PORTABLE_CACHES_PROPERTY = "org.jetbrains.jps.portable.caches"
-    private val PORTABLE_CACHES = java.lang.Boolean.getBoolean(PORTABLE_CACHES_PROPERTY)
+/** [DataExternalizer] that delegates to another [DataExternalizer] depending on the type of the object to externalize. */
+class DelegateDataExternalizer<T>(
+    val types: List<Class<out T>>,
+    val typesExternalizers: List<DataExternalizer<out T>>
+) : DataExternalizer<T> {
 
-    override fun getHashCode(path: String): Int {
-        if (!PORTABLE_CACHES) return FileUtil.pathHashCode(path)
-        // On case insensitive OS hash calculated from value converted to lower case
-        return if (StringUtil.isEmpty(path)) 0 else FileUtil.toCanonicalPath(path).hashCode()
+    init {
+        check(types.size == typesExternalizers.size)
+        check(types.size < Byte.MAX_VALUE) // We will writeByte(index), so we need lastIndex (types.size - 1) <= Byte.MAX_VALUE
     }
 
-    override fun isEqual(val1: String, val2: String?): Boolean {
-        if (!PORTABLE_CACHES) return FileUtil.pathsEqual(val1, val2)
-        // On case insensitive OS hash calculated from path converted to lower case
-        if (val1 == val2) return true
-        if (val2 == null) return false
+    override fun save(output: DataOutput, objectToExternalize: T) {
+        val type = types.single { it.isAssignableFrom(objectToExternalize!!::class.java) }
+        val typeIndex = types.indexOf(type)
 
-        val path1 = FileUtil.toCanonicalPath(val1)
-        val path2 = FileUtil.toCanonicalPath(val2)
-        return path1 == path2
-    }
-}
-
-/**
- * [DataExternalizer] for a [Collection].
- *
- * If you need a [DataExternalizer] for a more specific instance of [Collection] (e.g., [List]), use [ListExternalizer] or create another
- * instance of [GenericCollectionExternalizer].
- *
- * Note: The implementations of this class and [GenericCollectionExternalizer] are similar but not exactly the same: the latter reads and
- * writes the size of the collection to avoid resizing the collection when reading. Therefore, if we make this class extend
- * [GenericCollectionExternalizer] to share code, we will need to update some expected files in tests as the serialized data will change
- * slightly.
- */
-open class CollectionExternalizer<T>(
-    private val elementExternalizer: DataExternalizer<T>,
-    private val newCollection: () -> MutableCollection<T>
-) : DataExternalizer<Collection<T>> {
-    override fun read(input: DataInput): Collection<T> {
-        val result = newCollection()
-        val stream = input as DataInputStream
-
-        while (stream.available() > 0) {
-            result.add(elementExternalizer.read(stream))
-        }
-
-        return result
+        output.writeByte(typeIndex)
+        @Suppress("UNCHECKED_CAST")
+        (typesExternalizers[typeIndex] as DataExternalizer<T>).save(output, objectToExternalize)
     }
 
-    override fun save(output: DataOutput, value: Collection<T>) {
-        value.forEach { elementExternalizer.save(output, it) }
+    override fun read(input: DataInput): T {
+        val typeIndex = input.readByte().toInt()
+        return typesExternalizers[typeIndex].read(input)
     }
 }
-
-object StringCollectionExternalizer : CollectionExternalizer<String>(EnumeratorStringDescriptor(), { HashSet() })
-
-object IntCollectionExternalizer : CollectionExternalizer<Int>(IntExternalizer, { HashSet() })
 
 fun DataOutput.writeString(value: String) = StringExternalizer.save(this, value)
 
@@ -346,9 +286,56 @@ object ByteArrayExternalizer : DataExternalizer<ByteArray> {
     }
 }
 
-abstract class GenericCollectionExternalizer<T, C : Collection<T>>(
+/**
+ * DEPRECATED: [DataExternalizer] for a [Collection], whose implementation is tied to [com.intellij.util.io.PersistentHashMap] (e.g., the
+ * [read] method reads until the stream ends -- this can only work with a [com.intellij.util.io.PersistentHashMap]).
+ *
+ * Use [CollectionExternalizerV2] if possible.
+ */
+private class CollectionExternalizerForPersistentHashMap<T>(
     private val elementExternalizer: DataExternalizer<T>,
-    private val newCollection: (size: Int) -> MutableCollection<T>
+    private val newCollection: () -> MutableCollection<T>,
+) : DataExternalizer<Collection<T>> {
+
+    override fun save(output: DataOutput, value: Collection<T>) {
+        value.forEach { elementExternalizer.save(output, it) }
+    }
+
+    override fun read(input: DataInput): Collection<T> {
+        val result = newCollection()
+        val stream = input as DataInputStream
+
+        while (stream.available() > 0) {
+            result.add(elementExternalizer.read(stream))
+        }
+
+        return result
+    }
+}
+
+/**
+ * DEPRECATED: This class should not be used because its implementation is tied to [com.intellij.util.io.PersistentHashMap]
+ * (see [CollectionExternalizerForPersistentHashMap]).
+ *
+ * Currently, we can't change the name or implementation of this class because it is still used by the `compiler-reference-index` module in
+ * the Kotlin IDEA plugin and that code relies on this name and implementation being unchanged (see KTIJ-27258).
+ *
+ * Once we remove that dependency, we can remove this class.
+ */
+class CollectionExternalizer<T>(
+    private val elementExternalizer: DataExternalizer<T>,
+    private val newCollection: () -> MutableCollection<T>,
+) : DataExternalizer<Collection<T>> by CollectionExternalizerForPersistentHashMap(elementExternalizer, newCollection)
+
+/** DEPRECATED: See [CollectionExternalizer]. */
+@Suppress("unused") // See `CollectionExternalizer`
+object IntCollectionExternalizer :
+    DataExternalizer<Collection<Int>> by CollectionExternalizerForPersistentHashMap(IntExternalizer, { ArrayList() })
+
+/** [DataExternalizer] for a [Collection]. */
+open class CollectionExternalizerV2<T, C : Collection<T>>(
+    private val elementExternalizer: DataExternalizer<T>,
+    private val newCollection: (size: Int) -> MutableCollection<T> = { size -> ArrayList(size) },
 ) : DataExternalizer<C> {
 
     override fun save(output: DataOutput, collection: C) {
@@ -373,10 +360,10 @@ abstract class GenericCollectionExternalizer<T, C : Collection<T>>(
 }
 
 class ListExternalizer<T>(elementExternalizer: DataExternalizer<T>) :
-    GenericCollectionExternalizer<T, List<T>>(elementExternalizer, { size -> ArrayList(size) })
+    CollectionExternalizerV2<T, List<T>>(elementExternalizer, { size -> ArrayList(size) })
 
 class SetExternalizer<T>(elementExternalizer: DataExternalizer<T>) :
-    GenericCollectionExternalizer<T, Set<T>>(elementExternalizer, { size -> LinkedHashSet(size) })
+    CollectionExternalizerV2<T, Set<T>>(elementExternalizer, { size -> LinkedHashSet(size) })
 
 open class MapExternalizer<K, V, M : Map<K, V>>(
     private val keyExternalizer: DataExternalizer<K>,
@@ -409,3 +396,53 @@ class LinkedHashMapExternalizer<K, V>(
     keyExternalizer: DataExternalizer<K>,
     valueExternalizer: DataExternalizer<V>
 ) : MapExternalizer<K, V, LinkedHashMap<K, V>>(keyExternalizer, valueExternalizer, { size -> LinkedHashMap(size) })
+
+object JvmMethodSignatureExternalizer : DataExternalizer<JvmMemberSignature.Method> {
+
+    override fun save(output: DataOutput, method: JvmMemberSignature.Method) {
+        StringExternalizer.save(output, method.name)
+        StringExternalizer.save(output, method.desc)
+    }
+
+    override fun read(input: DataInput): JvmMemberSignature.Method {
+        return JvmMemberSignature.Method(
+            name = StringExternalizer.read(input),
+            desc = StringExternalizer.read(input)
+        )
+    }
+}
+
+object InlineFunctionOrAccessorExternalizer : DataExternalizer<InlineFunctionOrAccessor> by DelegateDataExternalizer(
+    types = listOf(InlineFunction::class.java, InlinePropertyAccessor::class.java),
+    typesExternalizers = listOf(InlineFunctionExternalizer, InlinePropertyAccessorExternalizer)
+)
+
+private object InlineFunctionExternalizer : DataExternalizer<InlineFunction> {
+
+    override fun save(output: DataOutput, function: InlineFunction) {
+        JvmMethodSignatureExternalizer.save(output, function.jvmMethodSignature)
+        StringExternalizer.save(output, function.kotlinFunctionName)
+    }
+
+    override fun read(input: DataInput): InlineFunction {
+        return InlineFunction(
+            jvmMethodSignature = JvmMethodSignatureExternalizer.read(input),
+            kotlinFunctionName = StringExternalizer.read(input)
+        )
+    }
+}
+
+private object InlinePropertyAccessorExternalizer : DataExternalizer<InlinePropertyAccessor> {
+
+    override fun save(output: DataOutput, accessor: InlinePropertyAccessor) {
+        JvmMethodSignatureExternalizer.save(output, accessor.jvmMethodSignature)
+        StringExternalizer.save(output, accessor.propertyName)
+    }
+
+    override fun read(input: DataInput): InlinePropertyAccessor {
+        return InlinePropertyAccessor(
+            jvmMethodSignature = JvmMethodSignatureExternalizer.read(input),
+            propertyName = StringExternalizer.read(input)
+        )
+    }
+}

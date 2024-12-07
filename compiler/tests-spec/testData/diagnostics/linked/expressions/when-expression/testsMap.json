@@ -125,6 +125,24 @@
       ],
       "5": [
         {
+          "specVersion": "0.1-435",
+          "casesNumber": 1,
+          "description": "\u0027When\u0027 with enumeration of the different variants of expressions in \u0027when condition\u0027.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/5.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "typesProvider, classes, functions"
+        },
+        {
+          "specVersion": "0.1-435",
+          "casesNumber": 1,
+          "description": "\u0027When\u0027 with different variants of the arithmetic expressions (additive expression and multiplicative expression) in \u0027when condition\u0027.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/5.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "typesProvider, classes, functions"
+        },
+        {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "When",
@@ -317,7 +335,7 @@
         },
         {
           "specVersion": "0.1-435",
-          "casesNumber": 26,
+          "casesNumber": 25,
           "description": "\u0027When\u0027 with different variants of the arithmetic expressions (additive expression and multiplicative expression) in \u0027when condition\u0027.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/5.2.kt",
           "unexpectedBehaviour": true,
@@ -623,229 +641,17 @@
     }
   },
   "5": {
-    "pos": {
+    "neg": {
       "1": [
         {
           "specVersion": "0.1-313",
-          "casesNumber": 2,
-          "description": "\u0027When\u0027 with bound value and allowed break and continue expression (without labels) in the control structure body.",
-          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/pos/1.2.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "main"
-        },
-        {
-          "specVersion": "0.1-313",
-          "casesNumber": 25,
+          "casesNumber": 1,
           "description": "\u0027When\u0027 with bound value and with different variants of expressions in the control structure body.",
-          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/pos/1.1.kt",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/neg/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main",
           "helpers": "typesProvider, classes, functions"
         },
-        {
-          "specVersion": "0.1-313",
-          "casesNumber": 0,
-          "description": "Annotated when statement",
-          "path": "compiler/testData/diagnostics/tests/when/AnnotatedWhenStatement.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        },
-        {
-          "specVersion": "0.1-313",
-          "casesNumber": 0,
-          "description": "Exhaustive platform enum else",
-          "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumElse.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        },
-        {
-          "specVersion": "0.1-313",
-          "casesNumber": 0,
-          "description": "Branch false bypass",
-          "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypass.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        },
-        {
-          "specVersion": "0.1-152",
-          "casesNumber": 0,
-          "description": "Exhaustive with nullability check before",
-          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheckBefore.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        },
-        {
-          "specVersion": "0.1-152",
-          "casesNumber": 0,
-          "description": "Exhaustive with nullability check else",
-          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheckElse.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        },
-        {
-          "specVersion": "0.1-152",
-          "casesNumber": 0,
-          "description": "Kt4434",
-          "path": "compiler/testData/diagnostics/tests/when/kt4434.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        },
-        {
-          "specVersion": "0.1-313",
-          "casesNumber": 0,
-          "description": "Duplicated labels",
-          "path": "compiler/testData/diagnostics/tests/when/DuplicatedLabels.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        },
-        {
-          "specVersion": "0.1-152",
-          "casesNumber": 0,
-          "description": "Kt10811",
-          "path": "compiler/testData/diagnostics/tests/when/kt10811.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        },
-        {
-          "specVersion": "0.1-152",
-          "casesNumber": 0,
-          "description": "Exhaustive platform enum statement",
-          "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumStatement.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        },
-        {
-          "specVersion": "0.1-313",
-          "casesNumber": 0,
-          "description": "Exhaustive platform enum",
-          "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnum.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        },
-        {
-          "specVersion": "0.1-313",
-          "casesNumber": 0,
-          "description": "Comma in when condition without argument",
-          "path": "compiler/testData/diagnostics/tests/when/CommaInWhenConditionWithoutArgument.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        },
-        {
-          "specVersion": "0.1-313",
-          "casesNumber": 0,
-          "description": "Exhaustive nullable",
-          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveNullable.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        },
-        {
-          "specVersion": "0.1-313",
-          "casesNumber": 0,
-          "description": "Branch false bypass else",
-          "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypassElse.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        },
-        {
-          "specVersion": "0.1-313",
-          "casesNumber": 0,
-          "description": "Exhaustive initialization",
-          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveInitialization.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        },
-        {
-          "specVersion": "0.1-152",
-          "casesNumber": 0,
-          "description": "Exhaustive with nullability check",
-          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheck.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        },
-        {
-          "specVersion": "0.1-152",
-          "casesNumber": 0,
-          "description": "Exhaustive with nullability check boolean",
-          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheckBoolean.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        },
-        {
-          "specVersion": "0.1-313",
-          "casesNumber": 0,
-          "description": "Exhaustive platform enum annotated",
-          "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumAnnotated.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        },
-        {
-          "specVersion": "0.1-152",
-          "casesNumber": 0,
-          "description": "No else when statement",
-          "path": "compiler/testData/diagnostics/tests/when/NoElseWhenStatement.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        },
-        {
-          "specVersion": "0.1-152",
-          "casesNumber": 0,
-          "description": "Kt10809",
-          "path": "compiler/testData/diagnostics/tests/when/kt10809.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        },
-        {
-          "specVersion": "0.1-152",
-          "casesNumber": 0,
-          "description": "Kt10439",
-          "path": "compiler/testData/diagnostics/tests/when/kt10439.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        },
-        {
-          "specVersion": "0.1-152",
-          "casesNumber": 0,
-          "description": "Non exhaustive boolean nullable",
-          "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveBooleanNullable.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        },
-        {
-          "specVersion": "0.1-313",
-          "casesNumber": 0,
-          "description": "Exhaustive no initialization",
-          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveNoInitialization.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        },
-        {
-          "specVersion": "0.1-152",
-          "casesNumber": 0,
-          "description": "Exhaustive return throw",
-          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveReturnThrow.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        },
-        {
-          "specVersion": "0.1-152",
-          "casesNumber": 0,
-          "description": "Exhaustive return",
-          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveReturn.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        },
-        {
-          "specVersion": "0.1-313",
-          "casesNumber": 0,
-          "description": "Exhaustive platform enum null",
-          "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumNull.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        }
-      ]
-    },
-    "neg": {
-      "1": [
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
@@ -1115,6 +921,227 @@
           "casesNumber": 0,
           "description": "Else on nullable enum with smart cast",
           "path": "compiler/testData/diagnostics/tests/when/ElseOnNullableEnumWithSmartCast.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 2,
+          "description": "\u0027When\u0027 with bound value and allowed break and continue expression (without labels) in the control structure body.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 25,
+          "description": "\u0027When\u0027 with bound value and with different variants of expressions in the control structure body.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-5/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "typesProvider, classes, functions"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 0,
+          "description": "Annotated when statement",
+          "path": "compiler/testData/diagnostics/tests/when/AnnotatedWhenStatement.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 0,
+          "description": "Exhaustive platform enum else",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumElse.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 0,
+          "description": "Branch false bypass",
+          "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypass.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Exhaustive with nullability check before",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheckBefore.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Exhaustive with nullability check else",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheckElse.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Kt4434",
+          "path": "compiler/testData/diagnostics/tests/when/kt4434.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 0,
+          "description": "Duplicated labels",
+          "path": "compiler/testData/diagnostics/tests/when/DuplicatedLabels.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Kt10811",
+          "path": "compiler/testData/diagnostics/tests/when/kt10811.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Exhaustive platform enum statement",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumStatement.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 0,
+          "description": "Exhaustive platform enum",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnum.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 0,
+          "description": "Comma in when condition without argument",
+          "path": "compiler/testData/diagnostics/tests/when/CommaInWhenConditionWithoutArgument.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 0,
+          "description": "Exhaustive nullable",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveNullable.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 0,
+          "description": "Branch false bypass else",
+          "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypassElse.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 0,
+          "description": "Exhaustive initialization",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveInitialization.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Exhaustive with nullability check",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheck.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Exhaustive with nullability check boolean",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheckBoolean.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 0,
+          "description": "Exhaustive platform enum annotated",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumAnnotated.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "No else when statement",
+          "path": "compiler/testData/diagnostics/tests/when/NoElseWhenStatement.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Kt10809",
+          "path": "compiler/testData/diagnostics/tests/when/kt10809.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Kt10439",
+          "path": "compiler/testData/diagnostics/tests/when/kt10439.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Non exhaustive boolean nullable",
+          "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveBooleanNullable.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 0,
+          "description": "Exhaustive no initialization",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveNoInitialization.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Exhaustive return throw",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveReturnThrow.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Exhaustive return",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustiveReturn.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 0,
+          "description": "Exhaustive platform enum null",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumNull.kt",
           "unexpectedBehaviour": false,
           "linkType": "primary"
         }

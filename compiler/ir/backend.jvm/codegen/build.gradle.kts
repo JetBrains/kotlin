@@ -7,8 +7,12 @@ dependencies {
     api(project(":compiler:ir.tree"))
     api(project(":compiler:ir.backend.common"))
     api(project(":compiler:backend.jvm"))
-    implementation(project(":compiler:ir.tree.impl"))
     compileOnly(intellijCore())
+}
+
+optInToUnsafeDuringIrConstructionAPI()
+kotlin {
+    compilerOptions.optIn.add("org.jetbrains.kotlin.ir.util.JvmIrInlineExperimental")
 }
 
 sourceSets {

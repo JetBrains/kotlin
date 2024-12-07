@@ -10,6 +10,7 @@ public final class Test {
     public bridge method lastIndexOf(p0: java.lang.Integer): int
     public bridge final method lastIndexOf(p0: java.lang.Object): int
     public bridge final method remove(p0: int): java.lang.Integer
+    public synthetic bridge method remove(p0: int): java.lang.Object
     public bridge method remove(p0: java.lang.Integer): boolean
     public bridge final method remove(p0: java.lang.Object): boolean
     public bridge method removeAt(p0: int): java.lang.Integer

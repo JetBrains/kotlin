@@ -1,5 +1,3 @@
-// IGNORE_FIR
-// DONT_TARGET_EXACT_BACKEND: JS
 // KJS_WITH_FULL_RUNTIME
 
 // MODULE: ModuleA1
@@ -21,6 +19,7 @@ import demoPackage.a1.ModuleA1Class
 fun moduleA2Function() = ModuleA1Class("A2")
 
 // MODULE: ModuleB
+// NO_COMMON_FILES
 // FILE: moduleb.kt
 package demoPackage.b
 

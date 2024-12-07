@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
+import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,7 +47,7 @@ public class KtPackageDirective extends KtModifierListOwnerStub<KotlinPlaceHolde
     // This should be either JetSimpleNameExpression, or JetDotQualifiedExpression
     @Nullable
     public KtExpression getPackageNameExpression() {
-        return KtStubbedPsiUtil.getStubOrPsiChild(this, KtStubElementTypes.INSIDE_DIRECTIVE_EXPRESSIONS, KtExpression.ARRAY_FACTORY);
+        return KtStubbedPsiUtil.getStubOrPsiChild(this, KtTokenSets.INSIDE_DIRECTIVE_EXPRESSIONS, KtExpression.ARRAY_FACTORY);
     }
 
     @NotNull

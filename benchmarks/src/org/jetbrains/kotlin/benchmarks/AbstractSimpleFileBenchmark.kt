@@ -6,7 +6,6 @@ package org.jetbrains.kotlin.benchmarks
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
@@ -26,9 +25,8 @@ import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
-import org.jetbrains.kotlin.fir.builder.RawFirBuilder
-import org.jetbrains.kotlin.fir.createSessionForTests
+import org.jetbrains.kotlin.fir.FirTestSessionFactoryHelper
+import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.java.FirJavaElementFinder
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
@@ -42,6 +40,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.openjdk.jmh.annotations.*
 import org.openjdk.jmh.infra.Blackhole
 import java.io.File
+import java.nio.charset.StandardCharsets
 
 private fun createFile(shortName: String, text: String, project: Project): KtFile {
     val virtualFile = object : LightVirtualFile(shortName, KotlinLanguage.INSTANCE, text) {
@@ -51,7 +50,7 @@ private fun createFile(shortName: String, text: String, project: Project): KtFil
         }
     }
 
-    virtualFile.charset = CharsetToolkit.UTF8_CHARSET
+    virtualFile.charset = StandardCharsets.UTF_8
     val factory = PsiFileFactory.getInstance(project) as PsiFileFactoryImpl
 
     return factory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as KtFile
@@ -73,7 +72,7 @@ private fun newConfiguration(useNewInference: Boolean): CompilerConfiguration {
     configuration.addJvmClasspathRoot(JDK_PATH)
     configuration.addJvmClasspathRoot(RUNTIME_JAR)
     configuration.configureJdkClasspathRoots()
-    configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+    configuration.messageCollector = MessageCollector.NONE
 
     val newInferenceState = if (useNewInference) LanguageFeature.State.ENABLED else LanguageFeature.State.DISABLED
     configuration.languageVersionSettings = LanguageVersionSettingsImpl(
@@ -141,7 +140,7 @@ abstract class AbstractSimpleFileBenchmark {
         val result = TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
             moduleContext.project,
             listOf(file),
-            NoScopeRecordCliBindingTrace(),
+            NoScopeRecordCliBindingTrace(env.project),
             env.configuration,
             { scope -> JvmPackagePartProvider(LANGUAGE_FEATURE_SETTINGS, scope) }
         )
@@ -155,9 +154,9 @@ abstract class AbstractSimpleFileBenchmark {
     private fun analyzeGreenFileIr(bh: Blackhole) {
         val scope = GlobalSearchScope.filesScope(env.project, listOf(file.virtualFile))
             .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(env.project))
-        val session = createSessionForTests(env.toAbstractProjectEnvironment(), scope.toAbstractProjectFileSearchScope())
+        val session = FirTestSessionFactoryHelper.createSessionForTests(env.toVfsBasedProjectEnvironment(), scope.toAbstractProjectFileSearchScope())
         val firProvider = session.firProvider as FirProviderImpl
-        val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, PsiHandlingMode.COMPILER)
+        val builder = PsiRawFirBuilder(session, firProvider.kotlinScopeProvider)
 
         val totalTransformer = FirTotalResolveProcessor(session)
         val firFile = builder.buildFirFile(file).also(firProvider::recordFile)

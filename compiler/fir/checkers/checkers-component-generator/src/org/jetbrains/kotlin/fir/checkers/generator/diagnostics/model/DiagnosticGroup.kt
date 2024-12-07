@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.fir.PrivateForInline
+import org.jetbrains.kotlin.util.PrivateForInline
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.typeOf
@@ -43,7 +43,6 @@ abstract class AbstractDiagnosticGroup @PrivateForInline constructor(val name: S
     ) = deprecationDiagnosticDelegateProvider<P>(featureForError, positioningStrategy, init)
 
     @PrivateForInline
-    @OptIn(ExperimentalStdlibApi::class)
     internal inline fun <reified P : PsiElement> diagnosticDelegateProvider(
         severity: Severity,
         positioningStrategy: PositioningStrategy,
@@ -61,7 +60,6 @@ abstract class AbstractDiagnosticGroup @PrivateForInline constructor(val name: S
     }
 
     @PrivateForInline
-    @OptIn(ExperimentalStdlibApi::class)
     internal inline fun <reified P : PsiElement> deprecationDiagnosticDelegateProvider(
         featureForError: LanguageFeature,
         positioningStrategy: PositioningStrategy,

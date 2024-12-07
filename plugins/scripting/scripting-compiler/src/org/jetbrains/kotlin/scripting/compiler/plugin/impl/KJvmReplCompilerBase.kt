@@ -10,19 +10,15 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
+import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorBasedReporter
 import org.jetbrains.kotlin.cli.common.repl.LineId
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
-import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
@@ -37,7 +33,7 @@ import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.JvmReplCompilerState
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplImplicitsExtensionsResolutionFilter
-import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.resolve.skipExtensionsResolutionForImplicits
 import org.jetbrains.kotlin.scripting.resolve.skipExtensionsResolutionForImplicitsExceptInnermost
 import kotlin.script.experimental.api.*
@@ -95,7 +91,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                 if (firstFailure != null)
                     return firstFailure
 
-                checkKotlinPackageUsage(context.environment.configuration, sourceFiles, messageCollector)
+                checkKotlinPackageUsageForPsi(context.environment.configuration, sourceFiles, messageCollector)
 
                 if (messageCollector.hasErrors()) return failure(messageCollector)
 
@@ -103,8 +99,8 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                 // registerPackageFragmentProvidersIfNeeded already tries to avoid duplicated registering, but impact on
                 // executing it on every snippet needs to be evaluated first
                 if (state.history.isEmpty()) {
-                    val updatedConfiguration = ScriptDependenciesProvider.getInstance(context.environment.project)
-                        ?.getScriptConfiguration(snippetKtFile)?.configuration
+                    val updatedConfiguration = ScriptConfigurationsProvider.getInstance(context.environment.project)
+                        ?.getScriptConfigurationResult(snippetKtFile, context.baseScriptCompilationConfiguration)?.valueOrNull()?.configuration
                         ?: context.baseScriptCompilationConfiguration
                     registerPackageFragmentProvidersIfNeeded(
                         updatedConfiguration,
@@ -134,23 +130,18 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     else -> throw AssertionError("Unexpected result ${analysisResult::class.java}")
                 }
 
-                val isIr = context.environment.configuration.getBoolean(JVMConfigurationKeys.IR)
-
-                val codegenDiagnosticsCollector = SimpleDiagnosticsCollector()
-
-                val genStateBuilder = GenerationState.Builder(
-                    snippetKtFile.project,
-                    ClassBuilderFactories.BINARIES,
-                    compilationState.analyzerEngine.module,
-                    compilationState.analyzerEngine.trace.bindingContext,
-                    compilationState.environment.configuration
-                ).diagnosticReporter(codegenDiagnosticsCollector)
-
-                val generationState = if (isIr) {
-                    generateWithBackendIr(compilationState, sourceFiles, genStateBuilder)
-                } else {
-                    generateWithOldBackend(snippetKtFile, sourceFiles, genStateBuilder)
+                val codegenDiagnosticsCollector = SimpleDiagnosticsCollector { message, severity ->
+                    messageCollector.report(severity, message)
                 }
+
+                val generationState = GenerationState(
+                    snippetKtFile.project,
+                    compilationState.analyzerEngine.module,
+                    compilationState.environment.configuration,
+                    diagnosticReporter = codegenDiagnosticsCollector,
+                )
+
+                generateWithBackendIr(compilationState, sourceFiles, generationState)
 
                 if (codegenDiagnosticsCollector.hasErrors) {
                     val scriptDiagnostics = codegenDiagnosticsCollector.scriptDiagnostics(snippet)
@@ -159,14 +150,14 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
 
                 state.history.push(lineId, scriptDescriptor)
 
-                val dependenciesProvider = ScriptDependenciesProvider.getInstance(context.environment.project)
+                val configurationsProvider = ScriptConfigurationsProvider.getInstance(context.environment.project)
                 makeCompiledScript(
                     generationState,
                     snippet,
                     sourceFiles.first(),
                     sourceDependencies
                 ) { ktFile ->
-                    dependenciesProvider?.getScriptConfiguration(ktFile)?.configuration
+                    configurationsProvider?.getScriptConfigurationResult(ktFile, context.baseScriptCompilationConfiguration)?.valueOrNull()?.configuration
                         ?: context.baseScriptCompilationConfiguration
                 }.onSuccess { compiledScript ->
 
@@ -182,43 +173,27 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
             }
         }.last()
 
-    private fun generateWithOldBackend(
-        snippetKtFile: KtFile,
-        sourceFiles: List<KtFile>,
-        prebuiltState: GenerationState.Builder,
-    ): GenerationState {
-        val generationState = prebuiltState.build().also { generationState ->
-            generationState.scriptSpecific.earlierScriptsForReplInterpreter = state.history.map { it.item }
-            generationState.beforeCompile()
-            generationState.oldBEInitTrace(sourceFiles)
-        }
-        KotlinCodegenFacade.generatePackage(generationState, snippetKtFile.script!!.containingKtFile.packageFqName, sourceFiles)
-
-        return generationState
-    }
-
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun generateWithBackendIr(
         compilationState: ReplCompilationState<AnalyzerT>,
         sourceFiles: List<KtFile>,
-        prebuiltState: GenerationState.Builder,
-    ): GenerationState {
+        generationState: GenerationState,
+    ) {
         val generatorExtensions = object : JvmGeneratorExtensionsImpl(compilationState.environment.configuration) {
-            override fun getPreviousScripts() = state.history.map { compilationState.symbolTable.referenceScript(it.item) }
+            override fun getPreviousScripts() = state.history.map { compilationState.symbolTable.descriptorExtension.referenceScript(it.item) }
         }
         val codegenFactory = JvmIrCodegenFactory(
             compilationState.environment.configuration,
-            compilationState.environment.configuration.get(CLIConfigurationKeys.PHASE_CONFIG),
             compilationState.mangler, compilationState.symbolTable, generatorExtensions
         )
-        val generationState = prebuiltState.build()
-
         codegenFactory.generateModule(
             generationState,
-            codegenFactory.convertToIr(CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(generationState, sourceFiles)),
+            codegenFactory.convertToIr(
+                CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(
+                    generationState, sourceFiles, compilationState.analyzerEngine.trace.bindingContext
+                )
+            ),
         )
-
-        return generationState
     }
 
     override suspend fun invoke(

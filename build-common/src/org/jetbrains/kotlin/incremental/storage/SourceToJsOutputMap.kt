@@ -5,39 +5,15 @@
 
 package org.jetbrains.kotlin.incremental.storage
 
-import org.jetbrains.kotlin.incremental.dumpCollection
+import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
 import java.io.File
 
-class SourceToJsOutputMap(storageFile: File, private val pathConverter: FileToPathConverter) : BasicStringMap<Collection<String>>(storageFile, StringCollectionExternalizer) {
-    override fun dumpValue(value: Collection<String>): String = value.dumpCollection()
-
-    @Synchronized
-    fun add(key: File, value: File) {
-        storage.append(pathConverter.toPath(key), listOf(pathConverter.toPath(value)))
-    }
-
-    operator fun get(sourceFile: File): Collection<File> =
-        storage[pathConverter.toPath(sourceFile)]?.map { pathConverter.toFile(it) } ?: setOf()
-
-
-    @Synchronized
-    operator fun set(key: File, values: Collection<File>) {
-        if (values.isEmpty()) {
-            remove(key)
-            return
-        }
-
-        storage[pathConverter.toPath(key)] = values.map { pathConverter.toPath(it) }
-    }
-
-    @Synchronized
-    fun remove(key: File) {
-        storage.remove(pathConverter.toPath(key))
-    }
-
-    @Synchronized
-    fun removeValues(key: File, removed: Set<File>) {
-        val notRemoved = this[key].filter { it !in removed }
-        this[key] = notRemoved
-    }
-}
+class SourceToJsOutputMap(
+    storageFile: File,
+    icContext: IncrementalCompilationContext,
+) : AppendableSetBasicMap<File, File>(
+    storageFile,
+    icContext.fileDescriptorForSourceFiles,
+    icContext.fileDescriptorForOutputFiles,
+    icContext
+)

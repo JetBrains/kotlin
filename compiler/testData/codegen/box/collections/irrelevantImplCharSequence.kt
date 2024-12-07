@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-
 // FILE: J.java
 
 public class J {

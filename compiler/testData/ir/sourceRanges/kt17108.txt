@@ -1,4 +1,4 @@
-@0:0..26:1 FILE fqName:<root> fileName:/kt17108.kt
+@0:0..27:0 FILE fqName:<root> fileName:/kt17108.kt
   @4:0..26:1 CLASS INTERFACE name:Boolean modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     @8:20..38 FUN name:not visibility:public modality:ABSTRACT <> ($this:<root>.Boolean) returnType:<root>.Boolean [operator]
       @8:4..38 VALUE_PARAMETER name:<this> type:<root>.Boolean

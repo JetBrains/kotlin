@@ -12,14 +12,14 @@ import org.jetbrains.kotlin.backend.jvm.serialization.JvmIrSerializerSession
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmSerializeIrMode
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.name.FqName
 
 class JvmIrSerializerImpl(private val configuration: CompilerConfiguration) : JvmIrSerializer {
 
-    private val declarationTable = DeclarationTable(JvmGlobalDeclarationTable())
+    private val declarationTable = DeclarationTable.Default(JvmGlobalDeclarationTable())
 
     override fun serializeIrFile(irFile: IrFile): ByteArray? {
         val fileClassFqName = irFile.getFileClassInfo().fileClassFqName
@@ -34,10 +34,9 @@ class JvmIrSerializerImpl(private val configuration: CompilerConfiguration) : Jv
 
     private fun makeSerializerSession(fileClassFqName: FqName) =
         JvmIrSerializerSession(
-            configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,
             declarationTable,
-            mutableMapOf(),
             configuration.get(JVMConfigurationKeys.SERIALIZE_IR) ?: JvmSerializeIrMode.NONE,
-            fileClassFqName
+            fileClassFqName,
+            configuration.languageVersionSettings,
         )
 }

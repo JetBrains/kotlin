@@ -7,11 +7,14 @@ public annotation class AllOpen {
 
 @AllOpen
 @kotlin.Metadata
-public enum class Enum {
+public final enum class Enum {
     // source: 'allOpenOnNotClasses.kt'
+    private synthetic final static field $ENTRIES: kotlin.enums.EnumEntries
     private synthetic final static field $VALUES: Enum[]
+    private synthetic final static method $values(): Enum[]
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int): void
+    public static @org.jetbrains.annotations.NotNull method getEntries(): kotlin.enums.EnumEntries
     public static method valueOf(p0: java.lang.String): Enum
     public static method values(): Enum[]
 }

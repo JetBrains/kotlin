@@ -23,6 +23,7 @@ fun builder(c: suspend () -> Unit) {
 }
 
 fun box(): String {
+    StateMachineChecker.reset()
     builder {
         crossinlineMe {
             StateMachineChecker.suspendHere()

@@ -49,15 +49,15 @@ private const val pi = 3.1415926535897931160E+00 /* 0x400921FB, 0x54442D18 */
 private const val pi_lo = 1.2246467991473531772E-16 /* 0x3CA1A626, 0x33145C07 */
 
 internal fun __ieee754_atan2(y: Double, x: Double): Double {
-    var z: Double = 0.0
-    var k: Int = 0
-    var m: Int = 0
-    var hx: Int = 0
-    var hy: Int = 0
-    var ix: Int = 0
-    var iy: Int = 0
-    var lx: UInt = 0U
-    var ly: UInt = 0U
+    var z: Double
+    var k: Int
+    var m: Int
+    var hx: Int
+    var hy: Int
+    var ix: Int
+    var iy: Int
+    var lx: UInt
+    var ly: UInt
 
     hx = __HI(x); ix = hx and 0x7fffffff
     lx = __LOu(x)

@@ -1,29 +1,37 @@
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
-// WITH_EXTENDED_CHECKERS
+// WITH_EXTRA_CHECKERS
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 20
+ * DESCRIPTION: Raw data flow analysis test
+ * HELPERS: classes, objects, typealiases, enumClasses, interfaces, sealedClasses
+ */
 
 // TESTCASE NUMBER: 1
 fun case_1(x: Any?) {
     if (x is Int || false) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>.inv()
     }
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(x: Any) {
     if (x is Unit || false || false || false || false || false) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>.toString()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>x<!>.toString()
     }
 }
 
 // TESTCASE NUMBER: 3
 fun case_3(x: Any?) {
     if (true && x !is Class) else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE!>prop_1<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_1
     }
 }
 
@@ -42,8 +50,8 @@ fun case_4(x: Any) {
 // TESTCASE NUMBER: 5
 fun case_5(x: Any?) {
     if (false || !(x !is Class.NestedClass?)) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>?.<!UNRESOLVED_REFERENCE!>prop_4<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class.NestedClass?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class.NestedClass?")!>x<!>?.prop_4
     }
 }
 
@@ -62,16 +70,16 @@ fun case_6(x: Any?) {
 // TESTCASE NUMBER: 7
 fun case_7(x: Any) {
     if (!(x is DeepObject.A.B.C.D.E.F.G.J) && true && true && true) else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>.<!UNRESOLVED_REFERENCE!>prop_1<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J")!>x<!>.prop_1
     }
 }
 
 // TESTCASE NUMBER: 8
 fun case_8(x: Any?) {
     if (!(x is Int?) && true) else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>?.<!UNRESOLVED_REFERENCE!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>?.inv()
     }
 }
 
@@ -90,17 +98,17 @@ fun case_9(x: Any?) {
 // TESTCASE NUMBER: 10
 fun case_10(x: Any?) {
     if (true && !!(x !is Interface3) && true) else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE!>itest<!>()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE!>itest3<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface3")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface3")!>x<!>.itest()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface3")!>x<!>.itest3()
     }
 }
 
 // TESTCASE NUMBER: 11
 fun case_11(x: Any?) {
     if (false || x is SealedMixedChildObject1? || false) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>?.<!UNRESOLVED_REFERENCE!>prop_1<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>?.<!UNRESOLVED_REFERENCE!>prop_2<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("SealedMixedChildObject1?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("SealedMixedChildObject1?")!>x<!>?.prop_1
+        <!DEBUG_INFO_EXPRESSION_TYPE("SealedMixedChildObject1?")!>x<!>?.prop_2
     }
 }

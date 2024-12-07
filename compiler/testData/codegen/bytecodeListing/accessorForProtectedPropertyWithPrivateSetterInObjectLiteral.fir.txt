@@ -1,0 +1,30 @@
+@kotlin.Metadata
+public final class B$test$1 {
+    // source: 'accessorForProtectedPropertyWithPrivateSetterInObjectLiteral.kt'
+    enclosing method B.test()Ljava/lang/Object;
+    synthetic final field this$0: B
+    inner (anonymous) class B$test$1
+    method <init>(p0: B): void
+    public method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class B {
+    // source: 'accessorForProtectedPropertyWithPrivateSetterInObjectLiteral.kt'
+    inner (anonymous) class B$test$1
+    public method <init>(): void
+    public synthetic final static method access$getVo(p0: B): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method test(): java.lang.Object
+}
+
+@kotlin.Metadata
+public class a/A {
+    // source: 'a.kt'
+    private @org.jetbrains.annotations.NotNull field vk: java.lang.String
+    private @org.jetbrains.annotations.NotNull field vo: java.lang.String
+    public method <init>(): void
+    private final static method fk$lambda$0(p0: a.A): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method fk(): kotlin.jvm.functions.Function0
+    protected final @org.jetbrains.annotations.NotNull method getVk(): java.lang.String
+    protected final @org.jetbrains.annotations.NotNull method getVo(): java.lang.String
+}

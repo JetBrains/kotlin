@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.CoreHID
+
+modules = CoreHID
+compilerOpts = -framework CoreHID
+linkerOpts = -framework CoreHID
+#Disabled: Swift-only framework

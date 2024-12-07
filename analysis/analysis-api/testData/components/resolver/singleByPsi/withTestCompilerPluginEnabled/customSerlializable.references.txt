@@ -1,0 +1,3 @@
+KtNameReferenceExpression(331,351): 'serializeFirstTarget'
+  KtSimpleNameReference:
+    (in test.Serializer) fun serializeFirstTarget(x: test.FirstTarget)

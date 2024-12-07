@@ -1,17 +1,18 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A {
     val a = 20
 
     val it: Number
     field = 4
 
-    <!PROPERTY_MUST_HAVE_GETTER!>val joke: Number
-    field = "Haha"<!>
+    <!PROPERTY_MUST_HAVE_GETTER!>val joke: Number<!>
+    field = "Haha"
 
-    <!PROPERTY_MUST_HAVE_GETTER!>val incompatible: Number
-    field: Any? = 42<!>
+    <!PROPERTY_MUST_HAVE_GETTER!>val incompatible: Number<!>
+    field: Any? = 42
 
-    <!PROPERTY_MUST_HAVE_GETTER!>val customGetterNeeded: Int
-    field: Number = 42<!>
+    <!PROPERTY_MUST_HAVE_GETTER!>val customGetterNeeded: Int<!>
+    field: Number = 42
 
     val invertedTypes: Int
     field: Number = 42
@@ -30,7 +31,7 @@ class A {
     val p = 5
         get() = field
 
-    <!PROPERTY_MUST_HAVE_SETTER!>var setterNeeded: Int
+    <!PROPERTY_MUST_HAVE_SETTER!>var setterNeeded: Int<!>
         field = "test"
-        get() = field.length<!>
+        get() = field.length
 }

@@ -1,0 +1,6 @@
+FILE: kt54478.kt
+    @FILE:R|kotlin/Suppress|(names = vararg(String(INVISIBLE_REFERENCE), String(INVISIBLE_MEMBER)))
+    public final fun <T : R|kotlin/Any|> test(block: R|kotlin/Any.() -> T|): R|kotlin/Unit| {
+    }
+    public final fun <T : R|kotlin/Any|> test(block: R|@NoInfer T|): R|kotlin/Unit| {
+    }

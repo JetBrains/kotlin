@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-151 Inherit visibility when overriding
 package kt151
 

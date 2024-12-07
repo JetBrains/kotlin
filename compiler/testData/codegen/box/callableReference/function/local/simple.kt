@@ -1,4 +1,4 @@
 fun box(): String {
     fun foo() = "OK"
-    return (::foo)()
+    return (::foo).let { it() }
 }

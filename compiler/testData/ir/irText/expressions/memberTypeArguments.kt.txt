@@ -1,16 +1,17 @@
 class GenericClass<T : Any?> {
+  val value: T
+    field = value
+    get
+
   constructor(value: T) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val value: T
-    field = value
-    get
-
   fun withNewValue(newValue: T): GenericClass<T> {
     return GenericClass<T>(value = newValue)
   }
 
 }
+

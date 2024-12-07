@@ -1,0 +1,12 @@
+public/*package*/ open class AnnotatedParameterInEnumClassConstructor : R|kotlin/Any| {
+    public/*package*/ constructor(): R|test/AnnotatedParameterInEnumClassConstructor|
+
+    public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(value: R|kotlin/String|): R|test/AnnotatedParameterInEnumClassConstructor.Anno|
+
+    }
+    public/*package*/ open inner class JavaEnum : R|kotlin/Any| {
+        public/*package*/ test/AnnotatedParameterInEnumClassConstructor.constructor(@R|test/AnnotatedParameterInEnumClassConstructor.Anno|(value = String(a)) a: R|kotlin/String!|, @R|test/AnnotatedParameterInEnumClassConstructor.Anno|(value = String(b)) b: R|kotlin/String!|): R|test/AnnotatedParameterInEnumClassConstructor.JavaEnum|
+
+    }
+}

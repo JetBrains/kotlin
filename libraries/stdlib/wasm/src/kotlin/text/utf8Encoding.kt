@@ -96,7 +96,7 @@ private fun codePointFrom3(bytes: ByteArray, byte1: Int, index: Int, endIndex: I
  */
 private fun codePointFrom4(bytes: ByteArray, byte1: Int, index: Int, endIndex: Int, throwOnMalformed: Boolean): Int {
     if (index >= endIndex) {
-        malformed(0, index, throwOnMalformed)
+        return malformed(0, index, throwOnMalformed)
     }
 
     val byte2 = bytes[index].toInt()
@@ -112,7 +112,9 @@ private fun codePointFrom4(bytes: ByteArray, byte1: Int, index: Int, endIndex: I
         }
     } else if (byte1 and 0xF > 0x4) {
         return malformed(0, index, throwOnMalformed)
-    } else if (byte2 and 0xC0 != 0x80) {
+    }
+
+    if (byte2 and 0xC0 != 0x80) {
         return malformed(0, index, throwOnMalformed)
     }
 

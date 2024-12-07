@@ -81,25 +81,57 @@ DIModuleRef DICreateModule(DIBuilderRef builder, DIScopeOpaqueRef scope,
   return llvm::wrap(llvm::unwrap(builder)->createModule(llvm::unwrap(scope), name, configurationMacro, includePath, iSysRoot));
 }
 
-DISubprogramRef DICreateFunction(DIBuilderRef builderRef, DIScopeOpaqueRef scope,
-                                 const char* name, const char *linkageName,
-                                 DIFileRef file, unsigned lineNo,
-                                 DISubroutineTypeRef type, int isLocal,
-                                 int isDefinition, unsigned scopeLine) {
+static DISubprogramRef DICreateFunctionShared(DIBuilderRef builderRef, DIScopeOpaqueRef scope,
+                                              llvm::StringRef name, llvm::StringRef linkageName,
+                                              DIFileRef file, unsigned lineNo,
+                                              DISubroutineTypeRef type, int isLocal,
+                                              int isDefinition, unsigned scopeLine, int isTransparentStepping) {
   auto builder = llvm::unwrap(builderRef);
+  auto spFlags = llvm::DISubprogram::toSPFlags(false, true, false);
+
+  if (isTransparentStepping != 0) {
+#ifdef __APPLE__
+    spFlags |= llvm::DISubprogram::SPFlagIsTransparentStepping;
+#else
+    assert(false);
+#endif
+  }
+
   auto subprogram = builder->createFunction(llvm::unwrap(scope),
                                             name,
                                             linkageName,
                                             llvm::unwrap(file),
                                             lineNo,
                                             llvm::unwrap(type),
-                                            scopeLine, llvm::DINode::DIFlags::FlagZero, llvm::DISubprogram::toSPFlags(false, true, false));
+                                            scopeLine, llvm::DINode::DIFlags::FlagZero, spFlags);
   auto tmp = subprogram->getRetainedNodes().get();
   if (!tmp && tmp->isTemporary())
     llvm::MDTuple::deleteTemporary(tmp);
 
   builder->finalizeSubprogram(subprogram);
   return llvm::wrap(subprogram);
+}
+
+DISubprogramRef DICreateFunction(DIBuilderRef builderRef, DIScopeOpaqueRef scope,
+                                 const char* name, const char *linkageName,
+                                 DIFileRef file, unsigned lineNo,
+                                 DISubroutineTypeRef type, int isLocal,
+                                 int isDefinition, unsigned scopeLine, int isTransparentStepping) {
+  return DICreateFunctionShared(builderRef, scope, name, linkageName, file, lineNo, type, isLocal, isDefinition, scopeLine,
+                                isTransparentStepping);
+}
+
+DISubprogramRef DICreateBridgeFunction(DIBuilderRef builderRef, DIScopeOpaqueRef scope,
+                                       LLVMValueRef function,
+                                       DIFileRef file, unsigned lineNo,
+                                       DISubroutineTypeRef type, int isLocal,
+                                       int isDefinition, unsigned scopeLine, int isTransparentStepping) {
+  auto fn = llvm::cast<llvm::Function>(llvm::unwrap(function));
+  auto name = fn->getName();
+  auto subprogram = DICreateFunctionShared(builderRef, scope, name, name, file, lineNo, type, isLocal, isDefinition, scopeLine,
+                                           isTransparentStepping);
+  fn->setSubprogram(llvm::unwrap(subprogram));
+  return subprogram;
 }
 
 DIScopeOpaqueRef DICreateLexicalBlockFile(DIBuilderRef builderRef, DIScopeOpaqueRef scopeRef, DIFileRef fileRef) {
@@ -247,7 +279,7 @@ DIExpressionRef DICreateEmptyExpression(DIBuilderRef builder) {
 
 void DIInsertDeclaration(DIBuilderRef builder, LLVMValueRef value, DILocalVariableRef localVariable, DILocationRef location, LLVMBasicBlockRef bb, int64_t *expr, uint64_t exprCount) {
   auto di_builder = llvm::unwrap(builder);
-  std::vector<int64_t> expression;
+  std::vector<uint64_t> expression;
   for (uint64_t i = 0; i < exprCount; ++i)
     expression.push_back(expr[i]);
   di_builder->insertDeclare(llvm::unwrap(value),

@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.test.builders
 
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.test.*
+import org.jetbrains.kotlin.test.backend.handlers.UpdateTestDataHandler
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.impl.TestConfigurationImpl
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.util.PrivateForInline
 import kotlin.io.path.Path
 
 @DefaultsDsl
@@ -32,7 +33,7 @@ class TestConfigurationBuilder {
     private val preAnalysisHandlers: MutableList<Constructor<PreAnalysisHandler>> = mutableListOf()
 
     private val additionalSourceProviders: MutableList<Constructor<AdditionalSourceProvider>> = mutableListOf()
-    private val moduleStructureTransformers: MutableList<ModuleStructureTransformer> = mutableListOf()
+    private val moduleStructureTransformers: MutableList<Constructor<ModuleStructureTransformer>> = mutableListOf()
 
     private val metaTestConfigurators: MutableList<Constructor<MetaTestConfigurator>> = mutableListOf()
     private val afterAnalysisCheckers: MutableList<Constructor<AfterAnalysisChecker>> = mutableListOf()
@@ -104,45 +105,52 @@ class TestConfigurationBuilder {
         }
     }
 
-    inline fun <I : ResultingArtifact<I>> handlersStep(
-        artifactKind: TestArtifactKind<I>,
-        init: HandlersStepBuilder<I>.() -> Unit
-    ): HandlersStepBuilder<I> {
+    inline fun <InputArtifact, InputArtifactKind> handlersStep(
+        artifactKind: InputArtifactKind,
+        init: HandlersStepBuilder<InputArtifact, InputArtifactKind>.() -> Unit,
+    ): HandlersStepBuilder<InputArtifact, InputArtifactKind>
+            where InputArtifact : ResultingArtifact<InputArtifact>,
+                  InputArtifactKind : TestArtifactKind<InputArtifact> {
         return HandlersStepBuilder(artifactKind).also {
             it.init()
             steps += it
         }
     }
 
-    inline fun <I : ResultingArtifact<I>> namedHandlersStep(
+    inline fun <InputArtifact, InputArtifactKind> namedHandlersStep(
         name: String,
-        artifactKind: TestArtifactKind<I>,
-        init: HandlersStepBuilder<I>.() -> Unit
-    ): HandlersStepBuilder<I> {
-        val previouslyContainedStep = namedStepOfType<I>(name)
-        if (previouslyContainedStep == null) {
+        artifactKind: InputArtifactKind,
+        init: HandlersStepBuilder<InputArtifact, InputArtifactKind>.() -> Unit,
+    ): HandlersStepBuilder<InputArtifact, InputArtifactKind>
+            where InputArtifact : ResultingArtifact<InputArtifact>,
+                  InputArtifactKind : TestArtifactKind<InputArtifact> {
+        val previouslyContainedStep = namedStepOfType<InputArtifact, InputArtifactKind>(name)
+        return if (previouslyContainedStep == null) {
             val step = handlersStep(artifactKind, init)
             namedSteps[name] = step
-            return step
+            step
         } else {
             configureNamedHandlersStep(name, artifactKind, init)
-            return previouslyContainedStep
+            previouslyContainedStep
         }
     }
 
-    inline fun <I : ResultingArtifact<I>> configureNamedHandlersStep(
+    inline fun <InputArtifact, InputArtifactKind> configureNamedHandlersStep(
         name: String,
-        artifactKind: TestArtifactKind<I>,
-        init: HandlersStepBuilder<I>.() -> Unit
-    ) {
-        val step = namedStepOfType<I>(name) ?: error { "Step \"$name\" not found" }
+        artifactKind: InputArtifactKind,
+        init: HandlersStepBuilder<InputArtifact, InputArtifactKind>.() -> Unit
+    ) where InputArtifact : ResultingArtifact<InputArtifact>,
+            InputArtifactKind : TestArtifactKind<InputArtifact> {
+        val step = namedStepOfType<InputArtifact, InputArtifactKind>(name) ?: error { "Step \"$name\" not found" }
         require(step.artifactKind == artifactKind) { "Step kind: ${step.artifactKind}, passed kind is $artifactKind" }
         step.apply(init)
     }
 
-    fun <I : ResultingArtifact<I>> namedStepOfType(name: String):  HandlersStepBuilder<I>?  {
+    fun <InputArtifact, InputArtifactKind> namedStepOfType(name: String): HandlersStepBuilder<InputArtifact, InputArtifactKind>?
+        where InputArtifact : ResultingArtifact<InputArtifact>,
+              InputArtifactKind : TestArtifactKind<InputArtifact> {
         @Suppress("UNCHECKED_CAST")
-        return namedSteps[name] as HandlersStepBuilder<I>?
+        return namedSteps[name] as HandlersStepBuilder<InputArtifact, InputArtifactKind>?
     }
 
     fun useSourcePreprocessor(vararg preprocessors: Constructor<SourceFilePreprocessor>, needToPrepend: Boolean = false) {
@@ -174,12 +182,14 @@ class TestConfigurationBuilder {
     }
 
     @TestInfrastructureInternals
-    fun resetModuleStructureTransformers() {
-        moduleStructureTransformers.clear()
+    fun useModuleStructureTransformers(vararg transformers: ModuleStructureTransformer) {
+        for (transformer in transformers) {
+            moduleStructureTransformers += { _ -> transformer }
+        }
     }
 
     @TestInfrastructureInternals
-    fun useModuleStructureTransformers(vararg transformers: ModuleStructureTransformer) {
+    fun useModuleStructureTransformers(vararg transformers: Constructor<ModuleStructureTransformer>) {
         moduleStructureTransformers += transformers
     }
 
@@ -196,8 +206,11 @@ class TestConfigurationBuilder {
         metaTestConfigurators += configurators
     }
 
-    fun useAfterAnalysisCheckers(vararg checkers: Constructor<AfterAnalysisChecker>) {
-        afterAnalysisCheckers += checkers
+    fun useAfterAnalysisCheckers(vararg checkers: Constructor<AfterAnalysisChecker>, insertAtFirst: Boolean = false) {
+        when (insertAtFirst) {
+            false -> afterAnalysisCheckers += checkers
+            true -> afterAnalysisCheckers.addAll(0, checkers.asList())
+        }
     }
 
     fun defaultDirectives(init: RegisteredDirectivesBuilder.() -> Unit) {
@@ -223,6 +236,11 @@ class TestConfigurationBuilder {
                 this.configuration()
             }
         }
+
+        // UpdateTestDataHandler should be _the very last_ handler at all times to avoid false-positive test data changes,
+        // so it is added after all configuration callbacks have already been executed
+        useAfterAnalysisCheckers(::UpdateTestDataHandler)
+
         return TestConfigurationImpl(
             testInfo,
             defaultsProviderBuilder.build(),
@@ -262,7 +280,7 @@ class TestConfigurationBuilder {
             get() = builder.preAnalysisHandlers
         val additionalSourceProviders: List<Constructor<AdditionalSourceProvider>>
             get() = builder.additionalSourceProviders
-        val moduleStructureTransformers: List<ModuleStructureTransformer>
+        val moduleStructureTransformers: List<Constructor<ModuleStructureTransformer>>
             get() = builder.moduleStructureTransformers
         val metaTestConfigurators: List<Constructor<MetaTestConfigurator>>
             get() = builder.metaTestConfigurators

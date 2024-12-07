@@ -1,0 +1,25 @@
+KT element: KtEnumEntry
+FIR element: FirEnumEntryImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] enum entry ENTRY: R|X|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
+    public final [ResolvedTo(STATUS)] enum class X : R|kotlin/Enum<X>| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
+            LAZY_super<R|kotlin/Enum<X>|>
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] enum entry ENTRY: R|X|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=X] fun values(): R|kotlin/Array<X>| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=X] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|X| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<X>|
+
+    }

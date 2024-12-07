@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.*
 
@@ -110,7 +109,6 @@ private fun genProperty(
             /* isDelegated = */ false
     ) {
         override val errorType = errorType
-        override val shouldBeCached = type.shouldBeCached
         override val resource = resource
     }
 
@@ -144,22 +142,12 @@ private fun genProperty(
     return property
 }
 
-private val SimpleType.shouldBeCached: Boolean
-    get() {
-        val viewClassFqName = constructor.declarationDescriptor?.fqNameUnsafe?.asString() ?: return false
-        return viewClassFqName != AndroidConst.VIEWSTUB_FQNAME
-    }
-
 interface AndroidSyntheticFunction
 
 interface AndroidSyntheticProperty {
     val resource: AndroidResource
 
     val errorType: String?
-
-    // True if the View should be cached.
-    // Some views (such as ViewStub) should not be cached.
-    val shouldBeCached: Boolean
 }
 
 val AndroidSyntheticProperty.isErrorType: Boolean

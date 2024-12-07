@@ -1,7 +1,7 @@
 ================ Step #1 add file with compilation error to module1 =================
 
 Lookups cache are INVALID
-Marked as dirty by Kotlin:
+ChunkBuildStarted. Marked as dirty by Kotlin:
   module1/src/a.kt
   module1/src/f.kt
   module2/src/b.kt

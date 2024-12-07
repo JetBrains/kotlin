@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-2883 Type inference fails due to non-Unit value returned
 package a
 

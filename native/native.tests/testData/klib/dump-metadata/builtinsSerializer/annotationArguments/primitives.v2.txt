@@ -1,0 +1,65 @@
+library {
+  // module name: <primitives.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/C
+    // class name: test/Primitives
+
+    // signature: test/C|null[0]
+    @test/Primitives(byte = 7.toByte(), char = '%', short = 239.toShort(), int = 239017, long = 123456789123456789L, float = 2.72f, double = -3.14, boolean = true)
+    public final class test/C : kotlin/Any {
+
+      // signature: test/C.<init>|<init>(){}[0]
+      public constructor()
+    }
+
+    // signature: test/Primitives|null[0]
+    public final annotation class test/Primitives : kotlin/Annotation {
+
+      // signature: test/Primitives.<init>|<init>(kotlin.Byte;kotlin.Char;kotlin.Short;kotlin.Int;kotlin.Long;kotlin.Float;kotlin.Double;kotlin.Boolean){}[0]
+      public constructor(byte: kotlin/Byte, char: kotlin/Char, short: kotlin/Short, int: kotlin/Int, long: kotlin/Long, float: kotlin/Float, double: kotlin/Double, boolean: kotlin/Boolean)
+
+      // signature: test/Primitives.boolean|{}boolean[0]
+      public final val boolean: kotlin/Boolean
+        // signature: test/Primitives.boolean.<get-boolean>|<get-boolean>(){}[0]
+        public final get
+
+      // signature: test/Primitives.byte|{}byte[0]
+      public final val byte: kotlin/Byte
+        // signature: test/Primitives.byte.<get-byte>|<get-byte>(){}[0]
+        public final get
+
+      // signature: test/Primitives.char|{}char[0]
+      public final val char: kotlin/Char
+        // signature: test/Primitives.char.<get-char>|<get-char>(){}[0]
+        public final get
+
+      // signature: test/Primitives.double|{}double[0]
+      public final val double: kotlin/Double
+        // signature: test/Primitives.double.<get-double>|<get-double>(){}[0]
+        public final get
+
+      // signature: test/Primitives.float|{}float[0]
+      public final val float: kotlin/Float
+        // signature: test/Primitives.float.<get-float>|<get-float>(){}[0]
+        public final get
+
+      // signature: test/Primitives.int|{}int[0]
+      public final val int: kotlin/Int
+        // signature: test/Primitives.int.<get-int>|<get-int>(){}[0]
+        public final get
+
+      // signature: test/Primitives.long|{}long[0]
+      public final val long: kotlin/Long
+        // signature: test/Primitives.long.<get-long>|<get-long>(){}[0]
+        public final get
+
+      // signature: test/Primitives.short|{}short[0]
+      public final val short: kotlin/Short
+        // signature: test/Primitives.short.<get-short>|<get-short>(){}[0]
+        public final get
+    }
+  }
+}

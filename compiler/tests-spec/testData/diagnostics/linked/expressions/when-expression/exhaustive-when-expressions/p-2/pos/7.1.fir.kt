@@ -1,6 +1,15 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SPEC VERSION: 0.1-435
+ * MAIN LINK: expressions, when-expression, exhaustive-when-expressions -> paragraph 2 -> sentence 7
+ * NUMBER: 1
+ * DESCRIPTION: Exhaustive when using subclasses of the sealed class.
+ * HELPERS: sealedClasses
+ */
 
 // TESTCASE NUMBER: 1
 fun case_1(value_1: SealedClass): Int = when (value_1) {
@@ -53,7 +62,7 @@ fun case_6(value_1: SealedClassMixed): String = when (value_1) {
 
 // TESTCASE NUMBER: 7
 fun case_7(value_1: SealedClassEmpty): String = when (value_1) {
-    else -> ""
+    <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> ""
 }
 
 /*

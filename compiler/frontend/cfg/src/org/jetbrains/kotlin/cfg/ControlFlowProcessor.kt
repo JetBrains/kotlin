@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.AccessTarget
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithValue
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeature.BreakContinueInInlineLambdas
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitQualifiedAccessToUninitializedEnumEntry
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
@@ -45,10 +46,10 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingContext.USED_AS_EXPRESSION
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getEnclosingFunctionDescriptor
+import org.jetbrains.kotlin.resolve.bindingContextUtil.recordUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -57,6 +58,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.getFakeDescriptorForObject
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -352,7 +354,7 @@ class ControlFlowProcessor(
                 builder.bindLabel(afterElvis)
                 mergeValues(listOfNotNull(left, right), expression)
                 if (right != null && languageVersionSettings.supportsFeature(LanguageFeature.ProhibitNonExhaustiveIfInRhsOfElvis)) {
-                    trace.record(USED_AS_EXPRESSION, right, true)
+                    right.recordUsedAsExpression(trace, true)
                 }
             } else {
                 if (!generateCall(expression)) {
@@ -926,18 +928,24 @@ class ControlFlowProcessor(
 
         private fun jumpDoesNotCrossFunctionBoundary(jumpExpression: KtExpressionWithLabel, jumpTarget: KtLoopExpression): Boolean {
             val bindingContext = trace.bindingContext
-
-            val labelExprEnclosingFunc = getEnclosingFunctionDescriptor(bindingContext, jumpExpression)
-            val labelTargetEnclosingFunc = getEnclosingFunctionDescriptor(bindingContext, jumpTarget)
+            val labelExprEnclosingFunc = getEnclosingFunctionDescriptor(bindingContext, jumpExpression, skipInlineFunctionLiterals = false)
+            val labelTargetEnclosingFunc = getEnclosingFunctionDescriptor(bindingContext, jumpTarget, skipInlineFunctionLiterals = false)
             return if (labelExprEnclosingFunc !== labelTargetEnclosingFunc) {
                 // Check to report only once
                 if (builder.getLoopExitPoint(jumpTarget) != null ||
                     // Local class secondary constructors are handled differently
                     // They are the only local class element NOT included in owner pseudocode
                     // See generateInitializersForClassOrObject && generateDeclarationForLocalClassOrObjectIfNeeded
-                    labelExprEnclosingFunc is ConstructorDescriptor && !labelExprEnclosingFunc.isPrimary
+                    labelExprEnclosingFunc?.parentsWithSelf?.any { it is ConstructorDescriptor && !it.isPrimary } == true
                 ) {
-                    trace.report(BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY.on(jumpExpression))
+                    val dependsOnInlineLambdas =
+                        getEnclosingFunctionDescriptor(bindingContext, jumpExpression, skipInlineFunctionLiterals = true) ==
+                                getEnclosingFunctionDescriptor(bindingContext, jumpTarget, skipInlineFunctionLiterals = true)
+                    if (dependsOnInlineLambdas) {
+                        trace.report(UNSUPPORTED_FEATURE.on(jumpExpression, BreakContinueInInlineLambdas to languageVersionSettings))
+                    } else {
+                        trace.report(BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY.on(jumpExpression))
+                    }
                 }
                 false
             } else {
@@ -1438,7 +1446,7 @@ class ControlFlowProcessor(
                 if (declaration is KtAnonymousInitializer) {
                     generateInstructions(declaration)
                     if (hasResultField && declaration == lastInitializer) {
-                        trace.record(USED_AS_EXPRESSION, resultExpression, true)
+                        resultExpression?.recordUsedAsExpression(trace, true)
                     }
                 } else if (declaration is KtProperty || declaration is KtDestructuringDeclaration) {
                     generateInstructions(declaration)

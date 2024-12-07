@@ -1,0 +1,19 @@
+with default settings:
+[qualifier] Companion.Nested()
+[qualifier] Companion.bar()
+[qualifier] Companion.bar()
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[qualifier] Companion.Nested()
+[qualifier] Companion.bar()
+[qualifier] Companion.bar()
+with SHORTEN_AND_IMPORT:
+[qualifier] Companion.Nested()
+[qualifier] Companion.bar()
+[qualifier] Companion.Nested()
+[qualifier] Companion.bar()
+with SHORTEN_AND_STAR_IMPORT:
+[qualifier] Companion.Nested()
+[qualifier] Companion.bar()
+[qualifier] Companion.Nested()
+[qualifier] Companion.bar()

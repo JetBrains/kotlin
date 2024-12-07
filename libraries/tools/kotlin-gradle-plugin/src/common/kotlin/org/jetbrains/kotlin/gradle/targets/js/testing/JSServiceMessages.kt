@@ -28,7 +28,7 @@ internal open class JSServiceMessagesTestExecutionSpec(
         return JSServiceMessagesClient(
             results = testResultProcessor,
             settings = clientSettings,
-            log = log
+            log = log,
         )
     }
 }
@@ -36,7 +36,7 @@ internal open class JSServiceMessagesTestExecutionSpec(
 internal open class JSServiceMessagesClient(
     results: TestResultProcessor,
     settings: TCServiceMessagesClientSettings,
-    log: Logger
+    log: Logger,
 ) : TCServiceMessagesClient(results, settings, log) {
     override fun printNonTestOutput(text: String, type: LogType?) {
         if (log.isDebugEnabled) {

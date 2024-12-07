@@ -1,13 +1,14 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
 
 class C<T> {
     inner class D
 
-    typealias DA = D
+    <!WRONG_MODIFIER_TARGET!>inner<!> typealias DA = D
     typealias SDA = C<Int>.D
-    typealias TSDA = C<T>.D
-    typealias TC = C<T>
+    <!WRONG_MODIFIER_TARGET!>inner<!> typealias TSDA = C<T>.D
+    <!WRONG_MODIFIER_TARGET!>inner<!> typealias TC = C<T>
     typealias SSDA = C<*>.D
     typealias SSC = C<*>
 }

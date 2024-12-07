@@ -10,6 +10,9 @@ enum class ImplementationStatus {
     /** This symbol is not implemented and should be implemented if the class is not abstract. */
     NOT_IMPLEMENTED,
 
+    /** This symbol is a var property but only has a val property as implementation */
+    VAR_IMPLEMENTED_BY_VAL,
+
     /** The symbol is inheriting multiple non-abstract symbols and hence must be explicitly implemented. */
     AMBIGUOUSLY_INHERITED,
 
@@ -23,8 +26,7 @@ enum class ImplementationStatus {
     ALREADY_IMPLEMENTED,
 
     /**
-     * The symbol is not implemented in the class and it cannot be implemented. For example, it's final in super classes or the current
-     * class is `expect`.
+     * The symbol is not implemented in the class, and it cannot be implemented. For example, it's final in super classes.
      */
     CANNOT_BE_IMPLEMENTED;
 

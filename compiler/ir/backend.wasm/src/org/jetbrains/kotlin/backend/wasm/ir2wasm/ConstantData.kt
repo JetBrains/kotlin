@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.wasm.ir.WasmSymbol
 // Representation of constant data in Wasm memory
 
 internal const val CHAR_SIZE_BYTES = 2
+internal const val BYTE_SIZE_BYTES = 1
+internal const val SHORT_SIZE_BYTES = 2
 internal const val INT_SIZE_BYTES = 4
+internal const val LONG_SIZE_BYTES = 8
 
 sealed class ConstantDataElement {
     abstract val sizeInBytes: Int
@@ -43,6 +46,23 @@ class ConstantDataIntField(val name: String, val value: WasmSymbol<Int>) : Const
     }
 
     override val sizeInBytes: Int = INT_SIZE_BYTES
+}
+
+class ConstantDataIntegerArray(val name: String, val value: List<Long>, val integerSize: Int) : ConstantDataElement() {
+    override fun toBytes(): ByteArray {
+        val array = ByteArray(value.size * integerSize)
+        repeat(value.size) { i ->
+            value[i].toLittleEndianBytesTo(array, i * integerSize, integerSize)
+        }
+        return array
+    }
+
+    override fun dump(indent: String, startAddress: Int): String {
+        if (value.isEmpty()) return ""
+        return "${addressToString(startAddress)}: $indent i${integerSize * 8}[] : ${toBytes().contentToString()}   ;; $name\n"
+    }
+
+    override val sizeInBytes: Int = value.size * integerSize
 }
 
 class ConstantDataIntArray(val name: String, val value: List<WasmSymbol<Int>>) : ConstantDataElement() {
@@ -94,6 +114,13 @@ class ConstantDataStruct(val name: String, val elements: List<ConstantDataElemen
 
     override val sizeInBytes: Int = elements.map { it.sizeInBytes }.sum()
 }
+
+fun Long.toLittleEndianBytesTo(to: ByteArray, offset: Int, size: Int) {
+    for (i in 0 until size) {
+        to[offset + i] = (this ushr (i * 8)).toByte()
+    }
+}
+
 
 fun Int.toLittleEndianBytes(): ByteArray {
     return ByteArray(4) {

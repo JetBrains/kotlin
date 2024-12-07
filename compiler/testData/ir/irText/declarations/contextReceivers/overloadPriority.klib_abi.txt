@@ -1,0 +1,12 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /Context { // /Context|null[0]
+    constructor <init>() // /Context.<init>|<init>(){}[0]
+}
+final fun /f(): kotlin/Any // /f|f(){}[0]
+final fun context(/Context) /f(): kotlin/String // /f|f!Context(){}[0]
+final fun /test() // /test|test(){}[0]

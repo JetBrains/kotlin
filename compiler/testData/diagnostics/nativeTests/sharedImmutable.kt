@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: annotation.kt
 package kotlin.native.concurrent
 
@@ -16,9 +18,9 @@ import kotlin.native.concurrent.SharedImmutable
 import kotlin.native.concurrent.ThreadLocal
 import kotlin.reflect.KProperty
 
-fun println(<!UNUSED_PARAMETER!>value<!>: Int) {}
-fun println(<!UNUSED_PARAMETER!>value<!>: String) {}
-fun println(<!UNUSED_PARAMETER!>value<!>: Point) {}
+fun println(value: Int) {}
+fun println(value: String) {}
+fun println(value: Point) {}
 
 data class Point(val x: Double, val y: Double)
 @SharedImmutable

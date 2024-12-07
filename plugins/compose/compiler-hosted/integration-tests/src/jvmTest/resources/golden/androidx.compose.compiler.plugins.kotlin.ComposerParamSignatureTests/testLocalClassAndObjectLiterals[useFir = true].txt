@@ -1,0 +1,36 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable
+fun Wat() {}
+
+@Composable
+fun Foo(x: Int) {
+    Wat()
+    @Composable fun goo() { Wat() }
+    class Bar {
+        @Composable fun baz() { Wat() }
+    }
+    goo()
+    Bar().baz()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public final class TestKt {
+  public final static Wat(Landroidx/compose/runtime/Composer;I)V
+  public final static Foo(ILandroidx/compose/runtime/Composer;I)V
+  private final static Wat%lambda%0(ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static Foo%goo(Landroidx/compose/runtime/Composer;I)V
+  private final static Foo%lambda%1(IILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  public final static INNERCLASS TestKt%Foo%Bar null Bar
+}
+public final class TestKt%Foo%Bar {
+  public <init>()V
+  public final baz(Landroidx/compose/runtime/Composer;I)V
+  OUTERCLASS TestKt Foo (ILandroidx/compose/runtime/Composer;I)V
+  public final static INNERCLASS TestKt%Foo%Bar null Bar
+}

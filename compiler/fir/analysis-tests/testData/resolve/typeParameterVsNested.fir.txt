@@ -38,7 +38,7 @@ FILE: typeParameterVsNested.kt
 
         public final class Some : R|test/My.T| {
             public constructor(): R|test/My.Some| {
-                super<R|T|>()
+                super<R|test/My.T|>()
             }
 
         }

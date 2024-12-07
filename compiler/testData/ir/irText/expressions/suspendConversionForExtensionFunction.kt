@@ -1,7 +1,7 @@
 // SKIP_KT_DUMP
-// !LANGUAGE: +SuspendConversion
+// LANGUAGE: +SuspendConversion
 
-fun main() {
+fun runMe() {
     val foo: String.(suspend () -> Unit) -> Unit = {}
     val f: () -> Unit = {}
     "".foo(f)

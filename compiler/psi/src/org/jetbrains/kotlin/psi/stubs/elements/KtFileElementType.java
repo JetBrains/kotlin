@@ -37,9 +37,9 @@ import java.io.IOException;
 public class KtFileElementType extends IStubFileElementType<KotlinFileStub> {
     private static final String NAME = "kotlin.FILE";
 
-    public static KtFileElementType INSTANCE = new KtFileElementType();
+    public static final KtFileElementType INSTANCE = new KtFileElementType();
 
-    public KtFileElementType() {
+    private KtFileElementType() {
         super(NAME, KotlinLanguage.INSTANCE);
     }
 
@@ -80,8 +80,7 @@ public class KtFileElementType extends IStubFileElementType<KotlinFileStub> {
         Project project = psi.getProject();
         Language languageForParser = getLanguageForParser(psi);
         PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, null, languageForParser, chameleon.getChars());
-        KotlinParser parser = (KotlinParser) LanguageParserDefinitions.INSTANCE.forLanguage(languageForParser).createParser(project);
-        return parser.parse(this, builder, psi.getContainingFile()).getFirstChildNode();
+        return KotlinParser.parse(builder, psi.getContainingFile()).getFirstChildNode();
     }
 
     @Override

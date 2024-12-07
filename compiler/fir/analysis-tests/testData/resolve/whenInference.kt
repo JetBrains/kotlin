@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun <T> materialize(): T = throw Exception()
 
 interface A

@@ -1,0 +1,30 @@
+FILE fqName:<root> fileName:/starProjectionCallableReference.kt
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:x type:kotlin.collections.MutableList<*> [val]
+        CALL 'public final fun mutableListOf <T> (vararg elements: T of kotlin.collections.mutableListOf): kotlin.collections.MutableList<T of kotlin.collections.mutableListOf> declared in kotlin.collections' type=kotlin.collections.MutableList<kotlin.Int> origin=null
+          <T>: kotlin.Int
+          elements: VARARG type=kotlin.Array<out kotlin.Int> varargElementType=kotlin.Int
+            CONST Int type=kotlin.Int value=1
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun also <T> (block: kotlin.Function1<T of kotlin.also, kotlin.Unit>): T of kotlin.also declared in kotlin' type=kotlin.collections.MutableList<*> origin=null
+          <T>: kotlin.collections.MutableList<*>
+          $receiver: GET_VAR 'val x: kotlin.collections.MutableList<*> declared in <root>.box' type=kotlin.collections.MutableList<*> origin=null
+          block: BLOCK type=kotlin.Function1<kotlin.Nothing, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
+            FUN ADAPTER_FOR_CALLABLE_REFERENCE name:mutate visibility:local modality:FINAL <> (p0:kotlin.collections.MutableList<*>) returnType:kotlin.Unit
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:kotlin.collections.MutableList<*>
+              BLOCK_BODY
+                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                  CALL 'public final fun mutate <T> (x: kotlin.collections.MutableList<T of <root>.mutate>): kotlin.collections.MutableList<T of <root>.mutate> declared in <root>' type=kotlin.collections.MutableList<*> origin=null
+                    <T>: kotlin.Any?
+                    x: TYPE_OP type=kotlin.Nothing origin=IMPLICIT_CAST typeOperand=kotlin.Nothing
+                      GET_VAR 'p0: kotlin.collections.MutableList<*> declared in <root>.box.mutate' type=kotlin.collections.MutableList<*> origin=null
+            FUNCTION_REFERENCE 'local final fun mutate (p0: kotlin.collections.MutableList<*>): kotlin.Unit declared in <root>.box' type=kotlin.Function1<kotlin.Nothing, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun mutate <T> (x: kotlin.collections.MutableList<T of <root>.mutate>): kotlin.collections.MutableList<T of <root>.mutate> declared in <root>
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
+  FUN name:mutate visibility:public modality:FINAL <T> (x:kotlin.collections.MutableList<T of <root>.mutate>) returnType:kotlin.collections.MutableList<T of <root>.mutate>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER name:x index:0 type:kotlin.collections.MutableList<T of <root>.mutate>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun mutate <T> (x: kotlin.collections.MutableList<T of <root>.mutate>): kotlin.collections.MutableList<T of <root>.mutate> declared in <root>'
+        GET_VAR 'x: kotlin.collections.MutableList<T of <root>.mutate> declared in <root>.mutate' type=kotlin.collections.MutableList<T of <root>.mutate> origin=null

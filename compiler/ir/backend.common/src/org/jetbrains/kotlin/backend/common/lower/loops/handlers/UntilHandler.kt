@@ -8,24 +8,21 @@ package org.jetbrains.kotlin.backend.common.lower.loops.handlers
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.loops.*
-import org.jetbrains.kotlin.backend.common.lower.matchers.SimpleCalleeMatcher
-import org.jetbrains.kotlin.backend.common.lower.matchers.singleArgumentExtension
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.name.FqName
 
 /** Builds a [HeaderInfo] for progressions built using the `until` extension function. */
-internal class UntilHandler(private val context: CommonBackendContext) :
-    ProgressionHandler {
+internal class UntilHandler(private val context: CommonBackendContext) : HeaderInfoHandler<IrCall, ProgressionType> {
+    private val progressionElementTypes = context.ir.symbols.progressionElementTypes
 
-    private val symbols = context.ir.symbols
-    private val progressionElementTypes = symbols.progressionElementTypes
-
-    override val matcher = SimpleCalleeMatcher {
-        singleArgumentExtension(FqName("kotlin.ranges.until"), progressionElementTypes)
-        parameterCount { it == 1 }
-        parameter(0) { it.type in progressionElementTypes }
+    override fun matchIterable(expression: IrCall): Boolean {
+        val callee = expression.symbol.owner
+        return callee.valueParameters.singleOrNull()?.type in progressionElementTypes &&
+                callee.extensionReceiverParameter?.type in progressionElementTypes &&
+                callee.kotlinFqName == FqName("kotlin.ranges.until")
     }
 
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol): HeaderInfo? =

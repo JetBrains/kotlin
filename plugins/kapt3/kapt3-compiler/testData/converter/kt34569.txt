@@ -1,5 +1,15 @@
-import java.lang.System;
-
+/**
+ * public final class T : java/lang/Runnable {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: run()V
+ *   public open fun run(): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class T implements java.lang.Runnable {
 

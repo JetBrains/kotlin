@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -743,6 +743,20 @@ public class SequenceTest {
             fibonacci().take(10).firstNotNullOf<Int, Int> { it.doubleIfNotMonodigit() }
         }
         assertNull(fibonacci().take(10).firstNotNullOfOrNull { it.doubleIfNotMonodigit() })
+    }
+
+    @Test fun toSet() {
+        assertEquals(emptySet(), emptySequence<Int>().toSet())
+        assertEquals(setOf(42), sequenceOf(42).toSet())
+        assertEquals(setOf(3, 2, 1), sequenceOf(3, 2, 1).toSet())
+        assertEquals(setOf(1, 2, 3), sequenceOf(1, 2, 1, 3, 2, 3).toSet())
+    }
+
+    @Test fun toList() {
+        assertEquals(emptyList(), emptySequence<Int>().toList())
+        assertEquals(listOf(42), sequenceOf(42).toList())
+        assertEquals(listOf(3, 2, 1), sequenceOf(3, 2, 1).toList())
+        assertEquals(listOf(1, 2, 1, 3, 2, 3), sequenceOf(1, 2, 1, 3, 2, 3).toList())
     }
 
     /*

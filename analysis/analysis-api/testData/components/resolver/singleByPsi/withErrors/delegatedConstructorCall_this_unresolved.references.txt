@@ -1,0 +1,3 @@
+KtConstructorDelegationReferenceExpression(115,119): 'this'
+  KtConstructorDelegationReference:
+    Nothing (Unresolved reference)

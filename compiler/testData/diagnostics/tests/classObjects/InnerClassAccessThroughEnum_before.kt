@@ -1,4 +1,5 @@
-// !LANGUAGE: -NestedClassesInEnumEntryShouldBeInner
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -NestedClassesInEnumEntryShouldBeInner
 
 package a
 

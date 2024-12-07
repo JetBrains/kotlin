@@ -1,0 +1,4 @@
+main
+  test:javaLib:1.0
+test
+  test:javaLib:1.0

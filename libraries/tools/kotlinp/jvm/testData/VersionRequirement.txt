@@ -1,0 +1,47 @@
+// test/Klass.class
+// ------------------------------------------
+// requires API version 1.2.0 (level=WARNING, message="Klass must not be used!")
+public final class test/Klass : kotlin/Any {
+
+  // signature: <init>()V
+  public constructor()
+
+  // module name: test-module
+}
+// test/Konstructor.class
+// ------------------------------------------
+public final class test/Konstructor : kotlin/Any {
+
+  // requires language version 42.0.0 (level=WARNING, errorCode=42, message="Konstructor must not be used!")
+  // signature: <init>()V
+  public constructor()
+
+  // module name: test-module
+}
+// test/VersionRequirementKt.class
+// ------------------------------------------
+package {
+
+  // requires compiler version 1.2.40 (level=ERROR)
+  // signature: function()V
+  public final fun function(): kotlin/Unit
+
+  // requires language version 1.3.0 (level=ERROR, message="property must not be used!")
+  // field: property:Ljava/lang/String;
+  // getter: getProperty()Ljava/lang/String;
+  // synthetic method for annotations: getProperty$annotations()V
+  public final val property: kotlin/String /* = ... */
+    public final get
+
+  // requires API version 1.1.0 (level=HIDDEN, errorCode=314)
+  public typealias Typealias = kotlin/String /* = kotlin/String */
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package test {
+    test/VersionRequirementKt
+  }
+}

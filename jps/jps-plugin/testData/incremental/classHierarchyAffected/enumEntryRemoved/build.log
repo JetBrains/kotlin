@@ -7,7 +7,7 @@ End of files
 Compiling files:
   src/Enum.kt
 End of files
-Marked as dirty by Kotlin:
+After build round. Marked as dirty by Kotlin:
   src/getRandomEnumEntry.kt
   src/use.kt
   src/useEnumImplicitly.kt

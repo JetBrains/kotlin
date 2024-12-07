@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNCHECKED_CAST -USELESS_CAST
+// DIAGNOSTICS: -UNCHECKED_CAST -USELESS_CAST
 inline public fun reg(convertFunc: (Any) -> Any) {
     convertFunc("")
 }

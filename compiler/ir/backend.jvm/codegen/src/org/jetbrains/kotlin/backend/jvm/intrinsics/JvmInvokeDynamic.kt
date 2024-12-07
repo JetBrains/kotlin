@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.getStringConstArgument
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Handle
 import org.jetbrains.org.objectweb.asm.Type
 
@@ -34,8 +33,8 @@ object JvmInvokeDynamic : IntrinsicMethod() {
             ?: fail("'bootstrapMethodHandle' should be a call")
         val bootstrapMethodHandle = evalMethodHandle(bootstrapMethodHandleArg)
 
-        val bootstrapMethodArgs = (expression.getValueArgument(2)?.safeAs<IrVararg>()
-            ?: fail("'bootstrapMethodArgs' is expected to be a vararg"))
+        val bootstrapMethodArgs = expression.getValueArgument(2) as? IrVararg
+            ?: fail("'bootstrapMethodArgs' is expected to be a vararg")
         val asmBootstrapMethodArgs = bootstrapMethodArgs.elements
             .map { generateBootstrapMethodArg(it, codegen) }
             .toTypedArray()
@@ -65,7 +64,7 @@ object JvmInvokeDynamic : IntrinsicMethod() {
             is IrCall ->
                 evalBootstrapArgumentIntrinsicCall(element, codegen)
                     ?: throw AssertionError("Unexpected callee in bootstrap method argument:\n${element.dump()}")
-            is IrConst<*> ->
+            is IrConst ->
                 when (element.kind) {
                     IrConstKind.Byte -> (element.value as Byte).toInt()
                     IrConstKind.Short -> (element.value as Short).toInt()
@@ -109,7 +108,7 @@ object JvmInvokeDynamic : IntrinsicMethod() {
     }
 
     private fun generateMethodHandle(irRawFunctionReference: IrRawFunctionReference, codegen: ExpressionCodegen): Handle =
-        codegen.context.methodSignatureMapper.mapToMethodHandle(irRawFunctionReference.symbol.owner)
+        codegen.methodSignatureMapper.mapToMethodHandle(irRawFunctionReference.symbol.owner)
 
     private fun evalOriginalMethodType(irCall: IrCall, codegen: ExpressionCodegen): Type {
         val irRawFunRef = irCall.getValueArgument(0) as? IrRawFunctionReference

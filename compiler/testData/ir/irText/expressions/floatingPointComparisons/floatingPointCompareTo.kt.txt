@@ -2,9 +2,31 @@ fun test1d(x: Double, y: Double): Int {
   return x.compareTo(other = y)
 }
 
+fun test1f(x: Float, y: Float): Int {
+  return x.compareTo(other = y)
+}
+
+fun Float.test1fr(x: Float): Int {
+  return <this>.compareTo(other = x)
+}
+
 fun test2d(x: Double, y: Any): Boolean {
   return when {
     y is Double -> EQEQ(arg0 = x.compareTo(other = y /*as Double */), arg1 = 0)
+    else -> false
+  }
+}
+
+fun test2f(x: Float, y: Any): Boolean {
+  return when {
+    y is Float -> EQEQ(arg0 = x.compareTo(other = y /*as Float */), arg1 = 0)
+    else -> false
+  }
+}
+
+fun Float.test2fr(x: Any): Boolean {
+  return when {
+    x is Float -> EQEQ(arg0 = <this>.compareTo(other = x /*as Float */), arg1 = 0)
     else -> false
   }
 }
@@ -19,17 +41,6 @@ fun test3d(x: Any, y: Any): Boolean {
   }
 }
 
-fun test1f(x: Float, y: Float): Int {
-  return x.compareTo(other = y)
-}
-
-fun test2f(x: Float, y: Any): Boolean {
-  return when {
-    y is Float -> EQEQ(arg0 = x.compareTo(other = y /*as Float */), arg1 = 0)
-    else -> false
-  }
-}
-
 fun test3f(x: Any, y: Any): Boolean {
   return when {
     when {
@@ -40,12 +51,9 @@ fun test3f(x: Any, y: Any): Boolean {
   }
 }
 
-fun testFD(x: Any, y: Any): Boolean {
+fun Float.test3fr(x: Any): Boolean {
   return when {
-    when {
-      x is Float -> y is Double
-      else -> false
-    } -> EQEQ(arg0 = x /*as Float */.compareTo(other = y /*as Double */), arg1 = 0)
+    x is Double -> EQEQ(arg0 = <this>.compareTo(other = x /*as Double */), arg1 = 0)
     else -> false
   }
 }
@@ -60,20 +68,13 @@ fun testDF(x: Any, y: Any): Boolean {
   }
 }
 
-fun Float.test1fr(x: Float): Int {
-  return <this>.compareTo(other = x)
-}
-
-fun Float.test2fr(x: Any): Boolean {
+fun testFD(x: Any, y: Any): Boolean {
   return when {
-    x is Float -> EQEQ(arg0 = <this>.compareTo(other = x /*as Float */), arg1 = 0)
+    when {
+      x is Float -> y is Double
+      else -> false
+    } -> EQEQ(arg0 = x /*as Float */.compareTo(other = y /*as Double */), arg1 = 0)
     else -> false
   }
 }
 
-fun Float.test3fr(x: Any): Boolean {
-  return when {
-    x is Double -> EQEQ(arg0 = <this>.compareTo(other = x /*as Double */), arg1 = 0)
-    else -> false
-  }
-}

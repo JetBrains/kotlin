@@ -3,13 +3,6 @@ fun interface IFoo {
 
 }
 
-fun useFoo(foo: IFoo) {
-}
-
-fun withVararg(vararg xs: Int): Int {
-  return 42
-}
-
 fun test() {
   useFoo(foo = { // BLOCK
     local fun withVararg(p0: Int) {
@@ -19,3 +12,11 @@ fun test() {
     ::withVararg /*-> IFoo */
   })
 }
+
+fun useFoo(foo: IFoo) {
+}
+
+fun withVararg(vararg xs: Int): Int {
+  return 42
+}
+

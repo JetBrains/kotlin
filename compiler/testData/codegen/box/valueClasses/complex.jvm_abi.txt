@@ -1,0 +1,17 @@
+MODULE main
+	CLASS E.class
+		CLASS METADATA
+			PROPERTY getWithNonTrivialSetters-impl(IILjava/lang/String;)LD;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<anonymous parameter 0>: D
+					K2
+						_: D
+	CLASS NotInlined.class
+		CLASS METADATA
+			PROPERTY getWithNonTrivialSetters()LR;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<anonymous parameter 0>: R<kotlin/collections/List<kotlin/Int>>
+					K2
+						_: R<kotlin/collections/List<kotlin/Int>>

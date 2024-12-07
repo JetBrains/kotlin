@@ -16,10 +16,16 @@ object CodeMetaInfoParser {
     /*
      * ([\S&&[^,(){}]]+) -- tag, allowing all non-space characters except bracers and curly bracers
      * ([{](.*?)[}])? -- list of attributes
-     * (\("(.*?)"\))? -- arguments of meta info
+     * (\("((?:\\"|.)*?)"\))? -- arguments of meta info
      * (, )? -- possible separator between different infos
+     * 
+     * Note about escaping quotes in arguments:
+     * `".*?"` matches everything between `"` and the closest next `"` that follows after. `\\"`
+     * enforces that escaped `"` are matched "along with" other symbols matched via `.`, so that
+     * the closing quote no longer has a change to match `\\"`.
+     * Note that just using `.*` would match `<!TAG("A"), RAG("B")!>` as `A"), RAG("B`.
      */
-    private val tagRegex = """([\S&&[^,(){}]]+)([{](.*?)[}])?(\("(.*?)"\))?(, )?""".toRegex()
+    private val tagRegex = """([\S&&[^,(){}]]+)([{](.*?)[}])?(\("((?:\\"|.)*?)"\))?(, )?""".toRegex()
 
     private class Opening(val index: Int, val tags: String, val startOffset: Int) {
         override fun equals(other: Any?): Boolean {

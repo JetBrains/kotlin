@@ -11,84 +11,67 @@ import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.constant
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class JsNameLinkingNamer(private val context: JsIrBackendContext, private val minimizedMemberNames: Boolean) : IrNamerBase() {
+class JsNameLinkingNamer(
+    private val context: JsIrBackendContext,
+    private val minimizedMemberNames: Boolean,
+    private val isEsModules: Boolean
+) : IrNamerBase() {
 
     val nameMap = mutableMapOf<IrDeclaration, JsName>()
 
-    private fun IrDeclarationWithName.getName(prefix: String = ""): JsName {
+    private fun IrDeclarationWithName.getName(): JsName {
         return nameMap.getOrPut(this) {
             val name = (this as? IrClass)?.let { context.localClassNames[this] } ?: let {
                 this.nameIfPropertyAccessor() ?: getJsNameOrKotlinName().asString()
             }
-            JsName(sanitizeName(prefix + name), true)
+            JsName(sanitizeName(name), true)
         }
     }
 
     val importedModules = mutableListOf<JsImportedModule>()
-    val imports = mutableMapOf<IrDeclaration, JsExpression>()
+    val imports = mutableMapOf<IrDeclaration, JsStatement>()
 
     override fun getNameForStaticDeclaration(declaration: IrDeclarationWithName): JsName {
-
         if (declaration.isEffectivelyExternal()) {
             val jsModule: String? = declaration.getJsModule()
             val maybeParentFile: IrFile? = declaration.parent as? IrFile
             val fileJsModule: String? = maybeParentFile?.getJsModule()
             val jsQualifier: List<JsName>? = maybeParentFile?.getJsQualifier()?.split('.')?.map { JsName(it, false) }
 
-            when {
-                jsModule != null -> {
-                    val nameString = if (declaration.isJsNonModule()) {
-                        declaration.getJsNameOrKotlinName().asString()
-                    } else {
-                        val parent = declaration.fqNameWhenAvailable!!.parent()
-                        parent.child(declaration.getJsNameOrKotlinName()).asString()
-                    }
-                    val name = JsName(sanitizeName(nameString), false)
-                    importedModules += JsImportedModule(jsModule, name, name.makeRef())
-                    return name
-                }
-
-                fileJsModule != null -> {
-                    if (declaration !in nameMap) {
-                        val moduleName = JsName(sanitizeName("\$module\$$fileJsModule"), true)
-                        importedModules += JsImportedModule(fileJsModule, moduleName, null)
-                        val qualifiedReference =
-                            if (jsQualifier == null) moduleName.makeRef() else (listOf(moduleName) + jsQualifier).makeRef()
-                        imports[declaration] = jsElementAccess(declaration.getJsNameOrKotlinName().identifier, qualifiedReference)
-                        return declaration.getName()
-                    }
-                }
-
-                else -> {
-                    val name = declaration.getJsNameOrKotlinName().identifier
-
-                    if (jsQualifier != null) {
-                        imports[declaration] = jsElementAccess(name, jsQualifier.makeRef())
-                        return declaration.getName()
-                    }
-
-                    return name.toJsName(temporary = false)
-                }
+            return when {
+                jsModule != null -> declaration.generateImportForDeclarationWithJsModule(jsModule)
+                fileJsModule != null -> declaration.generateImportForDeclarationInFileWithJsModule(fileJsModule, jsQualifier)
+                else -> declaration.generateRegularQualifiedImport(jsQualifier)
             }
         }
 
-        return declaration.getName()
+        return declaration.getName().also {
+            if (declaration == context.intrinsics.void.owner.backingField) {
+                it.constant = true
+            }
+        }
     }
 
     override fun getNameForMemberFunction(function: IrSimpleFunction): JsName {
-        require(function.dispatchReceiverParameter != null)
+        require(function.dispatchReceiverParameter != null) {
+            "Function '${function.fqNameWhenAvailable}' has no dispatch receiver"
+        }
         val signature = jsFunctionSignature(function, context)
+        if (context.keeper.shouldKeep(function)) {
+            context.minimizedNameGenerator.keepName(signature)
+        }
         val result = if (minimizedMemberNames && !function.hasStableJsName(context)) {
             function.parentAsClass.fieldData()
             context.minimizedNameGenerator.nameBySignature(signature)
-        } else signature
+        } else {
+            signature
+        }
         return result.toJsName()
     }
 
@@ -98,9 +81,79 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext, private val mi
         return JsName(field.parentAsClass.fieldData()[field]!!, false)
     }
 
+    private fun IrDeclarationWithName.generateImportForDeclarationWithJsModule(jsModule: String): JsName {
+        val nameString = if (isJsNonModule()) {
+            getJsNameOrKotlinName().asString()
+        } else {
+            val parent = fqNameWhenAvailable!!.parent()
+            parent.child(getJsNameOrKotlinName()).asString()
+        }
+        val name = JsName(sanitizeName(nameString), true)
+        val nameRef = name.makeRef()
+
+        if (isEsModules) {
+            val importSubject = when {
+                this is IrClass && isObject -> JsImport.Target.All(nameRef)
+                else -> JsImport.Target.Default(nameRef)
+            }
+            imports[this] = JsImport(jsModule, importSubject)
+            nameMap[this] = name
+        } else {
+            importedModules += JsImportedModule(jsModule, name, nameRef)
+        }
+        return name
+    }
+
+    private fun IrDeclarationWithName.generateImportForDeclarationInFileWithJsModule(
+        fileJsModule: String,
+        jsQualifier: List<JsName>?
+    ): JsName {
+        if (this in nameMap) return getName()
+
+        val declarationStableName = getJsNameOrKotlinName().identifier
+
+        if (isEsModules) {
+            val importedName = jsQualifier?.firstOrNull() ?: declarationStableName.toJsName(temporary = false)
+            val importStatement = JsImport(fileJsModule, JsImport.Element(importedName))
+            imports[this] = when (val qualifiedReference = jsQualifier?.makeRef()) {
+                null -> importStatement
+                else -> JsCompositeBlock(
+                    listOf(
+                        importStatement,
+                        jsElementAccess(declarationStableName, qualifiedReference).putIntoVariableWitName(
+                            declarationStableName.toJsName()
+                        )
+                    )
+                )
+            }
+
+        } else {
+            val moduleName = JsName(sanitizeName("\$module\$$fileJsModule"), true)
+            importedModules += JsImportedModule(fileJsModule, moduleName, null)
+            val qualifiedReference =
+                if (jsQualifier == null) moduleName.makeRef() else (listOf(moduleName) + jsQualifier).makeRef()
+            imports[this] =
+                jsElementAccess(declarationStableName, qualifiedReference).putIntoVariableWitName(declarationStableName.toJsName())
+        }
+
+        return getName()
+    }
+
+    private fun IrDeclarationWithName.generateRegularQualifiedImport(jsQualifier: List<JsName>?): JsName {
+        val name = getJsNameOrKotlinName().identifier
+
+        if (jsQualifier != null) {
+            imports[this] = jsElementAccess(name, jsQualifier.makeRef()).putIntoVariableWitName(name.toJsName())
+            return getName()
+        }
+
+        return name.toJsName(temporary = false)
+    }
+
+
     private fun IrClass.fieldData(): Map<IrField, String> {
         return context.fieldDataCache.getOrPut(this) {
-            val nameCnt = mutableMapOf<String, Int>()
+            val nameCnt = hashMapOf<String, Int>()
 
             val allClasses = DFS.topologicalOrder(listOf(this)) { node ->
                 node.superTypes.mapNotNull {
@@ -108,7 +161,7 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext, private val mi
                 }
             }
 
-            val result = mutableMapOf<IrField, String>()
+            val result = hashMapOf<IrField, String>()
 
             if (minimizedMemberNames) {
                 allClasses.reversed().forEach {
@@ -117,16 +170,17 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext, private val mi
                             declaration is IrFunction && declaration.dispatchReceiverParameter != null -> {
                                 val property = (declaration as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
                                 if (property?.isExported(context) == true || property?.isEffectivelyExternal() == true) {
-                                    context.minimizedNameGenerator.reserveName(property.name.asString())
+                                    context.minimizedNameGenerator.reserveName(property.getJsNameOrKotlinName().identifier)
                                 }
                                 if (declaration.hasStableJsName(context)) {
                                     val signature = jsFunctionSignature(declaration, context)
                                     context.minimizedNameGenerator.reserveName(signature)
                                 }
                             }
+
                             declaration is IrProperty -> {
                                 if (declaration.isExported(context)) {
-                                    context.minimizedNameGenerator.reserveName(declaration.name.asString())
+                                    context.minimizedNameGenerator.reserveName(declaration.getJsNameOrKotlinName().identifier)
                                 }
                             }
                         }
@@ -138,13 +192,24 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext, private val mi
                 it.declarations.forEach {
                     when {
                         it is IrField -> {
-                            val safeName = if (minimizedMemberNames) {
-                                context.minimizedNameGenerator.generateNextName()
-                            } else it.safeName()
-                            val suffix = nameCnt.getOrDefault(safeName, 0) + 1
-                            nameCnt[safeName] = suffix
-                            result[it] = safeName + "_$suffix"
+                            val correspondingProperty = it.correspondingPropertySymbol?.owner
+                            val hasStableName = correspondingProperty != null &&
+                                    correspondingProperty.visibility.isPublicAPI &&
+                                    (correspondingProperty.isExported(context) || correspondingProperty.getJsName() != null) &&
+                                    correspondingProperty.isSimpleProperty
+                            val safeName = when {
+                               hasStableName -> (correspondingProperty ?: it).getJsNameOrKotlinName().identifier
+                               minimizedMemberNames && !context.keeper.shouldKeep(it) -> context.minimizedNameGenerator.generateNextName()
+                               else -> it.safeName()
+                            }
+                            val resultName = if (!hasStableName) {
+                                val suffix = nameCnt.getOrDefault(safeName, 0) + 1
+                                nameCnt[safeName] = suffix
+                                safeName + "_$suffix"
+                            } else safeName
+                            result[it] = resultName
                         }
+
                         it is IrFunction && it.dispatchReceiverParameter != null -> {
                             nameCnt[jsFunctionSignature(it, context)] = 1 // avoid clashes with member functions
                         }

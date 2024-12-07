@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.contracts.parsing.*
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class PsiConditionalEffectParser(
     collector: ContractParsingDiagnosticsCollector,
@@ -33,10 +32,10 @@ internal class PsiConditionalEffectParser(
         val resolvedCall = expression.getResolvedCall(callContext.bindingContext) ?: return null
         if (!resolvedCall.resultingDescriptor.isImpliesCallDescriptor()) return null
 
-        val effect = contractParserDispatcher.parseEffect(resolvedCall.dispatchReceiver.safeAs<ExpressionReceiver>()?.expression)
-                ?: return null
+        val effect = contractParserDispatcher.parseEffect((resolvedCall.dispatchReceiver as? ExpressionReceiver)?.expression)
+            ?: return null
         val condition = contractParserDispatcher.parseCondition(resolvedCall.firstArgumentAsExpressionOrNull())
-                ?: return null
+            ?: return null
 
         return ConditionalEffectDeclaration(effect, condition)
     }

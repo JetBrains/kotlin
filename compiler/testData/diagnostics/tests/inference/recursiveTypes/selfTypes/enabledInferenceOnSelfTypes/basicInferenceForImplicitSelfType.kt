@@ -1,4 +1,5 @@
-// !LANGUAGE: +TypeInferenceOnCallsWithSelfTypes
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +TypeInferenceOnCallsWithSelfTypes
 
 // FILE: JavaBuilder.java
 public class JavaBuilder<B extends JavaBuilder<B>> {
@@ -13,7 +14,10 @@ class Builder<B : Builder<B>> {
     fun <T : B> test(): T = TODO()
 
     fun foo() {}
+    fun bar(block: () -> Out<B>) {}
 }
+
+class Out<out T>
 
 fun testStar(builder: Builder<*>) {
     <!DEBUG_INFO_EXPRESSION_TYPE("Builder<*>")!>builder.test()<!>
@@ -21,6 +25,10 @@ fun testStar(builder: Builder<*>) {
     builder
         .test()
         .foo()
+
+    builder
+        .test()
+        .bar { Out() }
 }
 
 fun <K : Builder<K>> testTypeParam(builder: Builder<K>) {
@@ -29,6 +37,10 @@ fun <K : Builder<K>> testTypeParam(builder: Builder<K>) {
     builder
         .test()
         .foo()
+
+    builder
+        .test()
+        .bar { Out() }
 }
 
 fun testStarJava(builder: JavaBuilder<*>) {

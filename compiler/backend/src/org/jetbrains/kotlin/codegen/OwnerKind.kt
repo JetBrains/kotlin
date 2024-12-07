@@ -5,22 +5,7 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-
 enum class OwnerKind {
-    PACKAGE,
     IMPLEMENTATION,
-    DEFAULT_IMPLS,
-    ERASED_INLINE_CLASS,
-    PROPERTY_REFERENCE_SIGNATURE;
-
-    companion object {
-        fun getMemberOwnerKind(descriptor: DeclarationDescriptor): OwnerKind = when (descriptor) {
-            is PackageFragmentDescriptor -> PACKAGE
-            is ClassDescriptor -> IMPLEMENTATION
-            else -> throw AssertionError("Unexpected declaration container: $this")
-        }
-    }
+    ;
 }

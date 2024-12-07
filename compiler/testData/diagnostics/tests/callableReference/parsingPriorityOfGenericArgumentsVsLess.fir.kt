@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package test
 
 class Foo {
@@ -5,5 +6,5 @@ class Foo {
 }
 
 fun test() {
-    Foo::bar <!SYNTAX!>< Int ><!> <!SYNTAX!>(2 + 2)<!>
+    Foo::<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!> <!SYNTAX!>< Int ><!> <!SYNTAX!>(2 + 2)<!>
 }

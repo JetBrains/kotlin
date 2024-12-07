@@ -128,8 +128,6 @@ data class JsonNumber(val value: Double) : JsonNode() {
 class JsonSyntaxException(val offset: Int, val line: Int, val column: Int, val text: String) :
     RuntimeException("JSON syntax error at ${line + 1}, ${column + 1}: $text")
 
-fun parseJson(file: File): JsonNode = parseJson(file.readText(Charsets.UTF_8))
-
 fun parseJson(text: String): JsonNode = JsonParser(text).parse()
 
 private class JsonParser(val content: String) {

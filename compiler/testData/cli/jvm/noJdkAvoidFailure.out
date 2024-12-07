@@ -1,0 +1,4 @@
+compiler/testData/cli/jvm/usingStdlibJavaExtension.kt:5:23: error: cannot access class 'java.lang.Class'. Check your module classpath for missing or conflicting dependencies.
+    foo(String::class.java)
+                      ^^^^
+COMPILATION_ERROR

@@ -13,4 +13,9 @@ object GeneralConfiguration {
     const val LINKED_TESTS_PATH = "linked"
     const val TESTS_MAP_FILENAME = "testsMap.json"
     const val SECTIONS_TESTS_MAP_FILENAME = "sectionsMap.json"
+
+    /**
+     * Can be changed to `true` for local debugging purposes
+     */
+    const val PRINT_TEST_OUTPUTS_TO_STDOUT = false
 }

@@ -1,0 +1,13 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /A { // /A|null[0]
+    final var it // /A.it|{}it[0]
+        final fun <get-it>(): kotlin/Int // /A.it.<get-it>|<get-it>(){}[0]
+        final fun <set-it>(kotlin/Int) // /A.it.<set-it>|<set-it>(kotlin.Int){}[0]
+    constructor <init>() // /A.<init>|<init>(){}[0]
+}
+final fun /test() // /test|test(){}[0]

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType
+// LANGUAGE: +FunctionReferenceWithDefaultValueAsOtherType
 
 fun foo(a: String, b: Int = 5): String {
     return a + b

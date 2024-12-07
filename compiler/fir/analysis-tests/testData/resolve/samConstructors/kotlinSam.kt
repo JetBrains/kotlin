@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun interface MyRunnable {
     fun foo(x: Int): Boolean
 }

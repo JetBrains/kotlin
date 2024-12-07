@@ -141,12 +141,20 @@ open class RewriteSourceMapFilterReader(
         log.warn("Cannot rewrite paths in JavaScript source maps: $reason")
     }
 
-    protected open fun transformString(value: String): String =
-        File(srcSourceRoot)
+    protected open fun transformString(value: String): String {
+        val sourceFileResolved = File(srcSourceRoot)
             .resolve(value)
-            .canonicalFile
-            .relativeToOrSelf(File(targetSourceRoot))
-            .path
+            .normalize().absoluteFile
+
+        val transformedPath = sourceFileResolved.relativeToOrNull(File(targetSourceRoot))?.path ?: return sourceFileResolved.path
+
+        return if (File.separatorChar == '\\') {
+            transformedPath.replace('\\', '/')
+        } else {
+            transformedPath
+        }
+    }
+
 
     override fun read(): Int {
         maybeReadFirst()

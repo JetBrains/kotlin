@@ -1,6 +1,14 @@
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER
 // SKIP_TXT
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 33
+ * DESCRIPTION: Raw data flow analysis test
+ * HELPERS: classes, objects, typealiases, functions, enumClasses, interfaces, sealedClasses
+ */
 
 // TESTCASE NUMBER: 1, 2, 3, 4, 5
 fun nullableStringArg(number: String?) {}
@@ -12,7 +20,7 @@ fun nullableStringArg(number: String?) {}
  */
 fun case_1(x: Int?) {
     if (x == null) {
-        nullableStringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>)
+        nullableStringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>)
     }
 }
 
@@ -23,7 +31,7 @@ fun case_1(x: Int?) {
  */
 fun case_2(x: Int?, y: Nothing?) {
     if (x == y) {
-        nullableStringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>)
+        nullableStringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>)
     }
 }
 
@@ -34,7 +42,7 @@ fun case_2(x: Int?, y: Nothing?) {
  */
 fun case_3(x: Int?) {
     if (x == null) {
-        nullableStringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>)
+        nullableStringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>)
     }
 }
 
@@ -45,7 +53,7 @@ fun case_3(x: Int?) {
  */
 fun case_4(x: Int?) {
     if (x == null) {
-        nullableStringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>)
+        nullableStringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>)
     }
 }
 
@@ -57,6 +65,6 @@ fun case_4(x: Int?) {
 fun case_5(x: Int?) {
     if (x == null) {
         var y = x
-        nullableStringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>y<!>)
+        nullableStringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>y<!>)
     }
 }

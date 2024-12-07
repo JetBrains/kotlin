@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.UnsignedTypes
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -27,11 +29,19 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.resolve.DeclarationsChecker.Companion.hasAccessorImplementation
+import org.jetbrains.kotlin.resolve.DeclarationsChecker.Companion.hasAnyAccessorImplementation
+import org.jetbrains.kotlin.resolve.descriptorUtil.inlineClassRepresentation
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.typeUtil.isUnsignedNumberType
 
 object LateinitModifierApplicabilityChecker {
-    fun checkLateinitModifierApplicability(trace: BindingTrace, ktDeclaration: KtCallableDeclaration, descriptor: VariableDescriptor) {
+    fun checkLateinitModifierApplicability(
+        trace: BindingTrace,
+        ktDeclaration: KtCallableDeclaration,
+        descriptor: VariableDescriptor,
+        languageVersionSettings: LanguageVersionSettings
+    ) {
         if (!ktDeclaration.hasModifier(KtTokens.LATEINIT_KEYWORD)) return
 
         val variables = when (descriptor) {
@@ -47,10 +57,27 @@ object LateinitModifierApplicabilityChecker {
         }
 
         if (type.isInlineClassType()) {
-            if (UnsignedTypes.isUnsignedType(type)) {
-                trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(ktDeclaration, "is not allowed on $variables of unsigned types"))
-            } else {
-                trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(ktDeclaration, "is not allowed on $variables of inline class types"))
+            when {
+                type.isUnsignedNumberType() -> trace.report(
+                    Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(
+                        ktDeclaration,
+                        "is not allowed on $variables of unsigned types"
+                    )
+                )
+                !languageVersionSettings.supportsFeature(LanguageFeature.InlineLateinit) ->
+                    trace.report(
+                        Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(
+                            ktDeclaration,
+                            "is not allowed on $variables of inline class types"
+                        )
+                    )
+                hasUnderlyingTypeForbiddenForLateinit(type) ->
+                    trace.report(
+                        Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(
+                            ktDeclaration,
+                            "is not allowed on $variables of inline type with underlying type not suitable for lateinit declaration"
+                        )
+                    )
             }
         }
 
@@ -80,7 +107,7 @@ object LateinitModifierApplicabilityChecker {
         if (descriptor is PropertyDescriptor) {
             val isAbstract = descriptor.modality == Modality.ABSTRACT
             val hasDelegateExpressionOrInitializer = ktDeclaration is KtProperty && ktDeclaration.hasDelegateExpressionOrInitializer()
-            val hasAccessorImplementation = descriptor.hasAccessorImplementation()
+            val hasAccessorImplementation = descriptor.hasAnyAccessorImplementation()
             val hasBackingField = trace.bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) ?: false
 
             if (ktDeclaration is KtParameter) {
@@ -100,7 +127,12 @@ object LateinitModifierApplicabilityChecker {
                         )
                     )
                 } else if (!isAbstract && !hasBackingField) {
-                    trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(ktDeclaration, "is not allowed on properties without backing field"))
+                    trace.report(
+                        Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(
+                            ktDeclaration,
+                            "is not allowed on properties without backing field"
+                        )
+                    )
                 }
             }
 
@@ -109,4 +141,26 @@ object LateinitModifierApplicabilityChecker {
             }
         }
     }
+
+    private fun hasUnderlyingTypeForbiddenForLateinit(type: KotlinType): Boolean {
+
+        fun getUnderlyingType(type: KotlinType): KotlinType {
+            return (type.constructor.declarationDescriptor as ClassDescriptor).inlineClassRepresentation!!.underlyingType
+        }
+
+        fun isForbiddenForLateinit(type: KotlinType): Boolean {
+            if (type.isMarkedNullable || TypeUtils.isNullableType(type)) return true
+            if (KotlinBuiltIns.isPrimitiveType(type)) return true
+            if (type.isInlineClassType()) {
+                return isForbiddenForLateinit(getUnderlyingType(type))
+            }
+            return false
+        }
+
+        // prevent infinite recursion
+        if (type.isRecursiveInlineOrValueClassType()) return false
+        return isForbiddenForLateinit(getUnderlyingType(type))
+    }
+
+
 }

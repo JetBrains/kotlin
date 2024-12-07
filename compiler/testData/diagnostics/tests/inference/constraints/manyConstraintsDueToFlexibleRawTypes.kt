@@ -1,5 +1,12 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_JAVAC
+
+// FILE: MyComparableSettings.java
+abstract class MyComparableSettings implements Comparable<MyComparableSettings> {}
+
+// FILE: MySettingsListener.java
+abstract class MySettingsListener<S extends MyComparableSettings> {}
 
 // FILE: MySettings.java
 
@@ -19,9 +26,6 @@ public class MySettings<
         return null;
     }
 }
-
-abstract class MyComparableSettings implements Comparable<MyComparableSettings> {}
-abstract class MySettingsListener<S extends MyComparableSettings> {}
 
 // FILE: test.kt
 

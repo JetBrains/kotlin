@@ -1,4 +1,5 @@
-// !LANGUAGE: -ForbidSuperDelegationToAbstractFakeOverride -ForbidSuperDelegationToAbstractAnyMethod
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ForbidSuperDelegationToAbstractFakeOverride -ForbidSuperDelegationToAbstractAnyMethod
 interface Foo {
     fun check(): String = "OK"
 }

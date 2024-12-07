@@ -5,13 +5,12 @@
 package org.jetbrains.kotlin.js.backend.ast;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.js.backend.ast.metadata.HasMetadata;
-import org.jetbrains.kotlin.js.common.Symbol;
+import org.jetbrains.kotlin.js.backend.ast.metadata.HasMetadataImpl;
 
 /**
  * An abstract base class for named JavaScript objects.
  */
-public class JsName extends HasMetadata implements Symbol {
+public class JsName extends HasMetadataImpl {
   @NotNull
   private final String ident;
 

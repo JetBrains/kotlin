@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun <T> myRun(computable: () -> T): T = TODO()
 
 interface Inv<W>

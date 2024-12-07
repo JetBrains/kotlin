@@ -1,9 +1,3 @@
-fun use1(fn: Function2<A, Int, Unit>) {
-}
-
-fun use2(fn: Function1<Int, Unit>) {
-}
-
 open class A {
   constructor() /* primary */ {
     super/*Any*/()
@@ -30,16 +24,6 @@ object Obj : A {
 
 }
 
-fun testUnbound() {
-  use1(fn = { // BLOCK
-    local fun foo(p0: A, p1: Int) {
-      p0.foo(xs = [p1]) /*~> Unit */
-    }
-
-    ::foo
-  })
-}
-
 fun testBound(a: A) {
   use2(fn = { // BLOCK
     local fun A.foo(p0: Int) {
@@ -59,3 +43,20 @@ fun testObject() {
     Obj::foo
   })
 }
+
+fun testUnbound() {
+  use1(fn = { // BLOCK
+    local fun foo(p0: A, p1: Int) {
+      p0.foo(xs = [p1]) /*~> Unit */
+    }
+
+    ::foo
+  })
+}
+
+fun use1(fn: Function2<A, Int, Unit>) {
+}
+
+fun use2(fn: Function1<Int, Unit>) {
+}
+

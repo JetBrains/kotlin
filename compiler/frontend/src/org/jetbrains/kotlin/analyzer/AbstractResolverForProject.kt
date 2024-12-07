@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analyzer
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.context.ProjectContext
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.checkWithAttachment
 
 abstract class AbstractResolverForProject<M : ModuleInfo>(
@@ -21,7 +23,7 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
     protected val fallbackModificationTracker: ModificationTracker? = null,
     private val delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
     private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory
-) : ResolverForProject<M>() {
+) : ResolverForProject<M>(), Disposable {
 
     protected class ModuleData(
         val moduleDescriptor: ModuleDescriptorImpl,
@@ -35,11 +37,14 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
         }
     }
 
-    // Protected by ("projectContext.storageManager.lock")
-    protected val descriptorByModule = mutableMapOf<M, ModuleData>()
+    @Volatile
+    protected var disposed = false
 
     // Protected by ("projectContext.storageManager.lock")
-    private val moduleInfoByDescriptor = mutableMapOf<ModuleDescriptorImpl, M>()
+    protected val descriptorByModule = hashMapOf<M, ModuleData>()
+
+    // Protected by ("projectContext.storageManager.lock")
+    private val moduleInfoByDescriptor = hashMapOf<ModuleDescriptorImpl, M>()
 
     @Suppress("UNCHECKED_CAST")
     private val moduleInfoToResolvableInfo: Map<M, M> =
@@ -54,6 +59,7 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
     abstract fun builtInsForModule(module: M): KotlinBuiltIns
     abstract fun createResolverForModule(descriptor: ModuleDescriptor, moduleInfo: M): ResolverForModule
     override fun tryGetResolverForModule(moduleInfo: M): ResolverForModule? {
+        checkValid()
         if (!isCorrectModuleInfo(moduleInfo)) {
             return null
         }
@@ -61,6 +67,7 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
     }
 
     private fun setupModuleDescriptor(module: M, moduleDescriptor: ModuleDescriptorImpl) {
+        checkValid()
         moduleDescriptor.setDependencies(
             LazyModuleDependencies(
                 projectContext.storageManager,
@@ -80,7 +87,7 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
     }
 
     // Protected by ("projectContext.storageManager.lock")
-    private val resolverByModuleDescriptor = mutableMapOf<ModuleDescriptor, ResolverForModule>()
+    private val resolverByModuleDescriptor = hashMapOf<ModuleDescriptor, ResolverForModule>()
 
     override val allModules: Collection<M> by lazy {
         this.moduleInfoToResolvableInfo.keys + delegateResolver.allModules
@@ -123,6 +130,9 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
      */
     private fun resolverForModuleDescriptorImpl(descriptor: ModuleDescriptor): ResolverForModule? {
         return projectContext.storageManager.compute {
+            checkValid()
+            descriptor.assertValid()
+
             val module = moduleInfoByDescriptor[descriptor]
             if (module == null) {
                 if (delegateResolver is EmptyResolverForProject<*>) {
@@ -146,11 +156,13 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
         }
 
     override fun descriptorForModule(moduleInfo: M): ModuleDescriptorImpl {
+        checkValid()
         checkModuleIsCorrect(moduleInfo)
         return doGetDescriptorForModule(moduleInfo)
     }
 
     override fun moduleInfoForModuleDescriptor(moduleDescriptor: ModuleDescriptor): M {
+        checkValid()
         return moduleInfoByDescriptor[moduleDescriptor] ?: delegateResolver.moduleInfoForModuleDescriptor(moduleDescriptor)
     }
 
@@ -213,6 +225,29 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
         return ModuleData(moduleDescriptor, modificationTracker)
     }
 
+    private fun checkValid() {
+        if (disposed) {
+            reportInvalidResolver()
+        }
+    }
+
+    protected open fun reportInvalidResolver() {
+        throw InvalidResolverException("$name is invalidated")
+    }
+
+    override fun dispose() {
+        projectContext.storageManager.compute {
+            disposed = true
+            descriptorByModule.values.forEach {
+                moduleInfoByDescriptor.remove(it.moduleDescriptor)
+                it.moduleDescriptor.isValid = false
+            }
+            descriptorByModule.clear()
+            moduleInfoByDescriptor.keys.forEach { it.isValid = false }
+            moduleInfoByDescriptor.clear()
+        }
+    }
+
     private fun renderResolversChainContents(): String {
         val resolversChain = generateSequence(this) { it.delegateResolver as? AbstractResolverForProject<M> }
 
@@ -252,7 +287,9 @@ private class DelegatingPackageFragmentProvider<M : ModuleInfo>(
     override fun collectPackageFragments(fqName: FqName, packageFragments: MutableCollection<PackageFragmentDescriptor>) {
         if (certainlyDoesNotExist(fqName)) return
 
-        resolverForProject.resolverForModuleDescriptor(module).packageFragmentProvider.collectPackageFragmentsOptimizedIfPossible(fqName, packageFragments)
+        resolverForProject.resolverForModuleDescriptor(module)
+            .packageFragmentProvider
+            .collectPackageFragmentsOptimizedIfPossible(fqName, packageFragments)
     }
 
     override fun isEmpty(fqName: FqName): Boolean {
@@ -280,8 +317,8 @@ private class DelegatingPackageFragmentProvider<M : ModuleInfo>(
 
 private object DiagnoseUnknownModuleInfoReporter {
     fun report(name: String, infos: List<ModuleInfo>, allModules: Collection<ModuleInfo>): Nothing {
-        val message = "$name does not know how to resolve $infos, allModules: $allModules"
-        when {
+        val message = "$name does not know how to resolve"
+        val error = when {
             name.contains(ResolverForProject.resolverForSdkName) -> errorInSdkResolver(message)
             name.contains(ResolverForProject.resolverForLibrariesName) -> errorInLibrariesResolver(message)
             name.contains(ResolverForProject.resolverForModulesName) -> {
@@ -295,9 +332,11 @@ private object DiagnoseUnknownModuleInfoReporter {
                             else -> errorInModulesResolver(message)
                         }
                     }
+
                     else -> errorInModulesResolver(message)
                 }
             }
+
             name.contains(ResolverForProject.resolverForScriptDependenciesName) -> errorInScriptDependenciesInfoResolver(message)
             name.contains(ResolverForProject.resolverForSpecialInfoName) -> {
                 when {
@@ -305,23 +344,28 @@ private object DiagnoseUnknownModuleInfoReporter {
                     else -> errorInSpecialModuleInfoResolver(message)
                 }
             }
+
             else -> otherError(message)
         }
+
+        throw error.withAttachment("infos.txt", infos).withAttachment("allModules.txt", allModules)
     }
 
     // Do not inline 'error*'-methods, they are needed to avoid Exception Analyzer merging those AssertionErrors
 
-    private fun errorInSdkResolver(message: String): Nothing = throw AssertionError(message)
-    private fun errorInLibrariesResolver(message: String): Nothing = throw AssertionError(message)
-    private fun errorInModulesResolver(message: String): Nothing = throw AssertionError(message)
+    private fun errorInSdkResolver(message: String) = KotlinExceptionWithAttachments(message)
+    private fun errorInLibrariesResolver(message: String) = KotlinExceptionWithAttachments(message)
+    private fun errorInModulesResolver(message: String) = KotlinExceptionWithAttachments(message)
 
-    private fun errorInModulesResolverWithEmptyInfos(message: String): Nothing = throw AssertionError(message)
-    private fun errorInModulesResolverWithScriptDependencies(message: String): Nothing = throw AssertionError(message)
-    private fun errorInModulesResolverWithLibraryInfo(message: String): Nothing = throw AssertionError(message)
+    private fun errorInModulesResolverWithEmptyInfos(message: String) = KotlinExceptionWithAttachments(message)
+    private fun errorInModulesResolverWithScriptDependencies(message: String) = KotlinExceptionWithAttachments(message)
+    private fun errorInModulesResolverWithLibraryInfo(message: String) = KotlinExceptionWithAttachments(message)
 
-    private fun errorInScriptDependenciesInfoResolver(message: String): Nothing = throw AssertionError(message)
-    private fun errorInScriptModuleInfoResolver(message: String): Nothing = throw AssertionError(message)
-    private fun errorInSpecialModuleInfoResolver(message: String): Nothing = throw AssertionError(message)
+    private fun errorInScriptDependenciesInfoResolver(message: String) = KotlinExceptionWithAttachments(message)
+    private fun errorInScriptModuleInfoResolver(message: String) = KotlinExceptionWithAttachments(message)
+    private fun errorInSpecialModuleInfoResolver(message: String) = KotlinExceptionWithAttachments(message)
 
-    private fun otherError(message: String): Nothing = throw AssertionError(message)
+    private fun otherError(message: String) = KotlinExceptionWithAttachments(message)
 }
+
+class InvalidResolverException(message: String) : IllegalStateException(message)

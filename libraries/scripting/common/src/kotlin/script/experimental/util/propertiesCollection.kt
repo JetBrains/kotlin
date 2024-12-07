@@ -277,6 +277,11 @@ open class PropertiesCollection(protected var properties: Map<Key<*>, Any?> = em
             data[this] = newValues
         }
 
+        fun <V> Key<in List<V>>.transform(action: (V) -> V) {
+            val newValues = get(this)?.map(action) ?: emptyList()
+            data[this] = newValues
+        }
+
         // include another builder
         operator fun <T : Builder> T.invoke(body: T.() -> Unit) {
             this.body()

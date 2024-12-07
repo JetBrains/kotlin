@@ -21,8 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.lexer.KtTokens
 
-
-fun getInfixOperator(ktOperator: IElementType): IrStatementOrigin? =
+internal fun getInfixOperator(ktOperator: IElementType): IrStatementOrigin? =
     when (ktOperator) {
         KtTokens.EQ -> IrStatementOrigin.EQ
         KtTokens.PLUSEQ -> IrStatementOrigin.PLUSEQ
@@ -53,7 +52,7 @@ fun getInfixOperator(ktOperator: IElementType): IrStatementOrigin? =
         else -> null
     }
 
-fun getPrefixOperator(ktOperator: IElementType): IrStatementOrigin? =
+internal fun getPrefixOperator(ktOperator: IElementType): IrStatementOrigin? =
     when (ktOperator) {
         KtTokens.PLUSPLUS -> IrStatementOrigin.PREFIX_INCR
         KtTokens.MINUSMINUS -> IrStatementOrigin.PREFIX_DECR
@@ -63,7 +62,7 @@ fun getPrefixOperator(ktOperator: IElementType): IrStatementOrigin? =
         else -> null
     }
 
-fun getPostfixOperator(ktOperator: IElementType): IrStatementOrigin? =
+internal fun getPostfixOperator(ktOperator: IElementType): IrStatementOrigin? =
     when (ktOperator) {
         KtTokens.PLUSPLUS -> IrStatementOrigin.POSTFIX_INCR
         KtTokens.MINUSMINUS -> IrStatementOrigin.POSTFIX_DECR
@@ -71,7 +70,7 @@ fun getPostfixOperator(ktOperator: IElementType): IrStatementOrigin? =
         else -> null
     }
 
-fun getIrTypeOperator(ktOperator: IElementType): IrTypeOperator? =
+internal fun getIrTypeOperator(ktOperator: IElementType): IrTypeOperator? =
     when (ktOperator) {
         KtTokens.IS_KEYWORD -> IrTypeOperator.INSTANCEOF
         KtTokens.NOT_IS -> IrTypeOperator.NOT_INSTANCEOF
@@ -80,10 +79,10 @@ fun getIrTypeOperator(ktOperator: IElementType): IrTypeOperator? =
         else -> null
     }
 
-val AUGMENTED_ASSIGNMENTS =
+internal val AUGMENTED_ASSIGNMENTS =
     setOf(IrStatementOrigin.PLUSEQ, IrStatementOrigin.MINUSEQ, IrStatementOrigin.MULTEQ, IrStatementOrigin.DIVEQ, IrStatementOrigin.PERCEQ)
 
-val OPERATORS_DESUGARED_TO_CALLS =
+internal val OPERATORS_DESUGARED_TO_CALLS =
     setOf(
         IrStatementOrigin.PLUS,
         IrStatementOrigin.MINUS,
@@ -97,23 +96,20 @@ val OPERATORS_DESUGARED_TO_CALLS =
         IrStatementOrigin.UPLUS
     )
 
-val COMPARISON_OPERATORS =
+internal val COMPARISON_OPERATORS =
     setOf(IrStatementOrigin.LT, IrStatementOrigin.LTEQ, IrStatementOrigin.GT, IrStatementOrigin.GTEQ)
 
-val EQUALITY_OPERATORS =
+internal val EQUALITY_OPERATORS =
     setOf(IrStatementOrigin.EQEQ, IrStatementOrigin.EXCLEQ)
 
-val IDENTITY_OPERATORS =
+internal val IDENTITY_OPERATORS =
     setOf(IrStatementOrigin.EQEQEQ, IrStatementOrigin.EXCLEQEQ)
 
-val IN_OPERATORS =
+internal val IN_OPERATORS =
     setOf(IrStatementOrigin.IN, IrStatementOrigin.NOT_IN)
 
-val BINARY_BOOLEAN_OPERATORS =
+internal val BINARY_BOOLEAN_OPERATORS =
     setOf(IrStatementOrigin.ANDAND, IrStatementOrigin.OROR)
 
-val INCREMENT_DECREMENT_OPERATORS =
+internal val INCREMENT_DECREMENT_OPERATORS =
     setOf(IrStatementOrigin.PREFIX_INCR, IrStatementOrigin.PREFIX_DECR, IrStatementOrigin.POSTFIX_INCR, IrStatementOrigin.POSTFIX_DECR)
-
-val POSTFIX_INCREMENT_DECREMENT_OPERATORS =
-    setOf(IrStatementOrigin.POSTFIX_INCR, IrStatementOrigin.POSTFIX_DECR)

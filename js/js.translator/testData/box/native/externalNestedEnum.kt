@@ -1,7 +1,6 @@
 // DONT_TARGET_EXACT_BACKEND: WASM
 // WASM_MUTE_REASON: UNSUPPORTED_JS_INTEROP
 // KT-46961
-// IGNORE_BACKEND: JS
 
 external object O {
     enum class Foo {

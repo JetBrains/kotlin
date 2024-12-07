@@ -1,0 +1,1 @@
+[DIAGNOSTIC_ID | WARNING] Sample diagnostic

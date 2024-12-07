@@ -8,3 +8,14 @@ public final class Some {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
+public final class TypedThis {
+    public constructor TypedThis()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final fun Extension /* = TypedThis */.bar(): kotlin.Unit
+    public final fun TypedThis.baz(): kotlin.Unit
+}
+private typealias Extension = TypedThis
+

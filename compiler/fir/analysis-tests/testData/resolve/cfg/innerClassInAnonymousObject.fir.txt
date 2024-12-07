@@ -5,7 +5,7 @@ FILE: innerClassInAnonymousObject.kt
         }
 
         local final class Nested : R|kotlin/Any| {
-            public constructor(): R|<anonymous>.Nested| {
+            public constructor(): R|<local>/<anonymous>.Nested| {
                 super<R|kotlin/Any|>()
             }
 

@@ -1,0 +1,2 @@
+FILE: noParameterTypRefInFunction.kt
+    public? final? fun foo(x: <ERROR TYPE REF: No type for parameter>): R|kotlin/Unit| { LAZY_BLOCK }

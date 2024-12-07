@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.gradle.targets.js
 
 import org.gradle.internal.hash.FileHasher
 import org.gradle.internal.hash.Hashing.defaultFunction
-import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
 import org.jetbrains.kotlin.gradle.utils.appendLine
-import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import java.io.File
-import org.gradle.api.Project
+import java.nio.file.Files
 
 fun Appendable.appendConfigsFromDir(confDir: File) {
     val files = confDir.listFiles() ?: return
@@ -49,32 +47,36 @@ fun FileHasher.calculateDirHash(
         .forEach { file ->
             hasher.putString(file.toRelativeString(dir))
             if (file.isFile) {
-                hasher.putHash(hash(file))
+                if (!Files.isSymbolicLink(file.toPath())) {
+                    hasher.putHash(hash(file))
+                } else {
+                    val absoluteFile = file.absoluteFile
+                    hasher.putHash(hash(absoluteFile))
+                    hasher.putString(absoluteFile.toRelativeString(dir))
+                }
             }
         }
 
-    val digest = hasher.hash().toByteArray()
-
-    return digest.toHex()
+    return hasher.hash().toByteArray().toHex()
 }
 
 const val JS = "js"
+const val MJS = "mjs"
+const val WASM = "wasm"
 const val JS_MAP = "js.map"
 const val META_JS = "meta.js"
+const val HTML = "html"
 
-val Project.isTeamCity: Boolean
-    get() = if (isConfigurationCacheAvailable(project.gradle)) {
-        project.providers.gradleProperty(TCServiceMessagesTestExecutor.TC_PROJECT_PROPERTY).forUseAtConfigurationTime().isPresent
-    } else {
-        project.hasProperty(TCServiceMessagesTestExecutor.TC_PROJECT_PROPERTY)
+internal fun writeWasmUnitTestRunner(workingDir: File, compiledFile: File): File {
+    val static = workingDir.resolve("static").also {
+        it.mkdirs()
     }
 
-internal fun writeWasmUnitTestRunner(compiledFile: File): File {
-    val testRunnerFile = compiledFile.parentFile.resolve("runUnitTests.mjs")
+    val testRunnerFile = static.resolve("runUnitTests.mjs")
     testRunnerFile.writeText(
         """
-        import exports from '${compiledFile.absolutePath}';
-        exports.startUnitTests?.();
+        import { startUnitTests } from './${compiledFile.relativeTo(static).invariantSeparatorsPath}';
+        startUnitTests();
         """.trimIndent()
     )
     return testRunnerFile

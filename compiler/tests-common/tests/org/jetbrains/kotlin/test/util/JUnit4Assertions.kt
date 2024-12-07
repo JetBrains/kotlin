@@ -12,6 +12,10 @@ import org.junit.Assert
 import java.io.File
 
 object JUnit4Assertions : Assertions() {
+    override fun doesEqualToFile(expectedFile: File, actual: String, sanitizer: (String) -> String): Boolean {
+        return KotlinTestUtils.doesEqualToFile(expectedFile, actual, sanitizer).first;
+    }
+
     override fun assertEqualsToFile(expectedFile: File, actual: String, sanitizer: (String) -> String, message: () -> String) {
         KotlinTestUtils.assertEqualsToFile(expectedFile, actual, sanitizer)
     }
@@ -40,8 +44,12 @@ object JUnit4Assertions : Assertions() {
         KtUsefulTestCase.assertSameElements(message?.invoke() ?: "", expected, actual)
     }
 
-    override fun assertAll(exceptions: List<Throwable>) {
+    override fun failAll(exceptions: List<Throwable>) {
         exceptions.forEach { throw it }
+    }
+
+    override fun assertAll(conditions: List<() -> Unit>) {
+        conditions.forEach { it.invoke() }
     }
 
     override fun fail(message: () -> String): Nothing {

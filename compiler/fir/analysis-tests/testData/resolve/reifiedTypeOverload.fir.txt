@@ -1,0 +1,36 @@
+FILE: classes.kt
+    package classes
+
+    public abstract class Foo : R|kotlin/Any| {
+        public constructor(): R|classes/Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract class Bar : R|kotlin/Any| {
+        public constructor(): R|classes/Bar| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+FILE: bar.kt
+    package classes.bar
+
+    public final inline fun <reified T : R|classes/Bar|> nameOf(): R|kotlin/String| {
+        ^nameOf String(Bar)
+    }
+FILE: foo.kt
+    package classes.foo
+
+    public final inline fun <reified T : R|classes/Foo|> nameOf(): R|kotlin/String| {
+        ^nameOf String(Foo)
+    }
+FILE: main.kt
+    package main
+
+    public final fun <T> foo(): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|classes/bar/nameOf|<R|classes/Bar|>()
+        R|classes/foo/nameOf|<R|classes/Foo|>()
+    }

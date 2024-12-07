@@ -1,0 +1,26 @@
+//
+// Source
+// ------------------------------------------
+
+fun interface A {
+    fun compute(value: Int): Unit
+}
+fun Example(a: A) {
+    a.compute(123)
+}
+fun Usage() {
+    Example { it -> it + 1 }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public abstract interface A {
+  public abstract compute(I)V
+}
+public final class TestKt {
+  public final static Example(LA;)V
+  public final static Usage()V
+  private final static Usage%lambda%0(I)V
+}

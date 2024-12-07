@@ -6,51 +6,54 @@
 package org.jetbrains.kotlin.gradle.tasks.configuration
 
 import org.gradle.api.Project
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
+import org.gradle.api.tasks.compile.AbstractCompile
+import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+import org.jetbrains.kotlin.gradle.dsl.KaptExtensionConfig
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsHelper
+import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.KAPT_SUBPLUGIN_ID
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isIncludeCompileClasspath
-import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
-import org.jetbrains.kotlin.gradle.internal.KaptTask
-import org.jetbrains.kotlin.gradle.internal.KotlinJvmCompilerArgumentsContributor
-import org.jetbrains.kotlin.gradle.internal.buildKaptSubpluginOptions
+import org.jetbrains.kotlin.gradle.internal.kapt.KaptProperties
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompilerArgumentsProvider
-import java.util.concurrent.Callable
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.whenKaptEnabled
 
 internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStubsTask> {
 
-    constructor(compilation: KotlinCompilationData<*>, kotlinTaskProvider: TaskProvider<KotlinCompile>) : super(compilation) {
+    constructor(
+        compilation: KotlinCompilation<*>
+    ) : super(KotlinCompilationInfo(compilation)) {
         configureFromExtension(project.extensions.getByType(KaptExtension::class.java))
-        configureTask { task ->
-            val kotlinCompileTask = kotlinTaskProvider.get()
-            task.useModuleDetection.value(kotlinCompileTask.useModuleDetection).disallowChanges()
-            task.moduleName.value(kotlinCompileTask.moduleName).disallowChanges()
-            task.libraries.from({ kotlinCompileTask.libraries })
-            task.compileKotlinArgumentsContributor.set(providers.provider { kotlinCompileTask.compilerArgumentsContributor })
-            task.pluginOptions.addAll(kotlinCompileTask.pluginOptions)
+
+        configureTask { kaptGenerateStubsTask ->
+            // Syncing compiler options from related KotlinJvmCompile task
+            @Suppress("DEPRECATION") val jvmCompilerOptions = compilation.compilerOptions.options as KotlinJvmCompilerOptions
+            syncOptionsFromCompileTask(jvmCompilerOptions, kaptGenerateStubsTask)
         }
     }
 
-    constructor(project: Project, ext: KotlinTopLevelExtension, kaptExtension: KaptExtension) : super(project, ext) {
+    constructor(
+        project: Project,
+        explicitApiMode: Provider<ExplicitApiMode>,
+        kaptExtension: KaptExtensionConfig
+    ) : super(project, explicitApiMode) {
         configureFromExtension(kaptExtension)
-        configureTask { task ->
-            task.compileKotlinArgumentsContributor.set(
-                providers.provider {
-                    KotlinJvmCompilerArgumentsContributor(KotlinJvmCompilerArgumentsProvider(task))
-                }
-            )
-        }
     }
 
-    private fun configureFromExtension(kaptExtension: KaptExtension) {
+    private fun configureFromExtension(kaptExtension: KaptExtensionConfig) {
         configureTask { task ->
             task.verbose.set(KaptTask.queryKaptVerboseProperty(project))
-            task.pluginOptions.add(buildOptions(kaptExtension, task))
+            if (kaptExtension is KaptExtension) {
+                task.pluginOptions.add(buildOptions(kaptExtension, task))
+            }
+            task.useK2Kapt.value(KaptProperties.isUseK2(project)).finalizeValueOnRead()
 
             if (!isIncludeCompileClasspath(kaptExtension)) {
                 task.onlyIf {
@@ -60,7 +63,8 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
         }
     }
 
-    private fun isIncludeCompileClasspath(kaptExtension: KaptExtension) = kaptExtension.includeCompileClasspath ?: project.isIncludeCompileClasspath()
+    private fun isIncludeCompileClasspath(kaptExtension: KaptExtensionConfig) =
+        kaptExtension.includeCompileClasspath ?: KaptProperties.isIncludeCompileClasspath(project).get()
 
     private fun buildOptions(kaptExtension: KaptExtension, task: KaptGenerateStubsTask): Provider<CompilerPluginOptions> {
         val javacOptions = project.provider { kaptExtension.getJavacOptions() }
@@ -80,6 +84,71 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
                 compilerPluginOptions.addPluginArgument(KAPT_SUBPLUGIN_ID, it)
             }
             return@provider compilerPluginOptions
+        }
+    }
+
+    companion object {
+        internal fun wireJavaAndKotlinOutputs(
+            project: Project,
+            javaCompileTask: TaskProvider<out AbstractCompile>,
+            kotlinCompileTask: TaskProvider<out KotlinJvmCompile>
+        ) {
+            project.whenKaptEnabled {
+                val kaptGenerateStubsTaskName = getKaptTaskName(kotlinCompileTask.name, KAPT_GENERATE_STUBS_PREFIX)
+                project.tasks.withType<KaptGenerateStubsTask>().configureEach { task ->
+                    if (task.name == kaptGenerateStubsTaskName) {
+                        task.javaOutputDir.set(javaCompileTask.flatMap { it.destinationDirectory })
+                        task.kotlinCompileDestinationDirectory.set(kotlinCompileTask.flatMap { it.destinationDirectory })
+                    }
+                }
+            }
+        }
+
+        internal fun configureLibraries(
+            project: Project,
+            kotlinCompileTask: TaskProvider<out KotlinJvmCompile>,
+            vararg paths: Any
+        ) {
+            project.whenKaptEnabled {
+                val kaptGenerateStubsTaskName = getKaptTaskName(kotlinCompileTask.name, KAPT_GENERATE_STUBS_PREFIX)
+                project.tasks.withType<KaptGenerateStubsTask>().configureEach { task ->
+                    if (task.name == kaptGenerateStubsTaskName) {
+                        task.libraries.from(paths)
+                    }
+                }
+            }
+        }
+
+        internal fun configureUseModuleDetection(
+            project: Project,
+            kotlinCompileTask: TaskProvider<out KotlinJvmCompile>,
+            config: Property<Boolean>.() -> Unit
+        ) {
+            project.whenKaptEnabled {
+                val kaptGenerateStubsTaskName = getKaptTaskName(kotlinCompileTask.name, KAPT_GENERATE_STUBS_PREFIX)
+                project.tasks.withType<KaptGenerateStubsTask>().configureEach { task ->
+                    if (task.name == kaptGenerateStubsTaskName) {
+                        config(task.useModuleDetection)
+                    }
+                }
+            }
+        }
+
+        internal fun syncOptionsFromCompileTask(
+            taskCompilerOptions: KotlinJvmCompilerOptions,
+            kaptGenerateStubsTask: KaptGenerateStubsTask,
+        ) {
+            // Syncing compiler options from related KotlinJvmCompile task
+            KotlinJvmCompilerOptionsHelper.syncOptionsAsConvention(
+                from = taskCompilerOptions,
+                into = kaptGenerateStubsTask.compilerOptions
+            )
+
+            // This task should not sync any freeCompilerArgs from relevant KotlinCompile task
+            // when someone explicitly configures any value for this task as well.
+            // Here we reset any configured value and say that use KotlinCompile freeCompilerArgs as convention
+            kaptGenerateStubsTask.compilerOptions.freeCompilerArgs.value(null as Iterable<String>?)
+            kaptGenerateStubsTask.compilerOptions.freeCompilerArgs.convention(taskCompilerOptions.freeCompilerArgs)
         }
     }
 }

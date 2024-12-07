@@ -4,19 +4,21 @@
  * Version of kotlin-gradle-plugin-idea module that should be resolved for compatibility tests
  * This version can be treated as 'minimal guaranteed backwards compatible version' of the module.
  */
-val testedVersion = "1.7.20-dev-2127"
+val testedVersion = "1.8.20-dev-4242"
 
 val isSnapshotTest = properties.contains("kgp-idea.snapshot_test")
 val resolvedTestedVersion = if (isSnapshotTest) properties["defaultSnapshotVersion"].toString() else testedVersion
 
 //region Download and prepare classpath for specified tested version
 
-if (isSnapshotTest) {
-    repositories {
-        clear()
+repositories {
+    if (isSnapshotTest) {
         mavenLocal()
         mavenCentral()
     }
+
+    maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap")
+    maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-ide-plugin-dependencies")
 }
 
 val classpathDestination = layout.buildDirectory.dir("classpath")
@@ -32,6 +34,11 @@ dependencies {
     incomingClasspath(kotlin("gradle-plugin-idea", resolvedTestedVersion))
     incomingClasspath(testFixtures(kotlin("gradle-plugin-idea", resolvedTestedVersion)))
     incomingClasspath(kotlin("gradle-plugin-idea-proto", resolvedTestedVersion))
+
+    incomingClasspath.resolutionStrategy {
+        force(kotlin("stdlib", bootstrapKotlinVersion))
+        force(kotlin("test-junit", bootstrapKotlinVersion))
+    }
 }
 
 val syncClasspath by tasks.register<Sync>("syncClasspath") {
@@ -57,7 +64,7 @@ val outgoingClasspath by configurations.creating {
 }
 
 tasks.register<Delete>("clean") {
-    delete(project.buildDir)
+    delete(layout.buildDirectory)
 }
 
 //endregion

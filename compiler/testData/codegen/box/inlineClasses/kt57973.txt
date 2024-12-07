@@ -1,0 +1,45 @@
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class IC {
+    // source: 'kt57973.kt'
+    private final field x: long
+    private synthetic method <init>(p0: long): void
+    public synthetic final static method box-impl(p0: long): IC
+    public static method constructor-impl(p0: long): long
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: long, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: long, p1: long): boolean
+    public method f(p0: long, p1: long, p2: long, p3: long, p4: long, p5: long, p6: long, p7: long, p8: long, p9: long, p10: long, p11: long, p12: long, p13: long, p14: long, p15: long, p16: long, p17: long, p18: long, p19: long, p20: long, p21: long, p22: long, p23: long, p24: long, p25: long, p26: long, p27: long, p28: long, p29: long, p30: long, p31: long, p32: long): long
+    public static method f-impl(p0: long, p1: long, p2: long, p3: long, p4: long, p5: long, p6: long, p7: long, p8: long, p9: long, p10: long, p11: long, p12: long, p13: long, p14: long, p15: long, p16: long, p17: long, p18: long, p19: long, p20: long, p21: long, p22: long, p23: long, p24: long, p25: long, p26: long, p27: long, p28: long, p29: long, p30: long, p31: long, p32: long, p33: long): long
+    public method g(p0: long, p1: long, p2: long, p3: long, p4: long, p5: long, p6: long, p7: long, p8: long, p9: long, p10: long, p11: long, p12: long, p13: long, p14: long, p15: long, p16: long, p17: long, p18: long, p19: long, p20: long, p21: long, p22: long, p23: long, p24: long, p25: long, p26: long, p27: long, p28: long, p29: long, p30: long, p31: long): long
+    public static method g-impl(p0: long, p1: long, p2: long, p3: long, p4: long, p5: long, p6: long, p7: long, p8: long, p9: long, p10: long, p11: long, p12: long, p13: long, p14: long, p15: long, p16: long, p17: long, p18: long, p19: long, p20: long, p21: long, p22: long, p23: long, p24: long, p25: long, p26: long, p27: long, p28: long, p29: long, p30: long, p31: long, p32: long): long
+    public final method getX(): long
+    public method hashCode(): int
+    public static method hashCode-impl(p0: long): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: long): java.lang.String
+    public synthetic final method unbox-impl(): long
+}
+
+@kotlin.Metadata
+public final class IIC$DefaultImpls {
+    // source: 'kt57973.kt'
+    public synthetic static method f$default(p0: IIC, p1: long, p2: long, p3: long, p4: long, p5: long, p6: long, p7: long, p8: long, p9: long, p10: long, p11: long, p12: long, p13: long, p14: long, p15: long, p16: long, p17: long, p18: long, p19: long, p20: long, p21: long, p22: long, p23: long, p24: long, p25: long, p26: long, p27: long, p28: long, p29: long, p30: long, p31: long, p32: long, p33: long, p34: int, p35: int, p36: java.lang.Object): long
+    public synthetic static method g$default(p0: IIC, p1: long, p2: long, p3: long, p4: long, p5: long, p6: long, p7: long, p8: long, p9: long, p10: long, p11: long, p12: long, p13: long, p14: long, p15: long, p16: long, p17: long, p18: long, p19: long, p20: long, p21: long, p22: long, p23: long, p24: long, p25: long, p26: long, p27: long, p28: long, p29: long, p30: long, p31: long, p32: long, p33: int, p34: java.lang.Object): long
+    public final inner class IIC$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface IIC {
+    // source: 'kt57973.kt'
+    public abstract method f(p0: long, p1: long, p2: long, p3: long, p4: long, p5: long, p6: long, p7: long, p8: long, p9: long, p10: long, p11: long, p12: long, p13: long, p14: long, p15: long, p16: long, p17: long, p18: long, p19: long, p20: long, p21: long, p22: long, p23: long, p24: long, p25: long, p26: long, p27: long, p28: long, p29: long, p30: long, p31: long, p32: long): long
+    public abstract method g(p0: long, p1: long, p2: long, p3: long, p4: long, p5: long, p6: long, p7: long, p8: long, p9: long, p10: long, p11: long, p12: long, p13: long, p14: long, p15: long, p16: long, p17: long, p18: long, p19: long, p20: long, p21: long, p22: long, p23: long, p24: long, p25: long, p26: long, p27: long, p28: long, p29: long, p30: long, p31: long): long
+    public final inner class IIC$DefaultImpls
+}
+
+@kotlin.Metadata
+public final class Kt57973Kt {
+    // source: 'kt57973.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final inner class IIC$DefaultImpls
+}

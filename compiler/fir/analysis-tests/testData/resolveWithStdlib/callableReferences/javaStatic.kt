@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: JavaClass.java
 public class JavaClass {
     public static int bar(String x) { return 0; }

@@ -7,7 +7,7 @@ End of files
 Compiling files:
   src/a.kt
 End of files
-Marked as dirty by Kotlin:
+After build round. Marked as dirty by Kotlin:
   src/b.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
@@ -18,7 +18,7 @@ End of files
 Compiling files:
   src/b.kt
 End of files
-Marked as dirty by Kotlin:
+After build round. Marked as dirty by Kotlin:
   src/a.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------

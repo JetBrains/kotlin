@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 interface A
 abstract class B
 annotation class C
@@ -6,7 +7,7 @@ enum class D
 
 fun main() {
     ::<!UNRESOLVED_REFERENCE!>A<!>
-    ::B
+    ::<!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!>B<!>
     ::<!CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR!>C<!>   // KT-3465
-    ::<!UNRESOLVED_REFERENCE!>D<!>
+    ::<!INVISIBLE_REFERENCE!>D<!>
 }

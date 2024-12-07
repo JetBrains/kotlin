@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1285
 package foo
 
 fun bar(i: Int = 0): Int = if (i == 7) i else bar(i - 1)

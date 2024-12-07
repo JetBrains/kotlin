@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 package aaa
 
 fun bar(a: Int, b: Int) {}

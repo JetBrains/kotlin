@@ -1,4 +1,6 @@
-// !LANGUAGE: +ContextReceivers
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// LANGUAGE: +ContextReceivers
 
 interface A {
     fun a(): Int
@@ -8,10 +10,10 @@ interface B {
 }
 
 context(A)
-val a = 1
+val a = <!CONTEXT_PARAMETERS_WITH_BACKING_FIELD!>1<!>
 
 context(A, B)
-var b = 2
+var b = <!CONTEXT_PARAMETERS_WITH_BACKING_FIELD!>2<!>
 
 context(A, B)
 val c get() = a() + b()

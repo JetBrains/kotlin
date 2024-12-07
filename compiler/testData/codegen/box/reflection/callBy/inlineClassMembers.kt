@@ -1,5 +1,4 @@
-// IGNORE_BACKEND: JS_IR, JS, NATIVE, WASM
-// IGNORE_BACKEND: JS_IR_ES6
+// TARGET_BACKEND: JVM
 // WITH_REFLECT
 import kotlin.test.assertEquals
 
@@ -11,7 +10,8 @@ interface IFoo {
 var global = Z(0)
 
 
-inline class Z(val x: Int) : IFoo {
+@JvmInline
+value class Z(val x: Int) : IFoo {
 
     override fun fooFun(z: Z): Z = Z(z.x + x)
 

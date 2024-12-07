@@ -108,11 +108,11 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
         }.sortedBy { it.target.jpsModuleBuildTarget.presentableName }
 
         allTargets.forEach { (chunk, target) ->
-            val metaBuildInfo = chunk.buildMetaInfoFile(target.jpsModuleBuildTarget)
+            val compilerArgumentsFile = chunk.compilerArgumentsFile(target.jpsModuleBuildTarget)
             dumpCachesForTarget(
                 printer, paths, target.jpsModuleBuildTarget,
                 target.localCacheVersionManager.versionFileForTesting,
-                metaBuildInfo.toFile(),
+                compilerArgumentsFile.toFile(),
                 subdirectory = KOTLIN_CACHE_DIRECTORY_NAME
             )
         }

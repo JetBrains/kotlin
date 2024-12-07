@@ -1,0 +1,5 @@
+expression: CALL_EXPRESSION
+text: foo @Deprecated("") {
+        it.length
+    }
+isUsedAsExpression: false

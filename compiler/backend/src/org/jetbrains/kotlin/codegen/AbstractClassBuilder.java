@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.codegen.inline.FileMapping;
 import org.jetbrains.kotlin.codegen.inline.SMAPBuilder;
 import org.jetbrains.kotlin.codegen.inline.SourceMapper;
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings;
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.org.objectweb.asm.*;
 
@@ -114,8 +115,13 @@ public abstract class AbstractClassBuilder implements ClassBuilder {
     }
 
     @Override
-    public void done() {
+    public void done(boolean generateSmapCopyToAnnotation) {
         getVisitor().visitSource(sourceName, debugInfo);
+        if (generateSmapCopyToAnnotation && debugInfo != null) {
+            AnnotationVisitor v = getVisitor().visitAnnotation(JvmAnnotationNames.SOURCE_DEBUG_EXTENSION_DESC, false);
+            CodegenUtilKt.visitWithSplitting(v, "value", debugInfo);
+            v.visitEnd();
+        }
         getVisitor().visitEnd();
     }
 
@@ -142,12 +148,16 @@ public abstract class AbstractClassBuilder implements ClassBuilder {
 
     @Override
     public void visitSMAP(@NotNull SourceMapper smap, boolean backwardsCompatibleSyntax) {
-        if (!GENERATE_SMAP) return;
-
-        List<FileMapping> fileMappings = smap.getResultMappings();
-        if (fileMappings.isEmpty()) return;
-
-        visitSource(fileMappings.get(0).getName(), SMAPBuilder.INSTANCE.build(fileMappings, backwardsCompatibleSyntax));
+        if (GENERATE_SMAP && !smap.isTrivial()) {
+            List<FileMapping> fileMappings = smap.getResultMappings();
+            visitSource(fileMappings.get(0).getName(), SMAPBuilder.INSTANCE.build(fileMappings, backwardsCompatibleSyntax));
+        } else {
+            SourceInfo sourceInfo = smap.getSourceInfo();
+            if (sourceInfo == null) return;
+            String fileName = sourceInfo.getSourceFileName();
+            if (fileName == null) return;
+            visitSource(fileName, null);
+        }
     }
 
     @Override

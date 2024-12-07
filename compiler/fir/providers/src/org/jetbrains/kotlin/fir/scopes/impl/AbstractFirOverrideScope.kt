@@ -5,21 +5,21 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 abstract class AbstractFirOverrideScope(
     val session: FirSession,
     protected val overrideChecker: FirOverrideChecker
 ) : FirTypeScope() {
     //base symbol as key, overridden as value
-    val overrideByBase = mutableMapOf<FirCallableSymbol<*>, FirCallableSymbol<*>?>()
+    val overrideByBase: MutableMap<FirCallableSymbol<*>, FirCallableSymbol<*>?> = mutableMapOf()
 
     // Receiver is super-type function here
     protected open fun FirCallableSymbol<*>.getOverridden(overrideCandidates: Set<FirCallableSymbol<*>>): FirCallableSymbol<*>? {
@@ -29,7 +29,7 @@ abstract class AbstractFirOverrideScope(
         val baseDeclaration = (this as FirBasedSymbol<*>).fir as FirCallableDeclaration
         val override = overrideCandidates.firstOrNull {
             val overrideCandidate = (it as FirBasedSymbol<*>).fir as FirCallableDeclaration
-            baseDeclaration.modality != Modality.FINAL && overrideChecker.similarFunctionsOrBothProperties(
+            overrideChecker.similarFunctionsOrBothProperties(
                 overrideCandidate,
                 baseDeclaration
             )
@@ -54,7 +54,10 @@ internal fun FirOverrideChecker.similarFunctionsOrBothProperties(
         overrideCandidate is FirConstructor -> false
         overrideCandidate is FirProperty -> baseDeclaration is FirProperty && isOverriddenProperty(overrideCandidate, baseDeclaration)
         overrideCandidate is FirField -> baseDeclaration is FirField
-        else -> error("Unknown fir callable type: $overrideCandidate, $baseDeclaration")
+        else -> errorWithAttachment("Unknown fir callable type") {
+            withFirEntry("overrideCandidate", overrideCandidate)
+            withFirEntry("baseDeclaration", baseDeclaration)
+        }
     }
 }
 

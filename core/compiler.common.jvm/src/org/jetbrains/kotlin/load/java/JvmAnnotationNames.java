@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.load.java;
@@ -42,6 +31,7 @@ public final class JvmAnnotationNames {
     public static final int METADATA_STRICT_VERSION_SEMANTICS_FLAG = 1 << 3;
     public static final int METADATA_JVM_IR_FLAG = 1 << 4;
     public static final int METADATA_JVM_IR_STABLE_ABI_FLAG = 1 << 5;
+    @SuppressWarnings("unused")
     public static final int METADATA_FIR_FLAG = 1 << 6;
     public static final int METADATA_PUBLIC_ABI_FLAG = 1 << 7;
 
@@ -54,6 +44,7 @@ public final class JvmAnnotationNames {
     public static final FqName DEPRECATED_ANNOTATION = new FqName(Deprecated.class.getName());
     public static final FqName DOCUMENTED_ANNOTATION = new FqName(Documented.class.getName());
     public static final FqName REPEATABLE_ANNOTATION = new FqName("java.lang.annotation.Repeatable");
+    public static final FqName OVERRIDE_ANNOTATION = new FqName(Override.class.getName());
 
     public static final FqName JETBRAINS_NOT_NULL_ANNOTATION = new FqName("org.jetbrains.annotations.NotNull");
     public static final FqName JETBRAINS_NULLABLE_ANNOTATION = new FqName("org.jetbrains.annotations.Nullable");
@@ -70,6 +61,8 @@ public final class JvmAnnotationNames {
     public static final FqName SERIALIZED_IR_FQ_NAME = new FqName("kotlin.jvm.internal.SerializedIr");
     public static final String SERIALIZED_IR_DESC = "L" + JvmClassName.byFqNameWithoutInnerClasses(SERIALIZED_IR_FQ_NAME).getInternalName() + ";";
     public static final String SERIALIZED_IR_BYTES_FIELD_NAME = "b";
+
+    public static final String SOURCE_DEBUG_EXTENSION_DESC = "Lkotlin/jvm/internal/SourceDebugExtension;";
 
     // Just for internal use: there is no such real classes in bytecode
     public static final FqName ENHANCED_NULLABILITY_ANNOTATION = new FqName("kotlin.jvm.internal.EnhancedNullability");

@@ -1,5 +1,6 @@
-// !LANGUAGE: +VariableDeclarationInWhenSubject
-// !DIAGNOSTICS: +UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +VariableDeclarationInWhenSubject
+// DIAGNOSTICS: +UNUSED_VARIABLE
 
 fun foo(): Any = 42
 

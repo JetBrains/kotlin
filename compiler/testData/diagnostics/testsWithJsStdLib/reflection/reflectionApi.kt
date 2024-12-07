@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// FIR_IDENTICAL
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 import kotlin.reflect.*
 
 class Foo(val prop: Any) {

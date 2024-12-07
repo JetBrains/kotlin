@@ -1,35 +1,36 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider
 
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.utils.getNameWithPositionString
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.types.Variance
 
-abstract class AbstractDeclarationReturnTypeTest : AbstractAnalysisApiSingleFileTest() {
-    override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
+abstract class AbstractDeclarationReturnTypeTest : AbstractAnalysisApiBasedTest() {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = buildString {
-            ktFile.accept(object : KtTreeVisitor<Int>() {
-                override fun visitDeclaration(dclaration: KtDeclaration, indent: Int): Void? {
-                    if (dclaration is KtTypeParameter) return null
+            mainFile.accept(object : KtTreeVisitor<Int>() {
+                override fun visitDeclaration(declaration: KtDeclaration, indent: Int): Void? {
+                    if (declaration is KtTypeParameter) return null
                     append(" ".repeat(indent))
-                    if (dclaration is KtClassLikeDeclaration) {
-                        appendLine(dclaration.getNameWithPositionString())
+                    if (declaration is KtClassLikeDeclaration) {
+                        appendLine(declaration.getNameWithPositionString())
                     } else {
-                        analyseForTest(dclaration) {
-                            val returnType = dclaration.getReturnKtType()
-                            append(dclaration.getNameWithPositionString())
+                        analyseForTest(declaration) {
+                            val returnType = declaration.returnType
+                            append(declaration.getNameWithPositionString())
                             append(" : ")
-                            appendLine(returnType.render())
+                            appendLine(returnType.render(position = Variance.INVARIANT))
                         }
                     }
-                    return super.visitDeclaration(dclaration, indent + 2)
+                    return super.visitDeclaration(declaration, indent + 2)
                 }
             }, 0)
         }

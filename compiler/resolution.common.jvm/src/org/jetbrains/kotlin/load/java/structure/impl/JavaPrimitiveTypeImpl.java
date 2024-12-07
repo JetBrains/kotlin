@@ -21,11 +21,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType;
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementTypeSource;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 
 public class JavaPrimitiveTypeImpl extends JavaTypeImpl<PsiPrimitiveType> implements JavaPrimitiveType {
-    public JavaPrimitiveTypeImpl(@NotNull PsiPrimitiveType psiPrimitiveType) {
-        super(psiPrimitiveType);
+    public JavaPrimitiveTypeImpl(@NotNull JavaElementTypeSource<PsiPrimitiveType> psiPrimitiveTypeSource) {
+        super(psiPrimitiveTypeSource);
     }
 
     @Override

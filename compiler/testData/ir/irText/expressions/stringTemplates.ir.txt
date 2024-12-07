@@ -1,8 +1,4 @@
 FILE fqName:<root> fileName:/stringTemplates.kt
-  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.String
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.String declared in <root>'
-        CONST String type=kotlin.String value=""
   PROPERTY name:x visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final,static]
       EXPRESSION_BODY
@@ -99,3 +95,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test9> (): kotlin.String declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test9 type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
+  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value=""

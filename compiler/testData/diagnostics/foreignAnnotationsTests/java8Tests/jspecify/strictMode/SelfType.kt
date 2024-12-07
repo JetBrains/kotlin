@@ -1,7 +1,8 @@
+// FIR_IDENTICAL
 // JSPECIFY_STATE: strict
 
 // FILE: SelfType.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 @NullMarked
 public class SelfType<T extends SelfType<T>> {
@@ -12,7 +13,7 @@ public class SelfType<T extends SelfType<T>> {
 public class B extends SelfType<B> {}
 
 // FILE: C.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 @NullMarked
 public class C<E extends C<E>> extends SelfType<E> {}
@@ -21,7 +22,7 @@ public class C<E extends C<E>> extends SelfType<E> {}
 public class AK extends SelfType<AK> {}
 
 // FILE: AKN.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 public class AKN extends SelfType<@Nullable AK> {}
 
@@ -32,7 +33,7 @@ public class BK extends B {}
 public class CK extends C<CK> {}
 
 // FILE: CKN.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 public class CKN extends C<@Nullable CK> {}
 
@@ -42,8 +43,7 @@ fun main(ak: AK, akn: AKN, bk: BK, ck: CK, ckn: CKN): Unit {
     // jspecify_nullness_mismatch
     ak.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 
-    // jspecify_nullness_mismatch
-    akn.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    akn.foo(null)
 
     bk.foo(bk)
     // jspecify_nullness_mismatch
@@ -53,6 +53,5 @@ fun main(ak: AK, akn: AKN, bk: BK, ck: CK, ckn: CKN): Unit {
     // jspecify_nullness_mismatch
     ck.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 
-    // jspecify_nullness_mismatch
-    ckn.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    ckn.foo(null)
 }

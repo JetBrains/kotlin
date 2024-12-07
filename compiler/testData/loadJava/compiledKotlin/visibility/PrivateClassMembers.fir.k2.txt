@@ -1,0 +1,16 @@
+public final class PrivateClassMembers : R|kotlin/Any| {
+    private final fun f(): R|kotlin/Int|
+
+    private final val v: R|kotlin/Int|
+        private get(): R|kotlin/Int|
+
+    private final var r: R|kotlin/Int|
+        private get(): R|kotlin/Int|
+        private set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    internal final val internal: R|kotlin/Int|
+        internal get(): R|kotlin/Int|
+
+    public constructor(): R|test/PrivateClassMembers|
+
+}

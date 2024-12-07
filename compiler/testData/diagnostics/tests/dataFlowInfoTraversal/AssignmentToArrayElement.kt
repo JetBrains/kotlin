@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 fun arrayAccessRHS(a: Int?, b: Array<Int>) {
     b[0] = a!!

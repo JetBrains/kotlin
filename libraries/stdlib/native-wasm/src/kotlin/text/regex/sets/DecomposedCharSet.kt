@@ -22,17 +22,21 @@
 
 package kotlin.text.regex
 
+import kotlin.experimental.ExperimentalNativeApi
+
 /** Represents canonical decomposition of Unicode character. Is used when CANON_EQ flag of Pattern class is specified. */
 open internal class DecomposedCharSet(
         /** Decomposition of the Unicode codepoint */
         private val decomposedChar: IntArray,
         /** Length of useful part of decomposedChar decomposedCharLength <= decomposedChar.length */
-        private val decomposedCharLength: Int) : SimpleSet() {
+        private val decomposedCharLength: Int
+) : SimpleSet() {
 
     /** Contains information about number of chars that were read for a codepoint last time */
     private var readCharsForCodePoint = 1
 
     /** UTF-16 encoding of decomposedChar */
+    @OptIn(ExperimentalNativeApi::class)
     private val decomposedCharUTF16: String by lazy {
         val strBuff = StringBuilder()
 
@@ -41,6 +45,9 @@ open internal class DecomposedCharSet(
         }
         return@lazy strBuff.toString()
     }
+
+    override val consumesFixedLength: Boolean
+        get() = true
 
     override fun matches(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         var strIndex = startIndex
@@ -118,6 +125,7 @@ open internal class DecomposedCharSet(
         get() = "decomposed char: $decomposedChar"
 
     /** Reads Unicode codepoint from [testString] starting from [strIndex] until [rightBound]. */
+    @OptIn(ExperimentalNativeApi::class)
     fun codePointAt(strIndex: Int, testString: CharSequence, rightBound: Int): Int {
         var index = strIndex
 

@@ -1,0 +1,25 @@
+//
+// Source
+// ------------------------------------------
+
+interface Foo {
+    @Composable fun bar()
+}
+
+class FooImpl : Foo {
+    @Composable override fun bar() {}
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public abstract interface Foo {
+  public abstract bar(Landroidx/compose/runtime/Composer;I)V
+}
+public final class FooImpl implements Foo {
+  public <init>()V
+  public bar(Landroidx/compose/runtime/Composer;I)V
+  static <clinit>()V
+  public final static I %stable
+}

@@ -1,5 +1,7 @@
-// TARGET_BACKEND: JVM
 // WITH_STDLIB
+// WASM_ALLOW_FQNAME_IN_KCLASS
+// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
 
 package test
 
@@ -7,24 +9,22 @@ import kotlin.test.assertEquals
 
 class Klass {
     class Nested
-    class `Nested$With$Dollars`
     companion object
+}
+
+class AnotherKlass {
+    object Nested
+    companion object Default
 }
 
 fun box(): String {
     assertEquals("test.Klass", Klass::class.qualifiedName)
     assertEquals("test.Klass.Nested", Klass.Nested::class.qualifiedName)
-    assertEquals("test.Klass.Nested\$With\$Dollars", Klass.`Nested$With$Dollars`::class.qualifiedName)
     assertEquals("test.Klass.Companion", Klass.Companion::class.qualifiedName)
 
-    assertEquals("java.util.Date", java.util.Date::class.qualifiedName)
-    assertEquals("kotlin.jvm.internal.Ref.ObjectRef", kotlin.jvm.internal.Ref.ObjectRef::class.qualifiedName)
-
-    class Local
-    assertEquals(null, Local::class.qualifiedName)
-
-    val o = object {}
-    assertEquals(null, o.javaClass.kotlin.qualifiedName)
+    assertEquals("test.AnotherKlass", AnotherKlass::class.qualifiedName)
+    assertEquals("test.AnotherKlass.Nested", AnotherKlass.Nested::class.qualifiedName)
+    assertEquals("test.AnotherKlass.Default", AnotherKlass.Default::class.qualifiedName)
 
     return "OK"
 }

@@ -9,7 +9,13 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
-import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 interface ConstraintSystemOperation {
     val hasContradiction: Boolean
@@ -52,13 +58,36 @@ interface ConstraintSystemOperation {
     val errors: List<ConstraintSystemError>
 }
 
+abstract class ConstraintSystemTransaction {
+    abstract fun closeTransaction()
+
+    abstract fun rollbackTransaction()
+}
+
 interface ConstraintSystemBuilder : ConstraintSystemOperation {
-    // if runOperations return true, then this operation will be applied, and function return true
-    fun runTransaction(runOperations: ConstraintSystemOperation.() -> Boolean): Boolean
+    fun prepareTransaction(): ConstraintSystemTransaction
 
     fun buildCurrentSubstitutor(): TypeSubstitutorMarker
 
     fun currentStorage(): ConstraintStorage
+}
+
+// if runOperations return true, then this operation will be applied, and function return true
+@OptIn(ExperimentalContracts::class)
+inline fun ConstraintSystemBuilder.runTransaction(crossinline runOperations: ConstraintSystemOperation.() -> Boolean): Boolean {
+    contract {
+        callsInPlace(runOperations, InvocationKind.EXACTLY_ONCE)
+    }
+    val transactionState = prepareTransaction()
+
+    // typeVariablesTransaction is clear
+    if (runOperations()) {
+        transactionState.closeTransaction()
+        return true
+    }
+
+    transactionState.rollbackTransaction()
+    return false
 }
 
 fun ConstraintSystemBuilder.addSubtypeConstraintIfCompatible(

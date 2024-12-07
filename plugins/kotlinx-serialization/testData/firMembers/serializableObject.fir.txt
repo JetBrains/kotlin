@@ -1,0 +1,26 @@
+FILE: serializableObject.kt
+    @R|kotlinx/serialization/Serializable|() public final object FooBar : R|kotlin/Any| {
+        private constructor(): R|FooBar| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun serializer(): R|kotlinx/serialization/KSerializer<FooBar>|
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval encoded: R|kotlin/String| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.encodeToString|<R|FooBar|>(Q|FooBar|.R|/FooBar.serializer|(), Q|FooBar|)
+        when () {
+            !=(R|<local>/encoded|, String({})) ->  {
+                ^box R|<local>/encoded|
+            }
+        }
+
+        lval decoded: R|FooBar| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.decodeFromString|<R|FooBar|>(Q|FooBar|.R|/FooBar.serializer|(), R|<local>/encoded|)
+        when () {
+            !==(R|<local>/decoded|, Q|FooBar|) ->  {
+                ^box String(Incorrect object instance)
+            }
+        }
+
+        ^box String(OK)
+    }

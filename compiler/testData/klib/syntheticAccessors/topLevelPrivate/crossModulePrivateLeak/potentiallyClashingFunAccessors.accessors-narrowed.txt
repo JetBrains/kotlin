@@ -1,0 +1,20 @@
+/* MODULE name=<lib1> */
+
+/* FILE package=org.sample fileName=file1.kt */
+
+internal inline fun inlineFun1(): String
+    /* ACCESSOR use-site */ access$libName$tFile1Kt()
+/* TARGET declaration */ private fun libName(): String
+/* ACCESSOR declaration */ internal fun access$libName$tFile1Kt(): String
+    /* TARGET use-site */ libName()
+
+
+/* MODULE name=<lib2> */
+
+/* FILE package=org.sample fileName=file2.kt */
+
+internal inline fun inlineFun2(): String
+    /* ACCESSOR use-site */ access$libName$tFile2Kt()
+/* TARGET declaration */ private fun libName(): String
+/* ACCESSOR declaration */ internal fun access$libName$tFile2Kt(): String
+    /* TARGET use-site */ libName()

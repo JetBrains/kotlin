@@ -30,10 +30,14 @@ abstract class ReferenceTrackingInterpreter : OptimizationBasicInterpreter() {
                 else
                     createTaintedValue(v, w)
 
-            v is TrackedReferenceValue && w is TrackedReferenceValue ->
-                createPossiblyMergedValue(v, w)
+            v is TrackedReferenceValue -> {
+                if (w is TrackedReferenceValue)
+                    createPossiblyMergedValue(v, w)
+                else
+                    createTaintedValue(v, w)
+            }
 
-            v is TrackedReferenceValue || w is TrackedReferenceValue ->
+            w is TrackedReferenceValue ->
                 createTaintedValue(v, w)
 
             else ->

@@ -424,30 +424,30 @@ class TowerResolver {
             if (!isSuccessful) return null
             var compatibilityCandidate: C? = null
             var compatibilityGroup: Collection<C>? = null
-            var firstGroupWithResolved: Collection<C>? = null
+            var shouldStopGroup: Collection<C>? = null
             outer@ for (group in candidateGroups) {
                 for (candidate in group) {
-                    if (isSuccessfulCandidate(candidate)) {
-                        firstGroupWithResolved = group
+                    if (shouldStopResolveOnCandidate(candidate)) {
+                        shouldStopGroup = group
                         break@outer
                     }
 
-                    if (compatibilityCandidate == null && isSuccessfulPreserveCompatibility(candidate)) {
+                    if (compatibilityCandidate == null && isPreserveCompatibilityCandidate(candidate)) {
                         compatibilityGroup = group
                         compatibilityCandidate = candidate
                     }
                 }
             }
 
-            if (firstGroupWithResolved == null) return null
+            if (shouldStopGroup == null) return null
             if (compatibilityCandidate != null
-                && compatibilityGroup !== firstGroupWithResolved
+                && compatibilityGroup !== shouldStopGroup
                 && needToReportCompatibilityWarning(compatibilityCandidate)
             ) {
-                firstGroupWithResolved.forEach { it.addCompatibilityWarning(compatibilityCandidate) }
+                shouldStopGroup.forEach { it.addCompatibilityWarning(compatibilityCandidate) }
             }
 
-            return firstGroupWithResolved.filter(::isSuccessfulCandidate)
+            return shouldStopGroup.filter(::shouldStopResolveOnCandidate)
         }
 
         private fun needToReportCompatibilityWarning(candidate: C) = candidate is ResolutionCandidate &&
@@ -455,12 +455,11 @@ class TowerResolver {
                     (it.constraintSystemError as? LowerPriorityToPreserveCompatibility)?.needToReportWarning == true
                 }
 
-        private fun isSuccessfulCandidate(candidate: C): Boolean {
-            return candidate.resultingApplicability == CandidateApplicability.RESOLVED
-                    || candidate.resultingApplicability == CandidateApplicability.RESOLVED_WITH_ERROR
+        private fun shouldStopResolveOnCandidate(candidate: C): Boolean {
+            return candidate.resultingApplicability.shouldStopResolve
         }
 
-        private fun isSuccessfulPreserveCompatibility(candidate: C): Boolean =
+        private fun isPreserveCompatibilityCandidate(candidate: C): Boolean =
             candidate.resultingApplicability == CandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY
 
         override fun pushCandidates(candidates: Collection<C>) {

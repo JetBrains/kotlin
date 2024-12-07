@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.kdoc.psi.impl
 
 import com.intellij.lang.ASTNode
+import com.intellij.psi.ContributedReferenceHost
+import com.intellij.psi.PsiReference
+import org.jetbrains.kotlin.psi.KotlinReferenceProvidersService
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
-import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 
 /**
  * The part of a doc comment which describes a single class, method or property
@@ -26,7 +28,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
  * can have sections for the class itself, its primary constructor and each of the
  * properties defined in the primary constructor.
  */
-class KDocSection(node: ASTNode) : KDocTag(node) {
+class KDocSection(node: ASTNode) : KDocTag(node), ContributedReferenceHost {
     /**
      * Returns the name of the section (the name of the doc tag introducing the section,
      * or null for the default section).
@@ -45,4 +47,12 @@ class KDocSection(node: ASTNode) : KDocTag(node) {
     }
 
     fun findTagByName(name: String): KDocTag? = findTagsByName(name).firstOrNull()
+
+    override fun getReference(): PsiReference? {
+        return references.firstOrNull()
+    }
+
+    override fun getReferences(): Array<out PsiReference?> {
+        return KotlinReferenceProvidersService.getReferencesFromProviders(this)
+    }
 }

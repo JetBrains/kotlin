@@ -1,1 +1,4 @@
+info: produce executable: $TMP_DIR$
+info: cache directory: null
+info: executable production duration: [time]
 OK

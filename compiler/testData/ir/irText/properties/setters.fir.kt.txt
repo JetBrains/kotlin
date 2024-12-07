@@ -1,0 +1,58 @@
+var foo: Int
+  field = 42
+  get
+  set
+
+class Bar : Foo {
+  constructor() /* primary */ {
+    super/*Foo*/()
+    /* <init>() */
+
+  }
+
+  override var foo: Int
+    override get(): Int {
+      return super<Foo>.<get-foo>()
+    }
+    override set(_: Int) {
+    }
+
+}
+
+open class Foo {
+  open var foo: Int
+    field = 42
+    open get
+    open set
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+var bar: Int
+  get(): Int {
+    return 42
+  }
+  set(value: Int) {
+    return Unit
+  }
+
+var baz: Int
+  get(): Int {
+    return 42
+  }
+  set(param: Int) {
+    return Unit
+  }
+
+var qux: Int
+  get(): Int {
+    return 42
+  }
+  set(_: Int) {
+    return Unit
+  }

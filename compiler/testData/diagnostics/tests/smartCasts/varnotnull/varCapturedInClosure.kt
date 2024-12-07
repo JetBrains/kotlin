@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 public fun foo() {
     var s: String? = ""
@@ -8,7 +9,8 @@ public fun foo() {
         } else if (s == null) {
             return -2
         } else {
-            return <!SMARTCAST_IMPOSSIBLE!>s<!>.length // Here smartcast is possible, at least in principle
+            // Smart cast might be unsafe if function is invoked twice concurrently
+            return <!SMARTCAST_IMPOSSIBLE!>s<!>.length
         }
     }
     if (s != null) {

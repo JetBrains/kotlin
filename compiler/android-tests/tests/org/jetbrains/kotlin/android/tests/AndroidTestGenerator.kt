@@ -162,8 +162,13 @@ private fun getGeneratedClassName(file: File, text: String, newPackagePrefix: St
     for (annotation in FILE_NAME_ANNOTATIONS) {
         if (text.contains(annotation)) {
             val indexOf = text.indexOf(annotation)
-            val annotationParameter = text.substring(text.indexOf("(\"", indexOf) + 2, text.indexOf("\")", indexOf))
-            return packageFqName.child(Name.identifier(annotationParameter))
+            val startIndex = text.indexOf("(\"", indexOf)
+            val endIndex = text.indexOf("\")", indexOf)
+            // "start", "end" can be -1 in case when we use some const val in argument place
+            if (startIndex != -1 && endIndex != -1) {
+                val annotationParameter = text.substring(startIndex + 2, endIndex)
+                return packageFqName.child(Name.identifier(annotationParameter))
+            }
         }
     }
 

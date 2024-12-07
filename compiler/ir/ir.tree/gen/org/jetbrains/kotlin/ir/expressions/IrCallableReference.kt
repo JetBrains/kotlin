@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,12 +9,10 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.name.Name
 
 /**
- * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.callableReference
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.callableReference]
  */
 abstract class IrCallableReference<S : IrSymbol> : IrMemberAccessExpression<S>() {
-    abstract val referencedName: Name
+    abstract override var symbol: S
 }

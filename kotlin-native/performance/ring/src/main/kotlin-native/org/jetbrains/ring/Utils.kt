@@ -13,39 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// We benchmark both new and legacy MM.
-@file:OptIn(FreezingIsDeprecated::class)
-
 package org.jetbrains.ring
 
-import kotlin.native.concurrent.FreezableAtomicReference as KAtomicRef
-import kotlin.native.concurrent.isFrozen
-import kotlin.native.concurrent.freeze
+import kotlin.concurrent.AtomicReference as KAtomicRef
 
 public actual class AtomicRef<T> constructor(@PublishedApi internal val a: KAtomicRef<T>) {
     public actual inline var value: T
         get() = a.value
         set(value) {
-            if (a.isFrozen) value.freeze()
             a.value = value
         }
 
     public actual inline fun lazySet(value: T) {
-        if (a.isFrozen) value.freeze()
         a.value = value
     }
 
     public actual inline fun compareAndSet(expect: T, update: T): Boolean {
-        if (a.isFrozen) update.freeze()
         return a.compareAndSet(expect, update)
     }
 
     public actual fun getAndSet(value: T): T {
-        if (a.isFrozen) value.freeze()
         while (true) {
             val cur = a.value
             if (cur === value) return cur
-            if (a.compareAndSwap(cur, value) === cur) return cur
+            if (a.compareAndExchange(cur, value) === cur) return cur
         }
     }
 

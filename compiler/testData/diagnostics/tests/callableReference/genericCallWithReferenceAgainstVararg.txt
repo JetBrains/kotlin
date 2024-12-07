@@ -1,8 +1,11 @@
 package
 
 public fun foo(/*0*/ vararg ints: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit
+public fun fooAlias(/*0*/ vararg ints: MyInt /* = kotlin.Int */ /*kotlin.IntArray*/): kotlin.Unit
 public fun </*0*/ T> myLet(/*0*/ block: (T) -> kotlin.Unit): kotlin.Unit
 public fun </*0*/ T> myLet(/*0*/ t: T, /*1*/ block: (T) -> kotlin.Unit): kotlin.Unit
 public fun myLetExplicit1(/*0*/ block: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
 public fun myLetExplicit2(/*0*/ block: (kotlin.IntArray) -> kotlin.Unit): kotlin.Unit
 public fun test(/*0*/ i: kotlin.IntArray): kotlin.Unit
+public typealias MyInt = kotlin.Int
+

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2022 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the LICENSE file.
  */
 
 #include "Natives.h"
@@ -19,10 +8,11 @@
 #if KONAN_OBJC_INTEROP
 
 #import <objc/runtime.h>
-#import <CoreFoundation/CFString.h>
-#import <Foundation/NSException.h>
-#import <Foundation/NSString.h>
+#import <CoreFoundation/CoreFoundation.h>
+#import <Foundation/Foundation.h>
 #import "Memory.h"
+#import "KString.h"
+#import "ObjCInteropUtils.h"
 #import "ObjCInteropUtilsPrivate.h"
 
 namespace {
@@ -72,15 +62,10 @@ OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, NSString* str) {
   CFStringRef immutableCopyOrSameStr = CFStringCreateCopy(nullptr, (CFStringRef)str);
 
   auto length = CFStringGetLength(immutableCopyOrSameStr);
-  CFRange range = {0, length};
-  ArrayHeader* result = AllocArrayInstance(theStringTypeInfo, length, OBJ_RESULT)->array();
-  KChar* rawResult = CharArrayAddressOfElementAt(result, 0);
-
-  CFStringGetCharacters(immutableCopyOrSameStr, range, rawResult);
-
-  result->obj()->SetAssociatedObject((void*)immutableCopyOrSameStr);
-
-  RETURN_OBJ(result->obj());
+  auto result = CreateUninitializedUtf16String(length, OBJ_RESULT);
+  CFStringGetCharacters(immutableCopyOrSameStr, {0, length}, reinterpret_cast<UniChar*>(StringRawData(result)));
+  result->SetAssociatedObject((void*)immutableCopyOrSameStr);
+  RETURN_OBJ(result);
 }
 
 // Note: this body is used for init methods with signatures differing from this;

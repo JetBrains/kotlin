@@ -22,6 +22,8 @@
 
 package kotlin.text.regex
 
+import kotlin.experimental.ExperimentalNativeApi
+
 /**
  * The node which marks end of the particular group.
  */
@@ -45,6 +47,7 @@ open internal class FSet(val groupIndex: Int) : SimpleSet() {
 
     override fun processSecondPass(): FSet {
         val result = super.processSecondPass()
+        @OptIn(ExperimentalNativeApi::class)
         assert(result == this)
         return this
     }

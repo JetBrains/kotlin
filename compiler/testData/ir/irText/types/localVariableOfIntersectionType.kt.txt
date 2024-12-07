@@ -1,5 +1,14 @@
-interface In<in T : Any?> {
+interface IA {
+  abstract fun foo()
 
+}
+
+interface IB {
+  abstract fun bar()
+
+}
+
+interface In<in T : Any?> {
 }
 
 interface Inv<T : Any?> {
@@ -13,16 +22,6 @@ interface Z {
 
 }
 
-interface IA {
-  abstract fun foo()
-
-}
-
-interface IB {
-  abstract fun bar()
-
-}
-
 fun test(a: In<IA>, b: In<IB>, z: Z) {
   z.create<Any>(x = a, y = b).<get-t>() /*as IA */.foo()
   z.create<Any>(x = a, y = b).<get-t>() /*as IB */.bar()
@@ -30,3 +29,4 @@ fun test(a: In<IA>, b: In<IB>, z: Z) {
   t /*as IA */.foo()
   t /*as IB */.bar()
 }
+

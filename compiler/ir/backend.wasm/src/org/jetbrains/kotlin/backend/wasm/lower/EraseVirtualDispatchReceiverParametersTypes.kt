@@ -9,16 +9,14 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.buildStatement
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irImplicitCast
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.ir.util.isInterface
@@ -80,18 +78,29 @@ class EraseVirtualDispatchReceiverParametersTypes(val context: CommonBackendCont
         val newReceiver = oldReceiver.copyTo(irFunction, type = context.irBuiltIns.anyType)
         irFunction.dispatchReceiverParameter = newReceiver
 
+        val blockBody = irFunction.body as? IrBlockBody ?: return
         val classThisReceiverSymbol = irFunction.parentAsClass.thisReceiver?.symbol
+
+        val lazyCastedThis = lazy(LazyThreadSafetyMode.NONE) {
+            builder.buildStatement(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+                scope.createTemporaryVariable(
+                    builder.irImplicitCast(builder.irGet(newReceiver), originalReceiverType),
+                    oldReceiver.name.asString()
+                )
+            }
+        }
 
         // Cast receiver usages back to original type
         irFunction.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitGetValue(expression: IrGetValue): IrExpression {
-                if (expression.symbol == oldReceiver.symbol || expression.symbol == classThisReceiverSymbol) {
-                    return with(builder) {
-                        irImplicitCast(irGet(newReceiver), originalReceiverType)
-                    }
-                }
-                return expression
+                if (expression.type.isAny()) return expression
+                if (expression.symbol != oldReceiver.symbol && expression.symbol != classThisReceiverSymbol) return expression
+                return builder.irGet(lazyCastedThis.value)
             }
         })
+
+        if (lazyCastedThis.isInitialized()) {
+            blockBody.statements.add(0, lazyCastedThis.value)
+        }
     }
 }

@@ -1,0 +1,6 @@
+KtNameReferenceExpression(76,77): 'x'
+  KtSimpleNameReference:
+    (in <local>: main) var x: ERROR_TYPE(Unresolved name: listOf)
+  
+  KtSimpleNameReference:
+    (in <local>: main) var x: ERROR_TYPE(Unresolved name: listOf)

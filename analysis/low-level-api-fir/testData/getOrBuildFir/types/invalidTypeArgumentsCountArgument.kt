@@ -1,0 +1,1 @@
+fun x(): List<Int, <expr>String</expr>> = 1

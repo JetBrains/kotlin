@@ -1,0 +1,137 @@
+library {
+  // module name: <nestedClassesAndObjects.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/ClassA
+    // class name: test/ClassA.classB
+    // class name: test/ClassA.classB.BC
+    // class name: test/ClassA.classB.BO
+    // class name: test/ClassA.classC
+    // class name: test/E
+    // class name: test/E.Companion
+    // class name: test/E.Companion.D
+    // class name: test/F
+    // class name: test/F.ObjA
+
+    // signature: test/ClassA|null[0]
+    public final class test/ClassA : kotlin/Any {
+
+      // signature: test/ClassA.<init>|-5645683436151566731[0]
+      public constructor()
+
+      // nested class: classB
+
+      // nested class: classC
+    }
+
+    // signature: test/ClassA.classB|null[0]
+    public final class test/ClassA.classB : kotlin/Any {
+
+      // signature: test/ClassA.classB.<init>|-5645683436151566731[0]
+      public constructor()
+
+      // signature: test/ClassA.classB.memberFromB|-3679144108801549793[0]
+      public final fun memberFromB(): kotlin/Int
+
+      // nested class: BC
+
+      // nested class: BO
+    }
+
+    // signature: test/ClassA.classB.BC|null[0]
+    public final class test/ClassA.classB.BC : kotlin/Any {
+
+      // signature: test/ClassA.classB.BC.<init>|-5645683436151566731[0]
+      public constructor()
+
+      // signature: test/ClassA.classB.BC.memberFromBB|-923442573915205545[0]
+      public final val memberFromBB: kotlin/Int /* = 150 */
+        // signature: test/ClassA.classB.BC.memberFromBB.<get-memberFromBB>|5443620829411313169[0]
+        public final get
+    }
+
+    // signature: test/ClassA.classB.BO|null[0]
+    public final object test/ClassA.classB.BO : kotlin/Any {
+
+      // signature: test/ClassA.classB.BO.<init>|-5645683436151566731[0]
+      private constructor()
+
+      // signature: test/ClassA.classB.BO.memberFromBO|217425991890338881[0]
+      public final val memberFromBO: kotlin/Int /* = 175 */
+        // signature: test/ClassA.classB.BO.memberFromBO.<get-memberFromBO>|1305725195157127243[0]
+        public final get
+    }
+
+    // signature: test/ClassA.classC|null[0]
+    public final inner class test/ClassA.classC : kotlin/Any {
+
+      // signature: test/ClassA.classC.<init>|-5645683436151566731[0]
+      public constructor()
+
+      // signature: test/ClassA.classC.memberFromC|-1068553291605578391[0]
+      public final val memberFromC: kotlin/Int /* = 200 */
+        // signature: test/ClassA.classC.memberFromC.<get-memberFromC>|-6578051353572346364[0]
+        public final get
+    }
+
+    // signature: test/E|null[0]
+    public final class test/E : kotlin/Any {
+
+      // signature: test/E.<init>|-5645683436151566731[0]
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    // signature: test/E.Companion|null[0]
+    public final companion object test/E.Companion : kotlin/Any {
+
+      // signature: test/E.Companion.<init>|-5645683436151566731[0]
+      private constructor()
+
+      // signature: test/E.Companion.stat|5548368031485153544[0]
+      public final val stat: kotlin/Int /* = 250 */
+        // signature: test/E.Companion.stat.<get-stat>|3631794081063849556[0]
+        public final get
+
+      // nested class: D
+    }
+
+    // signature: test/E.Companion.D|null[0]
+    public final class test/E.Companion.D : kotlin/Any {
+
+      // signature: test/E.Companion.D.<init>|-5645683436151566731[0]
+      public constructor()
+
+      // signature: test/E.Companion.D.memberFromD|-58066615210301050[0]
+      public final val memberFromD: kotlin/Int /* = 275 */
+        // signature: test/E.Companion.D.memberFromD.<get-memberFromD>|-1518145003187322874[0]
+        public final get
+    }
+
+    // signature: test/F|null[0]
+    public final class test/F : kotlin/Any {
+
+      // signature: test/F.<init>|-5645683436151566731[0]
+      public constructor()
+
+      // nested class: ObjA
+    }
+
+    // signature: test/F.ObjA|null[0]
+    public final object test/F.ObjA : kotlin/Any {
+
+      // signature: test/F.ObjA.<init>|-5645683436151566731[0]
+      private constructor()
+
+      // signature: test/F.ObjA.memberFromObjA|-203378438521009523[0]
+      public final val memberFromObjA: kotlin/Int /* = 300 */
+        // signature: test/F.ObjA.memberFromObjA.<get-memberFromObjA>|-5527443413947154633[0]
+        public final get
+    }
+  }
+}

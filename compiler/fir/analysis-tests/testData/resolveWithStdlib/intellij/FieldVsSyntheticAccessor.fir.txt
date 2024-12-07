@@ -7,15 +7,15 @@ FILE: User.kt
         }
 
         public final fun foo(tree: R|BaseClass|): R|kotlin/Unit| {
-            lval ui: R|ft<kotlin/String, kotlin/String?>| = R|<local>/tree|.<HIDDEN: /BaseClass.ui is invisible>#
+            lval ui: R|kotlin/String!| = R|<local>/tree|.R|/BaseClass.ui<HIDDEN: /BaseClass.ui is invisible>#|
         }
 
         public final fun bar(): R|kotlin/Unit| {
-            lval ui: R|ft<kotlin/String, kotlin/String?>| = this@R|test/User|.R|/BaseClass.ui|
+            lval ui: R|kotlin/String!| = this@R|test/User|.R|/BaseClass.ui|
         }
 
         public final fun baz(): R|kotlin/Unit| {
-            lval ui: R|ft<kotlin/String, kotlin/String?>| = this@R|test/User|.R|/BaseClass.ui|
+            lval ui: R|kotlin/String!| = this@R|test/User|.R|/BaseClass.ui|
         }
 
     }

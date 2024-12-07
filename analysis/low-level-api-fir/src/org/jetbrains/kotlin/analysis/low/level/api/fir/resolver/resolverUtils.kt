@@ -8,16 +8,14 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.resolver
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.resolve.ImplicitValueStorage
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
-import org.jetbrains.kotlin.fir.resolve.dfa.LogicSystem
-import org.jetbrains.kotlin.fir.resolve.dfa.PersistentFlow
-import org.jetbrains.kotlin.fir.resolve.dfa.PropertyStability
+import org.jetbrains.kotlin.fir.resolve.dfa.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.types.SmartcastStability
 
 internal fun createStubBodyResolveComponents(firSession: FirSession): FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents {
     val scopeSession = ScopeSession()
@@ -38,7 +36,7 @@ internal fun createStubBodyResolveComponents(firSession: FirSession): FirAbstrac
     )
 }
 
-private class StubBodyResolveTransformerComponents(
+internal open class StubBodyResolveTransformerComponents(
     session: FirSession,
     scopeSession: ScopeSession,
     transformer: FirBodyResolveTransformer,
@@ -48,15 +46,20 @@ private class StubBodyResolveTransformerComponents(
     scopeSession,
     transformer,
     context,
+    expandTypeAliases = true,
 ) {
-    override val dataFlowAnalyzer: FirDataFlowAnalyzer<*>
-        get() = object : FirDataFlowAnalyzer<PersistentFlow>(this@StubBodyResolveTransformerComponents, context.dataFlowAnalyzerContext) {
-            override val logicSystem: LogicSystem<PersistentFlow>
+    override val dataFlowAnalyzer: FirDataFlowAnalyzer
+        get() = object : FirDataFlowAnalyzer(this@StubBodyResolveTransformerComponents, context.dataFlowAnalyzerContext) {
+            override val logicSystem: LogicSystem
                 get() = error("Should not be called")
 
-            override fun getTypeUsingSmartcastInfo(
-                symbol: FirBasedSymbol<*>,
-                expression: FirExpression
-            ): Pair<PropertyStability, MutableList<ConeKotlinType>>? = null
+            override val receiverStack: ImplicitValueStorage
+                get() = error("Should not be called")
+
+            override fun implicitUpdated(info: TypeStatement) =
+                error("Should not be called")
+
+            override fun getTypeUsingSmartcastInfo(expression: FirExpression): Pair<SmartcastStability, Set<ConeKotlinType>>? =
+                null
         }
 }

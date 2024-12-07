@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +NewInference +SamConversionForKotlinFunctions
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +SamConversionForKotlinFunctions
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // ISSUE: KT-27565
 
 // FILE: Runnable.java

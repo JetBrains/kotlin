@@ -8,7 +8,7 @@ Compiling files:
   src/A.kt
   src/AParent.kt
 End of files
-Marked as dirty by Kotlin:
+After build round. Marked as dirty by Kotlin:
   src/AChild.kt
   src/AGrandChild.kt
   src/ATypeParameter.kt
@@ -62,7 +62,7 @@ End of files
 Compiling files:
   src/A.kt
 End of files
-Marked as dirty by Kotlin:
+After build round. Marked as dirty by Kotlin:
   src/AChild.kt
   src/AGrandChild.kt
   src/ATypeParameter.kt

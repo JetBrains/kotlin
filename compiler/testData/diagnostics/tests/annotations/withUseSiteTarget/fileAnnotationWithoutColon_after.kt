@@ -1,5 +1,6 @@
-// !LANGUAGE: +RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun test1(<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@<!INAPPLICABLE_FILE_TARGET!>file<!><!SYNTAX!><!> Suppress("")<!> x: Int) {}
 

@@ -1,5 +1,15 @@
-import java.lang.System;
-
+/**
+ * public final class C : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: f()V
+ *   public final fun f(): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class C {
 

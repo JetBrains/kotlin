@@ -22,6 +22,8 @@
 
 package kotlin.text.regex
 
+import kotlin.experimental.ExperimentalNativeApi
+
 /**
  * Group node over subexpression without alternations.
  */
@@ -86,6 +88,7 @@ open internal class SingleSet(var kid: AbstractSet, fSet: FSet) : JointSet(listO
     override fun processSecondPass(): AbstractSet {
         if (secondPassVisited) {
             if (fSet.isBackReferenced) {
+                @OptIn(ExperimentalNativeApi::class)
                 assert(backReferencedSet != null) // secondPassVisited
                 return backReferencedSet!!
             }

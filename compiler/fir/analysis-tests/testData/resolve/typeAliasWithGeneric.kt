@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 open class A
 
 interface B<S, T : A>

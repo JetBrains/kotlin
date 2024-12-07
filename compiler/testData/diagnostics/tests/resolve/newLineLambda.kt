@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun noArgs() {}
 fun oneLambdaArg(fn: () -> Unit) {}
@@ -28,7 +29,7 @@ fun testNoArgs() {
 }
 
 fun testLambdaArg() {
-    oneLambdaArg(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    oneLambdaArg<!NO_VALUE_FOR_PARAMETER!>()<!>
     oneLambdaArg {}
     oneLambdaArg()
     {}
@@ -40,7 +41,7 @@ fun testLambdaArg() {
         <!TOO_MANY_ARGUMENTS!>{}<!>
     )
     oneLambdaArg() {}
-    oneLambdaArg(<!NO_VALUE_FOR_PARAMETER!>)<!> // {}
+    oneLambdaArg<!NO_VALUE_FOR_PARAMETER!>()<!> // {}
     oneLambdaArg() /* */ {}
     oneLambdaArg() /*
         block
@@ -95,7 +96,7 @@ fun testTwoLambdas() {
     )
 
     fun bar(): () -> Unit {
-        twoLambdaArgs(<!NO_VALUE_FOR_PARAMETER!>)<!>
+        twoLambdaArgs<!NO_VALUE_FOR_PARAMETER!>()<!>
         {}
         <!MANY_LAMBDA_EXPRESSION_ARGUMENTS, UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{}<!>
 

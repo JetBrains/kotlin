@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import org.jetbrains.kotlin.backend.common.serialization.IrDeserializationSettings.DeserializeFunctionBodies
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -27,14 +28,18 @@ abstract class BasicIrModuleDeserializer(
     override val klib: IrLibrary,
     override val strategyResolver: (String) -> DeserializationStrategy,
     libraryAbiVersion: KotlinAbiVersion,
-    private val containsErrorCode: Boolean = false
+    private val containsErrorCode: Boolean = false,
+    private val shouldSaveDeserializationState: Boolean = true,
 ) : IrModuleDeserializer(moduleDescriptor, libraryAbiVersion) {
 
     private val fileToDeserializerMap = mutableMapOf<IrFile, IrFileDeserializer>()
 
     private val moduleDeserializationState = ModuleDeserializationState()
 
-    protected val moduleReversedFileIndex = mutableMapOf<IdSignature, FileDeserializationState>()
+    protected var fileDeserializationStates: List<FileDeserializationState> = emptyList()
+        get() = if (!shouldSaveDeserializationState) error("File deserialization state are not cached inside the instance because `shouldSaveDeserializationState` was set as `false`") else field
+
+    protected val moduleReversedFileIndex = hashMapOf<IdSignature, FileDeserializationState>()
 
     override val moduleDependencies by lazy {
         moduleDescriptor.allDependencyModules
@@ -45,8 +50,6 @@ abstract class BasicIrModuleDeserializer(
     override fun fileDeserializers(): Collection<IrFileDeserializer> {
         return fileToDeserializerMap.values.filterNot { strategyResolver(it.file.fileEntry.name).onDemand }
     }
-
-    protected lateinit var fileDeserializationStates: List<FileDeserializationState>
 
     override fun init(delegate: IrModuleDeserializer) {
         val fileCount = klib.fileCount()
@@ -64,25 +67,8 @@ abstract class BasicIrModuleDeserializer(
                 moduleFragment.files.add(file)
         }
 
-        this.fileDeserializationStates = fileDeserializationStates
-
-        fileToDeserializerMap.values.forEach { it.symbolDeserializer.deserializeExpectActualMapping() }
-    }
-
-    private fun IrSymbolDeserializer.deserializeExpectActualMapping() {
-        actuals.forEach {
-            val expectSymbol = parseSymbolData(it.expectSymbol)
-            val actualSymbol = parseSymbolData(it.actualSymbol)
-
-            val expect = deserializeIdSignature(expectSymbol.signatureId)
-            val actual = deserializeIdSignature(actualSymbol.signatureId)
-
-            assert(linker.expectUniqIdToActualUniqId[expect] == null) {
-                "Expect signature $expect is already actualized by ${linker.expectUniqIdToActualUniqId[expect]}, while we try to record $actual"
-            }
-            linker.expectUniqIdToActualUniqId[expect] = actual
-            // Non-null only for topLevel declarations.
-            findModuleDeserializerForTopLevelId(actual)?.let { md -> linker.topLevelActualUniqItToDeserializer[actual] = md }
+        if (shouldSaveDeserializationState) {
+            this.fileDeserializationStates = fileDeserializationStates
         }
     }
 
@@ -97,7 +83,7 @@ abstract class BasicIrModuleDeserializer(
     // TODO: fix to topLevel checker
     override fun contains(idSig: IdSignature): Boolean = idSig in moduleReversedFileIndex
 
-    open fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
+    override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
         val topLevelSignature = idSig.topLevelSignature()
         val fileLocalDeserializationState = moduleReversedFileIndex[topLevelSignature] ?: return null
 
@@ -107,11 +93,11 @@ abstract class BasicIrModuleDeserializer(
         return fileLocalDeserializationState.fileDeserializer.symbolDeserializer.deserializeIrSymbol(idSig, symbolKind)
     }
 
-    final override fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind) =
-        tryDeserializeIrSymbol(idSig, symbolKind)
-            ?: error("No file for ${idSig.topLevelSignature()} (@ $idSig) in module $moduleDescriptor")
+    override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing {
+        error("No file for ${idSig.topLevelSignature()} (@ $idSig) in module $moduleDescriptor")
+    }
 
-    override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, linker.builtIns, emptyList())
+    override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor)
 
     private fun deserializeIrFile(
         fileProto: ProtoFile, file: IrFile, fileReader: IrLibraryFileFromBytes,
@@ -125,26 +111,29 @@ abstract class BasicIrModuleDeserializer(
             file,
             fileReader,
             fileProto,
-            fileStrategy.needBodies,
-            allowErrorNodes,
-            fileStrategy.inlineBodies,
-            moduleDeserializer
+            IrDeserializationSettings(
+                allowErrorNodes = allowErrorNodes,
+                deserializeFunctionBodies = when {
+                    fileStrategy.needBodies -> DeserializeFunctionBodies.ALL
+                    fileStrategy.inlineBodies -> DeserializeFunctionBodies.ONLY_INLINE
+                    else -> DeserializeFunctionBodies.NONE
+                }
+            ),
+            moduleDeserializer,
         )
 
         fileToDeserializerMap[file] = fileDeserializationState.fileDeserializer
 
-        if (!fileStrategy.onDemand) {
-            val topLevelDeclarations = fileDeserializationState.fileDeserializer.reversedSignatureIndex.keys
-            topLevelDeclarations.forEach {
-                moduleReversedFileIndex.putIfAbsent(it, fileDeserializationState) // TODO Why not simple put?
-            }
+        val topLevelDeclarations = fileDeserializationState.fileDeserializer.reversedSignatureIndex.keys
+        topLevelDeclarations.forEach {
+            moduleReversedFileIndex.putIfAbsent(it, fileDeserializationState) // TODO Why not simple put?
+        }
 
-            if (fileStrategy.theWholeWorld) {
-                fileDeserializationState.enqueueAllDeclarations()
-            }
-            if (fileStrategy.theWholeWorld || fileStrategy.explicitlyExported) {
-                moduleDeserializationState.enqueueFile(fileDeserializationState)
-            }
+        if (fileStrategy.theWholeWorld) {
+            fileDeserializationState.enqueueAllDeclarations()
+        }
+        if (fileStrategy.theWholeWorld || fileStrategy.explicitlyExported) {
+            moduleDeserializationState.enqueueFile(fileDeserializationState)
         }
 
         return fileDeserializationState

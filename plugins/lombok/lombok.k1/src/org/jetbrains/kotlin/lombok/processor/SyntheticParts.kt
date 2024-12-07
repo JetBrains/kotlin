@@ -6,18 +6,21 @@
 package org.jetbrains.kotlin.lombok.processor
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 
 class SyntheticParts(
     val methods: List<SimpleFunctionDescriptor> = emptyList(),
     val staticFunctions: List<SimpleFunctionDescriptor> = emptyList(),
-    val constructors: List<ClassConstructorDescriptor> = emptyList()
+    val constructors: List<ClassConstructorDescriptor> = emptyList(),
+    val classes: List<ClassDescriptor> = emptyList(),
 ) {
 
     operator fun plus(other: SyntheticParts): SyntheticParts = SyntheticParts(
         methods + other.methods,
         staticFunctions + other.staticFunctions,
-        constructors + other.constructors
+        constructors + other.constructors,
+        classes + other.classes
     )
 
     companion object {
@@ -29,6 +32,7 @@ class SyntheticPartsBuilder {
     private val methods = mutableListOf<SimpleFunctionDescriptor>()
     private val staticFunctions = mutableListOf<SimpleFunctionDescriptor>()
     private val constructors = mutableListOf<ClassConstructorDescriptor>()
+    private val classes = mutableListOf<ClassDescriptor>()
 
     fun addMethod(method: SimpleFunctionDescriptor) {
         methods += method
@@ -42,5 +46,9 @@ class SyntheticPartsBuilder {
         constructors += constructor
     }
 
-    fun build(): SyntheticParts = SyntheticParts(methods, staticFunctions, constructors)
+    fun addClass(clazz: ClassDescriptor) {
+        classes += clazz
+    }
+
+    fun build(): SyntheticParts = SyntheticParts(methods, staticFunctions, constructors, classes)
 }

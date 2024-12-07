@@ -1,0 +1,22 @@
+STEP 0:
+    modifications:
+        U : InterfaceA.0.kt -> InterfaceA.kt
+        U : InterfaceB.0.kt -> InterfaceB.kt
+        U : InterfaceC.0.kt -> InterfaceC.kt
+    added file: InterfaceA.kt, InterfaceB.kt, InterfaceC.kt
+STEP 1:
+    modifications:
+        U : InterfaceA.1.kt -> InterfaceA.kt
+    modified ir: InterfaceA.kt
+    updated exports: InterfaceA.kt
+    updated imports: InterfaceB.kt, InterfaceC.kt
+STEP 2:
+    updated exports: InterfaceB.kt, InterfaceC.kt
+STEP 3:
+    modifications:
+        U : InterfaceA.3.kt -> InterfaceA.kt
+    modified ir: InterfaceA.kt
+    updated exports: InterfaceA.kt
+    updated imports: InterfaceB.kt, InterfaceC.kt
+STEP 4:
+    updated exports: InterfaceB.kt, InterfaceC.kt, InterfaceA.kt

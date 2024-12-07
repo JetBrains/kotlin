@@ -1,0 +1,4 @@
+compiler/testData/cli/js/compilationErrorConstDivByZero.kt:1:17: error: [EVALUATION_ERROR] Cannot evaluate constant expression: / by zero
+const val inf = 1 / 0
+                ^^^^^
+COMPILATION_ERROR

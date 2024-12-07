@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test() {
     <!INVISIBLE_MEMBER!>Double<!>()
     <!INVISIBLE_MEMBER!>Float<!>()

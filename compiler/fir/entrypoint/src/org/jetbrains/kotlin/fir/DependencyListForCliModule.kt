@@ -9,123 +9,96 @@ import org.jetbrains.kotlin.fir.deserialization.LibraryPathFilter
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.MultipleModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import java.nio.file.Path
 import java.nio.file.Paths
 
 class DependencyListForCliModule(
-    val platform: TargetPlatform,
-    val analyzerServices: PlatformDependentAnalyzerServices,
     val regularDependencies: List<FirModuleData>,
     val dependsOnDependencies: List<FirModuleData>,
     val friendsDependencies: List<FirModuleData>,
     val moduleDataProvider: ModuleDataProvider,
 ) {
     companion object {
-        fun createDependencyModuleData(
-            name: Name,
-            platform: TargetPlatform,
-            analyzerServices: PlatformDependentAnalyzerServices
-        ): FirModuleData {
-            return FirModuleDataImpl(
-                name,
-                dependencies = emptyList(),
-                dependsOnDependencies = emptyList(),
-                friendDependencies = emptyList(),
-                platform,
-                analyzerServices,
-            )
-        }
-
-        inline fun build(
-            mainModuleName: Name,
-            platform: TargetPlatform,
-            analyzerServices: PlatformDependentAnalyzerServices,
-            init: Builder.() -> Unit = {}
-        ): DependencyListForCliModule {
-            return Builder(mainModuleName, platform, analyzerServices).apply(init).build()
+        inline fun build(binaryModuleData: BinaryModuleData, init: Builder.() -> Unit = {}): DependencyListForCliModule {
+            return Builder(binaryModuleData).apply(init).build()
         }
     }
 
-    class Builder(val mainModuleName: Name, val platform: TargetPlatform, val analyzerServices: PlatformDependentAnalyzerServices) {
-        private fun createData(name: String): FirModuleData = createDependencyModuleData(Name.special(name), platform, analyzerServices)
-
-        private val binaryRegularDependenciesModuleData: FirModuleData = createData("<regular dependencies of $mainModuleName>")
-        private val binaryDependsOnModuleData: FirModuleData = createData("<dependsOn dependencies of $mainModuleName")
-        private val binaryFriendsModuleData: FirModuleData = createData("<friends dependencies of $mainModuleName")
-
+    class Builder(val binaryModuleData: BinaryModuleData) {
         private val allRegularDependencies = mutableListOf<FirModuleData>()
         private val allFriendsDependencies = mutableListOf<FirModuleData>()
         private val allDependsOnDependencies = mutableListOf<FirModuleData>()
 
-        private val filtersMap: Map<FirModuleData, MutableSet<Path>> =
+        private val filtersMap =
             listOf(
-                binaryDependsOnModuleData,
-                binaryFriendsModuleData,
-                binaryRegularDependenciesModuleData
-            ).map { it to mutableSetOf<Path>() }.toMap()
+                binaryModuleData.dependsOn,
+                binaryModuleData.friends,
+                binaryModuleData.regular
+            ).associateWithTo(mutableMapOf<FirModuleData, MutableSet<Path>>()) { mutableSetOf() }
 
         fun dependency(vararg path: Path) {
-            filtersMap.getValue(binaryRegularDependenciesModuleData) += path
+            filtersMap.getValue(binaryModuleData.regular) += path
         }
 
-        fun friendDependency(vararg path: Path) {
-            filtersMap.getValue(binaryFriendsModuleData) += path
-        }
-
-        fun dependsOnDependency(vararg path: Path) {
-            filtersMap.getValue(binaryDependsOnModuleData) += path
+        fun dependency(moduleData: FirModuleData, vararg path: Path) {
+            filtersMap.getOrPut(moduleData) {
+                allRegularDependencies.add(moduleData)
+                mutableSetOf()
+            } += path
         }
 
         fun dependency(vararg path: String) {
-            path.mapTo(filtersMap.getValue(binaryRegularDependenciesModuleData)) { Paths.get(it) }
-        }
-
-        fun friendDependency(vararg path: String) {
-            path.mapTo(filtersMap.getValue(binaryFriendsModuleData)) { Paths.get(it) }
-        }
-
-        fun dependsOnDependency(vararg path: String) {
-            path.mapTo(filtersMap.getValue(binaryDependsOnModuleData)) { Paths.get(it) }
+            path.mapTo(filtersMap.getValue(binaryModuleData.regular)) { Paths.get(it) }
         }
 
         @JvmName("dependenciesString")
         fun dependencies(paths: Collection<String>) {
-            paths.mapTo(filtersMap.getValue(binaryRegularDependenciesModuleData)) { Paths.get(it) }
+            paths.mapTo(filtersMap.getValue(binaryModuleData.regular)) { Paths.get(it) }
+        }
+
+        @JvmName("dependenciesString")
+        fun dependencies(moduleData: FirModuleData, paths: Collection<String>) {
+            paths.mapTo(
+                filtersMap.getOrPut(moduleData) {
+                    allRegularDependencies.add(moduleData)
+                    mutableSetOf()
+                }
+            ) {
+                Paths.get(it)
+            }
         }
 
         @JvmName("friendDependenciesString")
         fun friendDependencies(paths: Collection<String>) {
-            paths.mapTo(filtersMap.getValue(binaryFriendsModuleData)) { Paths.get(it) }
+            paths.mapTo(filtersMap.getValue(binaryModuleData.friends)) { Paths.get(it) }
         }
 
         @JvmName("dependsOnDependenciesString")
         fun dependsOnDependencies(paths: Collection<String>) {
-            paths.mapTo(filtersMap.getValue(binaryDependsOnModuleData)) { Paths.get(it) }
+            paths.mapTo(filtersMap.getValue(binaryModuleData.dependsOn)) { Paths.get(it) }
         }
 
         fun dependencies(paths: Collection<Path>) {
-            filtersMap.getValue(binaryRegularDependenciesModuleData) += paths
+            filtersMap.getValue(binaryModuleData.regular) += paths
         }
 
         fun friendDependencies(paths: Collection<Path>) {
-            filtersMap.getValue(binaryFriendsModuleData) += paths
+            filtersMap.getValue(binaryModuleData.friends) += paths
         }
 
         fun dependsOnDependencies(paths: Collection<Path>) {
-            filtersMap.getValue(binaryDependsOnModuleData) += paths
+            filtersMap.getValue(binaryModuleData.dependsOn) += paths
         }
 
-        fun sourceDependencies(modules: Collection<FirModuleData>) {
-            allRegularDependencies += modules
-        }
 
+        // Potentially, a part of a public API, so we leave it even while it's unused
+        @Suppress("unused")
         fun sourceFriendsDependencies(modules: Collection<FirModuleData>) {
             allFriendsDependencies += modules
         }
 
+        // Potentially, a part of a public API, so we leave it even while it's unused
+        @Suppress("unused")
         fun sourceDependsOnDependencies(modules: Collection<FirModuleData>) {
             allDependsOnDependencies += modules
         }
@@ -136,29 +109,25 @@ class DependencyListForCliModule(
                 .mapValues { LibraryPathFilter.LibraryList(it.value) }
                 .toMutableMap()
 
-            allRegularDependencies += binaryRegularDependenciesModuleData
+            allRegularDependencies += binaryModuleData.regular
             if (pathFiltersMap.isEmpty()) {
                 return DependencyListForCliModule(
-                    platform,
-                    analyzerServices,
                     allRegularDependencies,
                     dependsOnDependencies = allDependsOnDependencies,
                     friendsDependencies = allFriendsDependencies,
-                    SingleModuleDataProvider(binaryRegularDependenciesModuleData)
+                    SingleModuleDataProvider(binaryModuleData.regular)
                 )
             }
-            if (binaryFriendsModuleData in pathFiltersMap) {
-                allFriendsDependencies += binaryFriendsModuleData
+            if (binaryModuleData.friends in pathFiltersMap) {
+                allFriendsDependencies += binaryModuleData.friends
             }
-            if (binaryDependsOnModuleData in pathFiltersMap) {
-                allDependsOnDependencies += binaryDependsOnModuleData
+            if (binaryModuleData.dependsOn in pathFiltersMap) {
+                allDependsOnDependencies += binaryModuleData.dependsOn
             }
 
             val moduleDataProvider = MultipleModuleDataProvider(pathFiltersMap)
-            pathFiltersMap.putIfAbsent(binaryRegularDependenciesModuleData, LibraryPathFilter.TakeAll)
+            pathFiltersMap.putIfAbsent(binaryModuleData.regular, LibraryPathFilter.TakeAll)
             return DependencyListForCliModule(
-                platform,
-                analyzerServices,
                 allRegularDependencies,
                 allDependsOnDependencies,
                 allFriendsDependencies,

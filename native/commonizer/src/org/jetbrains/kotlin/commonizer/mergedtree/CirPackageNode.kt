@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.commonizer.mergedtree
 
-import gnu.trove.THashMap
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.cir.CirPackage
 import org.jetbrains.kotlin.commonizer.cir.CirPackageName
 import org.jetbrains.kotlin.commonizer.utils.CommonizedGroup
+import org.jetbrains.kotlin.commonizer.utils.CommonizerMap
 import org.jetbrains.kotlin.commonizer.utils.firstNonNull
 import org.jetbrains.kotlin.storage.NullableLazyValue
 
@@ -18,10 +18,10 @@ class CirPackageNode(
     override val commonDeclaration: NullableLazyValue<CirPackage>
 ) : CirNodeWithMembers<CirPackage, CirPackage> {
 
-    override val properties: MutableMap<PropertyApproximationKey, CirPropertyNode> = THashMap()
-    override val functions: MutableMap<FunctionApproximationKey, CirFunctionNode> = THashMap()
-    override val classes: MutableMap<CirName, CirClassNode> = THashMap()
-    val typeAliases: MutableMap<CirName, CirTypeAliasNode> = THashMap()
+    override val properties: MutableMap<PropertyApproximationKey, CirPropertyNode> = CommonizerMap()
+    override val functions: MutableMap<FunctionApproximationKey, CirFunctionNode> = CommonizerMap()
+    override val classes: MutableMap<CirName, CirClassNode> = CommonizerMap()
+    val typeAliases: MutableMap<CirName, CirTypeAliasNode> = CommonizerMap()
 
     val packageName: CirPackageName
         get() = targetDeclarations.firstNonNull().packageName

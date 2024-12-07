@@ -1,5 +1,7 @@
 package
 
+public val Received<kotlin.String>.thisIsFine: kotlin.Boolean
+public val Received<kotlin.String>.thisRaisesUnresolvedReference: kotlin.Boolean
 public fun A?.bar(): kotlin.Unit
 public fun A.gav(): kotlin.String
 
@@ -36,3 +38,28 @@ public final class C {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     public final fun A?.complex(): kotlin.String
 }
+
+public sealed class Received</*0*/ out T> {
+    protected constructor Received</*0*/ out T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public sealed class Error</*0*/ out T> : Received<T> {
+        protected constructor Error</*0*/ out T>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public final data class SomeError</*0*/ out T> : Received.Error<T> {
+            public constructor SomeError</*0*/ out T>(/*0*/ details: T?)
+            public final val details: T?
+            public final operator /*synthesized*/ fun component1(): T?
+            public final /*synthesized*/ fun copy(/*0*/ details: T? = ...): Received.Error.SomeError<T>
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
+    }
+}
+

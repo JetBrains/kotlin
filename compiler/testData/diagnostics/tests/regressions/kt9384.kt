@@ -1,5 +1,5 @@
-// FIR_IDE_IGNORE
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 fun main(args: Array<String>) {
     fun f() = run {
         <!WRONG_MODIFIER_TARGET!>private<!> class C {

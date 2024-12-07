@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: -ExperimentalBuilderInference
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: -ExperimentalBuilderInference
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface Base
 

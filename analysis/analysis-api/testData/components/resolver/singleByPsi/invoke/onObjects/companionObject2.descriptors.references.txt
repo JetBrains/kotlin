@@ -1,0 +1,6 @@
+KtNameReferenceExpression(119,122): 'Foo'
+  KtSimpleNameReference:
+    (in foo.Foo) companion object
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

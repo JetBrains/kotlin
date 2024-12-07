@@ -1,4 +1,5 @@
-// !LANGUAGE: +ExpectedTypeFromCast
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +ExpectedTypeFromCast
 
 @Target(AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)

@@ -1,6 +1,6 @@
 interface A
 
-class B: A
+class B : A
 
 abstract class Super {
     abstract val a: A
@@ -9,7 +9,7 @@ abstract class Super {
     abstract fun getB(): B
 }
 
-class Sub: {
+class Sub : Super() {
     override val a = B()
     override val b = B()
     override fun getA() = B()

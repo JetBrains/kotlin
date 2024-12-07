@@ -144,7 +144,6 @@ internal class LowSurrogateCharSet(low: Char) : CharSet(low) {
             is LowSurrogateCharSet -> set.char == this.char
             is CharSet,
             is RangeSet,
-            is SupplementaryCharSet,
             is SupplementaryRangeSet -> false
             else -> true
         }
@@ -208,7 +207,6 @@ internal class HighSurrogateCharSet(high: Char) : CharSet(high) {
             is HighSurrogateCharSet -> set.char == this.char
             is CharSet,
             is RangeSet,
-            is SupplementaryCharSet,
             is SupplementaryRangeSet -> false
             else -> true
         }

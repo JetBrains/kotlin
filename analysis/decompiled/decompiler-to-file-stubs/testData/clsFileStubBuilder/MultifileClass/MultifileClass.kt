@@ -1,3 +1,7 @@
+/* Unavailable @JvmName */
+// KNM_K2_IGNORE
+// KNM_FE10_IGNORE
+
 @file:[JvmName("MultifileClass") JvmMultifileClass]
 package test
 

@@ -1,4 +1,7 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
 package org.jetbrains.kotlin.analysis.decompiler.stub
 
@@ -12,14 +15,13 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.Flags
-import org.jetbrains.kotlin.metadata.deserialization.NameResolver
-import org.jetbrains.kotlin.metadata.deserialization.TypeTable
-import org.jetbrains.kotlin.metadata.deserialization.supertypes
+import org.jetbrains.kotlin.metadata.deserialization.*
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtSuperTypeList
+import org.jetbrains.kotlin.psi.stubs.elements.KotlinValueClassRepresentation
 import org.jetbrains.kotlin.psi.stubs.elements.KtClassElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
@@ -36,7 +38,7 @@ fun createClassStub(
     nameResolver: NameResolver,
     classId: ClassId,
     source: SourceElement?,
-    context: ClsStubBuilderContext
+    context: ClsStubBuilderContext,
 ) {
     ClassClsStubBuilder(parent, classProto, nameResolver, classId, source, context).build()
 }
@@ -47,7 +49,7 @@ private class ClassClsStubBuilder(
     nameResolver: NameResolver,
     private val classId: ClassId,
     source: SourceElement?,
-    outerContext: ClsStubBuilderContext
+    outerContext: ClsStubBuilderContext,
 ) {
     private val thisAsProtoContainer = ProtoContainer.Class(
         classProto, nameResolver, TypeTable(classProto.typeTable), source, outerContext.protoContainer
@@ -57,6 +59,7 @@ private class ClassClsStubBuilder(
     private val c = outerContext.child(
         classProto.typeParameterList, classId.shortClassName, nameResolver, thisAsProtoContainer.typeTable, thisAsProtoContainer
     )
+    private val contextReceiversListStubBuilder = ContextReceiversListStubBuilder(c)
     private val typeStubBuilder = TypeClsStubBuilder(c)
     private val supertypeIds = run {
         val supertypeIds = classProto.supertypes(c.typeTable).map { c.nameResolver.getClassId(it.className) }
@@ -85,6 +88,7 @@ private class ClassClsStubBuilder(
 
     private fun createClassOrObjectStubAndModifierListStub(): StubElement<out PsiElement> {
         val classOrObjectStub = doCreateClassOrObjectStub()
+        contextReceiversListStubBuilder.createContextReceiverStubs(classOrObjectStub, classProto.contextReceiverTypes(c.typeTable))
         val modifierList = createModifierListForClass(classOrObjectStub)
         if (Flags.HAS_ANNOTATIONS.get(classProto.flags)) {
             createAnnotationStubs(c.components.annotationLoader.loadClassAnnotations(thisAsProtoContainer), modifierList)
@@ -95,6 +99,7 @@ private class ClassClsStubBuilder(
     private fun createModifierListForClass(parent: StubElement<out PsiElement>): KotlinModifierListStubImpl {
         val relevantFlags = arrayListOf(VISIBILITY)
         relevantFlags.add(EXTERNAL_CLASS)
+        relevantFlags.add(EXPECT_CLASS)
         if (isClass()) {
             relevantFlags.add(INNER)
             relevantFlags.add(DATA)
@@ -103,6 +108,7 @@ private class ClassClsStubBuilder(
         }
         if (isInterface()) {
             relevantFlags.add(FUN_INTERFACE)
+            relevantFlags.add(INTERFACE_MODALITY)
         }
         val additionalModifiers = when (classKind) {
             ProtoBuf.Class.Kind.ENUM_CLASS -> listOf(KtTokens.ENUM_KEYWORD)
@@ -144,11 +150,19 @@ private class ClassClsStubBuilder(
                     superTypeRefs,
                     isInterface = classKind == ProtoBuf.Class.Kind.INTERFACE,
                     isEnumEntry = classKind == ProtoBuf.Class.Kind.ENUM_ENTRY,
+                    isClsStubCompiledToJvmDefaultImplementation = JvmProtoBufUtil.isNewPlaceForBodyGeneration(classProto),
                     isLocal = false,
                     isTopLevel = !this.classId.isNestedClass,
+                    valueClassRepresentation = valueClassRepresentation(),
                 )
             }
         }
+    }
+
+    private fun valueClassRepresentation(): KotlinValueClassRepresentation? = when {
+        classProto.multiFieldValueClassUnderlyingNameCount > 0 -> KotlinValueClassRepresentation.MULTI_FIELD_VALUE_CLASS
+        classProto.hasInlineClassUnderlyingPropertyName() -> KotlinValueClassRepresentation.INLINE_CLASS
+        else -> null
     }
 
     private fun createConstructorStub() {
@@ -206,9 +220,12 @@ private class ClassClsStubBuilder(
                 superNames = arrayOf(),
                 isInterface = false,
                 isEnumEntry = true,
+                isClsStubCompiledToJvmDefaultImplementation = JvmProtoBufUtil.isNewPlaceForBodyGeneration(classProto),
                 isLocal = false,
-                isTopLevel = false
+                isTopLevel = false,
+                valueClassRepresentation = null,
             )
+
             if (annotations.isNotEmpty()) {
                 createAnnotationStubs(annotations, createEmptyModifierListStub(enumEntryStub))
             }
@@ -253,25 +270,27 @@ private class ClassClsStubBuilder(
         val (nameResolver, classProto, _, sourceElement) =
             c.components.classDataFinder.findClassData(nestedClassId)
                 ?: c.components.virtualFileForDebug.let { rootFile ->
-                    val outerClassId = nestedClassId.outerClassId
-                    val sortedChildren = rootFile.parent.children.sortedBy { it.name }
-                    val msgPrefix = "Could not find data for nested class $nestedClassId of class $outerClassId\n"
-                    val explanation = when {
-                        outerClassId != null && sortedChildren.none { it.name.startsWith("${outerClassId.relativeClassName}\$a") } ->
-                            // KT-29427: case with obfuscation
-                            "Reason: obfuscation suspected (single-letter name)\n"
-                        else ->
-                            // General case
-                            ""
+                    if (LOG.isDebugEnabled) {
+                        val outerClassId = nestedClassId.outerClassId
+                        val sortedChildren = rootFile.parent.children.sortedBy { it.name }
+                        val msgPrefix = "Could not find data for nested class $nestedClassId of class $outerClassId\n"
+                        val explanation = when {
+                            outerClassId != null && sortedChildren.none { it.name.startsWith("${outerClassId.relativeClassName}\$a") } ->
+                                // KT-29427: case with obfuscation
+                                "Reason: obfuscation suspected (single-letter name)\n"
+                            else ->
+                                // General case
+                                ""
+                        }
+                        val msg = msgPrefix + explanation +
+                                "Root file: ${rootFile.canonicalPath}\n" +
+                                "Dir: ${rootFile.parent.canonicalPath}\n" +
+                                "Children:\n" +
+                                sortedChildren.joinToString(separator = "\n") {
+                                    "${it.name} (valid: ${it.isValid})"
+                                }
+                        LOG.debug(msg)
                     }
-                    val msg = msgPrefix + explanation +
-                            "Root file: ${rootFile.canonicalPath}\n" +
-                            "Dir: ${rootFile.parent.canonicalPath}\n" +
-                            "Children:\n" +
-                            sortedChildren.joinToString(separator = "\n") {
-                                "${it.name} (valid: ${it.isValid})"
-                            }
-                    LOG.info(msg)
                     return
                 }
         createClassStub(classBody, classProto, nameResolver, nestedClassId, sourceElement, c)

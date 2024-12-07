@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 abstract class Base {
     override fun equals(other: Any?) = other is Base
 }

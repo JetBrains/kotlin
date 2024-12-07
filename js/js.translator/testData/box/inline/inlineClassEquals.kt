@@ -1,5 +1,4 @@
 // The test checks an optimization which is implemented only for JS_IR backend
-// DONT_TARGET_EXACT_BACKEND: JS
 
 @file:Suppress("RESERVED_MEMBER_INSIDE_VALUE_CLASS")
 
@@ -141,8 +140,8 @@ fun testUnderlyingInline() {
     }
     caseJsEq()
 
-    // CHECK_CALLED_IN_SCOPE: scope=testUnderlyingInline$caseEquals function=equals
-    // CHECK_NEW_COUNT: function=testUnderlyingInline$caseEquals count=4
+    // CHECK_NOT_CALLED_IN_SCOPE: scope=testUnderlyingInline$caseEquals function=equals
+    // CHECK_NEW_COUNT: function=testUnderlyingInline$caseEquals count=2
     fun caseEquals() {
         assertTrue(c1_1 == ClassUnderlayingInline(x1!!))
         assertTrue(ClassUnderlayingInline(x1!!) == c1_2)
@@ -209,7 +208,7 @@ fun testNullableUnderlyingType() {
     caseJsEq()
 }
 
-// CHECK_NEW_COUNT: function=testUnderlyingWithEqualsOverride count=4
+// CHECK_NEW_COUNT: function=testUnderlyingWithEqualsOverride count=4 TARGET_BACKENDS=JS_IR
 // CHECK_CALLED_IN_SCOPE: scope=testUnderlyingWithEqualsOverride function=equals
 fun testUnderlyingWithEqualsOverride() {
     val x0 = ClassUnderlayingWithEquals(MyClass(0))
@@ -256,8 +255,8 @@ fun testNullableUnderlyingInlineClass() {
     }
     caseJsEq()
 
-    // CHECK_CALLED_IN_SCOPE: scope=testNullableUnderlyingInlineClass$caseEquals function=equals
-    // CHECK_NEW_COUNT: function=testNullableUnderlyingInlineClass$caseEquals count=3
+    // CHECK_NOT_CALLED_IN_SCOPE: scope=testNullableUnderlyingInlineClass$caseEquals function=equals
+    // CHECK_NEW_COUNT: function=testNullableUnderlyingInlineClass$caseEquals count=1
     fun caseEquals() {
         assertTrue(ClassNullableUnderlayingInline(i1_1) == ClassNullableUnderlayingInline(i1_2!!))
     }
@@ -265,7 +264,7 @@ fun testNullableUnderlyingInlineClass() {
 }
 
 // CHECK_CALLED_IN_SCOPE: scope=testInlineClassWithInterface function=equals
-// CHECK_NEW_COUNT: function=testInlineClassWithInterface count=14
+// CHECK_NEW_COUNT: function=testInlineClassWithInterface count=10
 fun testInlineClassWithInterface() {
     val xi_1_1: InterfaceForInlineClass = ClassIntWithInterface(1)
     val xi_1_2: InterfaceForInlineClass = ClassIntWithInterface(1)
@@ -317,7 +316,6 @@ fun testCompareDifferentInstancesInSmartCast() {
 fun testCompareDifferentInstncesInInlineTemplate() {
     inline fun <reified T, reified S> myEq(x: T, y: S) = x == y
 
-    // CHECK_NOT_CALLED_IN_SCOPE: scope=testCompareDifferentInstncesInInlineTemplate$caseJsEq function=equals
     // CHECK_NEW_COUNT: function=testCompareDifferentInstncesInInlineTemplate$caseJsEq count=0
     fun caseJsEq() {
         assertTrue(myEq(ClassInt(1), ClassInt(1)))

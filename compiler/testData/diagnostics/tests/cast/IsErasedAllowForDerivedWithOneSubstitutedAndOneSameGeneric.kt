@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 open class BaseTwo<A, B>
 open class DerivedWithOne<D>: BaseTwo<D, String>()

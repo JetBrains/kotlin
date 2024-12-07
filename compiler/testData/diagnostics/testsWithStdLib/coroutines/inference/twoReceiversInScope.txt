@@ -1,7 +1,7 @@
 package
 
-public fun </*0*/ F> flow(/*0*/ @kotlin.BuilderInference block: MyFlowCollector<F>.() -> kotlin.Unit): MyFlow<F>
-public fun </*0*/ P> produce(/*0*/ @kotlin.BuilderInference block: SendChannel<P>.() -> kotlin.Unit): kotlin.Unit
+public fun </*0*/ F> flow(/*0*/ block: MyFlowCollector<F>.() -> kotlin.Unit): MyFlow<F>
+public fun </*0*/ P> produce(/*0*/ block: SendChannel<P>.() -> kotlin.Unit): kotlin.Unit
 public fun </*0*/ C> MyFlow<C>.collect(/*0*/ action: (C) -> kotlin.Unit): kotlin.Unit
 private fun </*0*/ T> MyFlow<T>.idScoped(): MyFlow<T>
 

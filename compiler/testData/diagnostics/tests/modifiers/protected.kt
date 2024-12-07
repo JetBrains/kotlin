@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 class My(protected val x: Int) {
     class Her(protected val x: Int)

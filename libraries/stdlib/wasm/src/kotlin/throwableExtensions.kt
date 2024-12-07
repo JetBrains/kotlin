@@ -49,6 +49,9 @@ public actual val Throwable.suppressedExceptions: List<Throwable> get() {
     return this.suppressedExceptionsList ?: emptyList()
 }
 
+internal expect var Throwable.suppressedExceptionsList: MutableList<Throwable>?
+internal expect val Throwable.stack: String
+
 private class ExceptionTraceBuilder {
     private val target = StringBuilder()
     private val visited = mutableListOf<Throwable>()

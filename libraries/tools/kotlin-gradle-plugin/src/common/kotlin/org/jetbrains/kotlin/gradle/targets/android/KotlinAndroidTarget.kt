@@ -6,33 +6,94 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import com.android.build.gradle.api.BaseVariant
-import org.gradle.api.InvalidUserDataException
-import org.gradle.api.Named
-import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.Project
+import org.gradle.api.*
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Attribute
-import org.gradle.api.attributes.Usage.JAVA_RUNTIME_JARS
+import org.gradle.api.attributes.AttributeContainer
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.configureSourcesPublicationAttributes
+import org.jetbrains.kotlin.gradle.tasks.DefaultKotlinJavaToolchain
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
+import org.jetbrains.kotlin.gradle.utils.forAllAndroidVariants
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.setProperty
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.utils.addIfNotNull
+import javax.inject.Inject
 
-open class KotlinAndroidTarget(
-    override val targetName: String,
-    project: Project
-) : AbstractKotlinTarget(project) {
+internal fun ObjectFactory.KotlinAndroidTarget(
+    project: Project,
+    targetName: String = "",
+    isMultiplatformProject: Boolean = false,
+): KotlinAndroidTarget = newInstance(targetName, project, isMultiplatformProject)
 
-    override var disambiguationClassifier: String? = null
-        internal set
+abstract class KotlinAndroidTarget @Inject constructor(
+    final override val targetName: String,
+    project: Project,
+    val isMultiplatformProject: Boolean,
+) : AbstractKotlinTarget(project),
+    HasConfigurableKotlinCompilerOptions<KotlinJvmCompilerOptions> {
+
+    final override val disambiguationClassifier: String = targetName
 
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.androidJvm
 
-    internal val compilationFactory = KotlinJvmAndroidCompilationFactory(project, this)
-
     override val compilations: NamedDomainObjectContainer<out KotlinJvmAndroidCompilation> =
-        project.container(compilationFactory.itemClass, compilationFactory)
+        project.container(KotlinJvmAndroidCompilation::class.java)
+
+
+    @ExperimentalKotlinGradlePluginApi
+    val mainVariant: KotlinAndroidTargetVariantDsl = KotlinAndroidTargetVariantDslImpl(project.objects).apply {
+        sourceSetTree.convention(KotlinSourceSetTree.main)
+    }
+
+    @ExperimentalKotlinGradlePluginApi
+    fun mainVariant(action: Action<KotlinAndroidTargetVariantDsl>) {
+        action.execute(mainVariant)
+    }
+
+    @ExperimentalKotlinGradlePluginApi
+    fun mainVariant(configure: KotlinAndroidTargetVariantDsl.() -> Unit) {
+        mainVariant.configure()
+    }
+
+    @ExperimentalKotlinGradlePluginApi
+    val unitTestVariant: KotlinAndroidTargetVariantDsl = KotlinAndroidTargetVariantDslImpl(project.objects).apply {
+        sourceSetTree.convention(KotlinSourceSetTree.test)
+    }
+
+    @ExperimentalKotlinGradlePluginApi
+    fun unitTestVariant(action: Action<KotlinAndroidTargetVariantDsl>) {
+        action.execute(unitTestVariant)
+    }
+
+    @ExperimentalKotlinGradlePluginApi
+    fun unitTestVariant(configure: KotlinAndroidTargetVariantDsl.() -> Unit) {
+        unitTestVariant.configure()
+    }
+
+    @ExperimentalKotlinGradlePluginApi
+    val instrumentedTestVariant: KotlinAndroidTargetVariantDsl = KotlinAndroidTargetVariantDslImpl(project.objects).apply {
+        sourceSetTree.convention(KotlinSourceSetTree.instrumentedTest)
+    }
+
+    @ExperimentalKotlinGradlePluginApi
+    fun instrumentedTestVariant(action: Action<KotlinAndroidTargetVariantDsl>) {
+        action.execute(instrumentedTestVariant)
+    }
+
+    @ExperimentalKotlinGradlePluginApi
+    fun instrumentedTestVariant(configure: KotlinAndroidTargetVariantDsl.() -> Unit) {
+        instrumentedTestVariant.configure()
+    }
+
 
     /** Names of the Android library variants that should be published from the target's project within the default publications which are
      * set up if the `maven-publish` Gradle plugin is applied.
@@ -66,9 +127,9 @@ open class KotlinAndroidTarget(
     var publishLibraryVariantsGroupedByFlavor = false
 
     private fun checkPublishLibraryVariantsExist() {
-        fun AbstractAndroidProjectHandler.getLibraryVariantNames() =
+        fun AndroidProjectHandler.getLibraryVariantNames() =
             mutableSetOf<String>().apply {
-                project.forEachVariant {
+                project.forAllAndroidVariants {
                     if (getLibraryOutputTask(it) != null)
                         add(getVariantName(it))
                 }
@@ -94,14 +155,16 @@ open class KotlinAndroidTarget(
         KotlinAndroidPlugin.androidTargetHandler().doCreateComponents()
     }
 
-    private fun isVariantPublished(variant: BaseVariant): Boolean {
-        return publishLibraryVariants?.contains(getVariantName(variant)) ?: true
-    }
+    private fun isVariantPublished(
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variant: DeprecatedAndroidBaseVariant
+    ): Boolean = publishLibraryVariants?.contains(getVariantName(variant)) ?: true
 
-    private fun AbstractAndroidProjectHandler.doCreateComponents(): Set<KotlinTargetComponent> {
+    private fun AndroidProjectHandler.doCreateComponents(): Set<KotlinTargetComponent> {
+        assert(project.state.executed) { "Android: doCreateComponents requires 'afterEvaluate' based project state" }
 
-        val publishableVariants = mutableListOf<BaseVariant>()
-            .apply { project.forEachVariant { add(it) } }
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+        val publishableVariants = mutableListOf<DeprecatedAndroidBaseVariant>()
+            .apply { project.forAllAndroidVariants { add(it) } }
             .toList() // Defensive copy against unlikely modification by the lambda that captures the list above in forEachVariant { }
             .filter { getLibraryOutputTask(it) != null }
 
@@ -121,39 +184,24 @@ open class KotlinAndroidTarget(
                 val androidVariantName = getVariantName(androidVariant)
                 val compilation = compilations.getByName(androidVariantName)
 
-                val flavorNames = getFlavorNames(androidVariant)
-                val buildTypeName = getBuildTypeName(androidVariant)
-
-                val artifactClassifier = buildTypeName.takeIf { it != "release" && publishLibraryVariantsGroupedByFlavor }
+                val usageContexts = createAndroidUsageContexts(
+                    variant = androidVariant,
+                    compilation = compilation,
+                    isSingleBuildType = publishableVariants.filter(::isVariantPublished).map(::getBuildTypeName).distinct().size == 1,
+                )
 
                 createKotlinVariant(
                     lowerCamelCaseName(compilation.target.name, *flavorGroupNameParts.toTypedArray()),
                     compilation,
-                    createAndroidUsageContexts(
-                        androidVariant,
-                        compilation,
-                        artifactClassifier,
-                        publishableVariants.filter(::isVariantPublished).map(::getBuildTypeName).distinct().size == 1
-                    )
+                    usageContexts,
                 ).apply {
                     publishable = isVariantPublished(androidVariant)
-                    sourcesArtifacts = setOf(
-                        sourcesJarArtifact(
-                            compilation, compilation.disambiguateName(""),
-                            dashSeparatedName(
-                                compilation.target.name.toLowerCase(),
-                                *flavorNames.map { it.toLowerCase() }.toTypedArray(),
-                                buildTypeName.takeIf { it != "release" }?.toLowerCase()
-                            ),
-                            classifierPrefix = artifactClassifier
-                        )
-                    )
 
                     if (!publishLibraryVariantsGroupedByFlavor) {
                         defaultArtifactIdSuffix =
                             dashSeparatedName(
                                 (getFlavorNames(androidVariant) + getBuildTypeName(androidVariant).takeIf { it != "release" })
-                                    .map { it?.toLowerCase() }
+                                    .map { it?.toLowerCaseAsciiOnly() }
                             ).takeIf { it.isNotEmpty() }
                     }
                 }
@@ -164,7 +212,6 @@ open class KotlinAndroidTarget(
                     target = this@KotlinAndroidTarget,
                     nestedVariants = nestedVariants,
                     flavorNames = flavorGroupNameParts,
-                    sourcesArtifacts = nestedVariants.filter { it.publishable }.flatMap { it.sourcesArtifacts }.toSet()
                 )
             } else {
                 nestedVariants.single()
@@ -172,20 +219,20 @@ open class KotlinAndroidTarget(
         }.toSet()
     }
 
-    private fun AbstractAndroidProjectHandler.createAndroidUsageContexts(
-        variant: BaseVariant,
+    private fun AndroidProjectHandler.createAndroidUsageContexts(
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variant: DeprecatedAndroidBaseVariant,
         compilation: KotlinCompilation<*>,
-        artifactClassifier: String?,
-        isSingleBuildType: Boolean
+        isSingleBuildType: Boolean,
     ): Set<DefaultKotlinUsageContext> {
+        val flavorNames = getFlavorNames(variant)
+        val buildTypeName = getBuildTypeName(variant)
+        val artifactClassifier = buildTypeName.takeIf { it != "release" && publishLibraryVariantsGroupedByFlavor }
+
         val variantName = getVariantName(variant)
         val outputTaskOrProvider = getLibraryOutputTask(variant) ?: return emptySet()
         val artifact = run {
             val archivesConfigurationName = lowerCamelCaseName(targetName, variantName, "archives")
-            project.configurations.maybeCreate(archivesConfigurationName).apply {
-                isCanBeConsumed = false
-                isCanBeResolved = false
-            }
+            project.configurations.maybeCreateDependencyScope(archivesConfigurationName)
             project.artifacts.add(archivesConfigurationName, outputTaskOrProvider) { artifact ->
                 artifact.classifier = artifactClassifier
             }
@@ -194,36 +241,82 @@ open class KotlinAndroidTarget(
         val apiElementsConfigurationName = lowerCamelCaseName(variantName, "apiElements")
         val runtimeElementsConfigurationName = lowerCamelCaseName(variantName, "runtimeElements")
 
-        // Here, the Java Usage values are used intentionally as Gradle needs this for
-        // ordering of the usage contexts (prioritizing the dependencies) when merging them into the POM;
-        // These Java usages should not be replaced with the custom Kotlin usages.
-        return listOf(
-            apiElementsConfigurationName to javaApiUsageForMavenScoping(),
-            runtimeElementsConfigurationName to JAVA_RUNTIME_JARS
-        ).mapTo(mutableSetOf()) { (dependencyConfigurationName, usageName) ->
+        val sourcesElementsConfigurationName = lowerCamelCaseName(variantName, "sourcesElements")
+        val sourcesElementsConfiguration = createSourcesElementsIfNeeded(
+            variantName,
+            apiElementsConfigurationName,
+            sourcesElementsConfigurationName
+        )
+
+        fun AttributeContainer.filterOutAndroidVariantAttributes(): AttributeContainer =
+            HierarchyAttributeContainer(this) {
+                val valueString = run {
+                    val value = getAttribute(it)
+                    (value as? Named)?.name ?: value.toString()
+                }
+                filterOutAndroidVariantAttribute(it) &&
+                        filterOutAndroidBuildTypeAttribute(it, valueString, isSingleBuildType) &&
+                        filterOutAndroidAgpVersionAttribute(it)
+            }
+
+        val sourcesUsageContext = createSourcesJarAndUsageContextIfPublishable(
+            producingCompilation = compilation,
+            componentName = compilation.disambiguateName(""),
+            artifactNameAppendix = dashSeparatedName(
+                compilation.target.name.toLowerCaseAsciiOnly(),
+                *flavorNames.map { it.toLowerCaseAsciiOnly() }.toTypedArray(),
+                buildTypeName.takeIf { it != "release" }?.toLowerCaseAsciiOnly()
+            ),
+            classifierPrefix = artifactClassifier,
+            sourcesElementsConfigurationName = sourcesElementsConfigurationName,
+            overrideConfigurationAttributes = sourcesElementsConfiguration.attributes.filterOutAndroidVariantAttributes()
+        )
+
+        val usageContexts = listOf(
+            apiElementsConfigurationName to KotlinUsageContext.MavenScope.COMPILE,
+            runtimeElementsConfigurationName to KotlinUsageContext.MavenScope.RUNTIME,
+        ).mapTo(mutableSetOf()) { (dependencyConfigurationName, mavenScope) ->
             val configuration = project.configurations.getByName(dependencyConfigurationName)
             DefaultKotlinUsageContext(
                 compilation,
-                project.usageByName(usageName),
+                mavenScope,
                 dependencyConfigurationName,
                 overrideConfigurationArtifacts = project.setProperty { listOf(artifact) },
-                overrideConfigurationAttributes = HierarchyAttributeContainer(configuration.attributes) {
-                    val valueString = run {
-                        val value = configuration.attributes.getAttribute(it)
-                        (value as? Named)?.name ?: value.toString()
-                    }
-                    filterOutAndroidVariantAttribute(it) &&
-                            filterOutAndroidBuildTypeAttribute(it, valueString, isSingleBuildType) &&
-                            filterOutAndroidAgpVersionAttribute(it)
-                }
+                overrideConfigurationAttributes = configuration.attributes.filterOutAndroidVariantAttributes()
             )
+        }
+        usageContexts.addIfNotNull(sourcesUsageContext)
+
+        return usageContexts
+    }
+
+    /**
+     * TODO: Ask Google about providing such configuration where they could set their attributes and control them.
+     * Just like as they do with apiElements or runtimeElements
+     */
+    private fun createSourcesElementsIfNeeded(
+        variantName: String,
+        apiElementsConfigurationName: String,
+        sourcesElementsConfigurationName: String,
+    ): Configuration {
+        val existingConfiguration = project.configurations.findByName(sourcesElementsConfigurationName)
+        if (existingConfiguration != null) return existingConfiguration
+
+        val apiElementsConfiguration = project.configurations.findConsumable(apiElementsConfigurationName)
+            ?: error("Configuration $apiElementsConfigurationName was not found")
+        return project.configurations.createConsumable(sourcesElementsConfigurationName).apply {
+            description = "Source files of Android ${variantName}."
+            isVisible = false
+
+            apiElementsConfiguration.copyAttributesTo(project.providers, dest = this)
+            configureSourcesPublicationAttributes(this@KotlinAndroidTarget)
         }
     }
 
     /** We filter this variant out as it is never requested on the consumer side, while keeping it leads to ambiguity between Android and
      * JVM variants due to non-nesting sets of unmatched attributes. */
     private fun filterOutAndroidVariantAttribute(
-        attribute: Attribute<*>
+        attribute: Attribute<*>,
     ): Boolean =
         attribute.name != "com.android.build.gradle.internal.attributes.VariantAttr" &&
                 attribute.name != "com.android.build.api.attributes.VariantAttr"
@@ -231,7 +324,7 @@ open class KotlinAndroidTarget(
     private fun filterOutAndroidBuildTypeAttribute(
         it: Attribute<*>,
         valueString: String,
-        isSinglePublishedVariant: Boolean
+        isSinglePublishedVariant: Boolean,
     ) = when {
         PropertiesProvider(project).keepAndroidBuildTypeAttribute -> true
         it.name != "com.android.build.api.attributes.BuildTypeAttr" -> true
@@ -243,6 +336,13 @@ open class KotlinAndroidTarget(
     }
 
     private fun filterOutAndroidAgpVersionAttribute(
-        attribute: Attribute<*>
+        attribute: Attribute<*>,
     ): Boolean = attribute.name != "com.android.build.api.attributes.AgpVersionAttr"
+
+    override val compilerOptions: KotlinJvmCompilerOptions = project.objects
+        .newInstance<KotlinJvmCompilerOptionsDefault>()
+        .apply {
+            DefaultKotlinJavaToolchain.wireJvmTargetToToolchain(this, project)
+        }
 }
+

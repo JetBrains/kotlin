@@ -1,5 +1,8 @@
 $TESTDATA_DIR$/withLib.kt
+-Xir-produce-klib-dir
 -libraries
-$TESTDATA_DIR$/lib/LibraryExample.jar
--output
-$TEMP_DIR$/out.js
+$STDLIB_JS$:$TESTDATA_DIR$/lib/LibraryExample.klib
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out

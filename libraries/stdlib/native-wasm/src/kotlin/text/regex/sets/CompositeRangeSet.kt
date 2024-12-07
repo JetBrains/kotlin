@@ -93,7 +93,7 @@ package kotlin.text.regex
  * from the parent range. This class represents the parent range split in such a manner.
  */
 internal class CompositeRangeSet(/* range without surrogates */ val withoutSurrogates: AbstractSet,
-                                 /* range containing surrogates only */ val surrogates: AbstractSet) : SimpleSet() {
+                                 /* range containing surrogates only */ val surrogates: SurrogateRangeSet) : SimpleSet() {
 
     override var next: AbstractSet = dummyNext
         get() = field
@@ -102,6 +102,12 @@ internal class CompositeRangeSet(/* range without surrogates */ val withoutSurro
             surrogates.next = next
             withoutSurrogates.next = next
         }
+
+    // This node consumes a single character starting at `startIndex`.
+    // A single surrogate char is consumed only if it is unpaired, see [SurrogateRangeSet].
+    // Thus, for a given [testString] and [startIndex] a fixed amount of chars are consumed.
+    override val consumesFixedLength: Boolean
+        get() = true
 
     override fun matches(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         var result = withoutSurrogates.matches(startIndex, testString, matchResult)

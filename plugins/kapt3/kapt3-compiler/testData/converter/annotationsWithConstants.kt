@@ -1,4 +1,4 @@
-//FILE: lib/R.java
+// FILE: lib/R.java
 package lib;
 
 public class R {
@@ -7,7 +7,7 @@ public class R {
     }
 }
 
-//FILE: app/R.java
+// FILE: app/R.java
 package app;
 
 public class R {
@@ -16,7 +16,7 @@ public class R {
     }
 }
 
-//FILE: app/R2.java
+// FILE: app/R2.java
 package app;
 
 public class R2 { // For ButterKnife library project support
@@ -25,7 +25,7 @@ public class R2 { // For ButterKnife library project support
     }
 }
 
-//FILE: app/B.java
+// FILE: app/B.java
 package app;
 
 public class B {
@@ -44,7 +44,7 @@ public class B {
     public final static String a9 = "A";
 }
 
-//FILE: lib/OnClick.java
+// FILE: lib/OnClick.java
 package lib;
 
 import java.lang.annotation.ElementType;
@@ -58,7 +58,7 @@ public @interface OnClick {
     int[] value() default {};
 }
 
-//FILE: test.kt
+// FILE: test.kt
 package app
 
 import lib.R as LibR
@@ -85,7 +85,10 @@ annotation class Anno(
         val a8: Double,
         val a9: String)
 
-class MyActivity {
+class MyActivity(
+    val param1: Int = B.id.textView,
+    var param2: Int = B.a3,
+) {
     @Bind(LibR.id.textView)
     @BindField(LibR.id.textView)
     val a = 0
@@ -168,8 +171,3 @@ object JJ {
     val b = c()
     fun c() = "42"
 }
-
-// EXPECTED_ERROR class B is public, should be declared in a file named B.java
-// EXPECTED_ERROR class R is public, should be declared in a file named R.java
-// EXPECTED_ERROR class R is public, should be declared in a file named R.java
-// EXPECTED_ERROR class R2 is public, should be declared in a file named R2.java

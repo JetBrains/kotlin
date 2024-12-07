@@ -10,7 +10,6 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightMethodBuilder
 import com.intellij.psi.impl.light.LightModifierList
 import com.intellij.psi.impl.light.LightParameterListBuilder
-import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -22,15 +21,14 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.JvmNames.JVM_OVERLOADS_FQ_NAME
-import org.jetbrains.kotlin.name.JvmNames.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.name.JvmNames.STRICTFP_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.name.JvmNames.SYNCHRONIZED_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.STRICTFP_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.SYNCHRONIZED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
 import org.jetbrains.kotlin.resolve.inline.isInlineOnly
@@ -61,7 +59,9 @@ internal class UltraLightMembersCreator(
         usedPropertyNames: HashSet<String>,
         forceStatic: Boolean
     ): KtLightField? {
+        ProgressManager.checkCanceled()
 
+        if (variable.nameAsSafeName.isSpecial) return null
         if (!hasBackingField(variable)) return null
 
         if (variable.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) || variable.hasExpectModifier()) return null
@@ -104,12 +104,13 @@ internal class UltraLightMembersCreator(
     private fun hasBackingField(property: KtCallableDeclaration): Boolean {
         if (property.hasModifier(ABSTRACT_KEYWORD)) return false
         if (property.hasModifier(LATEINIT_KEYWORD)) return true
-        if (property is KtParameter) return true
-        if ((property as? KtProperty)?.accessors?.isEmpty() == true) return true
 
-        val context = LightClassGenerationSupport.getInstance(containingClass.project).analyze(property)
-        val descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property)
-        return descriptor is PropertyDescriptor && context[BindingContext.BACKING_FIELD_REQUIRED, descriptor] == true
+        if (property is KtParameter) return true
+        if (property !is KtProperty) return false
+
+        return property.hasInitializer() ||
+                property.getter?.takeIf { it.hasBody() } == null ||
+                property.setter?.takeIf { it.hasBody() } == null && property.isVar
     }
 
     fun createMethods(
@@ -119,6 +120,7 @@ internal class UltraLightMembersCreator(
         forceNonFinal: Boolean = false,
         additionalReceiverParameter: ((KtUltraLightMethod) -> KtUltraLightParameter)? = null,
     ): Collection<KtLightMethod> {
+        ProgressManager.checkCanceled()
 
         if (ktFunction.hasExpectModifier()
             || ktFunction.hasReifiedParameters()
@@ -258,11 +260,11 @@ internal class UltraLightMembersCreator(
         if (ktDeclaration is KtNamedFunction &&
             ktDeclaration.hasBlockBody() &&
             !ktDeclaration.hasDeclaredReturnType()
-        ) return PsiType.VOID
+        ) return PsiTypes.voidType()
 
         val desc =
             ktDeclaration.resolve()?.getterIfProperty() as? CallableDescriptor
-                ?: return PsiType.NULL
+                ?: return PsiTypes.nullType()
 
         return support.mapType(desc.returnType, wrapper) { typeMapper, signatureWriter ->
             typeMapper.mapReturnType(desc, signatureWriter)
@@ -302,8 +304,9 @@ internal class UltraLightMembersCreator(
                 if (forcePrivate || declaration.isPrivate() || accessedProperty?.isPrivate() == true) {
                     return name == PsiModifier.PRIVATE
                 }
-                if (declaration.hasModifier(PROTECTED_KEYWORD) || accessedProperty
-                        ?.hasModifier(PROTECTED_KEYWORD) == true
+                if (declaration.hasModifier(PROTECTED_KEYWORD) ||
+                    accessedProperty?.hasModifier(PROTECTED_KEYWORD) == true ||
+                    (declaration is KtConstructor<*> && containingClassIsSealed)
                 ) {
                     return name == PsiModifier.PROTECTED
                 }
@@ -335,7 +338,7 @@ internal class UltraLightMembersCreator(
         }
 
         private fun KtDeclaration.isPrivate() =
-            hasModifier(PRIVATE_KEYWORD) || this is KtConstructor<*> && containingClassIsSealed || isInlineOnly()
+            hasModifier(PRIVATE_KEYWORD) || isInlineOnly()
 
         private fun KtDeclaration.isInlineOnly(): Boolean {
             if (this !is KtCallableDeclaration || !hasModifier(INLINE_KEYWORD)) return false
@@ -436,6 +439,7 @@ internal class UltraLightMembersCreator(
         forceNonFinal: Boolean = false,
         additionalReceiverParameter: ((KtUltraLightMethod) -> KtUltraLightParameter)? = null,
     ): List<KtLightMethod> {
+        ProgressManager.checkCanceled()
 
         val propertyName = declaration.name ?: return emptyList()
         if (declaration.isConstOrJvmField() ||
@@ -531,7 +535,7 @@ internal class UltraLightMembersCreator(
                 auxiliaryOrigin,
                 forceStatic = onlyJvmStatic || forceStatic,
                 forceNonFinal = forceNonFinal,
-            ).setMethodReturnType(PsiType.VOID)
+            ).setMethodReturnType(PsiTypes.voidType())
 
             val setterWrapper = KtUltraLightMethodForSourceDeclaration(
                 setterPrototype,

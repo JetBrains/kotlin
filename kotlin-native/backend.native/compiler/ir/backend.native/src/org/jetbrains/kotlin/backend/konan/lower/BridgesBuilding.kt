@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.lower
@@ -12,29 +12,97 @@ import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.*
+import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.ir.BridgeDirection
+import org.jetbrains.kotlin.backend.konan.ir.BridgeDirectionKind
+import org.jetbrains.kotlin.backend.konan.ir.BridgeDirections
+import org.jetbrains.kotlin.backend.konan.ir.OverriddenFunctionInfo
+import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrRawFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullableAny
-import org.jetbrains.kotlin.ir.util.simpleFunctions
-import org.jetbrains.kotlin.ir.util.transformFlat
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
+private var IrFunction.bridges: MutableMap<BridgeDirections, IrSimpleFunction>? by irAttribute(followAttributeOwner = false)
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+internal fun IrFunction.getDefaultValueForOverriddenBuiltinFunction() = BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(descriptor)
+
+internal class BridgesSupport(val irBuiltIns: IrBuiltIns, val irFactory: IrFactory) {
+    fun getBridge(overriddenFunction: OverriddenFunctionInfo): IrSimpleFunction {
+        val irFunction = overriddenFunction.function
+        val directions = overriddenFunction.bridgeDirections
+        assert(overriddenFunction.needBridge) {
+            "Function ${irFunction.render()} doesn't need a bridge to call overridden function ${overriddenFunction.overriddenFunction.render()}"
+        }
+
+        val functionBridges = irFunction::bridges.getOrSetIfNull { mutableMapOf() }
+        return functionBridges.getOrPut(directions) { createBridge(irFunction, directions) }
+    }
+
+    private fun BridgeDirection.type() =
+            if (this.kind == BridgeDirectionKind.NONE)
+                null
+            else this.erasedType ?: irBuiltIns.anyNType
+
+    private fun createBridge(function: IrSimpleFunction, bridgeDirections: BridgeDirections): IrSimpleFunction {
+        val target = function.target
+
+        // Note: bridgeDirection.type() = null only for BridgeDirectionKind.NONE (no conversion required),
+        // so in this case the type is taken from target - the function to be called.
+        return irFactory.buildFun {
+            startOffset = function.startOffset
+            endOffset = function.endOffset
+            origin = DECLARATION_ORIGIN_BRIDGE_METHOD(target)
+            name = "<bridge-$bridgeDirections>${function.computeFunctionName()}".synthesizedName
+            visibility = function.visibility
+            modality = function.modality
+            returnType = bridgeDirections.returnDirection.type() ?: target.returnType
+            isSuspend = function.isSuspend
+        }.apply {
+            attributeOwnerId = function.attributeOwnerId
+            parent = function.parent
+            val bridge = this
+
+            dispatchReceiverParameter = target.dispatchReceiverParameter?.let {
+                it.copyTo(bridge, type = bridgeDirections.dispatchReceiverDirection.type() ?: it.type)
+            }
+            extensionReceiverParameter = target.extensionReceiverParameter?.let {
+                it.copyTo(bridge, type = bridgeDirections.extensionReceiverDirection.type() ?: it.type)
+            }
+            valueParameters = target.valueParameters.map {
+                it.copyTo(bridge, type = bridgeDirections.parameterDirectionAt(it.indexInOldValueParameters).type() ?: it.type)
+            }
+
+            typeParameters = function.typeParameters.map { parameter ->
+                parameter.copyToWithoutSuperTypes(bridge).also { it.superTypes += parameter.superTypes }
+            }
+        }
+    }
+}
 internal class WorkersBridgesBuilding(val context: Context) : DeclarationContainerLoweringPass, IrElementTransformerVoid() {
-
+    private val bridgesPolicy = context.config.bridgesPolicy
     val symbols = context.ir.symbols
     lateinit var runtimeJobFunction: IrSimpleFunction
 
@@ -62,7 +130,7 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                 if (expression.symbol != symbols.executeImpl)
                     return expression
 
-                val job = expression.getValueArgument(3) as IrFunctionReference
+                val job = expression.getValueArgument(3) as IrRawFunctionReference
                 val jobFunction = (job.symbol as IrSimpleFunctionSymbol).owner
 
                 if (!::runtimeJobFunction.isInitialized) {
@@ -70,40 +138,39 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                     val startOffset = jobFunction.startOffset
                     val endOffset = jobFunction.endOffset
                     runtimeJobFunction =
-                        IrFunctionImpl(
-                                startOffset, endOffset,
+                        context.irFactory.createSimpleFunction(
+                                startOffset,
+                                endOffset,
                                 IrDeclarationOrigin.DEFINED,
-                                IrSimpleFunctionSymbolImpl(),
                                 jobFunction.name,
                                 jobFunction.visibility,
-                                jobFunction.modality,
                                 isInline = false,
-                                isExternal = false,
+                                isExpect = false,
+                                returnType = context.irBuiltIns.anyNType,
+                                jobFunction.modality,
+                                IrSimpleFunctionSymbolImpl(),
                                 isTailrec = false,
                                 isSuspend = false,
-                                returnType = context.irBuiltIns.anyNType,
-                                isExpect = false,
-                                isFakeOverride = false,
                                 isOperator = false,
-                                isInfix = false
-                    )
+                                isInfix = false,
+                        )
 
                     runtimeJobFunction.valueParameters +=
-                        IrValueParameterImpl(
-                                startOffset, endOffset,
-                                IrDeclarationOrigin.DEFINED,
-                                IrValueParameterSymbolImpl(),
-                                arg.name,
-                                arg.index,
+                        context.irFactory.createValueParameter(
+                                startOffset = startOffset,
+                                endOffset = endOffset,
+                                origin = IrDeclarationOrigin.DEFINED,
+                                name = arg.name,
                                 type = context.irBuiltIns.anyNType,
+                                isAssignable = arg.isAssignable,
+                                symbol = IrValueParameterSymbolImpl(),
                                 varargElementType = null,
                                 isCrossinline = arg.isCrossinline,
                                 isNoinline = arg.isNoinline,
                                 isHidden = arg.isHidden,
-                                isAssignable = arg.isAssignable
                         )
                 }
-                val overriddenJobDescriptor = OverriddenFunctionInfo(jobFunction, runtimeJobFunction)
+                val overriddenJobDescriptor = OverriddenFunctionInfo(jobFunction, runtimeJobFunction, bridgesPolicy)
                 if (!overriddenJobDescriptor.needBridge) return expression
 
                 val bridge = context.buildBridge(
@@ -112,14 +179,12 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                         overriddenFunction = overriddenJobDescriptor,
                         targetSymbol = jobFunction.symbol)
                 bridges += bridge
-                expression.putValueArgument(3, IrFunctionReferenceImpl.fromSymbolOwner(
+                expression.putValueArgument(3, IrRawFunctionReferenceImpl(
                         startOffset   = job.startOffset,
                         endOffset     = job.endOffset,
                         type          = job.type,
-                        symbol        = bridge.symbol,
-                        typeArgumentsCount = 0,
-                        reflectionTarget = null)
-                )
+                        symbol        = bridge.symbol
+                ))
                 return expression
             }
         })
@@ -128,6 +193,7 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
 }
 
 internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
+    private val bridgesPolicy = context.config.bridgesPolicy
 
     override fun lower(irClass: IrClass) {
         val builtBridges = mutableSetOf<IrSimpleFunction>()
@@ -135,7 +201,7 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
         for (function in irClass.simpleFunctions()) {
             val set = mutableSetOf<BridgeDirections>()
             for (overriddenFunction in function.allOverriddenFunctions) {
-                val overriddenFunctionInfo = OverriddenFunctionInfo(function, overriddenFunction)
+                val overriddenFunctionInfo = OverriddenFunctionInfo(function, overriddenFunction, bridgesPolicy)
                 val bridgeDirections = overriddenFunctionInfo.bridgeDirections
                 if (!bridgeDirections.allNotNeeded() && overriddenFunctionInfo.canBeCalledVirtually
                         && !overriddenFunctionInfo.inheritsBridge && set.add(bridgeDirections)) {
@@ -155,8 +221,7 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
 
                 val body = declaration.body ?: return declaration
 
-                val descriptor = declaration.descriptor
-                val typeSafeBarrierDescription = BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(descriptor)
+                val typeSafeBarrierDescription = declaration.getDefaultValueForOverriddenBuiltinFunction()
                 if (typeSafeBarrierDescription == null || builtBridges.contains(declaration))
                     return declaration
 
@@ -181,14 +246,17 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
     }
 }
 
-internal class DECLARATION_ORIGIN_BRIDGE_METHOD(val bridgeTarget: IrFunction) : IrDeclarationOrigin {
+internal class DECLARATION_ORIGIN_BRIDGE_METHOD(val bridgeTarget: IrSimpleFunction) : IrDeclarationOrigin {
+    override val name: String
+        get() = "BRIDGE_METHOD"
+
     override fun toString(): String {
-        return "BRIDGE_METHOD(target=${bridgeTarget.symbol})"
+        return "$name(target=${bridgeTarget.symbol})"
     }
 }
 
-internal val IrFunction.bridgeTarget: IrFunction?
-        get() = (origin as? DECLARATION_ORIGIN_BRIDGE_METHOD)?.bridgeTarget
+internal val IrSimpleFunction.bridgeTarget: IrSimpleFunction?
+    get() = (origin as? DECLARATION_ORIGIN_BRIDGE_METHOD)?.bridgeTarget
 
 private fun IrBuilderWithScope.returnIfBadType(value: IrExpression,
                                                type: IrType,
@@ -217,7 +285,9 @@ private fun IrBlockBodyBuilder.buildTypeSafeBarrier(function: IrFunction,
         // But let's keep it simple here for now; JVM backend doesn't do this anyway.
 
         if (!type.isNullableAny()) {
-            +returnIfBadType(irGet(valueParameters[i]), type,
+            // Here, we can't trust value parameter type until we check it, because of @UnsafeVariance
+            // So we add implicit cast to avoid type check optimization
+            +returnIfBadType(irImplicitCast(irGet(valueParameters[i]), context.irBuiltIns.anyNType), type,
                     if (typeSafeBarrierDescription == SpecialGenericSignatures.TypeSafeBarrierDescription.MAP_GET_OR_DEFAULT)
                         irGet(valueParameters[2])
                     else irConst(typeSafeBarrierDescription.defaultValue)
@@ -229,8 +299,8 @@ private fun IrBlockBodyBuilder.buildTypeSafeBarrier(function: IrFunction,
 private fun Context.buildBridge(startOffset: Int, endOffset: Int,
                                 overriddenFunction: OverriddenFunctionInfo, targetSymbol: IrSimpleFunctionSymbol,
                                 superQualifierSymbol: IrClassSymbol? = null): IrFunction {
-
-    val bridge = specialDeclarationsFactory.getBridge(overriddenFunction)
+    val target = targetSymbol.owner.target
+    val bridge = bridgesSupport.getBridge(overriddenFunction)
 
     if (bridge.modality == Modality.ABSTRACT) {
         return bridge
@@ -238,27 +308,19 @@ private fun Context.buildBridge(startOffset: Int, endOffset: Int,
 
     val irBuilder = createIrBuilder(bridge.symbol, startOffset, endOffset)
     bridge.body = irBuilder.irBlockBody(bridge) {
-        val typeSafeBarrierDescription = BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(overriddenFunction.overriddenFunction.descriptor)
+        val typeSafeBarrierDescription = overriddenFunction.overriddenFunction.getDefaultValueForOverriddenBuiltinFunction()
         typeSafeBarrierDescription?.let { buildTypeSafeBarrier(bridge, overriddenFunction.function, it) }
 
         val delegatingCall = IrCallImpl.fromSymbolOwner(
                 startOffset,
                 endOffset,
-                targetSymbol.owner.returnType,
-                targetSymbol,
-                typeArgumentsCount = targetSymbol.owner.typeParameters.size,
-                valueArgumentsCount = targetSymbol.owner.valueParameters.size,
+                target.returnType,
+                target.symbol,
                 superQualifierSymbol = superQualifierSymbol /* Call non-virtually */
         ).apply {
-            bridge.dispatchReceiverParameter?.let {
-                dispatchReceiver = irGet(it)
-            }
-            bridge.extensionReceiverParameter?.let {
-                extensionReceiver = irGet(it)
-            }
-            bridge.valueParameters.forEachIndexed { index, parameter ->
-                this.putValueArgument(index, irGet(parameter))
-            }
+            bridge.dispatchReceiverParameter?.let { dispatchReceiver = irGet(it) }
+            bridge.extensionReceiverParameter?.let { extensionReceiver = irGet(it) }
+            bridge.valueParameters.forEachIndexed { index, parameter -> putValueArgument(index, irGet(parameter)) }
         }
 
         +irReturn(delegatingCall)

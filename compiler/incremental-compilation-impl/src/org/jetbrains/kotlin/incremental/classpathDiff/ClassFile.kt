@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 
 import java.io.File
 
-/** Information to locate a .class file. */
+/** Information about the location of a .class file. */
 class ClassFile(
 
     /** Directory or jar containing the .class file. */
@@ -25,13 +25,21 @@ class ClassFile(
     val unixStyleRelativePath: String
 
     init {
-        unixStyleRelativePath = relativePath.replace('\\', '/')
+        unixStyleRelativePath = File(relativePath).invariantSeparatorsPath
     }
 }
 
-/** Contains the contents of a [ClassFile] and information extracted from the contents. */
-class ClassFileWithContents(
+/** Information about the location of a .class file ([ClassFile]) and how to load its contents. */
+class ClassFileWithContentsProvider(
     val classFile: ClassFile,
+    val contentsProvider: () -> ByteArray
+) {
+    fun loadContents() = ClassFileWithContents(classFile, contentsProvider.invoke())
+}
+
+/** Information about the location of a .class file ([ClassFile]) and its contents. */
+class ClassFileWithContents(
+    @Suppress("unused") val classFile: ClassFile,
     val contents: ByteArray
 ) {
     val classInfo: BasicClassInfo by lazy {

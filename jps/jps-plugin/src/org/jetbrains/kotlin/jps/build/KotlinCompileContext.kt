@@ -12,7 +12,9 @@ import org.jetbrains.jps.incremental.GlobalContextKey
 import org.jetbrains.jps.incremental.fs.CompilationRound
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
+import org.jetbrains.kotlin.build.joinToReadableString
 import org.jetbrains.kotlin.config.CompilerRunnerConstants.KOTLIN_COMPILER_NAME
+import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
 import org.jetbrains.kotlin.jps.KotlinJpsBundle
@@ -80,7 +82,13 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
     val fileToPathConverter: FileToPathConverter =
         JpsFileToPathConverter(jpsContext.projectDescriptor.project)
 
-    val lookupStorageManager = JpsLookupStorageManager(dataManager, fileToPathConverter)
+    val icContext = IncrementalCompilationContext(
+        pathConverterForSourceFiles = fileToPathConverter,
+        pathConverterForOutputFiles = fileToPathConverter,
+        useCompilerMapsOnly = KotlinBuilder.isKotlinBuilderInDumbMode
+    )
+
+    val lookupStorageManager = JpsLookupStorageManager(dataManager, icContext)
 
     /**
      * Flag to prevent rebuilding twice.
@@ -302,11 +310,4 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
             )
         }
     }
-}
-
-fun List<String>.joinToReadableString(): String = when {
-    size > 5 -> take(5).joinToString() + " and ${size - 5} more"
-    size > 1 -> dropLast(1).joinToString() + " and ${last()}"
-    size == 1 -> single()
-    else -> ""
 }

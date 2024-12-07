@@ -97,16 +97,16 @@ private const val P4 = -1.65339022054652515390e-06 /* 0xBEBBBD41, 0xC5D26BF1 */
 private const val P5 = 4.13813679705723846039e-08 /* 0x3E663769, 0x72BEA4D0 */
 
 
-internal fun __ieee754_exp(x: Double): Double    /* default IEEE double exp */ {
-    var x: Double = x
-    var y: Double = 0.0
+internal fun __ieee754_exp(_x: Double): Double    /* default IEEE double exp */ {
+    var x: Double = _x
+    var y: Double
     var hi: Double = 0.0
     var lo: Double = 0.0
-    var c: Double = 0.0
-    var t: Double = 0.0
+    var c: Double
+    var t: Double
     var k: Int = 0
-    var xsb: Int = 0
-    var hx: UInt = 0U
+    var xsb: Int
+    var hx: UInt
 
     hx = __HIu(x)    /* high word of x */
     xsb = ((hx shr 31) and 1U).toInt()        /* sign bit of x */

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.container.DslKt;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
-import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
+import org.jetbrains.kotlin.psi.KtPsiFactory;
 import org.jetbrains.kotlin.resolve.FunctionDescriptorResolver;
 import org.jetbrains.kotlin.resolve.OverridingUtil;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
@@ -146,7 +146,6 @@ public class KotlinOverridingTest extends KotlinTestWithEnvironment {
         assertNotOverridable(
                 "fun <T1, X : Array<out T1>> a(a : Array<*>) : T1",
                 "fun <T, Y : Array<out T>> a(a : Array<in T>) : T");
-
     }
 
     private void assertOverridable(String superFun, String subFun) {
@@ -169,7 +168,7 @@ public class KotlinOverridingTest extends KotlinTestWithEnvironment {
     }
 
     private FunctionDescriptor makeFunction(String funDecl) {
-        KtNamedFunction function = KtPsiFactoryKt.KtPsiFactory(getProject()).createFunction(funDecl);
+        KtNamedFunction function = new KtPsiFactory(getProject()).createFunction(funDecl);
         LexicalScope scope = TypeTestUtilsKt.builtInPackageAsLexicalScope(module);
         return functionDescriptorResolver.resolveFunctionDescriptor(
                 module, scope, function, DummyTraces.DUMMY_TRACE, DataFlowInfoFactory.EMPTY, null

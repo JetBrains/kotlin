@@ -19,21 +19,26 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.*
-import java.util.*
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.CLASS_BODY
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.MODIFIER_LIST
 
 class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDeclarationContainer {
+    private val lBraceTokenSet = TokenSet.create(KtTokens.LBRACE)
+    private val rBraceTokenSet = TokenSet.create(KtTokens.RBRACE)
+
     constructor(node: ASTNode) : super(node)
 
     constructor(stub: KotlinPlaceHolderStub<KtClassBody>) : super(stub, CLASS_BODY)
 
     override fun getParent() = parentByStub
 
-    override fun getDeclarations() = listOf(*getStubOrPsiChildren(DECLARATION_TYPES, KtDeclaration.ARRAY_FACTORY))
+    override fun getDeclarations() = stub?.getChildrenByType(KtFile.FILE_DECLARATION_TYPES, KtDeclaration.ARRAY_FACTORY)?.toList()
+        ?: PsiTreeUtil.getChildrenOfTypeAsList(this, KtDeclaration::class.java)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitClassBody(this, data)
 
@@ -56,14 +61,20 @@ class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDec
         get() = getStubOrPsiChildrenAsList(KtStubElementTypes.OBJECT_DECLARATION).filter { it.isCompanion() }
 
     val rBrace: PsiElement?
-        get() = node.getChildren(TokenSet.create(KtTokens.RBRACE)).singleOrNull()?.psi
+        get() = node.getChildren(rBraceTokenSet).singleOrNull()?.psi
 
     val lBrace: PsiElement?
-        get() = node.getChildren(TokenSet.create(KtTokens.LBRACE)).singleOrNull()?.psi
+        get() = node.getChildren(lBraceTokenSet).singleOrNull()?.psi
 
     /**
      * @return annotations that do not belong to any declaration due to incomplete code or syntax errors
      */
     val danglingAnnotations: List<KtAnnotationEntry>
-        get() = getStubOrPsiChildrenAsList(MODIFIER_LIST).flatMap { it.annotationEntries }
+        get() = danglingModifierLists.flatMap { it.annotationEntries }
+
+    /**
+     * @return modifier lists that do not belong to any declaration due to incomplete code or syntax errors
+     */
+    val danglingModifierLists: List<KtModifierList>
+        get() = getStubOrPsiChildrenAsList(MODIFIER_LIST)
 }

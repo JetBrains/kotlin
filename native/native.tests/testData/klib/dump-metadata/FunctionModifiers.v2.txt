@@ -1,0 +1,34 @@
+library {
+  // module name: <FunctionModifiers.kt>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Foo
+
+    // signature: /Foo|null[0]
+    public final class Foo : kotlin/Any {
+
+      // signature: /Foo.<init>|<init>(){}[0]
+      public constructor()
+
+      // signature: /Foo.f1|f1(){}[0]
+      public final fun f1(): kotlin/Unit
+
+      // signature: /Foo.f2|f2(kotlin.Int){}[0]
+      public final infix fun f2(x: kotlin/Int): kotlin/Unit
+
+      // signature: /Foo.f3|f3(){}[0]
+      public final suspend fun f3(): kotlin/Unit
+
+      // signature: /Foo.f4|f4(){}[0]
+      public final tailrec fun f4(): kotlin/Unit
+
+      // signature: /Foo.f5|f5(kotlin.IntArray...){}[0]
+      public final fun f5(vararg x: kotlin/Int /* kotlin/IntArray */): kotlin/Unit
+
+      // signature: /Foo.plus|plus(kotlin.Int){}[0]
+      public final operator fun plus(x: kotlin/Int): kotlin/Unit
+    }
+  }
+}

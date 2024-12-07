@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2022 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -8,15 +8,9 @@
 
 #include <type_traits>
 
+#include "ManuallyScoped.hpp"
 #include "Memory.h"
-
-// TODO: Generalize for uses outside this file.
-enum class ErrorPolicy {
-  kIgnore,  // Ignore any errors. (i.e. unsafe mode)
-  kDefaultValue,  // Return the default value from the function when an error happens.
-  kThrow,  // Throw a Kotlin exception when an error happens. The exact exception is chosen by the callee.
-  kTerminate,  // Terminate immediately when an error happens.
-};
+#include "concurrent/Mutex.hpp"
 
 class KRefSharedHolder {
  public:
@@ -24,55 +18,61 @@ class KRefSharedHolder {
 
   void init(ObjHeader* obj);
 
-  // Error if called from the wrong worker with non-frozen obj_.
-  template <ErrorPolicy errorPolicy>
   ObjHeader* ref() const;
 
-  void dispose() const;
-
-  void disposeFromNative() const {
-    kotlin::CalledFromNativeGuard guard;
-    dispose();
-  }
+  void dispose();
 
   OBJ_GETTER0(describe) const;
 
  private:
   ObjHeader* obj_;
-  ForeignRefContext context_;
+  kotlin::mm::RawSpecialRef* ref_;
 };
 
 static_assert(std::is_trivially_destructible_v<KRefSharedHolder>, "KRefSharedHolder destructor is not guaranteed to be called.");
 
 class BackRefFromAssociatedObject {
  public:
+  void initForPermanentObject(ObjHeader* obj);
+
   void initAndAddRef(ObjHeader* obj);
 
-  // Error if refCount is zero and it's called from the wrong worker with non-frozen obj_.
-  template <ErrorPolicy errorPolicy>
+  // Returns true if initialized as permanent.
+  bool initWithExternalRCRef(void* ref) noexcept;
+
   void addRef();
 
-  // Error if called from the wrong worker with non-frozen obj_.
-  template <ErrorPolicy errorPolicy>
   bool tryAddRef();
 
   void releaseRef();
 
-  void detach();
-  void assertDetached();
+  void dealloc();
 
-  // Error if called from the wrong worker with non-frozen obj_.
-  template <ErrorPolicy errorPolicy>
   ObjHeader* ref() const;
 
+  ObjHeader* refPermanent() const;
+
+  void* externalRCRef(bool permanent) const noexcept;
+
  private:
-  ObjHeader* obj_; // May be null before [initAndAddRef] or after [detach].
-  ForeignRefContext context_;
-  volatile int refCount;
+  union {
+    struct {
+      kotlin::mm::RawSpecialRef* ref_;
+      kotlin::ManuallyScoped<kotlin::RWSpinLock> deallocMutex_;
+    }; // Regular object.
+    ObjHeader* permanentObj_; // Permanent object.
+  };
 };
 
 static_assert(
         std::is_trivially_destructible_v<BackRefFromAssociatedObject>,
         "BackRefFromAssociatedObject destructor is not guaranteed to be called.");
+
+extern "C" {
+RUNTIME_NOTHROW void KRefSharedHolder_initLocal(KRefSharedHolder* holder, ObjHeader* obj);
+RUNTIME_NOTHROW void KRefSharedHolder_init(KRefSharedHolder* holder, ObjHeader* obj);
+RUNTIME_NOTHROW void KRefSharedHolder_dispose(KRefSharedHolder* holder);
+RUNTIME_NOTHROW ObjHeader* KRefSharedHolder_ref(const KRefSharedHolder* holder);
+} // extern "C"
 
 #endif // RUNTIME_MEMORYSHAREDREFS_HPP

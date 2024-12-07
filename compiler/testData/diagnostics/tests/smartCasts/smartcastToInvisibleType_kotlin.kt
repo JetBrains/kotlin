@@ -1,5 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // INFERENCE_HELPERS
-// ISSUE: KT-44802
+// ISSUES: KT-44802, KT-56744
+// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedOrVararg
 // FILE: a.kt
 
 package foo

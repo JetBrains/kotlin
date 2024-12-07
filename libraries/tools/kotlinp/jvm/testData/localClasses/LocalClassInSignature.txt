@@ -1,0 +1,39 @@
+// LocalClassInSignatureKt.class
+// ------------------------------------------
+package {
+
+  // signature: test()V
+  public final fun test(): kotlin/Unit
+
+  // module name: test-module
+}
+// LocalClassInSignatureKt$test$Local.class
+// ------------------------------------------
+local open class .LocalClassInSignatureKt$test$Local : kotlin/Any {
+
+  // signature: <init>()V
+  public constructor()
+
+  // signature: generic(LLocalClassInSignatureKt$test$Local;)LLocalClassInSignatureKt$test$Local;
+  public final fun <T#0 /* T */ : .LocalClassInSignatureKt$test$Local, T#1 /* U */ : T#0> generic(t: T#0): T#1
+
+  // signature: param(LLocalClassInSignatureKt$test$Local;)V
+  public final fun param(l: .LocalClassInSignatureKt$test$Local): kotlin/Unit
+
+  // signature: receiver(LLocalClassInSignatureKt$test$Local;)LLocalClassInSignatureKt$test$Local;
+  public final fun .LocalClassInSignatureKt$test$Local.receiver(): .LocalClassInSignatureKt$test$Local
+
+  // field: returnType:LLocalClassInSignatureKt$test$Local;
+  // getter: getReturnType()LLocalClassInSignatureKt$test$Local;
+  public final val returnType: .LocalClassInSignatureKt$test$Local
+    public final get
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package <root> {
+    LocalClassInSignatureKt
+  }
+}

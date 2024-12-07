@@ -4,3 +4,16 @@
  */
 
 #include "MarkAndSweepUtils.hpp"
+
+void kotlin::gc::stopTheWorld(GCHandle gcHandle, const char* reason) noexcept {
+    mm::RequestThreadsSuspension(reason);
+    gcHandle.suspensionRequested();
+
+    mm::WaitForThreadsSuspension();
+    gcHandle.threadsAreSuspended();
+}
+
+void kotlin::gc::resumeTheWorld(kotlin::gc::GCHandle gcHandle) noexcept {
+    mm::ResumeThreads();
+    gcHandle.threadsAreResumed();
+}

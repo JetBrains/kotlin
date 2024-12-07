@@ -1,0 +1,24 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final object /A // /A|null[0]
+final enum class /Enum : kotlin/Enum</Enum> { // /Enum|null[0]
+    final val entries // /Enum.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries</Enum> // /Enum.entries.<get-entries>|<get-entries>#static(){}[0]
+    final fun valueOf(kotlin/String): /Enum // /Enum.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array</Enum> // /Enum.values|values#static(){}[0]
+    enum entry A // /Enum.A|null[0]
+}
+final class /Z { // /Z|null[0]
+    constructor <init>() // /Z.<init>|<init>(){}[0]
+    final object Companion // /Z.Companion|null[0]
+}
+final val /a // /a|{}a[0]
+    final fun <get-a>(): kotlin/Int // /a.<get-a>|<get-a>(){}[0]
+final fun /test1(): /Enum // /test1|test1(){}[0]
+final fun /test2(): /A // /test2|test2(){}[0]
+final fun /test3(): kotlin/Int // /test3|test3(){}[0]
+final fun /test4(): /Z.Companion // /test4|test4(){}[0]

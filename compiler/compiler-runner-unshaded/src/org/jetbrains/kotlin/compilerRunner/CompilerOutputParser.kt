@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.containers.Stack
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -43,7 +42,7 @@ object CompilerOutputParser {
             @Throws(IOException::class)
             override fun read(cbuf: CharArray, off: Int, len: Int): Int {
                 val read = reader.read(cbuf, off, len)
-                stringBuilder.append(cbuf, off, len)
+                stringBuilder.appendRange(cbuf, off, off + len)
                 return read
             }
 
@@ -64,32 +63,29 @@ object CompilerOutputParser {
             factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
             val parser = factory.newSAXParser()
             parser.parse(InputSource(wrappingReader), CompilerOutputSAXHandler(messageCollector, collector))
-        }
-        catch (e: Throwable) {
+        } catch (e: Throwable) {
             // Load all the text into the stringBuilder
             try {
                 // This will not close the reader (see the wrapper above)
-                FileUtil.loadTextAndClose(wrappingReader)
-            }
-            catch (ioException: IOException) {
+                wrappingReader.readText()
+            } catch (ioException: IOException) {
                 reportException(messageCollector, ioException)
             }
 
             val message = stringBuilder.toString()
             reportException(messageCollector, IllegalStateException(message, e))
             messageCollector.report(ERROR, message)
-        }
-        finally {
+        } finally {
             try {
                 reader.close()
-            }
-            catch (e: IOException) {
+            } catch (e: IOException) {
                 reportException(messageCollector, e)
             }
         }
     }
 
-    private class CompilerOutputSAXHandler(private val messageCollector: MessageCollector, private val collector: OutputItemsCollector) : DefaultHandler() {
+    private class CompilerOutputSAXHandler(private val messageCollector: MessageCollector, private val collector: OutputItemsCollector) :
+        DefaultHandler() {
 
         private val message = StringBuilder()
         private val tags = Stack<String>()
@@ -116,8 +112,7 @@ object CompilerOutputParser {
                 if (!message.trim { it <= ' ' }.isEmpty()) {
                     messageCollector.report(ERROR, "Unhandled compiler output: $message")
                 }
-            }
-            else {
+            } else {
                 message.append(ch, start, length)
             }
         }
@@ -138,8 +133,7 @@ object CompilerOutputParser {
 
             if (category == OUTPUT) {
                 reportToCollector(text)
-            }
-            else {
+            } else {
                 messageCollector.report(category, text, CompilerMessageLocation.create(path, line, column, null))
             }
             tags.pop()
@@ -154,13 +148,14 @@ object CompilerOutputParser {
 
         companion object {
             private val CATEGORIES = mapOf(
-                    "error" to ERROR,
-                    "warning" to WARNING,
-                    "logging" to LOGGING,
-                    "output" to OUTPUT,
-                    "exception" to EXCEPTION,
-                    "info" to INFO,
-                    "messages" to INFO)
+                "error" to ERROR,
+                "warning" to WARNING,
+                "logging" to LOGGING,
+                "output" to OUTPUT,
+                "exception" to EXCEPTION,
+                "info" to INFO,
+                "messages" to INFO
+            )
 
             private fun safeParseInt(value: String?, defaultValue: Int): Int {
                 if (value == null) {
@@ -168,8 +163,7 @@ object CompilerOutputParser {
                 }
                 try {
                     return Integer.parseInt(value.trim { it <= ' ' })
-                }
-                catch (e: NumberFormatException) {
+                } catch (e: NumberFormatException) {
                     return defaultValue
                 }
 

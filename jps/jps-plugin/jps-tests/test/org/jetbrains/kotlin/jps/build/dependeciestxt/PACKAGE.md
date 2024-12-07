@@ -34,5 +34,5 @@ Supported dependency flags:
   - `runtime`
   - `provided`
   - `expectedBy` (old MPP)
-  - `included` (new MPP)
-  - `exproted`
+  - `include` (new MPP)
+  - `exported`

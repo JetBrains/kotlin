@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface Base
 class Inv<K> : Base
 

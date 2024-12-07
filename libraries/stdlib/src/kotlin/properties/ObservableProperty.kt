@@ -40,4 +40,6 @@ public abstract class ObservableProperty<V>(initialValue: V) : ReadWriteProperty
         this.value = value
         afterChange(property, oldValue, value)
     }
+
+    override fun toString(): String = "ObservableProperty(value=$value)"
 }

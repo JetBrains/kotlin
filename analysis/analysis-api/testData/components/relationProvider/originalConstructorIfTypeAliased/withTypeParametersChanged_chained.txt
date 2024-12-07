@@ -1,0 +1,175 @@
+Resolved constructor:
+  KaConstructorSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Public
+    containingClassId: test/MyTypeAliasSecond
+    contextReceivers: []
+    hasStableParameterNames: true
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isPrimary: false
+    location: CLASS
+    modality: FINAL
+    origin: TYPEALIASED_CONSTRUCTOR
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: [
+        KaUsualClassType:
+          annotations: []
+          typeArguments: [
+            KaUsualClassType:
+              annotations: []
+              typeArguments: [
+                KaTypeParameterType:
+                  annotations: []
+                  type: T2
+              ]
+              type: test/Cell<T2>
+          ]
+          type: test/Cell<test/Cell<T2>>
+      ]
+      type: {test/MyTypeAliasSecond<T2>=} test/MyClass<test/Cell<test/Cell<T2>>>
+    typeParameters: [
+      KaTypeParameterSymbol:
+        annotations: []
+        compilerVisibility: Local
+        isActual: false
+        isExpect: false
+        isReified: false
+        location: LOCAL
+        modality: FINAL
+        name: T2
+        origin: SOURCE
+        upperBounds: []
+        variance: INVARIANT
+        visibility: LOCAL
+        getContainingFileSymbol: KaFileSymbol(withTypeParametersChanged_chained.kt)
+        getContainingModule: KaSourceModule "Sources of main"
+        deprecationStatus: null
+    ]
+    valueParameters: [
+      KaValueParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        generatedPrimaryConstructorProperty: null
+        hasDefaultValue: false
+        isActual: false
+        isCrossinline: false
+        isExpect: false
+        isExtension: false
+        isImplicitLambdaParameter: false
+        isNoinline: false
+        isVal: true
+        isVararg: false
+        location: LOCAL
+        modality: FINAL
+        name: t
+        origin: TYPEALIASED_CONSTRUCTOR
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: [
+            KaUsualClassType:
+              annotations: []
+              typeArguments: [
+                KaTypeParameterType:
+                  annotations: []
+                  type: T2
+              ]
+              type: test/Cell<T2>
+          ]
+          type: test/Cell<test/Cell<T2>>
+        visibility: PUBLIC
+        getContainingFileSymbol: KaFileSymbol(withTypeParametersChanged_chained.kt)
+        getContainingJvmClassName: null
+        getContainingModule: KaSourceModule "Sources of main"
+        deprecationStatus: null
+    ]
+    visibility: PUBLIC
+    getContainingFileSymbol: KaFileSymbol(withTypeParametersChanged_chained.kt)
+    getContainingJvmClassName: null
+    getContainingModule: KaSourceModule "Sources of main"
+    deprecationStatus: null
+
+Original constructor if type aliased:
+  KaConstructorSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Public
+    containingClassId: test/MyClass
+    contextReceivers: []
+    hasStableParameterNames: true
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isPrimary: true
+    location: CLASS
+    modality: FINAL
+    origin: SOURCE
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: [
+        KaTypeParameterType:
+          annotations: []
+          type: T
+      ]
+      type: test/MyClass<T>
+    typeParameters: [
+      KaTypeParameterSymbol:
+        annotations: []
+        compilerVisibility: Local
+        isActual: false
+        isExpect: false
+        isReified: false
+        location: CLASS
+        modality: FINAL
+        name: T
+        origin: SOURCE
+        upperBounds: []
+        variance: INVARIANT
+        visibility: LOCAL
+        getContainingFileSymbol: KaFileSymbol(withTypeParametersChanged_chained.kt)
+        getContainingModule: KaSourceModule "Sources of main"
+        deprecationStatus: null
+    ]
+    valueParameters: [
+      KaValueParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        generatedPrimaryConstructorProperty: null
+        hasDefaultValue: false
+        isActual: false
+        isCrossinline: false
+        isExpect: false
+        isExtension: false
+        isImplicitLambdaParameter: false
+        isNoinline: false
+        isVal: true
+        isVararg: false
+        location: LOCAL
+        modality: FINAL
+        name: t
+        origin: SOURCE
+        receiverParameter: null
+        returnType: KaTypeParameterType:
+          annotations: []
+          type: T
+        visibility: PUBLIC
+        getContainingFileSymbol: KaFileSymbol(withTypeParametersChanged_chained.kt)
+        getContainingJvmClassName: test.MyClass
+        getContainingModule: KaSourceModule "Sources of main"
+        deprecationStatus: null
+    ]
+    visibility: PUBLIC
+    getContainingFileSymbol: KaFileSymbol(withTypeParametersChanged_chained.kt)
+    getContainingJvmClassName: test.MyClass
+    getContainingModule: KaSourceModule "Sources of main"
+    deprecationStatus: null

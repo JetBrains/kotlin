@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface I1
 interface I2
 
@@ -13,8 +14,8 @@ class A {
         val o2 by lazy {
             object : I1 {}
         }
-        val o3 = object : I1, I2 {} // FIR allows this since the containing class is private
-        val o4 by lazy { // FIR allows this since the containing class is private
+        val <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>o3<!> = object : I1, I2 {} // FIR allows this since the containing class is private
+        val <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>o4<!> by lazy { // FIR allows this since the containing class is private
             object : I1, I2 {}
         }
 

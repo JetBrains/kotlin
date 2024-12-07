@@ -1,22 +1,31 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // constructor vs. fun overload
 
+// FILE: constructorVsFun/J.java
+package constructorVsFun;
+
+public class J {
+    public J(String s) {}
+}
+
+// FILE: test.kt
 package constructorVsFun
 
-class a() { }
+class a<!CONFLICTING_OVERLOADS!>()<!> { }
 
-fun a() = 1
+<!CONFLICTING_OVERLOADS!>fun a()<!> = 1
 
 class Tram {
-    fun f() { }
+    <!CONFLICTING_OVERLOADS!>fun f()<!> { }
 
-    class f() { }
+    class f<!CONFLICTING_OVERLOADS!>()<!> { }
 }
 
 class Yvayva {
     companion object {
-        fun fghj() { }
+        <!CONFLICTING_OVERLOADS!>fun fghj()<!> { }
 
-        class fghj() { }
+        class fghj<!CONFLICTING_OVERLOADS!>()<!> { }
     }
 }
 
@@ -27,3 +36,5 @@ class Rtyu {
         class ololo() { }
     }
 }
+
+<!CONFLICTING_OVERLOADS!>fun J(s: String)<!> { }

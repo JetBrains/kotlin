@@ -1,7 +1,20 @@
 import kotlin.reflect.KClass;
 
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>(Lkotlin/reflect/KClass;)V
+ *   public constructor(klass: kotlin/reflect/KClass<*>)
+ *
+ *   // getter: klass()Ljava/lang/Class;
+ *   public final val klass: kotlin/reflect/KClass<*>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
 public abstract @interface Anno {
 
     public abstract java.lang.Class<?> klass();
@@ -12,8 +25,17 @@ public abstract @interface Anno {
 
 import kotlin.reflect.KClass;
 
-@kotlin.Metadata()
 @ABC()
+/**
+ * public final class ErrorMissingAnnotation : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
 public final class ErrorMissingAnnotation {
 
     public ErrorMissingAnnotation() {
@@ -26,9 +48,18 @@ public final class ErrorMissingAnnotation {
 
 import kotlin.reflect.KClass;
 
-@kotlin.Metadata()
-@CDE()
 @ABC()
+@CDE()
+/**
+ * public final class ErrorMultipleMissingAnnotations : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
 public final class ErrorMultipleMissingAnnotations {
 
     public ErrorMultipleMissingAnnotations() {
@@ -41,13 +72,45 @@ public final class ErrorMultipleMissingAnnotations {
 
 import kotlin.reflect.KClass;
 
-@kotlin.Metadata()
-@ABC()
-@Anno(klass = ABC.class)
 @CDE()
+@Anno(klass = ABC.class)
+@ABC()
+/**
+ * public final class ErrorSomeMissingAnnotations : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
 public final class ErrorSomeMissingAnnotations {
 
     public ErrorSomeMissingAnnotations() {
+        super();
+    }
+}
+
+////////////////////
+
+
+import kotlin.reflect.KClass;
+
+@com.example.XYZ()
+/**
+ * public final class FullyQualifiedMissingAnnotation : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class FullyQualifiedMissingAnnotation {
+
+    public FullyQualifiedMissingAnnotation() {
         super();
     }
 }

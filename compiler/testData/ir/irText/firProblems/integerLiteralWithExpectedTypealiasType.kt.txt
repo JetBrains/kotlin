@@ -1,0 +1,12 @@
+fun box(): String {
+  return foo(l = 0L)
+}
+
+fun foo(l: Long): String {
+  return when {
+    EQEQ(arg0 = l, arg1 = 0L) -> "OK"
+    else -> "fail"
+  }
+}
+
+typealias MyLong = Long

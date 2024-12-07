@@ -5,49 +5,34 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler.pipeline
 
-import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
+import org.jetbrains.kotlin.cli.common.GroupedKtSources
+import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.Fir2IrPluginContext
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.modules.TargetId
-import org.jetbrains.kotlin.platform.TargetPlatform
-
-// ---
 
 data class ModuleCompilerInput(
     val targetId: TargetId,
-    val commonPlatform: TargetPlatform,
-    val commonSources: Collection<KtSourceFile>,
-    val platform: TargetPlatform,
-    val platformSources: Collection<KtSourceFile>,
+    val groupedSources: GroupedKtSources,
     val configuration: CompilerConfiguration,
-    val friendFirModules: Collection<FirModuleData> = emptyList()
 )
 
 data class ModuleCompilerEnvironment(
-    val projectEnvironment: AbstractProjectEnvironment,
+    val projectEnvironment: VfsBasedProjectEnvironment,
     val diagnosticsReporter: BaseDiagnosticsCollector
 )
 
 data class ModuleCompilerOutput(
-    val generationState: GenerationState
-)
-
-// ---
-
-data class ModuleCompilerAnalyzedOutput(
-    val session: FirSession,
-    val scopeSession: ScopeSession,
-    val fir: List<FirFile>
+    val generationState: GenerationState,
+    val builderFactory: ClassBuilderFactory
 )
 
 data class ModuleCompilerIrBackendInput(
@@ -55,7 +40,8 @@ data class ModuleCompilerIrBackendInput(
     val configuration: CompilerConfiguration,
     val extensions: JvmFir2IrExtensions,
     val irModuleFragment: IrModuleFragment,
-    val symbolTable: SymbolTable,
     val components: Fir2IrComponents,
-    val firSession: FirSession
+    val pluginContext: Fir2IrPluginContext,
+    val irActualizedResult: IrActualizedResult?,
+    val symbolTable: SymbolTable,
 )

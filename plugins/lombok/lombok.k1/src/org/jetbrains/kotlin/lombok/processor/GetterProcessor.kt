@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.lombok.processor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.lombok.config.*
 import org.jetbrains.kotlin.lombok.config.LombokAnnotations.Accessors
 import org.jetbrains.kotlin.lombok.config.LombokAnnotations.Getter
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.name.Name
 
 class GetterProcessor(private val config: LombokConfig) : Processor {
 
-    override fun contribute(classDescriptor: ClassDescriptor, partsBuilder: SyntheticPartsBuilder) {
+    override fun contribute(classDescriptor: ClassDescriptor, partsBuilder: SyntheticPartsBuilder, c: LazyJavaResolverContext) {
         val globalAccessors = Accessors.get(classDescriptor, config)
         val clGetter =
             Getter.getOrNull(classDescriptor)

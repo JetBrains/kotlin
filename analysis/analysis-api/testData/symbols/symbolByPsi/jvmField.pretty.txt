@@ -1,0 +1,3 @@
+var jvmField: kotlin.Long
+
+var jvmFieldOnField: kotlin.Int

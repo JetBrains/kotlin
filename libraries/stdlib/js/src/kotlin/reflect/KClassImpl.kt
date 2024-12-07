@@ -15,7 +15,14 @@ internal abstract class KClassImpl<T : Any>(
         get() = TODO()
 
     override fun equals(other: Any?): Boolean {
-        return other is KClassImpl<*> && jClass == other.jClass
+        return when (other) {
+            // NothingKClassImpl and ErrorKClass don't provide the jClass property; therefore, process them separately.
+            // This can't be neither NothingKClassImpl nor ErrorKClass because they overload equals.
+            is NothingKClassImpl -> false
+            is ErrorKClass -> false
+            is KClassImpl<*> -> jClass == other.jClass
+            else -> false
+        }
     }
 
     // TODO: use FQN

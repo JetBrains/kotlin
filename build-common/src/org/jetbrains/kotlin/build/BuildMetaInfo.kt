@@ -6,70 +6,128 @@
 package org.jetbrains.kotlin.build
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.PluginClasspaths
-import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
-import kotlin.reflect.KClass
+import org.jetbrains.kotlin.config.*
 
-interface BuildMetaInfo {
-    val isEAP: Boolean
-    val compilerBuildVersion: String
-    val languageVersionString: String
-    val apiVersionString: String
-    val multiplatformEnable: Boolean
-    val metadataVersionMajor: Int
-    val metadataVersionMinor: Int
-    val metadataVersionPatch: Int
-    val ownVersion: Int
-    val coroutinesVersion: Int
-    val multiplatformVersion: Int
-    val pluginClasspaths: String
-}
-
-abstract class BuildMetaInfoFactory<T : BuildMetaInfo>(private val metaInfoClass: KClass<T>) {
-    protected abstract fun create(
-        isEAP: Boolean,
-        compilerBuildVersion: String,
-        languageVersionString: String,
-        apiVersionString: String,
-        multiplatformEnable: Boolean,
-        ownVersion: Int,
-        coroutinesVersion: Int,
-        multiplatformVersion: Int,
-        metadataVersionArray: IntArray?,
-        pluginClasspaths: String
-    ): T
-
-    fun create(args: CommonCompilerArguments): T {
-        val languageVersion = args.languageVersion?.let { LanguageVersion.fromVersionString(it) } ?: LanguageVersion.LATEST_STABLE
-
-        return create(
-            isEAP = !languageVersion.isStable,
-            compilerBuildVersion = KotlinCompilerVersion.VERSION,
-            languageVersionString = languageVersion.versionString,
-            apiVersionString = args.apiVersion ?: languageVersion.versionString,
-            multiplatformEnable = args.multiPlatform,
-            ownVersion = OWN_VERSION,
-            coroutinesVersion = COROUTINES_VERSION,
-            multiplatformVersion = MULTIPLATFORM_VERSION,
-            metadataVersionArray = args.metadataVersion?.let { BinaryVersion.parseVersionArray(it) },
-            pluginClasspaths = PluginClasspaths(args.pluginClasspaths).serialize()
-        )
+abstract class BuildMetaInfo {
+    enum class CustomKeys {
+        LANGUAGE_VERSION_STRING, IS_EAP, METADATA_VERSION_STRING, PLUGIN_CLASSPATHS, API_VERSION_STRING
     }
 
-    fun serializeToString(args: CommonCompilerArguments): String =
-        serializeToString(create(args))
+    fun obtainReasonForRebuild(currentCompilerArgumentsMap: Map<String, String>, previousCompilerArgsMap: Map<String, String>): String? {
+        if (currentCompilerArgumentsMap.keys != previousCompilerArgsMap.keys) {
+            return "Compiler arguments version was changed"
+        }
 
-    fun serializeToString(info: T): String =
-        serializeToPlainText(info, metaInfoClass)
+        val changedCompilerArguments = currentCompilerArgumentsMap.mapNotNull {
+            val key = it.key
+            val previousValue = previousCompilerArgsMap[it.key] ?: return@mapNotNull key
+            val currentValue = it.value
+            return@mapNotNull if (compareIsChanged(key, currentValue, previousValue)) key else null
+        }
 
-    fun deserializeFromString(str: String): T? =
-        deserializeFromPlainText(str, metaInfoClass)
-
-    companion object {
-        const val OWN_VERSION: Int = 0
-        const val COROUTINES_VERSION: Int = 0
-        const val MULTIPLATFORM_VERSION: Int = 0
+        if (changedCompilerArguments.isNotEmpty()) {
+            val rebuildReason = when (changedCompilerArguments.size) {
+                1 -> "One of compiler arguments was changed: "
+                else -> "Some compiler arguments were changed: "
+            } + changedCompilerArguments.joinToReadableString()
+            return rebuildReason
+        }
+        return null
     }
+
+    private fun compareIsChanged(key: String, currentValue: String, previousValue: String): Boolean {
+        // check for specific key changes
+        checkIfPlatformSpecificCompilerArgumentWasChanged(key, currentValue, previousValue)?.let { comparisonResult ->
+            return comparisonResult
+        }
+        when (key) {
+            CustomKeys.LANGUAGE_VERSION_STRING.name ->
+                return LanguageVersion.fromVersionString(currentValue) != LanguageVersion.fromVersionString(previousValue)
+            CustomKeys.API_VERSION_STRING.name -> return ApiVersion.parse(currentValue) != ApiVersion.parse(previousValue)
+            CustomKeys.PLUGIN_CLASSPATHS.name -> return !PluginClasspathComparator(previousValue, currentValue).equals()
+        }
+
+        // check keys that are sensitive for true -> false change
+        if (key in argumentsListForSpecialCheck) {
+            return previousValue == "true" && currentValue != "true"
+        }
+
+        // compare all other change-sensitive values
+        if (previousValue != currentValue) {
+            return true
+        }
+
+        return false
+    }
+
+    open fun checkIfPlatformSpecificCompilerArgumentWasChanged(key: String, currentValue: String, previousValue: String): Boolean? {
+        return null
+    }
+
+    open fun createPropertiesMapFromCompilerArguments(args: CommonCompilerArguments): Map<String, String> {
+        val resultMap = transformClassToPropertiesMap(args, excludedProperties).toMutableMap()
+        val languageVersion = args.languageVersion?.let { LanguageVersion.fromVersionString(it) }
+            ?: LanguageVersion.LATEST_STABLE
+        val languageVersionSting = languageVersion.versionString
+        resultMap[CustomKeys.LANGUAGE_VERSION_STRING.name] = languageVersionSting
+
+        val isEAP = languageVersion.isPreRelease()
+        resultMap[CustomKeys.IS_EAP.name] = isEAP.toString()
+
+        val apiVersionString = args.apiVersion ?: languageVersionSting
+        resultMap[CustomKeys.API_VERSION_STRING.name] = apiVersionString
+
+        val pluginClasspath = PluginClasspath(args.pluginClasspaths).serialize()
+        resultMap[CustomKeys.PLUGIN_CLASSPATHS.name] = pluginClasspath
+
+        return resultMap
+    }
+
+    fun deserializeMapFromString(inputString: String): Map<String, String> = inputString
+        .split("\n")
+        .filter(String::isNotBlank)
+        .associate { it.substringBefore("=") to it.substringAfter("=") }
+
+    private fun serializeMapToString(myList: Map<String, String>) = myList.map { "${it.key}=${it.value}" }.joinToString("\n")
+    fun serializeArgsToString(args: CommonCompilerArguments) = serializeMapToString(createPropertiesMapFromCompilerArguments(args))
+
+    open val excludedProperties = listOf(
+        "languageVersion",
+        "apiVersion",
+        "pluginClasspaths",
+        "metadataVersion",
+        "dumpDirectory",
+        "dumpOnlyFqName",
+        "dumpPerf",
+        "errors",
+        "extraHelp",
+        "freeArgs",
+        "help",
+        "intellijPluginRoot",
+        "kotlinHome",
+        "listPhases",
+        "phasesToDump",
+        "phasesToDumpAfter",
+        "phasesToDumpBefore",
+        "profilePhases",
+        "renderInternalDiagnosticNames",
+        "reportOutputFiles",
+        "reportPerf",
+        "script",
+        "verbose",
+        "verbosePhases",
+        "version"
+    )
+
+    open val argumentsListForSpecialCheck = listOf(
+        "allowAnyScriptsInSourceRoots",
+        "allowKotlinPackage",
+        "allowResultReturnType",
+        "noCheckActual",
+        "skipMetadataVersionCheck",
+        "skipPrereleaseCheck",
+        "suppressVersionWarnings",
+        "suppressWarnings",
+        CustomKeys.IS_EAP.name
+    )
 }

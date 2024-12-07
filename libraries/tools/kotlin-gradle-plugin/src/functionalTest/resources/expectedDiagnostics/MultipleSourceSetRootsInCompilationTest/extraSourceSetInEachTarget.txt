@@ -1,0 +1,87 @@
+[KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] The Default Kotlin Hierarchy Template was not applied to 'root project 'extraSourceSetInEachTarget'':
+Explicit .dependsOn() edges were configured for the following source sets:
+[jsMain, jsTest, jvmMain, jvmTest, linuxX64Main, linuxX64Test]
+
+Consider removing dependsOn-calls or disabling the default template by adding
+    'kotlin.mpp.applyDefaultHierarchyTemplate=false'
+to your gradle.properties
+
+Learn more about hierarchy templates: https://kotl.in/hierarchy-template
+----
+[MultipleSourceSetRootsInCompilation | WARNING] Kotlin Source Set 'jsExtraMain' is included to 'main' compilation of 'js' target,
+but it doesn't depend on 'commonMain'.
+
+Please remove 'jsExtraMain' and include its sources to the compilation's default source set:
+
+    kotlin.sourceSets["jsMain"].kotlin.srcDir() // <-- pass sources directory of 'jsExtraMain'
+
+Or provide explicit dependency if the solution above is not applicable
+
+    kotlin.sourceSets["jsExtraMain"].dependsOn(commonMain)
+
+See https://kotl.in/connecting-source-sets for more details.
+----
+[MultipleSourceSetRootsInCompilation | WARNING] Kotlin Source Set 'jsExtraTest' is included to 'test' compilation of 'js' target,
+but it doesn't depend on 'commonTest'.
+
+Please remove 'jsExtraTest' and include its sources to the compilation's default source set:
+
+    kotlin.sourceSets["jsTest"].kotlin.srcDir() // <-- pass sources directory of 'jsExtraTest'
+
+Or provide explicit dependency if the solution above is not applicable
+
+    kotlin.sourceSets["jsExtraTest"].dependsOn(commonTest)
+
+See https://kotl.in/connecting-source-sets for more details.
+----
+[MultipleSourceSetRootsInCompilation | WARNING] Kotlin Source Set 'jvmExtraMain' is included to 'main' compilation of 'jvm' target,
+but it doesn't depend on 'commonMain'.
+
+Please remove 'jvmExtraMain' and include its sources to the compilation's default source set:
+
+    kotlin.sourceSets["jvmMain"].kotlin.srcDir() // <-- pass sources directory of 'jvmExtraMain'
+
+Or provide explicit dependency if the solution above is not applicable
+
+    kotlin.sourceSets["jvmExtraMain"].dependsOn(commonMain)
+
+See https://kotl.in/connecting-source-sets for more details.
+----
+[MultipleSourceSetRootsInCompilation | WARNING] Kotlin Source Set 'jvmExtraTest' is included to 'test' compilation of 'jvm' target,
+but it doesn't depend on 'commonTest'.
+
+Please remove 'jvmExtraTest' and include its sources to the compilation's default source set:
+
+    kotlin.sourceSets["jvmTest"].kotlin.srcDir() // <-- pass sources directory of 'jvmExtraTest'
+
+Or provide explicit dependency if the solution above is not applicable
+
+    kotlin.sourceSets["jvmExtraTest"].dependsOn(commonTest)
+
+See https://kotl.in/connecting-source-sets for more details.
+----
+[MultipleSourceSetRootsInCompilation | WARNING] Kotlin Source Set 'linuxX64ExtraMain' is included to 'main' compilation of 'linuxX64' target,
+but it doesn't depend on 'commonMain'.
+
+Please remove 'linuxX64ExtraMain' and include its sources to the compilation's default source set:
+
+    kotlin.sourceSets["linuxX64Main"].kotlin.srcDir() // <-- pass sources directory of 'linuxX64ExtraMain'
+
+Or provide explicit dependency if the solution above is not applicable
+
+    kotlin.sourceSets["linuxX64ExtraMain"].dependsOn(commonMain)
+
+See https://kotl.in/connecting-source-sets for more details.
+----
+[MultipleSourceSetRootsInCompilation | WARNING] Kotlin Source Set 'linuxX64ExtraTest' is included to 'test' compilation of 'linuxX64' target,
+but it doesn't depend on 'commonTest'.
+
+Please remove 'linuxX64ExtraTest' and include its sources to the compilation's default source set:
+
+    kotlin.sourceSets["linuxX64Test"].kotlin.srcDir() // <-- pass sources directory of 'linuxX64ExtraTest'
+
+Or provide explicit dependency if the solution above is not applicable
+
+    kotlin.sourceSets["linuxX64ExtraTest"].dependsOn(commonTest)
+
+See https://kotl.in/connecting-source-sets for more details.

@@ -62,5 +62,7 @@ class ResolverForSingleModuleProject<M : ModuleInfo>(
             this,
             languageVersionSettings,
             CliSealedClassInheritorsProvider,
+            resolveOptimizingOptions = null,
+            absentDescriptorHandlerClass = null
         )
 }

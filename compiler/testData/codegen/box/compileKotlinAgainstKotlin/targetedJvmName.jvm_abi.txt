@@ -1,0 +1,9 @@
+MODULE lib
+	CLASS lib/AKt.class
+		PACKAGE METADATA
+			PROPERTY renamedGetFoo()Ljava/lang/String;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/String
+					K2
+						value: kotlin/String

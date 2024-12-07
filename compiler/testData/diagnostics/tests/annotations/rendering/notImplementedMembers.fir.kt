@@ -1,4 +1,5 @@
-// !RENDER_DIAGNOSTICS_MESSAGES
+// RUN_PIPELINE_TILL: FRONTEND
+// RENDER_DIAGNOSTICS_MESSAGES
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.CLASS,  AnnotationTarget.VALUE_PARAMETER,  AnnotationTarget.PROPERTY)
 annotation class An
@@ -15,7 +16,7 @@ interface B {
     fun <T> a(@An arg: @An Int)
 }
 
-<!CONFLICTING_INHERITED_MEMBERS!>interface C<!> : A, B
+<!CONFLICTING_INHERITED_MEMBERS("C; 'fun a(arg: @An() Int): Unit' defined in '/A', 'fun <T> a(arg: @An() Int): Unit' defined in '/B'")!>interface C<!> : A, B
 
 @An
 abstract class D {
@@ -23,8 +24,8 @@ abstract class D {
     abstract val d: @An Int
 }
 
-<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class E<!> : D(), A
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class F<!> : A
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED("Class 'E'; member:val d: @An() Int"), ABSTRACT_MEMBER_NOT_IMPLEMENTED("Class 'E'; member:fun a(arg: @An() Int): Unit")!>class E<!> : D(), A
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED("Class 'F'; member:fun a(arg: @An() Int): Unit")!>class F<!> : A
 
 @An
 interface G {
@@ -44,5 +45,5 @@ interface GI : G {
     override fun a(@An arg: @An Int) {}
 }
 
-<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class AG1<!>(val a: A, val g: G) : A by a, G by g
-<!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>class AG2<!>() : AI, GI
+<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED("Class 'AG1'; a")!>class AG1<!>(val a: A, val g: G) : A by a, G by g
+<!CANNOT_INFER_VISIBILITY("a"), MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED("Class 'AG2'; a")!>class AG2<!>() : AI, GI

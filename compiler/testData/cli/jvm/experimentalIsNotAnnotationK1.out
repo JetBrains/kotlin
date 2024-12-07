@@ -1,0 +1,3 @@
+warning: class org.test.NotAnAnnotation1 is not an opt-in requirement marker
+warning: class org.test.NotAnAnnotation2 is not an opt-in requirement marker
+OK

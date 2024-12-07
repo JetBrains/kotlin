@@ -1,6 +1,0 @@
-KT element: KtBinaryExpressionWithTypeRHS
-FIR element: FirTypeOperatorCallImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-(R|<local>/x| as R|kotlin/String|)

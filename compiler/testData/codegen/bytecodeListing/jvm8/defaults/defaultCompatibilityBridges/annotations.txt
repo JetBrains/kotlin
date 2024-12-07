@@ -1,0 +1,66 @@
+Module: library
+@kotlin.Metadata
+public final class base/A$DefaultImpls {
+    // source: 'a.kt'
+    public static @base.Anno(value="f") @org.jetbrains.annotations.NotNull method f(@org.jetbrains.annotations.NotNull p0: base.A): java.lang.String
+    public synthetic deprecated static @base.Anno(value="p") method getP$annotations(): void
+    public static @base.Anno(value="get-p") @org.jetbrains.annotations.NotNull method getP(@org.jetbrains.annotations.NotNull p0: base.A): java.lang.String
+    public static @base.Anno(value="set-p") method setP(@org.jetbrains.annotations.NotNull p0: base.A, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
+    public final inner class base/A$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface base/A {
+    // source: 'a.kt'
+    public abstract @base.Anno(value="f") @org.jetbrains.annotations.NotNull method f(): java.lang.String
+    public abstract @base.Anno(value="get-p") @org.jetbrains.annotations.NotNull method getP(): java.lang.String
+    public abstract @base.Anno(value="set-p") method setP(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public final inner class base/A$DefaultImpls
+}
+
+@java.lang.annotation.Retention(value=RUNTIME)
+@kotlin.Metadata
+public annotation class base/Anno {
+    // source: 'a.kt'
+    public abstract method value(): java.lang.String
+}
+
+@kotlin.Metadata
+public class base/B {
+    // source: 'a.kt'
+    public method <init>(): void
+    public @base.Anno(value="f") @org.jetbrains.annotations.NotNull method f(): java.lang.String
+    public @base.Anno(value="get-p") @org.jetbrains.annotations.NotNull method getP(): java.lang.String
+    public @base.Anno(value="set-p") method setP(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public final inner class base/A$DefaultImpls
+}
+Module: main
+@kotlin.Metadata
+public final class C$DefaultImpls {
+    // source: 'source.kt'
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method f(@org.jetbrains.annotations.NotNull p0: C): java.lang.String
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method getP(@org.jetbrains.annotations.NotNull p0: C): java.lang.String
+    public deprecated static @java.lang.Deprecated method setP(@org.jetbrains.annotations.NotNull p0: C, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
+    public final inner class C$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface C {
+    // source: 'source.kt'
+    public synthetic static method access$f$jd(p0: C): java.lang.String
+    public synthetic static method access$getP$jd(p0: C): java.lang.String
+    public synthetic static method access$setP$jd(p0: C, p1: java.lang.String): void
+    public @org.jetbrains.annotations.NotNull method f(): java.lang.String
+    public @org.jetbrains.annotations.NotNull method getP(): java.lang.String
+    public method setP(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public final inner class C$DefaultImpls
+}
+
+@kotlin.Metadata
+public final class D {
+    // source: 'source.kt'
+    public method <init>(): void
+    public @base.Anno(value="f") @org.jetbrains.annotations.NotNull method f(): java.lang.String
+    public @base.Anno(value="get-p") @org.jetbrains.annotations.NotNull method getP(): java.lang.String
+    public @base.Anno(value="set-p") method setP(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+}

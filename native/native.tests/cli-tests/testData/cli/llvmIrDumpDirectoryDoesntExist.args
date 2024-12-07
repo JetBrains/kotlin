@@ -1,0 +1,3 @@
+$TESTDATA_DIR$/simple.kt
+-Xsave-llvm-ir-after=Codegen
+-Xsave-llvm-ir-directory=no/such/dir

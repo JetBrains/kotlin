@@ -1,4 +1,6 @@
-// !API_VERSION: 1.0
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// API_VERSION: 1.0
 
 // FILE: a.kt
 package a

@@ -16,8 +16,8 @@ import java.io.File
 /**
  * Cache for storing already created [GradleNodeModule]s
  */
-internal abstract class AbstractNodeModulesCache : AutoCloseable, BuildService<AbstractNodeModulesCache.Parameters> {
-    internal interface Parameters : BuildServiceParameters {
+abstract class AbstractNodeModulesCache : AutoCloseable, BuildService<AbstractNodeModulesCache.Parameters> {
+    interface Parameters : BuildServiceParameters {
         val rootProjectDir: DirectoryProperty
         val cacheDir: DirectoryProperty
     }

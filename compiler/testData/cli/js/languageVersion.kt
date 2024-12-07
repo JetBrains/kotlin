@@ -1,4 +1,3 @@
 package test
 
-sealed interface Polygon
-
+value class Holder<T>(val value: T)

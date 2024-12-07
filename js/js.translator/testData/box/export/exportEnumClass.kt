@@ -1,9 +1,12 @@
-// IGNORE_BACKEND: JS
+// LANGUAGE: +EnumEntries
 // RUN_PLAIN_BOX_FUNCTION
 // INFER_MAIN_MODULE
 
 // MODULE: export_enum_class
 // FILE: lib.kt
+
+@JsExport
+enum class Uninhabited
 
 @JsExport
 enum class Foo(val constructorParameter: String) {
@@ -95,6 +98,10 @@ function box() {
 
     if (this["export_enum_class"].OuterClass.NestedEnum.A.ordinal !== 0) return "fail29"
     if (this["export_enum_class"].OuterClass.NestedEnum.B.ordinal !== 1) return "fail30"
+
+    if (this["export_enum_class"].Foo.entries !== undefined) return "fail31"
+
+    if (this["export_enum_class"].Uninhabited.values().length !== 0) return "Uninhabited.values"
 
     return "OK"
 }

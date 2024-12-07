@@ -1,0 +1,9 @@
+MODULE main
+	CLASS NestedBigArityFunCallsKt.class
+		PACKAGE METADATA
+			FUNCTION test(Lkotlin/jvm/functions/FunctionN;)Ljava/lang/String;
+				Property: class.metadata.function.valueParameters
+					K1
+						(f: kotlin/Function25<A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, kotlin/Function25<A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, kotlin/String, kotlin/String>, kotlin/String> /* = F^<kotlin/Function25<A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, kotlin/String, kotlin/String> /* = F^<kotlin/String> */> */)
+					K2
+						(f: kotlin/Function25<A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, kotlin/Function25<A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, kotlin/String, kotlin/String> /* = F^<kotlin/String> */, kotlin/String> /* = F^<kotlin/Function25<A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, kotlin/String, kotlin/String> /* = F^<kotlin/String> */> */)

@@ -5,20 +5,21 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.collectors.CheckerRunningDiagnosticCollectorVisitor
-import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.AbstractLLFirDiagnosticsCollector
+import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
 
 internal class LLFirStructureElementDiagnosticsCollector(
     session: FirSession,
-    private val doCreateVisitor: (components: List<AbstractDiagnosticCollectorComponent>) -> CheckerRunningDiagnosticCollectorVisitor,
-    useExtendedCheckers: Boolean,
+    private val doCreateVisitor: (components: DiagnosticCollectorComponents) -> CheckerRunningDiagnosticCollectorVisitor,
+    filter: DiagnosticCheckerFilter,
 ) : AbstractLLFirDiagnosticsCollector(
     session,
-    useExtendedCheckers,
+    filter,
 ) {
-    override fun createVisitor(components: List<AbstractDiagnosticCollectorComponent>): CheckerRunningDiagnosticCollectorVisitor {
+    override fun createVisitor(components: DiagnosticCollectorComponents): CheckerRunningDiagnosticCollectorVisitor {
         return doCreateVisitor(components)
     }
 }

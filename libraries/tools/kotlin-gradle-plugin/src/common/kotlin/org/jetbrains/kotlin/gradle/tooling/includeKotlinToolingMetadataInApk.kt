@@ -7,16 +7,10 @@ package org.jetbrains.kotlin.gradle.tooling
 
 import com.android.build.gradle.AppExtension
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 
 internal fun Project.includeKotlinToolingMetadataInApk() {
     plugins.withId("com.android.application") {
-        val buildKotlinToolingMetadataTask = if (hasKpmModel) {
-            buildKotlinToolingMetadataForMainKpmModuleTask
-        } else {
-            buildKotlinToolingMetadataTask
-        } ?: return@withId
-
+        val buildKotlinToolingMetadataTask = buildKotlinToolingMetadataTask ?: return@withId
         val android = project.extensions.getByName("android") as AppExtension
         android.applicationVariants.configureEach { variant ->
             if (!variant.buildType.isDebuggable) {

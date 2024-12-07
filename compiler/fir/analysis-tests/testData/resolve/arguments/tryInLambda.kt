@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun <T> myRun(block: () -> T): T = block()
 
 fun foo() {}

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package test
 
 open class A

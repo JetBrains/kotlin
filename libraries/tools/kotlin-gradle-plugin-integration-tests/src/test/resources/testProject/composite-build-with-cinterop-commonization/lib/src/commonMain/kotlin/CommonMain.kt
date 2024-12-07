@@ -1,0 +1,4 @@
+package lib
+
+class CommonMain {
+}

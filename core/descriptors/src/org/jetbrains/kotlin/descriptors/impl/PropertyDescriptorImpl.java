@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ContextReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitContextReceiver;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.utils.SmartSet;
 
@@ -179,9 +180,14 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         List<TypeParameterDescriptor> parameters = typeParameters;
         // Diagnostics for EA-212070
         if (parameters == null) {
-            throw new IllegalStateException("typeParameters == null for " + this.toString());
+            throw new IllegalStateException("typeParameters == null for " + this);
         }
         return parameters;
+    }
+
+    @Override
+    public void validate() {
+        getTypeParameters();
     }
 
     @Override
@@ -561,7 +567,10 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         if (substitutedType == null) return null;
         return new ReceiverParameterDescriptorImpl(
                 substitutedPropertyDescriptor,
-                new ContextReceiver(substitutedPropertyDescriptor, substitutedType, receiverParameterDescriptor.getValue()),
+                new ContextReceiver(substitutedPropertyDescriptor,
+                                    substitutedType,
+                                    ((ImplicitContextReceiver) receiverParameterDescriptor.getValue()).getCustomLabelName(),
+                                    receiverParameterDescriptor.getValue()),
                 receiverParameterDescriptor.getAnnotations()
         );
     }

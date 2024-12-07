@@ -5,10 +5,15 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.codegen.state.JvmMethodExceptionTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.org.objectweb.asm.*
-import org.jetbrains.org.objectweb.asm.tree.*
+import org.jetbrains.org.objectweb.asm.ClassWriter
+import org.jetbrains.org.objectweb.asm.FieldVisitor
+import org.jetbrains.org.objectweb.asm.MethodVisitor
+import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.tree.ClassNode
+import org.jetbrains.org.objectweb.asm.tree.FieldNode
+import org.jetbrains.org.objectweb.asm.tree.LocalVariableNode
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class OriginCollectingClassBuilderFactory(private val builderMode: ClassBuilderMode) : ClassBuilderFactory {
     val compiledClasses = mutableListOf<ClassNode>()
@@ -43,7 +48,7 @@ class OriginCollectingClassBuilderFactory(private val builderMode: ClassBuilderM
                 name: String,
                 desc: String,
                 signature: String?,
-                exceptions: JvmMethodExceptionTypes
+                exceptions: Array<out String>?
         ): MethodVisitor {
             val methodNode = super.newMethod(origin, access, name, desc, signature, exceptions) as MethodNode
             origins[methodNode] = origin
@@ -64,6 +69,4 @@ class OriginCollectingClassBuilderFactory(private val builderMode: ClassBuilderM
     }
 
     override fun asText(builder: ClassBuilder) = throw UnsupportedOperationException()
-
-    override fun close() {}
 }

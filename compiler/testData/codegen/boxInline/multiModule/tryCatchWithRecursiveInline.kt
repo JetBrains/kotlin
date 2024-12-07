@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: NATIVE
 // FILE: lib.kt
 inline fun <T> T.andAlso(block: (T) -> Unit): T {
     block(this)

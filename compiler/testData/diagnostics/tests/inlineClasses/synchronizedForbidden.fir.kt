@@ -1,41 +1,43 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // SKIP_TXT
 // KT-49339
+// LANGUAGE: +ProhibitSynchronizationByValueClassesAndPrimitives
 
 @JvmInline
 value class A(val a: Int) {
-    @get:Synchronized
+    <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@get:Synchronized<!>
     val f0
         get() = Unit
 
-    @Synchronized
+    <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@Synchronized<!>
     fun f1() = Unit
 
-    @Synchronized
+    <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@Synchronized<!>
     fun String.f2() = Unit
 
-    @get:Synchronized
+    <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@get:Synchronized<!>
     val String.f3
         get() = Unit
 
-    @get:Synchronized
+    <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@get:Synchronized<!>
     val A.f4
         get() = Unit
 
-    @Synchronized
+    <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@Synchronized<!>
     fun A.f5() = Unit
 
     val f6
-        @Synchronized
+        <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@Synchronized<!>
         get() = Unit
 
     val A.f7
-        @Synchronized
+        <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@Synchronized<!>
         get() = Unit
 
     val String.f8
-        @Synchronized
+        <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@Synchronized<!>
         get() = Unit
 }
 
@@ -66,23 +68,23 @@ val A.f14
 
 fun main() {
     val a = A(2)
-    synchronized(a) {}
-    synchronized(2) {}
-    synchronized(0x2) {}
-    synchronized(2U) {}
-    synchronized(true) {}
-    synchronized(2L) {}
-    synchronized(2.to(1).first) {}
-    synchronized(2.toByte()) {}
-    synchronized(2UL) {}
-    synchronized(2F) {}
-    synchronized(2.0) {}
-    synchronized('2') {}
-    synchronized(block={}, lock='2')
-    synchronized(block={}, lock=a)
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>a<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>2<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>0x2<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>2U<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>true<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>2L<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>2.to(1).first<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>2.toByte()<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>2UL<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>2F<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>2.0<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>'2'<!>) {}
+    synchronized(block={}, lock=<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>'2'<!>)
+    synchronized(block={}, lock=<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>a<!>)
     for (b in listOf(a)) {
-        synchronized(b) {}
-        synchronized(b.to(1).first) {}
-        synchronized(block={}, lock=a)
+        synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>b<!>) {}
+        synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>b.to(1).first<!>) {}
+        synchronized(block={}, lock=<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>a<!>)
     }
 }

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 enum class Color {
     RED {
@@ -17,7 +18,7 @@ class MyColor(val x: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>, y: Color.<!ENUM_ENTRY_A
         class Local : Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>
         fun local(arg: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>): Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> = arg
         val temp: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> = Color.RED
-        temp as? Color.<!ENUM_ENTRY_AS_TYPE, ENUM_ENTRY_AS_TYPE!>RED<!>
+        temp as? Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>
         if (temp is <!IS_ENUM_ENTRY!>Color.RED<!>) {
         return temp as Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>
     }
@@ -47,7 +48,7 @@ fun <T> bar(a: Any): T = a <!UNCHECKED_CAST!>as T<!>
 
 fun <T> foo() {
     foo<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>()
-    foo<<!CANNOT_INFER_PARAMETER_TYPE!>RedAlias<!>>()
+    foo<RedAlias>()
     bar<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>(<!ARGUMENT_TYPE_MISMATCH!>Color.RED<!>)
 }
 

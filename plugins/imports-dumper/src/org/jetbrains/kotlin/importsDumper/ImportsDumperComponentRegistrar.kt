@@ -5,14 +5,16 @@
 
 package org.jetbrains.kotlin.importsDumper
 
-import com.intellij.mock.MockProject
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 
-class ImportsDumperComponentRegistrar : ComponentRegistrar {
-    override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
+class ImportsDumperComponentRegistrar : CompilerPluginRegistrar() {
+    override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val destinationPath = configuration[ImportsDumperConfigurationKeys.DESTINATION] ?: return
-        AnalysisHandlerExtension.registerExtension(project, ImportsDumperExtension(destinationPath))
+        AnalysisHandlerExtension.registerExtension(ImportsDumperExtension(destinationPath))
     }
+
+    override val supportsK2: Boolean
+        get() = false
 }

@@ -1,5 +1,5 @@
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class X {
     abstract class Y<T : Any>
@@ -10,11 +10,11 @@ class X {
 
 
 fun testStar(y: X.Y<*>, t: Any) {
-    X().foo(y, <!ARGUMENT_TYPE_MISMATCH!>t<!>)
+    X().foo(y, <!MEMBER_PROJECTED_OUT!>t<!>)
 }
 
 fun testOut(y: X.Y<out Any>, t: Any) {
-    X().foo(y, <!ARGUMENT_TYPE_MISMATCH!>t<!>)
+    X().foo(y, <!MEMBER_PROJECTED_OUT!>t<!>)
 }
 
 fun testIn(y: X.Y<in Any>, t: Any) {
@@ -26,5 +26,5 @@ fun <T : Any> testWithParameter(y: X.Y<T>, t: Any) {
 }
 
 fun <T : Any> testWithCapturedParameter(y: X.Y<out T>, t: Any) {
-    X().foo(y, <!ARGUMENT_TYPE_MISMATCH!>t<!>)
+    X().foo(y, <!MEMBER_PROJECTED_OUT!>t<!>)
 }

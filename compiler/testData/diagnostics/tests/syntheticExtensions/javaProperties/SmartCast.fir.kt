@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: KotlinFile.kt
 fun foo(o: JavaInterface2): Int {
     if (o is JavaClass) {

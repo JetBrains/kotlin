@@ -3,5 +3,6 @@ enum class Foo {
     open fun result() = "Fail"
 }
 
-// There are two CHECKCASTs, one in Foo.valueOf and one in Foo.values
-// 2 CHECKCAST
+// There are three CHECKCASTs: one in Foo.valueOf, one in Foo.values, and one in the static initializer
+// (`$ENTRIES` to `[Ljava/lang/Enum;`).
+// 3 CHECKCAST

@@ -8,10 +8,15 @@ package org.jetbrains.kotlin.analysis.test.framework.services
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticModuleProvider
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaBuiltinsModuleImpl
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
+import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
+import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompilationInterceptor
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMode
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -40,7 +45,7 @@ class AnalysisApiEnvironmentManagerImpl(
     private val _projectEnvironment: KotlinCoreProjectEnvironment by lazy {
         StandaloneProjectFactory.createProjectEnvironment(
             testRootDisposable,
-            testServices.applicationDisposableProvider.getApplicationRootDisposable(),
+            KotlinCoreApplicationEnvironmentMode.UnitTest,
         )
     }
 
@@ -49,18 +54,33 @@ class AnalysisApiEnvironmentManagerImpl(
             projectDisposable = _projectEnvironment.parentDisposable,
             applicationDisposable = _projectEnvironment.environment.parentDisposable,
         )
+        KotlinCoreEnvironment.underApplicationLock {
+            _projectEnvironment.environment.application.apply {
+                if (getServiceIfCreated(BuiltinsVirtualFileProvider::class.java) == null) {
+                    registerService(BuiltinsVirtualFileProvider::class.java, BuiltinsVirtualFileProviderTestImpl())
+                }
+                if (getServiceIfCreated(KotlinBuiltInDecompilationInterceptor::class.java) == null) {
+                    registerService(
+                        KotlinBuiltInDecompilationInterceptor::class.java,
+                        KotlinBuiltInDecompilationInterceptorTestImpl::class.java
+                    )
+                }
+            }
+        }
     }
 
+    @OptIn(KaImplementationDetail::class)
     override fun initializeProjectStructure() {
-        val ktModuleProjectStructure = testServices.ktModuleProvider.getModuleStructure()
+        val ktTestModuleStructure = testServices.ktTestModuleStructure
         val useSiteModule = testServices.moduleStructure.modules.first()
         val useSiteCompilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(useSiteModule)
+        val builtinsModule = KaBuiltinsModuleImpl(useSiteModule.targetPlatform, getProject())
+
+        val globalLanguageVersionSettings = useSiteModule.languageVersionSettings
 
         StandaloneProjectFactory.registerServicesForProjectEnvironment(
             _projectEnvironment,
-            KtStaticModuleProvider(ktModuleProjectStructure),
-            ktModuleProjectStructure.allKtModules(),
-            ktModuleProjectStructure.allSourceFiles(),
+            KotlinTestProjectStructureProvider(globalLanguageVersionSettings, builtinsModule, ktTestModuleStructure),
             useSiteCompilerConfiguration.languageVersionSettings,
             useSiteCompilerConfiguration.get(JVMConfigurationKeys.JDK_HOME)?.toPath(),
         )

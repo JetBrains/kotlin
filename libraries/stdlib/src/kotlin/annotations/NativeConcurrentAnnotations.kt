@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,21 +21,14 @@ package kotlin.native.concurrent
 public expect annotation class ThreadLocal()
 
 /**
- * Note: with the new MM this annotation has no effect.
+ * This annotation has no effect, and its usages can be safely dropped.
  *
- * Marks a top level property with a backing field as immutable.
- * It is possible to share the value of such property between multiple threads, but it becomes deeply frozen,
- * so no changes can be made to its state or the state of objects it refers to.
- *
- * The annotation has effect only in Kotlin/Native platform.
- *
- * PLEASE NOTE THAT THIS ANNOTATION MAY GO AWAY IN UPCOMING RELEASES.
- *
- * Since 1.7.20 usage of this annotation is deprecated. See https://github.com/JetBrains/kotlin/blob/master/kotlin-native/NEW_MM.md#freezing-deprecation for details.
+ * Since 1.7.20 usage of this annotation is deprecated. See https://kotlinlang.org/docs/native-migration-guide.html for details.
  */
+@Deprecated("This annotation is redundant and has no effect")
+@DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
 @Target(AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.BINARY)
-// Not @FreezingIsDeprecated: Lots of usages, only the doc updated.
 @OptionalExpectation
 public expect annotation class SharedImmutable()
 

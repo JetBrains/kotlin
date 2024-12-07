@@ -9,7 +9,7 @@ FILE: anonymousInDelegate.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final override fun bar(): R|kotlin/Int| {
+            public open override fun bar(): R|kotlin/Int| {
                 ^bar Int(42)
             }
 

@@ -10,24 +10,34 @@ import java.io.File
 import kotlin.reflect.KClass
 
 class CheckersConfigurator {
-    private val registeredAliases: MutableMap<KClass<*>, String> = LinkedHashMap()
+    private val registeredAliases: MutableMap<KClass<*>, Pair<String, Boolean>> = LinkedHashMap()
     private val additionalCheckers: MutableMap<String, String> = LinkedHashMap()
+    private val visitAlso: MutableMap<KClass<*>, Alias> = LinkedHashMap()
 
-    inline fun <reified T : FirElement> alias(name: String) {
-        alias(T::class, name)
+    inline fun <reified T : FirElement> alias(name: String, withVisit: Boolean = true): Alias {
+        return alias(T::class, name, withVisit)
     }
 
-    fun alias(kClass: KClass<out FirElement>, name: String) {
+    fun alias(kClass: KClass<out FirElement>, name: String, withVisit: Boolean): Alias {
         val realName = name.takeIf { it.startsWith("Fir") } ?: "Fir$name"
-        registeredAliases[kClass] = realName
+        registeredAliases[kClass] = Pair(realName, withVisit)
+        return realName
     }
 
     fun additional(fieldName: String, classFqn: String) {
         additionalCheckers[fieldName] = classFqn
     }
 
+    inline fun <reified T : FirElement> visitAlso(name: String) {
+        visitAlso(T::class, name)
+    }
+
+    fun visitAlso(kClass: KClass<out FirElement>, by: Alias) {
+        visitAlso[kClass] = by
+    }
+
     fun build(): CheckersConfiguration {
-        return CheckersConfiguration(registeredAliases, additionalCheckers)
+        return CheckersConfiguration(registeredAliases, additionalCheckers, visitAlso)
     }
 }
 
@@ -35,8 +45,10 @@ fun generateCheckersComponents(
     generationPath: File,
     packageName: String,
     abstractCheckerName: String,
-    init: CheckersConfigurator.() -> Unit
+    checkMethodTypeParameterConstraint: KClass<out FirElement>,
+    checkType: KClass<out FirElement>,
+    init: CheckersConfigurator.() -> Unit,
 ) {
     val configuration = CheckersConfigurator().apply(init).build()
-    Generator(configuration, generationPath, packageName, abstractCheckerName).generate()
+    Generator(configuration, generationPath, packageName, abstractCheckerName, checkMethodTypeParameterConstraint, checkType).generate()
 }

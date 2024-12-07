@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING
+import org.jetbrains.kotlin.util.assertThrows
 import org.junit.AssumptionViolatedException
-import org.junit.jupiter.api.assertThrows
 import java.net.URLClassLoader
 import kotlin.test.Test
 import kotlin.test.assertNull
@@ -49,7 +49,7 @@ class CastIsolatedKotlinPluginClassLoaderAwareTest {
 
         assertTrue(
             MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING !in exception.message.orEmpty(),
-            "Expected no classpath warning in the error message, since this cast was not failing because of iosolated classloaders"
+            "Expected no classpath warning in the error message, since this cast was not failing because of isolated classloaders"
         )
     }
 

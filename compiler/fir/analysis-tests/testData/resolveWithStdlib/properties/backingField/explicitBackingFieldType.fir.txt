@@ -8,39 +8,39 @@ FILE: explicitBackingFieldType.kt
             public get(): R|kotlin/Int|
 
         public final val it: R|kotlin/Number|
-            private <explicit backing field>: R|kotlin/Int| = Int(4)
+            private final backing field field: R|kotlin/Int| = Int(4)
             public get(): R|kotlin/Number|
 
         public final val joke: R|kotlin/Number|
-            private <explicit backing field>: R|kotlin/String| = String(Haha)
+            private final backing field field: R|kotlin/String| = String(Haha)
             public get(): R|kotlin/Number|
 
         public final val incompatible: R|kotlin/Number|
-            private <explicit backing field>: R|kotlin/Any?| = Int(42)
+            private final backing field field: R|kotlin/Any?| = Int(42)
             public get(): R|kotlin/Number|
 
         public final val customGetterNeeded: R|kotlin/Int|
-            private <explicit backing field>: R|kotlin/Number| = Int(42)
+            private final backing field field: R|kotlin/Number| = Int(42)
             public get(): R|kotlin/Int|
 
         public final val invertedTypes: R|kotlin/Int|
-            private <explicit backing field>: R|kotlin/Number| = Int(42)
+            private final backing field field: R|kotlin/Number| = Int(42)
             public get(): R|kotlin/Int| {
                 ^ Int(30)
             }
 
         public final val uninitialized: R|kotlin/Number|
-            private <explicit backing field>: R|kotlin/Int|
+            private final backing field field: R|kotlin/Int|
             public get(): R|kotlin/Number|
 
         public final val uninitializedWithGetter: R|kotlin/Number|
-            private <explicit backing field>: R|kotlin/Int|
+            private final backing field field: R|kotlin/Int|
             public get(): R|kotlin/Number| {
                 ^ Int(2)
             }
 
         public final val initiaizedWithExplicitBackingField: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2)))
-            private <explicit backing field>: R|kotlin/collections/MutableList<kotlin/Int>|
+            private final backing field field: R|kotlin/collections/MutableList<kotlin/Int>|
             public get(): R|kotlin/collections/List<kotlin/Int>|
 
         public final val p: R|kotlin/Int| = Int(5)
@@ -49,7 +49,7 @@ FILE: explicitBackingFieldType.kt
             }
 
         public final var setterNeeded: R|kotlin/Int|
-            private <explicit backing field>: R|kotlin/String| = String(test)
+            private final backing field field: R|kotlin/String| = String(test)
             public get(): R|kotlin/Int| {
                 ^ this@R|/A|.F|/A.setterNeeded|.R|kotlin/String.length|
             }

@@ -1,0 +1,2 @@
+KtConstantExpression(25,26): '1'
+  null

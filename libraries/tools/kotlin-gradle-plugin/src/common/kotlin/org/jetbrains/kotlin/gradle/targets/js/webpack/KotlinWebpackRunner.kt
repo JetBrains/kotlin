@@ -48,9 +48,10 @@ internal data class KotlinWebpackRunner(
 
     private fun configureClient(
         clientType: LogType,
-        progressLogger: ProgressLogger?
+        progressLogger: ProgressLogger?,
+        infrastructureLogged: InfrastructureLogged,
     ): TeamCityMessageCommonClient {
-        return TeamCityMessageCommonClient(clientType, logger)
+        return WebpackLogClient(clientType, logger, infrastructureLogged)
             .apply {
                 if (progressLogger != null) {
                     this.progressLogger = progressLogger
@@ -66,14 +67,16 @@ internal data class KotlinWebpackRunner(
             "${this}: Entry file not existed \"${config.entry}\""
         }
 
-        val standardClient = configureClient(LogType.LOG, progressLogger)
+        val infrastructureLogged = InfrastructureLogged(false)
+
+        val standardClient = configureClient(LogType.LOG, progressLogger, infrastructureLogged)
         execFactory.standardOutput = TCServiceMessageOutputStreamHandler(
             client = standardClient,
             onException = { },
             logger = standardClient.log
         )
 
-        val errorClient = configureClient(LogType.ERROR, progressLogger)
+        val errorClient = configureClient(LogType.ERROR, progressLogger, infrastructureLogged)
         execFactory.errorOutput = TCServiceMessageOutputStreamHandler(
             client = errorClient,
             onException = { },

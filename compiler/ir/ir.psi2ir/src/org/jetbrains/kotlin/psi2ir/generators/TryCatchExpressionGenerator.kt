@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class TryCatchExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
+internal class TryCatchExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
     fun generateTryCatch(ktTry: KtTryExpression): IrExpression {
         val resultType = getExpressionTypeWithCoercionToUnitOrFail(ktTry).toIrType()
         val irTryCatch = IrTryImpl(ktTry.startOffsetSkippingComments, ktTry.endOffset, resultType)
@@ -39,7 +39,7 @@ class TryCatchExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
             val irCatch = IrCatchImpl(
                 ktCatchClause.startOffsetSkippingComments, ktCatchClause.endOffset,
-                context.symbolTable.declareVariable(
+                context.symbolTable.descriptorExtension.declareVariable(
                     ktCatchParameter.startOffsetSkippingComments, ktCatchParameter.endOffset,
                     IrDeclarationOrigin.CATCH_PARAMETER,
                     catchParameterDescriptor, catchParameterDescriptor.type.toIrType()

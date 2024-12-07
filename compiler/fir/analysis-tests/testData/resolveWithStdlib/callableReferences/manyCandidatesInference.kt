@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun <T> foo(x: () -> T, y: Int) {}
 fun <E> bar(x: E): Int = 1
 

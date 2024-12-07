@@ -20,7 +20,7 @@ internal class DiagnosticsCollector(private val fileStructureCache: FileStructur
         return diagnostics.diagnosticsFor(filter, element)
     }
 
-    fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic> {
+    fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic> {
         val fileStructure = fileStructureCache.getFileStructure(ktFile)
         return fileStructure.getAllDiagnosticsForFile(filter)
     }

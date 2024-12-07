@@ -1,0 +1,11 @@
+$TESTDATA_DIR$/warningsSuppressionDisablesErrors_Wasm.kt
+-Xir-produce-klib-dir
+-libraries
+$STDLIB_JS$
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out
+-Xwasm
+-Xsuppress-warning=non-existing-diagnostic
+-Xsuppress-warning=UNINITIALIZED_VARIABLE

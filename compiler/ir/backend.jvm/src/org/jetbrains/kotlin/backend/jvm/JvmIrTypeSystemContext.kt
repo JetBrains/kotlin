@@ -7,28 +7,28 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.ir.IrJvmFlexibleType
 import org.jetbrains.kotlin.backend.jvm.ir.asJvmFlexibleType
+import org.jetbrains.kotlin.backend.jvm.ir.isWithFlexibleMutability
 import org.jetbrains.kotlin.backend.jvm.ir.isWithFlexibleNullability
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
-import org.jetbrains.kotlin.ir.types.isMarkedNullable as irIsMarkedNullable
 import org.jetbrains.kotlin.types.model.FlexibleTypeMarker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.ir.types.isMarkedNullable as irIsMarkedNullable
 
 class JvmIrTypeSystemContext(override val irBuiltIns: IrBuiltIns) : IrTypeSystemContext {
     override fun KotlinTypeMarker.asFlexibleType(): FlexibleTypeMarker? =
-        (this as IrType).asJvmFlexibleType(irBuiltIns)
+        (this as IrType).asJvmFlexibleType(irBuiltIns, JvmIrSpecialAnnotationSymbolProvider)
 
-    override fun FlexibleTypeMarker.upperBound(): SimpleTypeMarker {
+    override fun FlexibleTypeMarker.upperBound(): IrSimpleType {
         return when (this) {
             is IrJvmFlexibleType -> this.upperBound
             else -> error("Unexpected flexible type ${this::class.java.simpleName}: $this")
         }
     }
 
-    override fun FlexibleTypeMarker.lowerBound(): SimpleTypeMarker {
+    override fun FlexibleTypeMarker.lowerBound(): IrSimpleType {
         return when (this) {
             is IrJvmFlexibleType -> this.lowerBound
             else -> error("Unexpected flexible type ${this::class.java.simpleName}: $this")
@@ -37,4 +37,10 @@ class JvmIrTypeSystemContext(override val irBuiltIns: IrBuiltIns) : IrTypeSystem
 
     override fun KotlinTypeMarker.isMarkedNullable(): Boolean =
         this is IrSimpleType && !isWithFlexibleNullability() && irIsMarkedNullable()
+
+    override fun KotlinTypeMarker.isDynamic(): Boolean =
+        false
+
+    override fun KotlinTypeMarker.isFlexibleWithDifferentTypeConstructors(): Boolean =
+        (this as IrType).isWithFlexibleMutability()
 }

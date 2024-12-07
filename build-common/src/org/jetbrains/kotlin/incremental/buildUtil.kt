@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.build.isModuleMappingFile
 import org.jetbrains.kotlin.build.report.ICReporter
+import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
@@ -33,9 +34,6 @@ import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.io.File
 import java.nio.file.Files
-import java.util.*
-import kotlin.collections.HashSet
-import kotlin.collections.LinkedHashSet
 
 const val DELETE_MODULE_FILE_PROPERTY = "kotlin.delete.module.file.after.build"
 
@@ -142,18 +140,44 @@ data class DirtyData(
     val dirtyClassesFqNamesForceRecompile: Collection<FqName> = emptyList()
 )
 
-fun ChangesCollector.getDirtyData(
+/**
+ * Returns changed symbols from the changes collected by this [ChangesCollector].
+ *
+ * If impacted symbols are also needed, use [getChangedAndImpactedSymbols].
+ */
+fun ChangesCollector.getChangedSymbols(reporter: ICReporter): DirtyData {
+    // Caches are used to compute impacted symbols. Set `caches = emptyList()` so that we get changed symbols only, not impacted ones.
+    return changes().getChangedAndImpactedSymbols(caches = emptyList(), reporter)
+}
+
+/**
+ * Returns changed and impacted symbols from the changes collected by this [ChangesCollector].
+ *
+ * For example, if `Subclass` extends `Superclass` and `Superclass` has changed, `Subclass` will be impacted.
+ */
+fun ChangesCollector.getChangedAndImpactedSymbols(
+    caches: Iterable<IncrementalCacheCommon>,
+    reporter: ICReporter
+): DirtyData {
+    return changes().getChangedAndImpactedSymbols(caches, reporter)
+}
+
+/**
+ * Returns changed and impacted symbols from this list of changes.
+ *
+ * For example, if `Subclass` extends `Superclass` and `Superclass` has changed, `Subclass` will be impacted.
+ */
+fun List<ChangeInfo>.getChangedAndImpactedSymbols(
     caches: Iterable<IncrementalCacheCommon>,
     reporter: ICReporter
 ): DirtyData {
     val dirtyLookupSymbols = HashSet<LookupSymbol>()
     val dirtyClassesFqNames = HashSet<FqName>()
 
-    val sealedParents = HashMap<FqName, MutableSet<FqName>>()
-    val notSealedParents = HashSet<FqName>()
+    val sealedParents = HashSet<FqName>()
 
-    for (change in changes()) {
-        reporter.reportVerbose { "Process $change" }
+    for (change in this) {
+        reporter.debug { "Process $change" }
 
         if (change is ChangeInfo.SignatureChanged) {
             val fqNames = if (!change.areSubclassesAffected) listOf(change.fqName) else withSubtypes(change.fqName, caches)
@@ -177,34 +201,12 @@ fun ChangesCollector.getDirtyData(
 
             fqNames.mapTo(dirtyLookupSymbols) { LookupSymbol(SAM_LOOKUP_NAME.asString(), it.asString()) }
         } else if (change is ChangeInfo.ParentsChanged) {
-            fun FqName.isSealed(): Boolean {
-                if (notSealedParents.contains(this)) return false
-                if (sealedParents.containsKey(this)) return true
-                return isSealed(this, caches).also { sealed ->
-                    if (sealed) {
-                        sealedParents[this] = HashSet()
-                    } else {
-                        notSealedParents.add(this)
-                    }
-                }
-            }
             change.parentsChanged.forEach { parent ->
-                if (parent.isSealed()) {
-                    sealedParents.getOrPut(parent) { HashSet() }.add(change.fqName)
-                }
+                sealedParents.addAll(findSealedSupertypes(parent, caches))
             }
         }
     }
-
-    val forceRecompile = HashSet<FqName>().apply {
-        addAll(sealedParents.keys)
-        //we should recompile all inheritors with parent sealed class: add known subtypes
-        addAll(sealedParents.keys.flatMap { withSubtypes(it, caches) })
-        //we should recompile all inheritors with parent sealed class: add new subtypes
-        addAll(sealedParents.values.flatten())
-    }
-
-    return DirtyData(dirtyLookupSymbols, dirtyClassesFqNames, forceRecompile)
+    return DirtyData(dirtyLookupSymbols, dirtyClassesFqNames, sealedParents)
 }
 
 fun mapLookupSymbolsToFiles(
@@ -251,7 +253,22 @@ fun mapClassesFqNamesToFiles(
 fun isSealed(
     fqName: FqName,
     caches: Iterable<IncrementalCacheCommon>
-): Boolean = caches.any { it.isSealed(fqName) ?: false }
+): Boolean = caches.any { cache -> cache.isSealed(fqName) ?: false }
+
+/**
+ * Finds sealed supertypes of class in same module.
+ * This method should be used for processing freedomOsSealedClasses feature, because
+ * mutually declared list of sealed subclasses could be declared only in the same module.
+ */
+fun findSealedSupertypes(
+    fqName: FqName,
+    caches: Iterable<IncrementalCacheCommon>
+): Collection<FqName> {
+    if (isSealed(fqName, caches)) {
+        return listOf(fqName)
+    }
+    return caches.flatMap { cache -> cache.getSupertypesOf(fqName).filter { cache.isSealed(it) ?: false }}
+}
 
 fun withSubtypes(
     typeFqName: FqName,

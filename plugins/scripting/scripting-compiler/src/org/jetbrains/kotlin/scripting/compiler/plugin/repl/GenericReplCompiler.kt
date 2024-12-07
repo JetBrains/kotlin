@@ -3,22 +3,26 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.scripting.compiler.plugin.repl
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
+import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
-import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
+import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
-import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write
@@ -36,7 +40,12 @@ open class GenericReplCompiler(
         scriptDefinition: KotlinScriptDefinition,
         compilerConfiguration: CompilerConfiguration,
         messageCollector: MessageCollector
-    ) : this(Disposer.newDisposable(), scriptDefinition, compilerConfiguration, messageCollector)
+    ) : this(
+        Disposer.newDisposable("Default disposable for ${GenericReplCompiler::class.simpleName}"),
+        scriptDefinition,
+        compilerConfiguration,
+        messageCollector
+    )
 
     private val checker =
         GenericReplChecker(
@@ -51,6 +60,7 @@ open class GenericReplCompiler(
 
     override fun check(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCheckResult = checker.check(state, codeLine)
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun compile(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCompileResult {
         state.lock.write {
             val compilerState = state.asState(GenericReplCompilerState::class.java)
@@ -70,7 +80,7 @@ open class GenericReplCompiler(
 
             @Suppress("DEPRECATION")
             val newDependencies =
-                ScriptDependenciesProvider.getInstance(checker.environment.project)?.getScriptConfiguration(psiFile)
+                ScriptConfigurationsProvider.getInstance(checker.environment.project)?.getScriptConfiguration(psiFile)
                     ?.legacyDependencies
             var classpathAddendum: List<File>? = null
             if (compilerState.lastDependencies != newDependencies) {
@@ -91,21 +101,24 @@ open class GenericReplCompiler(
                 else -> error("Unexpected result ${analysisResult::class.java}")
             }
 
-            val generationState = GenerationState.Builder(
-                psiFile.project,
-                ClassBuilderFactories.BINARIES,
-                compilerState.analyzerEngine.module,
-                compilerState.analyzerEngine.trace.bindingContext,
-                compilerConfiguration
-            ).build()
+            val generationState = GenerationState(psiFile.project, compilerState.analyzerEngine.module, compilerConfiguration)
 
-            generationState.scriptSpecific.earlierScriptsForReplInterpreter = compilerState.history.map { it.item }
-            generationState.beforeCompile()
-            generationState.oldBEInitTrace(listOf(psiFile))
-            KotlinCodegenFacade.generatePackage(
+            val generatorExtensions =
+                object : JvmGeneratorExtensionsImpl(checker.environment.configuration) {
+                    override fun getPreviousScripts() = compilerState.history.map { compilerState.symbolTable.descriptorExtension.referenceScript(it.item) }
+                }
+            val codegenFactory = JvmIrCodegenFactory(
+                checker.environment.configuration,
+                compilerState.mangler, compilerState.symbolTable, generatorExtensions
+            )
+
+            codegenFactory.generateModule(
                 generationState,
-                psiFile.script!!.containingKtFile.packageFqName,
-                setOf(psiFile.script!!.containingKtFile)
+                codegenFactory.convertToIr(
+                    CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(
+                        generationState, listOf(psiFile), compilerState.analyzerEngine.trace.bindingContext,
+                    )
+                ),
             )
 
             compilerState.history.push(LineId(codeLine.no, 0, codeLine.hashCode()), scriptDescriptor)

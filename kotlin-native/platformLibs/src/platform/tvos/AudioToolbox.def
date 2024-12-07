@@ -1,4 +1,4 @@
-depends = CFNetwork CoreAudioTypes CoreFoundation CoreMIDI Foundation Security darwin posix
+depends = CFCGTypes CFNetwork CoreAudioTypes CoreFoundation CoreFoundationBase CoreMIDI Foundation Security darwin posix
 language = Objective-C
 package = platform.AudioToolbox
 modules = AudioToolbox AudioUnit

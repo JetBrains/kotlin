@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class A {
     open var it: Number
         private field = 3
@@ -9,7 +10,7 @@ open class A {
         // error, because `it` is not
         // final, so no smart type narrowing
         // is provided
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(it <!UNRESOLVED_REFERENCE!>+<!> 1)
+        println(it <!UNRESOLVED_REFERENCE!>+<!> 1)
     }
 }
 

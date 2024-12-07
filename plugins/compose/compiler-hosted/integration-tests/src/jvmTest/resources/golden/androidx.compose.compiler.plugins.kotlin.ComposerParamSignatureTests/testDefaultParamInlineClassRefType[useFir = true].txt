@@ -1,0 +1,86 @@
+//
+// Source
+// ------------------------------------------
+
+@JvmInline
+value class Data(val string: String)
+@JvmInline
+value class IntData(val value: Int)
+
+@Composable fun Example(data: Data = Data(""), intData: IntData = IntData(0)) {}
+@Composable private fun PrivateExample(data: Data = Data(""), intData: IntData = IntData(0)) {}
+@Composable internal fun InternalExample(data: Data = Data(""), intData: IntData = IntData(0)) {}
+@Composable @PublishedApi internal fun PublishedExample(data: Data = Data(""), intData: IntData = IntData(0)) {}
+
+abstract class Test {
+    @Composable private fun PrivateExample(data: Data = Data("")) {}
+    @Composable fun PublicExample(data: Data = Data("")) {}
+    @Composable internal fun InternalExample(data: Data = Data("")) {}
+    @Composable @PublishedApi internal fun PublishedExample(data: Data = Data("")) {}
+    @Composable protected fun ProtectedExample(data: Data = Data("")) {}
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public final class Data {
+  public final getString()Ljava/lang/String;
+  public static toString-impl(Ljava/lang/String;)Ljava/lang/String;
+  public toString()Ljava/lang/String;
+  public static hashCode-impl(Ljava/lang/String;)I
+  public hashCode()I
+  public static equals-impl(Ljava/lang/String;Ljava/lang/Object;)Z
+  public equals(Ljava/lang/Object;)Z
+  private synthetic <init>(Ljava/lang/String;)V
+  public static constructor-impl(Ljava/lang/String;)Ljava/lang/String;
+  public final static synthetic box-impl(Ljava/lang/String;)LData;
+  public final synthetic unbox-impl()Ljava/lang/String;
+  public final static equals-impl0(Ljava/lang/String;Ljava/lang/String;)Z
+  private final Ljava/lang/String; string
+}
+public final class IntData {
+  public final getValue()I
+  public static toString-impl(I)Ljava/lang/String;
+  public toString()Ljava/lang/String;
+  public static hashCode-impl(I)I
+  public hashCode()I
+  public static equals-impl(ILjava/lang/Object;)Z
+  public equals(Ljava/lang/Object;)Z
+  private synthetic <init>(I)V
+  public static constructor-impl(I)I
+  public final static synthetic box-impl(I)LIntData;
+  public final synthetic unbox-impl()I
+  public final static equals-impl0(II)Z
+  private final I value
+}
+public abstract class Test {
+  public <init>()V
+  private final PrivateExample-PLmOXgA(Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V
+  public final PublicExample-PLmOXgA(Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V
+  public final InternalExample-PLmOXgA%test_module(Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V
+  public final PublishedExample-PLmOXgA(Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V
+  protected final ProtectedExample-PLmOXgA(Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V
+  public final synthetic PublicExample-XUE1X6o(Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V
+  public final synthetic PublishedExample-XUE1X6o(Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V
+  protected final synthetic ProtectedExample-XUE1X6o(Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V
+  private final static PrivateExample_PLmOXgA%lambda%0(LTest;Ljava/lang/String;IILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static PublicExample_PLmOXgA%lambda%1(LTest;Ljava/lang/String;IILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static InternalExample_PLmOXgA%lambda%2(LTest;Ljava/lang/String;IILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static PublishedExample_PLmOXgA%lambda%3(LTest;Ljava/lang/String;IILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static ProtectedExample_PLmOXgA%lambda%4(LTest;Ljava/lang/String;IILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  static <clinit>()V
+  public final static I %stable
+}
+public final class TestKt {
+  public final static Example-zy-tHAg(Ljava/lang/String;ILandroidx/compose/runtime/Composer;II)V
+  private final static PrivateExample-zy-tHAg(Ljava/lang/String;ILandroidx/compose/runtime/Composer;II)V
+  public final static InternalExample-zy-tHAg(Ljava/lang/String;ILandroidx/compose/runtime/Composer;II)V
+  public final static PublishedExample-zy-tHAg(Ljava/lang/String;ILandroidx/compose/runtime/Composer;II)V
+  public final static synthetic Example-phPabU0(Ljava/lang/String;ILandroidx/compose/runtime/Composer;II)V
+  public final static synthetic PublishedExample-phPabU0(Ljava/lang/String;ILandroidx/compose/runtime/Composer;II)V
+  private final static Example_zy_tHAg%lambda%0(Ljava/lang/String;IIILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static PrivateExample_zy_tHAg%lambda%1(Ljava/lang/String;IIILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static InternalExample_zy_tHAg%lambda%2(Ljava/lang/String;IIILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static PublishedExample_zy_tHAg%lambda%3(Ljava/lang/String;IIILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+}

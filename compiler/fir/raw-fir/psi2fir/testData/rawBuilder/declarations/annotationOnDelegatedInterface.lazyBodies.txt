@@ -1,0 +1,33 @@
+FILE: annotationOnDelegatedInterface.kt
+    public final? interface Base : R|kotlin/Any| {
+        public? final? fun print(): R|kotlin/Unit|
+
+    }
+    public final? class BaseImpl : Base {
+        public? constructor(x: Int): R|BaseImpl| {
+            LAZY_super<<implicit>>
+        }
+
+        public? final? val x: Int = R|<local>/x|
+            public? get(): Int
+
+        public? open? override fun print(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    @Target(LAZY_EXPRESSION) public final? annotation class Some : R|kotlin/Annotation| {
+        public? constructor(s: String): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? val s: String = R|<local>/s|
+            public? get(): String
+
+    }
+    public final? class Derived : Base {
+        public? constructor(b: Base): R|Derived| {
+            LAZY_super<<implicit>>
+        }
+
+        private final field $$delegate_0: Base = LAZY_EXPRESSION
+
+    }

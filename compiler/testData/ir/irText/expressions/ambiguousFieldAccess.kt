@@ -1,5 +1,6 @@
-// SKIP_KLIB_TEST
-// Related to KT-49507
+// FIR_IDENTICAL
+// TARGET_BACKEND: JVM_IR
+
 // FILE: A.java
 public class A {
     protected String x = "1";

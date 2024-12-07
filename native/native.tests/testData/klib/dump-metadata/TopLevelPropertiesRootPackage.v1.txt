@@ -1,0 +1,33 @@
+library {
+  // module name: <TopLevelPropertiesRootPackage.kt>
+
+  library fragment {
+    // package name: <root>
+
+    package {
+
+      // signature: /v1|7393439784805956893[0]
+      public final val v1: kotlin/Int /* = 1 */
+        // signature: /v1.<get-v1>|6078408232880608613[0]
+        public final get
+
+      // signature: /v2|-7674839086071973207[0]
+      public final val v2: kotlin/String /* = "hello" */
+        // signature: /v2.<get-v2>|-1626959823585604055[0]
+        public final get
+
+      // signature: /v3|1020778405567015018[0]
+      public final val v3: kotlin/Function1<kotlin/String, kotlin/Int>
+        // signature: /v3.<get-v3>|-8677319744655558329[0]
+        public final get
+
+      // signature: /v4|8662652590067501092[0]
+      public final val v4: kotlin/Function1<kotlin/String, kotlin/Int> /* = MyTransformer^ */
+        // signature: /v4.<get-v4>|-8872551565527715335[0]
+        public final get
+
+      // signature: /MyTransformer|null[0]
+      public typealias MyTransformer = kotlin/Function1<kotlin/String, kotlin/Int> /* = kotlin/Function1<kotlin/String, kotlin/Int> */
+    }
+  }
+}

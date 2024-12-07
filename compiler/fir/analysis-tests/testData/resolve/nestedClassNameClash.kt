@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun <T> listOf(): List<T> = null!!
 
 fun <T> materialize(): T = null!!

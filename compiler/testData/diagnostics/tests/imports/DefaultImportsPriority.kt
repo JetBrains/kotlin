@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// WITH_EXTENDED_CHECKERS
+// WITH_EXTRA_CHECKERS
 
 import java.lang.reflect.*
 import <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util.List<!>

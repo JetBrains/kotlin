@@ -1,3 +1,12 @@
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ *
+ * SPEC VERSION: 0.1-100
+ * MAIN LINK: expressions, constant-literals, real-literals -> paragraph 4 -> sentence 1
+ * NUMBER: 2
+ * DESCRIPTION: Real literals with underscores at the end.
+ */
+
 // TESTCASE NUMBER: 1
 val value_1= <!ILLEGAL_UNDERSCORE!>.0_0e-0___<!>
 

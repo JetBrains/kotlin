@@ -7,14 +7,17 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.inlineClassFieldName
-import org.jetbrains.kotlin.backend.jvm.ir.eraseTypeParameters
+import org.jetbrains.kotlin.backend.jvm.ir.eraseIfTypeParameter
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.util.isSubtypeOf
 import org.jetbrains.kotlin.ir.util.isTypeParameter
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
@@ -29,8 +32,8 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
     // If this value is immaterial, construct an object on the top of the stack. This
     // must always be done before generating other values or emitting raw bytecode.
     open fun materializeAt(target: Type, irTarget: IrType, castForReified: Boolean) {
-        val erasedSourceType = irType.eraseTypeParameters()
-        val erasedTargetType = irTarget.eraseTypeParameters()
+        val erasedSourceType = irType.eraseIfTypeParameter()
+        val erasedTargetType = irTarget.eraseIfTypeParameter()
 
         // Coerce inline classes
         val isFromTypeUnboxed = InlineClassAbi.unboxType(erasedSourceType)?.let(typeMapper::mapType) == type
@@ -38,6 +41,13 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
         if (isFromTypeUnboxed && !isToTypeUnboxed) {
             val boxed = typeMapper.mapType(erasedSourceType, TypeMappingMode.CLASS_DECLARATION)
             StackValue.boxInlineClass(type, boxed, erasedSourceType.isNullable(), mv)
+
+            if (typeMapper.mapType(erasedTargetType) == target) {
+                if (!erasedSourceType.isSubtypeOf(erasedTargetType, codegen.context.typeSystem)) {
+                    StackValue.coerce(boxed, target, mv, false)
+                }
+            }
+
             return
         }
         if (!isFromTypeUnboxed && isToTypeUnboxed) {
@@ -101,6 +111,12 @@ abstract class BooleanValue(codegen: ExpressionCodegen) :
         mv.mark(end)
         if (Type.BOOLEAN_TYPE != target) {
             StackValue.coerce(Type.BOOLEAN_TYPE, target, mv)
+        }
+    }
+
+    fun markLineNumber(expression: IrExpression) {
+        with(codegen) {
+            expression.markLineNumber(startOffset = true)
         }
     }
 }

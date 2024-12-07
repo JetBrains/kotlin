@@ -25,6 +25,9 @@ public class ConstructorExample {
     @NonNull
     private Long zzzz = 23L;
 
+    // Not required by annotation because static.
+    private static String constant;
+
     static void javaUsage() {
         ConstructorExample generated = new ConstructorExample("foo", true);
     }

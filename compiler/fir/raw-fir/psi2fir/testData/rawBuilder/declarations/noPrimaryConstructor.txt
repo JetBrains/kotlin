@@ -1,7 +1,7 @@
 FILE: noPrimaryConstructor.kt
-    public? final? class NoPrimary : R|kotlin/Any| {
+    public final? class NoPrimary : R|kotlin/Any| {
         public? final? val x: String
-            [ContainingClassKey=NoPrimary] public? get(): String
+            public? [ContainingClassKey=NoPrimary] get(): String
 
         public? [ContainingClassKey=NoPrimary] constructor(x: String): R|NoPrimary| {
             super<R|kotlin/Any|>()

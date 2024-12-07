@@ -1,13 +1,13 @@
 open class Base {
+  val f1: Function0<Any>
+    field = f1
+    get
+
   constructor(f1: Function0<Any>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val f1: Function0<Any>
-    field = f1
-    get
 
 }
 
@@ -30,3 +30,4 @@ object Thing : Base {
   }
 
 }
+

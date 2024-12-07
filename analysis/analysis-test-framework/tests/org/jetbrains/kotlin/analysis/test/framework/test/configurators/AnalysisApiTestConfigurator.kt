@@ -8,39 +8,51 @@ package org.jetbrains.kotlin.analysis.test.framework.test.configurators
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.Application
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Key
-import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalModificationService
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.ApplicationServiceRegistration
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.impl.testConfiguration
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import java.nio.file.Path
-import java.util.concurrent.locks.ReadWriteLock
-import java.util.concurrent.locks.ReentrantReadWriteLock
-import kotlin.concurrent.withLock
-import kotlin.reflect.KClass
 
 abstract class AnalysisApiTestConfigurator {
     open val testPrefix: String? get() = null
 
+    abstract val frontendKind: FrontendKind
+
     abstract val analyseInDependentSession: Boolean
+
+    /**
+     * The platform used by default, in case if no platform is specified in the test data file.
+     */
+    open val defaultTargetPlatform: TargetPlatform
+        get() = JvmPlatforms.defaultJvmPlatform
 
     abstract fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable)
 
-    abstract val serviceRegistrars: List<AnalysisApiTestServiceRegistrar>
+    abstract val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
 
-    open fun prepareFilesInModule(files: List<PsiFile>, module: TestModule, testServices: TestServices) {}
+    open fun prepareFilesInModule(ktTestModule: KtTestModule, testServices: TestServices) {}
 
-    abstract fun doOutOfBlockModification(file: KtFile)
+    open fun doGlobalModuleStateModification(project: Project) {
+        KotlinGlobalModificationService.getInstance(project).publishGlobalModuleStateModification()
+    }
 
-    open fun preprocessTestDataPath(path: Path): Path = path
+    open fun computeTestDataPath(path: Path): Path = path
 
-    abstract fun createModules(moduleStructure: TestModuleStructure, testServices: TestServices, project: Project): KtModuleProjectStructure
+    abstract fun createModules(
+        moduleStructure: TestModuleStructure,
+        testServices: TestServices,
+        project: Project,
+    ): KtTestModuleStructure
 
     fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {
         serviceRegistrars.forEach { it.registerProjectExtensionPoints(project, testServices) }
@@ -50,38 +62,12 @@ abstract class AnalysisApiTestConfigurator {
         serviceRegistrars.forEach { it.registerProjectServices(project, testServices) }
     }
 
+    @OptIn(TestInfrastructureInternals::class)
+    fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
+        serviceRegistrars.forEach { it.registerProjectModelServices(project, testServices.testConfiguration.rootDisposable, testServices) }
+    }
+
     fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
-        ApplicationServiceRegistrar.register(application, serviceRegistrars, testServices)
+        ApplicationServiceRegistration.register(application, serviceRegistrars, testServices)
     }
-}
-
-private object ApplicationServiceRegistrar {
-    fun register(application: MockApplication, registrars: List<AnalysisApiTestServiceRegistrar>, testServices: TestServices) {
-        for (registrar in registrars) {
-            val registered = application.lock.readLock().withLock {
-                application.serviceRegistered[registrar::class] == true
-            }
-
-            if (registered) {
-                continue
-            }
-
-            application.lock.writeLock().withLock {
-                registrar.registerApplicationServices(application, testServices)
-                application.serviceRegistered[registrar::class] = true
-            }
-        }
-    }
-
-    private val Application.lock
-            by NotNullableUserDataProperty<Application, ReadWriteLock>(
-                Key("TestApplicationServicesRegistrarLock"),
-                ReentrantReadWriteLock(),
-            )
-
-    private var Application.serviceRegistered
-            by NotNullableUserDataProperty<Application, MutableMap<KClass<out AnalysisApiTestServiceRegistrar>, Boolean>>(
-                Key("TestApplicationServicesRegistered"),
-                mutableMapOf(),
-            )
 }

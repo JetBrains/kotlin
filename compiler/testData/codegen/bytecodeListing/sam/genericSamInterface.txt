@@ -3,7 +3,7 @@ synthetic final class<null>  TKt$sam$Sam$0 {
     // source: 't.kt'
     <null> method <init>(p0: kotlin.jvm.functions.Function0): void
     public synthetic final <null> method get(): java.lang.Object
-    enclosing method TKt.genericSam(Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
+    enclosing class TKt
     private synthetic final field <null> function: kotlin.jvm.functions.Function0
     inner (anonymous) class TKt$sam$Sam$0
 }

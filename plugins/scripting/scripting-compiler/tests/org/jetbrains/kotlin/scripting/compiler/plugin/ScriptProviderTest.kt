@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
@@ -108,6 +110,5 @@ private class TestScriptDefinitionSource(val counter: AtomicInteger, val defGens
 }
 
 private class TestCliScriptDefinitionProvider(private val standardDef: ScriptDefinition) : CliScriptDefinitionProvider() {
-    @Suppress("DEPRECATION", "OverridingDeprecatedMember", "OVERRIDE_DEPRECATION")
-    override fun getDefaultScriptDefinition(): KotlinScriptDefinition = standardDef.legacyDefinition
+    override fun getDefaultDefinition(): ScriptDefinition = standardDef
 }

@@ -5,45 +5,66 @@
 
 package org.jetbrains.kotlin.fir.descriptors
 
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
-class FirModuleDescriptor(val session: FirSession) : ModuleDescriptor {
+class FirModuleDescriptor private constructor(
+    val session: FirSession,
+    val moduleData: FirModuleData,
     override val builtIns: KotlinBuiltIns
-        get() = DefaultBuiltIns.Instance
+) : ModuleDescriptor {
+    companion object {
+        fun createSourceModuleDescriptor(session: FirSession, builtIns: KotlinBuiltIns): FirModuleDescriptor {
+            require(session.kind == FirSession.Kind.Source)
+            return FirModuleDescriptor(session, session.moduleData, builtIns)
+        }
 
-    override fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean {
-        return false
+        fun createDependencyModuleDescriptor(moduleData: FirModuleData, builtIns: KotlinBuiltIns): FirModuleDescriptor {
+            // We may create dependency module descriptor for java sources, which have source session and source module data
+            return FirModuleDescriptor(moduleData.session, moduleData, builtIns)
+        }
     }
 
-    override val platform: TargetPlatform?
-        get() = null
+    override fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean {
+        if (targetModule !is FirModuleDescriptor) return false
+        return when (targetModule.moduleData) {
+            this.moduleData,
+            in moduleData.friendDependencies,
+            in moduleData.dependsOnDependencies -> true
+            else -> false
+        }
+    }
+
+    override val platform: TargetPlatform
+        get() = moduleData.platform
 
     override fun getPackage(fqName: FqName): PackageViewDescriptor {
         val symbolProvider = session.symbolProvider
-        if (symbolProvider.getPackage(fqName) != null) {
+        if (symbolProvider.hasPackage(fqName)) {
             return FirPackageViewDescriptor(fqName, this)
         }
-        TODO("Missing package reporting")
+        error("Module $moduleData doesn't contain package $fqName")
     }
 
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
-        TODO("not implemented")
+        shouldNotBeCalled()
     }
 
-    override val allDependencyModules: List<ModuleDescriptor>
-        get() = TODO("not implemented")
+    override var allDependencyModules: List<ModuleDescriptor> = emptyList()
+
     override val expectedByModules: List<ModuleDescriptor>
-        get() = TODO("not implemented")
+        get() = shouldNotBeCalled()
     override val allExpectedByModules: Set<ModuleDescriptor>
-        get() = TODO("not implemented")
+        get() = shouldNotBeCalled()
 
     override fun <T> getCapability(capability: ModuleCapability<T>): T? {
         return null
@@ -61,20 +82,16 @@ class FirModuleDescriptor(val session: FirSession) : ModuleDescriptor {
     }
 
     override fun getName(): Name {
-        return FIR_MODULE_NAME
+        return moduleData.name
     }
 
-    override val stableName: Name?
+    override val stableName: Name
         get() = name
 
     override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) {
-        TODO("not implemented")
+        shouldNotBeCalled()
     }
 
     override val annotations: Annotations
         get() = Annotations.EMPTY
-
-    companion object {
-        val FIR_MODULE_NAME = Name.identifier("module for FIR session")
-    }
 }

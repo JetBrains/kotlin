@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cpp
 
+import com.google.gson.JsonSyntaxException
 import com.google.gson.annotations.Expose
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
@@ -14,6 +15,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gson
 import java.io.FileReader
 import java.io.FileWriter
@@ -26,6 +28,7 @@ import java.io.FileWriter
  *
  * @see CompilationDatabaseExtension gradle plugin to simplify generation of these tasks.
  */
+@DisableCachingByDefault(because = "No point in caching")
 abstract class GenerateCompilationDatabase : DefaultTask() {
     /**
      * Entries in the compilation database.
@@ -126,10 +129,19 @@ abstract class GenerateCompilationDatabase : DefaultTask() {
         val serialized = mutableListOf<SerializedEntry>()
         mergeFiles.files.forEach { file ->
             FileReader(file).use {
-                serialized.addAll(gson.fromJson(it, Array<SerializedEntry>::class.java))
+                try {
+                    serialized.addAll(gson.fromJson(it, Array<SerializedEntry>::class.java))
+                } catch (e: JsonSyntaxException) {
+                    throw IllegalStateException("Failed to parse $file as compilation database", e)
+                }
             }
         }
-        serialized.addAll(entries.get().flatMap { SerializedEntry.fromEntry(it) })
+        entries.get().forEach {
+            // TODO: Reconsider when we use source directory for this.
+            // Make sure directories actually exist.
+            it.directory.asFile.get().mkdirs()
+            serialized.addAll(SerializedEntry.fromEntry(it))
+        }
         FileWriter(outputFile.asFile.get()).use {
             gson.toJson(serialized, it)
         }

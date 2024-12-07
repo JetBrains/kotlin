@@ -1,5 +1,6 @@
-// !LANGUAGE: +UnitConversionsOnArbitraryExpressions
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +UnitConversionsOnArbitraryExpressions
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 fun foo(f: () -> Unit) {}
 fun <T> fooGeneric(f: (T) -> Unit): T = TODO()

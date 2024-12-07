@@ -1,7 +1,0 @@
-KT element: KtProperty
-FIR element: FirPropertyImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-public final val x: R|kotlin/Int| = Int(1)
-    public get(): R|kotlin/Int|

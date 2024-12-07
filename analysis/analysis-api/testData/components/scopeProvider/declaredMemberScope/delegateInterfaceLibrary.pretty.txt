@@ -1,0 +1,15 @@
+private val p: A
+
+override var bar: kotlin.Long
+
+override val kotlin.Int.doo: kotlin.String
+
+override fun foo()
+
+override val foo: kotlin.Int
+
+override var kotlin.Int.zoo: kotlin.Unit
+
+override fun kotlin.Int.smth(): kotlin.Short
+
+constructor(p: A)

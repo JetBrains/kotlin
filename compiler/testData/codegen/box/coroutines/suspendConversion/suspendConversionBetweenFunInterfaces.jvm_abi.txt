@@ -1,0 +1,3 @@
+MODULE main
+	Missing in K1
+		SuspendConversionBetweenFunInterfacesKt$sam$Fn$0.class

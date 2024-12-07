@@ -21,6 +21,6 @@ FILE: lib.kt
     }
 FILE: main.kt
     public final fun test(d: R|D|): R|kotlin/Unit| {
-        lval a: R|kotlin/Int| = R|<local>/d|.R|/C.x|
+        lval a: R|kotlin/Int| = R|<local>/d|.R|/A.x|
         lval b: R|kotlin/Int| = R|<local>/d|.R|/D.y|
     }

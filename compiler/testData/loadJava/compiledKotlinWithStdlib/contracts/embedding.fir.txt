@@ -1,0 +1,26 @@
+public final fun embedInstancePredicate(x: R|kotlin/Any|, y: R|kotlin/Any?|): R|kotlin/Unit|
+    [R|Contract description]
+     <
+        Returns(WILDCARD) -> x is kotlin/String && y is kotlin/String
+    >
+
+
+public final fun embedNullCheckPredicate(x: R|kotlin/Any?|, y: R|kotlin/Int?|): R|kotlin/Unit|
+    [R|Contract description]
+     <
+        Returns(WILDCARD) -> y != null && x is kotlin/String
+    >
+
+
+public final fun R|kotlin/Boolean|.embedReceiverReference(b: R|kotlin/Boolean|): R|kotlin/Unit|
+    [R|Contract description]
+     <
+        Returns(WILDCARD) -> (!this) && b
+    >
+
+
+public final fun embedVariable(x: R|kotlin/Any|, b: R|kotlin/Boolean|): R|kotlin/Unit|
+    [R|Contract description]
+     <
+        Returns(WILDCARD) -> b && x is kotlin/String
+    >

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER
 // SKIP_TXT
 // Related issue: KT-28370
 
@@ -12,14 +13,14 @@ fun test1() {
     try {
         x = null
     } catch (e: Exception) {
-        x<!UNSAFE_CALL!>.<!>length // smartcast shouldn't be allowed (OOME could happen after `x = null`)
+        x<!UNSAFE_CALL!>.<!>length // smartcast is unsafe (OOME could happen after `x = null`)
         throw e
     }
     finally {
-        // smartcast shouldn't be allowed, `x = null` could've happened
+        // smartcast is unsafe, `x = null` could've happened
         x<!UNSAFE_CALL!>.<!>length
     }
-    // smartcast shouldn't be allowed, `x = null` could've happened
+    // smartcast is unsafe, `x = null` could've happened
     x<!UNSAFE_CALL!>.<!>length
 }
 
@@ -32,6 +33,7 @@ fun test2() {
     try {
         x = null
     } catch (e: Exception) {
+        // smartcast is unsafe, `x = null` could've happened
         x<!UNSAFE_CALL!>.<!>length
     }
     finally {
@@ -48,7 +50,7 @@ fun test3() {
         } catch (e: Exception) {
             t2 = null
         }
-        t2<!UNSAFE_CALL!>.<!>not() // wrong smartcast, NPE
+        t2<!UNSAFE_CALL!>.<!>not() // smartcast is unsafe, t2 is always null
     }
 }
 
@@ -58,7 +60,7 @@ fun test4() {
         try {
             t2 = null
         } finally { }
-        t2<!UNSAFE_CALL!>.<!>not() // wrong smartcast, NPE
+        t2<!UNSAFE_CALL!>.<!>not() // smartcast is unsafe, t2 is always null
     }
 }
 
@@ -78,11 +80,11 @@ fun test5() {
         return
     }
     finally {
-        s1.length
-        s2<!UNSAFE_CALL!>.<!>length
+        s1.length // smartcast is safe, s1 is always ""
+        s2<!UNSAFE_CALL!>.<!>length // smartcast is unsafe, s2 can be null
     }
-    s1.length
-    s2<!UNSAFE_CALL!>.<!>length
+    s1.length // smartcast is safe, s1 is always ""
+    s2.length // smartcast is safe, as we can't reach this point with s2 = null
 }
 
 fun test6(s1: String?, s2: String?) {
@@ -96,10 +98,10 @@ fun test6(s1: String?, s2: String?) {
         return
     }
     finally {
-        s<!UNSAFE_CALL!>.<!>length
+        s<!UNSAFE_CALL!>.<!>length // smartcast is unsafe, s is always null
         requireNotNull(s2)
     }
-    s<!UNSAFE_CALL!>.<!>length
-    s1<!UNSAFE_CALL!>.<!>length
+    s<!UNSAFE_CALL!>.<!>length // smartcast is unsafe, s is always null
+    s1.length
     s2.length
 }

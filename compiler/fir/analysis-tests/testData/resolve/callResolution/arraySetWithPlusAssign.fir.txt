@@ -20,8 +20,10 @@ FILE: arraySetWithPlusAssign.kt
                 Q|kotlin/Unit|
             }
             )
+            Unit
         }
         )
+        Unit
     }
     public final class B : R|kotlin/Any| {
         public constructor(): R|B| {
@@ -47,8 +49,10 @@ FILE: arraySetWithPlusAssign.kt
                 Q|kotlin/Unit|
             }
             )
+            Unit
         }
         )
+        Unit
     }
     public final class C : R|kotlin/Any| {
         public constructor(): R|C| {
@@ -77,8 +81,10 @@ FILE: arraySetWithPlusAssign.kt
                 Q|kotlin/Unit|
             }
             )
+            Unit
         }
         )
+        Unit
     }
     public final class D : R|kotlin/Any| {
         public constructor(): R|D| {
@@ -108,8 +114,10 @@ FILE: arraySetWithPlusAssign.kt
                 Q|kotlin/Unit|
             }
             )
+            Unit
         }
         )
+        Unit
     }
     public final class E : R|kotlin/Any| {
         public constructor(): R|E| {
@@ -118,15 +126,17 @@ FILE: arraySetWithPlusAssign.kt
 
     }
     public final fun test_5(x: R|E|): R|kotlin/Unit| {
-        R|<local>/x|.<Unresolved name: get>#(Int(1)).<Unresolved name: +=>#(fun <anonymous>(): <ERROR TYPE REF: Unresolved name: plusAssign> <inline=Unknown>  {
+        R|<local>/x|.<Unresolved name: get>#(Int(1)).<Unresolved name: +=>#(fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             R|/someCallInsideLambda|()
-            ^ R|<local>/x|.<Unresolved name: get>#(Int(1)).<Unresolved name: +=>#(fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            R|<local>/x|.<Unresolved name: get>#(Int(1)).<Unresolved name: +=>#(fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 R|/someCallInsideLambda|()
                 Q|kotlin/Unit|
             }
             )
+            Unit
         }
         )
+        Unit
     }
     public final class F : R|kotlin/Any| {
         public constructor(): R|F| {
@@ -154,6 +164,7 @@ FILE: arraySetWithPlusAssign.kt
             ^ String(please choose String)
         }
         )
+        Unit
     }
     public final class G : R|kotlin/Any| {
         public constructor(): R|G| {
@@ -192,10 +203,12 @@ FILE: arraySetWithPlusAssign.kt
                     ))
                 }
 
+                Unit
             }
             ))
         }
 
+        Unit
     }
     public final fun someCallInsideLambda(): R|kotlin/Unit| {
     }

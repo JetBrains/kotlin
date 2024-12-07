@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
-import java.io.IOException
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
 import kotlin.io.path.*
 import kotlin.streams.asSequence
 import kotlin.streams.toList
+import kotlin.test.fail
 
 /**
  * Find the file with given [name] in current [Path].
@@ -86,26 +86,6 @@ internal fun Path.copyRecursively(dest: Path) {
     })
 }
 
-internal fun Path.deleteRecursively() {
-    Files.walkFileTree(this, object : SimpleFileVisitor<Path>() {
-        override fun visitFile(
-            file: Path,
-            fileAttributes: BasicFileAttributes
-        ): FileVisitResult {
-            file.deleteIfExists()
-            return FileVisitResult.CONTINUE
-        }
-
-        override fun postVisitDirectory(
-            dir: Path,
-            exception: IOException?
-        ): FileVisitResult {
-            dir.deleteIfExists()
-            return FileVisitResult.CONTINUE
-        }
-    })
-}
-
 internal fun Iterable<String>.toPaths(): List<Path> = map { Paths.get(it) }
 
 /**
@@ -128,3 +108,22 @@ fun TestProject.sourceFilesRelativeToProject(
             it.relativeTo(projectPath)
         }
 }
+
+/**
+ * Returns a single file located in the [relativePath] subdirectory. If no file or more than one file is found an assertion error will be thrown.
+ */
+fun Path.getSingleFileInDir(relativePath: String? = null): Path {
+    val path = if (relativePath != null) resolve(relativePath) else this
+    return Files.list(path).use {
+        val files = it.asSequence().toList()
+        files.singleOrNull() ?: fail("The directory must contain a single file, but got: $files")
+    }
+}
+
+/**
+ * Get Gradle project Kotlin persistent cache.
+ *
+ * **Note**: if a test project is using composite build - [GradleProject] should point to the root project in this composite build.
+ */
+val GradleProject.projectPersistentCache: Path
+    get() = projectPath.resolve(".kotlin")

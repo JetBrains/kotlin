@@ -16,26 +16,23 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
+import org.jetbrains.annotations.Nullable;
+
 public abstract class SourceInfoAwareJsNode extends AbstractNode {
-    private Object source;
+    private JsLocationWithSource source;
 
     @Override
-    public Object getSource() {
+    @Nullable
+    public JsLocationWithSource getSource() {
         return source;
     }
 
     @Override
-    public void setSource(Object info) {
+    public void setSource(@Nullable JsLocationWithSource info) {
         source = info;
     }
 
     @Override
     public void acceptChildren(JsVisitor visitor) {
-    }
-
-    @Override
-    public JsNode source(Object info) {
-        source = info;
-        return this;
     }
 }

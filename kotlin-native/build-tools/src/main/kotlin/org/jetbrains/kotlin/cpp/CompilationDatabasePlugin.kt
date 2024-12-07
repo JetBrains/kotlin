@@ -8,16 +8,15 @@ package org.jetbrains.kotlin.cpp
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.*
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.PlatformManager
+import org.jetbrains.kotlin.konan.target.TargetDomainObjectContainer
+import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
+import org.jetbrains.kotlin.utils.capitalized
 import javax.inject.Inject
 
 /**
@@ -25,25 +24,62 @@ import javax.inject.Inject
  *
  * Allows generating compilation databases for different targets. For example:
  * ```
+ * dependencies {
+ *     compilationDatabase(project(":some:other:project"))
+ * }
+ *
  * compilationDatabase {
  *    target(someTarget1) {
  *        entry { ... }
  *    }
- *    allTargets {
- *        mergeFrom(provider { project("subproject") })
- *    }
+ *    allTargets {}
  * }
  * ```
- * Adds an entry for target `someTarget1`, and for each known target merges in databases generated
- * by this plugin in `subproject`.
+ * Adds an entry for target `someTarget1`, and for each known target merges in databases from `:some:other:project`.
  * The task that generates the database can be found via `compilationDatabase.target(someTarget1).task`.
  *
  * @see CompilationDatabasePlugin gradle plugin that creates this extension.
  */
-abstract class CompilationDatabaseExtension @Inject constructor(private val project: Project) {
-    // TODO: This platformManager should acquired be from something service-ish.
-    //       But for usefulness this service should be accessible from WorkAction.
-    private val platformManager = project.extensions.getByType<PlatformManager>()
+abstract class CompilationDatabaseExtension @Inject constructor(private val project: Project) : TargetDomainObjectContainer<CompilationDatabaseExtension.Target>(project) {
+    init {
+        this.factory = { target ->
+            project.objects.newInstance<Target>(this, target)
+        }
+    }
+
+    /**
+     * Bucket of dependencies with compilation databases to merge in.
+     */
+    val compilationDatabase: Configuration by project.configurations.creating {
+        description = "Compilation Database dependencies"
+        isCanBeConsumed = false
+        isCanBeResolved = false
+    }
+
+    /**
+     * Internal resolvable configuration of compilation database dependencies.
+     */
+    private val compilationDatabaseJSON by project.configurations.creating {
+        description = "Compilation Database dependencies (internal)"
+        isCanBeConsumed = false
+        isCanBeResolved = true
+        attributes {
+            attribute(CppUsage.USAGE_ATTRIBUTE, project.objects.named(CppUsage.COMPILATION_DATABASE))
+        }
+        extendsFrom(compilationDatabase)
+    }
+
+    /**
+     * Contains produced compilation database.
+     */
+    val compilationDatabaseElements: Configuration by project.configurations.creating {
+        description = "Compilation Database"
+        isCanBeConsumed = true
+        isCanBeResolved = false
+        attributes {
+            attribute(CppUsage.USAGE_ATTRIBUTE, project.objects.named(CppUsage.COMPILATION_DATABASE))
+        }
+    }
 
     /**
      * Entries in the compilation database.
@@ -51,8 +87,14 @@ abstract class CompilationDatabaseExtension @Inject constructor(private val proj
      * Single [Entry] generates a number of compilation database entries: one for each file in [files].
      *
      * @property target target for which this [Entry] is generated.
+     * @property sanitizer optional sanitizer for [target].
      */
-    abstract class Entry @Inject constructor(val target: KonanTarget) {
+    abstract class Entry @Inject constructor(
+            private val _target: TargetWithSanitizer,
+    ) {
+        val target by _target::target
+        val sanitizer by _target::sanitizer
+
         /**
          * **directory** from the [JSON Compilation Database](https://clang.llvm.org/docs/JSONCompilationDatabase.html#format).
          *
@@ -88,38 +130,30 @@ abstract class CompilationDatabaseExtension @Inject constructor(private val proj
      * Configure compilation database generation for [target].
      *
      * [entry] to add new entries.
-     * [mergeFrom] to merge databases from other projects with [CompilationDatabasePlugin]s.
      * [task] is the gradle task for compilation database generation.
      *
      * @property target target for which compilation database is generated.
+     * @property sanitizer optional sanitizer for which compilation database is generated.
      */
     abstract class Target @Inject constructor(
-            private val project: Project,
-            val target: KonanTarget,
+            private val owner: CompilationDatabaseExtension,
+            private val _target: TargetWithSanitizer,
     ) {
-        protected abstract val mergeFrom: ListProperty<GenerateCompilationDatabase>
+        val target by _target::target
+        val sanitizer by _target::sanitizer
 
-        /**
-         * Merge compilation database generated for [from] project for [target].
-         *
-         * @param from project with applied [CompilationDatabasePlugin] to merge compilation database from.
-         */
-        fun mergeFrom(from: Provider<Project>) {
-            mergeFrom.add(from.flatMap { project ->
-                project.extensions.getByType<CompilationDatabaseExtension>().target(target).task
-            })
-        }
+        private val project by owner::project
 
         protected abstract val entries: ListProperty<GenerateCompilationDatabase.Entry>
 
         /**
-         * Add an entry to the compilation database for [target].
+         * Add an entry to the compilation database for [target] with optional [sanitizer].
          *
          * @param action configure [Entry]
          */
         fun entry(action: Action<in Entry>) {
             entries.add(project.provider {
-                val instance = project.objects.newInstance<Entry>(target).apply {
+                val instance = project.objects.newInstance<Entry>(_target).apply {
                     action.execute(this)
                 }
                 project.objects.newInstance<GenerateCompilationDatabase.Entry>().apply {
@@ -132,66 +166,34 @@ abstract class CompilationDatabaseExtension @Inject constructor(private val proj
         }
 
         /**
-         * Gradle task that generates compilation database for [target].
+         * Gradle task that generates compilation database for [target] with optional [sanitizer].
          */
-        val task = project.tasks.register<GenerateCompilationDatabase>("${target}CompilationDatabase") {
-            description = "Generate compilation database for $target"
+        val task = project.tasks.register<GenerateCompilationDatabase>("compilationDatabase${_target.name.capitalized}") {
+            description = "Generate compilation database for $_target"
             group = TASK_GROUP
-            mergeFiles.from(mergeFrom)
+            mergeFiles.from(
+                    owner.compilationDatabaseJSON.incoming.artifactView {
+                        attributes {
+                            attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, _target)
+                        }
+                    }.files)
             entries.set(this@Target.entries)
-            outputFile.set(project.layout.buildDirectory.file("${target}/compile_commands.json"))
+            outputFile.set(project.layout.buildDirectory.file("$_target/compile_commands.json"))
+        }
+
+        init {
+            owner.compilationDatabaseElements.outgoing {
+                variants {
+                    create("$_target") {
+                        attributes {
+                            attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, _target)
+                        }
+                        artifact(task)
+                    }
+                }
+            }
         }
     }
-
-    protected abstract val targets: MapProperty<KonanTarget, Target>
-
-    private fun targetGetOrPut(target: KonanTarget) = targets.getting(target).orNull
-            ?: project.objects.newInstance<Target>(project, target).apply {
-                targets.put(target, this)
-            }
-
-    /**
-     * Get [compilation database configuration][Target] for [target] and apply [action] to it.
-     *
-     * @param target target to configure.
-     * @param action action to apply to configuration.
-     */
-    fun target(target: KonanTarget, action: Action<in Target>) = targetGetOrPut(target).apply {
-        action.execute(this)
-    }
-
-    /**
-     * Get [compilation database configuration][Target] for [target].
-     *
-     * @param target target to configure.
-     */
-    fun target(target: KonanTarget) = this.target(target) {}
-
-    /**
-     * Get [compilation database configurations][Target] for all known targets and apply [action] to each.
-     *
-     * @param action action to apply to configurations.
-     */
-    fun allTargets(action: Action<in Target>) = platformManager.enabled.map { target(it, action) }
-
-    /**
-     * Get [compilation database configurations][Target] for all known targets.
-     */
-    val allTargets
-        get() = allTargets {}
-
-    /**
-     * Get [compilation database configuration][Target] for [host target][HostManager.host] and apply [action] to it.
-     *
-     * @param action action to apply to configuration.
-     */
-    fun hostTarget(action: Action<in Target>) = target(HostManager.host, action)
-
-    /**
-     * Get [compilation database configuration][Target] for [host target][HostManager.host].
-     */
-    val hostTarget
-        get() = hostTarget {}
 
     companion object {
         @JvmStatic
@@ -204,10 +206,15 @@ abstract class CompilationDatabaseExtension @Inject constructor(private val proj
  *
  * Creates [CompilationDatabaseExtension] extension named `compilationDatabase`.
  *
+ * Creates the following [configurations][org.gradle.api.artifacts.Configuration]:
+ * * `compilationDatabase` - like `implementation` from java or C++ plugin. Bucket of dependencies to get other compilation databases from.
+ * * `compilationDatabaseElements` - like `apiElements` (sort of) from java plugin or `{variant}LinkElements` from C++ plugin. Contains produced compilation database.
+ *
  * @see CompilationDatabaseExtension extension that this plugin creates.
  */
 open class CompilationDatabasePlugin : Plugin<Project> {
     override fun apply(project: Project) {
+        project.apply<CppConsumerPlugin>()
         project.extensions.create<CompilationDatabaseExtension>("compilationDatabase", project)
     }
 }

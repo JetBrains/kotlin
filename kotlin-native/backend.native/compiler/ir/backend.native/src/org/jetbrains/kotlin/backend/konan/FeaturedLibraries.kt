@@ -5,23 +5,24 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.konan.*
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.library.SearchPathResolver
-import org.jetbrains.kotlin.library.isInterop
+import org.jetbrains.kotlin.library.metadata.*
+import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
-internal fun Context.getExportedDependencies(): List<ModuleDescriptor> = getDescriptorsFromLibraries((config.resolve.exportedLibraries + config.resolve.includedLibraries).toSet())
-internal fun Context.getIncludedLibraryDescriptors(): List<ModuleDescriptor> = getDescriptorsFromLibraries(config.resolve.includedLibraries.toSet())
+internal fun ModuleDescriptor.getExportedDependencies(konanConfig: KonanConfig): List<ModuleDescriptor> =
+        getDescriptorsFromLibraries((konanConfig.resolve.exportedLibraries + konanConfig.resolve.includedLibraries).toSet())
 
-private fun Context.getDescriptorsFromLibraries(libraries: Set<KonanLibrary>) =
-    moduleDescriptor.allDependencyModules.filter {
+internal fun ModuleDescriptor.getIncludedLibraryDescriptors(konanConfig: KonanConfig): List<ModuleDescriptor> =
+        getDescriptorsFromLibraries(konanConfig.resolve.includedLibraries.toSet())
+
+private fun ModuleDescriptor.getDescriptorsFromLibraries(libraries: Set<KonanLibrary>) =
+    allDependencyModules.filter {
         when (val origin = it.klibModuleOrigin) {
             CurrentKlibModuleOrigin, SyntheticModulesOrigin -> false
             is DeserializedKlibModuleOrigin -> origin.library in libraries
@@ -52,18 +53,6 @@ internal fun getIncludedLibraries(
         allowDefaultLibs = false
 )
 
-internal fun getCoveredLibraries(
-    configuration: CompilerConfiguration,
-    resolvedLibraries: KotlinLibraryResolveResult,
-    resolver: SearchPathResolver<KonanLibrary>
-): List<KonanLibrary> = getFeaturedLibraries(
-        configuration.getList(KonanConfigKeys.LIBRARIES_TO_COVER),
-        resolvedLibraries,
-        resolver,
-        FeaturedLibrariesReporter.forCoveredLibraries(configuration),
-        allowDefaultLibs = true
-)
-
 private sealed class FeaturedLibrariesReporter {
 
     abstract fun reportIllegalKind(library: KonanLibrary)
@@ -71,7 +60,7 @@ private sealed class FeaturedLibrariesReporter {
 
     protected val KonanLibrary.reportedKind: String
         get() = when {
-            isInterop -> "Interop"
+            isCInteropLibrary() -> "Interop"
             isDefault -> "Default"
             else -> "Unknown kind"
         }
@@ -165,13 +154,13 @@ private fun getFeaturedLibraries(
     val remainingFeaturedLibraries = featuredLibraryFiles.toMutableSet()
     val result = mutableListOf<KonanLibrary>()
     //TODO: please add type checks before cast.
-    val libraries = resolvedLibraries.getFullList(null).cast<List<KonanLibrary>>()
+    val libraries = resolvedLibraries.getFullList(null).map { it as KonanLibrary }
 
     for (library in libraries) {
         val libraryFile = library.libraryFile
         if (libraryFile in featuredLibraryFiles) {
             remainingFeaturedLibraries -= libraryFile
-            if (library.isInterop || (!allowDefaultLibs && library.isDefault)) {
+            if (library.isCInteropLibrary() || (!allowDefaultLibs && library.isDefault)) {
                 reporter.reportIllegalKind(library)
             } else {
                 result += library

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-1355 Type inference fails with smartcast and generic function
 //tests for Map.set
 package a

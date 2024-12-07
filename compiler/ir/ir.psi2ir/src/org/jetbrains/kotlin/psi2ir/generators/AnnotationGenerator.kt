@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
-class AnnotationGenerator(context: GeneratorContext) : IrElementVisitorVoid {
+internal class AnnotationGenerator(context: GeneratorContext) : IrElementVisitorVoid {
     private val typeTranslator = context.typeTranslator
     private val constantValueGenerator = context.constantValueGenerator
 

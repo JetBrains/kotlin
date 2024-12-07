@@ -1,0 +1,27 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:$android_tools_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-multiplatform'
+
+android {
+    compileSdkVersion 31
+    namespace 'app.example.com.lib'
+}
+
+
+kotlin {
+    android {
+
+    }
+}

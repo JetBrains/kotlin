@@ -1,0 +1,35 @@
+FILE: resolveGetValueWithWholeDelegate.kt
+    public final class State<S> : R|kotlin/Any| {
+        public constructor<S>(value: R|S|): R|State<S>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var value: R|S| = R|<local>/value|
+            public get(): R|S|
+            public set(value: R|S|): R|kotlin/Unit|
+
+    }
+    public final operator fun <V> R|State<V>|.getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|V| {
+        ^getValue this@R|/getValue|.R|SubstitutionOverride</State.value: R|V|>|
+    }
+    public final inline fun <M> remember(block: R|() -> M|): R|M| {
+        ^remember R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|M|>|()
+    }
+    public final val list0: R|kotlin/collections/List<kotlin/Int>|by R|/remember|<R|State<kotlin/collections/List<kotlin/Int>>|>(<L> = remember@fun <anonymous>(): R|State<kotlin/collections/List<kotlin/Int>>| <inline=Inline, kind=UNKNOWN>  {
+        ^ R|/State.State|<R|kotlin/collections/List<kotlin/Int>|>(R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(1)))
+    }
+    )
+        public get(): R|kotlin/collections/List<kotlin/Int>| {
+            ^ D|/list0|.R|/getValue|<R|kotlin/collections/List<kotlin/Int>|>(Null(null), ::R|/list0|)
+        }
+    public final fun expectInt(i: R|kotlin/Int|): R|kotlin/Unit| {
+        R|kotlin/io/println|(R|<local>/i|)
+    }
+    public final fun main(): R|kotlin/Unit| {
+        lval list1: R|kotlin/collections/List<kotlin/Int>|by R|/remember|<R|State<kotlin/collections/List<kotlin/Int>>|>(<L> = remember@fun <anonymous>(): R|State<kotlin/collections/List<kotlin/Int>>| <inline=Inline, kind=UNKNOWN>  {
+            ^ R|/State.State|<R|kotlin/collections/List<kotlin/Int>|>(R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(1)))
+        }
+        )
+        R|/expectInt|(R|/list0|.R|SubstitutionOverride<kotlin/collections/List.get: R|kotlin/Int|>|(Int(0)))
+        R|/expectInt|(R|<local>/list1|.R|SubstitutionOverride<kotlin/collections/List.get: R|kotlin/Int|>|(Int(0)))
+    }

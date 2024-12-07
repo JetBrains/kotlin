@@ -14,18 +14,15 @@ data class NpmDependencyDeclaration(
     @Input
     val name: String,
     @Input
-    val version: String,
-    @Input
-    val generateExternals: Boolean
+    val version: String
 ) : Serializable
 
 fun NpmDependencyDeclaration.uniqueRepresentation() =
-    "$scope $name:$version, $generateExternals"
+    "$scope $name:$version"
 
 internal fun NpmDependency.toDeclaration(): NpmDependencyDeclaration =
     NpmDependencyDeclaration(
         scope = this.scope,
         name = this.name,
         version = this.version,
-        generateExternals = this.generateExternals
     )

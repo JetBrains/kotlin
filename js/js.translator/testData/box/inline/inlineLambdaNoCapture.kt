@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1283
 package foo
 
 // CHECK_CONTAINS_NO_CALLS: sumEven
@@ -16,8 +15,8 @@ internal inline fun filteredReduce(a: Array<Int>, predicate: (Int) -> Boolean, r
     return result
 }
 
-// CHECK_BREAKS_COUNT: function=sumEven count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=sumEven name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=sumEven count=0
+// CHECK_LABELS_COUNT: function=sumEven name=$l$block count=0
 internal fun sumEven(a: Array<Int>): Int {
     return filteredReduce(a, { x -> x % 2 == 0}, { x, y -> x + y})
 }

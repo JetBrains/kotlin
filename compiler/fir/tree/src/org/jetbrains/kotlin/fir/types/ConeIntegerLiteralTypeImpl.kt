@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.isLong
 import org.jetbrains.kotlin.fir.isULong
-import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeExtensions.approximateIntegerLiteralBounds
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeExtensions.createClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeExtensions.createSupertypeList
@@ -16,15 +16,16 @@ import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeExtensions.getApprox
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeExtensions.withNullabilityAndAttributes
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.model.RigidTypeMarker
 
 class ConeIntegerLiteralConstantTypeImpl(
     value: Long,
     override val possibleTypes: Collection<ConeClassLikeType>,
     isUnsigned: Boolean,
-    nullability: ConeNullability
-) : ConeIntegerLiteralConstantType(value, isUnsigned, nullability) {
+    isMarkedNullable: Boolean
+) : ConeIntegerLiteralConstantType(value, isUnsigned, isMarkedNullable) {
     override val supertypes: List<ConeClassLikeType> by lazy {
         createSupertypeList(this)
     }
@@ -33,12 +34,11 @@ class ConeIntegerLiteralConstantTypeImpl(
         return getApproximatedTypeImpl(expectedType)
     }
 
-    @OptIn(ExperimentalUnsignedTypes::class)
     companion object {
         fun create(
             value: Long,
             isUnsigned: Boolean,
-            nullability: ConeNullability = ConeNullability.NOT_NULL
+            isTypePresent: (ConeClassLikeType) -> Boolean,
         ): ConeSimpleKotlinType {
             val possibleTypes = mutableListOf<ConeClassLikeType>()
 
@@ -64,22 +64,25 @@ class ConeIntegerLiteralConstantTypeImpl(
 
             if (isUnsigned) {
                 addUnsignedPossibleType()
+                if (possibleTypes.any { !isTypePresent(it) }) {
+                    return ConeErrorType(ConeSimpleDiagnostic("Unsigned integers need stdlib", DiagnosticKind.UnsignedNumbersAreNotPresent))
+                }
             } else {
                 addSignedPossibleTypes()
             }
             return if (possibleTypes.size == 1) {
-                possibleTypes.single().withNullabilityAndAttributes(nullability, ConeAttributes.Empty).also {
+                possibleTypes.single().withNullabilityAndAttributes(false, ConeAttributes.Empty).also {
                     if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
                         assert(it.isLong() || it.isULong())
                     }
                 }
             } else {
-                ConeIntegerLiteralConstantTypeImpl(value, possibleTypes, isUnsigned, nullability)
+                ConeIntegerLiteralConstantTypeImpl(value, possibleTypes, isUnsigned, isMarkedNullable = false)
             }
         }
 
         private fun createType(classId: ClassId): ConeClassLikeType {
-            return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(classId), emptyArray(), false)
+            return ConeClassLikeTypeImpl(classId.toLookupTag(), EMPTY_ARRAY, false)
         }
 
         private val INT_RANGE = Int.MIN_VALUE.toLong()..Int.MAX_VALUE.toLong()
@@ -94,8 +97,8 @@ class ConeIntegerLiteralConstantTypeImpl(
 
 class ConeIntegerConstantOperatorTypeImpl(
     isUnsigned: Boolean,
-    nullability: ConeNullability
-) : ConeIntegerConstantOperatorType(isUnsigned, nullability) {
+    isMarkedNullable: Boolean,
+) : ConeIntegerConstantOperatorType(isUnsigned, isMarkedNullable) {
     override val possibleTypes: Collection<ConeClassLikeType> = when (isUnsigned) {
         false -> setOf(
             createClassLikeType(StandardClassIds.Int),
@@ -121,7 +124,7 @@ class ConeIntegerConstantOperatorTypeImpl(
  * If it returns null then CST will be found by regular rules using real supertypes
  *   of integer literal types
  */
-fun ConeIntegerLiteralType.Companion.findCommonSuperType(types: Collection<SimpleTypeMarker>): SimpleTypeMarker? {
+fun ConeIntegerLiteralType.Companion.findCommonSuperType(types: Collection<RigidTypeMarker>): RigidTypeMarker? {
     return ConeIntegerLiteralTypeExtensions.findCommonSuperType(types)
 }
 
@@ -134,37 +137,42 @@ fun ConeKotlinType.approximateIntegerLiteralType(expectedType: ConeKotlinType? =
 }
 
 private object ConeIntegerLiteralTypeExtensions {
-    private val COMPARABLE_TAG = ConeClassLikeLookupTagImpl(StandardClassIds.Comparable)
-
     fun createSupertypeList(type: ConeIntegerLiteralType): List<ConeClassLikeType> {
-        return listOf(
-            createClassLikeType(StandardClassIds.Number),
-            ConeClassLikeTypeImpl(COMPARABLE_TAG, arrayOf(ConeKotlinTypeProjectionIn(type)), false)
-        )
+        val comparableSuperType =
+            ConeClassLikeTypeImpl(StandardClassIds.Comparable.toLookupTag(), arrayOf(ConeKotlinTypeProjectionIn(type)), false)
+
+        return if (type.possibleTypes.none { it.isUnsignedTypeOrNullableUnsignedType }) {
+            listOf(
+                createClassLikeType(StandardClassIds.Number),
+                comparableSuperType,
+            )
+        } else {
+            listOf(comparableSuperType)
+        }
     }
 
     fun createClassLikeType(classId: ClassId): ConeClassLikeType {
-        return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(classId), emptyArray(), false)
+        return ConeClassLikeTypeImpl(classId.toLookupTag(), ConeTypeProjection.EMPTY_ARRAY, false)
     }
 
     fun ConeIntegerLiteralType.getApproximatedTypeImpl(expectedType: ConeKotlinType?): ConeClassLikeType {
         val expectedTypeForApproximation = (expectedType?.lowerBoundIfFlexible() as? ConeClassLikeType)
-            ?.withNullabilityAndAttributes(ConeNullability.NOT_NULL, ConeAttributes.Empty)
+            ?.withNullabilityAndAttributes(false, ConeAttributes.Empty)
         val approximatedType = when (expectedTypeForApproximation) {
             null, !in possibleTypes -> possibleTypes.first()
             else -> expectedTypeForApproximation
         }
-        return approximatedType.withNullabilityAndAttributes(nullability, attributes)
+        return approximatedType.withNullabilityAndAttributes(isMarkedNullable, attributes)
     }
 
 
-    fun findCommonSuperType(types: Collection<SimpleTypeMarker>): SimpleTypeMarker? {
+    fun findCommonSuperType(types: Collection<RigidTypeMarker>): RigidTypeMarker? {
         if (types.isEmpty()) return null
         @Suppress("UNCHECKED_CAST")
-        return types.reduce { left: SimpleTypeMarker?, right: SimpleTypeMarker? -> commonSuperType(left, right) }
+        return types.reduce { left: RigidTypeMarker?, right: RigidTypeMarker? -> commonSuperType(left, right) }
     }
 
-    private fun commonSuperType(left: SimpleTypeMarker?, right: SimpleTypeMarker?): SimpleTypeMarker? {
+    private fun commonSuperType(left: RigidTypeMarker?, right: RigidTypeMarker?): RigidTypeMarker? {
         if (left == null || right == null) return null
 
         return when {
@@ -188,8 +196,8 @@ private object ConeIntegerLiteralTypeExtensions {
 
     private fun commonSuperTypeBetweenIntegerTypeAndRegularType(
         integerLiteralType: ConeIntegerLiteralType,
-        regularType: SimpleTypeMarker
-    ): SimpleTypeMarker? {
+        regularType: RigidTypeMarker
+    ): RigidTypeMarker? {
         return when (regularType) {
             in integerLiteralType.possibleTypes -> regularType
             else -> null
@@ -201,7 +209,7 @@ private object ConeIntegerLiteralTypeExtensions {
         right: ConeIntegerLiteralConstantType
     ): ConeIntegerLiteralConstantType {
         val possibleTypes = left.possibleTypes intersect right.possibleTypes
-        return ConeIntegerLiteralConstantTypeImpl(left.value, possibleTypes, left.isUnsigned, left.nullability)
+        return ConeIntegerLiteralConstantTypeImpl(left.value, possibleTypes, left.isUnsigned, left.isMarkedNullable)
     }
 
     fun ConeFlexibleType.approximateIntegerLiteralBounds(expectedType: ConeKotlinType? = null): ConeFlexibleType {
@@ -218,12 +226,12 @@ private object ConeIntegerLiteralTypeExtensions {
         return this
     }
 
-    fun ConeClassLikeType.withNullabilityAndAttributes(nullability: ConeNullability, attributes: ConeAttributes): ConeClassLikeType {
-        if (nullability == this.nullability && attributes == this.attributes) return this
+    fun ConeClassLikeType.withNullabilityAndAttributes(isMarkedNullable: Boolean, attributes: ConeAttributes): ConeClassLikeType {
+        if (isMarkedNullable == this.isMarkedNullable && attributes == this.attributes) return this
 
         return when (this) {
             is ConeErrorType -> this
-            is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullability.isNullable, attributes)
+            is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, isMarkedNullable, attributes)
             else -> error("sealed")
         }
     }

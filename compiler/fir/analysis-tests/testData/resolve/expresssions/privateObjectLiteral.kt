@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class C {
     private val x = object {
         fun foo() = 42

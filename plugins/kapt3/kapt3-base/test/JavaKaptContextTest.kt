@@ -5,25 +5,21 @@
 
 package org.jetbrains.kotlin.kapt.base.test
 
-import junit.framework.TestCase
-import org.jetbrains.kotlin.base.kapt3.DetectMemoryLeaksMode
-import org.jetbrains.kotlin.base.kapt3.KaptFlag
-import org.jetbrains.kotlin.base.kapt3.KaptOptions
-import org.jetbrains.kotlin.kapt3.base.KaptContext
-import org.jetbrains.kotlin.kapt3.base.doAnnotationProcessing
+import org.jetbrains.kotlin.kapt3.base.*
 import org.jetbrains.kotlin.kapt3.base.incremental.DeclaredProcType
 import org.jetbrains.kotlin.kapt3.base.incremental.IncrementalProcessor
 import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt3.base.util.WriterBackedKaptLogger
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.nio.file.Files
 import javax.annotation.processing.AbstractProcessor
-import javax.annotation.processing.Processor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.TypeElement
 
-class JavaKaptContextTest : TestCase() {
+class JavaKaptContextTest {
     companion object {
         private val TEST_DATA_DIR = File("plugins/kapt3/kapt3-base/testData/runner")
         val logger = WriterBackedKaptLogger(isVerbose = true)
@@ -38,7 +34,7 @@ class JavaKaptContextTest : TestCase() {
                         for (annotatedElement in annotatedElements) {
                             val generatedClassName = annotatedElement.simpleName.toString().replaceFirstChar(Char::uppercaseChar) +
                                     annotationName.replaceFirstChar(Char::uppercaseChar)
-                            val file = processingEnv.filer.createSourceFile("generated." + generatedClassName)
+                            val file = processingEnv.filer.createSourceFile("generated.$generatedClassName")
                             file.openWriter().use {
                                 it.write(
                                     """
@@ -58,7 +54,12 @@ class JavaKaptContextTest : TestCase() {
         )
     }
 
-    private fun doAnnotationProcessing(javaSourceFile: File, processor: IncrementalProcessor, outputDir: File) {
+    private fun doAnnotationProcessing(
+        javaSourceFile: File,
+        processor: IncrementalProcessor,
+        outputDir: File,
+        fileReadOutput: File? = null
+    ) {
         val options = KaptOptions.Builder().apply {
             projectBaseDir = javaSourceFile.parentFile
 
@@ -66,6 +67,8 @@ class JavaKaptContextTest : TestCase() {
             classesOutputDir = outputDir
             stubsOutputDir = outputDir
             incrementalDataOutputDir = outputDir
+
+            fileReadHistoryReportFile = fileReadOutput
 
             flags.add(KaptFlag.MAP_DIAGNOSTIC_LOCATIONS)
             detectMemoryLeaks = DetectMemoryLeaksMode.NONE
@@ -87,6 +90,26 @@ class JavaKaptContextTest : TestCase() {
     }
 
     @Test
+    fun testDumpFileReadHistory() {
+        val sourceOutputDir = Files.createTempDirectory("kaptRunner").toFile()
+        val fileReadOutputFile = File.createTempFile("kapt_read_history", ".txt")
+        try {
+            doAnnotationProcessing(
+                File(TEST_DATA_DIR, "Simple.java"),
+                simpleProcessor(),
+                sourceOutputDir,
+                fileReadOutput = fileReadOutputFile
+            )
+            assertTrue(fileReadOutputFile.exists())
+            assertTrue(fileReadOutputFile.readText().contains("generated/MyMethodMyAnnotation.java"))
+            assertTrue(fileReadOutputFile.readText().contains("java/lang/Enum.class"))
+        } finally {
+            sourceOutputDir.deleteRecursively()
+            fileReadOutputFile.delete()
+        }
+    }
+
+    @Test
     fun testException() {
         val exceptionMessage = "Here we are!"
         var triggered = false
@@ -100,10 +123,17 @@ class JavaKaptContextTest : TestCase() {
         }
 
         try {
-            doAnnotationProcessing(File(TEST_DATA_DIR, "Simple.java"), IncrementalProcessor(processor, DeclaredProcType.NON_INCREMENTAL, logger), TEST_DATA_DIR)
+            doAnnotationProcessing(
+                File(TEST_DATA_DIR, "Simple.java"),
+                IncrementalProcessor(processor, DeclaredProcType.NON_INCREMENTAL, logger),
+                TEST_DATA_DIR
+            )
         } catch (e: KaptBaseError) {
             assertEquals(KaptBaseError.Kind.EXCEPTION, e.kind)
             assertEquals("Here we are!", e.cause!!.message)
+            triggered = true
+        } catch (e: Throwable) { // AnnotationProcessorError
+            assertTrue(e.cause!!.message!!.contains("Here we are!"))
             triggered = true
         }
 

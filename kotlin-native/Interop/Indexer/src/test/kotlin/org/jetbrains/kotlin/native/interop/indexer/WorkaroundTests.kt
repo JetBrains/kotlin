@@ -33,7 +33,7 @@ class WorkaroundTests : IndexerTests() {
                 compilerArgs = defaultCompilerArgs(language),
                 language = language
         )
-        withIndex { index ->
+        withIndex(excludeDeclarationsFromPCH = false) { index ->
             val translationUnit = compilation.parse(
                     index,
                     options = CXTranslationUnit_DetailedPreprocessingRecord,

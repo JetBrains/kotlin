@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irComposite
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
@@ -18,9 +19,10 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.getArrayElementType
+import org.jetbrains.kotlin.ir.util.isBoxedArray
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import java.lang.IllegalArgumentException
 
 internal class WasmVarargExpressionLowering(
     private val context: WasmBackendContext
@@ -44,11 +46,11 @@ internal class WasmVarargExpressionLowering(
             get() = arrayClass.symbol in context.wasmSymbols.unsignedTypesToUnsignedArrays.values
 
         val primaryConstructor: IrConstructor
-            get() {
+            get() =
                 if (isUnsigned)
-                    return arrayClass.constructors.find { it.valueParameters.singleOrNull()?.type == context.irBuiltIns.intType }!!
-                return arrayClass.primaryConstructor!!
-            }
+                    arrayClass.constructors.find { it.valueParameters.singleOrNull()?.type == context.irBuiltIns.intType }!!
+                else arrayClass.primaryConstructor!!
+
         val constructors
             get() = arrayClass.constructors
 
@@ -74,7 +76,6 @@ internal class WasmVarargExpressionLowering(
 
                 return func?.owner ?: throw IllegalArgumentException("copyInto is not found for ${arrayType.render()}")
             }
-
     }
 
     private fun IrBlockBuilder.irCreateArray(size: IrExpression, arrDescr: ArrayDescr) =
@@ -164,16 +165,37 @@ internal class WasmVarargExpressionLowering(
             this@irSize.irSize()
         }
 
+    private fun tryVisitWithNoSpread(irVararg: IrVararg, builder: DeclarationIrBuilder): IrExpression {
+        val irVarargType = irVararg.type
+        if (!irVarargType.isUnsignedArray()) return irVararg
+
+        val unsignedConstructor = irVarargType.getClass()!!.primaryConstructor!!
+        val constructorParameterType = unsignedConstructor.valueParameters[0].type
+        val signedElementType = constructorParameterType.getArrayElementType(context.irBuiltIns)
+
+        irVararg.type = constructorParameterType
+        irVararg.varargElementType = signedElementType
+        return builder.irCall(unsignedConstructor.symbol, irVarargType).also {
+            it.putValueArgument(0, irVararg)
+        }
+    }
+
     override fun visitVararg(expression: IrVararg): IrExpression {
         // Optimization in case if we have a single spread element
-        if (expression.elements.size == 1 && expression.elements.first() is IrSpreadElement) {
-            val spreadExpr = (expression.elements.first() as IrSpreadElement).expression
+        val singleSpreadElement = expression.elements.singleOrNull() as? IrSpreadElement
+        if (singleSpreadElement != null) {
+            val spreadExpr = singleSpreadElement.expression
             if (isImmediatelyCreatedArray(spreadExpr))
                 return spreadExpr.transform(this, null)
         }
 
         // Lower nested varargs
         val irVararg = super.visitVararg(expression) as IrVararg
+        val builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol)
+
+        if (irVararg.elements.none { it is IrSpreadElement }) {
+            return tryVisitWithNoSpread(irVararg, builder)
+        }
 
         // Create temporary variable for each element and emit them all at once to preserve
         // argument evaluation order as per kotlin language spec.
@@ -202,9 +224,7 @@ internal class WasmVarargExpressionLowering(
                 yield(VarargSegmentBuilder.Plain(currentElements.toList(), context))
         }.toList()
 
-        val builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol)
         val destArrayDescr = ArrayDescr(irVararg.type, context)
-
         return builder.irComposite(irVararg) {
             // Emit all of the variables first so that all vararg expressions
             // are evaluated only once and in order of their appearance.

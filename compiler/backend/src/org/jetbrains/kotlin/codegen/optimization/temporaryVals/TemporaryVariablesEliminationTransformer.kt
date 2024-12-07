@@ -5,26 +5,24 @@
 
 package org.jetbrains.kotlin.codegen.optimization.temporaryVals
 
+import org.jetbrains.kotlin.codegen.InsnSequence
 import org.jetbrains.kotlin.codegen.inline.isSuspendInlineMarker
-import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
+import org.jetbrains.kotlin.codegen.optimization.common.nodeType
 import org.jetbrains.kotlin.codegen.optimization.common.removeUnusedLocalVariables
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckExpressionValueIsNotNull
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckNotNullWithMessage
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
 import kotlin.math.max
 
-class TemporaryVariablesEliminationTransformer(private val state: GenerationState) : MethodTransformer() {
+class TemporaryVariablesEliminationTransformer : MethodTransformer() {
     private val temporaryValsAnalyzer = TemporaryValsAnalyzer()
 
     override fun transform(internalClassName: String, methodNode: MethodNode) {
-        if (!state.isIrBackend) return
-
         // If there are any suspend inline markers, don't touch anything now.
         if (methodNode.instructions.any { isSuspendInlineMarker(it) }) return
 
@@ -168,7 +166,7 @@ class TemporaryVariablesEliminationTransformer(private val state: GenerationStat
         }
 
         for (insn in insnList) {
-            when (insn.type) {
+            when (insn.nodeType) {
                 AbstractInsnNode.LINE -> {
                     usedLabels.add((insn as LineNumberNode).start)
                 }
@@ -570,7 +568,7 @@ class TemporaryVariablesEliminationTransformer(private val state: GenerationStat
     }
 
     private fun AbstractInsnNode.isIntervening(context: ControlFlowGraph): Boolean =
-        when (this.type) {
+        when (this.nodeType) {
             AbstractInsnNode.LINE, AbstractInsnNode.FRAME ->
                 false
             AbstractInsnNode.LABEL ->

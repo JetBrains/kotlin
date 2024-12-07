@@ -1,0 +1,47 @@
+library {
+  // module name: <annotation.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/AnnotationArray
+    // class name: test/C1
+    // class name: test/C2
+    // class name: test/Empty
+    // class name: test/JustAnnotation
+
+    public final annotation class test/AnnotationArray : kotlin/Annotation {
+
+      public constructor(annotationArray: kotlin/Array<test/JustAnnotation>)
+
+      public final val annotationArray: kotlin/Array<test/JustAnnotation>
+        public final get
+    }
+
+    @test/JustAnnotation(annotation = test/Empty())
+    @test/AnnotationArray(annotationArray = [])
+    public final class test/C1 : kotlin/Any {
+
+      public constructor()
+    }
+
+    @test/AnnotationArray(annotationArray = [test/JustAnnotation(annotation = test/Empty()), test/JustAnnotation(annotation = test/Empty())])
+    public final class test/C2 : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final annotation class test/Empty : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    public final annotation class test/JustAnnotation : kotlin/Annotation {
+
+      public constructor(annotation: test/Empty)
+
+      public final val annotation: test/Empty
+        public final get
+    }
+  }
+}

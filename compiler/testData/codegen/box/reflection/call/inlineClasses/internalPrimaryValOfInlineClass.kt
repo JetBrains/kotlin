@@ -1,19 +1,26 @@
-// IGNORE_BACKEND: JS_IR, JS, NATIVE, WASM
-// IGNORE_BACKEND: JS_IR_ES6
+// TARGET_BACKEND: JVM
 // WITH_REFLECT
 
 import kotlin.test.assertEquals
 
-inline class Z(internal val x: Int)
-inline class Z2(internal val x: Z)
+@JvmInline
+value class Z(internal val x: Int)
+@JvmInline
+value class Z2(internal val x: Z)
 
-inline class L(internal val x: Long)
-inline class L2(internal val x: L)
+@JvmInline
+value class L(internal val x: Long)
+@JvmInline
+value class L2(internal val x: L)
 
-inline class A1(internal val x: Any?)
-inline class A1_2(internal val x: A1)
-inline class A2(internal val x: Any)
-inline class A2_2(internal val x: A2)
+@JvmInline
+value class A1(internal val x: Any?)
+@JvmInline
+value class A1_2(internal val x: A1)
+@JvmInline
+value class A2(internal val x: Any)
+@JvmInline
+value class A2_2(internal val x: A2)
 
 fun box(): String {
     assertEquals(42, Z::x.call(Z(42)))

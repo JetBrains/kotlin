@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun test11() {
     fun Any.bar(<!UNUSED_PARAMETER!>i<!>: Int) {}
     todo().<!UNREACHABLE_CODE!>bar(1)<!>

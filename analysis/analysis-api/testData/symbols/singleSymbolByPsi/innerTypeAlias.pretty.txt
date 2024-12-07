@@ -1,0 +1,1 @@
+typealias MyAlias<C, D> = kotlin.collections.Map<kotlin.collections.Map<A, B>, kotlin.collections.Map<C, D>>

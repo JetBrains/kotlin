@@ -3,12 +3,17 @@ plugins {
     kotlin("android")
 }
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+}
+
 android {
     compileSdkVersion(30)
+    namespace = "com.example.plainAndroidConsumer"
 }
 
 repositories {
-    maven(rootProject.buildDir.resolve("repo"))
+    maven("<localRepo>")
     mavenCentral()
 }
 

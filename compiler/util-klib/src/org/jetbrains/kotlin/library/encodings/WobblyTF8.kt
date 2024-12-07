@@ -29,11 +29,11 @@ object WobblyTF8 {
             if (char1 < '\u0080') {
                 // U+0000..U+007F -> 0xxxxxxx
                 // 7 meaningful bits -> 1 byte
-                buffer[writtenBytes++] = char1.code
+                buffer[writtenBytes++] = char1.toInt()
             } else if (char1 < '\u0800') {
                 // U+0080..U+07FF -> 110xxxxx 10xxxxxx
                 // 11 meaningful bits -> 2 bytes
-                val codePoint = char1.code
+                val codePoint = char1.toInt()
                 buffer[writtenBytes++] = (codePoint ushr 6) or 0b1100_0000
                 buffer[writtenBytes++] = (codePoint and 0b0011_1111) or 0b1000_0000
             } else {
@@ -55,7 +55,7 @@ object WobblyTF8 {
 
                 // U+0800..U+FFFF -> 1110xxxx 10xxxxxx 10xxxxxx
                 // 16 meaningful bits -> 3 bytes
-                val codePoint = char1.code
+                val codePoint = char1.toInt()
                 buffer[writtenBytes++] = (codePoint ushr 12) or 0b1110_0000
                 buffer[writtenBytes++] = ((codePoint ushr 6) and 0b0011_1111) or 0b1000_0000
                 buffer[writtenBytes++] = (codePoint and 0b0011_1111) or 0b1000_0000

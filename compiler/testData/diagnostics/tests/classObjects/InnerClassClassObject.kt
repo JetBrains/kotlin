@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // http://youtrack.jetbrains.net/issue/KT-449
 
 class A {

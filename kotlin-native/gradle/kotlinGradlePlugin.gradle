@@ -1,34 +1,3 @@
-import org.jetbrains.kotlin.UtilsKt
-
-project.buildscript.repositories {
-    maven {
-        url BootstrapKt.getBootstrapKotlinRepo(project)
-    }
-    if (UtilsKt.getCacheRedirectorEnabled(project))
-        maven { url 'https://cache-redirector.jetbrains.com/maven-central' }
-    else
-        mavenCentral()
-}
-def kotlinRoot = ext.properties.containsKey("rootBuildDirectory") ? file("${ext.rootBuildDirectory}/..") : rootProject.projectDir
-File versionPropertiesFile = new File(kotlinRoot, "gradle/versions.properties")
-def versionProperties = new Properties()
-versionPropertiesFile.withInputStream {
-    versionProperties.load(it)
-}
-
-project.buildscript.configurations.all {
-    resolutionStrategy.eachDependency {
-        if (requested.group == "com.google.code.gson" && requested.name == "gson") {
-            useVersion(versionProperties['versions.gson'])
-            because("Force using same gson version because of https://github.com/google/gson/pull/1991")
-        }
-    }
-}
-
-project.buildscript.dependencies {
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}"
-}
-
 configurations {
     kotlinCompilerClasspath
 }

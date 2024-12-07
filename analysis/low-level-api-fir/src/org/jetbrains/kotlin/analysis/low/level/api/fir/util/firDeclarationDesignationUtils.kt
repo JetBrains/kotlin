@@ -1,38 +1,23 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignation
+import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
-internal fun FirDeclaration.ensurePhase(firResolvePhase: FirResolvePhase) =
-    check(resolvePhase >= firResolvePhase) {
-        "Element phase required to be $firResolvePhase but element resolved to $resolvePhase"
-    }
-
-internal fun FirDeclarationDesignation.ensurePathPhase(firResolvePhase: FirResolvePhase) =
-    path.forEach { it.ensurePhase(firResolvePhase) }
-
-internal fun FirDeclarationDesignation.ensureDesignation(firResolvePhase: FirResolvePhase) {
-    ensurePathPhase(firResolvePhase)
-    declaration.ensurePhase(firResolvePhase)
-}
-internal fun FirDeclarationDesignation.ensurePhaseForClasses(firResolvePhase: FirResolvePhase) {
-    ensurePathPhase(firResolvePhase)
-    if (declaration is FirClassLikeDeclaration) {
-        check(declaration.resolvePhase >= firResolvePhase) {
-            "Expected $firResolvePhase but found ${declaration.resolvePhase}"
-        }
+internal fun FirElementWithResolveState.checkPhase(requiredResolvePhase: FirResolvePhase) {
+    @OptIn(ResolveStateAccess::class)
+    val declarationResolveState = resolveState
+    checkWithAttachment(
+        declarationResolveState.resolvePhase >= requiredResolvePhase,
+        { "At least $requiredResolvePhase expected but $declarationResolveState found for ${this::class.simpleName}" },
+    ) {
+        withFirEntry("firDeclaration", this@checkPhase)
     }
 }
-
-internal fun FirDeclarationDesignation.isTargetCallableDeclarationAndInPhase(firResolvePhase: FirResolvePhase): Boolean =
-    (declaration as? FirCallableDeclaration)?.let { it.resolvePhase >= firResolvePhase } ?: false
-
-internal fun FirDeclarationDesignation.targetContainingDeclaration(): FirDeclaration? = path.lastOrNull()

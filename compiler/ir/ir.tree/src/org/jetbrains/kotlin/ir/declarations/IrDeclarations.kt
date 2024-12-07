@@ -7,15 +7,19 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NameUtils.getPackagePartClassNamePrefix
 import java.io.File
 
 fun <D : IrAttributeContainer> D.copyAttributes(other: IrAttributeContainer?): D = apply {
     if (other != null) {
         attributeOwnerId = other.attributeOwnerId
+        originalBeforeInline = other.originalBeforeInline
     }
 }
 
@@ -35,21 +39,8 @@ fun IrClass.addAll(members: List<IrDeclaration>) {
 
 val IrFile.path: String get() = fileEntry.name
 val IrFile.name: String get() = File(path).name
-
-@ObsoleteDescriptorBasedAPI
-fun IrFunction.getIrValueParameter(parameter: ValueParameterDescriptor): IrValueParameter =
-    valueParameters.getOrElse(parameter.index) {
-        throw AssertionError("No IrValueParameter for $parameter")
-    }.also { found ->
-        assert(found.descriptor == parameter) {
-            "Parameter indices mismatch at $descriptor: $parameter != ${found.descriptor}"
-        }
-    }
-
-@ObsoleteDescriptorBasedAPI
-fun IrFunction.putDefault(parameter: ValueParameterDescriptor, expressionBody: IrExpressionBody) {
-    getIrValueParameter(parameter).defaultValue = expressionBody
-}
+val IrFile.nameWithPackage: String get() = packageFqName.child(Name.identifier(name)).asString()
+val IrFile.packagePartClassName: String get() = getPackagePartClassNamePrefix(File(path).nameWithoutExtension) + "Kt"
 
 val IrFunction.isStaticMethodOfClass: Boolean
     get() = this is IrSimpleFunction && parent is IrClass && dispatchReceiverParameter == null

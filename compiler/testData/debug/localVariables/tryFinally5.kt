@@ -1,5 +1,5 @@
-// JVM backend has the `a` local covering the finally block. It shouldn't.
-// IGNORE_BACKEND: JVM
+// IGNORE_INLINER: IR
+
 // WITH_STDLIB
 // FILE: test.kt
 
@@ -29,7 +29,20 @@ fun box() {
     val localX = x
 }
 
-// EXPECTATIONS
+// EXPECTATIONS JVM_IR +USE_INLINE_SCOPES_NUMBERS
+// test.kt:28 box:
+// test.kt:13 compute:
+// test.kt:14 compute:
+// test.kt:15 compute: a:java.lang.String="a":java.lang.String
+// test.kt:7 compute: a:java.lang.String="a":java.lang.String, $i$f$g\1\15:int=0:int
+// test.kt:16 compute: a:java.lang.String="a":java.lang.String, $i$f$g\1\15:int=0:int, $i$a$-g-TestKt$compute$1\2\71\0:int=0:int
+// test.kt:17 compute: a:java.lang.String="a":java.lang.String, $i$f$g\1\15:int=0:int, $i$a$-g-TestKt$compute$1\2\71\0:int=0:int, b\2:java.lang.String="b":java.lang.String
+// test.kt:22 compute:
+// test.kt:28 box:
+// test.kt:29 box: result:java.lang.String="b":java.lang.String
+// test.kt:30 box: result:java.lang.String="b":java.lang.String, localX:java.lang.String="OK":java.lang.String
+
+// EXPECTATIONS JVM_IR
 // test.kt:28 box:
 // test.kt:13 compute:
 // test.kt:14 compute:
@@ -41,3 +54,16 @@ fun box() {
 // test.kt:28 box:
 // test.kt:29 box: result:java.lang.String="b":java.lang.String
 // test.kt:30 box: result:java.lang.String="b":java.lang.String, localX:java.lang.String="OK":java.lang.String
+
+// EXPECTATIONS JS_IR
+// test.kt:28 box:
+// test.kt:14 compute:
+// test.kt:14 compute:
+// test.kt:14 compute:
+// test.kt:14 compute:
+// test.kt:16 compute: a="a":kotlin.String
+// test.kt:16 compute: a="a":kotlin.String
+// test.kt:16 compute: a="a":kotlin.String
+// test.kt:16 compute: a="a":kotlin.String
+// test.kt:17 compute: a="a":kotlin.String, b="b":kotlin.String
+// test.kt:22 compute: a="a":kotlin.String, b="b":kotlin.String

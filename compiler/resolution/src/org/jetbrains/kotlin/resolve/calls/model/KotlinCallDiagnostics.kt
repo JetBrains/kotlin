@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability.*
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.model.TypeParameterMarker
 
 interface TransformableToWarning<T : KotlinCallDiagnostic> {
     fun transformToWarning(): T?
@@ -63,6 +64,20 @@ class TooManyArguments(val argument: KotlinCallArgument, val descriptor: Callabl
 
 class NonVarargSpread(val argument: KotlinCallArgument) : KotlinCallDiagnostic(INAPPLICABLE) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgumentSpread(argument, this)
+}
+
+class MultiLambdaBuilderInferenceRestriction(
+    val argument: KotlinCallArgument,
+    val typeParameter: TypeParameterMarker?
+) : KotlinCallDiagnostic(RESOLVED) {
+    override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
+}
+
+class StubBuilderInferenceReceiver(
+    val receiver: SimpleKotlinCallArgument,
+    val extensionReceiverParameter: ReceiverParameterDescriptor,
+) : KotlinCallDiagnostic(RESOLVED) {
+    override fun report(reporter: DiagnosticReporter) = reporter.onCallReceiver(receiver, this)
 }
 
 class MixingNamedAndPositionArguments(override val argument: KotlinCallArgument) : InapplicableArgumentDiagnostic()
@@ -121,14 +136,6 @@ class WrongCountOfTypeArguments(
 object TypeCheckerHasRanIntoRecursion : KotlinCallDiagnostic(INAPPLICABLE) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCall(this)
 }
-
-// Callable reference resolution
-class CallableReferenceNotCompatible(
-    argument: CallableReferenceResolutionAtom,
-    val candidate: CallableMemberDescriptor,
-    val expectedType: UnwrappedType?,
-    val callableReverenceType: UnwrappedType
-) : CallableReferenceInapplicableDiagnostic(argument)
 
 // supported by FE but not supported by BE now
 class CallableReferencesDefaultArgumentUsed(
@@ -204,23 +211,23 @@ class UnsafeCallError(
 }
 
 // Other
-object InstantiationOfAbstractClass : KotlinCallDiagnostic(RUNTIME_ERROR) {
+object InstantiationOfAbstractClass : KotlinCallDiagnostic(K1_RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCall(this)
 }
 
-class AbstractSuperCall(val receiver: SimpleKotlinCallArgument) : KotlinCallDiagnostic(RUNTIME_ERROR) {
+class AbstractSuperCall(val receiver: SimpleKotlinCallArgument) : KotlinCallDiagnostic(K1_RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCall(this)
     }
 }
 
-object AbstractFakeOverrideSuperCall : KotlinCallDiagnostic(RUNTIME_ERROR) {
+object AbstractFakeOverrideSuperCall : KotlinCallDiagnostic(K1_RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCall(this)
     }
 }
 
-class SuperAsExtensionReceiver(val receiver: SimpleKotlinCallArgument) : KotlinCallDiagnostic(RUNTIME_ERROR) {
+class SuperAsExtensionReceiver(val receiver: SimpleKotlinCallArgument) : KotlinCallDiagnostic(K1_RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCallReceiver(receiver, this)
     }
@@ -273,7 +280,7 @@ class ArgumentNullabilityWarningDiagnostic(
     }
 }
 
-class ResolvedToSamWithVarargDiagnostic(val argument: KotlinCallArgument) : KotlinCallDiagnostic(RESOLVED_TO_SAM_WITH_VARARG) {
+class ResolvedToSamWithVarargDiagnostic(val argument: KotlinCallArgument) : KotlinCallDiagnostic(K1_RESOLVED_TO_SAM_WITH_VARARG) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCallArgument(argument, this)
     }

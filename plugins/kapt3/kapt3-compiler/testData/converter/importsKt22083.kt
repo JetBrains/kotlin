@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // CORRECT_ERROR_TYPES
 
 // FILE: a.kt
@@ -52,5 +51,3 @@ interface TestC {
 
     fun e(): LibFooBar
 }
-
-// EXPECTED_ERROR(kotlin:17:5) cannot find symbol

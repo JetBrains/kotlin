@@ -1,4 +1,7 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// ISSUE: KT-63794
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: main1.kt
 package abc1
 
@@ -162,3 +165,10 @@ fun foo3() {}
 fun foo5(x: Throws) {}
 fun foo6(x: kotlin.Throws) {}
 fun foo7(x: kotlin.jvm.Throws) {}
+
+// FILE: main10.kt
+
+val x: Throws? = null
+val y = Throws()
+val z = Throws::exceptionClasses
+val w = Throws::class

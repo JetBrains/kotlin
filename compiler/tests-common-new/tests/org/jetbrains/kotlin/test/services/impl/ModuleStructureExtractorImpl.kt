@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.test.services.impl
 
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
@@ -45,7 +47,7 @@ class ModuleStructureExtractorImpl(
     private val environmentConfigurators: List<AbstractEnvironmentConfigurator>
 ) : ModuleStructureExtractor(testServices, additionalSourceProviders, moduleStructureTransformers) {
     companion object {
-        private val allowedExtensionsForFiles = listOf(".kt", ".kts", ".java", ".js", ".mjs", ".config")
+        private val allowedExtensionsForFiles = listOf(".kt", ".kts", ".java", ".js", ".mjs", ".config", ".xml")
 
         /*
          * ([^()\n]+) module name
@@ -64,7 +66,7 @@ class ModuleStructureExtractorImpl(
         var result = extractor.splitTestDataByModules()
         for (transformer in moduleStructureTransformers) {
             result = try {
-                transformer.transformModuleStructure(result)
+                transformer.transformModuleStructure(result, testServices.defaultsProvider)
             } catch (e: Throwable) {
                 throw ExceptionFromModuleStructureTransformer(e, result)
             }
@@ -72,7 +74,7 @@ class ModuleStructureExtractorImpl(
         return result
     }
 
-    private inner class ModuleStructureExtractorWorker constructor(
+    private inner class ModuleStructureExtractorWorker(
         private val testDataFiles: List<File>,
         private val directivesContainer: DirectivesContainer,
     ) {
@@ -96,9 +98,12 @@ class ModuleStructureExtractorImpl(
         private var filesOfCurrentModule = mutableListOf<TestFile>()
 
         private var currentFileName: String? = null
+        private var currentSnippetNumber: Int = 1
         private var firstFileInModule: Boolean = true
         private var linesOfCurrentFile = mutableListOf<String>()
         private var endLineNumberOfLastFile = -1
+
+        private var allowFilesWithSameNames = false
 
         private var directivesBuilder = RegisteredDirectivesParser(directivesContainer, assertions)
         private var moduleDirectivesBuilder: RegisteredDirectivesParser = directivesBuilder
@@ -173,9 +178,14 @@ class ModuleStructureExtractorImpl(
                     if (currentModuleName != null) {
                         finishModule(lineNumber)
                     } else {
+                        if (currentFileName != null) {
+                            error("Defining `// FILE` before `// MODULE` is prohibited: it's unclear if the directives before the first `// FILE` are global- or module-specific")
+                        }
                         finishGlobalDirectives()
                     }
-                    val (moduleName, dependencies, friends, dependsOn) = splitRawModuleStringToNameAndDependencies(values.joinToString(separator = " "))
+                    val (moduleName, dependencies, friends, dependsOn) = splitRawModuleStringToNameAndDependencies(
+                        values.joinToString(separator = " ")
+                    )
                     currentModuleName = moduleName
                     val kind = defaultsProvider.defaultDependencyKind
                     dependencies.mapTo(dependenciesOfCurrentModule) { name ->
@@ -186,6 +196,26 @@ class ModuleStructureExtractorImpl(
                     }
                     dependsOn.mapTo(dependenciesOfCurrentModule) { name ->
                         DependencyDescription(name, DependencyKind.Source, DependencyRelation.DependsOnDependency)
+                    }
+                }
+                ModuleStructureDirectives.SNIPPET -> {
+                    fun snippetName() = "snippet_${"%03d".format(currentSnippetNumber)}"
+
+                    val previousModuleName = currentModuleName ?: snippetName().also {
+                        currentModuleName = it
+                        currentFileName = "$it.kts"
+                    }
+                    if (linesOfCurrentFile.all { it.isBlank() }) {
+                        finishGlobalDirectives()
+                    } else {
+                        finishModule(lineNumber)
+
+                        dependenciesOfCurrentModule.add(
+                            DependencyDescription(previousModuleName, DependencyKind.Source, DependencyRelation.FriendDependency)
+                        )
+                        currentSnippetNumber++
+                        currentModuleName = snippetName()
+                        currentFileName = "$currentModuleName.kts"
                     }
                 }
                 ModuleStructureDirectives.DEPENDENCY,
@@ -218,6 +248,9 @@ class ModuleStructureExtractorImpl(
                     }
                     currentFileName = (values.first() as String).also(::validateFileName)
                 }
+                ModuleStructureDirectives.ALLOW_FILES_WITH_SAME_NAMES -> {
+                    allowFilesWithSameNames = true
+                }
                 ModuleStructureDirectives.TARGET_PLATFORM -> {
                     if (currentModuleTargetPlatform != null) {
                         assertions.fail { "Target platform already specified twice for module $currentModuleName" }
@@ -242,13 +275,9 @@ class ModuleStructureExtractorImpl(
                     currentModuleTargetPlatform = if (values.size != 1) {
                         assertions.fail { "JVM target should be single" }
                     } else {
-                        when (values.single()) {
-                            "1.6" -> JvmPlatforms.jvm6
-                            "1.8" -> JvmPlatforms.jvm8
-                            "11" -> JvmPlatforms.jvm11
-                            "17" -> JvmPlatforms.jvm17
-                            else -> assertions.fail { "Incorrect value for JVM target" }
-                        }
+                        val jvmTarget = JvmTarget.fromString(values.single().toString())
+                            ?: assertions.fail { "Unknown JVM target: ${values.single()}" }
+                        JvmPlatforms.jvmPlatformByTargetVersion(jvmTarget)
                     }
                     return false // Workaround for FE and FIR
                 }
@@ -273,23 +302,34 @@ class ModuleStructureExtractorImpl(
                     dependenciesNames = dependenciesNames.filter { it != "support" }
                 }
             }
+            val friendsNames = friends.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList()
+            val dependsOnNames = dependsOn.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList()
+
+            val intersection = buildSet {
+                addAll(dependenciesNames intersect friendsNames)
+                addAll(dependenciesNames intersect dependsOnNames)
+                addAll(friendsNames intersect dependsOnNames)
+            }
+            require(intersection.isEmpty()) {
+                val m = if (intersection.size == 1) "module" else "modules"
+                val names = if (intersection.size == 1) "`${intersection.first()}`" else intersection.joinToArrayString()
+                """Module `$name` depends on $m $names with different kinds simultaneously"""
+            }
+
             return ModuleNameAndDependencies(
                 name,
                 dependenciesNames,
-                friends.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList(),
-                dependsOn.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList(),
+                friendsNames,
+                dependsOnNames,
             )
         }
 
         private fun finishGlobalDirectives() {
-            globalDirectives = directivesBuilder.build().also { directives ->
-                directives.forEach { it.checkDirectiveApplicability(contextIsGlobal = true) }
-            }
+            globalDirectives = directivesBuilder.build().onEach { it.checkDirectiveApplicability(contextIsGlobal = true) }
             resetModuleCaches()
             resetFileCaches()
         }
 
-        @OptIn(ExperimentalStdlibApi::class)
         private fun Directive.checkDirectiveApplicability(
             contextIsGlobal: Boolean = false,
             contextIsModule: Boolean = false,
@@ -315,7 +355,11 @@ class ModuleStructureExtractorImpl(
             moduleDirectives.forEach { it.checkDirectiveApplicability(contextIsGlobal = isImplicitModule, contextIsModule = true) }
 
             val targetBackend = currentModuleTargetBackend ?: defaultsProvider.defaultTargetBackend
-            currentModuleLanguageVersionSettingsBuilder.configureUsingDirectives(moduleDirectives, environmentConfigurators, targetBackend)
+            val frontendKind = currentModuleFrontendKind ?: defaultsProvider.defaultFrontend
+
+            currentModuleLanguageVersionSettingsBuilder.configureUsingDirectives(
+                moduleDirectives, environmentConfigurators, targetBackend, useK2 = frontendKind == FrontendKinds.FIR
+            )
             val moduleName = currentModuleName
                 ?: testServices.defaultDirectives[ModuleStructureDirectives.MODULE].firstOrNull()
                 ?: DEFAULT_MODULE_NAME
@@ -326,13 +370,12 @@ class ModuleStructureExtractorImpl(
                 targetBackend = targetBackend,
                 frontendKind = currentModuleFrontendKind ?: defaultsProvider.defaultFrontend,
                 backendKind = BackendKinds.fromTargetBackend(targetBackend),
-                binaryKind = defaultsProvider.defaultArtifactKind ?: targetPlatform.toArtifactKind(),
+                binaryKind = defaultsProvider.defaultArtifactKind ?: targetPlatform.toArtifactKind(frontendKind),
                 files = filesOfCurrentModule,
                 allDependencies = dependenciesOfCurrentModule,
                 directives = moduleDirectives,
                 languageVersionSettings = currentModuleLanguageVersionSettingsBuilder.build()
             )
-            modules += testModule
             additionalSourceProviders.flatMapTo(filesOfCurrentModule) { additionalSourceProvider ->
                 additionalSourceProvider.produceAdditionalFiles(
                     globalDirectives ?: RegisteredDirectives.Empty,
@@ -343,6 +386,7 @@ class ModuleStructureExtractorImpl(
                     }
                 }
             }
+            modules += testModule
             firstFileInModule = true
             resetModuleCaches()
         }
@@ -353,13 +397,13 @@ class ModuleStructureExtractorImpl(
                 nameSuffix == "COMMON" -> CommonPlatforms.defaultCommonPlatform
                 nameSuffix == "JVM" -> JvmPlatforms.unspecifiedJvmPlatform // TODO(dsavvinov): determine JvmTarget precisely
                 nameSuffix == "JS" -> JsPlatforms.defaultJsPlatform
+                nameSuffix == "WASM" -> WasmPlatforms.wasmJs
                 nameSuffix == "NATIVE" -> NativePlatforms.unspecifiedNativePlatform
                 nameSuffix.isEmpty() -> null // TODO(dsavvinov): this leads to 'null'-platform in ModuleDescriptor
                 else -> throw IllegalStateException("Can't determine platform by name $nameSuffix")
             }
         }
 
-        @OptIn(ExperimentalStdlibApi::class)
         private fun finishFile(lineNumber: Int) {
             val actualDefaultFileName = if (currentModuleName == null) {
                 defaultFileName
@@ -367,12 +411,10 @@ class ModuleStructureExtractorImpl(
                 "module_${currentModuleName}_$defaultFileName"
             }
             val filename = currentFileName ?: actualDefaultFileName
-            if (filesOfCurrentModule.any { it.name == filename }) {
+            if (!allowFilesWithSameNames && filesOfCurrentModule.any { it.name == filename }) {
                 error("File with name \"$filename\" already defined in module ${currentModuleName ?: actualDefaultFileName}")
             }
-            val directives = fileDirectivesBuilder?.build()?.also { directives ->
-                directives.forEach { it.checkDirectiveApplicability(contextIsFile = true) }
-            }
+            val directives = fileDirectivesBuilder?.build()?.onEach { it.checkDirectiveApplicability(contextIsFile = true) }
             val fileContent = buildString {
                 for (i in 0 until endLineNumberOfLastFile) {
                     appendLine()

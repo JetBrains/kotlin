@@ -1,3 +1,5 @@
+import kotlin.io.path.createTempDirectory
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -7,13 +9,13 @@ dependencies {
     testApi(project(":kotlin-scripting-compiler"))
     testApi(projectTests(":compiler:tests-common"))
     testImplementation(intellijCore())
+    testApi(platform(libs.junit.bom))
+    testCompileOnly(libs.junit4)
+    testImplementation("org.junit.jupiter:junit-jupiter:${libs.versions.junit5.get()}")
+    testRuntimeOnly(libs.junit.vintage.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
     testApi(projectTests(":generators:test-generator"))
-    testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(toolsJar())
-
-    if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
-    }
 }
 
 sourceSets {
@@ -23,6 +25,7 @@ sourceSets {
 
 projectTest(parallel = true) {
     dependsOn(":dist")
+    useJUnitPlatform()
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
 }
@@ -31,7 +34,7 @@ val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJa
 val generateKotlinUseSiteFromJavaOnesForJspecifyTests by generator("org.jetbrains.kotlin.generators.tests.GenerateKotlinUseSitesFromJavaOnesForJspecifyTestsKt")
 
 task<Exec>("downloadJspecifyTests") {
-    val tmpDirPath = createTempDir().absolutePath
+    val tmpDirPath = createTempDirectory().toAbsolutePath().toString()
     doFirst {
         executable("git")
         args("clone", "https://github.com/jspecify/jspecify/", tmpDirPath)
@@ -44,12 +47,9 @@ task<Exec>("downloadJspecifyTests") {
     }
 }
 
-val test: Test by tasks
-
-test.apply {
+tasks.test {
     exclude("**/*JspecifyAnnotationsTestGenerated*")
 }
-
 task<Test>("jspecifyTests") {
     workingDir(project.rootDir)
     include("**/*JspecifyAnnotationsTestGenerated*")

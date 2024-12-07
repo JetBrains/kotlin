@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,7 @@ package kotlin.text
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
+import kotlin.contracts.*
 import kotlin.random.*
 
 /**
@@ -29,7 +30,10 @@ public expect fun CharSequence.elementAt(index: Int): Char
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.elementAtOrElse(index: Int, defaultValue: (Int) -> Char): Char {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -132,7 +136,10 @@ public inline fun CharSequence.firstOrNull(predicate: (Char) -> Boolean): Char? 
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.getOrElse(index: Int, defaultValue: (Int) -> Char): Char {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -141,7 +148,7 @@ public inline fun CharSequence.getOrElse(index: Int, defaultValue: (Int) -> Char
  * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun CharSequence.getOrNull(index: Int): Char? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -245,7 +252,6 @@ public fun CharSequence.random(random: Random): Char {
  * Returns a random character from this char sequence, or `null` if this char sequence is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.randomOrNull(): Char? {
     return randomOrNull(Random)
@@ -255,7 +261,6 @@ public inline fun CharSequence.randomOrNull(): Char? {
  * Returns a random character from this char sequence using the specified source of randomness, or `null` if this char sequence is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun CharSequence.randomOrNull(random: Random): Char? {
     if (isEmpty())
         return null
@@ -1054,6 +1059,10 @@ public fun CharSequence.withIndex(): Iterable<IndexedValue<Char>> {
 /**
  * Returns `true` if all characters match the given [predicate].
  * 
+ * Note that if the char sequence contains no characters, the function returns `true`
+ * because there are no characters in it that _do not_ match the predicate.
+ * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
+ * 
  * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun CharSequence.all(predicate: (Char) -> Boolean): Boolean {
@@ -1184,6 +1193,8 @@ public inline fun CharSequence.forEachIndexed(action: (index: Int, Char) -> Unit
  * Returns the largest character.
  * 
  * @throws NoSuchElementException if the char sequence is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxOrThrow")
@@ -1255,6 +1266,8 @@ public inline fun <R : Comparable<R>> CharSequence.maxByOrNull(selector: (Char) 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the char sequence is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -1277,6 +1290,8 @@ public inline fun CharSequence.maxOf(selector: (Char) -> Double): Double {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the char sequence is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -1296,7 +1311,11 @@ public inline fun CharSequence.maxOf(selector: (Char) -> Float): Float {
  * Returns the largest value among all values produced by [selector] function
  * applied to each character in the char sequence.
  * 
+ * If multiple characters produce the maximal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the char sequence is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfGeneric
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -1316,9 +1335,11 @@ public inline fun <R : Comparable<R>> CharSequence.maxOf(selector: (Char) -> R):
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each character in the char sequence or `null` if there are no characters.
+ * applied to each character in the char sequence or `null` if the char sequence is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -1336,9 +1357,11 @@ public inline fun CharSequence.maxOfOrNull(selector: (Char) -> Double): Double? 
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each character in the char sequence or `null` if there are no characters.
+ * applied to each character in the char sequence or `null` if the char sequence is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -1356,7 +1379,11 @@ public inline fun CharSequence.maxOfOrNull(selector: (Char) -> Float): Float? {
 
 /**
  * Returns the largest value among all values produced by [selector] function
- * applied to each character in the char sequence or `null` if there are no characters.
+ * applied to each character in the char sequence or `null` if the char sequence is empty.
+ * 
+ * If multiple characters produce the maximal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfGeneric
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -1378,7 +1405,11 @@ public inline fun <R : Comparable<R>> CharSequence.maxOfOrNull(selector: (Char) 
  * Returns the largest value according to the provided [comparator]
  * among all values produced by [selector] function applied to each character in the char sequence.
  * 
+ * If multiple characters produce the maximal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the char sequence is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithGeneric
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -1398,7 +1429,11 @@ public inline fun <R> CharSequence.maxOfWith(comparator: Comparator<in R>, selec
 
 /**
  * Returns the largest value according to the provided [comparator]
- * among all values produced by [selector] function applied to each character in the char sequence or `null` if there are no characters.
+ * among all values produced by [selector] function applied to each character in the char sequence or `null` if the char sequence is empty.
+ * 
+ * If multiple characters produce the maximal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithGeneric
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -1417,7 +1452,9 @@ public inline fun <R> CharSequence.maxOfWithOrNull(comparator: Comparator<in R>,
 }
 
 /**
- * Returns the largest character or `null` if there are no characters.
+ * Returns the largest character or `null` if the char sequence is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.4")
 public fun CharSequence.maxOrNull(): Char? {
@@ -1466,6 +1503,8 @@ public fun CharSequence.maxWithOrNull(comparator: Comparator<in Char>): Char? {
  * Returns the smallest character.
  * 
  * @throws NoSuchElementException if the char sequence is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minOrThrow")
@@ -1537,6 +1576,8 @@ public inline fun <R : Comparable<R>> CharSequence.minByOrNull(selector: (Char) 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the char sequence is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -1559,6 +1600,8 @@ public inline fun CharSequence.minOf(selector: (Char) -> Double): Double {
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
  * 
  * @throws NoSuchElementException if the char sequence is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -1578,7 +1621,11 @@ public inline fun CharSequence.minOf(selector: (Char) -> Float): Float {
  * Returns the smallest value among all values produced by [selector] function
  * applied to each character in the char sequence.
  * 
+ * If multiple characters produce the minimal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the char sequence is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfGeneric
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -1598,9 +1645,11 @@ public inline fun <R : Comparable<R>> CharSequence.minOf(selector: (Char) -> R):
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each character in the char sequence or `null` if there are no characters.
+ * applied to each character in the char sequence or `null` if the char sequence is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -1618,9 +1667,11 @@ public inline fun CharSequence.minOfOrNull(selector: (Char) -> Double): Double? 
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each character in the char sequence or `null` if there are no characters.
+ * applied to each character in the char sequence or `null` if the char sequence is empty.
  * 
  * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfFloatingResult
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -1638,7 +1689,11 @@ public inline fun CharSequence.minOfOrNull(selector: (Char) -> Float): Float? {
 
 /**
  * Returns the smallest value among all values produced by [selector] function
- * applied to each character in the char sequence or `null` if there are no characters.
+ * applied to each character in the char sequence or `null` if the char sequence is empty.
+ * 
+ * If multiple characters produce the minimal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfMinOfGeneric
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -1660,7 +1715,11 @@ public inline fun <R : Comparable<R>> CharSequence.minOfOrNull(selector: (Char) 
  * Returns the smallest value according to the provided [comparator]
  * among all values produced by [selector] function applied to each character in the char sequence.
  * 
+ * If multiple characters produce the minimal value, this function returns the first of those values.
+ * 
  * @throws NoSuchElementException if the char sequence is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithGeneric
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -1680,7 +1739,11 @@ public inline fun <R> CharSequence.minOfWith(comparator: Comparator<in R>, selec
 
 /**
  * Returns the smallest value according to the provided [comparator]
- * among all values produced by [selector] function applied to each character in the char sequence or `null` if there are no characters.
+ * among all values produced by [selector] function applied to each character in the char sequence or `null` if the char sequence is empty.
+ * 
+ * If multiple characters produce the minimal value, this function returns the first of those values.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxOfWithMinOfWithGeneric
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -1699,7 +1762,9 @@ public inline fun <R> CharSequence.minOfWithOrNull(comparator: Comparator<in R>,
 }
 
 /**
- * Returns the smallest character or `null` if there are no characters.
+ * Returns the smallest character or `null` if the char sequence is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxMinPrimitive
  */
 @SinceKotlin("1.4")
 public fun CharSequence.minOrNull(): Char? {
@@ -1860,7 +1925,6 @@ public inline fun CharSequence.reduceIndexedOrNull(operation: (index: Int, acc: 
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun CharSequence.reduceOrNull(operation: (acc: Char, Char) -> Char): Char? {
     if (isEmpty())
         return null
@@ -1951,7 +2015,6 @@ public inline fun CharSequence.reduceRightIndexedOrNull(operation: (index: Int, 
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun CharSequence.reduceRightOrNull(operation: (Char, acc: Char) -> Char): Char? {
     var index = lastIndex
     if (index < 0) return null
@@ -2068,7 +2131,6 @@ public inline fun CharSequence.runningReduceIndexed(operation: (index: Int, acc:
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun <R> CharSequence.scan(initial: R, operation: (acc: R, Char) -> R): List<R> {
     return runningFold(initial, operation)
 }
@@ -2086,7 +2148,6 @@ public inline fun <R> CharSequence.scan(initial: R, operation: (acc: R, Char) ->
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun <R> CharSequence.scanIndexed(initial: R, operation: (index: Int, acc: R, Char) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
 }
@@ -2266,7 +2327,7 @@ public fun <R> CharSequence.chunkedSequence(size: Int, transform: (CharSequence)
 }
 
 /**
- * Splits the original char sequence into pair of char sequences,
+ * Splits the original char sequence into a pair of char sequences,
  * where *first* char sequence contains characters for which [predicate] yielded `true`,
  * while *second* char sequence contains characters for which [predicate] yielded `false`.
  * 
@@ -2286,7 +2347,7 @@ public inline fun CharSequence.partition(predicate: (Char) -> Boolean): Pair<Cha
 }
 
 /**
- * Splits the original string into pair of strings,
+ * Splits the original string into a pair of strings,
  * where *first* string contains characters for which [predicate] yielded `true`,
  * while *second* string contains characters for which [predicate] yielded `false`.
  * 

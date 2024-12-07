@@ -5,18 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import org.gradle.api.file.SourceDirectorySet
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.JsIrCompilationDetails
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
+import javax.inject.Inject
 
-class KotlinJsIrCompilation(
-    target: KotlinTarget,
-    name: String
-) : KotlinJsCompilation(JsIrCompilationDetails(target, name)) {
-
-    override val externalsOutputFormat: ExternalsOutputFormat = ExternalsOutputFormat.SOURCE
-
-    internal val allSources: MutableSet<SourceDirectorySet> = mutableSetOf()
+open class KotlinJsIrCompilation @Inject internal constructor(
+    compilation: KotlinCompilationImpl
+) : KotlinJsCompilation(compilation) {
+    var wasmTarget: WasmTarget? = null
+        internal set
 }

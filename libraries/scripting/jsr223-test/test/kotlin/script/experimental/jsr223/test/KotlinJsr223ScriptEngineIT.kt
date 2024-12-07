@@ -5,6 +5,8 @@
 
 package kotlin.script.experimental.jsr223.test
 
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
@@ -20,6 +22,7 @@ import java.nio.file.Files.createTempDirectory
 import java.nio.file.Files.createTempFile
 import javax.script.*
 import kotlin.script.experimental.jvmhost.jsr223.KotlinJsr223ScriptEngineImpl
+import kotlin.script.templates.standard.ScriptTemplateWithBindings
 
 // duplicating it here to avoid dependency on the implementation - it may interfere with tests
 private const val KOTLIN_JSR223_RESOLVE_FROM_CLASSLOADER_PROPERTY = "kotlin.jsr223.experimental.resolve.dependencies.from.context.classloader"
@@ -32,6 +35,11 @@ fun callLambda(x: Int, aFunction: (Int) -> Int): Int = aFunction.invoke(x)
 
 @Suppress("unused") // accessed from the tests below
 inline fun inlineCallLambda(x: Int, aFunction: (Int) -> Int): Int = aFunction.invoke(x)
+
+@Suppress("unused", "UNCHECKED_CAST") // accessed from the tests below
+fun ScriptTemplateWithBindings.myFunFromBindings(n: Int): Int =
+    (bindings["myFunFromBindings"] as (Int) -> Int).invoke(n)
+
 
 class KotlinJsr223ScriptEngineIT {
 
@@ -344,6 +352,36 @@ obj
     }
 
     @Test
+    fun testEvalInEvalWithBindingsWithLambda() {
+        // the problem (KT-67747) is only reproducible with INDY lambdas
+        withProperty(
+            "kotlin.script.base.compiler.arguments",
+            getPropertyValue = { listOfNotNull(it?.takeIf(String::isNotBlank), "-Xlambdas=indy").joinToString(" ") }
+        ) {
+            val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+            // code here is somewhat similar to one used in Spring's KotlinScriptTemplateTests
+            val res1 = engine.eval(
+                """
+            fun f(script: String): Int {
+                val bindings = javax.script.SimpleBindings()
+                bindings.put("myFunFromBindings", { i: Int -> i * 7 })
+                return eval(script, bindings) as Int
+            }
+            """.trimIndent()
+            )
+            Assert.assertNull(res1)
+            // Note that direct call to the lambda stored in bindings is not possible, so the additional helper
+            // [kotlin.script.experimental.jsr223.test.myFunFromBindings] is used (as in Spring)
+            val script = """
+            import kotlin.script.experimental.jsr223.test.*
+            myFunFromBindings(6)
+            """.trimIndent()
+            val res2 = (engine as Invocable).invokeFunction("f", script)
+            Assert.assertEquals(42, res2)
+        }
+    }
+
+    @Test
     fun `kotlin script evaluation should support functional return types`() {
         val scriptEngine = ScriptEngineManager().getEngineByExtension("kts")!!
 
@@ -423,10 +461,10 @@ obj
                     runtime.absolutePath,
                     "-cp", paths.compilerClasspath.joinToString(File.pathSeparator),
                     K2JVMCompiler::class.java.name,
-                    "-no-stdlib",
-                    "-cp", compileCp.joinToString(File.pathSeparator) { it.path },
-                    "-d", outJar.absolutePath,
-                    "-jvm-target", "17",
+                    K2JVMCompilerArguments::noStdlib.cliArgument,
+                    K2JVMCompilerArguments::classpath.cliArgument, compileCp.joinToString(File.pathSeparator) { it.path },
+                    K2JVMCompilerArguments::destination.cliArgument, outJar.absolutePath,
+                    K2JVMCompilerArguments::jvmTarget.cliArgument, "17",
                     "libraries/scripting/jsr223-test/testData/testJsr223Inlining.kt"
                 ),
                 additionalEnvVars = listOf("JAVA_HOME" to jdk17.absolutePath)
@@ -467,6 +505,23 @@ fun assertThrows(exceptionClass: Class<*>, body: () -> Unit) {
     } catch (e: Throwable) {
         if (!exceptionClass.isAssignableFrom(e.javaClass)) {
             Assert.fail("Expecting an exception of type ${exceptionClass.name} but got ${e.javaClass.name}")
+        }
+    }
+}
+
+internal fun <T> withProperty(name: String, getPropertyValue: (String?) -> String?, body: () -> T): T {
+    val prevPropertyVal = System.getProperty(name)
+    val value = getPropertyValue(prevPropertyVal)
+    when (value) {
+        null -> System.clearProperty(name)
+        else -> System.setProperty(name, value)
+    }
+    try {
+        return body()
+    } finally {
+        when (prevPropertyVal) {
+            null -> System.clearProperty(name)
+            else -> System.setProperty(name, prevPropertyVal)
         }
     }
 }

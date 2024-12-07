@@ -20,18 +20,13 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun CallableDescriptor.getContainingKotlinJvmBinaryClass(): KotlinJvmBinaryClass? {
     if (this !is DeserializedCallableMemberDescriptor) return null
 
-    val container = containingDeclaration
-
-    return when (container) {
-        is DeserializedClassDescriptor ->
-            container.source.safeAs<KotlinJvmBinarySourceElement>()?.binaryClass
-        is LazyJavaPackageFragment ->
-            container.source.safeAs<KotlinJvmBinaryPackageSourceElement>()?.getRepresentativeBinaryClass()
+    return when (val container = containingDeclaration) {
+        is DeserializedClassDescriptor -> (container.source as? KotlinJvmBinarySourceElement)?.binaryClass
+        is LazyJavaPackageFragment -> (container.source as? KotlinJvmBinaryPackageSourceElement)?.getRepresentativeBinaryClass()
         else -> null
     }
 }

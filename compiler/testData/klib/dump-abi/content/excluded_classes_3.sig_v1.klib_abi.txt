@@ -1,0 +1,15 @@
+// Rendering settings:
+// - Signature version: 1
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <excluded_classes_library>
+final class /Bar { // /Bar|null[0]
+    constructor <init>() // /Bar.<init>|-5645683436151566731[0]
+}
+final class /Baz { // /Baz|null[0]
+    constructor <init>() // /Baz.<init>|-5645683436151566731[0]
+    final class Nested { // /Baz.Nested|null[0]
+        constructor <init>() // /Baz.Nested.<init>|-5645683436151566731[0]
+    }
+}

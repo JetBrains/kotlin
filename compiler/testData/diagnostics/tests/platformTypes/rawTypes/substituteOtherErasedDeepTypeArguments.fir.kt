@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // FULL_JDK
 
@@ -10,13 +11,17 @@ class X<B extends I1<P, P, P>, P, A extends I1<I2<B>, B, I1<P, I2<B>, P>>> {
     }
 }
 
+// FILE: E.java
 class E<T> {
     T getT() {
         return null;
     }
 }
 
+// FILE: I1.java
 interface I1<P, A, F> {}
+
+// FILE: I2.java
 interface I2<S> {}
 
 // FILE: test.kt

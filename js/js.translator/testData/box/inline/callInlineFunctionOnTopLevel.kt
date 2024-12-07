@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1297
 package foo
 
 // CHECK_NOT_CALLED: inline1

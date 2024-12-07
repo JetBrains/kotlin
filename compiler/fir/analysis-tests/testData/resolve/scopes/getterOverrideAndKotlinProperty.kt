@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // SCOPE_DUMP: A:getFoo, B:getFoo, C:getFoo, D:getFoo
 // FILE: A.java
 public interface A {

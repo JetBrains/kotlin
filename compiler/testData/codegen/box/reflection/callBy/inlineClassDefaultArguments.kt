@@ -1,10 +1,10 @@
-// IGNORE_BACKEND: JS_IR, JS, NATIVE, WASM
-// IGNORE_BACKEND: JS_IR_ES6
+// TARGET_BACKEND: JVM
 // WITH_REFLECT
 
 import kotlin.test.assertEquals
 
-inline class A(val x: Int)
+@JvmInline
+value class A(val x: Int)
 
 fun test1(x: A = A(0)) = "OK"
 

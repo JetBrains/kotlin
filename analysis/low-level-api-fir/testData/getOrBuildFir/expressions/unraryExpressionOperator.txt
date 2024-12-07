@@ -1,0 +1,12 @@
+KT element: KtOperationReferenceExpression
+FIR element: FirResolvedNamedReferenceImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|kotlin/Boolean.not|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] unraryExpressionOperator.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Boolean|): R|kotlin/Boolean| {
+        ^foo R|<local>/x|.R|kotlin/Boolean.not|()
+    }

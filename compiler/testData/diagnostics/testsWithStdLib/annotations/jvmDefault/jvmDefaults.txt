@@ -3,92 +3,71 @@ package
 public fun test(): kotlin.Unit
 
 public interface KInterface {
-    @kotlin.jvm.JvmDefault public open val property: kotlin.String
-    public open val propertyNonDefault: kotlin.String
+    public open val property: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    @kotlin.jvm.JvmDefault public open fun test(): kotlin.String
-    public open fun testNonDefault(): kotlin.String
+    public open fun test(): kotlin.String
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public open class KotlinClass : KInterface {
     public constructor KotlinClass()
-    @kotlin.jvm.JvmDefault public open override /*1*/ /*fake_override*/ val property: kotlin.String
-    public open override /*1*/ /*fake_override*/ val propertyNonDefault: kotlin.String
+    public open override /*1*/ /*fake_override*/ val property: kotlin.String
     public final val xproperty: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    @kotlin.jvm.JvmDefault public open override /*1*/ /*fake_override*/ fun test(): kotlin.String
-    public open override /*1*/ /*fake_override*/ fun testNonDefault(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun test(): kotlin.String
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public final class KotlinClassIndirectInheritance : KotlinClass {
     public constructor KotlinClassIndirectInheritance()
-    @kotlin.jvm.JvmDefault public open override /*1*/ /*fake_override*/ val property: kotlin.String
+    public open override /*1*/ /*fake_override*/ val property: kotlin.String
     public final val property2: kotlin.String
-    public open override /*1*/ /*fake_override*/ val propertyNonDefault: kotlin.String
     public final override /*1*/ /*fake_override*/ val xproperty: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
     public final fun foo2(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    @kotlin.jvm.JvmDefault public open override /*1*/ /*fake_override*/ fun test(): kotlin.String
-    public open override /*1*/ /*fake_override*/ fun testNonDefault(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun test(): kotlin.String
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public final class KotlinClassIndirectInheritance2 : KotlinInterfaceIndirectInheritance {
     public constructor KotlinClassIndirectInheritance2()
-    @kotlin.jvm.JvmDefault public open override /*1*/ /*fake_override*/ val property: kotlin.String
-    public open override /*1*/ /*fake_override*/ val propertyNonDefault: kotlin.String
-    @kotlin.jvm.JvmDefault public open override /*1*/ /*fake_override*/ val propertyy: kotlin.String
-    public open override /*1*/ /*fake_override*/ val propertyyNonDefault: kotlin.String
-    @kotlin.jvm.JvmDefault public open override /*1*/ /*fake_override*/ val propertyyy: kotlin.String
-    public open override /*1*/ /*fake_override*/ val propertyyyNonDefault: kotlin.String
+    public open override /*1*/ /*fake_override*/ val property: kotlin.String
+    public open override /*1*/ /*fake_override*/ val propertyy: kotlin.String
+    public open override /*1*/ /*fake_override*/ val propertyyy: kotlin.String
     public final val xproperty: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun foo(): kotlin.Unit
-    @kotlin.jvm.JvmDefault public open override /*1*/ /*fake_override*/ fun fooo(): kotlin.Unit
-    public open override /*1*/ /*fake_override*/ fun foooNonDefault(): kotlin.Unit
-    @kotlin.jvm.JvmDefault public open override /*1*/ /*fake_override*/ fun foooo(): kotlin.Unit
-    public open override /*1*/ /*fake_override*/ fun fooooNonDefault(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun fooo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun foooo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    @kotlin.jvm.JvmDefault public open override /*1*/ /*fake_override*/ fun test(): kotlin.String
-    public open override /*1*/ /*fake_override*/ fun testNonDefault(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun test(): kotlin.String
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface KotlinInterface : KInterface {
-    @kotlin.jvm.JvmDefault public open override /*1*/ /*fake_override*/ val property: kotlin.String
-    public open override /*1*/ /*fake_override*/ val propertyNonDefault: kotlin.String
-    @kotlin.jvm.JvmDefault public open val propertyy: kotlin.String
-    public open val propertyyNonDefault: kotlin.String
+    public open override /*1*/ /*fake_override*/ val property: kotlin.String
+    public open val propertyy: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @kotlin.jvm.JvmDefault public open fun fooo(): kotlin.Unit
-    public open fun foooNonDefault(): kotlin.Unit
+    public open fun fooo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    @kotlin.jvm.JvmDefault public open override /*1*/ /*fake_override*/ fun test(): kotlin.String
-    public open override /*1*/ /*fake_override*/ fun testNonDefault(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun test(): kotlin.String
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface KotlinInterfaceIndirectInheritance : KotlinInterface {
-    @kotlin.jvm.JvmDefault public open override /*1*/ /*fake_override*/ val property: kotlin.String
-    public open override /*1*/ /*fake_override*/ val propertyNonDefault: kotlin.String
-    @kotlin.jvm.JvmDefault public open override /*1*/ /*fake_override*/ val propertyy: kotlin.String
-    public open override /*1*/ /*fake_override*/ val propertyyNonDefault: kotlin.String
-    @kotlin.jvm.JvmDefault public open val propertyyy: kotlin.String
-    public open val propertyyyNonDefault: kotlin.String
+    public open override /*1*/ /*fake_override*/ val property: kotlin.String
+    public open override /*1*/ /*fake_override*/ val propertyy: kotlin.String
+    public open val propertyyy: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @kotlin.jvm.JvmDefault public open override /*1*/ /*fake_override*/ fun fooo(): kotlin.Unit
-    public open override /*1*/ /*fake_override*/ fun foooNonDefault(): kotlin.Unit
-    @kotlin.jvm.JvmDefault public open fun foooo(): kotlin.Unit
-    public open fun fooooNonDefault(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun fooo(): kotlin.Unit
+    public open fun foooo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    @kotlin.jvm.JvmDefault public open override /*1*/ /*fake_override*/ fun test(): kotlin.String
-    public open override /*1*/ /*fake_override*/ fun testNonDefault(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun test(): kotlin.String
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

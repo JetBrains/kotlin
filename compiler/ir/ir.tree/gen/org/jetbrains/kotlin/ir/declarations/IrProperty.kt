@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,28 +15,25 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
- * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.property
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.property]
  */
-abstract class IrProperty : IrDeclarationBase(), IrPossiblyExternalDeclaration,
-        IrOverridableDeclaration<IrPropertySymbol>, IrMetadataSourceOwner, IrAttributeContainer,
-        IrMemberWithContainerSource {
+abstract class IrProperty : IrDeclarationBase(), IrPossiblyExternalDeclaration, IrOverridableDeclaration<IrPropertySymbol>, IrMetadataSourceOwner, IrAttributeContainer, IrMemberWithContainerSource {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: PropertyDescriptor
 
     abstract override val symbol: IrPropertySymbol
 
-    abstract val isVar: Boolean
+    abstract override var overriddenSymbols: List<IrPropertySymbol>
 
-    abstract val isConst: Boolean
+    abstract var isVar: Boolean
 
-    abstract val isLateinit: Boolean
+    abstract var isConst: Boolean
 
-    abstract val isDelegated: Boolean
+    abstract var isLateinit: Boolean
 
-    abstract val isExpect: Boolean
+    abstract var isDelegated: Boolean
 
-    abstract override val isFakeOverride: Boolean
+    abstract var isExpect: Boolean
 
     abstract var backingField: IrField?
 

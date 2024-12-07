@@ -1,0 +1,44 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final class Nested<T : <ERROR TYPE REF: Symbol not found for MyParam>> : R|kotlin/Any|
+    Element 7
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol MyParam
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol public final class Outer<MyParam> : R|kotlin/Any|
+                Type: test.Outer<MyParam>
+    Element 9
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol T : <ERROR TYPE REF: Symbol not found for MyParam>
+
+FILE: [ResolvedTo(IMPORTS)] declaredInClass_fromNested_typeBound.kt
+    public final? [ResolvedTo(SUPER_TYPES)] class Outer<[ResolvedTo(SUPER_TYPES)] MyParam> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor<[ResolvedTo(SUPER_TYPES)] MyParam>(): R|test/Outer<MyParam>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] class Nested<[ResolvedTo(STATUS)] T : <ERROR TYPE REF: Symbol not found for MyParam>> : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor<[ResolvedTo(STATUS)] T : <ERROR TYPE REF: Symbol not found for MyParam>>(): R|test/Outer.Nested<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }

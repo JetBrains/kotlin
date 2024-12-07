@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo1(b: Boolean, c: Int) {
     if (b && <!CONDITION_TYPE_MISMATCH!>c<!>) {}
     if (b || <!CONDITION_TYPE_MISMATCH!>c<!>) {}

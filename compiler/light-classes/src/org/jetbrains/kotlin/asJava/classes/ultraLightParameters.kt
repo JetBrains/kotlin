@@ -35,16 +35,15 @@ internal class KtUltraLightSuspendContinuationParameter(
     private val ktFunction: KtFunction,
     private val support: KtUltraLightSupport,
     method: KtLightMethod
-) : LightParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, PsiType.NULL, method, method.language),
+) : LightParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, PsiTypes.nullType(), method, method.language),
     KtLightParameter,
-    KtUltraLightElementWithNullabilityAnnotation<KtParameter, PsiParameter> {
+    KtUltraLightElementWithNullabilityAnnotationDescriptorBased<KtParameter, PsiParameter> {
 
     override val qualifiedNameForNullabilityAnnotation: String?
         get() = if (!ktFunction.isPrivate()) computeQualifiedNameForNullabilityAnnotation(ktType) else null
 
     override val psiTypeForNullabilityAnnotation: PsiType? get() = psiType
     override val kotlinOrigin: KtParameter? = null
-    override val clsDelegate: PsiParameter get() = invalidAccess()
 
     private val ktType: KotlinType?
         get() {
@@ -54,10 +53,10 @@ internal class KtUltraLightSuspendContinuationParameter(
         }
 
     private val psiType by lazyPub {
-        ktType?.asPsiType(support, TypeMappingMode.DEFAULT, method) ?: PsiType.NULL
+        ktType?.asPsiType(support, TypeMappingMode.DEFAULT, method) ?: PsiTypes.nullType()
     }
 
-    private val lightModifierList by lazyPub { KtLightSimpleModifierList(this, emptySet()) }
+    private val lightModifierList by lazyPub { KtUltraLightSimpleModifierList(this, emptySet()) }
 
     override fun getType(): PsiType = psiType
 
@@ -87,21 +86,24 @@ internal abstract class KtUltraLightParameter(
     private val ultraLightMethod: KtUltraLightMethod
 ) : LightParameter(
     name,
-    PsiType.NULL,
+    PsiTypes.nullType(),
     ultraLightMethod,
     ultraLightMethod.language
-), KtUltraLightElementWithNullabilityAnnotation<KtParameter, PsiParameter>, KtLightParameter {
+), KtUltraLightElementWithNullabilityAnnotationDescriptorBased<KtParameter, PsiParameter>, KtLightParameter {
+    override fun isEquivalentTo(another: PsiElement?): Boolean {
+        return another is KtParameter && kotlinOrigin?.isEquivalentTo(another) == true || this == another
+    }
 
-    override fun isEquivalentTo(another: PsiElement?): Boolean = kotlinOrigin == another
-
-    override val clsDelegate: PsiParameter get() = invalidAccess()
-
-    private val lightModifierList by lazyPub { KtLightSimpleModifierList(this, emptySet()) }
+    private val lightModifierList by lazyPub { KtUltraLightSimpleModifierList(this, emptySet()) }
 
     override fun getModifierList(): PsiModifierList = lightModifierList
 
     override fun getNavigationElement(): PsiElement = kotlinOrigin ?: method.navigationElement
     override fun getUseScope(): SearchScope = kotlinOrigin?.useScope ?: LocalSearchScope(this)
+
+    override fun getText(): String? = kotlinOrigin?.text.orEmpty()
+    override fun getTextRange(): TextRange? = kotlinOrigin?.textRange
+    override fun getTextOffset(): Int = kotlinOrigin?.textOffset ?: super.getTextOffset()
 
     override fun isValid() = parent.isValid
 
@@ -115,12 +117,12 @@ internal abstract class KtUltraLightParameter(
         get() = type
 
     protected fun computeParameterType(kotlinType: KotlinType?, containingDeclaration: CallableDescriptor?): PsiType {
-        kotlinType ?: return PsiType.NULL
+        kotlinType ?: return PsiTypes.nullType()
 
         if (kotlinType.isSuspendFunctionType) {
             return kotlinType.asPsiType(support, TypeMappingMode.DEFAULT, this)
         } else {
-            val containingDescriptor = containingDeclaration ?: return PsiType.NULL
+            val containingDescriptor = containingDeclaration ?: return PsiTypes.nullType()
             val mappedType = support.mapType(kotlinType, this) { typeMapper, sw ->
                 typeMapper.writeParameterType(sw, kotlinType, containingDescriptor)
             }
@@ -201,9 +203,6 @@ internal class KtUltraLightParameterForSource(
             }
         }
 
-    override fun getText(): String? = kotlinOrigin.text
-    override fun getTextRange(): TextRange = kotlinOrigin.textRange
-    override fun getTextOffset(): Int = kotlinOrigin.textOffset
     override fun getStartOffsetInParent(): Int = kotlinOrigin.startOffsetInParent
     override fun isWritable(): Boolean = kotlinOrigin.isWritable
     override fun getNavigationElement(): PsiElement = kotlinOrigin.navigationElement
@@ -290,7 +289,7 @@ internal class KtUltraLightParameterForDescriptor(
     override fun isVarArgs() = _isVarArgs
 
     override val givenAnnotations: List<KtLightAbstractAnnotation> by getAndAddLazy {
-        descriptor.obtainLightAnnotations(support, this)
+        descriptor.obtainLightAnnotations(this)
     }
 
     private val _parameterType by getAndAddLazy {

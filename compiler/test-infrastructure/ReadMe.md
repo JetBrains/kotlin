@@ -354,13 +354,24 @@ For example, to debug Kotlin/JS tests, run:
 
 To debug WASM tests, run:
 ```
-./gradlew :js:js.tests:wasmTest -Pfd.kotlin.wasm.debugMode=2
+./gradlew :wasm:wasm.tests:test -Pfd.kotlin.wasm.debugMode=2
 ```
 
 Values of the debug mode: `0` (or `false`), `1` (or `true`), `2`.
 
 Debug mode `2` will ensure that IR is dumped to a file after each lowering phase.
 The IR dumps will appear next to the generated `.js` or `.wat` file.
+
+# Massive testdata updating
+
+There is a handler [UpdateTestDataHandler](../tests-common-new/tests/org/jetbrains/kotlin/test/backend/handlers/UpdateTestDataHandler.kt),
+which can be used to update all testData. It is disabled by default. It can be enabled by either changing code,
+or by passing system property `kotlin.test.update.test.data`.
+
+For example, to update all IR text test data by the output of the JVM backend, you can use:
+```bash
+./gradlew -Pkotlin.test.update.test.data=true :compiler:fir:fir2ir:test --tests "org.jetbrains.kotlin.test.runners.ir.FirPsiJvmIrTextTestGenerated" --continue
+```
 
 # Code style
 

@@ -13,10 +13,7 @@ import org.eclipse.jgit.api.ResetCommand
 import org.eclipse.jgit.lib.TextProgressMonitor
 import org.jetbrains.kotlinx.dataframe.*
 import org.jetbrains.kotlinx.dataframe.api.*
-import org.jetbrains.kotlinx.dataframe.io.DisplayConfiguration
-import org.jetbrains.kotlinx.dataframe.io.readCSV
-import org.jetbrains.kotlinx.dataframe.io.toHTML
-import org.jetbrains.kotlinx.dataframe.io.writeCSV
+import org.jetbrains.kotlinx.dataframe.io.*
 import org.jetbrains.kotlinx.dataframe.math.median
 import java.io.File
 import java.io.InputStream
@@ -36,9 +33,11 @@ abstract class BenchmarkTemplate(
     private val projectName: String,
     private val projectGitUrl: String,
     private val gitCommitSha: String,
+    private val stableKotlinVersions: String
 ) {
     private val workingDir = File(args.first())
     val currentKotlinVersion: String = args[1]
+    private val kotlinVersions = setOf(stableKotlinVersions, currentKotlinVersion)
     private val gradleProfilerDir = workingDir.resolve("gradle-profiler")
     private val projectRepoDir = workingDir.resolve(projectName)
     private val scenariosDir = workingDir.resolve("scenarios")
@@ -46,23 +45,22 @@ abstract class BenchmarkTemplate(
 
     private val gitOperationsPrinter = TextProgressMonitor()
 
-    fun <T : InputStream> runAllBenchmarks(
+    fun <T : InputStream> runBenchmarks(
+        repoPatch: (() -> List<Pair<String, T>>)?,
         suite: ScenarioSuite,
-        benchmarks: Map<BenchmarkName, (() -> Pair<String, T>)?>
     ) {
         printStartingMessage()
         downloadGradleProfilerIfNotAvailable()
         checkoutRepository()
 
-        val results = benchmarks.map { (name, patchFile) ->
-            repoReset()
-            patchFile?.let {
-                val (patchName, patch) = it()
+        repoReset()
+        repoPatch?.let {
+            it().forEach { (patchName, patch) ->
                 repoApplyPatch(patchName, patch)
             }
-            runBenchmark(suite, name)
         }
-        aggregateBenchmarkResults(*results.toTypedArray())
+        val result = runBenchmark(suite)
+        aggregateBenchmarkResults(result)
 
         printEndingMessage()
     }
@@ -123,30 +121,35 @@ abstract class BenchmarkTemplate(
         patch: InputStream
     ) {
         println("Applying patch $patchName to repository")
-        Git.open(projectRepoDir)
-            .apply()
+        val git = Git.open(projectRepoDir)
+        git.apply()
             .setPatch(patch)
             .call()
+        git.close()
     }
 
     fun repoReset() {
         println("Hard resetting project repo")
-        Git.open(projectRepoDir)
-            .reset()
+        val git = Git.open(projectRepoDir)
+        git.reset()
             .setMode(ResetCommand.ResetType.HARD)
             .setProgressMonitor(gitOperationsPrinter)
             .call()
+        git.clean()
+            .setCleanDirectories(true)
+            .setForce(true)
+            .call()
+        git.close()
     }
 
-    fun runBenchmark(
+    private fun runBenchmark(
         scenarioSuite: ScenarioSuite,
-        benchmarkName: BenchmarkName,
-        dryRun: Boolean = false
+        @Suppress("UNUSED_PARAMETER") dryRun: Boolean = false
     ): BenchmarkResult {
-        println("Staring benchmark $benchmarkName")
-        val normalizedBenchmarkName = benchmarkName.normalizeTitle
+        println("Staring benchmark $projectName")
+        val normalizedBenchmarkName = projectName.normalizeTitle
         if (!scenariosDir.exists()) scenariosDir.mkdirs()
-        val scenarioFile = scenariosDir.resolve("${projectName}_$normalizedBenchmarkName.scenario")
+        val scenarioFile = scenariosDir.resolve("$normalizedBenchmarkName.scenario")
         scenarioSuite.writeTo(scenarioFile)
         val benchmarkOutputDir = benchmarkOutputsDir
             .resolve(projectName)
@@ -186,60 +189,73 @@ abstract class BenchmarkTemplate(
             throw BenchmarkFailedException(profilerProcess.exitValue())
         }
 
-        println("Benchmark $benchmarkName has ended")
+        println("Benchmark $projectName has ended")
         return BenchmarkResult(
-            benchmarkName,
+            projectName,
             benchmarkOutputDir.resolve("benchmark.csv")
         )
     }
 
-    fun aggregateBenchmarkResults(vararg benchmarkResults: BenchmarkResult) {
+    // Not working as intended due to this bug: https://github.com/gradle/gradle-profiler/issues/317
+    fun aggregateBenchmarkResults(benchmarkResult: BenchmarkResult) {
         println("Aggregating benchmark results...")
-        val sortedResults = benchmarkResults.sortedBy { it.name }
-        val results = sortedResults
-            .map { result ->
-                DataFrame
-                    .readCSV(result.result)
-                    .flipColumnsWithRows()
-                    .remove("version", "tasks") // removing unused columns
-                    .remove { nameContains("warm-up build") } // removing warm-up times
-                    .add("median build time") { // squashing build times into median build time
-                        valuesOf<Int>().median()
-                    }
-                    .remove { nameContains("measured build") } // removing iterations results
-                    .groupBy("scenario").aggregate { // merging configuration and build times into one row
-                        first { it.values().contains("task start") }["median build time"] into "tasks start median time"
-                        first { it.values().contains("total execution time") }["median build time"] into "execution median time"
-                    }
-                    .add("benchmark") { result.name }
+        val results = DataFrame
+            .readCSV(benchmarkResult.result, duplicate = true)
+            .drop {
+                // Removing unused rows
+                it["scenario"] in listOf("version", "tasks") ||
+                        it["scenario"].toString().startsWith("warm-up build")
             }
-            .concat()
-            .groupBy("scenario").aggregate { // Merging scenarios from different benchmarks into one row
-                forEachRow { row ->
-                    row["tasks start median time"] into "Configuration: ${row["benchmark"]}"
-                    row["execution median time"] into "Execution: ${row["benchmark"]}"
+            .flipColumnsWithRows()
+            .add("median build time") { // squashing build times into median build time
+                valuesOf<Int>().median()
+            }
+            .remove { nameContains("measured build") } // removing iterations results
+            .groupBy("scenario").aggregate { // merging configuration and build times into one row
+                first { it.values().contains("task start") }["median build time"] into "tasks start median time"
+                first { it.values().contains("total execution time") }["median build time"] into "execution median time"
+            }
+            .groupBy {
+                expr {
+                    val scenarioName = get("scenario").toString()
+                    if (scenarioName.endsWith(currentKotlinVersion)) {
+                        scenarioName.substringBefore(currentKotlinVersion)
+                    } else {
+                        scenarioName.substringBefore(stableKotlinVersions)
+                    }
                 }
             }
-            .sortBy("scenario")
-            .rename("scenario" to "Scenario")
+            .aggregate {
+                forEach { row ->
+                    val version = if (row["scenario"].toString().endsWith(stableKotlinVersions)) {
+                        stableKotlinVersions
+                    } else {
+                        currentKotlinVersion
+                    }
+                    row["tasks start median time"] into "Configuration: $version"
+                    row["execution median time"] into "Execution: $version"
+                }
+            }
+            .rename { col(0) }.into("Scenario")
+            .sortBy("Scenario")
             .reorderColumnsBy {
                 // "Scenario" column should always be in the first place
                 if (it.name() == "Scenario") "0000Scenario" else it.name()
             }
             .insert("Configuration diff from stable release") {
-                val stableReleaseConfiguration = column<Int>("Configuration: ${sortedResults.first().name}").getValue(this)
-                val currentReleaseConfiguration = column<Int>("Configuration: ${sortedResults.last().name}").getValue(this)
+                val stableReleaseConfiguration = column<Int>("Configuration: $stableKotlinVersions").getValue(this)
+                val currentReleaseConfiguration = column<Int>("Configuration: $currentKotlinVersion").getValue(this)
                 val percent = currentReleaseConfiguration * 100 / stableReleaseConfiguration
                 "${percent}%"
             }
-            .after("Configuration: ${sortedResults.last().name}")
+            .after("Configuration: $currentKotlinVersion")
             .insert("Execution diff from stable release") {
-                val stableReleaseConfiguration = column<Int>("Execution: ${sortedResults.first().name}").getValue(this)
-                val currentReleaseConfiguration = column<Int>("Execution: ${sortedResults.last().name}").getValue(this)
+                val stableReleaseConfiguration = column<Int>("Execution: $stableKotlinVersions").getValue(this)
+                val currentReleaseConfiguration = column<Int>("Execution: $currentKotlinVersion").getValue(this)
                 val percent = currentReleaseConfiguration * 100 / stableReleaseConfiguration
                 "${percent}%"
             }
-            .after("Execution: ${sortedResults.last().name}")
+            .after("Execution: $currentKotlinVersion")
 
         println("Benchmark results:")
         println(results.print(borders = true))
@@ -249,7 +265,7 @@ abstract class BenchmarkTemplate(
         results.writeCSV(benchmarkCsv)
         val benchmarkHtml = benchmarkOutputDir.resolve("$projectName.html")
         benchmarkHtml.writeText(
-            results.toHTML(
+            results.toStandaloneHTML(
                 configuration = DisplayConfiguration(
                     cellContentLimit = 120,
                     cellFormatter = { dataRow, dataColumn ->
@@ -268,7 +284,6 @@ abstract class BenchmarkTemplate(
                         }
                     }
                 ),
-                includeInit = true,
                 getFooter = {
                     "Results for: $projectName"
                 }
@@ -320,28 +335,41 @@ abstract class BenchmarkTemplate(
     }
 
     private fun ScenarioSuite.writeTo(output: File) {
+        val allScenarios = scenarios
+            .map {scenario ->
+                kotlinVersions.map { scenario to it }
+            }
+            .flatten()
+            .map { (scenario, version) ->
+                "${scenario.title} $version".normalizeTitle
+            }
         output.writeText(
             """
-            |default-scenarios = [${scenarios.joinToString { "\"${it.title.normalizeTitle}\"" }}]
+            |default-scenarios = [${allScenarios.joinToString { "\"$it\"" }}]
             |
             |${scenarios.joinToString(separator = "\n") { it.write() }}
             """.trimMargin()
         )
     }
 
-    private fun Scenario.write(): String =
+    private fun Scenario.write(): String = kotlinVersions.joinToString(separator = "\n") { kotlinVersion ->
+        val finalGradleArgs = gradleArgs
+            .plus("-PkotlinVersion=$kotlinVersion")
+            .joinToString { "\"$it\"" }
         """
-        |${title.normalizeTitle} {
-        |    title = "$title"
+        |${"$title $kotlinVersion".normalizeTitle} {
+        |    title = "$title $kotlinVersion"
         |    warm-ups = $warmups
         |    iterations = $iterations
         |    tasks = [${tasks.joinToString { "\"$it\"" }}]
-        |    ${if (gradleArgs.isNotEmpty()) "gradle-args = [${gradleArgs.joinToString { "\"$it\"" }}]" else ""}
+        |    gradle-args = [$finalGradleArgs]
         |    ${if (cleanupTasks.isNotEmpty()) "cleanup-tasks = [${cleanupTasks.joinToString { "\"$it\"" }}]" else ""}
         |    ${if (applyAbiChange.isNotEmpty()) "apply-abi-change-to = [${applyAbiChange.joinToString { "\"$it\"" }}]" else ""}
         |    ${if (applyAndroidResourceValueChange.isNotEmpty()) "apply-android-resource-value-change-to = [${applyAndroidResourceValueChange.joinToString { "\"$it\"" }}]" else ""}
         |}
+        |
         """.trimMargin()
+    }
 
     private val String.dropLeadingDir: String get() = substringAfter('/')
     private val String.normalizeTitle: String get() = lowercase().replace(" ", "_")
@@ -355,7 +383,11 @@ abstract class BenchmarkTemplate(
                 columnName == "scenario" -> DataColumn.createValueColumn(
                     columnName,
                     columns().map {
-                        it.name.dropLastWhile { it.isDigit() }
+                        if (it.name.contains(currentKotlinVersion)) {
+                            it.name.substringBefore(currentKotlinVersion) + currentKotlinVersion
+                        } else {
+                            it.name.substringBefore(stableKotlinVersions) + stableKotlinVersions
+                        }
                     }.drop(1)
                 )
                 columnName == "version" -> DataColumn.createValueColumn(
@@ -376,7 +408,7 @@ abstract class BenchmarkTemplate(
                 )
                 columnName.startsWith("measured build") -> DataColumn.createValueColumn(
                     columnName,
-                    rowToColumn(columnName) { it.toString().toInt() }
+                    rowToColumn(columnName) { it.toString().toIntOrNull() }
                 )
                 else -> throw IllegalArgumentException("Unknown column name: $columnName")
             }
@@ -402,7 +434,7 @@ abstract class BenchmarkTemplate(
 
     companion object {
         private const val STEP_SEPARATOR = "###############"
-        private const val GRADLE_PROFILER_VERSION = "0.18.0"
+        private const val GRADLE_PROFILER_VERSION = "0.19.0"
         private const val GRADLE_PROFILER_URL: String =
             "https://repo1.maven.org/maven2/org/gradle/profiler/gradle-profiler/$GRADLE_PROFILER_VERSION/gradle-profiler-$GRADLE_PROFILER_VERSION.zip"
 
@@ -411,6 +443,7 @@ abstract class BenchmarkTemplate(
 
 typealias BenchmarkName = String
 
+@Suppress("Unused")
 class BenchmarkFailedException(exitCode: Int) : Exception(
     "Benchmark process was not finished successfully with $exitCode exit code."
 )
@@ -425,7 +458,8 @@ class BenchmarkResult(
 annotation class BenchmarkProject(
     val name: String,
     val gitUrl: String,
-    val gitCommitSha: String
+    val gitCommitSha: String,
+    val stableKotlinVersion: String,
 )
 
 class BenchmarkScriptDefinition : ScriptCompilationConfiguration(
@@ -451,9 +485,10 @@ class BenchmarkEvaluationConfiguration : ScriptEvaluationConfiguration(
             val name: String = compileConf[benchmarkProjectName]!!
             val gitUrl: String = compileConf[benchmarkGitUrl]!!
             val gitCommitSha: String = compileConf[benchmarkGitCommitSha]!!
+            val stableKotlinVersion: String = compileConf[benchmarkStableKotlinVersion]!!
 
             context.evaluationConfiguration.with evalConf@{
-                constructorArgs(name, gitUrl, gitCommitSha)
+                constructorArgs(name, gitUrl, gitCommitSha, stableKotlinVersion)
             }.asSuccess()
         }
     }
@@ -474,6 +509,7 @@ internal class BenchmarkScriptConfigurator : RefineScriptCompilationConfiguratio
             data[benchmarkProjectName] = benchmarkProject.name
             data[benchmarkGitUrl] = benchmarkProject.gitUrl
             data[benchmarkGitCommitSha] = benchmarkProject.gitCommitSha
+            data[benchmarkStableKotlinVersion] = benchmarkProject.stableKotlinVersion
         }.asSuccess()
     }
 }
@@ -481,3 +517,4 @@ internal class BenchmarkScriptConfigurator : RefineScriptCompilationConfiguratio
 private val benchmarkProjectName by PropertiesCollection.key<String>()
 private val benchmarkGitUrl by PropertiesCollection.key<String>()
 private val benchmarkGitCommitSha by PropertiesCollection.key<String>()
+private val benchmarkStableKotlinVersion by PropertiesCollection.key<String>()

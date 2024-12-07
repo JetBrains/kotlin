@@ -1,7 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1400
-
-// Unmute when JS_IR supports release coroutines
-
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 

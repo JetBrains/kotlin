@@ -1,4 +1,5 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
+// LATEST_LV_DIFFERENCE
 import kotlin.reflect.KClass
 
 open class A

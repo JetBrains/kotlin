@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi;
@@ -46,29 +35,18 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
         return visitor.visitArgument(this, data);
     }
 
-    private static final TokenSet CONSTANT_EXPRESSIONS_TYPES = TokenSet.create(
-            KtStubElementTypes.NULL,
-            KtStubElementTypes.BOOLEAN_CONSTANT,
-            KtStubElementTypes.FLOAT_CONSTANT,
-            KtStubElementTypes.CHARACTER_CONSTANT,
-            KtStubElementTypes.INTEGER_CONSTANT,
-
-            KtStubElementTypes.REFERENCE_EXPRESSION,
-            KtStubElementTypes.DOT_QUALIFIED_EXPRESSION,
-
-            KtStubElementTypes.STRING_TEMPLATE
-    );
-
     private static final TokenSet STRING_TEMPLATE_EXPRESSIONS_TYPES = TokenSet.create(
             KtStubElementTypes.STRING_TEMPLATE
     );
 
     @Override
-    @Nullable @IfNotParsed
+    @Nullable
+    @IfNotParsed
     public KtExpression getArgumentExpression() {
         KotlinPlaceHolderStub<? extends KtValueArgument> stub = getStub();
         if (stub != null) {
-            KtExpression[] constantExpressions = stub.getChildrenByType(CONSTANT_EXPRESSIONS_TYPES, KtExpression.EMPTY_ARRAY);
+            KtExpression[] constantExpressions =
+                    stub.getChildrenByType(KtStubElementTypes.CONSTANT_EXPRESSIONS_TYPES, KtExpression.EMPTY_ARRAY);
             if (constantExpressions.length != 0) {
                 return constantExpressions[0];
             }
@@ -84,10 +62,11 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
         if (stub != null) {
             KtExpression[] stringTemplateExpressions = stub.getChildrenByType(STRING_TEMPLATE_EXPRESSIONS_TYPES, KtExpression.EMPTY_ARRAY);
             expression = stringTemplateExpressions.length != 0 ? stringTemplateExpressions[0] : null;
-        } else {
+        }
+        else {
             expression = findChildByClass(KtExpression.class);
         }
-        return expression instanceof KtStringTemplateExpression ? (KtStringTemplateExpression)expression : null;
+        return expression instanceof KtStringTemplateExpression ? (KtStringTemplateExpression) expression : null;
     }
 
     @Override
@@ -124,7 +103,7 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
     }
 
     public boolean isSpread() {
-        KotlinValueArgumentStub stub = getStub();
+        KotlinValueArgumentStub stub = getGreenStub();
         if (stub != null) {
             return stub.isSpread();
         }

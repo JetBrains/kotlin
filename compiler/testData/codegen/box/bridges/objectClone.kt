@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+
 import java.util.HashSet
 
 interface A : Set<String>

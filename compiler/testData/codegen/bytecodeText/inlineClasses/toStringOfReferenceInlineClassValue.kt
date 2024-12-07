@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 // Completely incorrect bytecode - see `box/inlineClasses/toStringOfUnboxedNullable.kt`
 // IGNORE_BACKEND: JVM
 

@@ -5,53 +5,37 @@
 
 package org.jetbrains.kotlin.build
 
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.JsMetadataVersion
 
-/**
- * If you want to add a new field, check its type is supported by [serializeToPlainText], [deserializeFromPlainText]
- */
-data class JsBuildMetaInfo(
-    override val isEAP: Boolean,
-    override val compilerBuildVersion: String,
-    override val languageVersionString: String,
-    override val apiVersionString: String,
-    override val multiplatformEnable: Boolean,
-    override val metadataVersionMajor: Int,
-    override val metadataVersionMinor: Int,
-    override val metadataVersionPatch: Int,
-    override val ownVersion: Int,
-    override val coroutinesVersion: Int,
-    override val multiplatformVersion: Int,
-    override val pluginClasspaths: String
-) : BuildMetaInfo {
-    companion object : BuildMetaInfoFactory<JsBuildMetaInfo>(JsBuildMetaInfo::class) {
-        override fun create(
-            isEAP: Boolean,
-            compilerBuildVersion: String,
-            languageVersionString: String,
-            apiVersionString: String,
-            multiplatformEnable: Boolean,
-            ownVersion: Int,
-            coroutinesVersion: Int,
-            multiplatformVersion: Int,
-            metadataVersionArray: IntArray?,
-            pluginClasspaths: String
-        ): JsBuildMetaInfo {
-            val metadataVersion = metadataVersionArray?.let(::JsMetadataVersion) ?: JsMetadataVersion.INSTANCE
-            return JsBuildMetaInfo(
-                isEAP = isEAP,
-                compilerBuildVersion = compilerBuildVersion,
-                languageVersionString = languageVersionString,
-                apiVersionString = apiVersionString,
-                multiplatformEnable = multiplatformEnable,
-                metadataVersionMajor = metadataVersion.major,
-                metadataVersionMinor = metadataVersion.minor,
-                metadataVersionPatch = metadataVersion.patch,
-                ownVersion = ownVersion,
-                coroutinesVersion = coroutinesVersion,
-                multiplatformVersion = multiplatformVersion,
-                pluginClasspaths = pluginClasspaths
-            )
+class JsBuildMetaInfo : BuildMetaInfo() {
+    override fun checkIfPlatformSpecificCompilerArgumentWasChanged(key: String, currentValue: String, previousValue: String): Boolean? {
+        when (key) {
+            CustomKeys.METADATA_VERSION_STRING.name -> {
+                val currentValueIntArray = BinaryVersion.parseVersionArray(currentValue)
+                if (currentValueIntArray?.size != 3) return null
+                val currentVersion = JsMetadataVersion(currentValueIntArray[0], currentValueIntArray[1], currentValueIntArray[2])
+
+                val previousValueIntArray = BinaryVersion.parseVersionArray(previousValue)
+                if (previousValueIntArray?.size != 3) return null
+                val previousVersion = JsMetadataVersion(previousValueIntArray[0], previousValueIntArray[1], previousValueIntArray[2])
+                return currentVersion == previousVersion
+            }
         }
+        return null
     }
+
+    override fun createPropertiesMapFromCompilerArguments(args: CommonCompilerArguments): Map<String, String> {
+        val resultMap = mutableMapOf<String, String>()
+        val metadataVersionArray = args.metadataVersion?.let { BinaryVersion.parseVersionArray(it) }
+        val metadataVersion = metadataVersionArray?.let(::JsMetadataVersion) ?: JsMetadataVersion.INSTANCE
+        val metadataVersionString = metadataVersion.toInteger().toString()
+        resultMap[CustomKeys.METADATA_VERSION_STRING.name] = metadataVersionString
+
+        return super.createPropertiesMapFromCompilerArguments(args) + resultMap
+    }
+
+    override val argumentsListForSpecialCheck: List<String>
+        get() = super.argumentsListForSpecialCheck + listOf("sourceMap", "metaInfo" + "partialLinkage" + "wasmDebug")
 }

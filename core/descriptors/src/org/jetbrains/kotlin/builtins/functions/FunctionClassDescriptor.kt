@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.utils.IDEAPlatforms
+import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 /**
  * A [ClassDescriptor] representing the fictitious class for a function type, such as kotlin.Function1 or kotlin.reflect.KFunction2.
@@ -28,11 +31,11 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
  * This allows to use both 'invoke' and reflection API on function references obtained by '::'.
  */
 class FunctionClassDescriptor(
-        private val storageManager: StorageManager,
-        private val containingDeclaration: PackageFragmentDescriptor,
-        val functionKind: FunctionClassKind,
-        val arity: Int
-) : AbstractClassDescriptor(storageManager, functionKind.numberedClassName(arity)) {
+    private val storageManager: StorageManager,
+    private val containingDeclaration: PackageFragmentDescriptor,
+    val functionTypeKind: FunctionTypeKind,
+    val arity: Int
+) : AbstractClassDescriptor(storageManager, functionTypeKind.numberedClassName(arity)) {
 
     private val typeConstructor = FunctionTypeConstructor()
     private val memberScope = FunctionClassScope(storageManager, this)
@@ -94,15 +97,16 @@ class FunctionClassDescriptor(
     private inner class FunctionTypeConstructor : AbstractClassTypeConstructor(storageManager) {
         override fun computeSupertypes(): Collection<KotlinType> {
             // For K{Suspend}Function{n}, add corresponding numbered {Suspend}Function{n} class, e.g. {Suspend}Function2 for K{Suspend}Function2
-            val supertypes = when (functionKind) {
-                FunctionClassKind.Function -> // Function$N <: Function
+            val supertypes = when (functionTypeKind) {
+                FunctionTypeKind.Function -> // Function$N <: Function
                     listOf(functionClassId)
-                FunctionClassKind.KFunction -> // KFunction$N <: KFunction
-                    listOf(kFunctionClassId, ClassId(BUILT_INS_PACKAGE_FQ_NAME, FunctionClassKind.Function.numberedClassName(arity)))
-                FunctionClassKind.SuspendFunction -> // SuspendFunction$N<...> <: Function
+                FunctionTypeKind.KFunction -> // KFunction$N <: KFunction
+                    listOf(kFunctionClassId, ClassId(BUILT_INS_PACKAGE_FQ_NAME, FunctionTypeKind.Function.numberedClassName(arity)))
+                FunctionTypeKind.SuspendFunction -> // SuspendFunction$N<...> <: Function
                     listOf(functionClassId)
-                FunctionClassKind.KSuspendFunction -> // KSuspendFunction$N<...> <: KFunction
-                    listOf(kFunctionClassId, ClassId(COROUTINES_PACKAGE_FQ_NAME, FunctionClassKind.SuspendFunction.numberedClassName(arity)))
+                FunctionTypeKind.KSuspendFunction -> // KSuspendFunction$N<...> <: KFunction
+                    listOf(kFunctionClassId, ClassId(COROUTINES_PACKAGE_FQ_NAME, FunctionTypeKind.SuspendFunction.numberedClassName(arity)))
+                else -> shouldNotBeCalled()
             }
 
             val moduleDescriptor = containingDeclaration.containingDeclaration
@@ -135,4 +139,7 @@ class FunctionClassDescriptor(
         private val functionClassId = ClassId(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("Function"))
         private val kFunctionClassId = ClassId(KOTLIN_REFLECT_FQ_NAME, Name.identifier("KFunction"))
     }
+
+    @IDEAPluginsCompatibilityAPI(IDEAPlatforms._223, message = "Please migrate to the functionTypeKind", plugins = "android")
+    val functionKind: FunctionClassKind = FunctionClassKind.getFunctionClassKind(functionTypeKind)
 }

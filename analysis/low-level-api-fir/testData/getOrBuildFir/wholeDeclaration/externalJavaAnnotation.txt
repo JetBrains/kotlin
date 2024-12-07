@@ -1,0 +1,14 @@
+KT element: KtNamedFunction
+FIR element: FirSimpleFunctionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!| {
+    ^test R|/ClassWithExternalAnnotatedMembers.ClassWithExternalAnnotatedMembers|().R|/ClassWithExternalAnnotatedMembers.externalNotNullMethod|()
+}
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!| {
+        ^test R|/ClassWithExternalAnnotatedMembers.ClassWithExternalAnnotatedMembers|().R|/ClassWithExternalAnnotatedMembers.externalNotNullMethod|()
+    }

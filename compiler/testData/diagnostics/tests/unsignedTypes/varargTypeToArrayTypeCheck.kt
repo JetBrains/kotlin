@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 
 fun ubyte(vararg a: UByte): UByteArray = a
 fun ushort(vararg a: UShort): UShortArray = a

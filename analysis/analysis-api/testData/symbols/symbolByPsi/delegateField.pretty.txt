@@ -1,6 +1,4 @@
-class MyColor {
-  constructor(x: kotlin.Int, y: kotlin.Int, z: kotlin.Int)
-
+class MyColor(x: kotlin.Int, y: kotlin.Int, z: kotlin.Int) {
   val x: kotlin.Int
 
   val y: kotlin.Int
@@ -10,6 +8,7 @@ class MyColor {
 
 class Some {
   val delegate: MyColor
+    get()
 
   val lambda: kotlin.Lazy<MyColor>
 

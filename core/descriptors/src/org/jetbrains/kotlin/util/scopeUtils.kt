@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.utils.SmartList
-import java.util.*
+import org.jetbrains.kotlin.utils.filterIsInstanceAndTo
 
 /**
  * Concatenates the contents of this collection with the given collection, avoiding allocations if possible.
@@ -105,31 +105,6 @@ inline fun <Scope, T : ClassifierDescriptor> getFirstClassifierDiscriminateHeade
     return result
 }
 
-inline fun <reified R> Iterable<*>.filterIsInstanceAnd(predicate: (R) -> Boolean): Collection<R> =
-    filterIsInstanceAndTo(SmartList(), predicate)
-
-inline fun <reified R, C : MutableCollection<in R>> Iterable<*>.filterIsInstanceAndTo(destination: C, predicate: (R) -> Boolean): C {
-    for (element in this) if (element is R && predicate(element)) destination.add(element)
-    return destination
+inline fun <reified R> Iterable<*>.filterIsInstanceAnd(predicate: (R) -> Boolean): List<R> {
+    return filterIsInstanceAndTo(SmartList(), predicate)
 }
-
-inline fun <reified T, reified R, C : MutableCollection<in R>> Iterable<*>.filterIsInstanceMapTo(destination: C, transform: (T) -> R): C {
-    for (element in this) if (element is T) {
-        destination.add(transform(element))
-    }
-    return destination
-}
-
-inline fun <reified T, reified R> Iterable<*>.filterIsInstanceMapNotNull(transform: (T) -> R?): Collection<R> =
-    filterIsInstanceMapNotNullTo(SmartList(), transform)
-
-inline fun <reified T, reified R, C : MutableCollection<in R>> Iterable<*>.filterIsInstanceMapNotNullTo(destination: C, transform: (T) -> R?): C {
-    for (element in this) if (element is T) {
-        val result = transform(element)
-        if (result != null) {
-            destination.add(result)
-        }
-    }
-    return destination
-}
-

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !API_VERSION: 1.1
+// API_VERSION: 1.1
 
 @SinceKotlin("0.9")
 fun ok1() {}

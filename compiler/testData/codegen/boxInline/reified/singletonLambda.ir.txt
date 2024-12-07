@@ -1,0 +1,37 @@
+@kotlin.Metadata
+public final class _2Kt$box$$inlined$foo$1 {
+    // source: '1.kt'
+    enclosing method _2Kt.box()Ljava/lang/String;
+    public final static field INSTANCE: _2Kt$box$$inlined$foo$1
+    inner (anonymous) class _2Kt$box$$inlined$foo$1
+    static method <clinit>(): void
+    public method <init>(): void
+    public synthetic bridge method invoke(): java.lang.Object
+    public final method invoke(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class _2Kt {
+    // source: '2.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class test/_1Kt$foo$x$1 {
+    // source: '1.kt'
+    enclosing method test/_1Kt.foo()Ljava/lang/String;
+    public final static field INSTANCE: test._1Kt$foo$x$1
+    inner (anonymous) class test/_1Kt$foo$x$1
+    static method <clinit>(): void
+    public method <init>(): void
+    public synthetic bridge method invoke(): java.lang.Object
+    public final method invoke(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class test/_1Kt {
+    // source: '1.kt'
+    inner (anonymous) class test/_1Kt$foo$x$1
+    public synthetic final static method bar(): java.lang.String
+    public synthetic final static method foo(): java.lang.String
+}

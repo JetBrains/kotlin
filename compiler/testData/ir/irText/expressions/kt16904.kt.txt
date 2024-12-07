@@ -1,10 +1,4 @@
 abstract class A {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val x: B
     field = B()
     get
@@ -13,6 +7,12 @@ abstract class A {
     field = 0
     get
     set
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
 }
 
@@ -34,26 +34,26 @@ class Test1 : A {
     /* <init>() */
 
     { // BLOCK
-      val tmp0_this: Test1 = <this>
-      tmp0_this.<get-x>().plusAssign(x = 42)
+      val tmp_0: Test1 = <this>
+      tmp_0.<get-x>().plusAssign(x = 42)
     }
     { // BLOCK
-      val tmp1_this: Test1 = <this>
-      tmp1_this.<set-y>(<set-?> = tmp1_this.<get-y>().plus(other = 42))
+      val tmp_1: Test1 = <this>
+      tmp_1.<set-y>(<set-?> = tmp_1.<get-y>().plus(other = 42))
     }
   }
 
 }
 
 class Test2 : J {
+  init {
+    <this>(super<Test2>).#field = 42
+  }
+
   constructor() /* primary */ {
     super/*J*/()
     /* <init>() */
 
-  }
-
-  init {
-    <this>(super<Test2>).#field = 42
   }
 
 }

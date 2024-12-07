@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
-import org.gradle.api.Project
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil.compilationsBySourceSets
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithClosure
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropIdentifier.Scope
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
@@ -59,7 +57,7 @@ internal fun CInteropCommonizerDependent.Factory.from(
      This relationship should not be declared, but we try to be lenient towards it here.
       */
     val filteredCompilations = compilations.filter { compilation ->
-        compilation.associateWithClosure.none { associateCompilation -> associateCompilation in compilations }
+        compilation.allAssociatedCompilations.none { associatedCompilation -> associatedCompilation in compilations }
     }.ifEmpty { return null }.toSet()
 
     val scopes: Set<Scope> = filteredCompilations
@@ -73,29 +71,27 @@ internal fun CInteropCommonizerDependent.Factory.from(
     return CInteropCommonizerDependent(target, scopes, interops)
 }
 
-internal fun CInteropCommonizerDependent.Factory.from(compilation: KotlinSharedNativeCompilation): CInteropCommonizerDependent? {
+internal suspend fun CInteropCommonizerDependent.Factory.from(compilation: KotlinSharedNativeCompilation): CInteropCommonizerDependent? {
     return from(
-        compilation.project.getCommonizerTarget(compilation) as? SharedCommonizerTarget ?: return null,
+        compilation.commonizerTarget.await() as? SharedCommonizerTarget ?: return null,
         compilation.getImplicitlyDependingNativeCompilations()
     )
 }
 
-internal fun CInteropCommonizerDependent.Factory.from(project: Project, sourceSet: KotlinSourceSet): CInteropCommonizerDependent? {
+internal suspend fun CInteropCommonizerDependent.Factory.from(sourceSet: KotlinSourceSet): CInteropCommonizerDependent? {
     return from(
-        target = project.getCommonizerTarget(sourceSet) as? SharedCommonizerTarget ?: return null,
-        compilations = (compilationsBySourceSets(project)[sourceSet] ?: return null)
+        target = sourceSet.commonizerTarget.await() as? SharedCommonizerTarget ?: return null,
+        compilations = sourceSet.internal.compilations
             .filterIsInstance<KotlinNativeCompilation>().toSet()
     )
 }
 
-internal fun CInteropCommonizerDependent.Factory.fromAssociateCompilations(
-    project: Project, sourceSet: KotlinSourceSet
-): CInteropCommonizerDependent? {
+internal suspend fun CInteropCommonizerDependent.Factory.fromAssociateCompilations(sourceSet: KotlinSourceSet): CInteropCommonizerDependent? {
     return from(
-        target = project.getCommonizerTarget(sourceSet) as? SharedCommonizerTarget ?: return null,
-        compilations = (compilationsBySourceSets(project)[sourceSet] ?: return null)
+        target = sourceSet.commonizerTarget.await() as? SharedCommonizerTarget ?: return null,
+        compilations = sourceSet.internal.compilations
             .filterIsInstance<KotlinNativeCompilation>()
-            .flatMap { compilation -> compilation.associateWithClosure }
+            .flatMap { compilation -> compilation.allAssociatedCompilations }
             .filterIsInstance<KotlinNativeCompilation>()
             .toSet()
     )

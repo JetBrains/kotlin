@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.PossiblyExternalAnnotationDescriptor
-import org.jetbrains.kotlin.load.java.lazy.JavaResolverComponents
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.copyWithNewDefaultTypeQualifiers
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaAnnotationDescriptor
@@ -50,7 +49,6 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 import org.jetbrains.kotlin.types.typeUtil.contains
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class SignatureEnhancement(private val typeEnhancement: JavaTypeEnhancement) {
     fun <D : CallableMemberDescriptor> enhanceSignatures(c: LazyJavaResolverContext, platformSignatures: Collection<D>): Collection<D> {
@@ -92,7 +90,7 @@ class SignatureEnhancement(private val typeEnhancement: JavaTypeEnhancement) {
         val receiverTypeEnhancement =
             if (extensionReceiverParameter != null)
                 enhanceValueParameter(
-                    parameterDescriptor = annotationOwnerForMember.safeAs<FunctionDescriptor>()
+                    parameterDescriptor = (annotationOwnerForMember as? FunctionDescriptor)
                         ?.getUserData(JavaMethodDescriptor.ORIGINAL_VALUE_PARAMETER_FOR_EXTENSION_RECEIVER),
                     methodContext = memberContext,
                     predefined = null,
@@ -103,7 +101,13 @@ class SignatureEnhancement(private val typeEnhancement: JavaTypeEnhancement) {
         val predefinedEnhancementInfo =
             (this as? JavaMethodDescriptor)
                 ?.run { SignatureBuildingComponents.signature(this.containingDeclaration as ClassDescriptor, this.computeJvmDescriptor()) }
-                ?.let { signature -> PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE[signature] }
+                ?.let { signature ->
+                    PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE[signature]?.let {
+                        check(it.errorsSinceLanguageVersion == null || it.errorsSinceLanguageVersion?.startsWith("2.") == true)
+                        // We only change behavior for predefined nullability with warnings for versions >= 2.0
+                        if (it.errorsSinceLanguageVersion == null) it else it.warningModeClone
+                    }
+                }
 
 
         predefinedEnhancementInfo?.let {
@@ -128,7 +132,7 @@ class SignatureEnhancement(private val typeEnhancement: JavaTypeEnhancement) {
                 typeContainer = annotationOwnerForMember, isCovariant = true,
                 containerContext = memberContext,
                 containerApplicabilityType =
-                if (this.safeAs<PropertyDescriptor>()?.isJavaField == true)
+                if ((this as? PropertyDescriptor)?.isJavaField == true)
                     AnnotationQualifierApplicabilityType.FIELD
                 else
                     AnnotationQualifierApplicabilityType.METHOD_RETURN_TYPE,
@@ -161,7 +165,7 @@ class SignatureEnhancement(private val typeEnhancement: JavaTypeEnhancement) {
     fun enhanceTypeParameterBounds(
         typeParameter: TypeParameterDescriptor,
         bounds: List<KotlinType>,
-        context: LazyJavaResolverContext
+        context: LazyJavaResolverContext,
     ): List<KotlinType> {
         return bounds.map { bound ->
             // TODO: would not enhancing raw type arguments be sufficient?
@@ -195,7 +199,7 @@ class SignatureEnhancement(private val typeEnhancement: JavaTypeEnhancement) {
         methodContext: LazyJavaResolverContext,
         predefined: TypeEnhancementInfo?,
         ignoreDeclarationNullabilityAnnotations: Boolean,
-        collector: (CallableMemberDescriptor) -> KotlinType
+        collector: (CallableMemberDescriptor) -> KotlinType,
     ) = enhance(
         parameterDescriptor, false,
         parameterDescriptor?.let { methodContext.copyWithNewDefaultTypeQualifiers(it.annotations) } ?: methodContext,
@@ -210,7 +214,7 @@ class SignatureEnhancement(private val typeEnhancement: JavaTypeEnhancement) {
         containerApplicabilityType: AnnotationQualifierApplicabilityType,
         predefined: TypeEnhancementInfo?,
         ignoreDeclarationNullabilityAnnotations: Boolean = false,
-        collector: (CallableMemberDescriptor) -> KotlinType
+        collector: (CallableMemberDescriptor) -> KotlinType,
     ): KotlinType? {
         return SignatureParts(typeContainer, isCovariant, containerContext, containerApplicabilityType)
             .enhance(collector(this), overriddenDescriptors.map { collector(it) }, predefined, ignoreDeclarationNullabilityAnnotations)
@@ -220,7 +224,7 @@ class SignatureEnhancement(private val typeEnhancement: JavaTypeEnhancement) {
         type: KotlinType,
         overrides: List<KotlinType>,
         predefined: TypeEnhancementInfo? = null,
-        ignoreDeclarationNullabilityAnnotations: Boolean = false
+        ignoreDeclarationNullabilityAnnotations: Boolean = false,
     ) = with(typeEnhancement) {
         type.enhance(type.computeIndexedQualifiers(overrides, predefined, ignoreDeclarationNullabilityAnnotations), skipRawTypeArguments)
     }
@@ -231,7 +235,7 @@ private class SignatureParts(
     override val isCovariant: Boolean,
     private val containerContext: LazyJavaResolverContext,
     override val containerApplicabilityType: AnnotationQualifierApplicabilityType,
-    override val skipRawTypeArguments: Boolean = false
+    override val skipRawTypeArguments: Boolean = false,
 ) : AbstractSignatureParts<AnnotationDescriptor>() {
     override val annotationTypeQualifierResolver: AnnotationTypeQualifierResolver
         get() = containerContext.components.annotationTypeQualifierResolver
@@ -251,11 +255,15 @@ private class SignatureParts(
     override val typeSystem: TypeSystemInferenceExtensionContext
         get() = SimpleClassicTypeSystemContext
 
-    override val AnnotationDescriptor.forceWarning: Boolean
-        get() = (this is PossiblyExternalAnnotationDescriptor && isIdeExternalAnnotation) ||
+    override fun AnnotationDescriptor.forceWarning(unenhancedType: KotlinTypeMarker?): Boolean =
+        (this is PossiblyExternalAnnotationDescriptor && isIdeExternalAnnotation) ||
                 (this is LazyJavaAnnotationDescriptor && !enableImprovementsInStrictMode &&
                         (isFreshlySupportedTypeUseAnnotation ||
-                                containerApplicabilityType == AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS))
+                                containerApplicabilityType == AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS)) ||
+                // Previously, type use annotations on primitive arrays were lost, so temporarily treat them as warnings.
+                (unenhancedType != null && KotlinBuiltIns.isPrimitiveArray(unenhancedType as KotlinType) &&
+                        annotationTypeQualifierResolver.isTypeUseAnnotation(this) &&
+                        !containerContext.components.settings.enhancePrimitiveArrays)
 
     override val KotlinTypeMarker.annotations: Iterable<AnnotationDescriptor>
         get() = (this as KotlinType).annotations
@@ -276,4 +284,12 @@ private class SignatureParts(
 
     override val TypeParameterMarker.isFromJava: Boolean
         get() = this is LazyJavaTypeParameterDescriptor
+
+    override fun getDefaultNullability(
+        referencedParameterBoundsNullability: NullabilityQualifierWithMigrationStatus?,
+        defaultTypeQualifiers: JavaDefaultQualifiers?,
+    ): NullabilityQualifierWithMigrationStatus? {
+        return referencedParameterBoundsNullability?.copy(qualifier = NullabilityQualifier.NOT_NULL)
+            ?: defaultTypeQualifiers?.nullabilityQualifier
+    }
 }

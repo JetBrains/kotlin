@@ -14,21 +14,27 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isPrimitiveArray
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.ir.util.render
 
 
 // Copied and adapted from Kotlin/Native
 
-abstract class AbstractValueUsageLowering(val context: JsCommonBackendContext) : AbstractValueUsageTransformer(context.irBuiltIns),
+abstract class AbstractValueUsageLowering(
+    val context: JsCommonBackendContext,
+    replaceTypesInsideInlinedFunctionBlock: Boolean = false
+) : AbstractValueUsageTransformer(context.irBuiltIns, replaceTypesInsideInlinedFunctionBlock),
     BodyLoweringPass {
 
     val icUtils = context.inlineClassesUtils
@@ -49,39 +55,14 @@ abstract class AbstractValueUsageLowering(val context: JsCommonBackendContext) :
 
     abstract fun IrExpression.useExpressionAsType(actualType: IrType, expectedType: IrType): IrExpression
 
-    protected fun IrExpression.getActualType() = when (this) {
-        is IrConstructorCall -> symbol.owner.returnType
-        is IrCall -> symbol.owner.realOverrideTarget.returnType
-        is IrGetField -> this.symbol.owner.type
-
-        is IrTypeOperatorCall -> {
-            if (operator == IrTypeOperator.REINTERPRET_CAST) {
-                this.typeOperand
-            } else {
-                this.type
-            }
-        }
-
-        is IrGetValue -> {
-            val value = this.symbol.owner
-            if (value is IrValueParameter && icUtils.shouldValueParameterBeBoxed(value)) {
-                irBuiltIns.anyType
-            } else {
-                this.type
-            }
-        }
-
-        else -> this.type
-    }
-
-    override fun IrExpression.useAs(type: IrType): IrExpression = useExpressionAsType(getActualType(), type)
+    override fun IrExpression.useAs(type: IrType): IrExpression = useExpressionAsType(getActualType(context), type)
 
     private val IrFunctionAccessExpression.target: IrFunction
         get() = when (this) {
             is IrConstructorCall -> this.symbol.owner
             is IrDelegatingConstructorCall -> this.symbol.owner
             is IrCall -> this.callTarget
-            else -> TODO(this.render())
+            is IrEnumConstructorCall -> compilationException("IrEnumConstructorCall is not supported here", this)
         }
 
     private val IrCall.callTarget: IrFunction
@@ -104,26 +85,52 @@ abstract class AbstractValueUsageLowering(val context: JsCommonBackendContext) :
         parameter: IrValueParameter
     ): IrExpression {
 
-        return this.useAsArgument(expression.target.valueParameters[parameter.index])
+        return this.useAsArgument(expression.target.valueParameters[parameter.indexInOldValueParameters])
     }
 
-
-    override fun IrExpression.useAsVarargElement(expression: IrVararg): IrExpression {
-        return this.useAs(
+    override fun useAsVarargElement(element: IrExpression, expression: IrVararg): IrExpression =
+        element.useAs(
             // Do not box primitive inline classes
-            if (icUtils.isTypeInlined(type) && !icUtils.isTypeInlined(expression.type) && !expression.type.isPrimitiveArray())
+            if (icUtils.isTypeInlined(element.type) && !icUtils.isTypeInlined(expression.type) && !expression.type.isPrimitiveArray())
                 irBuiltIns.anyNType
             else
-                expression.varargElementType
+                if (!expression.type.isPrimitiveArray()) irBuiltIns.anyNType else expression.varargElementType
         )
+
+    companion object {
+        fun IrExpression.getActualType(context: JsCommonBackendContext) = when (this) {
+            is IrConstructorCall -> symbol.owner.returnType
+            is IrCall -> symbol.owner.realOverrideTarget.returnType
+            is IrGetField -> this.symbol.owner.type
+
+            is IrTypeOperatorCall -> {
+                if (operator == IrTypeOperator.REINTERPRET_CAST) {
+                    this.typeOperand
+                } else {
+                    this.type
+                }
+            }
+
+            is IrGetValue -> {
+                val value = this.symbol.owner
+                if (value is IrValueParameter && context.inlineClassesUtils.shouldValueParameterBeBoxed(value)) {
+                    context.irBuiltIns.anyType
+                } else {
+                    this.type
+                }
+            }
+
+            else -> this.type
+        }
     }
 }
 
-class AutoboxingTransformer(context: JsCommonBackendContext) : AbstractValueUsageLowering(context) {
+class AutoboxingTransformer(context: JsCommonBackendContext, replaceTypesInsideInlinedFunctionBlock: Boolean = false) :
+    AbstractValueUsageLowering(context, replaceTypesInsideInlinedFunctionBlock) {
     private var processingReturnStack = mutableListOf<IrReturn>()
 
     private fun IrExpression.useReturnableExpressionAsType(expectedType: IrType): IrExpression {
-        val expressionType = getActualType()
+        val expressionType = getActualType(context)
         if (expressionType.isUnit() && expectedType.isUnit()) {
             return this
         }
@@ -148,7 +155,6 @@ class AutoboxingTransformer(context: JsCommonBackendContext) : AbstractValueUsag
         is IrSimpleFunctionSymbol -> useReturnableExpressionAsType(returnTarget.owner.returnType)
         is IrConstructorSymbol -> useReturnableExpressionAsType(irBuiltIns.unitType)
         is IrReturnableBlockSymbol -> useReturnableExpressionAsType(returnTarget.owner.type)
-        else -> error(returnTarget)
     }
 
     override fun IrExpression.useExpressionAsType(actualType: IrType, expectedType: IrType): IrExpression {
@@ -164,6 +170,8 @@ class AutoboxingTransformer(context: JsCommonBackendContext) : AbstractValueUsag
                 return JsIrBuilder.buildComposite(actualType, listOf(this, unitValue))
             }
         }
+
+        if (expectedType.isUnit()) return this
 
         val actualInlinedClass = icUtils.getInlinedClass(actualType)
         val expectedInlinedClass = icUtils.getInlinedClass(expectedType)
@@ -227,22 +235,12 @@ class AutoboxingTransformer(context: JsCommonBackendContext) : AbstractValueUsag
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        if (expression.symbol == irBuiltIns.eqeqeqSymbol && expression.allArgumentsHaveType(irBuiltIns.charType)) {
-            return expression.apply { transformChildrenVoid() }
+        return if (expression.origin == IrStatementOrigin.SYNTHETIC_NOT_AUTOBOXED_CHECK) {
+            expression.apply { transformChildrenVoid() }
         } else {
-            return super.visitCall(expression)
+            super.visitCall(expression)
         }
     }
-
-    private fun IrCall.allArgumentsHaveType(type: IrType): Boolean {
-        for (i in 0 until valueArgumentsCount) {
-            if (getValueArgument(i)?.type != type) {
-                return false
-            }
-        }
-        return true
-    }
-
 }
 
 private tailrec fun IrExpression.isGetUnit(irBuiltIns: IrBuiltIns): Boolean =
@@ -252,6 +250,9 @@ private tailrec fun IrExpression.isGetUnit(irBuiltIns: IrBuiltIns): Boolean =
                 is IrExpression -> lastStmt.isGetUnit(irBuiltIns)
                 else -> false
             }
+
+        is IrConstructorCall ->
+            this.type == irBuiltIns.unitType
 
         is IrGetObjectValue ->
             this.symbol == irBuiltIns.unitClass

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
+import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -40,18 +42,18 @@ class SetterGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
     private val lombokService: LombokService
         get() = session.lombokService
 
-    private val cache: FirCache<FirClassSymbol<*>, Map<Name, FirJavaMethod>?, Nothing?> =
-        session.firCachesFactory.createCache(::createSetters)
+    private val cache: FirCache<Pair<FirClassSymbol<*>, FirClassDeclaredMemberScope?>, Map<Name, FirJavaMethod>?, Nothing?> =
+        session.firCachesFactory.createCache(uncurry(::createSetters))
 
-    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {
+    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         if (!classSymbol.isSuitableForSetters()) return emptySet()
-        return cache.getValue(classSymbol)?.keys ?: emptySet()
+        return cache.getValue(classSymbol to context.declaredScope)?.keys ?: emptySet()
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
         val owner = context?.owner
         if (owner == null || !owner.isSuitableForSetters()) return emptyList()
-        val getter = cache.getValue(owner)?.get(callableId.callableName) ?: return emptyList()
+        val getter = cache.getValue(owner to context.declaredScope)?.get(callableId.callableName) ?: return emptyList()
         return listOf(getter.symbol)
     }
 
@@ -59,17 +61,23 @@ class SetterGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         return isSuitableJavaClass() && classKind != ClassKind.ENUM_CLASS
     }
 
-    private fun createSetters(classSymbol: FirClassSymbol<*>): Map<Name, FirJavaMethod>? {
+    private fun createSetters(classSymbol: FirClassSymbol<*>, declaredScope: FirClassDeclaredMemberScope?): Map<Name, FirJavaMethod>? {
         val fieldsWithSetter = computeFieldsWithSetters(classSymbol) ?: return null
         val globalAccessors = lombokService.getAccessors(classSymbol)
+        val explicitlyDeclaredFunctions = declaredScope?.collectAllFunctions()?.associateBy { it.name }.orEmpty()
         return fieldsWithSetter.mapNotNull { (field, setterInfo) ->
             val accessors = lombokService.getAccessorsIfAnnotated(field.symbol) ?: globalAccessors
             val setterName = computeSetterName(field, setterInfo, accessors) ?: return@mapNotNull null
+            val existing = explicitlyDeclaredFunctions[setterName]
+            if (existing != null && existing.valueParameterSymbols.size == 1) {
+                return@mapNotNull null
+            }
             val function = buildJavaMethod {
+                containingClassSymbol = classSymbol
                 moduleData = field.moduleData
                 returnTypeRef = if (accessors.chain) {
                     buildResolvedTypeRef {
-                        type = classSymbol.defaultType()
+                        coneType = classSymbol.defaultType()
                     }
                 } else {
                     session.builtinTypes.unitType
@@ -83,16 +91,15 @@ class SetterGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
 
                 valueParameters += buildJavaValueParameter {
                     moduleData = field.moduleData
+                    containingDeclarationSymbol = this@buildJavaMethod.symbol
                     returnTypeRef = field.returnTypeRef
                     name = field.name
-                    annotationBuilder = { emptyList() }
                     isVararg = false
                     isFromSource = true
                 }
 
                 isStatic = false
                 isFromSource = true
-                annotationBuilder = { emptyList() }
             }
             setterName to function
         }.toMap()

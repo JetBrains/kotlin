@@ -1,0 +1,20 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /Host { // /Host|null[0]
+    final val y // /Host.y|{}y[0]
+        final fun <get-y>(): kotlin/Int // /Host.y.<get-y>|<get-y>(){}[0]
+    constructor <init>(kotlin/Int) // /Host.<init>|<init>(kotlin.Int){}[0]
+    final fun (/Outer).test(): /Outer.Inner // /Host.test|test@Outer(){}[0]
+}
+final class /Outer { // /Outer|null[0]
+    constructor <init>() // /Outer.<init>|<init>(){}[0]
+    open inner class Inner { // /Outer.Inner|null[0]
+        final val x // /Outer.Inner.x|{}x[0]
+            final fun <get-x>(): kotlin/Int // /Outer.Inner.x.<get-x>|<get-x>(){}[0]
+        constructor <init>(kotlin/Int) // /Outer.Inner.<init>|<init>(kotlin.Int){}[0]
+    }
+}

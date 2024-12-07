@@ -5,59 +5,63 @@
 
 package org.jetbrains.kotlin.test.runners.codegen
 
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.HandlersStepBuilder
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.backend.handlers.*
-import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.*
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SMAP
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.RUN_DEX_CHECKER
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JvmForeignAnnotationsConfigurator
 import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.*
 
-fun <F : ResultingArtifact.FrontendOutput<F>, B : ResultingArtifact.BackendInput<B>> TestConfigurationBuilder.commonConfigurationForCodegenAndDebugTest(
+fun <F : ResultingArtifact.FrontendOutput<F>, B : ResultingArtifact.BackendInput<B>> TestConfigurationBuilder.commonConfigurationForTest(
+    targetFrontend: FrontendKind<F>,
     frontendFacade: Constructor<FrontendFacade<F>>,
     frontendToBackendConverter: Constructor<Frontend2BackendConverter<F, B>>,
-    backendFacade: Constructor<BackendFacade<B, BinaryArtifacts.Jvm>>,
+    additionalSourceProvider: Constructor<AdditionalSourceProvider>? = null,
 ) {
+    commonServicesConfigurationForCodegenAndDebugTest(targetFrontend)
+    additionalSourceProvider?.let { useAdditionalSourceProviders(it) }
     facadeStep(frontendFacade)
     classicFrontendHandlersStep()
     firHandlersStep()
-    commonBackendStepsConfiguration(
-        frontendToBackendConverter,
-        irHandlersInit = {},
-        backendFacade,
-        jvmHandlersInit = {}
+    facadeStep(frontendToBackendConverter)
+    irHandlersStep(init = {})
+    facadeStep(::JvmIrBackendFacade)
+    jvmArtifactsHandlersStep(init = {})
+}
+
+fun TestConfigurationBuilder.commonServicesConfigurationForCodegenAndDebugTest(targetFrontend: FrontendKind<*>) {
+    useConfigurators(
+        ::CommonEnvironmentConfigurator,
+        ::JvmEnvironmentConfigurator,
+        ::ScriptingEnvironmentConfigurator,
     )
+
+    useAdditionalSourceProviders(
+        ::AdditionalDiagnosticsSourceFilesProvider,
+        ::CoroutineHelpersSourceFilesProvider,
+    )
+
+    commonServicesMinimalSettingsConfigurationForCodegenAndDebugTest(targetFrontend)
 }
 
-fun <F : ResultingArtifact.FrontendOutput<F>, B : ResultingArtifact.BackendInput<B>> TestConfigurationBuilder.commonConfigurationForCodegenTest(
-    targetFrontend: FrontendKind<F>,
-    frontendFacade: Constructor<FrontendFacade<F>>,
-    frontendToBackendConverter: Constructor<Frontend2BackendConverter<F, B>>,
-    backendFacade: Constructor<BackendFacade<B, BinaryArtifacts.Jvm>>,
-) {
-    commonServicesConfigurationForCodegenTest(targetFrontend)
-    commonConfigurationForCodegenAndDebugTest(frontendFacade, frontendToBackendConverter, backendFacade)
-}
-
-fun <F : ResultingArtifact.FrontendOutput<F>, B : ResultingArtifact.BackendInput<B>> TestConfigurationBuilder.commonConfigurationForDebugTest(
-    targetFrontend: FrontendKind<F>,
-    frontendFacade: Constructor<FrontendFacade<F>>,
-    frontendToBackendConverter: Constructor<Frontend2BackendConverter<F, B>>,
-    backendFacade: Constructor<BackendFacade<B, BinaryArtifacts.Jvm>>,
-) {
-    commonServicesConfigurationForDebugTest(targetFrontend)
-    commonConfigurationForCodegenAndDebugTest(frontendFacade, frontendToBackendConverter, backendFacade)
-}
-
-private fun TestConfigurationBuilder.commonServicesConfigurationForCodegenAndDebugTest(targetFrontend: FrontendKind<*>) {
+fun TestConfigurationBuilder.commonServicesMinimalSettingsConfigurationForCodegenAndDebugTest(targetFrontend: FrontendKind<*>) {
     globalDefaults {
         frontend = targetFrontend
         targetPlatform = JvmPlatforms.defaultJvmPlatform
@@ -69,54 +73,22 @@ private fun TestConfigurationBuilder.commonServicesConfigurationForCodegenAndDeb
     }
 
     useConfigurators(
-        ::CommonEnvironmentConfigurator,
-        ::JvmEnvironmentConfigurator,
-        ::ScriptingEnvironmentConfigurator,
+        ::JvmForeignAnnotationsConfigurator,
     )
 
     useAdditionalSourceProviders(
-        ::AdditionalDiagnosticsSourceFilesProvider,
-        ::CoroutineHelpersSourceFilesProvider,
-        ::CodegenHelpersSourceFilesProvider
+        ::CodegenHelpersSourceFilesProvider,
     )
-}
-
-fun TestConfigurationBuilder.commonServicesConfigurationForCodegenTest(targetFrontend: FrontendKind<*>) {
-    commonServicesConfigurationForCodegenAndDebugTest(targetFrontend)
-    useAdditionalSourceProviders(
-        ::MainFunctionForBlackBoxTestsSourceProvider
-    )
-
-}
-
-fun TestConfigurationBuilder.commonServicesConfigurationForDebugTest(targetFrontend: FrontendKind<*>) {
-    commonServicesConfigurationForCodegenAndDebugTest(targetFrontend)
-    useAdditionalSourceProviders(
-        ::MainFunctionForDebugTestsSourceProvider
-    )
-}
-
-inline fun <B : ResultingArtifact.BackendInput<B>, F : ResultingArtifact.FrontendOutput<F>> TestConfigurationBuilder.commonBackendStepsConfiguration(
-    noinline frontendToBackendConverter: Constructor<Frontend2BackendConverter<F, B>>,
-    irHandlersInit: HandlersStepBuilder<IrBackendInput>.() -> Unit,
-    noinline backendFacade: Constructor<BackendFacade<B, BinaryArtifacts.Jvm>>,
-    jvmHandlersInit: HandlersStepBuilder<BinaryArtifacts.Jvm>.() -> Unit,
-) {
-    facadeStep(frontendToBackendConverter)
-    irHandlersStep(irHandlersInit)
-    facadeStep(backendFacade)
-    jvmArtifactsHandlersStep(jvmHandlersInit)
 }
 
 fun TestConfigurationBuilder.useInlineHandlers() {
     configureJvmArtifactsHandlersStep {
-        inlineHandlers()
+        useHandlers(
+            ::BytecodeInliningHandler,
+            ::SMAPDumpHandler
+        )
     }
 
-    applyDumpSmapDirective()
-}
-
-fun TestConfigurationBuilder.applyDumpSmapDirective() {
     forTestsMatching("compiler/testData/codegen/boxInline/smap/*") {
         defaultDirectives {
             +DUMP_SMAP
@@ -124,33 +96,37 @@ fun TestConfigurationBuilder.applyDumpSmapDirective() {
     }
 }
 
-fun TestConfigurationBuilder.configureDumpHandlersForCodegenTest() {
+fun TestConfigurationBuilder.useIrInliner() {
+    defaultDirectives {
+        +LanguageSettingsDirectives.ENABLE_JVM_IR_INLINER
+    }
+}
+
+fun TestConfigurationBuilder.useInlineScopesNumbers() {
+    defaultDirectives {
+        +LanguageSettingsDirectives.USE_INLINE_SCOPES_NUMBERS
+    }
+}
+
+fun TestConfigurationBuilder.configureDumpHandlersForCodegenTest(includeAllDumpHandlers: Boolean = true) {
     configureIrHandlersStep {
-        dumpHandlersForConverterStep()
+        useHandlers(
+            ::IrTreeVerifierHandler,
+            ::IrTextDumpHandler,
+            ::IrMangledNameAndSignatureDumpHandler,
+        )
     }
     configureJvmArtifactsHandlersStep {
-        dumpHandlersForBackendStep()
+        if (includeAllDumpHandlers) {
+            useHandlers(::BytecodeListingHandler)
+        }
     }
 }
 
 fun TestConfigurationBuilder.configureCommonHandlersForBoxTest() {
     commonHandlersForCodegenTest()
     configureJvmArtifactsHandlersStep {
-        boxHandlersForBackendStep()
-    }
-}
-
-fun TestConfigurationBuilder.configureCommonHandlersForSteppingTest() {
-    commonHandlersForCodegenTest()
-    configureJvmArtifactsHandlersStep {
-        steppingHandlersForBackendStep()
-    }
-}
-
-fun TestConfigurationBuilder.configureCommonHandlersForLocalVariableTest() {
-    commonHandlersForCodegenTest()
-    configureJvmArtifactsHandlersStep {
-        localVariableHandlersForBackendStep()
+        useHandlers(::JvmBoxRunner)
     }
 }
 
@@ -167,48 +143,31 @@ fun TestConfigurationBuilder.commonHandlersForCodegenTest() {
     }
 }
 
-fun HandlersStepBuilder<IrBackendInput>.dumpHandlersForConverterStep() {
-    useHandlers(::IrTreeVerifierHandler, ::IrTextDumpHandler)
-}
-
-fun HandlersStepBuilder<BinaryArtifacts.Jvm>.dumpHandlersForBackendStep() {
-    useHandlers(::BytecodeListingHandler)
-}
-
-fun HandlersStepBuilder<BinaryArtifacts.Jvm>.boxHandlersForBackendStep() {
-    useHandlers(::JvmBoxRunner)
-}
-
-fun HandlersStepBuilder<BinaryArtifacts.Jvm>.steppingHandlersForBackendStep() {
-    useHandlers(::SteppingDebugRunner)
-}
-
-fun HandlersStepBuilder<BinaryArtifacts.Jvm>.localVariableHandlersForBackendStep() {
-    useHandlers(::LocalVariableDebugRunner)
-}
-
-fun HandlersStepBuilder<ClassicFrontendOutputArtifact>.commonClassicFrontendHandlersForCodegenTest() {
+fun HandlersStepBuilder<ClassicFrontendOutputArtifact, FrontendKinds.ClassicFrontend>.commonClassicFrontendHandlersForCodegenTest() {
     useHandlers(
         ::NoCompilationErrorsHandler,
     )
 }
 
-fun HandlersStepBuilder<FirOutputArtifact>.commonFirHandlersForCodegenTest() {
+fun HandlersStepBuilder<FirOutputArtifact, FrontendKinds.FIR>.commonFirHandlersForCodegenTest() {
     useHandlers(
         ::NoFirCompilationErrorsHandler,
     )
 }
 
-fun HandlersStepBuilder<BinaryArtifacts.Jvm>.commonBackendHandlersForCodegenTest() {
+fun HandlersStepBuilder<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.commonBackendHandlersForCodegenTest() {
     useHandlers(
+        ::JvmBackendDiagnosticsHandler,
         ::NoJvmSpecificCompilationErrorsHandler,
         ::DxCheckerHandler,
     )
 }
 
-fun HandlersStepBuilder<BinaryArtifacts.Jvm>.inlineHandlers() {
-    useHandlers(
-        ::BytecodeInliningHandler,
-        ::SMAPDumpHandler
-    )
+fun TestConfigurationBuilder.configureModernJavaTest(jdkKind: TestJdkKind, jvmTarget: JvmTarget) {
+    defaultDirectives {
+        JvmEnvironmentConfigurationDirectives.JDK_KIND with jdkKind
+        JvmEnvironmentConfigurationDirectives.JVM_TARGET with jvmTarget
+        +ConfigurationDirectives.WITH_STDLIB
+        +CodegenTestDirectives.IGNORE_DEXING
+    }
 }

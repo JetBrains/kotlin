@@ -3,6 +3,7 @@ description = "Kotlin Build Common"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("gradle-plugin-compiler-dependency-configuration")
 }
 
 dependencies {
@@ -14,18 +15,24 @@ dependencies {
     compileOnly(project(":js:js.serializer"))
     compileOnly(project(":js:js.config"))
     compileOnly(project(":kotlin-util-klib-metadata"))
-    compileOnly(project(":kotlin-reflect-api"))
+    compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
+    compileOnly(libs.intellij.asm)
+    compileOnly(project(":compiler:build-tools:kotlin-build-statistics"))
 
     testCompileOnly(project(":compiler:cli-common"))
     testApi(projectTests(":compiler:tests-common"))
-    testApi(commonDependency("junit:junit"))
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(libs.junit.jupiter.params)
+    testImplementation(libs.junit4)
     testApi(protobufFull())
     testApi(kotlinStdlib())
-    testImplementation(project(":kotlin-reflect"))
+    testImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
+    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    testImplementation("org.reflections:reflections:0.10.2")
 }
 
 sourceSets {
@@ -33,12 +40,10 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-publish()
-
-runtimeJar()
-sourcesJar()
-javadocJar()
-
 testsJar()
 
 projectTest(parallel = true)
+
+projectTest("testJUnit5", jUnitMode = JUnitMode.JUnit5, parallel = true) {
+    useJUnitPlatform()
+}

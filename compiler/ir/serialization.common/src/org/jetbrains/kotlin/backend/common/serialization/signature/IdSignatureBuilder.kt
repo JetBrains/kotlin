@@ -7,29 +7,88 @@ package org.jetbrains.kotlin.backend.common.serialization.signature
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.name.FqName
 
-abstract class IdSignatureBuilder<D> {
+abstract class IdSignatureBuilder<Declaration : Any, Mangler : KotlinMangler<Declaration>> {
+    private data class PropertyAccessorIdHashAndDescription(val id: Long, val description: String)
+
     protected var packageFqn: FqName = FqName.ROOT
     protected val classFqnSegments = mutableListOf<String>()
-    protected var hashId: Long? = null
-    protected var hashIdAcc: Long? = null
-    protected var overridden: List<D>? = null
+
+    /**
+     * Use [setHashIdAndDescriptionFor] or [setHashIdAndDescription] with `isPropertyAccessor = false` to set this property.
+     *
+     * This property is made private to enforce always setting [description] along with it.
+     */
+    private var hashId: Long? = null
+
+    /**
+     * Use [setHashIdAndDescriptionFor] or [setHashIdAndDescription] with `isPropertyAccessor = true` to set this property.
+     *
+     * This property is made private to enforce always setting [description] along with it.
+     */
+    private var propertyAccessorIdHashAndDescription: PropertyAccessorIdHashAndDescription? = null
+
+    protected var overridden: List<Declaration>? = null
     protected var mask = 0L
+
+    /**
+     * For local or top-level private declarations, the signature of the containing declaration **or** [IdSignature.FileSignature]
+     * respectively.
+     *
+     * Used to build [IdSignature.CompositeSignature].
+     */
     protected var container: IdSignature? = null
+
+    protected fun createContainer() {
+        container = container?.let {
+            buildContainerSignature(it)
+        } ?: build()
+
+        reset(false)
+    }
+
     protected var description: String? = null
+
+    protected abstract fun renderDeclarationForDescription(declaration: Declaration): String
+
+    protected fun setDescriptionIfLocalDeclaration(declaration: Declaration) {
+        if (container != null) {
+            description = renderDeclarationForDescription(declaration)
+        }
+    }
 
     protected var isTopLevelPrivate: Boolean = false
 
     protected abstract val currentFileSignature: IdSignature.FileSignature?
 
-    protected abstract fun accept(d: D)
+    protected abstract val mangler: Mangler
+
+    protected fun setHashIdAndDescriptionFor(declaration: Declaration, isPropertyAccessor: Boolean) {
+        mangler.run {
+            val mangledName = declaration.signatureString(compatibleMode = false)
+            val id = mangledName.hashMangle
+            setHashIdAndDescription(id, mangledName, isPropertyAccessor)
+        }
+    }
+
+    protected fun setHashIdAndDescription(id: Long, description: String, isPropertyAccessor: Boolean) {
+        if (isPropertyAccessor) {
+            propertyAccessorIdHashAndDescription = PropertyAccessorIdHashAndDescription(id, description)
+        } else {
+            hashId = id
+            this.description = description
+        }
+    }
+
+    protected abstract fun accept(d: Declaration)
 
     protected fun reset(resetContainer: Boolean = true) {
         this.packageFqn = FqName.ROOT
         this.classFqnSegments.clear()
         this.hashId = null
-        this.hashIdAcc = null
+        this.propertyAccessorIdHashAndDescription = null
         this.mask = 0L
         this.overridden = null
         this.description = null
@@ -39,7 +98,7 @@ abstract class IdSignatureBuilder<D> {
     }
 
 
-    protected fun buildContainerSignature(container: IdSignature): IdSignature.CompositeSignature {
+    private fun buildContainerSignature(container: IdSignature): IdSignature.CompositeSignature {
         val localName = classFqnSegments.joinToString(".")
         val localHash = hashId
         return IdSignature.CompositeSignature(container, IdSignature.LocalSignature(localName, localHash, description))
@@ -68,15 +127,27 @@ abstract class IdSignatureBuilder<D> {
                 buildContainerSignature(preservedContainer)
             }
 
-            hashIdAcc == null -> {
-                IdSignature.CommonSignature(packageFqName, classFqName, hashId, mask)
-            }
-            else -> {
-                val accessorSignature = IdSignature.CommonSignature(packageFqName, classFqName, hashIdAcc, mask)
-                hashIdAcc = null
+            propertyAccessorIdHashAndDescription != null -> {
+                val accessorSignature = IdSignature.CommonSignature(
+                    packageFqName = packageFqName,
+                    declarationFqName = classFqName,
+                    id = propertyAccessorIdHashAndDescription!!.id,
+                    mask = mask,
+                    description = propertyAccessorIdHashAndDescription!!.description,
+                )
+                propertyAccessorIdHashAndDescription = null
                 classFqnSegments.run { removeAt(lastIndex) }
                 val propertySignature = build()
                 IdSignature.AccessorSignature(propertySignature, accessorSignature)
+            }
+            else -> {
+                IdSignature.CommonSignature(
+                    packageFqName = packageFqName,
+                    declarationFqName = classFqName,
+                    id = hashId,
+                    mask = mask,
+                    description = description,
+                )
             }
         }
     }
@@ -106,7 +177,7 @@ abstract class IdSignatureBuilder<D> {
     protected open fun platformSpecificAlias(descriptor: TypeAliasDescriptor) {}
     protected open fun platformSpecificPackage(descriptor: PackageFragmentDescriptor) {}
 
-    fun buildSignature(declaration: D): IdSignature {
+    fun buildSignature(declaration: Declaration): IdSignature {
         reset()
 
         accept(declaration)

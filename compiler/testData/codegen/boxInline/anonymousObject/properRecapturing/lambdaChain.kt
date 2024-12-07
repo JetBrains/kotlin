@@ -20,10 +20,10 @@ fun box(): String {
                 {
                     {
                         result = param + c + a
-                    }()
-                }()
+                    }.let { it() }
+                }.let { it() }
             }
-        }()
+        }.let { it() }
     }
 
     return if (result == "start12") "OK" else "fail: $result"

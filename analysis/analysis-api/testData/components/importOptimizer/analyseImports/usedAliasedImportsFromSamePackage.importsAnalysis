@@ -1,0 +1,9 @@
+USED DECLARATIONS:
+
+Declaration: test.SamePackage
+By names: [Aliased]
+
+Declaration: test.samePackage
+By names: [aliased]
+
+UNRESOLVED NAMES:

@@ -27,15 +27,15 @@ private val TWO52 = doubleArrayOf(
     -4.50359962737049600000e+15, /* 0xC3300000, 0x00000000 */
 )
 
-internal fun rint(x: Double): Double {
-    var x: Double = x
-    var i0: Int = 0
-    var j0: Int = 0
-    var sx: Int = 0
-    var i: UInt = 0U
-    var i1: UInt = 0U
-    var w: Double = 0.0
-    var t: Double = 0.0
+internal fun rint(_x: Double): Double {
+    var x: Double = _x
+    var i0: Int
+    var j0: Int
+    var sx: Int
+    var i: UInt
+    var i1: UInt
+    var w: Double
+    var t: Double
 
     i0 = __HI(x)
     sx = (i0 shr 31) and 1
@@ -46,7 +46,7 @@ internal fun rint(x: Double): Double {
             if (((i0 and 0x7fffffff) or i1.toInt()) == 0) return x
             i1 = i1 or (i0 and 0x0fffff).toUInt()
             i0 = i0 and 0xfffe0000.toInt()
-            i0 = i0 or (((i1 or i1.negate()) shr 12) and 0x80000.toUInt()).toInt();
+            i0 = i0 or (((i1 or i1.negate()) shr 12) and 0x80000.toUInt()).toInt()
             x = doubleSetWord(d = x, hi = i0)
             w = TWO52[sx] + x
             t = w - TWO52[sx]

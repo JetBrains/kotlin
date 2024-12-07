@@ -1,3 +1,5 @@
+// LAMBDAS: CLASS
+
 class Foo {
     fun foo() = { }
 }

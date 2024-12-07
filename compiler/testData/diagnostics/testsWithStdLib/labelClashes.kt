@@ -1,4 +1,8 @@
-// !RENDER_DIAGNOSTICS_FULL_TEXT
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ContextReceivers
+// RENDER_DIAGNOSTICS_FULL_TEXT
+// ISSUE: KT-49015, KT-51433
+// FIR_DUMP
 
 fun Int.with() {
     with("") {
@@ -39,5 +43,23 @@ class TypedThis {
 
     fun Extension.bar() {
         this@TypedThis
+    }
+}
+
+object OtherTests {
+    fun Int.with() {
+        with("") {
+            this<!LABEL_RESOLVE_WILL_CHANGE!>@with<!>.toString()
+            this<!LABEL_RESOLVE_WILL_CHANGE!>@with<!>.<!UNRESOLVED_REFERENCE!>length<!>
+            this<!LABEL_RESOLVE_WILL_CHANGE!>@with<!>.inc()
+        }
+    }
+}
+
+object OtherTests2 {
+    fun Int.with() {
+        with("") {
+            this<!LABEL_RESOLVE_WILL_CHANGE!>@with<!>.toString()
+        }
     }
 }

@@ -1,0 +1,15 @@
+MODULE main
+	CLASS Derived.class
+		METHOD x()Ljava/lang/String;
+			Annotation: method.invisibleAnnotations
+				K1
+					---
+				K2
+					@Lorg/jetbrains/annotations/NotNull;
+	CLASS DerivedKt.class
+		METHOD box()Ljava/lang/String;
+			Annotation: method.invisibleAnnotations
+				K1
+					---
+				K2
+					@Lorg/jetbrains/annotations/NotNull;

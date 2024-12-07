@@ -1,0 +1,27 @@
+public open class Base : R|kotlin/Any| {
+    protected open val prot: R|kotlin/Int|
+        protected get(): R|kotlin/Int|
+
+    internal open val int: R|kotlin/Int|
+        internal get(): R|kotlin/Int|
+
+    public open val pub: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
+    public constructor(): R|test/Base|
+
+}
+
+public final class Child : R|test/Base| {
+    public open val prot: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
+    public open val int: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
+    public open val pub: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
+    public constructor(prot: R|kotlin/Int|, int: R|kotlin/Int|, pub: R|kotlin/Int|): R|test/Child|
+
+}

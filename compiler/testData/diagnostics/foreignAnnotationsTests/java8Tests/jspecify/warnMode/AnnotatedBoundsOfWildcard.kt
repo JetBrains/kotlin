@@ -1,8 +1,9 @@
+// FIR_IDENTICAL
 // JSPECIFY_STATE: warn
 // MUTE_FOR_PSI_CLASS_FILES_READING
 
 // FILE: AnnotatedBoundsOfWildcard.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 @NullMarked
 public class AnnotatedBoundsOfWildcard {
@@ -24,7 +25,7 @@ public class Base {}
 public class Derived extends Base {}
 
 // FILE: Test.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 @NullMarked
 public class Test<T extends Object, E extends @Nullable Object, F extends @NullnessUnspecified Object> { }

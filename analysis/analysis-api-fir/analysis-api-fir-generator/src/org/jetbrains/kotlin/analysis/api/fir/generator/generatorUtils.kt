@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.generator
 
-import org.jetbrains.kotlin.util.SmartPrinter
+import org.jetbrains.kotlin.utils.SmartPrinter
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 

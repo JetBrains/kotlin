@@ -12,7 +12,7 @@ public open class A : KI {
     public open fun foo(/*0*/ x: kotlin.jvm.functions.FunctionN<kotlin.String!>!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun manyParams(/*0*/ x: (kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String) -> kotlin.Unit): kotlin.Unit
-    public open fun manyParams(/*0*/ x: kotlin.jvm.functions.FunctionN<Unit!>!): kotlin.Unit
+    public open fun manyParams(/*0*/ x: kotlin.jvm.functions.FunctionN<kotlin.Unit!>!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 

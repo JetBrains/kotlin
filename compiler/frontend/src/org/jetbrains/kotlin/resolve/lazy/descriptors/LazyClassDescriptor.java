@@ -52,12 +52,14 @@ import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static kotlin.collections.CollectionsKt.firstOrNull;
 import static org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE;
 import static org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PUBLIC;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.INNER_KEYWORD;
+import static org.jetbrains.kotlin.name.NameUtils.contextReceiverName;
 import static org.jetbrains.kotlin.resolve.BindingContext.TYPE;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveModalityFromModifiers;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
@@ -121,10 +123,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         this.c = c;
 
         classOrObject = classLikeInfo.getCorrespondingClassOrObject();
-        if (classOrObject != null) {
-            this.c.getTrace().record(BindingContext.CLASS, classOrObject, this);
-        }
-        this.c.getTrace().record(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, DescriptorUtils.getFqName(this), this);
 
         this.declarationProvider = c.getDeclarationProviderFactory().getClassMemberDeclarationProvider(classLikeInfo);
 
@@ -132,7 +130,10 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         this.scopesHolderForClass = createScopesHolderForClass(c, this.declarationProvider);
         this.kind = classLikeInfo.getClassKind();
-        this.staticScope = kind == ClassKind.ENUM_CLASS ? new StaticScopeForKotlinEnum(storageManager, this) : MemberScope.Empty.INSTANCE;
+        this.staticScope = kind == ClassKind.ENUM_CLASS ?
+                           new StaticScopeForKotlinEnum(
+                                   storageManager, this, /* enumEntriesCanBeUsed = */ true
+                           ) : MemberScope.Empty.INSTANCE;
 
         this.typeConstructor = new LazyClassTypeConstructor();
 
@@ -192,8 +193,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             this.annotations = Annotations.Companion.getEMPTY();
         }
 
-        List<KtAnnotationEntry> jetDanglingAnnotations = classLikeInfo.getDanglingAnnotations();
-        if (jetDanglingAnnotations.isEmpty()) {
+        List<KtAnnotationEntry> ktDanglingAnnotations = classLikeInfo.getDanglingAnnotations();
+        if (ktDanglingAnnotations.isEmpty()) {
             this.danglingAnnotations = Annotations.Companion.getEMPTY();
         }
         else {
@@ -209,7 +210,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                             return getScopeForMemberDeclarationResolution();
                         }
                     },
-                    jetDanglingAnnotations
+                    ktDanglingAnnotations
             );
         }
 
@@ -307,18 +308,27 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 return CollectionsKt.emptyList();
             }
             List<KtContextReceiver> contextReceivers = classOrObject.getContextReceivers();
-            List<ReceiverParameterDescriptor> contextReceiverDescriptors = contextReceivers.stream()
-                    .map(KtContextReceiver::typeReference)
-                    .filter(Objects::nonNull)
-                    .map(typeReference -> {
+            List<ReceiverParameterDescriptor> contextReceiverDescriptors =
+                    IntStream.range(0, contextReceivers.size())
+                    .mapToObj(index -> {
+                        KtContextReceiver contextReceiver = contextReceivers.get(index);
+                        KtTypeReference typeReference = contextReceiver.typeReference();
+                        if (typeReference == null) return null;
                         KotlinType kotlinType =
                                 c.getTypeResolver().resolveType(getScopeForClassHeaderResolution(), typeReference, c.getTrace(), true);
+                        Name label = contextReceiver.labelNameAsName() != null
+                                    ? contextReceiver.labelNameAsName()
+                                    : contextReceiverName(index);
                         return DescriptorFactory.createContextReceiverParameterForClass(
                                 this,
                                 kotlinType,
-                                Annotations.Companion.getEMPTY()
+                                contextReceiver.labelNameAsName(),
+                                Annotations.Companion.getEMPTY(),
+                                index
                         );
-                    }).collect(Collectors.toList());
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
 
             if (c.getLanguageVersionSettings().supportsFeature(LanguageFeature.ContextReceivers)) {
                 HashMultimap<String, ReceiverParameterDescriptor> labelNameToReceiverMap = HashMultimap.create();
@@ -332,6 +342,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
             return contextReceiverDescriptors;
         });
+
+        if (classOrObject != null) {
+            this.c.getTrace().record(BindingContext.CLASS, classOrObject, this);
+        }
+        this.c.getTrace().record(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, DescriptorUtils.getFqName(this), this);
     }
 
     private static boolean isIllegalInner(@NotNull DeclarationDescriptor descriptor) {
@@ -686,6 +701,13 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             return isRecursiveInlineClass(newConstructor, visited);
         }
         return false;
+    }
+
+    @Override
+    public void validate() {
+        if (parameters == null) {
+            throw new IllegalStateException("parameters == null for " + this);
+        }
     }
 
     @Override

@@ -1,4 +1,4 @@
-// !LANGUAGE: +SuspendConversion
+// LANGUAGE: +SuspendConversion
 // IGNORE_BACKEND: JVM
 
 fun interface SuspendRunnable {

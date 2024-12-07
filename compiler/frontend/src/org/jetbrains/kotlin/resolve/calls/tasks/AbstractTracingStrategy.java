@@ -20,6 +20,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
@@ -139,16 +140,14 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     }
 
     @Override
-    public void recursiveType(@NotNull BindingTrace trace, boolean shouldReportErrorsOnRecursiveTypeInsidePlusAssignment) {
+    public void recursiveType(@NotNull BindingTrace trace, @NotNull LanguageVersionSettings languageVersionSettings, boolean insideAugmentedAssignment) {
         KtExpression expression = call.getCalleeExpression();
         if (expression == null) return;
-        DiagnosticFactory0<KtExpression> factory;
-        if (shouldReportErrorsOnRecursiveTypeInsidePlusAssignment) {
-            factory = TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.getErrorFactory();
+        if (insideAugmentedAssignment) {
+            trace.report(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_IN_AUGMENTED_ASSIGNMENT.on(languageVersionSettings, expression));
         } else {
-            factory = TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.getWarningFactory();
+            trace.report(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.on(languageVersionSettings, expression));
         }
-        trace.report(factory.on(expression));
     }
 
     @Override

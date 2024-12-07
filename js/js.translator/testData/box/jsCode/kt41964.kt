@@ -1,6 +1,3 @@
-// IGNORE_FIR
-// EXPECTED_REACHABLE_NODES: 1280
-
 // MODULE: lib
 // FILE: aaa.kt
 package bar

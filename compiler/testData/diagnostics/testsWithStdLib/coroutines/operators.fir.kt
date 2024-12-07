@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
 
 import kotlin.reflect.KProperty
@@ -35,9 +36,9 @@ class A {
     suspend <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun equals(a: A) = a === this
     suspend operator fun set(a: A, b: A) {}
 
-    suspend operator fun provideDelegate(a: A, p: KProperty<*>) = a
-    suspend operator fun getValue(a: A, p: KProperty<*>) = a
-    suspend operator fun setValue(a: A, p: KProperty<*>, b: A) {}
+    suspend <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun provideDelegate(a: A, p: KProperty<*>) = a
+    suspend <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun getValue(a: A, p: KProperty<*>) = a
+    suspend <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun setValue(a: A, p: KProperty<*>, b: A) {}
 }
 
 class B

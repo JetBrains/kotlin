@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 typealias StringType = String
 
 fun <T : Throwable> test() {

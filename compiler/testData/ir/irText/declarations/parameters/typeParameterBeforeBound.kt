@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+
 class Test1<T : U, U>
 
 fun <T : U, U> test2() {}

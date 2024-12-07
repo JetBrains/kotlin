@@ -2,7 +2,7 @@
 [![TeamCity (simple build status)](https://img.shields.io/teamcity/http/teamcity.jetbrains.com/s/Kotlin_KotlinPublic_Compiler.svg)](https://teamcity.jetbrains.com/buildConfiguration/Kotlin_KotlinPublic_Compiler?branch=%3Cdefault%3E&buildTypeTab=overview&mode=builds)
 [![Maven Central](https://img.shields.io/maven-central/v/org.jetbrains.kotlin/kotlin-maven-plugin.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.jetbrains.kotlin%22)
 [![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](https://www.apache.org/licenses/LICENSE-2.0)
-[![Revved up by Gradle Enterprise](https://img.shields.io/badge/Revved%20up%20by-Gradle%20Enterprise-06A0CE?logo=Gradle&labelColor=02303A)](https://ge.jetbrains.com/scans?search.rootProjectNames=Kotlin)
+[![Revved up by Develocity](https://img.shields.io/badge/Revved%20up%20by-Develocity-06A0CE?logo=Gradle&labelColor=02303A)](https://ge.jetbrains.com/scans?search.rootProjectNames=Kotlin)
 
 # Kotlin Programming Language
 
@@ -43,30 +43,12 @@ Support for multiplatform programming is one of Kotlin’s key benefits. It redu
 ## Build environment requirements
 
 This repository is using [Gradle toolchains](https://docs.gradle.org/current/userguide/toolchains.html) feature
-to select and auto-provision required JDKs from [AdoptOpenJdk](https://adoptopenjdk.net) project. 
-
-Unfortunately [AdoptOpenJdk](https://adoptopenjdk.net) project does not provide required JDK 1.6 and 1.7 images,
-so you could either download them manually and provide path to installation via `JDK_16` and `JDK_17` environment variables or
-use following SDK managers:
-- [Asdf-vm](https://asdf-vm.com/)
-- [Jabba](https://github.com/shyiko/jabba)
-- [SDKMAN!](https://sdkman.io/)
+to select and auto-provision required JDKs from [AdoptOpenJdk](https://adoptopenjdk.net) project.
 
 Alternatively, it is still possible to only provide required JDKs via environment variables 
 (see [gradle.properties](./gradle.properties#L5) for supported variable names). To ensure Gradle uses only JDKs 
 from environmental variables - disable Gradle toolchain auto-detection by passing `-Porg.gradle.java.installations.auto-detect=false` option
 (or put it into `$GRADLE_USER_HOME/gradle.properties`).
-
-For local development, if you're not working on the standard library, it's OK to avoid installing JDK 1.6 and JDK 1.7.
-Add `kotlin.build.isObsoleteJdkOverrideEnabled=true` to the `local.properties` file, so build will only use JDK 1.8+. Note, that in this
-case, build will have Gradle remote build cache misses for some tasks. 
-
-Note: The JDK 6 for MacOS is not available on Oracle's site. You can install it by
-
-```bash
-$ brew tap homebrew/cask-versions
-$ brew install --cask java6
-```
 
 On Windows you might need to add long paths setting to the repo:
 
@@ -113,16 +95,9 @@ To build Kotlin/Native, see
 
 ## <a name="working-in-idea"></a> Working with the project in IntelliJ IDEA
 
-Working with the Kotlin project requires at least IntelliJ IDEA 2019.1. You can download IntelliJ IDEA 2019.1 [here](https://www.jetbrains.com/idea/download).
+It is recommended to use the latest released version of Intellij IDEA (Community or Ultimate Edition). You can download IntelliJ IDEA [here](https://www.jetbrains.com/idea/download).
 
-After cloning the project, to import the project in IntelliJ choose the project directory in the Open project dialog. Then, after project opened, select 
-`File` -> `New` -> `Module from Existing Sources...` in the menu, and select `build.gradle.kts` file in the project's root folder.
-
-In the import dialog, select `use default gradle wrapper`.
-
-To be able to run tests from IntelliJ easily, check `Delegate IDE build/run actions to Gradle` and choose `Gradle Test Runner` in the Gradle runner settings after importing the project.
-
-At this time, you can use the latest released `1.6.x` version of the Kotlin plugin for working with the code. To make sure you have the latest version installed, use `Tools` -> `Kotlin` -> `Configure Kotlin Plugin Updates`.
+After cloning the project, import the project in IntelliJ by choosing the project directory in the Open project dialog.
 
 For handy work with compiler tests it's recommended to use [
 Kotlin Compiler Test Helper](https://github.com/demiurg906/test-data-helper-plugin)
@@ -137,29 +112,41 @@ repository for all Gradle builds. Gradle will check hashes (md5 and sha256) of u
 It's expected that `verification-metadata.xml` should only be updated with the commits that modify the build. There are some tips how
 to perform such updates:
 
-- Use auto-generation for getting an initial list of new hashes (verify updates relate to you changes).
+- Delete `components` section of `verification-metadata.xml` to avoid stockpiling of old unused dependencies. You may use the following command:
+```bash
+#macOS
+sed -i '' -e '/<components>/,/<\/components>/d' gradle/verification-metadata.xml
+#Linux & Git for Windows
+sed -i -e '/<components>/,/<\/components>/d' gradle/verification-metadata.xml
+```
+- Re-generate dependencies with Gradle's `--write-verification-metadata` command (verify update relates to your changes)
 
-`./gradlew -M sha256,md5 help`
+```bash
+./gradlew --write-verification-metadata sha256,md5 -Pkotlin.native.enabled=true resolveDependencies
+```
 
-*(any other task may be used instead of `help`)*
+*`resolveDependencies` task resolves dependencies for all platforms including dependencies downloaded by plugins.*
 
-- Consider removing old versions from the file if you are updating dependencies.
-- Leave meaningful `origin` attribute (instead of `Generated by Gradle`) if you did some manual verification of the artifact.
-- Always do manual verification if several hashes are needed, and a new `also-trust` tag has to be added.
-- If you’re adding a dependency with OS mentioning in an artifact name (`darwin`, `mac`, `osx`, `linux`, `windows`), remember to add 
-  counterparts for other platforms.
+You can also use `./scripts/update-verification-metadata.sh` script which includes both of these steps
 
-## Using -dev and -SNAPSHOT versions
+Keep in mind:
 
-We publish `-dev` and `-SNAPSHOT` versions frequently.
+- If you’re adding a dependency with OS mentioned in an artifact name (`darwin`, `mac`, `osx`, `linux`, `windows`), remember to add them to 
+  `implicitDependencies` configuration or update `resolveDependencies` task if needed. `resolveDependencies` should resolve all dependencies
+  including dependencies for different platforms.
+- If you have a `local.properties` file in your Kotlin project folder, make sure that it doesn't contain `kotlin.native.enabled=false`.
+  Otherwise, native-only dependencies may not be added to the verification metadata. This is because `local.properties` has higher 
+  precedence than the `-Pkotlin.native.enabled=true` specified in the Gradle command.
+
+## Using -dev versions
+
+We publish `-dev` versions frequently.
 
 For `-dev` versions you can use the [list of available versions](https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap/org/jetbrains/kotlin/kotlin-compiler/maven-metadata.xml) and include this maven repository:
 
-`maven { url = uri("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap") }`
-
-For `-SNAPSHOT` versions that are updated daily, you can use the [list of available versions](https://oss.sonatype.org/content/repositories/snapshots/org/jetbrains/kotlin/kotlin-compiler/maven-metadata.xml) and include this maven repository:
-
-`maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }`
+```kotlin
+maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap")
+```
 
 # License
 Kotlin is distributed under the terms of the Apache License (Version 2.0). See [license folder](license/README.md) for details.

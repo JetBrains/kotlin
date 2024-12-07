@@ -1,14 +1,13 @@
-typealias Action<RenderingT : Any?> = Function1<@UnsafeVariance RenderingT, Unit>
 data class Tag<out RenderingT : Any?> {
+  val action: Function1<@UnsafeVariance RenderingT, Unit>
+    field = action
+    get
+
   constructor(action: Function1<@UnsafeVariance RenderingT, Unit>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val action: Function1<@UnsafeVariance RenderingT, Unit>
-    field = action
-    get
 
   operator fun component1(): Function1<@UnsafeVariance RenderingT, Unit> {
     return <this>.#action
@@ -18,14 +17,6 @@ data class Tag<out RenderingT : Any?> {
     return Tag<RenderingT>(action = action)
   }
 
-  override fun toString(): String {
-    return "Tag(" + "action=" + <this>.#action + ")"
-  }
-
-  override fun hashCode(): Int {
-    return <this>.#action.hashCode()
-  }
-
   override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -33,19 +24,29 @@ data class Tag<out RenderingT : Any?> {
     when {
       other !is Tag<RenderingT> -> return false
     }
-    val tmp0_other_with_cast: Tag<RenderingT> = other as Tag<RenderingT>
+    val tmp_0: Tag<RenderingT> = other as Tag<RenderingT>
     when {
-      EQEQ(arg0 = <this>.#action, arg1 = tmp0_other_with_cast.#action).not() -> return false
+      EQEQ(arg0 = <this>.#action, arg1 = tmp_0.#action).not() -> return false
     }
     return true
   }
 
+  override fun hashCode(): Int {
+    return <this>.#action.hashCode()
+  }
+
+  override fun toString(): String {
+    return "Tag(" + "action=" + <this>.#action + ")"
+  }
+
+}
+
+fun doAction() {
+  getTag().<get-action>() /*~> Unit */
 }
 
 fun getTag(): Tag<*> {
   throw Exception()
 }
 
-fun doAction() {
-  getTag().<get-action>() /*~> Unit */
-}
+typealias Action<RenderingT : Any?> = Function1<@UnsafeVariance RenderingT, Unit>

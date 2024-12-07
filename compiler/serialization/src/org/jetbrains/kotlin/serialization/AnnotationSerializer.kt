@@ -24,20 +24,16 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value
 import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.Type
 import org.jetbrains.kotlin.metadata.deserialization.Flags
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.error.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
 
 open class AnnotationSerializer(private val stringTable: DescriptorAwareStringTable) {
     fun serializeAnnotation(annotation: AnnotationDescriptor): ProtoBuf.Annotation? = ProtoBuf.Annotation.newBuilder().apply {
-        val annotationClass = annotation.annotationClass ?: error("Annotation type is not a class: ${annotation.type}")
-        if (ErrorUtils.isError(annotationClass)) {
-            if (ignoreAnnotation(annotation.type)) return null
-            error("Unresolved annotation type: ${annotation.type} at ${annotation.source.containingFile}")
-        }
-
-        id = stringTable.getFqNameIndex(annotationClass)
+        val classId = getAnnotationClassId(annotation) ?: return null
+        id = stringTable.getQualifiedClassNameIndex(classId)
 
         for ((name, value) in annotation.allValueArguments) {
             val argument = ProtoBuf.Annotation.Argument.newBuilder()
@@ -46,6 +42,15 @@ open class AnnotationSerializer(private val stringTable: DescriptorAwareStringTa
             addArgument(argument)
         }
     }.build()
+
+    protected open fun getAnnotationClassId(annotation: AnnotationDescriptor): ClassId? {
+        val annotationClass = annotation.annotationClass ?: error("Annotation type is not a class: ${annotation.type}")
+        if (ErrorUtils.isError(annotationClass)) {
+            error("Unresolved annotation type: ${annotation.type} at ${annotation.source.containingFile}")
+        }
+
+        return annotationClass.classId
+    }
 
     fun valueProto(constant: ConstantValue<*>): Value.Builder = Value.newBuilder().apply {
         constant.accept(object : AnnotationArgumentVisitor<Unit, Unit> {
@@ -175,6 +180,4 @@ open class AnnotationSerializer(private val stringTable: DescriptorAwareStringTa
             }
         }, Unit)
     }
-
-    protected open fun ignoreAnnotation(type: KotlinType): Boolean = false
 }

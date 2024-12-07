@@ -1,9 +1,14 @@
-fun use(fn: Function1<Int, String>): String {
-  return fn.invoke(p1 = 1)
-}
+object Host {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
 
-fun use0(fn: Function0<String>): String {
-  return fn.invoke()
+  }
+
+  fun importedObjectMemberWithVarargs(vararg xs: Int): String {
+    return "abc"
+  }
+
 }
 
 fun coerceToUnit(fn: Function1<Int, Unit>) {
@@ -21,39 +26,6 @@ fun fnWithVarargs(vararg xs: Int): String {
   return "abc"
 }
 
-object Host {
-  private constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  fun importedObjectMemberWithVarargs(vararg xs: Int): String {
-    return "abc"
-  }
-
-}
-
-fun testDefault(): String {
-  return use(fn = { // BLOCK
-    local fun fnWithDefault(p0: Int): String {
-      return fnWithDefault(a = p0)
-    }
-
-    ::fnWithDefault
-  })
-}
-
-fun testVararg(): String {
-  return use(fn = { // BLOCK
-    local fun fnWithVarargs(p0: Int): String {
-      return fnWithVarargs(xs = [p0])
-    }
-
-    ::fnWithVarargs
-  })
-}
-
 fun testCoercionToUnit() {
   return coerceToUnit(fn = { // BLOCK
     local fun fnWithDefault(p0: Int) {
@@ -64,13 +36,13 @@ fun testCoercionToUnit() {
   })
 }
 
-fun testImportedObjectMember(): String {
+fun testDefault(): String {
   return use(fn = { // BLOCK
-    local fun Host.importedObjectMemberWithVarargs(p0: Int): String {
-      return receiver.importedObjectMemberWithVarargs(xs = [p0])
+    local fun fnWithDefault(p0: Int): String {
+      return fnWithDefault(a = p0)
     }
 
-    Host::importedObjectMemberWithVarargs
+    ::fnWithDefault
   })
 }
 
@@ -84,6 +56,26 @@ fun testDefault0(): String {
   })
 }
 
+fun testImportedObjectMember(): String {
+  return use(fn = { // BLOCK
+    local fun Host.importedObjectMemberWithVarargs(p0: Int): String {
+      return receiver.importedObjectMemberWithVarargs(xs = [p0])
+    }
+
+    Host::importedObjectMemberWithVarargs
+  })
+}
+
+fun testVararg(): String {
+  return use(fn = { // BLOCK
+    local fun fnWithVarargs(p0: Int): String {
+      return fnWithVarargs(xs = [p0])
+    }
+
+    ::fnWithVarargs
+  })
+}
+
 fun testVararg0(): String {
   return use0(fn = { // BLOCK
     local fun fnWithVarargs(): String {
@@ -93,3 +85,12 @@ fun testVararg0(): String {
     ::fnWithVarargs
   })
 }
+
+fun use(fn: Function1<Int, String>): String {
+  return fn.invoke(p1 = 1)
+}
+
+fun use0(fn: Function0<String>): String {
+  return fn.invoke()
+}
+

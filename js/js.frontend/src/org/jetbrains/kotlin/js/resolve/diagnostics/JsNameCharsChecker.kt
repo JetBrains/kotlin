@@ -9,13 +9,19 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.js.naming.JsNameSuggestion
 import org.jetbrains.kotlin.js.naming.NameSuggestion
+import org.jetbrains.kotlin.js.naming.WasmNameSuggestion
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 
-class JsNameCharsChecker(private val suggestion: NameSuggestion) : DeclarationChecker {
+class JsNameCharsChecker(suggestion: JsNameSuggestion) : AbstractNameCharsChecker(suggestion)
+
+class WasmNameCharsChecker(suggestion: WasmNameSuggestion) : AbstractNameCharsChecker(suggestion)
+
+abstract class AbstractNameCharsChecker(private val suggestion: NameSuggestion) : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.JsAllowInvalidCharsIdentifiersEscaping)) {
             return

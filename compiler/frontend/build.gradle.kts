@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -15,10 +17,10 @@ dependencies {
     api(project(":compiler:frontend.common"))
     api(project(":compiler:frontend.common-psi"))
     api(project(":kotlin-script-runtime"))
-    api(commonDependency("io.javaslang","javaslang"))
+    api(libs.vavr)
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
-    compileOnly(commonDependency("com.google.guava:guava"))
+    compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    compileOnly(libs.guava)
 }
 
 sourceSets {
@@ -26,6 +28,6 @@ sourceSets {
     "test" {}
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions.freeCompilerArgs += "-Xjvm-default=compatibility"
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
 }

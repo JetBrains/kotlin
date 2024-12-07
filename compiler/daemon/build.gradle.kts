@@ -5,24 +5,18 @@ plugins {
     id("jps-compatible")
 }
 
-val ktorExcludesForDaemon : List<Pair<String, String>> by rootProject.extra
-
 dependencies {
     compileOnly(project(":compiler:cli"))
-    compileOnly(project(":compiler:cli-js"))
     compileOnly(project(":compiler:incremental-compilation-impl"))
-    compileOnly(project(":daemon-common-new"))
-
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
+    compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
 
-    runtimeOnly(project(":kotlin-reflect"))
+    runtimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     embedded(project(":daemon-common")) { isTransitive = false }
-    api(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
-        isTransitive = false
-    }
 }
+
+optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { projectDefault() }
@@ -32,15 +26,5 @@ sourceSets {
 publish()
 
 runtimeJar()
-
 sourcesJar()
-
 javadocJar()
-
-tasks {
-    val compileKotlin by existing(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
-        kotlinOptions {
-            freeCompilerArgs += "-opt-in=kotlinx.coroutines.DelicateCoroutinesApi"
-        }
-    }
-}

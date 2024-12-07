@@ -1,0 +1,15 @@
+FILE: inferenceFromLambdaReturnType.kt
+    public final class ThemeKey<T> : R|kotlin/Any| {
+        public constructor<T>(): R|ThemeKey<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun <S> getWithFallback(fallback: R|(ThemeKey<S>) -> S|): R|kotlin/Unit| {
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/getWithFallback|<R|kotlin/String|>(<L> = getWithFallback@fun <anonymous>(it: R|ThemeKey<kotlin/String>|): R|kotlin/String| <inline=NoInline>  {
+            ^ String()
+        }
+        )
+    }

@@ -20,16 +20,18 @@ import clang.*
 import kotlinx.cinterop.*
 import java.io.File
 
+val predefinedMacros = setOf("__DATE__", "__TIME__", "__TIMESTAMP__", "__FILE__", "__FILE_NAME__", "__BASE_FILE__", "__LINE__")
+
 /**
  * Finds all "macro constants" and registers them as [NativeIndex.constants] in given index.
  */
 internal fun findMacros(
         nativeIndex: NativeIndexImpl,
         compilation: CompilationWithPCH,
-        translationUnit: CXTranslationUnit,
+        translationUnits: List<CXTranslationUnit>,
         headers: Set<CXFile?>
 ) {
-    val names = collectMacroNames(nativeIndex, translationUnit, headers)
+    val names = collectMacroNames(nativeIndex, translationUnits, headers)
     // TODO: apply user-defined filters.
     val macros = expandMacros(compilation, names, typeConverter = { nativeIndex.convertType(it) })
 
@@ -63,7 +65,7 @@ private fun expandMacros(
         // Ensure libclang reports all errors:
         compilerArgs += "-ferror-limit=0"
 
-        val translationUnit = parseTranslationUnit(index, sourceFile, compilerArgs, options = 0)
+        val translationUnit = parseTranslationUnit(index, sourceFile, compilerArgs, options = CXTranslationUnit_DetailedPreprocessingRecord)
         try {
             val nameToMacroDef = mutableMapOf<String, MacroDef>()
             val unprocessedMacros = names.toMutableList()
@@ -181,7 +183,7 @@ private fun reparseWithCodeSnippets(library: CompilationWithPCH,
             codeSnippetLines.forEach { writer.appendLine(it) }
         }
     }
-    clang_reparseTranslationUnit(translationUnit, 0, null, 0)
+    clang_reparseTranslationUnit(translationUnit, 0, null, CXTranslationUnit_DetailedPreprocessingRecord)
 }
 
 /**
@@ -284,29 +286,30 @@ enum class VisitorState {
     EXPECT_END, INVALID
 }
 
-private fun collectMacroNames(nativeIndex: NativeIndexImpl, translationUnit: CXTranslationUnit, headers: Set<CXFile?>): List<String> {
+private fun collectMacroNames(nativeIndex: NativeIndexImpl, translationUnits: List<CXTranslationUnit>, headers: Set<CXFile?>): List<String> {
     val result = mutableSetOf<String>()
 
-    visitChildren(translationUnit) { cursor, _ ->
-        val file = memScoped {
-            val fileVar = alloc<CXFileVar>()
-            clang_getFileLocation(clang_getCursorLocation(cursor), fileVar.ptr, null, null, null)
-            fileVar.value
-        }
+    translationUnits.forEach {
+        visitChildren(it) { cursor, _ ->
+            val file = memScoped {
+                val fileVar = alloc<CXFileVar>()
+                clang_getFileLocation(clang_getCursorLocation(cursor), fileVar.ptr, null, null, null)
+                fileVar.value
+            }
 
-        if (cursor.kind == CXCursorKind.CXCursor_MacroDefinition &&
-                nativeIndex.library.includesDeclaration(cursor) &&
-                file != null && // Builtin macros mostly seem to be useless.
-                file in headers &&
-                canMacroBeConstant(cursor))
-        {
-            val spelling = getCursorSpelling(cursor)
-            result.add(spelling)
+            if (cursor.kind == CXCursorKind.CXCursor_MacroDefinition &&
+                    nativeIndex.library.includesDeclaration(cursor) &&
+                    file != null && // Builtin macros mostly seem to be useless.
+                    file in headers &&
+                    canMacroBeConstant(cursor)) {
+                val spelling = getCursorSpelling(cursor)
+                result.add(spelling)
+            }
+            CXChildVisitResult.CXChildVisit_Continue
         }
-        CXChildVisitResult.CXChildVisit_Continue
     }
 
-    return result.toList()
+    return result.filterNot { predefinedMacros.contains(it) }.toList()
 }
 
 private fun canMacroBeConstant(cursor: CValue<CXCursor>): Boolean {

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: A.java
 
 import java.util.*;
@@ -29,15 +30,15 @@ fun main() {
     raw.charSequences = arrayOf<String>()
     raw.charSequences = <!ASSIGNMENT_TYPE_MISMATCH!>arrayOf<Double>()<!>
 
-    raw.maps = <!ASSIGNMENT_TYPE_MISMATCH!>arrayOf<Map<Int, Int>>()<!>
-    raw.maps = <!ASSIGNMENT_TYPE_MISMATCH!>arrayOf<MutableMap<Int, Int>>()<!>
+    raw.maps = arrayOf<Map<Int, Int>>()
+    raw.maps = arrayOf<MutableMap<Int, Int>>()
     raw.maps = <!ASSIGNMENT_TYPE_MISMATCH!>arrayOf<List<String>>()<!>
 
-    raw.arraysOfLists = <!ASSIGNMENT_TYPE_MISMATCH!>arrayOf<Array<List<*>>>()<!>
+    raw.arraysOfLists = arrayOf<Array<List<*>>>()
     raw.arraysOfLists = <!ASSIGNMENT_TYPE_MISMATCH!>arrayOf<List<String>>()<!>
     raw.arraysOfLists = <!ASSIGNMENT_TYPE_MISMATCH!>arrayOf<Array<Array<String>>>()<!>
 
     raw.arraysOfAny = arrayOf<Array<Array<String>>>()
 
-    raw.erasedLists = <!ASSIGNMENT_TYPE_MISMATCH!>arrayOf<List<String>>()<!>
+    raw.erasedLists = arrayOf<List<String>>()
 }

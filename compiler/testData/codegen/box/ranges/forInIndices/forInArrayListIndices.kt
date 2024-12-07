@@ -16,8 +16,8 @@ fun bar(): String {
     a.add("K")
     val map = mutableMapOf<String, String>().apply {
         for (i in a.indices step 2) {
-            put(a[i].toLowerCase(), a[i])
-            put(a[i + 1].toLowerCase(), a[i + 1])
+            put(a[i].lowercase(), a[i])
+            put(a[i + 1].lowercase(), a[i + 1])
         }
     }
     return map.values.joinToString(separator = "")

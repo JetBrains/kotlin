@@ -23,12 +23,9 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.AnalyzerExtensions
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
-import org.jetbrains.kotlin.resolve.isEffectivelyFinal
 
 class InlineAnalyzerExtension(
     private val reasonableInlineRules: Iterable<ReasonableInlineRule>,
@@ -159,10 +156,12 @@ class InlineAnalyzerExtension(
             }
         }
 
-        //TODO: actually it should be isEffectivelyFinal(false), but looks like it requires committee decision: KT-34372)
-        if (callableDescriptor.isEffectivelyFinal(true)) {
+        if (callableDescriptor.isEffectivelyFinal(ignoreEnumClassFinality = true)) {
             if (overridesAnything) {
                 trace.report(Errors.OVERRIDE_BY_INLINE.on(functionOrProperty))
+            }
+            if (!callableDescriptor.isEffectivelyFinal(ignoreEnumClassFinality = false)) {
+                trace.report(Errors.DECLARATION_CANT_BE_INLINED_WARNING.on(functionOrProperty))
             }
             return
         }
@@ -181,6 +180,7 @@ class InlineAnalyzerExtension(
         ) return
 
         if (reasonableInlineRules.any { it.isInlineReasonable(functionDescriptor, function, trace.bindingContext) }) return
+        if (functionDescriptor.returnType?.needsMfvcFlattening() == true) return
 
         val reportOn = function.modifierList?.getModifier(KtTokens.INLINE_KEYWORD) ?: function
         trace.report(Errors.NOTHING_TO_INLINE.on(reportOn))

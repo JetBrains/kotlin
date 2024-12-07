@@ -17,8 +17,11 @@
 package org.jetbrains.kotlin.jps.build
 
 import com.intellij.openapi.util.io.FileUtil
+import junit.framework.TestCase.assertTrue
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
+import org.jetbrains.kotlin.jps.build.JpsBuildTestCase.change
+import java.io.File
 
 inline fun withSystemProperty(property: String, newValue: String?, fn: ()->Unit) {
     val backup = System.getProperty(property)
@@ -69,5 +72,34 @@ fun withDaemon(fn: () -> Unit) {
                 }
             }
         }
+    }
+}
+
+interface Action {
+    fun apply()
+    fun checkPath(path: String) {
+        assertTrue("$path does not exist", File(path).exists())
+    }
+}
+
+class TouchAction(val path: String): Action {
+    override fun apply() {
+        checkPath(path)
+        change(path)
+    }
+}
+
+class DeleteAction(val path: String): Action {
+    override fun apply() {
+        val file = File(path)
+        checkPath(path)
+        assertTrue("Can not delete file \"" + file.absolutePath + "\"", file.delete())
+    }
+}
+
+class ChangeAction(val path: String, val newContent: String): Action {
+    override fun apply() {
+        checkPath(path)
+        change(path, newContent)
     }
 }

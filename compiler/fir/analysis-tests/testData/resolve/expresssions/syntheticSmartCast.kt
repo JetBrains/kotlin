@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: SomeClass.java
 import org.jetbrains.annotations.Nullable;
 

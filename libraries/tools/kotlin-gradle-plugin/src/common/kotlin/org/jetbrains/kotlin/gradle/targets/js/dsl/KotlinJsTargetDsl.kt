@@ -1,61 +1,89 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.targets.js.dsl
 
-import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.util.ConfigureUtil
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
+import org.gradle.api.provider.Property
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KOTLIN_JS_DCE_TOOL_DEPRECATION_MESSAGE
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.HasBinaries
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
+import org.jetbrains.kotlin.gradle.targets.js.ir.*
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import org.jetbrains.kotlin.gradle.utils.withType
 
 interface KotlinJsSubTargetContainerDsl : KotlinTarget {
     val nodejs: KotlinJsNodeDsl
 
     val browser: KotlinJsBrowserDsl
 
+    @InternalKotlinGradlePluginApi
+    val subTargets: NamedDomainObjectContainer<KotlinJsIrSubTargetWithBinary>
+
     val isNodejsConfigured: Boolean
+        get() = subTargets.withType<KotlinNodeJsIr>().isNotEmpty()
 
     val isBrowserConfigured: Boolean
+        get() = subTargets.withType<KotlinBrowserJsIr>().isNotEmpty()
 
-    fun whenNodejsConfigured(body: KotlinJsNodeDsl.() -> Unit)
+    fun whenNodejsConfigured(body: KotlinJsNodeDsl.() -> Unit) {
+        subTargets
+            .withType<KotlinNodeJsIr>()
+            .configureEach(body)
+    }
 
-    fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit)
+    fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit) {
+        subTargets
+            .withType<KotlinBrowserJsIr>()
+            .configureEach(body)
+    }
 }
 
-interface KotlinJsTargetDsl : KotlinTarget {
+interface KotlinJsTargetDsl :
+    KotlinTarget,
+    KotlinTargetWithNodeJsDsl,
+    HasBinaries<KotlinJsBinaryContainer>,
+    HasConfigurableKotlinCompilerOptions<KotlinJsCompilerOptions> {
+
+    @Deprecated("Use outputModuleName with Provider API instead")
     var moduleName: String?
+
+    /**
+     * Represents the name of the output module for a Kotlin/JS and Kotlin/Wasm target.
+     * This property allows customization of output filenames
+     */
+    val outputModuleName: Property<String>
 
     fun browser() = browser { }
     fun browser(body: KotlinJsBrowserDsl.() -> Unit)
-    fun browser(fn: Closure<*>) {
+    fun browser(fn: Action<KotlinJsBrowserDsl>) {
         browser {
-            ConfigureUtil.configure(fn, this)
-        }
-    }
-
-    fun nodejs() = nodejs { }
-    fun nodejs(body: KotlinJsNodeDsl.() -> Unit)
-    fun nodejs(fn: Closure<*>) {
-        nodejs {
-            ConfigureUtil.configure(fn, this)
+            fn.execute(this)
         }
     }
 
     fun useCommonJs()
+    fun useEsModules()
 
-    val binaries: KotlinJsBinaryContainer
+    /**
+     * The function accepts [jsExpression] and puts this expression as the "args: Array<String>" argument in place of main-function call
+     */
+    @ExperimentalMainFunctionArgumentsDsl
+    fun passAsArgumentToMainFunction(jsExpression: String)
+
+    fun generateTypeScriptDefinitions()
 
     @Deprecated(
         message = "produceExecutable() was changed on binaries.executable()",
@@ -69,63 +97,45 @@ interface KotlinJsTargetDsl : KotlinTarget {
     val testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
 
     // Need to compatibility when users use KotlinJsCompilation specific in build script
-    override val compilations: NamedDomainObjectContainer<out KotlinJsCompilation>
+    override val compilations: NamedDomainObjectContainer<KotlinJsIrCompilation>
+
+    override val binaries: KotlinJsBinaryContainer
+}
+
+interface KotlinTargetWithNodeJsDsl {
+    fun nodejs() = nodejs { }
+    fun nodejs(body: KotlinJsNodeDsl.() -> Unit)
+    fun nodejs(fn: Action<KotlinJsNodeDsl>) {
+        nodejs {
+            fn.execute(this)
+        }
+    }
 }
 
 interface KotlinJsSubTargetDsl {
     @ExperimentalDistributionDsl
-    fun distribution(body: Distribution.() -> Unit)
+    fun distribution(body: Action<Distribution>)
 
-    @ExperimentalDistributionDsl
-    fun distribution(fn: Closure<*>) {
-        distribution {
-            ConfigureUtil.configure(fn, this)
-        }
-    }
-
-    fun testTask(body: KotlinJsTest.() -> Unit)
-    fun testTask(fn: Closure<*>) {
-        testTask {
-            ConfigureUtil.configure(fn, this)
-        }
-    }
+    fun testTask(body: Action<KotlinJsTest>)
 
     val testRuns: NamedDomainObjectContainer<KotlinJsPlatformTestRun>
 }
 
 interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
-    fun commonWebpackConfig(body: KotlinWebpackConfig.() -> Unit)
-    fun commonWebpackConfig(fn: Closure<*>) {
-        commonWebpackConfig {
-            ConfigureUtil.configure(fn, this)
-        }
-    }
+    fun commonWebpackConfig(body: Action<KotlinWebpackConfig>)
 
-    fun runTask(body: KotlinWebpack.() -> Unit)
-    fun runTask(fn: Closure<*>) {
-        runTask {
-            ConfigureUtil.configure(fn, this)
-        }
-    }
+    fun runTask(body: Action<KotlinWebpack>)
 
-    fun webpackTask(body: KotlinWebpack.() -> Unit)
-    fun webpackTask(fn: Closure<*>) {
-        webpackTask {
-            ConfigureUtil.configure(fn, this)
-        }
-    }
+    fun webpackTask(body: Action<KotlinWebpack>)
 
+    @Deprecated(KOTLIN_JS_DCE_TOOL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     @ExperimentalDceDsl
-    fun dceTask(body: KotlinJsDce.() -> Unit)
-
-    @ExperimentalDceDsl
-    fun dceTask(fn: Closure<*>) {
-        dceTask {
-            ConfigureUtil.configure(fn, this)
-        }
-    }
+    fun dceTask(body: Action<@Suppress("DEPRECATION_ERROR") org.jetbrains.kotlin.gradle.dsl.KotlinJsDce>)
 }
 
 interface KotlinJsNodeDsl : KotlinJsSubTargetDsl {
-    fun runTask(body: NodeJsExec.() -> Unit)
+    fun runTask(body: Action<NodeJsExec>)
+
+    @ExperimentalMainFunctionArgumentsDsl
+    fun passProcessArgvToMainFunction()
 }

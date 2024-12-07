@@ -1,5 +1,3 @@
-// DONT_RUN_GENERATED_CODE: JS
-
 tailrec fun test(x : Int = 0, e : Any = "a") {
     if (x < 100000 && !e.equals("a")) {
         throw IllegalArgumentException()

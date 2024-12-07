@@ -24,8 +24,8 @@ fun box(): String {
             {
                 val q = object {}
                 s2 = q.javaClass.enclosingMethod.declaringClass.toString()
-            }()
-        }()
+            }.let { it() }
+        }.let { it() }
     }
 
     return "OK"

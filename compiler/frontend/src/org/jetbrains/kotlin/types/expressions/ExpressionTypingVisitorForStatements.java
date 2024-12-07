@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
+import org.jetbrains.kotlin.resolve.calls.checkers.AssignmentChecker;
+import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext;
 import org.jetbrains.kotlin.resolve.calls.checkers.NewSchemeOfIntegerOperatorResolutionChecker;
 import org.jetbrains.kotlin.resolve.calls.context.CallPosition;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
@@ -44,6 +46,7 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
+import org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
@@ -56,6 +59,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.psi.KtPsiUtil.deparenthesize;
@@ -441,6 +446,19 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                                   ? refineTypeByPropertyInType(bindingContext, leftOperand, leftType)
                                   : refineTypeFromPropertySetterIfPossible(bindingContext, leftOperand, leftType);
 
+        List<AssignResolutionAltererExtension> assignAlterers = AssignResolutionAltererExtension.Companion.getInstances(expression.getProject());
+        if (!assignAlterers.isEmpty()) {
+            KotlinTypeInfo alteredTypeInfo = assignAlterers.stream()
+                    .filter((it) -> it.needOverloadAssign(expression, leftType, bindingContext))
+                    .map((it) -> it.resolveAssign(bindingContext, expression, leftOperand, left, leftInfo, context, components, scope))
+                    .filter(Objects::nonNull)
+                    .findFirst()
+                    .orElse(null);
+            if (alteredTypeInfo != null) {
+                return alteredTypeInfo;
+            }
+        }
+
         DataFlowInfo dataFlowInfo = leftInfo.getDataFlowInfo();
         KotlinTypeInfo resultInfo;
         if (right != null) {
@@ -458,7 +476,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                 DataFlowValue rightValue = components.dataFlowValueFactory.createDataFlowValue(right, rightType, context);
                 // We cannot say here anything new about rightValue except it has the same value as leftValue
                 resultInfo = resultInfo.replaceDataFlowInfo(dataFlowInfo.assign(leftValue, rightValue, components.languageVersionSettings));
-                NewSchemeOfIntegerOperatorResolutionChecker.checkArgument(expectedType, right, context.languageVersionSettings, context.trace, components.moduleDescriptor);
+                NewSchemeOfIntegerOperatorResolutionChecker.checkArgument(expectedType, right, context.trace, components.moduleDescriptor);
             }
         }
         else {
@@ -466,6 +484,19 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         }
         if (expectedType != null && leftOperand != null) { //if expectedType == null, some other error has been generated
             basic.checkLValue(context.trace, context, leftOperand, right, expression, false);
+
+            CallCheckerContext callCheckerContext =
+                    new CallCheckerContext(
+                            context,
+                            components.deprecationResolver,
+                            components.moduleDescriptor,
+                            components.missingSupertypesResolver,
+                            components.callComponents,
+                            context.trace
+                    );
+            for (AssignmentChecker checker : components.assignmentCheckers) {
+                checker.check(expression, callCheckerContext);
+            }
         }
 
         if (!refineJavaFieldInTypeProperly) {

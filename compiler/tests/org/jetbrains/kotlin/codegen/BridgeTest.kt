@@ -52,7 +52,7 @@ class BridgeTest : TestCase() {
         return Fun(text)
     }
 
-    private fun bridge(from: Fun, to: Fun): Bridge<Meth, Fun> = Bridge(Meth(from), Meth(to), emptySet())
+    private fun bridge(from: Fun, to: Fun): Bridge<Meth> = Bridge(Meth(from), Meth(to))
 
     /**
      * Constructs a graph out of the given pairs of vertices. First vertex should be a function in the derived class,
@@ -125,7 +125,7 @@ class BridgeTest : TestCase() {
         }
     }
 
-    private fun doTest(function: Fun, expectedBridges: Set<Bridge<Meth, Fun>>) {
+    private fun doTest(function: Fun, expectedBridges: Set<Bridge<Meth>>) {
         val actualBridges = generateBridges(function, ::Meth)
         assert(actualBridges.all { it.from != it.to }) {
             "A bridge invoking itself was generated, which makes no sense, since it will result in StackOverflowError" +

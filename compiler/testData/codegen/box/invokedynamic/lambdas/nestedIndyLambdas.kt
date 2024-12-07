@@ -3,7 +3,6 @@
 // LAMBDAS: INDY
 
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 3 java/lang/invoke/LambdaMetafactory
 
 fun box(): String {

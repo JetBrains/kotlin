@@ -87,7 +87,7 @@ FILE: protectedVisibilityAndSmartcast_overrideChangesType.fir.kt
                 super<R|A.B|>(R|<local>/a|)
             }
 
-            protected final override val a: R|Derived| = R|<local>/a|
+            protected open override val a: R|Derived| = R|<local>/a|
                 protected get(): R|Derived|
 
             public final fun fest_4(other: R|A|): R|kotlin/Unit| {
@@ -122,7 +122,7 @@ FILE: protectedVisibilityAndSmartcast_overrideChangesType.fir.kt
                 super<R|A|>()
             }
 
-            protected final override val a: R|Derived| = R|<local>/a|
+            protected open override val a: R|Derived| = R|<local>/a|
                 protected get(): R|Derived|
 
             public final fun fest_5(other: R|A|): R|kotlin/Unit| {

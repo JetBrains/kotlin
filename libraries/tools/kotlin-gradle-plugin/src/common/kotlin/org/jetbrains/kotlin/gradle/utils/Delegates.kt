@@ -7,14 +7,6 @@ package org.jetbrains.kotlin.gradle.utils
 
 import kotlin.reflect.KProperty
 
-open class ProviderDelegate<out T : Any>(
-    private val defaultValueProvider: () -> T
-) {
-    operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        return defaultValueProvider()
-    }
-}
-
 class PropertyDelegate<T : Any>(
     private val defaultValueProvider: () -> T
 ) {
@@ -29,10 +21,35 @@ class PropertyDelegate<T : Any>(
     }
 }
 
-fun <T : Any> provider(
-    defaultValueProvider: () -> T
-): ProviderDelegate<T> = ProviderDelegate(defaultValueProvider)
-
 fun <T : Any> property(
     defaultValueProvider: () -> T
 ): PropertyDelegate<T> = PropertyDelegate(defaultValueProvider)
+
+/**
+ * Similar to [SynchronizedLazyImpl] but doesn't implement [Serializable] in the way
+ * that value gets initialised upon serialisation.
+ * It is intended that [initializer] gets serialised.
+ * Reason: Sometimes Gradle Configuration Cache can't serialise some entities that
+ * are produced by [initializer] but is okay serialising [initializer]
+ */
+internal class TransientLazy<T: Any>(
+    private val initializer: () -> T
+) : Lazy<T> {
+    @Volatile
+    @Transient
+    private var _value: T? = null
+    override fun isInitialized(): Boolean = _value != null
+    override val value get(): T {
+        val v1 = _value
+        if (v1 != null) return v1
+
+        return synchronized(this) {
+            val v2 = _value
+            if (v2 == null) {
+                initializer().also { _value = it }
+            } else {
+                v2
+            }
+        }
+    }
+}

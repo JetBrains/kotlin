@@ -18,49 +18,59 @@ import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.publish.maven.MavenPublication
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.gradle.dsl.metadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.usageByName
-import org.jetbrains.kotlin.gradle.targets.metadata.COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME
-import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
-import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
-import org.jetbrains.kotlin.gradle.utils.listProperty
-import org.jetbrains.kotlin.gradle.utils.setProperty
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseCompilations
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
+import org.jetbrains.kotlin.gradle.plugin.await
+import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinUsageContext.PublishOnlyIf
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.kotlinMultiplatformRootPublication
+import org.jetbrains.kotlin.gradle.targets.metadata.*
+import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 abstract class KotlinSoftwareComponent(
     private val project: Project,
     private val name: String,
-    protected val kotlinTargets: Iterable<KotlinTarget>
+    protected val kotlinTargets: Iterable<KotlinTarget>,
 ) : SoftwareComponentInternal, ComponentWithVariants {
 
     override fun getName(): String = name
 
-    override fun getVariants(): Set<SoftwareComponent> = kotlinTargets
-        .filter { target -> target !is KotlinMetadataTarget }
-        .flatMap { target ->
-            val targetPublishableComponentNames =
-                (target as? AbstractKotlinTarget)?.kotlinComponents?.mapNotNullTo(mutableSetOf()) { component ->
-                    component.name.takeIf { component.publishable }
-                }
-            target.components.filter { targetPublishableComponentNames?.contains(it.name) ?: true }
-        }.toSet()
+    private val metadataTarget get() = project.multiplatformExtension.metadataTarget
 
-    private val _usages: Set<UsageContext> by lazy {
-        val metadataTarget = project.multiplatformExtension.metadata()
+    private val _variants = project.future {
+        AfterFinaliseCompilations.await()
+        kotlinTargets
+            .filter { target -> target !is KotlinMetadataTarget }
+            .flatMap { target ->
+                val targetPublishableComponentNames = target.internal.kotlinComponents
+                    .filter { component -> component.publishable }
+                    .map { component -> component.name }
+                    .toSet()
+
+                target.components.filter { it.name in targetPublishableComponentNames }
+            }.toSet()
+    }
+
+    override fun getVariants(): Set<SoftwareComponent> = _variants.getOrThrow()
+
+    private val _usages: Future<Set<DefaultKotlinUsageContext>> = project.future {
+        metadataTarget.awaitMetadataCompilationsCreated()
 
         if (!project.isKotlinGranularMetadataEnabled) {
             val metadataCompilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME)
-            return@lazy metadataTarget.createUsageContexts(metadataCompilation)
+            return@future metadataTarget.createUsageContexts(metadataCompilation)
         }
 
-        mutableSetOf<UsageContext>().apply {
-            // This usage value is only needed for Maven scope mapping. Don't replace it with a custom Kotlin Usage value
-            val javaApiUsage = project.usageByName("java-api-jars")
-
+        mutableSetOf<DefaultKotlinUsageContext>().apply {
             val allMetadataJar = project.tasks.named(KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)
             val allMetadataArtifact = project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, allMetadataJar) { allMetadataArtifact ->
                 allMetadataArtifact.classifier = if (project.isCompatibilityMetadataVariantEnabled) "all" else ""
@@ -68,11 +78,10 @@ abstract class KotlinSoftwareComponent(
 
             this += DefaultKotlinUsageContext(
                 compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
-                usage = javaApiUsage,
+                mavenScope = KotlinUsageContext.MavenScope.COMPILE,
                 dependencyConfigurationName = metadataTarget.apiElementsConfigurationName,
                 overrideConfigurationArtifacts = project.setProperty { listOf(allMetadataArtifact) }
             )
-
 
             if (project.isCompatibilityMetadataVariantEnabled) {
                 // Ensure that consumers who expect Kotlin 1.2.x metadata package can still get one:
@@ -80,35 +89,53 @@ abstract class KotlinSoftwareComponent(
                 this += run {
                     DefaultKotlinUsageContext(
                         metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
-                        javaApiUsage,
+                        KotlinUsageContext.MavenScope.COMPILE,
                         /** this configuration is created by [KotlinMetadataTargetConfigurator.createCommonMainElementsConfiguration] */
                         COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME
                     )
                 }
             }
+
+            val sourcesElements = metadataTarget.sourcesElementsConfigurationName
+            if (metadataTarget.isSourcesPublishable) {
+                addSourcesJarArtifactToConfiguration(sourcesElements)
+                this += DefaultKotlinUsageContext(
+                    compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
+                    dependencyConfigurationName = sourcesElements,
+                    includeIntoProjectStructureMetadata = false,
+                    publishOnlyIf = { metadataTarget.isSourcesPublishable }
+                )
+            }
         }
     }
+
 
     override fun getUsages(): Set<UsageContext> {
-        return _usages
+        return _usages.getOrThrow().publishableUsages()
     }
 
-    val sourcesArtifacts: Set<PublishArtifact> by lazy {
-        val sourcesJarTask = sourcesJarTask(
-            project,
-            lazy { project.kotlinExtension.sourceSets.associate { it.name to it.kotlin } },
-            null,
-            name.toLowerCase()
-        )
-        val sourcesJarArtifact = project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, sourcesJarTask) { sourcesJarArtifact ->
+    private suspend fun allPublishableCommonSourceSets() = getCommonSourceSetsForMetadataCompilation(project) +
+            getHostSpecificMainSharedSourceSets(project)
+
+    /**
+     * Registration (during object init) of [sourcesJarTask] is required for cases when
+     * user build scripts want to have access to sourcesJar task to configure it
+     */
+    private val sourcesJarTask: TaskProvider<Jar> = sourcesJarTaskNamed(
+        "sourcesJar",
+        name,
+        project,
+        project.future { allPublishableCommonSourceSets().associate { it.name to it.kotlin } },
+        name.toLowerCaseAsciiOnly()
+    )
+
+    private fun addSourcesJarArtifactToConfiguration(configurationName: String): PublishArtifact {
+        return project.artifacts.add(configurationName, sourcesJarTask) { sourcesJarArtifact ->
             sourcesJarArtifact.classifier = "sources"
         }
-        setOf(sourcesJarArtifact)
     }
 
-    // This property is declared in the parent type to allow the usages to reference it without forcing the subtypes to load,
-    // which is needed for compatibility with older Gradle versions
-    var publicationDelegate: MavenPublication? = null
+    val publicationDelegate: MavenPublication? get() = project.kotlinMultiplatformRootPublication.lenient.getOrNull()
 }
 
 class KotlinSoftwareComponentWithCoordinatesAndPublication(project: Project, name: String, kotlinTargets: Iterable<KotlinTarget>) :
@@ -123,21 +150,35 @@ interface KotlinUsageContext : UsageContext {
     val compilation: KotlinCompilation<*>
     val dependencyConfigurationName: String
     val includeIntoProjectStructureMetadata: Boolean
+    val mavenScope: MavenScope?
+
+    enum class MavenScope {
+        COMPILE, RUNTIME;
+    }
 }
 
 class DefaultKotlinUsageContext(
     override val compilation: KotlinCompilation<*>,
-    private val usage: Usage,
+    override val mavenScope: KotlinUsageContext.MavenScope? = null,
     override val dependencyConfigurationName: String,
     internal val overrideConfigurationArtifacts: SetProperty<PublishArtifact>? = null,
     internal val overrideConfigurationAttributes: AttributeContainer? = null,
-    override val includeIntoProjectStructureMetadata: Boolean = true
+    override val includeIntoProjectStructureMetadata: Boolean = true,
+    internal val publishOnlyIf: PublishOnlyIf = PublishOnlyIf { true },
 ) : KotlinUsageContext {
+    fun interface PublishOnlyIf {
+        fun predicate(): Boolean
+    }
 
     private val kotlinTarget: KotlinTarget get() = compilation.target
     private val project: Project get() = kotlinTarget.project
 
-    override fun getUsage(): Usage = usage
+    @Deprecated(
+        message = "Usage is no longer supported. Use `usageScope`",
+        replaceWith = ReplaceWith("usageScope"),
+        level = DeprecationLevel.ERROR
+    )
+    override fun getUsage(): Usage = error("Usage is no longer supported. Use `usageScope`")
 
     override fun getName(): String = dependencyConfigurationName
 
@@ -164,15 +205,13 @@ class DefaultKotlinUsageContext(
          * attributes schema migration, or create proper, non-detached configurations for publishing that are separated from the
          * configurations used for project-to-project dependencies
          */
-        val result = project.configurations.detachedConfiguration().attributes
+        val result = project.configurations.detachedResolvable().attributes
 
-        // Capture type parameter T:
-        fun <T> copyAttribute(attribute: Attribute<T>, from: AttributeContainer, to: AttributeContainer) {
-            to.attribute<T>(attribute, from.getAttribute(attribute)!!)
-        }
-
-        filterOutNonPublishableAttributes(configurationAttributes.keySet())
-            .forEach { copyAttribute(it, configurationAttributes, result) }
+        configurationAttributes.copyAttributesTo(
+            project.providers,
+            dest = result,
+            keys = filterOutNonPublishableAttributes(configurationAttributes.keySet())
+        )
 
         return result
     }
@@ -180,6 +219,8 @@ class DefaultKotlinUsageContext(
     override fun getCapabilities(): Set<Capability> = emptySet()
 
     override fun getGlobalExcludes(): Set<ExcludeRule> = emptySet()
+
+    private val publishJvmEnvironmentAttribute get() = project.kotlinPropertiesProvider.publishJvmEnvironmentAttribute
 
     private fun filterOutNonPublishableAttributes(attributes: Set<Attribute<*>>): Set<Attribute<*>> =
         attributes.filterTo(mutableSetOf()) {
@@ -195,7 +236,27 @@ class DefaultKotlinUsageContext(
                      * 2. If this attribute is published, but not present on all the variants in a multiplatform library, and is also
                      * missing on the consumer side (like Gradle < 7.0, Kotlin 1.6.0), then there is a
                      * case when Gradle fails to choose a variant in a completely reasonable setup.
+                     *
+                     * UPD: 1.9.20:
+                     * We should now be ready to publish the 'jvm environment' attribute.
+                     * It will however be rolled out as 'opt-in' first (as safety measure).
+                     * We expect that the 'external Android target' will opt-into publishing this attribute,
+                     * as it will switch to KotlinPlatformType.jvm and requires this additional attribute to disambiguate
+                     * Android from the JVM
                      */
-                    it.name != "org.gradle.jvm.environment"
+                    (it.name != "org.gradle.jvm.environment" || publishJvmEnvironmentAttribute) &&
+                    /**
+                     * Non-packed klibs are used only locally and should not be published.
+                     * Thus, it does not make sense to publish this attribute as well.
+                     *
+                     * Another option could be to put this attribute only on the secondary variant that is non-packed.
+                     * However, disambiguation rules do not work well on old Gradle versions with this.
+                     */
+                    it.name != KlibPackaging.ATTRIBUTE.name
         }
+
 }
+
+internal fun Iterable<DefaultKotlinUsageContext>.publishableUsages() = this
+    .filter { it.publishOnlyIf.predicate() }
+    .toSet()

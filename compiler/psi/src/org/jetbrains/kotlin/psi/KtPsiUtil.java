@@ -336,9 +336,9 @@ public class KtPsiUtil {
     }
 
     @Nullable
-    public static KtClassOrObject getClassIfParameterIsProperty(@NotNull KtParameter jetParameter) {
-        if (jetParameter.hasValOrVar()) {
-            PsiElement grandParent = jetParameter.getParent().getParent();
+    public static KtClassOrObject getClassIfParameterIsProperty(@NotNull KtParameter ktParameter) {
+        if (ktParameter.hasValOrVar()) {
+            PsiElement grandParent = ktParameter.getParent().getParent();
             if (grandParent instanceof KtPrimaryConstructor) {
                 return ((KtPrimaryConstructor) grandParent).getContainingClassOrObject();
             }
@@ -828,6 +828,11 @@ public class KtPsiUtil {
         PsiElement current = PsiTreeUtil.getStubOrPsiParent(declaration);
         boolean isNonLocalCallable = isNonLocalCallable(declaration);
         while (current != null) {
+            // No enclosing declaration found. There no sense to iterate through directories
+            if (current instanceof PsiFile) {
+                return null;
+            }
+
             PsiElement parent = PsiTreeUtil.getStubOrPsiParent(current);
             if (parent instanceof KtScript) return null;
             if (current instanceof KtAnonymousInitializer) {
@@ -883,7 +888,7 @@ public class KtPsiUtil {
         KtSimpleNameExpression operationExpression = expression.getOperationReference();
         IElementType elementType = operationExpression.getReferencedNameElementType();
         assert elementType == null || elementType instanceof KtToken :
-                "JetOperationExpression should have operation token of type KtToken: " +
+                "KtOperationExpression should have operation token of type KtToken: " +
                 expression;
         return (KtToken) elementType;
     }

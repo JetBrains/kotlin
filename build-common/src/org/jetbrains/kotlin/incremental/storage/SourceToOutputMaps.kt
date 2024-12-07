@@ -16,47 +16,49 @@
 
 package org.jetbrains.kotlin.incremental.storage
 
-import org.jetbrains.kotlin.incremental.dumpCollection
+import com.intellij.util.io.DataExternalizer
+import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import java.io.DataInput
+import java.io.DataOutput
 import java.io.File
 
 internal class SourceToJvmNameMap(
     storageFile: File,
-    pathConverter: FileToPathConverter
-) : AbstractSourceToOutputMap<JvmClassName>(JvmClassNameTransformer, storageFile, pathConverter)
+    icContext: IncrementalCompilationContext,
+) : AbstractSourceToOutputMap<JvmClassName>(JvmClassNameTransformer, storageFile, icContext)
 
 internal class SourceToFqNameMap(
     storageFile: File,
-    pathConverter: FileToPathConverter
-) : AbstractSourceToOutputMap<FqName>(FqNameTransformer, storageFile, pathConverter)
+    icContext: IncrementalCompilationContext,
+) : AbstractSourceToOutputMap<FqName>(FqNameTransformer, storageFile, icContext)
 
 internal abstract class AbstractSourceToOutputMap<Name>(
     private val nameTransformer: NameTransformer<Name>,
     storageFile: File,
-    private val pathConverter: FileToPathConverter
-) : BasicStringMap<Collection<String>>(storageFile, PathStringDescriptor, StringCollectionExternalizer) {
-    fun clearOutputsForSource(sourceFile: File) {
-        remove(pathConverter.toPath(sourceFile))
+    icContext: IncrementalCompilationContext,
+) : AppendableSetBasicMap<File, Name>(
+    storageFile,
+    icContext.fileDescriptorForSourceFiles,
+    NameExternalizer(nameTransformer),
+    icContext
+) {
+
+    @Synchronized
+    fun getFqNames(sourceFile: File): Collection<FqName>? =
+        this[sourceFile]?.map { nameTransformer.asFqName(nameTransformer.asString(it)) }
+
+}
+
+private class NameExternalizer<Name>(private val nameTransformer: NameTransformer<Name>) : DataExternalizer<Name> {
+
+    override fun save(output: DataOutput, name: Name) {
+        StringExternalizer.save(output, nameTransformer.asString(name))
     }
 
-    fun add(sourceFile: File, className: Name) {
-        storage.append(pathConverter.toPath(sourceFile), listOf(nameTransformer.asString(className)))
+    override fun read(input: DataInput): Name {
+        return nameTransformer.asName(StringExternalizer.read(input))
     }
 
-    fun contains(sourceFile: File): Boolean =
-        pathConverter.toPath(sourceFile) in storage
-
-    operator fun get(sourceFile: File): Collection<Name> =
-        storage[pathConverter.toPath(sourceFile)].orEmpty().map(nameTransformer::asName)
-
-    fun getFqNames(sourceFile: File): Collection<FqName> =
-        storage[pathConverter.toPath(sourceFile)].orEmpty().map(nameTransformer::asFqName)
-
-    override fun dumpValue(value: Collection<String>) =
-        value.dumpCollection()
-
-    private fun remove(path: String) {
-        storage.remove(path)
-    }
 }

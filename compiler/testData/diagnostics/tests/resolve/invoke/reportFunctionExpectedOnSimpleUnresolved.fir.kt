@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 object Scope1 {
     val someVar: Any = Any()
 

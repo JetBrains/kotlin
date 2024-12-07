@@ -1,0 +1,16 @@
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class Dummy {
+
+    public Dummy() {
+        super();
+    }
+}
+
+////////////////////
+
+package error;
+
+public final class NonExistentClass {
+}

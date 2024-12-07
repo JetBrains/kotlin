@@ -1,7 +1,4 @@
-warning: ATTENTION!
- This build uses experimental K2 compiler:
-  -Xuse-k2
 compiler/testData/cli/jvm/optInEmptyMessageFir.kt:8:5: error: this declaration needs opt-in. Its usage must be marked with '@EmptyMarker' or '@OptIn(EmptyMarker::class)'
     foo()
-    ^
+    ^^^
 COMPILATION_ERROR

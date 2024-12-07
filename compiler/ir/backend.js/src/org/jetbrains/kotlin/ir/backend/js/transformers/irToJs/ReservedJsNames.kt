@@ -13,5 +13,8 @@ class ReservedJsNames {
         fun makeInternalModuleName() = JsName("_", false)
         fun makeJsExporterName() = JsName("\$jsExportAll\$", false)
         fun makeCrossModuleNameRef(moduleName: JsName) = JsNameRef("\$_\$", moduleName.makeRef())
+        fun makeMainFunctionName() = JsName("main", true)
+        fun makeTestFunctionName() = JsName("test", true)
+        fun makeSuiteFunctionName() = JsName("suite", true)
     }
 }

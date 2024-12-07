@@ -1,4 +1,5 @@
-data <!PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS!>class A<!>
+// RUN_PIPELINE_TILL: FRONTEND
+data <!DATA_CLASS_WITHOUT_PARAMETERS!>class A<!>
 
 fun foo(a: A) {
     a.<!UNRESOLVED_REFERENCE!>component1<!>()

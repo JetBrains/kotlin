@@ -1,0 +1,12 @@
+USED DECLARATIONS:
+
+Declaration: dependency.invoke
+By names: [str]
+
+Declaration: kotlin.String
+By names: [String]
+
+Declaration: test.My
+By names: [My]
+
+UNRESOLVED NAMES:

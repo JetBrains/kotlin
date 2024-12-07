@@ -1,4 +1,5 @@
-import com.unknown
+// RUN_PIPELINE_TILL: FRONTEND
+import <!UNRESOLVED_IMPORT!>com<!>.unknown
 
 fun ff() {
     val a = <!UNRESOLVED_REFERENCE!>unknown<!>()

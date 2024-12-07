@@ -1,17 +1,29 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeTargetPreset
 import org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsLinux
-import org.jetbrains.kotlin.konan.target.KonanTarget.LINUX_MIPS32
 
 plugins {
     kotlin("multiplatform")
 }
 
 kotlin {
-    presets.forEach { preset ->
-        if (preset is AbstractKotlinNativeTargetPreset) {
-            targetFromPreset(preset)
-        }
-    }
+    androidNativeArm64()
+    androidNativeX64()
+    iosArm64()
+    iosSimulatorArm64()
+    iosX64()
+    linuxArm64()
+    linuxX64()
+    macosArm64()
+    macosX64()
+    mingwX64()
+    tvosArm64()
+    tvosSimulatorArm64()
+    tvosX64()
+    watchosArm32()
+    watchosArm64()
+    watchosDeviceArm64()
+    watchosSimulatorArm64()
+    watchosX64()
 }
 
 allprojects {

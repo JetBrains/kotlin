@@ -1,0 +1,10 @@
+/noValueForParameterOfLambda.kt:6:12: error: no value passed for parameter 'p2'
+    lambda(1)
+           ^^
+/noValueForParameterOfLambda.kt:10:12: error: no value passed for parameter 's'
+    lambda(1)
+           ^^
+/noValueForParameterOfLambda.kt:14:12: error: no value passed for parameter 'x'
+    lambda(1)
+           ^^
+

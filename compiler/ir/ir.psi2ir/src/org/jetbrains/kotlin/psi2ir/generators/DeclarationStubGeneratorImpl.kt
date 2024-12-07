@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.lazy.LazyScopedTypeParametersResolver
-import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
@@ -33,22 +32,6 @@ class DeclarationStubGeneratorImpl(
             extensions
         )
 }
-
-// In most cases, IrProviders list consist of an optional deserializer and a DeclarationStubGenerator.
-fun generateTypicalIrProviderList(
-    moduleDescriptor: ModuleDescriptor,
-    irBuiltins: IrBuiltIns,
-    symbolTable: SymbolTable,
-    descriptorFinder: DescriptorByIdSignatureFinder,
-    deserializer: IrDeserializer? = null,
-    extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY
-): List<IrProvider> {
-    val stubGenerator = DeclarationStubGeneratorImpl(
-        moduleDescriptor, symbolTable, irBuiltins, descriptorFinder, extensions
-    )
-    return listOfNotNull(deserializer, stubGenerator)
-}
-
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class DeclarationStubGeneratorForNotFoundClasses(

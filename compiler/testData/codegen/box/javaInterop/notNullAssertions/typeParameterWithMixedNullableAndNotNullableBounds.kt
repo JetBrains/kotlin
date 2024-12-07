@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM, JVM_IR
+// IGNORE_BACKEND_K1: JVM, JVM_IR
 
 // Note: This fails on non-FIR because of KT-45903 (missing not-null assertion on argument).
 

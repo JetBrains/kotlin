@@ -1,18 +1,3 @@
-class A {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  fun foo() {
-  }
-
-}
-
-fun bar() {
-}
-
 val qux: Int
   field = 1
   get
@@ -40,3 +25,19 @@ val test5: KFunction0<Unit>
 val test6: KFunction0<Unit>
   field = ::bar
   get
+
+class A {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun foo() {
+  }
+
+}
+
+fun bar() {
+}
+

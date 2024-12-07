@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
-
 
 @JsGradlePluginTests
 class CleanDataTaskIT : KGPBaseTest() {
@@ -17,14 +15,7 @@ class CleanDataTaskIT : KGPBaseTest() {
     @DisplayName("nodejs is deleted from Gradle user home")
     @GradleTest
     fun testDownloadedFolderDeletion(gradleVersion: GradleVersion) {
-        project(
-            "cleanTask",
-            gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                // bug in Gradle: https://github.com/gradle/gradle/issues/15796
-                warningMode = if (gradleVersion < GradleVersion.version("7.0")) WarningMode.Summary else defaultBuildOptions.warningMode
-            )
-        ) {
+        project("cleanTask", gradleVersion) {
             build("testCleanTask")
         }
     }

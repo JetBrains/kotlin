@@ -1,0 +1,12 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /Flaf { // /Flaf|null[0]
+    final val javaName // /Flaf.javaName|{}javaName[0]
+        final fun <get-javaName>(): kotlin/String // /Flaf.javaName.<get-javaName>|<get-javaName>(){}[0]
+    constructor <init>(kotlin/String) // /Flaf.<init>|<init>(kotlin.String){}[0]
+    final fun forJavaName(kotlin/String): /Flaf // /Flaf.forJavaName|forJavaName(kotlin.String){}[0]
+}

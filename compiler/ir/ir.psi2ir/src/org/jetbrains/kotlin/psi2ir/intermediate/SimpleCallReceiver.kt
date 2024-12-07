@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.psi2ir.intermediate
 
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 
-class SimpleCallReceiver(
+internal class SimpleCallReceiver(
     val dispatchReceiverValue: IntermediateValue?,
     val extensionReceiverValue: IntermediateValue?,
     val contextReceiverValues: List<IntermediateValue>

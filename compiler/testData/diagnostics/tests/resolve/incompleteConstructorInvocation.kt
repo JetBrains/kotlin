@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package p
 
 class X<V>(provider: () -> V, trackValue: Boolean) {

@@ -17,6 +17,5 @@ private const val INCOMPATIBLE_ABI_VERSION_COMMENT: String = "$INCOMPATIBLE_ABI_
 
 fun <V : BinaryVersion> createIncompatibleAbiVersionDecompiledText(expectedVersion: V, actualVersion: V): DecompiledText = DecompiledText(
     INCOMPATIBLE_ABI_VERSION_COMMENT.replace(CURRENT_ABI_VERSION_MARKER, expectedVersion.toString())
-        .replace(FILE_ABI_VERSION_MARKER, actualVersion.toString()),
-    DecompiledTextIndex.Empty
+        .replace(FILE_ABI_VERSION_MARKER, actualVersion.toString())
 )

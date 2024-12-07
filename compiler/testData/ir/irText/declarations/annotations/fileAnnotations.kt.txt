@@ -3,14 +3,15 @@ package test
 
 @Target(allowedTargets = [AnnotationTarget.FILE])
 open annotation class A : Annotation {
+  val x: String
+    field = x
+    get
+
   constructor(x: String) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val x: String
-    field = x
-    get
-
 }
+

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 
 class Class1<T : Class2<Class1<<!UNRESOLVED_REFERENCE!>X<!>>>>

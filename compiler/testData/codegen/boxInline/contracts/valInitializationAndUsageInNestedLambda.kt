@@ -1,6 +1,6 @@
 // NO_CHECK_LAMBDA_INLINING
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// IGNORE_BACKEND: NATIVE
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// JVM_ABI_K1_K2_DIFF: KT-62464
 
 // FILE: 1.kt
 
@@ -25,7 +25,7 @@ fun box(): String {
         x = 42
         {
             x
-        }()
+        }.let { it() }
     }
     return if (res == 42 && x.inc() == 43) "OK" else "Fail: ${x.inc()}"
 }

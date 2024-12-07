@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 open class Bar {
     fun foo() {}
 }

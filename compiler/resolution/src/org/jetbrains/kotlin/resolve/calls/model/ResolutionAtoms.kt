@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.resolve.calls.components.extractInputOutputTypesFrom
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConeNoInferSubtyping
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintError
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintMismatch
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintWarning
@@ -25,10 +26,10 @@ import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.model.K2Only
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.unCapture
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /**
  * Call, Callable reference, lambda & function expression, collection literal.
@@ -281,11 +282,14 @@ sealed class CallResolutionResult(
         return diagnostics.map {
             val error = it.constraintSystemError ?: return@map it
             if (error !is NewConstraintMismatch) return@map it
-            val lowerType = error.lowerType.safeAs<KotlinType>()?.unwrap() ?: return@map it
+            val lowerType = (error.lowerType as? KotlinType)?.unwrap() ?: return@map it
             val newLowerType = substitutor.safeSubstitute(lowerType.unCapture())
+
+            @OptIn(K2Only::class)
             when (error) {
                 is NewConstraintError -> NewConstraintError(newLowerType, error.upperType, error.position).asDiagnostic()
                 is NewConstraintWarning -> NewConstraintWarning(newLowerType, error.upperType, error.position).asDiagnostic()
+                is ConeNoInferSubtyping -> error("ConeNoInferSubtyping shouldn't be encountered in K1")
             }
         }
     }

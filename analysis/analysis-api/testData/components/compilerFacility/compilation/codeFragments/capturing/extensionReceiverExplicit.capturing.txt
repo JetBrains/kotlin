@@ -1,0 +1,3 @@
+ExtensionReceiver[name: with; isMutated: false; displayText: this@with]
+    <explicit receiver parameter>: R|kotlin/String|
+    R|kotlin/String|

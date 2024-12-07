@@ -29,6 +29,4 @@ public interface ClassBuilderFactory {
     String asText(ClassBuilder builder);
 
     byte[] asBytes(ClassBuilder builder);
-
-    void close();
 }

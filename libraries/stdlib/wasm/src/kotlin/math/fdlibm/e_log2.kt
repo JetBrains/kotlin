@@ -41,14 +41,14 @@ private const val ivln2 = 0.14426950408889634073e+01 /* 0x3ff71547, 0x652b82fe *
 
 private const val zero = 0.0
 
-internal fun __ieee754_log2(x: Double): Double {
-    var x: Double = x
-    var y: Double = 0.0
-    var z: Double = 0.0
-    var i: Int = 0
-    var k: Int = 0
-    var hx: Int = 0
-    var lx: UInt = 0U
+internal fun __ieee754_log2(_x: Double): Double {
+    var x: Double = _x
+    var y: Double
+    var z: Double
+    var i: Int
+    var k: Int
+    var hx: Int
+    var lx: UInt
 
     hx = __HI(x)    /* high word of x */
     lx = __LOu(x)    /* low word of x */
@@ -56,8 +56,8 @@ internal fun __ieee754_log2(x: Double): Double {
     k = 0
     if (hx < 0x00100000) {                  /* x < 2**-1022  */
         if (((hx and 0x7fffffff) or lx.toInt()) == 0)
-            return -two54 / zero             /* log(+-0)=-inf */
-        if (hx < 0) return (x - x) / zero        /* log(-#) = NaN */
+            return Double.NEGATIVE_INFINITY             /* log(+-0)=-inf */
+        if (hx < 0) return Double.NaN        /* log(-#) = NaN */
         k -= 54; x *= two54 /* subnormal number, scale up x */
         hx = __HI(x)                /* high word of x */
     }

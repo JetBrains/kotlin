@@ -1,7 +1,5 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
+// TARGET_BACKEND: JVM
 // WITH_REFLECT
-// IGNORE_BACKEND: JS, NATIVE, WASM
 
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.test.assertEquals

@@ -1,0 +1,5 @@
+language = C
+headers=pod1/pod1-umbrella.h
+
+headerFilter=**
+excludeFilter=pod1/pod1.h

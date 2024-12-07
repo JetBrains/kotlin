@@ -5,25 +5,28 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.checkTypeRefForUnderscore
+import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 
-object FirTopLevelTypeAliasChecker : FirTypeAliasChecker() {
+object FirTopLevelTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirTypeAlias, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (context.containingDeclarations.lastOrNull() !is FirFile) {
+        if (!context.isTopLevel && !context.languageVersionSettings.supportsFeature(LanguageFeature.NestedTypeAliases)) {
             reporter.reportOn(declaration.source, FirErrors.TOPLEVEL_TYPEALIASES_ONLY, context)
         }
 
         fun containsTypeParameter(type: ConeKotlinType): Boolean {
-            val unwrapped = type.lowerBoundIfFlexible().unwrapDefinitelyNotNull()
+            val unwrapped = type.unwrapToSimpleTypeUsingLowerBound()
 
             if (unwrapped is ConeTypeParameterType) {
                 return true
@@ -52,5 +55,6 @@ object FirTopLevelTypeAliasChecker : FirTypeAliasChecker() {
                 context
             )
         }
+        checkTypeRefForUnderscore(expandedTypeRef, context, reporter)
     }
 }

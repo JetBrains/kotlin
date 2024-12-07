@@ -7,11 +7,11 @@ dependencies {
     api(kotlinStdlib())
     compileOnly(toolsJarApi())
 
-    testApi(commonDependency("junit:junit"))
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
     testCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
-
-    testCompileOnly(toolsJarApi())
 }
 
 sourceSets {
@@ -22,6 +22,6 @@ sourceSets {
 testsJar {}
 
 projectTest {
+    useJUnitPlatform()
     workingDir = rootDir
-    dependsOn(":dist")
 }

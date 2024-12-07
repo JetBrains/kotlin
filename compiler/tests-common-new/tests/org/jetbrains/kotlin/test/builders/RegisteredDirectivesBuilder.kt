@@ -65,8 +65,13 @@ class RegisteredDirectivesBuilder private constructor(
     }
 
     private fun <K : Directive, V> MutableMap<K, V>.putWithExistsCheck(key: K, value: V) {
-        val alreadyRegistered = put(key, value)
-        if (alreadyRegistered != null) {
+        val alreadyRegistered = get(key)
+        if (alreadyRegistered == null) {
+            put(key, value)
+        } else if (alreadyRegistered is List<Any?> && value is List<Any?>) {
+            @Suppress("UNCHECKED_CAST")
+            put(key, (alreadyRegistered + value) as V)
+        } else {
             error("Default values for $key directive already registered")
         }
     }

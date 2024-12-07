@@ -1,0 +1,5 @@
+KtDeclaration: KtClass Foo
+annotations: [
+  Anno(value = kotlin.collections.List<kotlin.String>::class)
+    psi: KtAnnotationEntry
+]

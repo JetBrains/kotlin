@@ -1,6 +1,6 @@
-// !OPT_IN: kotlin.js.ExperimentalJsExport
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !RENDER_DIAGNOSTICS_MESSAGES
+// OPT_IN: kotlin.js.ExperimentalJsExport
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// RENDER_DIAGNOSTICS_MESSAGES
 
 package foo
 
@@ -53,4 +53,28 @@ fun foo5(<!NON_EXPORTABLE_TYPE("parameter; (Unit) -> Unit")!>x: (Unit) -> Unit<!
 
 @JsExport
 fun foo6(x: (A) -> A) {
+}
+
+@JsExport
+fun foo7(x: List<Int>) {
+}
+
+@JsExport
+fun foo8(x: MutableList<Int>) {
+}
+
+@JsExport
+fun foo9(x: Set<Int>) {
+}
+
+@JsExport
+fun foo10(x: MutableSet<Int>) {
+}
+
+@JsExport
+fun foo11(x: Map<String, Int>) {
+}
+
+@JsExport
+fun foo12(x: MutableMap<String, Int>) {
 }

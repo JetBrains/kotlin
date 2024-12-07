@@ -3,7 +3,7 @@
 // JSPECIFY_STATE: strict
 
 // FILE: my.sand.box/module-info.java
-import org.jspecify.nullness.NullMarked;
+import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 open module my.sand.box {

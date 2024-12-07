@@ -1,0 +1,395 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] superQualifierTypeArgsInDelegatedConstructorInnerClass.kt
+    public final? [ResolvedTo(RAW_FIR)] interface B<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun f(): <implicit> { LAZY_BLOCK }
+
+    }
+    public open [ResolvedTo(RAW_FIR)] class A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] b: Boolean): R|one/A<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface D : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(RAW_FIR)] class C : B<Int> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|one/C| {
+            LAZY_super<<implicit>>
+        }
+
+        public final? inner [ResolvedTo(RAW_FIR)] class Inner : A<D> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] one/C.constructor(): R|one/C.Inner| {
+                LAZY_super<A<D>>
+            }
+
+        }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] superQualifierTypeArgsInDelegatedConstructorInnerClass.kt
+    public final? [ResolvedTo(RAW_FIR)] interface B<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun f(): <implicit> { LAZY_BLOCK }
+
+    }
+    public open [ResolvedTo(RAW_FIR)] class A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] b: Boolean): R|one/A<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface D : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(RAW_FIR)] class C : B<Int> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|one/C| {
+            LAZY_super<<implicit>>
+        }
+
+        public final? inner [ResolvedTo(RAW_FIR)] class Inner : A<D> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] one/C.constructor(): R|one/C.Inner| {
+                LAZY_super<A<D>>
+            }
+
+        }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] superQualifierTypeArgsInDelegatedConstructorInnerClass.kt
+    public final? [ResolvedTo(RAW_FIR)] interface B<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun f(): <implicit> { LAZY_BLOCK }
+
+    }
+    public open [ResolvedTo(RAW_FIR)] class A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] b: Boolean): R|one/A<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface D : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(RAW_FIR)] class C : B<Int> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|one/C| {
+            LAZY_super<<implicit>>
+        }
+
+        public final? inner [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Inner : A<D> {
+            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Inner] one/C.constructor(): R|one/C.Inner| {
+                LAZY_super<A<D>>
+            }
+
+        }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] superQualifierTypeArgsInDelegatedConstructorInnerClass.kt
+    public final? [ResolvedTo(RAW_FIR)] interface B<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun f(): <implicit> { LAZY_BLOCK }
+
+    }
+    public open [ResolvedTo(RAW_FIR)] class A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] b: Boolean): R|one/A<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface D : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(RAW_FIR)] class C : B<Int> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|one/C| {
+            LAZY_super<<implicit>>
+        }
+
+        public final? inner [ResolvedTo(COMPANION_GENERATION)] class Inner : A<D> {
+            public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Inner] one/C.constructor(): R|one/C.Inner| {
+                LAZY_super<A<D>>
+            }
+
+        }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] superQualifierTypeArgsInDelegatedConstructorInnerClass.kt
+    public final? [ResolvedTo(SUPER_TYPES)] interface B<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun f(): <implicit> { LAZY_BLOCK }
+
+    }
+    public open [ResolvedTo(SUPER_TYPES)] class A<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor<[ResolvedTo(SUPER_TYPES)] T>([ResolvedTo(RAW_FIR)] b: Boolean): R|one/A<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface D : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] class C : R|one/B<kotlin/Int>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|one/C| {
+            LAZY_super<<implicit>>
+        }
+
+        public final? inner [ResolvedTo(SUPER_TYPES)] class Inner : R|one/A<one/D>| {
+            public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Inner] one/C.constructor(): R|one/C.Inner| {
+                LAZY_super<A<R|one/D|>>
+            }
+
+        }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] superQualifierTypeArgsInDelegatedConstructorInnerClass.kt
+    public final? [ResolvedTo(SUPER_TYPES)] interface B<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun f(): <implicit> { LAZY_BLOCK }
+
+    }
+    public open [ResolvedTo(SUPER_TYPES)] class A<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor<[ResolvedTo(SUPER_TYPES)] T>([ResolvedTo(RAW_FIR)] b: Boolean): R|one/A<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface D : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(TYPES)] class C : R|one/B<kotlin/Int>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|one/C| {
+            LAZY_super<<implicit>>
+        }
+
+        public final? inner [ResolvedTo(TYPES)] class Inner : R|one/A<one/D>| {
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=Inner] one/C.constructor(): R|one/C.Inner| {
+                LAZY_super<R|one/A<one/D>|>
+            }
+
+        }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] superQualifierTypeArgsInDelegatedConstructorInnerClass.kt
+    public abstract [ResolvedTo(STATUS)] interface B<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun f(): <implicit> { LAZY_BLOCK }
+
+    }
+    public open [ResolvedTo(STATUS)] class A<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] b: R|kotlin/Boolean|): R|one/A<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface D : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(STATUS)] class C : R|one/B<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|one/C| {
+            LAZY_super<<implicit>>
+        }
+
+        public final inner [ResolvedTo(STATUS)] class Inner : R|one/A<one/D>| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Inner] one/C.constructor(): R|one/C.Inner| {
+                LAZY_super<R|one/A<one/D>|>
+            }
+
+        }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] superQualifierTypeArgsInDelegatedConstructorInnerClass.kt
+    public abstract [ResolvedTo(STATUS)] interface B<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun f(): <implicit> { LAZY_BLOCK }
+
+    }
+    public open [ResolvedTo(STATUS)] class A<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] b: R|kotlin/Boolean|): R|one/A<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface D : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(STATUS)] class C : R|one/B<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|one/C| {
+            LAZY_super<<implicit>>
+        }
+
+        public final inner [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Inner : R|one/A<one/D>| {
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Inner] one/C.constructor(): R|one/C.Inner| {
+                LAZY_super<R|one/A<one/D>|>
+            }
+
+        }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] superQualifierTypeArgsInDelegatedConstructorInnerClass.kt
+    public abstract [ResolvedTo(STATUS)] interface B<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun f(): <implicit> { LAZY_BLOCK }
+
+    }
+    public open [ResolvedTo(STATUS)] class A<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] b: R|kotlin/Boolean|): R|one/A<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface D : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(STATUS)] class C : R|one/B<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|one/C| {
+            LAZY_super<<implicit>>
+        }
+
+        public final inner [ResolvedTo(CONTRACTS)] class Inner : R|one/A<one/D>| {
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Inner] one/C.constructor(): R|one/C.Inner| {
+                LAZY_super<R|one/A<one/D>|>
+            }
+
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] superQualifierTypeArgsInDelegatedConstructorInnerClass.kt
+    public abstract [ResolvedTo(STATUS)] interface B<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun f(): <implicit> { LAZY_BLOCK }
+
+    }
+    public open [ResolvedTo(STATUS)] class A<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] b: R|kotlin/Boolean|): R|one/A<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface D : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(STATUS)] class C : R|one/B<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|one/C| {
+            LAZY_super<<implicit>>
+        }
+
+        public final inner [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Inner : R|one/A<one/D>| {
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Inner] one/C.constructor(): R|one/C.Inner| {
+                LAZY_super<R|one/A<one/D>|>
+            }
+
+        }
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] superQualifierTypeArgsInDelegatedConstructorInnerClass.kt
+    public abstract [ResolvedTo(STATUS)] interface B<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun f(): <implicit> { LAZY_BLOCK }
+
+    }
+    public open [ResolvedTo(STATUS)] class A<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] b: R|kotlin/Boolean|): R|one/A<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface D : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(STATUS)] class C : R|one/B<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|one/C| {
+            LAZY_super<<implicit>>
+        }
+
+        public final inner [ResolvedTo(CONSTANT_EVALUATION)] class Inner : R|one/A<one/D>| {
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Inner] one/C.constructor(): R|one/C.Inner| {
+                LAZY_super<R|one/A<one/D>|>
+            }
+
+        }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] superQualifierTypeArgsInDelegatedConstructorInnerClass.kt
+    public abstract [ResolvedTo(STATUS)] interface B<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun f(): <implicit> { LAZY_BLOCK }
+
+    }
+    public open [ResolvedTo(STATUS)] class A<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] b: R|kotlin/Boolean|): R|one/A<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface D : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(STATUS)] class C : R|one/B<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|one/C| {
+            LAZY_super<<implicit>>
+        }
+
+        public final inner [ResolvedTo(ANNOTATION_ARGUMENTS)] class Inner : R|one/A<one/D>| {
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Inner] one/C.constructor(): R|one/C.Inner| {
+                LAZY_super<R|one/A<one/D>|>
+            }
+
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] superQualifierTypeArgsInDelegatedConstructorInnerClass.kt
+    public abstract [ResolvedTo(STATUS)] interface B<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun f(): R|kotlin/Boolean| {
+            ^f Boolean(true)
+        }
+
+    }
+    public open [ResolvedTo(STATUS)] class A<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] b: R|kotlin/Boolean|): R|one/A<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface D : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(STATUS)] class C : R|one/B<kotlin/Int>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|one/C| {
+            LAZY_super<<implicit>>
+        }
+
+        public final inner [ResolvedTo(ANNOTATION_ARGUMENTS)] class Inner : R|one/A<one/D>| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inner] one/C.constructor(): R|one/C.Inner| {
+                super<R|one/A<one/D>|>(this@R|one/C|.super<R|one/B<kotlin/Int>|>.R|SubstitutionOverride<one/B.f: R|kotlin/Boolean|>|())
+            }
+
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] superQualifierTypeArgsInDelegatedConstructorInnerClass.kt
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface B<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(BODY_RESOLVE)] fun f(): R|kotlin/Boolean| {
+            ^f Boolean(true)
+        }
+
+    }
+    public open [ResolvedTo(BODY_RESOLVE)] class A<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Boolean|): R|one/A<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface D : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class C : R|one/B<kotlin/Int>| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor(): R|one/C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner [ResolvedTo(BODY_RESOLVE)] class Inner : R|one/A<one/D>| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inner] one/C.constructor(): R|one/C.Inner| {
+                super<R|one/A<one/D>|>(this@R|one/C|.super<R|one/B<kotlin/Int>|>.R|SubstitutionOverride<one/B.f: R|kotlin/Boolean|>|())
+            }
+
+        }
+
+    }

@@ -1,5 +1,5 @@
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_ANONYMOUS_PARAMETER -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_ANONYMOUS_PARAMETER -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 class Sample
 
@@ -78,13 +78,13 @@ fun test2() { // to extension lambda 1
     val i26: E1 = id { s: String -> this + s.length } // oi- ni+
     val i26a: E1 = id { s -> this + s.length } // oi+ ni+
     val e = E.VALUE
-    val w27 = W2(<!ARGUMENT_TYPE_MISMATCH!>when (e) { E.VALUE ->  { s: String -> <!NO_THIS!>this<!> + s.length } }<!>) // oi- ni+
-    val w27a = W2(<!ARGUMENT_TYPE_MISMATCH!>when (e) { E.VALUE ->  { s -> <!NO_THIS!>this<!> + s.<!UNRESOLVED_REFERENCE!>length<!> } }<!>) // oi+ ni+
-    val i27: E1 = <!INITIALIZER_TYPE_MISMATCH!>when (e) { E.VALUE ->  { s: String -> <!NO_THIS!>this<!> + s.length } }<!> // oi+ ni+
-    val i27a: E1 = <!INITIALIZER_TYPE_MISMATCH!>when (e) { E.VALUE ->  { s -> <!NO_THIS!>this<!> + s.<!UNRESOLVED_REFERENCE!>length<!> } }<!> // oi+ ni+
+    val w27 = W2(when (e) { E.VALUE ->  { s: String -> this + s.length } }) // oi- ni+
+    val w27a = W2(when (e) { E.VALUE ->  { s -> this + s.length } }) // oi+ ni+
+    val i27: E1 = when (e) { E.VALUE ->  { s: String -> this + s.length } } // oi+ ni+
+    val i27a: E1 = when (e) { E.VALUE ->  { s -> this + s.length } } // oi+ ni+
 
-    val w28 = W2 <!ARGUMENT_TYPE_MISMATCH!>{ i: Int, <!CANNOT_INFER_PARAMETER_TYPE!>s<!> -> i <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!> s.<!UNRESOLVED_REFERENCE!>length<!> }<!> // oi- ni-
-    val i28: E1 = id { i: Int, <!CANNOT_INFER_PARAMETER_TYPE!>s<!> -> <!ARGUMENT_TYPE_MISMATCH!>i <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!> s.<!UNRESOLVED_REFERENCE!>length<!><!> } // oi- ni-
+    val w28 = W2 <!ARGUMENT_TYPE_MISMATCH!>{ i: Int, <!CANNOT_INFER_PARAMETER_TYPE!>s<!> -> i + s.<!UNRESOLVED_REFERENCE!>length<!> }<!> // oi- ni-
+    val i28: E1 = id { i: Int, s -> i + s.length } // oi- ni-
     val w29 = W2 <!ARGUMENT_TYPE_MISMATCH!>{ i: Int, s: String -> i + s.length }<!> // oi- ni-
     val i29: E1 = id { i: Int, s: String -> i + s.length } // oi+ ni+
 

@@ -1,0 +1,27 @@
+Classifier names:
+  bar
+  doBar
+  doFoo
+  foo
+  internalBar
+  internalDoBar
+  internalDoFoo
+  internalFoo
+  privateBar
+  privateDoBar
+  privateDoFoo
+  privateFoo
+
+Callable names:
+  bar
+  doBar
+  doFoo
+  foo
+  internalBar
+  internalDoBar
+  internalDoFoo
+  internalFoo
+  privateBar
+  privateDoBar
+  privateDoFoo
+  privateFoo

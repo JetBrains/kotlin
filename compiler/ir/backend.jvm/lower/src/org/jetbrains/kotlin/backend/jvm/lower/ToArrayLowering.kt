@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.addDispatchReceiver
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
@@ -33,13 +33,17 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.DFS
 
-internal val toArrayPhase = makeIrFilePhase(
-    ::ToArrayLowering,
-    name = "ToArray",
-    description = "Handle toArray functions"
-)
-
-private class ToArrayLowering(private val context: JvmBackendContext) : ClassLoweringPass {
+/**
+ * Handles [java.util.Collection.toArray] functions. There are two functions which are declared in Java `Collection`, but not in Kotlin:
+ *
+ *     Object[] toArray();
+ *     <T> T[] toArray(T[] a);
+ *
+ * This phase generates `toArray` overrides for `Collection` subclasses which call `kotlin.jvm.internal.CollectionToArray.toArray`,
+ * unless the function is already declared in the class.
+ */
+@PhaseDescription(name = "ToArray")
+internal class ToArrayLowering(private val context: JvmBackendContext) : ClassLoweringPass {
     private val symbols = context.ir.symbols
 
     override fun lower(irClass: IrClass) {
@@ -150,7 +154,6 @@ private fun IrType.isArrayOrNullableArrayOf(context: JvmBackendContext, element:
     this is IrSimpleType && (isArray() || isNullableArray()) && arguments.size == 1 && element == when (val it = arguments[0]) {
         is IrStarProjection -> context.irBuiltIns.anyClass
         is IrTypeProjection -> if (it.variance == Variance.IN_VARIANCE) context.irBuiltIns.anyClass else it.type.classifierOrNull
-        else -> null
     }
 
 // Match `fun <T> toArray(prototype: Array<T>): Array<T>`

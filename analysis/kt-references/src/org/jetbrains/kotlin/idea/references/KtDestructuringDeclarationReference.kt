@@ -21,7 +21,7 @@ abstract class KtDestructuringDeclarationReference(
 
     override fun resolve() = multiResolve(false).asSequence()
         .map { it.element }
-        .first { it is KtDestructuringDeclarationEntry }
+        .firstOrNull { it is KtDestructuringDeclarationEntry }
 
     override val resolvesByNames: Collection<Name>
         get() {

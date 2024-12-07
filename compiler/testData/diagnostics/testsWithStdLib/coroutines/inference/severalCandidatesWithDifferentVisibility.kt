@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 // FILE: a.kt
 
@@ -32,7 +33,7 @@ interface Inv<T> {
     fun emit(e: T)
 }
 
-fun <T> invBuilder(@BuilderInference block: Inv<T>.() -> Unit) {}
+fun <T> invBuilder(block: Inv<T>.() -> Unit) {}
 
 fun test() {
     invBuilder {

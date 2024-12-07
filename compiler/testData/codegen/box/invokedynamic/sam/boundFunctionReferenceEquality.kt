@@ -4,7 +4,6 @@
 // WITH_STDLIB
 
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 0 java/lang/invoke/LambdaMetafactory
 // 19 final synthetic class BoundAdaptedFunctionReferenceKt\$box\$[0-9]*
 // 1 final synthetic class FromOtherFileKt\$target1FromOtherFile\$[0-9]*

@@ -7,7 +7,6 @@
 //  ^ D8 fails with AssertionError, possible reason: only Kotlin output files are passed to D8
 
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 1 java/lang/invoke/LambdaMetafactory
 
 // FILE: kt45581.kt

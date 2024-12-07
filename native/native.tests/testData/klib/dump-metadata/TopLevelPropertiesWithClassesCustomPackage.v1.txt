@@ -1,0 +1,50 @@
+library {
+  // module name: <TopLevelPropertiesWithClassesCustomPackage.kt>
+
+  library fragment {
+    // package name: custom.pkg
+
+    // class name: custom/pkg/Bar
+    // class name: custom/pkg/Foo
+
+    // signature: custom.pkg/Bar|null[0]
+    public final object custom/pkg/Bar : kotlin/Any {
+
+      // signature: custom.pkg/Bar.<init>|-5645683436151566731[0]
+      private constructor()
+    }
+
+    // signature: custom.pkg/Foo|null[0]
+    public final class custom/pkg/Foo : kotlin/Any {
+
+      // signature: custom.pkg/Foo.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    package {
+
+      // signature: custom.pkg/v1|7393439784805956893[0]
+      public final val v1: kotlin/Int /* = 1 */
+        // signature: custom.pkg/v1.<get-v1>|6078408232880608613[0]
+        public final get
+
+      // signature: custom.pkg/v2|-7674839086071973207[0]
+      public final val v2: kotlin/String /* = "hello" */
+        // signature: custom.pkg/v2.<get-v2>|-1626959823585604055[0]
+        public final get
+
+      // signature: custom.pkg/v3|1020778405567015018[0]
+      public final val v3: kotlin/Function1<kotlin/String, kotlin/Int>
+        // signature: custom.pkg/v3.<get-v3>|-8677319744655558329[0]
+        public final get
+
+      // signature: custom.pkg/v4|8662652590067501092[0]
+      public final val v4: kotlin/Function1<kotlin/String, kotlin/Int> /* = custom/pkg/MyTransformer^ */
+        // signature: custom.pkg/v4.<get-v4>|-8872551565527715335[0]
+        public final get
+
+      // signature: custom.pkg/MyTransformer|null[0]
+      public typealias MyTransformer = kotlin/Function1<kotlin/String, kotlin/Int> /* = kotlin/Function1<kotlin/String, kotlin/Int> */
+    }
+  }
+}

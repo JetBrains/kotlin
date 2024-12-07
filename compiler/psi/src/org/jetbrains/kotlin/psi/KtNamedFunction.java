@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi;
@@ -20,13 +9,10 @@ import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiModifiableCodeBlock;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.AstLoadingFilter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub;
@@ -36,8 +22,10 @@ import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt.isKtFile;
+
 public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunctionStub>
-        implements KtFunction, KtDeclarationWithInitializer, PsiModifiableCodeBlock {
+        implements KtFunction, KtDeclarationWithInitializer {
     public KtNamedFunction(@NotNull ASTNode node) {
         super(node);
     }
@@ -52,7 +40,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     }
 
     public boolean hasTypeParameterListBeforeFunctionName() {
-        KotlinFunctionStub stub = getStub();
+        KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
             return stub.hasTypeParameterListBeforeFunctionName();
         }
@@ -73,7 +61,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
 
     @Override
     public boolean hasBlockBody() {
-        KotlinFunctionStub stub = getStub();
+        KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
             return stub.hasBlockBody();
         }
@@ -125,21 +113,31 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     @Nullable
     public KtExpression getBodyExpression() {
         KotlinFunctionStub stub = getStub();
-        if (stub != null && !stub.hasBody()) {
-            return null;
+        if (stub != null) {
+            if (!stub.hasBody()) {
+                return null;
+            }
+            if (getContainingKtFile().isCompiled()) {
+                //don't load ast
+                return null;
+            }
         }
 
-        return AstLoadingFilter.forceAllowTreeLoading(this.getContainingFile(), () ->
-                findChildByClass(KtExpression.class)
-        );
+        return findChildByClass(KtExpression.class);
     }
 
     @Nullable
     @Override
     public KtBlockExpression getBodyBlockExpression() {
         KotlinFunctionStub stub = getStub();
-        if (stub != null && !(stub.hasBlockBody() && stub.hasBody())) {
-            return null;
+        if (stub != null) {
+            if (!(stub.hasBlockBody() && stub.hasBody())) {
+                return null;
+            }
+            if (getContainingKtFile().isCompiled()) {
+                //don't load ast
+                return null;
+            }
         }
 
         KtExpression bodyExpression = findChildByClass(KtExpression.class);
@@ -152,7 +150,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
 
     @Override
     public boolean hasBody() {
-        KotlinFunctionStub stub = getStub();
+        KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
             return stub.hasBody();
         }
@@ -167,7 +165,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     @Override
     @Nullable
     public KtTypeReference getReceiverTypeReference() {
-        KotlinFunctionStub stub = getStub();
+        KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
             if (!stub.isExtension()) {
                 return null;
@@ -201,10 +199,11 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     @NotNull
     @Override
     public List<KtContextReceiver> getContextReceivers() {
-        KtContextReceiverList contextReceiverList = getStubOrPsiChild(KtStubElementTypes.CONTEXT_RECEIVER_LIST);
+        KtContextReceiverList contextReceiverList = getContextReceiverList();
         if (contextReceiverList != null) {
             return contextReceiverList.contextReceivers();
-        } else {
+        }
+        else {
             return Collections.emptyList();
         }
     }
@@ -212,7 +211,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     @Override
     @Nullable
     public KtTypeReference getTypeReference() {
-        KotlinFunctionStub stub = getStub();
+        KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
             List<KtTypeReference> typeReferences = getStubOrPsiChildrenAsList(KtStubElementTypes.TYPE_REFERENCE);
             int returnTypeIndex = stub.isExtension() ? 1 : 0;
@@ -239,19 +238,23 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     @Override
     public boolean isLocal() {
         PsiElement parent = getParent();
-        return !(parent instanceof KtFile || parent instanceof KtClassBody);
+        return !(isKtFile(parent) || parent instanceof KtClassBody || parent.getParent() instanceof KtScript);
+    }
+
+    public boolean isAnonymous() {
+        return getName() == null && isLocal();
     }
 
     public boolean isTopLevel() {
-        KotlinFunctionStub stub = getStub();
+        KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
             return stub.isTopLevel();
         }
 
-        return getParent() instanceof KtFile;
+        return isKtFile(getParent());
     }
 
-    @Override
+    @SuppressWarnings({"unused", "MethodMayBeStatic"}) //keep for compatibility with potential plugins
     public boolean shouldChangeModificationCount(PsiElement place) {
         // Suppress Java check for out-of-block
         return false;
@@ -259,7 +262,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
 
     @Override
     public KtContractEffectList getContractDescription() {
-        return findChildByType(KtNodeTypes.CONTRACT_EFFECT_LIST);
+        return getStubOrPsiChild(KtStubElementTypes.CONTRACT_EFFECT_LIST);
     }
 
     public boolean mayHaveContract() {
@@ -267,7 +270,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     }
 
     public boolean mayHaveContract(boolean isAllowedOnMembers) {
-        KotlinFunctionStub stub = getStub();
+        KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
             return stub.mayHaveContract();
         }

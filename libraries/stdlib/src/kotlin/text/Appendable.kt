@@ -11,20 +11,20 @@ package kotlin.text
 /**
  * An object to which char sequences and values can be appended.
  */
-expect interface Appendable {
+public expect interface Appendable {
     /**
      * Appends the specified character [value] to this Appendable and returns this instance.
      *
      * @param value the character to append.
      */
-    fun append(value: Char): Appendable
+    public fun append(value: Char): Appendable
 
     /**
      * Appends the specified character sequence [value] to this Appendable and returns this instance.
      *
      * @param value the character sequence to append. If [value] is `null`, then the four characters `"null"` are appended to this Appendable.
      */
-    fun append(value: CharSequence?): Appendable
+    public fun append(value: CharSequence?): Appendable
 
     /**
      * Appends a subsequence of the specified character sequence [value] to this Appendable and returns this instance.
@@ -36,7 +36,7 @@ expect interface Appendable {
      *
      * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] character sequence indices or when `startIndex > endIndex`.
      */
-    fun append(value: CharSequence?, startIndex: Int, endIndex: Int): Appendable
+    public fun append(value: CharSequence?, startIndex: Int, endIndex: Int): Appendable
 }
 
 /**
@@ -49,7 +49,6 @@ expect interface Appendable {
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] character sequence indices or when `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun <T : Appendable> T.appendRange(value: CharSequence, startIndex: Int, endIndex: Int): T {
     @Suppress("UNCHECKED_CAST")
     return append(value, startIndex, endIndex) as T

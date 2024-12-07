@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface Foo<T>
 
 class AnonymousReturnWithGenericType<T> {

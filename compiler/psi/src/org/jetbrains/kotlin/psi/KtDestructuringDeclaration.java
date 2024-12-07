@@ -31,6 +31,8 @@ import java.util.List;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
 public class KtDestructuringDeclaration extends KtDeclarationImpl implements KtValVarKeywordOwner, KtDeclarationWithInitializer {
+    private static final TokenSet VAL_VAR_KEYWORDS = TokenSet.create(VAL_KEYWORD, VAR_KEYWORD);
+
     public KtDestructuringDeclaration(@NotNull ASTNode node) {
         super(node);
     }
@@ -67,7 +69,7 @@ public class KtDestructuringDeclaration extends KtDeclarationImpl implements KtV
     @Override
     @Nullable
     public PsiElement getValOrVarKeyword() {
-        return findChildByType(TokenSet.create(VAL_KEYWORD, VAR_KEYWORD));
+        return findChildByType(VAL_VAR_KEYWORDS);
     }
 
     @Nullable

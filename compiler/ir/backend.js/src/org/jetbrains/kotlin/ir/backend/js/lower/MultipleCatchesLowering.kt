@@ -7,22 +7,21 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrCatchImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrElseBranchImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrTryImpl
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 /**
+ * Replaces multiple catches with a single one.
+ *
  * Since JS does not support multiple catch blocks by default we should replace them with similar `when` statement, so
  *
  * try {}
@@ -37,21 +36,29 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
  * try {}
  * catch ($p: dynamic) {
  *   when ($p) {
- *     ex is Ex1 -> catch1((Ex1)$p)
- *     ex is Ex2 -> catch2((Ex2)$p)
- *     ex is Ex3 -> catch3((Ex3)$p)
- *     else throw $p [ | catch_dynamic($p) ]
+ *     ex1 is Ex1 -> {
+ *         val ex1 = (Ex1)$p
+ *         catch2(ex1)
+ *     }
+ *     ex1 is Ex2 -> {
+ *         val ex2 = (Ex2)$p
+ *         catch2(ex2)
+ *     }
+ *     ex1 is Ex3 -> {
+ *         val ex3 = (Ex3)$p
+ *         catch3(ex3)
+ *     }
+ *     else throw $p [ | { val exd = $p; catch_dynamic(exd) } ]
  *   }
  * }
  * finally {}
  */
-
 class MultipleCatchesLowering(private val context: JsIrBackendContext) : BodyLoweringPass {
     private val litTrue get() = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, true)
     private val nothingType = context.irBuiltIns.nothingType
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        irBody.transform(object : IrElementTransformer<IrDeclarationParent> {
+        irBody.transform(object : IrTransformer<IrDeclarationParent>() {
 
             override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent): IrStatement {
                 val parent = (declaration as? IrDeclarationParent) ?: data
@@ -70,31 +77,32 @@ class MultipleCatchesLowering(private val context: JsIrBackendContext) : BodyLow
                 var isCaughtDynamic = false
 
                 for (catch in aTry.catches) {
-                    assert(!catch.catchParameter.isVar) { "caught exception parameter has to be immutable" }
-                    val type = catch.catchParameter.type
+                    val catchParameter = catch.catchParameter
+                    assert(!catchParameter.isVar) { "caught exception parameter has to be immutable" }
+                    val type = catchParameter.type
 
-                    val castedPendingException = {
-                        if (type !is IrDynamicType)
-                            buildImplicitCast(pendingException(), type)
-                        else
-                            pendingException()
-                    }
+                    catchParameter.initializer = if (type is IrDynamicType)
+                        pendingException()
+                    else
+                        buildImplicitCast(pendingException(), type)
 
-                    val catchBody = catch.result.transform(object : IrElementTransformer<IrValueSymbol> {
-                        override fun visitGetValue(expression: IrGetValue, data: IrValueSymbol): IrExpression =
-                            if (expression.symbol == data)
-                                castedPendingException()
-                            else
-                                expression
-                    }, catch.catchParameter.symbol)
+                    val useOffsetsFrom = catch.result as? IrBlock ?: catch
+
+                    val catchBody = IrBlockImpl(
+                        useOffsetsFrom.startOffset,
+                        useOffsetsFrom.endOffset,
+                        catch.result.type,
+                        null,
+                        listOf(catchParameter, catch.result)
+                    )
 
                     if (type is IrDynamicType) {
-                        branches += IrElseBranchImpl(catch.startOffset, catch.endOffset, litTrue, catchBody)
+                        branches += IrElseBranchImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, litTrue, catchBody)
                         isCaughtDynamic = true
                         break
                     } else {
                         val typeCheck = buildIsCheck(pendingException(), type)
-                        branches += IrBranchImpl(catch.startOffset, catch.endOffset, typeCheck, catchBody)
+                        branches += IrBranchImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, typeCheck, catchBody)
                     }
                 }
 
@@ -106,7 +114,7 @@ class MultipleCatchesLowering(private val context: JsIrBackendContext) : BodyLow
                 val whenStatement = JsIrBuilder.buildWhen(aTry.type, branches)
 
                 val newCatch = aTry.run {
-                    IrCatchImpl(catches.first().startOffset, catches.last().endOffset, pendingExceptionDeclaration, whenStatement)
+                    IrCatchImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, pendingExceptionDeclaration, whenStatement)
                 }
 
                 return aTry.run { IrTryImpl(startOffset, endOffset, type, tryResult, listOf(newCatch), finallyExpression) }

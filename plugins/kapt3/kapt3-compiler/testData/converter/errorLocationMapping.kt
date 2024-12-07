@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // CORRECT_ERROR_TYPES
 
 @file:Suppress("UNRESOLVED_REFERENCE", "ANNOTATION_ARGUMENT_MUST_BE_CONST", "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION")
@@ -24,10 +23,14 @@ class ErrorInDeclarations {
     fun <T : String> f2() {}
     fun <T : ABC> f3() {}
     fun f4(): ABC? = null
+
+    @JvmOverloads
+    fun f5(a: ABC, b: String = "") {}
+
+    companion object {
+        @JvmStatic
+        fun f6(a: ABC) {}
+    }
 }
 
 annotation class Anno(val a: KClass<Any>)
-
-// EXPECTED_ERROR(kotlin:12:1) cannot find symbol
-// EXPECTED_ERROR(kotlin:7:1) cannot find symbol
-// EXPECTED_ERROR(kotlin:13:1) cannot find symbol

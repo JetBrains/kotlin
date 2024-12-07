@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.util
@@ -41,7 +30,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.contains
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
 
 // resolved call
@@ -132,17 +120,6 @@ fun Call.getValueArgumentForExpression(expression: KtExpression): ValueArgument?
 
 // Get call / resolved call from binding context
 
-fun KtElement?.getCalleeExpressionIfAny(): KtExpression? {
-    val element = if (this is KtExpression) KtPsiUtil.deparenthesize(this) else this
-    return when (element) {
-        is KtSimpleNameExpression -> element
-        is KtCallElement -> element.calleeExpression
-        is KtQualifiedExpression -> element.selectorExpression.getCalleeExpressionIfAny()
-        is KtOperationExpression -> element.operationReference
-        else -> null
-    }
-}
-
 /**
  *  For expressions like <code>a(), a[i], a.b.c(), +a, a + b, (a()), a(): Int, @label a()</code>
  *  returns a corresponding call.
@@ -160,7 +137,7 @@ fun KtElement.getCall(context: BindingContext): Call? {
     if (element is KtWhenExpression) {
         val subjectVariable = element.subjectVariable
         if (subjectVariable != null) {
-            return subjectVariable.getCall(context)
+            return subjectVariable.getCall(context) ?: context[CALL, element]
         }
     }
 
@@ -177,7 +154,7 @@ fun KtElement.getCall(context: BindingContext): Call? {
 }
 
 fun KtElement.getParentCall(context: BindingContext, strict: Boolean = true): Call? {
-    val callExpressionTypes = arrayOf<Class<out KtElement>?>(
+    val callExpressionTypes = arrayOf(
         KtSimpleNameExpression::class.java, KtCallElement::class.java, KtBinaryExpression::class.java,
         KtUnaryExpression::class.java, KtArrayAccessExpression::class.java
     )
@@ -301,11 +278,11 @@ fun ResolvedCall<*>.getFirstArgumentExpression(): KtExpression? =
     valueArgumentsByIndex?.run { get(0).arguments[0].getArgumentExpression() }
 
 fun ResolvedCall<*>.getReceiverExpression(): KtExpression? =
-    extensionReceiver.safeAs<ExpressionReceiver>()?.expression ?: dispatchReceiver.safeAs<ExpressionReceiver>()?.expression
+    (extensionReceiver as? ExpressionReceiver)?.expression ?: (dispatchReceiver as? ExpressionReceiver)?.expression
 
 val KtLambdaExpression.isTrailingLambdaOnNewLIne
     get(): Boolean {
-        parent?.safeAs<KtLambdaArgument>()?.let { lambdaArgument ->
+        (parent as? KtLambdaArgument)?.let { lambdaArgument ->
             var prevSibling = lambdaArgument.prevSibling
 
             while (prevSibling != null && prevSibling !is KtElement) {

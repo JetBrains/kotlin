@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.gradle.targets.native.tasks.artifact
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.ExtensionAware
+import org.gradle.api.provider.Provider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinNativeFatFramework
-import org.jetbrains.kotlin.gradle.dsl.KotlinNativeFatFrameworkConfig
+import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.BITCODE_EMBEDDING_DEPRECATION_MESSAGE
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
@@ -31,6 +31,7 @@ abstract class KotlinNativeFatFrameworkConfigImpl @Inject constructor(artifactNa
         this.targets = targets.toSet()
     }
 
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)
     override var embedBitcode: BitcodeEmbeddingMode? = null
 
     override fun validate() {
@@ -54,9 +55,9 @@ abstract class KotlinNativeFatFrameworkConfigImpl @Inject constructor(artifactNa
             isStatic = isStatic,
             linkerOptions = linkerOptions,
             kotlinOptionsFn = kotlinOptionsFn,
+            toolOptionsConfigure = toolOptionsConfigure,
             binaryOptions = binaryOptions,
             targets = targets,
-            embedBitcode = embedBitcode,
             extensions = extensions
         )
     }
@@ -68,14 +69,20 @@ class KotlinNativeFatFrameworkImpl(
     override val modes: Set<NativeBuildType>,
     override val isStatic: Boolean,
     override val linkerOptions: List<String>,
+    @Suppress("DEPRECATION")
+    @Deprecated("Please migrate to toolOptionsConfigure DSL. More details are here: https://kotl.in/u1r8ln")
     override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
+    override val toolOptionsConfigure: KotlinCommonCompilerToolOptions.() -> Unit,
     override val binaryOptions: Map<String, String>,
     override val targets: Set<KonanTarget>,
-    override val embedBitcode: BitcodeEmbeddingMode?,
+    @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE)
+    override val embedBitcode: BitcodeEmbeddingMode? = null,
     extensions: ExtensionAware
 ) : KotlinNativeFatFramework, ExtensionAware by extensions {
     override fun getName() = lowerCamelCaseName(artifactName, "FatFramework")
     override val taskName = lowerCamelCaseName("assemble", name)
+    override val outDir
+        get() = "out/fatframework"
 
     override fun registerAssembleTask(project: Project) {
         val parentTask = project.registerTask<Task>(taskName) {
@@ -89,12 +96,12 @@ class KotlinNativeFatFrameworkImpl(
                 lowerCamelCaseName("assemble", artifactName, buildType.visibleName, "FatFramework")
             ) {
                 it.baseName = artifactName
-                it.destinationDir = project.buildDir.resolve("out/fatframework/${buildType.getName()}")
+                it.destinationDirProperty.set(project.layout.buildDirectory.dir("$outDir/${buildType.getName()}"))
             }
             parentTask.dependsOn(fatTask)
 
             val nameSuffix = "ForFat"
-            val frameworkDescriptors: List<FrameworkDescriptor> = targets.map { target ->
+            val frameworkDescriptors: List<Provider<FrameworkDescriptor>> = targets.map { target ->
                 val librariesConfigurationName = project.registerLibsDependencies(target, artifactName + nameSuffix, modules)
                 val exportConfigurationName = project.registerExportDependencies(target, artifactName + nameSuffix, modules)
                 val targetTask = registerLinkFrameworkTask(
@@ -104,15 +111,14 @@ class KotlinNativeFatFrameworkImpl(
                     buildType = buildType,
                     librariesConfigurationName = librariesConfigurationName,
                     exportConfigurationName = exportConfigurationName,
-                    embedBitcode = embedBitcode,
                     outDirName = "${artifactName}FatFrameworkTemp",
                     taskNameSuffix = nameSuffix
                 )
-                fatTask.dependsOn(targetTask)
-                val frameworkFileProvider = targetTask.map { it.outputFile }
-                FrameworkDescriptor(frameworkFileProvider.get(), isStatic, target)
+                targetTask.map {
+                    FrameworkDescriptor(it.outputFile.get(), isStatic, target)
+                }
             }
-            fatTask.configure { it.fromFrameworkDescriptors(frameworkDescriptors) }
+            fatTask.configure { it.fromFrameworkDescriptorProviders(frameworkDescriptors) }
         }
     }
 }

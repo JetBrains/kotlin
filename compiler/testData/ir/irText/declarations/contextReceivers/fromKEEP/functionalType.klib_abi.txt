@@ -1,0 +1,21 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /K { // /K|null[0]
+    final val k // /K.k|{}k[0]
+        final fun <get-k>(): kotlin/String // /K.k.<get-k>|<get-k>(){}[0]
+    constructor <init>() // /K.<init>|<init>(){}[0]
+}
+final class /O { // /O|null[0]
+    final val o // /O.o|{}o[0]
+        final fun <get-o>(): kotlin/String // /O.o.<get-o>|<get-o>(){}[0]
+    constructor <init>() // /O.<init>|<init>(){}[0]
+}
+final class /Param { // /Param|null[0]
+    constructor <init>() // /Param.<init>|<init>(){}[0]
+}
+final fun /box(): kotlin/String // /box|box(){}[0]
+final fun <#A: kotlin/Any?> context(/K) (/K)./f(kotlin/Function3</O, /K, /Param, #A>): #A // /f|f!O@K(kotlin.Function3<O,K,Param,0:0>){0§<kotlin.Any?>}[0]

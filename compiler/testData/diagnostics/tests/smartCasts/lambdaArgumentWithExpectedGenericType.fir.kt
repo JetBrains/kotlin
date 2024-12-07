@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class My<T: Any>(val y: T?) {
 
     fun get(): T = run {

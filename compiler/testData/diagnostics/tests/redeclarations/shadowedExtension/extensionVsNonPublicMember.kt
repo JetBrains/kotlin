@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class WithPublicInvoke {
     public operator fun invoke() {}
 }

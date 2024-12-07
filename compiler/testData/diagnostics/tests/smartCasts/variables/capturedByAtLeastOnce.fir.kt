@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import kotlin.contracts.*
 
 @Suppress("OPT_IN_USAGE_ERROR", "OPT_IN_USAGE_FUTURE_ERROR")
@@ -28,7 +29,7 @@ fun test() {
     var s: String? = null
     s = ""
     atLeastOnce {
-        <!SMARTCAST_IMPOSSIBLE!>s<!>.length // unstable since lambda can be called twice
+        s<!UNSAFE_CALL!>.<!>length // unstable since lambda can be called twice
         s = null
         var s2: String? = null
         s2 = ""

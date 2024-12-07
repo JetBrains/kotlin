@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun foo(vararg x: String) {}
 
 fun foo() {}

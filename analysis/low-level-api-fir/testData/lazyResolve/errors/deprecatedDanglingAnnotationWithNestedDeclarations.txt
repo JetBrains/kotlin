@@ -1,0 +1,432 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] deprecatedDanglingAnnotationWithNestedDeclarations.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    [ResolvedTo(RAW_FIR)] @Deprecated[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] deprecatedDanglingAnnotationWithNestedDeclarations.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    [ResolvedTo(RAW_FIR)] @Deprecated[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] deprecatedDanglingAnnotationWithNestedDeclarations.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(Use 'AAA' instead).open#(ERROR_EXPR(No right operand)local final? [ResolvedTo(RAW_FIR)] class MyClass : Any {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|<local>/MyClass| {
+            super<Any>()
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val foo: <implicit> = IntegerLiteral(24)
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): <implicit>
+
+        @Anno[Unresolved](String(str)) public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| {
+        }
+
+        local final? companion [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|<local>/MyClass.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @Anno[Unresolved](String(something)) public? final? [ResolvedTo(RAW_FIR)] fun getSomething([ResolvedTo(RAW_FIR)] a: Int = IntegerLiteral(24)): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    )) <DANGLING MODIFIER: Top level declaration expected>
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] deprecatedDanglingAnnotationWithNestedDeclarations.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    [ResolvedTo(COMPANION_GENERATION)] @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(Use 'AAA' instead).open#(ERROR_EXPR(No right operand)local final? [ResolvedTo(RAW_FIR)] class MyClass : Any {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|<local>/MyClass| {
+            super<Any>()
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val foo: <implicit> = IntegerLiteral(24)
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): <implicit>
+
+        @Anno[Unresolved](String(str)) public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| {
+        }
+
+        local final? companion [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|<local>/MyClass.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @Anno[Unresolved](String(something)) public? final? [ResolvedTo(RAW_FIR)] fun getSomething([ResolvedTo(RAW_FIR)] a: Int = IntegerLiteral(24)): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    )) <DANGLING MODIFIER: Top level declaration expected>
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] deprecatedDanglingAnnotationWithNestedDeclarations.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    [ResolvedTo(SUPER_TYPES)] @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(Use 'AAA' instead).open#(ERROR_EXPR(No right operand)local final? [ResolvedTo(RAW_FIR)] class MyClass : Any {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|<local>/MyClass| {
+            super<Any>()
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val foo: <implicit> = IntegerLiteral(24)
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): <implicit>
+
+        @Anno[Unresolved](String(str)) public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| {
+        }
+
+        local final? companion [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|<local>/MyClass.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @Anno[Unresolved](String(something)) public? final? [ResolvedTo(RAW_FIR)] fun getSomething([ResolvedTo(RAW_FIR)] a: Int = IntegerLiteral(24)): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    )) <DANGLING MODIFIER: Top level declaration expected>
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] deprecatedDanglingAnnotationWithNestedDeclarations.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    [ResolvedTo(TYPES)] @R|kotlin/Deprecated|[Types](String(Use 'AAA' instead).open#(ERROR_EXPR(No right operand)local final? [ResolvedTo(RAW_FIR)] class MyClass : Any {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|<local>/MyClass| {
+            super<Any>()
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val foo: <implicit> = IntegerLiteral(24)
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): <implicit>
+
+        @Anno[Unresolved](String(str)) public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| {
+        }
+
+        local final? companion [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|<local>/MyClass.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @Anno[Unresolved](String(something)) public? final? [ResolvedTo(RAW_FIR)] fun getSomething([ResolvedTo(RAW_FIR)] a: Int = IntegerLiteral(24)): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    )) <DANGLING MODIFIER: Top level declaration expected>
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] deprecatedDanglingAnnotationWithNestedDeclarations.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](String(Use 'AAA' instead).open#(ERROR_EXPR(No right operand)local final? [ResolvedTo(RAW_FIR)] class MyClass : Any {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|<local>/MyClass| {
+            super<Any>()
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val foo: <implicit> = IntegerLiteral(24)
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): <implicit>
+
+        @Anno[Unresolved](String(str)) public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| {
+        }
+
+        local final? companion [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|<local>/MyClass.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @Anno[Unresolved](String(something)) public? final? [ResolvedTo(RAW_FIR)] fun getSomething([ResolvedTo(RAW_FIR)] a: Int = IntegerLiteral(24)): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    )) <DANGLING MODIFIER: Top level declaration expected>
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] deprecatedDanglingAnnotationWithNestedDeclarations.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    [ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|kotlin/Deprecated|[Types](String(Use 'AAA' instead).open#(ERROR_EXPR(No right operand)local final? [ResolvedTo(RAW_FIR)] class MyClass : Any {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|<local>/MyClass| {
+            super<Any>()
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val foo: <implicit> = IntegerLiteral(24)
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): <implicit>
+
+        @Anno[Unresolved](String(str)) public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| {
+        }
+
+        local final? companion [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|<local>/MyClass.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @Anno[Unresolved](String(something)) public? final? [ResolvedTo(RAW_FIR)] fun getSomething([ResolvedTo(RAW_FIR)] a: Int = IntegerLiteral(24)): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    )) <DANGLING MODIFIER: Top level declaration expected>
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] deprecatedDanglingAnnotationWithNestedDeclarations.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    [ResolvedTo(CONTRACTS)] @R|kotlin/Deprecated|[Types](String(Use 'AAA' instead).open#(ERROR_EXPR(No right operand)local final? [ResolvedTo(RAW_FIR)] class MyClass : Any {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|<local>/MyClass| {
+            super<Any>()
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val foo: <implicit> = IntegerLiteral(24)
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): <implicit>
+
+        @Anno[Unresolved](String(str)) public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| {
+        }
+
+        local final? companion [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|<local>/MyClass.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @Anno[Unresolved](String(something)) public? final? [ResolvedTo(RAW_FIR)] fun getSomething([ResolvedTo(RAW_FIR)] a: Int = IntegerLiteral(24)): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    )) <DANGLING MODIFIER: Top level declaration expected>
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] deprecatedDanglingAnnotationWithNestedDeclarations.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|kotlin/Deprecated|[Types](String(Use 'AAA' instead).open#(ERROR_EXPR(No right operand)local final? [ResolvedTo(RAW_FIR)] class MyClass : Any {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|<local>/MyClass| {
+            super<Any>()
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val foo: <implicit> = IntegerLiteral(24)
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): <implicit>
+
+        @Anno[Unresolved](String(str)) public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| {
+        }
+
+        local final? companion [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|<local>/MyClass.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @Anno[Unresolved](String(something)) public? final? [ResolvedTo(RAW_FIR)] fun getSomething([ResolvedTo(RAW_FIR)] a: Int = IntegerLiteral(24)): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    )) <DANGLING MODIFIER: Top level declaration expected>
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] deprecatedDanglingAnnotationWithNestedDeclarations.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    [ResolvedTo(CONSTANT_EVALUATION)] @R|kotlin/Deprecated|[Types](String(Use 'AAA' instead).open#(ERROR_EXPR(No right operand)local final? [ResolvedTo(RAW_FIR)] class MyClass : Any {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|<local>/MyClass| {
+            super<Any>()
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val foo: <implicit> = IntegerLiteral(24)
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): <implicit>
+
+        @Anno[Unresolved](String(str)) public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| {
+        }
+
+        local final? companion [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|<local>/MyClass.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @Anno[Unresolved](String(something)) public? final? [ResolvedTo(RAW_FIR)] fun getSomething([ResolvedTo(RAW_FIR)] a: Int = IntegerLiteral(24)): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    )) <DANGLING MODIFIER: Top level declaration expected>
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] deprecatedDanglingAnnotationWithNestedDeclarations.kt
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    [ResolvedTo(ANNOTATION_ARGUMENTS)] @R|kotlin/Deprecated|[Types](message = String(Use 'AAA' instead).<Unresolved name: open>#(ERROR_EXPR(No right operand)local final [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|<local>/MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(RAW_FIR)] val foo: R|kotlin/Int| = Int(24)
+            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+
+        @R|Anno|[Types](s = String(str)) public final [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| {
+        }
+
+        local final companion [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|<local>/MyClass.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @R|Anno|[Types](s = String(something)) public final [ResolvedTo(RAW_FIR)] fun getSomething([ResolvedTo(RAW_FIR)] a: R|kotlin/Int| = Int(24)): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    )) <DANGLING MODIFIER: Top level declaration expected>
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] deprecatedDanglingAnnotationWithNestedDeclarations.kt
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    [ResolvedTo(BODY_RESOLVE)] @R|kotlin/Deprecated|[Types](message = String(Use 'AAA' instead).<Unresolved name: open>#(ERROR_EXPR(No right operand)local final [ResolvedTo(BODY_RESOLVE)] class MyClass : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|<local>/MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val foo: R|kotlin/Int| = Int(24)
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+
+        @R|Anno|[Types](s = String(str)) public final [ResolvedTo(BODY_RESOLVE)] fun baz(): R|kotlin/Unit| {
+        }
+
+        local final companion [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|<local>/MyClass.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @R|Anno|[Types](s = String(something)) public final [ResolvedTo(BODY_RESOLVE)] fun getSomething([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int| = Int(24)): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    )) <DANGLING MODIFIER: Top level declaration expected>
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] deprecatedDanglingAnnotationWithNestedDeclarations.kt
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    [ResolvedTo(BODY_RESOLVE)] @R|kotlin/Deprecated|[Types](message = String(Use 'AAA' instead).<Unresolved name: open>#(ERROR_EXPR(No right operand)local final [ResolvedTo(BODY_RESOLVE)] class MyClass : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|<local>/MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val foo: R|kotlin/Int| = Int(24)
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+
+        @R|Anno|[Types](s = String(str)) public final [ResolvedTo(BODY_RESOLVE)] fun baz(): R|kotlin/Unit| {
+        }
+
+        local final companion [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|<local>/MyClass.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @R|Anno|[Types](s = String(something)) public final [ResolvedTo(BODY_RESOLVE)] fun getSomething([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int| = Int(24)): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    )) <DANGLING MODIFIER: Top level declaration expected>

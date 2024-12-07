@@ -1,13 +1,13 @@
 // NO_CHECK_LAMBDA_INLINING
-
+// IGNORE_INLINER: IR
 // FILE: 1.kt
 
 package builders
 
 inline fun call(crossinline init: () -> Unit) {
-    return {
+    val lambda = {
         init()
-    }()
+    }; lambda()
 }
 
 // FILE: 2.kt

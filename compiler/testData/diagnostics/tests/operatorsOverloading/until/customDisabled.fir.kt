@@ -1,4 +1,5 @@
-// !LANGUAGE: -RangeUntilOperator
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -RangeUntilOperator
 
 class A {
     operator fun rangeUntil(other: A): Iterable<A> = TODO()

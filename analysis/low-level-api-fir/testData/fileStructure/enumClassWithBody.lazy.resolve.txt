@@ -1,0 +1,41 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] enumClassWithBody.kt
+    public final [ResolvedTo(BODY_RESOLVE)] enum class A : R|kotlin/Enum<A>| {
+        private [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
+            super<R|kotlin/Enum<A>|>()
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] enum entry X: R|A| = object : R|A| {
+            private [ResolvedTo(BODY_RESOLVE)] constructor(): R|<anonymous>| {
+                super<R|A|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun localInX(): R|kotlin/Int| {
+                ^localInX Int(1)
+            }
+
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] enum entry Y: R|A| = object : R|A| {
+            private [ResolvedTo(BODY_RESOLVE)] constructor(): R|<anonymous>| {
+                super<R|A|>()
+            }
+
+            public open override [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+            }
+
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] enum entry Z: R|A|
+        public open [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] fun values(): R|kotlin/Array<A>| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|A| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] val entries: R|kotlin/enums/EnumEntries<A>|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<A>|
+
+    }

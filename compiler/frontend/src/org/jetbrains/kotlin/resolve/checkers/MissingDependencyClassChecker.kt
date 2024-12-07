@@ -59,10 +59,7 @@ object MissingDependencyClassChecker : CallChecker {
             if (source.isPreReleaseInvisible) {
                 return PRE_RELEASE_CLASS.on(reportOn, source.presentableString)
             }
-            if (source.abiStability == DeserializedContainerAbiStability.FIR_UNSTABLE) {
-                return FIR_COMPILED_CLASS.on(reportOn, source.presentableString)
-            }
-            if (source.abiStability == DeserializedContainerAbiStability.IR_UNSTABLE) {
+            if (source.abiStability == DeserializedContainerAbiStability.UNSTABLE) {
                 return IR_WITH_UNSTABLE_ABI_COMPILED_CLASS.on(reportOn, source.presentableString)
             }
         }

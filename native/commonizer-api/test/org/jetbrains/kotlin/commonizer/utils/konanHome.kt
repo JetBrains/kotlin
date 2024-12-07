@@ -9,6 +9,7 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import java.io.File
 
@@ -16,7 +17,7 @@ internal val konanHome: File by lazy {
     val project = ProjectBuilder
         .builder()
         .build()
-        ?.run {
+        .run {
             project.plugins.apply("kotlin-multiplatform")
 
             (project.kotlinExtension as KotlinMultiplatformExtension).apply {

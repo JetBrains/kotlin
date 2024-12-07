@@ -17,8 +17,8 @@ inline fun inlineMe(crossinline c: suspend () -> Unit) = {
             }
         }
         sr
-    }()
-}()
+    }.let { it() }
+}.let { it() }
 
 // FILE: box.kt
 import helpers.*
@@ -29,6 +29,7 @@ fun builder(c: suspend () -> Unit) {
 }
 
 fun box(): String {
+    StateMachineChecker.reset()
     builder {
         inlineMe {
             StateMachineChecker.suspendHere()

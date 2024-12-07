@@ -1,11 +1,10 @@
-// IGNORE_BACKEND: WASM
 // WITH_STDLIB
 // KJS_WITH_FULL_RUNTIME
 // FILE: 1.kt
 package test
 
 inline fun <reified Y : Enum<Y>> myValues2(): String {
-    val values = { enumValues<Y>() }()
+    val values = { enumValues<Y>() }.let { it() }
     return values.joinToString("")
 }
 

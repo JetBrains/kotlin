@@ -1,10 +1,11 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test() {
-    Double(<!NO_VALUE_FOR_PARAMETER!>)<!>
-    Float(<!NO_VALUE_FOR_PARAMETER!>)<!>
-    Long(<!NO_VALUE_FOR_PARAMETER!>)<!>
-    Int(<!NO_VALUE_FOR_PARAMETER!>)<!>
-    Short(<!NO_VALUE_FOR_PARAMETER!>)<!>
-    Byte(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    <!INVISIBLE_REFERENCE!>Double<!>()
+    <!INVISIBLE_REFERENCE!>Float<!>()
+    <!INVISIBLE_REFERENCE!>Long<!>()
+    <!INVISIBLE_REFERENCE!>Int<!>()
+    <!INVISIBLE_REFERENCE!>Short<!>()
+    <!INVISIBLE_REFERENCE!>Byte<!>()
     <!INVISIBLE_REFERENCE!>Char<!>()
-    Boolean(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    <!INVISIBLE_REFERENCE!>Boolean<!>()
 }

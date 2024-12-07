@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.utils
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PathManager
-import org.jetbrains.jps.model.java.impl.JavaSdkUtil
 
 import java.io.File
+import java.nio.file.Paths
 import java.util.regex.Pattern
 
 object PathUtil {
@@ -71,8 +71,6 @@ object PathUtil {
     const val KOTLIN_SCRIPTING_COMMON_JAR = "$KOTLIN_SCRIPTING_COMMON_NAME.jar"
     const val KOTLIN_SCRIPTING_JVM_NAME = "kotlin-scripting-jvm"
     const val KOTLIN_SCRIPTING_JVM_JAR = "$KOTLIN_SCRIPTING_JVM_NAME.jar"
-    const val KOTLIN_SCRIPTING_JS_NAME = "kotlin-scripting-js"
-    const val KOTLIN_SCRIPTING_JS_JAR = "$KOTLIN_SCRIPTING_JS_NAME.jar"
     const val KOTLIN_DAEMON_NAME = "kotlin-daemon"
     const val KOTLIN_DAEMON_JAR = "$KOTLIN_SCRIPTING_JVM_NAME.jar"
     const val KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME = "kotlin-scripting-compiler"
@@ -81,15 +79,11 @@ object PathUtil {
     const val KOTLINX_COROUTINES_CORE_JAR = "$KOTLINX_COROUTINES_CORE_NAME.jar"
     const val KOTLIN_SCRIPTING_COMPILER_IMPL_NAME = "kotlin-scripting-compiler-impl"
     const val KOTLIN_SCRIPTING_COMPILER_IMPL_JAR = "$KOTLIN_SCRIPTING_COMPILER_IMPL_NAME.jar"
-    const val JS_ENGINES_NAME = "js.engines"
-    const val JS_ENGINES_JAR = "$JS_ENGINES_NAME.jar"
     const val MAIN_KTS_NAME = "kotlin-main-kts"
 
     val KOTLIN_SCRIPTING_PLUGIN_CLASSPATH_JARS = arrayOf(
         KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMPILER_IMPL_JAR,
-        KOTLINX_COROUTINES_CORE_JAR,
         KOTLIN_SCRIPTING_COMMON_JAR, KOTLIN_SCRIPTING_JVM_JAR,
-        KOTLIN_SCRIPTING_JS_JAR, JS_ENGINES_JAR
     )
 
     const val KOTLIN_TEST_NAME = "kotlin-test"
@@ -180,9 +174,15 @@ object PathUtil {
 
     @JvmStatic
     fun getJdkClassesRootsFromJre(javaHome: String): List<File> =
-            JavaSdkUtil.getJdkClassesRoots(File(javaHome), true)
+            JavaSdkUtil.getJdkClassesRoots(Paths.get(javaHome), true).map { it.toFile() }
 
     @JvmStatic
     fun getJdkClassesRoots(jdkHome: File): List<File> =
-            JavaSdkUtil.getJdkClassesRoots(jdkHome, false)
+            JavaSdkUtil.getJdkClassesRoots(jdkHome.toPath(), false).map { it.toFile() }
+
+    @JvmStatic
+    fun getJdkClassesRootsFromJdkOrJre(javaRoot: File): List<File> {
+        val isJdk = File(javaRoot, "jre/lib").exists()
+        return JavaSdkUtil.getJdkClassesRoots(javaRoot.toPath(), !isJdk).map { it.toFile() }
+    }
 }

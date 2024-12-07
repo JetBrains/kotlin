@@ -3,7 +3,5 @@ data class A(
         val y: String
 )
 
-// LINES(JS):    1 2 3 * 1 2 2 1 3 3 1 1 1 2 3 1 1 1 2 3 1 1 1 2 3 1 1 1 1 1 2 3
-
-// FIXME: componentN function body should point to the corresponding property.
-// LINES(JS_IR): 2 2 3 3 * 2 2 * 3 3 * 1 1 * 1 1 * 1 1 * 1 1 1 1 1 1 1 1 * 1 1 * 1 1 1 1 1 1 * 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+// LINES(ClassicFrontend JS_IR): 1 2 3 1 2 2 3 3 2 2 2 3 3 3 1 1 1 1 1 1 1 2 3 1 1 1 1 2 3 1 1 * 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+// LINES(FIR JS_IR):             1 2 3 1 2 2 3 3 2 2 2 3 3 3 1 1 1 1 1 1 1 1 1 1 1 * 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1

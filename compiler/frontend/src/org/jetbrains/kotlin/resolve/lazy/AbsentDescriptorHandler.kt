@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.resolve.lazy
 
+import org.jetbrains.kotlin.container.PlatformSpecificExtension
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
-interface AbsentDescriptorHandler {
+interface AbsentDescriptorHandler : PlatformSpecificExtension<AbsentDescriptorHandler> {
     fun diagnoseDescriptorNotFound(declaration: KtDeclaration): DeclarationDescriptor
 }
 
@@ -24,6 +24,6 @@ class NoDescriptorForDeclarationException @JvmOverloads constructor(declaration:
                 + (additionalDetails?.let { "\n---------------------------------------------------\n$it" } ?: "")
     ) {
     init {
-        withAttachment("declaration.kt", declaration.getElementTextWithContext())
+        withPsiAttachment("declaration.kt", declaration)
     }
 }

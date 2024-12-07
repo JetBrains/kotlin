@@ -25,6 +25,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.E>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.E
         public final /*synthesized*/ fun values(): kotlin.Array<test.E>
     }
@@ -46,4 +47,3 @@ package other {
     public fun baz(/*0*/ b: kotlin.Boolean?): kotlin.Int
     public fun foo(/*0*/ e: test.E): kotlin.Int
 }
-

@@ -5,13 +5,16 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
+import org.jetbrains.kotlin.DeprecatedCompilerApi
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
-import org.jetbrains.kotlin.ir.util.fileOrNull
-
-@Suppress("unused") // Used in kotlin-native
-val IrReturnableBlock.sourceFileSymbol: IrFileSymbol?
-    get() = inlineFunctionSymbol?.owner?.fileOrNull?.symbol
+import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.render
 
 val IrFunctionReference.isWithReflection: Boolean
     get() = reflectionTarget != null
@@ -34,6 +37,7 @@ var IrDynamicOperatorExpression.right: IrExpression
             arguments[0] = value
     }
 
+@DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
 fun IrFunctionAccessExpression.putArgument(parameter: IrValueParameter, argument: IrExpression): Unit =
     putArgument(symbol.owner, parameter, argument)
 
@@ -47,4 +51,59 @@ fun IrVararg.addElement(varargElement: IrVarargElement) {
 
 fun IrStringConcatenation.addArgument(argument: IrExpression) {
     arguments.add(argument)
+}
+
+val IrContainerExpression.isTransparentScope: Boolean
+    get() = this is IrComposite
+
+fun IrExpression.implicitCastTo(expectedType: IrType?): IrExpression {
+    if (expectedType == null) return this
+
+    return IrTypeOperatorCallImpl(startOffset, endOffset, expectedType, IrTypeOperator.IMPLICIT_CAST, expectedType, this)
+}
+
+fun IrExpression.isUnchanging(): Boolean =
+    this is IrFunctionExpression ||
+            (this is IrCallableReference<*> && arguments.all { it == null }) ||
+            this is IrClassReference ||
+            this is IrConst ||
+            (this is IrGetValue && !symbol.owner.let { it is IrVariable && it.isVar })
+
+fun IrExpression.hasNoSideEffects(): Boolean =
+    isUnchanging() || this is IrGetValue
+
+internal fun IrMemberAccessExpression<*>.checkArgumentSlotAccess(kind: String, index: Int, total: Int) {
+    if (index >= total) {
+        // KT-69558: TODO convert this throw to `irError(...) { withIrEntry(this) }`
+        throw AssertionError(
+            "No such $kind argument slot in ${this::class.java.simpleName}: $index (total=$total)" +
+                    (symbol.signature?.let { ".\nSymbol: $it" } ?: "") +
+                    "\nExpression: ${render()}"
+        )
+    }
+}
+
+fun IrMemberAccessExpression<*>.copyTypeArgumentsFrom(other: IrMemberAccessExpression<*>, shift: Int = 0) {
+    assert(typeArgumentsCount == other.typeArgumentsCount + shift) {
+        "Mismatching type arguments: $typeArgumentsCount vs ${other.typeArgumentsCount} + $shift"
+    }
+    for (i in 0 until other.typeArgumentsCount) {
+        putTypeArgument(i + shift, other.getTypeArgument(i))
+    }
+}
+
+val CallableDescriptor.typeParametersCount: Int
+    get() =
+        when (this) {
+            is PropertyAccessorDescriptor -> correspondingProperty.typeParameters.size
+            else -> typeParameters.size
+        }
+
+@DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
+fun IrMemberAccessExpression<*>.putArgument(
+    @Suppress("unused") callee: IrFunction, // To be removed
+    parameter: IrValueParameter,
+    argument: IrExpression
+) {
+    arguments[parameter.indexInParameters] = argument
 }

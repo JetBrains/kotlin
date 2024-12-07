@@ -1,0 +1,3 @@
+KtNameReferenceExpression(71,76): 'super'
+  KtSimpleNameReference:
+    (in ROOT) interface A

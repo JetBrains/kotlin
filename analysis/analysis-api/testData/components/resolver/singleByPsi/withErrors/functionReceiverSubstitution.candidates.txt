@@ -1,0 +1,29 @@
+KtDotQualifiedExpression(73,80): 'f.foo()'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = f
+          isSafeNavigation = false
+          type = Foo<kotlin.String>
+        signature = KaFunctionSignature:
+          receiverType = Foo<kotlin.String>
+          returnType = kotlin.Unit
+          symbol = /foo(<extension receiver>: Foo<A>, i: kotlin.Int): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableId = null
+          ]
+          callableId = /foo
+      typeArgumentsMapping = {
+        A -> (kotlin.String)
+      }
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'.>
+    isInBestCandidates = true

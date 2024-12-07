@@ -9,53 +9,62 @@
 @file:BenchmarkProject(
     name = "kvision",
     gitUrl = "https://github.com/rjaros/kvision.git",
-    gitCommitSha = "9204d7be944a57bd6c09053bc16b5eeea1bccac5"
+    gitCommitSha = "8f2b3c96dcc9ad594995367ad138a37328244bb9",
+    stableKotlinVersion = "2.0.20",
 )
 
 import java.io.File
 
-val currentReleasePatch = {
-    "kvision-kotlin-current.patch" to File("benchmarkScripts/files/kvision-kotlin-current.patch")
-        .readText()
-        .run { replace("<kotlin_version>", currentKotlinVersion) }
-        .byteInputStream()
+val repoPatch = {
+    listOf(
+        "kvision-kotlin-current.patch" to File("benchmarkScripts/files/kvision-kotlin-repo.patch")
+            .readText()
+            .run { replace("<kotlin_version>", currentKotlinVersion) }
+            .byteInputStream(),
+    )
 }
 
-runAllBenchmarks(
+runBenchmarks(
+    repoPatch,
     suite {
-        // Disabled due to the possible error "No space left on device"
-        // Kotlin/Js/Ir trashes /tmp directory with files that are not reused
-        // Check https://youtrack.jetbrains.com/issue/KT-52176/Kotlin-JS-Ir-compilation-creates-build-files-in-system-temp-dire
-//        scenario {
-//            title = "Build Js IR clean build"
-//
-//            runTasks("jsIrJar")
-//            runCleanupTasks("clean")
-//        }
-
         scenario {
-            title = "Build Js Legacy clean build"
+            title = "Build Js clean build"
 
-            runTasks("jsLegacyJar")
+            runTasks("jsJar")
             runCleanupTasks("clean")
         }
 
         scenario {
-            title = "Build Js Legacy with ABI change in ObservableList"
+            title = "Build Js IR with ABI change in ObservableList"
 
-            runTasks("jsLegacyJar")
-            applyAbiChangeTo("kvision-modules/kvision-state/src/main/kotlin/io/kvision/state/ObservableList.kt")
+            runTasks("jsJar")
+            applyAbiChangeTo("kvision-modules/kvision-state/src/jsMain/kotlin/io/kvision/state/ObservableList.kt")
         }
 
         scenario {
-            title = "Build Js Legacy with non-ABI change in ObservableList"
+            title = "Build Js IR with non-ABI change in ObservableList"
 
-            runTasks("jsLegacyJar")
-            applyNonAbiChangeTo("kvision-modules/kvision-state/src/main/kotlin/io/kvision/state/ObservableList.kt")
+            runTasks("jsJar")
+            applyNonAbiChangeTo("kvision-modules/kvision-state/src/jsMain/kotlin/io/kvision/state/ObservableList.kt")
         }
-    },
-    mapOf(
-        "1.6.20" to null,
-        "1.7.0" to  currentReleasePatch
-    )
+
+        scenario {
+            title = "Dry run configuration time"
+            useGradleArgs("-m")
+
+            runTasks("jsJar")
+        }
+
+        scenario {
+            title = "No-op configuration time"
+
+            runTasks("help")
+        }
+
+        scenario {
+            title = "UP-TO-DATE configuration time"
+
+            runTasks("jsJar")
+        }
+    }
 )

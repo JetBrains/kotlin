@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 
+@DeprecatedTargetPresetApi
 abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : KotlinCompilation<*>>(
-    protected val project: Project
-) : KotlinTargetPreset<R> {
+    protected val project: Project,
+) : InternalKotlinTargetPreset<R> {
 
     protected abstract fun createKotlinTargetConfigurator(): AbstractKotlinTargetConfigurator<R>
 
@@ -18,19 +21,19 @@ abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : KotlinCompila
         target.targetName
 
     // This function is used in IDE import in order to indicate that sourceSetName=disambiguationClassifier+compilationName
+    @Deprecated("Scheduled for removal with Kotlin 2.2", level = DeprecationLevel.ERROR)
     protected open fun useDisambiguationClassifierAsSourceSetNamePrefix() = true
 
     // This function is used in IDE import in order to override sourceSetName
+    @Deprecated("Scheduled for removal with Kotlin 2.2", level = DeprecationLevel.ERROR)
     protected open fun overrideDisambiguationClassifierOnIdeImport(name: String): String? = null
 
-    abstract protected fun instantiateTarget(name: String): R
+    protected abstract fun instantiateTarget(name: String): R
 
-    override fun createTarget(name: String): R {
+    override fun createTargetInternal(name: String): R {
         val result = instantiateTarget(name).apply {
             targetName = name
             disambiguationClassifier = provideTargetDisambiguationClassifier(this@apply)
-            useDisambiguationClassifierAsSourceSetNamePrefix = useDisambiguationClassifierAsSourceSetNamePrefix()
-            overrideDisambiguationClassifierOnIdeImport = overrideDisambiguationClassifierOnIdeImport(name)
             preset = this@KotlinOnlyTargetPreset
 
             val compilationFactory = createCompilationFactory(this)
@@ -38,7 +41,6 @@ abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : KotlinCompila
         }
 
         createKotlinTargetConfigurator().configureTarget(result)
-
         return result
     }
 

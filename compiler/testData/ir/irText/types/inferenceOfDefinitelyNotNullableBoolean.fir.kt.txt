@@ -1,0 +1,22 @@
+val key: Key<Boolean>
+  field = Key<@FlexibleNullability Boolean?>()
+  get
+
+val x: Boolean /* by */
+  field = lazy<Boolean>(initializer = local fun <anonymous>(): Boolean {
+    return { // BLOCK
+      val tmp_0: @EnhancedNullability Boolean? = A().get<@FlexibleNullability Boolean?>(key = <get-key>())
+      when {
+        EQEQ(arg0 = tmp_0, arg1 = null) -> false
+        else -> tmp_0
+      }
+    }
+  }
+)
+  get(): Boolean {
+    return #x$delegate.getValue<Boolean>(thisRef = null, property = ::x)
+  }
+
+fun main() {
+  println(message = <get-x>())
+}

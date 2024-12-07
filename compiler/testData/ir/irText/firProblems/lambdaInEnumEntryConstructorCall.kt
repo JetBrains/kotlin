@@ -1,5 +1,6 @@
+// FIR_IDENTICAL
 // WITH_STDLIB
-// KT-50774
+
 class Wrapper(var baseUrl: String)
 
 enum class ConfigurationParameter {

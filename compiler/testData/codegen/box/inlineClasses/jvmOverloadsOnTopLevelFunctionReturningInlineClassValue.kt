@@ -1,9 +1,8 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
-// WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class Str(val s: String)
 
 @JvmOverloads

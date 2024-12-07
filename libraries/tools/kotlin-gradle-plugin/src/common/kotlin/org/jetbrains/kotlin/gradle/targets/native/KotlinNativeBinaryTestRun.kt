@@ -50,8 +50,8 @@ abstract class AbstractKotlinNativeTestRun<T : KotlinNativeTest>(testRunName: St
     final override var executionSource: NativeBinaryTestRunSource
         get() = _executionSource
         private set(value) {
-            executionTask.configure {
-                it.executable(value.binary.linkTask) { value.binary.outputFile }
+            executionTask.configure { task ->
+                task.executable(value.binary.linkTaskProvider.map { it.outputFile.get() })
             }
             _executionSource = value
         }
@@ -75,8 +75,8 @@ open class DefaultSimulatorTestRun(testRunName: String, target: KotlinNativeTarg
     KotlinNativeSimulatorTestRun {
 
     override var deviceId: String
-        get() = executionTask.get().deviceId
+        get() = executionTask.flatMap { it.device }.get()
         set(value) {
-            executionTask.get().deviceId = value
+            executionTask.configure { it.device.set(value) }
         }
 }

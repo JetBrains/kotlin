@@ -14,7 +14,7 @@ import foo.Foo
 
 class Bar() : Foo() {
     fun execute(): String {
-        return { foo() } ()
+        return { foo() }.let { it() }
     }
 }
 

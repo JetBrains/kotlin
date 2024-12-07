@@ -34,7 +34,10 @@ class JsBridgesConstruction(context: JsIrBackendContext) : BridgesConstruction<J
     private val primitiveToLiteralConstructor = context.intrinsics.primitiveToLiteralConstructor
 
     override fun getFunctionSignature(function: IrSimpleFunction) =
-        jsFunctionSignature(function, context)
+        jsFunctionSignature(
+            function,
+            context
+        )
 
     override fun getBridgeOrigin(bridge: IrSimpleFunction): IrDeclarationOrigin =
         when {
@@ -67,7 +70,7 @@ class JsBridgesConstruction(context: JsIrBackendContext) : BridgesConstruction<J
                 type = context.irBuiltIns.intType
             }
 
-            val firstTrailingParameterIndexVar = lazy {
+            val firstTrailingParameterIndexVar = lazy(LazyThreadSafetyMode.NONE) {
                 irTemporary(
                     if (numberOfTrailingParameters == 0)
                         getTotalNumberOfArguments

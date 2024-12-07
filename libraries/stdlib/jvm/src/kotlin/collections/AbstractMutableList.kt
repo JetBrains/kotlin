@@ -13,6 +13,8 @@ import java.util.AbstractList
  * @param E the type of elements contained in the list. The list is invariant in its element type.
  */
 @SinceKotlin("1.1")
+// removeRange, modCount: Kotlin `protected` visibility is different from Java
+@Suppress("NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS")
 public actual abstract class AbstractMutableList<E> protected actual constructor() : MutableList<E>, AbstractList<E>() {
     /**
      * Replaces the element at the specified position in this list with the specified element.

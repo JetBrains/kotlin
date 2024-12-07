@@ -1,0 +1,23 @@
+KaLocalVariableSymbol:
+  annotations: []
+  callableId: null
+  compilerVisibility: Local
+  contextReceivers: []
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isVal: true
+  location: LOCAL
+  modality: FINAL
+  name: a
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Int
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(entryInDestructuringDeclaration.kt)
+  getContainingJvmClassName: null
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null

@@ -1,0 +1,5 @@
+expression: WHILE
+text: while (i < 100) {
+        i++
+    }
+isUsedAsExpression: false

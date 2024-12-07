@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class NoC
 class NoC1 : <!SUPERTYPE_NOT_INITIALIZED!>NoC<!>
 

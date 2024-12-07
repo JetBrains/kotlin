@@ -5,16 +5,7 @@
 
 package org.jetbrains.kotlin.types
 
-enum class EmptyIntersectionTypeKind(val description: String) {
-    MULTIPLE_CLASSES("multiple incompatible classes"),
-    INCOMPATIBLE_SUPERTYPES("incompatible supertypes"),
-    INCOMPATIBLE_TYPE_ARGUMENTS("incompatible type arguments"),
-    SINGLE_FINAL_CLASS("final class and interface")
+enum class EmptyIntersectionTypeKind(val description: String, val isDefinitelyEmpty: Boolean) {
+    MULTIPLE_CLASSES("multiple incompatible classes", isDefinitelyEmpty = true),
+    FINAL_CLASS_AND_INTERFACE("final class and interface", isDefinitelyEmpty = false)
 }
-
-fun EmptyIntersectionTypeKind.isDefinitelyEmpty(): Boolean =
-    this == EmptyIntersectionTypeKind.MULTIPLE_CLASSES
-            || this == EmptyIntersectionTypeKind.INCOMPATIBLE_SUPERTYPES
-            || this == EmptyIntersectionTypeKind.INCOMPATIBLE_TYPE_ARGUMENTS
-
-fun EmptyIntersectionTypeKind.isPossiblyEmpty(): Boolean = this == EmptyIntersectionTypeKind.SINGLE_FINAL_CLASS

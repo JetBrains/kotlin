@@ -9,12 +9,13 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.mpp.TypeParameterSymbolMarker
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
-class FirTypeParameterSymbol : FirClassifierSymbol<FirTypeParameter>() {
+class FirTypeParameterSymbol : FirClassifierSymbol<FirTypeParameter>(), TypeParameterSymbolMarker {
     val name: Name
         get() = fir.name
 
@@ -22,11 +23,14 @@ class FirTypeParameterSymbol : FirClassifierSymbol<FirTypeParameter>() {
 
     override fun toLookupTag(): ConeTypeParameterLookupTag = lookupTag
 
-    override fun toString(): String = "${this::class.simpleName} ${name.asString()}"
+    override fun toString(): String = when {
+        isBound -> "${this::class.simpleName} ${name.asString()}"
+        else -> "${this::class.simpleName} <unbound>"
+    }
 
     val resolvedBounds: List<FirResolvedTypeRef>
         get() {
-            ensureResolved(FirResolvePhase.TYPES)
+            lazyResolveToPhase(FirResolvePhase.TYPES)
             @Suppress("UNCHECKED_CAST")
             return fir.bounds as List<FirResolvedTypeRef>
         }

@@ -1,5 +1,3 @@
-// IGNORE_FIR
-// DONT_TARGET_EXACT_BACKEND: JS
 // ES_MODULES
 // MODULE: lib2
 // FILE: lib-1.mjs

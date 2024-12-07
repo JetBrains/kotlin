@@ -14,13 +14,13 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
-class CommonizeLibcurlTest {
+public class CommonizeLibcurlTest {
 
     @get:Rule
-    val temporaryOutputDirectory = TemporaryFolder()
+    public val temporaryOutputDirectory: TemporaryFolder = TemporaryFolder()
 
     @Test
-    fun commonizeSuccessfully() {
+    public fun commonizeSuccessfully() {
         val libraries = File("testData/libcurl").walkTopDown().filter { it.isFile && it.extension == "klib" }.toSet()
         val commonizer = CliCommonizer(this::class.java.classLoader)
 
@@ -63,7 +63,7 @@ class CommonizeLibcurlTest {
 
 
     @Test
-    fun `commonizeSuccessfully with unsupported targets`() {
+    public fun `commonizeSuccessfully with unsupported targets`() {
         val libraries = File("testData/libcurl").walkTopDown().filter { it.isFile && it.extension == "klib" }.toSet()
         val commonizer = CliCommonizer(this::class.java.classLoader)
 

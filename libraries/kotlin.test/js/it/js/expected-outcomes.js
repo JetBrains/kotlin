@@ -4,6 +4,7 @@ module.exports = {
     'SimpleTest testFooWrong': 'pending',
     'TestTest emptyTest': 'pending',
     'AsyncTest checkAsyncOrder': 'pass',
+    'AsyncTest checkCustomPromise': 'pass',
     'AsyncTest asyncPassing': 'pass',
     'AsyncTest asyncFailing': 'fail',
     'org OrgTest test': 'pass',

@@ -1,0 +1,28 @@
+USED DECLARATIONS:
+
+Declaration: dependency.AnotherClass
+By names: [AnotherClass]
+
+Declaration: dependency.B
+By names: [B]
+
+Declaration: dependency.Bar
+By names: [Bar]
+
+Declaration: dependency.Base
+By names: [Base]
+
+Declaration: dependency.b
+By names: [b]
+
+Declaration: dependency.bar
+By names: [bar]
+
+Declaration: dependency.ext
+By names: [ext]
+
+Declaration: dependency.zoo
+By names: [zoo]
+
+UNRESOLVED NAMES:
+C

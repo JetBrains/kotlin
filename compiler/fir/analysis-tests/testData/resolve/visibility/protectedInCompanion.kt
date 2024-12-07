@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 abstract class A {
     companion object {
         protected val PROTECTED_CONST: String = ""

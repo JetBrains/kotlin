@@ -1,6 +1,0 @@
-KT element: KtSuperTypeCallEntry
-FIR element: FirDelegatedConstructorCallImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-super<R|B|>(Int(1))

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: a.kt
 package boundsWithSubstitutors
     open class A<T>
@@ -20,10 +21,10 @@ package boundsWithSubstitutors
 
   class Pair<A, B>
 
-  abstract class C<T : B<<!UPPER_BOUND_VIOLATED!>Int<!>>, X :  (B<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Char<!>>) -> Pair<B<<!UPPER_BOUND_VIOLATED!>Any<!>>, B<A>>>() : B<<!UPPER_BOUND_VIOLATED!>Any<!>>() { // 2 errors
+  abstract class C<T : B<<!UPPER_BOUND_VIOLATED!>Int<!>>, X :  (B<<!UPPER_BOUND_VIOLATED!>Char<!>>) -> Pair<B<<!UPPER_BOUND_VIOLATED!>Any<!>>, B<A>>>() : B<<!UPPER_BOUND_VIOLATED!>Any<!>>() { // 2 errors
     val a = B<<!UPPER_BOUND_VIOLATED!>Char<!>>() // error
 
-    abstract val x :  (B<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Char<!>>) -> B<<!UPPER_BOUND_VIOLATED!>Any<!>>
+    abstract val x :  (B<<!UPPER_BOUND_VIOLATED!>Char<!>>) -> B<<!UPPER_BOUND_VIOLATED!>Any<!>>
   }
 
 
@@ -34,7 +35,7 @@ fun test() {
     bar<Int>()
     bar<<!UPPER_BOUND_VIOLATED!>Double?<!>>()
     bar<<!UPPER_BOUND_VIOLATED!>Double<!>>()
-    1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>buzz<!><Double>()
+    1.<!INAPPLICABLE_CANDIDATE!>buzz<!><<!UPPER_BOUND_VIOLATED!>Double<!>>()
 }
 
 fun <T : Any> foo() {}

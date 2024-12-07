@@ -1,0 +1,15 @@
+USED DECLARATIONS:
+
+Declaration: KotlinChild.nonStaticFieldFromBase
+By names: [nonStaticFieldFromBase]
+
+Declaration: dependency.Base
+By names: [Base]
+
+Declaration: dependency.Child.STATIC_CONSTANT_FROM_BASE
+By names: [STATIC_CONSTANT_FROM_BASE]
+
+Declaration: dependency.Child.staticFunFromBase
+By names: [staticFunFromBase]
+
+UNRESOLVED NAMES:

@@ -4,4 +4,3 @@ $TEMP_DIR$
 -Xopt-in=kotlin.RequiresOptIn
 -opt-in=kotlin.RequiresOptIn
 -opt-in=org.test.Warning
-

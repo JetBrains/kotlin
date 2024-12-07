@@ -5,31 +5,36 @@
 
 package kotlin.text
 
-import kotlin.native.concurrent.SharedImmutable
+import kotlin.native.internal.escapeAnalysis.Escapes
 import kotlin.native.internal.GCUnsafeCall
+import kotlin.native.internal.escapeAnalysis.PointsTo
 
 /**
  * Returns the index within this string of the first occurrence of the specified character, starting from the specified offset.
  */
 @GCUnsafeCall("Kotlin_String_indexOfChar")
+@Escapes.Nothing
 internal actual external fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int
 
 /**
  * Returns the index within this string of the first occurrence of the specified substring, starting from the specified offset.
  */
 @GCUnsafeCall("Kotlin_String_indexOfString")
+@Escapes.Nothing
 internal actual external fun String.nativeIndexOf(str: String, fromIndex: Int): Int
 
 /**
  * Returns the index within this string of the last occurrence of the specified character.
  */
 @GCUnsafeCall("Kotlin_String_lastIndexOfChar")
+@Escapes.Nothing
 internal actual external fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int
 
 /**
  * Returns the index within this string of the last occurrence of the specified character, starting from the specified offset.
  */
 @GCUnsafeCall("Kotlin_String_lastIndexOfString")
+@Escapes.Nothing
 internal actual external fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int
 
 /**
@@ -68,6 +73,7 @@ public actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boole
 }
 
 @GCUnsafeCall("Kotlin_String_replace")
+@Escapes.Nothing
 private external fun String.replace(oldChar: Char, newChar: Char): String
 
 private fun String.replaceIgnoreCase(oldChar: Char, newChar: Char): String {
@@ -114,13 +120,6 @@ public actual fun String.replaceFirst(oldValue: String, newValue: String, ignore
     val index = indexOf(oldValue, ignoreCase = ignoreCase)
     return if (index < 0) this else this.replaceRange(index, index + oldValue.length, newValue)
 }
-
-/**
- * Returns `true` if this string is empty or consists solely of whitespace characters.
- *
- * @sample samples.text.Strings.stringIsBlank
- */
-public actual fun CharSequence.isBlank(): Boolean = length == 0 || indices.all { this[it].isWhitespace() }
 
 /**
  * Returns the substring of this string starting at the [startIndex] and ending right before the [endIndex].
@@ -185,7 +184,8 @@ public actual fun CharSequence.regionMatches(
  * @param otherOffset the start offset in the other string of the substring to compare.
  * @param length the length of the substring to compare.
  */
-public fun String.regionMatches(
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.regionMatches(
         thisOffset: Int, other: String, otherOffset: Int, length: Int,
         ignoreCase: Boolean = false): Boolean {
     if (length < 0 || thisOffset < 0 || otherOffset < 0
@@ -201,6 +201,7 @@ public fun String.regionMatches(
 
 // Bounds must be checked before calling this method
 @GCUnsafeCall("Kotlin_String_unsafeRangeEquals")
+@Escapes.Nothing
 private external fun String.unsafeRangeEquals(thisOffset: Int, other: String, otherOffset: Int, length: Int): Boolean
 
 // Bounds must be checked before calling this method
@@ -219,7 +220,7 @@ private fun String.unsafeRangeEqualsIgnoreCase(thisOffset: Int, other: String, o
  * Returns a copy of this string converted to upper case using the rules of the default locale.
  */
 @Deprecated("Use uppercase() instead.", ReplaceWith("uppercase()"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 public actual fun String.toUpperCase(): String = uppercaseImpl()
 
 /**
@@ -238,7 +239,7 @@ public actual fun String.uppercase(): String = uppercaseImpl()
  * Returns a copy of this string converted to lower case using the rules of the default locale.
  */
 @Deprecated("Use lowercase() instead.", ReplaceWith("lowercase()"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 public actual fun String.toLowerCase(): String = lowercaseImpl()
 
 /**
@@ -256,10 +257,18 @@ public actual fun String.lowercase(): String = lowercaseImpl()
 /**
  * Returns a [CharArray] containing characters of this string.
  */
-public actual fun String.toCharArray(): CharArray = toCharArray(this, 0, length)
+public actual fun String.toCharArray(): CharArray = toCharArray(this, CharArray(length), 0, 0, length)
 
 @GCUnsafeCall("Kotlin_String_toCharArray")
-private external fun toCharArray(string: String, start: Int, size: Int): CharArray
+@PointsTo(
+        0x000000,
+        0x000000,
+        0x000000,
+        0x000000,
+        0x000000,
+        0x000010,
+) // the return value is destination
+private external fun toCharArray(string: String, destination: CharArray, destinationOffset: Int, start: Int, size: Int): CharArray
 
 /**
  * Returns a copy of this string having its first letter titlecased using the rules of the default locale,
@@ -273,8 +282,7 @@ private external fun toCharArray(string: String, start: Int, size: Int): CharArr
 @Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }"))
 @DeprecatedSinceKotlin(warningSince = "1.5")
 public actual fun String.capitalize(): String {
-    @Suppress("DEPRECATION")
-    return if (isNotEmpty() && this[0].isLowerCase()) substring(0, 1).toUpperCase() + substring(1) else this
+    return if (isNotEmpty() && this[0].isLowerCase()) substring(0, 1).uppercase() + substring(1) else this
 }
 
 /**
@@ -286,8 +294,7 @@ public actual fun String.capitalize(): String {
 @Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { it.lowercase() }"))
 @DeprecatedSinceKotlin(warningSince = "1.5")
 public actual fun String.decapitalize(): String {
-    @Suppress("DEPRECATION")
-    return if (isNotEmpty() && !this[0].isLowerCase()) substring(0, 1).toLowerCase() + substring(1) else this
+    return if (isNotEmpty() && !this[0].isLowerCase()) substring(0, 1).lowercase() + substring(1) else this
 }
 
 /**
@@ -334,7 +341,7 @@ public actual fun String(chars: CharArray): String = chars.concatToString()
 @DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public actual fun String(chars: CharArray, offset: Int, length: Int): String {
     if (offset < 0 || length < 0 || offset + length > chars.size)
-        throw ArrayIndexOutOfBoundsException()
+        throw IndexOutOfBoundsException()
 
     return unsafeStringFromCharArray(chars, offset, length)
 }
@@ -357,21 +364,15 @@ public actual fun CharArray.concatToString(): String = unsafeStringFromCharArray
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = this.size): String {
-    checkBoundsIndexes(startIndex, endIndex, size)
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, size)
     return unsafeStringFromCharArray(this, startIndex, endIndex - startIndex)
 }
 
-internal fun checkBoundsIndexes(startIndex: Int, endIndex: Int, size: Int) {
-    if (startIndex < 0 || endIndex > size) {
-        throw IndexOutOfBoundsException("startIndex: $startIndex, endIndex: $endIndex, size: $size")
-    }
-    if (startIndex > endIndex) {
-        throw IllegalArgumentException("startIndex: $startIndex > endIndex: $endIndex")
-    }
-}
-
 @GCUnsafeCall("Kotlin_String_unsafeStringFromCharArray")
-internal external fun unsafeStringFromCharArray(array: CharArray, start: Int, size: Int) : String
+// The return value may be an empty string, which is statically allocated and immutable;
+// we can treat it as non-escaping
+@Escapes.Nothing
+internal actual external fun unsafeStringFromCharArray(array: CharArray, start: Int, size: Int) : String
 
 /**
  * Returns a [CharArray] containing characters of this string or its substring.
@@ -385,8 +386,35 @@ internal external fun unsafeStringFromCharArray(array: CharArray, start: Int, si
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.length): CharArray {
-    checkBoundsIndexes(startIndex, endIndex, length)
-    return toCharArray(this, startIndex, endIndex - startIndex)
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
+    val rangeSize = endIndex - startIndex
+    return toCharArray(this, CharArray(rangeSize), 0, startIndex, rangeSize)
+}
+
+/**
+ * Copies characters from this string into the [destination] character array and returns that array.
+ *
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the array to copy to.
+ * @param startIndex the start offset (inclusive) of the substring to copy.
+ * @param endIndex the end offset (exclusive) of the substring to copy.
+ *
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this string builder indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
+ *  or when that index is out of the [destination] array indices range.
+ */
+@SinceKotlin("2.0")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.toCharArray(
+        destination: CharArray,
+        destinationOffset: Int = 0,
+        startIndex: Int = 0,
+        endIndex: Int = length
+): CharArray {
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
+    val rangeSize = endIndex - startIndex
+    AbstractList.checkBoundsIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
+    return toCharArray(this, destination, destinationOffset, startIndex, rangeSize)
 }
 
 /**
@@ -411,7 +439,7 @@ public actual fun ByteArray.decodeToString(): String = unsafeStringFromUtf8(0, s
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ByteArray.decodeToString(startIndex: Int = 0, endIndex: Int = this.size, throwOnInvalidSequence: Boolean = false): String {
-    checkBoundsIndexes(startIndex, endIndex, size)
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, size)
     return if (throwOnInvalidSequence)
         unsafeStringFromUtf8OrThrow(startIndex, endIndex - startIndex)
     else
@@ -440,7 +468,7 @@ public actual fun String.encodeToByteArray(): ByteArray = unsafeStringToUtf8(0, 
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.encodeToByteArray(startIndex: Int = 0, endIndex: Int = this.length, throwOnInvalidSequence: Boolean = false): ByteArray {
-    checkBoundsIndexes(startIndex, endIndex, length)
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
     return if (throwOnInvalidSequence)
         unsafeStringToUtf8OrThrow(startIndex, endIndex - startIndex)
     else
@@ -448,15 +476,23 @@ public actual fun String.encodeToByteArray(startIndex: Int = 0, endIndex: Int = 
 }
 
 @GCUnsafeCall("Kotlin_ByteArray_unsafeStringFromUtf8")
+// The return value may be an empty string, which is statically allocated and immutable;
+// we can treat it as non-escaping
+@Escapes.Nothing
 internal external fun ByteArray.unsafeStringFromUtf8(start: Int, size: Int) : String
 
 @GCUnsafeCall("Kotlin_ByteArray_unsafeStringFromUtf8OrThrow")
+// The return value may be an empty string, which is statically allocated and immutable;
+// we can treat it as non-escaping
+@Escapes.Nothing
 internal external fun ByteArray.unsafeStringFromUtf8OrThrow(start: Int, size: Int) : String
 
 @GCUnsafeCall("Kotlin_String_unsafeStringToUtf8")
+@Escapes.Nothing
 internal external fun String.unsafeStringToUtf8(start: Int, size: Int) : ByteArray
 
 @GCUnsafeCall("Kotlin_String_unsafeStringToUtf8OrThrow")
+@Escapes.Nothing
 internal external fun String.unsafeStringToUtf8OrThrow(start: Int, size: Int) : ByteArray
 
 internal fun compareToIgnoreCase(thiz: String, other: String): Int {
@@ -513,7 +549,6 @@ public actual fun CharSequence?.contentEquals(other: CharSequence?, ignoreCase: 
         this.contentEqualsImpl(other)
 }
 
-@SharedImmutable
 private val STRING_CASE_INSENSITIVE_ORDER = Comparator<String> { a, b -> a.compareTo(b, ignoreCase = true) }
 
 public actual val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>

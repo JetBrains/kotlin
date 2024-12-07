@@ -9,21 +9,21 @@
 
 #if KONAN_OBJC_INTEROP
 
-#import <Foundation/NSObject.h>
-#import <Foundation/NSValue.h>
-#import <Foundation/NSString.h>
-#import <Foundation/NSException.h>
-#import <Foundation/NSDecimalNumber.h>
+#import <Foundation/Foundation.h>
 #import <objc/runtime.h>
 #import <objc/objc-exception.h>
 #import <dispatch/dispatch.h>
 
+#import "CallsChecker.hpp"
 #import "ObjCExport.h"
 #import "ObjCExportInit.h"
 #import "ObjCExportPrivate.h"
 #import "Runtime.h"
-#import "Mutex.hpp"
+#import "concurrent/Mutex.hpp"
 #import "Exceptions.h"
+#include "ExternalRCRef.hpp"
+#include "swiftExportRuntime/SwiftExport.hpp"
+#include "StackTrace.hpp"
 
 @interface NSObject (NSObjectPrivateMethods)
 // Implemented for NSObject in libobjc/NSObject.mm
@@ -31,6 +31,10 @@
 @end
 
 static void injectToRuntime();
+
+extern "C" KInt Kotlin_hashCode(KRef str);
+extern "C" KBoolean Kotlin_equals(KRef lhs, KRef rhs);
+extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
 
 // Note: `KotlinBase`'s `toKotlin` and `_tryRetain` methods will terminate if
 // called with non-frozen object on a wrong worker. `retain` will also terminate
@@ -42,7 +46,11 @@ static void injectToRuntime();
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_OBJ(refHolder.ref<ErrorPolicy::kTerminate>());
+  if (permanent) {
+    RETURN_OBJ(refHolder.refPermanent());
+  } else {
+    RETURN_OBJ(refHolder.ref());
+  }
 }
 
 +(void)load {
@@ -54,10 +62,20 @@ static void injectToRuntime();
     injectToRuntime(); // In case `initialize` is called before `load` (see e.g. https://youtrack.jetbrains.com/issue/KT-50982).
     Kotlin_ObjCExport_initialize();
   }
+  if (kotlin::compiler::swiftExport()) {
+      // Swift Export generates types that don't need to be additionally initialized.
+      return;
+  }
   Kotlin_ObjCExport_initializeClass(self);
 }
 
 +(instancetype)allocWithZone:(NSZone*)zone {
+  if (kotlin::compiler::swiftExport()) {
+      // Swift Export types create Kotlin object themselves and do not dynamically associate
+      // Swift type info with Kotlin type info.
+      return [super allocWithZone:zone];
+  }
+
   Kotlin_initRuntimeIfNeeded();
   kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
 
@@ -84,27 +102,27 @@ static void injectToRuntime();
 }
 
 +(instancetype)createRetainedWrapper:(ObjHeader*)obj {
+  RuntimeAssert(!kotlin::compiler::swiftExport(), "Must not be used in Swift Export");
+
   kotlin::AssertThreadState(kotlin::ThreadState::kRunnable);
 
   KotlinBase* candidate = [super allocWithZone:nil];
   // TODO: should we call NSObject.init ?
-  candidate->refHolder.initAndAddRef(obj);
-  candidate->permanent = obj->permanent();
+  bool permanent = obj->permanent();
+  candidate->permanent = permanent;
 
-  if (!obj->permanent()) { // TODO: permanent objects should probably be supported as custom types.
-    if (!isShareable(obj)) {
-      SetAssociatedObject(obj, candidate);
-    } else {
-      id old = AtomicCompareAndSwapAssociatedObject(obj, nullptr, candidate);
-      if (old != nullptr) {
-        {
-          kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
-          candidate->refHolder.releaseRef();
-          [candidate releaseAsAssociatedObject:ReleaseMode::kDetachAndRelease];
-        }
-        return objc_retain(old);
+  if (!permanent) { // TODO: permanent objects should probably be supported as custom types.
+    candidate->refHolder.initAndAddRef(obj);
+    if (id old = AtomicCompareAndSwapAssociatedObject(obj, nullptr, candidate)) {
+      {
+        kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+        candidate->refHolder.releaseRef();
+        [candidate releaseAsAssociatedObject];
       }
+      return objc_retain(old);
     }
+  } else {
+    candidate->refHolder.initForPermanentObject(obj);
   }
 
   return candidate;
@@ -114,7 +132,7 @@ static void injectToRuntime();
   if (permanent) {
     [super retain];
   } else {
-    refHolder.addRef<ErrorPolicy::kTerminate>();
+    refHolder.addRef();
   }
   return self;
 }
@@ -123,7 +141,7 @@ static void injectToRuntime();
   if (permanent) {
     return [super _tryRetain];
   } else {
-    return refHolder.tryAddRef<ErrorPolicy::kTerminate>();
+    return refHolder.tryAddRef();
   }
 }
 
@@ -135,36 +153,121 @@ static void injectToRuntime();
   }
 }
 
--(void)releaseAsAssociatedObject:(ReleaseMode)mode {
-  // This function is called by the GC. It made a decision to reclaim Kotlin object, and runs
-  // deallocation hooks at the moment, including deallocation of the "associated object" ([self])
-  // using the [super release] call below.
+-(void)releaseAsAssociatedObject {
+  RuntimeAssert(!permanent, "Cannot be called on permanent objects");
+  // No need for any special handling. Weak reference handling machinery
+  // has already cleaned up the reference to Kotlin object.
+  [super release];
+}
 
-  // The deallocation involves running [self dealloc] which can contain arbitrary code.
-  // In particular, this code can retain and release [self]. Obj-C and Swift runtimes handle this
-  // gracefully (unless the object gets accessed after the deallocation of course), but Kotlin doesn't.
-  // Generally retaining and releasing Kotlin object that is being deallocated would lead to
-  // use-after-dispose and double-dispose problems (with unpredictable consequences) or to an assertion failure.
-  // To workaround this, detach the back ref from the Kotlin object:
-  if (ReleaseModeHasDetach(mode)) {
-    refHolder.detach();
-  } else {
-    // With Mark&Sweep this object should already have been detached earlier.
-    refHolder.assertDetached();
+-(void)dealloc {
+  if (!permanent) {
+    refHolder.dealloc();
   }
-
-  // So retain/release/etc. on [self] won't affect the Kotlin object, and an attempt to get
-  // the reference to it (e.g. when calling Kotlin method on [self]) would crash.
-  // The latter is generally ok because can be triggered only by user-defined Swift/Obj-C
-  // subclasses of Kotlin classes.
-  if (ReleaseModeHasRelease(mode)) {
-    [super release];
-  }
+  [super dealloc];
 }
 
 - (instancetype)copyWithZone:(NSZone *)zone {
   // TODO: write documentation.
   return [self retain];
+}
+
+- (instancetype)initWithExternalRCRef:(uintptr_t)ref {
+    RuntimeAssert(kotlin::compiler::swiftExport(), "Must be used in Swift Export only");
+    kotlin::AssertThreadState(kotlin::ThreadState::kNative);
+
+    Class bestFittingClass =
+            kotlin::swiftExportRuntime::bestFittingObjCClassFor(kotlin::mm::externalRCRefType(reinterpret_cast<void*>(ref)));
+    if ([self class] != bestFittingClass) {
+        if ([[self class] isSubclassOfClass:bestFittingClass]) {
+            konan::consoleErrorf(
+                    "Inheritance from Kotlin exported classes is not supported: %s inherits from %s\n", class_getName([self class]),
+                    class_getName(bestFittingClass));
+            kotlin::PrintStackTraceStderr();
+            std::abort();
+        }
+        RuntimeAssert(
+                [bestFittingClass isSubclassOfClass:[self class]], "Best-fitting class is %s which is not a subclass of self (%s)",
+                class_getName(bestFittingClass), class_getName([self class]));
+        // Rerun the entire initializer, but with the best-fitting class now.
+        return [[bestFittingClass alloc] initWithExternalRCRef:ref];
+    }
+
+    permanent = refHolder.initWithExternalRCRef(reinterpret_cast<void*>(ref));
+    if (permanent) {
+        // Cannot attach associated objects to permanent objects.
+        return self;
+    }
+
+    id newSelf = nil;
+    {
+        // TODO: Make it okay to get/replace associated objects w/o runnable state.
+        kotlin::CalledFromNativeGuard guard;
+        // `ref` holds a strong reference to obj, no need to place obj onto a stack.
+        KRef obj = refHolder.ref();
+        newSelf = AtomicCompareAndSwapAssociatedObject(obj, nullptr, self);
+    }
+
+    if (newSelf == nil) {
+        // No previous associated object was set, `self` is the associated object.
+        return self;
+    }
+
+    RuntimeAssert(
+            [[newSelf class] isSubclassOfClass:[self class]],
+            "During initialization of %p (%s) for Kotlin object %p trying to replace self with %p (%s) that is not a subclass", self,
+            class_getName([self class]), refHolder.ref(), newSelf, class_getName([newSelf class]));
+
+    KotlinBase* retiredSelf = self; // old `self`
+    self = [newSelf retain]; // new `self`, retained.
+
+    // Fully release old `self`:
+    [retiredSelf release]; // decrement SpecialRef refcount,
+    [retiredSelf releaseAsAssociatedObject]; // and decrement NSObject refcount.
+
+    // Return new `self`.
+    return self;
+}
+
+- (uintptr_t)externalRCRef {
+    return reinterpret_cast<uintptr_t>(refHolder.externalRCRef(permanent));
+}
+
+- (NSString *)description {
+    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
+    ObjHolder h1;
+    ObjHolder h2;
+    return Kotlin_Interop_CreateNSStringFromKString(Kotlin_toString([self toKotlin:h1.slot()], h2.slot()));
+}
+
+- (NSUInteger)hash {
+    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
+    ObjHolder holder;
+    return (NSUInteger)Kotlin_hashCode([self toKotlin:holder.slot()]);
+}
+
+- (BOOL)isEqual:(id)other {
+    if (self == other) {
+        return YES;
+    }
+
+    if (other == nil) {
+        return NO;
+    }
+
+    // All `NSObject`'s, `__SwiftObject`'s and `NSProxy`-ies wrapping them should respond well to `toKotlin:`.
+    // However, other system- or user- defined root classes may not.
+    // But, at the very least, we expect them to conform to NSObject protocol. There's no test for that.
+    if (![other respondsToSelector:Kotlin_ObjCExport_toKotlinSelector]) {
+        return NO;
+    }
+
+    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
+    ObjHolder lhsHolder;
+    ObjHolder rhsHolder;
+    KRef lhs = [self toKotlin:lhsHolder.slot()];
+    KRef rhs = [other toKotlin:rhsHolder.slot()];
+    return Kotlin_equals(lhs, rhs);
 }
 
 @end
@@ -177,9 +280,7 @@ static void injectToRuntime();
   RETURN_RESULT_OF(Kotlin_ObjCExport_convertUnmappedObjCObject, self);
 }
 
--(void)releaseAsAssociatedObject:(ReleaseMode)mode {
-  if (!ReleaseModeHasRelease(mode))
-    return;
+-(void)releaseAsAssociatedObject {
   objc_release(self);
 }
 @end
@@ -215,22 +316,36 @@ OBJ_GETTER(Kotlin_boxDouble, KDouble value);
 -(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
   const char* type = self.objCType;
 
-  // TODO: the code below makes some assumption on char, short, int and long sizes.
+  {
+    // Extracting known primitive numbers and boxing them should be fast enough.
+    kotlin::CallsCheckerIgnoreGuard guard;
 
-  switch (type[0]) {
-    case 'c': RETURN_RESULT_OF(Kotlin_boxByte, self.charValue);
-    case 's': RETURN_RESULT_OF(Kotlin_boxShort, self.shortValue);
-    case 'i': RETURN_RESULT_OF(Kotlin_boxInt, self.intValue);
-    case 'q': RETURN_RESULT_OF(Kotlin_boxLong, self.longLongValue);
-    case 'C': RETURN_RESULT_OF(Kotlin_boxUByte, self.unsignedCharValue);
-    case 'S': RETURN_RESULT_OF(Kotlin_boxUShort, self.unsignedShortValue);
-    case 'I': RETURN_RESULT_OF(Kotlin_boxUInt, self.unsignedIntValue);
-    case 'Q': RETURN_RESULT_OF(Kotlin_boxULong, self.unsignedLongLongValue);
-    case 'f': RETURN_RESULT_OF(Kotlin_boxFloat, self.floatValue);
-    case 'd': RETURN_RESULT_OF(Kotlin_boxDouble, self.doubleValue);
-
-    default:  RETURN_RESULT_OF(Kotlin_ObjCExport_convertUnmappedObjCObject, self);
+    // TODO: the code below makes some assumption on char, short, int and long sizes.
+    switch (type[0]) {
+      case 'c': RETURN_RESULT_OF(Kotlin_boxByte, self.charValue);
+      case 's': RETURN_RESULT_OF(Kotlin_boxShort, self.shortValue);
+      case 'i': RETURN_RESULT_OF(Kotlin_boxInt, self.intValue);
+      case 'l': if constexpr (sizeof(long) == 8) {
+                  RETURN_RESULT_OF(Kotlin_boxLong, self.longLongValue);
+                } else {
+                  RETURN_RESULT_OF(Kotlin_boxInt, self.intValue);
+                }
+      case 'q': RETURN_RESULT_OF(Kotlin_boxLong, self.longLongValue);
+      case 'C': RETURN_RESULT_OF(Kotlin_boxUByte, self.unsignedCharValue);
+      case 'S': RETURN_RESULT_OF(Kotlin_boxUShort, self.unsignedShortValue);
+      case 'I': RETURN_RESULT_OF(Kotlin_boxUInt, self.unsignedIntValue);
+      case 'L': if constexpr (sizeof(long) == 8) {
+                  RETURN_RESULT_OF(Kotlin_boxULong, self.unsignedLongLongValue);
+                } else {
+                  RETURN_RESULT_OF(Kotlin_boxUInt, self.unsignedIntValue);
+                }
+      case 'Q': RETURN_RESULT_OF(Kotlin_boxULong, self.unsignedLongLongValue);
+      case 'f': RETURN_RESULT_OF(Kotlin_boxFloat, self.floatValue);
+      case 'd': RETURN_RESULT_OF(Kotlin_boxDouble, self.doubleValue);
+    }
   }
+
+  RETURN_RESULT_OF(Kotlin_ObjCExport_convertUnmappedObjCObject, self);
 }
 @end
 
@@ -252,7 +367,7 @@ static void injectToRuntimeImpl() {
   Kotlin_ObjCExport_toKotlinSelector = @selector(toKotlin:);
 
   RuntimeCheck(Kotlin_ObjCExport_releaseAsAssociatedObjectSelector == nullptr, errorMessage);
-  Kotlin_ObjCExport_releaseAsAssociatedObjectSelector = @selector(releaseAsAssociatedObject:);
+  Kotlin_ObjCExport_releaseAsAssociatedObjectSelector = @selector(releaseAsAssociatedObject);
 }
 
 static void injectToRuntime() {

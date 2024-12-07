@@ -1,0 +1,1 @@
+val foo: (String) -> (Boolean) -> Unit = null!!

@@ -11,14 +11,12 @@ import kotlinx.cinterop.memScoped
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
-import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
-import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
+import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.isNothing
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.isSuspend
-import org.jetbrains.kotlin.ir.util.isThrowable
+import org.jetbrains.kotlin.ir.util.*
 
 /**
  * Add attributes to LLVM function declaration and its invocation.
@@ -107,6 +105,38 @@ private fun addDeclarationAttributesAtIndex(context: LLVMContextRef, function: L
     }
 }
 
+internal fun ContextUtils.getLlvmFunctionReturnType(function: IrSimpleFunction): LlvmRetType {
+    val returnType = when {
+        function.isSuspend -> error("Suspend functions should be lowered out at this point, but ${function.render()} is still here")
+        function.returnType.isVoidAsReturnType() -> LlvmRetType(llvm.voidType, isObjectType = false)
+        else -> LlvmRetType(
+                function.returnType.toLLVMType(llvm),
+                argumentAbiInfo.defaultParameterAttributesForIrType(function.returnType),
+                isObjectType = function.returnType.binaryTypeIsReference()
+        )
+    }
+    return returnType
+}
+
+internal fun LlvmFunctionSignature(irFunction: IrSimpleFunction, contextUtils: ContextUtils): LlvmFunctionSignature {
+    val returnType = contextUtils.getLlvmFunctionReturnType(irFunction)
+    val parameterTypes = ArrayList(irFunction.parameters.map {
+        LlvmParamType(it.type.toLLVMType(contextUtils.llvm), contextUtils.argumentAbiInfo.defaultParameterAttributesForIrType(it.type))
+    })
+
+    require(!irFunction.isSuspend) { "Suspend functions should be lowered out at this point" }
+
+    if (returnType.isObjectType)
+        parameterTypes.add(LlvmParamType(contextUtils.kObjHeaderPtrPtr))
+
+    return LlvmFunctionSignature(
+            returnType = returnType,
+            parameterTypes = parameterTypes,
+            functionAttributes = inferFunctionAttributes(contextUtils, irFunction),
+            isVararg = false,
+    )
+}
+
 /**
  * LLVM function's signature, enriched with attributes.
  */
@@ -117,12 +147,7 @@ internal open class LlvmFunctionSignature(
         val functionAttributes: List<LlvmFunctionAttribute> = emptyList(),
 ) : LlvmFunctionAttributeProvider {
 
-    constructor(irFunction: IrFunction, contextUtils: ContextUtils) : this(
-            returnType = contextUtils.getLlvmFunctionReturnType(irFunction),
-            parameterTypes = contextUtils.getLlvmFunctionParameterTypes(irFunction),
-            functionAttributes = inferFunctionAttributes(contextUtils, irFunction),
-            isVararg = false,
-    )
+    val returnsObjectType: Boolean get() = returnType.isObjectType
 
     val llvmFunctionType by lazy {
         functionType(returnType.llvmType, isVararg, parameterTypes.map { it.llvmType })
@@ -148,50 +173,64 @@ internal open class LlvmFunctionSignature(
     }
 }
 
+sealed class FunctionOrigin {
+    object FromNativeRuntime : FunctionOrigin()
+
+    class OwnedBy(val declaration: IrDeclaration) : FunctionOrigin()
+}
+
+
 /**
  * Prototype of a LLVM function that is not tied to a specific LLVM module.
  */
 internal class LlvmFunctionProto(
-        val name: String,
-        returnType: LlvmRetType,
-        parameterTypes: List<LlvmParamType> = emptyList(),
-        functionAttributes: List<LlvmFunctionAttribute> = emptyList(),
-        val origin: CompiledKlibModuleOrigin,
-        isVararg: Boolean = false,
-        val independent: Boolean = false,
-) : LlvmFunctionSignature(returnType, parameterTypes, isVararg, functionAttributes) {
-    constructor(
-            name: String,
-            signature: LlvmFunctionSignature,
-            origin: CompiledKlibModuleOrigin,
-            independent: Boolean = false,
-    ) : this(name, signature.returnType, signature.parameterTypes, signature.functionAttributes, origin, signature.isVararg, independent)
-
-    constructor(irFunction: IrFunction, symbolName: String, contextUtils: ContextUtils) : this(
+      val name: String,
+      val signature: LlvmFunctionSignature,
+      val origin: FunctionOrigin?,
+      val linkage: LLVMLinkage,
+      val independent: Boolean = false,
+) {
+    constructor(irFunction: IrSimpleFunction, symbolName: String, contextUtils: ContextUtils, linkage: LLVMLinkage) : this(
             name = symbolName,
-            returnType = contextUtils.getLlvmFunctionReturnType(irFunction),
-            parameterTypes = contextUtils.getLlvmFunctionParameterTypes(irFunction),
-            functionAttributes = inferFunctionAttributes(contextUtils, irFunction),
-            origin = irFunction.llvmSymbolOrigin,
+            signature = LlvmFunctionSignature(irFunction, contextUtils),
+            origin = FunctionOrigin.OwnedBy(irFunction),
+            linkage = linkage,
             independent = irFunction.hasAnnotation(RuntimeNames.independent)
     )
+
+    fun createLlvmFunction(context: Context, llvmModule: LLVMModuleRef): LlvmCallable {
+        val function = LLVMAddFunction(llvmModule, name, signature.llvmFunctionType)!!
+        addDefaultLlvmFunctionAttributes(context, function)
+        addTargetCpuAndFeaturesAttributes(context, function)
+        signature.addFunctionAttributes(function)
+        LLVMSetLinkage(function, linkage)
+        return LlvmCallable(function, signature)
+    }
 }
 
-private fun mustNotInline(context: Context, irFunction: IrFunction): Boolean {
+internal fun LlvmFunctionSignature.toProto(name: String, origin: FunctionOrigin?, linkage: LLVMLinkage, independent: Boolean = false) =
+        LlvmFunctionProto(name, this, origin, linkage, independent)
+
+
+
+private fun mustNotInline(context: Context, irFunction: IrSimpleFunction): Boolean {
     if (context.shouldContainLocationDebugInfo()) {
-        if (irFunction is IrConstructor && irFunction.isPrimary && irFunction.returnType.isThrowable()) {
+        if (irFunction.originalConstructor?.let { it.isPrimary && it.returnType.isThrowable() } == true) {
             // To simplify skipping this constructor when scanning call stack in Kotlin_getCurrentStackTrace.
             return true
         }
+    }
+    if (irFunction.symbol == context.ir.symbols.entryPoint) {
+        return true
     }
 
     return false
 }
 
-private fun inferFunctionAttributes(contextUtils: ContextUtils, irFunction: IrFunction): List<LlvmFunctionAttribute> =
+private fun inferFunctionAttributes(contextUtils: ContextUtils, irFunction: IrSimpleFunction): List<LlvmFunctionAttribute> =
         mutableListOf<LlvmFunctionAttribute>().apply {
-            // suspend function can return value in case of COROUTINE_SUSPENDED.
-            if (irFunction.returnType.isNothing() && !irFunction.isSuspend) {
+            if (irFunction.returnType.isNothing()) {
+                require(!irFunction.isSuspend) { "Suspend functions should be lowered out at this point"}
                 add(LlvmFunctionAttribute.NoReturn)
             }
             if (mustNotInline(contextUtils.context, irFunction)) {

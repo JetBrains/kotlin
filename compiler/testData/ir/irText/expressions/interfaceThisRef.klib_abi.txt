@@ -1,0 +1,10 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract interface /IFoo { // /IFoo|null[0]
+    open fun bar() // /IFoo.bar|bar(){}[0]
+    abstract fun foo() // /IFoo.foo|foo(){}[0]
+}

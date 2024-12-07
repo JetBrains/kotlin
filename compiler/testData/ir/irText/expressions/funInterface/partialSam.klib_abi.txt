@@ -1,0 +1,18 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract fun interface <#A: kotlin/Any?, #B: kotlin/Any?> /Fn { // /Fn|null[0]
+    abstract fun run(kotlin/String, kotlin/Int, #A): #B // /Fn.run|run(kotlin.String;kotlin.Int;1:0){}[0]
+}
+final class /J { // /J|null[0]
+    constructor <init>() // /J.<init>|<init>(){}[0]
+    final fun runConversion(/Fn<kotlin/String, kotlin/Int>, /Fn<kotlin/Int, kotlin/String>): kotlin/Int // /J.runConversion|runConversion(Fn<kotlin.String,kotlin.Int>;Fn<kotlin.Int,kotlin.String>){}[0]
+}
+final val /fis // /fis|{}fis[0]
+    final fun <get-fis>(): /Fn<kotlin/Int, kotlin/String> // /fis.<get-fis>|<get-fis>(){}[0]
+final val /fsi // /fsi|{}fsi[0]
+    final fun <get-fsi>(): /Fn<kotlin/String, kotlin/Int> // /fsi.<get-fsi>|<get-fsi>(){}[0]
+final fun /test(/J) // /test|test(J){}[0]

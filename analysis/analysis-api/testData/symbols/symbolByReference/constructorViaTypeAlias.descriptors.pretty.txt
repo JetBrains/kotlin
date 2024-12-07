@@ -1,1 +1,0 @@
-constructor(c: (kotlin.collections.MutableCollection<out E!>..kotlin.collections.Collection<E!>?))

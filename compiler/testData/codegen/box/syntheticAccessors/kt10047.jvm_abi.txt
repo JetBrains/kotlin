@@ -1,0 +1,9 @@
+MODULE main
+	CLASS test/O2dScriptAction.class
+		CLASS METADATA
+			PROPERTY getOwner()Ltest/Actor;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: T#0?
+					K2
+						value: T#0?

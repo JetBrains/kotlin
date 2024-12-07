@@ -1,0 +1,3 @@
+KtNameReferenceExpression(86,89): 'foo'
+  KtSimpleNameReference:
+    (in ROOT) fun <T : ERROR_TYPE(Symbol not found for NonExistent)> foo(x: kotlin.Int): T

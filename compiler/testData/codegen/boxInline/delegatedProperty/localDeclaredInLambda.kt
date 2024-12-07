@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_MULTI_MODULE: JVM, JVM_MULTI_MODULE_IR_AGAINST_OLD
 // FILE: test.kt
 package test
 
@@ -10,7 +9,7 @@ object C {
     inline fun inlineFun() = {
         val O by "K"
         O
-    }()
+    }.let { it() }
 }
 
 // FILE: box.kt

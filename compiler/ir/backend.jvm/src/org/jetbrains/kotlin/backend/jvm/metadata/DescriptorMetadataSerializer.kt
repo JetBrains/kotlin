@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.backend.jvm.metadata
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.localDelegatedProperties
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.createFreeFakeLambdaDescriptor
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
@@ -31,30 +31,34 @@ class DescriptorMetadataSerializer(
     private val serializationBindings: JvmSerializationBindings,
     parent: MetadataSerializer?
 ) : MetadataSerializer {
-    private val serializerExtension = JvmSerializerExtension(serializationBindings, context.state, context.typeMapper)
-    private val serializer: DescriptorSerializer? =
+    private val serializerExtension = JvmSerializerExtension(serializationBindings, context.state, context.defaultTypeMapper)
+    private val serializer: DescriptorSerializer? = run {
+        val languageVersionSettings = context.config.languageVersionSettings
         when (val metadata = irClass.metadata) {
             is DescriptorMetadataSource.Class -> DescriptorSerializer.create(
-                metadata.descriptor, serializerExtension, (parent as? DescriptorMetadataSerializer)?.serializer, context.state.project
+                metadata.descriptor, serializerExtension, (parent as? DescriptorMetadataSerializer)?.serializer,
+                languageVersionSettings, context.state.project,
             )
             is DescriptorMetadataSource.Script -> DescriptorSerializer.create(
-                metadata.descriptor, serializerExtension, (parent as? DescriptorMetadataSerializer)?.serializer, context.state.project
+                metadata.descriptor, serializerExtension, (parent as? DescriptorMetadataSerializer)?.serializer,
+                languageVersionSettings, context.state.project,
             )
-            is DescriptorMetadataSource.File -> DescriptorSerializer.createTopLevel(serializerExtension, context.state.project)
-            is DescriptorMetadataSource.Function -> DescriptorSerializer.createForLambda(serializerExtension)
+            is DescriptorMetadataSource.File -> DescriptorSerializer.createTopLevel(
+                serializerExtension, languageVersionSettings,
+                context.state.project
+            )
+            is DescriptorMetadataSource.Function -> DescriptorSerializer.createForLambda(serializerExtension, languageVersionSettings)
             else -> null
         }
+    }
 
     override fun serialize(metadata: MetadataSource): Pair<MessageLite, JvmStringTable>? {
-        val localDelegatedProperties = context.localDelegatedProperties[irClass.attributeOwnerId]
+        val localDelegatedProperties = irClass.localDelegatedProperties
         if (localDelegatedProperties != null && localDelegatedProperties.isNotEmpty()) {
-            context.state.bindingTrace.record(
-                CodegenBinding.DELEGATED_PROPERTIES_WITH_METADATA,
+            context.state.localDelegatedProperties.put(
                 // key for local delegated properties metadata in interfaces depends on jvmDefaultMode
-                if (irClass.isInterface && !context.state.jvmDefaultMode.forAllMethodsWithBody) context.typeMapper.mapClass(
-                    context.cachedDeclarations.getDefaultImplsClass(
-                        irClass
-                    )
+                if (irClass.isInterface && !context.config.jvmDefaultMode.isEnabled) context.defaultTypeMapper.mapClass(
+                    context.cachedDeclarations.getDefaultImplsClass(irClass)
                 ) else type,
                 localDelegatedProperties.mapNotNull { (it.owner.metadata as? DescriptorMetadataSource.LocalDelegatedProperty)?.descriptor }
             )
@@ -63,7 +67,7 @@ class DescriptorMetadataSerializer(
             is DescriptorMetadataSource.Class -> serializer!!.classProto(metadata.descriptor).build()
             is DescriptorMetadataSource.Script -> serializer!!.classProto(metadata.descriptor).build()
             is DescriptorMetadataSource.File ->
-                serializer!!.packagePartProto(irClass.getPackageFragment().fqName, metadata.descriptors).apply {
+                serializer!!.packagePartProto(irClass.getPackageFragment().packageFqName, metadata.descriptors).apply {
                     serializerExtension.serializeJvmPackage(this, type)
                 }.build()
             is DescriptorMetadataSource.Function -> {

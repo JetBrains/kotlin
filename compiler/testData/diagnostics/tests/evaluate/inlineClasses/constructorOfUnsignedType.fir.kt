@@ -1,4 +1,6 @@
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses -ApproximateIntegerLiteralTypesInReceiverPosition
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +InlineClasses
+// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 // SKIP_JAVAC
 // ALLOW_KOTLIN_PACKAGE
 

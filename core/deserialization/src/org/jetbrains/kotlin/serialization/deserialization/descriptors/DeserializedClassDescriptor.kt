@@ -52,7 +52,17 @@ class DeserializedClassDescriptor(
         VersionRequirementTable.create(classProto.versionRequirementTable), metadataVersion
     )
 
-    private val staticScope = if (kind == ClassKind.ENUM_CLASS) StaticScopeForKotlinEnum(c.storageManager, this) else MemberScope.Empty
+    val hasEnumEntriesMetadataFlag: Boolean = Flags.HAS_ENUM_ENTRIES.get(classProto.flags)
+
+    private val staticScope =
+        if (kind == ClassKind.ENUM_CLASS) {
+            val enumEntriesCanBeUsed = hasEnumEntriesMetadataFlag ||
+                    c.components.enumEntriesDeserializationSupport.canSynthesizeEnumEntries() == true
+            StaticScopeForKotlinEnum(c.storageManager, this, enumEntriesCanBeUsed)
+        } else {
+            MemberScope.Empty
+        }
+
     private val typeConstructor = DeserializedClassTypeConstructor()
 
     private val memberScopeHolder =
@@ -150,9 +160,14 @@ class DeserializedClassDescriptor(
         val contextReceiverType = c.typeDeserializer.type(it)
         ReceiverParameterDescriptorImpl(
             thisAsReceiverParameter,
-            ContextClassReceiver(this, contextReceiverType, null),
+            ContextClassReceiver(
+                this,
+                contextReceiverType,
+                /* customLabelName = */ null/*todo store custom label name in metadata?*/,
+                null
+            ),
             Annotations.EMPTY
-        );
+        )
     }
 
     private fun computeCompanionObjectDescriptor(): ClassDescriptor? {
@@ -186,60 +201,23 @@ class DeserializedClassDescriptor(
     override fun getValueClassRepresentation(): ValueClassRepresentation<SimpleType>? = valueClassRepresentation()
 
     private fun computeValueClassRepresentation(): ValueClassRepresentation<SimpleType>? {
-        val inlineClassRepresentation = computeInlineClassRepresentation()
-        val multiFieldValueClassRepresentation = computeMultiFieldValueClassRepresentation()
-        return when {
-            inlineClassRepresentation != null && multiFieldValueClassRepresentation != null ->
-                throw IllegalArgumentException("Class cannot have both inline class representation and multi field class representation: $this")
-            (isValue || isInline) && inlineClassRepresentation == null && multiFieldValueClassRepresentation == null ->
-                throw IllegalArgumentException("Value class has no value class representation: $this")
-            else -> inlineClassRepresentation ?: multiFieldValueClassRepresentation
-        }
-    }
-
-    private fun computeInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? {
         if (!isInline && !isValue) return null
-        if (isValue &&
-            !classProto.hasInlineClassUnderlyingPropertyName() &&
-            !classProto.hasInlineClassUnderlyingType() &&
-            !classProto.hasInlineClassUnderlyingTypeId() &&
-            classProto.multiFieldValueClassUnderlyingNameCount > 0
-        ) return null
-
-        val propertyName = when {
-            classProto.hasInlineClassUnderlyingPropertyName() ->
-                c.nameResolver.getName(classProto.inlineClassUnderlyingPropertyName)
-            !metadataVersion.isAtLeast(1, 5, 1) -> {
-                // Before 1.5, inline classes did not have underlying property name & type in the metadata.
-                // However, they were experimental, so supposedly this logic can be removed at some point in the future.
-                val constructor = unsubstitutedPrimaryConstructor ?: error("Inline class has no primary constructor: $this")
-                constructor.valueParameters.first().name
-            }
-            else -> error("Inline class has no underlying property name in metadata: $this")
+        classProto.loadValueClassRepresentation(c.nameResolver, c.typeTable, c.typeDeserializer::simpleType, ::getValueClassPropertyType)
+            ?.let { return it }
+        if (!metadataVersion.isAtLeast(1, 5, 1)) {
+            // Before 1.5, inline classes did not have underlying property name & type in the metadata.
+            // However, they were experimental, so supposedly this logic can be removed at some point in the future.
+            val constructor = unsubstitutedPrimaryConstructor ?: error("Inline class has no primary constructor: $this")
+            val propertyName = constructor.valueParameters.first().name
+            val propertyType = getValueClassPropertyType(propertyName) ?: error("Value class has no underlying property: $this")
+            return InlineClassRepresentation(propertyName, propertyType)
         }
-
-        val type = classProto.inlineClassUnderlyingType(c.typeTable)?.let(c.typeDeserializer::simpleType) ?: run {
-            val underlyingProperty = memberScope.getContributedVariables(propertyName, NoLookupLocation.FROM_DESERIALIZATION)
-                .singleOrNull { it.extensionReceiverParameter == null } ?: error("Value class has no underlying property: $this")
-            underlyingProperty.type as SimpleType
-        }
-
-        return InlineClassRepresentation(propertyName, type)
+        return null
     }
 
-    private fun computeMultiFieldValueClassRepresentation(): MultiFieldValueClassRepresentation<SimpleType>? {
-        val names = classProto.multiFieldValueClassUnderlyingNameList.map { c.nameResolver.getName(it) }.takeIf { it.isNotEmpty() } 
-            ?: return null
-        require(isValue) { "Not a value class: $this" }
-        val typeIdCount = classProto.multiFieldValueClassUnderlyingTypeIdCount
-        val typeCount = classProto.multiFieldValueClassUnderlyingTypeCount
-        val types = when (typeIdCount to typeCount) {
-            names.size to 0 -> classProto.multiFieldValueClassUnderlyingTypeIdList.map { c.typeTable[it] }
-            0 to names.size -> classProto.multiFieldValueClassUnderlyingTypeList
-            else -> error("Illegal multi-field value class representation: $this")
-        }.map { c.typeDeserializer.simpleType(it) }
-        return MultiFieldValueClassRepresentation(names zip types)
-    }
+    private fun getValueClassPropertyType(propertyName: Name): SimpleType? =
+        memberScope.getContributedVariables(propertyName, NoLookupLocation.FROM_DESERIALIZATION)
+            .singleOrNull { it.extensionReceiverParameter == null }?.type as SimpleType?
 
     override fun toString() =
         "deserialized ${if (isExpect) "expect " else ""}class $name" // not using descriptor renderer to preserve laziness

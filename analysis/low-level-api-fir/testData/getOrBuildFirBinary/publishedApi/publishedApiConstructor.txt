@@ -1,0 +1,8 @@
+KT element: KtSecondaryConstructor
+KT element text:
+@kotlin.PublishedApi internal constructor() { /* compiled code */ }
+FIR element: FirConstructorImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+@R|kotlin/PublishedApi|() internal [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo, LazyPublishedApiEffectiveVisibilityKey=public] constructor(): R|Foo|

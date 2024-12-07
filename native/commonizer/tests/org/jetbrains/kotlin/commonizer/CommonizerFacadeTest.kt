@@ -135,10 +135,7 @@ class CommonizerFacadeTest {
             val actualMissingModuleNames = mutableSetOf<String>()
 
             actualModuleResults.forEach { moduleResult ->
-                when (moduleResult) {
-                    is ModuleResult.Commonized -> actualCommonizedModuleNames += moduleResult.libraryName
-                    is ModuleResult.Missing -> actualMissingModuleNames += moduleResult.libraryName
-                }
+                actualCommonizedModuleNames += moduleResult.libraryName
             }
 
             assertEquals(expectedCommonizedModuleNames.size + expectedMissingModuleNames.size, actualModuleResults.size)

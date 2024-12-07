@@ -12,6 +12,9 @@ class KtDiagnosticFactoryToRendererMap(val name: String) {
 
     operator fun get(factory: AbstractKtDiagnosticFactory): KtDiagnosticRenderer? = renderersMap[factory]
 
+    val factories: Collection<AbstractKtDiagnosticFactory>
+        get() = renderersMap.keys
+
     fun containsKey(factory: AbstractKtDiagnosticFactory): Boolean {
         return renderersMap.containsKey(factory)
     }
@@ -115,7 +118,12 @@ class KtDiagnosticFactoryToRendererMap(val name: String) {
     private fun KtDiagnosticFactoryForDeprecation<*>.warningMessage(errorMessage: String): String {
         return buildString {
             append(errorMessage)
-            append(". This will become an error")
+            when {
+                errorMessage.endsWith(".") -> append(" ")
+                errorMessage.lastOrNull()?.isWhitespace() == true -> {}
+                else -> append(". ")
+            }
+            append("This will become an error")
             val sinceVersion = deprecatingFeature.sinceVersion
             if (sinceVersion != null) {
                 append(" in Kotlin ")
@@ -123,6 +131,7 @@ class KtDiagnosticFactoryToRendererMap(val name: String) {
             } else {
                 append(" in a future release")
             }
+            append(".")
         }
     }
 }

@@ -1,0 +1,118 @@
+FILE: whenWithGuardEnabled.fir.kt
+    public sealed class BooleanHolder : R|kotlin/Any| {
+        protected constructor(value: R|kotlin/Boolean|): R|BooleanHolder| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val value: R|kotlin/Boolean| = R|<local>/value|
+            public get(): R|kotlin/Boolean|
+
+    }
+    public final object True : R|BooleanHolder| {
+        private constructor(): R|True| {
+            super<R|BooleanHolder|>(Boolean(true))
+        }
+
+    }
+    public final object False : R|BooleanHolder| {
+        private constructor(): R|False| {
+            super<R|BooleanHolder|>(Boolean(false))
+        }
+
+    }
+    public final class StringHolder : R|kotlin/Any| {
+        public constructor(value: R|kotlin/String?|): R|StringHolder| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val value: R|kotlin/String?| = R|<local>/value|
+            public get(): R|kotlin/String?|
+
+    }
+    public final fun SmartCastInGuard(x: R|kotlin/Any|): R|kotlin/Unit| {
+        ^SmartCastInGuard when (R|<local>/x|) {
+            ($subj$ is R|kotlin/String|) ->  {
+                Q|kotlin/Unit|
+            }
+            ($subj$ is R|BooleanHolder|) && R|<local>/x|.R|/BooleanHolder.value| ->  {
+                Q|kotlin/Unit|
+            }
+            ($subj$ is R|StringHolder|) && !=(R|<local>/x|.R|/StringHolder.value|, Null(null)) && CMP(>, R|<local>/x|.R|/StringHolder.value|.R|kotlin/String.length|.R|kotlin/Int.compareTo|(Int(0))) ->  {
+                Q|kotlin/Unit|
+            }
+            (R|<local>/x| is R|kotlin/Boolean|) && R|<local>/x| ->  {
+                Q|kotlin/Unit|
+            }
+            else ->  {
+                Q|kotlin/Unit|
+            }
+        }
+
+    }
+    public final fun GuardWithoutSubject(x: R|kotlin/Any|): R|kotlin/Unit| {
+        ^GuardWithoutSubject when () {
+            (R|<local>/x| is R|kotlin/String|) ->  {
+                Q|kotlin/Unit|
+            }
+            (R|<local>/x| is R|BooleanHolder|) && R|<local>/x|.R|/BooleanHolder.value| ->  {
+                Q|kotlin/Unit|
+            }
+            when () {
+                (R|<local>/x| is R|kotlin/Boolean|) ->  {
+                    Boolean(true)
+                }
+                else ->  {
+                    Boolean(false)
+                }
+            }
+             ->  {
+                Q|kotlin/Unit|
+            }
+            (R|<local>/x| is R|kotlin/Boolean|) ->  {
+                Q|kotlin/Unit|
+            }
+            else ->  {
+                Q|kotlin/Unit|
+            }
+        }
+
+    }
+    public final fun MultipleConditionsNotAllowed(x: R|kotlin/Any|): R|kotlin/Unit| {
+        ^MultipleConditionsNotAllowed when (R|<local>/x|) {
+            ($subj$ is R|kotlin/String|) ->  {
+                Q|kotlin/Unit|
+            }
+            ($subj$ is R|True|) || ($subj$ is R|False|) && R|<local>/x|.R|/BooleanHolder.value| ->  {
+                Q|kotlin/Unit|
+            }
+            else ->  {
+                Q|kotlin/Unit|
+            }
+        }
+
+    }
+    public final fun NonExhaustiveWithGuard(x: R|BooleanHolder|): R|kotlin/Unit| {
+        ^NonExhaustiveWithGuard when (R|<local>/x|) {
+            ($subj$ is R|True|) ->  {
+                Q|kotlin/Unit|
+            }
+            ($subj$ is R|False|) && R|<local>/x|.R|/BooleanHolder.value| ->  {
+                Q|kotlin/Unit|
+            }
+        }
+
+    }
+    public final fun ExhaustiveWithGuard(x: R|BooleanHolder|): R|kotlin/Unit| {
+        ^ExhaustiveWithGuard when (R|<local>/x|) {
+            ($subj$ is R|True|) ->  {
+                Q|kotlin/Unit|
+            }
+            ($subj$ is R|False|) && R|<local>/x|.R|/BooleanHolder.value| ->  {
+                Q|kotlin/Unit|
+            }
+            ($subj$ is R|False|) ->  {
+                Q|kotlin/Unit|
+            }
+        }
+
+    }

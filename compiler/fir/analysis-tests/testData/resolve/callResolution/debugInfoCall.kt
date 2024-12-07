@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface B {
     operator fun invoke(x: Int): String
 }

@@ -31,8 +31,8 @@ fun box(): String {
     if (null in 0..2) return "Fail in null const"
     if (!(null !in 0..2)) return "Fail !in null const"
 
-    if ({ x }() in 0..2) return "Fail in complex"
-    if (!({ x }() !in 0..2)) return "Fail !in complex"
+    if ({ x }.let { it() } in 0..2) return "Fail in complex"
+    if (!({ x }.let { it() } !in 0..2)) return "Fail !in complex"
 
     return "OK"
 }

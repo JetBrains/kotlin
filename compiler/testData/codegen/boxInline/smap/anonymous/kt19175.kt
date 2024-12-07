@@ -1,11 +1,13 @@
+// IGNORE_INLINER: IR
+
 // FILE: 1.kt
 
 
 package test
 abstract class Introspector {
     abstract inner class SchemaRetriever(val transaction: String) {
-        inline fun inSchema(crossinline modifier: (String) -> Unit) =
-                { modifier.invoke(transaction) }()
+        inline fun inSchema(crossinline modifier: (String) -> Unit)
+          { val lambda = { modifier.invoke(transaction) }; lambda() }
     }
 }
 

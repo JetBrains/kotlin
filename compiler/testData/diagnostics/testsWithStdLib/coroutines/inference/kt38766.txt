@@ -2,7 +2,7 @@ package
 
 public inline fun </*0*/ reified T, /*1*/ R> emptyFlow(/*0*/ crossinline transform: (kotlin.Array<T>) -> R): Flow1<R>
 public inline fun </*0*/ reified T, /*1*/ R> emptyFlow(/*0*/ crossinline transform: suspend (kotlin.Array<T>) -> R): Flow1<R>
-@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ T> flow1(/*0*/ @kotlin.BuilderInference block: suspend FlowCollector1<T>.() -> kotlin.Unit): Flow1<T>
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ T> flow1(/*0*/ block: suspend FlowCollector1<T>.() -> kotlin.Unit): Flow1<T>
 public fun </*0*/ T> flowOf1(/*0*/ value: T): Flow1<T>
 
 public interface Flow1</*0*/ out T> {

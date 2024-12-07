@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // Issue: KT-41729
 
 import kotlin.reflect.KProperty
@@ -9,6 +10,6 @@ class Foo {
 fun main(x: Int) {
     val f = Foo()
     val a: Int
-    <!VARIABLE_EXPECTED!>get()<!> = f.<!INAPPLICABLE_CANDIDATE!>getValue<!>(null, ::<!UNSUPPORTED!>x<!>) // no exception after fix
+    <!VARIABLE_EXPECTED!><!UNRESOLVED_REFERENCE!>get<!>()<!> = f.<!CANNOT_INFER_PARAMETER_TYPE!>getValue<!>(null, ::<!UNSUPPORTED!>x<!>) // no exception after fix
     <!UNRESOLVED_REFERENCE!>print<!>(<!UNINITIALIZED_VARIABLE!>a<!>)
 }

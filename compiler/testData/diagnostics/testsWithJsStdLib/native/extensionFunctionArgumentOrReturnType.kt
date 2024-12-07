@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 external fun foo(<!EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION!>f: Int.() -> Int<!>)
 
 external fun bar(<!EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION!>vararg f: Int.() -> Int<!>)

@@ -1,3 +1,4 @@
+// SPLIT_PER_MODULE
 // MODULE: lib
 // FILE: lib.kt
 package lib

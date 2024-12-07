@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: NATIVE
 var result = "Fail"
 
 fun foo(

@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 // WITH_STDLIB
 
 inline class Foo(val a: Any)

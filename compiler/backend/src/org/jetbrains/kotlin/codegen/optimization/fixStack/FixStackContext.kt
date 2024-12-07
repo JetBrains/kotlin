@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.codegen.optimization.fixStack
 
 import com.intellij.util.SmartList
 import com.intellij.util.containers.Stack
+import org.jetbrains.kotlin.codegen.InsnSequence
 import org.jetbrains.kotlin.codegen.inline.isAfterInlineMarker
 import org.jetbrains.kotlin.codegen.inline.isBeforeInlineMarker
-import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.codegen.pseudoInsns.parsePseudoInsnOrNull
 import org.jetbrains.org.objectweb.asm.Opcodes

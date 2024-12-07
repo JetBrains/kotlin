@@ -17,100 +17,136 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.InputChanges
+import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
-import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
-import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
+import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
-import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
+import org.jetbrains.kotlin.gradle.report.BuildReportMode
+import org.jetbrains.kotlin.gradle.tasks.internal.KotlinMultiplatformCommonOptionsCompat
+import org.jetbrains.kotlin.gradle.utils.toPathsArray
 import java.io.File
 import javax.inject.Inject
 
 @CacheableTask
 abstract class KotlinCompileCommon @Inject constructor(
-    override val kotlinOptions: KotlinMultiplatformCommonOptions,
+    override val compilerOptions: KotlinMultiplatformCommonCompilerOptions,
     workerExecutor: WorkerExecutor,
     objectFactory: ObjectFactory
-) : AbstractKotlinCompile<K2MetadataCompilerArguments>(objectFactory),
+) : AbstractKotlinCompile<K2MetadataCompilerArguments>(objectFactory, workerExecutor),
+    KotlinCompilationTask<KotlinMultiplatformCommonCompilerOptions>,
     KotlinCommonCompile {
 
-    override val compilerRunner: Provider<GradleCompilerRunner> =
-        objectFactory.propertyWithConvention(
-            gradleCompileTaskProvider.map {
-                GradleCompilerRunnerWithWorkers(
-                    it,
-                    null,
-                    normalizedKotlinDaemonJvmArguments.orNull,
-                    metrics.get(),
-                    compilerExecutionStrategy.get(),
-                    workerExecutor
-                )
-            }
-        )
+    init {
+        compilerOptions.verbose.convention(logger.isDebugEnabled)
+    }
 
-    override fun createCompilerArgs(): K2MetadataCompilerArguments =
-        K2MetadataCompilerArguments()
+    @Suppress("DEPRECATION")
+    @Deprecated(KOTLIN_OPTIONS_DEPRECATION_MESSAGE)
+    override val kotlinOptions: KotlinMultiplatformCommonOptions = KotlinMultiplatformCommonOptionsCompat(
+        { this },
+        compilerOptions
+    )
 
+    /**
+     * Workaround for those "nasty" plugins that are adding 'freeCompilerArgs' on task execution phase.
+     * With properties api it is not possible to update property value after task configuration is finished.
+     *
+     * Marking it as `@Internal` as anyway on the configuration phase, when Gradle does task inputs snapshot,
+     * this input will always be empty.
+     */
+    @get:Internal
+    internal var executionTimeFreeCompilerArgs: List<String>? = null
+
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated("KTIJ-25227: Necessary override for IDEs < 2023.2", level = DeprecationLevel.ERROR)
     override fun setupCompilerArgs(args: K2MetadataCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        args.apply { fillDefaultValues() }
-        super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
+        @Suppress("DEPRECATION_ERROR")
+        super.setupCompilerArgs(args, defaultsOnly, ignoreClasspathResolutionErrors)
+    }
 
-        args.moduleName = this@KotlinCompileCommon.moduleName.get()
+    override fun createCompilerArguments(context: CreateCompilerArgumentsContext) = context.create<K2MetadataCompilerArguments> {
+        primitive { args ->
+            args.multiPlatform = multiPlatformEnabled.get()
 
-        if (expectActualLinker.get()) {
-            args.expectActualLinker = true
+            args.moduleName = this@KotlinCompileCommon.moduleName.get()
+
+            args.pluginOptions = (pluginOptions.toSingleCompilerPluginOptions() + kotlinPluginData?.orNull?.options)
+                .arguments.toTypedArray()
+
+            if (reportingSettings().buildReportMode == BuildReportMode.VERBOSE) {
+                args.reportPerf = true
+            }
+
+            args.metadataKlib = produceMetadataKlib.get()
+
+            args.destination = destinationDirectory.get().asFile.normalize().absolutePath
+
+            explicitApiMode.orNull?.run { args.explicitApi = toCompilerValue() }
+
+            KotlinCommonCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
+
+            val localExecutionTimeFreeCompilerArgs = executionTimeFreeCompilerArgs
+            if (localExecutionTimeFreeCompilerArgs != null) {
+                args.freeArgs = localExecutionTimeFreeCompilerArgs
+            }
         }
 
-        if (defaultsOnly) return
-
-        val classpathList = libraries.files.filter { it.exists() }.toMutableList()
-
-        with(args) {
-            classpath = classpathList.joinToString(File.pathSeparator)
-            destination = destinationDirectory.get().asFile.canonicalPath
-
-            friendPaths = this@KotlinCompileCommon.friendPaths.files.map { it.absolutePath }.toTypedArray()
-            refinesPaths = refinesMetadataPaths.map { it.absolutePath }.toTypedArray()
+        pluginClasspath { args ->
+            args.pluginClasspaths = runSafe {
+                listOfNotNull(
+                    pluginClasspath, kotlinPluginData?.orNull?.classpath
+                ).reduce(FileCollection::plus).toPathsArray()
+            }
         }
 
-        (kotlinOptions as KotlinMultiplatformCommonOptionsImpl).updateArguments(args)
+        dependencyClasspath { args ->
+            args.classpath = runSafe { libraries.files.filter { it.exists() }.joinToString(File.pathSeparator) }
+            args.friendPaths = runSafe { this@KotlinCompileCommon.friendPaths.files.toPathsArray() }
+            args.refinesPaths = refinesMetadataPaths.toPathsArray()
+        }
+
+        sources { args ->
+            args.freeArgs += sources.asFileTree.map { it.absolutePath }
+            args.commonSources = commonSourceSet.asFileTree.toPathsArray()
+        }
     }
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:IgnoreEmptyDirectories
     @get:InputFiles
+    @get:NormalizeLineEndings
     internal val refinesMetadataPaths: ConfigurableFileCollection = objectFactory.fileCollection()
 
     @get:Internal
-    internal val expectActualLinker = objectFactory.property(Boolean::class.java)
+    internal val produceMetadataKlib = objectFactory.property(Boolean::class.java)
 
     override fun callCompilerAsync(
         args: K2MetadataCompilerArguments,
-        kotlinSources: Set<File>,
         inputChanges: InputChanges,
         taskOutputsBackup: TaskOutputsBackup?
     ) {
-        val messageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
+        val gradlePrintingMessageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
+        val gradleMessageCollector = GradleErrorMessageCollector(logger, gradlePrintingMessageCollector)
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner.get()
         val environment = GradleCompilerEnvironment(
-            defaultCompilerClasspath, messageCollector, outputItemCollector,
+            defaultCompilerClasspath, gradleMessageCollector, outputItemCollector,
             reportingSettings = reportingSettings(),
-            outputFiles = allOutputFiles()
+            outputFiles = allOutputFiles(),
+            compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get()
         )
-        compilerRunner.runMetadataCompilerAsync(
-            kotlinSources.toList(),
-            commonSourceSet.files.toList(),
-            args,
-            environment
-        )
+        compilerRunner.runMetadataCompilerAsync(args, environment)
+        compilerRunner.errorsFiles?.let { gradleMessageCollector.flush(it) }
     }
 }

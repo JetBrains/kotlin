@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-610 Distinguish errors 'unused variable' and 'variable is assigned but never accessed'
 
 package kt610

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-597 Type inference failed
 
 fun <T> Array<T>?.get(i: Int) : T {

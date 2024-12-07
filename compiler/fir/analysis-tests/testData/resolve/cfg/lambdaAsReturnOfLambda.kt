@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: BACKEND
+// DUMP_CFG
 
 val x4: (String) -> Unit = run {
     return@run (lambda@{ foo: String ->

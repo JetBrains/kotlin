@@ -39,7 +39,7 @@ fun FirJavaField.toAccessorBaseName(config: ConeLombokAnnotations.Accessors): St
 fun FirTypeRef.isPrimitiveBoolean(): Boolean {
     return when (this) {
         is FirJavaTypeRef -> (type as? JavaPrimitiveType)?.type == PrimitiveType.BOOLEAN
-        else -> this.coneTypeSafe<ConeKotlinType>()?.lowerBoundIfFlexible()?.isBoolean ?: false
+        else -> this.coneTypeOrNull?.lowerBoundIfFlexible()?.isBoolean ?: false
     }
 }
 
@@ -81,3 +81,5 @@ private fun sameSignature(a: FirFunction, b: FirFunction): Boolean {
             bVararg && aSize >= (bSize - 1) ||
             aSize == bSize
 }
+
+internal inline fun <A, B, C> uncurry(crossinline f: (A, B) -> C): (Pair<A, B>) -> C = { (a, b) -> f(a, b) }

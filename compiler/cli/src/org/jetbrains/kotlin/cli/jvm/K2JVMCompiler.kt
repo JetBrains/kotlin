@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.cli.jvm
@@ -23,34 +12,54 @@ import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
+import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
-import org.jetbrains.kotlin.cli.common.messages.FilteringMessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageUtil
-import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.Companion.VERBOSE
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.common.profiling.ProfilingCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.jvm.compiler.*
-import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.compileModulesUsingFrontendIrAndLightTree
-import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.createProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmCliPipeline
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
-import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
-import org.jetbrains.kotlin.incremental.components.InlineConstTracker
-import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.File
 
 class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
+    override fun shouldRunK2(
+        messageCollector: MessageCollector,
+        arguments: K2JVMCompilerArguments,
+    ): Boolean {
+        val isK2 = super.shouldRunK2(messageCollector, arguments)
+        if (isK2 && kaptIsEnabled(arguments) && !arguments.useK2Kapt) {
+            arguments.languageVersion = LanguageVersion.KOTLIN_1_9.versionString
+            if (arguments.apiVersion?.startsWith("2") == true) {
+                arguments.apiVersion = ApiVersion.KOTLIN_1_9.versionString
+            }
+            arguments.skipMetadataVersionCheck = true
+            arguments.skipPrereleaseCheck = true
+            arguments.allowUnstableDependencies = true
+            return false
+        }
+
+        return isK2
+    }
+
+    override fun doExecutePhased(
+        arguments: K2JVMCompilerArguments,
+        services: Services,
+        basicMessageCollector: MessageCollector,
+    ): ExitCode {
+        return JvmCliPipeline(defaultPerformanceManager).execute(arguments, services, basicMessageCollector)
+    }
 
     override fun doExecute(
         arguments: K2JVMCompilerArguments,
@@ -58,10 +67,9 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         rootDisposable: Disposable,
         paths: KotlinPaths?
     ): ExitCode {
-        val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
-        configuration.putIfNotNull(CLIConfigurationKeys.REPEAT_COMPILE_MODULES, arguments.repeatCompileModules?.toIntOrNull())
-        configuration.put(CLIConfigurationKeys.PHASE_CONFIG, createPhaseConfig(jvmPhases, arguments, messageCollector))
+        configuration.phaseConfig = createPhaseConfig(jvmPhases, arguments, messageCollector)
 
         if (!configuration.configureJdkHome(arguments)) return COMPILATION_ERROR
 
@@ -101,6 +109,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 )
             projectEnvironment.registerExtensionsFromPlugins(configuration)
 
+            if (arguments.useOldBackend) {
+                messageCollector.report(WARNING, "-Xuse-old-backend is no longer supported. Please migrate to the new JVM IR backend")
+            }
+
             if (arguments.script || arguments.expression != null) {
                 val scriptingEvaluator = ScriptEvaluationExtension.getInstances(projectEnvironment.project).find { it.isAccepted(arguments) }
                 if (scriptingEvaluator == null) {
@@ -118,6 +130,12 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             }
         }
 
+        if (arguments.useOldBackend) {
+            val severity = if (isUseOldBackendAllowed()) WARNING else ERROR
+            messageCollector.report(severity, "-Xuse-old-backend is no longer supported. Please migrate to the new JVM IR backend")
+            if (severity == ERROR) return COMPILATION_ERROR
+        }
+
         messageCollector.report(LOGGING, "Configuring the compilation environment")
         try {
             val buildFile = arguments.buildFile?.let { File(it) }
@@ -129,34 +147,22 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             // should be called after configuring jdk home from build file
             configuration.configureJdkClasspathRoots()
 
-            val targetDescription = chunk.map { input -> input.getModuleName() + "-" + input.getModuleType() }.let { names ->
-                names.singleOrNull() ?: names.joinToString()
+            val environment = createCoreEnvironment(
+                rootDisposable, configuration, messageCollector,
+                moduleChunk.targetDescription()
+            ) ?: return COMPILATION_ERROR
+            environment.registerJavacIfNeeded(arguments).let {
+                if (!it) return COMPILATION_ERROR
             }
-            if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR) && arguments.useFirLT /* TODO: consider storing in the configuration instead of using args here directly */) {
-                val projectEnvironment =
-                    createProjectEnvironment(configuration, rootDisposable, EnvironmentConfigFiles.JVM_CONFIG_FILES, messageCollector)
 
-                compileModulesUsingFrontendIrAndLightTree(
-                    projectEnvironment, configuration, messageCollector, buildFile, chunk, targetDescription
-                )
-            } else {
-                val environment = createCoreEnvironment(
-                    rootDisposable, configuration, messageCollector,
-                    targetDescription
-                ) ?: return COMPILATION_ERROR
-                environment.registerJavacIfNeeded(arguments).let {
-                    if (!it) return COMPILATION_ERROR
-                }
+            if (environment.getSourceFiles().isEmpty() && !arguments.allowNoSourceFiles && buildFile == null) {
+                if (arguments.version) return OK
 
-                if (environment.getSourceFiles().isEmpty() && !arguments.allowNoSourceFiles && buildFile == null) {
-                    if (arguments.version) return OK
-
-                    messageCollector.report(ERROR, "No source files")
-                    return COMPILATION_ERROR
-                }
-
-                KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, chunk)
+                messageCollector.report(ERROR, "No source files")
+                return COMPILATION_ERROR
             }
+
+            if (!KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, chunk)) return COMPILATION_ERROR
             return OK
         } catch (e: CompilationException) {
             messageCollector.report(
@@ -181,24 +187,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
     }
 
-    private fun createCoreEnvironment(
-        rootDisposable: Disposable,
-        configuration: CompilerConfiguration,
-        messageCollector: MessageCollector,
-        targetDescription: String
-    ): KotlinCoreEnvironment? {
-        if (messageCollector.hasErrors()) return null
-
-        val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-
-        val sourceFiles = environment.getSourceFiles()
-        configuration[CLIConfigurationKeys.PERF_MANAGER]?.notifyCompilerInitialized(
-            sourceFiles.size, environment.countLinesOfCode(sourceFiles), targetDescription
-        )
-
-        return if (messageCollector.hasErrors()) null else environment
-    }
-
     override fun setupPlatformSpecificArgumentsAndServices(
         configuration: CompilerConfiguration, arguments: K2JVMCompilerArguments, services: Services
     ) {
@@ -211,6 +199,8 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 putIfNotNull(CommonConfigurationKeys.INLINE_CONST_TRACKER, services[InlineConstTracker::class.java])
 
                 putIfNotNull(CommonConfigurationKeys.ENUM_WHEN_TRACKER, services[EnumWhenTracker::class.java])
+
+                putIfNotNull(CommonConfigurationKeys.IMPORT_TRACKER, services[ImportTracker::class.java])
 
                 putIfNotNull(
                     JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS,
@@ -231,19 +221,40 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
     override fun executableScriptFileName(): String = "kotlinc-jvm"
 
-    override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = JvmMetadataVersion(*versionArray)
+    override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = MetadataVersion(*versionArray)
 
-    protected class K2JVMCompilerPerformanceManager : CommonCompilerPerformanceManager("Kotlin to JVM Compiler")
+    class K2JVMCompilerPerformanceManager : CommonCompilerPerformanceManager("Kotlin to JVM Compiler")
 
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            CLITool.doMain(K2JVMCompiler(), args)
+            doMain(K2JVMCompiler(), args)
         }
 
+        fun createCoreEnvironment(
+            rootDisposable: Disposable,
+            configuration: CompilerConfiguration,
+            messageCollector: MessageCollector,
+            targetDescription: String
+        ): KotlinCoreEnvironment? {
+            if (messageCollector.hasErrors()) return null
+
+            val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+
+            val sourceFiles = environment.getSourceFiles()
+            configuration[CLIConfigurationKeys.PERF_MANAGER]?.notifyCompilerInitialized(
+                sourceFiles.size, environment.countLinesOfCode(sourceFiles), targetDescription
+            )
+
+            return if (messageCollector.hasErrors()) null else environment
+        }
+
+        internal fun kaptIsEnabled(arguments: K2JVMCompilerArguments): Boolean {
+            return arguments.pluginOptions?.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") } == true
+        }
     }
 
-    override val defaultPerformanceManager: CommonCompilerPerformanceManager = K2JVMCompilerPerformanceManager()
+    override val defaultPerformanceManager: K2JVMCompilerPerformanceManager = K2JVMCompilerPerformanceManager()
 
     override fun createPerformanceManager(arguments: K2JVMCompilerArguments, services: Services): CommonCompilerPerformanceManager {
         val externalManager = services[CommonCompilerPerformanceManager::class.java]
@@ -251,6 +262,9 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         val argument = arguments.profileCompilerCommand ?: return defaultPerformanceManager
         return ProfilingCompilerPerformanceManager.create(argument)
     }
+
+    private fun isUseOldBackendAllowed(): Boolean =
+        K2JVMCompiler::class.java.classLoader.getResource("META-INF/unsafe-allow-use-old-backend") != null
 }
 
 fun CompilerConfiguration.configureModuleChunk(
@@ -260,7 +274,7 @@ fun CompilerConfiguration.configureModuleChunk(
     val destination = arguments.destination?.let { File(it) }
 
     return if (buildFile != null) {
-        val messageCollector = getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val messageCollector = getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
         fun strongWarning(message: String) {
             messageCollector.report(STRONG_WARNING, message)
@@ -298,5 +312,10 @@ fun CompilerConfiguration.configureModuleChunk(
     }
 }
 
+internal fun ModuleChunk.targetDescription(): String {
+    return modules
+        .map { input -> input.getModuleName() + "-" + input.getModuleType() }
+        .let { names -> names.singleOrNull() ?: names.joinToString() }
+}
 
 fun main(args: Array<String>) = K2JVMCompiler.main(args)

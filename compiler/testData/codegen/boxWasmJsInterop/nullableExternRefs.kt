@@ -19,23 +19,37 @@ fun assertFalse(x: Boolean) {
 
 external interface EI
 
-@JsFun("() => null")
-external fun getNull(): EI?
+fun getNull(): EI? =
+    js("null")
 
-@JsFun("() => undefined")
-external fun getUndefined(): EI?
+fun getUndefined(): EI? =
+    js("undefined")
 
-@JsFun("(ref) => ref === null")
-external fun isJsNull(ref: EI?): Boolean
+// https://youtrack.jetbrains.com/issue/KT-59294/WASM-localStorage-Cannot-read-properties-of-undefined-reading-length
+fun getStringUndefined(): String? =
+    js("undefined")
 
-@JsFun("(ref) => ref === undefined")
-external fun isJsUndefined(ref: EI?): Boolean
+fun isJsNull(ref: EI?): Boolean =
+    js("ref === null")
 
-@JsFun("() => null")
-external fun getJsNullAsNonNullable(): EI
+fun isJsUndefined(ref: EI?): Boolean =
+    js("ref === undefined")
 
-@JsFun("() => undefined")
-external fun getJsUndefinedAsNonNullable(): EI
+fun getJsNullAsNonNullable(): EI =
+    js("null")
+
+fun getJsUndefinedAsNonNullable(): EI =
+    js("undefined")
+
+inline fun checkNPE(body: () -> Unit) {
+    var throwed = false
+    try {
+        body()
+    } catch (e: NullPointerException) {
+        throwed = true
+    }
+    assertTrue(throwed)
+}
 
 fun box(): String {
     val jsNull = getNull()
@@ -45,6 +59,7 @@ fun box(): String {
     assertTrue((jsNull as Any?) == null)
     assertTrue((jsNull as Any?) === null)
     assertTrue(jsUndefined == null)
+    assertTrue(getStringUndefined() == null)
 
     assertTrue(isJsNull(null))
     assertTrue(isJsNull(null as EI?))
@@ -53,13 +68,9 @@ fun box(): String {
     assertTrue(isJsNull(jsNull))
 
     assertFalse(isJsUndefined(null))
-    assertTrue(isJsUndefined(jsUndefined))
 
-    // TODO: Should these fail?
-    val n2 = getJsNullAsNonNullable()
-    val ud2 = getJsUndefinedAsNonNullable()
-    assertTrue(isJsNull(n2))
-    assertTrue(isJsUndefined(ud2))
+    checkNPE(::getJsNullAsNonNullable)
+    checkNPE(::getJsUndefinedAsNonNullable)
 
     return "OK"
 }

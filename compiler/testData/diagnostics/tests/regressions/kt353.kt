@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-353 Generic type argument inference sometimes doesn't work
 
 interface A {

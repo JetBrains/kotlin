@@ -1,10 +1,4 @@
 class Test1 {
-  constructor(x: Int, y: Int) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val x: Int
     field = x
     get
@@ -12,16 +6,16 @@ class Test1 {
   val y: Int
     field = y
     get
+
+  constructor(x: Int, y: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
 }
 
 class Test2 {
-  constructor(x: Int, y: Int) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val y: Int
     field = y
     get
@@ -30,15 +24,15 @@ class Test2 {
     field = x
     get
 
-}
-
-class Test3 {
   constructor(x: Int, y: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+}
+
+class Test3 {
   val y: Int
     field = y
     get
@@ -50,4 +44,11 @@ class Test3 {
     <this>.#x = x
   }
 
+  constructor(x: Int, y: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
+

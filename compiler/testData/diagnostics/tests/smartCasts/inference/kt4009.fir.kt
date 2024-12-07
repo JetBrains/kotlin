@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface PsiElement {
     fun getText(): String
     fun getParent(): PsiElement

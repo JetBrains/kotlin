@@ -1,0 +1,12 @@
+public final [ResolvedTo(BODY_RESOLVE)] fun function([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Int| {
+    ^function R|<local>/i|
+}
+
+public final [ResolvedTo(BODY_RESOLVE)] val property: R|kotlin/Int| = this@R|lowlevel/<anonymous>|.R|lowlevel/<anonymous>.function|(Int(1))
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] get(): R|kotlin/Int|
+
+public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|
+
+public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String|

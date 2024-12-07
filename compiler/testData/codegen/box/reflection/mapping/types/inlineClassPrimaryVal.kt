@@ -6,28 +6,32 @@ import kotlin.reflect.KCallable
 import kotlin.reflect.jvm.*
 import kotlin.test.assertEquals
 
-inline class Z1(val publicX: Int) {
+@JvmInline
+value class Z1(val publicX: Int) {
     companion object {
         val publicXRef = Z1::publicX
         val publicXBoundRef = Z1(42)::publicX
     }
 }
 
-inline class Z2(internal val internalX: Int) {
+@JvmInline
+value class Z2(internal val internalX: Int) {
     companion object {
         val internalXRef = Z2::internalX
         val internalXBoundRef = Z2(42)::internalX
     }
 }
 
-inline class Z3(private val privateX: Int) {
+@JvmInline
+value class Z3(private val privateX: Int) {
     companion object {
         val privateXRef = Z3::privateX
         val privateXBoundRef = Z3(42)::privateX
     }
 }
 
-inline class ZZ(val x: Z1)
+@JvmInline
+value class ZZ(val x: Z1)
 
 fun KCallable<*>.getJavaTypesOfParams() = parameters.map { it.type.javaType }.toString()
 fun KCallable<*>.getJavaTypeOfResult() = returnType.javaType.toString()

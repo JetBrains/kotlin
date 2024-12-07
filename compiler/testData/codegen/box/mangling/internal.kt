@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR_ES6
 // MODULE: lib
 // FILE: lib.kt
 
@@ -20,7 +19,7 @@ internal class A {
     }
 }
 
-// MODULE: main(lib)(lib)
+// MODULE: main()(lib)
 // FILE: main.kt
 
 package main

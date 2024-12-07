@@ -5,18 +5,20 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.extensions
 
+import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.extensions.ProcessSourcesBeforeCompilingExtension
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
-import kotlin.script.experimental.api.*
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
+import kotlin.script.experimental.api.isStandalone
 
 class ScriptingProcessSourcesBeforeCompilingExtension(val project: Project) : ProcessSourcesBeforeCompilingExtension {
 
@@ -24,18 +26,20 @@ class ScriptingProcessSourcesBeforeCompilingExtension(val project: Project) : Pr
         val versionSettings = configuration.languageVersionSettings
         val shouldSkipStandaloneScripts = versionSettings.supportsFeature(LanguageFeature.SkipStandaloneScriptsInSourceRoots)
         val definitionProvider by lazy(LazyThreadSafetyMode.NONE) { ScriptDefinitionProvider.getInstance(project) }
-        val messageCollector = configuration.getNotNull(MESSAGE_COLLECTOR_KEY)
+        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
         fun KtFile.isStandaloneScript(): Boolean {
             val scriptDefinition = definitionProvider?.findDefinition(KtFileScriptSource(this))
             return scriptDefinition?.compilationConfiguration?.get(ScriptCompilationConfiguration.isStandalone) ?: true
         }
 
+        if (configuration.getBoolean(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS)) return sources
+        // TODO: see comment at LazyScriptDefinitionProvider.Companion.getNonScriptFilenameSuffixes
+        val nonScriptFilenameSuffixes = arrayOf(".${KotlinFileType.EXTENSION}", ".${JavaFileType.DEFAULT_EXTENSION}")
         // filter out scripts that are not suitable for source roots, according to the compiler configuration and script definitions
         return sources.filter { ktFile ->
             when {
-                !ktFile.isScript() -> true
-                configuration.getBoolean(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS) -> true
+                nonScriptFilenameSuffixes.any { ktFile.virtualFilePath.endsWith(it) } -> true
                 !ktFile.isStandaloneScript() -> true
                 else -> {
                     if (!shouldSkipStandaloneScripts) {

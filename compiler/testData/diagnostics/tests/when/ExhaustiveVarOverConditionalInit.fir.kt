@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)

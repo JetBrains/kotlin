@@ -1,9 +1,5 @@
 package test
 
-fun <T : Any?> eval(f: Function0<T>): T {
-  return f.invoke()
-}
-
 class C : B {
   constructor() /* primary */ {
     super/*B*/()
@@ -13,17 +9,21 @@ class C : B {
 
   fun f(): @FlexibleNullability String? {
     return eval<@FlexibleNullability String?>(f = local fun <anonymous>(): @FlexibleNullability String? {
-      return <this>(super<B>).#x
+      return <this>(super<C>).#x
     }
 )
   }
 
   fun g(): @FlexibleNullability String? {
     return eval<@FlexibleNullability String?>(f = local fun <anonymous>(): @FlexibleNullability String? {
-      return <this>(super<B>).#y
+      return <this>(super<C>).#y
     }
 )
   }
 
+}
+
+fun <T : Any?> eval(f: Function0<T>): T {
+  return f.invoke()
 }
 

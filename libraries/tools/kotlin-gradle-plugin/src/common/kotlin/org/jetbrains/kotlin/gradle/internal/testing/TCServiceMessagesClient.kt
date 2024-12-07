@@ -7,17 +7,16 @@ package org.jetbrains.kotlin.gradle.internal.testing
 
 import jetbrains.buildServer.messages.serviceMessages.*
 import org.gradle.api.internal.tasks.testing.*
+import org.gradle.api.tasks.testing.TestFailure
 import org.gradle.api.tasks.testing.TestOutputEvent
 import org.gradle.api.tasks.testing.TestOutputEvent.Destination.StdErr
 import org.gradle.api.tasks.testing.TestOutputEvent.Destination.StdOut
 import org.gradle.api.tasks.testing.TestResult
 import org.gradle.api.tasks.testing.TestResult.ResultType.*
-import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.process.internal.ExecHandle
 import org.jetbrains.kotlin.gradle.internal.LogType
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.testing.KotlinTestFailure
-import org.jetbrains.kotlin.gradle.utils.LegacyTestDescriptorInternal
 import org.slf4j.Logger
 import java.text.ParseException
 
@@ -29,22 +28,18 @@ data class TCServiceMessagesClientSettings(
     val stackTraceParser: (String) -> ParsedStackTrace? = { null },
     val ignoreOutOfRootNodes: Boolean = false,
     val ignoreLineEndingAfterMessage: Boolean = true,
-    val escapeTCMessagesInLog: Boolean = false
 )
 
 internal open class TCServiceMessagesClient(
     private val results: TestResultProcessor,
     val settings: TCServiceMessagesClientSettings,
-    val log: Logger
+    val log: Logger,
 ) : ServiceMessageParserCallback {
-    lateinit var rootOperationId: OperationIdentifier
     var afterMessage = false
 
-    inline fun root(operation: OperationIdentifier, actions: () -> Unit) {
-        rootOperationId = operation
-
+    inline fun root(actions: () -> Unit) {
         val tsStart = System.currentTimeMillis()
-        val root = RootNode(operation)
+        val root = RootNode()
         open(tsStart, root)
         actions()
         ensureNodesClosed(root)
@@ -59,14 +54,11 @@ internal open class TCServiceMessagesClient(
 
     override fun serviceMessage(message: ServiceMessage) {
 
-        // If a user uses TeamCity, this log may be treated by TC as an actual service message.
-        // So, escape logged messages if the corresponding setting is specified.
         log.kotlinDebug {
-            val messageString = if (settings.escapeTCMessagesInLog) {
-                message.toString().replaceFirst("^##teamcity\\[".toRegex(), "##TC[")
-            } else {
-                message.toString()
-            }
+            // If a user uses TeamCity, TC may treat this log as an actual service message.
+            // This message should be considered implementation detail and shouldn't be exposed "as is".
+            // At this stage it's already parsed correctly, and it's safe to escape it.
+            val messageString = message.toString().replaceFirst("^##teamcity\\[".toRegex(), "##TC[")
             "TCSM: $messageString"
         }
 
@@ -155,7 +147,8 @@ internal open class TCServiceMessagesClient(
     }
 
     private fun TestNode.failure(
-        message: TestFailed
+        message: TestFailed,
+        isAssertionFailure: Boolean = true,
     ) {
         hasFailures = true
 
@@ -173,17 +166,22 @@ internal open class TCServiceMessagesClient(
         val parsedStackTrace = settings.stackTraceParser(stacktrace)
 
         val failMessage = parsedStackTrace?.message ?: message.failureMessage
+        val exceptionClassName = failMessage?.let { extractExceptionClassName(it) } ?: "Unknown"
+        val rawFailure = KotlinTestFailure(
+            exceptionClassName,
+            failMessage,
+            stacktrace,
+            patchStackTrace(this, parsedStackTrace?.stackTrace),
+            message.expected,
+            message.actual,
+        )
         results.failure(
             descriptor.id,
-            KotlinTestFailure(
-                failMessage?.let { extractExceptionClassName(it) }
-                    ?: "Unknown",
-                failMessage,
-                stacktrace,
-                patchStackTrace(this, parsedStackTrace?.stackTrace),
-                message.expected,
-                message.actual
-            )
+            if (isAssertionFailure) {
+                TestFailure.fromTestAssertionFailure(rawFailure, rawFailure.expected, rawFailure.actual)
+            } else {
+                TestFailure.fromTestFrameworkFailure(rawFailure)
+            }
         )
     }
 
@@ -215,11 +213,6 @@ internal open class TCServiceMessagesClient(
         } else {
             results.output(descriptor.id, DefaultTestOutputEvent(destination, text))
         }
-    }
-
-    private inline fun <NodeType : Node> NodeType.open(contents: (NodeType) -> Unit) = open(System.currentTimeMillis()) {
-        contents(it)
-        System.currentTimeMillis()
     }
 
     private inline fun <NodeType : Node> NodeType.open(tsStart: Long, contents: (NodeType) -> Long) {
@@ -389,10 +382,9 @@ internal open class TCServiceMessagesClient(
         abstract fun requireReportingNode(): TestDescriptorInternal
     }
 
-    inner class RootNode(val ownerBuildOperationId: OperationIdentifier) : GroupNode(null, settings.rootNodeName) {
+    inner class RootNode : GroupNode(null, settings.rootNodeName) {
         override val descriptor: TestDescriptorInternal =
-            object : DefaultTestSuiteDescriptor(settings.rootNodeName, localId), LegacyTestDescriptorInternal {
-                override fun getOwnerBuildOperationId(): Any? = this@RootNode.ownerBuildOperationId
+            object : DefaultTestSuiteDescriptor(settings.rootNodeName, localId) {
                 override fun getParent(): TestDescriptorInternal? = null
                 override fun toString(): String = name
             }
@@ -437,10 +429,9 @@ internal open class TCServiceMessagesClient(
             val reportingParent = parents.last() as RootNode
             this.reportingParent = reportingParent
 
-            descriptor = object : DefaultTestSuiteDescriptor(id, fullName), LegacyTestDescriptorInternal {
+            descriptor = object : DefaultTestSuiteDescriptor(id, fullName) {
                 override fun getDisplayName(): String = fullNameWithoutRoot
                 override fun getClassName(): String? = fullNameWithoutRoot
-                override fun getOwnerBuildOperationId(): Any? = rootOperationId
                 override fun getParent(): TestDescriptorInternal = reportingParent.descriptor
                 override fun toString(): String = displayName
             }
@@ -483,8 +474,7 @@ internal open class TCServiceMessagesClient(
         private val parentDescriptor = (this@TestNode.parent as GroupNode).requireReportingNode()
 
         override val descriptor: TestDescriptorInternal =
-            object : DefaultTestDescriptor(id, className, methodName, classDisplayName, displayName), LegacyTestDescriptorInternal {
-                override fun getOwnerBuildOperationId(): Any? = rootOperationId
+            object : DefaultTestDescriptor(id, className, methodName, classDisplayName, displayName) {
                 override fun getParent(): TestDescriptorInternal = parentDescriptor
             }
 
@@ -527,7 +517,7 @@ internal open class TCServiceMessagesClient(
                     if (currentLeaf is TestNode) {
                         currentTest = currentLeaf
                         output.append(currentLeaf.allOutput)
-                        currentLeaf.failure(TestFailed(currentLeaf.cleanName, null as Throwable?))
+                        currentLeaf.failure(TestFailed(currentLeaf.cleanName, null as Throwable?), false)
                     }
 
                     close(ts, currentLeaf.localId)

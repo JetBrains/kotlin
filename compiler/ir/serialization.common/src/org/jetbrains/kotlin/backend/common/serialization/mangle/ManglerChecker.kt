@@ -15,7 +15,14 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.SpecialNames
 
-class ManglerChecker(vararg _manglers: KotlinMangler<IrDeclaration>) : IrElementVisitorVoid {
+class ManglerChecker(
+    vararg _manglers: KotlinMangler<IrDeclaration>,
+    private val needsChecking: (IrDeclarationBase) -> Boolean = hasDescriptor
+) : IrElementVisitorVoid {
+
+    companion object {
+        val hasDescriptor: (IrDeclarationBase) -> Boolean = { it.symbol.hasDescriptor }
+    }
 
     private val manglers = _manglers.toList()
 
@@ -29,7 +36,7 @@ class ManglerChecker(vararg _manglers: KotlinMangler<IrDeclaration>) : IrElement
         }
 
         override fun visitDeclaration(declaration: IrDeclarationBase, data: Nothing?): Boolean {
-            if (!declaration.symbol.hasDescriptor) return true
+            if (!needsChecking(declaration)) return true
 
             if (declaration.parent is IrPackageFragment) {
                 val vis = declaration as IrDeclarationWithVisibility
@@ -46,19 +53,17 @@ class ManglerChecker(vararg _manglers: KotlinMangler<IrDeclaration>) : IrElement
         override fun visitProperty(declaration: IrProperty, data: Nothing?): Boolean = true
         override fun visitClass(declaration: IrClass, data: Nothing?): Boolean =
             declaration.name == SpecialNames.NO_NAME_PROVIDED || super.visitClass(declaration, data)
+
+        override fun visitField(declaration: IrField, data: Nothing?): Boolean =
+            declaration.origin == IrDeclarationOrigin.DELEGATE || super.visitField(declaration, data)
     }
 
     private fun IrDeclaration.shouldBeSkipped(): Boolean = accept(skipper, null)
     private fun KotlinMangler<IrDeclaration>.isExportCheck(declaration: IrDeclaration) =
         !declaration.shouldBeSkipped() && declaration.isExported(false)
-    private fun KotlinMangler<IrDeclaration>.stringMangle(declaration: IrDeclaration) =
-        declaration.mangleString(compatibleMode = false)
 
     private fun KotlinMangler<IrDeclaration>.signatureMangle(declaration: IrDeclaration) =
         declaration.signatureString(compatibleMode = false)
-
-    private fun KotlinMangler<IrDeclaration>.fqnMangle(declaration: IrDeclaration) =
-        declaration.fqnString(compatibleMode = false)
 
     private fun <T : Any, R> Iterable<T>.checkAllEqual(init: R, op: T.() -> R, onError: (T, R, T, R) -> Unit): R {
         var prev: T? = null
@@ -87,21 +92,13 @@ class ManglerChecker(vararg _manglers: KotlinMangler<IrDeclaration>) : IrElement
         if (declaration is IrErrorDeclaration) return
 
         val exported = manglers.checkAllEqual(false, { isExportCheck(declaration) }) { m1, r1, m2, r2 ->
-            error("${declaration.render()}\n ${m1.manglerName}: $r1\n ${m2.manglerName}: $r2\n")
+            error("isExportCheck: ${declaration.render()}\n ${m1.manglerName}: $r1\n ${m2.manglerName}: $r2\n")
         }
 
         if (!exported) return
 
-        manglers.checkAllEqual("", { stringMangle(declaration) }) { m1, r1, m2, r2 ->
-            error("FULL: ${declaration.render()}\n ${m1.manglerName}: $r1\n ${m2.manglerName}: $r2\n")
-        }
-
         manglers.checkAllEqual("", { signatureMangle(declaration) }) { m1, r1, m2, r2 ->
             error("SIG: ${declaration.render()}\n ${m1.manglerName}: $r1\n ${m2.manglerName}: $r2\n")
-        }
-
-        manglers.checkAllEqual("", { fqnMangle(declaration) }) { m1, r1, m2, r2 ->
-            error("FQN: ${declaration.render()}\n ${m1.manglerName}: $r1\n ${m2.manglerName}: $r2\n")
         }
 
         declaration.acceptChildrenVoid(this)

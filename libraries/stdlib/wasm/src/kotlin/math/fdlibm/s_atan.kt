@@ -65,15 +65,15 @@ private val aT = doubleArrayOf(
 private const val one = 1.0
 private const val huge = 1.0e300
 
-internal fun atan(x: Double): Double {
-    var x: Double = x
-    var w: Double = 0.0
-    var s1: Double = 0.0
-    var s2: Double = 0.0
-    var z: Double = 0.0
-    var ix: Int = 0
-    var hx: Int = 0
-    var id: Int = 0
+internal fun atan(_x: Double): Double {
+    var x: Double = _x
+    var w: Double
+    var s1: Double
+    var s2: Double
+    var z: Double
+    var ix: Int
+    var hx: Int
+    var id: Int
 
     hx = __HI(x)
     ix = hx and 0x7fffffff

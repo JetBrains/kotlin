@@ -1,0 +1,7 @@
+package = foo
+
+---
+
+int answer() {
+    return 42;
+}

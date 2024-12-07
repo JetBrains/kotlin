@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 // See also KT-10896: Wrong inference of if / else result type
 
 interface Option<T>
@@ -24,11 +25,11 @@ fun <T> bind2(r: Option<T>): Option<T> {
 }
 
 fun <T, R> bind3(r: Option<T>): Option<T> {
-    return if (r is Some) {
+    return <!RETURN_TYPE_MISMATCH!>if (r is Some) {
         // Diagnoses an error correctly
         if (true) None<R>() else r
     }
-    else r
+    else r<!>
 }
 
 fun <T> bindWhen(r: Option<T>): Option<T> {

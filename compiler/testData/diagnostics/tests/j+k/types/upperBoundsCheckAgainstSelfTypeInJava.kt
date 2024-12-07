@@ -1,5 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
+
 // FILE: XBreakpointProperties.java
 public abstract class XBreakpointProperties<T> {}
 // FILE: XBreakpoint.java

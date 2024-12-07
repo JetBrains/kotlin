@@ -1,13 +1,18 @@
 // TARGET_BACKEND: JVM
 // SAM_CONVERSIONS: CLASS
-//   ^ test checks reflection for synthetic classes
-// FILE: J.java
+// ^ test checks reflection for synthetic classes
+
+// FILE: S.java
 
 import java.util.Arrays;
 
 interface S<A extends Number, B extends A, C extends A, D extends Comparable<B>, E extends C> {
     void accept(A a, B b, C c, D d, E e);
 }
+
+// FILE: J.java
+
+import java.util.Arrays;
 
 class J {
     public static String foo(S<Number, Long, Integer, Comparable<Long>, Integer> s) {

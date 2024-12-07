@@ -7,14 +7,12 @@ class A(val value: String) {
     inline fun String.inlineFun(crossinline lambda: () -> String, crossinline dlambda: () -> String = { this }): String {
         return {
             "$value ${this} ${lambda()} ${dlambda()}"
-        }()
+        }.let { it() }
     }
 }
 
 // FILE: 2.kt
 //WIH_RUNTIME
-// CHECK_CALLED_IN_SCOPE: function=A$inlineFun$lambda scope=test TARGET_BACKENDS=JS
-// CHECK_CALLED_IN_SCOPE: function=A$inlineFun$lambda_0 scope=test TARGET_BACKENDS=JS
 import test.*
 
 fun String.test(): String = with(A("VALUE")) { "INLINE".inlineFun({ this@test }) }

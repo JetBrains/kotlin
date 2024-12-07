@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: NATIVE
 // WITH_STDLIB
 // WITH_COROUTINES
 
@@ -15,7 +14,7 @@ fun myLaunch(
 ) {}
 
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
-public fun <E> myProduce(@BuilderInference block: suspend MyProducerScope<E>.() -> Unit) {}
+public fun <E> myProduce(block: suspend MyProducerScope<E>.() -> Unit) {}
 
 fun <T> MyReceiveChannel<T>.debounce(period: Long) {
     myProduce<Any> {

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: -ForbidExposingTypesInPrimaryConstructorProperties
+// LANGUAGE: -ForbidExposingTypesInPrimaryConstructorProperties
 
 private enum class Foo { A, B }
 

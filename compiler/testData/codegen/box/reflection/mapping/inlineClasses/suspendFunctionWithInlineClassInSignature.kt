@@ -8,7 +8,8 @@ import kotlin.reflect.jvm.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-inline class Z(val value: String)
+@JvmInline
+value class Z(val value: String)
 
 class S {
     suspend fun consumeZ(z: Z) {}

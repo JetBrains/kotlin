@@ -1,0 +1,57 @@
+FILE: properLocalPackages.kt
+    package a.b
+
+    public final class X : R|kotlin/Any| {
+        public constructor(): R|a/b/X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+            local final class U : R|kotlin/Any| {
+                public constructor(): R|<local>/U| {
+                    super<R|kotlin/Any|>()
+                }
+
+                local final inner class K : R|kotlin/Any| {
+                    public <local>/U.constructor(): R|<local>/U.K| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    local final inner class D : R|kotlin/Any| {
+                        public <local>/U.K.constructor(): R|<local>/U.K.D| {
+                            super<R|kotlin/Any|>()
+                        }
+
+                        public final fun check(): R|kotlin/Unit| {
+                            local final class F : R|kotlin/Any| {
+                                public constructor(): R|<local>/F| {
+                                    super<R|kotlin/Any|>()
+                                }
+
+                                local final inner class L : R|kotlin/Any| {
+                                    public <local>/F.constructor(): R|<local>/F.L| {
+                                        super<R|kotlin/Any|>()
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                local final class T : R|kotlin/Any| {
+                    public constructor(): R|<local>/U.T| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                }
+
+            }
+
+        }
+
+    }

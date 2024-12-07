@@ -1,13 +1,13 @@
-compiler/testData/cli/jvm/singleJavaFileRoots/test.kt:7:9: error: cannot access class 'C'. Check your module classpath for missing or conflicting dependencies
+compiler/testData/cli/jvm/singleJavaFileRoots/test.kt:7:9: error: cannot access class 'C'. Check your module classpath for missing or conflicting dependencies.
     B().c()
         ^
-compiler/testData/cli/jvm/singleJavaFileRoots/test.kt:8:5: error: unresolved reference: C
+compiler/testData/cli/jvm/singleJavaFileRoots/test.kt:8:5: error: unresolved reference 'C'.
     C().a()
     ^
-compiler/testData/cli/jvm/singleJavaFileRoots/test.kt:12:5: error: cannot access '<init>': it is package-private in 'PackageLocal1'
+compiler/testData/cli/jvm/singleJavaFileRoots/test.kt:12:5: error: cannot access 'constructor(): PackageLocal1': it is package-private in 'lib/ext/PackageLocal1'.
     PackageLocal1()
-    ^
-compiler/testData/cli/jvm/singleJavaFileRoots/test.kt:13:5: error: cannot access '<init>': it is package-private in 'PackageLocal2'
+    ^^^^^^^^^^^^^
+compiler/testData/cli/jvm/singleJavaFileRoots/test.kt:13:5: error: cannot access 'constructor(): PackageLocal2': it is package-private in 'lib/ext/PackageLocal2'.
     PackageLocal2()
-    ^
+    ^^^^^^^^^^^^^
 COMPILATION_ERROR

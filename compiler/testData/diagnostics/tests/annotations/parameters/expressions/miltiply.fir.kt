@@ -1,4 +1,4 @@
-// !LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
+// RUN_PIPELINE_TILL: FRONTEND
 package test
 
 annotation class Ann(

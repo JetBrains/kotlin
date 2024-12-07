@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 package o
 
 class TestFunctionLiteral {
@@ -11,22 +12,22 @@ class TestFunctionLiteral {
 open class A(val a: A)
 
 class TestObjectLiteral {
-    val obj: A = object: A(obj) {
+    val obj: A = object: A(<!UNINITIALIZED_VARIABLE!>obj<!>) {
         init {
-            val x = obj
+            val x = <!UNINITIALIZED_VARIABLE!>obj<!>
         }
         fun foo() {
             val y = obj
         }
     }
-    val obj1: A = l@ ( object: A(obj1) {
+    val obj1: A = l@ ( object: A(<!UNINITIALIZED_VARIABLE!>obj1<!>) {
         init {
-            val x = obj1
+            val x = <!UNINITIALIZED_VARIABLE!>obj1<!>
         }
         fun foo() = obj1
     })
 }
 
 class TestOther {
-    val x: Int = x + 1
+    val x: Int = <!UNINITIALIZED_VARIABLE!>x<!> + 1
 }

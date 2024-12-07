@@ -1,0 +1,31 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract interface foo/Base { // foo/Base|null[0]
+    abstract fun foo(kotlin/String): kotlin/String // foo/Base.foo|foo(kotlin.String){}[0]
+}
+final class foo/BaseImpl : foo/Base { // foo/BaseImpl|null[0]
+    final val s // foo/BaseImpl.s|{}s[0]
+        final fun <get-s>(): kotlin/String // foo/BaseImpl.s.<get-s>|<get-s>(){}[0]
+    constructor <init>(kotlin/String) // foo/BaseImpl.<init>|<init>(kotlin.String){}[0]
+    final fun foo(kotlin/String): kotlin/String // foo/BaseImpl.foo|foo(kotlin.String){}[0]
+}
+final class foo/Derived : foo/Base, foo/DerivedBase { // foo/Derived|null[0]
+    constructor <init>() // foo/Derived.<init>|<init>(){}[0]
+    final fun foo(kotlin/String): kotlin/String // foo/Derived.foo|foo(kotlin.String){}[0]
+}
+final class foo/Derived1 : foo/Base, foo/DerivedBase { // foo/Derived1|null[0]
+    constructor <init>() // foo/Derived1.<init>|<init>(){}[0]
+    final fun foo(kotlin/String): kotlin/String // foo/Derived1.foo|foo(kotlin.String){}[0]
+}
+open class foo/DerivedBase { // foo/DerivedBase|null[0]
+    constructor <init>() // foo/DerivedBase.<init>|<init>(){}[0]
+}
+final var foo/global // foo/global|{}global[0]
+    final fun <get-global>(): kotlin/String // foo/global.<get-global>|<get-global>(){}[0]
+    final fun <set-global>(kotlin/String) // foo/global.<set-global>|<set-global>(kotlin.String){}[0]
+final fun foo/box(): kotlin/String // foo/box|box(){}[0]
+final fun foo/newBase(): foo/Base // foo/newBase|newBase(){}[0]

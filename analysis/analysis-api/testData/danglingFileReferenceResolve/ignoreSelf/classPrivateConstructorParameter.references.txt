@@ -1,0 +1,3 @@
+KtNameReferenceExpression(83,88): 'param'
+  KtSimpleNameReference:
+    (in Foo) private val param: kotlin.String [classPrivateConstructorParameter.kt]

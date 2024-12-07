@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JVM
-// IGNORE_LIGHT_ANALYSIS
 
 // JVM_TARGET: 1.8
 // ^ This test causes SIGSEGV on JDK 1.6 with old back-end.

@@ -10,39 +10,10 @@
 
 #import <objc/runtime.h>
 
+#import "KotlinBase.h"
 #import "Types.h"
 #import "Memory.h"
 #import "ObjCExport.h"
-
-@interface KotlinBase : NSObject <NSCopying>
-+(instancetype)createRetainedWrapper:(ObjHeader*)obj;
-@end
-
-enum class ReleaseMode {
-    kRelease,
-    kDetachAndRelease,
-    kDetach,
-};
-
-inline bool ReleaseModeHasDetach(ReleaseMode mode) {
-    switch (mode) {
-        case ReleaseMode::kRelease:
-            return false;
-        case ReleaseMode::kDetachAndRelease:
-        case ReleaseMode::kDetach:
-            return true;
-    }
-}
-
-inline bool ReleaseModeHasRelease(ReleaseMode mode) {
-    switch (mode) {
-        case ReleaseMode::kRelease:
-        case ReleaseMode::kDetachAndRelease:
-            return true;
-        case ReleaseMode::kDetach:
-            return false;
-    }
-}
 
 extern "C" void Kotlin_ObjCExport_initializeClass(Class clazz);
 extern "C" const TypeInfo* Kotlin_ObjCExport_getAssociatedTypeInfo(Class clazz);

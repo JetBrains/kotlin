@@ -1,5 +1,5 @@
 # We might want to switch to alpine, but it is not stable enough yet.
-FROM ubuntu:14.04
+FROM ubuntu:16.04
 
 ENV TZ=Europe/Moscow
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -7,7 +7,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # Install crosstool-ng deps.
 RUN apt-get update
 RUN apt-get install -y curl gcc git g++ gperf bison flex texinfo help2man make libncurses5-dev \
-    python3-dev autoconf automake libtool gawk wget bzip2 xz-utils unzip \
+    python3-dev autoconf automake libtool libtool-bin gawk wget bzip2 xz-utils unzip \
     patch libstdc++6 rsync
 
 # Put a fix for strip.
@@ -28,7 +28,7 @@ USER $USERNAME
 WORKDIR /home/$USERNAME
 
 # Download zlib sources.
-RUN curl -LO https://zlib.net/zlib-1.2.11.tar.gz && \
+RUN curl -LO https://zlib.net/fossils/zlib-1.2.11.tar.gz && \
     tar -xf zlib-1.2.11.tar.gz && \
     rm zlib-1.2.11.tar.gz
 

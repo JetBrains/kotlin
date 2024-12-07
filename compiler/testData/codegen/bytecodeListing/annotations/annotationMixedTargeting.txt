@@ -1,0 +1,12 @@
+@kotlin.Metadata
+public final class Foo {
+    // source: 'test.kt'
+    private final field x: int
+    private final field y: int
+    public method <init>(p0: int): void
+    public final method foo(): void
+    public synthetic deprecated static @JavaPropertyAnnotation method getX$annotations(): void
+    public final method getX(): int
+    public synthetic deprecated static @JavaPropertyAnnotation method getY$annotations(): void
+    public final method getY(): int
+}

@@ -8,145 +8,78 @@
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import com.google.gson.GsonBuilder
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.Optional
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWebpackRulesContainer
+import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl
 import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssMode.EXTRACT
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssMode.IMPORT
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssMode.INLINE
-import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Companion.choose
 import org.jetbrains.kotlin.gradle.utils.appendLine
+import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import java.io.File
 import java.io.Serializable
 import java.io.StringWriter
 
 @Suppress("MemberVisibilityCanBePrivate")
 data class KotlinWebpackConfig(
-    @Input
+    val npmProjectDir: Provider<File>? = null,
     var mode: Mode = Mode.DEVELOPMENT,
-    @Internal
     var entry: File? = null,
-    @Nested
-    @Optional
     var output: KotlinWebpackOutput? = null,
-    @Internal
     var outputPath: File? = null,
-    @Input
-    @Optional
     var outputFileName: String? = entry?.name,
-    @Internal
     var configDirectory: File? = null,
-    @Internal
-    var bundleAnalyzerReportDir: File? = null,
-    @Internal
     var reportEvaluatedConfigFile: File? = null,
-    @Input
-    @Optional
     var devServer: DevServer? = null,
-    @Input
+    var watchOptions: WatchOptions? = null,
     var experiments: MutableSet<String> = mutableSetOf(),
-    @Nested
-    var cssSupport: KotlinWebpackCssSupport = KotlinWebpackCssSupport(),
-    @Input
-    @Optional
+    override val rules: KotlinWebpackRulesContainer,
     var devtool: String? = WebpackDevtool.EVAL_SOURCE_MAP,
-    @Input
     var showProgress: Boolean = false,
-    @Input
+    var optimization: Optimization? = null,
     var sourceMaps: Boolean = false,
-    @Input
     var export: Boolean = true,
-    @Input
     var progressReporter: Boolean = false,
-    @Input
-    @Optional
-    var progressReporterPathFilter: String? = null,
-    @Input
-    var resolveFromModulesFirst: Boolean = false,
-    @Input
-    val webpackMajorVersion: WebpackMajorVersion = WebpackMajorVersion.V5
-) {
-    @get:Input
-    @get:Optional
+    var resolveFromModulesFirst: Boolean = false
+) : WebpackRulesDsl {
+
     val entryInput: String?
-        get() = entry?.absoluteFile?.normalize()?.absolutePath
+        get() = npmProjectDir?.get()?.let { npmProjectDir -> entry?.relativeOrAbsolute(npmProjectDir) }
 
-    @get:Input
-    @get:Optional
     val outputPathInput: String?
-        get() = outputPath?.absoluteFile?.normalize()?.absolutePath
-
-    @get:Input
-    @get:Optional
-    val configDirectoryInput: String?
-        get() = configDirectory?.absoluteFile?.normalize()?.absolutePath
-
-    @get:Input
-    @get:Optional
-    val bundleAnalyzerReportDirInput: String?
-        get() = bundleAnalyzerReportDir?.absoluteFile?.normalize()?.absolutePath
-
-    @get:Input
-    @get:Optional
-    val reportEvaluatedConfigFileInput: String?
-        get() = reportEvaluatedConfigFile?.absoluteFile?.normalize()?.absolutePath
+        get() = npmProjectDir?.get()?.let { npmProjectDir -> outputPath?.relativeOrAbsolute(npmProjectDir) }
 
     fun getRequiredDependencies(versions: NpmVersions) =
         mutableSetOf<RequiredKotlinJsDependency>().also {
-            it.add(versions.kotlinJsTestRunner)
             it.add(
-                webpackMajorVersion.choose(
-                    versions.webpack,
-                    versions.webpack4
-                )
+                versions.webpack
             )
             it.add(
-                webpackMajorVersion.choose(
-                    versions.webpackCli,
-                    versions.webpackCli3
-                )
+                versions.webpackCli
             )
-            it.add(versions.formatUtil)
 
-            if (bundleAnalyzerReportDir != null) {
-                it.add(versions.webpackBundleAnalyzer)
-            }
+            it.add(
+                versions.kotlinWebHelpers
+            )
 
             if (sourceMaps) {
                 it.add(
-                    webpackMajorVersion.choose(
-                        versions.sourceMapLoader,
-                        versions.sourceMapLoader1
-                    )
+                    versions.sourceMapLoader
                 )
             }
 
             if (devServer != null) {
                 it.add(
-                    webpackMajorVersion.choose(
-                        versions.webpackDevServer,
-                        versions.webpackDevServer3
-                    )
+                    versions.webpackDevServer
                 )
             }
 
-            if (!cssSupport.enabled || cssSupport.rules.isEmpty()) return@also
-
-            it.add(versions.cssLoader)
-            cssSupport.rules.forEach { rule ->
-                when (rule.mode) {
-                    EXTRACT -> it.add(versions.miniCssExtractPlugin)
-                    INLINE -> it.add(versions.styleLoader)
-                    IMPORT -> it.add(versions.toStringLoader)
-                    else -> cssError()
+            rules.forEach { rule ->
+                if (rule.active) {
+                    it.addAll(rule.dependencies(versions))
                 }
             }
-
         }
 
     enum class Mode(val code: String) {
@@ -155,19 +88,10 @@ data class KotlinWebpackConfig(
     }
 
     @Suppress("unused")
-    data class BundleAnalyzerPlugin(
-        val analyzerMode: String,
-        val reportFilename: String,
-        val openAnalyzer: Boolean,
-        val generateStatsFile: Boolean,
-        val statsFilename: String
-    ) : Serializable
-
-    @Suppress("unused")
     data class DevServer(
         var open: Any = true,
         var port: Int? = null,
-        var proxy: MutableMap<String, Any>? = null,
+        var proxy: MutableList<Proxy>? = null,
         var static: MutableList<String>? = null,
         var contentBase: MutableList<String>? = null,
         var client: Client? = null
@@ -180,7 +104,27 @@ data class KotlinWebpackConfig(
                 var warnings: Boolean
             ) : Serializable
         }
+
+        data class Proxy(
+            val context: MutableList<String>,
+            val target: String,
+            val pathRewrite: MutableMap<String, String>? = null,
+            val secure: Boolean? = null,
+            val changeOrigin: Boolean? = null
+        ) : Serializable
     }
+
+    @Suppress("unused")
+    data class Optimization(
+        var runtimeChunk: Any?,
+        var splitChunks: Any?
+    ) : Serializable
+
+    @Suppress("unused")
+    data class WatchOptions(
+        var aggregateTimeout: Int? = null,
+        var ignored: Any? = null
+    ) : Serializable
 
     fun save(configFile: File) {
         configFile.writer().use {
@@ -212,13 +156,15 @@ data class KotlinWebpackConfig(
             appendEntry()
             appendResolveModules()
             appendSourceMaps()
+            appendOptimization()
             appendDevServer()
-            appendReport()
-            appendProgressReporter()
-            appendCssSupport()
+            rules.forEach { rule ->
+                if (rule.active) {
+                    with(rule) { appendToWebpackConfig() }
+                }
+            }
             appendErrorPlugin()
             appendFromConfigDir()
-            appendEvaluatedFileReport()
             appendExperiments()
 
             if (export) {
@@ -226,26 +172,6 @@ data class KotlinWebpackConfig(
                 appendLine("module.exports = config")
             }
         }
-    }
-
-    private fun Appendable.appendEvaluatedFileReport() {
-        if (reportEvaluatedConfigFile == null) return
-
-        val filePath = reportEvaluatedConfigFile!!.canonicalPath.jsQuoted()
-
-        //language=JavaScript 1.8
-        appendLine(
-            """
-                // save evaluated config file
-                ;(function(config) {
-                    const util = require('util');
-                    const fs = require('fs');
-                    const evaluatedConfig = util.inspect(config, {showHidden: false, depth: null, compact: false});
-                    fs.writeFile($filePath, evaluatedConfig, function (err) {});
-                })(config);
-                
-            """.trimIndent()
-        )
     }
 
     private fun Appendable.appendFromConfigDir() {
@@ -256,38 +182,22 @@ data class KotlinWebpackConfig(
         appendLine()
     }
 
-    private fun Appendable.appendReport() {
-        if (bundleAnalyzerReportDir == null) return
+    private fun Appendable.appendDevServer() {
+        if (devServer != null) {
 
-        entry ?: error("Entry should be defined for report")
+            appendLine("// dev server")
+            appendLine("config.devServer = ${json(devServer!!)};")
+            appendLine()
+        }
 
-        val reportBasePath = "${bundleAnalyzerReportDir!!.canonicalPath}/${entry!!.name}"
-        val config = BundleAnalyzerPlugin(
-            "static",
-            "$reportBasePath.report.html",
-            false,
-            true,
-            "$reportBasePath.stats.json"
-        )
+        if (watchOptions == null) return
 
         //language=JavaScript 1.8
         appendLine(
             """
-                // save webpack-bundle-analyzer report 
-                var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin; 
-                config.plugins.push(new BundleAnalyzerPlugin(${json(config)}));
-                
-           """.trimIndent()
+                config.watchOptions = ${json(watchOptions!!)};
+            """.trimIndent()
         )
-        appendLine()
-    }
-
-    private fun Appendable.appendDevServer() {
-        if (devServer == null) return
-
-        appendLine("// dev server")
-        appendLine("config.devServer = ${json(devServer!!)};")
-        appendLine()
     }
 
     private fun Appendable.appendExperiments() {
@@ -308,47 +218,52 @@ data class KotlinWebpackConfig(
             """
                 // source maps
                 config.module.rules.push({
-                        test: /\.js${'$'}/,
+                        test: /\.m?js${'$'}/,
                         use: ["source-map-loader"],
                         enforce: "pre"
                 });
                 config.devtool = ${devtool?.let { "'$it'" } ?: false};
-                ${
-                webpackMajorVersion.choose(
-                    "config.ignoreWarnings = [/Failed to parse source map/]",
-                    """
-                config.stats = config.stats || {}
-                Object.assign(config.stats, config.stats, {
-                    warningsFilter: [/Failed to parse source map/]
-                })
-                """
-                )
-            }
+                config.ignoreWarnings = [
+                    /Failed to parse source map/,
+                    /Accessing import\.meta directly is unsupported \(only property access or destructuring is supported\)/
+                ]
                 
             """.trimIndent()
         )
     }
 
-    private fun Appendable.appendEntry() {
-        if (
-            entry == null
-            || outputPath == null
-            || output == null
-        )
-            return
-
-        val multiEntryOutput = "${outputFileName!!.removeSuffix(".js")}-[name].js"
+    private fun Appendable.appendOptimization() {
+        if (optimization == null) return
 
         //language=JavaScript 1.8
         appendLine(
             """
+                // optimization
+                config.optimization = config.optimization || ${json(optimization!!)};
+            """.trimIndent()
+        )
+    }
+
+    private fun Appendable.appendEntry() {
+        if (entry != null) {
+            //language=JavaScript 1.8
+            appendLine(
+                """
                 // entry
                 config.entry = {
-                    main: [${entry!!.canonicalPath.jsQuoted()}]
+                    main: [require('path').resolve(__dirname, ${entryInput!!.jsQuoted()})]
                 };
-                
+                """.trimIndent()
+            )
+        }
+
+        if (output != null) {
+            val multiEntryOutput = "${outputFileName!!.removeSuffix(".js")}-[name].js"
+
+            //language=JavaScript 1.8
+            appendLine(
+                """
                 config.output = {
-                    path: ${outputPath!!.canonicalPath.jsQuoted()},
                     filename: (chunkData) => {
                         return chunkData.chunk.name === 'main'
                             ? ${outputFileName!!.jsQuoted()}
@@ -358,110 +273,19 @@ data class KotlinWebpackConfig(
                     ${output!!.libraryTarget?.let { "libraryTarget: ${it.jsQuoted()}," } ?: ""}
                     globalObject: "${output!!.globalObject}"
                 };
-                
-            """.trimIndent()
-        )
-    }
-
-    private fun Appendable.appendCssSupport() {
-        if (!cssSupport.enabled || cssSupport.rules.isEmpty())
-            return
-
-        appendLine(
-            """
-            // css settings
-            ;(function(config) {
-            """.trimIndent()
-        )
-
-        val extractedCss =
-            """
-            |       const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-            |       use.unshift({
-            |           loader: MiniCssExtractPlugin.loader,
-            |           options: {}
-            |       })
-            |       config.plugins.push(new MiniCssExtractPlugin())
-            """.trimMargin()
-
-        val inlinedCss =
-            """
-            |       use.unshift({
-            |           loader: 'style-loader',
-            |           options: {}
-            |       })
-            |       
-            """.trimMargin()
-
-        val importedCss =
-            """
-            |       use.unshift({
-            |           loader: 'to-string-loader',
-            |           options: {}
-            |       })
-            |       
-            """.trimMargin()
-
-        cssSupport.rules.forEach { rule ->
-            appendLine(
-                """
-            |    ;(function(config) {
-            """.trimMargin()
-            )
-            appendLine(
-                """
-            |       const use = [
-            |           {
-            |               loader: 'css-loader',
-            |               options: {},
-            |           }
-            |       ]
-            """.trimMargin()
-            )
-
-            when (rule.mode) {
-                EXTRACT -> appendLine(extractedCss)
-                INLINE -> appendLine(inlinedCss)
-                IMPORT -> appendLine(importedCss)
-                else -> cssError()
-            }
-
-            val excluded = rule.exclude.let {
-                if (it.isNotEmpty()) {
-                    "[${it.joinToString()}]"
-                } else null
-            }
-
-            val included = rule.include.let {
-                if (it.isNotEmpty()) {
-                    "[${it.joinToString()}]"
-                } else null
-            }
-
-            appendLine(
-                """
-            |       config.module.rules.push({
-            |           test: /\.css${'$'}/,
-            |           use: use,
-            |           ${excluded?.let { "exclude: $it," } ?: ""}
-            |           ${included?.let { "include: $it" } ?: ""}
-            |       })
-
-            """.trimMargin()
-            )
-
-            appendLine(
-                """
-            |   })(config);
-            
-            """.trimMargin()
+                """.trimIndent()
             )
         }
 
+        if (
+            outputPath == null
+        )
+            return
+
+        //language=JavaScript 1.8
         appendLine(
             """
-            })(config);
-            
+                config.output.path = require('path').resolve(__dirname, ${outputPathInput!!.jsQuoted()})
             """.trimIndent()
         )
     }
@@ -472,7 +296,7 @@ data class KotlinWebpackConfig(
             """
                 // noinspection JSUnnecessarySemicolon
                 ;(function(config) {
-                    const tcErrorPlugin = require('kotlin-test-js-runner/tc-log-error-webpack');
+                    const tcErrorPlugin = require('kotlin-web-helpers/dist/tc-log-error-webpack');
                     config.plugins.push(new tcErrorPlugin())
                     config.stats = config.stats || {}
                     Object.assign(config.stats, config.stats, {
@@ -496,46 +320,6 @@ data class KotlinWebpackConfig(
             """.trimIndent()
         )
     }
-
-    private fun Appendable.appendProgressReporter() {
-        if (!progressReporter) return
-
-        //language=ES6
-        appendLine(
-            """
-                // Report progress to console
-                // noinspection JSUnnecessarySemicolon
-                ;(function(config) {
-                    const webpack = require('webpack');
-                    const handler = (percentage, message, ...args) => {
-                        const p = percentage * 100;
-                        let msg = `${"$"}{Math.trunc(p / 10)}${"$"}{Math.trunc(p % 10)}% ${"$"}{message} ${"$"}{args.join(' ')}`;
-                        ${
-                if (progressReporterPathFilter == null) "" else """
-                            msg = msg.replace(${progressReporterPathFilter!!.jsQuoted()}, '');
-                        """.trimIndent()
-            };
-                        console.log(msg);
-                    };
-            
-                    config.plugins.push(new webpack.ProgressPlugin(handler))
-                })(config);
-                
-            """.trimIndent()
-        )
-    }
-
-    private fun cssError() {
-        throw IllegalStateException(
-            """
-                    Possible values for cssSupport.mode:
-                    - EXTRACT
-                    - INLINE
-                    - IMPORT
-                """.trimIndent()
-        )
-    }
-
 
     private fun json(obj: Any) = StringWriter().also {
         GsonBuilder().setPrettyPrinting().create().toJson(obj, it)

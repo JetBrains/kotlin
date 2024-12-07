@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.checkers
@@ -20,10 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.Conditions
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.kotlin.asJava.getJvmSignatureDiagnostics
 import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest.TestFile
 import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest.TestModule
 import org.jetbrains.kotlin.checkers.diagnostics.ActualDiagnostic
@@ -45,7 +31,6 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
@@ -56,7 +41,6 @@ import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.junit.Assert
 import java.io.File
-import java.util.*
 import java.util.regex.Pattern
 import kotlin.reflect.jvm.javaField
 
@@ -167,7 +151,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         val jvmTarget: JvmTarget?
         val declareCheckType: Boolean = CHECK_TYPE_DIRECTIVE in directives
         val declareFlexibleType: Boolean
-        val checkLazyLog: Boolean
         private val markDynamicCalls: Boolean
         val dynamicCallDescriptors: MutableList<DeclarationDescriptor> = mutableListOf()
         val withNewInferenceDirective: Boolean
@@ -179,7 +162,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             this.whatDiagnosticsToConsider = parseDiagnosticFilterDirective(directives, declareCheckType)
             this.customLanguageVersionSettings = parseLanguageVersionSettings(directives)
             this.jvmTarget = parseJvmTarget(directives)
-            this.checkLazyLog = CHECK_LAZY_LOG_DIRECTIVE in directives || CHECK_LAZY_LOG_DEFAULT
             this.declareFlexibleType = EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE in directives
             this.markDynamicCalls = MARK_DYNAMIC_CALLS_DIRECTIVE in directives
             this.withNewInferenceDirective = WITH_NEW_INFERENCE_DIRECTIVE in directives
@@ -247,7 +229,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             bindingContext: BindingContext,
             implementingModulesBindings: List<Pair<TargetPlatform, BindingContext>>,
             actualText: StringBuilder,
-            skipJvmSignatureDiagnostics: Boolean,
             languageVersionSettings: LanguageVersionSettings,
             moduleDescriptor: ModuleDescriptorImpl
         ): Boolean {
@@ -260,12 +241,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
 
             if (ktFile.name.endsWith("CoroutineUtil.kt") && ktFile.packageFqName == FqName("helpers")) return true
 
-            // TODO: report JVM signature diagnostics also for implementing modules
-            val jvmSignatureDiagnostics = if (skipJvmSignatureDiagnostics)
-                emptySet<ActualDiagnostic>()
-            else
-                computeJvmSignatureDiagnostics(bindingContext)
-
             val ok = booleanArrayOf(true)
             val withNewInference = newInferenceEnabled && withNewInferenceDirective && !USE_OLD_INFERENCE_DIAGNOSTICS_FOR_NI
             val diagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(
@@ -274,18 +249,12 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 ktFile,
                 markDynamicCalls,
                 dynamicCallDescriptors,
-                DiagnosticsRenderingConfiguration(
-                    platform = null,
-                    withNewInference,
-                    languageVersionSettings,
-                    // When using JVM IR, binding context is empty at the end of compilation, so debug info markers can't be computed.
-                    environment.configuration.getBoolean(JVMConfigurationKeys.IR),
-                ),
+                DiagnosticsRenderingConfiguration(platform = null, withNewInference, languageVersionSettings),
                 DataFlowValueFactoryImpl(languageVersionSettings),
                 moduleDescriptor,
                 this.diagnosedRangesToDiagnosticNames
             )
-            val filteredDiagnostics = ContainerUtil.filter(diagnostics + jvmSignatureDiagnostics) {
+            val filteredDiagnostics = ContainerUtil.filter(diagnostics) {
                 whatDiagnosticsToConsider.value(it.diagnostic)
             }
 
@@ -342,10 +311,12 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                             return
                         }
 
-                        val message = "Unexpected ${diagnostic.description}${PsiDiagnosticUtils.atLocation(
-                            ktFile,
-                            TextRange(actualStart, actualEnd)
-                        )}"
+                        val message = "Unexpected ${diagnostic.description}${
+                            PsiDiagnosticUtils.atLocation(
+                                ktFile,
+                                TextRange(actualStart, actualEnd)
+                            )
+                        }"
                         System.err.println(message)
                         ok[0] = false
                     }
@@ -380,20 +351,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 TextDiagnostic.InferenceCompatibility.OLD
         }
 
-        private fun computeJvmSignatureDiagnostics(bindingContext: BindingContext): Set<ActualDiagnostic> {
-            val jvmSignatureDiagnostics = HashSet<ActualDiagnostic>()
-            val declarations = PsiTreeUtil.findChildrenOfType(ktFile, KtDeclaration::class.java)
-            for (declaration in declarations) {
-                val diagnostics = getJvmSignatureDiagnostics(
-                    declaration,
-                    bindingContext.diagnostics,
-                    GlobalSearchScope.allScope(project)
-                ) ?: continue
-                jvmSignatureDiagnostics.addAll(diagnostics.forElement(declaration).map { ActualDiagnostic(it, null, newInferenceEnabled) })
-            }
-            return jvmSignatureDiagnostics
-        }
-
         override fun toString(): String = ktFile?.name ?: "Java file"
     }
 
@@ -422,8 +379,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         private val EXPLICIT_FLEXIBLE_TYPES_DECLARATIONS = "\npackage " + EXPLICIT_FLEXIBLE_PACKAGE +
                 "\npublic class " + EXPLICIT_FLEXIBLE_CLASS_NAME + "<L, U>"
         private val EXPLICIT_FLEXIBLE_TYPES_IMPORT = "import $EXPLICIT_FLEXIBLE_PACKAGE.$EXPLICIT_FLEXIBLE_CLASS_NAME"
-        val CHECK_LAZY_LOG_DIRECTIVE = "CHECK_LAZY_LOG"
-        val CHECK_LAZY_LOG_DEFAULT = "true" == System.getProperty("check.lazy.logs", "false")
 
         val MARK_DYNAMIC_CALLS_DIRECTIVE = "MARK_DYNAMIC_CALLS"
 
@@ -470,7 +425,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             val matcher = DIAGNOSTICS_PATTERN.matcher(directives)
             if (!matcher.find()) {
                 Assert.fail(
-                    "Wrong syntax in the '// !$DIAGNOSTICS_DIRECTIVE: ...' directive:\n" +
+                    "Wrong syntax in the '// $DIAGNOSTICS_DIRECTIVE: ...' directive:\n" +
                             "found: '$directives'\n" +
                             "Must be '([+-!]DIAGNOSTIC_FACTORY_NAME|ERROR|WARNING|INFO)+'\n" +
                             "where '+' means 'include'\n" +
@@ -502,6 +457,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                         }
                         condition = newCondition
                     }
+
                     "+" -> condition = Conditions.or(condition, newCondition)
                     "-" -> condition = Conditions.and(condition, Conditions.not(newCondition))
                 }

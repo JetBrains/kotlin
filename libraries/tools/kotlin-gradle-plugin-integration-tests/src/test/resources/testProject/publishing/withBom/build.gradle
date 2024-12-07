@@ -20,6 +20,6 @@ repositories {
 }
 
 dependencies {
-    implementation(platform("com.fasterxml.jackson:jackson-bom:2.12.3"))
+    implementation(platform("com.fasterxml.jackson:jackson-bom:2.18.1"))
     implementation("com.fasterxml.jackson.core:jackson-core")
 }

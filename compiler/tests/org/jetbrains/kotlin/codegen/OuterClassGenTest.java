@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.util.Ref;
+import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
@@ -25,15 +26,19 @@ import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.util.JUnit4Assertions;
+import org.jetbrains.kotlin.test.JvmCompilationUtils;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.StringsKt;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 public class OuterClassGenTest extends CodegenTestCase {
     @NotNull
@@ -70,14 +75,6 @@ public class OuterClassGenTest extends CodegenTestCase {
         doTest("foo.PackageInnerObject", "outerClassInfo");
     }
 
-    public void testLambdaInNoInlineFun() {
-        doTest("foo.Foo$foo$1", "foo.Foo$1Lambda", "outerClassInfo");
-    }
-
-    public void testLambdaInConstructor() {
-        doTest("foo.Foo$s$1", "foo.Foo$1LambdaInConstructor", "outerClassInfo");
-    }
-
     public void testObjectLiteralInPackageClass() {
         OuterClassInfo expectedInfo = new OuterClassInfo("foo/OuterClassInfo", null, null);
         doCustomTest("foo/OuterClassInfoKt\\$packageObjectLiteral\\$1", expectedInfo, "outerClassInfo");
@@ -103,46 +100,9 @@ public class OuterClassGenTest extends CodegenTestCase {
         doCustomTest("foo/Bar\\$callToInline\\$\\$inlined\\$inlineFoo\\$1", expectedInfo, "inlineObject");
     }
 
-    public void testLocalObjectInInlineLambda() {
-        OuterClassInfo expectedInfo = new OuterClassInfo("foo/Bar", "objectInInlineLambda", "()V");
-        doCustomTest("foo/Bar\\$objectInInlineLambda\\$\\$inlined\\$simpleFoo\\$lambda\\$1", expectedInfo, "inlineObject");
-    }
-
     public void testLocalObjectInLambdaInlinedIntoObject() {
         OuterClassInfo intoObjectInfo = new OuterClassInfo("foo/Bar", "objectInLambdaInlinedIntoObject", "()V");
         doCustomTest("foo/Bar\\$objectInLambdaInlinedIntoObject\\$\\$inlined\\$inlineFoo\\$1", intoObjectInfo, "inlineObject");
-    }
-
-    public void testLocalObjectInLambdaInlinedIntoObject2() {
-        OuterClassInfo objectInLambda = new OuterClassInfo("foo/Bar$objectInLambdaInlinedIntoObject$$inlined$inlineFoo$1", "run", "()V");
-        doCustomTest("foo/Bar\\$objectInLambdaInlinedIntoObject\\$\\$inlined\\$inlineFoo\\$1\\$lambda\\$1",
-                     objectInLambda, "inlineObject");
-    }
-
-    public void testLambdaInInlineFunction() {
-        OuterClassInfo expectedInfo = new OuterClassInfo("foo/Foo", "inlineFoo", "(Lkotlin/jvm/functions/Function0;)V");
-        doCustomTest("foo/Foo\\$inlineFoo\\$1", expectedInfo, "inlineLambda");
-    }
-
-    public void testLambdaInlined() {
-        OuterClassInfo expectedInfo = new OuterClassInfo("foo/Bar", "callToInline", "()V");
-        doCustomTest("foo/Bar\\$callToInline\\$\\$inlined\\$inlineFoo\\$1", expectedInfo, "inlineLambda");
-    }
-
-    public void testLambdaInInlineLambda() {
-        OuterClassInfo expectedInfo = new OuterClassInfo("foo/Bar", "objectInInlineLambda", "()V");
-        doCustomTest("foo/Bar\\$objectInInlineLambda\\$\\$inlined\\$simpleFoo\\$lambda\\$1", expectedInfo, "inlineLambda");
-    }
-
-    public void testLambdaInLambdaInlinedIntoObject() {
-        OuterClassInfo intoObjectInfo = new OuterClassInfo("foo/Bar", "objectInLambdaInlinedIntoObject", "()V");
-        doCustomTest("foo/Bar\\$objectInLambdaInlinedIntoObject\\$\\$inlined\\$inlineFoo\\$1", intoObjectInfo, "inlineLambda");
-    }
-
-    public void testLambdaInLambdaInlinedIntoObject2() {
-        OuterClassInfo objectInLambda = new OuterClassInfo("foo/Bar$objectInLambdaInlinedIntoObject$$inlined$inlineFoo$1", "invoke", "()V");
-        doCustomTest("foo/Bar\\$objectInLambdaInlinedIntoObject\\$\\$inlined\\$inlineFoo\\$1\\$lambda\\$1",
-                     objectInLambda, "inlineLambda");
     }
 
     private void doTest(@NotNull String classFqName, @NotNull String testDataFile) {
@@ -156,11 +116,8 @@ public class OuterClassGenTest extends CodegenTestCase {
     }
 
     private void doTest(@NotNull String classFqName, @NotNull String javaClassName, @NotNull String testDataFile) {
-        File javaOut = CodegenTestUtil.compileJava(
-                Collections.singletonList(KtTestUtil.getTestDataPathBase() + "/codegen/" + getPrefix() + "/" + testDataFile + ".java"),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                JUnit4Assertions.INSTANCE
+        File javaOut = compileJava(
+                Collections.singletonList(KtTestUtil.getTestDataPathBase() + "/codegen/" + getPrefix() + "/" + testDataFile + ".java")
         );
 
         String javaClassPath = javaClassName.replace('.', File.separatorChar) + ".class";
@@ -184,6 +141,21 @@ public class OuterClassGenTest extends CodegenTestCase {
                    kotlinInfo.getOwner().startsWith(expectedInfo.getOwner()));
         assertEquals(message, expectedInfo.getMethodName(), kotlinInfo.getMethodName());
         assertEquals(message, expectedInfo.getMethodDesc(), kotlinInfo.getMethodDesc());
+    }
+
+    @NotNull
+    private static File compileJava(@NotNull List<String> fileNames) {
+        try {
+            File directory = KtTestUtil.tmpDir("java-classes");
+            JvmCompilationUtils.compileJavaFiles(
+                    CollectionsKt.map(fileNames, File::new),
+                    Arrays.asList("-d", directory.getPath())
+            ).assertSuccessful();
+            return directory;
+        }
+        catch (IOException e) {
+            throw ExceptionUtilsKt.rethrow(e);
+        }
     }
 
     @NotNull

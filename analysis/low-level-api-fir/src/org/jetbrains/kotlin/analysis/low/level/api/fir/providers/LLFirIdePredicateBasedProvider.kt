@@ -9,26 +9,29 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
-import org.jetbrains.kotlin.analysis.providers.KotlinAnnotationsResolver
-import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinAnnotationsResolver
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.extensions.AnnotationFqn
-import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
-import org.jetbrains.kotlin.fir.extensions.FirRegisteredPluginAnnotations
-import org.jetbrains.kotlin.fir.extensions.predicate.*
-import org.jetbrains.kotlin.fir.extensions.registeredPluginAnnotations
+import org.jetbrains.kotlin.fir.extensions.*
+import org.jetbrains.kotlin.fir.extensions.predicate.AbstractPredicate
+import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
+import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
+import org.jetbrains.kotlin.fir.extensions.predicate.PredicateVisitor
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
@@ -37,10 +40,10 @@ import org.jetbrains.kotlin.psi.*
  * PSI index based implementation of [FirPredicateBasedProvider].
  */
 internal class LLFirIdePredicateBasedProvider(
-    private val session: FirSession,
+    private val session: LLFirSession,
     private val annotationsResolver: KotlinAnnotationsResolver,
-    private val declarationProvider: KotlinDeclarationProvider,
 ) : FirPredicateBasedProvider() {
+    private val projectStructureProvider by lazy { KotlinProjectStructureProvider.getInstance(session.project) }
 
     private val registeredPluginAnnotations: FirRegisteredPluginAnnotations
         get() = session.registeredPluginAnnotations
@@ -48,8 +51,8 @@ internal class LLFirIdePredicateBasedProvider(
     private val declarationOwnersCache: FirCache<FirFile, FirOwnersStorage, Nothing?> =
         session.firCachesFactory.createCache { firFile -> FirOwnersStorage.collectOwners(firFile) }
 
-    override fun getSymbolsByPredicate(predicate: DeclarationPredicate): List<FirBasedSymbol<*>> {
-        val annotations = registeredPluginAnnotations.getAnnotationsForPredicate(predicate)
+    override fun getSymbolsByPredicate(predicate: LookupPredicate): List<FirBasedSymbol<*>> {
+        val annotations = predicate.annotations
         val annotatedDeclarations = annotations
             .asSequence()
             .flatMap { annotationsResolver.declarationsByAnnotation(ClassId.topLevel(it)) }
@@ -72,8 +75,9 @@ internal class LLFirIdePredicateBasedProvider(
             this !is KtProperty
         ) return null
 
-        val firResolveSession = this.getFirResolveSession()
-        return this.resolveToFirSymbol(firResolveSession).fir
+        val moduleForFile = projectStructureProvider.getModule(this, session.ktModule)
+        val sessionForFile = moduleForFile.getFirResolveSession(project)
+        return this.resolveToFirSymbol(sessionForFile).fir
     }
 
     override fun getOwnersOfDeclaration(declaration: FirDeclaration): List<FirBasedSymbol<*>>? {
@@ -95,41 +99,71 @@ internal class LLFirIdePredicateBasedProvider(
         }
     }
 
-    override fun matches(predicate: DeclarationPredicate, declaration: FirDeclaration): Boolean {
-        return predicate.accept(matcher, declaration)
+    override fun matches(predicate: AbstractPredicate<*>, declaration: FirDeclaration): Boolean {
+        return when (predicate) {
+            is DeclarationPredicate -> predicate.accept(declarationPredicateMatcher, declaration)
+            is LookupPredicate -> predicate.accept(lookupPredicateMatcher, declaration)
+        }
     }
 
-    private val matcher: Matcher = Matcher()
+    private val declarationPredicateMatcher = Matcher<DeclarationPredicate>()
+    private val lookupPredicateMatcher = Matcher<LookupPredicate>()
 
-    private inner class Matcher : DeclarationPredicateVisitor<Boolean, FirDeclaration>() {
-        override fun visitPredicate(predicate: DeclarationPredicate, data: FirDeclaration): Boolean {
-            error("When overrides for all possible DeclarationPredicate subtypes are implemented, " +
-                          "this method should never be called, but it was called with $predicate")
+    private inner class Matcher<P : AbstractPredicate<P>> : PredicateVisitor<P, Boolean, FirDeclaration>() {
+        override fun visitPredicate(predicate: AbstractPredicate<P>, data: FirDeclaration): Boolean {
+            error(
+                "When overrides for all possible DeclarationPredicate subtypes are implemented, " +
+                        "this method should never be called, but it was called with $predicate"
+            )
         }
 
-        override fun visitAnd(predicate: DeclarationPredicate.And, data: FirDeclaration): Boolean {
+        override fun visitAnd(predicate: AbstractPredicate.And<P>, data: FirDeclaration): Boolean {
             return predicate.a.accept(this, data) && predicate.b.accept(this, data)
         }
 
-        override fun visitOr(predicate: DeclarationPredicate.Or, data: FirDeclaration): Boolean {
+        override fun visitOr(predicate: AbstractPredicate.Or<P>, data: FirDeclaration): Boolean {
             return predicate.a.accept(this, data) || predicate.b.accept(this, data)
         }
 
-        override fun visitAnnotatedWith(predicate: AnnotatedWith, data: FirDeclaration): Boolean {
+        override fun visitAnnotatedWith(predicate: AbstractPredicate.AnnotatedWith<P>, data: FirDeclaration): Boolean {
             return annotationsOnDeclaration(data).any { it in predicate.annotations }
         }
 
-        override fun visitAncestorAnnotatedWith(predicate: AncestorAnnotatedWith, data: FirDeclaration): Boolean {
+        override fun visitAncestorAnnotatedWith(predicate: AbstractPredicate.AncestorAnnotatedWith<P>, data: FirDeclaration): Boolean {
             return annotationsOnOuterDeclarations(data).any { it in predicate.annotations }
         }
 
-        override fun visitMetaAnnotatedWith(predicate: MetaAnnotatedWith, data: FirDeclaration): Boolean {
-            return metaAnnotationsOnDeclaration(data).any { it in predicate.metaAnnotations }
+        override fun visitMetaAnnotatedWith(predicate: AbstractPredicate.MetaAnnotatedWith<P>, data: FirDeclaration): Boolean {
+            return data.annotations.any { annotation ->
+                annotation.markedWithMetaAnnotation(session, data, predicate.metaAnnotations, predicate.includeItself)
+            }
         }
 
-        override fun visitAncestorMetaAnnotatedWith(predicate: AncestorMetaAnnotatedWith, data: FirDeclaration): Boolean {
-            return metaAnnotationsOnOuterDeclarations(data).any { it in predicate.metaAnnotations }
+        override fun visitParentAnnotatedWith(predicate: AbstractPredicate.ParentAnnotatedWith<P>, data: FirDeclaration): Boolean {
+            val parent = data.directParentDeclaration ?: return false
+            val parentPredicate = DeclarationPredicate.AnnotatedWith(predicate.annotations)
+
+            return parentPredicate.accept(declarationPredicateMatcher, parent)
         }
+
+        override fun visitHasAnnotatedWith(predicate: AbstractPredicate.HasAnnotatedWith<P>, data: FirDeclaration): Boolean {
+            val childPredicate = DeclarationPredicate.AnnotatedWith(predicate.annotations)
+
+            return data.anyDirectChildDeclarationMatches(childPredicate)
+        }
+
+        private val FirDeclaration.directParentDeclaration: FirDeclaration?
+            get() = getOwnersOfDeclaration(this)?.lastOrNull()?.fir
+    }
+
+    private fun FirDeclaration.anyDirectChildDeclarationMatches(childPredicate: DeclarationPredicate): Boolean {
+        var result = false
+
+        this.forEachDirectChildDeclaration {
+            result = result || childPredicate.accept(declarationPredicateMatcher, it)
+        }
+
+        return result
     }
 
     private fun annotationsOnDeclaration(declaration: FirDeclaration): Set<AnnotationFqn> {
@@ -138,7 +172,7 @@ internal class LLFirIdePredicateBasedProvider(
         val firResolvedAnnotations = declaration.annotations
             .asSequence()
             .mapNotNull { it.annotationTypeRef as? FirResolvedTypeRef }
-            .mapNotNull { it.type.classId }
+            .mapNotNull { it.coneType.classId }
             .map { it.asSingleFqName() }
             .toSet()
 
@@ -150,23 +184,8 @@ internal class LLFirIdePredicateBasedProvider(
         return psiAnnotations.map { it.asSingleFqName() }.toSet()
     }
 
-    private fun metaAnnotationsOnDeclaration(declaration: FirDeclaration): Set<AnnotationFqn> {
-        val directAnnotations = annotationsOnDeclaration(declaration)
-        val metaAnnotations = directAnnotations
-            .asSequence()
-            .mapNotNull { declarationProvider.getAllClassesByClassId(ClassId.topLevel(it)).singleOrNull() }
-            .flatMap { annotationsResolver.annotationsOnDeclaration(it) }
-            .toSet()
-
-        return metaAnnotations.map { it.asSingleFqName() }.toSet()
-    }
-
     private fun annotationsOnOuterDeclarations(declaration: FirDeclaration): Set<AnnotationFqn> {
         return getOwnersOfDeclaration(declaration)?.flatMap { annotationsOnDeclaration(it.fir) }.orEmpty().toSet()
-    }
-
-    private fun metaAnnotationsOnOuterDeclarations(declaration: FirDeclaration): Set<AnnotationFqn> {
-        return getOwnersOfDeclaration(declaration)?.flatMap { metaAnnotationsOnDeclaration(it.fir) }.orEmpty().toSet()
     }
 }
 
@@ -216,4 +235,27 @@ private inline fun FirFile.forEachElementWithContainers(
     }
 
     accept(declarationsCollector, persistentListOf())
+}
+
+/**
+ * Calls [action] on every direct child declaration of [this] declaration.
+ */
+private inline fun FirDeclaration.forEachDirectChildDeclaration(crossinline action: (child: FirDeclaration) -> Unit) {
+    this.acceptChildren(object : FirDefaultVisitorVoid() {
+        override fun visitElement(element: FirElement) {
+            // we must visit only direct children
+        }
+
+        override fun visitFile(file: FirFile) {
+            action(file)
+        }
+
+        override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration) {
+            action(callableDeclaration)
+        }
+
+        override fun visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration) {
+            action(classLikeDeclaration)
+        }
+    })
 }

@@ -1,7 +1,15 @@
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_VARIABLE -UNUSED_VALUE
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_VARIABLE -UNUSED_VALUE
 // SKIP_TXT
 // WITH_REFLECT
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 46
+ * DESCRIPTION: Raw data flow analysis test
+ * HELPERS: classes, objects, typealiases, functions, enumClasses, interfaces, sealedClasses
+ */
 
 import kotlin.reflect.*
 
@@ -12,8 +20,8 @@ import kotlin.reflect.*
  */
 fun case_1(x: Int?) {
     if (x != funNothingQuest() == true) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>.inv()
     }
 }
 
@@ -25,8 +33,8 @@ fun case_1(x: Int?) {
 fun case_2(x: Int?) {
     operator fun Nothing?.not() = null
     if (x != !null != false) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>.inv()
     }
 }
 
@@ -37,8 +45,8 @@ fun case_2(x: Int?) {
  */
 fun case_3(x: Int?) {
     if (x == funWithoutArgs() == true) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>.inv()
     }
 }
 
@@ -49,8 +57,8 @@ fun case_3(x: Int?) {
  */
 fun case_4(x: Int?, y: List<Nothing?>) {
     if (x == y[0] == true) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>inv()
     }
 }
 
@@ -65,8 +73,8 @@ fun case_5(x: Int?) {
     }
 
     if (x == y.z == true) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>inv()
     }
 }
 
@@ -79,8 +87,8 @@ fun case_6(x: Int?) {
     val y = null
 
     if (x == y == true) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>inv()
     }
 }
 
@@ -96,8 +104,8 @@ fun case_7(x: Int?) {
     }
 
     if (x == y.z == true) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>inv()
     }
 }
 
@@ -108,7 +116,7 @@ fun case_7(x: Int?) {
  */
 fun case_8(x: KClass<EmptyObject>?) {
     if (x == EmptyObject::class == true) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KClass<EmptyObject>? & kotlin.reflect.KClass<EmptyObject>")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KClass<EmptyObject>? & kotlin.reflect.KClass<EmptyObject>")!>x<!>.java
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KClass<EmptyObject>")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KClass<EmptyObject>")!>x<!>.java
     }
 }

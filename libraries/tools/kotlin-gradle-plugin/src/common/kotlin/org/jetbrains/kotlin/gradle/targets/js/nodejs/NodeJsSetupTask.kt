@@ -1,143 +1,80 @@
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
-import org.gradle.api.DefaultTask
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.file.FileSystemOperations
-import org.gradle.api.file.FileTree
-import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.*
-import org.gradle.internal.hash.FileHasher
-import org.jetbrains.kotlin.gradle.logging.kotlinInfo
-import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
-import org.jetbrains.kotlin.gradle.targets.js.calculateDirHash
-import org.jetbrains.kotlin.gradle.utils.ArchiveOperationsCompat
-import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
+import org.gradle.api.tasks.Internal
+import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.targets.js.AbstractSetupTask
+import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
-import java.net.URI
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import javax.inject.Inject
 
-abstract class NodeJsSetupTask : DefaultTask() {
-    @Transient
-    private val settings = NodeJsRootPlugin.apply(project.rootProject)
-    private val env by lazy { settings.requireConfigured() }
+@DisableCachingByDefault
+abstract class NodeJsSetupTask @Inject constructor(
+    settings: NodeJsEnvSpec
+) : AbstractSetupTask<NodeJsEnv, NodeJsEnvSpec>(settings) {
 
-    private val shouldDownload = settings.download
-
-    private val archiveOperations = ArchiveOperationsCompat(project)
-
-    @get:Inject
-    internal open val fileHasher: FileHasher
-        get() = error("Should be injected")
-
-    @get:Inject
-    internal open val fs: FileSystemOperations
-        get() = error("Should be injected")
-
-    val ivyDependency: String
-        @Input get() = env.ivyDependency
-
-    val downloadBaseUrl: String
-        @Input get() = env.downloadBaseUrl
-
-    val destination: File
-        @OutputDirectory get() = env.nodeDir
-
-    val destinationHashFile: File
-        @OutputFile get() = destination.parentFile.resolve("${destination.name}.hash")
-
-    @Transient
     @get:Internal
-    internal lateinit var configuration: Provider<Configuration>
+    override val artifactPattern: String
+        get() = "v[revision]/[artifact](-v[revision]-[classifier]).[ext]"
 
-    @get:Classpath
-    @get:Optional
-    val nodeJsDist: File? by lazy {
-        if (shouldDownload) {
-            val repo = project.repositories.ivy { repo ->
-                repo.name = "Node Distributions at ${downloadBaseUrl}"
-                repo.url = URI(downloadBaseUrl)
+    @get:Internal
+    override val artifactModule: String
+        get() = "org.nodejs"
 
-                repo.patternLayout {
-                    it.artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
-                }
-                repo.metadataSources { it.artifact() }
-                repo.content { it.includeModule("org.nodejs", "node") }
-            }
-            val startDownloadTime = System.currentTimeMillis()
-            val dist = configuration.get().files.single()
-            val downloadDuration = System.currentTimeMillis() - startDownloadTime
-            if (downloadDuration > 0) {
-                KotlinBuildStatsService.getInstance()
-                    ?.report(NumericalMetrics.ARTIFACTS_DOWNLOAD_SPEED, dist.length() * 1000 / downloadDuration)
-            }
-            project.repositories.remove(repo)
-            dist
-        } else null
-    }
+    @get:Internal
+    override val artifactName: String
+        get() = "node"
 
-    init {
-        onlyIf {
-            shouldDownload
-        }
-    }
+    private val isWindows = env.map { it.isWindows }
 
-    @Suppress("unused")
-    @TaskAction
-    fun exec() {
-        if (!shouldDownload) return
-        logger.kotlinInfo("Using node distribution from '$nodeJsDist'")
+    private val executable = env.map { it.executable }
 
-        var dirHash: String? = null
-        val upToDate = destinationHashFile.let { file ->
-            if (file.exists()) {
-                file.useLines {
-                    it.single() == (fileHasher.calculateDirHash(destination).also { dirHash = it })
-                }
-            } else false
-        }
+    override fun extract(archive: File) {
+        var fixBrokenSymLinks = false
 
-        val tmpDir = temporaryDir
-        unpackNodeArchive(nodeJsDist!!, tmpDir)
-
-        if (upToDate && fileHasher.calculateDirHash(tmpDir.resolve(destination.name))!! == dirHash) {
-            tmpDir.deleteRecursively()
-            return
-        }
-
-        if (destination.isDirectory) {
-            destination.deleteRecursively()
-        }
-
+        val destination = destinationProvider.getFile()
         fs.copy {
-            it.from(tmpDir)
+            it.from(
+                when {
+                    archive.name.endsWith("zip") -> archiveOperations.zipTree(archive)
+                    else -> {
+                        fixBrokenSymLinks = true
+                        archiveOperations.tarTree(archive)
+                    }
+                }
+            )
             it.into(destination.parentFile)
         }
 
-        tmpDir.deleteRecursively()
+        fixBrokenSymlinks(destination, isWindows.get(), fixBrokenSymLinks)
 
-        if (!env.isWindows) {
-            File(env.nodeExecutable).setExecutable(true)
-        }
-
-        destinationHashFile.writeText(
-            fileHasher.calculateDirHash(destination)!!
-        )
-    }
-
-    private fun unpackNodeArchive(archive: File, destination: File) {
-        logger.kotlinInfo("Unpacking $archive to $destination")
-
-        fs.copy {
-            it.from(fileTree(archive))
-            it.into(destination)
+        if (!isWindows.get()) {
+            File(executable.get()).setExecutable(true)
         }
     }
 
-    private fun fileTree(archive: File): FileTree =
-        when {
-            archive.name.endsWith("zip") -> archiveOperations.zipTree(archive)
-            else -> archiveOperations.tarTree(archive)
+    private fun fixBrokenSymlinks(destinationDir: File, isWindows: Boolean, necessaryToFix: Boolean) {
+        if (necessaryToFix) {
+            val nodeBinDir = computeNodeBinDir(destinationDir, isWindows).toPath()
+            fixBrokenSymlink("npm", nodeBinDir, destinationDir, isWindows)
+            fixBrokenSymlink("npx", nodeBinDir, destinationDir, isWindows)
         }
+    }
+
+    private fun fixBrokenSymlink(
+        name: String,
+        nodeBinDirPath: Path,
+        nodeDirProvider: File,
+        isWindows: Boolean,
+    ) {
+        val script = nodeBinDirPath.resolve(name)
+        val scriptFile = computeNpmScriptFile(nodeDirProvider, name, isWindows)
+        if (Files.deleteIfExists(script)) {
+            Files.createSymbolicLink(script, nodeBinDirPath.relativize(Paths.get(scriptFile)))
+        }
+    }
 
     companion object {
         const val NAME: String = "kotlinNodeJsSetup"

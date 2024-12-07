@@ -6,6 +6,8 @@ Cleaning output files:
   out/production/pJvm/FJvmKt.class
   out/production/pJvm/META-INF/pJvm.kotlin_module
 End of files
+Complementary files. Marked as dirty by Kotlin:
+  c/src/f.kt
 Cleaning output files:
   out/production/pJvm/FKt.class
 End of files

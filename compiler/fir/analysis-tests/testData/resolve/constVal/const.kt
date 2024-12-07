@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: Constants.java
 
 public class Constants {
@@ -7,7 +8,7 @@ public class Constants {
 
 // FILE: const.kt
 const val a = "something"
-<!MUST_BE_INITIALIZED!><!CONST_VAL_WITHOUT_INITIALIZER!>const<!> val b<!>
+<!CONST_VAL_WITHOUT_INITIALIZER!>const<!> <!MUST_BE_INITIALIZED!>val b<!>
 <!TYPE_CANT_BE_USED_FOR_CONST_VAL!>const<!> val c = null
 <!TYPE_CANT_BE_USED_FOR_CONST_VAL!>const<!> val d = ForConst
 const val e = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>ForConst.one()<!>
@@ -21,8 +22,8 @@ const val l = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>k<!>
 const val m = "123".toString()
 const val n = "456".length
 val o = "789"
-const val p = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>o.toString()<!>
-const val q = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>o.length<!>
+const val p = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>o.toString()<!>
+const val q = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>o.length<!>
 
 class ForConst{
     companion object {

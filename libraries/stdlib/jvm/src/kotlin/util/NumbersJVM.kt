@@ -7,6 +7,8 @@
 @file:kotlin.jvm.JvmName("NumbersKt")
 package kotlin
 
+import kotlin.math.abs
+
 /**
  * Returns `true` if the specified number is a
  * Not-a-Number (NaN) value, `false` otherwise.
@@ -37,13 +39,13 @@ public actual inline fun Float.isInfinite(): Boolean = java.lang.Float.isInfinit
  * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
  */
 @kotlin.internal.InlineOnly
-public actual inline fun Double.isFinite(): Boolean = !isInfinite() && !isNaN()
+public actual inline fun Double.isFinite(): Boolean = abs(this) <= Double.MAX_VALUE
 
 /**
  * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
  */
 @kotlin.internal.InlineOnly
-public actual inline fun Float.isFinite(): Boolean = !isInfinite() && !isNaN()
+public actual inline fun Float.isFinite(): Boolean = abs(this) <= Float.MAX_VALUE
 
 /**
  * Returns a bit representation of the specified floating-point value as [Long]
@@ -98,7 +100,6 @@ public actual inline fun Float.Companion.fromBits(bits: Int): Float = java.lang.
  * Counts the number of set bits in the binary representation of this [Int] number.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Int.countOneBits(): Int = Integer.bitCount(this)
 
@@ -106,7 +107,6 @@ public actual inline fun Int.countOneBits(): Int = Integer.bitCount(this)
  * Counts the number of consecutive most significant bits that are zero in the binary representation of this [Int] number.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Int.countLeadingZeroBits(): Int = Integer.numberOfLeadingZeros(this)
 
@@ -114,7 +114,6 @@ public actual inline fun Int.countLeadingZeroBits(): Int = Integer.numberOfLeadi
  * Counts the number of consecutive least significant bits that are zero in the binary representation of this [Int] number.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Int.countTrailingZeroBits(): Int = Integer.numberOfTrailingZeros(this)
 
@@ -123,7 +122,6 @@ public actual inline fun Int.countTrailingZeroBits(): Int = Integer.numberOfTrai
  * or zero, if this number is zero.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Int.takeHighestOneBit(): Int = Integer.highestOneBit(this)
 
@@ -132,7 +130,6 @@ public actual inline fun Int.takeHighestOneBit(): Int = Integer.highestOneBit(th
  * or zero, if this number is zero.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Int.takeLowestOneBit(): Int = Integer.lowestOneBit(this)
 
@@ -172,7 +169,6 @@ public actual inline fun Int.rotateRight(bitCount: Int): Int = Integer.rotateRig
  * Counts the number of set bits in the binary representation of this [Long] number.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Long.countOneBits(): Int = java.lang.Long.bitCount(this)
 
@@ -180,7 +176,6 @@ public actual inline fun Long.countOneBits(): Int = java.lang.Long.bitCount(this
  * Counts the number of consecutive most significant bits that are zero in the binary representation of this [Long] number.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Long.countLeadingZeroBits(): Int = java.lang.Long.numberOfLeadingZeros(this)
 
@@ -188,7 +183,6 @@ public actual inline fun Long.countLeadingZeroBits(): Int = java.lang.Long.numbe
  * Counts the number of consecutive least significant bits that are zero in the binary representation of this [Long] number.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Long.countTrailingZeroBits(): Int = java.lang.Long.numberOfTrailingZeros(this)
 
@@ -197,7 +191,6 @@ public actual inline fun Long.countTrailingZeroBits(): Int = java.lang.Long.numb
  * or zero, if this number is zero.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Long.takeHighestOneBit(): Long = java.lang.Long.highestOneBit(this)
 
@@ -206,7 +199,6 @@ public actual inline fun Long.takeHighestOneBit(): Long = java.lang.Long.highest
  * or zero, if this number is zero.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Long.takeLowestOneBit(): Long = java.lang.Long.lowestOneBit(this)
 

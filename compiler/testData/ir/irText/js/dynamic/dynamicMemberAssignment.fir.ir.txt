@@ -1,0 +1,27 @@
+FILE fqName:<root> fileName:/dynamicMemberAssignment.kt
+  FUN name:testMemberAssignment visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Unit
+    VALUE_PARAMETER name:d index:0 type:dynamic
+    BLOCK_BODY
+      DYN_OP operator=EQ type=kotlin.Unit
+        receiver: DYN_MEMBER memberName='m' type=kotlin.Unit
+          GET_VAR 'd: dynamic declared in <root>.testMemberAssignment' type=dynamic origin=null
+        0: CONST Int type=kotlin.Int value=1
+  FUN name:testSafeMemberAssignment visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Unit
+    VALUE_PARAMETER name:d index:0 type:dynamic
+    BLOCK_BODY
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        BLOCK type=kotlin.Unit? origin=SAFE_CALL
+          VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:dynamic [val]
+            GET_VAR 'd: dynamic declared in <root>.testSafeMemberAssignment' type=dynamic origin=null
+          WHEN type=kotlin.Unit? origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'val tmp_0: dynamic declared in <root>.testSafeMemberAssignment' type=dynamic origin=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Null type=kotlin.Nothing? value=null
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: DYN_OP operator=EQ type=kotlin.Unit
+                receiver: DYN_MEMBER memberName='m' type=kotlin.Unit
+                  GET_VAR 'val tmp_0: dynamic declared in <root>.testSafeMemberAssignment' type=dynamic origin=null
+                0: CONST Int type=kotlin.Int value=1

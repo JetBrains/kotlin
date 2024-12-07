@@ -1,5 +1,15 @@
+// LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SPEC VERSION: 0.1-435
+ * MAIN LINK: expressions, when-expression -> paragraph 6 -> sentence 5
+ * NUMBER: 2
+ * DESCRIPTION: 'When' with different variants of the arithmetic expressions (additive expression and multiplicative expression) in 'when condition'.
+ * HELPERS: typesProvider, classes, functions
+ */
 
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Any?) {
@@ -13,14 +23,6 @@ fun case_1(value_1: Any?) {
 fun case_2(value_1: Number, value_2: Int) {
     when (value_1) {
         -.09 % 10L, value_2 / -5, getByte() - 11 + 90 -> {}
-    }
-}
-
-// TESTCASE NUMBER: 3
-fun case_3(value_1: Boolean, value_2: Boolean, value_3: Long) {
-    <!NO_ELSE_IN_WHEN!>when<!> (value_1) {
-        value_2, !value_2, <!CONFUSING_BRANCH_CONDITION_WARNING!>getBoolean() && value_2<!>, <!CONFUSING_BRANCH_CONDITION_WARNING!>getChar() != 'a'<!> -> {}
-        <!CONFUSING_BRANCH_CONDITION_WARNING!>getList() === getAny()<!>, <!CONFUSING_BRANCH_CONDITION_WARNING!>value_3 <= 11<!> -> {}
     }
 }
 
@@ -80,7 +82,7 @@ fun case_9(value_1: Any) {
 // TESTCASE NUMBER: 10
 fun case_10(value_1: Collection<Int>, value_2: Collection<Int>, value_3: Collection<Int>?) {
     when (value_1) {
-        value_2 as List<Int>, value_2 as? List<Int> -> {}
+        value_2 as List<Int>, value_2 <!USELESS_CAST!>as? List<Int><!> -> {}
         value_3 <!UNCHECKED_CAST!>as? MutableMap<Int, Int><!>, (value_2 <!UNCHECKED_CAST!>as? Map<Int, Int><!>) as MutableMap<Int, Int> -> {}
     }
 }
@@ -226,8 +228,8 @@ fun case_23(value_1: Nothing) {
 // TESTCASE NUMBER: 24
 fun case_24(value_1: Nothing?) = when (value_1) {
     <!SENSELESS_COMPARISON!>throw Exception()<!>, <!SENSELESS_COMPARISON!><!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> ""<!> -> ""
-    <!SENSELESS_NULL_IN_WHEN!>null<!>, <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> "", throw throw throw Exception() -> ""
-    else -> ""
+    <!SENSELESS_COMPARISON!>null<!>, <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> "", throw throw throw Exception() -> ""
+    <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> ""
 }
 
 /*

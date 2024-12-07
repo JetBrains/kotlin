@@ -1,0 +1,3 @@
+KtNameReferenceExpression(70,74): 'name'
+  KtSimpleNameReference:
+    (in Foo) private val name: kotlin.String [privateProperty.kt]

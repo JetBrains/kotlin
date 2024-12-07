@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface A {
     fun <T> foo()
     fun <T> bar()
@@ -9,5 +10,5 @@ interface B {
 }
 
 <!CONFLICTING_INHERITED_MEMBERS!>interface C1<!> : A, B {
-    override fun bar()
+    override <!CONFLICTING_OVERLOADS!>fun bar()<!>
 }

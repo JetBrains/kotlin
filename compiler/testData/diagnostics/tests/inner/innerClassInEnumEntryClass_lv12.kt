@@ -1,4 +1,5 @@
-// !LANGUAGE: +InnerClassInEnumEntryClass -NestedClassesInEnumEntryShouldBeInner
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +InnerClassInEnumEntryClass -NestedClassesInEnumEntryShouldBeInner
 
 enum class Enum {
     ENTRY_WITH_CLASS {

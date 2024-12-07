@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: JA.java
 public interface JA<E> {
     public E getFoo();

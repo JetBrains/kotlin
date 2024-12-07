@@ -1,0 +1,6 @@
+$TESTDATA_DIR$/experimentalCheckers.kt
+-o
+simple
+-p
+library
+-Xuse-fir-experimental-checkers

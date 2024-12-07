@@ -10,5 +10,4 @@ kotlin {
     linuxX64()
     macosX64()
     mingwX64("windowsX64")
-    mingwX86("windowsX86")
 }

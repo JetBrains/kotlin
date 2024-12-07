@@ -30,9 +30,5 @@ public interface TextOutput {
 
     void print(CharSequence s);
 
-    void printOpt(char c);
-
-    boolean isCompact();
-
     void maybeIndent();
 }

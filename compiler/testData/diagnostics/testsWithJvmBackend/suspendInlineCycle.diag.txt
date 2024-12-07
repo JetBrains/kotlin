@@ -1,6 +1,3 @@
-/suspendInlineCycle.kt:8:5: error: the 'inlineFun2' invocation is a part of inline cycle
-    inlineFun2(p)
-    ^
-/suspendInlineCycle.kt:13:5: error: the 'inlineFun1' invocation is a part of inline cycle
-    inlineFun1(p)
-    ^
+/suspendInlineCycle.kt:6:5: error: The 'inlineFun2' invocation is a part of inline cycle
+
+/suspendInlineCycle.kt:11:5: error: The 'inlineFun1' invocation is a part of inline cycle

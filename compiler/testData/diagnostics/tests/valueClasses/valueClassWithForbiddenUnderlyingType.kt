@@ -1,20 +1,23 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !SKIP_JAVAC
-// !LANGUAGE: +InlineClasses
+// ALLOW_KOTLIN_PACKAGE
+// SKIP_JAVAC
+// SKIP_TXT
+// LANGUAGE: +InlineClasses
 
 package kotlin.jvm
 
 annotation class JvmInline
 
 @JvmInline
-value class Foo<T>(val x: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>T<!>)
+value class Foo<T>(val x: T)
 @JvmInline
-value class FooNullable<T>(val x: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>T?<!>)
+value class FooNullable<T>(val x: T?)
 
 @JvmInline
-value class FooGenericArray<T>(val x: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>Array<T><!>)
+value class FooGenericArray<T>(val x: Array<T>)
 @JvmInline
-value class FooGenericArray2<T>(val x: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>Array<Array<T>><!>)
+value class FooGenericArray2<T>(val x: Array<Array<T>>)
 
 @JvmInline
 value class FooStarProjectedArray(val x: Array<*>)

@@ -1,0 +1,72 @@
+FILE: listAssignmentInWhen.fir.kt
+    public final fun foo(list: R|kotlin/collections/MutableList<kotlin/Any?>|, condition: R|kotlin/Boolean|): R|kotlin/Unit| {
+        ^foo when () {
+            R|<local>/condition| ->  {
+                 {
+                    R|<local>/list|.R|SubstitutionOverride<kotlin/collections/MutableList.set: R|kotlin/Any?|>|(Int(0), String())
+                    Unit
+                }
+
+            }
+            else ->  {
+                Q|kotlin/Unit|
+            }
+        }
+
+    }
+    public final fun bar(list: R|kotlin/collections/MutableList<kotlin/Any?>|, condition: R|kotlin/Boolean|): R|kotlin/Unit| {
+        ^bar when () {
+            R|<local>/condition| ->  {
+                R|<local>/list|.R|SubstitutionOverride<kotlin/collections/MutableList.set: R|kotlin/Any?|>|(Int(0), String())
+            }
+            else ->  {
+                Q|kotlin/Unit|
+            }
+        }
+
+    }
+    public final fun plusFoo(list: R|kotlin/collections/MutableList<kotlin/String>|, condition: R|kotlin/Boolean|): R|kotlin/Unit| {
+        ^plusFoo when () {
+            R|<local>/condition| ->  {
+                 {
+                     {
+                        lval <array>: R|kotlin/collections/MutableList<kotlin/String>| = R|<local>/list|
+                        lval <index_0>: R|kotlin/Int| = Int(0)
+                        R|<local>/<array>|.R|SubstitutionOverride<kotlin/collections/MutableList.set: R|kotlin/String|>|(R|<local>/<index_0>|, R|<local>/<array>|.R|SubstitutionOverride<kotlin/collections/MutableList.get: R|kotlin/String|>|(R|<local>/<index_0>|).R|kotlin/String.plus|(String()))
+                    }
+
+                    Unit
+                }
+
+            }
+            else ->  {
+                Q|kotlin/Unit|
+            }
+        }
+
+    }
+    public final var x: R|kotlin/String| = String()
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): R|kotlin/Unit|
+    public final fun assign(condition: R|kotlin/Boolean|): R|kotlin/Unit| {
+        ^assign when () {
+            R|<local>/condition| ->  {
+                R|/x| = String()
+            }
+            else ->  {
+                Q|kotlin/Unit|
+            }
+        }
+
+    }
+    public final fun plugAssign(condition: R|kotlin/Boolean|): R|kotlin/Unit| {
+        ^plugAssign when () {
+            R|<local>/condition| ->  {
+                R|/x| = R|/x|.R|kotlin/String.plus|(String())
+            }
+            else ->  {
+                Q|kotlin/Unit|
+            }
+        }
+
+    }

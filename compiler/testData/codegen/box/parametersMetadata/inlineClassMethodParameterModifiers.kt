@@ -1,5 +1,6 @@
 // SKIP_JDK6
 // TARGET_BACKEND: JVM
+// IGNORE_BACKEND: JVM
 // WITH_STDLIB
 // FULL_JDK
 // PARAMETERS_METADATA
@@ -19,10 +20,8 @@ fun box(): String {
 
     val extensionMethod = Class.forName("AKt").declaredMethods.single { it.name.contains("extension") }
     val extensionMethodParameters = extensionMethod.getParameters()
-    if (extensionMethodParameters[0].isSynthetic())
-        return "wrong modifier (synthetic) on extension receiver parameter: ${extensionMethodParameters[0].modifiers}"
-    if (!extensionMethodParameters[0].isImplicit())
-        return "wrong modifier (not implicit) on extension receiver parameter: ${extensionMethodParameters[0].modifiers}"
+    if (extensionMethodParameters[0].isSynthetic() || extensionMethodParameters[0].isImplicit())
+        return "wrong modifier on extension receiver parameter: ${extensionMethodParameters[0].modifiers}"
 
     return "OK"
 }

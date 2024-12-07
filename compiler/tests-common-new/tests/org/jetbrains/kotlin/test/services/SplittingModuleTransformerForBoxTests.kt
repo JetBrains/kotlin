@@ -21,12 +21,16 @@ import org.jetbrains.kotlin.test.services.impl.TestModuleStructureImpl
  * Used when the same test sets are run both in a single module mode (as in IrBlackBoxInlineCodegenTest)
  * and in multi-module mode (as in IrCompileKotlinAgainstInlineKotlinTest).
  *
- * It will fail in case when module structure contains more than one module.
+ * If the test is already multimodule, do nothing.
  */
 @TestInfrastructureInternals
 class SplittingModuleTransformerForBoxTests : ModuleStructureTransformer() {
-    override fun transformModuleStructure(moduleStructure: TestModuleStructure): TestModuleStructure {
-        val module = moduleStructure.modules.singleOrNull() ?: error("Test should contain only one module")
+    override fun transformModuleStructure(moduleStructure: TestModuleStructure, defaultsProvider: DefaultsProvider): TestModuleStructure {
+        if (moduleStructure.modules.size > 1) {
+            // The test is already multimodule, no need to split it into modules further.
+            return moduleStructure
+        }
+        val module = moduleStructure.modules.single()
         val realFiles = module.files.filterNot { it.isAdditional }
         if (realFiles.size < 2) error("Test should contain at least two files")
         val additionalFiles = module.files.filter { it.isAdditional }

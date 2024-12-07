@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -59,29 +61,35 @@ class FirUnstableSmartcastTypeScope(
         return processComposite(FirScope::processPropertiesByName, name, processor)
     }
 
-    private inline fun <N, T : FirCallableSymbol<*>> processTypedComposite(
-        process: FirTypeScope.(N, (T, FirTypeScope) -> ProcessorAction) -> ProcessorAction,
-        name: N,
-        noinline processor: (T, FirTypeScope) -> ProcessorAction
+    private inline fun <S : FirCallableSymbol<*>> processDirectOverriddenWithBaseScope(
+        originalSymbol: S,
+        processDirectOverriddenSymbolsWithBaseScope: FirTypeScope.(S, (S, FirTypeScope) -> ProcessorAction) -> ProcessorAction,
+        noinline processor: (S, FirTypeScope) -> ProcessorAction
     ): ProcessorAction {
-        val unique = mutableSetOf<T>()
-        originalScope.process(name) { symbol, firTypeScope ->
+        val unique = mutableSetOf<S>()
+        originalScope.processDirectOverriddenSymbolsWithBaseScope(originalSymbol) { symbol, firTypeScope ->
             unique += symbol
             processor(symbol, firTypeScope)
         }.let { if (it == ProcessorAction.STOP) return ProcessorAction.STOP }
 
-        smartcastScope.process(name) { symbol, firTypeScope ->
-            if (symbol !in unique) {
-                markSymbolFromUnstableSmartcast(symbol)
-                processor(symbol, firTypeScope)
-            } else {
-                ProcessorAction.NEXT
+        smartcastScope.processDirectOverriddenSymbolsWithBaseScope(originalSymbol) { symbol, firTypeScope ->
+            when (symbol) {
+                /**
+                 * `processDirectOverriddenSymbolsWithBaseScope` may return the same symbol from underlying scopes,
+                 *   so we need to skip them until we found real overridden
+                 */
+                originalSymbol -> ProcessorAction.NEXT
+                !in unique -> {
+                    markSymbolFromUnstableSmartcast(symbol)
+                    processor(symbol, firTypeScope)
+                }
+                else -> ProcessorAction.NEXT
             }
         }.let { if (it == ProcessorAction.STOP) return ProcessorAction.STOP }
         return ProcessorAction.NEXT
     }
 
-    fun isSymbolFromUnstableSmartcast(symbol: FirBasedSymbol<*>) = symbol in symbolsFromUnstableSmartcast
+    fun isSymbolFromUnstableSmartcast(symbol: FirBasedSymbol<*>): Boolean = symbol in symbolsFromUnstableSmartcast
 
     fun markSymbolFromUnstableSmartcast(symbol: FirCallableSymbol<*>) {
         symbolsFromUnstableSmartcast += symbol
@@ -91,14 +99,14 @@ class FirUnstableSmartcastTypeScope(
         functionSymbol: FirNamedFunctionSymbol,
         processor: (FirNamedFunctionSymbol, FirTypeScope) -> ProcessorAction
     ): ProcessorAction {
-        return processTypedComposite(FirTypeScope::processDirectOverriddenFunctionsWithBaseScope, functionSymbol, processor)
+        return processDirectOverriddenWithBaseScope(functionSymbol, FirTypeScope::processDirectOverriddenFunctionsWithBaseScope, processor)
     }
 
     override fun processDirectOverriddenPropertiesWithBaseScope(
         propertySymbol: FirPropertySymbol,
         processor: (FirPropertySymbol, FirTypeScope) -> ProcessorAction
     ): ProcessorAction {
-        return processTypedComposite(FirTypeScope::processDirectOverriddenPropertiesWithBaseScope, propertySymbol, processor)
+        return processDirectOverriddenWithBaseScope(propertySymbol, FirTypeScope::processDirectOverriddenPropertiesWithBaseScope, processor)
     }
 
     override fun getCallableNames(): Set<Name> {
@@ -111,5 +119,16 @@ class FirUnstableSmartcastTypeScope(
 
     override val scopeOwnerLookupNames: List<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         scopes.flatMap { it.scopeOwnerLookupNames }
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirUnstableSmartcastTypeScope? {
+        val newSmartcastTypeScope = smartcastScope.withReplacedSessionOrNull(newSession, newScopeSession)
+        val newOriginalScope = originalScope.withReplacedSessionOrNull(newSession, newScopeSession)
+        if (newSmartcastTypeScope == null && newOriginalScope == null) return null
+        return FirUnstableSmartcastTypeScope(
+            newSmartcastTypeScope ?: smartcastScope,
+            newOriginalScope ?: originalScope,
+        )
     }
 }

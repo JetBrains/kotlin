@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 fun foo(arr: Array<out Number>): Int {
     @Suppress("UNCHECKED_CAST")

@@ -42,33 +42,33 @@ internal interface LlvmDiagnosticHandler {
     fun handle(diagnostics: List<LlvmDiagnostic>)
 }
 
-internal inline fun <R> withLlvmDiagnosticHandler(handler: LlvmDiagnosticHandler, block: () -> R): R {
+internal inline fun <R> withLlvmDiagnosticHandler(llvmContext: LLVMContextRef, handler: LlvmDiagnosticHandler, block: () -> R): R {
     val collector = LlvmDiagnosticCollector()
     return try {
-        withLlvmDiagnosticCollector(collector, block)
+        withLlvmDiagnosticCollector(llvmContext, collector, block)
     } finally {
         collector.flush(handler)
     }
 }
 
-internal inline fun <R> withLlvmDiagnosticCollector(collector: LlvmDiagnosticCollector, block: () -> R): R {
+internal inline fun <R> withLlvmDiagnosticCollector(llvmContext: LLVMContextRef, collector: LlvmDiagnosticCollector, block: () -> R): R {
     val handler: LLVMDiagnosticHandler = staticCFunction { diagnostic, context ->
         context!!.asStableRef<LlvmDiagnosticCollector>().get().add(createLlvmDiagnostic(diagnostic))
     }
     val context = StableRef.create(collector)
     return try {
-        withLlvmDiagnosticHandler(handler, context.asCPointer(), block)
+        withLlvmDiagnosticHandler(llvmContext, handler, context.asCPointer(), block)
     } finally {
         context.dispose()
     }
 }
 
 internal inline fun <R> withLlvmDiagnosticHandler(
+        llvmContext: LLVMContextRef,
         handler: LLVMDiagnosticHandler,
         context: COpaquePointer,
         block: () -> R
 ): R {
-    val llvmContext = llvmContext
     val currentHandler = LLVMContextGetDiagnosticHandler(llvmContext)
     val currentContext = LLVMContextGetDiagnosticContext(llvmContext)
 

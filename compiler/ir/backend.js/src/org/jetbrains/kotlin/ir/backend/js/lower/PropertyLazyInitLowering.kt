@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isTopLevel
 import org.jetbrains.kotlin.name.Name
@@ -101,7 +102,9 @@ class PropertyLazyInitLowering(
             }
 
         return irFactory.addFunction(file) {
-            name = Name.identifier("init properties $fileName")
+            name = Name.special("<init properties $fileName>")
+            startOffset = SYNTHETIC_OFFSET
+            endOffset = SYNTHETIC_OFFSET
             returnType = irBuiltIns.unitType
             visibility = INTERNAL
             origin = JsIrBuilder.SYNTHESIZED_DECLARATION
@@ -161,7 +164,7 @@ class PropertyLazyInitLowering(
     }
 
     companion object {
-        object PROPERTY_INIT_FUN_CALL : IrStatementOriginImpl("PROPERTY_INIT_FUN_CALL")
+        val PROPERTY_INIT_FUN_CALL by IrStatementOriginImpl
     }
 }
 
@@ -187,6 +190,9 @@ private fun allFieldsInFilePure(fieldToInitializer: Collection<IrExpression>): B
             expression.isPure(anyVariable = true)
         }
 
+/**
+ * Removes property initializers if they were initialized lazily.
+ */
 class RemoveInitializersForLazyProperties(
     private val context: JsCommonBackendContext
 ) : DeclarationTransformer {
@@ -281,7 +287,7 @@ private fun <T> IrDeclaration.withPersistentSafe(transform: IrDeclaration.() -> 
 
 private fun IrDeclaration.isCompatibleDeclaration(context: JsCommonBackendContext) =
     correspondingProperty?.let {
-        it.isForLazyInit() && !it.hasAnnotation(context.propertyLazyInitialization.eagerInitialization)
+        !it.isExternal && it.isForLazyInit() && !it.hasAnnotation(context.propertyLazyInitialization.eagerInitialization)
     } ?: true && withPersistentSafe { origin in compatibleOrigins } == true
 
 private val compatibleOrigins = listOf(

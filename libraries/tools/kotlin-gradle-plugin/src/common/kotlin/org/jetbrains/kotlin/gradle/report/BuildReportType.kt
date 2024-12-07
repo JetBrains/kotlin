@@ -10,9 +10,13 @@ import java.io.Serializable
 enum class BuildReportType : Serializable {
     FILE,
     HTTP,
-    BUILD_SCAN;
+    BUILD_SCAN,
+    SINGLE_FILE,
+    TRY_NEXT_CONSOLE,
+    JSON,
+    ;
 
     companion object {
-        const val serialVersionUID: Long = 0
+        const val serialVersionUID: Long = 3L
     }
 }

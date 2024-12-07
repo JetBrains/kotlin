@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.DescriptorFactory
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitContextReceiver
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.*
@@ -205,11 +206,13 @@ class TypeAliasConstructorDescriptorImpl private constructor(
 
             val classDescriptor = typeAliasDescriptor.classDescriptor
             val contextReceiverParameters = classDescriptor?.let {
-                constructor.contextReceiverParameters.map {
+                constructor.contextReceiverParameters.mapIndexed { index, contextReceiver ->
                     DescriptorFactory.createContextReceiverParameterForClass(
                         classDescriptor,
-                        substitutorForUnderlyingClass.safeSubstitute(it.type, Variance.INVARIANT),
-                        Annotations.EMPTY
+                        substitutorForUnderlyingClass.safeSubstitute(contextReceiver.type, Variance.INVARIANT),
+                        (contextReceiver.value as ImplicitContextReceiver).customLabelName,
+                        Annotations.EMPTY,
+                        index
                     )
                 }
             } ?: emptyList()

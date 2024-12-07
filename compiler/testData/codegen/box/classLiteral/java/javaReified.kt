@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-
 // WITH_STDLIB
 
 inline fun <reified T : Any> check(expected: String) {

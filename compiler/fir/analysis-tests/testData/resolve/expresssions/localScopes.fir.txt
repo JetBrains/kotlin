@@ -10,7 +10,7 @@ FILE: localScopes.kt
     }
     public final fun test(): R|kotlin/Unit| {
         local open class BaseLocal : R|Bar| {
-            public constructor(): R|BaseLocal| {
+            public constructor(): R|<local>/BaseLocal| {
                 super<R|Bar|>()
             }
 
@@ -19,7 +19,7 @@ FILE: localScopes.kt
 
         }
 
-        lval base: R|BaseLocal| = R|/BaseLocal.BaseLocal|()
+        lval base: R|<local>/BaseLocal| = R|<local>/BaseLocal.BaseLocal|()
         R|<local>/base|.R|<local>/baz|()
         R|<local>/base|.R|/Bar.foo|()
         lval anonymous: R|<anonymous>| = object : R|Bar| {
@@ -34,9 +34,9 @@ FILE: localScopes.kt
 
         R|<local>/anonymous|.R|/<anonymous>.baz|()
         R|<local>/anonymous|.R|/Bar.foo|()
-        local final class DerivedLocal : R|BaseLocal| {
-            public constructor(): R|DerivedLocal| {
-                super<R|BaseLocal|>()
+        local final class DerivedLocal : R|<local>/BaseLocal| {
+            public constructor(): R|<local>/DerivedLocal| {
+                super<R|<local>/BaseLocal|>()
             }
 
             public final fun gau(): R|kotlin/Unit| {
@@ -44,7 +44,7 @@ FILE: localScopes.kt
 
         }
 
-        lval derived: R|DerivedLocal| = R|/DerivedLocal.DerivedLocal|()
+        lval derived: R|<local>/DerivedLocal| = R|<local>/DerivedLocal.DerivedLocal|()
         R|<local>/derived|.R|<local>/gau|()
         R|<local>/derived|.R|<local>/baz|()
         R|<local>/derived|.R|/Bar.foo|()

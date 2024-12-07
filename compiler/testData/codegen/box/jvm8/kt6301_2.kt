@@ -1,4 +1,4 @@
-// !LANGUAGE: +JvmStaticInInterface
+// LANGUAGE: +JvmStaticInInterface
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8

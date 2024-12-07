@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:kotlin.js.JsFileName("KClassJs")
+
 package kotlin.reflect
 
 /**
@@ -45,7 +47,7 @@ public actual interface KClass<T : Any> : KClassifier {
      * For example, on JVM, [KClass] instances for a primitive type (`int`) and the corresponding wrapper type (`java.lang.Integer`)
      * are considered equal, because they have the same fully qualified name "kotlin.Int".
      */
-    override fun equals(other: Any?): Boolean
+    actual override fun equals(other: Any?): Boolean
 
-    override fun hashCode(): Int
+    actual override fun hashCode(): Int
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-2746 Do.smartcasts in inference
 
 class C<T>(t :T)

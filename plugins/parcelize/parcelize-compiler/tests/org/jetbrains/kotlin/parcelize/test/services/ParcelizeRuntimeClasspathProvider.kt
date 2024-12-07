@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.parcelize.test.services
 
+import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_PARCELIZE
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlin.test.services.TestServices
@@ -100,6 +101,7 @@ class ParcelizeRuntimeClasspathProvider(testServices: TestServices) : RuntimeCla
     }
 
     override fun runtimeClassPaths(module: TestModule): List<File> {
+        if (ENABLE_PARCELIZE !in module.directives) return emptyList()
         val kotlinRuntimeJar = PathUtil.kotlinPathsForIdeaPlugin.stdlibPath
 
         val robolectricClasspath = System.getProperty("robolectric.classpath")

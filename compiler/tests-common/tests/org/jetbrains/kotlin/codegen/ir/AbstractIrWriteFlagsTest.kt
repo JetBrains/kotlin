@@ -6,8 +6,5 @@
 package org.jetbrains.kotlin.codegen.ir
 
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
-import org.jetbrains.kotlin.test.TargetBackend
 
-abstract class AbstractIrWriteFlagsTest : AbstractWriteFlagsTest() {
-    override val backend = TargetBackend.JVM_IR
-}
+abstract class AbstractIrWriteFlagsTest : AbstractWriteFlagsTest()

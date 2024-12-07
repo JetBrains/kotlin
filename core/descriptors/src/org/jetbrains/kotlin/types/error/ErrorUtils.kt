@@ -5,10 +5,17 @@
 
 package org.jetbrains.kotlin.types.error
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeConstructor
+import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.typeUtil.isUnresolvedType
 
 object ErrorUtils {
     val errorModule: ModuleDescriptor = ErrorModuleDescriptor
@@ -99,4 +106,9 @@ object ErrorUtils {
     }
 
     fun containsUninferredTypeVariable(type: KotlinType): Boolean = type.contains(::isUninferredTypeVariable)
+
+    fun unresolvedTypeAsItIs(type: KotlinType): String {
+        assert(isUnresolvedType(type))
+        return (type.constructor as ErrorTypeConstructor).getParam(0)
+    }
 }

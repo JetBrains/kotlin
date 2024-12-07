@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 import kotlin.contracts.*
 
 class FirAnnotationArgumentMappingBuilder {
@@ -8,6 +9,7 @@ class FirAnnotationArgumentMappingBuilder {
     }
 }
 
+@OptIn(ExperimentalContracts::class)
 fun buildAnnotationArgumentMapping(init: FirAnnotationArgumentMappingBuilder.() -> Unit): FirAnnotationArgumentMapping {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)

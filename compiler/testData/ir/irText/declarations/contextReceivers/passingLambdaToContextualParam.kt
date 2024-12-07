@@ -1,5 +1,4 @@
-// !LANGUAGE: +ContextReceivers
-// TARGET_BACKEND: JVM_IR
+// LANGUAGE: +ContextReceivers
 
 class C {
     val result = "OK"

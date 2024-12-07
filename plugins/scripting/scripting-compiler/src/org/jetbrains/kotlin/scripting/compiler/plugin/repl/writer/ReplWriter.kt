@@ -16,4 +16,5 @@ interface ReplWriter {
     fun outputCompileError(x: String)
     fun outputRuntimeError(x: String)
     fun sendInternalErrorReport(x: String)
+    fun notifyErrorsReported()
 }

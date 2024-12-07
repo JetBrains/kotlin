@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.isPrimitiveArray
 
 object IrDataClassArrayMemberToString : IntrinsicMethod() {
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? =
+    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue =
         with(codegen) {
             val arrayType = expression.getValueArgument(0)!!.type
-            val asmArrayType = context.typeMapper.mapType(arrayType)
+            val asmArrayType = codegen.typeMapper.mapType(arrayType)
             gen(expression.getValueArgument(0)!!, asmArrayType, arrayType, data)
             val toStringArgumentDescriptor = if (arrayType.isPrimitiveArray()) asmArrayType.descriptor else "[Ljava/lang/Object;"
             mv.invokestatic("java/util/Arrays", "toString", "($toStringArgumentDescriptor)Ljava/lang/String;", false)

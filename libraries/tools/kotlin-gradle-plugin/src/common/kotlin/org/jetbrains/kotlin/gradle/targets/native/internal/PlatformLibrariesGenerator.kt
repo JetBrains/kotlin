@@ -6,16 +6,27 @@
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.compilerRunner.KotlinNativeLibraryGenerationRunner
+import org.gradle.api.logging.Logging
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Provider
+import org.gradle.api.services.BuildService
+import org.gradle.api.services.BuildServiceParameters
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
-import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
+import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.tasks.CacheBuilder
 import org.jetbrains.kotlin.gradle.tasks.addArg
 import org.jetbrains.kotlin.gradle.utils.lifecycleWithDuration
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
+import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeLibraryGenerationRunner
+import org.jetbrains.kotlin.gradle.internal.properties.NativeProperties
+import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
+import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
 import org.jetbrains.kotlin.konan.library.KONAN_PLATFORM_LIBS_NAME_PREFIX
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -25,10 +36,35 @@ import java.io.File
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-internal class PlatformLibrariesGenerator(val project: Project, val konanTarget: KonanTarget) {
+internal class PlatformLibrariesGenerator(
+    objectFactory: ObjectFactory,
+    val konanTarget: KonanTarget,
+    private val propertiesProvider: PropertiesProvider,
+    private val konanPropertiesService: Provider<KonanPropertiesBuildService>,
+    metricsReporter: Provider<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>,
+    classLoadersCachingService: Provider<ClassLoadersCachingBuildService>,
+    private val platformLibrariesService: Provider<GeneratedPlatformLibrariesService>,
+    useXcodeMessageStyle: Provider<Boolean>,
+    private val nativeProperties: NativeProperties,
+) {
 
-    private val distribution =
-        customerDistribution(project.konanHome)
+    private val logger = Logging.getLogger(this::class.java)
+
+    private val libraryGenerationRunner = objectFactory.KotlinNativeLibraryGenerationRunner(
+        metricsReporter,
+        classLoadersCachingService,
+        useXcodeMessageStyle,
+        nativeProperties,
+        konanPropertiesService
+    )
+
+    private val konanHome
+        get() = nativeProperties.actualNativeHomeDirectory.get()
+
+    private val distribution = customerDistribution(
+        konanHome.absolutePath,
+        konanDataDir = nativeProperties.konanDataDir.orNull?.absolutePath
+    )
 
     private val platformLibsDirectory =
         File(distribution.platformLibs(konanTarget)).absoluteFile
@@ -36,19 +72,11 @@ internal class PlatformLibrariesGenerator(val project: Project, val konanTarget:
     private val defDirectory =
         File(distribution.platformDefs(konanTarget)).absoluteFile
 
-    private val konanPropertiesService: KonanPropertiesBuildService
-        get() = KonanPropertiesBuildService.registerIfAbsent(project.gradle).get()
+    private val konanCacheKind: Provider<NativeCacheKind> = nativeProperties.getKonanCacheKind(konanTarget, konanPropertiesService)
 
-    private val konanCacheKind: NativeCacheKind by lazy {
-        project.getKonanCacheKind(konanTarget)
-    }
-
-    private val shouldBuildCaches: Boolean =
-        konanPropertiesService.cacheWorksFor(konanTarget) && konanCacheKind != NativeCacheKind.NONE
-
-    private val mode: String? by lazy {
-        PropertiesProvider(project).nativePlatformLibrariesMode
-    }
+    private val shouldBuildCaches: Boolean
+        get() = konanPropertiesService.get().cacheWorksFor(konanTarget) &&
+                konanCacheKind.get() != NativeCacheKind.NONE
 
     private val presentDefs: Set<String> by lazy {
         defDirectory
@@ -80,10 +108,10 @@ internal class PlatformLibrariesGenerator(val project: Project, val konanTarget:
         }
 
         val cacheDirectory = CacheBuilder.getRootCacheDirectory(
-            File(project.konanHome), konanTarget, true, konanCacheKind
+            konanHome, konanTarget, true, konanCacheKind.get()
         )
         return presentDefs.toPlatformLibNames().all {
-            cacheDirectory.resolve(CacheBuilder.getCacheFileName(it, konanCacheKind)).listFilesOrEmpty().isNotEmpty()
+            cacheDirectory.resolve(CacheBuilder.getCacheFileName(it, konanCacheKind.get())).listFilesOrEmpty().isNotEmpty()
         }
     }
 
@@ -92,18 +120,15 @@ internal class PlatformLibrariesGenerator(val project: Project, val konanTarget:
      * during this build to avoid redundant distribution checks.
      */
     private val alreadyProcessed: PlatformLibsInfo
-        get() = project.rootProject.extensions.extraProperties.run {
-            if (!has(GENERATED_LIBS_PROPERTY_NAME)) {
-                set(GENERATED_LIBS_PROPERTY_NAME, PlatformLibsInfo())
-            }
-            @Suppress("UNCHECKED_CAST")
-            get(GENERATED_LIBS_PROPERTY_NAME) as PlatformLibsInfo
-        }
+        get() = platformLibrariesService.get().platformLibsInfo
 
-    private fun runGenerationTool() = with(project) {
+    private fun runGenerationTool() {
         val args = mutableListOf("-target", konanTarget.visibleName)
         if (logger.isInfoEnabled) {
             args.add("-verbose")
+        }
+        nativeProperties.konanDataDir.orNull?.absolutePath?.let {
+            args.addAll(listOf("-Xkonan-data-dir", it))
         }
 
         // We can generate caches using either [CacheBuilder] or the library generator. Using CacheBuilder allows
@@ -115,34 +140,40 @@ internal class PlatformLibrariesGenerator(val project: Project, val konanTarget:
         //       Alternatively we can rely on the library generator tool in the CacheBuilder and eliminate a separate
         //       logic for library caching there.
         if (shouldBuildCaches) {
-            args.addArg("-cache-kind", konanCacheKind.produce!!)
+            args.addArg("-cache-kind", konanCacheKind.get().produce!!)
             args.addArg(
                 "-cache-directory",
-                CacheBuilder.getRootCacheDirectory(File(konanHome), konanTarget, true, konanCacheKind).absolutePath
+                CacheBuilder.getRootCacheDirectory(
+                    nativeProperties.actualNativeHomeDirectory.get(),
+                    konanTarget,
+                    true,
+                    konanCacheKind.get()
+                ).absolutePath
             )
             args.addArg("-cache-arg", "-g")
-            val additionalCacheFlags = konanPropertiesService.additionalCacheFlags(konanTarget)
+            val additionalCacheFlags = konanPropertiesService.get().additionalCacheFlags(konanTarget)
             additionalCacheFlags.forEach {
                 args.addArg("-cache-arg", it)
             }
         }
-
-        mode?.let {
-            args.addArg("-mode", it)
-        }
-
-        KotlinNativeLibraryGenerationRunner(this).run(args)
+        libraryGenerationRunner.runTool(
+            KotlinNativeToolRunner.ToolArguments(
+                shouldRunInProcessMode = false,
+                compilerArgumentsLogLevel = propertiesProvider.kotlinCompilerArgumentsLogLevel.get(),
+                arguments = args
+            )
+        )
     }
 
-    fun generatePlatformLibsIfNeeded(): Unit = with(project) {
-        if (!HostManager(distribution).isEnabled(konanTarget)) {
+    fun generatePlatformLibsIfNeeded() {
+        if (!HostManager().isEnabled(konanTarget)) {
             // We cannot generate libs on a machine that doesn't support the requested target.
             return
         }
 
         // Don't run the generator if libraries/caches for this target were already built during this Gradle invocation.
         val alreadyGenerated = alreadyProcessed.isGenerated(platformLibsDirectory)
-        val alreadyCached = alreadyProcessed.isCached(platformLibsDirectory, konanCacheKind)
+        val alreadyCached = alreadyProcessed.isCached(platformLibsDirectory, konanCacheKind.get())
         if ((alreadyGenerated && alreadyCached) || !defDirectory.exists()) {
             return
         }
@@ -155,14 +186,14 @@ internal class PlatformLibrariesGenerator(val project: Project, val konanTarget:
 
         val cachesAreReady = checkCaches()
         if (cachesAreReady) {
-            alreadyProcessed.setCached(platformLibsDirectory, konanCacheKind)
+            alreadyProcessed.setCached(platformLibsDirectory, konanCacheKind.get())
         }
 
         val generationMessage = when {
             !platformLibsAreReady && !cachesAreReady ->
-                "Generate and precompile platform libraries for $konanTarget (precompilation: ${konanCacheKind.visibleName})"
+                "Generate and precompile platform libraries for $konanTarget (precompilation: ${konanCacheKind.get().visibleName})"
             platformLibsAreReady && !cachesAreReady ->
-                "Precompile platform libraries for $konanTarget (precompilation: ${konanCacheKind.visibleName})"
+                "Precompile platform libraries for $konanTarget (precompilation: ${konanCacheKind.get().visibleName})"
             !platformLibsAreReady && cachesAreReady ->
                 "Generate platform libraries for $konanTarget"
             else -> {
@@ -185,11 +216,11 @@ internal class PlatformLibrariesGenerator(val project: Project, val konanTarget:
         val librariesAreActuallyCached = checkCaches()
         assert(librariesAreActuallyCached) { "Some platform libraries were not precompiled" }
         if (librariesAreActuallyCached) {
-            alreadyProcessed.setCached(platformLibsDirectory, konanCacheKind)
+            alreadyProcessed.setCached(platformLibsDirectory, konanCacheKind.get())
         }
     }
 
-    private class PlatformLibsInfo {
+    internal class PlatformLibsInfo {
         private val generated: MutableSet<File> = Collections.newSetFromMap(ConcurrentHashMap<File, Boolean>())
         private val cached: ConcurrentHashMap<NativeCacheKind, MutableSet<File>> = ConcurrentHashMap()
 
@@ -226,7 +257,13 @@ internal class PlatformLibrariesGenerator(val project: Project, val konanTarget:
         }
     }
 
+    internal abstract class GeneratedPlatformLibrariesService : BuildService<BuildServiceParameters.None> {
+        val platformLibsInfo = PlatformLibsInfo()
+    }
+
     companion object {
-        private const val GENERATED_LIBS_PROPERTY_NAME = "org.jetbrains.kotlin.native.platform.libs.info"
+        fun registerRequiredServiceIfAbsent(project: Project): Provider<GeneratedPlatformLibrariesService> {
+            return project.gradle.registerClassLoaderScopedBuildService(GeneratedPlatformLibrariesService::class)
+        }
     }
 }

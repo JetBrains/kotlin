@@ -53,7 +53,6 @@ internal class KTypeState(val irType: IrType, override val irClass: IrClass) : R
             is IrSimpleType -> Variance.INVARIANT
             is IrTypeProjection -> this.variance
             is IrStarProjection -> null
-            else -> TODO()
         }
     }
 

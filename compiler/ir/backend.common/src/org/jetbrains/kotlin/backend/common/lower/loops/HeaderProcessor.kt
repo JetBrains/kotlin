@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
+import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
@@ -60,17 +60,17 @@ fun IrStatement.isInductionVariable(context: CommonBackendContext) =
             origin == context.inductionVariableOrigin &&
             name.asString() == inductionVariableName
 
-internal class InitializerCallReplacer(private val replacementCall: IrCall) : IrElementTransformerVoid() {
+internal class InitializerCallReplacer(private val replacement: IrExpression) : IrElementTransformerVoid() {
     var initializerCall: IrCall? = null
 
-    override fun visitCall(expression: IrCall): IrCall {
+    override fun visitCall(expression: IrCall): IrExpression {
         if (initializerCall != null) {
             throw IllegalStateException(
                 "Multiple initializer calls found. First: ${initializerCall!!.render()}\nSecond: ${expression.render()}"
             )
         }
         initializerCall = expression
-        return replacementCall
+        return replacement
     }
 }
 

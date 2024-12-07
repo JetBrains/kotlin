@@ -1,23 +1,34 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation files('libs/android-support-v4.jar')
     // unused but needed for IncrementalCompilationMultiProjectIT.testAndroid to check if non-local dependency affects IC
-    implementation 'io.reactivex:rxjava:1.1.9'
+    implementation 'io.reactivex.rxjava3:rxjava:3.1.9'
     implementation 'com.loopj.android:android-async-http:1.4.9'
+
+    testImplementation "junit:junit:4.13.2"
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "28.0.3"
+    compileSdkVersion 34
+    namespace "org.jetbrains.kotlin.gradle.test.android.libalfa"
 
     defaultConfig {
-        minSdkVersion 7
-        targetSdkVersion 22
+        minSdkVersion 22
+        targetSdkVersion 34
+    }
+
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
     }
 
     flavorDimensions "myFlavor"
@@ -26,6 +37,10 @@ android {
         flavor2 { dimension "myFlavor" }
     }
 
-    publishNonDefault true
+    if (GradleVersion.current() < GradleVersion.version("8.5")) {
+        publishNonDefault true
+    }
     lintOptions.abortOnError = false
 }
+
+kotlin.compilerOptions.jvmTarget = JvmTarget.JVM_1_8

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImp
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import java.util.ArrayList
 
 sealed class ResolutionCandidate : Candidate, KotlinDiagnosticsHolder {
@@ -28,8 +29,12 @@ sealed class ResolutionCandidate : Candidate, KotlinDiagnosticsHolder {
     override val isSuccessful: Boolean
         get() {
             processParts(stopOnFirstError = true)
-            return resultingApplicabilities.minOrNull()!!.isSuccess && !getSystem().hasContradiction
+            // Note: candidate with K1_RESOLVED_WITH_ERROR is exceptionally treated as successful
+            return resultingApplicabilities.minOrNull()!!.isSuccessOrSuccessWithError && !getSystem().hasContradiction
         }
+
+    private val CandidateApplicability.isSuccessOrSuccessWithError: Boolean
+        get() = this >= CandidateApplicability.RESOLVED_LOW_PRIORITY
 
     override val resultingApplicability: CandidateApplicability
         get() {
@@ -55,6 +60,8 @@ sealed class ResolutionCandidate : Candidate, KotlinDiagnosticsHolder {
     private var newSystem: NewConstraintSystemImpl? = null
     private var currentApplicability: CandidateApplicability = CandidateApplicability.RESOLVED
 
+    fun getResultingSubstitutor(): TypeSubstitutorMarker? = newSystem?.buildCurrentSubstitutor()
+
     abstract fun getSubResolvedAtoms(): List<ResolvedAtom>
     abstract fun addResolvedKtPrimitive(resolvedAtom: ResolvedAtom)
 
@@ -71,6 +78,8 @@ sealed class ResolutionCandidate : Candidate, KotlinDiagnosticsHolder {
 
     override fun toString(): String {
         val descriptor = DescriptorRenderer.COMPACT.render(resolvedCall.candidateDescriptor)
+
+        @OptIn(ApplicabilityDetail::class)
         val okOrFail = if (resultingApplicabilities.minOrNull()?.isSuccess != false) "OK" else "FAIL"
         val step = "$step/$stepCount"
         return "$okOrFail($step): $descriptor"
@@ -121,6 +130,7 @@ sealed class ResolutionCandidate : Candidate, KotlinDiagnosticsHolder {
     // true if part was interrupted
     private fun processPart(part: ResolutionPart, stopOnFirstError: Boolean, startWorkIndex: Int = 0): Boolean {
         for (workIndex in startWorkIndex until (part.run { workCount() })) {
+            @OptIn(ApplicabilityDetail::class)
             if (stopOnFirstError && !currentApplicability.isSuccess) return true
 
             part.run { process(workIndex) }

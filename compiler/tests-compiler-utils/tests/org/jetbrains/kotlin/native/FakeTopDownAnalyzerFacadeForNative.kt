@@ -55,7 +55,9 @@ private fun createFakeTopDownAnalyzerForNative(
         NativePlatforms.unspecifiedNativePlatform,
         NativePlatformAnalyzerServices,
         bindingTrace,
-        languageVersionSettings
+        languageVersionSettings,
+        optimizingOptions = null,
+        absentDescriptorHandlerClass = null
     )
 
     configureStandardResolveComponents()

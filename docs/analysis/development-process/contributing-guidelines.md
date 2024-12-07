@@ -11,8 +11,8 @@ accepted.
 * Always write [Unit Tests](#always-write-unit-tests-for-your-code) for your changes.
 * Always perform **code formatting** and call **import optimizer** before committing your changes.
 * Do not use short names in declarations names
-    * Bad: `val dclSmbl: KtDeclarationSymbol`
-    * Good `val declarationSymbol: KtDeclarationSymbol`
+    * Bad: `val dclSmbl: KaDeclarationSymbol`
+    * Good `val declarationSymbol: KaDeclarationSymbol`
 * [Always add KDoc](#always-add-kdoc-to-any-public-declaration-inside-analysis-apianalysisanalysis-api-module) to any public declaration inside `analysis-api` module.
   * A good KDoc should include
     * What the declaration purpose and how it should be used?
@@ -46,7 +46,7 @@ Please do not include obvious KDocs, which do not add additional information. Al
 Bad (adds no information to the declaration name):
 
 ```kotlin
-public class KtAnnotationApplication(
+public class KaAnnotationApplication(
     /**
      * ClassId of an annotation
      */
@@ -57,7 +57,7 @@ public class KtAnnotationApplication(
 Good:
 
 ```kotlin
-public class KtAnnotationApplication(
+public class KaAnnotationApplication(
     /**
      * A fully qualified name of an annotation class which is being applied
      */
@@ -80,7 +80,7 @@ Example:
  * - `null` for [KtExpression] inside packages and import declarations;
  * - `Unit` type for statements;
  */
-public fun KtExpression.getKtType(): KtType?
+public fun KtExpression.getKaType(): KaType?
 ```
 
 ## Keep Analysis API Surface Area Concise and Minimal
@@ -106,34 +106,43 @@ If you fixed a bug or added new functionality to an existing feature, consider a
 
 ## Follow Naming Conventions
 
-* All public declarations which are exposed to the surface area of Analysis API should have `Kt` prefix. E.g, `KtSymbol`, `KtConstantValue`.
+* All public declarations which are exposed to the surface area of Analysis API should have `Ka` prefix. E.g, `KaSymbol`, `KaConstantValue`.
 
 ## Follow Analysis API Implementation Contracts
 
-* Add `KtLifetimeTokenOwner` as supertype for all declarations which contains other `KtLifetimeTokenOwner` inside (eg, via parameter types,
-  function return types) to ensure that internal `KtLifetimeTokenOwner` are not exposed via your declaration.
-* You have some declaration which implements `KtLifetimeTokenOwner`. It means that this declaration has a lifetime. And this declaration has
-  to be checked to ensure that it is not used after its lifetime has come to the end. To ensure that all methods(except `hashCode`/`equals`
-  /`toString`) and properties should be wrapped into `withValidityAssertion { .. }` check:
+* Add `KaLifetimeOwner` as supertype for all declarations that contains other `KaLifetimeOwner` inside (e.g., via parameter types,
+  function return types) to ensure that internal `KaLifetimeOwner` are not exposed via your declaration.
+* You have some declaration which implements `KaLifetimeOwner`. It means that this declaration has a lifetime. And this declaration has
+  to be checked to ensure that it is not used after its lifetime has come to an end. To ensure that all methods (except `hashCode`/`equals`
+  /`toString`) and properties should be wrapped into `withValidityAssertion { .. }` check. For simple cases there a constructor parameter
+  should be exposed, `by validityAsserted` should be used. If the constructor parameter should be reused without validity assertion,
+  it should be private and the name should contain `backing` prefix.
 
 ```kotlin
-public class KtCall(
-    private val _symbol: KtSymbol,
-    private val _isInvokeCall: Boolean,
-) : KtLifetimeTokenOwner {
-    public val symbol: KtSymbol get() = withValidityAssertion { _symbol }
-    public val isInvokeCall: Boolean get() = withValidityAssertion { _isInvokeCall }
+public class KaCall(
+    private val backingSymbol: KaSymbol,
+    private val backingIsInvokeCall: Boolean,
+    additionalInformation: String,
+) : KaLifetimeOwner {
+    public val symbol: KaSymbol get() = withValidityAssertion { backingSymbol }
+    public val isInvokeCall: Boolean get() = withValidityAssertion { backingIsInvokeCall }
+    public val additionalInformation: String by validityAsserted(additionalInformation)
 
     public fun isImplicitCall(): Boolean = withValidityAssertion {
         // IMPL
     }
 
     override fun equals(other: Any?): Boolean { // no withValidityAssertion
-        // IMPL
+        return this === other || 
+                other is KaCall && 
+                other.backingSymbol == backingSymbol &&
+                other.backingIsInvokeCall == backingIsInvokeCall
     }
+  
     override fun hashCode(): Int { // no withValidityAssertion
-        // IMPL
+        return Objects.hashCode(backingSymbol, backingIsInvokeCall)
     }
+  
     override fun toString(): String { // no withValidityAssertion
         // IMPL
     }
@@ -166,16 +175,16 @@ unclear semantics:
 Bad:
 
 ```kotlin
-internal fun render(value: KtAnnotationValue): String = buildString { renderConstantValue(value) }
+internal fun render(value: KaAnnotationValue): String = buildString { renderConstantValue(value) }
 
-private fun StringBuilder.renderConstantValue(value: KtAnnotationValue) {
+private fun StringBuilder.renderConstantValue(value: KaAnnotationValue) {
     when (value) {
-        is KtAnnotationApplicationValue -> renderAnnotationConstantValue(value)
+        is KaAnnotationApplicationValue -> renderAnnotationConstantValue(value)
             ...
     }
 }
 
-private fun StringBuilder.renderConstantAnnotationValue(value: KtConstantAnnotationValue) {
+private fun StringBuilder.renderConstantAnnotationValue(value: KaConstantAnnotationValue) {
     append(value.constantValue.renderAsKotlinConstant())
 }
 
@@ -185,17 +194,17 @@ private fun StringBuilder.renderConstantAnnotationValue(value: KtConstantAnnotat
 Good:
 
 ```kotlin
-internal object KtAnnotationRenderer {
-    fun render(value: KtAnnotationValue): String = buildString { renderConstantValue(value) }
+internal object KaAnnotationRenderer {
+    fun render(value: KaAnnotationValue): String = buildString { renderConstantValue(value) }
 
-    private fun StringBuilder.renderConstantValue(value: KtAnnotationValue) {
+    private fun StringBuilder.renderConstantValue(value: KaAnnotationValue) {
         when (value) {
-            is KtAnnotationApplicationValue -> renderAnnotationConstantValue(value)
+            is KaAnnotationApplicationValue -> renderAnnotationConstantValue(value)
                 ...
         }
     }
 
-    private fun StringBuilder.renderConstantAnnotationValue(value: KtConstantAnnotationValue) {
+    private fun StringBuilder.renderConstantAnnotationValue(value: KaConstantAnnotationValue) {
         append(value.constantValue.renderAsKotlinConstant())
     }
 }

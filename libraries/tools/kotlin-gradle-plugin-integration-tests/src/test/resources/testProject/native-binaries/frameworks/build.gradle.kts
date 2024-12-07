@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>")
+    id("org.jetbrains.kotlin.multiplatform")
 }
 
 repositories {
@@ -13,7 +13,6 @@ val disambiguation2Attribute = Attribute.of("myDisambiguation2Attribute", String
 kotlin {
     sourceSets["commonMain"].apply {
         dependencies {
-            api("org.jetbrains.kotlin:kotlin-stdlib-common")
             api(project(":exported"))
         }
     }
@@ -25,7 +24,6 @@ kotlin {
                 export(project(":exported"))
             }
             framework("custom") {
-                embedBitcode("disable")
                 linkerOpts = mutableListOf("-L.")
                 freeCompilerArgs = mutableListOf("-Xtime")
                 isStatic = true

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.optimization.common;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.AsmUtil;
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.org.objectweb.asm.Handle;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -152,13 +153,6 @@ public class OptimizationBasicInterpreter extends Interpreter<BasicValue> implem
             @NotNull BasicValue value1,
             @NotNull BasicValue value2
     ) throws AnalyzerException {
-        if (insn.getOpcode() == Opcodes.AALOAD) {
-            Type arrayType = value1.getType();
-            if (arrayType != null && arrayType.getSort() == Type.ARRAY) {
-                return new StrictBasicValue(AsmUtil.correctElementType(arrayType));
-            }
-        }
-
         switch (insn.getOpcode()) {
             case IALOAD:
             case BALOAD:
@@ -204,7 +198,13 @@ public class OptimizationBasicInterpreter extends Interpreter<BasicValue> implem
             case DREM:
                 return StrictBasicValue.DOUBLE_VALUE;
             case AALOAD:
-                return StrictBasicValue.NULL_VALUE;
+                Type arrayType = value1.getType();
+                if (arrayType != null && arrayType.getSort() == Type.ARRAY) {
+                    return new StrictBasicValue(AsmUtil.correctElementType(arrayType));
+                }
+                else {
+                    return StrictBasicValue.NULL_VALUE;
+                }
             case LCMP:
             case FCMPL:
             case FCMPG:
@@ -359,13 +359,11 @@ public class OptimizationBasicInterpreter extends Interpreter<BasicValue> implem
             return StrictBasicValue.UNINITIALIZED_VALUE;
         }
 
-        // if merge of two references then `lub` is java/lang/Object
-        // arrays also are BasicValues with reference type's
         if (isReference(v) && isReference(w)) {
             if (v == NULL_VALUE) return newValue(w.getType());
             if (w == NULL_VALUE) return newValue(v.getType());
 
-            return StrictBasicValue.REFERENCE_VALUE;
+            return mergeReferenceTypes(w.getType(), v.getType());
         }
 
         // if merge of something can be stored in int var (int, char, boolean, byte, character)
@@ -380,4 +378,35 @@ public class OptimizationBasicInterpreter extends Interpreter<BasicValue> implem
     private static boolean isReference(@NotNull BasicValue v) {
         return v.getType().getSort() == Type.OBJECT || v.getType().getSort() == Type.ARRAY;
     }
+
+    // Merge reference types, keeping track of array dimensions.
+    // See also org.jetbrains.org.objectweb.asm.Frame.merge.
+    // It's assumed that types a and b are not equal when calling this method.
+    private BasicValue mergeReferenceTypes(@NotNull Type a, @NotNull Type b) {
+        // Find out the minimal array dimension of both types.
+        int arrayDimensions = 0;
+        while (a.getSort() == Type.ARRAY && b.getSort() == Type.ARRAY) {
+            a = AsmUtil.correctElementType(a);
+            b = AsmUtil.correctElementType(b);
+            arrayDimensions++;
+        }
+        // Either of the two types is not an array -> result is j/l/Object.
+        if (arrayDimensions == 0) return REFERENCE_VALUE;
+
+        // Both of the types are arrays, and element type of one or both of them is primitive ->
+        // result is array of j/l/Object with one fewer dimension. E.g.
+        //   merge([I, [Lj/l/Object;) = Lj/l/Object;
+        //   merge([I, [S) = Lj/l/Object;
+        //   merge([[I, [[Lj/l/Object;) = [Lj/l/Object;
+        if (AsmUtil.isPrimitive(a) || AsmUtil.isPrimitive(b)) {
+            arrayDimensions--;
+        }
+
+        // Result is array of j/l/Object with the computed dimension.
+        StringBuilder result = new StringBuilder();
+        while (arrayDimensions-- > 0) result.append("[");
+        result.append(AsmTypes.OBJECT_TYPE.getDescriptor());
+        return newValue(Type.getType(result.toString()));
+    }
+
 }

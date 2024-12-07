@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package Jet87
 
 open class A() {

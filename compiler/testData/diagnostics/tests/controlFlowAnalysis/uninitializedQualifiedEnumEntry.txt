@@ -18,6 +18,7 @@ public final enum class SomeEnum11 : kotlin.Enum<SomeEnum11> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<SomeEnum11>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): SomeEnum11
     public final /*synthesized*/ fun values(): kotlin.Array<SomeEnum11>
 }
@@ -40,6 +41,7 @@ public final enum class SomeEnum12 : kotlin.Enum<SomeEnum12> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<SomeEnum12>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): SomeEnum12
     public final /*synthesized*/ fun values(): kotlin.Array<SomeEnum12>
 }
@@ -62,6 +64,7 @@ public final enum class SomeEnum21 : kotlin.Enum<SomeEnum21> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<SomeEnum21>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): SomeEnum21
     public final /*synthesized*/ fun values(): kotlin.Array<SomeEnum21>
 }
@@ -84,6 +87,7 @@ public final enum class SomeEnum22 : kotlin.Enum<SomeEnum22> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<SomeEnum22>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): SomeEnum22
     public final /*synthesized*/ fun values(): kotlin.Array<SomeEnum22>
 }
@@ -106,7 +110,7 @@ public final enum class SomeEnum3 : kotlin.Enum<SomeEnum3> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<SomeEnum3>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): SomeEnum3
     public final /*synthesized*/ fun values(): kotlin.Array<SomeEnum3>
 }
-

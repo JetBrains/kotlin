@@ -1,0 +1,1 @@
+public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): <implicit>

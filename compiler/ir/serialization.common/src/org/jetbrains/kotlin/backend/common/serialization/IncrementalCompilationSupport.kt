@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.isPublicApi
+import org.jetbrains.kotlin.ir.util.DelicateSymbolTableApi
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.IrLibrary
@@ -24,7 +26,7 @@ import org.jetbrains.kotlin.library.impl.*
 class ICData(val icData: List<SerializedIrFile>, val containsErrorCode: Boolean)
 
 class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
-    override val dataFlowGraph: ByteArray? = null
+    override val hasIr get() = true
 
     private inline fun <K, R : IrTableReader<K>> Array<R?>.itemBytes(fileIndex: Int, key: K, factory: () -> R): ByteArray {
         val reader = this[fileIndex] ?: factory().also { this[fileIndex] = it }
@@ -104,7 +106,7 @@ class CurrentModuleWithICDeserializer(
     icReaderFactory: (IrLibrary) -> IrModuleDeserializer) :
     IrModuleDeserializer(delegate.moduleDescriptor, KotlinAbiVersion.CURRENT) {
 
-    private val dirtyDeclarations = mutableMapOf<IdSignature, IrSymbol>()
+    private val dirtyDeclarations = hashMapOf<IdSignature, IrSymbol>()
     private val icKlib = ICKotlinLibrary(icData)
 
     private val icDeserializer: IrModuleDeserializer = icReaderFactory(icKlib)
@@ -113,13 +115,15 @@ class CurrentModuleWithICDeserializer(
         return idSig in dirtyDeclarations || idSig.topLevelSignature() in icDeserializer || idSig in delegate
     }
 
-    override fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
+    override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
         dirtyDeclarations[idSig]?.let { return it }
 
-        if (idSig.topLevelSignature() in icDeserializer) return icDeserializer.deserializeIrSymbol(idSig, symbolKind)
+        if (idSig.topLevelSignature() in icDeserializer) return icDeserializer.deserializeIrSymbolOrFail(idSig, symbolKind)
 
-        return delegate.deserializeIrSymbol(idSig, symbolKind)
+        return delegate.deserializeIrSymbolOrFail(idSig, symbolKind)
     }
+
+    override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = delegate.deserializedSymbolNotFound(idSig)
 
     override fun addModuleReachableTopLevel(idSig: IdSignature) {
         assert(idSig in icDeserializer)
@@ -140,9 +144,11 @@ class CurrentModuleWithICDeserializer(
         return this !is DeserializedDescriptor
     }
 
+    @OptIn(DelicateSymbolTableApi::class)
     override fun init(delegate: IrModuleDeserializer) {
         val knownBuiltIns = irBuiltIns.knownBuiltins.map { (it as IrSymbolOwner).symbol }.toSet()
-        symbolTable.forEachPublicSymbol {
+        symbolTable.descriptorExtension.forEachDeclarationSymbol {
+            assert(it.isPublicApi)
             if (it.descriptor.isDirtyDescriptor()) { // public && non-deserialized should be dirty symbol
                 if (it !in knownBuiltIns) {
                     dirtyDeclarations[it.signature!!] = it

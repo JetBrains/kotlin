@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 enum class A {
     X, Y;
     companion object {

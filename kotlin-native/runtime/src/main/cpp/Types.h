@@ -43,7 +43,6 @@ typedef const void* KConstNativePtr;
 
 typedef ObjHeader* KRef;
 typedef const ObjHeader* KConstRef;
-typedef const ArrayHeader* KString;
 
 #ifdef __cplusplus
 extern "C" {
@@ -68,11 +67,13 @@ extern const TypeInfo* theShortArrayTypeInfo;
 extern const TypeInfo* theStringTypeInfo;
 extern const TypeInfo* theThrowableTypeInfo;
 extern const TypeInfo* theUnitTypeInfo;
-extern const TypeInfo* theWorkerBoundReferenceTypeInfo;
 extern const TypeInfo* theCleanerImplTypeInfo;
+extern const TypeInfo* theRegularWeakReferenceImplTypeInfo;
 
-KBoolean IsInstance(const ObjHeader* obj, const TypeInfo* type_info) RUNTIME_PURE;
-KBoolean IsInstanceOfClassFast(const ObjHeader* obj, int32_t lo, int32_t hi) RUNTIME_PURE;
+KBoolean IsInstance(const ObjHeader* obj, const TypeInfo* type_info) RUNTIME_PURE RUNTIME_EXPORT RUNTIME_WEAK;
+KBoolean IsInstanceInternal(const ObjHeader* obj, const TypeInfo* type_info) RUNTIME_PURE;
+KBoolean IsSubtype(const TypeInfo* obj_type_info, const TypeInfo* type_info) RUNTIME_PURE;
+KBoolean IsSubclassFast(const TypeInfo* obj_type_info, int32_t lo, int32_t hi) RUNTIME_PURE;
 void CheckCast(const ObjHeader* obj, const TypeInfo* type_info);
 KBoolean IsArray(KConstRef obj) RUNTIME_PURE;
 bool IsSubInterface(const TypeInfo* thiz, const TypeInfo* other) RUNTIME_PURE;

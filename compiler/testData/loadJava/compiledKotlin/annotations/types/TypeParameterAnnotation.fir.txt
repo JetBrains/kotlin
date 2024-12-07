@@ -1,0 +1,11 @@
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.TYPE_PARAMETER)) public final annotation class A : R|kotlin/Annotation| {
+    public constructor(): R|test/A|
+
+}
+
+public final class SimpleTypeParameterAnnotation : R|kotlin/Any| {
+    public final fun <@R|test/A|() T> foo(x: R|T|): R|kotlin/Unit|
+
+    public constructor(): R|test/SimpleTypeParameterAnnotation|
+
+}

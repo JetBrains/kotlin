@@ -15,7 +15,16 @@ public abstract class AB {
     public abstract fun absFun2(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    @kotlin.jvm.JvmName(name = "AB_internalAbstractFun") internal abstract fun internalAbstractFun(): kotlin.Unit
+    @kotlin.jvm.JvmName(name = "AB_internalFinalFun") internal final fun internalFinalFun(): kotlin.Unit
+    @kotlin.jvm.JvmName(name = "AB_internalOpenFun") internal open fun internalOpenFun(): kotlin.Unit
     @kotlin.jvm.JvmName(name = "AB_openFun") public open fun openFun(): kotlin.Unit
+    @kotlin.jvm.JvmName(name = "AB_privateAbstractFun") private abstract fun privateAbstractFun(): kotlin.Unit
+    @kotlin.jvm.JvmName(name = "AB_privateFinalFun") private final fun privateFinalFun(): kotlin.Unit
+    @kotlin.jvm.JvmName(name = "AB_privateOpenFun") private open fun privateOpenFun(): kotlin.Unit
+    @kotlin.jvm.JvmName(name = "AB_protectedAbstractFun") protected abstract fun protectedAbstractFun(): kotlin.Unit
+    @kotlin.jvm.JvmName(name = "AB_protectedFinalFun") protected final fun protectedFinalFun(): kotlin.Unit
+    @kotlin.jvm.JvmName(name = "AB_protectedOpenFun") protected open fun protectedOpenFun(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -40,7 +49,16 @@ public final class D : AB {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @kotlin.jvm.JvmName(name = "D_finalFun") public final fun finalFun(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal open override /*1*/ fun internalAbstractFun(): kotlin.Unit
+    @kotlin.jvm.JvmName(name = "AB_internalFinalFun") internal final override /*1*/ /*fake_override*/ fun internalFinalFun(): kotlin.Unit
+    @kotlin.jvm.JvmName(name = "AB_internalOpenFun") internal open override /*1*/ /*fake_override*/ fun internalOpenFun(): kotlin.Unit
     @kotlin.jvm.JvmName(name = "D_openFun") public final override /*1*/ fun openFun(): kotlin.Unit
+    @kotlin.jvm.JvmName(name = "AB_privateAbstractFun") invisible_fake abstract override /*1*/ /*fake_override*/ fun privateAbstractFun(): kotlin.Unit
+    @kotlin.jvm.JvmName(name = "AB_privateFinalFun") invisible_fake final override /*1*/ /*fake_override*/ fun privateFinalFun(): kotlin.Unit
+    @kotlin.jvm.JvmName(name = "AB_privateOpenFun") invisible_fake open override /*1*/ /*fake_override*/ fun privateOpenFun(): kotlin.Unit
+    protected open override /*1*/ fun protectedAbstractFun(): kotlin.Unit
+    @kotlin.jvm.JvmName(name = "AB_protectedFinalFun") protected final override /*1*/ /*fake_override*/ fun protectedFinalFun(): kotlin.Unit
+    @kotlin.jvm.JvmName(name = "AB_protectedOpenFun") protected open override /*1*/ /*fake_override*/ fun protectedOpenFun(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 

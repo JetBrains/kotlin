@@ -1,0 +1,12 @@
+/* MODULE name=<lib> */
+
+/* FILE package=<root> fileName=A.kt */
+
+public class A<T : Any?>
+    /* TARGET declaration */ private constructor(s: T) /* primary */
+    public constructor()
+        /* TARGET use-site */ A<T>(s = "" as T)
+    internal inline fun copy(s: String): A<String>
+        /* ACCESSOR use-site */ access$<init><String>(s = s)
+    /* ACCESSOR declaration */ internal /* static */ fun <T : Any?> access$<init>(s: T): A<T>
+        /* TARGET use-site */ A<T>(s = s)

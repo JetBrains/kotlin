@@ -1,0 +1,29 @@
+@kotlin.Metadata
+public final class NoInitializationOfOuterClassKt {
+    // source: 'noInitializationOfOuterClass.kt'
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private static method getResult$delegate(): java.lang.Object
+    public final static @org.jetbrains.annotations.NotNull method getResult(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.NotNull p0: O$P, @org.jetbrains.annotations.Nullable p1: java.lang.Object, @org.jetbrains.annotations.Nullable p2: java.lang.Object): java.lang.String
+    public final inner class O$P
+}
+
+@kotlin.Metadata
+public final class O$P {
+    // source: 'noInitializationOfOuterClass.kt'
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: O$P
+    static method <clinit>(): void
+    private method <init>(): void
+    public final inner class O$P
+}
+
+@kotlin.Metadata
+public final class O {
+    // source: 'noInitializationOfOuterClass.kt'
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: O
+    static method <clinit>(): void
+    private method <init>(): void
+    public final inner class O$P
+}

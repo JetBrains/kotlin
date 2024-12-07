@@ -1,5 +1,5 @@
 public final class FieldAsVar : R|kotlin/Any| {
-    public open field f: R|kotlin/Int|
+    public field f: R|kotlin/Int|
 
     public constructor(): R|test/FieldAsVar|
 

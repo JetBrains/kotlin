@@ -1,0 +1,14 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final object /Assertions { // /Assertions|null[0]
+    final fun <#A1: kotlin/Any?> assertThat(#A1): /ObjectAssert<#A1> // /Assertions.assertThat|assertThat(0:0){0§<kotlin.Any?>}[0]
+}
+final class <#A: kotlin/Any?> /ObjectAssert { // /ObjectAssert|null[0]
+    constructor <init>() // /ObjectAssert.<init>|<init>(){}[0]
+    final fun describedAs(kotlin/String?, kotlin/Array<out kotlin/Any?>...): /ObjectAssert<#A>? // /ObjectAssert.describedAs|describedAs(kotlin.String?;kotlin.Array<out|kotlin.Any?>...){}[0]
+}
+final fun <#A: kotlin/Any> (#A?)./assertNotNull(kotlin/String? = ...) // /assertNotNull|assertNotNull@0:0?(kotlin.String?){0§<kotlin.Any>}[0]

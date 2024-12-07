@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun <T, R> apply(x: T, f: (T) -> R): R = f(x)
 
 fun foo(i: Int) {}

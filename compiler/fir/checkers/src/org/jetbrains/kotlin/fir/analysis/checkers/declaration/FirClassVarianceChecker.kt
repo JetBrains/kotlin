@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extractArgumentsTypeRefAndSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -21,7 +22,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.EnrichedProjectionKind
 import org.jetbrains.kotlin.types.Variance
 
-object FirClassVarianceChecker : FirClassChecker() {
+object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         checkTypeParameters(declaration.typeParameters, Variance.OUT_VARIANCE, context, reporter)
 
@@ -64,15 +65,17 @@ object FirClassVarianceChecker : FirClassChecker() {
             if (member is FirProperty && member.isVar) Variance.INVARIANT else Variance.OUT_VARIANCE
 
         var returnSource = member.returnTypeRef.source
-        if (returnSource != null && memberSource != null) {
-            if (returnSource.kind is KtFakeSourceElementKind && memberSource.kind !is KtFakeSourceElementKind) {
+        if (returnSource != null) {
+            if (memberSource != null && returnSource.kind is KtFakeSourceElementKind && memberSource.kind !is KtFakeSourceElementKind) {
                 returnSource = memberSource
             }
+        } else {
+            returnSource = memberSource
         }
 
         checkVarianceConflict(member.returnTypeRef, returnTypeVariance, context, reporter, returnSource)
 
-        val receiverTypeRef = member.receiverTypeRef
+        val receiverTypeRef = member.receiverParameter?.typeRef
         if (receiverTypeRef != null) {
             checkVarianceConflict(receiverTypeRef, Variance.IN_VARIANCE, context, reporter)
         }
@@ -92,11 +95,20 @@ object FirClassVarianceChecker : FirClassChecker() {
     }
 
     private fun checkVarianceConflict(
-        type: FirTypeRef, variance: Variance,
+        typeRef: FirTypeRef, variance: Variance,
         context: CheckerContext, reporter: DiagnosticReporter,
         source: KtSourceElement? = null
     ) {
-        checkVarianceConflict(type.coneType, variance, type, type.coneType, context, reporter, source)
+        val expandedType = typeRef.coneType.fullyExpandedType(context.session)
+        checkVarianceConflict(
+            type = expandedType,
+            variance = variance,
+            typeRef = typeRef,
+            containingType = expandedType,
+            context = context,
+            reporter = reporter,
+            source = source ?: typeRef.source,
+        )
     }
 
     private fun checkVarianceConflict(
@@ -162,7 +174,7 @@ object FirClassVarianceChecker : FirClassChecker() {
                         checkVarianceConflict(
                             typeArgumentType, newVariance, subTypeRefAndSource?.typeRef, containingType,
                             context, reporter, subTypeRefAndSource?.typeRef?.source ?: source,
-                            fullyExpandedType != type
+                            type.isTypealiasExpansion
                         )
                     }
                 }

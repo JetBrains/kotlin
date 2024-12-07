@@ -1,0 +1,10 @@
+Diagnostics from elements:
+  for PSI element of type KtObjectDeclaration at (7,14-48)
+    ABSTRACT_MEMBER_NOT_IMPLEMENTED      text ranges: [(110,116)]
+      PSI: KtObjectDeclaration at (7,14-48)
+  for PSI element of type KtConstantExpression at (10,38-39)
+    CONSTANT_EXPECTED_TYPE_MISMATCH      text ranges: [(230,231)]
+      PSI: KtConstantExpression at (10,38-39)
+  for PSI element of type KtConstantExpression at (4,9-10)
+    CONSTANT_EXPECTED_TYPE_MISMATCH      text ranges: [(88,89)]
+      PSI: KtConstantExpression at (4,9-10)

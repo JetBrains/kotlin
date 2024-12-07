@@ -9,7 +9,7 @@
 
 // TESTCASE NUMBER: 2
 open class Foo(val prop: Int) {
-    companion object MyCompanion : Foo(Foo.prop)
+    companion object MyCompanion : Foo(<!SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR!>Foo<!>.prop)
 }
 
 fun box(): String? {

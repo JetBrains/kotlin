@@ -1,0 +1,24 @@
+library {
+  // module name: <TopLevelPropertiesCustomPackage.kt>
+
+  library fragment {
+    // package name: custom.pkg
+
+    package {
+
+      public final val v1: kotlin/Int /* = 1 */
+        public final get
+
+      public final val v2: kotlin/String /* = "hello" */
+        public final get
+
+      public final val v3: kotlin/Function1<kotlin/String, kotlin/Int>
+        public final get
+
+      public final val v4: kotlin/Function1<kotlin/String, kotlin/Int> /* = custom/pkg/MyTransformer^ */
+        public final get
+
+      public typealias MyTransformer = kotlin/Function1<kotlin/String, kotlin/Int> /* = kotlin/Function1<kotlin/String, kotlin/Int> */
+    }
+  }
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,6 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.ModulePath
@@ -21,7 +20,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.test.directives.MultiplatformDiagnosticsDirectives.ENABLE_MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.types.typeUtil.closure
+import org.jetbrains.kotlin.utils.closure
 
 internal fun MultiplatformAnalysisConfiguration(testServices: TestServices): MultiplatformAnalysisConfiguration {
     return if (testServices.moduleStructure.allDirectives.contains(ENABLE_MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE)) {
@@ -42,9 +41,9 @@ internal fun MultiplatformAnalysisConfiguration(testServices: TestServices): Mul
 internal interface MultiplatformAnalysisConfiguration {
     fun getCompilerEnvironment(module: TestModule): TargetEnvironment
     fun getKtFilesForForSourceFiles(project: Project, module: TestModule): Map<TestFile, KtFile>
-    fun getDependencyDescriptors(module: TestModule): List<ModuleDescriptorImpl>
-    fun getFriendDescriptors(module: TestModule): List<ModuleDescriptorImpl>
-    fun getDependsOnDescriptors(module: TestModule): List<ModuleDescriptorImpl>
+    fun getDependencyDescriptors(module: TestModule): List<ModuleDescriptor>
+    fun getFriendDescriptors(module: TestModule): List<ModuleDescriptor>
+    fun getDependsOnDescriptors(module: TestModule): List<ModuleDescriptor>
 }
 
 /**
@@ -63,18 +62,18 @@ internal class MultiplatformSeparateAnalysisConfiguration(
         return CompilerEnvironment
     }
 
-    override fun getDependencyDescriptors(module: TestModule): List<ModuleDescriptorImpl> {
+    override fun getDependencyDescriptors(module: TestModule): List<ModuleDescriptor> {
         return getDescriptors(
             module.allDependencies - module.dependsOnDependencies.toSet(),
             dependencyProvider, moduleDescriptorProvider
         )
     }
 
-    override fun getDependsOnDescriptors(module: TestModule): List<ModuleDescriptorImpl> {
+    override fun getDependsOnDescriptors(module: TestModule): List<ModuleDescriptor> {
         return emptyList()
     }
 
-    override fun getFriendDescriptors(module: TestModule): List<ModuleDescriptorImpl> {
+    override fun getFriendDescriptors(module: TestModule): List<ModuleDescriptor> {
         return getDescriptors(
             module.friendDependencies, dependencyProvider, moduleDescriptorProvider
         )
@@ -86,7 +85,11 @@ internal class MultiplatformSeparateAnalysisConfiguration(
             if (dependencies.isEmpty()) return
             for (dependency in dependencies) {
                 val dependencyModule = dependencyProvider.getTestModule(dependency.moduleName)
-                val artifact = dependencyProvider.getArtifact(dependencyModule, FrontendKinds.ClassicFrontend)
+                val artifact = if (module.frontendKind == FrontendKinds.ClassicAndFIR) {
+                    dependencyProvider.getArtifact(dependencyModule, FrontendKinds.ClassicAndFIR).k1Artifact
+                } else {
+                    dependencyProvider.getArtifact(dependencyModule, FrontendKinds.ClassicFrontend)
+                }
                 /*
                 We need create KtFiles again with new project because otherwise we can access to some caches using
                 old project as key which may leads to missing services in core environment
@@ -121,7 +124,7 @@ internal class MultiplatformCompositeAnalysisConfiguration(
         return sourceFileProvider.getKtFilesForSourceFiles(module.files, project)
     }
 
-    override fun getDependencyDescriptors(module: TestModule): List<ModuleDescriptorImpl> {
+    override fun getDependencyDescriptors(module: TestModule): List<ModuleDescriptor> {
         // Transitive dependsOn descriptors should also be returned as dependencies
         val allDependsOnDependencies = module.dependsOnDependencies.closure(preserveOrder = true) { dependsOnDependency ->
             dependencyProvider.getTestModule(dependsOnDependency.moduleName).dependsOnDependencies
@@ -130,11 +133,11 @@ internal class MultiplatformCompositeAnalysisConfiguration(
         return getDescriptors(allDependencies, dependencyProvider, moduleDescriptorProvider)
     }
 
-    override fun getDependsOnDescriptors(module: TestModule): List<ModuleDescriptorImpl> {
+    override fun getDependsOnDescriptors(module: TestModule): List<ModuleDescriptor> {
         return getDescriptors(module.dependsOnDependencies, dependencyProvider, moduleDescriptorProvider)
     }
 
-    override fun getFriendDescriptors(module: TestModule): List<ModuleDescriptorImpl> {
+    override fun getFriendDescriptors(module: TestModule): List<ModuleDescriptor> {
         return getDescriptors(module.friendDependencies, dependencyProvider, moduleDescriptorProvider)
     }
 }
@@ -177,7 +180,7 @@ private fun getDescriptors(
     dependencies: Iterable<DependencyDescription>,
     dependencyProvider: DependencyProvider,
     moduleDescriptorProvider: ModuleDescriptorProvider
-): List<ModuleDescriptorImpl> {
+): List<ModuleDescriptor> {
     return dependencies.filter { it.kind == DependencyKind.Source }
         .map { dependencyDescription -> dependencyProvider.getTestModule(dependencyDescription.moduleName) }
         .map { dependencyModule -> moduleDescriptorProvider.getModuleDescriptor(dependencyModule) }

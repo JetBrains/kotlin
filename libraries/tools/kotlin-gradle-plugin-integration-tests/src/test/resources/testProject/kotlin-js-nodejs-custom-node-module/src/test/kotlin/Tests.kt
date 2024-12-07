@@ -16,6 +16,11 @@ class Tests {
     fun test2() {
         assertEquals("foo", foo.foo())
     }
+
+    @Test
+    fun test3() {
+        assertEquals(process.title, "KGP_CUSTOM_NODEJS_TITLE")
+    }
 }
 
 external val process: dynamic

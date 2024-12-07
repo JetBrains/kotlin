@@ -1,0 +1,2 @@
+KtNameReferenceExpression(121,123): 'BB'
+  null

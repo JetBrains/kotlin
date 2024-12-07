@@ -38,10 +38,10 @@ object SpecialNames {
     val ANONYMOUS = Name.special(ANONYMOUS_STRING)
 
     @JvmField
-    val UNARY = Name.special("<unary>")
+    val ANONYMOUS_FQ_NAME = FqName.topLevel(Name.special(ANONYMOUS_STRING))
 
     @JvmField
-    val UNARY_RESULT = Name.special("<unary-result>")
+    val UNARY = Name.special("<unary>")
 
     @JvmField
     val THIS = Name.special("<this>")
@@ -71,6 +71,12 @@ object SpecialNames {
     val RECEIVER = Name.special("<receiver>")
 
     /**
+     * Kotlin-generated `entries` read-only property
+     */
+    @JvmField
+    val ENUM_GET_ENTRIES = Name.special("<get-entries>")
+
+    /**
      * Special name to store expressions used as indexes in subscription operators (`get` and `set`).
      *
      * For example, `bar1()` and `bar2()` are indexes in `foo[bar1(), bar2()]` call.
@@ -80,6 +86,18 @@ object SpecialNames {
         require(idx >= 0) { "Index should be non-negative, but was $idx" }
 
         return Name.special("<index_$idx>")
+    }
+
+    private const val ANONYMOUS_PARAMETER_NAME_PREFIX = "anonymous parameter"
+
+    @JvmStatic
+    fun anonymousParameterName(index: Int): Name {
+        return Name.special("<$ANONYMOUS_PARAMETER_NAME_PREFIX $index>")
+    }
+
+    @JvmStatic
+    fun isAnonymousParameterName(name: Name): Boolean {
+        return name.isSpecial && name.asStringStripSpecialMarkers().startsWith(ANONYMOUS_PARAMETER_NAME_PREFIX)
     }
 
     @JvmStatic

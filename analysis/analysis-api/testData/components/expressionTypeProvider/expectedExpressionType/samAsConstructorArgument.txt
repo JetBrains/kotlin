@@ -1,2 +1,4 @@
 expression: { println("hello1") }
-expected type: ft<java/lang/Runnable, java/lang/Runnable?>
+expected type: KaFlexibleType:
+  annotations: []
+  type: java/lang/Runnable!

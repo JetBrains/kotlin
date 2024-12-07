@@ -8,7 +8,7 @@ End of files
 Compiling files:
   module1/src/A.kt
 End of files
-Marked as dirty by Kotlin:
+After build round. Marked as dirty by Kotlin:
   module1/src/D.kt
   module2/src/B.kt
   module3/src/C.kt
@@ -54,7 +54,7 @@ End of files
 Compiling files:
   module3/src/C.kt
 End of files
-Marked as dirty by Kotlin:
+After build round. Marked as dirty by Kotlin:
   module4/src/E.kt
   module5/src/F.kt
 Exit code: ADDITIONAL_PASS_REQUIRED

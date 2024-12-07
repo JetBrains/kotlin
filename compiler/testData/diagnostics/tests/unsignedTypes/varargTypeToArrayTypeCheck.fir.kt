@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 
 fun ubyte(vararg a: <!OPT_IN_USAGE!>UByte<!>): <!OPT_IN_USAGE!>UByteArray<!> = <!OPT_IN_USAGE!>a<!>
 fun ushort(vararg a: <!OPT_IN_USAGE!>UShort<!>): <!OPT_IN_USAGE!>UShortArray<!> = <!OPT_IN_USAGE!>a<!>

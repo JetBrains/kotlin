@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.importsDumper
 
 import com.intellij.openapi.project.Project
+import kotlinx.serialization.internal.LinkedHashMapSerializer
 import kotlinx.serialization.internal.StringSerializer
-import kotlinx.serialization.json.JSON
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 import kotlinx.serialization.list
-import kotlinx.serialization.map
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ProjectContext
@@ -29,18 +30,17 @@ class ImportsDumperExtension(destinationPath: String) : AnalysisHandlerExtension
         files: Collection<KtFile>,
         bindingTrace: BindingTrace,
         componentProvider: ComponentProvider
-    ): AnalysisResult? {
+    ): AnalysisResult {
         val filePathToImports: MutableMap<String, List<String>> = mutableMapOf()
 
         for (file in files) {
             filePathToImports[file.virtualFilePath] = file.importDirectives.map { it.text }
         }
 
-        val serializer = (StringSerializer to StringSerializer.list).map
+        val serializer = LinkedHashMapSerializer(StringSerializer, StringSerializer.list)
+        val jsonStringWithImports = Json(JsonConfiguration.Stable).toJson(serializer, filePathToImports)
 
-        val jsonStringWithImports = JSON.stringify(serializer, filePathToImports)
-
-        destination.writeText(jsonStringWithImports)
+        destination.writeText(jsonStringWithImports.toString())
 
         return AnalysisResult.success(bindingTrace.bindingContext, module, shouldGenerateCode = false)
     }

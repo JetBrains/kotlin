@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 val f: (String.() -> String)? = null
 
 fun box(): String {

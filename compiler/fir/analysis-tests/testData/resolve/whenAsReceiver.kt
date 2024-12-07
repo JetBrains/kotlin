@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun <T, R> T.also(block: () -> R): R {
     return null!!
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface A
 
 fun test_1(a: A?, convert: A.() -> String) {

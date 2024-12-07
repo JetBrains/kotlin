@@ -1,5 +1,0 @@
-$TESTDATA_DIR$/simple2js.kt
--kotlin-home
-$TESTDATA_DIR$
--output
-$TEMP_DIR$/out.js

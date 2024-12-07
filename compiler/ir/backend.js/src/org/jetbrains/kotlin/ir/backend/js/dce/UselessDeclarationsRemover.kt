@@ -9,14 +9,21 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.defaultConstructorForReflection
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
+import org.jetbrains.kotlin.utils.memoryOptimizedFilter
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 class UselessDeclarationsRemover(
     private val removeUnusedAssociatedObjects: Boolean,
@@ -24,6 +31,8 @@ class UselessDeclarationsRemover(
     private val context: JsIrBackendContext,
     private val dceRuntimeDiagnostic: RuntimeDiagnostic?,
 ) : IrElementVisitorVoid {
+    private val savedTypesCache = hashMapOf<IrClassSymbol, Set<IrClassSymbol>>()
+
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -45,7 +54,30 @@ class UselessDeclarationsRemover(
         // Otherwise `JsClassGenerator.generateAssociatedKeyProperties` will try to reference the object factory (which is removed).
         // That will result in an error from the Namer. It cannot generate a name for an absent declaration.
         if (removeUnusedAssociatedObjects && declaration.annotations.any { !it.shouldKeepAnnotation() }) {
-            declaration.annotations = declaration.annotations.filter { it.shouldKeepAnnotation() }
+            declaration.annotations = declaration.annotations.memoryOptimizedFilter { it.shouldKeepAnnotation() }
+        }
+
+        declaration.superTypes = declaration.superTypes
+            .flatMap { it.classOrNull?.collectUsedSuperTypes() ?: emptyList() }
+            .distinct()
+            .memoryOptimizedMap { it.defaultType }
+
+        // Remove default constructor if the class was never constructed
+        val defaultConstructor = declaration.findDefaultConstructorForReflection()
+        if (defaultConstructor != null && defaultConstructor !in usefulDeclarations) {
+            declaration.defaultConstructorForReflection = null
+        }
+    }
+
+    private fun IrClassSymbol.collectUsedSuperTypes(): Set<IrClassSymbol> {
+        return savedTypesCache.getOrPut(this) {
+            if (owner in usefulDeclarations || context.keeper.shouldKeep(owner)) {
+                setOf(this)
+            } else {
+                owner.superTypes
+                    .flatMap { it.takeIf { !it.isAny() }?.classOrNull?.collectUsedSuperTypes() ?: emptyList() }
+                    .toHashSet()
+            }
         }
     }
 

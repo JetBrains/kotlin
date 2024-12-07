@@ -1,50 +1,13 @@
 @kotlin.Metadata
-synthetic final class C$Companion$x1$1 {
-    // source: 'test.kt'
-    enclosing method C$Companion.x1()V
-    public final static field INSTANCE: C$Companion$x1$1
-    inner (anonymous) class C$Companion$x1$1
-    static method <clinit>(): void
-    method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): C
-    public synthetic bridge method invoke(): java.lang.Object
-    public final inner class C$Companion
-}
-
-@kotlin.Metadata
-synthetic final class C$Companion$x2$1 {
-    // source: 'test.kt'
-    enclosing method C$Companion.x2()V
-    public final static field INSTANCE: C$Companion$x2$1
-    inner (anonymous) class C$Companion$x2$1
-    static method <clinit>(): void
-    method <init>(): void
-    public final @org.jetbrains.annotations.NotNull method invoke(): C
-    public synthetic bridge method invoke(): java.lang.Object
-    public final inner class C$Companion
-}
-
-@kotlin.Metadata
 public final class C$Companion {
     // source: 'test.kt'
-    inner (anonymous) class C$Companion$x1$1
-    inner (anonymous) class C$Companion$x2$1
-    inner (anonymous) class C$sam$java_util_function_Supplier$0
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    private synthetic final static method x1$_init___proxy(): C
     public final method x1(): void
+    private synthetic final static method x2$_init___proxy$0(): C
     public final method x2(): void
     public final inner class C$Companion
-}
-
-@kotlin.Metadata
-synthetic final class C$sam$java_util_function_Supplier$0 {
-    // source: 'test.kt'
-    enclosing method C$Companion.x1()V
-    private synthetic final field function: kotlin.jvm.functions.Function0
-    inner (anonymous) class C$sam$java_util_function_Supplier$0
-    method <init>(p0: kotlin.jvm.functions.Function0): void
-    public synthetic final method get(): java.lang.Object
 }
 
 @kotlin.Metadata

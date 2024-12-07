@@ -15,7 +15,63 @@ FILE: common.kt
         }
 
     }
+FILE: jvm.kt
+    public open actual class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final actual fun foo(): R|kotlin/Unit| {
+        }
+
+        public final fun bar(): R|kotlin/Unit| {
+        }
+
+        public final actual val x: R|kotlin/Int| = Int(42)
+            public get(): R|kotlin/Int|
+
+    }
+    public final class C : R|B| {
+        public constructor(): R|C| {
+            super<R|B|>()
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            this@R|/C|.R|/A.foo|()
+            this@R|/C|.R|/A.bar|()
+            this@R|/C|.R|/A.x|.R|kotlin/Int.plus|(this@R|/C|.R|/A.x|)
+        }
+
+    }
+    public final class D : R|A| {
+        public constructor(): R|D| {
+            super<R|A|>()
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            this@R|/D|.R|/A.foo|()
+            this@R|/D|.R|/A.bar|()
+            this@R|/D|.R|/A.x|.R|kotlin/Int.plus|(this@R|/D|.R|/A.x|)
+        }
+
+    }
 Module: m1-jvm
+FILE: common.kt
+    public open expect class A : R|kotlin/Any| {
+        public expect constructor(): R|A|
+
+        public final expect fun foo(): R|kotlin/Unit|
+
+        public final expect val x: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+    }
+    public open class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+    }
 FILE: jvm.kt
     public open actual class A : R|kotlin/Any| {
         public constructor(): R|A| {

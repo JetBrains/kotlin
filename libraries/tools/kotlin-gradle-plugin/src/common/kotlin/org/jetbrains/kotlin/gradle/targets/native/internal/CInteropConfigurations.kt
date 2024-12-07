@@ -7,71 +7,110 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.*
-import org.gradle.api.internal.artifacts.ArtifactAttributes
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.artifacts.maybeCreateKlibPackingTask
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator.NativeArtifactFormat
-import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultCInteropSettings
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.categoryByName
+import org.jetbrains.kotlin.gradle.plugin.launchInStage
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
+import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements.cinteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
+import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.createConsumable
+import org.jetbrains.kotlin.gradle.utils.findConsumable
 
 internal fun createCInteropApiElementsKlibArtifact(
+    compilation: KotlinNativeCompilation,
     settings: DefaultCInteropSettings,
-    interopTask: TaskProvider<out CInteropProcess>
+    interopTask: TaskProvider<out CInteropProcess>,
 ) {
-    val project = settings.compilation.project
-    val configurationName = cInteropApiElementsConfigurationName(settings.target ?: return)
+    val project = compilation.project
+    val configurationName = cInteropApiElementsConfigurationName(compilation.target)
     val configuration = project.configurations.getByName(configurationName)
-    project.artifacts.add(configuration.name, interopTask.map { it.outputFile }) { artifact ->
-        artifact.extension = "klib"
-        artifact.type = "klib"
-        artifact.classifier = "cinterop-${settings.name}"
-        artifact.builtBy(interopTask)
+    val packedArtifactFile = if (project.kotlinPropertiesProvider.useNonPackedKlibs) {
+        // the default artifact should be compressed
+        val packTask = compilation.maybeCreateKlibPackingTask(settings.classifier, interopTask)
+        packTask.map { it.archiveFile.get().asFile }
+    } else {
+        interopTask.flatMap { it.klibFile }
     }
+    configuration.outgoing.registerKlibArtifact(packedArtifactFile, settings.classifier)
 }
 
 internal fun Project.locateOrCreateCInteropDependencyConfiguration(
     compilation: KotlinNativeCompilation,
-    cinterop: CInteropSettings,
-    target: KotlinTarget
 ): Configuration {
+    configurations.findResolvable(compilation.cInteropDependencyConfigurationName)?.let { return it }
+
     val compileOnlyConfiguration = configurations.getByName(compilation.compileOnlyConfigurationName)
     val implementationConfiguration = configurations.getByName(compilation.implementationConfigurationName)
 
-    return configurations.maybeCreate(cinterop.dependencyConfigurationName).apply {
+    return configurations.createResolvable(compilation.cInteropDependencyConfigurationName).apply {
         extendsFrom(compileOnlyConfiguration, implementationConfiguration)
         isVisible = false
-        isCanBeResolved = true
-        isCanBeConsumed = false
 
-        usesPlatformOf(target)
-        attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
-        attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_CINTEROP))
-        attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-        description = "Dependencies for cinterop '${cinterop.name}' (compilation '${compilation.name}')."
+        /* Deferring attributes to wait for compilation.attributes to be configured by user */
+        launchInStage(AfterFinaliseDsl) {
+            usesPlatformOf(compilation.target)
+            compilation.copyAttributesTo(project.providers, dest = attributes)
+            attributes.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
+            attributes.setAttribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_CINTEROP))
+            attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+            description = "CInterop dependencies for compilation '${compilation.name}')."
+        }
+    }
+}
+
+internal val KotlinNativeCompilation.cInteropDependencyConfigurationName: String
+    get() = compilation.disambiguateName("CInterop")
+
+internal val SetupCInteropApiElementsConfigurationSideEffect = KotlinTargetSideEffect<KotlinNativeTarget> { target ->
+    target.project.locateOrCreateCInteropApiElementsConfiguration(target)
+}
+
+// Workaround for https://github.com/gradle/gradle/issues/29630
+internal val MaybeAddWorkaroundForSecondaryVariantsBug = KotlinTargetSideEffect<KotlinNativeTarget> { target ->
+    // at this moment, there's no version with fix of the bug
+    target.project.artifacts.add(
+        cInteropApiElementsConfigurationName(target),
+        target.project.file("non-existing-file-workaround-for-gradle-29630.txt")
+    ) { fakeArtifact ->
+        fakeArtifact.extension = "txt"
+        fakeArtifact.type = "workaround-for-gradle-29630"
     }
 }
 
 internal fun Project.locateOrCreateCInteropApiElementsConfiguration(target: KotlinTarget): Configuration {
     val configurationName = cInteropApiElementsConfigurationName(target)
-    configurations.findByName(configurationName)?.let { return it }
+    configurations.findConsumable(configurationName)?.let { return it }
 
-    return configurations.create(configurationName).apply {
-        isCanBeResolved = false
-        isCanBeConsumed = true
+    return configurations.createConsumable(configurationName).apply {
+        /* Deferring attributes to wait for target.attributes to be configured by user */
+        launchInStage(AfterFinaliseDsl) {
+            usesPlatformOf(target)
+            target.copyAttributesTo(project.providers, dest = attributes)
+            attributes.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
+            attributes.setAttribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_CINTEROP))
+            attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+            attributes.setAttribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, NativeArtifactFormat.KLIB)
 
-        usesPlatformOf(target)
-        attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
-        attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_CINTEROP))
-        attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-        attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, NativeArtifactFormat.KLIB)
+            /* Expose api dependencies */
+            target.compilations.findByName(MAIN_COMPILATION_NAME)?.let { compilation ->
+                extendsFrom(compilation.internal.configurations.apiConfiguration)
+            }
+        }
     }
 }
 
-private fun cInteropApiElementsConfigurationName(target: KotlinTarget): String {
+internal fun cInteropApiElementsConfigurationName(target: KotlinTarget): String {
     return target.name + "CInteropApiElements"
 }
 
@@ -96,4 +135,3 @@ private class CInteropLibraryElementsCompatibilityRule : AttributeCompatibilityR
         }
     }
 }
-

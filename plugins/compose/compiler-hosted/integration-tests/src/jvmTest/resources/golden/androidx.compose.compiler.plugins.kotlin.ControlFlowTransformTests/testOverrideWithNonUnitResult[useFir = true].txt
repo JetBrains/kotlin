@@ -1,0 +1,33 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+class SomeClassImpl: SomeClass() {
+    @Composable
+    override fun SomeFunction(): Int = 10
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 1)
+class SomeClassImpl : SomeClass {
+  @Composable
+  override fun SomeFunction(%composer: Composer?, %changed: Int): Int {
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "C(SomeFunction):Test.kt")
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    val tmp0 = 10
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    %composer.endReplaceGroup()
+    return tmp0
+  }
+  static val %stable: Int = 0
+}

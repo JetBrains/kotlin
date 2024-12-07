@@ -1,17 +1,6 @@
 ================ Step #1 =================
 
 Building c
-Building pJs
-Cleaning output files:
-  out/production/pJs/pJs.js
-  out/production/pJs/pJs.meta.js
-  out/production/pJs/pJs/root-package.kjsm
-End of files
-Compiling files:
-  c/src/usage.kt
-End of files
-Exit code: OK
-------------------------------------------
 Building pJvm
 Cleaning output files:
   out/production/pJvm/META-INF/pJvm.kotlin_module

@@ -1,13 +1,14 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 // FILE: test.kt
-val bar2 by <!DELEGATE_SPECIAL_FUNCTION_AMBIGUITY!>bar2(<!NO_VALUE_FOR_PARAMETER!>)<!><!>
+val bar2 by <!UNRESOLVED_REFERENCE!>bar2<!>()
 
 // FILE: lt/neworld/compiler/Foo.kt
 package lt.neworld.compiler
 
 class Foo {
-    val bar by <!DELEGATE_SPECIAL_FUNCTION_AMBIGUITY!>bar(<!NO_VALUE_FOR_PARAMETER!>)<!><!>
+    val bar by <!UNRESOLVED_REFERENCE!>bar<!>()
 }
 
 // FILE: lt/neworld/compiler/bar/Bar.kt

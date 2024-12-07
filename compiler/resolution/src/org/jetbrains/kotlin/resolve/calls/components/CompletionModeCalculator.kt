@@ -142,11 +142,8 @@ class CompletionModeCalculator {
                     val argument = type.getArgument(position)
                     val parameter = typeConstructor.getParameter(position)
 
-                    if (argument.isStarProjection())
-                        continue
-
                     collectRequiredDirectionsForVariables(
-                        argument.getType(),
+                        argument.getType() ?: continue,
                         compositeVariance(outerVariance, argument, parameter),
                         fixationDirectionsCollector
                     )

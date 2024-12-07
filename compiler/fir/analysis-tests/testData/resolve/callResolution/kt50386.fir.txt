@@ -1,0 +1,74 @@
+FILE: kt50386.kt
+    public abstract interface Flow<T> : R|kotlin/Any| {
+    }
+    public abstract interface MutableSharedFlow<T> : R|Flow<T>| {
+    }
+    public final fun test(output: R|(ScrapingOffOutput) -> kotlin/Unit|): R|kotlin/Unit| {
+        lval p: <ERROR TYPE REF: Ambiguity: presenter, [/presenter, /presenter]> = <Ambiguity: presenter, [/presenter, /presenter]>#(R|<local>/output|, <L> = presenter@fun <anonymous>(): R|ScrapingOffPresenter| <inline=Unknown>  {
+            ^ R|/ScrapingOffPresenter.ScrapingOffPresenter|()
+        }
+        )
+    }
+    public abstract class Presenter<Events, Model, Output> : R|kotlin/Any| {
+        public constructor<Events, Model, Output>(outputExtraBufferCapacity: R|kotlin/Int| = Int(16)): R|Presenter<Events, Model, Output>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val output: R|MutableSharedFlow<Output>| = Null(null)!!
+            public get(): R|MutableSharedFlow<Output>|
+
+        public abstract fun Present(events: R|Events|): R|Model|
+
+    }
+    public final fun <Event : R|kotlin/Any|, Model, Output> presenter(events: R|Event|, output: R|((Output) -> kotlin/Unit)?| = Null(null), presenterProvider: R|() -> Presenter<Event, Model, Output>|): R|Model| {
+        ^presenter Null(null)!!
+    }
+    public final fun <Event : R|kotlin/Any|, Model, Output> presenter(output: R|((Output) -> kotlin/Unit)?| = Null(null), extraBufferCapacity: R|kotlin/Int| = Int(16), presenterProvider: R|() -> Presenter<Flow<Event>, Model, Output>|): R|PresentedData<Model, MutableSharedFlow<Event>>| {
+        ^presenter Null(null)!!
+    }
+    public final data class PresentedData<M, E> : R|kotlin/Any| {
+        public constructor<M, E>(model: R|M|, events: R|E|): R|PresentedData<M, E>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val model: R|M| = R|<local>/model|
+            public get(): R|M|
+
+        public final val events: R|E| = R|<local>/events|
+            public get(): R|E|
+
+        public final operator fun component1(): R|M|
+
+        public final operator fun component2(): R|E|
+
+        public final fun copy(model: R|M| = this@R|/PresentedData|.R|/PresentedData.model|, events: R|E| = this@R|/PresentedData|.R|/PresentedData.events|): R|PresentedData<M, E>|
+
+    }
+    private final class ScrapingOffPresenter : R|Presenter<Flow<ScrapingOffEvent>, ScrapingOffModel, ScrapingOffOutput>| {
+        public constructor(): R|ScrapingOffPresenter| {
+            super<R|Presenter<Flow<ScrapingOffEvent>, ScrapingOffModel, ScrapingOffOutput>|>()
+        }
+
+        public open override fun Present(events: R|Flow<ScrapingOffEvent>|): R|ScrapingOffModel| {
+            ^Present R|/ScrapingOffModel.ScrapingOffModel|()
+        }
+
+    }
+    public final class ScrapingOffEvent : R|kotlin/Any| {
+        public constructor(): R|ScrapingOffEvent| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class ScrapingOffOutput : R|kotlin/Any| {
+        public constructor(): R|ScrapingOffOutput| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class ScrapingOffModel : R|kotlin/Any| {
+        public constructor(): R|ScrapingOffModel| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

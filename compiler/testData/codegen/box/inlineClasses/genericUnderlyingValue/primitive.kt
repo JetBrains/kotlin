@@ -1,5 +1,7 @@
 // CHECK_BYTECODE_LISTING
-// LANGUAGE: -JvmInlineValueClasses, +GenericInlineClassParameter
+// FIR_IDENTICAL
+// LANGUAGE: +GenericInlineClassParameter
+// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 // IGNORE_BACKEND: JVM
 
 inline class ICInt<T: Int>(val value: T)

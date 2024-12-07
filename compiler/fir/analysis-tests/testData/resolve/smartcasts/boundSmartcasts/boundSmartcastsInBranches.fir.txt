@@ -14,14 +14,17 @@ FILE: boundSmartcastsInBranches.kt
             lval <iterator>: R|kotlin/collections/Iterator<A>| = R|<local>/list|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<A>|>|()
             while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
                 lval a: R|A| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|A|>|()
-                when () {
-                    ==(R|<local>/goodA|, Null(null)) ->  {
-                        R|<local>/goodA| = R|<local>/a|
-                        continue@@@[R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()]
+                 {
+                    when () {
+                        ==(R|<local>/goodA|, Null(null)) ->  {
+                            R|<local>/goodA| = R|<local>/a|
+                            continue@@@[R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()]
+                        }
                     }
+
+                    R|<local>/goodA|.R|/A.s|
                 }
 
-                R|<local>/goodA|.R|/A.s|
             }
 
         }
@@ -110,23 +113,23 @@ FILE: boundSmartcastsInBranches.kt
         when () {
             !=(R|<local>/x|, Null(null)) ->  {
                 R|<local>/x|.R|kotlin/String.length|
-                R|<local>/y|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
-                R|<local>/z|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+                R|<local>/y|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
+                R|<local>/z|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
             }
         }
 
         when () {
             !=(R|<local>/y|, Null(null)) ->  {
-                R|<local>/x|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+                R|<local>/x|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
                 R|<local>/y|.R|kotlin/String.length|
-                R|<local>/z|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+                R|<local>/z|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
             }
         }
 
         when () {
             !=(R|<local>/z|, Null(null)) ->  {
-                R|<local>/x|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
-                R|<local>/y|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+                R|<local>/x|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
+                R|<local>/y|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
                 R|<local>/z|.R|kotlin/String.length|
             }
         }
@@ -135,23 +138,23 @@ FILE: boundSmartcastsInBranches.kt
         when () {
             !=(R|<local>/x|, Null(null)) ->  {
                 R|<local>/x|.R|kotlin/String.length|
-                R|<local>/y|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
-                R|<local>/z|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+                R|<local>/y|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
+                R|<local>/z|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
             }
         }
 
         when () {
             !=(R|<local>/y|, Null(null)) ->  {
-                R|<local>/x|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+                R|<local>/x|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
                 R|<local>/y|.R|kotlin/String.length|
-                R|<local>/z|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+                R|<local>/z|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
             }
         }
 
         when () {
             !=(R|<local>/z|, Null(null)) ->  {
-                R|<local>/x|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
-                R|<local>/y|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+                R|<local>/x|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
+                R|<local>/y|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
                 R|<local>/z|.R|kotlin/String.length|
             }
         }
@@ -189,24 +192,44 @@ FILE: boundSmartcastsInBranches.kt
         when () {
             !=(R|<local>/x|, Null(null)) ->  {
                 R|<local>/x|.R|kotlin/String.length|
-                R|<local>/y|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+                R|<local>/y|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
                 R|<local>/z|.R|kotlin/String.length|
             }
         }
 
         when () {
             !=(R|<local>/y|, Null(null)) ->  {
-                R|<local>/x|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+                R|<local>/x|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
                 R|<local>/y|.R|kotlin/String.length|
-                R|<local>/z|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+                R|<local>/z|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
             }
         }
 
         when () {
             !=(R|<local>/z|, Null(null)) ->  {
                 R|<local>/x|.R|kotlin/String.length|
-                R|<local>/y|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+                R|<local>/y|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
                 R|<local>/z|.R|kotlin/String.length|
+            }
+        }
+
+    }
+    public final fun test_9(): R|kotlin/Unit| {
+        lvar a: R|kotlin/String?| = Null(null)
+        lval b: R|kotlin/String?|
+        when () {
+            !=(R|<local>/a|, Null(null)) ->  {
+                R|<local>/b| = R|<local>/a|
+            }
+            else ->  {
+                R|<local>/b| = R|<local>/a|
+            }
+        }
+
+        R|<local>/b|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
+        when () {
+            !=(R|<local>/a|, Null(null)) ->  {
+                R|<local>/b|.R|kotlin/String.length|
             }
         }
 

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.typeUtil.builtIns
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun resolveKtPrimitive(
     csBuilder: ConstraintSystemBuilder,
@@ -35,10 +34,12 @@ fun resolveKtPrimitive(
     diagnosticsHolder: KotlinDiagnosticsHolder,
     receiverInfo: ReceiverInfo,
     convertedType: UnwrappedType?,
-    inferenceSession: InferenceSession?
+    inferenceSession: InferenceSession?,
+    selectorCall: KotlinCall? = null,
 ): ResolvedAtom = when (argument) {
-    is SimpleKotlinCallArgument ->
-        checkSimpleArgument(csBuilder, argument, expectedType, diagnosticsHolder, receiverInfo, convertedType, inferenceSession)
+    is SimpleKotlinCallArgument -> checkSimpleArgument(
+        csBuilder, argument, expectedType, diagnosticsHolder, receiverInfo, convertedType, inferenceSession, selectorCall
+    )
 
     is LambdaKotlinCallArgument ->
         preprocessLambdaArgument(csBuilder, argument, expectedType, diagnosticsHolder)
@@ -102,7 +103,7 @@ private fun extraLambdaInfo(
     val isSuspend = expectedType?.isSuspendFunctionType ?: false
 
     val isFunctionSupertype = expectedType != null && KotlinBuiltIns.isNotNullOrNullableFunctionSupertype(expectedType)
-    val argumentAsFunctionExpression = argument.safeAs<FunctionExpression>()
+    val argumentAsFunctionExpression = argument as? FunctionExpression
 
     val typeVariable = TypeVariableForLambdaReturnType(builtIns, "_L")
 
@@ -153,7 +154,7 @@ private fun extractLambdaInfoFromFunctionalType(
     val expectedParameters = expectedType.getValueParameterTypesFromFunctionType()
     val expectedReceiver = expectedType.getReceiverTypeFromFunctionType()?.unwrap()
     val expectedContextReceivers = expectedType.getContextReceiverTypesFromFunctionType().map { it.unwrap() }.toTypedArray()
-    val argumentAsFunctionExpression = argument.safeAs<FunctionExpression>()
+    val argumentAsFunctionExpression = argument as? FunctionExpression
 
     val receiverFromExpected = argumentAsFunctionExpression?.receiverType == null && expectedReceiver != null
 

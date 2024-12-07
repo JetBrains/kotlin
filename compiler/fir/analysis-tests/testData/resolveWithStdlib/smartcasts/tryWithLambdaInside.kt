@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: BACKEND
+// DUMP_CFG
 // FULL_JDK
 
 fun <T> List<T>.notInPlaceFilter(block: (T) -> Boolean): List<T> = this

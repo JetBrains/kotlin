@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_FIR: ANY
+// FIR_IDENTICAL
 
 val <T : CharSequence> T.gk: () -> T
     get() = { -> this }

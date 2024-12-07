@@ -34,7 +34,6 @@ fun box(): String {
 // 0 INVOKESTATIC kotlin/UInt.constructor-impl
 // 0 INVOKE\w+ kotlin/UInt.(un)?box-impl
 
-// JVM_IR_TEMPLATES
 // 0 ILOAD
 // 0 ISTORE
 // 0 IADD

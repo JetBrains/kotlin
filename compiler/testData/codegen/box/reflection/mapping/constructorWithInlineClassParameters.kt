@@ -5,7 +5,8 @@ import kotlin.reflect.jvm.javaConstructor
 import kotlin.reflect.jvm.kotlinFunction
 import kotlin.test.assertEquals
 
-inline class Z(val x: Int)
+@JvmInline
+value class Z(val x: Int)
 
 class Test(val x: Z)
 

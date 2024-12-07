@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-40510
 
 // FILE: foo/A.java
@@ -11,4 +12,4 @@ public abstract class A {
 // FILE: main.kt
 import foo.A
 
-class DelegatedA(val a: A) : <!DELEGATION_NOT_TO_INTERFACE, SUPERTYPE_NOT_INITIALIZED!>A<!> by a
+class <!CANNOT_OVERRIDE_INVISIBLE_MEMBER!>DelegatedA<!>(val a: A) : <!DELEGATION_NOT_TO_INTERFACE, SUPERTYPE_NOT_INITIALIZED!>A<!> by a

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.bridges.FunctionHandle
 import org.jetbrains.kotlin.backend.common.bridges.generateBridges
-import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -23,6 +22,8 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
+import org.jetbrains.kotlin.utils.toSmartList
 
 /**
  * Constructs bridges for inherited generic functions
@@ -145,9 +146,13 @@ abstract class BridgesConstruction<T : JsCommonBackendContext>(val context: T) :
             val substitutionMap = makeTypeParameterSubstitutionMap(bridge, this)
             copyReceiverParametersFrom(bridge, substitutionMap)
             copyValueParametersFrom(bridge, substitutionMap)
-            annotations += bridge.annotations
-            overriddenSymbols += delegateTo.overriddenSymbols
-            overriddenSymbols += bridge.symbol
+            annotations = annotations memoryOptimizedPlus bridge.annotations
+            // the js function signature building process (jsFunctionSignature()) uses dfs throught overriddenSymbols for getting js name,
+            // therefore it is very important to put bridge symbol at the beginning, it allows to get correct js function name
+            overriddenSymbols = mutableSetOf(bridge.symbol).also {
+                it.addAll(overriddenSymbols)
+                it.addAll(delegateTo.overriddenSymbols)
+            }.toSmartList()
         }
 
         irFunction.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
@@ -177,7 +182,7 @@ abstract class BridgesConstruction<T : JsCommonBackendContext>(val context: T) :
 
                 val toTake = valueParameters.size - if (call.isSuspend xor irFunction.isSuspend) 1 else 0
 
-                valueParameters.subList(0, toTake).mapIndexed { i, valueParameter ->
+                valueParameters.subList(0, toTake).forEachIndexed { i, valueParameter ->
                     call.putValueArgument(i, irCastIfNeeded(irGet(valueParameter), delegateTo.valueParameters[i].type))
                 }
 
@@ -201,7 +206,7 @@ abstract class BridgesConstruction<T : JsCommonBackendContext>(val context: T) :
                 valueParametersToCopy = bridge.valueParameters.take(varargIndex)
             }
         }
-        valueParameters += valueParametersToCopy.map { p -> p.copyTo(this, type = p.type.substitute(substitutionMap)) }
+        valueParameters = valueParameters memoryOptimizedPlus valueParametersToCopy.map { p -> p.copyTo(this, type = p.type.substitute(substitutionMap)) }
     }
 
     abstract fun getBridgeOrigin(bridge: IrSimpleFunction): IrDeclarationOrigin
@@ -242,4 +247,10 @@ data class IrBasedFunctionHandle(val function: IrSimpleFunction) : FunctionHandl
 
     override fun getOverridden() =
         function.overriddenSymbols.map { IrBasedFunctionHandle(it.owner) }
+}
+
+private fun IrSimpleFunction.findInterfaceImplementation(): IrSimpleFunction? {
+    if (isReal) return null
+
+    return resolveFakeOverride()?.run { if (parentAsClass.isInterface) this else null }
 }

@@ -5,3 +5,4 @@ STEP 1:
         D : l1.kt
         U : l1.kt -> l1_new.kt
     added file: l1_new.kt
+    removed file: l1.kt

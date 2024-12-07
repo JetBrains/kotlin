@@ -1,0 +1,3 @@
+FILE: incompleteUserType.kt
+    public final fun foo(a: <ERROR TYPE REF: Incomplete user type>): R|kotlin/Unit| {
+    }

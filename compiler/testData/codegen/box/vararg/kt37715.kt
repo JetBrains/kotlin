@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IR_DUMP
 
 import kotlin.collections.toList
 

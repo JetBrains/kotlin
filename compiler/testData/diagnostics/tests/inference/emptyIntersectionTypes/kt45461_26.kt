@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // RENDER_DIAGNOSTICS_FULL_TEXT
-// !LANGUAGE: +ForbidInferringTypeVariablesIntoEmptyIntersection
+// LANGUAGE: +ForbidInferringTypeVariablesIntoEmptyIntersection
 class Foo<T>
 
 class Bar<T> {
@@ -10,5 +11,5 @@ class Out<out K>
 
 fun <K : L, L : N, N: <!FINAL_UPPER_BOUND!>Out<Int><!>> main() {
     val foo = Foo<K>()
-    val x: Out<Float> = Bar<Out<String>>().<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_ERROR("S; Out<String>, K, Out<Float>; multiple incompatible classes; : String, Int")!>takeFoo<!>(foo)
+    val x: Out<Float> = <!TYPE_MISMATCH!>Bar<Out<String>>().<!TYPE_MISMATCH!>takeFoo<!>(foo)<!>
 }

@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
-// !LANGUAGE: +QualifiedSupertypeMayBeExtendedByOtherSupertype
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
+// LANGUAGE: +QualifiedSupertypeMayBeExtendedByOtherSupertype
 
 // FILE: main.kt
 open class AndroidTargetConfigurator :
@@ -13,7 +14,7 @@ open class AndroidTargetConfigurator :
 
     @PublishedApi
     internal inline fun inlineFunPublished(): String {
-        return super.classFun() + super<ModuleConfiguratorWithTests>.getConfiguratorSettings() + super<AndroidModuleConfigurator>.getConfiguratorSettings()
+        return <!SUPER_CALL_FROM_PUBLIC_INLINE!>super<!>.classFun() + <!SUPER_CALL_FROM_PUBLIC_INLINE!>super<ModuleConfiguratorWithTests><!>.getConfiguratorSettings() + <!SUPER_CALL_FROM_PUBLIC_INLINE!>super<AndroidModuleConfigurator><!>.getConfiguratorSettings()
     }
 
     public inline fun inlineFunAnonymousObjects(): String {

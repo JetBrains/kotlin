@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: MyMap.java
 
 public interface MyMap<K, V> {

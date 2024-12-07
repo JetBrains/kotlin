@@ -1,0 +1,5 @@
+abstract class X<T, U>
+
+abstract class Y<T> : X<kotlin.String, T>()
+
+class A<T, R> : Y<kotlin.Pair<T, R>>()

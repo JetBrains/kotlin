@@ -268,8 +268,9 @@ KtFile: newModifiers.kt
             PsiElement(inline)('inline')
           PsiWhiteSpace(' ')
           PsiElement(get)('get')
-          PsiElement(LPAR)('(')
-          PsiElement(RPAR)(')')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
@@ -281,8 +282,8 @@ KtFile: newModifiers.kt
             PsiElement(data)('data')
           PsiWhiteSpace(' ')
           PsiElement(set)('set')
-          PsiElement(LPAR)('(')
           VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
             VALUE_PARAMETER
               PsiElement(IDENTIFIER)('q')
               PsiElement(COLON)(':')
@@ -291,7 +292,7 @@ KtFile: newModifiers.kt
                 USER_TYPE
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('Int')
-          PsiElement(RPAR)(')')
+            PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(EQ)('=')
           PsiWhiteSpace(' ')

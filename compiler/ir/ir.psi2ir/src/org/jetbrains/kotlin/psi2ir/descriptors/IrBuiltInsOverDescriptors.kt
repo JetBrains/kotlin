@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,23 +16,24 @@ import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
+import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.SymbolFinder
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeBuilder
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
-import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -44,11 +45,13 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 @ObsoleteDescriptorBasedAPI
+@OptIn(InternalSymbolFinderAPI::class)
 class IrBuiltInsOverDescriptors(
     val builtIns: KotlinBuiltIns,
     private val typeTranslator: TypeTranslator,
     val symbolTable: SymbolTable
 ) : IrBuiltIns() {
+    override val symbolFinder: SymbolFinderOverDescriptors = SymbolFinderOverDescriptors(builtIns, symbolTable)
     override val languageVersionSettings = typeTranslator.languageVersionSettings
 
     private var _functionFactory: IrAbstractDescriptorBasedFunctionFactory? = null
@@ -75,13 +78,31 @@ class IrBuiltInsOverDescriptors(
     private val builtInsModule = builtIns.builtInsModule
 
     private val kotlinInternalPackage = StandardClassIds.BASE_INTERNAL_PACKAGE
-    private val kotlinInternalIrPackage = IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(builtInsModule, kotlinInternalPackage)
+    override val kotlinInternalPackageFragment = createEmptyExternalPackageFragment(builtInsModule, kotlinInternalPackage)
 
     private val packageFragmentDescriptor = IrBuiltinsPackageFragmentDescriptorImpl(builtInsModule, KOTLIN_INTERNAL_IR_FQN)
-    override val operatorsPackageFragment: IrExternalPackageFragment =
-        IrExternalPackageFragmentImpl(symbolTable.referenceExternalPackageFragment(packageFragmentDescriptor), KOTLIN_INTERNAL_IR_FQN)
 
-    private fun ClassDescriptor.toIrSymbol() = symbolTable.referenceClass(this)
+    /*
+     * In REPL it's possible that builtins will be created several times with the same symbol table
+     * And since IrBuiltinsPackageFragmentDescriptorImpl has overridden equals, symbol for external package
+     *   will be the same for different descriptors (with same FQN). So we should create IrExternalPackageFragment
+     *   here only if it was not created before, on previous compilation
+     */
+    override val operatorsPackageFragment: IrExternalPackageFragment =
+        symbolTable.descriptorExtension.declareExternalPackageFragmentIfNotExists(packageFragmentDescriptor)
+
+    private fun ClassDescriptor.toIrSymbol(): IrClassSymbol {
+        return symbolTable.descriptorExtension.referenceClass(this)
+    }
+
+    private fun FunctionDescriptor.toIrSymbol(): IrSimpleFunctionSymbol {
+        return symbolTable.descriptorExtension.referenceSimpleFunction(this)
+    }
+
+    private fun PropertyDescriptor.toIrSymbol(): IrPropertySymbol {
+        return symbolTable.descriptorExtension.referenceProperty(this)
+    }
+
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
     private fun defineOperator(
@@ -98,24 +119,23 @@ class IrBuiltInsOverDescriptors(
             )
         }
 
-        val symbol = symbolTable.declareSimpleFunctionIfNotExists(operatorDescriptor) {
-            val operator = irFactory.createFunction(
-                UNDEFINED_OFFSET,
-                UNDEFINED_OFFSET,
-                BUILTIN_OPERATOR,
-                it,
-                Name.identifier(name),
-                DescriptorVisibilities.PUBLIC,
-                Modality.FINAL,
-                returnType,
+        val symbol = symbolTable.descriptorExtension.declareSimpleFunctionIfNotExists(operatorDescriptor) {
+            val operator = irFactory.createSimpleFunction(
+                startOffset = UNDEFINED_OFFSET,
+                endOffset = UNDEFINED_OFFSET,
+                origin = BUILTIN_OPERATOR,
+                name = Name.identifier(name),
+                visibility = DescriptorVisibilities.PUBLIC,
                 isInline = false,
-                isExternal = false,
+                isExpect = false,
+                returnType = returnType,
+                modality = Modality.FINAL,
+                symbol = it,
                 isTailrec = false,
                 isSuspend = false,
                 isOperator = false,
                 isInfix = false,
-                isExpect = false,
-                isFakeOverride = false
+                isExternal = false,
             )
             operator.parent = operatorsPackageFragment
             operatorsPackageFragment.declarations += operator
@@ -124,8 +144,17 @@ class IrBuiltInsOverDescriptors(
                 val valueParameterDescriptor = operatorDescriptor.valueParameters[i]
                 val valueParameterSymbol = IrValueParameterSymbolImpl(valueParameterDescriptor)
                 irFactory.createValueParameter(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, BUILTIN_OPERATOR, valueParameterSymbol, Name.identifier("arg$i"), i,
-                    valueParameterType, null, isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
+                    startOffset = UNDEFINED_OFFSET,
+                    endOffset = UNDEFINED_OFFSET,
+                    origin = BUILTIN_OPERATOR,
+                    name = Name.identifier("arg$i"),
+                    type = valueParameterType,
+                    isAssignable = false,
+                    symbol = valueParameterSymbol,
+                    varargElementType = null,
+                    isCrossinline = false,
+                    isNoinline = false,
+                    isHidden = false
                 ).apply {
                     parent = operator
                 }
@@ -144,7 +173,7 @@ class IrBuiltInsOverDescriptors(
     }
 
     private fun defineCheckNotNullOperator(): IrSimpleFunctionSymbol {
-        val name = Name.identifier("CHECK_NOT_NULL")
+        val name = Name.identifier(BuiltInOperatorNames.CHECK_NOT_NULL)
         val typeParameterDescriptor: TypeParameterDescriptor
         val valueParameterDescriptor: ValueParameterDescriptor
 
@@ -183,8 +212,8 @@ class IrBuiltInsOverDescriptors(
             )
         }
 
-        return symbolTable.declareSimpleFunctionIfNotExists(operatorDescriptor) { operatorSymbol ->
-            val typeParameter = symbolTable.declareGlobalTypeParameter(
+        return symbolTable.descriptorExtension.declareSimpleFunctionIfNotExists(operatorDescriptor) { operatorSymbol ->
+            val typeParameter = symbolTable.descriptorExtension.declareGlobalTypeParameter(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 BUILTIN_OPERATOR,
                 typeParameterDescriptor
@@ -207,21 +236,39 @@ class IrBuiltInsOverDescriptors(
                 buildSimpleType()
             }
 
-            irFactory.createFunction(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, BUILTIN_OPERATOR,
-                operatorSymbol, name,
-                DescriptorVisibilities.PUBLIC, Modality.FINAL,
-                returnIrType,
-                isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isOperator = false, isInfix = false,
-                isExpect = false, isFakeOverride = false
+            irFactory.createSimpleFunction(
+                startOffset = UNDEFINED_OFFSET,
+                endOffset = UNDEFINED_OFFSET,
+                origin = BUILTIN_OPERATOR,
+                name = name,
+                visibility = DescriptorVisibilities.PUBLIC,
+                isInline = false,
+                isExpect = false,
+                returnType = returnIrType,
+                modality = Modality.FINAL,
+                symbol = operatorSymbol,
+                isTailrec = false,
+                isSuspend = false,
+                isOperator = false,
+                isInfix = false,
+                isExternal = false,
             ).also { operator ->
                 operator.parent = operatorsPackageFragment
                 operatorsPackageFragment.declarations += operator
 
                 val valueParameterSymbol = IrValueParameterSymbolImpl(valueParameterDescriptor)
                 val valueParameter = irFactory.createValueParameter(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, BUILTIN_OPERATOR, valueParameterSymbol, Name.identifier("arg0"), 0,
-                    valueIrType, null, isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
+                    startOffset = UNDEFINED_OFFSET,
+                    endOffset = UNDEFINED_OFFSET,
+                    origin = BUILTIN_OPERATOR,
+                    name = Name.identifier("arg0"),
+                    type = valueIrType,
+                    isAssignable = false,
+                    symbol = valueParameterSymbol,
+                    varargElementType = null,
+                    isCrossinline = false,
+                    isNoinline = false,
+                    isHidden = false,
                 )
 
                 valueParameter.parent = operator
@@ -244,17 +291,7 @@ class IrBuiltInsOverDescriptors(
     override val anyClass = builtIns.any.toIrSymbol()
     override val anyNType = anyType.makeNullable()
 
-    private val intrinsicConstAnnotationFqName = kotlinInternalPackage.child(Name.identifier("IntrinsicConstEvaluation"))
-    private val intrinsicConstClass = irFactory.buildClass {
-        name = intrinsicConstAnnotationFqName.shortName()
-        kind = ClassKind.ANNOTATION_CLASS
-        modality = Modality.FINAL
-    }.apply {
-        parent = kotlinInternalIrPackage
-        createImplicitParameterDeclarationWithWrappedDescriptor()
-        addConstructor() { isPrimary = true }
-        addFakeOverrides(IrTypeSystemContextImpl(this@IrBuiltInsOverDescriptors))
-    }
+    private val intrinsicConstClass = createIntrinsicConstEvaluationClass()
     private val intrinsicConstType = intrinsicConstClass.defaultType
     private val intrinsicConstConstructor = intrinsicConstClass.primaryConstructor as IrConstructor
 
@@ -308,7 +345,7 @@ class IrBuiltInsOverDescriptors(
     override val stringClass = builtIns.string.toIrSymbol()
 
     // TODO: check if correct
-    override val charSequenceClass = findClass(Name.identifier("CharSequence"), "kotlin")!!
+    override val charSequenceClass = symbolFinder.findClass(Name.identifier("CharSequence"), "kotlin")!!
 
     override val collectionClass = builtIns.collection.toIrSymbol()
     override val setClass = builtIns.set.toIrSymbol()
@@ -336,6 +373,7 @@ class IrBuiltInsOverDescriptors(
     override val kCallableClass = builtIns.kCallable.toIrSymbol()
     override val kPropertyClass = builtIns.kProperty.toIrSymbol()
     override val kClassClass = builtIns.kClass.toIrSymbol()
+    override val kTypeClass = builtIns.kType.toIrSymbol()
 
     override val kProperty0Class = builtIns.kProperty0.toIrSymbol()
     override val kProperty1Class = builtIns.kProperty1.toIrSymbol()
@@ -374,6 +412,27 @@ class IrBuiltInsOverDescriptors(
     override val primitiveIrTypesWithComparisons = listOf(charType, byteType, shortType, intType, floatType, longType, doubleType)
     override val primitiveFloatingPointIrTypes = listOf(floatType, doubleType)
 
+    override val byteIterator = getPrimitiveIterator(PrimitiveType.BYTE)
+    override val charIterator = getPrimitiveIterator(PrimitiveType.CHAR)
+    override val shortIterator = getPrimitiveIterator(PrimitiveType.SHORT)
+    override val intIterator = getPrimitiveIterator(PrimitiveType.INT)
+    override val longIterator = getPrimitiveIterator(PrimitiveType.LONG)
+    override val floatIterator = getPrimitiveIterator(PrimitiveType.FLOAT)
+    override val doubleIterator = getPrimitiveIterator(PrimitiveType.DOUBLE)
+    override val booleanIterator = getPrimitiveIterator(PrimitiveType.BOOLEAN)
+
+    private fun getPrimitiveIterator(kind: PrimitiveType): IrClassSymbol {
+        val iteratorName = FqName("kotlin.collections.${kind.typeName}Iterator")
+        return builtIns.getBuiltInClassByFqName(iteratorName).let {
+            val iteratorIrSymbol = it.toIrSymbol()
+            it.unsubstitutedMemberScope
+                .getContributedFunctions(Name.identifier("next"), NoLookupLocation.FROM_BACKEND)
+                .single()
+                .toIrSymbol()
+            iteratorIrSymbol
+        }
+    }
+
     override val byteArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.BYTE).toIrSymbol()
     override val charArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.CHAR).toIrSymbol()
     override val shortArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.SHORT).toIrSymbol()
@@ -384,16 +443,22 @@ class IrBuiltInsOverDescriptors(
     override val booleanArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.BOOLEAN).toIrSymbol()
 
     override val primitiveArraysToPrimitiveTypes =
-        PrimitiveType.values().associate { builtIns.getPrimitiveArrayClassDescriptor(it).toIrSymbol() to it }
+        PrimitiveType.entries.associate { builtIns.getPrimitiveArrayClassDescriptor(it).toIrSymbol() to it }
     override val primitiveTypesToPrimitiveArrays = primitiveArraysToPrimitiveTypes.map { (k, v) -> v to k }.toMap()
     override val primitiveArrayElementTypes = primitiveArraysToPrimitiveTypes.mapValues { primitiveTypeToIrType[it.value] }
     override val primitiveArrayForType = primitiveArrayElementTypes.asSequence().associate { it.value to it.key }
 
     override val unsignedTypesToUnsignedArrays: Map<UnsignedType, IrClassSymbol> =
-        UnsignedType.values().mapNotNull { unsignedType ->
+        UnsignedType.entries.mapNotNull { unsignedType ->
             val array = builtIns.builtInsModule.findClassAcrossModuleDependencies(unsignedType.arrayClassId)?.toIrSymbol()
             if (array == null) null else unsignedType to array
         }.toMap()
+
+    override val unsignedArraysElementTypes: Map<IrClassSymbol, IrType?> by lazy {
+        unsignedTypesToUnsignedArrays.map { (k, v) ->
+            v to builtIns.builtInsModule.findClassAcrossModuleDependencies(k.classId)?.defaultType?.toIrType()
+        }.toMap()
+    }
 
     override val lessFunByOperandType = primitiveIrTypesWithComparisons.defineComparisonOperatorForEachIrType(BuiltInOperatorNames.LESS)
     override val lessOrEqualFunByOperandType =
@@ -415,7 +480,7 @@ class IrBuiltInsOverDescriptors(
 
     val booleanNot =
         builtIns.boolean.unsubstitutedMemberScope.getContributedFunctions(Name.identifier("not"), NoLookupLocation.FROM_BACKEND).single()
-    override val booleanNotSymbol = symbolTable.referenceSimpleFunction(booleanNot)
+    override val booleanNotSymbol = booleanNot.toIrSymbol()
 
     override val eqeqeqSymbol = defineOperator(BuiltInOperatorNames.EQEQEQ, booleanType, listOf(anyNType, anyNType))
     override val eqeqSymbol = defineOperator(BuiltInOperatorNames.EQEQ, booleanType, listOf(anyNType, anyNType), isIntrinsicConst = true)
@@ -440,24 +505,24 @@ class IrBuiltInsOverDescriptors(
     override val intTimesSymbol: IrSimpleFunctionSymbol =
         builtIns.int.unsubstitutedMemberScope.findFirstFunction("times") {
             KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, int)
-        }.let { symbolTable.referenceSimpleFunction(it) }
+        }.toIrSymbol()
 
     override val intXorSymbol: IrSimpleFunctionSymbol =
         builtIns.int.unsubstitutedMemberScope.findFirstFunction("xor") {
             KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, int)
-        }.let { symbolTable.referenceSimpleFunction(it) }
+        }.toIrSymbol()
 
     override val intPlusSymbol: IrSimpleFunctionSymbol =
         builtIns.int.unsubstitutedMemberScope.findFirstFunction("plus") {
             KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, int)
-        }.let { symbolTable.referenceSimpleFunction(it) }
+        }.toIrSymbol()
 
-    override val arrayOf = findFunctions(Name.identifier("arrayOf")).first {
+    override val arrayOf = symbolFinder.findFunctions(Name.identifier("arrayOf")).first {
         it.descriptor.extensionReceiverParameter == null && it.descriptor.dispatchReceiverParameter == null &&
                 it.descriptor.valueParameters.size == 1 && it.descriptor.valueParameters[0].varargElementType != null
     }
 
-    override val arrayOfNulls = findFunctions(Name.identifier("arrayOfNulls")).first {
+    override val arrayOfNulls = symbolFinder.findFunctions(Name.identifier("arrayOfNulls")).first {
         it.descriptor.extensionReceiverParameter == null && it.descriptor.dispatchReceiverParameter == null &&
                 it.descriptor.valueParameters.size == 1 && KotlinBuiltIns.isInt(it.descriptor.valueParameters[0].type)
     }
@@ -465,36 +530,6 @@ class IrBuiltInsOverDescriptors(
     override val linkageErrorSymbol: IrSimpleFunctionSymbol = defineOperator("linkageError", nothingType, listOf(stringType))
 
     override val enumClass = builtIns.enum.toIrSymbol()
-
-    private fun builtInsPackage(vararg packageNameSegments: String) =
-        builtIns.builtInsModule.getPackage(FqName.fromSegments(listOf(*packageNameSegments))).memberScope
-
-    override fun findFunctions(name: Name, vararg packageNameSegments: String): Iterable<IrSimpleFunctionSymbol> =
-        builtInsPackage(*packageNameSegments).getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).map {
-            symbolTable.referenceSimpleFunction(it)
-        }
-
-    override fun findFunctions(name: Name, packageFqName: FqName): Iterable<IrSimpleFunctionSymbol> =
-        builtIns.builtInsModule.getPackage(packageFqName).memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).map {
-            symbolTable.referenceSimpleFunction(it)
-        }
-
-    override fun findClass(name: Name, vararg packageNameSegments: String): IrClassSymbol? =
-        (builtInsPackage(*packageNameSegments).getContributedClassifier(
-            name,
-            NoLookupLocation.FROM_BACKEND
-        ) as? ClassDescriptor)?.let { symbolTable.referenceClass(it) }
-
-    override fun findClass(name: Name, packageFqName: FqName): IrClassSymbol? =
-        (builtIns.builtInsModule.getPackage(packageFqName).memberScope.getContributedClassifier(
-            name,
-            NoLookupLocation.FROM_BACKEND
-        ) as? ClassDescriptor)?.let { symbolTable.referenceClass(it) }
-
-    override fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol> =
-        builtInClass.descriptor.unsubstitutedMemberScope
-            .getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
-            .map { symbolTable.referenceSimpleFunction(it) }
 
     private val binaryOperatorCache = mutableMapOf<Triple<Name, IrType, IrType>, IrSimpleFunctionSymbol>()
 
@@ -536,9 +571,9 @@ class IrBuiltInsOverDescriptors(
         makeKey: (SimpleFunctionDescriptor) -> T?
     ): Map<T, IrSimpleFunctionSymbol> {
         val result = mutableMapOf<T, IrSimpleFunctionSymbol>()
-        for (d in builtInsPackage(*packageNameSegments).getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)) {
+        for (d in symbolFinder.builtInsPackage(*packageNameSegments).getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)) {
             makeKey(d)?.let { key ->
-                result[key] = symbolTable.referenceSimpleFunction(d)
+                result[key] = d.toIrSymbol()
             }
         }
         return result
@@ -562,14 +597,14 @@ class IrBuiltInsOverDescriptors(
             } else null
         }
 
-    override val extensionToString: IrSimpleFunctionSymbol = findFunctions(OperatorNameConventions.TO_STRING, "kotlin").first {
+    override val extensionToString: IrSimpleFunctionSymbol = symbolFinder.findFunctions(OperatorNameConventions.TO_STRING, "kotlin").first {
         val descriptor = it.descriptor
         descriptor is SimpleFunctionDescriptor && descriptor.dispatchReceiverParameter == null &&
                 descriptor.extensionReceiverParameter != null &&
                 KotlinBuiltIns.isNullableAny(descriptor.extensionReceiverParameter!!.type) && descriptor.valueParameters.isEmpty()
     }
 
-    override val memberToString: IrSimpleFunctionSymbol = findBuiltInClassMemberFunctions(
+    override val memberToString: IrSimpleFunctionSymbol = symbolFinder.findBuiltInClassMemberFunctions(
         anyClass,
         OperatorNameConventions.TO_STRING
     ).single {
@@ -577,7 +612,7 @@ class IrBuiltInsOverDescriptors(
         descriptor is SimpleFunctionDescriptor && descriptor.valueParameters.isEmpty()
     }
 
-    override val extensionStringPlus: IrSimpleFunctionSymbol = findFunctions(OperatorNameConventions.PLUS, "kotlin").first {
+    override val extensionStringPlus: IrSimpleFunctionSymbol = symbolFinder.findFunctions(OperatorNameConventions.PLUS, "kotlin").first {
         val descriptor = it.descriptor
         descriptor is SimpleFunctionDescriptor && descriptor.dispatchReceiverParameter == null &&
                 descriptor.extensionReceiverParameter != null &&
@@ -586,7 +621,7 @@ class IrBuiltInsOverDescriptors(
                 KotlinBuiltIns.isNullableAny(descriptor.valueParameters.first().type)
     }
 
-    override val memberStringPlus: IrSimpleFunctionSymbol = findBuiltInClassMemberFunctions(
+    override val memberStringPlus: IrSimpleFunctionSymbol = symbolFinder.findBuiltInClassMemberFunctions(
         stringClass,
         OperatorNameConventions.PLUS
     ).single {
@@ -604,3 +639,143 @@ class IrBuiltInsOverDescriptors(
 
 private inline fun MemberScope.findFirstFunction(name: String, predicate: (CallableMemberDescriptor) -> Boolean) =
     getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).first(predicate)
+
+@InternalSymbolFinderAPI
+class SymbolFinderOverDescriptors(private val builtIns: KotlinBuiltIns, private val symbolTable: SymbolTable) : SymbolFinder() {
+    internal fun builtInsPackage(vararg packageNameSegments: String) =
+        builtIns.builtInsModule.getPackage(FqName.fromSegments(listOf(*packageNameSegments))).memberScope
+
+    override fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol? =
+        symbolTable.descriptorExtension.referenceSimpleFunction(property.descriptor.getter!!)
+
+    override fun findFunctions(name: Name, vararg packageNameSegments: String): Iterable<IrSimpleFunctionSymbol> =
+        builtInsPackage(*packageNameSegments).getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).map {
+            it.toIrSymbol()
+        }
+
+    override fun findFunctions(name: Name, packageFqName: FqName): Iterable<IrSimpleFunctionSymbol> =
+        builtIns.builtInsModule.getPackage(packageFqName).memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).map {
+            it.toIrSymbol()
+        }
+
+    override fun findProperties(name: Name, packageFqName: FqName): Iterable<IrPropertySymbol> =
+        builtIns.builtInsModule.getPackage(packageFqName).memberScope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND).map {
+            it.toIrSymbol()
+        }
+
+    override fun findClass(name: Name, vararg packageNameSegments: String): IrClassSymbol? =
+        (builtInsPackage(*packageNameSegments).getContributedClassifier(
+            name,
+            NoLookupLocation.FROM_BACKEND
+        ) as? ClassDescriptor)?.toIrSymbol()
+
+    override fun findClass(name: Name, packageFqName: FqName): IrClassSymbol? =
+        findClassDescriptor(name, packageFqName)?.toIrSymbol()
+
+    override fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol> =
+        builtInClass.descriptor.unsubstitutedMemberScope
+            .getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
+            .map { it.toIrSymbol() }
+
+    fun findClassDescriptor(name: Name, packageFqName: FqName): ClassDescriptor? =
+        builtIns.builtInsModule.getPackage(packageFqName).memberScope.getContributedClassifier(
+            name,
+            NoLookupLocation.FROM_BACKEND
+        ) as? ClassDescriptor
+
+    fun findBuiltInClassDescriptor(descriptor: ClassDescriptor): ClassDescriptor? {
+        val packageFqName = descriptor.containingPackage() ?: return null
+        return findClassDescriptor(descriptor.name, packageFqName)
+    }
+
+    private fun ClassDescriptor.toIrSymbol(): IrClassSymbol {
+        return symbolTable.descriptorExtension.referenceClass(this)
+    }
+
+    private fun FunctionDescriptor.toIrSymbol(): IrSimpleFunctionSymbol {
+        return symbolTable.descriptorExtension.referenceSimpleFunction(this)
+    }
+
+    private fun PropertyDescriptor.toIrSymbol(): IrPropertySymbol {
+        return symbolTable.descriptorExtension.referenceProperty(this)
+    }
+
+    override fun findMemberFunction(clazz: IrClassSymbol, name: Name): IrSimpleFunctionSymbol? =
+        // inspired by: irBuiltIns.findBuiltInClassMemberFunctions(this, name).singleOrNull()
+        clazz.descriptor.unsubstitutedMemberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
+            .singleOrNull()
+            ?.let { symbolTable.descriptorExtension.referenceSimpleFunction(it) }
+
+    override fun findMemberProperty(clazz: IrClassSymbol, name: Name): IrPropertySymbol? =
+        clazz.descriptor.unsubstitutedMemberScope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND)
+            .singleOrNull()
+            ?.let { symbolTable.descriptorExtension.referenceProperty(it) }
+
+    override fun findMemberPropertyGetter(clazz: IrClassSymbol, name: Name): IrSimpleFunctionSymbol? =
+        clazz.descriptor.unsubstitutedMemberScope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND)
+            .singleOrNull()
+            ?.getter
+            ?.let { symbolTable.descriptorExtension.referenceSimpleFunction(it) }
+
+    override fun getName(clazz: IrClassSymbol) = clazz.descriptor.name
+    override fun isExtensionReceiverClass(property: IrPropertySymbol, expected: IrClassSymbol?): Boolean {
+        return property.descriptor.extensionReceiverParameter?.type?.let { TypeUtils.getClassDescriptor(it) } == expected?.descriptor
+    }
+
+    override fun isExtensionReceiverClass(function: IrFunctionSymbol, expected: IrClassSymbol?): Boolean {
+        return function.descriptor.extensionReceiverParameter?.type?.let { TypeUtils.getClassDescriptor(it) } == expected?.descriptor
+    }
+
+    override fun isExtensionReceiverNullable(function: IrFunctionSymbol): Boolean? {
+        return function.descriptor.extensionReceiverParameter?.type?.isMarkedNullable
+    }
+
+    override fun getValueParametersCount(function: IrFunctionSymbol): Int = function.descriptor.valueParameters.size
+
+    override fun getTypeParametersCount(function: IrFunctionSymbol): Int = function.descriptor.typeParameters.size
+
+    private fun match(type: KotlinType?, symbol: IrClassSymbol?) =
+        if (type == null)
+            symbol == null
+        else
+            TypeUtils.getClassDescriptor(type) == symbol?.descriptor
+
+    override fun isTypeParameterUpperBoundClass(property: IrPropertySymbol, index: Int, expected: IrClassSymbol): Boolean {
+        return property.descriptor.typeParameters.getOrNull(index)?.upperBounds?.any { match(it, expected) } ?: false
+    }
+
+    override fun isValueParameterClass(function: IrFunctionSymbol, index: Int, expected: IrClassSymbol?): Boolean {
+        return match(function.descriptor.valueParameters.getOrNull(index)?.type, expected)
+    }
+
+    override fun isReturnClass(function: IrFunctionSymbol, expected: IrClassSymbol): Boolean {
+        return match(function.descriptor.returnType, expected)
+    }
+
+    override fun isValueParameterTypeArgumentClass(function: IrFunctionSymbol, index: Int, argumentIndex: Int, expected: IrClassSymbol?): Boolean {
+        return match(function.descriptor.valueParameters.getOrNull(index)?.type?.arguments?.getOrNull(argumentIndex)?.type, expected)
+    }
+
+    override fun isValueParameterNullable(function: IrFunctionSymbol, index: Int): Boolean? {
+        return function.descriptor.valueParameters.getOrNull(index)?.type?.isMarkedNullable
+    }
+
+    override fun isExpect(function: IrFunctionSymbol): Boolean = function.descriptor.isExpect
+
+    override fun isSuspend(functionSymbol: IrFunctionSymbol): Boolean = functionSymbol.descriptor.isSuspend
+    override fun getVisibility(function: IrFunctionSymbol): DescriptorVisibility = function.descriptor.visibility
+
+    override fun findPrimaryConstructor(clazz: IrClassSymbol) = clazz.descriptor.unsubstitutedPrimaryConstructor?.let {
+        symbolTable.descriptorExtension.referenceConstructor(it)
+    }
+    override fun findNoParametersConstructor(clazz: IrClassSymbol) = clazz.descriptor.constructors.singleOrNull {
+        it.valueParameters.size == 0
+    }?.let { symbolTable.descriptorExtension.referenceConstructor(it) }
+
+    override fun findNestedClass(clazz: IrClassSymbol, name: Name): IrClassSymbol? {
+        val classDescriptor = clazz.descriptor.defaultType.memberScope.getContributedClassifier(name, NoLookupLocation.FROM_BUILTINS) as? ClassDescriptor
+        return classDescriptor?.let {
+            symbolTable.descriptorExtension.referenceClass(it)
+        }
+    }
+}

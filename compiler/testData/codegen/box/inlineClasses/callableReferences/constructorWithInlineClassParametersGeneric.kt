@@ -12,8 +12,8 @@ class Outer(val z1: Z<Int>) {
 }
 
 fun box(): String {
-    assertEquals(Z(1), ::Outer.invoke(Z(1)).z1)
-    assertEquals(Z(2), Outer::Inner.invoke(Outer(Z(1)), Z(2)).z2)
+    assertEquals(Z(1), ::Outer.let { it.invoke(Z(1)) }.z1)
+    assertEquals(Z(2), Outer::Inner.let { it.invoke(Outer(Z(1)), Z(2)) }.z2)
 
     return "OK"
 }

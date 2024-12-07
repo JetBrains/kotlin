@@ -1,14 +1,15 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A {
     operator fun component1() : Int = 1
     operator fun component2() : Int = 2
 }
 
 fun a() {
-    val (a, a) = A()
-    val (x, y) = A();
-    val b = 1
+    val (<!REDECLARATION!>a<!>, <!REDECLARATION!>a<!>) = A()
+    val (x, <!REDECLARATION!>y<!>) = A();
+    val <!REDECLARATION!>b<!> = 1
     use(b)
-    val (b, y) = A();
+    val (<!REDECLARATION!>b<!>, <!REDECLARATION!>y<!>) = A();
 }
 
 

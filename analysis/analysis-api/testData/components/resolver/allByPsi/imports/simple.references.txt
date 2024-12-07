@@ -1,0 +1,88 @@
+KtNameReferenceExpression(23,27): 'main'
+  KtSimpleNameReference:
+    package main
+
+KtNameReferenceExpression(54,60): 'kotlin'
+  KtSimpleNameReference:
+    package kotlin
+
+KtNameReferenceExpression(61,72): 'collections'
+  KtSimpleNameReference:
+    package kotlin.collections
+
+KtNameReferenceExpression(73,84): 'MutableList'
+  KtSimpleNameReference:
+    0: (in kotlin.collections) inline fun <T> MutableList(size: kotlin.Int, init: (kotlin.Int) -> T): kotlin.collections.MutableList<T>
+    1: (in kotlin.collections) interface MutableList<E> : kotlin.collections.List<E>, kotlin.collections.MutableCollection<E>
+
+KtNameReferenceExpression(92,98): 'kotlin'
+  KtSimpleNameReference:
+    package kotlin
+
+KtNameReferenceExpression(99,110): 'collections'
+  KtSimpleNameReference:
+    package kotlin.collections
+
+KtNameReferenceExpression(111,124): 'mutableListOf'
+  KtSimpleNameReference:
+    0: (in kotlin.collections) fun <T> mutableListOf(vararg elements: T): kotlin.collections.MutableList<T>
+    1: (in kotlin.collections) inline fun <T> mutableListOf(): kotlin.collections.MutableList<T>
+
+KtNameReferenceExpression(132,138): 'kotlin'
+  KtSimpleNameReference:
+    package kotlin
+
+KtNameReferenceExpression(139,143): 'text'
+  KtSimpleNameReference:
+    package kotlin.text
+
+KtNameReferenceExpression(144,152): 'toString'
+  KtSimpleNameReference:
+    0: (in kotlin.text) fun kotlin.UByte.toString(radix: kotlin.Int): kotlin.String
+    1: (in kotlin.text) fun kotlin.UInt.toString(radix: kotlin.Int): kotlin.String
+    2: (in kotlin.text) fun kotlin.ULong.toString(radix: kotlin.Int): kotlin.String
+    3: (in kotlin.text) fun kotlin.UShort.toString(radix: kotlin.Int): kotlin.String
+    4: (in kotlin.text) inline fun kotlin.Byte.toString(radix: kotlin.Int): kotlin.String
+    5: (in kotlin.text) inline fun kotlin.Int.toString(radix: kotlin.Int): kotlin.String
+    6: (in kotlin.text) inline fun kotlin.Long.toString(radix: kotlin.Int): kotlin.String
+    7: (in kotlin.text) inline fun kotlin.Short.toString(radix: kotlin.Int): kotlin.String
+
+KtNameReferenceExpression(177,181): 'java'
+  KtSimpleNameReference:
+    package java
+
+KtNameReferenceExpression(182,186): 'util'
+  KtSimpleNameReference:
+    package java.util
+
+KtNameReferenceExpression(187,196): 'ArrayList'
+  KtSimpleNameReference:
+    (in java.util) open class ArrayList<E : kotlin.Any!> : java.util.AbstractList<E!>(), java.util.RandomAccess, kotlin.Cloneable, java.io.Serializable, kotlin.collections.MutableList<E>
+
+KtNameReferenceExpression(204,208): 'java'
+  KtSimpleNameReference:
+    package java
+
+KtNameReferenceExpression(209,213): 'util'
+  KtSimpleNameReference:
+    package java.util
+
+KtNameReferenceExpression(214,221): 'HashMap'
+  KtSimpleNameReference:
+    (in java.util) open class HashMap<K : kotlin.Any!, V : kotlin.Any!> : java.util.AbstractMap<K!, V!>(), kotlin.Cloneable, java.io.Serializable, kotlin.collections.MutableMap<K, V>
+
+KtNameReferenceExpression(229,233): 'java'
+  KtSimpleNameReference:
+    package java
+
+KtNameReferenceExpression(234,238): 'lang'
+  KtSimpleNameReference:
+    package java.lang
+
+KtNameReferenceExpression(239,243): 'Math'
+  KtSimpleNameReference:
+    (in java.lang) class Math
+
+KtNameReferenceExpression(244,247): 'sin'
+  KtSimpleNameReference:
+    (in java.lang.Math) open fun sin(p0: kotlin.Double): kotlin.Double

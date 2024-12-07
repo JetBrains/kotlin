@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-3343 Type mismatch when function literal consists of try-catch with Int returning call, and Unit is expected
 

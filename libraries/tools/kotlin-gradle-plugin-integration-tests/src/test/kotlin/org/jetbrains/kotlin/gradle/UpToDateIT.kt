@@ -24,7 +24,7 @@ class UpToDateIT : KGPBaseTest() {
             gradleVersion,
             propertyMutationChain(
                 "compileKotlin.kotlinOptions.languageVersion",
-                "null", "'1.6'", "'1.5'", "'1.4'", "null"
+                "null", "'1.9'", "'1.8'", "'1.7'", "'1.6'", "null"
             )
         )
     }
@@ -36,7 +36,7 @@ class UpToDateIT : KGPBaseTest() {
             gradleVersion,
             propertyMutationChain(
                 "compileKotlin.kotlinOptions.apiVersion",
-                "null", "'1.6'", "'1.5'", "'1.4'", "null"
+                "null", "'1.9'", "'1.8'", "'1.7'", "'1.6'", "null"
             )
         )
     }
@@ -51,7 +51,7 @@ class UpToDateIT : KGPBaseTest() {
                 emptyMutation,
                 OptionMutation("compileKotlin.kotlinOptions.jvmTarget", "'1.8'", "'11'"),
                 OptionMutation("compileKotlin.kotlinOptions.freeCompilerArgs", "[]", "['-Xallow-kotlin-package']"),
-                OptionMutation("archivesBaseName", "'someName'", "'otherName'"),
+                archivesBaseNameOutputMutation("someName", "otherName"),
                 subpluginOptionMutation,
                 subpluginOptionMutationWithKapt,
                 externalOutputMutation,
@@ -65,6 +65,14 @@ class UpToDateIT : KGPBaseTest() {
         mutations: Set<ProjectMutation>
     ) {
         project("kotlinProject", gradleVersion) {
+            //language=properties
+            gradleProperties.append(
+                """
+                # suppress inspection "UnusedProperty"
+                kotlin.jvm.target.validation.mode = warning
+                """.trimIndent()
+            )
+
             mutations.forEach { mutation ->
                 mutation.initProject(this)
                 build("classes")
@@ -171,11 +179,16 @@ class UpToDateIT : KGPBaseTest() {
 
         override fun initProject(project: TestProject) = with(project) {
             buildGradle.appendText(
-                "\n" + """
-                apply plugin: 'kotlin-kapt'
-                plugins.apply("org.jetbrains.kotlin.plugin.allopen")
-                allOpen { annotation("allopen.Foo"); annotation("allopen.Bar") }
-            """.trimIndent()
+                """
+                |
+                |apply plugin: 'kotlin-kapt'
+                |plugins.apply("org.jetbrains.kotlin.plugin.allopen")
+                |allOpen { annotation("allopen.Foo"); annotation("allopen.Bar") }
+                |
+                |dependencies {
+                |    kapt 'org.jetbrains.kotlin:annotation-processor-example'
+                |}
+                """.trimMargin()
             )
         }
 
@@ -208,6 +221,31 @@ class UpToDateIT : KGPBaseTest() {
             assertTasksExecuted(":compileKotlin")
             assertTrue(helloWorldKtClass.exists())
         }
+    }
+
+    private fun archivesBaseNameOutputMutation(
+        oldName: String,
+        newName: String,
+    ) = object : ProjectMutation {
+        override fun initProject(project: TestProject) {
+            project.addArchivesBaseNameCompat(oldName)
+        }
+
+        override fun mutateProject(project: TestProject) {
+            project.buildGradle.modify {
+                if (project.gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_5)) {
+                    it.replace("archivesBaseName = '$oldName'", "archivesBaseName = '$newName'")
+                } else {
+                    it.replace("archivesName = '$oldName'", "archivesName = '$newName'")
+                }
+            }
+        }
+
+        override fun checkAfterRebuild(buildResult: BuildResult) {
+            buildResult.assertTasksExecuted(":compileKotlin")
+        }
+
+        override val name: String = "archiveBaseNameOutputMutation"
     }
 
     private interface ProjectMutation {

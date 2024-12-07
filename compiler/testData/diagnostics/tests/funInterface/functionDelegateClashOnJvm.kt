@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun interface F1 {
     val <!FUNCTION_DELEGATE_MEMBER_NAME_CLASH!>functionDelegate<!>: Function<*>? get() = null

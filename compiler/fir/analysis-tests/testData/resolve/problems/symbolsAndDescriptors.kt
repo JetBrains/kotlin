@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class IrClassSymbolImpl(descriptor: String? = null) :
     IrBindableSymbolBase<String>(descriptor),
     IrClassSymbol

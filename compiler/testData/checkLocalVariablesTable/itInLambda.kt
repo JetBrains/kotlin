@@ -1,3 +1,5 @@
+// LAMBDAS: CLASS
+
 public fun <T> Iterable<T>.myforEach(operation: (T) -> Unit) : Unit {
     for (element in this) operation(element)
 }

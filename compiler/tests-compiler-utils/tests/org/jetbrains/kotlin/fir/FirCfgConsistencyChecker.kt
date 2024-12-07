@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.EdgeKind
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.test.Assertions
 
@@ -20,35 +18,35 @@ class FirCfgConsistencyChecker(private val assertions: Assertions) : FirVisitorV
 
     override fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference) {
         val graph = (controlFlowGraphReference as? FirControlFlowGraphReferenceImpl)?.controlFlowGraph ?: return
-        assertions.assertEquals(ControlFlowGraph.State.Completed, graph.state)
+        assertions.assertEquals(graph.nodes.single { it is GraphEnterNodeMarker }, graph.enterNode)
+        assertions.assertEquals(graph.nodes.single { it is GraphExitNodeMarker }, graph.exitNode)
         checkConsistency(graph)
         checkOrder(graph)
     }
 
     private fun checkConsistency(graph: ControlFlowGraph) {
         for (node in graph.nodes) {
+            assertions.assertEquals(node.followingNodes.size, node.followingNodes.toSet().size) { "followingNodes has repeats: $node" }
+            assertions.assertEquals(node.previousNodes.size, node.previousNodes.toSet().size) { "previousNodes has repeats: $node" }
             for (to in node.followingNodes) {
-                checkEdge(node, to)
+                assertions.assertContainsElements(to.previousNodes, node)
+                assertions.assertFalse(node.isDead && to.isDead && to.edgeFrom(node).kind.usedInDfa) {
+                    "data flow between dead nodes: $node -> $to"
+                }
             }
             for (from in node.previousNodes) {
-                checkEdge(from, node)
+                val labelAllowed = node is FinallyBlockEnterNode ||
+                        from is FinallyBlockExitNode ||
+                        (from is AnonymousFunctionCaptureNode && node is FunctionEnterNode)
+                if (!labelAllowed) {
+                    val label = node.edgeFrom(from).label
+                    val correctedLabel = if (label == PostponedPath) NormalPath else label
+                    assertions.assertEquals(correctedLabel, NormalPath) { "edge from $from to $node cannot be labeled" }
+                }
+                assertions.assertContainsElements(from.followingNodes, node)
             }
-            if (node.followingNodes.isEmpty() && node.previousNodes.isEmpty()) {
-                throw AssertionError("Unconnected CFG node: $node")
-            }
-        }
-    }
-
-    private val cfgKinds = listOf(EdgeKind.DeadForward, EdgeKind.CfgForward, EdgeKind.DeadBackward, EdgeKind.CfgBackward)
-
-    private fun checkEdge(from: CFGNode<*>, to: CFGNode<*>) {
-        assertions.assertContainsElements(from.followingNodes, to)
-        assertions.assertContainsElements(to.previousNodes, from)
-        val fromKind = from.outgoingEdges.getValue(to).kind
-        val toKind = to.incomingEdges.getValue(from).kind
-        assertions.assertEquals(fromKind, toKind)
-        if (from.isDead && to.isDead) {
-            assertions.assertContainsElements(cfgKinds, toKind)
+            assertions.assertFalse(node.followingNodes.isEmpty() && node.previousNodes.isEmpty()) { "Unconnected CFG node: $node" }
+            assertions.assertTrue(node is ClassExitNode || node.flowInitialized) { "All nodes must have a flow: $node" }
         }
     }
 
@@ -57,7 +55,7 @@ class FirCfgConsistencyChecker(private val assertions: Assertions) : FirVisitorV
         for (node in graph.nodes) {
             for (previousNode in node.previousNodes) {
                 if (previousNode.owner != graph) continue
-                if (!node.incomingEdges.getValue(previousNode).kind.isBack) {
+                if (!node.edgeFrom(previousNode).kind.isBack) {
                     assertions.assertTrue(previousNode in visited)
                 }
             }

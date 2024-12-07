@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A private constructor()
 
 class B {
@@ -17,7 +18,7 @@ class E private constructor() {
 }
 
 val a = <!NO_COMPANION_OBJECT!>A<!>
-val <!EXPOSED_PROPERTY_TYPE!>b<!> = B
+val <!EXPOSED_PROPERTY_TYPE!>b<!> = <!INVISIBLE_REFERENCE!>B<!>
 val c = <!NO_COMPANION_OBJECT!>C<!>
 val d = D
 val e = E(42)

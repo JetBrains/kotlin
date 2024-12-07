@@ -3,71 +3,71 @@ FILE: implicitInLocalClasses.kt
     }
     public final fun main(): R|kotlin/Unit| {
         local final class A : R|kotlin/Any| {
-            public constructor(): R|A| {
+            public constructor(): R|<local>/A| {
                 super<R|kotlin/Any|>()
             }
 
             public final fun foo(x: R|kotlin/Int|): R|kotlin/Boolean| {
-                ^foo this@R|/A|.R|<local>/bar|(R|<local>/x|)
+                ^foo this@R|<local>/A|.R|<local>/bar|(R|<local>/x|)
             }
 
             public final fun bar(y: R|kotlin/Int|): R|kotlin/Boolean| {
-                ^bar CMP(>, this@R|/A|.R|kotlin/Any.hashCode|().R|kotlin/Int.plus|(R|<local>/y|).R|kotlin/Int.compareTo|(Int(0)))
+                ^bar CMP(>, this@R|<local>/A|.R|kotlin/Any.hashCode|().R|kotlin/Int.plus|(R|<local>/y|).R|kotlin/Int.compareTo|(Int(0)))
             }
 
             public final val w: R|kotlin/Boolean|
                 public get(): R|kotlin/Boolean| {
-                    ^ this@R|/A|.R|<local>/z|
+                    ^ this@R|<local>/A|.R|<local>/z|
                 }
 
             public final val z: R|kotlin/Boolean|
                 public get(): R|kotlin/Boolean| {
-                    ^ ==(this@R|/A|.R|kotlin/Any.hashCode|(), Int(0))
+                    ^ ==(this@R|<local>/A|.R|kotlin/Any.hashCode|(), Int(0))
                 }
 
         }
 
-        lval a: R|A| = R|/A.A|()
+        lval a: R|<local>/A| = R|<local>/A.A|()
         R|/useBoolean|(R|<local>/a|.R|<local>/foo|(Int(1)))
         R|/useBoolean|(R|<local>/a|.R|<local>/bar|(Int(1)))
         R|/useBoolean|(R|<local>/a|.R|<local>/w|)
         R|/useBoolean|(R|<local>/a|.R|<local>/z|)
         local final class B : R|kotlin/Any| {
-            public constructor(): R|B| {
+            public constructor(): R|<local>/B| {
                 super<R|kotlin/Any|>()
             }
 
             public final fun foo(x: R|kotlin/Int|): R|kotlin/Boolean| {
-                ^foo this@R|/B|.R|<local>/inner|.R|<local>/w|
+                ^foo this@R|<local>/B|.R|<local>/inner|.R|<local>/w|
             }
 
             public final fun bar(y: R|kotlin/Int|): R|kotlin/Boolean| {
-                ^bar CMP(>, this@R|/B|.R|kotlin/Any.hashCode|().R|kotlin/Int.plus|(R|<local>/y|).R|kotlin/Int.compareTo|(Int(0)))
+                ^bar CMP(>, this@R|<local>/B|.R|kotlin/Any.hashCode|().R|kotlin/Int.plus|(R|<local>/y|).R|kotlin/Int.compareTo|(Int(0)))
             }
 
-            public final val inner: R|B.Inner| = this@R|/B|.R|/B.Inner.Inner|()
-                public get(): R|B.Inner|
+            public final val inner: R|<local>/B.Inner| = this@R|<local>/B|.R|<local>/B.Inner.Inner|()
+                public get(): R|<local>/B.Inner|
 
             local final inner class Inner : R|kotlin/Any| {
-                public B.constructor(): R|B.Inner| {
+                public <local>/B.constructor(): R|<local>/B.Inner| {
                     super<R|kotlin/Any|>()
                 }
 
                 public final val w: R|kotlin/Boolean|
                     public get(): R|kotlin/Boolean| {
-                        ^ this@R|/B.Inner|.R|<local>/z|
+                        ^ this@R|<local>/B.Inner|.R|<local>/z|
                     }
 
                 public final val z: R|kotlin/Boolean|
                     public get(): R|kotlin/Boolean| {
-                        ^ this@R|/B|.R|<local>/bar|(Int(1))
+                        ^ this@R|<local>/B|.R|<local>/bar|(Int(1))
                     }
 
             }
 
         }
 
-        lval b: R|B| = R|/B.B|()
+        lval b: R|<local>/B| = R|<local>/B.B|()
         R|/useBoolean|(R|<local>/b|.R|<local>/foo|(Int(1)))
         R|/useBoolean|(R|<local>/b|.R|<local>/bar|(Int(1)))
         R|/useBoolean|(R|<local>/b|.R|<local>/inner|.R|<local>/w|)

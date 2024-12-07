@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.FlexibleTypeMarker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariance
 import org.jetbrains.kotlin.utils.SmartList
 
@@ -97,17 +97,17 @@ class TypeVariableDirectionCalculator(
         startDirection: ResolveDirection,
         action: (variable: Variable, direction: ResolveDirection) -> Unit
     ) = when (this) {
-        is SimpleTypeMarker -> visitType(startDirection, action)
+        is RigidTypeMarker -> visitType(startDirection, action)
         is FlexibleTypeMarker -> {
             with(c) {
                 lowerBound().visitType(startDirection, action)
                 upperBound().visitType(startDirection, action)
             }
         }
-        else -> error("?!")
+        else -> error("sealed")
     }
 
-    private fun SimpleTypeMarker.visitType(
+    private fun RigidTypeMarker.visitType(
         startDirection: ResolveDirection,
         action: (variable: Variable, direction: ResolveDirection) -> Unit
     ): Unit = with(c) {
@@ -131,7 +131,7 @@ class TypeVariableDirectionCalculator(
         for (index in 0 until constructor.parametersCount()) {
             val parameter = constructor.getParameter(index)
             val argument = getArgument(index)
-            if (argument.isStarProjection()) continue
+            val type = argument.getType() ?: continue
 
             val variance = AbstractTypeChecker.effectiveVariance(parameter.getVariance(), argument.getVariance()) ?: TypeVariance.INV
             val innerDirection = when (variance) {
@@ -140,7 +140,7 @@ class TypeVariableDirectionCalculator(
                 TypeVariance.IN -> startDirection.opposite()
             }
 
-            argument.getType().visitType(innerDirection, action)
+            type.visitType(innerDirection, action)
         }
     }
 
