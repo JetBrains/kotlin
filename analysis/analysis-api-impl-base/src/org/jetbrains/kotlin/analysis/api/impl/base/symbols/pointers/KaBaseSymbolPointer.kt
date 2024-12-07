@@ -40,22 +40,23 @@ abstract class KaBaseSymbolPointer<out S : KaSymbol>(originalSymbol: S?) : KaSym
     }
 
     private fun runCaching(symbol: S) {
-        if (cachedSymbol === IS_LOCAL) return
-        if (!symbol.isLocal) cachedSymbol = WeakReference(symbol) else IS_LOCAL
+        if (cachedSymbol === NOT_CACHED) return
+        cachedSymbol = if (symbol.isCacheable) WeakReference(symbol) else NOT_CACHED
     }
 
-    private companion object {
-        const val IS_LOCAL = "IS_LOCAL"
-    }
+    companion object {
+        private val NOT_CACHED = object {}
 
-    private val KaSymbol.isLocal: Boolean
-        get() = when(this) {
-            is KaCallableSymbol -> this.callableId?.isLocal == true
-            is KaClassLikeSymbol -> this.classId?.isLocal == true
-            is KaClassInitializerSymbol -> (this.psi as? KtClassInitializer)?.containingDeclaration?.getClassId()?.isLocal == true
-            is KaScriptSymbol, is KaFileSymbol, is KaPackageSymbol -> false
-            else -> true
-        }
+        internal val KaSymbol.isCacheable: Boolean
+            get() = when (this) {
+                is KaConstructorSymbol -> this.containingClassId?.isLocal == false
+                is KaCallableSymbol -> this.callableId?.isLocal == false
+                is KaClassLikeSymbol -> this.classId?.isLocal == false
+                is KaClassInitializerSymbol -> (this.psi as? KtClassInitializer)?.containingDeclaration?.getClassId()?.isLocal == false
+                is KaScriptSymbol, is KaFileSymbol, is KaPackageSymbol -> true
+                else -> false
+            }
+    }
 
     protected abstract fun restoreIfNotCached(analysisSession: KaSession): S?
 }
