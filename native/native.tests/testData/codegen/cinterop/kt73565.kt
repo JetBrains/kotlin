@@ -1,3 +1,4 @@
+// TARGET_BACKEND: NATIVE
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 
 import kotlin.test.*
@@ -11,12 +12,12 @@ fun box(): String {
 
     data1.usePinned { pinnedMemA ->
         data2.usePinned { pinnedMemB ->
-            if (pinnedMemA.addressOf(0).compareMemory(pinnedMemB.addressOf(0), data1.size) != 0) {
+            if (pinnedMemA.addressOf(0).compareBlock(pinnedMemB.addressOf(0), data1.size) != 0) {
                 return "memcmp test failed for equal data"
             }
         }
         data3.usePinned { pinnedMemB ->
-            if (pinnedMemA.addressOf(0).compareMemory(pinnedMemB.addressOf(0), data1.size) == 0) {
+            if (pinnedMemA.addressOf(0).compareBlock(pinnedMemB.addressOf(0), data1.size) == 0) {
                 return "memcmp test failed for unequal data"
             }
         }
@@ -24,7 +25,7 @@ fun box(): String {
 
     // memset
     data1.usePinned { pinned ->
-        pinned.addressOf(0).setMemory(0, data1.size)
+        pinned.addressOf(0).setBlock(0, data1.size)
     }
     if (data1.contentEquals(data2)) {
         return "memset test failed"
@@ -33,7 +34,7 @@ fun box(): String {
     // memcpy
     data1.usePinned { pinnedDest ->
         data2.usePinned { pinnedSrc ->
-            pinnedSrc.addressOf(0).copyMemory(pinnedDest.addressOf(0), data1.size)
+            pinnedSrc.addressOf(0).copyTo(pinnedDest.addressOf(0), data1.size)
         }
     }
     if (!data1.contentEquals(data2)) {
@@ -42,11 +43,9 @@ fun box(): String {
 
     // memmove
     data1.usePinned { pinned ->
-        val destAddress = interpretCPointer<FloatVar>(pinned.addressOf(0).rawValue + (Float.SIZE_BYTES.toLong() shl 1))
-            ?: return "memmove test failed with overlapping data"
-        pinned.addressOf(0).moveMemory(destAddress, 2)
+        pinned.addressOf(0).moveTo(pinned.addressOf(1), 2)
     }
-    if (!data1.contentEquals(floatArrayOf(1F, 2F, 1F, 2F, 5F, 6F))) {
+    if (!data1.contentEquals(floatArrayOf(1F, 1F, 2F, 4F, 5F, 6F))) {
         return "memmove test failed with overlapping data"
     }
 

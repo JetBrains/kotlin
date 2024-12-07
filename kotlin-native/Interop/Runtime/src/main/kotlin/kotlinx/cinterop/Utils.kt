@@ -757,21 +757,21 @@ public fun compareMemory(destMem: NativePointed, srcMem: NativePointed, size: Lo
 }
 
 @ExperimentalForeignApi
-public inline fun <reified T : CVariable> CPointer<T>.setMemory(value: Byte, length: Int) {
+public inline fun <reified T : CVariable> CPointer<T>.setBlock(value: Byte, length: Int) {
     nativeMemUtils.memset(pointed, value, length * sizeOf<T>())
 }
 
 @ExperimentalForeignApi
-public inline fun <reified T : CVariable> CPointer<T>.copyMemory(dest: CPointer<T>, length: Int) {
+public inline fun <reified T : CVariable> CPointer<T>.copyTo(dest: CPointer<T>, length: Int) {
     nativeMemUtils.memcpy(dest.pointed, pointed, length * sizeOf<T>())
 }
 
 @ExperimentalForeignApi
-public inline fun <reified T : CVariable> CPointer<T>.moveMemory(dest: CPointer<T>, length: Int) {
+public inline fun <reified T : CVariable> CPointer<T>.moveTo(dest: CPointer<T>, length: Int) {
     nativeMemUtils.memmove(dest.pointed, pointed, length * sizeOf<T>())
 }
 
 @ExperimentalForeignApi
-public inline fun <reified T : CVariable> CPointer<T>.compareMemory(dest: CPointer<T>, length: Int): Int {
+public inline fun <reified T : CVariable> CPointer<T>.compareBlock(dest: CPointer<T>, length: Int): Int {
     return nativeMemUtils.memcmp(dest.pointed, pointed, length * sizeOf<T>())
 }
