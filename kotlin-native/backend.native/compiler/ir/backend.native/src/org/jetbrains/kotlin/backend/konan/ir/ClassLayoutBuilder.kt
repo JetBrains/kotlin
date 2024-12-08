@@ -288,10 +288,10 @@ internal fun IrField.requiredAlignment(llvm: CodegenLlvmHelpers): Int {
 internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
     private val bridgesPolicy = context.config.bridgesPolicy
 
-    private fun IrField.toFieldInfo(llvm: CodegenLlvmHelpers): FieldInfo {
+    private fun IrField.toFieldInfo(llvm: CodegenLlvmHelpers): ClassLayoutBuilderFieldInfo {
         val isConst = correspondingPropertySymbol?.owner?.isConst ?: false
         require(!isConst || initializer?.expression is IrConst) { "A const val field ${render()} must have constant initializer" }
-        return FieldInfo(name.asString(), type, isConst, symbol, requiredAlignment(llvm))
+        return ClassLayoutBuilderFieldInfo(name.asString(), type, isConst, symbol, requiredAlignment(llvm))
     }
 
     val vtableEntries: List<OverriddenFunctionInfo> by lazy {
@@ -437,23 +437,15 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
         return context.getLayoutBuilder(superFunction.parentAsClass).itablePlace(superFunction)
     }
 
-    class FieldInfo(val name: String, val type: IrType, val isConst: Boolean, val irFieldSymbol: IrFieldSymbol, val alignment: Int) {
-        val irField: IrField?
-            get() = if (irFieldSymbol.isBound) irFieldSymbol.owner else null
-        init {
-            require(alignment.countOneBits() == 1) { "Alignment should be power of 2" }
-        }
-    }
-
     /**
      * All fields of the class instance.
      * The order respects the class hierarchy, i.e. a class [fields] contains superclass [fields] as a prefix.
      */
-    fun getFields(llvm: CodegenLlvmHelpers): List<FieldInfo> = getFieldsInternal(llvm)
+    fun getFields(llvm: CodegenLlvmHelpers): List<ClassLayoutBuilderFieldInfo> = getFieldsInternal(llvm)
 
-    private var fields: List<FieldInfo>? = null
+    private var fields: List<ClassLayoutBuilderFieldInfo>? = null
 
-    private fun getFieldsInternal(llvm: CodegenLlvmHelpers): List<FieldInfo> {
+    private fun getFieldsInternal(llvm: CodegenLlvmHelpers): List<ClassLayoutBuilderFieldInfo> {
         fields?.let { return it }
 
         val superClass = irClass.getSuperClassNotAny()
@@ -510,7 +502,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
     /**
      * Fields declared in the class.
      */
-    fun getDeclaredFields(llvm: CodegenLlvmHelpers): List<FieldInfo> {
+    fun getDeclaredFields(llvm: CodegenLlvmHelpers): List<ClassLayoutBuilderFieldInfo> {
         val outerThisField = if (irClass.isInner)
             context.innerClassesSupport.getOuterThisField(irClass)
         else null

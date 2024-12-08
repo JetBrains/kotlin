@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinaryNameAndType
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder
+import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilderFieldInfo
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -171,7 +171,7 @@ internal class KonanPartialModuleDeserializer(
         )
     }
 
-    fun buildClassFields(irClass: IrClass, fields: List<ClassLayoutBuilder.FieldInfo>): SerializedClassFields {
+    fun buildClassFields(irClass: IrClass, fields: List<ClassLayoutBuilderFieldInfo>): SerializedClassFields {
         val signature = irClass.symbol.signature
                 ?: error("No signature for ${irClass.render()}")
         val topLevelSignature = signature.topLevelSignature()
@@ -409,7 +409,7 @@ internal class KonanPartialModuleDeserializer(
 
     private val lock = Any()
 
-    fun deserializeClassFields(irClass: IrClass, outerThisFieldInfo: ClassLayoutBuilder.FieldInfo?): List<ClassLayoutBuilder.FieldInfo> = synchronized(lock) {
+    fun deserializeClassFields(irClass: IrClass, outerThisFieldInfo: ClassLayoutBuilderFieldInfo?): List<ClassLayoutBuilderFieldInfo> = synchronized(lock) {
         val signature = irClass.symbol.signature
                 ?: error("No signature for ${irClass.render()}")
         val serializedClassFields = classesFields[signature]
@@ -466,7 +466,7 @@ internal class KonanPartialModuleDeserializer(
                         else -> error("Bad binary type of field $name of ${irClass.render()}")
                     }
                 }
-                ClassLayoutBuilder.FieldInfo(
+                ClassLayoutBuilderFieldInfo(
                         name, type,
                         isConst = (field.flags and SerializedClassFieldInfo.FLAG_IS_CONST) != 0,
                         irFieldSymbol = IrFieldSymbolImpl(),
