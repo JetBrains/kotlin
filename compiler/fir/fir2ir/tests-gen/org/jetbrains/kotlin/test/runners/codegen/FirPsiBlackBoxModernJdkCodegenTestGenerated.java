@@ -855,6 +855,12 @@ public class FirPsiBlackBoxModernJdkCodegenTestGenerated extends AbstractFirPsiB
       public void testBasicSyntax() {
         runTest("compiler/testData/codegen/boxModernJdk/testsWithJava23/valhallaValueClasses/basicSyntax.kt");
       }
+
+      @Test
+      @TestMetadata("interopWithPreValhalla.kt")
+      public void testInteropWithPreValhalla() {
+        runTest("compiler/testData/codegen/boxModernJdk/testsWithJava23/valhallaValueClasses/interopWithPreValhalla.kt");
+      }
     }
   }
 }

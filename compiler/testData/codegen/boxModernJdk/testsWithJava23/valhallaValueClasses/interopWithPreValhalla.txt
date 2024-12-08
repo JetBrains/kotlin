@@ -1,0 +1,66 @@
+@kotlin.Metadata
+synthetic final class Generated_Box_MainKt$main$2 {
+    // source: 'Generated_Box_Main.kt'
+    enclosing method Generated_Box_MainKt.main([Ljava/lang/String;)V
+    public final static field INSTANCE: Generated_Box_MainKt$main$2
+    inner (anonymous) class Generated_Box_MainKt$main$2
+    static method <clinit>(): void
+    method <init>(): void
+    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class Generated_Box_MainKt {
+    // source: 'Generated_Box_Main.kt'
+    inner (anonymous) class Generated_Box_MainKt$main$2
+    public final static @org.jetbrains.annotations.Nullable method main(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public synthetic static method main(p0: java.lang.String[]): void
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class InnerInline {
+    // source: 'interopWithPreValhalla.kt'
+    private final field x: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): InnerInline
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getX(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+@kotlin.Metadata
+public final class InteropWithPreValhallaKt {
+    // source: 'interopWithPreValhalla.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class OuterInline {
+    // source: 'interopWithPreValhalla.kt'
+    private final @org.jetbrains.annotations.NotNull field x: Valhalla
+    public method <init>(@org.jetbrains.annotations.NotNull p0: Valhalla): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final @org.jetbrains.annotations.NotNull method getX(): Valhalla
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Valhalla {
+    // source: 'interopWithPreValhalla.kt'
+    private final field x: int
+    private final field y: int
+    public method <init>(p0: int, p1: int): void
+    public final method getX-rTLzBkc(): int
+    public final method getY-rTLzBkc(): int
+}

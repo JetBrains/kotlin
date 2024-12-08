@@ -49,7 +49,7 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
 
     public void testInnerClassInfo() {
         InnerClassAttribute innerB = new InnerClassAttribute("A$B", "A", "B", ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
-        InnerClassAttribute innerC = new InnerClassAttribute("A$B$C", "A$B", "C", ACC_PUBLIC | ACC_FINAL);
+        InnerClassAttribute innerC = new InnerClassAttribute("A$B$C", "A$B", "C", ACC_PUBLIC | ACC_FINAL | ACC_SUPER);
         String companionObjectDefaultName = SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.asString();
         InnerClassAttribute innerACompanionObject = new InnerClassAttribute(
                 "A$" + companionObjectDefaultName, "A", companionObjectDefaultName, ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
@@ -97,14 +97,14 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
         checkAccess("A", "OpenStaticClass", ACC_PUBLIC | ACC_STATIC);
         checkAccess("A", "FinalStaticClass", ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
         checkAccess("A", "AbstractStaticClass", ACC_PUBLIC | ACC_STATIC | ACC_ABSTRACT);
-        checkAccess("A", "OpenInnerClass", ACC_PUBLIC);
-        checkAccess("A", "FinalInnerClass", ACC_PUBLIC | ACC_FINAL);
-        checkAccess("A", "AbstractInnerClass", ACC_PUBLIC | ACC_ABSTRACT);
+        checkAccess("A", "OpenInnerClass", ACC_PUBLIC | ACC_SUPER);
+        checkAccess("A", "FinalInnerClass", ACC_PUBLIC | ACC_FINAL | ACC_SUPER);
+        checkAccess("A", "AbstractInnerClass", ACC_PUBLIC | ACC_ABSTRACT | ACC_SUPER);
 
-        checkAccess("A", "PrivateClass", ACC_PRIVATE);
-        checkAccess("A", "ProtectedClass", ACC_PROTECTED);
-        checkAccess("A", "InternalClass", ACC_PUBLIC);
-        checkAccess("A", "PublicClass", ACC_PUBLIC);
+        checkAccess("A", "PrivateClass", ACC_PRIVATE | ACC_SUPER);
+        checkAccess("A", "ProtectedClass", ACC_PROTECTED | ACC_SUPER);
+        checkAccess("A", "InternalClass", ACC_PUBLIC | ACC_SUPER);
+        checkAccess("A", "PublicClass", ACC_PUBLIC | ACC_SUPER);
     }
 
     private void checkAccess(@NotNull String outerName, @NotNull String innerName, int accessFlags) {

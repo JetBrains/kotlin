@@ -13,15 +13,15 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolD
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.DeclaratorCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType.KindCase.*
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
@@ -362,8 +362,13 @@ class IrDeclarationDeserializer(
 
                 valueClassRepresentation = when {
                     !flags.isValue -> null
+                    proto.isValhallaValueClass && proto.hasMultiFieldValueClassRepresentation() ->
+                        error("Class cannot be both Valhalla value and pre-Valhalla multi-field value: $name")
+                    proto.isValhallaValueClass && proto.hasInlineClassRepresentation() ->
+                        error("Class cannot be both Valhalla value and pre-Valhalla single-field value: $name")
                     proto.hasMultiFieldValueClassRepresentation() && proto.hasInlineClassRepresentation() ->
                         error("Class cannot be both inline and multi-field value: $name")
+                    proto.isValhallaValueClass -> ValhallaValueClassRepresentation()
                     proto.hasInlineClassRepresentation() -> deserializeInlineClassRepresentation(proto.inlineClassRepresentation)
                     proto.hasMultiFieldValueClassRepresentation() ->
                         deserializeMultiFieldValueClassRepresentation(proto.multiFieldValueClassRepresentation)

@@ -16,15 +16,11 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.isEquals
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.render
@@ -58,7 +54,8 @@ class FirClassAnySynthesizedMemberScope(
 ) : FirContainingNamesAwareScope() {
     private val originForFunctions = when {
         klass.isData -> FirDeclarationOrigin.Synthetic.DataClassMember
-        klass.isInlineOrValue -> FirDeclarationOrigin.Synthetic.ValueClassMember
+        klass.isValhallaValueClass -> FirDeclarationOrigin.Synthetic.ValhallaValueClassMember
+        klass.isInlineOrValue -> FirDeclarationOrigin.Synthetic.PreValhallaValueClassMember
         else -> error("This scope should not be created for non-data and non-value class. ${klass.render()}")
     }
     private val lookupTag = klass.symbol.toLookupTag()
@@ -96,9 +93,14 @@ class FirClassAnySynthesizedMemberScope(
     }
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        if (name !in ANY_MEMBER_NAMES) {
-            declaredMemberScope.processFunctionsByName(name, processor)
-            return
+        when (name) {
+            OperatorNameConventions.HASH_CODE if originForFunctions.generatedAnyHashCodeMethod -> {}
+            OperatorNameConventions.EQUALS if originForFunctions.generatedAnyEqualsMethod -> {}
+            OperatorNameConventions.TO_STRING if originForFunctions.generatedAnyToStringCodeMethod -> {}
+            else -> {
+                declaredMemberScope.processFunctionsByName(name, processor)
+                return
+            }
         }
         var synthesizedFunctionIsNeeded = true
         declaredMemberScope.processFunctionsByName(name) process@{ fromDeclaredScope ->
@@ -194,12 +196,6 @@ class FirClassAnySynthesizedMemberScope(
             declaredMemberScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: declaredMemberScope,
             klass,
             newScopeSession
-        )
-    }
-
-    companion object {
-        private val ANY_MEMBER_NAMES = hashSetOf(
-            OperatorNameConventions.HASH_CODE, OperatorNameConventions.EQUALS, OperatorNameConventions.TO_STRING
         )
     }
 }

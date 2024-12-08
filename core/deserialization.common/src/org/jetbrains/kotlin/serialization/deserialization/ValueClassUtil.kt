@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.ValhallaValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
@@ -21,6 +22,8 @@ fun <T : RigidTypeMarker> ProtoBuf.Class.loadValueClassRepresentation(
     typeDeserializer: (ProtoBuf.Type) -> T,
     typeOfPublicProperty: (Name) -> T?,
 ): ValueClassRepresentation<T>? {
+    if (isValhallaValueClass) return ValhallaValueClassRepresentation()
+
     if (multiFieldValueClassUnderlyingNameCount > 0) {
         val (names, types) = loadMultiFieldValueClassRepresentation(nameResolver, typeTable)
         return MultiFieldValueClassRepresentation(names zip types.map(typeDeserializer))

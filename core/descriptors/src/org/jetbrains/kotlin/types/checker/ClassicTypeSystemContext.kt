@@ -779,7 +779,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, SimpleTypeMarker>>? {
         require(this is TypeConstructor, this::errorMessage)
-        return (declarationDescriptor as? ClassDescriptor)?.valueClassRepresentation?.underlyingPropertyNamesToTypes
+        return (declarationDescriptor as? ClassDescriptor)?.valueClassRepresentation?.asPreValhalla()?.underlyingPropertyNamesToTypes
     }
 
     override fun TypeConstructorMarker.isInnerClass(): Boolean {

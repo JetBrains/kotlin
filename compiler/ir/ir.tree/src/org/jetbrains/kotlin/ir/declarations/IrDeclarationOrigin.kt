@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl.Companion.provideDelegate
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl.Synthetic.provideDelegate
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -54,6 +56,7 @@ interface IrDeclarationOrigin {
         val GENERATED_DATA_CLASS_MEMBER by IrDeclarationOriginImpl
         val GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER by IrDeclarationOriginImpl
         val GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER by IrDeclarationOriginImpl
+        val GENERATED_VALHALLA_VALUE_CLASS_MEMBER by IrDeclarationOriginImpl
         val LOCAL_FUNCTION by IrDeclarationOriginImpl
         val LOCAL_FUNCTION_FOR_LAMBDA by IrDeclarationOriginImpl
         val CATCH_PARAMETER by IrDeclarationOriginImpl

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.ValhallaValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -30,6 +31,9 @@ val IrClass.isSingleFieldValueClass: Boolean
 
 val IrClass.isMultiFieldValueClass: Boolean
     get() = valueClassRepresentation is MultiFieldValueClassRepresentation
+
+val IrClass.isValhallaValueClass: Boolean
+    get() = valueClassRepresentation is ValhallaValueClassRepresentation<*>
 
 fun IrClass.addMember(member: IrDeclaration) {
     declarations.add(member)

@@ -33,12 +33,19 @@ open class InitializersLowering(context: CommonBackendContext) : InitializersLow
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (container !is IrConstructor) return
-
-        val irClass = container.constructedClass
-        val instanceInitializerStatements = extractInitializers(irClass) {
+        val block = makeInitializerBlock(container) {
             (it is IrField && !it.isStatic && (container.isPrimary || !it.primaryConstructorParameter)) ||
                     (it is IrAnonymousInitializer && !it.isStatic)
         }
+
+        container.body?.transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall): IrExpression = block
+        })
+    }
+
+    protected fun makeInitializerBlock(container: IrConstructor, filter: (IrDeclaration) -> Boolean): IrBlock {
+        val irClass = container.constructedClass
+        val instanceInitializerStatements = extractInitializers(irClass, filter)
         val block = IrBlockImpl(irClass.startOffset, irClass.endOffset, context.irBuiltIns.unitType, null, instanceInitializerStatements)
         // Check that the initializers contain no local classes. Deep-copying them is a disaster for code size, and liable to break randomly.
         block.accept(object : IrVisitorVoid() {
@@ -49,10 +56,7 @@ open class InitializersLowering(context: CommonBackendContext) : InitializersLow
                 throw AssertionError("class in initializer should have been moved out by LocalClassPopupLowering: ${declaration.render()}")
         }, null)
 
-        container.body?.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall): IrExpression =
-                block.deepCopyWithSymbols(container)
-        })
+        return block.deepCopyWithSymbols(container)
     }
 }
 

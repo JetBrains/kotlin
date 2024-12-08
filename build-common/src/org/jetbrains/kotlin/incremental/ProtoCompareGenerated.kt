@@ -196,6 +196,11 @@ open class ProtoCompareGenerated(
 
         if (!checkEqualsClassMultiFieldValueClassUnderlyingTypeId(old, new)) return false
 
+        if (old.hasIsValhallaValueClass() != new.hasIsValhallaValueClass()) return false
+        if (old.hasIsValhallaValueClass()) {
+            if (old.isValhallaValueClass != new.isValhallaValueClass) return false
+        }
+
         if (!checkEqualsClassVersionRequirement(old, new)) return false
 
         if (old.hasVersionRequirementTable() != new.hasVersionRequirementTable()) return false
@@ -290,6 +295,7 @@ open class ProtoCompareGenerated(
         MULTI_FIELD_VALUE_CLASS_UNDERLYING_NAME_LIST,
         MULTI_FIELD_VALUE_CLASS_UNDERLYING_TYPE_LIST,
         MULTI_FIELD_VALUE_CLASS_UNDERLYING_TYPE_ID_LIST,
+        IS_VALHALLA_VALUE_CLASS,
         VERSION_REQUIREMENT_LIST,
         VERSION_REQUIREMENT_TABLE,
         COMPILER_PLUGIN_DATA_LIST,
@@ -363,6 +369,11 @@ open class ProtoCompareGenerated(
         if (!checkEqualsClassMultiFieldValueClassUnderlyingType(old, new)) result.add(ProtoBufClassKind.MULTI_FIELD_VALUE_CLASS_UNDERLYING_TYPE_LIST)
 
         if (!checkEqualsClassMultiFieldValueClassUnderlyingTypeId(old, new)) result.add(ProtoBufClassKind.MULTI_FIELD_VALUE_CLASS_UNDERLYING_TYPE_ID_LIST)
+
+        if (old.hasIsValhallaValueClass() != new.hasIsValhallaValueClass()) result.add(ProtoBufClassKind.IS_VALHALLA_VALUE_CLASS)
+        if (old.hasIsValhallaValueClass()) {
+            if (old.isValhallaValueClass != new.isValhallaValueClass) result.add(ProtoBufClassKind.IS_VALHALLA_VALUE_CLASS)
+        }
 
         if (!checkEqualsClassVersionRequirement(old, new)) result.add(ProtoBufClassKind.VERSION_REQUIREMENT_LIST)
 
@@ -2015,6 +2026,10 @@ fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) ->
 
     for(i in 0..multiFieldValueClassUnderlyingTypeIdCount - 1) {
         hashCode = 31 * hashCode + typeById(getMultiFieldValueClassUnderlyingTypeId(i)).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    if (hasIsValhallaValueClass()) {
+        hashCode = 31 * hashCode + isValhallaValueClass.hashCode()
     }
 
     for(i in 0..versionRequirementCount - 1) {

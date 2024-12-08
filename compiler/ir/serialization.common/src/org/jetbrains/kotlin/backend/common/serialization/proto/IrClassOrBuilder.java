@@ -94,6 +94,15 @@ public interface IrClassOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation getMultiFieldValueClassRepresentation();
 
   /**
+   * <code>optional bool is_valhalla_value_class = 10;</code>
+   */
+  boolean hasIsValhallaValueClass();
+  /**
+   * <code>optional bool is_valhalla_value_class = 10;</code>
+   */
+  boolean getIsValhallaValueClass();
+
+  /**
    * <code>repeated int64 sealed_subclass = 8 [packed = true];</code>
    */
   java.util.List<java.lang.Long> getSealedSubclassList();

@@ -32,11 +32,11 @@ public final class C {
   static <clinit>()V
   private final I foo
   public final static I %stable
-  public final INNERCLASS C%D C D
+  public final synchronized INNERCLASS C%D C D
 }
 public final class C%D implements A {
   public <init>(LC;)V
   public b()V
   final synthetic LC; this%0
-  public final INNERCLASS C%D C D
+  public final synchronized INNERCLASS C%D C D
 }

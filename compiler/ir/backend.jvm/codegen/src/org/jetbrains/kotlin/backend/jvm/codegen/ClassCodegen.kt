@@ -583,6 +583,7 @@ private fun IrClass.getFlags(languageVersionSettings: LanguageVersionSettings): 
             (if (isAnnotatedWithDeprecated) Opcodes.ACC_DEPRECATED else 0) or
             getSynthAccessFlag(languageVersionSettings) or
             when {
+                isValhallaValueClass -> Opcodes.ACC_FINAL and Opcodes.ACC_SUPER.inv()
                 isAnnotationClass -> Opcodes.ACC_ANNOTATION or Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
                 isInterface -> Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
                 isEnumClass -> Opcodes.ACC_ENUM or Opcodes.ACC_SUPER or modality.flags
@@ -606,7 +607,7 @@ private fun IrField.computeFieldFlags(context: JvmBackendContext, languageVersio
                 correspondingPropertySymbol?.owner?.isDeprecatedCallable(context) == true
             ) Opcodes.ACC_DEPRECATED else 0) or
             (if (isFinal) Opcodes.ACC_FINAL else 0) or
-            (if (isStatic) Opcodes.ACC_STATIC else 0) or
+            (if (isStatic) Opcodes.ACC_STATIC else if (parentAsClass.isValhallaValueClass) Opcodes.ACC_STRICT else 0) or
             (if (hasAnnotation(VOLATILE_ANNOTATION_FQ_NAME)) Opcodes.ACC_VOLATILE else 0) or
             (if (hasAnnotation(TRANSIENT_ANNOTATION_FQ_NAME)) Opcodes.ACC_TRANSIENT else 0) or
             (if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) ||

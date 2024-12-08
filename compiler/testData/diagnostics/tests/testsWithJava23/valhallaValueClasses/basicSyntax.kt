@@ -48,3 +48,8 @@ value class OldSingleFieldValueClass(val x: Int)
 
 @JvmInline
 value class OldMultiFieldValueClass<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>(val x: Int, val y: Int)<!>
+
+fun main() {
+    A(2).<!UNRESOLVED_REFERENCE!>copy<!>()
+    val (x) = <!COMPONENT_FUNCTION_MISSING!>A(2)<!>
+}

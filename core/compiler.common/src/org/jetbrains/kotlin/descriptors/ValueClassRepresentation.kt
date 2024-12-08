@@ -13,16 +13,21 @@ import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 
 sealed class ValueClassRepresentation<Type : RigidTypeMarker> {
-    abstract val underlyingPropertyNamesToTypes: List<Pair<Name, Type>>
-    abstract fun containsPropertyWithName(name: Name): Boolean
-    abstract fun getPropertyTypeByName(name: Name): Type?
-
     fun <Other : SimpleTypeMarker> mapUnderlyingType(transform: (Type) -> Other): ValueClassRepresentation<Other> = when (this) {
         is InlineClassRepresentation -> InlineClassRepresentation(underlyingPropertyName, transform(underlyingType))
         is MultiFieldValueClassRepresentation ->
             MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes.map { (name, type) -> name to transform(type) })
+        is ValhallaValueClassRepresentation<*> -> ValhallaValueClassRepresentation<Other>()
     }
 }
+
+sealed class PreValhallaValueClassRepresentation<Type : RigidTypeMarker>: ValueClassRepresentation<Type>() {
+    abstract val underlyingPropertyNamesToTypes: List<Pair<Name, Type>>
+    abstract fun containsPropertyWithName(name: Name): Boolean
+    abstract fun getPropertyTypeByName(name: Name): Type?
+}
+
+fun <T : RigidTypeMarker> ValueClassRepresentation<T>.asPreValhalla() = this as? PreValhallaValueClassRepresentation
 
 enum class ValueClassKind { Inline, MultiField }
 

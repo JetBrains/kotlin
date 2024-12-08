@@ -1334,6 +1334,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/testsWithJava23")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TestsWithJava23 {
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/thisAndSuper")
     @TestDataPath("$PROJECT_ROOT")
     public class ThisAndSuper {

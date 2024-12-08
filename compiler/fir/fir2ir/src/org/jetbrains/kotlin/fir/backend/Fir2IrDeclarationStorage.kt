@@ -315,13 +315,13 @@ class Fir2IrDeclarationStorage(
         if (function.visibility == Visibilities.Local) {
             return localStorage.getLocalFunctionSymbol(function)
         }
-        runIf(function.origin.generatedAnyMethod) {
+        runIf(function.origin.generatedAnyEqualsMethod || function.origin.generatedAnyHashCodeMethod || function.origin.generatedAnyToStringCodeMethod) {
             val containingClass = function.getContainingClass()!!
             val cache = dataClassGeneratedFunctionsCache.computeIfAbsent(containingClass) { DataClassGeneratedFunctionsStorage() }
             val cachedFunction = when (function.nameOrSpecialName) {
-                OperatorNameConventions.EQUALS -> cache.equalsSymbol
-                OperatorNameConventions.HASH_CODE -> cache.hashCodeSymbol
-                OperatorNameConventions.TO_STRING -> cache.toStringSymbol
+                OperatorNameConventions.EQUALS if function.origin.generatedAnyEqualsMethod -> cache.equalsSymbol
+                OperatorNameConventions.HASH_CODE if function.origin.generatedAnyHashCodeMethod -> cache.hashCodeSymbol
+                OperatorNameConventions.TO_STRING if function.origin.generatedAnyToStringCodeMethod -> cache.toStringSymbol
                 else -> return@runIf // componentN functions are the same for all sessions
             }
             return cachedFunction?.let(symbolsMappingForLazyClasses::remapFunctionSymbol)
@@ -414,7 +414,7 @@ class Fir2IrDeclarationStorage(
                 irForFirSessionDependantDeclarationMap[key] = irFunctionSymbol
             }
 
-            function.origin.generatedAnyMethod -> {
+            function.origin.generatedAnyEqualsMethod || function.origin.generatedAnyHashCodeMethod || function.origin.generatedAnyToStringCodeMethod -> {
                 val name = function.nameOrSpecialName
                 /*
                  * During regular compilation `equals`, `hashCode` and `toString` are generated separately using DataClassMemberGenerator.

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.types.model.RigidTypeMarker
 
 class MultiFieldValueClassRepresentation<Type : RigidTypeMarker>(
     override val underlyingPropertyNamesToTypes: List<Pair<Name, Type>>
-) : ValueClassRepresentation<Type>() {
+) : PreValhallaValueClassRepresentation<Type>() {
 
     private val map = underlyingPropertyNamesToTypes.toMap()
 

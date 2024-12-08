@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.types.model.RigidTypeMarker
 class InlineClassRepresentation<Type : RigidTypeMarker> constructor(
     val underlyingPropertyName: Name,
     val underlyingType: Type,
-) : ValueClassRepresentation<Type>() {
+) : PreValhallaValueClassRepresentation<Type>() {
 
     override val underlyingPropertyNamesToTypes: List<Pair<Name, Type>>
         get() = listOf(underlyingPropertyName to underlyingType)

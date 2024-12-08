@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.GENERATED_DATA_CLASS_MEMBER
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.GENERATED_VALHALLA_VALUE_CLASS_MEMBER
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -69,6 +70,10 @@ class Fir2IrDataClassMembersGenerator(
 
     fun generateMultiFieldValueClassMembers(klass: FirRegularClass, irClass: IrClass): List<FirDeclaration> {
         return MyDataClassMethodsGenerator(irClass, klass, GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER).generateHeaders()
+    }
+
+    fun generateValhallaValueClassMembers(klass: FirRegularClass, irClass: IrClass): List<FirDeclaration> {
+        return MyDataClassMethodsGenerator(irClass, klass, GENERATED_VALHALLA_VALUE_CLASS_MEMBER).generateHeaders()
     }
 
     fun generateDataClassMembers(klass: FirRegularClass, irClass: IrClass): List<FirDeclaration> {
@@ -144,8 +149,14 @@ class Fir2IrDataClassMembersGenerator(
             val scope = klass.unsubstitutedScope(c)
             val contributedSyntheticFunctions =
                 buildMap<Name, FirSimpleFunction> {
-                    for (name in listOf(EQUALS, HASHCODE_NAME, TO_STRING)) {
+                    val syntheticFunctionNames = listOf(EQUALS, HASHCODE_NAME, TO_STRING)
+                    for (name in syntheticFunctionNames) {
                         scope.processFunctionsByName(name) {
+                            when (name) {
+                                TO_STRING if !it.origin.generatedAnyToStringCodeMethod -> return@processFunctionsByName
+                                EQUALS if !it.origin.generatedAnyEqualsMethod -> return@processFunctionsByName
+                                HASHCODE_NAME if !it.origin.generatedAnyHashCodeMethod -> return@processFunctionsByName
+                            }
                             // We won't synthesize a function if there is a user-contributed (non-synthetic) one.
                             if (it.origin !is FirDeclarationOrigin.Synthetic) return@processFunctionsByName
                             if (it.containingClassLookupTag() != klass.symbol.toLookupTag()) return@processFunctionsByName

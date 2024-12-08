@@ -41526,28 +41526,39 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
     @TestMetadata("compiler/testData/diagnostics/tests/testsWithJava23")
     @TestDataPath("$PROJECT_ROOT")
     public class TestsWithJava23 {
-      @Test
-      @TestMetadata("basicSyntax.kt")
-      public void testBasicSyntax() {
-        runTest("compiler/testData/diagnostics/tests/testsWithJava23/basicSyntax.kt");
-      }
+      @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/testsWithJava23/valhallaValueClasses")
+      @TestDataPath("$PROJECT_ROOT")
+      public class ValhallaValueClasses {
+        @Test
+        @TestMetadata("basicSyntax.kt")
+        public void testBasicSyntax() {
+          runTest("compiler/testData/diagnostics/tests/testsWithJava23/valhallaValueClasses/basicSyntax.kt");
+        }
 
-      @Test
-      @TestMetadata("oldJDKs.kt")
-      public void testOldJDKs() {
-        runTest("compiler/testData/diagnostics/tests/testsWithJava23/oldJDKs.kt");
-      }
+        @Test
+        @TestMetadata("explicitApi.kt")
+        public void testExplicitApi() {
+          runTest("compiler/testData/diagnostics/tests/testsWithJava23/valhallaValueClasses/explicitApi.kt");
+        }
 
-      @Test
-      @TestMetadata("recursive.kt")
-      public void testRecursive() {
-        runTest("compiler/testData/diagnostics/tests/testsWithJava23/recursive.kt");
-      }
+        @Test
+        @TestMetadata("oldJDKs.kt")
+        public void testOldJDKs() {
+          runTest("compiler/testData/diagnostics/tests/testsWithJava23/valhallaValueClasses/oldJDKs.kt");
+        }
 
-      @Test
-      @TestMetadata("reservedNames.kt")
-      public void testReservedNames() {
-        runTest("compiler/testData/diagnostics/tests/testsWithJava23/reservedNames.kt");
+        @Test
+        @TestMetadata("recursive.kt")
+        public void testRecursive() {
+          runTest("compiler/testData/diagnostics/tests/testsWithJava23/valhallaValueClasses/recursive.kt");
+        }
+
+        @Test
+        @TestMetadata("reservedNames.kt")
+        public void testReservedNames() {
+          runTest("compiler/testData/diagnostics/tests/testsWithJava23/valhallaValueClasses/reservedNames.kt");
+        }
       }
     }
 

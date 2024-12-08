@@ -587,6 +587,7 @@ message IrClass {
   repeated int32 super_type = 6 [packed=true];
   optional IrInlineClassRepresentation inline_class_representation = 7;
   optional IrMultiFieldValueClassRepresentation multi_field_value_class_representation = 9;
+  optional bool is_valhalla_value_class = 10;
   repeated int64 sealed_subclass = 8 [packed=true];
 }
 
