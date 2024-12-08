@@ -829,13 +829,12 @@ object Elements : TemplateGroupBase() {
         includeDefault()
         include(Lists, CharSequences, ArraysOfUnsigned)
     } builder {
-        specialFor(CharSequences) {
-            inlineOnly()
-            sample("samples.text.Strings.findLast")
-        }
         inline(Inline.Only)
         doc { "Returns the last ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
         sample("samples.collections.Collections.Elements.find")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.findLast")
+        }
         returns("T?")
         body { "return lastOrNull(predicate)"}
     }
