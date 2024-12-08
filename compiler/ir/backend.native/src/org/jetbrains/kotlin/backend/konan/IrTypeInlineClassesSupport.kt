@@ -2,7 +2,7 @@
  * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
+@file:OptIn(InternalKotlinNativeApi::class)
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
@@ -41,12 +41,13 @@ fun IrClass.isUsedAsBoxClass(): Boolean = IrTypeInlineClassesSupport.isUsedAsBox
 
 fun IrType.binaryTypeIsReference(): Boolean = this.computePrimitiveBinaryTypeOrNull() == null
 
-internal inline fun <R> IrType.unwrapToPrimitiveOrReference(
+inline fun <R> IrType.unwrapToPrimitiveOrReference(
         eachInlinedClass: (inlinedClass: IrClass, nullable: Boolean) -> Unit,
         ifPrimitive: (primitiveType: KonanPrimitiveType, nullable: Boolean) -> R,
         ifReference: (type: IrType) -> R
 ): R = IrTypeInlineClassesSupport.unwrapToPrimitiveOrReference(this, eachInlinedClass, ifPrimitive, ifReference)
 
+@InternalKotlinNativeApi
 internal object IrTypeInlineClassesSupport : InlineClassesSupport<IrClass, IrType>() {
 
     override fun isNullable(type: IrType): Boolean = type.isNullable()
