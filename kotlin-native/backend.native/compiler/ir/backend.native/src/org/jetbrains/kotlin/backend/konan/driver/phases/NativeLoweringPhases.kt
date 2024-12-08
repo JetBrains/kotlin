@@ -563,6 +563,7 @@ internal val constEvaluationPhase = createFileLoweringPhase(
 )
 
 internal fun KonanConfig.getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = listOfNotNull(
+        interopPhase,
         assertionWrapperPhase,
         lateinitPhase,
         sharedVariablesPhase,
@@ -571,7 +572,6 @@ internal fun KonanConfig.getLoweringsUpToAndIncludingSyntheticAccessors(): Lower
         inlineCallableReferenceToLambdaPhase,
         arrayConstructorPhase,
         wrapInlineDeclarationsWithReifiedTypeParametersLowering,
-        interopPhase,
         inlineOnlyPrivateFunctionsPhase.takeUnless { this.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
         syntheticAccessorGenerationPhase.takeUnless { this.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
 )
