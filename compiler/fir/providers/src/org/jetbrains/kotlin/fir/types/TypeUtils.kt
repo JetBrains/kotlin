@@ -915,7 +915,7 @@ fun ConeClassLikeLookupTag.isAnonymousClass(): Boolean {
     return name == SpecialNames.ANONYMOUS
 }
 
-fun constructOuterType(type: ConeClassLikeType, symbol: FirClassLikeSymbol<*>, containingSymbol: FirClassLikeSymbol<*>): ConeClassLikeType {
+fun getOuterTypeArguments(type: ConeClassLikeType, symbol: FirClassLikeSymbol<*>): List<ConeTypeProjection> {
     val currentTypeArgumentsNumber = (symbol as? FirRegularClassSymbol)?.fir?.typeParameters?.count { it is FirTypeParameter } ?: 0
-    return containingSymbol.constructType(type.typeArguments.drop(currentTypeArgumentsNumber).toTypedArray())
+    return type.typeArguments.drop(currentTypeArgumentsNumber)
 }

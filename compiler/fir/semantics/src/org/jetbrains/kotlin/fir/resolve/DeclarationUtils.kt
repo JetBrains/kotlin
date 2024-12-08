@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.constructType
+import org.jetbrains.kotlin.fir.types.getOuterTypeArguments
 
 fun FirClassLikeDeclaration.getContainingDeclaration(session: FirSession): FirClassLikeDeclaration? {
     return symbol.getContainingDeclaration(session)?.fir
@@ -104,7 +106,8 @@ inline fun outerType(
     if (symbol is FirRegularClassSymbol && !symbol.fir.isInner) return null
 
     val containingSymbol = outerClass(symbol) ?: return null
-    return constructOuterType(fullyExpandedType, symbol, containingSymbol)
+    val outerTypeArguments = getOuterTypeArguments(fullyExpandedType, symbol)
+    return containingSymbol.constructType(outerTypeArguments.toTypedArray())
 }
 
 fun FirBasedSymbol<*>.isContextParameter(): Boolean {

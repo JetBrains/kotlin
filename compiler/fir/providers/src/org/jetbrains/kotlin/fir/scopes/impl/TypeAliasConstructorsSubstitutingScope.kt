@@ -75,6 +75,20 @@ private object TypeAliasOuterType : FirDeclarationDataKey()
  *
  * The fake extension receiver is not applicable to not inner RHS,
  * because it's disallowed to call a constructor on a nested class-like declaration on an outer instance.
+ *
+ * Also, consider receiver with independent type arguments as outer.
+ * To make it possible to report `UNRESOLVED_REFERENCE_WRONG_RECEIVER` for nested type aliases with inner RHS. For instance:
+ *
+ * ```kt
+ * class Outer<T> {
+ *     inner class Inner
+ *     typealias NestedTAToIntInner = Outer<Int>.Inner
+ *
+ *     fun test() {
+ *         NestedTAToIntInner() // Dispatch receivers mismatch: `Outer<T>` and `Outer<Int>`
+ *     }
+ * }
+ * ```
  */
 var FirConstructor.outerDispatchReceiverTypeIfTypeAliasWithInnerRHS: ConeClassLikeType? by FirDeclarationDataRegistry.data(TypeAliasOuterType)
 
@@ -175,14 +189,16 @@ class TypeAliasConstructorsSubstitutingScope private constructor(
                 val expandedClassType = typeAliasSymbol.resolvedExpandedTypeRef.coneType
                 val expandedClassSymbol = expandedClassType.toRegularClassSymbol(typeAliasSymbol.moduleData.session)
                 if (expandedClassType is ConeClassLikeType && expandedClassSymbol?.isInner == true) {
-                    val typeAliasRHSContainingClassTag = expandedClassSymbol.getContainingClassLookupTag()
-                    val typeAliasContainingClassTag = typeAliasSymbol.getContainingClassLookupTag()
-                    if (typeAliasRHSContainingClassTag != null && typeAliasContainingClassTag != typeAliasRHSContainingClassTag) {
-                        outerDispatchReceiverTypeIfTypeAliasWithInnerRHS = constructOuterType(
-                            expandedClassType,
-                            expandedClassSymbol,
-                            typeAliasRHSContainingClassTag.toRegularClassSymbol(session)!!,
-                        )
+                    val typeAliasRHSContainingClassSymbol = expandedClassSymbol.getContainingClassLookupTag()?.toRegularClassSymbol(session)
+
+                    if (typeAliasRHSContainingClassSymbol != null) {
+                        val outerTypeArguments = getOuterTypeArguments(expandedClassType, expandedClassSymbol)
+
+                        val typeAliasContainingClassTag = typeAliasSymbol.getContainingClassLookupTag()
+                        if (typeAliasContainingClassTag != typeAliasRHSContainingClassSymbol.toLookupTag() || outerTypeArguments.isNotEmpty()) {
+                            outerDispatchReceiverTypeIfTypeAliasWithInnerRHS =
+                                typeAliasRHSContainingClassSymbol.constructType(outerTypeArguments.toTypedArray())
+                        }
                     }
                 }
             }

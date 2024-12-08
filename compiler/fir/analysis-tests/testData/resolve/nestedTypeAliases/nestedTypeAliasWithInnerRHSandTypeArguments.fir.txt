@@ -34,10 +34,10 @@ FILE: nestedTypeAliasWithInnerRHSandTypeArguments.kt
             this@R|/Outer|.R|/Outer.Inner.Inner<None of the following candidates is applicable because of receiver type mismatch: [/Outer.Inner.Inner]>#|()
             this@R|/Outer|.R|/Outer.Inner.Inner|()
             this@R|/Outer|.R|/Outer.Inner.Inner|()
-            this@R|/Outer|.R|/Outer.Inner.Inner|()
-            this@R|/Outer|.R|/Outer.Inner.Inner|<R|kotlin/String|>()
+            this@R|/Outer|.R|/Outer.Inner.Inner<None of the following candidates is applicable because of receiver type mismatch: [/Outer.Inner.Inner]>#|()
+            this@R|/Outer|.R|/Outer.Inner.Inner<None of the following candidates is applicable because of receiver type mismatch: [/Outer.Inner.Inner]>#|<R|kotlin/String|>()
             this@R|/Outer|.R|/Outer.InnerWithParameter.InnerWithParameter|()
-            this@R|/Outer|.R|/Outer.InnerWithParameter.InnerWithParameter|()
+            this@R|/Outer|.R|/Outer.InnerWithParameter.InnerWithParameter<None of the following candidates is applicable because of receiver type mismatch: [/Outer.InnerWithParameter.InnerWithParameter]>#|()
         }
 
     }
