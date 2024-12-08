@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.*
+import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -264,3 +265,6 @@ object ForwardDeclarationsFqNames {
 
     val syntheticPackages = NativeStandardInteropNames.ForwardDeclarations.syntheticPackages
 }
+
+val ModuleDescriptor.isForwardDeclarationModule: Boolean
+    get() = name == FORWARD_DECLARATIONS_MODULE_NAME
