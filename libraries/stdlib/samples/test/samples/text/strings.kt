@@ -110,6 +110,15 @@ class Strings {
     }
 
     @Sample
+    fun findLast() {
+        val text = "a1b2c3d4e5"
+
+        assertPrints(text.findLast { it.isLetter() }, "e")
+        assertPrints(text.findLast { it.isUpperCase() }, "null")
+        assertPrints("".findLast { it.isLowerCase() }, "null")
+    }
+
+    @Sample
     fun zip() {
         val stringA = "abcd"
         val stringB = "zyx"
