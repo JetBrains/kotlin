@@ -190,10 +190,10 @@ fun main() {
             }
 
             val psiManager = PsiManager.getInstance(project)
+            val psiFiles = virtualFiles.map { psiManager.findFile(it)!! }
 
             val index = inMemoryIndex(
-                virtualFiles.flatMap { virtualFile ->
-                    val psiFile = psiManager.findFile(virtualFile)!!
+                psiFiles.flatMap { psiFile ->
                     indexFile(
                         file = psiFile,
                         extensions = listOf(
@@ -205,18 +205,6 @@ fun main() {
                         )
                     )
                 }
-            )
-
-            val singleModule = KaSourceModuleImpl(
-                directRegularDependencies = emptyList(),
-                directDependsOnDependencies = emptyList(),
-                directFriendDependencies = emptyList(),
-                contentScope = GlobalSearchScope.filesScope(project, virtualFiles),
-                targetPlatform = JvmPlatforms.defaultJvmPlatform,
-                project = project,
-                name = "dumdum",
-                languageVersionSettings = LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST),
-                psiRoots = virtualFiles.map { psiManager.findFile(it)!! }
             )
 
             project.apply {
@@ -285,6 +273,18 @@ fun main() {
                         override val deserializedDeclarationsOrigin: KotlinDeserializedDeclarationsOrigin
                             get() = KotlinDeserializedDeclarationsOrigin.BINARIES
                     }
+                )
+
+                val singleModule = KaSourceModuleImpl(
+                    directRegularDependencies = emptyList(),
+                    directDependsOnDependencies = emptyList(),
+                    directFriendDependencies = emptyList(),
+                    contentScope = GlobalSearchScope.filesScope(project, virtualFiles),
+                    targetPlatform = JvmPlatforms.defaultJvmPlatform,
+                    project = project,
+                    name = "dumdum",
+                    languageVersionSettings = LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST),
+                    psiRoots = psiFiles
                 )
 
                 registerService(
@@ -396,8 +396,7 @@ fun main() {
                 )
             }
 
-            for (file in virtualFiles) {
-                val psiFile = psiManager.findFile(file)!!
+            for (psiFile in psiFiles) {
                 analyze(psiFile as KtFile) {
                     psiFile.descendantsOfType<KtCallElement>().forEach { call ->
                         val callInfo = (call.resolveToCall() as KaSuccessCallInfo).call as KaCallableMemberCall<*, *>
