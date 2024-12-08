@@ -7,24 +7,25 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.Project
+import org.gradle.api.flow.*
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.PublishingExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.gradle.api.flow.FlowAction
-import org.gradle.api.flow.FlowParameters
-import org.gradle.api.flow.FlowScope
 import org.gradle.api.initialization.Settings
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.internal.exceptions.MultiCauseException
 import org.gradle.internal.extensions.core.serviceOf
 import org.gradle.util.GradleVersion
 import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
+import java.io.PrintWriter
 import java.io.Serializable
 import java.nio.file.Path
 import java.util.*
 import kotlin.io.path.*
+import kotlin.jvm.optionals.getOrNull
 
 interface GradleBuildScriptInjection<T> : Serializable {
     fun inject(target: T)
@@ -120,6 +121,8 @@ class ReturnFromBuildScriptAfterExecution<T>(
     val returnContainingGradleProject: TestProject,
     val serializedReturnPath: File,
     val injectionLoadProperty: String,
+    val defaultEvaluationTask: String = "tasks",
+    val defaultBuildAction: TestProject.(Array<String>, BuildOptions) -> Unit = build,
 ) {
     /**
      * Return values to the test by serializing the return after the execution. The benefit of serializing after execution is that we can
@@ -127,15 +130,18 @@ class ReturnFromBuildScriptAfterExecution<T>(
      * out for configuration entities.
      */
     fun buildAndReturn(
-        evaluationTask: String = "tasks",
+        evaluationTask: String = defaultEvaluationTask,
         executingProject: TestProject = returnContainingGradleProject,
         configurationCache: BuildOptions.ConfigurationCacheValue = BuildOptions.ConfigurationCacheValue.DISABLED,
         deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
+        buildAction: TestProject.(Array<String>, BuildOptions) -> Unit = defaultBuildAction,
     ): T {
-        executingProject.build(
-            evaluationTask,
-            "-P${injectionLoadProperty}=true",
-            buildOptions = executingProject.deriveBuildOptions().copy(
+        executingProject.buildAction(
+            arrayOf(
+                evaluationTask,
+                "-P${injectionLoadProperty}=true",
+            ),
+            executingProject.deriveBuildOptions().copy(
                 configurationCache = configurationCache,
             )
         )
@@ -144,10 +150,143 @@ class ReturnFromBuildScriptAfterExecution<T>(
             return it.readObject() as T
         }
     }
+
+    companion object {
+        val build: TestProject.(Array<String>, BuildOptions) -> Unit = { args, options ->
+            build(*args, buildOptions = options)
+        }
+        val buildAndFail: TestProject.(Array<String>, BuildOptions) -> Unit = { args, options ->
+            buildAndFail(*args, buildOptions = options)
+        }
+    }
 }
 
-inline fun <reified T> TestProject.buildScriptReturn(
+internal inline fun <reified T> TestProject.buildScriptReturn(
     crossinline returnFromProject: GradleProjectBuildScriptInjectionContext.() -> T,
+): ReturnFromBuildScriptAfterExecution<T> {
+    return buildScriptReturnInjection (
+        injectionProvider = { serializedReturnPath ->
+            object : GradleBuildScriptInjection<Project> {
+                override fun inject(target: Project) {
+                    val returnEvaluationProvider = target.providers.provider {
+                        val scope = GradleProjectBuildScriptInjectionContext(target)
+                        returnFromProject(scope)
+                    }
+                    val serializeOutput = {
+                        val returnValue = returnEvaluationProvider.get()
+                        serializedReturnPath.outputStream().use {
+                            ObjectOutputStream(it).writeObject(returnValue)
+                        }
+                    }
+                    if (GradleVersion.current() < GradleVersion.version("8.0")) {
+                        @Suppress("DEPRECATION")
+                        target.gradle.buildFinished {
+                            println(it)
+                            serializeOutput()
+                        }
+                    } else {
+                        target.serviceOf<FlowScope>().always(
+                            BuildFinishFlowAction::class.java
+                        ) {
+                            it.parameters.onBuildFinish.set(serializeOutput)
+                        }
+                    }
+                }
+            }
+        },
+        returnObjectProvider = { serializedReturnPath, injectionUuid ->
+            ReturnFromBuildScriptAfterExecution(
+                this,
+                serializedReturnPath,
+                injectionUuid,
+            )
+        }
+    )
+}
+
+sealed class CaughtException<ExpectedException : Throwable> : Serializable {
+    data class Expected<ExpectedException : Throwable>(val exception: ExpectedException) : CaughtException<ExpectedException>()
+    data class Unexpected<ExpectedException : Throwable>(val exception: String) : CaughtException<ExpectedException>()
+    data class NoException<ExpectedException : Throwable>(val exception: String = "build didn't fail") : CaughtException<ExpectedException>()
+
+    fun unwrap(): ExpectedException {
+        return when (this) {
+            is Expected<ExpectedException> -> exception
+            is Unexpected<ExpectedException> -> error(exception)
+            is NoException<ExpectedException> -> error(exception)
+        }
+    }
+}
+
+internal inline fun <reified T : java.lang.Exception> TestProject.catchBuildFailure(): ReturnFromBuildScriptAfterExecution<CaughtException<T>> {
+    return buildScriptReturnInjection(
+        injectionProvider = { serializedReturnPath ->
+            object : GradleBuildScriptInjection<Project> {
+                override fun inject(target: Project) {
+                    val serializeOutput: (Throwable?) -> Unit = { topLevelException ->
+                        val toSerialize = if (topLevelException == null) {
+                            CaughtException.NoException()
+                        } else {
+                            searchCauseGraph<T>(topLevelException)?.let {
+                                CaughtException.Expected(it)
+                            } ?: CaughtException.Unexpected(
+                                java.io.StringWriter().use {
+                                    PrintWriter(it).use {
+                                        topLevelException.printStackTrace(it)
+                                    }
+                                    it
+                                }.toString()
+                            )
+                        }
+
+                        serializedReturnPath.outputStream().use {
+                            ObjectOutputStream(it).writeObject(toSerialize)
+                        }
+                    }
+                    if (GradleVersion.current() < GradleVersion.version("8.0")) {
+                        @Suppress("DEPRECATION")
+                        target.gradle.buildFinished {
+                            serializeOutput(it.failure)
+                        }
+                    } else {
+                        val result = target.serviceOf<FlowProviders>().buildWorkResult
+                        target.serviceOf<FlowScope>().always(BuildFinishResultFlowAction::class.java) {
+                            it.parameters.onBuildFinish.set(serializeOutput)
+                            it.parameters.buildWorkResult.set(result)
+                        }
+                    }
+                }
+            }
+        },
+        returnObjectProvider = { serializedReturnPath, injectionUuid ->
+            ReturnFromBuildScriptAfterExecution(
+                this,
+                serializedReturnPath,
+                injectionUuid,
+                defaultBuildAction = ReturnFromBuildScriptAfterExecution.buildAndFail,
+            )
+        }
+    )
+}
+
+inline fun <reified T : Throwable> searchCauseGraph(exception: Throwable): T? {
+    val exceptions = mutableListOf(exception)
+    while (exceptions.isNotEmpty()) {
+        val cur = exceptions.removeLast()
+        if (cur is T) return cur
+        exceptions.addAll(
+            when (cur) {
+                is MultiCauseException -> cur.causes.mapNotNull { it }
+                else -> listOfNotNull(cur.cause)
+            }
+        )
+    }
+    return null
+}
+
+private inline fun <reified T> TestProject.buildScriptReturnInjection(
+    injectionProvider: (serializedReturnPath: File) -> GradleBuildScriptInjection<Project>,
+    returnObjectProvider: (serializedReturnPath: File, injectionUuid: String) -> ReturnFromBuildScriptAfterExecution<T>,
 ): ReturnFromBuildScriptAfterExecution<T> {
     enableBuildScriptInjectionsIfNecessary(
         buildGradle,
@@ -155,32 +294,7 @@ inline fun <reified T> TestProject.buildScriptReturn(
     )
     val injectionUuid = UUID.randomUUID().toString()
     val serializedReturnPath = projectPath.resolve("serializedReturnConfiguration_${injectionUuid}").toFile()
-    val injection = object : GradleBuildScriptInjection<Project> {
-        override fun inject(target: Project) {
-            val returnEvaluationProvider = target.providers.provider {
-                val scope = GradleProjectBuildScriptInjectionContext(target)
-                returnFromProject(scope)
-            }
-            val serializeOutput = {
-                val returnValue = returnEvaluationProvider.get()
-                serializedReturnPath.outputStream().use {
-                    ObjectOutputStream(it).writeObject(returnValue)
-                }
-            }
-            if (GradleVersion.current() < GradleVersion.version("8.0")) {
-                @Suppress("DEPRECATION")
-                target.gradle.buildFinished {
-                    serializeOutput()
-                }
-            } else {
-                target.serviceOf<FlowScope>().always(
-                    BuildFinishFlowAction::class.java
-                ) {
-                    it.parameters.onBuildFinish.set(serializeOutput)
-                }
-            }
-        }
-    }
+    val injection = injectionProvider(serializedReturnPath)
 
     val serializedInjectionName = "serializedInjection_${injectionUuid}"
     val serializedInjectionPath = projectPath.resolve(serializedInjectionName)
@@ -204,11 +318,7 @@ inline fun <reified T> TestProject.buildScriptReturn(
         else -> error("Can't find the build script to append the return injection")
     }
 
-    return ReturnFromBuildScriptAfterExecution(
-        this,
-        serializedReturnPath,
-        injectionUuid,
-    )
+    return returnObjectProvider(serializedReturnPath, injectionUuid)
 }
 
 /**
@@ -411,3 +521,17 @@ class BuildFinishFlowAction : FlowAction<BuildFinishFlowAction.Parameters> {
     }
 }
 
+class BuildFinishResultFlowAction : FlowAction<BuildFinishResultFlowAction.Parameters> {
+    interface Parameters : FlowParameters {
+        @get:Input
+        val onBuildFinish: Property<(Throwable?) -> Unit>
+        @get:Input
+        val buildWorkResult: Property<BuildWorkResult>
+    }
+
+    override fun execute(parameters: Parameters) {
+        parameters.onBuildFinish.get().invoke(
+            parameters.buildWorkResult.get().failure.getOrNull()
+        )
+    }
+}

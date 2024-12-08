@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.testkit.runner.UnexpectedBuildSuccess
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.uklibs.*
 import kotlin.test.assertEquals
+import kotlin.test.fail
 
 @MppGradlePluginTests
 class BuildScriptInjectionIT : KGPBaseTest() {
@@ -115,6 +117,43 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                 configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
             )
         }
+    }
+
+    @GradleTest
+    fun catchExceptions(version: GradleVersion) {
+        data class A(val name: String = "A") : Exception()
+        data class B(val name: String = "B") : Exception()
+
+        project("buildScriptInjectionGroovy", version) {
+            buildScriptInjection {
+                project.tasks.register("throwA") {
+                    it.doLast { throw A() }
+                }
+                project.tasks.register("throwB") {
+                    it.doLast { throw B() }
+                }
+                project.tasks.register("noBuildFailure") {}
+            }
+            assertEquals(
+                CaughtException.Expected(A()),
+                catchBuildFailure<A>().buildAndReturn("throwA")
+            )
+            assert(
+                assertIsInstance<CaughtException.Unexpected<A>>(
+                    catchBuildFailure<A>().buildAndReturn("throwB")
+                ).exception.contains("Caused by: B(name=B)")
+            )
+            assertIsInstance<UnexpectedBuildSuccess>(
+                runCatching {
+                    catchBuildFailure<A>().buildAndReturn("noBuildFailure")
+                }.exceptionOrNull()
+            )
+        }
+    }
+
+    private inline fun <reified T> assertIsInstance(value: Any?): T {
+        if (value is T) return value
+        fail("Expected $value to implement ${T::class.java}")
     }
 
     private fun publishAndConsumeProject(
