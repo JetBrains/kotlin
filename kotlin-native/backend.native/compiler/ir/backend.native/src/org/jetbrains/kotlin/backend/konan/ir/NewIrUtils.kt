@@ -8,13 +8,12 @@ package org.jetbrains.kotlin.backend.konan.ir
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
 import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.backend.konan.serialization.konanLibrary
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
@@ -24,8 +23,6 @@ import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
 import org.jetbrains.kotlin.utils.atMostOne
 
 private fun IrClass.isClassTypeWithSignature(signature: IdSignature.CommonSignature): Boolean {
@@ -78,17 +75,6 @@ private fun IrClass.getOverridingOf(function: IrFunction) = (function as? IrSimp
     it.allOverriddenFunctions.atMostOne { it.parent == this }
 }
 
-val ModuleDescriptor.konanLibrary get() = (this.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library
-
-val IrPackageFragment.konanLibrary: KotlinLibrary?
-    get() {
-        if (this is IrFile) {
-            val fileMetadata = metadata as? DescriptorMetadataSource.File
-            val moduleDescriptor = fileMetadata?.descriptors?.singleOrNull() as? ModuleDescriptor
-            moduleDescriptor?.konanLibrary?.let { return it }
-        }
-        return this.moduleDescriptor.konanLibrary
-    }
 // Any changes made to konanLibrary here should be ported to the containsDeclaration
 // function in LlvmModuleSpecificationBase in LlvmModuleSpecificationImpl.kt
 val IrDeclaration.konanLibrary: KotlinLibrary?

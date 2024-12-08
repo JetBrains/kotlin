@@ -16,10 +16,15 @@ import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.lazy.AbstractFir2IrLazyDeclaration
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.moduleDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
@@ -108,3 +113,15 @@ fun IrDeclaration.isFromInteropLibrary(): Boolean = isFromCInteropLibrary()
     DeprecationLevel.ERROR
 )
 fun DeclarationDescriptor.isFromInteropLibrary(): Boolean = isFromCInteropLibrary()
+
+val ModuleDescriptor.konanLibrary get() = (this.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library
+
+val IrPackageFragment.konanLibrary: KotlinLibrary?
+    get() {
+        if (this is IrFile) {
+            val fileMetadata = metadata as? DescriptorMetadataSource.File
+            val moduleDescriptor = fileMetadata?.descriptors?.singleOrNull() as? ModuleDescriptor
+            moduleDescriptor?.konanLibrary?.let { return it }
+        }
+        return this.moduleDescriptor.konanLibrary
+    }

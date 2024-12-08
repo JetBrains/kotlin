@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
+import org.jetbrains.kotlin.backend.konan.serialization.konanLibrary
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.library.KotlinLibrary
 
