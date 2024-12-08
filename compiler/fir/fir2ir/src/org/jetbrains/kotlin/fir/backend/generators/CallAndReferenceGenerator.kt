@@ -1356,9 +1356,9 @@ class CallAndReferenceGenerator(
      * resulting type.
      */
     private fun List<FirTypeProjection>.toExpandedTypeArguments(typeAliasSymbol: FirTypeAliasSymbol): List<FirTypeProjection> {
-        return typeAliasSymbol
-            .constructType(map { it.toConeTypeProjection() }.toTypedArray())
-            .fullyExpandedType(session)
+        val constructedType = typeAliasSymbol.constructType(map { it.toConeTypeProjection() }.toTypedArray())
+        val expandedType = constructedType.fullyExpandedType(session)
+        return constructedType
             .typeArguments
             .map { typeProjection ->
                 buildTypeProjectionWithVariance {

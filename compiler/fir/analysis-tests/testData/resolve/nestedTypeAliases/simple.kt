@@ -1,8 +1,16 @@
 // RUN_PIPELINE_TILL: BACKEND
-class A
 
-class C {
-    typealias TA = A
+class Foo<T> {
+    inner class Inner
+}
 
-    fun test(): TA = TA()
+typealias InnerAlias<K> = Foo<K>.Inner
+
+fun test() {
+    val foo = Foo<String>()
+
+    foo.InnerAlias()
+//    foo.Inner()
+/*    val aliasedInner = Foo<String>::InnerAlias
+    aliasedInner(foo)*/
 }
