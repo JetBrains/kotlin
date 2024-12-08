@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
 import org.jetbrains.kotlin.fir.backend.utils.contextParametersForFunctionOrContainingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.descriptors.FirBuiltInsPackageFragment
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
@@ -31,7 +34,10 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -307,13 +313,13 @@ class Fir2IrDeclarationStorage(
         if (function.visibility == Visibilities.Local) {
             return localStorage.getLocalFunctionSymbol(function)
         }
-        runIf(function.origin.generatedAnyMethod) {
+        runIf(function.origin.generatedAnyEqualsMethod || function.origin.generatedAnyHashCodeMethod || function.origin.generatedAnyToStringCodeMethod) {
             val containingClass = function.getContainingClass()!!
             val cache = dataClassGeneratedFunctionsCache.computeIfAbsent(containingClass) { DataClassGeneratedFunctionsStorage() }
             val cachedFunction = when (function.nameOrSpecialName) {
-                OperatorNameConventions.EQUALS -> cache.equalsSymbol
-                OperatorNameConventions.HASH_CODE -> cache.hashCodeSymbol
-                OperatorNameConventions.TO_STRING -> cache.toStringSymbol
+                OperatorNameConventions.EQUALS if function.origin.generatedAnyEqualsMethod -> cache.equalsSymbol
+                OperatorNameConventions.HASH_CODE if function.origin.generatedAnyHashCodeMethod -> cache.hashCodeSymbol
+                OperatorNameConventions.TO_STRING if function.origin.generatedAnyToStringCodeMethod -> cache.toStringSymbol
                 else -> return@runIf // componentN functions are the same for all sessions
             }
             return cachedFunction?.let(symbolsMappingForLazyClasses::remapFunctionSymbol)
@@ -406,7 +412,7 @@ class Fir2IrDeclarationStorage(
                 irForFirSessionDependantDeclarationMap[key] = irFunctionSymbol
             }
 
-            function.origin.generatedAnyMethod -> {
+            function.origin.generatedAnyEqualsMethod || function.origin.generatedAnyHashCodeMethod || function.origin.generatedAnyToStringCodeMethod -> {
                 val name = function.nameOrSpecialName
                 /*
                  * During regular compilation `equals`, `hashCode` and `toString` are generated separately using DataClassMemberGenerator.

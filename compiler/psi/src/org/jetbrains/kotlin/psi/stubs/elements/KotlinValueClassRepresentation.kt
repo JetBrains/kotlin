@@ -14,5 +14,6 @@ enum class KotlinValueClassRepresentation {
     // The order of entries is important, as an entry's ordinal is used to serialize/deserialize it
     INLINE_CLASS,
     MULTI_FIELD_VALUE_CLASS,
+    VALHALLA_VALUE_CLASS,
     ;
 }

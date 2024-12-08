@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isData
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -87,7 +88,7 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
     /**
      * Exclusion list:
      * 1. Primary constructors of public API classes
-     * 2. Properties of data classes in public API
+     * 2. Properties of data or value classes in public API
      * 3. Overrides of public API. Effectively, this means 'no report on overrides at all'
      * 4. Getters and setters (because getters can't change visibility and setter-only explicit visibility looks ugly)
      * 5. Properties of annotations in public API
@@ -105,7 +106,7 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
                 val containingClass = context.containingDeclarations.lastOrNull() as? FirRegularClass
                 // 2, 5
                 if (declaration is FirProperty) {
-                    if (containingClass != null && (containingClass.isData || containingClass.classKind == ClassKind.ANNOTATION_CLASS)) {
+                    if (containingClass != null && (containingClass.isData || containingClass.isInline || containingClass.classKind == ClassKind.ANNOTATION_CLASS)) {
                         return true
                     }
                     if (declaration.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty) {

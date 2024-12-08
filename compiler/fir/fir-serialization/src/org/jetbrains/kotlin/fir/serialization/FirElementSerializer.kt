@@ -304,6 +304,7 @@ class FirElementSerializer private constructor(
                     builder.addAllMultiFieldValueClassUnderlyingType(namesToTypes.map { (_, kotlinType) -> typeProto(kotlinType).build() })
                 }
             }
+            is ValhallaValueClassRepresentation -> builder.isValhallaValueClass = true
             null -> {}
         }
 

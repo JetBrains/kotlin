@@ -250,6 +250,7 @@ message Class {
   repeated int32 multi_field_value_class_underlying_name = 22 [packed = true, (name_id_in_table) = true];
   repeated Type multi_field_value_class_underlying_type = 23;
   repeated int32 multi_field_value_class_underlying_type_id = 24 [packed = true, (type_id_in_table) = true];
+  optional bool is_valhalla_value_class = 25;
 
   optional TypeTable type_table = 30;
 

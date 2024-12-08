@@ -13,7 +13,9 @@ sealed class FirDeclarationOrigin(
     val fromSupertypes: Boolean = false,
     val generated: Boolean = false,
     val fromSource: Boolean = false,
-    val generatedAnyMethod: Boolean = false,
+    val generatedAnyEqualsMethod: Boolean = false,
+    val generatedAnyHashCodeMethod: Boolean = false,
+    val generatedAnyToStringCodeMethod: Boolean = false,
 ) {
     object Source : FirDeclarationOrigin(fromSource = true)
     object Library : FirDeclarationOrigin()
@@ -27,9 +29,23 @@ sealed class FirDeclarationOrigin(
 
     val isBuiltIns: Boolean get() = this == BuiltIns || this == BuiltInsFallback
 
-    sealed class Synthetic(generatedAnyMethod: Boolean = false) : FirDeclarationOrigin(generatedAnyMethod = generatedAnyMethod) {
+    sealed class Synthetic(
+        generatedAnyEqualsMethod: Boolean = false,
+        generatedAnyHashCodeMethod: Boolean = false,
+        generatedAnyToStringCodeMethod: Boolean = false,
+    ) : FirDeclarationOrigin(
+        generatedAnyEqualsMethod = generatedAnyEqualsMethod,
+        generatedAnyHashCodeMethod = generatedAnyHashCodeMethod,
+        generatedAnyToStringCodeMethod = generatedAnyToStringCodeMethod,
+    ) {
+        private constructor(generatedAnyMethod: Boolean) : this(
+            generatedAnyEqualsMethod = generatedAnyMethod,
+            generatedAnyHashCodeMethod = generatedAnyMethod,
+            generatedAnyToStringCodeMethod = generatedAnyMethod
+        )
         object DataClassMember : Synthetic(generatedAnyMethod = true)
-        object ValueClassMember : Synthetic(generatedAnyMethod = true)
+        object PreValhallaValueClassMember : Synthetic(generatedAnyMethod = true)
+        object ValhallaValueClassMember : Synthetic(generatedAnyMethod = false)
         object JavaProperty : Synthetic()
         object DelegateField : Synthetic()
         object PluginFile : Synthetic()

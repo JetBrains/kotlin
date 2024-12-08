@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.asPreValhalla
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -461,7 +462,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         (this as? IrClassSymbol)?.owner?.isMultiFieldValueClass == true
 
     override fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, SimpleTypeMarker>>? =
-        (this as? IrClassSymbol)?.owner?.valueClassRepresentation?.underlyingPropertyNamesToTypes
+        (this as? IrClassSymbol)?.owner?.valueClassRepresentation?.asPreValhalla()?.underlyingPropertyNamesToTypes
 
     override fun TypeConstructorMarker.isInnerClass(): Boolean =
         (this as? IrClassSymbol)?.owner?.isInner == true

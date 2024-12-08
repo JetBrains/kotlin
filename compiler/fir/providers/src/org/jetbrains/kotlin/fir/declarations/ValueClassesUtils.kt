@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
-import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
-import org.jetbrains.kotlin.descriptors.createValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
@@ -40,7 +38,9 @@ internal fun ConeKotlinType.unsubstitutedUnderlyingTypeForInlineClass(session: F
 
 fun computeValueClassRepresentation(klass: FirRegularClass, session: FirSession): ValueClassRepresentation<ConeRigidType>? {
     val isValhallaSupported = session.languageVersionSettings.supportsFeature(LanguageFeature.ValhallaValueClasses)
-    if (isValhallaSupported && !klass.hasAnnotation(JVM_INLINE_ANNOTATION_CLASS_ID, session) && klass.hasValueModifier()) return null
+    if (isValhallaSupported && !klass.hasAnnotation(JVM_INLINE_ANNOTATION_CLASS_ID, session) && klass.hasValueModifier()) {
+        return ValhallaValueClassRepresentation()
+    }
     val parameters = klass.getValueClassUnderlyingParameters(session)?.takeIf { it.isNotEmpty() } ?: return null
     val fields = parameters.map { it.name to it.symbol.resolvedReturnType as ConeRigidType }
     fields.singleOrNull()?.let { (name, type) ->
@@ -86,7 +86,7 @@ private fun isRecursiveSingleFieldValueClass(
 private fun ConeRigidType.valueClassRepresentationTypeMarkersList(session: FirSession): List<Pair<Name, ConeRigidType>>? {
     val symbol = this.toRegularClassSymbol(session) ?: return null
     if (!symbol.fir.isInline) return null
-    symbol.fir.valueClassRepresentation?.let { return it.underlyingPropertyNamesToTypes }
+    symbol.fir.valueClassRepresentation?.let { return it.asPreValhalla()?.underlyingPropertyNamesToTypes }
 
     val constructorSymbol = symbol.fir.primaryConstructorIfAny(session) ?: return null
     return constructorSymbol.valueParameterSymbols.map { it.name to it.resolvedReturnType as ConeRigidType }

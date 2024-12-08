@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.KtPsiSourceFileLinesMapping
 import org.jetbrains.kotlin.KtSourceFileLinesMappingFromLineStartOffsets
 import org.jetbrains.kotlin.backend.common.CommonBackendErrors
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
-import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -24,7 +23,10 @@ import org.jetbrains.kotlin.fir.backend.utils.createFilesWithBuiltinsSyntheticDe
 import org.jetbrains.kotlin.fir.backend.utils.createFilesWithGeneratedDeclarations
 import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -257,6 +259,9 @@ class Fir2IrConverter(
             }
             if (irClass.isMultiFieldValueClass) {
                 allDeclarations += dataClassMembersGenerator.generateMultiFieldValueClassMembers(klass, irClass)
+            }
+            if (irClass.isValhallaValueClass) {
+                allDeclarations += dataClassMembersGenerator.generateValhallaValueClassMembers(klass, irClass)
             }
             if (irClass.isData) {
                 allDeclarations += dataClassMembersGenerator.generateDataClassMembers(klass, irClass)

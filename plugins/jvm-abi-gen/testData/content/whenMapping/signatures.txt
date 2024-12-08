@@ -10,14 +10,14 @@ public final enum class test/E {
 @kotlin.Metadata
 public synthetic final class test/Test$WhenMappings {
     // source: 'test.kt'
-    public synthetic inner class test/Test$WhenMappings
+    public synthetic final inner class test/Test$WhenMappings
     public synthetic final static field $EnumSwitchMapping$0: int[]
     static method <clinit>(): void
 }
 @kotlin.Metadata
 public final class test/Test {
     // source: 'test.kt'
-    public synthetic inner class test/Test$WhenMappings
+    public synthetic final inner class test/Test$WhenMappings
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method visibleWhenMapping(@org.jetbrains.annotations.NotNull p0: test.E): java.lang.String
 }

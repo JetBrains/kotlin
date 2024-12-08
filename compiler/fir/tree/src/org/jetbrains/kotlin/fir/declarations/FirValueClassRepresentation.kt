@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.ValhallaValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.fir.types.ConeRigidType
 
@@ -21,4 +22,5 @@ val FirRegularClass.inlineClassRepresentation: InlineClassRepresentation<ConeRig
 val FirRegularClass.multiFieldValueClassRepresentation: MultiFieldValueClassRepresentation<ConeRigidType>?
     get() = valueClassRepresentation as? MultiFieldValueClassRepresentation<ConeRigidType>
 
-
+val FirRegularClass.isValhallaValueClass: Boolean
+    get() = valueClassRepresentation is ValhallaValueClassRepresentation

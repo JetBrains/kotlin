@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
-import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.descriptors.ValhallaValueClassRepresentation
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils.getPackagePartClassNamePrefix
@@ -28,6 +25,9 @@ val IrClass.isSingleFieldValueClass: Boolean
 
 val IrClass.isMultiFieldValueClass: Boolean
     get() = valueClassRepresentation is MultiFieldValueClassRepresentation
+
+val IrClass.isValhallaValueClass: Boolean
+    get() = valueClassRepresentation is ValhallaValueClassRepresentation<*>
 
 fun IrClass.addMember(member: IrDeclaration) {
     declarations.add(member)
