@@ -7,15 +7,19 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.publishing
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.DependencySet
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.attributes.*
-import org.gradle.api.internal.component.SoftwareComponentInternal
+import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublicationContainer
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
 import org.jetbrains.kotlin.gradle.artifacts.uklibsModel.Uklib
 import org.jetbrains.kotlin.gradle.artifacts.uklibsPublication.UklibPomDependenciesRewriter
+import org.jetbrains.kotlin.gradle.artifacts.uklibsPublication.UklibPomDependenciesRewriter.DependencyGA
+import org.jetbrains.kotlin.gradle.artifacts.uklibsPublication.UklibPomDependenciesRewriter.TargetDep
 import org.jetbrains.kotlin.gradle.artifacts.uklibsPublication.archiveUklibTask
 import org.jetbrains.kotlin.gradle.dsl.awaitMetadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -85,16 +89,23 @@ private fun MavenPublication.addUklibArtifactAndChangePackagingAndPatchPom(
     rootComponent: KotlinSoftwareComponent,
 ) {
     data class ScopedConfigurationDependencies(
-        val dependencySet: DependencySet,
+        val dependencySet: List<Dependency>,
         val scope: KotlinUsageContext.MavenScope?,
     )
 
+//    val map: Provider<Map<DependencyGA, TargetDep>> = project.provider {
+//        emptyMap()
+//    }
     val map = project.provider {
-        val dependencyRemapping = mutableMapOf<UklibPomDependenciesRewriter.DependencyGA, KotlinUsageContext.MavenScope>()
+        val dependencyRemapping = mutableMapOf<UklibPomDependenciesRewriter.DependencyGA, UklibPomDependenciesRewriter.TargetDep>()
         rootComponent.targetsWithDedicatedComponents.flatMap {
             it.internal.kotlinComponents.filterIsInstance<KotlinVariant>().filter {
                 it.publishable
             }.flatMap { publishedComponent ->
+//                collectProjectsPublicationCoordinatesFromDependencies(
+//                    project,
+//                    publishedComponent,
+//                )
                 publishedComponent.internal.usages
                     .filterIsInstance<DefaultKotlinUsageContext>()
                     .filter { it.publishOnlyIf.predicate() }
@@ -102,19 +113,47 @@ private fun MavenPublication.addUklibArtifactAndChangePackagingAndPatchPom(
                         // FIXME: Project dependencies with PI
                         ScopedConfigurationDependencies(
                             project.configurations.getByName(publishedVariant.dependencyConfigurationName)
-                                .allDependencies,
+                                .allDependencies.toList(), // ? .filterNot { it is ProjectDependency }
                             publishedVariant.mavenScope,
                         )
                     }
             }
         }.forEach { set ->
+//            set.allResolvedDependencies.map { dependency ->
+//                val res = set.getProjectDataFromDependencyOrNull(dependency) ?: return@map
+//                val from = UklibPomDependenciesRewriter.DependencyGA(
+//                    res.rootPublicationCoordinates.group,
+//                    res.rootPublicationCoordinates.artifactId
+//                )
+//                val to = UklibPomDependenciesRewriter.DependencyGA(
+//                    res.targetPublicationCoordinates.group,
+//                    res.targetPublicationCoordinates.artifactId
+//                )
+//                if (dependencyRemapping[from]?.scope == KotlinUsageContext.MavenScope.COMPILE) return@map
+//                when (res.mavenScope) {
+//                    KotlinUsageContext.MavenScope.COMPILE -> dependencyRemapping[from] = UklibPomDependenciesRewriter.TargetDep(
+//                        to,
+//                        KotlinUsageContext.MavenScope.COMPILE
+//                    )
+//                    KotlinUsageContext.MavenScope.RUNTIME -> dependencyRemapping[from] = UklibPomDependenciesRewriter.TargetDep(
+//                        to,
+//                        KotlinUsageContext.MavenScope.RUNTIME
+//                    )
+//                }
+//            }
             set.dependencySet.forEach { dependency ->
                 val dep = UklibPomDependenciesRewriter.DependencyGA(dependency.group, dependency.name)
-                val exScope = dependencyRemapping[dep]
+                val exScope = dependencyRemapping[dep]?.scope
                 when (exScope) {
                     KotlinUsageContext.MavenScope.COMPILE -> {}
-                    KotlinUsageContext.MavenScope.RUNTIME -> dependencyRemapping[dep] = set.scope ?: KotlinUsageContext.MavenScope.COMPILE
-                    null -> dependencyRemapping[dep] = set.scope ?: KotlinUsageContext.MavenScope.COMPILE
+                    KotlinUsageContext.MavenScope.RUNTIME -> dependencyRemapping[dep] = UklibPomDependenciesRewriter.TargetDep(
+                        dep,
+                        set.scope ?: KotlinUsageContext.MavenScope.COMPILE
+                    )
+                    null -> dependencyRemapping[dep] = UklibPomDependenciesRewriter.TargetDep(
+                        dep,
+                        set.scope ?: KotlinUsageContext.MavenScope.COMPILE
+                    )
                 }
             }
         }

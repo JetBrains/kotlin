@@ -276,7 +276,6 @@ class UklibPublicationIT : KGPBaseTest() {
     )
 
     @GradleTestVersions(
-        // FIXME
         minVersion = TestVersions.Gradle.MAX_SUPPORTED,
     )
     @GradleTest
@@ -289,6 +288,10 @@ class UklibPublicationIT : KGPBaseTest() {
         ) {
             val dependency = project("buildScriptInjectionGroovy", gradleVersion) {
                 buildScriptInjection {
+//                    project.propertiesExtension.set(
+//                        PropertiesProvider.PropertyNames.KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT,
+//                        KmpIsolatedProjectsSupport.ENABLE.name,
+//                    )
                     project.group = "dependencyGroup"
                     project.version = "2.0"
                     project.applyMultiplatform {
@@ -315,21 +318,25 @@ class UklibPublicationIT : KGPBaseTest() {
             include(dependency, "dependency")
             include(publisher, "publisher")
 
-            try {
-                val res = publisher.publishReturn(PublisherConfiguration()).buildAndReturn(
-                    ":publisher:publishAllPublicationsToMavenRepository",
-                    executingProject = this,
-                    configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                    deriveBuildOptions = {
-                        defaultBuildOptions.copy(
-                            isolatedProjects = BuildOptions.IsolatedProjectsMode.ENABLED,
-                        )
-                    }
-                )
-                println(res)
-            } catch (e: Exception) {
-                println(projectPath)
-            }
+            val publishedProject = publisher.publishReturn(PublisherConfiguration()).buildAndReturn(
+                ":publisher:publishAllPublicationsToMavenRepository",
+                executingProject = this,
+                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+                deriveBuildOptions = {
+                    defaultBuildOptions.copy(
+                        // FIXME: PI doesn't work
+                        isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+                    )
+                }
+            )
+            assertEquals(
+                listOf(
+                    MavenDependency(groupId = "dependencyGroup", artifactId = "dependency", version = "2.0", scope = "compile"),
+                ),
+                parsePom(publishedProject.pom).mavenDependencies().filterNot {
+                    it.artifactId == "kotlin-stdlib"
+                },
+            )
         }
     }
 
@@ -452,6 +459,7 @@ class UklibPublicationIT : KGPBaseTest() {
             // FIXME: Otherwise klib resolver explodes
             projectPathAdditionalSuffix = publisherConfig.name,
         ) {
+            // FIXME: addPublishedProjectToRepositoriesAndIgnoreGradleMetadata?
             dependencyRepositories.forEach(::addPublishedProjectToRepositories)
             buildScriptInjection {
                 // FIXME: Enable cross compilation

@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.utils.named
 import org.jetbrains.kotlin.gradle.utils.setAttribute
+import java.io.File
 import javax.inject.Inject
 
 internal val KotlinUklibConsumptionSetupAction = KotlinProjectSetupAction {
@@ -186,6 +187,14 @@ internal abstract class UnzippedUklibToPlatformCompilationTransform : TransformA
         val fakeTransform: Property<Boolean>
     }
 
+    internal class PlatformCompilationTransformException(
+        val unzippedUklib: File,
+        val targetFragmentAttribute: String,
+        val availablePlatformFragments: List<String>,
+    ) : IllegalStateException(
+        "Couldn't resolve platform compilation artifact from $unzippedUklib failed. Needed fragment with attribute '${targetFragmentAttribute}', but only the following fragments were available $availablePlatformFragments"
+    )
+
     @get:InputArtifact
     abstract val inputArtifact: Provider<FileSystemLocation>
 
@@ -198,7 +207,8 @@ internal abstract class UnzippedUklibToPlatformCompilationTransform : TransformA
         val unzippedUklib = inputArtifact.get().asFile
         val targetFragmentAttribute = parameters.targetFragmentAttribute.get()
         // FIXME: Build up a Set<Attribute> -> Fragment map instead?
-        val platformFragments = Uklib.deserializeFromDirectory(unzippedUklib)
+        val uklib = Uklib.deserializeFromDirectory(unzippedUklib)
+        val platformFragments = uklib
             .module.fragments
             .filter { it.attributes == setOf(targetFragmentAttribute) }
 
@@ -206,7 +216,7 @@ internal abstract class UnzippedUklibToPlatformCompilationTransform : TransformA
             /**
              * FIXME: Uklib spec mentions that there may be an intermediate fragment without refiners. Was this a crutch for kotlin-test? Should we check this case silently ignore this case here?
              */
-            error("Couldn't resolve platform compilation artifact from ${unzippedUklib} failed. Needed fragment with attribute '${targetFragmentAttribute}', but only the following fragments were available ${platformFragments}")
+            throw PlatformCompilationTransformException(unzippedUklib, targetFragmentAttribute, uklib.module.fragments.map { it.identifier }.sorted())
         }
 
         if (platformFragments.size > 1) {

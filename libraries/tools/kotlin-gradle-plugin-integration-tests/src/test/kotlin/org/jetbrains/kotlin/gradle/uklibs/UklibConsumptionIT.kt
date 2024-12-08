@@ -9,22 +9,25 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.initialization.resolve.RepositoriesMode
 import org.gradle.api.internal.GradleInternal
-import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.internal.project.*
+import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.artifacts.UklibResolutionStrategy
+import org.jetbrains.kotlin.gradle.artifacts.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.locateOrRegisterMetadataDependencyTransformationTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.nativeCompilerClasspath
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.io.FileOutputStream
+import java.io.PrintStream
 import java.io.Serializable
 import java.net.URLClassLoader
 import kotlin.test.assertEquals
-import java.io.PrintStream
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 
 @MppGradlePluginTests
 @DisplayName("Smoke test uklib consumption")
@@ -32,9 +35,9 @@ class UklibConsumptionIT : KGPBaseTest() {
 
     @GradleTest
     fun `uklib consumption smoke - in kotlin compilations of a symmetric consumer and producer projects - with all metadata compilations`(
-        version: GradleVersion
+        version: GradleVersion,
     ) {
-        val symmetricTargets: KotlinMultiplatformExtension.() -> Unit =  {
+        val symmetricTargets: KotlinMultiplatformExtension.() -> Unit = {
             linuxArm64()
             iosArm64()
             iosX64()
@@ -43,7 +46,7 @@ class UklibConsumptionIT : KGPBaseTest() {
             wasmJs()
             wasmWasi()
         }
-        val publisher = publishUklib(version)  {
+        val publisher = publishUklib(version) {
             symmetricTargets()
             sourceSets.all {
                 it.compileSource(
@@ -124,12 +127,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                 gradleRepositoriesMode = RepositoriesMode.PREFER_PROJECT,
             )
         ) {
-            addPublishedProjectToRepositories(publisher)  {
-                metadataSources {
-                    it.mavenPom()
-                    it.ignoreGradleMetadataRedirection()
-                }
-            }
+            addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(publisher)
             buildScriptInjection {
                 project.propertiesExtension.set(
                     PropertiesProvider.PropertyNames.KOTLIN_MPP_UKLIB_RESOLUTION_STRATEGY,
@@ -259,7 +257,7 @@ class UklibConsumptionIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         publisherConfiguration: KotlinMultiplatformExtension.() -> Unit,
     ): PublishedProject {
-        return runTestProject<PublishedProject>(
+        return runTestProject(
             "buildScriptInjectionGroovy",
             gradleVersion,
         ) {
@@ -271,6 +269,112 @@ class UklibConsumptionIT : KGPBaseTest() {
             }
             publish(PublisherConfiguration())
         }.result
+    }
+
+    @GradleTest
+    fun `uklib consumption - with a subset of targets - in a source set with a superset of targets`(
+        version: GradleVersion,
+    ) {
+        val publisher = runTestProject("buildScriptInjectionGroovy", version) {
+            buildScriptInjection {
+                project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_PUBLISH_UKLIB, true.toString())
+                project.applyMultiplatform {
+                    linuxArm64()
+                    linuxX64()
+                    sourceSets.all { it.addIdentifierClass() }
+                }
+            }
+            publish(PublisherConfiguration(name = "dependency"))
+        }.result
+
+        runTestProject("buildScriptInjectionGroovy", version) {
+            addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(publisher)
+            buildScriptInjection {
+                project.propertiesExtension.set(
+                    PropertiesProvider.PropertyNames.KOTLIN_MPP_UKLIB_RESOLUTION_STRATEGY,
+                    UklibResolutionStrategy.AllowResolvingUklibs.propertyName,
+                )
+                project.applyMultiplatform {
+                    linuxArm64()
+                    linuxX64()
+                    jvm()
+                    sourceSets.all { it.addIdentifierClass() }
+                    sourceSets.commonMain.dependencies {
+                        implementation(publisher.coordinate)
+                    }
+                }
+            }
+
+            val jvmMainCompilationTask = buildScriptReturn {
+                kotlinMultiplatform.jvm().compilations.getByName("main").compileTaskProvider.name
+            }.buildAndReturn()
+            val jvmTransformationException = catchBuildFailure<UnzippedUklibToPlatformCompilationTransform.PlatformCompilationTransformException>().buildAndReturn(
+                evaluationTask = jvmMainCompilationTask,
+            ).unwrap()
+            assertEquals(
+                "jvm",
+                jvmTransformationException.targetFragmentAttribute,
+            )
+            assertEquals(
+                listOf("commonMain", "linuxArm64Main", "linuxMain", "linuxX64Main", "nativeMain"),
+                jvmTransformationException.availablePlatformFragments,
+            )
+
+            val commonMainTransformationTask = buildScriptReturn {
+                project.locateOrRegisterMetadataDependencyTransformationTask(
+                    kotlinMultiplatform.sourceSets.commonMain.get()
+                ).get().name
+            }.buildAndReturn()
+            val commonMainTransformationException = catchBuildFailure<GranularMetadataTransformation.MetadataTransformUklibException>().buildAndReturn(
+                evaluationTask = commonMainTransformationTask,
+            ).unwrap()
+            assertEquals(
+                listOf("jvm", "linux_arm64", "linux_x64"),
+                commonMainTransformationException.targetFragmentAttribute,
+            )
+            assertEquals(
+                listOf("commonMain", "linuxArm64Main", "linuxMain", "linuxX64Main", "nativeMain"),
+                commonMainTransformationException.availablePlatformFragments,
+            )
+        }
+    }
+
+    @GradleTest
+    fun `uklib consumption - with a subset of targets`(
+        version: GradleVersion,
+    ) {
+        val publisher = runTestProject("buildScriptInjectionGroovy", version) {
+            buildScriptInjection {
+                project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_PUBLISH_UKLIB, true.toString())
+                project.applyMultiplatform {
+                    linuxArm64()
+                    linuxX64()
+                    sourceSets.all { it.addIdentifierClass() }
+                }
+            }
+            publish(PublisherConfiguration(name = "dependency"))
+        }.result
+
+        runTestProject("buildScriptInjectionGroovy", version) {
+            addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(publisher)
+            buildScriptInjection {
+                project.propertiesExtension.set(
+                    PropertiesProvider.PropertyNames.KOTLIN_MPP_UKLIB_RESOLUTION_STRATEGY,
+                    UklibResolutionStrategy.AllowResolvingUklibs.propertyName,
+                )
+                project.applyMultiplatform {
+                    linuxArm64()
+                    linuxX64()
+                    jvm()
+                    sourceSets.all { it.addIdentifierClass() }
+                    sourceSets.iosMain.dependencies {
+                        implementation(publisher.coordinate)
+                    }
+                }
+            }
+
+            build("assemble")
+        }
     }
 }
 

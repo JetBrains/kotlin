@@ -89,12 +89,6 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
             }
         }
 
-        /**
-         * implementation -> runtime
-         * api -> compile
-         * compileOnly -> null
-         * runtimeOnly -> runtime
-         */
         project(
             "buildScriptInjectionGroovy",
             version,
@@ -102,18 +96,8 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
                 gradleRepositoriesMode = RepositoriesMode.PREFER_PROJECT,
             )
         ) {
-            addPublishedProjectToRepositories(directPublisher) {
-                metadataSources {
-                    it.mavenPom()
-                    it.ignoreGradleMetadataRedirection()
-                }
-            }
-            addPublishedProjectToRepositories(transitivePublisher) {
-                metadataSources {
-                    it.mavenPom()
-                    it.ignoreGradleMetadataRedirection()
-                }
-            }
+            addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(directPublisher)
+            addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(transitivePublisher)
             buildScriptInjection {
                 project.applyMultiplatform {
                     iosArm64()
@@ -182,13 +166,14 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
         addPublishedRepository: PublishedProject? = null,
         multiplatformConfiguration: KotlinMultiplatformExtension.() -> Unit,
     ): PublishedProject {
-        return runTestProject<PublishedProject>(
+        return runTestProject(
             "buildScriptInjectionGroovy",
             gradleVersion,
             dependencyManagement = DependencyManagement.DefaultDependencyManagement(
                 gradleRepositoriesMode = RepositoriesMode.PREFER_PROJECT,
             )
         ) {
+            // FIXME: addPublishedProjectToRepositoriesAndIgnoreGradleMetadata?
             addPublishedRepository?.let { addPublishedProjectToRepositories(it) }
             buildScriptInjection {
                 project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_PUBLISH_UKLIB, true.toString())

@@ -122,6 +122,15 @@ fun TestProject.addPublishedProjectToRepositories(
     }
 }
 
+fun TestProject.addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(
+    publishedProject: PublishedProject
+) = addPublishedProjectToRepositories(publishedProject) {
+    metadataSources {
+        it.mavenPom()
+        it.ignoreGradleMetadataRedirection()
+    }
+}
+
 fun TestProject.include(
     subproject: TestProject,
     name: String,

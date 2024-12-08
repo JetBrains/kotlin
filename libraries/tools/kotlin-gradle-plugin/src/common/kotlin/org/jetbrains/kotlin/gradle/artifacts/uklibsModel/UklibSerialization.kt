@@ -55,7 +55,7 @@ internal data class Uklib(
                 val fragmentIdentifier = fragment[FRAGMENT_IDENTIFIER] as String
                 Fragment(
                     identifier = fragmentIdentifier,
-                    attributes = (fragment[ATTRIBUTES] as List<String>).toSet(),
+                    attributes = (fragment[ATTRIBUTES] as List<String>).toHashSet(),
                     file = {
                         directory.resolve(fragmentIdentifier)
                     }

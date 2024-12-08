@@ -64,9 +64,14 @@ internal class UklibPomDependenciesRewriter {
         val artifact: String,
     )
 
+    data class TargetDep(
+        val ga: UklibPomDependenciesRewriter.DependencyGA,
+        val scope: KotlinUsageContext.MavenScope?,
+    )
+
     fun makeAllDependenciesCompile(
         pomXml: XmlProvider,
-        mapping: Map<DependencyGA, KotlinUsageContext.MavenScope>,
+        mapping: Map<DependencyGA, TargetDep>,
     ) {
         val dependenciesNode = (pomXml.asNode().get("dependencies") as NodeList).filterIsInstance<Node>().singleOrNull() ?: return
         val dependencyNodes = (dependenciesNode.get("dependency") as? NodeList).orEmpty().filterIsInstance<Node>()
@@ -74,18 +79,19 @@ internal class UklibPomDependenciesRewriter {
         dependencyNodes.forEach { dependencyNode ->
 //            fun Node.getSingleChildValueOrNull(childName: String): String? =
 //                ((get(childName) as NodeList?)?.singleOrNull() as Node?)?.text()
-            val g = ((dependencyNode.get("groupId") as NodeList).singleOrNull() as Node?)?.text() ?: return@forEach
-            val a = ((dependencyNode.get("artifactId") as NodeList).singleOrNull() as Node?)?.text() ?: return@forEach
+            val group = ((dependencyNode.get("groupId") as NodeList).singleOrNull() as Node?)?.text() ?: return@forEach
+            val artifact = ((dependencyNode.get("artifactId") as NodeList).singleOrNull() as Node?)?.text() ?: return@forEach
             val scope = ((dependencyNode.get("scope") as NodeList).singleOrNull() as Node?)
 
             // Leave if it's already compile
             if (scope?.text() == "compile") return@forEach
-            mapping[DependencyGA(g, a)]?.let {
-                when (it) {
+            mapping[DependencyGA(group, artifact)]?.let {
+                when (it.scope) {
                     KotlinUsageContext.MavenScope.COMPILE -> scope?.setValue("compile")
                     KotlinUsageContext.MavenScope.RUNTIME -> scope?.setValue("runtime")
                 }
             }
+            // When do we actually need to map dependencies?
         }
     }
 }

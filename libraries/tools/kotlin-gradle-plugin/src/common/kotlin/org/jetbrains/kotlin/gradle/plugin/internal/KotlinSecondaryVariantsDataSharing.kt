@@ -131,6 +131,7 @@ internal class KotlinProjectSharedDataProvider<T : KotlinShareableDataAsSecondar
     val files: FileCollection = lazyResolvedConfiguration.files
 
     fun getProjectDataFromDependencyOrNull(resolvedDependency: ResolvedDependencyResult): T? {
+        // Cinterop?
         val artifact = lazyResolvedConfiguration.getArtifacts(resolvedDependency).singleOrNull() ?: return null
         return artifact.parse()
     }

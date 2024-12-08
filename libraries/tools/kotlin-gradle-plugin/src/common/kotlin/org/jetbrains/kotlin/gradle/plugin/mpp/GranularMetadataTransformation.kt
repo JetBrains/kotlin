@@ -287,6 +287,14 @@ internal class GranularMetadataTransformation(
         }
     }
 
+    internal class MetadataTransformUklibException(
+        val unzippedUklib: File,
+        val targetFragmentAttribute: List<String>,
+        val availablePlatformFragments: List<String>,
+    ) : IllegalStateException(
+        "Couldn't resolve metadata compilation artifacts from $unzippedUklib failed. Needed fragment with attributes '${targetFragmentAttribute}', but only the following fragments were available $availablePlatformFragments"
+    )
+
     // FIXME: How do we ensure classpath ordering for PSM dependencies ???
     private fun processUklibDependency(
         compositeMetadataArtifact: ResolvedArtifactResult,
@@ -323,6 +331,14 @@ internal class GranularMetadataTransformation(
                 }
             }
         )
+
+        if (visibleFragments.isEmpty()) {
+            throw MetadataTransformUklibException(
+                unzippedUklib = compositeMetadataArtifact.file,
+                targetFragmentAttribute = uklibFragmentAttributes.sorted(),
+                availablePlatformFragments = uklibDependency.module.fragments.map { it.identifier }.sorted(),
+            )
+        }
 
         val moduleVersion = dependency.selected.moduleVersion!!
 
