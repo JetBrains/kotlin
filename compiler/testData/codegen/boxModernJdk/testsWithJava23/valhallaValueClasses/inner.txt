@@ -1,0 +1,51 @@
+@kotlin.Metadata
+public final class A$B {
+    // source: 'inner.kt'
+    private final @org.jetbrains.annotations.NotNull field parent: A
+    synthetic final field this$0: A
+    private final field y: int
+    public method <init>(p0: A, p1: int): void
+    public final @org.jetbrains.annotations.NotNull method getParent(): A
+    public final method getX(): int
+    public final method getY(): int
+    public final inner class A$B
+}
+
+@kotlin.Metadata
+public final class A {
+    // source: 'inner.kt'
+    private final field x: int
+    public method <init>(p0: int): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public final method x(): int
+    public final inner class A$B
+}
+
+@kotlin.Metadata
+synthetic final class Generated_Box_MainKt$main$2 {
+    // source: 'Generated_Box_Main.kt'
+    enclosing method Generated_Box_MainKt.main([Ljava/lang/String;)V
+    public final static field INSTANCE: Generated_Box_MainKt$main$2
+    inner (anonymous) class Generated_Box_MainKt$main$2
+    static method <clinit>(): void
+    method <init>(): void
+    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class Generated_Box_MainKt {
+    // source: 'Generated_Box_Main.kt'
+    inner (anonymous) class Generated_Box_MainKt$main$2
+    public final static @org.jetbrains.annotations.Nullable method main(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public synthetic static method main(p0: java.lang.String[]): void
+}
+
+@kotlin.Metadata
+public final class InnerKt {
+    // source: 'inner.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final inner class A$B
+}
