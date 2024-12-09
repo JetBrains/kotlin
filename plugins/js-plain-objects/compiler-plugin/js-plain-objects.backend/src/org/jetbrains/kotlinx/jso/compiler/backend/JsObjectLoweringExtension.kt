@@ -66,7 +66,7 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
                 substitutionMap.putAll(makeTypeParameterSubstitutionMap(parent, this))
             }
 
-            copyValueParametersFrom(declaration, substitutionMap)
+            copyParametersFrom(declaration, substitutionMap)
 
             extensionReceiverParameter = dispatchReceiverParameter
             dispatchReceiverParameter = null

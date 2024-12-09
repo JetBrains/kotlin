@@ -853,7 +853,11 @@ fun IrTypeParameter.copyToWithoutSuperTypes(
     this.index = index
 }
 
-fun IrFunction.copyValueParametersFrom(from: IrFunction, substitutionMap: Map<IrTypeParameterSymbol, IrType>) {
+fun IrFunction.copyParametersFrom(from: IrFunction) {
+    copyParametersFrom(from, makeTypeParameterSubstitutionMap(from, this))
+}
+
+fun IrFunction.copyParametersFrom(from: IrFunction, substitutionMap: Map<IrTypeParameterSymbol, IrType>) {
     parameters = parameters memoryOptimizedPlus from.parameters.map {
         it.copyTo(
             this,
@@ -866,11 +870,7 @@ fun IrFunction.copyValueParametersFrom(from: IrFunction, substitutionMap: Map<Ir
 fun IrFunction.copyParameterDeclarationsFrom(from: IrFunction) {
     assert(typeParameters.isEmpty())
     copyTypeParametersFrom(from)
-    copyValueParametersFrom(from)
-}
-
-fun IrFunction.copyValueParametersFrom(from: IrFunction) {
-    copyValueParametersFrom(from, makeTypeParameterSubstitutionMap(from, this))
+    copyParametersFrom(from)
 }
 
 fun IrTypeParametersContainer.copyTypeParameters(

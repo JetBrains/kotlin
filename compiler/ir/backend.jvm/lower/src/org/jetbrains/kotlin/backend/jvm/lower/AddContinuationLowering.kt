@@ -424,7 +424,7 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: JvmBackendContex
         function.copyTypeParametersFrom(this)
 
         val substitutionMap = makeTypeParameterSubstitutionMap(this, function)
-        function.copyValueParametersFrom(this, substitutionMap)
+        function.copyParametersFrom(this, substitutionMap)
 
         val continuationParameter = buildValueParameter(function) {
             kind = IrParameterKind.Regular
