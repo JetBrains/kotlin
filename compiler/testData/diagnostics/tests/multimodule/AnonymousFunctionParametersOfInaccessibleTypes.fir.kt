@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // MODULE: start
 // FILE: start.kt
 
@@ -16,9 +15,9 @@ fun withGenericParameter(arg: (InaccessibleGenericType<*>) -> Unit) {}
 // FILE: end.kt
 
 fun test() {
-    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>withConcreteParameter<!>(fun(<!MISSING_DEPENDENCY_CLASS!>arg<!>) {})
-    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>withGenericParameter<!>(fun(<!MISSING_DEPENDENCY_CLASS!>arg<!>) {})
+    <!MISSING_DEPENDENCY_CLASS!>withConcreteParameter<!>(fun(<!MISSING_DEPENDENCY_CLASS!>arg<!>) {})
+    <!MISSING_DEPENDENCY_CLASS!>withGenericParameter<!>(fun(<!MISSING_DEPENDENCY_CLASS!>arg<!>) {})
 
-    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>withConcreteParameter<!>(fun(arg: <!UNRESOLVED_REFERENCE!>InaccessibleConcreteType<!>) {})
-    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>withGenericParameter<!>(fun(arg: <!UNRESOLVED_REFERENCE!>InaccessibleGenericType<!><*>) {})
+    <!MISSING_DEPENDENCY_CLASS!>withConcreteParameter<!>(fun(arg: <!UNRESOLVED_REFERENCE!>InaccessibleConcreteType<!>) {})
+    <!MISSING_DEPENDENCY_CLASS!>withGenericParameter<!>(fun(arg: <!UNRESOLVED_REFERENCE!>InaccessibleGenericType<!><*>) {})
 }

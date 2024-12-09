@@ -1,5 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: FIR2IR
 // WITH_STDLIB
 // ISSUE: KT-73011
 
@@ -18,5 +17,5 @@ fun test1(): (Any?) -> Unit =
 
 fun test2(): (Any?) -> Unit =
     id(run {
-        ::<!UNRESOLVED_REFERENCE!>foo<!> // UNRESOLVED_REFERENCE
+        ::foo // UNRESOLVED_REFERENCE
     })

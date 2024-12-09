@@ -1,5 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: FIR2IR
 // ISSUE: KT-73031
 
 fun foo(reason: String): String = ""
@@ -13,8 +12,8 @@ fun unitFun() {}
 
 fun main() {
     lambdaWithExpectedReturnTypeUnit {
-        <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>myLet<!> {
-            ::<!UNRESOLVED_REFERENCE!>foo<!> // UNRESOLVED_REFERENCE in K2, but ok in K1
+        myLet {
+            ::foo // UNRESOLVED_REFERENCE in K2, but ok in K1
         } ?: unitFun()
     }
 }

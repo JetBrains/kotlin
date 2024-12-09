@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 import kotlin.reflect.KClass
 
 enum class SomeEnum {
@@ -10,7 +9,7 @@ annotation class MyAnnotation(
     val intValue: Int,
     val stringValue: String,
     val enumValue: SomeEnum,
-    val kClasses: <!PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER_WARNING!>Array<out KClass<*>><!>,
+    val kClasses: <!PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER_ERROR!>Array<out KClass<*>><!>,
     val annotation: MyOtherAnnotation
 )
 annotation class MyOtherAnnotation(val intValue: Int, val stringValue: String)

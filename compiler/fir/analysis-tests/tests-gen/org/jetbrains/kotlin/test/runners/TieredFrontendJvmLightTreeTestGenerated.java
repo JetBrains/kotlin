@@ -10561,17 +10561,6 @@ public class TieredFrontendJvmLightTreeTestGenerated extends AbstractTieredFront
       }
 
       @Nested
-      @TestMetadata("compiler/testData/diagnostics/tests/inference/callableReferences")
-      @TestDataPath("$PROJECT_ROOT")
-      public class CallableReferences {
-        @Test
-        @TestMetadata("fromExpectedTypeInLambda.kt")
-        public void testFromExpectedTypeInLambda() {
-          runTest("compiler/testData/diagnostics/tests/inference/callableReferences/fromExpectedTypeInLambda.kt");
-        }
-      }
-
-      @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes")
       @TestDataPath("$PROJECT_ROOT")
       public class CapturedTypes {
@@ -11056,17 +11045,6 @@ public class TieredFrontendJvmLightTreeTestGenerated extends AbstractTieredFront
         @TestMetadata("returnAsLastStatementInLambda.kt")
         public void testReturnAsLastStatementInLambda() {
           runTest("compiler/testData/diagnostics/tests/inference/nothingType/returnAsLastStatementInLambda.kt");
-        }
-      }
-
-      @Nested
-      @TestMetadata("compiler/testData/diagnostics/tests/inference/operators")
-      @TestDataPath("$PROJECT_ROOT")
-      public class Operators {
-        @Test
-        @TestMetadata("elvisWithExpectedTypeComplex.kt")
-        public void testElvisWithExpectedTypeComplex() {
-          runTest("compiler/testData/diagnostics/tests/inference/operators/elvisWithExpectedTypeComplex.kt");
         }
       }
 

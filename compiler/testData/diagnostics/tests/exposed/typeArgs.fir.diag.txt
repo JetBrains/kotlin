@@ -7,7 +7,7 @@
 
 /module_a_typeArgs.fir.kt:(418,421): error: 'public' function exposes its 'internal' return type argument 'My'.
 
-/module_a_typeArgs.fir.kt:(539,545): warning: 'public' generic exposes its 'internal' parameter bound type 'Inter'. This will be prohibited in the future.
+/module_a_typeArgs.fir.kt:(539,545): error: 'public' generic exposes its 'internal' parameter bound type 'Inter'.
 
 /module_a_typeArgs.fir.kt:(584,589): error: 'public' function exposes its 'internal' return type argument 'Inter'.
 // -- Module: <b> --

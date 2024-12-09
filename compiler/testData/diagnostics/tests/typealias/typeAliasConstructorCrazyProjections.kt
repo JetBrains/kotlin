@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // NI_EXPECTED_FILE
 
 class Bound<X, Y : X>(val x: X, val y: Y)

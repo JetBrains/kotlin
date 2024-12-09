@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 
 package test
 
@@ -25,7 +24,7 @@ class Generic<T1> {
 
     inner class Test1 : GI<T1>()
     inner class Test2 : <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>GIInt<!>()
-    inner class Test3 : <!CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION_WARNING!>GIStar<!>()
+    inner class Test3 : <!CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION_ERROR!>GIStar<!>()
     inner class Test3a : test.Generic<<!PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE!>*<!>>.Inner()
 
     inner class Test4<T2> : GG<T1, T2>()

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // RENDER_DIAGNOSTICS_FULL_TEXT
 private interface My
 
@@ -22,5 +21,4 @@ public class Derived<<!EXPOSED_TYPE_PARAMETER_BOUND!>T: My<!>>(<!EXPOSED_PARAMET
 
     fun <!EXPOSED_RECEIVER_TYPE!>My<!>.<!EXPOSED_FUNCTION_RETURN_TYPE!>bar<!>(): My = this
 }
-
 

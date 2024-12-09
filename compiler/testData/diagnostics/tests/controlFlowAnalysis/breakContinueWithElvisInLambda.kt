@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// LATEST_LV_DIFFERENCE
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // WITH_STDLIB
 // ISSUE: KT-67624
@@ -36,7 +35,7 @@ fun test_1_continue() {
 fun test_2_continue() {
     while (true) {
         inlineRun {
-            val result = it ?: <!UNSUPPORTED_FEATURE!>continue<!>
+            val result = it ?: continue
         }
     }
 }
@@ -62,7 +61,7 @@ fun test_1_break() {
 fun test_2_break() {
     while (true) {
         inlineRun {
-            val result = it ?: <!UNSUPPORTED_FEATURE!>break<!>
+            val result = it ?: break
         }
     }
 }
@@ -74,5 +73,4 @@ fun test_3_break() {
         }
     }
 }
-
 

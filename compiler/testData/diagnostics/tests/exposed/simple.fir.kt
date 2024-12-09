@@ -1,12 +1,11 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // RENDER_DIAGNOSTICS_FULL_TEXT
 private interface My
 
 private open class Base
 
 public interface Your: <!EXPOSED_SUPER_INTERFACE!>My<!> {
-    fun <T: <!EXPOSED_TYPE_PARAMETER_BOUND_DEPRECATION_WARNING!>Base<!>> foo(): T
+    fun <T: <!EXPOSED_TYPE_PARAMETER_BOUND!>Base<!>> foo(): T
 }
 
 public class Derived<T: <!EXPOSED_TYPE_PARAMETER_BOUND!>My<!>>(<!EXPOSED_PARAMETER_TYPE!>val x: My<!>): <!EXPOSED_SUPER_CLASS!>Base<!>() {
@@ -22,5 +21,4 @@ public class Derived<T: <!EXPOSED_TYPE_PARAMETER_BOUND!>My<!>>(<!EXPOSED_PARAMET
 
     fun <!EXPOSED_RECEIVER_TYPE!>My<!>.<!EXPOSED_FUNCTION_RETURN_TYPE!>bar<!>(): My = this
 }
-
 

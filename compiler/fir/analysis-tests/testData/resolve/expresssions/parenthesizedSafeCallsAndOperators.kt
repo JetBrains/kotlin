@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-68834
-// LATEST_LV_DIFFERENCE
 class Foo {
     var alias: Foo = this
 
@@ -31,11 +30,11 @@ fun huh(arg: Foo?) {
     (arg?.alias)[42] 
     (arg?.alias)[42] = arg
     (arg?.alias) += "" 
-    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(arg?.<!VARIABLE_EXPECTED!>alias<!>)<!>++
-    ++<!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(arg?.<!VARIABLE_EXPECTED!>alias<!>)<!>
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(arg?.<!VARIABLE_EXPECTED!>alias<!>)<!>++
+    ++<!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(arg?.<!VARIABLE_EXPECTED!>alias<!>)<!>
     (arg?.alias)("") 
     (arg?.alias)[42] += ""
     (arg?.alias[42]) += ""
-    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(arg?.alias[42])<!>++
-    ++<!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(arg?.alias[42])<!>
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(arg?.alias[42])<!>++
+    ++<!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(arg?.alias[42])<!>
 }

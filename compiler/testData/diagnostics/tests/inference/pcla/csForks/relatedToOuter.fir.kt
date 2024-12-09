@@ -1,4 +1,3 @@
-// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 class Controller<T> {
     fun yield(t: T): Boolean = true
@@ -16,9 +15,9 @@ fun <F> Controller<F>.baz(a: A<F>, f: F) {}
 fun <T> bar(a: A<T>, w: T) {
     generate {
         if (a is B) {
-            baz(<!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>a<!>, 1)
-            baz(a, w)
-            <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>baz(<!ARGUMENT_TYPE_MISMATCH!>a<!>, <!ARGUMENT_TYPE_MISMATCH!>""<!>)<!>
+            baz(a, 1)
+            baz(a, <!ARGUMENT_TYPE_MISMATCH!>w<!>)
+            baz(a, <!ARGUMENT_TYPE_MISMATCH!>""<!>)
         }
     }
 
@@ -34,11 +33,11 @@ fun <T> bar(a: A<T>, w: T) {
 
     generate {
         if (a is B) {
-            baz(<!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>a<!>, 1)
+            baz(a, 1)
         }
 
         if (a is B) {
-            <!ARGUMENT_TYPE_MISMATCH!>baz(a, w)<!>
+            baz(a, <!ARGUMENT_TYPE_MISMATCH!>w<!>)
         }
     }
 

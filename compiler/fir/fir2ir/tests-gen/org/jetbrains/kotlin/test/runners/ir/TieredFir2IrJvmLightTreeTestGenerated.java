@@ -109,6 +109,17 @@ public class TieredFir2IrJvmLightTreeTestGenerated extends AbstractTieredFir2IrJ
     @TestDataPath("$PROJECT_ROOT")
     public class Inference {
       @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/inference/callableReferences")
+      @TestDataPath("$PROJECT_ROOT")
+      public class CallableReferences {
+        @Test
+        @TestMetadata("fromExpectedTypeInLambda.kt")
+        public void testFromExpectedTypeInLambda() {
+          runTest("compiler/testData/diagnostics/tests/inference/callableReferences/fromExpectedTypeInLambda.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/inference/coercionToUnit")
       @TestDataPath("$PROJECT_ROOT")
       public class CoercionToUnit {
@@ -116,6 +127,17 @@ public class TieredFir2IrJvmLightTreeTestGenerated extends AbstractTieredFir2IrJ
         @TestMetadata("coercionToUnitWithNothingType.kt")
         public void testCoercionToUnitWithNothingType() {
           runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/coercionToUnitWithNothingType.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/inference/operators")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Operators {
+        @Test
+        @TestMetadata("elvisWithExpectedTypeComplex.kt")
+        public void testElvisWithExpectedTypeComplex() {
+          runTest("compiler/testData/diagnostics/tests/inference/operators/elvisWithExpectedTypeComplex.kt");
         }
       }
     }

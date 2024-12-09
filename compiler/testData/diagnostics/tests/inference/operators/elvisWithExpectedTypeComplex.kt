@@ -1,5 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: FIR2IR
 // ISSUE: KT-73031
 
 fun foo(reason: String): String = ""

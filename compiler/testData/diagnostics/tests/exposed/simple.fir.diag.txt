@@ -1,6 +1,6 @@
 /simple.fir.kt:(157,159): error: 'public' sub-interface exposes its 'private-in-file' supertype 'My'.
 
-/simple.fir.kt:(174,178): warning: 'public' generic exposes its 'private-in-file' parameter bound type 'Base'. This will be prohibited in the future.
+/simple.fir.kt:(174,178): error: 'public' generic exposes its 'private-in-file' parameter bound type 'Base'.
 
 /simple.fir.kt:(216,218): error: 'public' generic exposes its 'private-in-file' parameter bound type 'My'.
 
