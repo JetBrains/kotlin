@@ -132,6 +132,7 @@ if (!project.hasProperty("versions.kotlin-native")) {
 }
 
 val irCompilerModules = arrayOf(
+    ":native:base",
     ":compiler:ir.tree",
     ":compiler:ir.serialization.common",
     ":compiler:ir.serialization.js",
