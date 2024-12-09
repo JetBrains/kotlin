@@ -739,7 +739,9 @@ class CoroutineTransformerMethodVisitor(
                 )
             })
 
-            if (spillableVariable.slot !in suspendLambdaParameters) {
+            // skip restoring this
+            val isInstanceThisVariable = !isStatic(methodNode.access) && spillableVariable.slot == 0
+            if (spillableVariable.slot !in suspendLambdaParameters && !isInstanceThisVariable) {
                 // restore variable after suspension call
                 insert(suspension.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
                     load(continuationIndex, AsmTypes.OBJECT_TYPE)
