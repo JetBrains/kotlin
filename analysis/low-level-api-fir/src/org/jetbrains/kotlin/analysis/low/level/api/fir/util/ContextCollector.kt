@@ -114,7 +114,7 @@ object ContextCollector {
         preferBodyContext: Boolean = true,
     ): Context? {
         val designation = computeDesignation(file, targetElement)
-        val shouldTriggerBodyAnalysis = true // !partiallyResolveTargetElementIfPossible(resolveSession, designation, targetElement)
+        val shouldTriggerBodyAnalysis = !partiallyResolveTargetElementIfPossible(resolveSession, designation, targetElement)
 
         val acceptedElements = targetElement.parentsWithSelf.toSet()
 
@@ -625,12 +625,8 @@ private class ContextCollectorVisitor(
 
                 context.forConstructorBody(constructor, holder.session) {
                     processList(constructor.valueParameters)
-
                     dumpContext(constructor, ContextKind.BODY)
-
-                    onActive {
-                        process(constructor.body)
-                    }
+                    processBody(constructor)
                 }
 
                 onActive {
@@ -675,12 +671,8 @@ private class ContextCollectorVisitor(
             context.withSimpleFunction(simpleFunction, holder.session) {
                 context.forFunctionBody(simpleFunction, holder) {
                     processList(simpleFunction.valueParameters)
-
                     dumpContext(simpleFunction, ContextKind.BODY)
-
-                    onActive {
-                        process(simpleFunction.body)
-                    }
+                    processBody(simpleFunction)
                 }
 
                 onActive {
@@ -826,7 +818,7 @@ private class ContextCollectorVisitor(
 
                 onActive {
                     anonymousInitializer.performBodyAnalysis()
-                    processChildren(anonymousInitializer)
+                    processBody(anonymousInitializer)
                 }
             }
         }
@@ -937,13 +929,33 @@ private class ContextCollectorVisitor(
         }
     }
 
-    private fun FirElementWithResolveState.performBodyAnalysis() {
-        if (!shouldTriggerBodyAnalysis && this is FirDeclaration && this.attributes.any { it is LLPartialBodyAnalysisState }) {
+    private fun FirDeclaration.performBodyAnalysis() {
+        if (!shouldTriggerBodyAnalysis && partialBodyAnalysisState != null) {
             // The declaration body is partially resolved as the caller guaranteed
             return
         }
 
         lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+    }
+
+    private fun processBody(declaration: FirDeclaration) {
+        if (!isActive) {
+            return
+        }
+
+        val snapshot = declaration.partialBodyAnalysisState?.analysisStateSnapshot
+        if (snapshot != null) {
+            for (statement in snapshot.result.statements) {
+                statement.accept(this)
+                if (!isActive) {
+                    break
+                }
+            }
+
+            return
+        }
+
+        declaration.body?.accept(this)
     }
 
     /**
