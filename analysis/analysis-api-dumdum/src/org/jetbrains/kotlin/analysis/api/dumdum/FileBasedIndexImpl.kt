@@ -12,7 +12,7 @@ private fun <K, V> ID<K, V>.indexValueDescriptor(): ValueDescriptor<Map<K, Box<V
     ValueDescriptor("indexValue${name}", Serializer.dummy())
 
 fun interface FileLocator {
-    fun locate(dodcumentId: DocumentId<*>): VirtualFile
+    fun locate(dodcumentId: DocumentId<*>): List<VirtualFile>
 }
 
 fun Index.fileBased(fileLocator: FileLocator): FileBasedIndex = let { index ->
@@ -27,7 +27,7 @@ fun Index.fileBased(fileLocator: FileLocator): FileBasedIndex = let { index ->
             val keyDescriptor = indexId.asKeyDescriptor()
             return index
                 .documents(IndexKey(keyDescriptor, dataKey))
-                .filter { filter.contains(fileLocator.locate(it)) }
+                .filter { fileLocator.locate(it).any(filter::contains) }
                 .mapNotNull { documentId ->
                     index
                         .value(documentId, valueDescriptor)
@@ -47,14 +47,14 @@ fun Index.fileBased(fileLocator: FileLocator): FileBasedIndex = let { index ->
                 .filter { k ->
                     index
                         .documents(IndexKey(keyDescriptor, k))
-                        .any { filter.contains(fileLocator.locate(it)) }
+                        .any { fileLocator.locate(it).any(filter::contains) }
                 }
                 .all(processor::process)
         }
     }
 }
 
-fun fileBasedIndexesUpdates(fileContent: FileContent, extensions: List<FileBasedIndexExtension<*, *>>): List<IndexUpdate<*>> =
+fun fileBasedIndexesUpdates(documentId: DocumentId<*>, fileContent: FileContent, extensions: List<FileBasedIndexExtension<*, *>>): List<IndexUpdate<*>> =
     extensions.map { extension ->
         @Suppress("UNCHECKED_CAST")
         extension as FileBasedIndexExtension<Any, Any?>
@@ -62,7 +62,7 @@ fun fileBasedIndexesUpdates(fileContent: FileContent, extensions: List<FileBased
         val map = extension.indexer.map(fileContent).mapValues { (_, v) -> Box(v) }
         val keyDescriptor = indexId.asKeyDescriptor()
         IndexUpdate(
-            documentId = DocumentId(VirtualFileDocumentIdDescriptor, fileContent.file),
+            documentId = documentId,
             valueType = indexId.indexValueDescriptor(),
             value = map,
             keys = map.keys.map { key ->

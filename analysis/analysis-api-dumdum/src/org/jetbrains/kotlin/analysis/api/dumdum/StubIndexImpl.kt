@@ -18,9 +18,6 @@ data class StubValue(
 val StubIndexValueDescriptor: ValueDescriptor<StubValue> =
     ValueDescriptor("stub", Serializer.dummy())
 
-val VirtualFileDocumentIdDescriptor: DocumentIdDescriptor<VirtualFile> =
-    DocumentIdDescriptor("virtualFile", Serializer.dummy())
-
 fun <K> ID<K, *>.asKeyDescriptor(): KeyDescriptor<K> =
     KeyDescriptor(name, Serializer.dummy())
 
@@ -39,7 +36,7 @@ fun Index.stubIndex(fileLocator: FileLocator): StubIndex = let { index ->
                         dataKey
                     )
                 )
-                .map(fileLocator::locate)
+                .flatMap(fileLocator::locate)
                 .filter { scope.contains(it) }
                 .iterator()
 
@@ -58,7 +55,7 @@ fun Index.stubIndex(fileLocator: FileLocator): StubIndex = let { index ->
                         key
                     )
                 )
-                .filter { fileLocator.locate(it) in scope }
+                .filter { fileLocator.locate(it).any(scope::contains)  }
                 .mapNotNull { index.value(it, StubIndexValueDescriptor) }
                 .flatMap { stubValue ->
                     stubValue.index[indexKey]?.get(key as Any)?.map { stubId ->
@@ -70,12 +67,12 @@ fun Index.stubIndex(fileLocator: FileLocator): StubIndex = let { index ->
     }
 }
 
-fun stubIndexesUpdate(virtualFile: VirtualFile, tree: StubTree): IndexUpdate<*> {
+fun stubIndexesUpdate(documentId: DocumentId<*>, tree: StubTree): IndexUpdate<*> {
     val map = tree.indexStubTree { indexKey ->
         HashingStrategy.canonical()
     }
     return IndexUpdate(
-        documentId = DocumentId(VirtualFileDocumentIdDescriptor, virtualFile),
+        documentId = documentId,
         valueType = StubIndexValueDescriptor,
         value = StubValue(tree, map),
         keys = map.flatMap { (stubIndexKey, stubIndex) ->

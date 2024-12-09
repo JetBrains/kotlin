@@ -168,15 +168,22 @@ fun main() {
                 class Foo {
                     fun foo() { Bar().bar() }
                 }
+                
+                fun foo() { }
 
                 """.trimIndent(),
 
                 "bar.kt" to """
+                    
                 package bar
                 import foo.Foo
+                import foo.foo 
+                
                 class Bar {
                     fun bar() { Foo().foo() }
                 }
+                
+                fun bar() { foo() }
                 
                 """.trimIndent()
             )
@@ -191,10 +198,14 @@ fun main() {
 
             val psiManager = PsiManager.getInstance(project)
             val psiFiles = virtualFiles.map { psiManager.findFile(it)!! }
+            
+            val virtualFileDocumentIdDescriptor: DocumentIdDescriptor<VirtualFile> =
+                DocumentIdDescriptor("virtualFile", Serializer.dummy())            
 
             val index = inMemoryIndex(
                 psiFiles.flatMap { psiFile ->
                     indexFile(
+                        documentId = DocumentId(virtualFileDocumentIdDescriptor, psiFile.virtualFile),
                         file = psiFile,
                         extensions = listOf(
                             KotlinJvmModuleAnnotationsIndex(),
@@ -345,7 +356,7 @@ fun main() {
 
                 val fileLocator = FileLocator { documentId ->
                     @Suppress("UNCHECKED_CAST")
-                    (documentId as DocumentId<VirtualFile>).value
+                    listOf((documentId as DocumentId<VirtualFile>).value)
                 }
                 val stubIndex: StubIndex = index.stubIndex(fileLocator)
                 val fileBasedIndex: FileBasedIndex = index.fileBased(fileLocator)
@@ -409,10 +420,12 @@ fun main() {
 }
 
 fun indexFile(
+    documentId: DocumentId<*>,
     file: PsiFile,
     extensions: List<FileBasedIndexExtension<*, *>>,
 ): List<IndexUpdate<*>> =
     fileBasedIndexesUpdates(
+        documentId = documentId,
         fileContent = FileContentImpl.createByFile(file.virtualFile, file.project),
         extensions = extensions
     ) +
@@ -420,7 +433,7 @@ fun indexFile(
                 val stubElement = stubFileElementType.builder.buildStubTree(file)
                 listOf(
                     stubIndexesUpdate(
-                        virtualFile = file.virtualFile,
+                        documentId = documentId,
                         tree = StubTree(stubElement as PsiFileStub<*>)
                     )
                 )
