@@ -30,9 +30,9 @@ context(`_`: String, `_`: Int)
 fun multipleUnnamedQuoted() {}
 
 context(x: String)
-inline fun <reified x> noClashWithTypeParam(b: x){}
+inline fun <reified x> noClashWithTypeParam(b: x) {}
 
-context(x: String)
+context(x: Int)
 fun noClashInLocalFun() {
     fun local(x: String) {
         x.length

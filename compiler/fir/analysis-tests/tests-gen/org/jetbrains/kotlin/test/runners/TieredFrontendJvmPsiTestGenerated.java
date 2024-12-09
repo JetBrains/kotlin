@@ -28562,6 +28562,12 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
           }
 
           @Test
+          @TestMetadata("emptyContextName.kt")
+          public void testEmptyContextName() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/emptyContextName.kt");
+          }
+
+          @Test
           @TestMetadata("emptyListOfContextParameters.kt")
           public void testEmptyListOfContextParameters() {
             runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/emptyListOfContextParameters.kt");

@@ -27,10 +27,10 @@ val b: context(B)(String) -> String
     }
 
 fun test(){
-    with(A()){
+    with(A()) {
         a(B(), "")
     }
-    with(B()){
+    with(B()) {
         b(B(), "")
     }
 }

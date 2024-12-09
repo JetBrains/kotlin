@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextParameters
 
 class A {
@@ -6,7 +6,7 @@ class A {
 }
 
 class B {
-    fun foo(b: String): String { return b }
+    fun bar(b: String): String { return b }
 }
 
 context(ctx: T)
@@ -25,8 +25,14 @@ fun test2() {
 context(_: A, b: B, `_`: Int)
 fun test3() {
     implicit<A>().foo("")
-    b.foo("")
+    b.bar("")
     implicit<Int>().inc()
+}
+
+context(_ : A, `_`: B)
+fun test4() {
+    <!UNRESOLVED_REFERENCE!>_<!>.foo("")
+    <!UNRESOLVED_REFERENCE!>_<!>.bar("")
 }
 
 context(_: A)
@@ -39,8 +45,16 @@ val property2: String
 
 context(_: A, b: B, `_`: Int)
 val property3: String
-    get(){
-        b.foo("")
+    get() {
+        b.bar("")
         implicit<Int>().inc()
         return implicit<A>().foo("")
+    }
+
+context(_ : A, `_`: B)
+val property4: String
+    get() {
+        <!UNRESOLVED_REFERENCE!>_<!>.foo("")
+        <!UNRESOLVED_REFERENCE!>_<!>.bar("")
+        return ""
     }

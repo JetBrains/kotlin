@@ -5,7 +5,7 @@ fun <A, R> context(context: A, block: context(A) () -> R): R = block(context)
 
 class A {
     fun foo(a: String): String { return a }
-    fun usage1(){
+    fun usage1() {
         prop1
         prop2
     }
@@ -22,13 +22,13 @@ val prop2: String
     get() = c.foo("")
 
 fun usage2(c: A){
-    context(c){
+    context(c) {
         prop1
         prop2
     }
 }
 
-fun usage3(c: A){
+fun usage3(c: A) {
     with(c) {
         prop1
         prop2
@@ -36,7 +36,7 @@ fun usage3(c: A){
 }
 
 context(c: A)
-fun usage4(){
+fun usage4() {
     prop1
     prop2
 }

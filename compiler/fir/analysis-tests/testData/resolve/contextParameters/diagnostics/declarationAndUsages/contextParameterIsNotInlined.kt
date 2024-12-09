@@ -8,7 +8,7 @@ class A {
 fun noInlineRun(f: (A) -> Unit) { f(A()) }
 
 context(a: (A) -> Unit)
-<!NOTHING_TO_INLINE!>inline<!> fun test1(){
+<!NOTHING_TO_INLINE!>inline<!> fun test1() {
     noInlineRun(a)
 }
 
@@ -33,7 +33,7 @@ inline var bar: String
     }
 
 fun usage() {
-    with({a: A ->  }){
+    with({a: A ->  }) {
         test1()
         foo
         bar

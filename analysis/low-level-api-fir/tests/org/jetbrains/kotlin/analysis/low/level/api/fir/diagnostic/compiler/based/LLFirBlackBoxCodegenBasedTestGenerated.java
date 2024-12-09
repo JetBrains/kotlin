@@ -10313,6 +10313,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
     }
 
     @Test
+    @TestMetadata("contextParameterToDefaultArgument.kt")
+    public void testContextParameterToDefaultArgument() {
+      runTest("compiler/testData/codegen/box/contextParameters/contextParameterToDefaultArgument.kt");
+    }
+
+    @Test
     @TestMetadata("sameNameWithGlobalProperty.kt")
     public void testSameNameWithGlobalProperty() {
       runTest("compiler/testData/codegen/box/contextParameters/sameNameWithGlobalProperty.kt");

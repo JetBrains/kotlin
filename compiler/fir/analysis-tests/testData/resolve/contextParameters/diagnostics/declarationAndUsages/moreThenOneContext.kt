@@ -25,10 +25,10 @@ val property1: String
         return b.foo("")
     }
 
-fun inTypePosition(a: context(A, B) ()-> Unit){}
+fun inTypePosition(a: context(A, B) ()-> Unit) {}
 
 context(_: A, b: B)
-fun test2(){
+fun test2() {
     implicit<A>().foo("")
     b.foo("")
 }
@@ -41,7 +41,7 @@ val property2: String
     }
 
 fun usage1() {
-    with(A()){
+    with(A()) {
         with(B()) {
             test1()
             test2()

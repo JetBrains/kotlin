@@ -15,7 +15,7 @@ var prop1: String
     get() = c.foo("")
     set(value) { c.foo("") }
 
-fun usage(){
+fun usage() {
     <!NO_CONTEXT_ARGUMENT!>test<!>()
     <!NO_CONTEXT_ARGUMENT!>test<!>(<!TOO_MANY_ARGUMENTS!>A()<!>)
     <!NO_CONTEXT_ARGUMENT!>prop1<!>

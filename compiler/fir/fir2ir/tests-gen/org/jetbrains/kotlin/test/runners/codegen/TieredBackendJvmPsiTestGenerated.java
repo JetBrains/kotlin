@@ -23234,12 +23234,6 @@ public class TieredBackendJvmPsiTestGenerated extends AbstractTieredBackendJvmPs
           }
 
           @Test
-          @TestMetadata("emptyContextName.kt")
-          public void testEmptyContextName() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/emptyContextName.kt");
-          }
-
-          @Test
           @TestMetadata("inFunctionDeclaration.kt")
           public void testInFunctionDeclaration() {
             runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/inFunctionDeclaration.kt");
