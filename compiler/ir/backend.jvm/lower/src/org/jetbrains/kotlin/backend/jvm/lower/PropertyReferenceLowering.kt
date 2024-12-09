@@ -97,9 +97,6 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
     private val IrField.fakeGetterSignature: String
         get() = "${JvmAbi.getterName(name.asString())}()${context.defaultMethodSignatureMapper.mapReturnType(this)}"
 
-    private val IrDeclaration.parentsWithSelf: Sequence<IrDeclaration>
-        get() = generateSequence(this) { it.parent as? IrDeclaration }
-
     private fun IrLocalDelegatedPropertyReference.findClassOwner(): IrClass {
         val originalBeforeInline = originalBeforeInline
         if (originalBeforeInline != null) {
