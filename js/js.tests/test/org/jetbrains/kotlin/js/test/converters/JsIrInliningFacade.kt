@@ -33,7 +33,7 @@ class JsIrInliningFacade(
         }
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val phases = JsPreSerializationLoweringPhasesProvider.lowerings(configuration)
+        val phases = JsPreSerializationLoweringPhasesProvider.lowerings()
         val phaseConfig = createTestPhaseConfig(testServices, module)
 
         val transformedModule = PhaseEngine(
@@ -43,7 +43,6 @@ class JsIrInliningFacade(
         ).runPreSerializationLoweringPhases(
             inputArtifact.irModuleFragment,
             JsPreSerializationLoweringPhasesProvider,
-            configuration
         )
 
         // The returned artifact will be stored in dependencyProvider instead of `inputArtifact`, with same kind=BackendKinds.IrBackend

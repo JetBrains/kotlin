@@ -9,7 +9,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
-import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.cli.common.*
@@ -419,14 +418,14 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         if (arguments.irProduceKlibDir || arguments.irProduceKlibFile) {
             val transformedResult = if (!arguments.wasm) {
                 val phaseConfig = createPhaseConfig(arguments).also {
-                    if (arguments.listPhases) it.list(JsPreSerializationLoweringPhasesProvider.lowerings(configuration))
+                    if (arguments.listPhases) it.list(JsPreSerializationLoweringPhasesProvider.lowerings())
                 }
 
                 PhaseEngine(
                     phaseConfig,
                     PhaserState(),
                     JsPreSerializationLoweringContext(fir2IrActualizedResult.irBuiltIns, configuration),
-                ).runPreSerializationLoweringPhases(fir2IrActualizedResult, JsPreSerializationLoweringPhasesProvider, configuration)
+                ).runPreSerializationLoweringPhases(fir2IrActualizedResult, JsPreSerializationLoweringPhasesProvider)
             } else {
                 fir2IrActualizedResult
             }
