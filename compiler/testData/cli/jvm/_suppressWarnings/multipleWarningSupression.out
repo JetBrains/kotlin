@@ -1,0 +1,4 @@
+compiler/testData/cli/jvm/_suppressWarnings/src/warningSuppression.kt:3:16: warning: [REDUNDANT_PROJECTION] Projection is redundant: the corresponding type parameter of 'Out<out kotlin.Int>' has the same variance.
+fun foo(x: Out<out Int>): Out<String> {
+               ^^^
+OK

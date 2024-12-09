@@ -1,4 +1,0 @@
-$TESTDATA_DIR$/fileClassAndMultifileClassClash1.kt
-$TESTDATA_DIR$/fileClassAndMultifileClassClash2.kt
--d
-$TEMP_DIR$

@@ -7,7 +7,7 @@ dependencies {
     implementation(intellijRuntimeAnnotations())
 }
 
-project.configureJvmToolchain(JdkMajorVersion.JDK_17_0)
+project.configureJvmToolchain(JdkMajorVersion.JDK_21_0)
 
 tasks.withType<JavaCompile> {
     // deprecating a package is a `@Deprecated annotation has no effect on packages` warning in Java,

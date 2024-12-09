@@ -26,7 +26,7 @@ sourceSets {
 projectTest {
     dependsOn(":dist")
     workingDir = rootDir
-    javaLauncher.set(getToolchainLauncherFor(JdkMajorVersion.JDK_17_0))
+    javaLauncher.set(getToolchainLauncherFor(JdkMajorVersion.JDK_21_0))
     jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
 }
 

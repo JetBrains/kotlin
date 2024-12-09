@@ -507,7 +507,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
     functionalTestCompilation.compileTaskProvider.configure {
         with(this as KotlinCompile) {
-            kotlinJavaToolchain.toolchain.use(project.getToolchainLauncherFor(JdkMajorVersion.JDK_17_0))
+            kotlinJavaToolchain.toolchain.use(project.getToolchainLauncherFor(JdkMajorVersion.JDK_21_0))
         }
     }
     functionalTestCompilation.associateWith(kotlin.target.compilations.getByName(gradlePluginVariantForFunctionalTests.sourceSetName))
