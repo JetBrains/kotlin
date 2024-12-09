@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -55,9 +56,14 @@ class KlibSyntheticAccessorGenerator(
             accessor.copyValueParametersToStatic(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
             accessor.returnType = source.returnType.remapTypeParameters(klass, accessor)
 
-            accessor.body = context.irFactory.createExpressionBody(
+            accessor.body = context.irFactory.createBlockBody(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                createConstructorCall(accessor, source.symbol)
+                listOf(
+                    IrReturnImpl(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                        context.irBuiltIns.nothingType, accessor.symbol, createConstructorCall(accessor, source.symbol)
+                    )
+                )
             )
         }
     }
@@ -159,7 +165,10 @@ class KlibSyntheticAccessorGenerator(
                 type = innerClassThisReceiver.type // This is the type of the inner class.
             )
             returnType = expression.type // This is the type of the outer class.
-            body = context.irFactory.createExpressionBody(startOffset, startOffset, expression)
+            body = context.irFactory.createBlockBody(
+                startOffset, startOffset,
+                listOf(IrReturnImpl(startOffset, endOffset, context.irBuiltIns.nothingType, symbol, expression))
+            )
         }
     }
 }
