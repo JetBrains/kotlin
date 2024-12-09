@@ -6977,6 +6977,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         }
 
         @Test
+        @TestMetadata("nestedEquals.kt")
+        public void testNestedEquals() {
+          runTest("compiler/testData/codegen/boxModernJdk/testsWithJava23/valhallaValueClasses/nestedEquals.kt");
+        }
+
+        @Test
         @TestMetadata("recursive.kt")
         public void testRecursive() {
           runTest("compiler/testData/codegen/boxModernJdk/testsWithJava23/valhallaValueClasses/recursive.kt");

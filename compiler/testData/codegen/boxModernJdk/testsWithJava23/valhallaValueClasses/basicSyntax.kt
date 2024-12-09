@@ -5,7 +5,6 @@
 // IGNORE_BACKEND: ANDROID
 // IGNORE_DEXING
 // CHECK_BYTECODE_LISTING
-// CHECK_BYTECODE_TEXT
 
 value class A1(val x: Int)
 value class A2(val x: Int, val y: Int)
@@ -31,12 +30,9 @@ private fun multipleField() {
     val a = A2(2, 3)
     val a_ = A2_(2, 3)
     require(a == A2(2, 3)) { a.toString() }
+    require(a as Any? === A2(2, 3) as Any?) { a.toString() }
     require(a.x == a_.x) { a.x.toString() }
     require(a.y == a_.y) { a.y.toString() }
     require(a.toString() == a_.toString().replace("_", "")) { a.toString() }
     require(a.hashCode() == a_.hashCode()) { "${a.hashCode()} ${a_.hashCode()}" }
 }
-
-// `equals` in valhalla value classes just calls === which compares by components itself
-// @A1.class:
-// 0 INVOKE.*[eE]qual
