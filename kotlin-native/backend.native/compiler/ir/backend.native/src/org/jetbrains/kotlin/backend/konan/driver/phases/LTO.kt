@@ -190,6 +190,6 @@ internal val RemoveRedundantCallsToStaticInitializersPhase = createSimpleNamedCo
                     .mapNotNull { it.irFunction }
                     .toSet()
 
-            StaticInitializersOptimization.removeRedundantCalls(context, input.irModule, callGraph, rootSet)
+            StaticInitializersOptimization.removeRedundantCalls(generationState, input.irModule, moduleDFG, callGraph, rootSet)
         }
 )
