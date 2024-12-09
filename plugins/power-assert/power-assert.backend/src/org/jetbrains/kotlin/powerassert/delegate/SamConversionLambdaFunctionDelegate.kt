@@ -37,9 +37,7 @@ class SamConversionLambdaFunctionDelegate(
     override fun buildCall(
         builder: IrBuilderWithScope,
         original: IrCall,
-        dispatchReceiver: IrExpression?,
-        extensionReceiver: IrExpression?,
-        valueArguments: List<IrExpression?>,
+        arguments: List<IrExpression?>,
         messageArgument: IrExpression,
     ): IrExpression = with(builder) {
         val lambda = irLambda(context.irBuiltIns.stringType, messageParameter.type) {
@@ -49,9 +47,7 @@ class SamConversionLambdaFunctionDelegate(
         irCallCopy(
             overload = overload,
             original = original,
-            dispatchReceiver = dispatchReceiver,
-            extensionReceiver = extensionReceiver,
-            valueArguments = valueArguments,
+            arguments = arguments,
             messageArgument = expression,
         )
     }

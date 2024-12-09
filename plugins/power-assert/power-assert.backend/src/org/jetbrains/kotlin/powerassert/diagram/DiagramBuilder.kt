@@ -43,15 +43,6 @@ fun IrBuilderWithScope.buildDiagramNesting(
     }
 }
 
-fun IrBuilderWithScope.buildDiagramNestingNullable(
-    sourceFile: SourceFile,
-    root: Node?,
-    variables: PersistentList<IrTemporaryVariable> = persistentListOf(),
-    call: IrBuilderWithScope.(IrExpression?, PersistentList<IrTemporaryVariable>) -> IrExpression,
-): IrExpression {
-    return if (root != null) buildDiagramNesting(sourceFile, root, variables, call) else call(null, variables)
-}
-
 private fun IrBlockBuilder.buildExpression(
     sourceFile: SourceFile,
     node: Node,
