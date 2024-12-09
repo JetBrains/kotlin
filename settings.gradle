@@ -972,7 +972,6 @@ if (buildProperties.isKotlinNativeEnabled) {
     include ':kotlin-native:Interop:Runtime'
     include ':kotlin-native:Interop:Indexer'
     include ':kotlin-native:Interop:JsRuntime'
-    include ':kotlin-native:Interop:Skia'
     include ':kotlin-native:utilities:cli-runner'
     include ':kotlin-native:klib'
     include ':kotlin-native:common'

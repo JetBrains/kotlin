@@ -10,10 +10,6 @@ import org.jetbrains.kotlin.native.interop.indexer.*
 
 object Plugins {
     fun plugin(pluginName: String?): Plugin = when (pluginName) {
-        "org.jetbrains.kotlin.native.interop.skia" ->
-            Class.forName("$pluginName.SkiaPlugin")
-                    .getDeclaredConstructor()
-                    .newInstance() as Plugin
         null -> DefaultPlugin
         else -> error("Unexpected interop plugin: $pluginName")
     }
