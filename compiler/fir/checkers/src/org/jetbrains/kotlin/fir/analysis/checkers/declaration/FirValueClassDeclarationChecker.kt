@@ -127,6 +127,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                         ) {
                             continue
                         }
+                        if (isValhallaValueClass) continue
                         val delegatedTypeRefSource = (innerDeclaration.returnTypeRef as FirResolvedTypeRef).delegatedTypeRef?.source
                         reporter.reportOn(
                             delegatedTypeRefSource,

@@ -857,9 +857,39 @@ public class FirBlackBoxModernJdkCodegenTestGeneratedWithInlineScopes extends Ab
       }
 
       @Test
+      @TestMetadata("construction.kt")
+      public void testConstruction() {
+        runTest("compiler/testData/codegen/boxModernJdk/testsWithJava23/valhallaValueClasses/construction.kt");
+      }
+
+      @Test
+      @TestMetadata("inapplicableTypes.kt")
+      public void testInapplicableTypes() {
+        runTest("compiler/testData/codegen/boxModernJdk/testsWithJava23/valhallaValueClasses/inapplicableTypes.kt");
+      }
+
+      @Test
+      @TestMetadata("inner.kt")
+      public void testInner() {
+        runTest("compiler/testData/codegen/boxModernJdk/testsWithJava23/valhallaValueClasses/inner.kt");
+      }
+
+      @Test
       @TestMetadata("interopWithPreValhalla.kt")
       public void testInteropWithPreValhalla() {
         runTest("compiler/testData/codegen/boxModernJdk/testsWithJava23/valhallaValueClasses/interopWithPreValhalla.kt");
+      }
+
+      @Test
+      @TestMetadata("recursive.kt")
+      public void testRecursive() {
+        runTest("compiler/testData/codegen/boxModernJdk/testsWithJava23/valhallaValueClasses/recursive.kt");
+      }
+
+      @Test
+      @TestMetadata("reservedNames.kt")
+      public void testReservedNames() {
+        runTest("compiler/testData/codegen/boxModernJdk/testsWithJava23/valhallaValueClasses/reservedNames.kt");
       }
     }
   }
