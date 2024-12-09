@@ -12784,6 +12784,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         runTest("compiler/testData/codegen/box/coroutines/varSpilling/safeCallElvis.kt");
       }
 
+      @TestMetadata("thisUnspill.kt")
+      public void testThisUnspill() {
+        runTest("compiler/testData/codegen/box/coroutines/varSpilling/thisUnspill.kt");
+      }
+
       @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/cleanup")
       @TestDataPath("$PROJECT_ROOT")
       @RunWith(JUnit3RunnerWithInners.class)

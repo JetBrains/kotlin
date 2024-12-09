@@ -718,28 +718,32 @@ class CoroutineTransformerMethodVisitor(
 
         with(methodNode.instructions) {
             // store variable before suspension call
-            insertBefore(suspension.suspensionCallBegin, withInstructionAdapter {
-                load(continuationIndex, AsmTypes.OBJECT_TYPE)
+            // skip restoring this
+            val isInstanceThisVariable = !isStatic(methodNode.access) && spillableVariable.slot == 0
+            if (!isInstanceThisVariable) {
+                insertBefore(suspension.suspensionCallBegin, withInstructionAdapter {
+                    load(continuationIndex, AsmTypes.OBJECT_TYPE)
 
-                if (!config.enableDebugMode && spillableVariable.shouldSpillNull) {
-                    if (config.nullOutSpilledCoroutineLocalsUsingStdlibFunction) {
-                        putOnStack(spillableVariable)
-                        invokeNullOutSpilledVariable()
+                    if (!config.enableDebugMode && spillableVariable.shouldSpillNull) {
+                        if (config.nullOutSpilledCoroutineLocalsUsingStdlibFunction) {
+                            putOnStack(spillableVariable)
+                            invokeNullOutSpilledVariable()
+                        } else {
+                            aconst(null)
+                        }
                     } else {
-                        aconst(null)
+                        putOnStack(spillableVariable)
                     }
-                } else {
-                    putOnStack(spillableVariable)
-                }
 
-                putfield(
-                    classBuilderForCoroutineState.thisName,
-                    spillableVariable.fieldName,
-                    spillableVariable.normalizedType.descriptor
-                )
-            })
+                    putfield(
+                        classBuilderForCoroutineState.thisName,
+                        spillableVariable.fieldName,
+                        spillableVariable.normalizedType.descriptor
+                    )
+                })
+            }
 
-            if (spillableVariable.slot !in suspendLambdaParameters) {
+            if (spillableVariable.slot !in suspendLambdaParameters && !isInstanceThisVariable) {
                 // restore variable after suspension call
                 insert(suspension.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
                     load(continuationIndex, AsmTypes.OBJECT_TYPE)
@@ -857,6 +861,9 @@ class CoroutineTransformerMethodVisitor(
         // k - continuation
         // k + 1 - result
         for (slot in 0 until localsCount) {
+            // Do not spill `this` of suspend methods
+            if (!isStatic(methodNode.access) && slot == 0) continue
+            // Do not spill continuation and $result
             if (slot == continuationIndex || slot == dataIndex) continue
             // Do not spill $completion
             if (isForNamedFunction && slot == completionSlot) continue
