@@ -25,11 +25,9 @@ import com.intellij.psi.impl.PsiElementFinderImpl
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.impl.smartPointers.SmartTypePointerManagerImpl
+import com.intellij.psi.impl.source.PsiFileWithStubSupport
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.stubs.ObjectStubSerializer
-import com.intellij.psi.stubs.PsiFileStub
-import com.intellij.psi.stubs.Stub
-import com.intellij.psi.stubs.StubTree
+import com.intellij.psi.stubs.*
 import com.intellij.psi.tree.IStubFileElementType
 import com.intellij.psi.util.JavaClassSupers
 import com.intellij.psi.util.descendantsOfType
@@ -118,6 +116,11 @@ fun main() {
                         BuiltinsVirtualFileProviderCliImpl()
                     )
 
+                    application.registerService(
+                        StubTreeLoader::class.java,
+                        StubTreeLoaderImpl::class.java
+                    )
+
                     application.registerService(PluginUtil::class.java, object : PluginUtil {
                         val id = PluginId.getId("dumdum")
 
@@ -198,9 +201,9 @@ fun main() {
 
             val psiManager = PsiManager.getInstance(project)
             val psiFiles = virtualFiles.map { psiManager.findFile(it)!! }
-            
+
             val virtualFileDocumentIdDescriptor: DocumentIdDescriptor<VirtualFile> =
-                DocumentIdDescriptor("virtualFile", Serializer.dummy())            
+                DocumentIdDescriptor("virtualFile", Serializer.dummy())
 
             val index = inMemoryIndex(
                 psiFiles.flatMap { psiFile ->
@@ -217,6 +220,19 @@ fun main() {
                     )
                 }
             )
+
+            val fileLocator = FileLocator { documentId ->
+                @Suppress("UNCHECKED_CAST")
+                listOf((documentId as DocumentId<VirtualFile>).value)
+            }
+
+            val stubIndex: StubIndex = index.stubIndex(fileLocator) { virtualFile ->
+                DocumentId(virtualFileDocumentIdDescriptor, virtualFile)
+            }
+            
+            (applicationEnvironment.application.getService(StubTreeLoader::class.java) as StubTreeLoaderImpl).stubIndex = stubIndex
+
+            val fileBasedIndex: FileBasedIndex = index.fileBased(fileLocator)
 
             project.apply {
                 registerService(
@@ -354,12 +370,6 @@ fun main() {
                     }
                 )
 
-                val fileLocator = FileLocator { documentId ->
-                    @Suppress("UNCHECKED_CAST")
-                    listOf((documentId as DocumentId<VirtualFile>).value)
-                }
-                val stubIndex: StubIndex = index.stubIndex(fileLocator)
-                val fileBasedIndex: FileBasedIndex = index.fileBased(fileLocator)
 
                 registerService(
                     KotlinDirectInheritorsProvider::class.java,

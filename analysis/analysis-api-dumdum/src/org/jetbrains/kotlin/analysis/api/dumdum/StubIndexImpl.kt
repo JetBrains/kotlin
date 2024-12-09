@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.stubs.ObjectStubTree
 import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.psi.stubs.StubTree
 import com.intellij.util.Processor
@@ -21,8 +22,18 @@ val StubIndexValueDescriptor: ValueDescriptor<StubValue> =
 fun <K> ID<K, *>.asKeyDescriptor(): KeyDescriptor<K> =
     KeyDescriptor(name, Serializer.dummy())
 
-fun Index.stubIndex(fileLocator: FileLocator): StubIndex = let { index ->
+fun interface VirtualFileToDocumentIdMapper {
+    fun documentId(virtualFile: VirtualFile): DocumentId<*>
+}
+
+fun Index.stubIndex(fileLocator: FileLocator, documentIdMapper: VirtualFileToDocumentIdMapper): StubIndex = let { index ->
     object : StubIndex {
+        override fun stub(virtualFile: VirtualFile): ObjectStubTree<*>? =
+            index.value(
+                documentId = documentIdMapper.documentId(virtualFile),
+                valueDescriptor = StubIndexValueDescriptor
+            )?.stub
+
         override fun <K> getContainingFilesIterator(
             indexId: ID<K, *>,
             dataKey: K,
@@ -55,7 +66,7 @@ fun Index.stubIndex(fileLocator: FileLocator): StubIndex = let { index ->
                         key
                     )
                 )
-                .filter { fileLocator.locate(it).any(scope::contains)  }
+                .filter { fileLocator.locate(it).any(scope::contains) }
                 .mapNotNull { index.value(it, StubIndexValueDescriptor) }
                 .flatMap { stubValue ->
                     stubValue.index[indexKey]?.get(key as Any)?.map { stubId ->
