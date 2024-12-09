@@ -38,10 +38,3 @@ val CallableDescriptor.allParameters: List<ParameterDescriptor>
     } else {
         _explicitParameters
     }
-
-@Deprecated(
-    message = "Please use org.jetbrains.kotlin.descriptors.explicitParameters",
-    ReplaceWith("explicitParameters", "org.jetbrains.kotlin.descriptors.explicitParameters")
-)
-val CallableDescriptor.explicitParameters: List<ParameterDescriptor>
-    get() = _explicitParameters
