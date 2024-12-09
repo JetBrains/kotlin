@@ -789,6 +789,16 @@ This option is deprecated and will be deleted in future versions."""
         }
 
     @Argument(
+        value = "-Xvalhalla-value-classes",
+        description = "Enable experimental Valhalla value classes."
+    )
+    var valhallaValueClasses = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xir-inliner",
         description = "Inline functions using the IR inliner instead of the bytecode inliner."
     )
@@ -881,6 +891,9 @@ This option is deprecated and will be deleted in future versions."""
         }
         if (valueClasses) {
             result[LanguageFeature.ValueClasses] = LanguageFeature.State.ENABLED
+        }
+        if (valhallaValueClasses) {
+            result[LanguageFeature.ValhallaValueClasses] = LanguageFeature.State.ENABLED
         }
         return result
     }
