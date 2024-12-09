@@ -99,7 +99,6 @@ internal fun <T : PhaseContext> PhaseEngine<T>.runIrInliner(fir2IrOutput: Fir2Ir
                 engine.runPreSerializationLoweringPhases(
                         fir2IrOutput.fir2irActualizedResult,
                         NativePreSerializationLoweringPhasesProvider,
-                        environment.configuration
                 )
             }
     )
