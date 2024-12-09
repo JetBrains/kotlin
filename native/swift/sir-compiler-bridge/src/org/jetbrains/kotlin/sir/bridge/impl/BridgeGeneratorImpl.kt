@@ -440,9 +440,9 @@ private sealed class CType {
     class NSSet(elem: CType) : Generic("NSSet", elem)
     class NSDictionary(key: CType, value: CType) : Generic("NSDictionary", key, value)
 
-    class BlockPointer(val arity: Int) : CType() {
+    class BlockPointer(val parameters: List<Bridge>, val returnType: Bridge) : CType() {
         override val repr: String
-            get() = NSNumber.repr.format("(^%s)(${List(arity) { NSNumber }.joinToString { it.repr }})")
+            get() = NSNumber.repr.format("(^%s)(${parameters.map { it.cType }.joinToString { it.repr }})")
     }
 }
 
@@ -749,7 +749,8 @@ private sealed class Bridge(
         swiftType = swiftType,
         kotlinType = KotlinType.KotlinObject,
         cType = CType.BlockPointer(
-            arity = swiftType.parameterTypes.count(),
+            parameters = swiftType.parameterTypes.map { bridgeType(it) },
+            returnType = bridgeType(swiftType.returnType)
         )
     ) {
 
@@ -761,12 +762,12 @@ private sealed class Bridge(
 
                 override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
                     return """{
-       val newClosure: () -> Long = {
-           val res = _result()
-           kotlin.native.internal.ref.createRetainedExternalRCRef(res).toLong()
-       }
-       newClosure.objcPtr()
-    }()"""
+                    |   val newClosure: () -> Long = {
+                    |       val res = _result()
+                    |       kotlin.native.internal.ref.createRetainedExternalRCRef(res).toLong()
+                    |   }
+                    |   newClosure.objcPtr()
+                    |}()""".replaceIndentByMargin("    ")
                 }
             }
 
@@ -777,9 +778,9 @@ private sealed class Bridge(
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
                 return """{
-        let nativeBlock = ${valueExpression}
-        return { nativeBlock!() }
-    }()"""
+                |    let nativeBlock = ${valueExpression}
+                |    return { nativeBlock!() }
+                |}()""".replaceIndentByMargin("    ")
             }
 
             override fun renderNil(): String = error("we do not support wrapping closures into optionals yet - PUT TICKET HERE")
