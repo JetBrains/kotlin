@@ -137,6 +137,7 @@ include ":benchmarks",
         ":compiler:plugin-api",
         ":compiler:light-classes",
         ":compiler:javac-wrapper",
+        ":compiler:arguments",
         ":compiler:cli-common",
         ":compiler:cli-base",
         ":compiler:cli",
@@ -762,6 +763,7 @@ project(':kotlin-compiler-embeddable').projectDir = "$rootDir/prepare/compiler-e
 project(':kotlin-compiler-client-embeddable').projectDir = "$rootDir/prepare/compiler-client-embeddable" as File
 project(':kotlin-preloader').projectDir = "$rootDir/compiler/preloader" as File
 project(':kotlin-build-common').projectDir = "$rootDir/build-common" as File
+project(':compiler:arguments').projectDir = "$rootDir/compiler/arguments" as File
 project(':compiler:cli-common').projectDir = "$rootDir/compiler/cli/cli-common" as File
 project(':compiler:cli-base').projectDir = "$rootDir/compiler/cli/cli-base" as File
 project(':compiler:cli-js').projectDir = "$rootDir/compiler/cli/cli-js" as File
