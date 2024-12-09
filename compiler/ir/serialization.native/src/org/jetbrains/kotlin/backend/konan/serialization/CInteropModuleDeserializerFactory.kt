@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.KotlinLibrary
 
-open class CInteropModuleDeserializerFactory {
-    open fun createIrModuleDeserializer(
+interface CInteropModuleDeserializerFactory {
+    fun createIrModuleDeserializer(
         moduleDescriptor: ModuleDescriptor,
         klib: KotlinLibrary,
         moduleDependencies: Collection<IrModuleDeserializer>,
-    ): IrModuleDeserializer = error("Should not be called. Use the same method in inherited class instead")
+    ): IrModuleDeserializer
 }

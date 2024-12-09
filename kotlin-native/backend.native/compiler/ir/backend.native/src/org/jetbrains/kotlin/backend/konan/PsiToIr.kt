@@ -296,7 +296,7 @@ internal class KonanCInteropModuleDeserializerFactory(
         private val cachedLibraries: CachedLibraries,
         private val cenumsProvider: IrProviderForCEnumAndCStructStubs,
         private val stubGenerator: DeclarationStubGenerator,
-): CInteropModuleDeserializerFactory() {
+): CInteropModuleDeserializerFactory {
     override fun createIrModuleDeserializer(
             moduleDescriptor: ModuleDescriptor,
             klib: KotlinLibrary,
