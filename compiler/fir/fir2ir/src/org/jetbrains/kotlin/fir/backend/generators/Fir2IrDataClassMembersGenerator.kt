@@ -149,14 +149,8 @@ class Fir2IrDataClassMembersGenerator(
             val scope = klass.unsubstitutedScope(c)
             val contributedSyntheticFunctions =
                 buildMap<Name, FirSimpleFunction> {
-                    val syntheticFunctionNames = listOf(EQUALS, HASHCODE_NAME, TO_STRING)
-                    for (name in syntheticFunctionNames) {
+                    for (name in listOf(EQUALS, HASHCODE_NAME, TO_STRING)) {
                         scope.processFunctionsByName(name) {
-                            when (name) {
-                                TO_STRING if !it.origin.generatedAnyToStringCodeMethod -> return@processFunctionsByName
-                                EQUALS if !it.origin.generatedAnyEqualsMethod -> return@processFunctionsByName
-                                HASHCODE_NAME if !it.origin.generatedAnyHashCodeMethod -> return@processFunctionsByName
-                            }
                             // We won't synthesize a function if there is a user-contributed (non-synthetic) one.
                             if (it.origin !is FirDeclarationOrigin.Synthetic) return@processFunctionsByName
                             if (it.containingClassLookupTag() != klass.symbol.toLookupTag()) return@processFunctionsByName

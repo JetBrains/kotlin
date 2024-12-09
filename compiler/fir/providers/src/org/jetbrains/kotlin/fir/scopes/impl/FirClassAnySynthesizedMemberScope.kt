@@ -93,14 +93,9 @@ class FirClassAnySynthesizedMemberScope(
     }
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        when (name) {
-            OperatorNameConventions.HASH_CODE if originForFunctions.generatedAnyHashCodeMethod -> {}
-            OperatorNameConventions.EQUALS if originForFunctions.generatedAnyEqualsMethod -> {}
-            OperatorNameConventions.TO_STRING if originForFunctions.generatedAnyToStringCodeMethod -> {}
-            else -> {
-                declaredMemberScope.processFunctionsByName(name, processor)
-                return
-            }
+        if (name !in ANY_MEMBER_NAMES) {
+            declaredMemberScope.processFunctionsByName(name, processor)
+            return
         }
         var synthesizedFunctionIsNeeded = true
         declaredMemberScope.processFunctionsByName(name) process@{ fromDeclaredScope ->
@@ -196,6 +191,12 @@ class FirClassAnySynthesizedMemberScope(
             declaredMemberScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: declaredMemberScope,
             klass,
             newScopeSession
+        )
+    }
+
+    companion object {
+        private val ANY_MEMBER_NAMES = hashSetOf(
+            OperatorNameConventions.HASH_CODE, OperatorNameConventions.EQUALS, OperatorNameConventions.TO_STRING
         )
     }
 }

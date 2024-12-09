@@ -61,6 +61,9 @@ public final class Valhalla {
     private final field x: int
     private final field y: int
     public method <init>(p0: int, p1: int): void
-    public final method getX-rTLzBkc(): int
-    public final method getY-rTLzBkc(): int
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public final method x(): int
+    public final method y(): int
 }
