@@ -30,7 +30,7 @@ fun mutedMessage(klass: Class<*>, methodKey: String): String = "MUTED TEST: ${te
 
 fun testKey(klass: Class<*>, methodKey: String): String = "${klass.canonicalName}.$methodKey"
 
-fun wrapWithMuteInDatabase(testClass: Class<*>, methodName: String, f: () -> Unit): (() -> Unit)? {
+fun wrapWithMuteInDatabase(testClass: Class<*>, methodName: String, f: () -> Unit): (() -> Unit) {
     val mutedTest = getMutedTest(testClass, methodName)
     val testKey = testKey(testClass, methodName)
 

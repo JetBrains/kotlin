@@ -22,7 +22,7 @@ class AutoMute() {
 
 val DO_AUTO_MUTE: AutoMute by lazy { AutoMute() }
 
-internal fun wrapWithAutoMute(f: () -> Unit, testKey: String): (() -> Unit)? {
+internal fun wrapWithAutoMute(f: () -> Unit, testKey: String): (() -> Unit) {
     return {
         if (DO_AUTO_MUTE.isMuted(testKey)) {
             DO_AUTO_MUTE.muted(testKey)
