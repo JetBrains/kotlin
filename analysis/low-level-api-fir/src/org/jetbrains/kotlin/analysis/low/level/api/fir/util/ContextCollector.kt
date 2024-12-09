@@ -114,7 +114,7 @@ object ContextCollector {
         preferBodyContext: Boolean = true,
     ): Context? {
         val designation = computeDesignation(file, targetElement)
-        val shouldTriggerBodyAnalysis = !partiallyResolveTargetElementIfPossible(resolveSession, designation, targetElement)
+        val shouldTriggerBodyAnalysis = true // !partiallyResolveTargetElementIfPossible(resolveSession, designation, targetElement)
 
         val acceptedElements = targetElement.parentsWithSelf.toSet()
 
