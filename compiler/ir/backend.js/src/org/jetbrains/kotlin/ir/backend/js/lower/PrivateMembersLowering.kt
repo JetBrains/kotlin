@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrPropertyReferenceImpl
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.isLocal
@@ -26,12 +27,12 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 private val STATIC_THIS_PARAMETER by IrDeclarationOriginImpl
 
+private var IrFunction.correspondingStatic: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+
 /**
  * Extracts private members from classes.
  */
 class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTransformer {
-
-    private var IrFunction.correspondingStatic by context.mapping.privateMemberToCorrespondingStatic
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         return when (declaration) {
@@ -134,8 +135,6 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
 }
 
 class PrivateMemberBodiesLowering(val context: JsIrBackendContext) : BodyLoweringPass {
-
-    private var IrFunction.correspondingStatic by context.mapping.privateMemberToCorrespondingStatic
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transform(object : IrElementTransformerVoid() {

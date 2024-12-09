@@ -17,7 +17,6 @@ class JsMapping : Mapping() {
     val objectToGetInstanceFunction: DeclarationMapping<IrClass, IrSimpleFunction> by AttributeBasedMappingDelegate()
     val objectToInstanceField: DeclarationMapping<IrClass, IrField> by AttributeBasedMappingDelegate()
     val classToSyntheticPrimaryConstructor: DeclarationMapping<IrClass, IrConstructor> by AttributeBasedMappingDelegate()
-    val privateMemberToCorrespondingStatic: DeclarationMapping<IrFunction, IrSimpleFunction> by AttributeBasedMappingDelegate()
 
     val enumEntryToGetInstanceFun: DeclarationMapping<IrEnumEntry, IrSimpleFunction> by AttributeBasedMappingDelegate()
     val enumEntryToInstanceField: DeclarationMapping<IrEnumEntry, IrField> by AttributeBasedMappingDelegate()
