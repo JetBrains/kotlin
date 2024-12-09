@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.llvm.BasicLlvmHelpers
 import org.jetbrains.kotlin.backend.konan.llvm.isDefinition
-import org.jetbrains.kotlin.backend.konan.llvm.llvm2string
 import org.jetbrains.kotlin.backend.konan.llvm.setFunctionAlwaysInline
 
 // declared in Common.h

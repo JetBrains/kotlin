@@ -166,8 +166,6 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
 
     private val builtClassesMap = mutableMapOf<FunctionClassDescriptor, IrClass>()
 
-    val builtClasses get() = builtClassesMap.values
-
     val builtFunctionNClasses get() = builtClassesMap.entries.mapNotNull { (descriptor, irClass) ->
         with(descriptor) {
             if (functionTypeKind == FunctionTypeKind.Function)

@@ -121,7 +121,7 @@ internal fun Context.getUnboxFunction(inlinedClass: IrClass): IrSimpleFunction =
  * If output target is native binary then the cache is created.
  */
 internal fun initializeCachedBoxes(generationState: NativeGenerationState) {
-    BoxCache.values().forEach { cache ->
+    BoxCache.entries.forEach { cache ->
         val cacheName = "${cache.name}_CACHE"
         val rangeStart = "${cache.name}_RANGE_FROM"
         val rangeEnd = "${cache.name}_RANGE_TO"
@@ -202,10 +202,6 @@ internal fun IrConstantPrimitive.toBoxCacheValue(generationState: NativeGenerati
 
 private fun createConstant(llvmType: LLVMTypeRef, value: Int): ConstValue =
         constValue(LLVMConstInt(llvmType, value.toLong(), 1)!!)
-
-// When start is greater than end then `inRange` check is always false
-// and can be eliminated by LLVM.
-private val emptyRange = 1 to 0
 
 // Memory usage is around 20kb.
 private val BoxCache.defaultRange get() = when (this) {

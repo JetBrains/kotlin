@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.konan.target.*
 import java.io.File
 
 typealias ObjectFile = String
-typealias ExecutableFile = String
 
 internal class BitcodeCompiler(
         private val context: PhaseContext,
