@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -14,7 +13,6 @@ import org.jetbrains.kotlin.backend.jvm.lower.scripting.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -38,13 +36,10 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.topologicalSort
@@ -99,9 +94,6 @@ internal class ScriptsToClassesLowering(val context: JvmBackendContext) : Module
     }
 
     private fun collectCapturingClasses(irScript: IrScript, typeRemapper: SimpleTypeRemapper): Set<IrClassImpl> {
-        val annotator = ClosureAnnotator(irScript, irScript)
-        val capturingClasses = mutableSetOf<IrClassImpl>()
-
         val scriptsReceivers = mutableSetOf<IrType>().also {
             it.addIfNotNull(irScript.thisReceiver?.type)
         }
@@ -114,53 +106,7 @@ internal class ScriptsToClassesLowering(val context: JvmBackendContext) : Module
             scriptsReceivers.add(typeRemapper.remapType(it.type))
         }
 
-        val collector = object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitClass(declaration: IrClass) {
-                if (declaration is IrClassImpl && !declaration.isInner) {
-                    val closure = annotator.getClassClosure(declaration)
-                    if (closure.capturedValues.any { it.owner.type in scriptsReceivers }) {
-                        fun reportError(factory: KtDiagnosticFactory1<String>, name: Name? = null) {
-                            context.ktDiagnosticReporter.at(declaration).report(factory, (name ?: declaration.name).asString())
-                        }
-                        when {
-                            declaration.isInterface -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_INTERFACE)
-                            declaration.isEnumClass -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_ENUM)
-                            declaration.isEnumEntry -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_ENUM_ENTRY)
-                            // TODO: ClosureAnnotator is not catching companion's closures, so the following reporting never happens. Make it work or drop
-                            declaration.isCompanion -> reportError(
-                                JvmBackendErrors.SCRIPT_CAPTURING_OBJECT, SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
-                            )
-                            declaration.kind.isSingleton -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_OBJECT)
-
-                            declaration.isClass ->
-                                if (declaration.parent != irScript) {
-                                    if ((declaration.parent as? IrClass)?.isInner == false) {
-                                        context.ktDiagnosticReporter.at(declaration).report(
-                                            JvmBackendErrors.SCRIPT_CAPTURING_NESTED_CLASS,
-                                            declaration.name.asString(),
-                                            ((declaration.parent as? IrDeclarationWithName)?.name
-                                                ?: SpecialNames.NO_NAME_PROVIDED).asString()
-                                        )
-                                    }
-                                } else {
-                                    capturingClasses.add(declaration)
-                                }
-                        }
-                    }
-                }
-                super.visitClass(declaration)
-            }
-        }
-        for (statement in irScript.statements) {
-            if (statement is IrClassImpl) {
-                collector.visitClass(statement)
-            }
-        }
-        return capturingClasses
+        return irScript.statements.filterIsInstance<IrClass>().collectCapturersByReceivers(context, irScript, scriptsReceivers)
     }
 
     private fun finalizeScriptClass(irScript: IrScript, symbolRemapper: ScriptsToClassesSymbolRemapper) {
