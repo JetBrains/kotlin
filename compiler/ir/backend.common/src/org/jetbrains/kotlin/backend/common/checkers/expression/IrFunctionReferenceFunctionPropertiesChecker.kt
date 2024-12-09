@@ -14,6 +14,8 @@ internal object IrFunctionReferenceFunctionPropertiesChecker : IrFunctionReferen
         expression: IrFunctionReference,
         context: CheckerContext,
     ) {
+        if (!expression.symbol.isBound) return
+
         expression.checkFunctionProperties(expression.symbol.owner, context)
     }
 }

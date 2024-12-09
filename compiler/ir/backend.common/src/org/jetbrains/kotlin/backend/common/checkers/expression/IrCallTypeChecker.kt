@@ -19,6 +19,8 @@ internal object IrCallTypeChecker : IrCallChecker {
         expression: IrCall,
         context: CheckerContext,
     ) {
+        if (!expression.symbol.isBound) return
+
         val callee = expression.symbol.owner
         // TODO: We don't have the proper type substitution yet, so skip generics for now.
         val actualCallee = callee.resolveFakeOverrideMaybeAbstract { it.returnType.classifierOrNull !is IrTypeParameterSymbol } ?: callee

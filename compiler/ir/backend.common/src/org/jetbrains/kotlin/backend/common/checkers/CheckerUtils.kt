@@ -110,6 +110,7 @@ internal fun checkVisibility(
     context: CheckerContext,
 ) {
     if (context.file.module.name in EXCLUDED_MODULE_NAMES) return
+    if (!referencedDeclarationSymbol.isBound) return
 
     val referencedDeclaration = referencedDeclarationSymbol.owner as? IrDeclarationWithVisibility ?: return
     val classOfReferenced = referencedDeclaration.parentClassOrNull
@@ -151,6 +152,8 @@ internal fun checkFunctionUseSite(
     inlineFunctionUseSiteChecker: InlineFunctionUseSiteChecker,
     context: CheckerContext,
 ) {
+    if (!expression.symbol.isBound) return
+
     val function = expression.symbol.owner
     if (!function.isInline || inlineFunctionUseSiteChecker.isPermitted(expression)) return
     val message = buildString {
@@ -189,6 +192,6 @@ internal fun IrElement.checkFunctionDispatchReceiver(function: IrFunction, conte
 
 internal fun IrSymbol.ensureBound(expression: IrExpression, context: CheckerContext) {
     if (!this.isBound && expression.type !is IrDynamicType) {
-        context.error(expression, "Unbound symbol $this")
+        context.error(expression, "Unbound symbols are not expected at this stage")
     }
 }

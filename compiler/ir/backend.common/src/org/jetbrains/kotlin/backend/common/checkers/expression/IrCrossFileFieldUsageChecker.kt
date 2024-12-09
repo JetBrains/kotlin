@@ -20,6 +20,8 @@ internal object IrCrossFileFieldUsageChecker : IrFieldAccessChecker {
         expression: IrFieldAccessExpression,
         context: CheckerContext,
     ) {
+        if (!expression.symbol.isBound) return
+
         val field = expression.symbol.owner
         if (field.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return
         val containingFile = field.fileOrNull ?: return

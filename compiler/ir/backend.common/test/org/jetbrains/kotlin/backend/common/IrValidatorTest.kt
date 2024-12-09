@@ -32,11 +32,11 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
@@ -150,6 +150,7 @@ class IrValidatorTest {
                         checkAllKotlinFieldsArePrivate = true,
                         checkVisibilities = true,
                         checkVarargTypes = true,
+                        checkUnboundSymbols = true,
                         checkInlineFunctionUseSites = { it.symbol.owner.name.toString() != "inlineFunctionUseSiteNotPermitted" }
                     )
                 )
@@ -1072,6 +1073,100 @@ class IrValidatorTest {
                             inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 1, 10, null)
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `unbound symbols are reported for function references`() {
+        val unboundFunctionSymbol = IrSimpleFunctionSymbolImpl()
+
+        val functionReference = IrFunctionReferenceImplWithShape(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = TestIrBuiltins.anyType,
+            symbol = unboundFunctionSymbol,
+            typeArgumentsCount = 0,
+            valueArgumentsCount = 0,
+            contextParameterCount = 0,
+            hasDispatchReceiver = false,
+            hasExtensionReceiver = false
+        )
+
+        val function = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.anyType
+        }
+
+        val body = IrFactoryImpl.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+        body.statements.add(functionReference)
+        function.body = body
+
+        val file = createIrFile()
+        file.addChild(function)
+
+        testValidation(
+            IrVerificationMode.ERROR,
+            file,
+            listOf(
+                Message(
+                    ERROR,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Unbound symbols are not expected at this stage
+                    FUNCTION_REFERENCE 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Any origin=null reflectionTarget=<same>
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Any
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null)
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `unbound symbols are reported for function calls`() {
+        val unboundFunctionSymbol = IrSimpleFunctionSymbolImpl()
+
+        val functionCall = IrCallImplWithShape(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = TestIrBuiltins.anyType,
+            symbol = unboundFunctionSymbol,
+            typeArgumentsCount = 0,
+            valueArgumentsCount = 0,
+            contextParameterCount = 0,
+            hasDispatchReceiver = false,
+            hasExtensionReceiver = false
+        )
+
+        val function = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.anyType
+        }
+
+        val body = IrFactoryImpl.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+        body.statements.add(functionCall)
+        function.body = body
+
+        val file = createIrFile()
+        file.addChild(function)
+
+        testValidation(
+            IrVerificationMode.ERROR,
+            file,
+            listOf(
+                Message(
+                    ERROR,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Unbound symbols are not expected at this stage
+                    CALL 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Any origin=null
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Any
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null)
                 )
             )
         )

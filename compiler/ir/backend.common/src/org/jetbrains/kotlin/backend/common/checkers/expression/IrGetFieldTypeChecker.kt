@@ -16,6 +16,8 @@ internal object IrGetFieldTypeChecker : IrGetFieldChecker {
         expression: IrGetField,
         context: CheckerContext,
     ) {
+        if (!expression.symbol.isBound) return
+
         val fieldType = expression.symbol.owner.type
         // TODO: We don't have the proper type substitution yet, so skip generics for now.
         if (fieldType is IrSimpleType &&

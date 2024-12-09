@@ -14,6 +14,8 @@ internal object IrFunctionReferenceFunctionDispatchReceiverChecker : IrFunctionR
         expression: IrFunctionReference,
         context: CheckerContext,
     ) {
+        if (!expression.symbol.isBound) return
+
         expression.checkFunctionDispatchReceiver(expression.symbol.owner, context)
     }
 }

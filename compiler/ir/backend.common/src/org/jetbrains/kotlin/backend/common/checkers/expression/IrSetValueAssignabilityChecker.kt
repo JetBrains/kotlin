@@ -14,6 +14,8 @@ internal object IrSetValueAssignabilityChecker : IrSetValueChecker {
         expression: IrSetValue,
         context: CheckerContext,
     ) {
+        if (!expression.symbol.isBound) return
+
         val declaration = expression.symbol.owner
         if (declaration is IrValueParameter && !declaration.isAssignable) {
             context.error(expression, "Assignment to value parameters not marked assignable")

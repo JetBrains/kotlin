@@ -14,6 +14,8 @@ internal object IrGetValueTypeChecker : IrGetValueChecker {
         expression: IrGetValue,
         context: CheckerContext,
     ) {
+        if (!expression.symbol.isBound) return
+
         expression.ensureTypeIs(expression.symbol.owner.type, context)
     }
 }

@@ -349,7 +349,7 @@ private class IrFileValidator(
     private fun checkUnboundSymbol(element: IrElement) {
         if (element is IrSymbolOwner && config.checkUnboundSymbols) {
             if (!element.symbol.isBound) {
-                context.error(element, "Unbound symbol ${element.symbol}")
+                context.error(element, "Unbound symbols are not expected at this stage")
             }
         }
     }

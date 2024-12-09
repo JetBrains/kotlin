@@ -14,6 +14,8 @@ internal object IrCallFunctionPropertiesChecker : IrCallChecker {
         expression: IrCall,
         context: CheckerContext,
     ) {
+        if (!expression.symbol.isBound) return
+
         val function = expression.symbol.owner
         expression.checkFunctionProperties(function, context)
     }

@@ -14,6 +14,8 @@ internal object IrCallFunctionDispatchReceiverChecker : IrCallChecker {
         expression: IrCall,
         context: CheckerContext,
     ) {
+        if (!expression.symbol.isBound) return
+
         val function = expression.symbol.owner
         expression.checkFunctionDispatchReceiver(function, context)
     }
