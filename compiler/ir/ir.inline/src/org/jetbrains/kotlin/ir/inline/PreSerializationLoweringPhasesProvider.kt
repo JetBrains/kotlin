@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.inline
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
+import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.config.phaser.SameTypeNamedCompilerPhase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -57,7 +58,7 @@ abstract class PreSerializationLoweringPhasesProvider<Context : LoweringContext>
                     klibAssertionWrapperLowering, // Only on Native
                     jsCodeOutliningLowering, // Only on JS
                     ::LateinitLowering,
-//                  ::SharedVariablesLowering,
+                    ::SharedVariablesLowering,
 //                  ::OuterThisInInlineFunctionsSpecialAccessorLowering,
 //                  ::LocalClassesInInlineLambdasLowering,
 //                  { CommonInlineCallableReferenceToLambdaPhase(it, inlineFunctionResolver(context, InlineMode.ALL_INLINE_FUNCTIONS)) },
