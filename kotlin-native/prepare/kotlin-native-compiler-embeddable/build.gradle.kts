@@ -45,7 +45,6 @@ dependencies {
     kotlinNativeEmbedded(project(":kotlin-native:Interop:Runtime"))
     kotlinNativeEmbedded(project(":kotlin-native:Interop:Indexer"))
     kotlinNativeEmbedded(project(":kotlin-native:Interop:StubGenerator"))
-    kotlinNativeEmbedded(project(":kotlin-native:Interop:Skia"))
     kotlinNativeEmbedded(project(":kotlin-native:backend.native"))
     kotlinNativeEmbedded(project(":kotlin-native:utilities:cli-runner"))
     kotlinNativeEmbedded(project(":kotlin-native:klib"))

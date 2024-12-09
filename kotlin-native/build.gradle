@@ -114,7 +114,6 @@ configurations {
 apply plugin: CompilationDatabasePlugin
 
 dependencies {
-    distPack project(':kotlin-native:Interop:Skia')
     distPack project(path: ':kotlin-native:utilities:cli-runner', configuration: 'runtimeElements')
     commonSources project(path: ':kotlin-stdlib', configuration: 'metadataSourcesElements')
     commonSources project(path: ':kotlin-test', configuration: 'metadataSourcesElements')
