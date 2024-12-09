@@ -43,12 +43,6 @@ class Psi2IrTranslator(
     val configuration: Psi2IrConfiguration,
     private val checkNoUnboundSymbols: (SymbolTable, String) -> Unit
 ) {
-    @Deprecated("Only for backward compatibility with older versions of IDE", level = DeprecationLevel.ERROR)
-    constructor(
-        languageVersionSettings: LanguageVersionSettings,
-        configuration: Psi2IrConfiguration
-    ) : this(languageVersionSettings, configuration, checkNoUnboundSymbols = { _, _ -> })
-
     private val postprocessingSteps = SmartList<Psi2IrPostprocessingStep>()
 
     fun addPostprocessingStep(step: Psi2IrPostprocessingStep) {
