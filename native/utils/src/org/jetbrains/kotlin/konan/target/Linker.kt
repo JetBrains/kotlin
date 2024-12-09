@@ -94,8 +94,6 @@ fun LinkerFlags.finalLinkCommands(
 // for another implementation of this class.
 abstract class LinkerFlags(val configurables: Configurables) {
 
-    protected val llvmBin = "${configurables.absoluteLlvmHome}/bin"
-
     open val useCompilerDriverAsLinker: Boolean get() = false // TODO: refactor.
 
     /**
@@ -360,9 +358,6 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
 
     fun dsymutilCommand(executable: ExecutableFile, outputDsymBundle: String): List<String> =
             listOf(dsymutil, executable, "-o", outputDsymBundle)
-
-    fun dsymutilDryRunVerboseCommand(executable: ExecutableFile): List<String> =
-            listOf(dsymutil, "-dump-debug-map", executable)
 }
 
 class GccBasedLinker(targetProperties: GccConfigurables)
@@ -513,86 +508,11 @@ class MingwLinker(targetProperties: MingwConfigurables)
     }
 }
 
-class WasmLinker(targetProperties: WasmConfigurables)
-    : LinkerFlags(targetProperties), WasmConfigurables by targetProperties {
-
-    override val useCompilerDriverAsLinker: Boolean get() = false
-
-    override fun filterStaticLibraries(binaries: List<String>) = binaries.filter { it.isJavaScript }
-
-    override fun LinkerArguments.finalLinkCommands(): List<Command> {
-        if (kind != LinkerOutputKind.EXECUTABLE) throw Error("Unsupported linker output kind")
-        require(sanitizer == null) {
-            "Sanitizers are unsupported"
-        }
-
-        val linkage = Command("$llvmBin/wasm-ld").apply {
-            +objectFiles
-            +listOf("-o", executable)
-            +lldFlags
-        }
-
-        // TODO(horsh): maybe rethink it.
-        val jsBindingsGeneration = object : Command() {
-            override fun execute() {
-                javaScriptLink(libraries, executable)
-            }
-
-            private fun javaScriptLink(jsFiles: List<String>, executable: String): String {
-                val linkedJavaScript = File("$executable.js")
-
-                val linkerHeader = "var konan = { libraries: [] };\n"
-                val linkerFooter = """|if (isBrowser()) {
-                                      |   konan.moduleEntry([]);
-                                      |} else {
-                                      |   konan.moduleEntry(arguments);
-                                      |}""".trimMargin()
-
-                linkedJavaScript.writeText(linkerHeader)
-
-                jsFiles.forEach {
-                    linkedJavaScript.appendBytes(File(it).readBytes())
-                }
-
-                linkedJavaScript.appendBytes(linkerFooter.toByteArray())
-                return linkedJavaScript.name
-            }
-        }
-        return listOf(linkage, jsBindingsGeneration)
-    }
-}
-
-open class ZephyrLinker(targetProperties: ZephyrConfigurables)
-    : LinkerFlags(targetProperties), ZephyrConfigurables by targetProperties {
-
-    private val linker = "$absoluteTargetToolchain/bin/ld"
-
-    override val useCompilerDriverAsLinker: Boolean get() = false
-
-    override fun filterStaticLibraries(binaries: List<String>) = emptyList<String>()
-
-    override fun LinkerArguments.finalLinkCommands(): List<Command> {
-        if (kind != LinkerOutputKind.EXECUTABLE) throw Error("Unsupported linker output kind: $kind")
-        require(sanitizer == null) {
-            "Sanitizers are unsupported"
-        }
-        return listOf(Command(linker).apply {
-            +listOf("-r", "--gc-sections", "--entry", "main")
-            +listOf("-o", executable)
-            +objectFiles
-            +libraries
-            +linkerArgs
-        })
-    }
-}
-
 fun linker(configurables: Configurables): LinkerFlags =
         when (configurables) {
             is GccConfigurables -> GccBasedLinker(configurables)
             is AppleConfigurables -> MacOSBasedLinker(configurables)
             is AndroidConfigurables-> AndroidLinker(configurables)
             is MingwConfigurables -> MingwLinker(configurables)
-            is WasmConfigurables -> WasmLinker(configurables)
-            is ZephyrConfigurables -> ZephyrLinker(configurables)
             else -> error("Unexpected target: ${configurables.target}")
         }
