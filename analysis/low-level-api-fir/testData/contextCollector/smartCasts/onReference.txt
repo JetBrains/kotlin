@@ -24,7 +24,7 @@ Smart Casts:
         kotlin.Any
 
 FILE: [ResolvedTo(IMPORTS)] onReference.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyResolveStateKey=2(2/3) #1] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|kotlin/Any|): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=2(2/3) #1] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|kotlin/Any|): R|kotlin/Unit| {
         when () {
             (R|<local>/a| !is R|Foo|) ->  {
                 ^test Unit

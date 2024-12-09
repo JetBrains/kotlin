@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.partialBodyResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.partialBodyAnalysisState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isPartialBodyResolvable
 import org.jetbrains.kotlin.fir.declarations.*
@@ -186,7 +186,7 @@ private fun FirDeclaration.decreasePhase(newPhase: FirResolvePhase) {
     if (isPartialBodyResolvable) {
         val oldPhase = resolvePhase
         if (oldPhase >= FirResolvePhase.BODY_RESOLVE.previous) {
-            partialBodyResolveState = null
+            partialBodyAnalysisState = null
         }
     }
 

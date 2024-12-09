@@ -24,7 +24,7 @@ FILE: [ResolvedTo(IMPORTS)] beforeLoop.kt
             public? [ResolvedTo(RAW_FIR)] get(): Node?
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyResolveStateKey=1(1/2) #1] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] initial: R|Node|): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=1(1/2) #1] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] initial: R|Node|): R|kotlin/Unit| {
         [ResolvedTo(RAW_FIR)] lvar current: R|Node| = R|<local>/initial|
         while(!=(current#, Null(null))) {
             consume#(current#)

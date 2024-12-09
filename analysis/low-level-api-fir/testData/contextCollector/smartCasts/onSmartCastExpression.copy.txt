@@ -37,7 +37,7 @@ FILE: [ResolvedTo(IMPORTS)] onSmartCastExpression.kt
         public? final? [ResolvedTo(RAW_FIR)] fun boo(): Int { LAZY_BLOCK }
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyResolveStateKey=3(3/4) #1] fun main(): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=3(3/4) #1] fun main(): R|kotlin/Unit| {
         [ResolvedTo(RAW_FIR)] lval x: R|Base| = R|/Base.Base|()
         String().R|kotlin/String.toString|()
         when () {

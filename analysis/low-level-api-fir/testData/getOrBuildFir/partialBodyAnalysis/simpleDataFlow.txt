@@ -9,7 +9,7 @@ R|<local>/obj|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] simpleDataFlow.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyResolveStateKey=1(1/3) #1] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] obj: R|kotlin/Any|): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=1(1/3) #1] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] obj: R|kotlin/Any|): R|kotlin/Unit| {
         when () {
             (R|<local>/obj| !is R|kotlin/String|) ->  {
                 ^test Unit
@@ -34,7 +34,7 @@ R|<local>/obj|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] simpleDataFlow.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyResolveStateKey=2(2/3) #2] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] obj: R|kotlin/Any|): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=2(2/3) #2] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] obj: R|kotlin/Any|): R|kotlin/Unit| {
         when () {
             (R|<local>/obj| !is R|kotlin/String|) ->  {
                 ^test Unit

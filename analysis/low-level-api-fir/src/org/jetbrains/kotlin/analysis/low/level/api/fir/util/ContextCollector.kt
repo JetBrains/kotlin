@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyAnalysisState
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.partialBodyResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.partialBodyAnalysisState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousDeclaration
@@ -412,7 +412,7 @@ private class ContextCollectorVisitor(
         }
 
         if (container is FirDeclaration) {
-            val snapshot = container.partialBodyResolveState?.analysisStateSnapshot
+            val snapshot = container.partialBodyAnalysisState?.analysisStateSnapshot
             if (snapshot != null) {
                 val graph = snapshot.dataFlowAnalyzerContext.currentGraph
                 if (graph.declaration == container) {

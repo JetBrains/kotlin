@@ -21,7 +21,7 @@ Tower Data Context:
 FILE: [ResolvedTo(IMPORTS)] beforeIf.kt
     public final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyResolveStateKey=1(1/2) #1] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] obj: R|kotlin/Any|): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=1(1/2) #1] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] obj: R|kotlin/Any|): R|kotlin/Unit| {
         R|<local>/obj|.R|kotlin/Any.hashCode|()
         when () {
             (obj# is Foo) ->  {

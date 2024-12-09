@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets
 
 import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -60,5 +59,5 @@ internal class LLPartialBodyAnalysisSnapshot(
 internal class LLPartialBodyAnalysisResult(
     val statements: List<FirStatement>,
     val delegatedConstructorCall: FirDelegatedConstructorCall?,
-    val defaultParameterValues: Map<FirValueParameter, FirExpression>
+    val defaultParameterValues: List<FirExpression>
 )

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBody
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyAnalysisResult
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyAnalysisSnapshot
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyAnalysisState
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.partialBodyResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.partialBodyAnalysisState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.codeFragmentScopeProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
@@ -124,7 +124,7 @@ private class FirPartialBodyExpressionResolveTransformer(
 
         require(data is ResolutionMode.ContextIndependent)
 
-        val state = declaration.partialBodyResolveState
+        val state = declaration.partialBodyAnalysisState
 
         if (target is LLFirPartialBodyResolveTarget && (state == null || state.performedAnalysesCount < MAX_ANALYSES_COUNT)) {
             transformPartially(target.request, block, data, state)
@@ -218,7 +218,7 @@ private class FirPartialBodyExpressionResolveTransformer(
                     // Here we reached a stop element.
                     // It means all statements up to the target one are now analyzed.
                     // So now we save the current context and suspend further analysis.
-                    declaration.partialBodyResolveState = LLPartialBodyAnalysisState(
+                    declaration.partialBodyAnalysisState = LLPartialBodyAnalysisState(
                         totalPsiStatementCount = request.totalPsiStatementCount,
                         analyzedPsiStatementCount = request.targetPsiStatementCount,
                         analyzedFirStatementCount = index,
@@ -230,9 +230,9 @@ private class FirPartialBodyExpressionResolveTransformer(
                                 defaultParameterValues = collectDefaultParameterValues(declaration)
                             ),
                             towerDataContext = context.towerDataContext.createSnapshot(keepMutable = true),
-                        dataFlowAnalyzerContext = context.dataFlowAnalyzerContext
+                            dataFlowAnalyzerContext = context.dataFlowAnalyzerContext
                         ),
-                        previousState = declaration.partialBodyResolveState?.copy(analysisStateSnapshot = null)
+                        previousState = declaration.partialBodyAnalysisState?.copy(analysisStateSnapshot = null)
                     )
                     shouldStop = true
                     throw PartialBodyAnalysisSuspendedException()
@@ -255,31 +255,25 @@ private class FirPartialBodyExpressionResolveTransformer(
         // This makes the compiler think the declaration is fully resolved (see 'FirExpression.isResolved')
         block.writeResultType(session)
 
-        declaration.partialBodyResolveState = LLPartialBodyAnalysisState(
+        declaration.partialBodyAnalysisState = LLPartialBodyAnalysisState(
             totalPsiStatementCount = request.totalPsiStatementCount,
             analyzedPsiStatementCount = request.totalPsiStatementCount,
             analyzedFirStatementCount = index,
             performedAnalysesCount = performedAnalysesCount + 1,
             analysisStateSnapshot = null,
-            previousState = declaration.partialBodyResolveState?.copy(analysisStateSnapshot = null)
+            previousState = declaration.partialBodyAnalysisState?.copy(analysisStateSnapshot = null)
         )
 
         return true
     }
 
-    private fun collectDefaultParameterValues(declaration: FirDeclaration): Map<FirValueParameter, FirExpression> {
-        if (declaration !is FirFunction) {
-            return emptyMap()
+    private fun collectDefaultParameterValues(declaration: FirDeclaration): List<FirExpression> {
+        if (declaration is FirFunction) {
+            val result = declaration.valueParameters.mapNotNull { it.defaultValue }
+            return result.ifEmpty { emptyList() }
         }
 
-        val result = buildMap {
-            for (valueParameter in declaration.valueParameters) {
-                val defaultValue = valueParameter.defaultValue ?: continue
-                put(valueParameter, defaultValue)
-            }
-        }
-
-        return result.ifEmpty { emptyMap() }
+        return emptyList()
     }
 
     private fun transformFully(
@@ -629,7 +623,7 @@ internal object BodyStateKeepers {
     }
 
     val PARTIAL_BODY_RESOLVABLE: StateKeeper<FirDeclaration, FirDesignation> = stateKeeper { builder, declaration, context ->
-        builder.add(FirDeclaration::partialBodyResolveState::get, FirDeclaration::partialBodyResolveState::set)
+        builder.add(FirDeclaration::partialBodyAnalysisState::get, FirDeclaration::partialBodyAnalysisState::set)
     }
 
     val ANONYMOUS_INITIALIZER: StateKeeper<FirAnonymousInitializer, FirDesignation> = stateKeeper { builder, initializer, designation ->
@@ -755,7 +749,7 @@ private fun <T : FirDeclaration> StateKeeperScope<T, FirDesignation>.preservePar
         return false
     }
 
-    val state = declaration.partialBodyResolveState
+    val state = declaration.partialBodyAnalysisState
     if (state == null) {
         return false
     }

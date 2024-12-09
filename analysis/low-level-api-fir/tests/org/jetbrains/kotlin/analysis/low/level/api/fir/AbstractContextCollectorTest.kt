@@ -85,7 +85,7 @@ abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedTest() {
 
 private class FirDeclarationRendererWithPartialBodyResolveState : FirDeclarationRendererWithAttributes() {
     override fun attributeTypesToIds(): List<Pair<String, Int>> {
-        return super.attributeTypesToIds().filter { it.first == "PartialBodyResolveStateKey" }
+        return super.attributeTypesToIds().filter { it.first == "PartialBodyAnalysisStateKey" }
     }
 }
 
