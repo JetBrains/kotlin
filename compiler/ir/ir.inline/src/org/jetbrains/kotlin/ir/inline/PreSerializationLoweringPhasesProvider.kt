@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
 import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.OuterThisInInlineFunctionsSpecialAccessorLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.config.phaser.SameTypeNamedCompilerPhase
@@ -61,7 +62,7 @@ abstract class PreSerializationLoweringPhasesProvider<Context : LoweringContext>
                     ::LateinitLowering,
                     ::SharedVariablesLowering,
                     ::OuterThisInInlineFunctionsSpecialAccessorLowering,
-//                  ::LocalClassesInInlineLambdasLowering,
+                    ::LocalClassesInInlineLambdasLowering,
 //                  { CommonInlineCallableReferenceToLambdaPhase(it, inlineFunctionResolver(context, InlineMode.ALL_INLINE_FUNCTIONS)) },
 //                  ::ArrayConstructorLowering,
 //                  ::WrapInlineDeclarationsWithReifiedTypeParametersLowering,
