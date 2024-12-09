@@ -24,9 +24,6 @@ internal val DeclarationDescriptor.isExpectMember: Boolean
 internal val DeclarationDescriptor.isSerializableExpectClass: Boolean
     get() = this is ClassDescriptor && OptionalAnnotationUtil.shouldGenerateExpectClass(this)
 
-@Deprecated("Moved to the ':core:descriptors' module", level = DeprecationLevel.HIDDEN)
-fun DeclarationDescriptor.findPackage(): PackageFragmentDescriptor = findPackage()
-
 private fun sourceByIndex(descriptor: CallableMemberDescriptor, index: Int): SourceFile {
     val fragment = descriptor.findPackage() as KlibMetadataDeserializedPackageFragment
     val fileName = fragment.proto.strings.stringList[index]
