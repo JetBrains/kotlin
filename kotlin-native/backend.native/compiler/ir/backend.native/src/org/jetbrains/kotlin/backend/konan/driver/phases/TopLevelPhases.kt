@@ -98,6 +98,19 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
             }
         }
 
+        fun runGlobalOptimizations(fragments: List<Pair<BackendJobFragment, NativeGenerationState>>) {
+            if (context.config.produce.isHeaderCache) {
+                return
+            }
+            rootPerformanceManager.trackIRLowering {
+                fragments.forEach { (fragment, generationState) ->
+                    newEngine(generationState) { generationStateEngine ->
+                        generationStateEngine.runGlobalOptimizations(fragment.irModule)
+                    }
+                }
+            }
+        }
+
         fun runAfterLowerings(fragment: BackendJobFragment, generationState: NativeGenerationState) {
             val tempFiles = createTempFiles(config, fragment.cacheDeserializationStrategy)
             val outputFiles = generationState.outputFiles
@@ -111,9 +124,6 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
             }
             try {
                 fragment.performanceManager?.notifyIRGenerationStarted()
-                newEngine(generationState) { generationStateEngine ->
-                    generationStateEngine.runGlobalOptimizations(fragment.irModule)
-                }
                 val moduleCompilationOutput = backendEngine.useContext(generationState) { generationStateEngine ->
                     val bitcodeFile = tempFiles.create(generationState.llvmModuleName, ".bc").javaFile()
                     val objectFile = tempFiles.create(File(outputFiles.nativeBinaryFile).name, ".o").javaFile()
@@ -145,6 +155,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
         if (threadsCount == 1) {
             val fragmentsList = fragments.toList()
             val generationStates = fragmentsList.map { fragment -> createGenerationStateAndRunLowerings(fragment) }
+            runGlobalOptimizations(fragmentsList.zip(generationStates))
             fragmentsList.zip(generationStates).forEach { (fragment, generationState) ->
                 runAfterLowerings(fragment, generationState)
             }
@@ -152,13 +163,16 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
             val fragmentsList = fragments.toList()
             if (fragmentsList.size == 1) {
                 val fragment = fragmentsList[0]
-                runAfterLowerings(fragment, createGenerationStateAndRunLowerings(fragment))
+                val generationState = createGenerationStateAndRunLowerings(fragment)
+                runGlobalOptimizations(listOf(fragment to generationState))
+                runAfterLowerings(fragment, generationState)
             } else {
                 // We'd love to run entire pipeline in parallel, but it's difficult (mainly because of the lowerings,
                 // which need cross-file access all the time and it's not easy to overcome this). So, for now,
                 // we split the pipeline into two parts - everything before lowerings (including them)
                 // which is run sequentially, and everything else which is run in parallel.
                 val generationStates = fragmentsList.map { fragment -> createGenerationStateAndRunLowerings(fragment) }
+                runGlobalOptimizations(fragmentsList.zip(generationStates))
                 val executor = Executors.newFixedThreadPool(threadsCount)
                 val thrownFromThread = AtomicReference<Throwable?>(null)
                 val tasks = fragmentsList.zip(generationStates).map { (fragment, generationState) ->
