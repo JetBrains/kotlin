@@ -7819,6 +7819,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/controlStructures/bottles.kt");
     }
 
+    @TestMetadata("breakInDoWhile.kt")
+    public void testBreakInDoWhile() {
+      runTest("compiler/testData/codegen/box/controlStructures/breakInDoWhile.kt");
+    }
+
     @TestMetadata("breakInFinally.kt")
     public void testBreakInFinally() {
       runTest("compiler/testData/codegen/box/controlStructures/breakInFinally.kt");
