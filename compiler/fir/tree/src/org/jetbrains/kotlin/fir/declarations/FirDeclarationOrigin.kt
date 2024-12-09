@@ -13,9 +13,7 @@ sealed class FirDeclarationOrigin(
     val fromSupertypes: Boolean = false,
     val generated: Boolean = false,
     val fromSource: Boolean = false,
-    val generatedAnyEqualsMethod: Boolean = false,
-    val generatedAnyHashCodeMethod: Boolean = false,
-    val generatedAnyToStringCodeMethod: Boolean = false,
+    val generatedAnyMethods: Boolean = false,
 ) {
     object Source : FirDeclarationOrigin(fromSource = true)
     object Library : FirDeclarationOrigin()
@@ -30,23 +28,12 @@ sealed class FirDeclarationOrigin(
     val isBuiltIns: Boolean get() = this == BuiltIns || this == BuiltInsFallback
 
     sealed class Synthetic(
-        generatedAnyEqualsMethod: Boolean = false,
-        generatedAnyHashCodeMethod: Boolean = false,
-        generatedAnyToStringCodeMethod: Boolean = false,
-    ) : FirDeclarationOrigin(
-        generatedAnyEqualsMethod = generatedAnyEqualsMethod,
-        generatedAnyHashCodeMethod = generatedAnyHashCodeMethod,
-        generatedAnyToStringCodeMethod = generatedAnyToStringCodeMethod,
-    ) {
-        private constructor(generatedAnyMethod: Boolean) : this(
-            generatedAnyEqualsMethod = generatedAnyMethod,
-            generatedAnyHashCodeMethod = generatedAnyMethod,
-            generatedAnyToStringCodeMethod = generatedAnyMethod
-        )
+        generatedAnyMethods: Boolean = false,
+    ) : FirDeclarationOrigin(generatedAnyMethods = generatedAnyMethods) {
 
-        object DataClassMember : Synthetic(generatedAnyMethod = true)
-        object PreValhallaValueClassMember : Synthetic(generatedAnyMethod = true)
-        object ValhallaValueClassMember : Synthetic(generatedAnyMethod = true)
+        object DataClassMember : Synthetic(generatedAnyMethods = true)
+        object PreValhallaValueClassMember : Synthetic(generatedAnyMethods = true)
+        object ValhallaValueClassMember : Synthetic(generatedAnyMethods = true)
         object JavaProperty : Synthetic()
         object DelegateField : Synthetic()
         object PluginFile : Synthetic()
