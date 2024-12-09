@@ -197,7 +197,11 @@ abstract class DefaultArgumentFunctionFactory(
                         isPrimary = false
                         isExpect = false
                         visibility = newVisibility
-                        if (!copyOriginalFunctionStartLocation) startOffset = UNDEFINED_OFFSET
+
+                        if (!copyOriginalFunctionStartLocation) {
+                            startOffset = UNDEFINED_OFFSET
+                            endOffset = UNDEFINED_OFFSET
+                        }
                     }
                 }
             is IrSimpleFunction ->
@@ -211,7 +215,11 @@ abstract class DefaultArgumentFunctionFactory(
                         isExternal = false
                         isTailrec = false
                         visibility = newVisibility
-                        if (!copyOriginalFunctionStartLocation) startOffset = UNDEFINED_OFFSET
+
+                        if (!copyOriginalFunctionStartLocation) {
+                            startOffset = UNDEFINED_OFFSET
+                            endOffset = UNDEFINED_OFFSET
+                        }
                     }
                 }
         }

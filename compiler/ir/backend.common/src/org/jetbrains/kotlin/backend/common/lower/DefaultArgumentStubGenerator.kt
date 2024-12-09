@@ -124,7 +124,9 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
                         dispatchReceiver = newIrFunction.dispatchReceiverParameter?.let { irGet(it) }
                         params.forEachIndexed { i, variable -> putValueArgument(i, irGet(variable)) }
                     }
-                    is IrSimpleFunction -> +irReturn(dispatchToImplementation(originalDeclaration, newIrFunction, params))
+                    is IrSimpleFunction -> {
+                        +irReturn(dispatchToImplementation(originalDeclaration, newIrFunction, params))
+                    }
                 }
             }.statements
         }

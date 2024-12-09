@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.LineAndColumn
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -48,7 +49,7 @@ private val debugFriendlyOrigins = IdentityHashMap<IrDeclarationOrigin, Boolean>
 
 private val IrSymbol?.shouldIgnore: Boolean
     get() = this?.let {
-        val owner = it.owner as? IrFunction ?: return@let false
+        val owner = it.owner as? IrDeclaration ?: return@let false
         owner.getPackageFragment().packageFqName.startsWith(StandardClassIds.BASE_KOTLIN_PACKAGE) ||
                 owner.origin !in debugFriendlyOrigins
     } == true
@@ -58,32 +59,23 @@ fun IrElement.getSourceLocation(
     fileEntry: IrFileEntry?,
     type: LocationType = LocationType.START
 ): SourceLocation {
-    val isIgnoredDeclaration = declaration.shouldIgnore
+    if (declaration.shouldIgnore) {
+        return if (declaration is IrFunctionSymbol && declaration.owner.isInline)
+            SourceLocation.NoLocation("Inlined function body")
+        else SourceLocation.IgnoredLocation
+    }
 
     if (fileEntry == null) return SourceLocation.NoLocation("fileEntry is null")
-    if (isIgnoredDeclaration && declaration is IrFunctionSymbol && (declaration.owner.isInline)) return SourceLocation.NoLocation("Inlined function body")
+    if (hasSyntheticOrUndefinedLocation) return SourceLocation.NoLocation("Synthetic declaration")
 
     val path = fileEntry.name
     var (line, column) = type.getLineAndColumnNumberFor(this, fileEntry)
 
-    if (line < 0 || column < 0) {
-        if (!isIgnoredDeclaration) return SourceLocation.NoLocation("startLine or startColumn < 0")
-        line = 0
-        column = 0
-    }
-    return if (isIgnoredDeclaration) {
-        SourceLocation.IgnoredLocation(
-            path,
-            line,
-            column
-        )
-    } else {
-        SourceLocation.Location(
-            path,
-            line,
-            column
-        )
-    }
+    return SourceLocation.Location(
+        path,
+        line,
+        column
+    )
 }
 
 fun WasmExpressionBuilder.buildUnreachableForVerifier() {

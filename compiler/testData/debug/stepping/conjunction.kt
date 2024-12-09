@@ -45,13 +45,15 @@ fun getD() = true
 // test.kt:12 box
 
 // EXPECTATIONS WASM
-// test.kt:3 $box (10)
 // test.kt:4 $box (16)
 // test.kt:14 $getA (13)
+// test.kt:4 $box (16)
 // test.kt:5 $box (11)
 // test.kt:16 $getB (13)
+// test.kt:5 $box (11)
 // test.kt:6 $box (11)
 // test.kt:18 $getC (13)
+// test.kt:6 $box (11)
 // test.kt:7 $box (11)
 // test.kt:10 $box (8)
 // test.kt:12 $box (1)

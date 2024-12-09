@@ -45,7 +45,8 @@ sealed class WasmFunction(
         name: String,
         type: WasmSymbolReadOnly<WasmFunctionType>,
         val locals: MutableList<WasmLocal> = mutableListOf(),
-        val instructions: MutableList<WasmInstr> = mutableListOf()
+        val instructions: MutableList<WasmInstr> = mutableListOf(),
+        val endLocation: SourceLocation = SourceLocation.NoLocation,
     ) : WasmFunction(name, type)
 
     class Imported(

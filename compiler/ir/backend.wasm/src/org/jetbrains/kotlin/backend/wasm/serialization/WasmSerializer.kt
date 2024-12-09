@@ -160,6 +160,7 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeWasmSymbolReadOnly(func.type, ::serializeWasmFunctionType)
             when (func) {
                 is WasmFunction.Defined -> withTag(FunctionTags.DEFINED) {
+                    serializeSourceLocation(func.endLocation)
                     serializeList(func.locals, ::serializeWasmLocal)
                     serializeList(func.instructions, ::serializeWasmInstr)
                 }
@@ -412,12 +413,8 @@ class WasmSerializer(outputStream: OutputStream) {
         when (sl) {
             SourceLocation.NoLocation -> setTag(LocationTags.NO_LOCATION)
             SourceLocation.NextLocation -> setTag(LocationTags.NEXT_LOCATION)
+            SourceLocation.IgnoredLocation -> setTag(LocationTags.IGNORED_LOCATION)
             is SourceLocation.Location -> withTag(LocationTags.LOCATION) {
-                serializeString(sl.file)
-                b.writeUInt32(sl.line.toUInt())
-                b.writeUInt32(sl.column.toUInt())
-            }
-            is SourceLocation.IgnoredLocation -> withTag(LocationTags.IGNORED_LOCATION) {
                 serializeString(sl.file)
                 b.writeUInt32(sl.line.toUInt())
                 b.writeUInt32(sl.column.toUInt())

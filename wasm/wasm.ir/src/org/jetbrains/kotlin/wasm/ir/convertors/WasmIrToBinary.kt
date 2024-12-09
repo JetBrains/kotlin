@@ -327,7 +327,9 @@ class WasmIrToBinary(
         withVarUInt32PayloadSizePrepended { content() }
     }
 
-    private fun withVarUInt32PayloadSizePrepended(fn: () -> Unit) {
+    private fun withVarUInt32PayloadSizePrepended(sourceLocation: SourceLocation? = null, fn: () -> Unit) {
+        sourceLocation?.let { debugInformationGenerator?.addSourceLocation(SourceLocationMappingToBinary(it, offsets + Box(b.written))) }
+
         val box = Box(-1)
         val previousOffsets = offsets
         offsets += box
@@ -337,6 +339,7 @@ class WasmIrToBinary(
         b = newWriter
         fn()
         b = previousWriter
+
         b.writeVarUInt32(newWriter.written)
 
         box.value = b.written
@@ -473,10 +476,10 @@ class WasmIrToBinary(
         b.writeVarUInt32(t.type.id!!)
     }
 
-    private fun appendExpr(expr: Iterable<WasmInstr>) {
+    private fun appendExpr(expr: Iterable<WasmInstr>, endLocation: SourceLocation = SourceLocation.NoLocation("End of instruction list")) {
         val expressionWithEndOp = sequence {
             yieldAll(expr)
-            yield(WasmInstrWithLocation(WasmOp.END, SourceLocation.NoLocation("End of instruction list")))
+            yield(WasmInstrWithLocation(WasmOp.END, endLocation))
         }
 
         if (optimizeInstructionFlow) {
@@ -561,7 +564,11 @@ class WasmIrToBinary(
     }
 
     private fun appendCode(function: WasmFunction.Defined) {
-        withVarUInt32PayloadSizePrepended {
+        withVarUInt32PayloadSizePrepended(SourceLocation.NextLocation) {
+//            debugInformationGenerator?.addSourceLocation(
+//                SourceLocationMappingToBinary(SourceLocation.NextLocation, offsets + Box(b.written))
+//            )
+
             b.writeVarUInt32(function.locals.count { !it.isParameter })
             function.locals.forEach { local ->
                 if (!local.isParameter) {
@@ -570,7 +577,7 @@ class WasmIrToBinary(
                 }
             }
 
-            appendExpr(function.instructions)
+            appendExpr(function.instructions, function.endLocation)
         }
     }
 

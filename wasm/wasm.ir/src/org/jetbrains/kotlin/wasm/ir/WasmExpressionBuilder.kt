@@ -29,11 +29,16 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>) {
     private var _numberOfNestedBlocks = 0
 
     fun buildInstr(op: WasmOp, location: SourceLocation, vararg immediates: WasmImmediate) {
+        expression.lastOrNull()?.let {
+            if (it.operator.breakControlFlowImmediately && !op.endPreviousControlBlock) return
+        }
+
         if (op.isBlockStart()) {
             _numberOfNestedBlocks++
         } else if (op.isBlockEnd()) {
             _numberOfNestedBlocks--
         }
+
         expression += WasmInstrWithLocation(op, immediates.toList(), location)
     }
 

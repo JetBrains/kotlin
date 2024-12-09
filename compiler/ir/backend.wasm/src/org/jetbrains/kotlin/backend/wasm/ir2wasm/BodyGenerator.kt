@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
@@ -68,7 +67,7 @@ class BodyGenerator(
     internal fun generateExpression(expression: IrExpression) {
         expression.acceptVoid(this)
 
-        if (expression.type.isNothing()) {
+        if (expression.type.isNothing() && expression !is IrReturn) {
             // TODO Ideally, we should generate unreachable only for specific cases and preferable on declaration site. 
             body.buildUnreachableAfterNothingType()
         }
@@ -77,7 +76,7 @@ class BodyGenerator(
     // Generates code for the given IR element but *never* leaves anything on the stack.
     private fun generateAsStatement(statement: IrExpression) {
         generateExpression(statement)
-        if (statement.type != wasmSymbols.voidType) {
+        if (statement.type != wasmSymbols.voidType && statement !is IrReturn) {
             body.buildDrop(SourceLocation.NoLocation("DROP"))
         }
     }
@@ -592,10 +591,10 @@ class BodyGenerator(
 
     fun generateObjectCreationPrefixIfNeeded(constructor: IrConstructor) {
         val parentClass = constructor.parentAsClass
-        if (constructor.origin == PrimaryConstructorLowering.SYNTHETIC_PRIMARY_CONSTRUCTOR) return
         constructor.getSourceLocation().let {
             if (it is SourceLocation.WithSourceInformation) body.buildNop(it)
         }
+        if (constructor.origin == PrimaryConstructorLowering.SYNTHETIC_PRIMARY_CONSTRUCTOR) return
         if (parentClass.isAbstractOrSealed) return
         val thisParameter = functionContext.referenceLocal(parentClass.thisReceiver!!.symbol)
         body.commentGroupStart { "Object creation prefix" }
@@ -1163,10 +1162,17 @@ class BodyGenerator(
             return
         }
 
+        val branches = expression.branches
+        val onlyOneBranch = branches.singleOrNull()
+
+        if (onlyOneBranch != null && isElseBranch(onlyOneBranch)) {
+            generateExpression(onlyOneBranch.result)
+            return
+        }
+
         val resultType = wasmModuleTypeTransformer.transformBlockResultType(expression.type)
         var ifCount = 0
         var seenElse = false
-        val branches = expression.branches
 
         for (branch in branches) {
             if (!isElseBranch(branch)) {
@@ -1196,7 +1202,10 @@ class BodyGenerator(
         }
 
         repeat(ifCount) {
-            body.buildEnd(branches[branches.lastIndex - it].nextLocation())
+            val endLocation = branches[branches.lastIndex - it]
+                .takeIf { expression.origin != IrStatementOrigin.ANDAND }
+                ?.nextLocation()
+            body.buildEnd(endLocation)
         }
     }
 

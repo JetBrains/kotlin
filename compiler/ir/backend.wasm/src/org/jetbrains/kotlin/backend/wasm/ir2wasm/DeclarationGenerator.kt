@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.parentOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
@@ -155,35 +156,27 @@ class DeclarationGenerator(
 
         if (declaration is IrConstructor) {
             bodyBuilder.generateObjectCreationPrefixIfNeeded(declaration)
-        } else {
-            val location = locationTarget.getSourceLocation(declaration.symbol, declaration.fileOrNull?.fileEntry)
-            if (location is SourceLocation.WithSourceInformation || declaration.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
-                exprGen.buildNop(SourceLocation.NextLocation)
-            }
         }
 
         declarationBody.acceptVoid(bodyBuilder)
 
-        if (declaration.name.asString().contains("foo")) {
-            println("caught")
-        }
         val declarationBodyEndLocation =
             locationTarget.getSourceLocation(declaration.symbol, declaration.fileOrNull?.fileEntry, LocationType.END)
 
         // Return implicit this from constructions to avoid extra tmp
         // variables on constructor call sites.
         // TODO: Redesign construction scheme.
+
         if (declaration is IrConstructor) {
             exprGen.buildGetLocal(/*implicit this*/ function.locals[0], SourceLocation.NoLocation("Get implicit dispatch receiver"))
             exprGen.buildInstr(WasmOp.RETURN, SourceLocation.NoLocation("Return implicit this"))
         } else {
+            // Add unreachable if function returns something but not as a last instruction.
+            // We can do a separate lowering which adds explicit returns everywhere instead.
+            if (wasmFunctionType.resultTypes.isNotEmpty()) {
+                exprGen.buildUnreachableForVerifier()
+            }
             exprGen.buildNop(declarationBodyEndLocation)
-        }
-
-        // Add unreachable if function returns something but not as a last instruction.
-        // We can do a separate lowering which adds explicit returns everywhere instead.
-        if (wasmFunctionType.resultTypes.isNotEmpty()) {
-            exprGen.buildUnreachableForVerifier()
         }
 
         wasmFileCodegenContext.defineFunction(declaration.symbol, function)

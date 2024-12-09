@@ -22,11 +22,11 @@ sealed class SourceLocation {
         override val column: Int
     ) : WithSourceInformation()
 
-    data class IgnoredLocation(
-        override val file: String,
-        override val line: Int,
-        override val column: Int
-    ) : WithSourceInformation()
+    object IgnoredLocation : WithSourceInformation() {
+        override val file = "IGNORED_IMPLEMENTATIONS.kt"
+        override val line = 0
+        override val column = 0
+    }
 
     companion object {
         @Suppress("FunctionName", "UNUSED_PARAMETER")

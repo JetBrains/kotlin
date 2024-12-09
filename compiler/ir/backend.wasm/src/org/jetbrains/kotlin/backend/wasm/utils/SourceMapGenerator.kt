@@ -36,10 +36,11 @@ class SourceMapGenerator(
     fun generate(): String? {
         val sourceMapsInfo = SourceMapsInfo.from(configuration) ?: return null
 
-        val sourceMapBuilder =
-            SourceMap3Builder(null, { error("This should not be called for Kotlin/Wasm") }, sourceMapsInfo.sourceMapPrefix)
-
-        val ignoredSource = SPECIAL_IGNORED_FILE.also(sourceMapBuilder::addIgnoredSource)
+        val sourceMapBuilder = SourceMap3Builder(
+            null,
+            { error("This should not be called for Kotlin/Wasm") },
+            sourceMapsInfo.sourceMapPrefix,
+        ).apply { addIgnoredSource(SourceLocation.IgnoredLocation.file) }
 
         val pathResolver = SourceFilePathResolver.create(
             sourceMapsInfo.sourceRoots,
@@ -53,7 +54,12 @@ class SourceMapGenerator(
 
         for (mapping in sourceLocationMappings) {
             val generatedLocation = mapping.generatedLocation
-            val sourceLocation = mapping.sourceLocation.takeIf { it != prev || prevGeneratedLine != generatedLocation.line } ?: continue
+            val sourceLocation = mapping.sourceLocation.takeIf { it != prev || prevGeneratedLine != generatedLocation.line }
+
+            if (sourceLocation == null) {
+                offsetExpectedNextLocation = -1
+                continue
+            }
 
             require(generatedLocation.line >= prevGeneratedLine) { "The order of the mapping is wrong" }
 
@@ -75,7 +81,7 @@ class SourceMapGenerator(
                         pathResolver
                             .getPathRelativeToSourceRoots(File(sourceLocation.file))
                             .replace(Regex("^\\.\\./"), "")
-                    else ignoredSource
+                    else sourceLocation.file
 
                     if (offsetExpectedNextLocation != -1) {
                         sourceMapBuilder.addMapping(
@@ -93,6 +99,7 @@ class SourceMapGenerator(
                         sourceLocation.column,
                         generatedLocation.column
                     )
+
                     prev = sourceLocation
                 }
             }
@@ -100,9 +107,5 @@ class SourceMapGenerator(
         }
 
         return sourceMapBuilder.build()
-    }
-
-    companion object {
-        private const val SPECIAL_IGNORED_FILE = "IGNORED_IMPLEMENTATIONS.kt"
     }
 }
