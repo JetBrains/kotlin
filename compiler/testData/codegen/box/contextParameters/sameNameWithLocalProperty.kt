@@ -1,4 +1,3 @@
-// TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND_K1: ANY
 // LANGUAGE: +ContextParameters
 

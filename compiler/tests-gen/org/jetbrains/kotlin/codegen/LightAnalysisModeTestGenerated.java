@@ -7981,6 +7981,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/contextParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
+    @TestMetadata("contextParameterToDefaultArgument.kt")
+    public void testContextParameterToDefaultArgument() {
+      runTest("compiler/testData/codegen/box/contextParameters/contextParameterToDefaultArgument.kt");
+    }
+
     @TestMetadata("sameNameWithGlobalProperty.kt")
     public void testSameNameWithGlobalProperty() {
       runTest("compiler/testData/codegen/box/contextParameters/sameNameWithGlobalProperty.kt");

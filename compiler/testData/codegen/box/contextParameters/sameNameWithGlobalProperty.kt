@@ -1,8 +1,7 @@
-// TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND_K1: ANY
 // LANGUAGE: +ContextParameters
 
-class A(var x: String){
+class A(var x: String) {
     fun foo(): String { return x }
 }
 
@@ -16,7 +15,7 @@ fun test1() {
 }
 
 fun box(): String {
-    with(A("OK")){
+    with(A("OK")) {
         test1()
     }
     return result

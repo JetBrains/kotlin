@@ -23,10 +23,10 @@ val property: String
         return <!AMBIGUOUS_CONTEXT_ARGUMENT!>implicit<!><A>().foo("")
     }
 
-fun inTypePosition(a: context(A, A) ()-> Unit){}
+fun inTypePosition(a: context(A, A) ()-> Unit) {}
 
 fun usage(){
-    with(A()){
+    with(A()) {
         test()
         property
     }

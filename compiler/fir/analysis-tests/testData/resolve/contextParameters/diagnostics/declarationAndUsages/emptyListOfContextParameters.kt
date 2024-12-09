@@ -15,4 +15,4 @@ context(<!CONTEXT_PARAMETER_WITHOUT_NAME!>String<!>)
 val property2: String
     get() = ""
 
-fun inTypePosition(a: context(<!SYNTAX!><!>) ()-> Unit){}
+fun inTypePosition(a: context(<!SYNTAX!><!>) ()-> Unit) {}

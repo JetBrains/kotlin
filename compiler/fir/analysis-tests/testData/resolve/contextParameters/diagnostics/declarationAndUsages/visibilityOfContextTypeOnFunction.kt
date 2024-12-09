@@ -13,19 +13,19 @@ open class OpenClass {
         val a: String = ""
     }
     context(a: ProtectedClass)
-    public fun test1(){
+    public fun test1() {
         a.a
     }
     context(a: ProtectedClass)
-    internal fun test2(){
+    internal fun test2() {
         a.a
     }
     context(a: ProtectedClass)
-    protected fun test3(){
+    protected fun test3() {
         a.a
     }
     context(a: ProtectedClass)
-    private fun test4(){
+    private fun test4() {
         a.a
     }
 }

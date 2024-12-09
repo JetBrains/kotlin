@@ -1,11 +1,11 @@
 // RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +ContextParameters
-class C(var a: String){
+class C(var a: String) {
     fun foo(): String { return a }
 }
 
 context(a: C)
-fun test(b: C = a){
+fun test(b: C = a) {
     b.foo()
 }
 
@@ -20,11 +20,11 @@ fun test3(b: Array<C> = arrayOf(*a)) {
 }
 
 fun usage(){
-    with(C("OK")){
+    with(C("OK")) {
         test()
         test2()
     }
-    with(arrayOf(C("OK"))){
+    with(arrayOf(C("OK"))) {
         test3()
     }
 }

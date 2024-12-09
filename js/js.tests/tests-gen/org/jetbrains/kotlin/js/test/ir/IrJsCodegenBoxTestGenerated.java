@@ -6907,6 +6907,42 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
     public void testAllFilesPresentInContextParameters() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/contextParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
     }
+
+    @Test
+    @TestMetadata("contextParameterToDefaultArgument.kt")
+    public void testContextParameterToDefaultArgument() {
+      runTest("compiler/testData/codegen/box/contextParameters/contextParameterToDefaultArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("sameNameWithGlobalProperty.kt")
+    public void testSameNameWithGlobalProperty() {
+      runTest("compiler/testData/codegen/box/contextParameters/sameNameWithGlobalProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("sameNameWithLocalArguments.kt")
+    public void testSameNameWithLocalArguments() {
+      runTest("compiler/testData/codegen/box/contextParameters/sameNameWithLocalArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("sameNameWithLocalProperty.kt")
+    public void testSameNameWithLocalProperty() {
+      runTest("compiler/testData/codegen/box/contextParameters/sameNameWithLocalProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("sameNameWithMemberProperty.kt")
+    public void testSameNameWithMemberProperty() {
+      runTest("compiler/testData/codegen/box/contextParameters/sameNameWithMemberProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("sameNameWithPropertyName.kt")
+    public void testSameNameWithPropertyName() {
+      runTest("compiler/testData/codegen/box/contextParameters/sameNameWithPropertyName.kt");
+    }
   }
 
   @Nested

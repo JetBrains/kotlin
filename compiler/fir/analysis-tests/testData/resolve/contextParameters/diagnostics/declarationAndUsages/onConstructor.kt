@@ -8,10 +8,10 @@ class Test1 context(c: A) <!SYNTAX!>constructor<!><!SYNTAX!>(<!><!SYNTAX!>firstN
 
 class Test2 {
     <!UNSUPPORTED!>context(c: A)<!>
-    constructor(){}
+    constructor() {}
 
     <!UNSUPPORTED!>context(c: A)<!>
-    constructor(a: String){}
+    constructor(a: String) {}
 }
 
 class Test3: Base {
@@ -20,7 +20,7 @@ class Test3: Base {
     constructor() :<!SYNTAX!><!> context(c: A) <!SYNTAX!>this<!><!SYNTAX!>(<!><!SYNTAX!>"<!><!SYNTAX!>"<!><!SYNTAX!>)<!>
 }
 
-class Test4(val a: context(A) ()-> String = {""}){
+class Test4(val a: context(A) ()-> String = {""}) {
     constructor(b: context(A) (String)-> String) : this() {}
 }
 
