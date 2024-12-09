@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.konan.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.PartialCacheInfo
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
-import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
@@ -74,15 +73,9 @@ internal class KonanIrLinker(
     val klibToModuleDeserializerMap = mutableMapOf<KotlinLibrary, KonanPartialModuleDeserializer>()
 
     fun getCachedDeclarationModuleDeserializer(declaration: IrDeclaration): KonanPartialModuleDeserializer? {
-        val packageFragment = declaration.getPackageFragment()
-        val moduleDescriptor = packageFragment.moduleDescriptor
-        val klib = packageFragment.konanLibrary
-        val declarationBeingCached = packageFragment is IrFile && klib != null && nativeCacheSupport.libraryBeingCached?.klib == klib
-                && (nativeCacheSupport.libraryBeingCached as PartialCacheInfo).strategy.contains(packageFragment.path)
-        return if (klib != null && !moduleDescriptor.isFromCInteropLibrary()
-                && nativeCacheSupport.cachedLibraries.isLibraryCached(klib) && !declarationBeingCached)
-            moduleDeserializers[moduleDescriptor] ?: error("No module deserializer for ${declaration.render()}")
-        else null
+        return nativeCacheSupport.getDescriptorForCachedDeclarationModuleDeserializer(declaration)?.let {
+            moduleDeserializers[it] ?: error("No module deserializer for ${declaration.render()}")
+        }
     }
 
     override fun createModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: KotlinLibrary?, strategyResolver: (String) -> DeserializationStrategy) =

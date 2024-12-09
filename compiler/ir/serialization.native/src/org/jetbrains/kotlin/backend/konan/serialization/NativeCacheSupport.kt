@@ -6,9 +6,13 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.konan.PartialCacheInfoBase
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 
-class NativeCacheSupport(
-    val cachedLibraries: CachedLibrariesBase,
-    val lazyIrForCaches: Boolean,
-    val libraryBeingCached: PartialCacheInfoBase?,
-)
+interface NativeCacheSupport{
+    val cachedLibraries: CachedLibrariesBase
+    val lazyIrForCaches: Boolean
+    val libraryBeingCached: PartialCacheInfoBase?
+
+    fun getDescriptorForCachedDeclarationModuleDeserializer(declaration: IrDeclaration): ModuleDescriptor?
+}

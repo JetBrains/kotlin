@@ -143,7 +143,7 @@ internal fun PsiToIrContext.psiToIr(
                         builtIns = generatorContext.irBuiltIns,
                         messageCollector = messageCollector
                 ),
-                nativeCacheSupport = NativeCacheSupport(config.cachedLibraries, config.lazyIrForCaches, config.libraryToCache),
+                nativeCacheSupport = NativeCacheSupportImpl(config.cachedLibraries, config.lazyIrForCaches, config.libraryToCache),
                 userVisibleIrModulesSupport = config.userVisibleIrModulesSupport,
                 externalOverridabilityConditions = listOf(IrObjCOverridabilityCondition)
         ).also { linker ->
