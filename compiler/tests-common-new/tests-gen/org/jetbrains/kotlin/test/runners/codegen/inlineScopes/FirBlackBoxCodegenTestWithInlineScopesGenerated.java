@@ -15706,6 +15706,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
         runTest("compiler/testData/codegen/box/coroutines/varSpilling/safeCallElvis.kt");
       }
 
+      @Test
+      @TestMetadata("thisUnspill.kt")
+      public void testThisUnspill() {
+        runTest("compiler/testData/codegen/box/coroutines/varSpilling/thisUnspill.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/cleanup")
       @TestDataPath("$PROJECT_ROOT")

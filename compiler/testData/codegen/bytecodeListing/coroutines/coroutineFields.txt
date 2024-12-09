@@ -3,7 +3,6 @@
 final class Controller$multipleSuspensions$1 {
     // source: 'coroutineFields.kt'
     enclosing method Controller.multipleSuspensions(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-    field L$0: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: Controller
