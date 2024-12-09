@@ -132,7 +132,6 @@ if (!project.hasProperty("versions.kotlin-native")) {
 }
 
 val irCompilerModules = arrayOf(
-    ":native:base",
     ":compiler:ir.tree",
     ":compiler:ir.serialization.common",
     ":compiler:ir.serialization.js",
@@ -202,6 +201,7 @@ val commonCompilerModules = arrayOf(
     ":compiler:build-tools:kotlin-build-tools-api",
     ":js:js.config",
     ":wasm:wasm.config",
+    ":native:base",
 ).also { extra["commonCompilerModules"] = it }
 
 val firCompilerCoreModules = arrayOf(
