@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.writableTypeInfoSymbolName
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.kotlinFqName
-import java.lang.IllegalStateException
 
 internal sealed interface WritableTypeInfoPointer : ConstPointer
 
