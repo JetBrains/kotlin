@@ -7,12 +7,11 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure
 
 import com.intellij.mock.MockApplication
 import com.intellij.openapi.application.Application
-import com.intellij.openapi.util.Key
-import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
-import java.util.concurrent.locks.ReadWriteLock
+import com.intellij.openapi.util.KeyWithDefaultValue
+import com.intellij.openapi.util.UserDataHolder
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.withLock
-import kotlin.reflect.KClass
+import kotlin.reflect.KProperty
 
 /**
  * [ApplicationServiceRegistration] centralizes registration of services with shared [MockApplication]s.
@@ -24,6 +23,8 @@ import kotlin.reflect.KClass
  * This whole object is a workaround for improper application sharing, see [KT-64167](https://youtrack.jetbrains.com/issue/KT-64167).
  */
 object ApplicationServiceRegistration {
+    private val lock = ReentrantReadWriteLock()
+
     fun <DATA> register(application: MockApplication, registrars: List<AnalysisApiServiceRegistrar<DATA>>, data: DATA) {
         registerWithCustomRegistration(application, registrars) {
             registerApplicationServices(application, data)
@@ -35,7 +36,6 @@ object ApplicationServiceRegistration {
         registrars: List<AnalysisApiServiceRegistrar<DATA>>,
         register: AnalysisApiServiceRegistrar<DATA>.() -> Unit,
     ) {
-        val lock = application.lock
         for (registrar in registrars) {
             if (lock.readLock().withLock { application.isRegistrarRegistered(registrar) }) {
                 continue
@@ -44,23 +44,28 @@ object ApplicationServiceRegistration {
             lock.writeLock().withLock {
                 if (application.isRegistrarRegistered(registrar)) return@withLock
                 registrar.register()
-                application.serviceRegistered[registrar::class] = true
+                application.serviceRegistered[registrar.id] = true
             }
         }
     }
 
     private fun <DATA> Application.isRegistrarRegistered(registrar: AnalysisApiServiceRegistrar<DATA>): Boolean =
-        serviceRegistered[registrar::class] == true
+        serviceRegistered[registrar.id] == true
 
-    private val Application.lock
-            by NotNullableUserDataProperty<Application, ReadWriteLock>(
-                Key("TestApplicationServicesRegistrarLock"),
-                ReentrantReadWriteLock(),
+    private val <DATA> AnalysisApiServiceRegistrar<DATA>.id: String
+        get() = this::class.qualifiedName ?: error("A service registrar should have a qualified name.")
+
+    private val Application.serviceRegistered
+            by UserDataPropertyWithDefault<Application, MutableMap<String, Boolean>>(
+                KeyWithDefaultValue.create("ApplicationServiceRegistration.serviceRegistered") { mutableMapOf() },
             )
 
-    private var Application.serviceRegistered
-            by NotNullableUserDataProperty<Application, MutableMap<KClass<out Any>, Boolean>>(
-                Key("TestApplicationServicesRegistered"),
-                mutableMapOf(),
-            )
+    private class UserDataPropertyWithDefault<in R : UserDataHolder, T>(val key: KeyWithDefaultValue<T>) {
+        operator fun getValue(thisRef: R, desc: KProperty<*>): T =
+            thisRef.getUserData(key) ?: error("A user data key with a default value should guarantee a non-null value.")
+
+        operator fun setValue(thisRef: R, desc: KProperty<*>, value: T) {
+            thisRef.putUserData(key, value)
+        }
+    }
 }
