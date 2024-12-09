@@ -483,7 +483,10 @@ fun RTableContext.RTableRowContext.linePerSecondCell(linePerSec: Double) {
     cell(df.format(linePerSec))
 }
 fun RTableContext.RTableRowContext.linePerSecondCell(lines: Int, time: Long, timeUnit: TableTimeUnit = TableTimeUnit.NS) {
-    val linePerSec = lines / TableTimeUnit.S.convert(time, from = timeUnit)
+    val linePerSec = when (time) {
+        0L -> 0.0
+        else -> lines / TableTimeUnit.S.convert(time, from = timeUnit)
+    }
     linePerSecondCell(linePerSec)
 }
 
