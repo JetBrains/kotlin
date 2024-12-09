@@ -21,6 +21,3 @@ internal val CallableMemberDescriptor.propertyIfAccessor
     get() = if (this is PropertyAccessorDescriptor)
                 this.correspondingProperty
                 else this
-
-val ModuleDescriptor.isForwardDeclarationModule: Boolean
-    get() = name == FORWARD_DECLARATIONS_MODULE_NAME
