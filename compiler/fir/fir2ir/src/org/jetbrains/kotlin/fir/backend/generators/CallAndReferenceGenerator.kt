@@ -27,10 +27,8 @@ import org.jetbrains.kotlin.fir.resolve.calls.getExpectedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.approximateDeclarationType
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
-import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
-import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorSubstitutor
-import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -181,7 +179,7 @@ class CallAndReferenceGenerator(
                 if (function is FirConstructor) {
                     // The number of type parameters of typealias constructor may mismatch with that number in the original constructor.
                     // And for IR, we need to use the original constructor as a source of truth
-                    function = function.originalConstructorIfTypeAlias ?: function
+                    function = function?.typeAliasConstructorInfo?.originalConstructor ?: function
                 }
                 return if (adapterGenerator.needToGenerateAdaptedCallableReference(callableReferenceAccess, type, function)) {
                     // Receivers are being applied inside
@@ -939,7 +937,7 @@ class CallAndReferenceGenerator(
                     firConstructorSymbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
                     val fullyExpandedConstructorSymbol = firConstructorSymbol.let {
-                        it.fir.originalConstructorIfTypeAlias?.unwrapUseSiteSubstitutionOverrides()?.symbol ?: it
+                        it.fir.typeAliasConstructorInfo?.originalConstructor?.unwrapUseSiteSubstitutionOverrides()?.symbol ?: it
                     }
                     val irConstructor = declarationStorage.getIrConstructorSymbol(fullyExpandedConstructorSymbol)
 
@@ -1355,8 +1353,9 @@ class CallAndReferenceGenerator(
      * We need to map them using the typealias parameters and typealias constructor substitutors.
      */
     private fun FirCallableDeclaration?.refineTypeArgumentsOfTypeAliasConstructor(originalTypeArguments: List<FirTypeProjection>): List<FirTypeRef> {
-        val typeAliasSymbol = (this as? FirConstructor)?.typeAliasForConstructor
+        val typeAliasConstructorInfo = (this as? FirConstructor)?.typeAliasConstructorInfo
             ?: return originalTypeArguments.map { (it as FirTypeProjectionWithVariance).typeRef }
+        val typeAliasSymbol = typeAliasConstructorInfo.typeAliasSymbol
 
         val parametersSubstitutor = createParametersSubstitutor(
             session,
@@ -1367,7 +1366,7 @@ class CallAndReferenceGenerator(
 
         /**
          * Filter out type arguments that correspond outer type parameters of an inner class
-         * To perform it, we should use two substitutors: `typeAliasConstructorSubstitutor` and `parametersSubstitutor`.
+         * To perform it, we should use two substitutors: `typeAliasConstructorInfo.substitutor` and `parametersSubstitutor`.
          * Consider the following example:
          *
          * ```kt
@@ -1383,10 +1382,10 @@ class CallAndReferenceGenerator(
          * }
          * ```
          *
-         * In the example above, `parametersSubstitutor` holds `K -> String` substitution, `typeAliasConstructorSubstitutor` holds `T` -> K` substituion.
+         * In the example above, `parametersSubstitutor` holds `K -> String` substitution, `typeAliasConstructorInfo.substitutor` holds `T` -> K` substituion.
          */
-        val containingInnerClass = originalConstructorIfTypeAlias?.takeIf { it.isInner }?.getContainingClass()
-        val typeAliasConstructorSubstitutor = typeAliasConstructorSubstitutor
+        val containingInnerClass = typeAliasConstructorInfo.originalConstructor.takeIf { it.isInner }?.getContainingClass()
+        val typeAliasConstructorSubstitutor = typeAliasConstructorInfo.substitutor
         val ignoredTypeArguments = if (typeAliasConstructorSubstitutor != null && containingInnerClass != null) {
             containingInnerClass.typeParameters.filterIsInstance<FirOuterClassTypeParameterRef>().mapNotNullTo(mutableSetOf()) {
                 typeAliasConstructorSubstitutor.substituteOrNull(it.toConeType())

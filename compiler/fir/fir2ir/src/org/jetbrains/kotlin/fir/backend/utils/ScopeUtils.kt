@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
-import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -32,7 +32,7 @@ internal tailrec fun FirCallableSymbol<*>.unwrapCallRepresentative(
     val fir = fir
 
     if (fir is FirConstructor) {
-        val originalForTypeAlias = fir.originalConstructorIfTypeAlias
+        val originalForTypeAlias = fir.typeAliasConstructorInfo?.originalConstructor
         if (originalForTypeAlias != null) {
             return originalForTypeAlias.symbol.unwrapCallRepresentative(c, owner)
         }

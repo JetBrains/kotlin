@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -213,7 +213,7 @@ object FirOptInUsageBaseChecker {
     ) {
         val parentClassSymbol = containingClassLookupTag()?.toRegularClassSymbol(context.session)
         if (this is FirConstructor) {
-            val ownerClassLikeSymbol = this.typeAliasForConstructor ?: parentClassSymbol
+            val ownerClassLikeSymbol = this.typeAliasConstructorInfo?.typeAliasSymbol ?: parentClassSymbol
             // For other callable we check dispatch receiver type instead
             ownerClassLikeSymbol?.loadExperimentalities(
                 context, result, visited, fromSetter = false, dispatchReceiverType = null, fromSupertype = false

@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
-import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -708,7 +708,7 @@ fun createConeDiagnosticForCandidateWithError(
         CandidateApplicability.K2_VISIBILITY_ERROR -> {
             val session = candidate.callInfo.session
 
-            (symbol as? FirConstructorSymbol)?.typeAliasForConstructor?.let {
+            (symbol as? FirConstructorSymbol)?.typeAliasConstructorInfo?.typeAliasSymbol?.let {
                 if (!session.visibilityChecker.isVisible(it.fir, candidate)) {
                     return ConeVisibilityError(it)
                 }

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.scopes.scopeForTypeAlias
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 
@@ -51,7 +51,7 @@ fun FirClassLikeSymbol<*>.getPrimaryConstructorSymbol(
 
     constructorsScope.processDeclaredConstructors {
         // Typealias constructors & SO override constructors of primary constructors are not marked as primary
-        val unwrappedConstructor = it.fir.originalConstructorIfTypeAlias?.unwrapSubstitutionOverrides() ?: it.fir
+        val unwrappedConstructor = it.fir.typeAliasConstructorInfo?.originalConstructor?.unwrapSubstitutionOverrides() ?: it.fir
         if (unwrappedConstructor.isPrimary && constructorSymbol == null) {
             constructorSymbol = it
         }
