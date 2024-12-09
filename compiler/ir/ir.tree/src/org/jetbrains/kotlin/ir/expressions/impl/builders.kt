@@ -95,6 +95,22 @@ fun IrCompositeImpl(
     origin = origin,
 )
 
+fun IrCompositeImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    origin: IrStatementOrigin?,
+    statements: List<IrStatement>,
+) = IrCompositeImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    origin = origin,
+).apply {
+    this.statements.addAll(statements)
+}
+
 fun IrCatchImpl(
     startOffset: Int,
     endOffset: Int,
@@ -536,6 +552,21 @@ fun IrRawFunctionReferenceImpl(
     endOffset = endOffset,
     type = type,
     symbol = symbol,
+)
+
+fun IrReturnImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    returnTargetSymbol: IrReturnTargetSymbol,
+    value: IrExpression,
+) = IrReturnImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    returnTargetSymbol = returnTargetSymbol,
+    value = value,
 )
 
 fun IrReturnableBlockImpl(

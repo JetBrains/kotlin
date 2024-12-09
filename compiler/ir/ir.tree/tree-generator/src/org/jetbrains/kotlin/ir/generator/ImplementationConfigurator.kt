@@ -244,56 +244,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             default("elements", smartList())
         }
 
-
-        impl(composite) {
-            implementation.generationCallback = {
-                println()
-                print()
-                println("""
-                    // A temporary API for compatibility with Flysto user project, see KQA-1254
-                    constructor(
-                        startOffset: Int,
-                        endOffset: Int,
-                        type: IrType,
-                        origin: IrStatementOrigin?,
-                        statements: List<IrStatement>,
-                    ) : this(
-                        constructorIndicator = null,
-                        startOffset = startOffset,
-                        endOffset = endOffset,
-                        type = type,
-                        origin = origin,
-                    ) {
-                        this.statements.addAll(statements)
-                    }
-                """.replaceIndent(currentIndent))
-            }
-        }
-
-        impl(`return`) {
-            implementation.generationCallback = {
-                println()
-                print()
-                println("""
-                    // A temporary API for compatibility with Flysto user project, see KQA-1254
-                    constructor(
-                        startOffset: Int,
-                        endOffset: Int,
-                        type: IrType,
-                        returnTargetSymbol: IrReturnTargetSymbol,
-                        value: IrExpression,
-                    ) : this(
-                        constructorIndicator = null,
-                        startOffset = startOffset,
-                        endOffset = endOffset,
-                        type = type,
-                        returnTargetSymbol = returnTargetSymbol,
-                        value = value,
-                    )
-                """.replaceIndent(currentIndent))
-            }
-        }
-
         impl(const) {
             implementation.generationCallback = {
                 println()
