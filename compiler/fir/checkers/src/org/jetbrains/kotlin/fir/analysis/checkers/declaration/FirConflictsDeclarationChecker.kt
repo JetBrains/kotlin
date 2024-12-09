@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.getDestructuredParameter
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.PACKAGE_MEMBER
-import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -119,7 +119,8 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKin
         container: FirDeclaration,
     ) {
         declarationConflictingSymbols.forEach { (conflictingDeclaration, symbols) ->
-            val typeAliasForConstructorSource = (conflictingDeclaration as? FirConstructorSymbol)?.typeAliasForConstructor?.source
+            val typeAliasForConstructorSource =
+                (conflictingDeclaration as? FirConstructorSymbol)?.typeAliasConstructorInfo?.typeAliasSymbol?.source
             val origin = conflictingDeclaration.origin
             val source = when {
                 conflictingDeclaration !is FirCallableSymbol<*> -> conflictingDeclaration.source

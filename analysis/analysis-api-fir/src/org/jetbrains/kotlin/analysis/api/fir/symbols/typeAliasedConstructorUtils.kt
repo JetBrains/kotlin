@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
-import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -25,8 +24,7 @@ internal fun typeAliasedConstructorsEqual(left: FirConstructorSymbol, right: Fir
 
     if (left == right) return true
 
-    return left.typeAliasForConstructor == right.typeAliasForConstructor &&
-            left.originalConstructorIfTypeAlias == right.originalConstructorIfTypeAlias
+    return left.typeAliasConstructorInfo == right.typeAliasConstructorInfo
 }
 
 internal fun typeAliasedConstructorParametersEqual(left: FirValueParameterSymbol, right: FirValueParameterSymbol): Boolean {
@@ -47,10 +45,7 @@ internal fun typeAliasedConstructorParametersEqual(left: FirValueParameterSymbol
 internal fun FirConstructorSymbol.hashCodeForTypeAliasedConstructor(): Int {
     require(isTypeAliasedConstructor)
 
-    return Objects.hash(
-        originalConstructorIfTypeAlias,
-        typeAliasForConstructor,
-    )
+    return typeAliasConstructorInfo!!.hashCode()
 }
 
 internal fun FirValueParameterSymbol.hashCodeForTypeAliasedConstructorParameter(): Int {
@@ -59,9 +54,5 @@ internal fun FirValueParameterSymbol.hashCodeForTypeAliasedConstructorParameter(
     val containingConstructor = containingDeclarationSymbol as FirConstructorSymbol
     val parameterIndex = containingConstructor.valueParameterSymbols.indexOf(this)
 
-    return Objects.hash(
-        parameterIndex,
-        containingConstructor.originalConstructorIfTypeAlias,
-        containingConstructor.typeAliasForConstructor,
-    )
+    return Objects.hash(parameterIndex, containingConstructor.typeAliasConstructorInfo)
 }

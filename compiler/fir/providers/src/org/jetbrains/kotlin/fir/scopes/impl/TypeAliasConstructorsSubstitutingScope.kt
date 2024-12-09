@@ -27,26 +27,20 @@ import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 
-private object TypeAliasConstructorKey : FirDeclarationDataKey()
+private object TypeAliasConstructorInfoKey : FirDeclarationDataKey()
 
-var <T : FirFunction> T.originalConstructorIfTypeAlias: T? by FirDeclarationDataRegistry.data(TypeAliasConstructorKey)
-val <T : FirFunction> FirFunctionSymbol<T>.originalConstructorIfTypeAlias: T?
-    get() = fir.originalConstructorIfTypeAlias
+data class TypeAliasConstructorInfo<T : FirFunction>(
+    val originalConstructor: T,
+    val typeAliasSymbol: FirTypeAliasSymbol,
+    val substitutor: ConeSubstitutor?,
+)
 
-val FirFunctionSymbol<*>.isTypeAliasedConstructor: Boolean
-    get() = fir.originalConstructorIfTypeAlias != null
+var <T : FirFunction> T.typeAliasConstructorInfo: TypeAliasConstructorInfo<T>? by FirDeclarationDataRegistry.data(TypeAliasConstructorInfoKey)
 
-private object TypeAliasForConstructorKey : FirDeclarationDataKey()
+val FirConstructorSymbol.typeAliasConstructorInfo: TypeAliasConstructorInfo<*>?
+    get() = fir.typeAliasConstructorInfo
 
-var FirFunction.typeAliasForConstructor: FirTypeAliasSymbol? by FirDeclarationDataRegistry.data(TypeAliasForConstructorKey)
-val FirFunctionSymbol<*>.typeAliasForConstructor: FirTypeAliasSymbol?
-    get() = fir.typeAliasForConstructor
-
-private object TypeAliasConstructorSubstitutorKey : FirDeclarationDataKey()
-
-var FirConstructor.typeAliasConstructorSubstitutor: ConeSubstitutor? by FirDeclarationDataRegistry.data(TypeAliasConstructorSubstitutorKey)
-
-class TypeAliasConstructorsSubstitutingScope(
+class TypeAliasConstructorsSubstitutingScope private constructor(
     private val typeAliasSymbol: FirTypeAliasSymbol,
     private val delegatingScope: FirScope,
     private val session: FirSession,
@@ -179,11 +173,11 @@ class TypeAliasConstructorsSubstitutingScope(
             // Never treat typealiased constructors as class members, they can be only an extension or a regular function
             dispatchReceiverType = null
         }.apply {
-            originalConstructorIfTypeAlias = originalConstructorSymbol.fir
-            typeAliasForConstructor = typeAliasSymbol
-            if (delegatingScope is FirClassSubstitutionScope) {
-                typeAliasConstructorSubstitutor = delegatingScope.substitutor
-            }
+            typeAliasConstructorInfo = TypeAliasConstructorInfo(
+                originalConstructor,
+                typeAliasSymbol,
+                (delegatingScope as? FirClassSubstitutionScope)?.substitutor,
+            )
         }
 
         return newConstructorSymbol
