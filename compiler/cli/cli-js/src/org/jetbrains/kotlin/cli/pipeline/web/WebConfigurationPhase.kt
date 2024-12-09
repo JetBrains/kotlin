@@ -88,7 +88,7 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         // setup phase config for the first compilation stage (KLIB compilation)
         if (arguments.includes == null) {
             configuration.phaseConfig = createPhaseConfig(arguments).also {
-                if (arguments.listPhases) it.list(JsPreSerializationLoweringPhasesProvider.lowerings(configuration))
+                if (arguments.listPhases) it.list(JsPreSerializationLoweringPhasesProvider.lowerings())
             }
         }
 
