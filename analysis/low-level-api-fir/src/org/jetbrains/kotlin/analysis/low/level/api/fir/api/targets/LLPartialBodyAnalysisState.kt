@@ -6,6 +6,10 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets
 
 import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CfgInternals
@@ -15,13 +19,13 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
  * Represents the incomplete body resolve state.
  * The attribute is only present if the function body was analyzed partially.
  */
-internal data class LLPartialBodyResolveState(
+internal data class LLPartialBodyAnalysisState(
     val totalPsiStatementCount: Int,
     val analyzedPsiStatementCount: Int,
     val analyzedFirStatementCount: Int,
     val performedAnalysesCount: Int,
-    val analysisStateSnapshot: LLPartialBodyResolveSnapshot?,
-    val previousState: LLPartialBodyResolveState?
+    val analysisStateSnapshot: LLPartialBodyAnalysisSnapshot?,
+    val previousState: LLPartialBodyAnalysisState?
 ) {
     init {
         if (previousState != null) {
@@ -37,7 +41,8 @@ internal data class LLPartialBodyResolveState(
     }
 }
 
-internal class LLPartialBodyResolveSnapshot(
+internal class LLPartialBodyAnalysisSnapshot(
+    val result: LLPartialBodyAnalysisResult,
     val towerDataContext: FirTowerDataContext,
     val dataFlowAnalyzerContext: DataFlowAnalyzerContext
 ) {
@@ -51,3 +56,9 @@ internal class LLPartialBodyResolveSnapshot(
         dataFlowAnalyzerContext.currentGraph.orderNodes(isComplete = false)
     }
 }
+
+internal class LLPartialBodyAnalysisResult(
+    val statements: List<FirStatement>,
+    val delegatedConstructorCall: FirDelegatedConstructorCall?,
+    val defaultParameterValues: Map<FirValueParameter, FirExpression>
+)

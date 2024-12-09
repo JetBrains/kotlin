@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyResolveRequest
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyAnalysisState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.partialBodyResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirResolveDesignationCollector
@@ -53,8 +53,8 @@ internal class PartialBodyDeclarationFirElementProvider(
     companion object {
         private val LOG = logger<PartialBodyDeclarationFirElementProvider>()
 
-        private fun createEmptyState(psiStatementCount: Int): LLPartialBodyResolveState {
-            return LLPartialBodyResolveState(
+        private fun createEmptyState(psiStatementCount: Int): LLPartialBodyAnalysisState {
+            return LLPartialBodyAnalysisState(
                 totalPsiStatementCount = psiStatementCount,
                 analyzedPsiStatementCount = 0,
                 analyzedFirStatementCount = 0,
@@ -146,7 +146,7 @@ internal class PartialBodyDeclarationFirElementProvider(
      * and all missing elements are added to [bodyMappings].
      */
     @Volatile
-    private var cachedState: LLPartialBodyResolveState = createEmptyState(psiStatements.size)
+    private var cachedState: LLPartialBodyAnalysisState = createEmptyState(psiStatements.size)
 
     /**
      * Contains mappings for non-body elements.

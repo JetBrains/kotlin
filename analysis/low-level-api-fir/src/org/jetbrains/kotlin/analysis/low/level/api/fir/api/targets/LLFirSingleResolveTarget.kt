@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 
 private object PartialBodyResolveStateKey : FirDeclarationDataKey()
 
-internal var FirDeclaration.partialBodyResolveState: LLPartialBodyResolveState?
+internal var FirDeclaration.partialBodyResolveState: LLPartialBodyAnalysisState?
         by FirDeclarationDataRegistry.data(PartialBodyResolveStateKey)
 
 /**

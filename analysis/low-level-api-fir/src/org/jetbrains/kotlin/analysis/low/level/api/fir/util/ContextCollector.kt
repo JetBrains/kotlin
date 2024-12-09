@@ -9,7 +9,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyAnalysisState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.partialBodyResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
@@ -938,7 +938,7 @@ private class ContextCollectorVisitor(
     }
 
     private fun FirElementWithResolveState.performBodyAnalysis() {
-        if (!shouldTriggerBodyAnalysis && this is FirDeclaration && this.attributes.any { it is LLPartialBodyResolveState }) {
+        if (!shouldTriggerBodyAnalysis && this is FirDeclaration && this.attributes.any { it is LLPartialBodyAnalysisState }) {
             // The declaration body is partially resolved as the caller guaranteed
             return
         }
