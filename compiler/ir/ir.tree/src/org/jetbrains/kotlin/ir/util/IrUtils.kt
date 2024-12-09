@@ -867,7 +867,7 @@ fun IrFunction.copyParametersFrom(from: IrFunction, substitutionMap: Map<IrTypeP
     }
 }
 
-fun IrFunction.copyParameterDeclarationsFrom(from: IrFunction) {
+fun IrFunction.copyValueAndTypeParametersFrom(from: IrFunction) {
     assert(typeParameters.isEmpty())
     copyTypeParametersFrom(from)
     copyParametersFrom(from)

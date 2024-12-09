@@ -84,7 +84,7 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
             function.isInfix,
             function.isExternal,
         ).apply {
-            copyParameterDeclarationsFrom(function)
+            copyValueAndTypeParametersFrom(function)
             parent = function.parent
             annotations = function.annotations
             body = functionBody.apply {

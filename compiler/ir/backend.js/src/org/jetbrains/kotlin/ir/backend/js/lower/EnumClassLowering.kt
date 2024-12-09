@@ -105,7 +105,7 @@ class EnumClassConstructorLowering(val context: JsCommonBackendContext) : Declar
             additionalParameters.forEach { (name, type) ->
                 valueParameters = valueParameters memoryOptimizedPlus JsIrBuilder.buildValueParameter(this, name, type)
             }
-            copyParameterDeclarationsFrom(enumConstructor)
+            copyValueAndTypeParametersFrom(enumConstructor)
 
             val newConstructor = this
             enumConstructor.newConstructor = this

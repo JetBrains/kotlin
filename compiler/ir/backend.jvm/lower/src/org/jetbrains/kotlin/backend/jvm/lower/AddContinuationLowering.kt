@@ -337,7 +337,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
                             else JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
                     }.apply {
                         copyAnnotationsFrom(view)
-                        copyParameterDeclarationsFrom(view)
+                        copyValueAndTypeParametersFrom(view)
                         context.remapMultiFieldValueClassStructure(view, this, parametersMappingOrNull = null)
                         copyAttributes(view)
                         generateErrorForInlineBody()

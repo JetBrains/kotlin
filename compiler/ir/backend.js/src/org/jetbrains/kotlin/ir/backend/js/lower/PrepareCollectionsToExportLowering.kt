@@ -139,7 +139,7 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
             isExternal = false
         ).also {
             it.parent = companionObject
-            it.copyParameterDeclarationsFrom(factoryMethodForTheCollectionSymbol.owner)
+            it.copyValueAndTypeParametersFrom(factoryMethodForTheCollectionSymbol.owner)
             it.dispatchReceiverParameter = companionObject.thisReceiver?.copyTo(it)
             it.body = context.createIrBuilder(it.symbol).run {
                 irBlockBody(it) {

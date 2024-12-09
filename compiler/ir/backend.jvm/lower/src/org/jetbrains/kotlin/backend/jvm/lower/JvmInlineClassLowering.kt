@@ -67,7 +67,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             name = mangledName
             returnType = source.returnType
         }.apply {
-            copyParameterDeclarationsFrom(source)
+            copyValueAndTypeParametersFrom(source)
             annotations = source.annotations
             parent = source.parent
             // We need to ensure that this bridge has the same attribute owner as its static inline class replacement, since this
@@ -439,7 +439,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         }.apply {
             // Don't create a default argument stub for the primary constructor
             irConstructor.valueParameters.forEach { it.defaultValue = null }
-            copyParameterDeclarationsFrom(irConstructor)
+            copyValueAndTypeParametersFrom(irConstructor)
             annotations = irConstructor.annotations
             body = context.createIrBuilder(this.symbol).irBlockBody(this) {
                 +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
