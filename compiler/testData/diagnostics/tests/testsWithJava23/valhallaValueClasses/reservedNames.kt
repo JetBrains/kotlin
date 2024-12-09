@@ -2,6 +2,7 @@
 // IGNORE_BACKEND_K1: ANY
 // RUN_PIPELINE_TILL: FRONTEND
 // JVM_TARGET: 23
+// ENABLE_JVM_PREVIEW
 
 <!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class A(val x: Int) {
     override fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>equals<!>(other: Any?) = other is A && this.x == <!DEBUG_INFO_SMARTCAST!>other<!>.x

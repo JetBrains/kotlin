@@ -43,9 +43,10 @@ sealed class FirDeclarationOrigin(
             generatedAnyHashCodeMethod = generatedAnyMethod,
             generatedAnyToStringCodeMethod = generatedAnyMethod
         )
+
         object DataClassMember : Synthetic(generatedAnyMethod = true)
         object PreValhallaValueClassMember : Synthetic(generatedAnyMethod = true)
-        object ValhallaValueClassMember : Synthetic(generatedAnyMethod = false)
+        object ValhallaValueClassMember : Synthetic(generatedAnyMethod = true)
         object JavaProperty : Synthetic()
         object DelegateField : Synthetic()
         object PluginFile : Synthetic()

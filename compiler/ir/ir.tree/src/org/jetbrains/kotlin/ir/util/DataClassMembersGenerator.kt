@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.irEquals
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.ir.expressions.addArgument
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImplWithShape
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.putArgument
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -141,6 +139,11 @@ abstract class DataClassMembersGenerator(
                     arguments[0] = irThis()
                     arguments[1] = otherCasted
                 })
+                return
+            }
+
+            if (irClass.isValhallaValueClass) {
+                +irIfThenReturnTrue(irEqeqeq(irThis(), irOther()))
                 return
             }
 

@@ -109,6 +109,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.UPPER_BOUN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_BASED_ON_JAVA_ANNOTATIONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.VALHALLA_VALUE_CLASS_ON_OLD_JVM_TARGET
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.VALHALLA_VALUE_CLASS_WITHOUT_JVM_PREVIEW
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE
 
@@ -282,6 +283,10 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             VALHALLA_VALUE_CLASS_ON_OLD_JVM_TARGET,
             "Valhalla value classes are supported only since JVM target 23, while the current target is {0}.",
             STRING
+        )
+        map.put(
+            VALHALLA_VALUE_CLASS_WITHOUT_JVM_PREVIEW,
+            "Valhalla value classes require '-Xjvm-enable-preview' enabled .",
         )
         map.put(JVM_INLINE_WITHOUT_VALUE_CLASS, "'@JvmInline' annotation is applicable only to value classes.")
 

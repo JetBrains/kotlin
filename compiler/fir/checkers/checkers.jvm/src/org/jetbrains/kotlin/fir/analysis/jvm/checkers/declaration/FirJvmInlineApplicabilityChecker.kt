@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -26,6 +27,7 @@ object FirJvmInlineApplicabilityChecker : FirRegularClassChecker(MppCheckerKind.
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val targetJvmTarget = context.session.jvmTargetProvider?.jvmTarget
         val isValhallaSupportedInJdk = targetJvmTarget != null && targetJvmTarget.majorVersion >= JvmTarget.JVM_23.majorVersion
+        val isJvmPreviewEnabled = context.languageVersionSettings.getFlag(JvmAnalysisFlags.enableJvmPreview)
         val isValhallaSupportEnabled = context.languageVersionSettings.supportsFeature(LanguageFeature.ValhallaValueClasses)
         val annotation = declaration.getAnnotationByClassId(JVM_INLINE_ANNOTATION_CLASS_ID, context.session)
         if (annotation != null && !(declaration.isInline && declaration.getModifier(KtTokens.VALUE_KEYWORD) != null)) {
@@ -39,6 +41,8 @@ object FirJvmInlineApplicabilityChecker : FirRegularClassChecker(MppCheckerKind.
             } else if (!isValhallaSupportedInJdk) {
                 val actualJvmTarget = targetJvmTarget?.description ?: return
                 reporter.reportOn(valueKeyword, FirJvmErrors.VALHALLA_VALUE_CLASS_ON_OLD_JVM_TARGET, actualJvmTarget, context)
+            } else if (!isJvmPreviewEnabled) {
+                reporter.reportOn(valueKeyword, FirJvmErrors.VALHALLA_VALUE_CLASS_WITHOUT_JVM_PREVIEW, context)
             }
         }
     }
