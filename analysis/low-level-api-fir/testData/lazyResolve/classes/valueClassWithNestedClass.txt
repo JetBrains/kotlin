@@ -38,7 +38,7 @@ FILE: [ResolvedTo(IMPORTS)] valueClassWithNestedClass.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] valueClassWithNestedClass.kt
-    @JvmInline[Unresolved]() public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class ValueClass : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class ValueClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/ValueClass.value] value: NestedClass): R|pack/ValueClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -57,7 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] valueClassWithNestedClass.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] valueClassWithNestedClass.kt
-    @JvmInline[Unresolved]() public final? value [ResolvedTo(COMPANION_GENERATION)] class ValueClass : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? value [ResolvedTo(COMPANION_GENERATION)] class ValueClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/ValueClass.value] value: NestedClass): R|pack/ValueClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -76,7 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] valueClassWithNestedClass.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] valueClassWithNestedClass.kt
-    @JvmInline[Unresolved]() public final? value [ResolvedTo(SUPER_TYPES)] class ValueClass : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? value [ResolvedTo(SUPER_TYPES)] class ValueClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/ValueClass.value] value: NestedClass): R|pack/ValueClass| {
             LAZY_super<R|kotlin/Any|>
         }

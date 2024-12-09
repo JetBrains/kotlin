@@ -52,6 +52,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         private val equalsAndHashCodeNames = setOf("equals", "hashCode")
         private val javaLangFqName = FqName("java.lang")
         private val cloneableFqName = FqName("Cloneable")
+        private val recordFqName = FqName("Record")
     }
 
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -76,7 +77,9 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
         for (supertypeEntry in declaration.superTypeRefs) {
             if (supertypeEntry is FirImplicitAnyTypeRef || supertypeEntry is FirErrorTypeRef) continue
-            if (supertypeEntry.toRegularClassSymbol(context.session)?.isInterface == true) continue
+            val superTypeSymbol = supertypeEntry.toRegularClassSymbol(context.session)
+            if (superTypeSymbol?.isInterface == true) continue
+            if (superTypeSymbol?.classId?.isRecordId() == true) continue
             reporter.reportOn(supertypeEntry.source, FirErrors.VALUE_CLASS_CANNOT_EXTEND_CLASSES, context)
         }
 
@@ -325,5 +328,9 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
     private fun ClassId.isCloneableId(): Boolean =
         relativeClassName == cloneableFqName &&
+                (packageFqName == StandardClassIds.BASE_KOTLIN_PACKAGE || packageFqName == javaLangFqName)
+
+    private fun ClassId.isRecordId(): Boolean =
+        relativeClassName == recordFqName &&
                 (packageFqName == StandardClassIds.BASE_KOTLIN_PACKAGE || packageFqName == javaLangFqName)
 }

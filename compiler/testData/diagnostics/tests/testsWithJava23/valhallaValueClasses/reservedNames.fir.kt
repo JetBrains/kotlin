@@ -2,6 +2,7 @@
 // IGNORE_BACKEND_K1: ANY
 // RUN_PIPELINE_TILL: FRONTEND
 // JVM_TARGET: 23
+// ENABLE_JVM_PREVIEW
 
 value class A(val x: Int) {
     override fun equals(other: Any?) = other is A && this.x == other.x

@@ -4790,6 +4790,11 @@ internal class ValhallaValueClassOnOldJvmTargetImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ValhallaValueClassOnOldJvmTarget
 
+internal class ValhallaValueClassWithoutJvmPreviewImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ValhallaValueClassWithoutJvmPreview
+
 internal class JvmInlineWithoutValueClassImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

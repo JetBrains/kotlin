@@ -387,7 +387,7 @@ class ClassCodegen private constructor(
             metadataSerializer.bindFieldMetadata(it, fieldType to fieldName)
         }
 
-        if (irClass.hasAnnotation(JVM_RECORD_ANNOTATION_FQ_NAME) && !field.isStatic) {
+        if (irClass.isJvmRecord && !field.isStatic) {
             // TODO: Write annotations to the component
             visitor.addRecordComponent(fieldName, fieldType.descriptor, fieldSignature)
         }
@@ -583,13 +583,16 @@ private fun IrClass.getFlags(languageVersionSettings: LanguageVersionSettings): 
             (if (isAnnotatedWithDeprecated) Opcodes.ACC_DEPRECATED else 0) or
             getSynthAccessFlag(languageVersionSettings) or
             when {
-                isValhallaValueClass -> Opcodes.ACC_FINAL and Opcodes.ACC_SUPER.inv()
+                isValhallaValueClass -> VersionIndependentOpcodes.ACC_RECORD or Opcodes.ACC_FINAL and Opcodes.ACC_SUPER.inv()
                 isAnnotationClass -> Opcodes.ACC_ANNOTATION or Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
                 isInterface -> Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
                 isEnumClass -> Opcodes.ACC_ENUM or Opcodes.ACC_SUPER or modality.flags
-                hasAnnotation(JVM_RECORD_ANNOTATION_FQ_NAME) -> VersionIndependentOpcodes.ACC_RECORD or Opcodes.ACC_SUPER or modality.flags
+                isJvmRecord -> VersionIndependentOpcodes.ACC_RECORD or Opcodes.ACC_SUPER or modality.flags
                 else -> Opcodes.ACC_SUPER or modality.flags
             }
+
+private val IrClass.isJvmRecord: Boolean
+    get() = hasAnnotation(JVM_RECORD_ANNOTATION_FQ_NAME) || isValhallaValueClass
 
 private fun IrClass.getSynthAccessFlag(languageVersionSettings: LanguageVersionSettings): Int {
     if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME))

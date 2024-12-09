@@ -3,7 +3,10 @@ public final class A1 {
     // source: 'basicSyntax.kt'
     private final field x: int
     public method <init>(p0: int): void
-    public final method getX(): int
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public final method x(): int
 }
 
 @kotlin.Metadata
@@ -26,8 +29,11 @@ public final class A2 {
     private final field x: int
     private final field y: int
     public method <init>(p0: int, p1: int): void
-    public final method getX(): int
-    public final method getY(): int
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public final method x(): int
+    public final method y(): int
 }
 
 @kotlin.Metadata

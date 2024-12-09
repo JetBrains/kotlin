@@ -56,7 +56,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClass.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClass.kt
-    @JvmInline[Unresolved]() public final? value [ResolvedTo(SUPER_TYPES)] class Value : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? value [ResolvedTo(SUPER_TYPES)] class Value : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
             LAZY_super<R|kotlin/Any|>
         }

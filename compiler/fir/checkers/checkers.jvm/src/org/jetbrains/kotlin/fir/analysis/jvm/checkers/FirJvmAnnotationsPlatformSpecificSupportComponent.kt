@@ -29,6 +29,7 @@ object FirJvmAnnotationsPlatformSpecificSupportComponent : FirAnnotationsPlatfor
         JvmStandardClassIds.Annotations.Java.Deprecated,
         StandardClassIds.Annotations.WasExperimental,
         JvmStandardClassIds.Annotations.JvmRecord,
+        JvmStandardClassIds.Annotations.JvmInline,
     )
 
     override val volatileAnnotations: Set<ClassId> = setOf(

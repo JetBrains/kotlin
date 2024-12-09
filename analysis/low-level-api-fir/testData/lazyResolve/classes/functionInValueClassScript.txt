@@ -80,7 +80,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @JvmInline[Unresolved]() public final? value [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-functionInValueClassScript.kts>] class Value : R|kotlin/Any| {
+        @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? value [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-functionInValueClassScript.kts>] class Value : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
                 LAZY_super<R|kotlin/Any|>
             }

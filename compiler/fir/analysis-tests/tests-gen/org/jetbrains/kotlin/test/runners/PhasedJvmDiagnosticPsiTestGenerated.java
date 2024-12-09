@@ -41559,6 +41559,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         public void testReservedNames() {
           runTest("compiler/testData/diagnostics/tests/testsWithJava23/valhallaValueClasses/reservedNames.kt");
         }
+
+        @Test
+        @TestMetadata("withoutJvmPreview.kt")
+        public void testWithoutJvmPreview() {
+          runTest("compiler/testData/diagnostics/tests/testsWithJava23/valhallaValueClasses/withoutJvmPreview.kt");
+        }
       }
     }
 

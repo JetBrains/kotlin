@@ -2,6 +2,7 @@
 // IGNORE_BACKEND_K1: ANY
 // RUN_PIPELINE_TILL: FRONTEND
 // JVM_TARGET: 23
+// ENABLE_JVM_PREVIEW
 
 value class A(val x: Int): Comparable<Int> by x {
     init {
@@ -48,6 +49,14 @@ value class OldSingleFieldValueClass(val x: Int)
 
 @JvmInline
 value class OldMultiFieldValueClass<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>(val x: Int, val y: Int)<!>
+
+<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
+value class WithJvmRecordAnnotation(val x: Int)
+
+value class ExplicitlyInheritingRecord(val x: Int): <!ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE!>java.lang.Record<!>()
+
+@JvmRecord
+value class ExplicitlyInheritingRecordWithJvmRecordAnnotation(val x: Int): <!ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE!>java.lang.Record<!>()
 
 fun main() {
     A(2).<!UNRESOLVED_REFERENCE!>copy<!>()

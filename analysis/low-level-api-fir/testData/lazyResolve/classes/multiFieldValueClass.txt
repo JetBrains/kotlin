@@ -30,7 +30,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
-    @JvmInline[Unresolved]() public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Foo<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T> : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Foo<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.a] a: T, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.b] b: T): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
-    @JvmInline[Unresolved]() public final? value [ResolvedTo(COMPANION_GENERATION)] class Foo<[ResolvedTo(COMPANION_GENERATION)] T> : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? value [ResolvedTo(COMPANION_GENERATION)] class Foo<[ResolvedTo(COMPANION_GENERATION)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(COMPANION_GENERATION)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.a] a: T, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.b] b: T): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -60,7 +60,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
-    @JvmInline[Unresolved]() public final? value [ResolvedTo(SUPER_TYPES)] class Foo<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? value [ResolvedTo(SUPER_TYPES)] class Foo<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(SUPER_TYPES)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.a] a: T, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.b] b: T): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }

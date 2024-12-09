@@ -27,7 +27,7 @@ FILE: [ResolvedTo(IMPORTS)] valueClassWithParameterizedAlias.kt
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] valueClassWithParameterizedAlias.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias<[ResolvedTo(RAW_FIR)] T> = List<T>
-    @JvmInline[Unresolved]() public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class ValueClass<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T> : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class ValueClass<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/ValueClass.value] value: MyTypeAlias<T>): R|pack/ValueClass<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -40,7 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] valueClassWithParameterizedAlias.kt
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] valueClassWithParameterizedAlias.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias<[ResolvedTo(RAW_FIR)] T> = List<T>
-    @JvmInline[Unresolved]() public final? value [ResolvedTo(COMPANION_GENERATION)] class ValueClass<[ResolvedTo(COMPANION_GENERATION)] T> : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? value [ResolvedTo(COMPANION_GENERATION)] class ValueClass<[ResolvedTo(COMPANION_GENERATION)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] constructor<[ResolvedTo(COMPANION_GENERATION)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/ValueClass.value] value: MyTypeAlias<T>): R|pack/ValueClass<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -53,7 +53,7 @@ FILE: [ResolvedTo(IMPORTS)] valueClassWithParameterizedAlias.kt
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] valueClassWithParameterizedAlias.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias<[ResolvedTo(RAW_FIR)] T> = List<T>
-    @JvmInline[Unresolved]() public final? value [ResolvedTo(SUPER_TYPES)] class ValueClass<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[CompilerRequiredAnnotations]() public final? value [ResolvedTo(SUPER_TYPES)] class ValueClass<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueClass] constructor<[ResolvedTo(SUPER_TYPES)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/ValueClass.value] value: MyTypeAlias<T>): R|pack/ValueClass<T>| {
             LAZY_super<R|kotlin/Any|>
         }

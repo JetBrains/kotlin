@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.irEquals
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -140,6 +139,11 @@ abstract class DataClassMembersGenerator(
                     arguments[0] = irThis()
                     arguments[1] = otherCasted
                 })
+                return
+            }
+
+            if (irClass.isValhallaValueClass) {
+                +irIfThenReturnTrue(irEqeqeq(irThis(), irOther()))
                 return
             }
 
