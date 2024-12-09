@@ -18,9 +18,8 @@ import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.gradle.artifacts.uklibStateAttribute
 import org.jetbrains.kotlin.gradle.artifacts.uklibStateUnzipped
-import org.jetbrains.kotlin.gradle.artifacts.uklibsModel.Fragment
 import org.jetbrains.kotlin.gradle.artifacts.uklibsModel.Uklib
-import org.jetbrains.kotlin.gradle.artifacts.uklibsModel.isSubsetOf
+import org.jetbrains.kotlin.gradle.artifacts.uklibsModel.formCompilationClasspathInConsumingModuleFragment
 import org.jetbrains.kotlin.gradle.artifacts.uklibsPublication.uklibFragmentPlatformAttribute
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -310,29 +309,11 @@ internal class GranularMetadataTransformation(
         val uklibDependency = Uklib.deserializeFromDirectory(
             compositeMetadataArtifact.file,
         )
-
-        val fragmentCanSee: Fragment.(Fragment) -> Boolean = { attributes.isSubsetOf(it.attributes) }
-        val visibleFragments = uklibDependency.module.fragments.filter {
-            uklibFragmentAttributes.isSubsetOf(it.attributes)
-                    // FIXME: Is this the correct place to filter out compilations transformed by the parent ?? See allVisibleSourceSetNames and visibleSourceSetNamesExcludingDependsOn
-                    && it.identifier !in sourceSetsVisibleInParents
-        }.sortedWith(
-            object : Comparator<Fragment> {
-                override fun compare(left: Fragment, right: Fragment): Int {
-                    if (left.fragmentCanSee(right)) {
-                        return -1
-                    } else if (right.fragmentCanSee(left)) {
-                        return 1
-                    } else if (left.attributes == right.attributes) {
-                        return 0
-                    } else {
-                        return left.identifier.compareTo(right.identifier)
-                    }
-                }
-            }
+        val allVisibleFragments = uklibDependency.module.fragments.formCompilationClasspathInConsumingModuleFragment(
+            consumingFragmentAttributes = uklibFragmentAttributes,
         )
 
-        if (visibleFragments.isEmpty()) {
+        if (allVisibleFragments.isEmpty()) {
             throw MetadataTransformUklibException(
                 unzippedUklib = compositeMetadataArtifact.file,
                 targetFragmentAttribute = uklibFragmentAttributes.sorted(),
@@ -345,9 +326,14 @@ internal class GranularMetadataTransformation(
         return MetadataDependencyResolution.ChooseVisibleSourceSets(
             dependency = dependency.selected,
             projectStructureMetadata = null,
-            // FIXME: Don't filter this
-            allVisibleSourceSetNames = visibleFragments.map { it.identifier }.toHashSet(),
-            visibleSourceSetNamesExcludingDependsOn = visibleFragments.map { it.identifier }.toHashSet(),
+            allVisibleSourceSetNames = allVisibleFragments.map {
+                it.identifier
+            }.toHashSet(),
+            visibleSourceSetNamesExcludingDependsOn = allVisibleFragments.filterNot {
+                it.identifier in sourceSetsVisibleInParents
+            }.map {
+                it.identifier
+            }.toHashSet(),
             visibleTransitiveDependencies = dependency.selected.dependencies.filterIsInstance<ResolvedDependencyResult>().toHashSet(),
             metadataProvider = ArtifactMetadataProvider(
                 object : CompositeMetadataArtifact {
@@ -361,7 +347,7 @@ internal class GranularMetadataTransformation(
                         val backrefArtifact = this
                         return object : CompositeMetadataArtifactContent {
                             val backrefContent = this
-                            private val fragmentSourceSets: Map<String, CompositeMetadataArtifactContent.SourceSetContent> = visibleFragments.keysToMap { fragment ->
+                            private val fragmentSourceSets: Map<String, CompositeMetadataArtifactContent.SourceSetContent> = allVisibleFragments.keysToMap { fragment ->
                                 object : CompositeMetadataArtifactContent.SourceSetContent {
                                     override val containingArtifactContent: CompositeMetadataArtifactContent
                                         get() = backrefContent
@@ -393,7 +379,6 @@ internal class GranularMetadataTransformation(
                                         }
                                     override val cinteropMetadataBinaries: List<CompositeMetadataArtifactContent.CInteropMetadataBinary>
                                         get() = emptyList()
-
                                 }
                             }.mapKeys { it.key.identifier }
 

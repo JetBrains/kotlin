@@ -8,7 +8,6 @@ import java.io.File
 
 internal data class Uklib(
     val module: Module,
-    // FIXME: Use this version for a forward compatibility?
     val manifestVersion: String,
 ) {
     fun serializeUklibToArchive(
@@ -17,11 +16,7 @@ internal data class Uklib(
     ) {
         val manifest = GsonBuilder().setPrettyPrinting().create().toJson(
             mapOf(
-                FRAGMENTS to module.fragments.filter {
-                    // FIXME: Where was this coming from ???
-                    //fragmentIdentifierToArtifact[it.identifier]!!.exists()
-                    true
-                }.sortedBy {
+                FRAGMENTS to module.fragments.sortedBy {
                     // Make sure we have some stable order of fragments
                     it.identifier
                 }.map {
@@ -46,10 +41,19 @@ internal data class Uklib(
     }
 
     companion object {
+        data class IncompatibleUklibVersion(
+            val uklibDirectory: File,
+            val uklibVersion: String,
+            val maximumCompatibleVersion: String,
+        ) : IllegalStateException("Can't read Uklib at path ${uklibDirectory} with version ${uklibVersion}, maximum compatible version: $maximumCompatibleVersion")
+
         fun deserializeFromDirectory(directory: File): Uklib {
             val umanifest = directory.resolve(UMANIFEST_FILE_NAME)
             if (!umanifest.exists()) error("Can't deserialize Uklib from ${directory} because ${UMANIFEST_FILE_NAME} doesn't exist")
             val json = Gson().fromJson(umanifest.readText(), Map::class.java) as Map<String, Any>
+
+            val manifestVersion = json[UMANIFEST_VERSION] as String
+            if (manifestVersion != MAXIMUM_COMPATIBLE_UMANIFEST_VERSION) throw IncompatibleUklibVersion(directory, manifestVersion, MAXIMUM_COMPATIBLE_UMANIFEST_VERSION)
 
             val fragments = (json[FRAGMENTS] as List<Map<String, Any>>).map { fragment ->
                 val fragmentIdentifier = fragment[FRAGMENT_IDENTIFIER] as String
@@ -65,8 +69,7 @@ internal data class Uklib(
                 module = Module(
                     fragments = fragments,
                 ),
-                // FIXME: Read version and make sure we are compatible before deserializing the rest of the json
-                manifestVersion = json[UMANIFEST_VERSION] as String,
+                manifestVersion = manifestVersion,
             )
         }
 
@@ -90,5 +93,6 @@ internal data class Uklib(
         const val UMANIFEST_VERSION = "manifestVersion"
 
         const val CURRENT_UMANIFEST_VERSION = "0.0.1"
+        const val MAXIMUM_COMPATIBLE_UMANIFEST_VERSION = CURRENT_UMANIFEST_VERSION
     }
 }

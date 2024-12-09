@@ -22,14 +22,8 @@ import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 import kotlin.test.assertEquals
 import com.android.build.gradle.BaseExtension
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.initialization.resolve.RepositoriesMode
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
-import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
-import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.*
 import org.junit.jupiter.api.assertThrows
 import org.w3c.dom.Document
@@ -197,38 +191,6 @@ class UklibPublicationIT : KGPBaseTest() {
                 // FIXME: Enable cross compilation
                 project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_PUBLISH_UKLIB, true.toString())
                 project.applyMultiplatform {
-                    class FakeCompilation(delegate: Delegate) : DecoratedExternalKotlinCompilation(delegate) {
-                        @Suppress("UNCHECKED_CAST", "DEPRECATION")
-                        override val compilerOptions: HasCompilerOptions<KotlinJvmCompilerOptions>
-                            get() = super.compilerOptions as HasCompilerOptions<KotlinJvmCompilerOptions>
-                    }
-
-                    class FakeTarget(delegate: Delegate) : DecoratedExternalKotlinTarget(delegate),
-                        HasConfigurableKotlinCompilerOptions<KotlinJvmCompilerOptions> {
-
-                        @Suppress("UNCHECKED_CAST")
-                        override val compilations: NamedDomainObjectContainer<FakeCompilation>
-                            get() = super.compilations as NamedDomainObjectContainer<FakeCompilation>
-
-                        override val compilerOptions: KotlinJvmCompilerOptions
-                            get() = super.compilerOptions as KotlinJvmCompilerOptions
-                    }
-
-                    fun ExternalKotlinTargetDescriptorBuilder<FakeTarget>.defaults() {
-                        targetName = "fake"
-                        platformType = KotlinPlatformType.jvm
-                        targetFactory = ExternalKotlinTargetDescriptor.TargetFactory(::FakeTarget)
-                    }
-
-                    fun ExternalKotlinCompilationDescriptorBuilder<FakeCompilation>.defaults(
-                        kotlin: KotlinMultiplatformExtension,
-                        name: String = KotlinCompilation.MAIN_COMPILATION_NAME,
-                    ) {
-                        compilationName = name
-                        compilationFactory = ExternalKotlinCompilationDescriptor.CompilationFactory(::FakeCompilation)
-                        defaultSourceSet = kotlin.sourceSets.maybeCreate(name)
-                    }
-
                     iosArm64()
                     iosX64()
                     val kotlin = this
@@ -424,6 +386,8 @@ class UklibPublicationIT : KGPBaseTest() {
             },
         )
     }
+
+
 
     @kotlinx.serialization.Serializable
     data class Fragment(

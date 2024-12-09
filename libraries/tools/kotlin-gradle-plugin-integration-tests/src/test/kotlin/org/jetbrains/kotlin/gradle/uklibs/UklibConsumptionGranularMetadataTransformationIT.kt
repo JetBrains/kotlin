@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.uklibs
 
-import org.gradle.api.initialization.resolve.RepositoriesMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -89,13 +88,7 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
             }
         }
 
-        project(
-            "buildScriptInjectionGroovy",
-            version,
-            dependencyManagement = DependencyManagement.DefaultDependencyManagement(
-                gradleRepositoriesMode = RepositoriesMode.PREFER_PROJECT,
-            )
-        ) {
+        project("buildScriptInjectionGroovy", version) {
             addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(directPublisher)
             addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(transitivePublisher)
             buildScriptInjection {
@@ -166,13 +159,7 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
         addPublishedRepository: PublishedProject? = null,
         multiplatformConfiguration: KotlinMultiplatformExtension.() -> Unit,
     ): PublishedProject {
-        return runTestProject(
-            "buildScriptInjectionGroovy",
-            gradleVersion,
-            dependencyManagement = DependencyManagement.DefaultDependencyManagement(
-                gradleRepositoriesMode = RepositoriesMode.PREFER_PROJECT,
-            )
-        ) {
+        return runTestProject("buildScriptInjectionGroovy", gradleVersion) {
             // FIXME: addPublishedProjectToRepositoriesAndIgnoreGradleMetadata?
             addPublishedRepository?.let { addPublishedProjectToRepositories(it) }
             buildScriptInjection {

@@ -134,8 +134,12 @@ fun Project.disablePlatformSpecificComponentReferences(disabled: Boolean = true)
     propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_DISABLE_PLATFORM_SPECIFIC_COMPONENTS_REFERENCES, disabled.toString())
 }
 
-fun Project.publishUklibVariant(enabled: Boolean = true) {
+fun Project.publishUklib(enabled: Boolean = true) {
     propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_PUBLISH_UKLIB, enabled.toString())
+}
+
+fun Project.enableCrossCompilation(enabled: Boolean = true) {
+    propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION, enabled.toString())
 }
 
 internal fun Project.setUklibResolutionStrategy(strategy: UklibResolutionStrategy) {

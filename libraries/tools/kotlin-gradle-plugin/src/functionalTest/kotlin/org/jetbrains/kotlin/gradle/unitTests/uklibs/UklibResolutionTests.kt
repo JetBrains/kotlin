@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.unitTests
+package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -327,7 +327,7 @@ class UklibResolutionTests {
     ): Project {
         return buildProjectWithMPP(
             preApplyCode = {
-                publishUklibVariant()
+                publishUklib()
                 fakeUklibTransforms()
                 setUklibResolutionStrategy(strategy)
                 // Test stdlib in a separate test
@@ -677,7 +677,7 @@ class UklibResolutionTests {
         return buildProjectWithMPP(
             preApplyCode = {
                 if (publishUklibVariant) {
-                    publishUklibVariant()
+                    publishUklib()
                 }
                 fakeUklibTransforms()
                 setUklibResolutionStrategy(uklibResolutionStrategy)

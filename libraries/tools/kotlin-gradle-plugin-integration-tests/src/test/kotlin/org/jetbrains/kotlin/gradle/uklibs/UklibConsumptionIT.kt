@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.uklibs
 
+import com.android.build.gradle.BaseExtension
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.initialization.resolve.RepositoriesMode
@@ -28,6 +29,7 @@ import java.io.Serializable
 import java.net.URLClassLoader
 import kotlin.test.assertEquals
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import kotlin.io.path.pathString
 
 @MppGradlePluginTests
 @DisplayName("Smoke test uklib consumption")
@@ -374,6 +376,132 @@ class UklibConsumptionIT : KGPBaseTest() {
             }
 
             build("assemble")
+        }
+    }
+
+    @GradleTest
+    fun `uklib consumption - transitive uklib is consumed through a jvm dependency`(
+        version: GradleVersion,
+    ) {
+        val transitive = runTestProject("buildScriptInjectionGroovy", version) {
+            buildScriptInjection {
+                project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_PUBLISH_UKLIB, true.toString())
+                project.applyMultiplatform {
+                    linuxArm64()
+                    linuxX64()
+                    jvm()
+                    sourceSets.all { it.addIdentifierClass() }
+                }
+            }
+            publish(PublisherConfiguration(name = "transitive"))
+        }.result
+
+        val direct = runTestProject("buildScriptInjectionGroovy", version) {
+            addPublishedProjectToRepositories(transitive)
+            buildScriptInjection {
+                project.plugins.apply("java-library")
+                java.sourceSets.all {
+                    it.compileJavaSource(
+                        project,
+                        """
+                            public class Direct_${it.name} { }
+                        """.trimIndent()
+                    )
+                }
+                project.configurations.getByName("api").dependencies.add(
+                    project.dependencies.create(transitive.coordinate)
+                )
+            }
+            publishJava(PublisherConfiguration(name = "direct"))
+        }.result
+
+        runTestProject("buildScriptInjectionGroovy", version) {
+            addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(direct)
+            addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(transitive)
+            buildScriptInjection {
+                project.propertiesExtension.set(
+                    PropertiesProvider.PropertyNames.KOTLIN_MPP_UKLIB_RESOLUTION_STRATEGY,
+                    UklibResolutionStrategy.AllowResolvingUklibs.propertyName,
+                )
+                project.applyMultiplatform {
+                    linuxArm64()
+                    linuxX64()
+                    jvm()
+                    sourceSets.all { it.addIdentifierClass() }
+                    sourceSets.commonMain.dependencies {
+                        implementation(direct.coordinate)
+                    }
+                }
+            }
+
+            build("assemble")
+
+            val classpath = buildScriptReturn {
+                val transformationTask = project.locateOrRegisterMetadataDependencyTransformationTask(
+                    kotlinMultiplatform.sourceSets.getByName("commonMain")
+                ).get()
+                transformationTask.allTransformedLibraries().get()
+            }.buildAndReturn(
+                buildScriptReturn {
+                    project.locateOrRegisterMetadataDependencyTransformationTask(
+                        kotlinMultiplatform.sourceSets.getByName("commonMain")
+                    ).get().name
+                }.buildAndReturn()
+            )
+
+            assertEquals(
+                listOf(
+                    listOf("foo", "direct", "1.0", "direct-1.0.jar"),
+                    listOf("build", "kotlinTransformedMetadataLibraries", "commonMain", "uklib-foo-transitive-1.0-commonMain"),
+                ),
+                classpath.filterNot {
+                    "kotlin-stdlib" in it.name
+                }.map {
+                    it.toPath().toList().takeLast(4).map { it.pathString }
+                }
+            )
+        }
+    }
+
+    @GradleAndroidTest
+    fun `uklib consumption - androidTarget consumes jvm only uklib`(
+        version: GradleVersion,
+        agpVersion: String,
+    ) {
+        val direct = runTestProject("buildScriptInjectionGroovy", version) {
+            buildScriptInjection {
+                project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_PUBLISH_UKLIB, true.toString())
+                project.applyMultiplatform {
+                    jvm()
+                    sourceSets.commonMain.get().compileSource("class Jvm")
+                }
+            }
+            publish(PublisherConfiguration(name = "transitive"))
+        }.result
+
+        runTestProject("buildScriptInjectionGroovyWithAGP", version) {
+            addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(direct)
+            buildScriptInjection {
+                project.propertiesExtension.set(
+                    PropertiesProvider.PropertyNames.KOTLIN_MPP_UKLIB_RESOLUTION_STRATEGY,
+                    UklibResolutionStrategy.AllowResolvingUklibs.propertyName,
+                )
+                project.plugins.apply("com.android.library")
+                with(project.extensions.getByType(BaseExtension::class.java)) {
+                    compileSdkVersion(23)
+                    namespace = "kotlin.multiplatform.projects"
+                }
+                project.applyMultiplatform {
+                    androidTarget()
+                    sourceSets.commonMain.get().compileSource("fun consume() { Jvm() }")
+                    sourceSets.commonMain.dependencies {
+                        implementation(direct.coordinate)
+                    }
+                }
+            }
+
+            // FIXME: Is this actually supposed to pass
+            buildAndFail("assemble", buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion))
         }
     }
 }

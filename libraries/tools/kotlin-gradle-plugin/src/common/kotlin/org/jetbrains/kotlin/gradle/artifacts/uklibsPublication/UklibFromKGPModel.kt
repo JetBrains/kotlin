@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.gradle.artifacts.uklibsModel.Fragment
 import org.jetbrains.kotlin.gradle.artifacts.metadataFragmentIdentifier
 import org.jetbrains.kotlin.gradle.artifacts.metadataPublishedArtifacts
 import org.jetbrains.kotlin.gradle.artifacts.publishedMetadataCompilations
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.awaitMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.DecoratedExternalKotlinTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import java.io.File
 
 
@@ -30,10 +33,9 @@ internal data class KGPFragment(
     val outputFile: Provider<File>,
 )
 
-internal suspend fun kgpFragments(
-    metadataTarget: KotlinMetadataTarget,
-    allTargets: List<KotlinTarget>,
-): List<KGPFragment> {
+internal suspend fun KotlinMultiplatformExtension.validateKgpModelIsUklibCompliantAndCreateKgpFragments(): List<KGPFragment> {
+    val metadataTarget = awaitMetadataTarget()
+    val allTargets = awaitTargets()
     // Guarantee that we can safely access any compilations
     KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
 
@@ -122,16 +124,27 @@ internal suspend fun kgpFragments(
                 )
             }
             else -> {
-                when (target.uklibFragmentPlatformAttribute) {
+                val attribute = target.uklibFragmentPlatformAttribute
+                when (attribute) {
                     is UklibFragmentPlatformAttribute.OnlyConsumeInMetadataCompilationsAndIgnoreAtPublication -> { /* Do nothing for AGP */ }
                     is UklibFragmentPlatformAttribute.PublishAndConsumeInAllCompilations -> { /* FIXME: rewrite the logic above */ }
-                    is UklibFragmentPlatformAttribute.FailOnPublicationAndIgnoreForConsumption -> target.uklibFragmentPlatformAttribute.unwrap()
+                    is UklibFragmentPlatformAttribute.FailOnPublicationAndIgnoreForConsumption -> target.project.reportDiagnostic(
+                        KotlinToolingDiagnostics.UklibFragmentFromUnexpectedTarget(attribute.error)
+                    )
                 }
             }
         }
     }
 
     return fragments
+}
+
+private fun ensureSourceSetStructureIsUklibCompliant() {
+
+}
+
+private fun ensureDependenciesAreDeclaredInRootSourceSet() {
+
 }
 
 internal enum class UklibJsTargetIdentifier {
@@ -150,6 +163,7 @@ internal sealed class UklibFragmentPlatformAttribute {
     // Android
     data class OnlyConsumeInMetadataCompilationsAndIgnoreAtPublication(val attribute: String) : UklibFragmentPlatformAttribute()
     // External target
+    // FIXME: Can we actually ignore consumption for external target? What will happen if uklib resolution sees attributes it doesn't know about
     data class FailOnPublicationAndIgnoreForConsumption(val error: String) : UklibFragmentPlatformAttribute()
 
     // FIXME: Separate unwrap to consume for publication vs compilation
@@ -166,6 +180,10 @@ internal val KotlinTarget.uklibFragmentPlatformAttribute: UklibFragmentPlatformA
         // FIXME: Actually maybe request jvm transform in Android?
         if (this is KotlinAndroidTarget) {
             return UklibFragmentPlatformAttribute.OnlyConsumeInMetadataCompilationsAndIgnoreAtPublication(targetName)
+        }
+
+        if (this is KotlinMetadataTarget) {
+            error("Uklib fragment attribute requested for metadata target")
         }
 
         when (this) {
@@ -186,10 +204,8 @@ internal val KotlinTarget.uklibFragmentPlatformAttribute: UklibFragmentPlatformA
         }
 
         val error = when (this) {
-            is KotlinMetadataTarget -> "Metadata target does't have a platform attribute"
-            // FIXME: Test this !!!
-            is DecoratedExternalKotlinTarget -> "FIXME: This is explicitly unsupported"
-            else -> "???"
+            is DecoratedExternalKotlinTarget -> "external target"
+            else -> this.targetName
         }
         return UklibFragmentPlatformAttribute.FailOnPublicationAndIgnoreForConsumption(error)
     }

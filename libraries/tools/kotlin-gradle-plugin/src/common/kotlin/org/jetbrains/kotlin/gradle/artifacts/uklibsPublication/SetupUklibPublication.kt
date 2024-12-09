@@ -12,7 +12,6 @@ import org.gradle.api.XmlProvider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.artifacts.uklibsModel.Uklib
 import org.jetbrains.kotlin.gradle.artifacts.uklibsModel.Module
-import org.jetbrains.kotlin.gradle.dsl.awaitMetadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext
 import org.jetbrains.kotlin.gradle.tasks.locateTask
@@ -23,19 +22,13 @@ internal suspend fun Project.archiveUklibTask(): TaskProvider<ArchiveUklibTask> 
 
     val archiveUklib = tasks.register(taskName, ArchiveUklibTask::class.java)
 
-    val metadataTarget = multiplatformExtension.awaitMetadataTarget()
-    val allTargets = multiplatformExtension.awaitTargets().toMutableList()
-
-    val kgpFragments = kgpFragments(
-        metadataTarget = metadataTarget,
-        allTargets = allTargets,
-    )
+    val kgpFragments = multiplatformExtension.validateKgpModelIsUklibCompliantAndCreateKgpFragments()
 
     kgpFragments.forEach { fragment ->
         archiveUklib.configure {
             // outputFile might be a directory or a file
             it.inputs.files(fragment.outputFile)
-            // some outputFiles are derived from a project.provider, use explicit task dependency
+            // FIXME: some outputFiles are derived from a project.provider, use explicit task dependency as a workaround (remap output files from the task)
             it.dependsOn(fragment.providingTask)
         }
     }
