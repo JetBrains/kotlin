@@ -20745,6 +20745,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       }
 
       @Test
+      @TestMetadata("kt73691.kt")
+      public void testKt73691() {
+        runTest("compiler/testData/codegen/box/initializers/kt73691.kt");
+      }
+
+      @Test
       @TestMetadata("multipleModules1.kt")
       public void testMultipleModules1() {
         runTest("compiler/testData/codegen/box/initializers/multipleModules1.kt");
