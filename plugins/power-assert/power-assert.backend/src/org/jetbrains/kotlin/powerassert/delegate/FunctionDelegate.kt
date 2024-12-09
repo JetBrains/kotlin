@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 interface FunctionDelegate {
     val function: IrFunction
@@ -36,30 +37,22 @@ interface FunctionDelegate {
     fun buildCall(
         builder: IrBuilderWithScope,
         original: IrCall,
-        dispatchReceiver: IrExpression?,
-        extensionReceiver: IrExpression?,
-        valueArguments: List<IrExpression?>,
+        arguments: List<IrExpression?>,
         messageArgument: IrExpression,
     ): IrExpression
 
     fun IrBuilderWithScope.irCallCopy(
         overload: IrSimpleFunctionSymbol,
         original: IrCall,
-        dispatchReceiver: IrExpression?,
-        extensionReceiver: IrExpression?,
-        valueArguments: List<IrExpression?>,
+        arguments: List<IrExpression?>,
         messageArgument: IrExpression,
     ): IrExpression {
         return irCall(overload, type = original.type).apply {
-            this.dispatchReceiver = original.dispatchReceiver?.deepCopyWithSymbols(parent)
-            this.extensionReceiver = (extensionReceiver ?: original.extensionReceiver)?.deepCopyWithSymbols(parent)
             for (i in original.typeArguments.indices) {
                 typeArguments[i] = original.typeArguments[i]
             }
-            for ((i, argument) in valueArguments.withIndex()) {
-                putValueArgument(i, argument?.deepCopyWithSymbols(parent))
-            }
-            putValueArgument(valueArguments.size, messageArgument.deepCopyWithSymbols(parent))
+            this.arguments.assignFrom(arguments) { it?.deepCopyWithSymbols(parent) }
+            this.arguments.add(messageArgument.deepCopyWithSymbols(parent))
         }
     }
 }

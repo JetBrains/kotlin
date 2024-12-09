@@ -701,9 +701,21 @@ public class IrBlackBoxCodegenTestForPowerAssertGenerated extends AbstractIrBlac
     }
 
     @Test
+    @TestMetadata("ContextReceivers.kt")
+    public void testContextReceivers() {
+      runTest("plugins/power-assert/testData/codegen/parameters/ContextReceivers.kt");
+    }
+
+    @Test
     @TestMetadata("implicitReceiver.kt")
     public void testImplicitReceiver() {
       runTest("plugins/power-assert/testData/codegen/parameters/implicitReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("Receivers.kt")
+    public void testReceivers() {
+      runTest("plugins/power-assert/testData/codegen/parameters/Receivers.kt");
     }
 
     @Test
