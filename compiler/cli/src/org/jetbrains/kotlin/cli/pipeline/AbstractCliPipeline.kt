@@ -33,6 +33,7 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
         ProgressIndicatorAndCompilationCanceledStatus.setCompilationCanceledStatus(canceledStatus)
         val rootDisposable = Disposer.newDisposable("Disposable for ${CLICompiler::class.simpleName}.execImpl")
         setIdeaIoUseFallback() // TODO (KT-73573): probably could be removed
+        val performanceManager = createPerformanceManager(arguments, services)
         if (arguments.reportPerf || arguments.dumpPerf != null) {
             performanceManager.enableCollectingPerformanceStatistics()
         }
@@ -129,6 +130,14 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
     }
 
     abstract fun createCompoundPhase(arguments: A): CompilerPhase<PipelineContext, ArgumentsPipelineArtifact<A>, *>
-    abstract val performanceManager: CommonCompilerPerformanceManager
+    abstract val defaultPerformanceManager: CommonCompilerPerformanceManager
+
+    /**
+     * Some CLIs might support non-standard performance managers, so this method is needed to be able to create such a manager if needed.
+     */
+    protected open fun createPerformanceManager(arguments: A, services: Services): CommonCompilerPerformanceManager {
+        return defaultPerformanceManager
+    }
+
     protected open fun isKaptMode(arguments: A): Boolean = false
 }
