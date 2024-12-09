@@ -8,6 +8,13 @@ package org.jetbrains.kotlin.backend.konan.serialization
 import org.jetbrains.kotlin.backend.konan.PartialCacheInfoBase
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.name.FqName
+
+interface CacheDeserializationStrategyBase {
+    fun contains(filePath: String): Boolean
+    fun contains(fqName: FqName, fileName: String): Boolean
+}
 
 interface NativeCacheSupport{
     val cachedLibraries: CachedLibrariesBase
@@ -15,4 +22,5 @@ interface NativeCacheSupport{
     val libraryBeingCached: PartialCacheInfoBase?
 
     fun getDescriptorForCachedDeclarationModuleDeserializer(declaration: IrDeclaration): ModuleDescriptor?
+    fun getDeserializationStrategy(klib: KotlinLibrary): CacheDeserializationStrategyBase
 }

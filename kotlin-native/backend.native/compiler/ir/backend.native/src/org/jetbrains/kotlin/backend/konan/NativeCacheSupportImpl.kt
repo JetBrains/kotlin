@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.declarations.moduleDescriptor
 import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.library.KotlinLibrary
 
 class NativeCacheSupportImpl(
         override val cachedLibraries: CachedLibraries,
@@ -32,5 +33,11 @@ class NativeCacheSupportImpl(
                 && cachedLibraries.isLibraryCached(klib) && !declarationBeingCached)
             moduleDescriptor
         else null
+    }
+
+    override fun getDeserializationStrategy(klib: KotlinLibrary): CacheDeserializationStrategy = when {
+        klib == libraryBeingCached?.klib -> libraryBeingCached.strategy
+        lazyIrForCaches && cachedLibraries.isLibraryCached(klib) -> CacheDeserializationStrategy.Nothing
+        else -> CacheDeserializationStrategy.WholeModule
     }
 }

@@ -42,7 +42,7 @@ internal class KonanPartialModuleDeserializer(
         private val cachedLibraries: CachedLibrariesBase,
         private val inlineFunctionFiles: MutableMap<IrExternalPackageFragment, IrFile>,
         strategyResolver: (String) -> DeserializationStrategy,
-        private val cacheDeserializationStrategy: CacheDeserializationStrategy,
+        private val cacheDeserializationStrategy: CacheDeserializationStrategyBase,
         containsErrorCode: Boolean = false
 ) : BasicIrModuleDeserializer(konanIrLinker, moduleDescriptor, klib,
         { fileName ->

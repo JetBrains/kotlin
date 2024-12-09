@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.IrKlibBytesSource
 import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFileFromBytes
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
 import org.jetbrains.kotlin.backend.common.serialization.deserializeFqName
+import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategyBase
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.file.File
@@ -44,10 +45,7 @@ fun KotlinLibrary.getFileFqNames(filePaths: List<String>): List<String> {
     }
 }
 
-sealed class CacheDeserializationStrategy {
-    abstract fun contains(filePath: String): Boolean
-    abstract fun contains(fqName: FqName, fileName: String): Boolean
-
+sealed class CacheDeserializationStrategy : CacheDeserializationStrategyBase {
     object Nothing : CacheDeserializationStrategy() {
         override fun contains(filePath: String) = false
         override fun contains(fqName: FqName, fileName: String) = false

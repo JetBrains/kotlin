@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.backend.common.linkage.issues.UserVisibleIrModulesSu
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.*
-import org.jetbrains.kotlin.backend.konan.CacheDeserializationStrategy
-import org.jetbrains.kotlin.backend.konan.PartialCacheInfo
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -98,11 +96,7 @@ internal class KonanIrLinker(
                     )
                 }
                 else -> {
-                    val deserializationStrategy = when {
-                        klib == nativeCacheSupport.libraryBeingCached?.klib -> (nativeCacheSupport.libraryBeingCached as PartialCacheInfo).strategy
-                        nativeCacheSupport.lazyIrForCaches && nativeCacheSupport.cachedLibraries.isLibraryCached(klib) -> CacheDeserializationStrategy.Nothing
-                        else -> CacheDeserializationStrategy.WholeModule
-                    }
+                    val deserializationStrategy = nativeCacheSupport.getDeserializationStrategy(klib)
                     KonanPartialModuleDeserializer(
                             this, moduleDescriptor, klib, stubGenerator, nativeCacheSupport.cachedLibraries, inlineFunctionFiles, strategyResolver, deserializationStrategy
                     ).also {
