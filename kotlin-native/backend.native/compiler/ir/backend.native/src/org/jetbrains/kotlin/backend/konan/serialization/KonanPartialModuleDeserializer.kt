@@ -39,7 +39,7 @@ internal class KonanPartialModuleDeserializer(
         moduleDescriptor: ModuleDescriptor,
         override val klib: KotlinLibrary,
         private val stubGenerator: DeclarationStubGenerator,
-        private val cachedLibraries: CachedLibrariesBase,
+        private val nativeCacheSupport: NativeCacheSupport,
         private val inlineFunctionFiles: MutableMap<IrExternalPackageFragment, IrFile>,
         strategyResolver: (String) -> DeserializationStrategy,
         private val cacheDeserializationStrategy: CacheDeserializationStrategyBase,
@@ -307,7 +307,7 @@ internal class KonanPartialModuleDeserializer(
     }
 
     private val inlineFunctionReferences by lazy {
-        cachedLibraries.inlineFunctionReferences(klib) {
+        nativeCacheSupport.cachedLibraries.inlineFunctionReferences(klib) {
             it.file.deserializationState.declarationDeserializer.symbolDeserializer.deserializeIdSignature(it.functionSignature)
         }
     }
@@ -400,7 +400,7 @@ internal class KonanPartialModuleDeserializer(
     }
 
     private val classesFields by lazy {
-        cachedLibraries.classesFields(klib)
+        nativeCacheSupport.cachedLibraries.classesFields(klib)
     }
 
     private val lock = Any()
@@ -484,7 +484,7 @@ internal class KonanPartialModuleDeserializer(
     }
 
     val eagerInitializedFiles by lazy {
-        cachedLibraries.eagerInitializedFiles(klib) {
+        nativeCacheSupport.cachedLibraries.eagerInitializedFiles(klib) {
             it.file.deserializationState.file
         }
     }

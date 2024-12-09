@@ -97,7 +97,7 @@ internal class KonanIrLinker(
                 else -> {
                     val deserializationStrategy = nativeCacheSupport.getDeserializationStrategy(klib)
                     KonanPartialModuleDeserializer(
-                            this, moduleDescriptor, klib, stubGenerator, nativeCacheSupport.cachedLibraries, inlineFunctionFiles, strategyResolver, deserializationStrategy
+                            this, moduleDescriptor, klib, stubGenerator, nativeCacheSupport, inlineFunctionFiles, strategyResolver, deserializationStrategy
                     ).also {
                         moduleDeserializers[moduleDescriptor] = it
                         klibToModuleDeserializerMap[klib] = it
