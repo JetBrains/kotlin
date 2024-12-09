@@ -8,7 +8,7 @@
 
 @file:OptIn(ExperimentalStdlibApi::class)
 
-package kotlin.concurrent
+package kotlin.concurrent.atomics
 
 /**
  * Casts the given [AtomicInt] instance to [java.util.concurrent.atomic.AtomicInteger].
