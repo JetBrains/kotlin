@@ -43,4 +43,9 @@ public sealed interface SirAttribute {
 
         override val arguments: List<SirArgument>? get() = null
     }
+
+    object Escaping : SirAttribute {
+        override val identifier: String get() = "escaping"
+        override val arguments: List<SirArgument>? get() = null
+    }
 }

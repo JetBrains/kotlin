@@ -7,7 +7,6 @@ package org.jetbrains.sir.printer
 
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.util.*
-import org.jetbrains.kotlin.utils.IndentingPrinter
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 
@@ -152,13 +151,7 @@ public class SirAsSwiftSourcesPrinter private constructor(
         }
     }
 
-    private fun SirDeclaration.printAttributes() {
-        attributes.forEach {
-            println("@", it.identifier.swiftIdentifier, it.arguments?.joinToString(prefix = "(", postfix = ")") { parameter ->
-                parameter.swiftRender
-            } ?: "")
-        }
-    }
+    private fun SirDeclaration.printAttributes() = attributes.render().takeUnless { it.isBlank() }?.let { println(it) }
 
     private fun SirDeclarationContainer.printChildren() {
         allNonPackageEnums()
@@ -460,6 +453,7 @@ public class SirAsSwiftSourcesPrinter private constructor(
 
     private fun SirFunctionBody?.print() = (this ?: emptyBodyStub)
         .statements
+        .flatMap { it.split("\n") }
         .forEach {
             println(it)
         }
@@ -492,6 +486,7 @@ private val SirClassMemberDeclaration.callableKind: SirCallableKind
 private val SirParameter.swiftRender: String
     get() = (argumentName?.swiftIdentifier ?: "_") +
             (parameterName?.swiftIdentifier?.let { " $it" } ?: "") + ": " +
+            (type.attributes.render().takeUnless { it.isBlank() }?.let { "$it " } ?: "") +
             type.swiftRender
 
 private val SirArgument.swiftRender
@@ -502,3 +497,12 @@ private val SirExpression.swiftRender: String
         is SirExpression.Raw -> raw
         is SirExpression.StringLiteral -> value.swiftStringLiteral
     }
+
+private fun List<SirAttribute>.render(): String = joinToString(" ") { atr ->
+    buildString {
+        fun List<SirArgument>.render(): String = joinToString(prefix = "(", postfix = ")") { it.swiftRender }
+        append("@")
+        append(atr.identifier.swiftIdentifier)
+        append(atr.arguments?.render() ?: "")
+    }
+}
