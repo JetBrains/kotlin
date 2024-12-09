@@ -8,7 +8,7 @@ annotation class A(val x: String)
 annotation class Something
 
 // FILE: C.kt
-open class C { fun foo(x: @A("SomeWord") Int) {} }
+open class C { fun foo(x: @A(<!EVALUATED("SomeWord")!>"SomeWord"<!>) Int) {} }
 
 // FILE: D.kt
 class D {                    @Something fun bar() {} }

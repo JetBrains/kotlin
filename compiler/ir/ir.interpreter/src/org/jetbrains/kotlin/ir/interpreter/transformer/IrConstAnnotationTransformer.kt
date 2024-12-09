@@ -16,16 +16,30 @@ import org.jetbrains.kotlin.ir.interpreter.isPrimitiveArray
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.isAnnotation
+import org.jetbrains.kotlin.ir.util.parentsWithSelf
 import org.jetbrains.kotlin.ir.util.toIrConst
 
 internal abstract class IrConstAnnotationTransformer(private val context: IrConstEvaluationContext) {
+    var insideFakeOverrideDeclaration = false
+
+    protected inline fun <T> handleAsFakeOverrideIf(condition: Boolean, action: () -> T): T {
+        val oldValue = insideFakeOverrideDeclaration
+        if (condition) {
+            insideFakeOverrideDeclaration = true
+        }
+
+        try {
+            return action()
+        } finally {
+            insideFakeOverrideDeclaration = oldValue
+        }
+    }
 
     abstract fun visitAnnotations(element: IrElement)
 
     protected fun transformAnnotations(annotationContainer: IrAnnotationContainer) {
-        val declarationIsFakeOverride = (annotationContainer as? IrDeclaration)?.origin == IrDeclarationOrigin.FAKE_OVERRIDE
         annotationContainer.annotations.forEach { annotation ->
-            context.saveConstantsOnCondition(!declarationIsFakeOverride) {
+            context.saveConstantsOnCondition(!insideFakeOverrideDeclaration) {
                 transformAnnotation(annotation)
             }
         }
