@@ -43,7 +43,6 @@ import java.io.File
 
 object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, JvmFrontendPipelineArtifact>(
     name = "JvmFrontendPipelinePhase",
-    preActions = setOf(PerformanceNotifications.AnalysisStarted),
     postActions = setOf(PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: ConfigurationPipelineArtifact): JvmFrontendPipelineArtifact? {
@@ -92,6 +91,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             return null
         }
 
+        performanceManager?.notifyAnalysisStarted()
         val sourceScope: AbstractProjectFileSearchScope
         when (configuration.useLightTree) {
             true -> {
