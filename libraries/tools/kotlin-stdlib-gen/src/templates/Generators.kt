@@ -613,6 +613,75 @@ object Generators : TemplateGroupBase() {
         }
     }
 
+    val f_partitionIndexed = fn("partitionIndexed(predicate: (index: Int, T) -> Boolean)") {
+        includeDefault()
+        include(CharSequences, Strings)
+    } builder {
+        inline()
+
+        doc {
+            """
+            Splits the original ${f.collection} into pair of lists,
+            where *first* list contains elements for which [predicate] yielded `true`,
+            while *second* list contains elements for which [predicate] yielded `false`.
+            @param [predicate] function that takes the index of ${f.element.prefixWithArticle()} and the ${f.element} itself
+            and returns the result of predicate evaluation on the ${f.element}.
+            """
+        }
+        sample(
+            when (family) {
+                CharSequences, Strings -> "samples.text.Strings.partitionIndexed"
+                ArraysOfObjects, ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.partitionIndexedArrayOfPrimitives"
+                Sequences -> "samples.collections.Sequences.Transformations.partitionIndexed"
+                else -> "samples.collections.Iterables.Operations.partitionIndexed"
+            }
+        )
+        sequenceClassification(terminal)
+        returns("Pair<List<T>, List<T>>")
+        body {
+            """
+            val first = ArrayList<T>()
+            val second = ArrayList<T>()
+            for ((idx, element) in this.withIndex()) {
+                if (predicate(idx, element)) {
+                    first.add(element)
+                } else {
+                    second.add(element)
+                }
+            }
+            return Pair(first, second)
+            """
+        }
+
+        specialFor(CharSequences, Strings) {
+            doc {
+                """
+                Splits the original ${f.collection} into pair of ${f.collection}s,
+                where *first* ${f.collection} contains characters for which [predicate] yielded `true`,
+                while *second* ${f.collection} contains characters for which [predicate] yielded `false`.
+                @param [predicate] function that takes the index of ${f.element.prefixWithArticle()} and the ${f.element} itself
+                and returns the result of predicate evaluation on the ${f.element}.
+                """
+            }
+            returns("Pair<SELF, SELF>")
+        }
+        body(CharSequences, Strings) {
+            val toString = if (f == Strings) ".toString()" else ""
+            """
+            val first = StringBuilder()
+            val second = StringBuilder()
+            for ((idx, element) in this.withIndex()) {
+                if (predicate(idx, element)) {
+                    first.append(element)
+                } else {
+                    second.append(element)
+                }
+            }
+            return Pair(first$toString, second$toString)
+            """
+        }
+    }
+
     val f_windowed_transform = fn("windowed(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (List<T>) -> R)") {
         include(Iterables, Sequences, CharSequences)
     } builder {
