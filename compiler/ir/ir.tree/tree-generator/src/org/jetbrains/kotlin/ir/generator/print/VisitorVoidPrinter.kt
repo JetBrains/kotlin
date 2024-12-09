@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.generator.print
 
+import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.generators.tree.AbstractVisitorVoidPrinter
 import org.jetbrains.kotlin.generators.tree.ClassRef
 import org.jetbrains.kotlin.generators.tree.PositionTypeParameterRef
@@ -34,4 +36,7 @@ internal class VisitorVoidPrinter(
 
     override val ImportCollecting.classKDoc: String
         get() = deprecatedVisitorInterface(irVisitorVoidType)
+
+    override val annotations: List<Annotation>
+        get() = listOf(DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20, replaceWith = "IrVisitorVoid"))
 }

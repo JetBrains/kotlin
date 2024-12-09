@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.IndentingPrinter
 import org.jetbrains.kotlin.utils.addToStdlib.joinToWithBuffer
 import org.jetbrains.kotlin.utils.withIndent
+import kotlin.reflect.KClass
+import kotlin.reflect.full.memberProperties
 
 interface ImportCollectingPrinter : ImportCollecting, IndentingPrinter
 
@@ -97,7 +99,7 @@ fun ImportCollectingPrinter.printFunctionDeclaration(
     }
 
     deprecation?.let {
-        printDeprecation(it)
+        printAnnotation(it)
     }
 
     if (visibility != Visibility.PUBLIC) {
@@ -183,16 +185,31 @@ data class PrimaryConstructorParameter(
     val defaultValue by functionParameter::defaultValue
 }
 
-private fun IndentingPrinter.printDeprecation(deprecation: Deprecated) {
-    println("@Deprecated(")
-    withIndent {
-        println("message = \"", deprecation.message, "\",")
-        println("replaceWith = ReplaceWith(\"", deprecation.replaceWith.expression, "\"),")
-        println("level = DeprecationLevel.", deprecation.level.name, ",")
-    }
-    println(")")
-}
+private fun String.asStringLiteral(): String = "\"" + replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n") + "\""
 
+fun <A : Annotation> ImportCollectingPrinter.printAnnotation(annotation: A) {
+    @Suppress("UNCHECKED_CAST")
+    val annotationInterface = annotation::class.java.interfaces.single().kotlin as KClass<Annotation>
+    print("@", annotationInterface.asRef<PositionTypeParameterRef>().render())
+    val properties = annotationInterface.memberProperties
+    if (properties.isNotEmpty()) {
+        println("(")
+        withIndent {
+            for (property in properties) {
+                print(property.name, " = ")
+                when (val value = property.get(annotation)) {
+                    is String -> print(value.asStringLiteral())
+                    is Enum<*> -> print(value::class.asRef<PositionTypeParameterRef>().render(), ".", value.name)
+                    else -> print(value)
+                }
+                println(",")
+            }
+        }
+        println(")")
+    } else {
+        println()
+    }
+}
 
 fun ImportCollectingPrinter.printPropertyDeclaration(
     name: String,
@@ -213,7 +230,7 @@ fun ImportCollectingPrinter.printPropertyDeclaration(
     printKDoc(kDoc)
 
     deprecation?.let {
-        printDeprecation(it)
+        printAnnotation(it)
     }
 
     if (isVolatile) {
