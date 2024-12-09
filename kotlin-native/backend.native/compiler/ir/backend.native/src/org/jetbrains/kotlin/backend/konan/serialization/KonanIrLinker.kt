@@ -89,10 +89,9 @@ internal class KonanIrLinker(
                             moduleDescriptor,
                             klib,
                             listOfNotNull(forwardDeclarationDeserializer),
-                            nativeCacheSupport.cachedLibraries.isLibraryCached(klib),
+                            nativeCacheSupport,
                             cenumsProvider,
                             stubGenerator,
-                            builtIns
                     )
                 }
                 else -> {

@@ -33,15 +33,15 @@ internal class KonanInteropModuleDeserializer(
     moduleDescriptor: ModuleDescriptor,
     override val klib: KotlinLibrary,
     override val moduleDependencies: Collection<IrModuleDeserializer>,
-    private val isLibraryCached: Boolean,
+    nativeCacheSupport: NativeCacheSupport,
     private val cenumsProvider: IrProviderForCEnumAndCStructStubs,
     private val stubGenerator: DeclarationStubGenerator,
-    private val builtIns: IrBuiltIns,
 ) : IrModuleDeserializer(moduleDescriptor, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT) {
     init {
         require(klib.isCInteropLibrary())
     }
 
+    private val isLibraryCached: Boolean = nativeCacheSupport.cachedLibraries.isLibraryCached(klib)
     private val descriptorByIdSignatureFinder = DescriptorByIdSignatureFinderImpl(
         moduleDescriptor, KonanManglerDesc,
         DescriptorByIdSignatureFinderImpl.LookupMode.MODULE_ONLY
