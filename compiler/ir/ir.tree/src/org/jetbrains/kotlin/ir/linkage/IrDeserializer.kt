@@ -28,11 +28,5 @@ interface IrDeserializer : IrProvider {
      *
      * In the future, this function should be split into several functions with different semantics for more precise use.
      */
-    @Deprecated(
-        "Use postProcess(inOrAfterLinkageStep) instead",
-        ReplaceWith("postProcess(inOrAfterLinkageStep = true)"),
-        DeprecationLevel.ERROR
-    )
-    fun postProcess() = postProcess(inOrAfterLinkageStep = true)
     fun postProcess(inOrAfterLinkageStep: Boolean)
 }
