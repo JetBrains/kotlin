@@ -18,7 +18,6 @@ internal enum class OsType(val osName: String) {
     MAC("darwin"),
     LINUX("linux"),
     FREEBSD("linux"), // https://github.com/node-gradle/gradle-node-plugin/issues/178
-    SUN("sunos"),
 }
 
 internal fun parsePlatform(name: String, arch: String, uname: Provider<String>): Platform {
@@ -39,7 +38,6 @@ internal fun parseOsType(type: String): OsType {
         name.contains("mac") -> OsType.MAC
         name.contains("linux") -> OsType.LINUX
         name.contains("freebsd") -> OsType.FREEBSD
-        name.contains("sunos") -> OsType.SUN
         else -> error("Unsupported OS: $name")
     }
 }
