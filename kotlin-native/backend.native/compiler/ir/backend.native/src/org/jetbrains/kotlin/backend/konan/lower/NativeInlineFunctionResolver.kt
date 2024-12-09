@@ -48,10 +48,7 @@ internal class NativeInlineFunctionResolver(
 
         SharedVariablesLowering(context).lower(body, function)
 
-        OuterThisInInlineFunctionsSpecialAccessorLowering(
-                context,
-                generatePublicAccessors = !doubleInliningEnabled // Make accessors public if `SyntheticAccessorLowering` is disabled.
-        ).lowerWithoutAddingAccessorsToParents(function)
+        OuterThisInInlineFunctionsSpecialAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
 
         LocalClassesInInlineLambdasLowering(context).lower(body, function)
         // Do not extract local classes off of inline functions from cached libraries.

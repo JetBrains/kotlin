@@ -103,7 +103,7 @@ class DumpSyntheticAccessors(context: CommonBackendContext) : ModuleLoweringPass
         val body = body ?: compilationException("${id()} has no body", this)
         val expression = when (body) {
             is IrExpressionBody -> body.expression
-            is IrBlockBody -> body.statements.singleOrNull() as? IrExpression
+            is IrBlockBody -> (body.statements.singleOrNull() as? IrReturn)?.value
                 ?: compilationException("${id()} is expected to have exactly the single expression in block body", this)
             is IrSyntheticBody -> syntheticBodyIsNotSupported(this)
         }

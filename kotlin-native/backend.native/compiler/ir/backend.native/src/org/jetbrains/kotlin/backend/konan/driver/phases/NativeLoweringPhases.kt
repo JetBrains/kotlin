@@ -168,11 +168,7 @@ private val sharedVariablesPhase = createFileLoweringPhase(
 )
 
 private val outerThisSpecialAccessorInInlineFunctionsPhase = createFileLoweringPhase(
-        { context: LoweringContext ->
-            // Make accessors public if `SyntheticAccessorLowering` is disabled.
-            val generatePublicAccessors = context.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING)
-            OuterThisInInlineFunctionsSpecialAccessorLowering(context, generatePublicAccessors)
-        },
+        ::OuterThisInInlineFunctionsSpecialAccessorLowering,
         name = "OuterThisInInlineFunctionsSpecialAccessorLowering",
 )
 
