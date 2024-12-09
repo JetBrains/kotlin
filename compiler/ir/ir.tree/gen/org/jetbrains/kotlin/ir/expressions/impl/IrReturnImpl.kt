@@ -28,20 +28,4 @@ class IrReturnImpl internal constructor(
     override var attributeOwnerId: IrAttributeContainer = this
 
     override var originalBeforeInline: IrAttributeContainer? = null
-
-    // A temporary API for compatibility with Flysto user project, see KQA-1254
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        returnTargetSymbol: IrReturnTargetSymbol,
-        value: IrExpression,
-    ) : this(
-        constructorIndicator = null,
-        startOffset = startOffset,
-        endOffset = endOffset,
-        type = type,
-        returnTargetSymbol = returnTargetSymbol,
-        value = value,
-    )
 }

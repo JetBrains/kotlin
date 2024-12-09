@@ -29,21 +29,4 @@ class IrCompositeImpl internal constructor(
     override var originalBeforeInline: IrAttributeContainer? = null
 
     override val statements: MutableList<IrStatement> = ArrayList(2)
-
-    // A temporary API for compatibility with Flysto user project, see KQA-1254
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        origin: IrStatementOrigin?,
-        statements: List<IrStatement>,
-    ) : this(
-        constructorIndicator = null,
-        startOffset = startOffset,
-        endOffset = endOffset,
-        type = type,
-        origin = origin,
-    ) {
-        this.statements.addAll(statements)
-    }
 }
