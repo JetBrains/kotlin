@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -23,7 +22,7 @@ import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.memoryOptimizedPlus
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 private val STATIC_THIS_PARAMETER by IrDeclarationOriginImpl
 
@@ -66,32 +65,27 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
             it.annotations = function.annotations
         }
 
-        staticFunction.typeParameters =
-            staticFunction.typeParameters memoryOptimizedPlus function.typeParameters.map { it.deepCopyWithSymbols(staticFunction) }
-
-        staticFunction.extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(staticFunction)
-        staticFunction.valueParameters = staticFunction.valueParameters memoryOptimizedPlus buildValueParameter(staticFunction) {
-            origin = STATIC_THIS_PARAMETER
-            name = Name.identifier("\$this")
-            type = function.dispatchReceiverParameter!!.type
-        }
-
         function.correspondingStatic = staticFunction
 
-        staticFunction.valueParameters = staticFunction.valueParameters memoryOptimizedPlus function.valueParameters.map {
-            // TODO better way to avoid copying default value
-            it.copyTo(staticFunction, defaultValue = null)
+        staticFunction.typeParameters = function.typeParameters.map { it.deepCopyWithSymbols(staticFunction) }
+        staticFunction.parameters = function.parameters.map { originalParameter ->
+            if (originalParameter.kind == IrParameterKind.DispatchReceiver) {
+                originalParameter.copyTo(
+                    staticFunction,
+                    origin = STATIC_THIS_PARAMETER,
+                    name = Name.identifier("\$this"),
+                    kind = IrParameterKind.Regular,
+                )
+            } else {
+                // TODO better way to avoid copying default value
+                originalParameter.copyTo(staticFunction, defaultValue = null, kind = IrParameterKind.Regular)
+            }
         }
 
-        val oldParameters =
-            listOfNotNull(function.extensionReceiverParameter, function.dispatchReceiverParameter) + function.valueParameters
-        val newParameters = listOfNotNull(staticFunction.extensionReceiverParameter) + staticFunction.valueParameters
-        assert(oldParameters.size == newParameters.size)
-
-        val parameterMapping = oldParameters.zip(newParameters).toMap()
+        val parameterMapping = function.parameters.zip(staticFunction.parameters).toMap()
 
         val parameterTransformer = object : IrElementTransformerVoid() {
-            override fun visitGetValue(expression: IrGetValue) = parameterMapping[expression.symbol.owner]?.let {
+            override fun visitGetValue(expression: IrGetValue): IrGetValue = parameterMapping[expression.symbol.owner]?.let {
                 expression.run { IrGetValueImpl(startOffset, endOffset, type, it.symbol, origin) }
             } ?: expression
         }
@@ -102,7 +96,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
             }
         }
 
-        function.valueParameters.forEach {
+        function.parameters.forEach {
             // TODO better way to avoid copying default value
 
             parameterMapping[it]?.apply {
@@ -193,12 +187,7 @@ class PrivateMemberBodiesLowering(val context: JsIrBackendContext) : BodyLowerin
                     superQualifierSymbol = expression.superQualifierSymbol
                 )
 
-                newExpression.extensionReceiver = expression.extensionReceiver
-                expression.dispatchReceiver?.let { newExpression.putValueArgument(0, it) }
-
-                for (i in 0 until expression.valueArgumentsCount) {
-                    newExpression.putValueArgument(i + 1, expression.getValueArgument(i))
-                }
+                newExpression.arguments.assignFrom(expression.arguments)
                 newExpression.copyTypeArgumentsFrom(expression)
 
                 return newExpression
@@ -211,12 +200,7 @@ class PrivateMemberBodiesLowering(val context: JsIrBackendContext) : BodyLowerin
 
                 val newExpression = builder()
 
-                newExpression.extensionReceiver = expression.extensionReceiver
-
-                newExpression.dispatchReceiver = expression.dispatchReceiver
-                for (i in 0 until expression.valueArgumentsCount) {
-                    newExpression.putValueArgument(i, expression.getValueArgument(i))
-                }
+                newExpression.arguments.assignFrom(expression.arguments)
                 newExpression.copyTypeArgumentsFrom(expression)
 
                 return newExpression
