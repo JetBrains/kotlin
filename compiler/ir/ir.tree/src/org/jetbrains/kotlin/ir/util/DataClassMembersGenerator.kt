@@ -142,11 +142,6 @@ abstract class DataClassMembersGenerator(
                 return
             }
 
-            if (irClass.isValhallaValueClass) {
-                +irIfThenReturnTrue(irEqeqeq(irThis(), irOther()))
-                return
-            }
-
             if (!irClass.isValue) {
                 +irIfThenReturnTrue(irEqeqeq(irThis(), irOther()))
             }
