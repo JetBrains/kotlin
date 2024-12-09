@@ -14,6 +14,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.FileIndexFacade
 import com.intellij.openapi.roots.PackageIndex
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSet
@@ -25,7 +26,6 @@ import com.intellij.psi.impl.PsiElementFinderImpl
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.impl.smartPointers.SmartTypePointerManagerImpl
-import com.intellij.psi.impl.source.PsiFileWithStubSupport
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.*
 import com.intellij.psi.tree.IStubFileElementType
@@ -67,6 +67,7 @@ import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.descriptors.CallableDescriptor.UserDataKey
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
@@ -165,7 +166,7 @@ fun main() {
             }.project
 
             val files = mapOf(
-                "foo.kt" to """
+                FileId("/src/foo/foo.kt") to """
                 package foo
                 import bar.Bar
                 class Foo {
@@ -176,7 +177,7 @@ fun main() {
 
                 """.trimIndent(),
 
-                "bar.kt" to """
+                FileId("/src/bar/bar.kt") to """
                     
                 package bar
                 import foo.Foo
@@ -191,24 +192,25 @@ fun main() {
                 """.trimIndent()
             )
 
-            val virtualFiles = files.map { (name, content) ->
+            val FileIdKey = Key<FileId>("dumdum.fileId")
+
+            val virtualFileById = files.mapValues { (fileId, content) ->
                 LightVirtualFile(
-                    name,
+                    fileId.id.split('/').last(),
                     KotlinFileType.INSTANCE,
                     content
-                )
+                ).also {
+                    it.putUserData(FileIdKey, fileId)
+                }
             }
 
             val psiManager = PsiManager.getInstance(project)
-            val psiFiles = virtualFiles.map { psiManager.findFile(it)!! }
-
-            val virtualFileDocumentIdDescriptor: DocumentIdDescriptor<VirtualFile> =
-                DocumentIdDescriptor("virtualFile", Serializer.dummy())
+            val psiFileById = virtualFileById.mapValues { (_, virtualFile) -> psiManager.findFile(virtualFile)!! }
 
             val index = inMemoryIndex(
-                psiFiles.flatMap { psiFile ->
+                psiFileById.flatMap { (fileId, psiFile) ->
                     indexFile(
-                        documentId = DocumentId(virtualFileDocumentIdDescriptor, psiFile.virtualFile),
+                        fileId = fileId,
                         file = psiFile,
                         extensions = listOf(
                             KotlinJvmModuleAnnotationsIndex(),
@@ -221,18 +223,17 @@ fun main() {
                 }
             )
 
-            val fileLocator = FileLocator { documentId ->
-                @Suppress("UNCHECKED_CAST")
-                listOf((documentId as DocumentId<VirtualFile>).value)
+            val virtualFileFactory = VirtualFileFactory { fileId ->
+                virtualFileById[fileId]!!
             }
 
-            val stubIndex: StubIndex = index.stubIndex(fileLocator) { virtualFile ->
-                DocumentId(virtualFileDocumentIdDescriptor, virtualFile)
+            val stubIndex: StubIndex = index.stubIndex(virtualFileFactory) { virtualFile ->
+                virtualFile.getUserData(FileIdKey)!!
             }
-            
+
             (applicationEnvironment.application.getService(StubTreeLoader::class.java) as StubTreeLoaderImpl).stubIndex = stubIndex
 
-            val fileBasedIndex: FileBasedIndex = index.fileBased(fileLocator)
+            val fileBasedIndex: FileBasedIndex = index.fileBased(virtualFileFactory)
 
             project.apply {
                 registerService(
@@ -306,12 +307,12 @@ fun main() {
                     directRegularDependencies = emptyList(),
                     directDependsOnDependencies = emptyList(),
                     directFriendDependencies = emptyList(),
-                    contentScope = GlobalSearchScope.filesScope(project, virtualFiles),
+                    contentScope = GlobalSearchScope.filesScope(project, virtualFileById.values),
                     targetPlatform = JvmPlatforms.defaultJvmPlatform,
                     project = project,
                     name = "dumdum",
                     languageVersionSettings = LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST),
-                    psiRoots = psiFiles
+                    psiRoots = psiFileById.values.toList()
                 )
 
                 registerService(
@@ -417,9 +418,9 @@ fun main() {
                 )
             }
 
-            for (psiFile in psiFiles) {
-                analyze(psiFile as KtFile) {
-                    psiFile.descendantsOfType<KtCallElement>().forEach { call ->
+            for (psiFile in psiFileById) {
+                analyze(psiFile.value as KtFile) {
+                    psiFile.value.descendantsOfType<KtCallElement>().forEach { call ->
                         val callInfo = (call.resolveToCall() as KaSuccessCallInfo).call as KaCallableMemberCall<*, *>
                         println(callInfo.partiallyAppliedSymbol.signature.callableId)
                     }
@@ -430,12 +431,12 @@ fun main() {
 }
 
 fun indexFile(
-    documentId: DocumentId<*>,
+    fileId: FileId,
     file: PsiFile,
     extensions: List<FileBasedIndexExtension<*, *>>,
 ): List<IndexUpdate<*>> =
     fileBasedIndexesUpdates(
-        documentId = documentId,
+        fileId = fileId,
         fileContent = FileContentImpl.createByFile(file.virtualFile, file.project),
         extensions = extensions
     ) +
@@ -443,7 +444,7 @@ fun indexFile(
                 val stubElement = stubFileElementType.builder.buildStubTree(file)
                 listOf(
                     stubIndexesUpdate(
-                        documentId = documentId,
+                        fileId = fileId,
                         tree = StubTree(stubElement as PsiFileStub<*>)
                     )
                 )

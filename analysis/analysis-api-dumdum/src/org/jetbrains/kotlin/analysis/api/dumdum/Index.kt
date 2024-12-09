@@ -1,29 +1,15 @@
 package org.jetbrains.kotlin.analysis.api.dumdum
 
 interface Index {
-    fun <S> value(documentId: DocumentId<*>, valueDescriptor: ValueDescriptor<S>): S?
+    fun <S> value(fileId: FileId, valueDescriptor: ValueDescriptor<S>): S?
 
-    fun <K> documents(key: IndexKey<K>): Sequence<DocumentId<*>>
+    fun <K> files(key: IndexKey<K>): Sequence<FileId>
 
     fun <K> keys(keyDescriptor: KeyDescriptor<K>): Sequence<K>
 }
 
-data class IndexUpdate<T>(
-    val documentId: DocumentId<*>,
-    val valueType: ValueDescriptor<T>,
-    val value: T,
-    val keys: List<IndexKey<*>>,
-)
-
-data class DocumentId<T>(
-    val descriptor: DocumentIdDescriptor<T>,
-    val value: T,
-)
-
-data class DocumentIdDescriptor<T>(
-    val type: String,
-    val serializer: Serializer<T>,
-)
+@JvmInline
+value class FileId(val id: String)
 
 data class IndexKey<K>(
     val keyDescriptor: KeyDescriptor<K>,
@@ -62,3 +48,10 @@ interface Serializer<T> {
         fun <T> dummy(): Serializer<T> = DUMMY as Serializer<T>
     }
 }
+
+data class IndexUpdate<T>(
+    val fileId: FileId,
+    val valueType: ValueDescriptor<T>,
+    val value: T,
+    val keys: List<IndexKey<*>>,
+)

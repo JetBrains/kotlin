@@ -22,15 +22,15 @@ val StubIndexValueDescriptor: ValueDescriptor<StubValue> =
 fun <K> ID<K, *>.asKeyDescriptor(): KeyDescriptor<K> =
     KeyDescriptor(name, Serializer.dummy())
 
-fun interface VirtualFileToDocumentIdMapper {
-    fun documentId(virtualFile: VirtualFile): DocumentId<*>
+fun interface FilePathExtractor {
+    fun filePath(virtualFile: VirtualFile): FileId
 }
 
-fun Index.stubIndex(fileLocator: FileLocator, documentIdMapper: VirtualFileToDocumentIdMapper): StubIndex = let { index ->
+fun Index.stubIndex(virtualFileFactory: VirtualFileFactory, documentIdMapper: FilePathExtractor): StubIndex = let { index ->
     object : StubIndex {
         override fun stub(virtualFile: VirtualFile): ObjectStubTree<*>? =
             index.value(
-                documentId = documentIdMapper.documentId(virtualFile),
+                fileId = documentIdMapper.filePath(virtualFile),
                 valueDescriptor = StubIndexValueDescriptor
             )?.stub
 
@@ -41,13 +41,13 @@ fun Index.stubIndex(fileLocator: FileLocator, documentIdMapper: VirtualFileToDoc
             scope: GlobalSearchScope,
         ): Iterator<VirtualFile> =
             index
-                .documents(
+                .files(
                     IndexKey(
                         (indexId as StubIndexKey<K, *>).asKeyDescriptor(),
                         dataKey
                     )
                 )
-                .flatMap(fileLocator::locate)
+                .map(virtualFileFactory::virtualFile)
                 .filter { scope.contains(it) }
                 .iterator()
 
@@ -60,13 +60,13 @@ fun Index.stubIndex(fileLocator: FileLocator, documentIdMapper: VirtualFileToDoc
             processor: Processor<in Psi>,
         ): Boolean =
             index
-                .documents(
+                .files(
                     IndexKey(
                         indexKey.asKeyDescriptor(),
                         key
                     )
                 )
-                .filter { fileLocator.locate(it).any(scope::contains) }
+                .filter { scope.contains(virtualFileFactory.virtualFile(it)) }
                 .mapNotNull { index.value(it, StubIndexValueDescriptor) }
                 .flatMap { stubValue ->
                     stubValue.index[indexKey]?.get(key as Any)?.map { stubId ->
@@ -78,12 +78,12 @@ fun Index.stubIndex(fileLocator: FileLocator, documentIdMapper: VirtualFileToDoc
     }
 }
 
-fun stubIndexesUpdate(documentId: DocumentId<*>, tree: StubTree): IndexUpdate<*> {
+fun stubIndexesUpdate(fileId: FileId, tree: StubTree): IndexUpdate<*> {
     val map = tree.indexStubTree { indexKey ->
         HashingStrategy.canonical()
     }
     return IndexUpdate(
-        documentId = documentId,
+        fileId = fileId,
         valueType = StubIndexValueDescriptor,
         value = StubValue(tree, map),
         keys = map.flatMap { (stubIndexKey, stubIndex) ->

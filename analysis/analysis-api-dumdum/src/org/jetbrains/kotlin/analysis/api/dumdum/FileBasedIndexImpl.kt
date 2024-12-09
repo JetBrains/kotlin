@@ -11,11 +11,11 @@ private data class Box<T>(val value: T)
 private fun <K, V> ID<K, V>.indexValueDescriptor(): ValueDescriptor<Map<K, Box<V>>> =
     ValueDescriptor("indexValue${name}", Serializer.dummy())
 
-fun interface FileLocator {
-    fun locate(dodcumentId: DocumentId<*>): List<VirtualFile>
+fun interface VirtualFileFactory {
+    fun virtualFile(fileId: FileId): VirtualFile
 }
 
-fun Index.fileBased(fileLocator: FileLocator): FileBasedIndex = let { index ->
+fun Index.fileBased(virtualFileFactory: VirtualFileFactory): FileBasedIndex = let { index ->
     object : FileBasedIndex {
         override fun <K, V> processValues(
             indexId: ID<K, V>,
@@ -26,8 +26,8 @@ fun Index.fileBased(fileLocator: FileLocator): FileBasedIndex = let { index ->
             val valueDescriptor = indexId.indexValueDescriptor()
             val keyDescriptor = indexId.asKeyDescriptor()
             return index
-                .documents(IndexKey(keyDescriptor, dataKey))
-                .filter { fileLocator.locate(it).any(filter::contains) }
+                .files(IndexKey(keyDescriptor, dataKey))
+                .filter { filter.contains(virtualFileFactory.virtualFile(it)) }
                 .mapNotNull { documentId ->
                     index
                         .value(documentId, valueDescriptor)
@@ -46,15 +46,15 @@ fun Index.fileBased(fileLocator: FileLocator): FileBasedIndex = let { index ->
                 .keys(keyDescriptor)
                 .filter { k ->
                     index
-                        .documents(IndexKey(keyDescriptor, k))
-                        .any { fileLocator.locate(it).any(filter::contains) }
+                        .files(IndexKey(keyDescriptor, k))
+                        .any { filter.contains(virtualFileFactory.virtualFile(it)) }
                 }
                 .all(processor::process)
         }
     }
 }
 
-fun fileBasedIndexesUpdates(documentId: DocumentId<*>, fileContent: FileContent, extensions: List<FileBasedIndexExtension<*, *>>): List<IndexUpdate<*>> =
+fun fileBasedIndexesUpdates(fileId: FileId, fileContent: FileContent, extensions: List<FileBasedIndexExtension<*, *>>): List<IndexUpdate<*>> =
     extensions.map { extension ->
         @Suppress("UNCHECKED_CAST")
         extension as FileBasedIndexExtension<Any, Any?>
@@ -62,7 +62,7 @@ fun fileBasedIndexesUpdates(documentId: DocumentId<*>, fileContent: FileContent,
         val map = extension.indexer.map(fileContent).mapValues { (_, v) -> Box(v) }
         val keyDescriptor = indexId.asKeyDescriptor()
         IndexUpdate(
-            documentId = documentId,
+            fileId = fileId,
             valueType = indexId.indexValueDescriptor(),
             value = map,
             keys = map.keys.map { key ->
