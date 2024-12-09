@@ -56,9 +56,10 @@ internal class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendC
             }
         }
 
-        val implementation = declaration.findInterfaceImplementation(context.config.jvmDefaultMode)
+        val implementation = declaration.findInterfaceImplementation(context.config.jvmDefaultMode, allowJvmDefault = true)
             ?: return declaration
-        return generateDelegationToDefaultImpl(implementation, declaration)
+
+        return generateDelegationToInterfaceImplementation(implementation, declaration) ?: declaration
     }
 
     private fun generateCloneImplementation(fakeOverride: IrSimpleFunction, cloneFun: IrSimpleFunction): IrSimpleFunction {
@@ -78,31 +79,56 @@ internal class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendC
         return irFunction
     }
 
-    private fun generateDelegationToDefaultImpl(
-        interfaceImplementation: IrSimpleFunction,
-        classOverride: IrSimpleFunction
-    ): IrSimpleFunction {
+    private fun generateDelegationToInterfaceImplementation(
+        implementation: IrSimpleFunction,
+        classOverride: IrSimpleFunction,
+    ): IrSimpleFunction? {
         val irFunction = context.cachedDeclarations.getDefaultImplsRedirection(classOverride)
 
-        val superMethod = firstSuperMethodFromKotlin(irFunction, interfaceImplementation).owner
+        // TODO: probably need to check superMethod somewhere below, instead of implementation, to avoid SOE.
+        val superMethod = firstSuperMethodFromKotlin(irFunction, implementation).owner
         val superClassType = superMethod.parentAsClass.defaultType
-        val defaultImplFun = context.cachedDeclarations.getDefaultImplsFunction(superMethod)
         val classStartOffset = classOverride.parentAsClass.startOffset
+
+        // For inherited interface implementations compiled in the `disable` (DefaultImpls-based) mode, we generate a bridge in the
+        // class that calls the static method from DefaultImpls.
+        // For inherited interface implementations compiled in the `all-compatibility` mode, we generate a bridge that calls the super
+        // method from the interface. This is done for Kotlin interfaces only, and only if the class is compiled in the compatibility mode
+        // (with `-Xjvm-default=all-compatibility`, and no `@JvmDefaultWithoutCompatibility` annotation on it). This is needed because
+        // otherwise changing the mode that is used to compile the interface from `disable` to `all-compatibility` would not be
+        // binary-compatible.
+        val (callee, superQualifierSymbol) =
+            if (implementation.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) {
+                return null
+            } else if (implementation.isDefinitelyNotDefaultImplsMethod(context.config.jvmDefaultMode, implementation)) {
+                if (context.config.jvmDefaultMode != JvmDefaultMode.ALL_COMPATIBILITY) return null // TODO: also check annotation
+                superMethod to superMethod.parentAsClass.symbol
+            } else {
+                context.cachedDeclarations.getDefaultImplsFunction(superMethod) to null
+            }
+
         val backendContext = context
         context.createIrBuilder(irFunction.symbol, classStartOffset, classStartOffset).apply {
             irFunction.body = irExprBody(irBlock {
                 val parameter2arguments = backendContext.multiFieldValueClassReplacements
-                    .mapFunctionMfvcStructures(this, defaultImplFun, irFunction) { sourceParameter, _ ->
+                    .mapFunctionMfvcStructures(this, callee, irFunction) { sourceParameter, _ ->
                         irGet(sourceParameter).let {
-                            if (sourceParameter != irFunction.dispatchReceiverParameter) it
+                            if (sourceParameter != irFunction.dispatchReceiverParameter || superQualifierSymbol != null) it
                             else it.reinterpretAsDispatchReceiverOfType(superClassType)
                         }
                     }
-                +irCall(defaultImplFun.symbol, irFunction.returnType).apply {
-                    for (index in superMethod.parentAsClass.typeParameters.indices) {
-                        typeArguments[index] = createPlaceholderAnyNType(context.irBuiltIns)
+
+                +irCall(callee.symbol, irFunction.returnType).apply {
+                    this.superQualifierSymbol = superQualifierSymbol
+
+                    if (superQualifierSymbol == null) {
+                        for (index in superMethod.parentAsClass.typeParameters.indices) {
+                            typeArguments[index] = createPlaceholderAnyNType(context.irBuiltIns)
+                        }
+                        passTypeArgumentsFrom(irFunction, offset = superMethod.parentAsClass.typeParameters.size)
+                    } else {
+                        passTypeArgumentsFrom(irFunction)
                     }
-                    passTypeArgumentsFrom(irFunction, offset = superMethod.parentAsClass.typeParameters.size)
 
                     for ((parameter, argument) in parameter2arguments) {
                         if (argument != null) {
