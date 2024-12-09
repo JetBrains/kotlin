@@ -3,12 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.concurrent
+package kotlin.concurrent.atomics
 
 /**
  * An array of ints in which elements may be updated atomically.
  *
- * Since the JS platform does not support multi-threading,
+ * Since the Wasm platform does not support multi-threading,
  * the implementation is trivial and has no atomic synchronizations.
  */
 @SinceKotlin("2.1")
@@ -29,7 +29,7 @@ public actual class AtomicIntArray {
      * Creates a new [AtomicIntArray] filled with elements of the given [array].
      */
     public actual constructor(array: IntArray) {
-        this.array = array.asDynamic().slice().unsafeCast<IntArray>()
+        this.array = array.copyOf()
     }
 
     /**
@@ -104,7 +104,7 @@ public actual class AtomicIntArray {
     }
 
     /**
-     * Atomically adds the given [delta] to the element of this [AtomicIntArray] at the given [index] and returns the old value of the element.
+     * Atomically adds the given [delta] the element of this [AtomicIntArray] at the given [index] by and returns the old value of the element.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
@@ -116,7 +116,7 @@ public actual class AtomicIntArray {
     }
 
     /**
-     * Atomically adds the given [delta] to the element of this [AtomicIntArray] at the given [index] and returns the new value of the element.
+     * Atomically adds the given [delta] the element of this [AtomicIntArray] at the given [index] by and returns the new value of the element.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
@@ -139,7 +139,7 @@ public actual class AtomicIntArray {
 /**
  * An array of longs in which elements may be updated atomically.
  *
- * Since the JS platform does not support multi-threading,
+ * Since the Wasm platform does not support multi-threading,
  * the implementation is trivial and has no atomic synchronizations.
  */
 @SinceKotlin("2.1")
@@ -160,7 +160,7 @@ public actual class AtomicLongArray {
      * Creates a new [AtomicIntArray] filled with elements of the given [array].
      */
     public actual constructor(array: LongArray) {
-        this.array = array.asDynamic().slice().unsafeCast<LongArray>()
+        this.array = array.copyOf()
     }
 
     /**
@@ -235,7 +235,7 @@ public actual class AtomicLongArray {
     }
 
     /**
-     * Atomically adds the given [delta] to the element of this [AtomicLongArray] at the given [index] and returns the old value of the element.
+     * Atomically adds the given [delta] the element of this [AtomicLongArray] at the given [index] by and returns the old value of the element.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
@@ -247,7 +247,7 @@ public actual class AtomicLongArray {
     }
 
     /**
-     * Atomically adds the given [delta] to the element of this [AtomicLongArray] at the given [index] and returns the new value of the element.
+     * Atomically adds the given [delta] the element of this [AtomicLongArray] at the given [index] by and returns the new value of the element.
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
@@ -270,7 +270,7 @@ public actual class AtomicLongArray {
 /**
  * A generic array of objects in which elements may be updated atomically.
  *
- * Since the JS platform does not support multi-threading,
+ * Since the Wasm platform does not support multi-threading,
  * the implementation is trivial and has no atomic synchronizations.
  */
 @SinceKotlin("2.1")
@@ -282,7 +282,7 @@ public actual class AtomicArray<T> {
      * Creates a new [AtomicArray] filled with elements of the given [array].
      */
     public actual constructor (array: Array<T>) {
-        this.array = array.asDynamic().slice() as Array<T>
+        this.array = array.copyOf()
     }
 
     /**

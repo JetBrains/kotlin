@@ -8,7 +8,7 @@
 
 @file:Suppress("NEWER_VERSION_IN_SINCE_KOTLIN", "API_NOT_AVAILABLE")
 
-package kotlin.concurrent
+package kotlin.concurrent.atomics
 
 import kotlin.internal.ActualizeByJvmBuiltinProvider
 

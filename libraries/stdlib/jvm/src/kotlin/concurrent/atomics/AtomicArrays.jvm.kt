@@ -8,7 +8,7 @@
 
 @file:OptIn(ExperimentalStdlibApi::class)
 
-package kotlin.concurrent
+package kotlin.concurrent.atomics
 
 /**
  * Casts the given [AtomicIntArray] instance to [java.util.concurrent.atomic.AtomicIntegerArray].
