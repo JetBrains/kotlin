@@ -1071,6 +1071,16 @@ object KotlinToolingDiagnostics {
             """.trimIndent()
         )
     }
+
+    object DeprecatedLegacyCompilationOutputsBackup : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(): ToolingDiagnostic =
+            build(
+                """
+                Backups of compilation outputs using the non-precise method are deprecated and will be phased out soon in favor of a more precise and efficient approach (https://kotlinlang.org/docs/whatsnew1820.html#precise-backup-of-compilation-tasks-outputs).
+                Please remove '${PropertiesProvider.PropertyNames.KOTLIN_COMPILER_USE_PRECISE_COMPILATION_RESULTS_BACKUP}=false' and/or '${PropertiesProvider.PropertyNames.KOTLIN_COMPILER_KEEP_INCREMENTAL_COMPILATION_CACHES_IN_MEMORY}=false' from your 'gradle.properties' file.    
+                """.trimIndent()
+            )
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {
