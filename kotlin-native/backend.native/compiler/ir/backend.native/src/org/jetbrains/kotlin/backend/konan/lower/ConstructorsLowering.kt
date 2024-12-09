@@ -52,7 +52,6 @@ internal fun Context.getLoweredConstructorFunction(irConstructor: IrConstructor)
                 originalConstructor = irConstructor
 
                 parameters += buildReceiverParameter {
-                    origin = JvmLoweredDeclarationOrigin.TO_ARRAY
                     type = parentClass.defaultType
                 }
 

@@ -594,7 +594,6 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             returnType = info.originalResultType
         }.apply {
             parameters += buildReceiverParameter {
-                origin = IrDeclarationOrigin.DEFINED
                 type = closureClass.defaultType
             }
             info.originalParameterTypes.forEachIndexed { index, irType ->

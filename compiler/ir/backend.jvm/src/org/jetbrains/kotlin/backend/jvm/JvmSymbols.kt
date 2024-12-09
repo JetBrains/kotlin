@@ -806,7 +806,6 @@ class JvmSymbols(
         }.apply {
             parent = kotlinJvmInternalPackage
             parameters += buildReceiverParameter {
-                origin = IrDeclarationOrigin.DEFINED
                 type = irBuiltIns.anyNType
             }
             addValueParameter("owner", irBuiltIns.stringType)

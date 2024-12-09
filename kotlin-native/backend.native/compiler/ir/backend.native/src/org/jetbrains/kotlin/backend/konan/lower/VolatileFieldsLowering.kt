@@ -67,7 +67,6 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
         parent = scope
         if (scope is IrClass) {
             parameters += buildReceiverParameter {
-                origin = IrDeclarationOrigin.DEFINED
                 type = scope.defaultType
                 startOffset = irField.startOffset
                 endOffset = irField.endOffset
