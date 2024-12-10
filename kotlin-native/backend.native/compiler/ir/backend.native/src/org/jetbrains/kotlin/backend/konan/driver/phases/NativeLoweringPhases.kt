@@ -637,7 +637,7 @@ internal fun PhaseEngine<NativeGenerationState>.getLoweringsAfterInlining(): Low
         staticInitializersPhase,
         builtinOperatorPhase,
         bridgesPhase,
-        exportInternalAbiPhase.takeIf { context.config.produce.isCache },
+        exportInternalAbiPhase.takeIf { context.config.produce.isCache || context.shouldOptimize() },
         useInternalAbiPhase,
         autoboxPhase,
         constructorsLoweringPhase,
