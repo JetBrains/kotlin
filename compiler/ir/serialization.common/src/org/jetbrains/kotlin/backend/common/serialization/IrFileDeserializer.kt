@@ -158,7 +158,10 @@ class FileDeserializationState(
             val topLevelDeclarationSymbol = symbolDeserializer.deserializedSymbols[topLevelDeclarationSignature]
             if (topLevelDeclarationSymbol == null || !topLevelDeclarationSymbol.isBound) {
                 // Perform actual deserialization:
-                fileDeserializer.deserializeDeclaration(topLevelDeclarationSignature)
+                val topLevelDeclaration = fileDeserializer.deserializeDeclaration(topLevelDeclarationSignature)
+
+                // Enqueue the deserialized declaration to the PL engine for further processing.
+                linker.partialLinkageSupport.enqueueDeclaration(topLevelDeclaration)
             }
 
             // Remove it from the queue:

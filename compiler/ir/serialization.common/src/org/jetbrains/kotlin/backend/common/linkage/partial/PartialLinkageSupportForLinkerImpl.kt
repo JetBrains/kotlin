@@ -34,10 +34,15 @@ internal class PartialLinkageSupportForLinkerImpl(
     private val stubGenerator = MissingDeclarationStubGenerator(builtIns)
     private val classifierExplorer = ClassifierExplorer(builtIns, stubGenerator)
     private val patcher = PartiallyLinkedIrTreePatcher(builtIns, classifierExplorer, stubGenerator, logger)
+    private val declarationsEnqueuedForProcessing = hashSetOf<IrDeclaration>()
 
     override val isEnabled get() = true
 
     override fun shouldBeSkipped(declaration: IrDeclaration) = patcher.shouldBeSkipped(declaration)
+
+    override fun enqueueDeclaration(declaration: IrDeclaration) {
+        declarationsEnqueuedForProcessing += declaration
+    }
 
     override fun exploreClassifiers(fakeOverrideBuilder: IrLinkerFakeOverrideProvider) {
         val entries = fakeOverrideBuilder.fakeOverrideCandidates

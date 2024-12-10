@@ -27,6 +27,11 @@ interface PartialLinkageSupportForLinker {
     fun shouldBeSkipped(declaration: IrDeclaration): Boolean
 
     /**
+     * Enqueue the declaration for processing by the partial linkage engine.
+     */
+    fun enqueueDeclaration(declaration: IrDeclaration)
+
+    /**
      * For general use in IR linker.
      *
      * Note: Those classifiers that were detected as partially linked are excluded from the fake overrides generation
@@ -58,6 +63,7 @@ interface PartialLinkageSupportForLinker {
         val DISABLED = object : PartialLinkageSupportForLinker {
             override val isEnabled get() = false
             override fun shouldBeSkipped(declaration: IrDeclaration) = true
+            override fun enqueueDeclaration(declaration: IrDeclaration) = Unit
             override fun exploreClassifiers(fakeOverrideBuilder: IrLinkerFakeOverrideProvider) = Unit
             override fun exploreClassifiersInInlineLazyIrFunction(function: IrFunction) = Unit
             override fun generateStubsAndPatchUsages(symbolTable: SymbolTable, roots: () -> Sequence<IrModuleFragment>) = Unit
