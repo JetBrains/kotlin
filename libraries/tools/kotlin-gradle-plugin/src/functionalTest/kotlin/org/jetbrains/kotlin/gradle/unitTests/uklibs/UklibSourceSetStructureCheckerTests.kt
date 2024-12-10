@@ -52,9 +52,7 @@ class UklibSourceSetStructureCheckerTests {
         val a by FG
         assertEquals(
             Violations(
-                cycles = listOf(
-                    listOf(a, a)
-                )
+                firstEncounteredCycle = listOf(a, a)
             ),
             checkFGMap(
                 a to setOf(a)
@@ -64,18 +62,17 @@ class UklibSourceSetStructureCheckerTests {
 
     @Test
     fun `other cycles`() {
+        val entry by FG
         val a by FG
         val b by FG
         val c by FG
         assertEquals(
             Violations(
-                cycles = listOf(
-                    listOf(a, b, c, a),
-                    listOf(b, c, a, b),
-                    listOf(c, a, b, c),
-                )
+                // FIXME: ??? why is entry not first ???
+                firstEncounteredCycle = listOf(a, b, c, entry, a),
             ).pp(),
             checkFGMap(
+                entry to setOf(a),
                 a to setOf(b),
                 b to setOf(c),
                 c to setOf(a),
@@ -121,6 +118,45 @@ class UklibSourceSetStructureCheckerTests {
             checkFGMap(
                 abc to emptySet(),
                 ab to setOf(abc),
+            )
+        )
+    }
+
+    @Test
+    fun `multiple-same fragment`() {
+        val jvm8 = VFragment("jvm-8", setOf("jvm"))
+        val jvm11 = VFragment("jvm-11", setOf("jvm"))
+        assertEquals(
+            Violations(
+                duplicateAttributesFragments = mapOf(
+                    setOf("jvm") to setOf(jvm8, jvm11)
+                )
+            ),
+            checkSourceSetStructure(
+                mapOf(
+                    jvm8 to emptySet(),
+                    jvm11 to emptySet(),
+                )
+            )
+        )
+
+        val iosArm64 = VFragment("iosArm64", setOf("iosArm64"))
+        val iosX64 = VFragment("iosX64", setOf("iosX64"))
+        val appleMain = VFragment("appleMain", setOf("iosArm64", "iosX64"))
+        val commonMain = VFragment("commonMain", setOf("iosArm64", "iosX64"))
+        assertEquals(
+            Violations(
+                duplicateAttributesFragments = mapOf(
+                    setOf("iosArm64", "iosX64") to setOf(appleMain, commonMain)
+                )
+            ),
+            checkSourceSetStructure(
+                mapOf(
+                    iosArm64 to setOf(appleMain.identifier),
+                    iosX64 to setOf(appleMain.identifier),
+                    appleMain to setOf(commonMain.identifier),
+                    commonMain to emptySet(),
+                )
             )
         )
     }

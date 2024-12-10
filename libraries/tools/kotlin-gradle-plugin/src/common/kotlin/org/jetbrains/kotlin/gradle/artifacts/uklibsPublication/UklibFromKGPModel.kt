@@ -170,6 +170,7 @@ data class VFragment(
 ) {
     fun refines(fragment: VFragment): Boolean = attributes.isSubsetOf(fragment.attributes)
 }
+fun <E> Set<E>.isProperSubsetOf(another: Set<E>): Boolean = size < another.size && another.containsAll(this)
 
 data class UnderRefinementViolation(
     val fragment: VFragment,
@@ -185,16 +186,14 @@ data class RefinesIncompatibleFragmentViolation(
 data class Violations(
     val missingFragments: Set<String> = emptySet(),
     val fragmentsWithEmptyAttributes: Set<VFragment> = emptySet(),
-    val cycles: List<List<VFragment>> = emptyList(),
-    val duplicateAttributesFragments: Map<Set<String>, List<VFragment>> = emptyMap(),
+    val firstEncounteredCycle: List<VFragment>? = null,
+    val duplicateAttributesFragments: Map<Set<String>, Set<VFragment>> = emptyMap(),
     val underRefinementViolations: Set<UnderRefinementViolation> = emptySet(),
     val incompatibleRefinementViolations: Set<RefinesIncompatibleFragmentViolation> = emptySet(),
     val orphanedIntermediateFragments: Set<VFragment> = emptySet(),
 )
 
 fun checkSourceSetStructure(
-    // a dependsOn/refines b
-    // FIXME: Accept each fragment as Identifier -> Fragment?
     refinementEdges: Map<VFragment, Set<String>>,
 ): Violations {
     if (refinementEdges.isEmpty()) error("Refinement graph is empty")
@@ -227,40 +226,40 @@ fun checkSourceSetStructure(
 
     /**
      * Detect cycles to make sure we are working with a DAG
+     *
+     * Find and return the first encountered cycle similar to what we do in CircularDependsOnEdges
      */
-    val cycles = mutableListOf<List<VFragment>>()
-    val caughtInExistingCycle = mutableMapOf<VFragment, List<VFragment>>()
-//    val acyclicFragments = setOf<VFragment>()
-    // FIXME: This walks over the entire graph for every node
-    // Find implementation for https://www.cs.tufts.edu/comp/150GA/homeworks/hw1/Johnson%2075.PDF
-    fun findCycles(fragment: VFragment, backtrace: HashSet<VFragment>): Boolean {
-//        if (fragment in caughtInExistingCycle) {
-//            return true
-//            caughtInExistingCycle[fragment]!!
-//        }
+    val cycleFreeFragments = mutableSetOf<VFragment>()
+    fun findFirstCycle(
+        fragment: VFragment,
+        backtrace: HashSet<VFragment>
+    ): List<VFragment>? {
+        if (fragment in cycleFreeFragments) {
+            return null
+        }
         if (fragment in backtrace) {
-            val cyclePath = backtrace.toList() + listOf(fragment)
-            cycles.add(cyclePath)
-//            backtrace.forEach {
-//                caughtInExistingCycle[it] = cyclePath
-//            }
-            return true
+            return backtrace.toList() + listOf(fragment)
         }
         backtrace.add(fragment)
         refinementEdges[fragment]!!.forEach {
-            val encounteredCycle = findCycles(
+            findFirstCycle(
                 fragmentByIdentifier[it]!!,
                 backtrace,
-            )
+            )?.let {
+                return it
+            }
         }
         backtrace.remove(fragment)
-        return false
+        // This fragment definitely doesn't lead to a cycle
+        cycleFreeFragments.add(fragment)
+        return null
     }
     fragments.forEach {
-        findCycles(it, hashSetOf())
-    }
-    if (cycles.isNotEmpty()) {
-        return Violations(cycles = cycles)
+        findFirstCycle(it, hashSetOf())?.let {
+            return Violations(
+                firstEncounteredCycle = it,
+            )
+        }
     }
 
     /**
@@ -268,11 +267,12 @@ fun checkSourceSetStructure(
      *
      * i.e. detect multiple-same targets and bamboos
      */
-    val attributeSets: MutableMap<Set<String>, MutableList<VFragment>> = mutableMapOf()
+    val attributeSets: MutableMap<Set<String>, MutableSet<VFragment>> = mutableMapOf()
     fragments.forEach {
-        attributeSets.getOrPut(it.attributes, { mutableListOf() }).add(it)
+        attributeSets.getOrPut(it.attributes, { hashSetOf() }).add(it)
     }
     val duplicateAttributesFragments = attributeSets.filter { it.value.size > 1 }
+    val allDuplicateAttributesFragments = duplicateAttributesFragments.values.flatten()
 
     /**
      * Violations of "Fragment `F1` refines fragment `F2` <=> targets of `F1` are compatible with `F2`"
@@ -283,7 +283,7 @@ fun checkSourceSetStructure(
     fragments.forEach { leftFragment ->
         expectedRefinementEdges[leftFragment] = HashSet()
         fragments.forEach { rightFragment ->
-            if (leftFragment != rightFragment && leftFragment.refines(rightFragment)) {
+            if (leftFragment.identifier != rightFragment.identifier && leftFragment.refines(rightFragment)) {
                 expectedRefinementEdges[leftFragment]!!.add(rightFragment)
             }
         }
@@ -319,7 +319,10 @@ fun checkSourceSetStructure(
          *
          * 2. Check that the fragment actually refined all the fragments it was supposed to
          */
-        val underRefinedFragments = expectedRefinementFragments.subtract(actuallyRefinedFragments)
+        val underRefinedFragments = expectedRefinementFragments
+            .subtract(actuallyRefinedFragments)
+            // Don't report multiple-same targets as refinement violations
+            .subtract(allDuplicateAttributesFragments)
         if (underRefinedFragments.isNotEmpty()) {
             underRefinementViolations.add(
                 UnderRefinementViolation(
@@ -335,7 +338,8 @@ fun checkSourceSetStructure(
          *
          * 3. Check that the fragment didn't refine any fragments it wasn't compatible with
          */
-        val incompatibleFragments = actuallyRefinedFragments.subtract(expectedRefinementFragments)
+        val incompatibleFragments = actuallyRefinedFragments
+            .subtract(expectedRefinementFragments)
         if (incompatibleFragments.isNotEmpty()) {
             incompatibleRefinementViolations.add(
                 RefinesIncompatibleFragmentViolation(
