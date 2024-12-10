@@ -91,7 +91,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                         generationStateEngine.runPhase(BuildAdditionalCacheInfoPhase, module)
                         if (context.config.produce.isHeaderCache) return@newEngine
                     }
-                    if (context.config.produce == CompilerOutputKind.PROGRAM) {
+                    if (context.config.produce == CompilerOutputKind.PROGRAM && (!context.shouldOptimize() || fragment.llvmModuleSpecification.isFinal)) {
                         generationStateEngine.runPhase(EntryPointPhase, module)
                     }
                     rootPerformanceManager.trackIRLowering {
