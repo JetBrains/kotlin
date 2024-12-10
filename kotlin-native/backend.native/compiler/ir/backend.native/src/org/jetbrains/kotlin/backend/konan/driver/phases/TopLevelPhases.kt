@@ -95,7 +95,11 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                         generationStateEngine.runPhase(EntryPointPhase, module)
                     }
                     rootPerformanceManager.trackIRLowering {
-                        generationStateEngine.lowerModuleWithDependencies(module)
+                        // TODO: KonanLibraryResolver.TopologicalLibraryOrder actually returns libraries in the reverse topological order.
+                        // TODO: Does the order of files really matter with the new MM? (and with lazy top-levels initialization?)
+                        val allModulesToLower = listOf(module) + fragment.dependencies.reversed()
+                        generationStateEngine.lowerModuleWithDependencies(allModulesToLower)
+                        mergeDependencies(module, fragment.dependencies)
                     }
                 }
                 return generationState
@@ -277,6 +281,7 @@ private fun isReferencedByNativeRuntime(declarations: List<IrDeclaration>): Bool
 private data class BackendJobFragment(
         val name: String,
         val irModule: IrModuleFragment,
+        val dependencies: List<IrModuleFragment>,
         val cacheDeserializationStrategy: CacheDeserializationStrategy?,
         val dependenciesTracker: DependenciesTracker,
         val llvmModuleSpecification: LlvmModuleSpecification,
@@ -316,6 +321,7 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
             BackendJobFragment(
                     "",
                     fragment,
+                    context.findDependenciesToCompile().filter { llvmModuleSpecification.containsModule(it) },
                     cacheDeserializationStrategy,
                     dependenciesTracker,
                     llvmModuleSpecification,
@@ -353,6 +359,7 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
             BackendJobFragment(
                     name,
                     fragment,
+                    context.findDependenciesToCompile().filter { llvmModuleSpecification.containsModule(it) },
                     null,
                     dependenciesTracker,
                     llvmModuleSpecification,
@@ -370,6 +377,7 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
                 BackendJobFragment(
                         "",
                         input,
+                        context.findDependenciesToCompile().filter { llvmModuleSpecification.containsModule(it) },
                         context.config.libraryToCache?.strategy,
                         DependenciesTrackerImpl(llvmModuleSpecification, context.config, context),
                         llvmModuleSpecification,
@@ -480,12 +488,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.linkBinary(
     }
 }
 
-internal fun PhaseEngine<NativeGenerationState>.lowerModuleWithDependencies(module: IrModuleFragment) {
-    val dependenciesToCompile = findDependenciesToCompile()
-    // TODO: KonanLibraryResolver.TopologicalLibraryOrder actually returns libraries in the reverse topological order.
-    // TODO: Does the order of files really matter with the new MM? (and with lazy top-levels initialization?)
-    val allModulesToLower = listOf(module) + dependenciesToCompile.reversed()
-
+internal fun PhaseEngine<NativeGenerationState>.lowerModuleWithDependencies(allModulesToLower: List<IrModuleFragment>) {
     // In Kotlin/Native, lowerings are run not over modules, but over individual files.
     // This means that there is no guarantee that after running a lowering in file A, the same lowering has already been run in file B,
     // and vice versa.
@@ -516,8 +519,6 @@ internal fun PhaseEngine<NativeGenerationState>.lowerModuleWithDependencies(modu
     runModuleWisePhase(validateIrAfterInliningAllFunctions, allModulesToLower)
     runLowerings(getLoweringsAfterInlining(), allModulesToLower)
     runModuleWisePhase(validateIrAfterLowering, allModulesToLower)
-
-    mergeDependencies(module, dependenciesToCompile)
 }
 
 internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns, cExportFiles: CExportFiles?, globalOptimizationsResult: GlobalOptimizationsResult) {
@@ -615,10 +616,8 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
     runPhase(CodegenPhase, CodegenInput(module, irBuiltIns, globalOptimizationsResult.lifetimes))
 }
 
-private fun PhaseEngine<NativeGenerationState>.findDependenciesToCompile(): List<IrModuleFragment> {
-    return context.config.librariesWithDependencies()
-            .mapNotNull { context.context.irModules[it.libraryName] }
-            .filter { context.llvmModuleSpecification.containsModule(it) }
+private fun Context.findDependenciesToCompile(): List<IrModuleFragment> {
+    return config.librariesWithDependencies().mapNotNull { irModules[it.libraryName] }
 }
 
 // Save all files for codegen in reverse topological order.
