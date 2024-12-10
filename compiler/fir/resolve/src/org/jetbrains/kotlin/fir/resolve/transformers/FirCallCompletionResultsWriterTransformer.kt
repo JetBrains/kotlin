@@ -1193,24 +1193,19 @@ class FirCallCompletionResultsWriterTransformer(
         if (arrayLiteral.isResolved) return arrayLiteral
         val expectedArrayType = data?.getExpectedType(arrayLiteral)!!
         val expectedArrayElementType = getCollectionLiteralElementType(expectedArrayType, session, scopeSession)
-        arrayLiteral.transformChildren(this, expectedArrayElementType?.toExpectedType())
         val call = components.syntheticCallGenerator.generateCollectionCall(
-            arrayLiteral,
+            transformElement(arrayLiteral, expectedArrayElementType?.toExpectedType()),
             expectedArrayType,
             resolutionContext,
             resolutionMode = ResolutionMode.ContextIndependent
         )
-        // val resolveTransformer = FirBodyResolveTransformer(
-        //     session,
-        //     phase = FirResolvePhase.BODY_RESOLVE,
-        //     implicitTypeOnly = false,
-        //     scopeSession = scopeSession
-        // ).expressionsTransformer
-        val s = call
-            // .transform<FirExpression, _>(resolveTransformer, ResolutionMode.WithExpectedType(expectedArrayType.toFirResolvedTypeRef()))
-            .transform<FirExpression, _>(this, data)
-        s.resultType = expectedArrayType
-        return s
+        components.callResolver.resolveCallAndSelectCandidate(
+            call,
+            ResolutionMode.WithExpectedType(expectedArrayType.toFirResolvedTypeRef())
+        )
+        val result = call.transform<FirExpression, _>(this, data)
+        result.resultType = expectedArrayType
+        return result
     }
 
     override fun transformVarargArgumentsExpression(
