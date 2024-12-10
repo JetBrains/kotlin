@@ -80,9 +80,9 @@ internal class DefaultPomDependenciesRewriter(
 
 private val TargetPublicationCoordinates.GAV.moduleCoordinates
     get() = ModuleCoordinates(
-        moduleGroup = group,
-        moduleName = artifactId,
-        moduleVersion = version
+        group = group,
+        name = artifactId,
+        version = version
     )
 
 private fun collectProjectsPublicationCoordinatesFromDependencies(
