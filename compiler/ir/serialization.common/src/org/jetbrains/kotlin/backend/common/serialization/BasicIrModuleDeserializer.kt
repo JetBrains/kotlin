@@ -207,7 +207,14 @@ abstract class BasicIrModuleDeserializer(
             while (filesWithPendingTopLevels.isNotEmpty()) {
                 val pendingFileDeserializationState = filesWithPendingTopLevels.first()
 
-                pendingFileDeserializationState.fileDeserializer.deserializeFileImplicitDataIfFirstUse()
+                if (pendingFileDeserializationState.fileDeserializer.deserializeFileImplicitDataIfFirstUse()) {
+                    // Schedule the IR file for processing by the PL engine only when the implicit file data
+                    // is deserialized for the first time.
+                    //
+                    // Note: Enqueueing the file does not mean all top-level declarations in this file are
+                    // also enqueued. This is done separately in `FileDeserializationState.deserializeAllFileReachableTopLevel()`.
+                    linker.partialLinkageSupport.enqueueFile(pendingFileDeserializationState.file)
+                }
                 pendingFileDeserializationState.deserializeAllFileReachableTopLevel()
 
                 filesWithPendingTopLevels.remove(pendingFileDeserializationState)

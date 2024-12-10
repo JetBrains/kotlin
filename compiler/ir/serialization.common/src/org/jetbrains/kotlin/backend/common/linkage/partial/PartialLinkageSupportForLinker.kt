@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.linkage.partial
 
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -24,6 +25,14 @@ interface PartialLinkageSupportForLinker {
      * [generateStubsAndPatchUsages] functions. These function do the same check internally in more optimal way.
      */
     fun shouldBeSkipped(declaration: IrDeclaration): Boolean
+
+    /**
+     * Enqueue the file for processing by the partial linkage engine.
+     *
+     * Note: Enqueueing the file does not mean any declarations in this file are also enqueued.
+     * For enqueueing declarations it is always required to make explicit [enqueueDeclaration] calls.
+     */
+    fun enqueueFile(file: IrFile)
 
     /**
      * Enqueue the declaration for processing by the partial linkage engine.
@@ -61,6 +70,7 @@ interface PartialLinkageSupportForLinker {
         val DISABLED = object : PartialLinkageSupportForLinker {
             override val isEnabled get() = false
             override fun shouldBeSkipped(declaration: IrDeclaration) = true
+            override fun enqueueFile(file: IrFile) = Unit
             override fun enqueueDeclaration(declaration: IrDeclaration) = Unit
             override fun exploreClassifiers(fakeOverrideBuilder: IrLinkerFakeOverrideProvider) = Unit
             override fun exploreClassifiersInInlineLazyIrFunction(function: IrFunction) = Unit

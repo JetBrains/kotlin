@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvide
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
@@ -33,11 +34,26 @@ internal class PartialLinkageSupportForLinkerImpl(
     private val stubGenerator = MissingDeclarationStubGenerator(builtIns)
     private val classifierExplorer = ClassifierExplorer(builtIns, stubGenerator)
     private val patcher = PartiallyLinkedIrTreePatcher(builtIns, classifierExplorer, stubGenerator, logger)
+
+    /**
+     * The queue of IR files to remove unusable annotations.
+     *
+     * Note: The fact that an IR file is in this queue does not automatically mean that
+     * the declarations of this file are going to be processed/patched by the PL engine.
+     * To process the declarations, they need to be explicitly added to the appropriate queue: [declarationsEnqueuedForProcessing].
+     */
+    private val filesEnqueuedForProcessing = hashSetOf<IrFile>()
+
+    /** The queue of IR declarations to be processed/patched by the PL engine. */
     private val declarationsEnqueuedForProcessing = hashSetOf<IrDeclaration>()
 
     override val isEnabled get() = true
 
     override fun shouldBeSkipped(declaration: IrDeclaration) = patcher.shouldBeSkipped(declaration)
+
+    override fun enqueueFile(file: IrFile) {
+        filesEnqueuedForProcessing += file
+    }
 
     override fun enqueueDeclaration(declaration: IrDeclaration) {
         declarationsEnqueuedForProcessing += declaration
@@ -67,6 +83,9 @@ internal class PartialLinkageSupportForLinkerImpl(
         for (symbol in symbolTable.descriptorExtension.allUnboundSymbols) {
             stubGenerator.getDeclaration(symbol)
         }
+
+        // Patch IR files (without visiting contained declarations).
+        patcher.removeUnusableAnnotationsFromFiles(filesEnqueuedForProcessing.getCopyAndClear())
 
         // Patch all IR declarations scheduled so far.
         patcher.patchDeclarations(declarationsEnqueuedForProcessing.getCopyAndClear())

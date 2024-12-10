@@ -37,7 +37,8 @@ class IrFileDeserializer(
 ) {
     val reversedSignatureIndex = fileProto.declarationIdList.associateBy { symbolDeserializer.deserializeIdSignature(it) }
 
-    private var annotations: List<ProtoConstructorCall>? = fileProto.annotationList
+    /** Once deserialized this property is set to `null`. */
+    private var protoAnnotationsPendingDeserialization: List<ProtoConstructorCall>? = fileProto.annotationList
 
     fun deserializeDeclaration(idSig: IdSignature): IrDeclaration {
         return declarationDeserializer.deserializeDeclaration(loadTopLevelDeclarationProto(idSig)).also {
@@ -50,11 +51,23 @@ class IrFileDeserializer(
         return libraryFile.declaration(idSigIndex)
     }
 
-    fun deserializeFileImplicitDataIfFirstUse() {
-        annotations?.let {
+    /**
+     * Deserializes file-level annotations for the current [IrFile].
+     *
+     * The actual deserialization happens just once on the first invocation.
+     * The subsequent invocations have no effect.
+     *
+     * @return If the annotations have been actually deserialized on this invocation.
+     */
+    fun deserializeFileImplicitDataIfFirstUse(): Boolean {
+        protoAnnotationsPendingDeserialization?.let {
             file.annotations += declarationDeserializer.deserializeAnnotations(it)
-            annotations = null
+            protoAnnotationsPendingDeserialization = null
+
+            return true
         }
+
+        return false
     }
 }
 

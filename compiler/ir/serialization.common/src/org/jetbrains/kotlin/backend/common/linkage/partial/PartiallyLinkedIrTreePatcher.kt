@@ -58,6 +58,18 @@ internal class PartiallyLinkedIrTreePatcher(
 
     fun shouldBeSkipped(declaration: IrDeclaration): Boolean = PLModule.determineModuleFor(declaration).shouldBeSkipped
 
+    fun removeUnusableAnnotationsFromFiles(files: Collection<IrFile>) {
+        for (file in files) {
+            val currentFile: PLFile = PLFile.IrBased(file)
+
+            // Optimization: Don't patch declarations from stdlib/built-ins.
+            if (currentFile.module.shouldBeSkipped)
+                continue
+
+            with(ExpressionTransformer(currentFile)) { file.filterUnusableAnnotations() }
+        }
+    }
+
     fun patchDeclarations(declarations: Collection<IrDeclaration>) {
         val declarationsGroupedByDirectParent = declarations.groupBy { it.parent }
 
@@ -872,7 +884,7 @@ internal class PartiallyLinkedIrTreePatcher(
                 null
         }
 
-        private fun <T> T.filterUnusableAnnotations() where T : IrMutableAnnotationContainer, T : IrSymbolOwner {
+        fun <T> T.filterUnusableAnnotations() where T : IrMutableAnnotationContainer, T : IrSymbolOwner {
             if (annotations.isNotEmpty()) {
                 annotations = annotations.filterTo(ArrayList(annotations.size)) { annotation ->
                     // Visit the annotation as an expression.
