@@ -1205,7 +1205,7 @@ private class ObjCBlockPointerValuePassing(
         )
         invokeMethod.overriddenSymbols += overriddenInvokeMethod.symbol
         irClass.addChild(invokeMethod)
-        invokeMethod.createDispatchReceiverParameter()
+        invokeMethod.parameters += invokeMethod.createDispatchReceiverParameterWithClassParent()
 
         invokeMethod.valueParameters += (0 until parameterCount).map { index ->
             val parameter = context.irFactory.createValueParameter(

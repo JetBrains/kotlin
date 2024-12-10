@@ -260,12 +260,26 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                                 isFakeOverride
                         ).apply {
                             parent = functionClass
-                            valueParameters += invokeFunctionDescriptor.valueParameters.map {
+                            if (!isFakeOverride)
+                                parameters += createDispatchReceiverParameterWithClassParent(DECLARATION_ORIGIN_FUNCTION_CLASS)
+                            else {
+                                val overriddenFunction = superTypes
+                                        .mapNotNull { it.classOrNull?.owner }
+                                        .single { it.descriptor is FunctionClassDescriptor }
+                                        .simpleFunctions()
+                                        .single { it.name == OperatorNameConventions.INVOKE }
+                                overriddenSymbols += overriddenFunction.symbol
+                                val dispatchReceiver = overriddenFunction.dispatchReceiverParameter?.copyTo(this)
+                                if (dispatchReceiver != null) parameters += dispatchReceiver
+                            }
+
+                            parameters += invokeFunctionDescriptor.valueParameters.map {
                                 symbolTable.irFactory.createValueParameter(
                                         startOffset = SYNTHETIC_OFFSET,
                                         endOffset = SYNTHETIC_OFFSET,
                                         origin = DECLARATION_ORIGIN_FUNCTION_CLASS,
                                         name = it.name,
+                                        kind = IrParameterKind.Regular,
                                         type = functionClass.typeParameters[it.index].defaultType,
                                         isAssignable = false,
                                         symbol = IrValueParameterSymbolImpl(it),
@@ -274,17 +288,6 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                                         isNoinline = it.isNoinline,
                                         isHidden = false,
                                 ).also { it.parent = this }
-                            }
-                            if (!isFakeOverride)
-                                createDispatchReceiverParameter(DECLARATION_ORIGIN_FUNCTION_CLASS)
-                            else {
-                                val overriddenFunction = superTypes
-                                        .mapNotNull { it.classOrNull?.owner }
-                                        .single { it.descriptor is FunctionClassDescriptor }
-                                        .simpleFunctions()
-                                        .single { it.name == OperatorNameConventions.INVOKE }
-                                overriddenSymbols += overriddenFunction.symbol
-                                dispatchReceiverParameter = overriddenFunction.dispatchReceiverParameter?.copyTo(this)
                             }
                         }
                     }

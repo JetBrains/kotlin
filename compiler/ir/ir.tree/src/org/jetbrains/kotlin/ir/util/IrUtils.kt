@@ -1073,7 +1073,10 @@ val IrDeclaration.isTopLevelDeclaration get() =
         parent !is IrDeclaration && !this.isPropertyAccessor && !this.isPropertyField
 
 fun IrClass.createThisReceiverParameter() {
-    thisReceiver = buildReceiverParameter(this, IrDeclarationOrigin.INSTANCE_RECEIVER, symbol.typeWithParameters(typeParameters))
+    thisReceiver = buildReceiverParameter {
+        origin = IrDeclarationOrigin.INSTANCE_RECEIVER
+        type = symbol.typeWithParameters(typeParameters)
+    }
 }
 
 fun IrFactory.createSpecialAnnotationClass(fqn: FqName, parent: IrPackageFragment) =
@@ -1108,6 +1111,10 @@ fun IrDeclarationContainer.simpleFunctions() = declarations.flatMap {
     }
 }
 
+@DeprecatedForRemovalCompilerApi(
+    deprecatedSince = CompilerVersionOfApiDeprecation._2_1_20,
+    replaceWith = "org.jetbrains.kotlin.ir.util.createDispatchReceiverParameterWithClassParent",
+)
 fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = null) {
     assert(dispatchReceiverParameter == null)
 
@@ -1130,6 +1137,12 @@ fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = nu
 
     parameters = listOf(new) + parameters
 }
+
+fun IrFunction.createDispatchReceiverParameterWithClassParent(declarationOrigin: IrDeclarationOrigin? = null): IrValueParameter =
+    buildReceiverParameter {
+        origin = declarationOrigin ?: parentAsClass.origin
+        type = parentAsClass.defaultType
+    }
 
 val IrFunction.allParameters: List<IrValueParameter>
     get() = when (this) {

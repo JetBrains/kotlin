@@ -36,18 +36,17 @@ fun IrExpression.asInlinableFunctionReference(): IrFunctionReference? {
     val (function, reference) = statements
     if (function !is IrSimpleFunction || reference !is IrFunctionReference || function.symbol != reference.symbol)
         return null
-    if (function.dispatchReceiverParameter != null)
-        return null
-    if ((0 until reference.valueArgumentsCount).any { reference.getValueArgument(it) != null })
-        return null
-    if (function.valueParameters.any { it.isVararg || it.defaultValue != null })
+    if (reference.arguments.zip(reference.symbol.owner.parameters)
+            .any { (argument, parameter) -> parameter.kind != IrParameterKind.ExtensionReceiver && argument != null }
+    ) return null
+    if (function.parameters.any { it.isVararg || it.defaultValue != null })
         return null
     return reference
 }
 
 private fun IrExpression.asInlinableLambda(builder: IrStatementsBuilder<*>): IrInlinableLambda? {
     if (this is IrFunctionExpression) {
-        if (function.valueParameters.any { it.isVararg || it.defaultValue != null })
+        if (function.parameters.any { it.isVararg || it.defaultValue != null })
             return null
         return IrInlinableLambda(function, null)
     }
@@ -118,9 +117,11 @@ fun IrInlinable.inline(target: IrDeclarationParent, arguments: List<IrValueDecla
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, invoke.returnType, invoke.symbol,
                 typeArgumentsCount = 0,
             ).apply {
-                dispatchReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, invokable.symbol)
-                for ((index, argument) in arguments.withIndex()) {
-                    putValueArgument(index, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, argument.symbol))
+                val newArguments = (listOf(invokable) + arguments).map { arg ->
+                    IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, arg.symbol)
+                }
+                for ((index, argument) in newArguments.withIndex()) {
+                    this.arguments[index] = argument
                 }
             }
         }

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
-import org.jetbrains.kotlin.backend.common.ir.addExtensionReceiver
+import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -111,7 +111,11 @@ abstract class InlineCallableReferenceToLambdaPhase(
                 val boundReceiver = boundReceiver()
                 val fieldReceiver = when {
                     field.isStatic -> null
-                    boundReceiver != null -> irGet(addExtensionReceiver(boundReceiver.type))
+                    boundReceiver != null -> {
+                        val extensionReceiver = createExtensionReceiver(boundReceiver.type)
+                        parameters += extensionReceiver
+                        irGet(extensionReceiver)
+                    }
                     else -> irGet(addValueParameter("receiver", field.parentAsClass.defaultType))
                 }
                 irBlockBody {
@@ -155,7 +159,11 @@ abstract class InlineCallableReferenceToLambdaPhase(
                         for (parameter in referencedFunction.parameters) {
                             val next = parameters.count { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
                             val getOnNewParameter = when {
-                                boundReceiverParameter == parameter -> irGet(addExtensionReceiver(boundReceiver!!.type))
+                                boundReceiverParameter == parameter -> {
+                                    val extensionReceiver = createExtensionReceiver(boundReceiver!!.type)
+                                    parameters += extensionReceiver
+                                    irGet(extensionReceiver)
+                                }
                                 next >= argumentTypes.size ->
                                     error(
                                         "The number of parameters for reference and referenced function is different\n" +

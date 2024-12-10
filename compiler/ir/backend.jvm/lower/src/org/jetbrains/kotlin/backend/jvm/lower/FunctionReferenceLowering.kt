@@ -731,11 +731,10 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }.apply {
                 metadata = functionReferenceClass.metadata
                 overriddenSymbols += superMethod.symbol
-                dispatchReceiverParameter = buildReceiverParameter(
-                    this,
-                    IrDeclarationOrigin.INSTANCE_RECEIVER,
-                    functionReferenceClass.symbol.defaultType
-                )
+                dispatchReceiverParameter = buildReceiverParameter {
+                    origin = IrDeclarationOrigin.INSTANCE_RECEIVER
+                    type = functionReferenceClass.symbol.defaultType
+                }
 
                 when {
                     isLambda ->

@@ -321,7 +321,10 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
                     superMethod.symbol,
                     secondSuperMethod?.symbol
                 )
-                dispatchReceiverParameter = buildReceiverParameter(this, clazz.origin, clazz.defaultType, startOffset, endOffset)
+                parameters += buildReceiverParameter {
+                    origin = clazz.origin
+                    type = clazz.defaultType
+                }
 
                 if (isLambda) createLambdaInvokeMethod() else createFunctionReferenceInvokeMethod()
             }

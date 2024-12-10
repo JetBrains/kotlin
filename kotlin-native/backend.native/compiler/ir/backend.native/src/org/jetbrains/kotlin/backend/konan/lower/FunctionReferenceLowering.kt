@@ -374,7 +374,7 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                         modality = Modality.FINAL
                         returnType = overridden[0].owner.returnType
                     }
-                    function.createDispatchReceiverParameter()
+                    function.parameters += function.createDispatchReceiverParameterWithClassParent()
                     function.overriddenSymbols += overridden
                     function.body = context.createIrBuilder(function.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                         +irReturn(
@@ -535,7 +535,7 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
             attributeOwnerId = functionReference.attributeOwnerId
             val function = this
 
-            function.createDispatchReceiverParameter()
+            function.parameters += function.createDispatchReceiverParameterWithClassParent()
 
             extensionReceiverParameter = superFunction.extensionReceiverParameter?.copyTo(function)
 

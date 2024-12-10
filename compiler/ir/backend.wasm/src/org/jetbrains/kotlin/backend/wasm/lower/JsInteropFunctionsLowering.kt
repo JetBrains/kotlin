@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
-import org.jetbrains.kotlin.backend.common.ir.addDispatchReceiver
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
@@ -594,7 +593,9 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             name = Name.identifier("invoke")
             returnType = info.originalResultType
         }.apply {
-            addDispatchReceiver { type = closureClass.defaultType }
+            parameters += buildReceiverParameter {
+                type = closureClass.defaultType
+            }
             info.originalParameterTypes.forEachIndexed { index, irType ->
                 addValueParameter {
                     name = Name.identifier("p$index")
