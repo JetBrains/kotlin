@@ -78,7 +78,7 @@ internal class JsUsefulDeclarationProcessor(
                 }
 
                 context.intrinsics.jsCreateThisSymbol -> {
-                    val jsClassOrThis = expression.getValueArgument(0)
+                    val jsClassOrThis = expression.arguments[0]
 
                     val classTypeToCreate = when (jsClassOrThis) {
                         is IrCall -> jsClassOrThis.typeArguments[0]!!
@@ -107,7 +107,7 @@ internal class JsUsefulDeclarationProcessor(
                 }
 
                 context.intrinsics.jsPlus -> {
-                    if (expression.getValueArgument(0)?.type?.classOrNull == context.irBuiltIns.stringClass) {
+                    if (expression.arguments[0]?.type?.classOrNull == context.irBuiltIns.stringClass) {
                         toStringMethod.enqueue(data, "intrinsic: jsPlus")
                     }
                 }
