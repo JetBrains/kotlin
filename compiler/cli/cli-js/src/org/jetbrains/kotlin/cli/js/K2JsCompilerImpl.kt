@@ -10,11 +10,8 @@ import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -27,9 +24,7 @@ import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputsBuilt
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsCodeGenerator
-import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
-import org.jetbrains.kotlin.backend.js.TsCompilationStrategy
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -37,20 +32,6 @@ import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.io.File
 import java.io.IOException
-
-val K2JSCompilerArguments.granularity: JsGenerationGranularity
-    get() = when {
-        this.irPerFile -> JsGenerationGranularity.PER_FILE
-        this.irPerModule -> JsGenerationGranularity.PER_MODULE
-        else -> JsGenerationGranularity.WHOLE_PROGRAM
-    }
-
-private val K2JSCompilerArguments.dtsStrategy: TsCompilationStrategy
-    get() = when {
-        !this.generateDts -> TsCompilationStrategy.NONE
-        this.irPerFile -> TsCompilationStrategy.EACH_FILE
-        else -> TsCompilationStrategy.MERGED
-    }
 
 private class Ir2JsTransformer(
     val arguments: K2JSCompilerArguments,
@@ -119,25 +100,6 @@ internal class K2JsCompilerImpl(
     messageCollector = messageCollector,
     performanceManager = performanceManager
 ) {
-    companion object {
-        private val moduleKindMap = mapOf(
-            K2JsArgumentConstants.MODULE_PLAIN to ModuleKind.PLAIN,
-            K2JsArgumentConstants.MODULE_COMMONJS to ModuleKind.COMMON_JS,
-            K2JsArgumentConstants.MODULE_AMD to ModuleKind.AMD,
-            K2JsArgumentConstants.MODULE_UMD to ModuleKind.UMD,
-            K2JsArgumentConstants.MODULE_ES to ModuleKind.ES,
-        )
-    }
-
-    private val K2JSCompilerArguments.targetVersion: EcmaVersion?
-        get() {
-            val targetString = target
-            return when {
-                targetString != null -> EcmaVersion.entries.firstOrNull { it.name == targetString }
-                else -> EcmaVersion.defaultVersion()
-            }
-        }
-
     override fun checkTargetArguments(): ExitCode? {
         if (arguments.targetVersion == null) {
             messageCollector.report(ERROR, "Unsupported ECMA version: ${arguments.target}")
