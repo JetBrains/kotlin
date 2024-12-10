@@ -20,5 +20,11 @@
       <constraint name="Name" within="" contains="" _kotlinAlsoMatchVar="enabled" />
       <constraint name="AnnotationParam" minCount="0" maxCount="2147483647" within="" contains="" />
     </searchConfiguration>
+    <searchConfiguration name="Deprecated compiler API - interface" text="@$Annotation$($AnnotationParam$) interface $Name$" recursive="true" caseInsensitive="false" type="Kotlin" pattern_context="default">
+      <constraint name="__context__" within="" contains="" />
+      <constraint name="Annotation" regexp="DeprecatedCompilerApi" within="" contains="" />
+      <constraint name="Name" within="" contains="" />
+      <constraint name="AnnotationParam" minCount="0" maxCount="2147483647" within="" contains="" />
+    </searchConfiguration>
   </component>
 </project>
