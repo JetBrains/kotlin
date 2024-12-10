@@ -58,14 +58,32 @@ internal class PartiallyLinkedIrTreePatcher(
 
     fun shouldBeSkipped(declaration: IrDeclaration): Boolean = PLModule.determineModuleFor(declaration).shouldBeSkipped
 
-    fun patchDeclarations(roots: Collection<IrDeclaration>) {
-        roots.forEach { root ->
-            val startingFile = PLFile.determineFileFor(root)
+    fun patchDeclarations(declarations: Collection<IrDeclaration>) {
+        val declarationsGroupedByDirectParent = declarations.groupBy { it.parent }
+
+        for ((directParent: IrDeclarationParent, declarationsWithSameParent: List<IrDeclaration>) in declarationsGroupedByDirectParent) {
+            val currentFile: PLFile = PLFile.determineFileFor(declarationsWithSameParent[0])
+
             // Optimization: Don't patch declarations from stdlib/built-ins.
-            if (!startingFile.module.shouldBeSkipped) {
-                root.transformVoid(DeclarationTransformer(startingFile))
-                root.transformVoid(ExpressionTransformer(startingFile))
-                root.transformVoid(NonLocalReturnsPatcher(startingFile))
+            if (currentFile.module.shouldBeSkipped)
+                continue
+
+            val directParentAsPackageFragment: IrPackageFragment? = directParent as? IrPackageFragment
+
+            val declarationTransformer = DeclarationTransformer(currentFile)
+            val expressionTransformer = ExpressionTransformer(currentFile)
+            val nonLocalReturnsPatcher = NonLocalReturnsPatcher(currentFile)
+
+            // For top-level declarations, we need to supply their declaration container (either IR file or
+            // IR package fragment in case of Lazy IR) to `DeclarationTransformer` before starting visiting
+            // these declarations. This is necessary to be able to remove problematic declarations from
+            // the container after finishing visiting (i.e., on exit from `withRemoval***()`).
+            declarationTransformer.withRemovalOfChildrenIn(directParentAsPackageFragment) {
+                for (declaration in declarationsWithSameParent) {
+                    declaration.transformVoid(declarationTransformer)
+                    declaration.transformVoid(expressionTransformer)
+                    declaration.transformVoid(nonLocalReturnsPatcher)
+                }
             }
         }
     }
@@ -114,15 +132,22 @@ internal class PartiallyLinkedIrTreePatcher(
             return this
         }
 
-        private fun <T : IrDeclarationContainer> T.transformChildrenWithRemoval(): T =
-            transformChildrenWithRemoval(DeclarationTransformerContext.DeclarationContainer(this))
+        inline fun withRemovalOfChildrenIn(declarationContainer: IrPackageFragment?, action: () -> Unit) {
+            if (declarationContainer != null)
+                declarationContainer.withRemovalOfChildren { action() }
+            else
+                action()
+        }
 
-        private fun <T : IrStatementContainer> T.transformChildrenWithRemoval(): T =
-            transformChildrenWithRemoval(DeclarationTransformerContext.StatementContainer(this))
+        private inline fun <T : IrDeclarationContainer> T.withRemovalOfChildren(action: T.() -> Unit): T =
+            withRemovalInContext(DeclarationTransformerContext.DeclarationContainer(this), action)
 
-        private fun <T : IrElement> T.transformChildrenWithRemoval(context: DeclarationTransformerContext): T {
+        private inline fun <T : IrStatementContainer> T.withRemovalOfChildren(action: T.() -> Unit): T =
+            withRemovalInContext(DeclarationTransformerContext.StatementContainer(this), action)
+
+        private inline fun <T : IrElement> T.withRemovalInContext(context: DeclarationTransformerContext, action: T.() -> Unit): T {
             stack.push(context)
-            transformChildrenVoid()
+            action()
             assert(stack.pop() === context)
 
             context.performRemoval()
@@ -134,10 +159,6 @@ internal class PartiallyLinkedIrTreePatcher(
             // The declarations with origin = PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION are already effectively removed.
             if (origin != PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION)
                 stack.peek().scheduleForRemoval(this)
-        }
-
-        override fun visitPackageFragment(declaration: IrPackageFragment): IrPackageFragment {
-            return declaration.transformChildrenWithRemoval()
         }
 
         override fun visitClass(declaration: IrClass): IrStatement {
@@ -201,7 +222,7 @@ internal class PartiallyLinkedIrTreePatcher(
             }
 
             // Process underlying declarations. Collect declarations to remove.
-            return declaration.transformChildrenWithRemoval()
+            return declaration.withRemovalOfChildren { transformChildrenVoid() }
         }
 
         override fun visitConstructor(declaration: IrConstructor): IrStatement {
@@ -412,11 +433,11 @@ internal class PartiallyLinkedIrTreePatcher(
         }
 
         override fun visitBlockBody(body: IrBlockBody): IrBody {
-            return body.transformChildrenWithRemoval()
+            return body.withRemovalOfChildren { transformChildrenVoid() }
         }
 
         override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
-            return expression.transformChildrenWithRemoval()
+            return expression.withRemovalOfChildren { transformChildrenVoid() }
         }
 
         private fun <S : IrSymbol> IrOverridableDeclaration<S>.filterOverriddenSymbols() {
