@@ -30,6 +30,7 @@ import java.io.File
 internal data class WriteBitcodeFileInput(
         override val llvmModule: LLVMModuleRef,
         val outputFile: File,
+        val addEntryPointAlias: Boolean,
 ) : LlvmIrHolder
 
 /**
@@ -37,9 +38,11 @@ internal data class WriteBitcodeFileInput(
  */
 internal val WriteBitcodeFilePhase = createSimpleNamedCompilerPhase<PhaseContext, WriteBitcodeFileInput>(
         "WriteBitcodeFile",
-) { context, (llvmModule, outputFile) ->
-    // Insert `_main` after pipeline, so we won't worry about optimizations corrupting entry point.
-    insertAliasToEntryPoint(context, llvmModule)
+) { context, (llvmModule, outputFile, addEntryPointAlias) ->
+    if (addEntryPointAlias) {
+        // Insert `_main` after pipeline, so we won't worry about optimizations corrupting entry point.
+        insertAliasToEntryPoint(context, llvmModule)
+    }
     LLVMWriteBitcodeToFile(llvmModule, outputFile.canonicalPath)
 }
 
@@ -138,7 +141,7 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
     val optimizationConfig = createLTOFinalPipelineConfig(
             context,
             context.llvm.targetTriple,
-            closedWorld = context.config.isFinalBinary,
+            closedWorld = context.config.isFinalBinary  && !context.shouldOptimize(),
             timePasses = context.config.flexiblePhaseConfig.needProfiling,
     )
     useContext(OptimizationState(context.config, optimizationConfig)) {

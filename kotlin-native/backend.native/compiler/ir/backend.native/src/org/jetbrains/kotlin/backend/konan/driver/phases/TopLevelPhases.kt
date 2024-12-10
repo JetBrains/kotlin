@@ -262,7 +262,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBitcodeBackend(context: Bitcod
         val outputPath = context.config.outputPath
         val outputFiles = OutputFiles(outputPath, context.config.target, context.config.produce)
         bitcodeEngine.runBitcodePostProcessing()
-        runPhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
+        runPhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile, true))
         val objectFile = tempFiles.create(File(outputFiles.nativeBinaryFile).name, ".o").javaFile()
         runPhase(ObjectFilesPhase, ObjectFilesPhaseInput(bitcodeFile, objectFile))
         val moduleCompilationOutput = ModuleCompilationOutput(listOf(objectFile), dependencies)
@@ -435,7 +435,7 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(
     if (context.config.produce.isFullCache) {
         runPhase(SaveAdditionalCacheInfoPhase)
     }
-    runPhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
+    runPhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile, !context.shouldOptimize() || context.llvmModuleSpecification.isFinal))
     runPhase(ObjectFilesPhase, ObjectFilesPhaseInput(bitcodeFile, objectFile))
 }
 
@@ -513,7 +513,7 @@ internal fun PhaseEngine<NativeGenerationState>.lowerModuleWithDependencies(allM
 
 internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns, cExportFiles: CExportFiles?, globalOptimizationsResult: GlobalOptimizationsResult) {
     runCodegen(module, irBuiltIns, globalOptimizationsResult)
-    val generatedBitcodeFiles = if (context.config.produceCInterface) {
+    val generatedBitcodeFiles = if (context.config.produceCInterface && (!context.shouldOptimize() || context.llvmModuleSpecification.isFinal)) {
         require(cExportFiles != null)
         val input = CExportGenerateApiInput(
                 context.context.cAdapterExportedElements!!,
@@ -527,7 +527,9 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
     } else {
         emptyList()
     }
-    runPhase(CStubsPhase)
+    if (!context.shouldOptimize() || context.llvmModuleSpecification.isFinal) {
+        runPhase(CStubsPhase)
+    }
     // TODO: Consider extracting llvmModule and friends from nativeGenerationState and pass them explicitly.
     //  Motivation: possibility to run LTO on bitcode level after separate IR compilation.
     val llvmModule = context.llvm.module

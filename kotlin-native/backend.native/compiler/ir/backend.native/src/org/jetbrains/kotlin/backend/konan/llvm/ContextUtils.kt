@@ -165,7 +165,7 @@ internal interface ContextUtils : RuntimeAware {
     fun linkageOf(irFunction: IrSimpleFunction): LLVMLinkage {
         if (isExternal(irFunction) || irFunction.isExported())
             return LLVMLinkage.LLVMExternalLinkage
-        if (context.config.producePerFileCache) {
+        if (context.config.producePerFileCache || context.shouldOptimize()) {
             val originalFunction = irFunction.originalConstructor ?: irFunction
             if (originalFunction in generationState.calledFromExportedInlineFunctions)
                 return LLVMLinkage.LLVMExternalLinkage

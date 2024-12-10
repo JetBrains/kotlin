@@ -278,10 +278,10 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         val typeInfoSymbolName = if (declaration.isExported()) {
             declaration.computeTypeInfoSymbolName()
         } else {
-            if (!context.config.producePerFileCache)
+            if (!(context.config.producePerFileCache || context.shouldOptimize()))
                 "${KonanBinaryInterface.MANGLE_CLASS_PREFIX}:$internalName"
             else {
-                val containerName = (generationState.cacheDeserializationStrategy as CacheDeserializationStrategy.SingleFile).filePath
+                val containerName = (generationState.cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile)?.filePath ?: generationState.llvmModuleName
                 declaration.computePrivateTypeInfoSymbolName(containerName)
             }
         }
@@ -303,7 +303,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             val typeInfoOffsetInGlobal = LLVMOffsetOfElement(llvmTargetData, typeInfoWithVtableType, 0)
             check(typeInfoOffsetInGlobal == 0L) { "Offset for $typeInfoSymbolName TypeInfo is $typeInfoOffsetInGlobal" }
 
-            if (context.config.producePerFileCache && declaration in generationState.constructedFromExportedInlineFunctions) {
+            if ((context.config.producePerFileCache || context.shouldOptimize()) && declaration in generationState.constructedFromExportedInlineFunctions) {
                 // This is required because internal inline functions can access private classes.
                 // So, in the generated code, the class type info can be accessed outside the file.
                 // With per-file caches involved, this can mean accessing from a different object file.
@@ -455,11 +455,12 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                     }
                 }
             } else {
-                if (!context.config.producePerFileCache)
+                if (!(context.config.producePerFileCache || context.shouldOptimize()))
                     "${KonanBinaryInterface.MANGLE_FUN_PREFIX}:${qualifyInternalName(declaration)}"
                 else {
                     val containerName = declaration.parentClassOrNull?.fqNameForIrSerialization?.asString()
-                            ?: (generationState.cacheDeserializationStrategy as CacheDeserializationStrategy.SingleFile).filePath
+                            ?: (generationState.cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile)?.filePath
+                            ?: generationState.llvmModuleName
                     declaration.computePrivateSymbolName(containerName)
                 }
             }
