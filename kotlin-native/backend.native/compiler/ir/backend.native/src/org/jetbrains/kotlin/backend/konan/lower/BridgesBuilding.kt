@@ -289,7 +289,7 @@ private fun IrBlockBodyBuilder.buildTypeSafeBarrier(function: IrFunction,
             // So we add implicit cast to avoid type check optimization
             +returnIfBadType(irImplicitCast(irGet(valueParameters[i]), context.irBuiltIns.anyNType), type,
                     if (typeSafeBarrierDescription == SpecialGenericSignatures.TypeSafeBarrierDescription.MAP_GET_OR_DEFAULT)
-                        irGet(valueParameters[2])
+                        irGet(valueParameters[1])
                     else irConst(typeSafeBarrierDescription.defaultValue)
             )
         }
