@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.library.impl.javaFile
@@ -114,8 +116,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
             }
         }
 
-        fun runAfterLowerings(fragment: BackendJobFragment, generationState: NativeGenerationState, globalOptimizationsResult: GlobalOptimizationsResult) {
-            val tempFiles = createTempFiles(config, fragment.cacheDeserializationStrategy)
+        fun runAfterLowerings(fragment: BackendJobFragment, generationState: NativeGenerationState, globalOptimizationsResult: GlobalOptimizationsResult, tempFiles: TempFiles): ModuleCompilationOutput? {
             val outputFiles = generationState.outputFiles
             if (context.config.produce.isHeaderCache) {
                 newEngine(generationState) { generationStateEngine ->
@@ -123,7 +124,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                     File(outputFiles.nativeBinaryFile).createNew()
                     generationStateEngine.runPhase(FinalizeCachePhase, outputFiles)
                 }
-                return
+                return null
             }
             try {
                 fragment.performanceManager?.notifyIRGenerationStarted()
@@ -142,57 +143,108 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                     generationStateEngine.compileModule(fragment.irModule, backendContext.irBuiltIns, bitcodeFile, objectFile, cExportFiles, globalOptimizationsResult)
                     ModuleCompilationOutput(listOf(objectFile), generationState.dependenciesTracker.collectResult())
                 }
-                val depsFilePath = config.writeSerializedDependencies
-                if (!depsFilePath.isNullOrEmpty()) {
-                    depsFilePath.File().writeLines(DependenciesTrackingResult.serialize(moduleCompilationOutput.dependenciesTrackingResult))
-                }
-                linkBinary(moduleCompilationOutput, outputFiles.mainFileName, outputFiles, tempFiles)
+                return moduleCompilationOutput
             } finally {
-                tempFiles.dispose()
                 fragment.performanceManager?.notifyIRGenerationFinished()
             }
         }
 
         val fragments = backendEngine.splitIntoFragments(irModule)
         val threadsCount = context.config.threadsCount
-        if (threadsCount == 1) {
-            val fragmentsList = fragments.toList()
-            val generationStates = fragmentsList.map { fragment -> createGenerationStateAndRunLowerings(fragment) }
-            val globalOptimizationsResult = runGlobalOptimizations(fragmentsList.zip(generationStates))
-            fragmentsList.zip(generationStates).forEach { (fragment, generationState) ->
-                runAfterLowerings(fragment, generationState, globalOptimizationsResult)
-            }
-        } else {
-            val fragmentsList = fragments.toList()
-            if (fragmentsList.size == 1) {
-                val fragment = fragmentsList[0]
-                val generationState = createGenerationStateAndRunLowerings(fragment)
-                val globalOptimizationsResult = runGlobalOptimizations(listOf(fragment to generationState))
-                runAfterLowerings(fragment, generationState, globalOptimizationsResult)
-            } else {
-                // We'd love to run entire pipeline in parallel, but it's difficult (mainly because of the lowerings,
-                // which need cross-file access all the time and it's not easy to overcome this). So, for now,
-                // we split the pipeline into two parts - everything before lowerings (including them)
-                // which is run sequentially, and everything else which is run in parallel.
+        val tempFiles = if (context.config.produce.isCache) null else createTempFiles(config, null)
+        try {
+            val moduleCompilationOutputs = if (threadsCount == 1) {
+                val fragmentsList = fragments.toList()
                 val generationStates = fragmentsList.map { fragment -> createGenerationStateAndRunLowerings(fragment) }
                 val globalOptimizationsResult = runGlobalOptimizations(fragmentsList.zip(generationStates))
-                val executor = Executors.newFixedThreadPool(threadsCount)
-                val thrownFromThread = AtomicReference<Throwable?>(null)
-                val tasks = fragmentsList.zip(generationStates).map { (fragment, generationState) ->
-                    Callable {
-                        try {
-                            runAfterLowerings(fragment, generationState, globalOptimizationsResult)
-                        } catch (t: Throwable) {
-                            thrownFromThread.set(t)
-                        }
+                fragmentsList.zip(generationStates).map { (fragment, generationState) ->
+                    val localTempFiles = tempFiles ?: createTempFiles(config, fragment.cacheDeserializationStrategy)
+                    try {
+                        val moduleCompilationOutput = runAfterLowerings(fragment, generationState, globalOptimizationsResult, localTempFiles)
+                        if (moduleCompilationOutput != null && tempFiles == null) {
+                            val depsFilePath = config.writeSerializedDependencies
+                            if (!depsFilePath.isNullOrEmpty()) {
+                                depsFilePath.File().writeLines(DependenciesTrackingResult.serialize(moduleCompilationOutput.dependenciesTrackingResult))
+                            }
+                            linkBinary(moduleCompilationOutput, generationState.outputFiles.mainFileName, generationState.outputFiles, localTempFiles)
+                            null
+                        } else moduleCompilationOutput
+                    } finally {
+                        if (localTempFiles !== tempFiles)
+                            localTempFiles.dispose()
                     }
                 }
-                executor.invokeAll(tasks.toList())
-                executor.shutdown()
-                executor.awaitTermination(1, TimeUnit.DAYS)
-                thrownFromThread.get()?.let { throw it }
+            } else {
+                val fragmentsList = fragments.toList()
+                if (fragmentsList.size == 1) {
+                    val fragment = fragmentsList[0]
+                    val generationState = createGenerationStateAndRunLowerings(fragment)
+                    val globalOptimizationsResult = runGlobalOptimizations(listOf(fragment to generationState))
+                    val localTempFiles = tempFiles ?: createTempFiles(config, fragment.cacheDeserializationStrategy)
+                    try {
+                        val moduleCompilationOutput = runAfterLowerings(fragment, generationState, globalOptimizationsResult, localTempFiles)
+                        if (moduleCompilationOutput != null && tempFiles == null) {
+                            val depsFilePath = config.writeSerializedDependencies
+                            if (!depsFilePath.isNullOrEmpty()) {
+                                depsFilePath.File().writeLines(DependenciesTrackingResult.serialize(moduleCompilationOutput.dependenciesTrackingResult))
+                            }
+                            linkBinary(moduleCompilationOutput, generationState.outputFiles.mainFileName, generationState.outputFiles, localTempFiles)
+                            listOf(null)
+                        } else listOf(moduleCompilationOutput)
+                    } finally {
+                        if (localTempFiles !== tempFiles)
+                            localTempFiles.dispose()
+                    }
+                } else {
+                    // We'd love to run entire pipeline in parallel, but it's difficult (mainly because of the lowerings,
+                    // which need cross-file access all the time and it's not easy to overcome this). So, for now,
+                    // we split the pipeline into two parts - everything before lowerings (including them)
+                    // which is run sequentially, and everything else which is run in parallel.
+                    val generationStates = fragmentsList.map { fragment -> createGenerationStateAndRunLowerings(fragment) }
+                    val globalOptimizationsResult = runGlobalOptimizations(fragmentsList.zip(generationStates))
+                    val executor = Executors.newFixedThreadPool(threadsCount)
+                    val thrownFromThread = AtomicReference<Throwable?>(null)
+                    val tasks = fragmentsList.zip(generationStates).map { (fragment, generationState) ->
+                        Callable<ModuleCompilationOutput?> {
+                            val localTempFiles = tempFiles ?: createTempFiles(config, fragment.cacheDeserializationStrategy)
+                            try {
+                                val moduleCompilationOutput = runAfterLowerings(fragment, generationState, globalOptimizationsResult, localTempFiles)
+                                if (moduleCompilationOutput != null && tempFiles == null) {
+                                    val depsFilePath = config.writeSerializedDependencies
+                                    if (!depsFilePath.isNullOrEmpty()) {
+                                        depsFilePath.File().writeLines(DependenciesTrackingResult.serialize(moduleCompilationOutput.dependenciesTrackingResult))
+                                    }
+                                    linkBinary(moduleCompilationOutput, generationState.outputFiles.mainFileName, generationState.outputFiles, localTempFiles)
+                                    null
+                                } else moduleCompilationOutput
+                            } catch (t: Throwable) {
+                                thrownFromThread.set(t)
+                                null
+                            } finally {
+                                if (localTempFiles !== tempFiles)
+                                    localTempFiles.dispose()
+                            }
+                        }
+                    }
+                    val futures = executor.invokeAll(tasks)
+                    executor.shutdown()
+                    executor.awaitTermination(1, TimeUnit.DAYS)
+                    thrownFromThread.get()?.let { throw it }
+                    futures.map { it.get() }
+                }
             }
+            ModuleCompilationOutput.merge(moduleCompilationOutputs)?.let { moduleCompilationOutput ->
+                val depsFilePath = config.writeSerializedDependencies
+                if (!depsFilePath.isNullOrEmpty()) {
+                    depsFilePath.File().writeLines(DependenciesTrackingResult.serialize(moduleCompilationOutput.dependenciesTrackingResult))
+                }
+                val outputFiles = OutputFiles(context.config.outputPath, config.target, config.produce)
+                linkBinary(moduleCompilationOutput, outputFiles.mainFileName, outputFiles, tempFiles!!)
+            }
+        } finally {
+            tempFiles?.dispose()
         }
+
         (rootPerformanceManager as? K2NativeCompilerPerformanceManager)?.collectChildMeasurements()
     }
 }
@@ -288,7 +340,35 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
 internal data class ModuleCompilationOutput(
         val objectFiles: List<java.io.File>,
         val dependenciesTrackingResult: DependenciesTrackingResult,
-)
+) {
+    companion object {
+        fun merge(moduleCompilationOutputs: List<ModuleCompilationOutput?>): ModuleCompilationOutput? {
+            val emptyOutputs = moduleCompilationOutputs.count { it == null }
+            if (emptyOutputs == moduleCompilationOutputs.size) {
+                return null
+            }
+            check(emptyOutputs == 0)
+            val objectFiles = mutableListOf<java.io.File>()
+            val nativeDependenciesToLink = mutableListOf<KonanLibrary>()
+            val allNativeDependencies = mutableListOf<KonanLibrary>()
+            val allCachedBitcodeDependencies = mutableListOf<DependenciesTracker.ResolvedDependency>()
+            moduleCompilationOutputs.forEach {
+                objectFiles.addAll(it!!.objectFiles)
+                nativeDependenciesToLink.addAll(it.dependenciesTrackingResult.nativeDependenciesToLink)
+                allNativeDependencies.addAll(it.dependenciesTrackingResult.allNativeDependencies)
+                allCachedBitcodeDependencies.addAll(it.dependenciesTrackingResult.allCachedBitcodeDependencies)
+            }
+            return ModuleCompilationOutput(
+                    objectFiles = objectFiles,
+                    dependenciesTrackingResult = DependenciesTrackingResult(
+                            nativeDependenciesToLink = nativeDependenciesToLink,
+                            allNativeDependencies = allNativeDependencies,
+                            allCachedBitcodeDependencies = allCachedBitcodeDependencies,
+                    )
+            )
+        }
+    }
+}
 
 /**
  * 1. Translates IR to LLVM IR.
