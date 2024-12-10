@@ -63,9 +63,9 @@ class My(
 annotation class Your(
     @ParamOnly
     @PropertyOnly
-    <!WRONG_ANNOTATION_TARGET_WARNING!>@FieldOnly<!>
+    <!WRONG_ANNOTATION_TARGET!>@FieldOnly<!>
     @ParamProperty
-    <!WRONG_ANNOTATION_TARGET_WARNING!>@ParamField<!>
+    <!WRONG_ANNOTATION_TARGET!>@ParamField<!>
     @PropertyField
     @ParamPropertyField
     <!WRONG_ANNOTATION_TARGET!>@Inapplicable<!>
