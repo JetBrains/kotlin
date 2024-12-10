@@ -14,13 +14,16 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.cli.pipeline.web.js.JsConfigurationUpdater
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
+import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputsBuilt
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsCodeGenerator
@@ -29,7 +32,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.io.File
-import java.io.IOException
 
 class Ir2JsTransformer private constructor(
     val module: ModulesStructure,
@@ -161,59 +163,20 @@ internal class K2JsCompilerImpl(
         return null
     }
 
-    override fun tryInitializeCompiler(libraries: List<String>, rootDisposable: Disposable): KotlinCoreEnvironment? {
-        initializeCommonConfiguration(libraries)
-
-        val targetVersion = arguments.targetVersion?.also {
-            configuration.put(JSConfigurationKeys.TARGET, it)
-        }
-
-        configuration.put(JSConfigurationKeys.OPTIMIZE_GENERATED_JS, arguments.optimizeGeneratedJs)
+    override fun tryInitializeCompiler(rootDisposable: Disposable): KotlinCoreEnvironment? {
+        JsConfigurationUpdater.fillConfiguration(configuration, arguments)
+        if (messageCollector.hasErrors()) return null
 
         val environmentForJS =
             KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
-        if (messageCollector.hasErrors()) return null
-
-        val configurationJs = environmentForJS.configuration
         val sourcesFiles = environmentForJS.getSourceFiles()
-        val isES2015 = targetVersion == EcmaVersion.es2015
-        val moduleKind = configuration[JSConfigurationKeys.MODULE_KIND]
-            ?: moduleKindMap[arguments.moduleKind]
-            ?: ModuleKind.ES.takeIf { isES2015 }
-            ?: ModuleKind.UMD
-
-        configurationJs.put(JSConfigurationKeys.MODULE_KIND, moduleKind)
-        configurationJs.put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage)
-        configurationJs.put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, arguments.renderInternalDiagnosticNames)
-        configurationJs.put(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, arguments.irPropertyLazyInitialization)
-        configurationJs.put(JSConfigurationKeys.GENERATE_POLYFILLS, arguments.generatePolyfills)
-        configurationJs.put(JSConfigurationKeys.GENERATE_DTS, arguments.generateDts)
-        configurationJs.put(JSConfigurationKeys.GENERATE_INLINE_ANONYMOUS_FUNCTIONS, arguments.irGenerateInlineAnonymousFunctions)
-        configurationJs.put(JSConfigurationKeys.USE_ES6_CLASSES, arguments.useEsClasses ?: isES2015)
-        configurationJs.put(JSConfigurationKeys.COMPILE_SUSPEND_AS_JS_GENERATOR, arguments.useEsGenerators ?: isES2015)
-        configurationJs.put(JSConfigurationKeys.COMPILE_LAMBDAS_AS_ES6_ARROW_FUNCTIONS, arguments.useEsArrowFunctions ?: isES2015)
-
-        arguments.platformArgumentsProviderJsExpression?.let {
-            configurationJs.put(JSConfigurationKeys.DEFINE_PLATFORM_MAIN_FUNCTION_ARGUMENTS, it)
-        }
-
-        val moduleName = arguments.irModuleName ?: outputName
-        configurationJs.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
-
-        try {
-            configurationJs.put(JSConfigurationKeys.OUTPUT_DIR, outputDir.canonicalFile)
-        } catch (e: IOException) {
-            messageCollector.report(ERROR, "Could not resolve output directory", null)
-            return null
-        }
-
         if (sourcesFiles.isEmpty() && (!incrementalCompilationIsEnabledForJs(arguments)) && arguments.includes.isNullOrEmpty()) {
             messageCollector.report(ERROR, "No source files", null)
             return null
         }
 
         performanceManager?.notifyCompilerInitialized(
-            sourcesFiles.size, environmentForJS.countLinesOfCode(sourcesFiles), "$moduleName-$moduleKind"
+            sourcesFiles.size, environmentForJS.countLinesOfCode(sourcesFiles), "$moduleName-${configuration.moduleKind}"
         )
 
         return environmentForJS

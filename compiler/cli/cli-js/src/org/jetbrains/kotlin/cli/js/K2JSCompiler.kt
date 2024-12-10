@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.cli.js
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.cli.common.*
@@ -23,21 +22,17 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.klib.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
+import org.jetbrains.kotlin.cli.pipeline.web.CommonWebConfigurationUpdater
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
-import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
-import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ic.IncrementalCacheGuard
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
@@ -45,7 +40,6 @@ import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.progress.IncrementalNextRoundException
-import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
@@ -113,10 +107,11 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         val pluginLoadResult = loadPlugins(paths, arguments, configuration)
         if (pluginLoadResult != OK) return pluginLoadResult
 
-        val libraries: List<String> = configureLibraries(arguments.libraries) + listOfNotNull(arguments.includes)
-        val friendLibraries: List<String> = configureLibraries(arguments.friendModules)
+        CommonWebConfigurationUpdater.initializeCommonConfiguration(compilerImpl.configuration, arguments)
+        val libraries = configuration.libraries
+        val friendLibraries = configuration.friendLibraries
 
-        val targetEnvironment = compilerImpl.tryInitializeCompiler(libraries, rootDisposable) ?: return COMPILATION_ERROR
+        val targetEnvironment = compilerImpl.tryInitializeCompiler(rootDisposable) ?: return COMPILATION_ERROR
 
         val zipAccessor = DisposableZipFileSystemAccessor(64)
         Disposer.register(rootDisposable, zipAccessor)
@@ -442,128 +437,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         arguments: K2JSCompilerArguments,
         services: Services,
     ) {
-        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-
-        @Suppress("DEPRECATION")
-        if (arguments.outputFile != null) {
-            messageCollector.report(WARNING, "The '-output' command line option does nothing and will be removed in a future release")
-        }
-        @Suppress("DEPRECATION")
-        if (arguments.noStdlib) {
-            messageCollector.report(WARNING, "The '-no-stdlib' command line option does nothing and will be removed in a future release")
-        }
-        @Suppress("DEPRECATION")
-        if (arguments.metaInfo) {
-            messageCollector.report(WARNING, "The '-meta-info' command line option does nothing and will be removed in a future release")
-        }
-        @Suppress("DEPRECATION")
-        if (arguments.typedArrays) {
-            messageCollector.report(
-                WARNING,
-                "The '-Xtyped-arrays' command line option does nothing and will be removed in a future release"
-            )
-        }
-
-        if (arguments.debuggerCustomFormatters) {
-            configuration.put(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS, true)
-        }
-
-        if (arguments.sourceMap) {
-            configuration.put(JSConfigurationKeys.SOURCE_MAP, true)
-            if (arguments.sourceMapPrefix != null) {
-                configuration.put(JSConfigurationKeys.SOURCE_MAP_PREFIX, arguments.sourceMapPrefix!!)
-            }
-
-            var sourceMapSourceRoots = arguments.sourceMapBaseDirs
-            if (sourceMapSourceRoots == null && StringUtil.isNotEmpty(arguments.sourceMapPrefix)) {
-                sourceMapSourceRoots = calculateSourceMapSourceRoot(messageCollector, arguments)
-            }
-
-            if (sourceMapSourceRoots != null) {
-                val sourceMapSourceRootList = StringUtil.split(sourceMapSourceRoots, File.pathSeparator)
-                configuration.put(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, sourceMapSourceRootList)
-            }
-
-        } else {
-            if (arguments.sourceMapPrefix != null) {
-                messageCollector.report(WARNING, "source-map-prefix argument has no effect without source map", null)
-            }
-            if (arguments.sourceMapBaseDirs != null) {
-                messageCollector.report(WARNING, "source-map-source-root argument has no effect without source map", null)
-            }
-        }
-
-        configuration.put(JSConfigurationKeys.FRIEND_PATHS_DISABLED, arguments.friendModulesDisabled)
-
-        configuration.put(JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT, arguments.strictImplicitExportType)
-
-
-        val friendModules = arguments.friendModules
-        if (!arguments.friendModulesDisabled && friendModules != null) {
-            val friendPaths = friendModules
-                .split(File.pathSeparator.toRegex())
-                .dropLastWhile { it.isEmpty() }
-                .filterNot { it.isEmpty() }
-
-            configuration.put(JSConfigurationKeys.FRIEND_PATHS, friendPaths)
-        }
-
-        if (arguments.wasm) {
-            // K/Wasm support ES modules only.
-            configuration.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.ES)
-        }
-
-        configuration.putIfNotNull(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER, services[IncrementalDataProvider::class.java])
-        configuration.putIfNotNull(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER, services[IncrementalResultsConsumer::class.java])
-        configuration.putIfNotNull(JSConfigurationKeys.INCREMENTAL_NEXT_ROUND_CHECKER, services[IncrementalNextRoundChecker::class.java])
-        configuration.putIfNotNull(CommonConfigurationKeys.LOOKUP_TRACKER, services[LookupTracker::class.java])
-        configuration.putIfNotNull(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER, services[ExpectActualTracker::class.java])
-
-        val sourceMapEmbedContentString = arguments.sourceMapEmbedSources
-        var sourceMapContentEmbedding: SourceMapSourceEmbedding? = if (sourceMapEmbedContentString != null)
-            sourceMapContentEmbeddingMap[sourceMapEmbedContentString]
-        else
-            SourceMapSourceEmbedding.INLINING
-        if (sourceMapContentEmbedding == null) {
-            messageCollector.report(
-                ERROR,
-                "Unknown source map source embedding mode: $sourceMapEmbedContentString. Valid values are: ${sourceMapContentEmbeddingMap.keys.joinToString()}"
-            )
-            sourceMapContentEmbedding = SourceMapSourceEmbedding.INLINING
-        }
-        configuration.put(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, sourceMapContentEmbedding)
-        configuration.put(JSConfigurationKeys.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES, arguments.includeUnavailableSourcesIntoSourceMap)
-
-        if (!arguments.sourceMap && sourceMapEmbedContentString != null) {
-            messageCollector.report(WARNING, "source-map-embed-sources argument has no effect without source map", null)
-        }
-
-        val sourceMapNamesPolicyString = arguments.sourceMapNamesPolicy
-        var sourceMapNamesPolicy: SourceMapNamesPolicy? = if (sourceMapNamesPolicyString != null)
-            sourceMapNamesPolicyMap[sourceMapNamesPolicyString]
-        else
-            SourceMapNamesPolicy.SIMPLE_NAMES
-        if (sourceMapNamesPolicy == null) {
-            messageCollector.report(
-                ERROR,
-                "Unknown source map names policy: $sourceMapNamesPolicyString. Valid values are: ${sourceMapNamesPolicyMap.keys.joinToString()}"
-            )
-            sourceMapNamesPolicy = SourceMapNamesPolicy.SIMPLE_NAMES
-        }
-        configuration.put(JSConfigurationKeys.SOURCEMAP_NAMES_POLICY, sourceMapNamesPolicy)
-
-        configuration.put(JSConfigurationKeys.PRINT_REACHABILITY_INFO, arguments.irDcePrintReachabilityInfo)
-        configuration.put(JSConfigurationKeys.FAKE_OVERRIDE_VALIDATOR, arguments.fakeOverrideValidator)
-        configuration.putIfNotNull(JSConfigurationKeys.DUMP_REACHABILITY_INFO_TO_FILE, arguments.irDceDumpReachabilityInfoToFile)
-
-        configuration.setupPartialLinkageConfig(
-            mode = arguments.partialLinkageMode,
-            logLevel = arguments.partialLinkageLogLevel,
-            compilerModeAllowsUsingPartialLinkage =
-            /* no PL when producing KLIB */ arguments.includes != null,
-            onWarning = { messageCollector.report(WARNING, it) },
-            onError = { messageCollector.report(ERROR, it) }
-        )
+        CommonWebConfigurationUpdater.setupPlatformSpecificArgumentsAndServices(configuration, arguments, services)
     }
 
     override fun executableScriptFileName(): String = "kotlinc-js"

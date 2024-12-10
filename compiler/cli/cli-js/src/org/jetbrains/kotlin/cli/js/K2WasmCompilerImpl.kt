@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmConfigurationUpdater
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
@@ -31,11 +31,9 @@ import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.ir.backend.js.loadIr
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.io.File
-import org.jetbrains.kotlin.platform.wasm.WasmTarget
-import org.jetbrains.kotlin.serialization.js.ModuleKind
-import java.io.IOException
 
 internal class K2WasmCompilerImpl(
     arguments: K2JSCompilerArguments,
@@ -56,29 +54,12 @@ internal class K2WasmCompilerImpl(
 ) {
     override fun checkTargetArguments(): ExitCode? = null
 
-    override fun tryInitializeCompiler(libraries: List<String>, rootDisposable: Disposable): KotlinCoreEnvironment? {
-        initializeCommonConfiguration(libraries)
-
-        configuration.put(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, arguments.wasmEnableArrayRangeChecks)
-        configuration.put(WasmConfigurationKeys.WASM_ENABLE_ASSERTS, arguments.wasmEnableAsserts)
-        configuration.put(WasmConfigurationKeys.WASM_GENERATE_WAT, arguments.wasmGenerateWat)
-        configuration.put(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS, arguments.wasmUseTrapsInsteadOfExceptions)
-        configuration.put(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL, arguments.wasmUseNewExceptionProposal)
-        configuration.put(WasmConfigurationKeys.WASM_USE_JS_TAG, arguments.wasmUseJsTag ?: arguments.wasmUseNewExceptionProposal)
-        configuration.putIfNotNull(WasmConfigurationKeys.WASM_TARGET, arguments.wasmTarget?.let(WasmTarget::fromName))
-
-        val moduleName = arguments.irModuleName ?: outputName
-        configuration.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
+    override fun tryInitializeCompiler(rootDisposable: Disposable): KotlinCoreEnvironment? {
+        WasmConfigurationUpdater.fillConfiguration(configuration, arguments)
 
         val environmentForWasm =
             KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.WASM_CONFIG_FILES)
         if (messageCollector.hasErrors()) return null
-
-        val configurationWasm = environmentForWasm.configuration
-
-        configurationWasm.put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage)
-        configurationWasm.put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, arguments.renderInternalDiagnosticNames)
-
         return environmentForWasm
     }
 
