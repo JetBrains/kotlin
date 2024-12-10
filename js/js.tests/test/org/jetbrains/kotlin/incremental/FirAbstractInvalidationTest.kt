@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.config.phaser.PhaserState
@@ -23,7 +22,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringContext
 import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringPhasesProvider
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
+import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode

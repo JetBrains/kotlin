@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
+import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
