@@ -18,7 +18,7 @@ kotlinx-coroutines = "1.8.0"
 shadow = "8.3.0" # Should be in sync with version in kotlin-native/
 spdx = "0.8.0-dev-14"
 proguard = "7.4.2"
-ktor = "3.0.1"
+ktor = "2.3.12"
 kotlinx-metadataJvm = "0.9.0"
 kotlinx-bcv = "0.15.1"
 gson = "2.11.0"
@@ -89,7 +89,7 @@ ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.ref = "ktor" }
 ktor-serialization-jackson = { module = "io.ktor:ktor-serialization-jackson", version.ref = "ktor" }
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
-ktor-server-cio = { module = "io.ktor:ktor-server-cio", version.ref = "ktor" }
+ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
 ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
 
 jackson-dataformat-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }

@@ -107,7 +107,7 @@ dependencies {
     testImplementation(libs.ktor.client.cio)
     testImplementation(libs.ktor.client.mock)
     testImplementation(libs.ktor.server.core)
-    testImplementation(libs.ktor.server.cio)
+    testImplementation(libs.ktor.server.netty)
     testImplementation(libs.ktor.server.test.host)
 
     testImplementation(gradleApi())
