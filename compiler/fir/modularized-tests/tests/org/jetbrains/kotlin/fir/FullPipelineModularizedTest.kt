@@ -13,7 +13,11 @@ import org.jetbrains.kotlin.config.LanguageVersion
 internal val API_VERSION: String = System.getProperty("fir.bench.language.version", "1.4")
 
 // This is used for language version configuration for K2 only. K1 uses LANGUAGE_VERSION_K1
-internal val LANGUAGE_VERSION_K2: String = System.getProperty("fir.bench.language.version.k2", LanguageVersion.entries.last().versionString)
+internal val LANGUAGE_VERSION_K2: String = when (val versionMacro = System.getProperty("fir.bench.language.version.k2", "last")) {
+    "last" -> LanguageVersion.entries.last().versionString
+    "stable" -> LanguageVersion.LATEST_STABLE.versionString
+    else -> versionMacro
+}
 
 class FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
 
