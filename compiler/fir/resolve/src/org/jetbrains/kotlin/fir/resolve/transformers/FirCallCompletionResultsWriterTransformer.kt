@@ -1191,10 +1191,17 @@ class FirCallCompletionResultsWriterTransformer(
 
     override fun transformArrayLiteral(arrayLiteral: FirArrayLiteral, data: ExpectedArgumentType?): FirStatement {
         if (arrayLiteral.isResolved) return arrayLiteral
-        val expectedArrayType = data?.getExpectedType(arrayLiteral)!!
-        val expectedArrayElementType = getCollectionLiteralElementType(expectedArrayType, session, scopeSession)
+        val expectedArrayType = data?.getExpectedType(arrayLiteral)
+        val expectedArrayElementType = expectedArrayType?.let { getCollectionLiteralElementType(it, session, scopeSession) }
+        if (expectedArrayType == null || expectedArrayElementType == null) {
+            arrayLiteral.resultType = buildErrorTypeRef { // todo
+                source = arrayLiteral.source
+                diagnostic = ConeSimpleDiagnostic("Collection literal type is unknown", kind = DiagnosticKind.InferenceError)
+            }.coneType
+            return arrayLiteral
+        }
         val call = components.syntheticCallGenerator.generateCollectionCall(
-            transformElement(arrayLiteral, expectedArrayElementType?.toExpectedType()),
+            transformElement(arrayLiteral, expectedArrayElementType.toExpectedType()),
             expectedArrayType,
             resolutionContext,
             resolutionMode = ResolutionMode.ContextIndependent
