@@ -19,10 +19,10 @@ package kotlin.internal.jdk8
 
 import java.util.regex.MatchResult
 import java.util.regex.Matcher
-import kotlin.internal.PlatformImplementations
 import kotlin.internal.jdk7.JDK7PlatformImplementations
 import kotlin.random.Random
 import kotlin.random.jdk8.PlatformThreadLocalRandom
+import kotlin.time.*
 
 internal open class JDK8PlatformImplementations : JDK7PlatformImplementations() {
 
@@ -57,4 +57,19 @@ internal open class JDK8PlatformImplementations : JDK7PlatformImplementations() 
         // then.
         if (sdkIsNullOrAtLeast(34)) PlatformThreadLocalRandom() else super.defaultPlatformRandom()
 
+    @ExperimentalTime
+    override fun getSystemClock(): Clock {
+        // java.time.Instant is available since SDK 26
+        return if (sdkIsNullOrAtLeast(26)) object : Clock {
+            override fun now(): Instant =
+                java.time.Instant.now().toKotlinInstant()
+        } else object : Clock {
+            override fun now(): Instant =
+                // After experimenting in Android Studio, it seems like on Android with API < 26, only millisecond precision
+                // is available in `Instant.now()` with core library desugaring enabled. Because of that, `currentTimeMillis`
+                // is good enough + suggesting that our users enable core library desugaring isn't going to bring any benefits,
+                // so the KDoc for [Clock] does not mention any of this.
+                Instant.fromEpochMilliseconds(System.currentTimeMillis())
+        }
+    }
 }

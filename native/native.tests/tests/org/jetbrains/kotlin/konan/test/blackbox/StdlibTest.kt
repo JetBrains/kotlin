@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCase
         freeCompilerArgs = [
             ENABLE_MPP, STDLIB_IS_A_FRIEND, ENABLE_X_STDLIB_API, ENABLE_X_ENCODING_API, ENABLE_RANGE_UNTIL,
             ENABLE_X_FOREIGN_API, ENABLE_X_NATIVE_API, ENABLE_OBSOLETE_NATIVE_API, ENABLE_NATIVE_RUNTIME_API,
-            ENABLE_OBSOLETE_WORKERS_API, ENABLE_INTERNAL_FOR_KOTLIN_NATIVE, ENABLE_X_UUID_API,
+            ENABLE_OBSOLETE_WORKERS_API, ENABLE_INTERNAL_FOR_KOTLIN_NATIVE, ENABLE_X_UUID_API, ENABLE_X_TIME,
             "-Xcommon-sources=libraries/stdlib/common/test/jsCollectionFactories.kt",
             "-Xcommon-sources=libraries/stdlib/common/test/testUtils.kt",
             "-Xcommon-sources=libraries/stdlib/test/testUtils.kt",
@@ -58,6 +58,7 @@ internal const val STDLIB_IS_A_FRIEND = "-friend-modules=$KOTLIN_NATIVE_DISTRIBU
 private const val ENABLE_X_STDLIB_API = "-opt-in=kotlin.ExperimentalStdlibApi"
 private const val ENABLE_X_ENCODING_API = "-opt-in=kotlin.io.encoding.ExperimentalEncodingApi"
 private const val ENABLE_X_UUID_API = "-opt-in=kotlin.uuid.ExperimentalUuidApi"
+private const val ENABLE_X_TIME = "-opt-in=kotlin.time.ExperimentalTime"
 private const val ENABLE_X_FOREIGN_API = "-opt-in=kotlinx.cinterop.ExperimentalForeignApi"
 private const val ENABLE_X_NATIVE_API = "-opt-in=kotlin.experimental.ExperimentalNativeApi"
 private const val ENABLE_OBSOLETE_NATIVE_API = "-opt-in=kotlin.native.ObsoleteNativeApi"

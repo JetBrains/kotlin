@@ -6151,6 +6151,19 @@ public abstract class kotlin/time/AbstractLongTimeSource : kotlin/time/TimeSourc
 	protected abstract fun read ()J
 }
 
+public abstract interface class kotlin/time/Clock {
+	public static final field Companion Lkotlin/time/Clock$Companion;
+	public abstract fun now ()Lkotlin/time/Instant;
+}
+
+public final class kotlin/time/Clock$Companion {
+}
+
+public final class kotlin/time/Clock$System : kotlin/time/Clock {
+	public static final field INSTANCE Lkotlin/time/Clock$System;
+	public fun now ()Lkotlin/time/Instant;
+}
+
 public abstract interface class kotlin/time/ComparableTimeMark : java/lang/Comparable, kotlin/time/TimeMark {
 	public abstract fun compareTo (Lkotlin/time/ComparableTimeMark;)I
 	public abstract fun equals (Ljava/lang/Object;)Z
@@ -6254,6 +6267,32 @@ public final class kotlin/time/DurationUnitKt {
 public abstract interface annotation class kotlin/time/ExperimentalTime : java/lang/annotation/Annotation {
 }
 
+public final class kotlin/time/Instant : java/io/Serializable, java/lang/Comparable {
+	public static final field Companion Lkotlin/time/Instant$Companion;
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public fun compareTo (Lkotlin/time/Instant;)I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEpochSeconds ()J
+	public final fun getNanosecondsOfSecond ()I
+	public fun hashCode ()I
+	public final fun minus-LRDsOJo (J)Lkotlin/time/Instant;
+	public final fun minus-UwyO8pc (Lkotlin/time/Instant;)J
+	public final fun plus-LRDsOJo (J)Lkotlin/time/Instant;
+	public final fun toEpochMilliseconds ()J
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/time/Instant$Companion {
+	public final fun fromEpochMilliseconds (J)Lkotlin/time/Instant;
+	public final fun fromEpochSeconds (JI)Lkotlin/time/Instant;
+	public final fun fromEpochSeconds (JJ)Lkotlin/time/Instant;
+	public static synthetic fun fromEpochSeconds$default (Lkotlin/time/Instant$Companion;JJILjava/lang/Object;)Lkotlin/time/Instant;
+	public final fun getDISTANT_FUTURE ()Lkotlin/time/Instant;
+	public final fun getDISTANT_PAST ()Lkotlin/time/Instant;
+	public final fun now ()Lkotlin/time/Instant;
+	public final fun parse (Ljava/lang/CharSequence;)Lkotlin/time/Instant;
+}
+
 public final class kotlin/time/MeasureTimeKt {
 	public static final fun measureTime (Lkotlin/jvm/functions/Function0;)J
 	public static final fun measureTime (Lkotlin/time/TimeSource$Monotonic;Lkotlin/jvm/functions/Function0;)J
@@ -6347,6 +6386,11 @@ public final class kotlin/time/TimedValue {
 	public final fun getValue ()Ljava/lang/Object;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/time/jdk8/InstantConversionsJDK8Kt {
+	public static final fun toJavaInstant (Lkotlin/time/Instant;)Ljava/time/Instant;
+	public static final fun toKotlinInstant (Ljava/time/Instant;)Lkotlin/time/Instant;
 }
 
 public abstract interface annotation class kotlin/uuid/ExperimentalUuidApi : java/lang/annotation/Annotation {
