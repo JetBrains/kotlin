@@ -16,7 +16,7 @@ FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-@R|kotlin/jvm/JvmInline|() public final inline [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=pack/LibraryValueClass.NestedClass), IsNewPlaceForBodyGeneration=false] class LibraryValueClass : R|kotlin/Any| {
+@R|kotlin/jvm/JvmInline|() public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=pack/LibraryValueClass.NestedClass), IsNewPlaceForBodyGeneration=false] class LibraryValueClass : R|kotlin/Any| {
     public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class NestedClass : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NestedClass] constructor(): R|pack/LibraryValueClass.NestedClass|
 

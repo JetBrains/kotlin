@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.createValueClassRepresentation
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
@@ -48,7 +48,7 @@ fun computeValueClassRepresentation(klass: FirRegularClass, session: FirSession)
 }
 
 private fun FirRegularClass.getValueClassUnderlyingParameters(session: FirSession): List<FirValueParameter>? {
-    if (!isInline) return null
+    if (!isInlineOrValue) return null
     return primaryConstructorIfAny(session)?.fir?.valueParameters
 }
 
@@ -63,7 +63,7 @@ private fun isRecursiveSingleFieldValueClass(
 
 private fun ConeRigidType.valueClassRepresentationTypeMarkersList(session: FirSession): List<Pair<Name, ConeRigidType>>? {
     val symbol = this.toRegularClassSymbol(session) ?: return null
-    if (!symbol.fir.isInline) return null
+    if (!symbol.fir.isInlineOrValue) return null
     symbol.fir.valueClassRepresentation?.let { return it.underlyingPropertyNamesToTypes }
 
     val constructorSymbol = symbol.fir.primaryConstructorIfAny(session) ?: return null
@@ -76,7 +76,7 @@ fun FirSimpleFunction.isTypedEqualsInValueClass(session: FirSession): Boolean =
         with(this@isTypedEqualsInValueClass) {
             contextParameters.isEmpty() && receiverParameter == null
                     && name == OperatorNameConventions.EQUALS
-                    && this@run.isInline && valueParameters.size == 1
+                    && this@run.isInlineOrValueClass() && valueParameters.size == 1
                     && returnTypeRef.coneType.fullyExpandedType(session).let {
                 it.isBoolean || it.isNothing
             } && valueParameters[0].returnTypeRef.coneType.let {

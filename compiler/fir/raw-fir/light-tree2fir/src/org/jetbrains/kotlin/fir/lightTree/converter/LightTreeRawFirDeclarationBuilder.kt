@@ -515,6 +515,7 @@ class LightTreeRawFirDeclarationBuilder(
                     isCompanion = calculatedModifiers.isCompanion() && classKind == ClassKind.OBJECT
                     isData = calculatedModifiers.isDataClass()
                     isInline = calculatedModifiers.isInlineClass()
+                    isValue = calculatedModifiers.isValueClass()
                     isFun = calculatedModifiers.isFunctionalInterface()
                     isExternal = calculatedModifiers.hasExternal()
                 }
@@ -597,7 +598,7 @@ class LightTreeRawFirDeclarationBuilder(
                             classWrapper,
                             delegatedConstructorSource,
                             containingClassIsExpectClass = status.isExpect,
-                            isImplicitlyActual = status.isActual && (status.isInline || classKind == ClassKind.ANNOTATION_CLASS),
+                            isImplicitlyActual = isImplicitlyActual(status, classKind),
                             isKotlinAny = classIsKotlinAny,
                         )
                         val firPrimaryConstructor = primaryConstructorWrapper?.firConstructor

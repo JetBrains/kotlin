@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.comparators.FirMemberDeclarationComparator
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.utils.addDeclaration
-import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.addCloneForArrayIfNeeded
 import org.jetbrains.kotlin.fir.deserialization.deserializationExtension
 import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
@@ -134,7 +131,8 @@ internal fun deserializeClassToSymbol(
         isInner = classOrObject.hasModifier(KtTokens.INNER_KEYWORD)
         isCompanion = (classOrObject as? KtObjectDeclaration)?.isCompanion() == true
         isData = classOrObject.hasModifier(KtTokens.DATA_KEYWORD)
-        isInline = classOrObject.hasModifier(KtTokens.INLINE_KEYWORD) || classOrObject.hasModifier(KtTokens.VALUE_KEYWORD)
+        isInline = classOrObject.hasModifier(KtTokens.INLINE_KEYWORD)
+        isValue = classOrObject.hasModifier(KtTokens.VALUE_KEYWORD)
         isFun = classOrObject.hasModifier(KtTokens.FUN_KEYWORD)
         isExternal = classOrObject.hasModifier(KtTokens.EXTERNAL_KEYWORD)
     }
@@ -248,7 +246,7 @@ internal fun deserializeClassToSymbol(
 
         contextParameters.addAll(memberDeserializer.createContextReceiversForClass(classOrObject, symbol))
     }.apply {
-        if (classOrObject is KtClass && isInline) {
+        if (classOrObject is KtClass && isInlineOrValue) {
             val stub = classOrObject.stub as? KotlinClassStubImpl ?: loadStubByElement(classOrObject)
             valueClassRepresentation = stub?.deserializeValueClassRepresentation(this)
         }

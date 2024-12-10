@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
+import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -107,7 +108,7 @@ object OperatorFunctionChecks {
                     }
                     return buildString {
                         append("must override 'equals()' in Any")
-                        if (customEqualsSupported && containingClassSymbol.isInline) {
+                        if (customEqualsSupported && containingClassSymbol.isInlineOrValueClass()) {
                             val expectedParameterTypeRendered =
                                 containingClassSymbol.defaultType().replaceArgumentsWithStarProjections().renderReadable()
                             append(" or define 'equals(other: ${expectedParameterTypeRendered}): Boolean'")

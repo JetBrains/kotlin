@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
-import org.jetbrains.kotlin.fir.declarations.utils.hasBody
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
@@ -75,7 +72,7 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker(MppCheckerKind.C
         containingClass: FirClass?,
     ): List<FirValueParameter> {
         if (declaration is FirPrimaryConstructor &&
-            containingClass != null && containingClass.classKind != ClassKind.ANNOTATION_CLASS && !containingClass.isInline
+            containingClass != null && containingClass.classKind != ClassKind.ANNOTATION_CLASS && !containingClass.isInlineOrValue
         ) {
             return declaration.valueParameters.filter { it.source.valOrVarKeyword != null }
         }

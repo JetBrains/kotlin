@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.deserializedIr
 import org.jetbrains.kotlin.ir.util.isEnumClass
 import org.jetbrains.kotlin.ir.util.isObject
@@ -111,7 +110,7 @@ class Fir2IrLazyClass(
         set(_) = mutationNotSupported()
 
     override var isValue: Boolean
-        get() = fir.isInline
+        get() = fir.isInlineOrValue
         set(_) = mutationNotSupported()
 
     override var isExpect: Boolean

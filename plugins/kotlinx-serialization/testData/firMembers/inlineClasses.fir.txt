@@ -1,5 +1,5 @@
 FILE: inlineClasses.kt
-    @R|kotlinx/serialization/Serializable|() @R|kotlin/jvm/JvmInline|() public final inline class Foo : R|kotlin/Any| {
+    @R|kotlinx/serialization/Serializable|() @R|kotlin/jvm/JvmInline|() public final value class Foo : R|kotlin/Any| {
         public constructor(i: R|kotlin/Int|): R|Foo| {
             super<R|kotlin/Any|>()
         }

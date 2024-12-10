@@ -159,7 +159,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                     ClassKind.ANNOTATION_CLASS -> "annotation class"
                     ClassKind.CLASS -> when {
                         context.isInsideInterface -> "nested class inside exported interface"
-                        declaration.isInline -> "value class"
+                        declaration.isInlineOrValue -> "value class"
                         else -> null
                     }
                     else -> if (context.isInsideInterface && !declaration.status.isCompanion) {

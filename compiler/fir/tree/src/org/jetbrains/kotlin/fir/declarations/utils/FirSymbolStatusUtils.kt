@@ -49,6 +49,7 @@ inline val FirClassLikeSymbol<*>.isExpect: Boolean get() = rawStatus.isExpect
 inline val FirClassLikeSymbol<*>.isInner: Boolean get() = rawStatus.isInner
 inline val FirClassLikeSymbol<*>.isStatic: Boolean get() = rawStatus.isStatic
 inline val FirClassLikeSymbol<*>.isInline: Boolean get() = rawStatus.isInline
+inline val FirClassLikeSymbol<*>.isValue: Boolean get() = rawStatus.isValue
 inline val FirClassLikeSymbol<*>.isExternal: Boolean get() = rawStatus.isExternal
 inline val FirClassLikeSymbol<*>.isFromSealedClass: Boolean get() = rawStatus.isFromSealedClass
 inline val FirClassLikeSymbol<*>.isFromEnumClass: Boolean get() = rawStatus.isFromEnumClass

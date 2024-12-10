@@ -40,7 +40,7 @@ FILE: module_main_reservedMethodsInInterfaces.kt
         }
 
     }
-    @R|kotlin/jvm/JvmInline|() public final inline class A1 : R|I1| {
+    @R|kotlin/jvm/JvmInline|() public final value class A1 : R|I1| {
         public constructor(i: R|kotlin/Int|): R|A1| {
             super<R|kotlin/Any|>()
         }
@@ -64,7 +64,7 @@ FILE: module_main_reservedMethodsInInterfaces.kt
     }
     public abstract interface I2_ : R|I2| {
     }
-    @R|kotlin/jvm/JvmInline|() public final inline class A2<T> : R|I2_| {
+    @R|kotlin/jvm/JvmInline|() public final value class A2<T> : R|I2_| {
         public constructor<T>(i: R|kotlin/Int|): R|A2<T>| {
             super<R|kotlin/Any|>()
         }
@@ -92,7 +92,7 @@ FILE: module_main_reservedMethodsInInterfaces.kt
         }
 
     }
-    @R|kotlin/jvm/JvmInline|() public final inline class A3 : R|I3| {
+    @R|kotlin/jvm/JvmInline|() public final value class A3 : R|I3| {
         public constructor(i: R|kotlin/Int|, i1: R|kotlin/Int|): R|A3| {
             super<R|kotlin/Any|>()
         }
@@ -115,7 +115,7 @@ FILE: module_main_reservedMethodsInInterfaces.kt
         }
 
     }
-    @R|kotlin/jvm/JvmInline|() public final inline class A4<T> : R|I4|, R|Lib| {
+    @R|kotlin/jvm/JvmInline|() public final value class A4<T> : R|I4|, R|Lib| {
         public constructor<T>(i: R|kotlin/Int|, i1: R|kotlin/Int|): R|A4<T>| {
             super<R|kotlin/Any|>()
         }
@@ -138,7 +138,7 @@ FILE: module_main_reservedMethodsInInterfaces.kt
         }
 
     }
-    @R|kotlin/jvm/JvmInline|() public final inline class A5<T> : R|I5|, R|Lib1|, R|Lib2|, R|Lib3| {
+    @R|kotlin/jvm/JvmInline|() public final value class A5<T> : R|I5|, R|Lib1|, R|Lib2|, R|Lib3| {
         public constructor<T>(i: R|kotlin/Int|, i1: R|kotlin/Int|): R|A5<T>| {
             super<R|kotlin/Any|>()
         }
@@ -165,7 +165,7 @@ FILE: module_main_reservedMethodsInInterfaces.kt
         }
 
     }
-    @R|kotlin/jvm/JvmInline|() public final inline class A6 : R|AC| {
+    @R|kotlin/jvm/JvmInline|() public final value class A6 : R|AC| {
         public constructor(i: R|kotlin/Int|): R|A6| {
             super<R|AC|>()
         }

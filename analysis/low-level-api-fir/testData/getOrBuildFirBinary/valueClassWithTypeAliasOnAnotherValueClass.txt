@@ -13,7 +13,7 @@ FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-@R|kotlin/jvm/JvmInline|() public final inline [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType={pack/MyTypeAlias=} pack/AnotherValueClass), IsNewPlaceForBodyGeneration=false] class ValueClass : R|kotlin/Any| {
+@R|kotlin/jvm/JvmInline|() public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType={pack/MyTypeAlias=} pack/AnotherValueClass), IsNewPlaceForBodyGeneration=false] class ValueClass : R|kotlin/Any| {
     public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|

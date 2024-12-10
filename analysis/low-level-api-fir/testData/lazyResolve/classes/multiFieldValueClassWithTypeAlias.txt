@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] multiFieldValueClassWithTypeAlias.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyAlias<[ResolvedTo(RAW_FIR)] A> = List<A>
-    @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    @JvmInline[Unresolved]() public final? value [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.alias] alias: MyAlias<T>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.b] b: String): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -17,7 +17,7 @@ FILE: [ResolvedTo(RAW_FIR)] multiFieldValueClassWithTypeAlias.kt
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClassWithTypeAlias.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyAlias<[ResolvedTo(RAW_FIR)] A> = List<A>
-    @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    @JvmInline[Unresolved]() public final? value [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.alias] alias: MyAlias<T>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.b] b: String): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -33,7 +33,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClassWithTypeAlias.kt
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClassWithTypeAlias.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyAlias<[ResolvedTo(RAW_FIR)] A> = List<A>
-    @JvmInline[Unresolved]() public final? inline [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Foo<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T> : R|kotlin/Any| {
+    @JvmInline[Unresolved]() public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Foo<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.alias] alias: MyAlias<T>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.b] b: String): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -49,7 +49,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClassWithTypeAlias.kt
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClassWithTypeAlias.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyAlias<[ResolvedTo(RAW_FIR)] A> = List<A>
-    @JvmInline[Unresolved]() public final? inline [ResolvedTo(COMPANION_GENERATION)] class Foo<[ResolvedTo(COMPANION_GENERATION)] T> : R|kotlin/Any| {
+    @JvmInline[Unresolved]() public final? value [ResolvedTo(COMPANION_GENERATION)] class Foo<[ResolvedTo(COMPANION_GENERATION)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(COMPANION_GENERATION)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.alias] alias: MyAlias<T>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.b] b: String): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -65,7 +65,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClassWithTypeAlias.kt
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClassWithTypeAlias.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyAlias<[ResolvedTo(RAW_FIR)] A> = List<A>
-    @JvmInline[Unresolved]() public final? inline [ResolvedTo(SUPER_TYPES)] class Foo<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    @JvmInline[Unresolved]() public final? value [ResolvedTo(SUPER_TYPES)] class Foo<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(SUPER_TYPES)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.alias] alias: MyAlias<T>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.b] b: String): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClassWithTypeAlias.kt
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClassWithTypeAlias.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyAlias<[ResolvedTo(RAW_FIR)] A> = List<A>
-    @R|kotlin/jvm/JvmInline|[Types]() public final? inline [ResolvedTo(TYPES)] class Foo<[ResolvedTo(TYPES)] T> : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final? value [ResolvedTo(TYPES)] class Foo<[ResolvedTo(TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(TYPES)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.alias] alias: MyAlias<T>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.b] b: String): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -97,7 +97,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClassWithTypeAlias.kt
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClassWithTypeAlias.kt
     public final [ResolvedTo(SUPER_TYPES)] typealias MyAlias<[ResolvedTo(SUPER_TYPES)] A> = R|kotlin/collections/List<A>|
-    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(alias, {pack/MyAlias<T>=} kotlin/collections/List<T>), (b, kotlin/String)])] class Foo<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(alias, {pack/MyAlias<T>=} kotlin/collections/List<T>), (b, kotlin/String)])] class Foo<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=Foo] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Foo.alias] alias: R|{pack/MyAlias<T>=} kotlin/collections/List<T>|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Foo.b] b: R|kotlin/String|): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -113,7 +113,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClassWithTypeAlias.kt
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClassWithTypeAlias.kt
     public final [ResolvedTo(SUPER_TYPES)] typealias MyAlias<[ResolvedTo(SUPER_TYPES)] A> = R|kotlin/collections/List<A>|
-    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(alias, {pack/MyAlias<T>=} kotlin/collections/List<T>), (b, kotlin/String)])] class Foo<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T> : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(alias, {pack/MyAlias<T>=} kotlin/collections/List<T>), (b, kotlin/String)])] class Foo<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T> : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=Foo] constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Foo.alias] alias: R|{pack/MyAlias<T>=} kotlin/collections/List<T>|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Foo.b] b: R|kotlin/String|): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -129,7 +129,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClassWithTypeAlias.kt
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClassWithTypeAlias.kt
     public final [ResolvedTo(SUPER_TYPES)] typealias MyAlias<[ResolvedTo(SUPER_TYPES)] A> = R|kotlin/collections/List<A>|
-    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(CONTRACTS)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(alias, {pack/MyAlias<T>=} kotlin/collections/List<T>), (b, kotlin/String)])] class Foo<[ResolvedTo(CONTRACTS)] T> : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(CONTRACTS)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(alias, {pack/MyAlias<T>=} kotlin/collections/List<T>), (b, kotlin/String)])] class Foo<[ResolvedTo(CONTRACTS)] T> : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=Foo] constructor<[ResolvedTo(CONTRACTS)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Foo.alias] alias: R|{pack/MyAlias<T>=} kotlin/collections/List<T>|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Foo.b] b: R|kotlin/String|): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -145,7 +145,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClassWithTypeAlias.kt
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClassWithTypeAlias.kt
     public final [ResolvedTo(SUPER_TYPES)] typealias MyAlias<[ResolvedTo(SUPER_TYPES)] A> = R|kotlin/collections/List<A>|
-    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(alias, {pack/MyAlias<T>=} kotlin/collections/List<T>), (b, kotlin/String)])] class Foo<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T> : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(alias, {pack/MyAlias<T>=} kotlin/collections/List<T>), (b, kotlin/String)])] class Foo<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T> : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=Foo] constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Foo.alias] alias: R|{pack/MyAlias<T>=} kotlin/collections/List<T>|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Foo.b] b: R|kotlin/String|): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -161,7 +161,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClassWithTypeAlias.kt
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClassWithTypeAlias.kt
     public final [ResolvedTo(SUPER_TYPES)] typealias MyAlias<[ResolvedTo(SUPER_TYPES)] A> = R|kotlin/collections/List<A>|
-    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(CONSTANT_EVALUATION)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(alias, {pack/MyAlias<T>=} kotlin/collections/List<T>), (b, kotlin/String)])] class Foo<[ResolvedTo(CONSTANT_EVALUATION)] T> : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(CONSTANT_EVALUATION)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(alias, {pack/MyAlias<T>=} kotlin/collections/List<T>), (b, kotlin/String)])] class Foo<[ResolvedTo(CONSTANT_EVALUATION)] T> : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=Foo] constructor<[ResolvedTo(CONSTANT_EVALUATION)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Foo.alias] alias: R|{pack/MyAlias<T>=} kotlin/collections/List<T>|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Foo.b] b: R|kotlin/String|): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -177,7 +177,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClassWithTypeAlias.kt
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClassWithTypeAlias.kt
     public final [ResolvedTo(SUPER_TYPES)] typealias MyAlias<[ResolvedTo(SUPER_TYPES)] A> = R|kotlin/collections/List<A>|
-    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(alias, {pack/MyAlias<T>=} kotlin/collections/List<T>), (b, kotlin/String)])] class Foo<[ResolvedTo(ANNOTATION_ARGUMENTS)] T> : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(alias, {pack/MyAlias<T>=} kotlin/collections/List<T>), (b, kotlin/String)])] class Foo<[ResolvedTo(ANNOTATION_ARGUMENTS)] T> : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=Foo] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Foo.alias] alias: R|{pack/MyAlias<T>=} kotlin/collections/List<T>|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Foo.b] b: R|kotlin/String|): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -193,7 +193,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClassWithTypeAlias.kt
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClassWithTypeAlias.kt
     public final [ResolvedTo(SUPER_TYPES)] typealias MyAlias<[ResolvedTo(SUPER_TYPES)] A> = R|kotlin/collections/List<A>|
-    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(alias, {pack/MyAlias<T>=} kotlin/collections/List<T>), (b, kotlin/String)])] class Foo<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(alias, {pack/MyAlias<T>=} kotlin/collections/List<T>), (b, kotlin/String)])] class Foo<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Foo.alias] alias: R|{pack/MyAlias<T>=} kotlin/collections/List<T>|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Foo.b] b: R|kotlin/String|): R|pack/Foo<T>| {
             super<R|kotlin/Any|>()
         }
@@ -209,7 +209,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClassWithTypeAlias.kt
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] multiFieldValueClassWithTypeAlias.kt
     public final [ResolvedTo(BODY_RESOLVE)] typealias MyAlias<[ResolvedTo(BODY_RESOLVE)] A> = R|kotlin/collections/List<A>|
-    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(alias, {pack/MyAlias<T>=} kotlin/collections/List<T>), (b, kotlin/String)])] class Foo<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(alias, {pack/MyAlias<T>=} kotlin/collections/List<T>), (b, kotlin/String)])] class Foo<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Foo.alias] alias: R|{pack/MyAlias<T>=} kotlin/collections/List<T>|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Foo.b] b: R|kotlin/String|): R|pack/Foo<T>| {
             super<R|kotlin/Any|>()
         }

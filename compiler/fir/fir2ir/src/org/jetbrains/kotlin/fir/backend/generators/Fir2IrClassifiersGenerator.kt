@@ -91,7 +91,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
                 isCompanion = regularClass.isCompanion,
                 isInner = regularClass.isInner,
                 isData = regularClass.isData,
-                isValue = regularClass.isInline,
+                isValue = regularClass.isInlineOrValue,
                 isExpect = regularClass.isExpect,
                 isFun = regularClass.isFun,
                 hasEnumEntries = regularClass.hasEnumEntries,

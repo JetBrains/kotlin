@@ -53,6 +53,9 @@ class FirAllModifierRenderer : FirModifierRenderer() {
         if (memberDeclaration.isInline) {
             renderModifier("inline")
         }
+        if (memberDeclaration is FirClass && memberDeclaration.isValue) {
+            renderModifier("value")
+        }
         if (memberDeclaration.isOperator) {
             renderModifier("operator")
         }
