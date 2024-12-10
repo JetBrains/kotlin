@@ -108,6 +108,19 @@ class FileDeserializationState(
 
     val fileDeserializer = IrFileDeserializer(file, fileReader, fileProto, symbolDeserializer, declarationDeserializer)
 
+    /**
+     * This is the queue of top-level declarations in the current file to be deserialized.
+     *
+     * A declaration can be enqueued using one of the available ways: [addIdSignature], [enqueueAllDeclarations].
+     * The deserialization happens on invocation of [deserializeAllFileReachableTopLevel].
+     *
+     * Note 1: The signature is removed from the queue during deserialization of the corresponding declaration.
+     *
+     * Note 2: Since we don't know the state of a declaration for a certain [IdSignature], there are no
+     * guarantees that the queue contains only items that has NEVER been attempted to be deserialized before.
+     * It actually may contain signatures of already deserialized declarations. In that case, the deserialization
+     * does not happen (as there is nothing effectively to deserialize), but the signature is removed from the queue.
+     */
     private val reachableTopLevels = LinkedHashSet<IdSignature>()
 
     init {
@@ -121,24 +134,35 @@ class FileDeserializationState(
         }
     }
 
-    fun addIdSignature(key: IdSignature) {
-        reachableTopLevels.add(key)
+    /**
+     * Schedule deserialization of a top-level declaration with the given signature.
+     */
+    fun addIdSignature(topLevelDeclarationSignature: IdSignature) {
+        reachableTopLevels.add(topLevelDeclarationSignature)
     }
 
+    /**
+     * Schedule deserialization of all top-level declarations in this file.
+     */
     fun enqueueAllDeclarations() {
         reachableTopLevels.addAll(fileDeserializer.reversedSignatureIndex.keys)
     }
 
+    /**
+     * Deserialize all top-level declarations previously scheduled for deserialization in the current file.
+     */
     fun deserializeAllFileReachableTopLevel() {
         while (reachableTopLevels.isNotEmpty()) {
-            val reachableKey = reachableTopLevels.first()
+            val topLevelDeclarationSignature = reachableTopLevels.first()
 
-            val existedSymbol = symbolDeserializer.deserializedSymbols[reachableKey]
-            if (existedSymbol == null || !existedSymbol.isBound) {
-                fileDeserializer.deserializeDeclaration(reachableKey)
+            val topLevelDeclarationSymbol = symbolDeserializer.deserializedSymbols[topLevelDeclarationSignature]
+            if (topLevelDeclarationSymbol == null || !topLevelDeclarationSymbol.isBound) {
+                // Perform actual deserialization:
+                fileDeserializer.deserializeDeclaration(topLevelDeclarationSignature)
             }
 
-            reachableTopLevels.remove(reachableKey)
+            // Remove it from the queue:
+            reachableTopLevels.remove(topLevelDeclarationSignature)
         }
     }
 }
