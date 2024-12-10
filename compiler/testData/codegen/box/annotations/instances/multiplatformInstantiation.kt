@@ -5,6 +5,9 @@
 
 // (supported: JVM_IR, JS_IR(_ES6))
 
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
+// ^^^ IR serialization/deserialization is not tested with K1.
+
 // WITH_STDLIB
 // LANGUAGE: +InstantiationOfAnnotationClasses +MultiPlatformProjects
 

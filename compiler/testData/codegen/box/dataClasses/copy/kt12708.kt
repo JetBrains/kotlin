@@ -3,6 +3,8 @@
 // IGNORE_BACKEND_K2: ANY
 // IGNORE_IR_DESERIALIZATION_TEST: NATIVE
 // FIR status: Disabling ProhibitDataClassesOverridingCopy is not supported
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
+// ^^^ Source code is not compiled in JS.
 
 fun box(): String {
     val a: A = B(1)

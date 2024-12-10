@@ -4,6 +4,8 @@
 
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM
 // KT-57391: java.lang.IllegalStateException: IrSimpleFunctionSymbolImpl for /main|main(){}[0] is already bound
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
+// ^^^ Source code is not compiled in JS.
 
 // IGNORE_IR_DESERIALIZATION_TEST: NATIVE
 // IGNORE_BACKEND: NATIVE

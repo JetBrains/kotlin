@@ -7,6 +7,8 @@
 // IGNORE_BACKEND_K2: ANY
 // IGNORE_IR_DESERIALIZATION_TEST: NATIVE
 // IGNORE_LIGHT_ANALYSIS
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
+// ^^^ Source code is not compiled in JS.
 
 // DISABLE_IR_VISIBILITY_CHECKS: ANY
 // ^ isInitialized results in private field access which is reported by the visibility checker.

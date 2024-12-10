@@ -16,6 +16,9 @@
 //   [IR VALIDATION] IrValidationBeforeLoweringPhase: The following element references a 'private' declaration that is invisible in the current scope.
 //   SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]' type=kotlin.Unit origin=null
 
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
+// ^^^ Source code is not compiled in JS.
+
 // FILE: kt49316.kt
 import a.*
 

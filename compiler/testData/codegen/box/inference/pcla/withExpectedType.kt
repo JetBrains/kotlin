@@ -4,6 +4,8 @@
 // IGNORE_BACKEND_K2: JVM_IR, JS_IR, JS_IR_ES6, WASM, NATIVE
 // IGNORE_IR_DESERIALIZATION_TEST: NATIVE
 // FIR status: Initializer type mismatch at first val x = : expected kotlin/collections/MutableList<kotlin/CharSequence>, actual kotlin/collections/MutableList<kotlin/String>
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
+// ^^^ Source code is not compiled in JS.
 
 import kotlin.experimental.ExperimentalTypeInference
 
