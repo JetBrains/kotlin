@@ -94,7 +94,9 @@ open class UpgradeCallableReferences(
                 invokeFunction = expression.function,
                 origin = expression.origin,
                 isRestrictedSuspension = isRestrictedSuspension,
-            ).copyAttributes(expression)
+            ).apply {
+                copyAttributes(expression)
+            }
         }
 
         override fun visitElement(element: IrElement, data: IrDeclarationParent): IrElement {

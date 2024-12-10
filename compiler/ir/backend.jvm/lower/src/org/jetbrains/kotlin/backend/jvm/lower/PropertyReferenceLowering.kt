@@ -410,7 +410,8 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             parent = currentDeclarationParent!!
             superTypes = listOf(superClass.defaultType)
             createThisReceiverParameter()
-        }.copyAttributes(expression)
+            copyAttributes(expression)
+        }
 
         addConstructor(expression, referenceClass, superClass)
 

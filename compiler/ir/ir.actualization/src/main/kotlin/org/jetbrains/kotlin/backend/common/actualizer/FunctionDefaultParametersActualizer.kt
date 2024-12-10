@@ -44,6 +44,8 @@ private class FunctionDefaultParametersActualizerVisitor(private val symbolRemap
         return expression.remapSymbolParent(
             classRemapper = { symbolRemapper.getReferencedClass(it.symbol).owner },
             functionRemapper = { symbolRemapper.getReferencedFunction(it.symbol).owner }
-        ).copyAttributes(expression)
+        ).apply {
+            copyAttributes(expression)
+        }
     }
 }

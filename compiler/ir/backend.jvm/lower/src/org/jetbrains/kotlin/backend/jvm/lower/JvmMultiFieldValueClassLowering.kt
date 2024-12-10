@@ -807,7 +807,9 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
                     expression.startOffset, expression.endOffset,
                     expression.type, replacement.symbol, function.typeParameters.size,
                     expression.reflectionTarget, expression.origin
-                ).copyAttributes(expression)
+                ).apply {
+                    copyAttributes(expression)
+                }
             }
         }.unwrapBlock()
     }

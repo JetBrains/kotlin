@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
+import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
+import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
@@ -18,11 +20,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils.getPackagePartClassNamePrefix
 import java.io.File
 
-fun <D : IrElement> D.copyAttributes(other: IrElement?): D = apply {
-    if (other != null) {
-        attributeOwnerId = other.attributeOwnerId
-        originalBeforeInline = other.originalBeforeInline
-    }
+fun IrElement.copyAttributes(other: IrElement) {
+    attributeOwnerId = other.attributeOwnerId
+    originalBeforeInline = other.originalBeforeInline
 }
 
 val IrClass.isSingleFieldValueClass: Boolean
@@ -56,3 +56,12 @@ val IrClass.multiFieldValueClassRepresentation: MultiFieldValueClassRepresentati
 
 val IrClass.inlineClassRepresentation: InlineClassRepresentation<IrSimpleType>?
     get() = valueClassRepresentation as? InlineClassRepresentation<IrSimpleType>
+
+
+@DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
+fun <D : IrElement> D.copyAttributes(other: IrElement?): D = apply {
+    if (other != null) {
+        attributeOwnerId = other.attributeOwnerId
+        originalBeforeInline = other.originalBeforeInline
+    }
+}

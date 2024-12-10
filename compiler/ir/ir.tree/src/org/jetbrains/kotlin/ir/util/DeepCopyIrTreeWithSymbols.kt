@@ -35,7 +35,7 @@ internal inline fun <T : IrElement> T.deepCopyImpl(createTypeRemapper: (SymbolRe
 abstract class IrDeepCopyBase : IrElementTransformerVoid() {
     protected abstract fun IrType.remapType(): IrType
 
-    protected open fun <D : IrElement> D.processAttributes(other: IrElement?): D =
+    protected open fun <D : IrElement> D.processAttributes(other: IrElement) =
         copyAttributes(other)
 
     protected inline fun <reified T : IrElement> T.transform() =

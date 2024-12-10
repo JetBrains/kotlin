@@ -232,7 +232,8 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             expression.reflectionTarget, expression.origin
         ).apply {
             buildReplacement(function, expression, replacement)
-        }.copyAttributes(expression)
+            copyAttributes(expression)
+        }
     }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
