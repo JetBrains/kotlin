@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.lower.*
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
@@ -86,6 +87,9 @@ fun compileIr(
     safeExternalBooleanDiagnostic: RuntimeDiagnostic?,
     granularity: JsGenerationGranularity,
 ): LoweredIr {
+    require(irLinker is JsIrLinker) {
+        "jsCompiler needs JsIrLinker, but got ${irLinker.javaClass.name}"
+    }
     val moduleDescriptor = moduleFragment.descriptor
     val irFactory = symbolTable.irFactory
     val shouldGeneratePolyfills = configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)
