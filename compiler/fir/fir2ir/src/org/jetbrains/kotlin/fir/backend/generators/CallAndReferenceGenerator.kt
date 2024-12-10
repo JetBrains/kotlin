@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.approximateDeclarationType
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
+import org.jetbrains.kotlin.fir.scopes.impl.toConeType
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorSubstitutor
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -1355,8 +1357,40 @@ class CallAndReferenceGenerator(
             }.toMap()
         )
 
+        /**
+         * Filter out type arguments that correspond outer type parameters of an inner class
+         * To perform it, we should use two substitutors: `typeAliasConstructorSubstitutor` and `parametersSubstitutor`.
+         * Consider the following example:
+         *
+         * ```kt
+         * class Foo<T> {
+         *     inner class Inner
+         * }
+         *
+         * typealias InnerAlias<K> = Foo<K>.Inner
+         *
+         * fun test() {
+         *     val foo = Foo<String>()
+         *     foo.InnerAlias() // Filter out `String` type argument (String <- K <- T, where T is `FirOuterClassTypeParameterRef`)
+         * }
+         * ```
+         *
+         * In the example above, `parametersSubstitutor` holds `K -> String` substitution, `typeAliasConstructorSubstitutor` holds `T` -> K` substituion.
+         */
+        val containingInnerClass = originalConstructorIfTypeAlias?.takeIf { it.isInner }?.getContainingClass()
+        val typeAliasConstructorSubstitutor = typeAliasConstructorSubstitutor
+        val ignoredTypeArguments = if (typeAliasConstructorSubstitutor != null && containingInnerClass != null) {
+            containingInnerClass.typeParameters.filterIsInstance<FirOuterClassTypeParameterRef>().mapNotNullTo(mutableSetOf()) {
+                typeAliasConstructorSubstitutor.substituteOrNull(it.toConeType())
+            }
+        } else {
+            emptySet()
+        }
+
         return buildList {
             for ((index, typeArgument) in typeAliasSymbol.resolvedExpandedTypeRef.coneType.typeArguments.withIndex()) {
+                if (ignoredTypeArguments.contains(typeArgument)) continue
+
                 val typeProjection = parametersSubstitutor.substituteArgument(typeArgument, index) ?: typeArgument
                 val typeRef = if (typeProjection is ConeKotlinType) {
                     buildResolvedTypeRef {
