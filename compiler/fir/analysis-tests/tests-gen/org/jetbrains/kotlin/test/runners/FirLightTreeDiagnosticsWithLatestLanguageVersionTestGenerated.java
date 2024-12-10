@@ -1980,6 +1980,12 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
       }
 
       @Test
+      @TestMetadata("conflictingOverloads2.kt")
+      public void testConflictingOverloads2() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/conflictingOverloads2.kt");
+      }
+
+      @Test
       @TestMetadata("conflictingProjection.kt")
       public void testConflictingProjection() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/conflictingProjection.kt");
