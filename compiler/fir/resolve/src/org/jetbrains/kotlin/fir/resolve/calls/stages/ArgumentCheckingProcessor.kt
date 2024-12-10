@@ -116,7 +116,9 @@ internal object ArgumentCheckingProcessor {
             }
             is ConeCollectionLiteralResolutionAtom -> {
                 val collectionLiteralArgumentContext = this@resolveArgumentExpression
-                collectionLiteralArgumentContext.expectedType ?: error("WTF1 ${collectionLiteralArgumentContext.expectedType}")
+                if (collectionLiteralArgumentContext.expectedType == null) {
+                    return
+                }
                 val collectionLiteralElementType = getCollectionLiteralElementType(
                     collectionLiteralArgumentContext.expectedType,
                     session,
