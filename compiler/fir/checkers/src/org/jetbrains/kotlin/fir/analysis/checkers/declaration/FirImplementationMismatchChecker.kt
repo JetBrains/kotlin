@@ -261,7 +261,7 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
                 if (callable is FirNamedFunctionSymbol) {
                     callable.valueParameterSymbols.mapTo(this) { it.resolvedReturnTypeRef.coneType }
                 }
-            }
+            } to (callable is FirPropertySymbol) // Needed to split properties and functions into separate groups
         }.values
 
         val clashes = sameArgumentGroups.mapNotNull { fs ->

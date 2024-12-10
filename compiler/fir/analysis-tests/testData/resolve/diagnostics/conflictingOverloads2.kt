@@ -9,5 +9,5 @@ interface Base {
 }
 
 interface Derived : Base {
-    <!CONFLICTING_OVERLOADS!>var test: String<!>
+    var test: String
 }
