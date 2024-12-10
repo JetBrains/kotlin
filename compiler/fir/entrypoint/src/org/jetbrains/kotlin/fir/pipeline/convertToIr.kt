@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.pipeline
 
-import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.IrSpecialAnnotationsProvider
 import org.jetbrains.kotlin.backend.common.IrValidatorConfig
 import org.jetbrains.kotlin.backend.common.actualizer.*
@@ -23,26 +22,33 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.generators.Fir2IrDataClassGeneratedMemberBodyGenerator
 import org.jetbrains.kotlin.fir.backend.utils.generatedBuiltinsDeclarationsFileName
+import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.scopes.staticScopeForBackend
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
+import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
+import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -305,7 +311,12 @@ private class Fir2IrPipeline(
 
     private fun Fir2IrConversionResult.buildFakeOverrides(fakeOverrideBuilder: IrFakeOverrideBuilder) {
         val temporaryResolver = SpecialFakeOverrideSymbolsResolver(IrExpectActualMap())
-        fakeOverrideBuilder.buildForAll(dependentIrFragments + mainIrFragment, temporaryResolver)
+        val getExternalPackages = {
+            componentsStorage.declarationStorage.fragmentCache.values
+                .flatMap { it.fragmentsForDependencies.values + it.builtinFragmentsForDependencies.values + it.fragmentForPrecompiledBinaries }
+        }
+
+        fakeOverrideBuilder.buildForAll(dependentIrFragments + mainIrFragment, getExternalPackages, temporaryResolver)
         @OptIn(Fir2IrSymbolsMappingForLazyClasses.SymbolRemapperInternals::class)
         componentsStorage.symbolsMappingForLazyClasses.initializeRemapper(temporaryResolver)
     }
@@ -333,24 +344,45 @@ private class Fir2IrPipeline(
 
     private fun IrFakeOverrideBuilder.buildForAll(
         modules: List<IrModuleFragment>,
-        resolver: SpecialFakeOverrideSymbolsResolver
+        getExternalPackages: () -> List<IrExternalPackageFragment>,
+        resolver: SpecialFakeOverrideSymbolsResolver,
     ) {
         val builtFakeOverridesClasses = mutableSetOf<IrClass>()
         fun buildFakeOverrides(clazz: IrClass) {
             if (!builtFakeOverridesClasses.add(clazz)) return
             for (c in clazz.superTypes) {
-                c.getClass()?.let { buildFakeOverrides(it) }
+                c.getClass()?.let { superClass ->
+                    if (superClass is Fir2IrLazyClass) {
+                        superClass.isSubclassedInCompiledCode = true
+                        superClass.computeDeclarationsNeededForSubclasses()
+                    }
+                    buildFakeOverrides(superClass)
+                }
             }
             if (clazz is IrLazyDeclarationBase) {
-                resolveOverridenSymbolsInLazyClass(clazz as Fir2IrLazyClass, resolver)
+                buildFakeOverridesForLazyClass(clazz as Fir2IrLazyClass, resolver)
             } else {
                 buildFakeOverridesForClass(clazz, false)
             }
         }
 
         class ClassVisitor : IrElementVisitorVoid {
+            val allClasses = hashSetOf<IrClass>()
+            val classesToProcess = mutableListOf<IrClass>()
+
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
+            }
+
+            override fun visitDeclaration(declaration: IrDeclarationBase) {
+                if (declaration is IrLazyDeclarationBase) {
+                    if (declaration is Fir2IrLazyClass) {
+                        @OptIn(UnsafeDuringIrConstructionAPI::class)
+                        declaration.declarations.forEach { it.acceptVoid(this) }
+                    }
+                } else {
+                    super.visitDeclaration(declaration)
+                }
             }
 
             private fun isIgnoredClass(declaration: IrClass): Boolean {
@@ -363,63 +395,99 @@ private class Fir2IrPipeline(
 
             override fun visitClass(declaration: IrClass) {
                 if (!isIgnoredClass(declaration)) {
-                    buildFakeOverrides(declaration)
+                    if (allClasses.add(declaration)) {
+                        classesToProcess += declaration
+                    }
                 }
-                declaration.acceptChildrenVoid(this)
+                super.visitClass(declaration)
             }
         }
 
-        for (module in modules) {
-            for (file in module.files) {
-                try {
-                    file.acceptVoid(ClassVisitor())
-                } catch (e: Throwable) {
-                    CodegenUtil.reportBackendException(e, "IR fake override builder", file.fileEntry.name) { offset ->
-                        file.fileEntry.takeIf { it.supportsDebugInfo }?.let {
-                            val (line, column) = it.getLineAndColumnNumbers(offset)
-                            line to column
+        val visitor = ClassVisitor()
+        val roots: MutableList<IrPackageFragment> = modules.flatMap { it.files }.toMutableList()
+        while (true) {
+            roots += getExternalPackages()
+            for (root in roots) {
+                root.acceptVoid(visitor)
+            }
+            roots.clear()
+
+            if (visitor.classesToProcess.isEmpty()) break
+            for (clazz in visitor.classesToProcess) {
+                buildFakeOverrides(clazz)
+            }
+            visitor.classesToProcess.clear()
+        }
+    }
+
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun buildFakeOverridesForLazyClass(
+        clazz: Fir2IrLazyClass,
+        resolver: SpecialFakeOverrideSymbolsResolver,
+    ) {
+        val declarationStorage = clazz.declarationStorage
+        val lookupTag = clazz.fir.symbol.toLookupTag()
+
+        val allFromSuper = clazz.superTypes.flatMap { superType ->
+            superType.classOrFail.owner.declarations
+        }
+
+        val functionNames = mutableSetOf<Name>()
+        val propertyNames = mutableSetOf<Name>()
+        for (decl in allFromSuper) {
+            when (decl) {
+                is IrSimpleFunction -> functionNames.add(decl.name)
+                is IrProperty -> propertyNames.add(decl.name)
+            }
+        }
+
+        listOfNotNull(
+            clazz.fir.unsubstitutedScope(clazz),
+            clazz.fir.staticScopeForBackend(clazz.session, clazz.scopeSession)
+        ).forEach { scope ->
+            for (name in functionNames) {
+                scope.processFunctionsByName(name) { function ->
+                    val declaration = declarationStorage.getIrFunctionSymbol(function, lookupTag).owner as IrSimpleFunction
+                    declaration.overriddenSymbols = declaration.overriddenSymbols.map { resolver.getReferencedSimpleFunction(it) }
+                }
+            }
+            for (name in propertyNames) {
+                scope.processPropertiesByName(name) { property ->
+                    if (property is FirPropertySymbol) {
+                        val declaration = declarationStorage.getIrPropertySymbol(property, lookupTag).owner as IrProperty
+                        declaration.overriddenSymbols = declaration.overriddenSymbols.map { resolver.getReferencedProperty(it) }
+                        declaration.getter?.let { getter ->
+                            getter.overriddenSymbols = getter.overriddenSymbols.map { resolver.getReferencedSimpleFunction(it) }
+                        }
+                        declaration.setter?.let { setter ->
+                            setter.overriddenSymbols = setter.overriddenSymbols.map { resolver.getReferencedSimpleFunction(it) }
                         }
                     }
                 }
             }
         }
-    }
 
-    private fun resolveOverridenSymbolsInLazyClass(
-        clazz: Fir2IrLazyClass,
-        resolver: SpecialFakeOverrideSymbolsResolver,
-    ) {
-        /*
-         * Eventually, we should be able to process lazy classes with the same code.
-         *
-         * Now we can't do this, because overriding by Java function is not supported correctly in IR builder.
-         * In most cases, nothing need to be done for lazy classes. For other cases, it is
-         * caller responsibility to handle them.
-         *
-         * Super-classes already have processed fake overrides at this moment.
-         * Also, all Fir2IrLazyClass super-classes are always platform classes,
-         * so it's valid to process it with empty expect-actual mapping.
-         *
-         * But this is still a hack, and should be removed within KT-64352
-         */
-        @OptIn(UnsafeDuringIrConstructionAPI::class)
-        for (declaration in clazz.declarations) {
-            when (declaration) {
+        /*for (decl in allFromSuper) {
+            when (decl) {
                 is IrSimpleFunction -> {
-                    declaration.overriddenSymbols = declaration.overriddenSymbols.map { resolver.getReferencedSimpleFunction(it) }
+                    decl as Fir2IrLazySimpleFunction
+
+                    scope.processOverriddenFunctionsAndSelf(decl.fir.symbol) { func ->
+                        fakeOverrides += declarationStorage.getIrFunctionSymbol(func, lookupTag).owner as IrSimpleFunction
+                        ProcessorAction.NEXT
+                    }
                 }
                 is IrProperty -> {
-                    declaration.overriddenSymbols = declaration.overriddenSymbols.map { resolver.getReferencedProperty(it) }
-                    declaration.getter?.let { getter ->
-                        getter.overriddenSymbols = getter.overriddenSymbols.map { resolver.getReferencedSimpleFunction(it) }
-                    }
-                    declaration.setter?.let { setter ->
-                        setter.overriddenSymbols = setter.overriddenSymbols.map { resolver.getReferencedSimpleFunction(it) }
+                    decl as Fir2IrLazyProperty
+                    scope.processOverriddenProperties(decl.fir.symbol) { property ->
+                        fakeOverrides += declarationStorage.getIrPropertySymbol(property, lookupTag).owner as IrProperty
+                        ProcessorAction.NEXT
                     }
                 }
             }
-        }
+        }*/
     }
+
 
     /** If `stdlibCompilation` mode is enabled, there could be files with synthetic declarations.
      *  All of them should be generated before FIR2IR conversion and removed after the actualizaiton.
@@ -473,3 +541,5 @@ fun IrPluginContext.applyIrGenerationExtensions(
         runMandatoryIrValidation(extension, irModuleFragment, fir2IrConfiguration)
     }
 }
+
+private var Fir2IrLazyClass.isSubclassedInCompiledCode: Boolean by irFlag(false)

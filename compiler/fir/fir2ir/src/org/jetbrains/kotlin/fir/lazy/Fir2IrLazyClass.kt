@@ -146,8 +146,19 @@ class Fir2IrLazyClass(
         get() = computeValueClassRepresentation(fir)
         set(_) = mutationNotSupported()
 
+    val declarationsStatic: MutableList<IrDeclaration> = mutableListOf()
+
     @UnsafeDuringIrConstructionAPI
-    override val declarations: MutableList<IrDeclaration> by lazyVar(lock) {
+    override val declarations: MutableList<IrDeclaration>
+        get() {
+            val declStatic = declarationsStatic
+            //val declLazy = computeAllDeclarations()
+            return declStatic
+        }
+
+    //@UnsafeDuringIrConstructionAPI
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    fun computeAllDeclarations(): List<IrDeclaration> {
         val result = mutableListOf<IrDeclaration>()
         // NB: it's necessary to take all callables from scope,
         // e.g. to avoid accessing un-enhanced Java declarations with FirJavaTypeRef etc. inside
@@ -223,7 +234,49 @@ class Fir2IrLazyClass(
             result.addAll(getFieldsWithContextReceiversForClass(this@Fir2IrLazyClass, fir))
         }
 
-        result
+        return result
+    }
+
+    private var computedDeclarationsNeededForSubclasses = false
+
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    fun computeDeclarationsNeededForSubclasses() {
+        if (computedDeclarationsNeededForSubclasses) return
+        computedDeclarationsNeededForSubclasses = true
+
+        val result = mutableListOf<IrDeclaration>()
+        val lookupTag = fir.symbol.toLookupTag()
+
+        listOfNotNull(
+            fir.unsubstitutedScope(c),
+            fir.staticScopeForBackend(session, scopeSession)
+        ).forEach { scope ->
+            for (name in scope.getCallableNames()) {
+                scope.processFunctionsByName(name) l@{ functionSymbol ->
+                    val function = functionSymbol.fir
+                    if (functionSymbol.isStatic || functionSymbol.isFinal)
+                        return@l
+                    if (!session.visibilityChecker.isVisibleForOverriding(fir.moduleData, fir.symbol, function))
+                        return@l
+
+                    result += declarationStorage.getIrFunctionSymbol(functionSymbol, lookupTag).owner
+                }
+
+                // todo perf: only needed for case of subclassing by delegation
+                scope.processPropertiesByName(name) l@{ propertySymbol ->
+                    if (propertySymbol !is FirPropertySymbol)
+                        return@l
+
+                    val property = propertySymbol.fir
+                    if (propertySymbol.isStatic || propertySymbol.isFinal)
+                        return@l
+                    if (!session.visibilityChecker.isVisibleForOverriding(fir.moduleData, fir.symbol, property))
+                        return@l
+
+                    result += declarationStorage.getIrPropertySymbol(propertySymbol, lookupTag).owner as IrProperty
+                }
+            }
+        }
     }
 
     private fun shouldBuildStub(fir: FirDeclaration): Boolean {

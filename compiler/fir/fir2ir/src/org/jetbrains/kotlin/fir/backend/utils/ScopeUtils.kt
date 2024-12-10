@@ -135,7 +135,7 @@ internal fun FirClassSymbol<*>.unsubstitutedScope(c: Fir2IrComponents): FirTypeS
     return this.unsubstitutedScope(c.session, c.scopeSession, withForcedTypeCalculator = true, memberRequiredPhase = null)
 }
 
-internal fun FirClass.unsubstitutedScope(c: Fir2IrComponents): FirTypeScope {
+fun FirClass.unsubstitutedScope(c: Fir2IrComponents): FirTypeScope {
     return symbol.unsubstitutedScope(c)
 }
 
