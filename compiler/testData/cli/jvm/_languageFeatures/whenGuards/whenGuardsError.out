@@ -1,0 +1,10 @@
+compiler/testData/cli/jvm/_languageFeatures/whenGuards/src/whenGuards.kt:13:18: error: the feature "when guards" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xwhen-guards', but note that no stability guarantees are provided.
+    is Status.Ok if status.info.isEmpty() -> "no data"
+                 ^^^^^^^^^^^^^^^^^^^^^^^^
+compiler/testData/cli/jvm/_languageFeatures/whenGuards/src/whenGuards.kt:15:21: error: the feature "when guards" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xwhen-guards', but note that no stability guarantees are provided.
+    is Status.Error if status.problem == Problem.CONNECTION -> "problems with connection"
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+compiler/testData/cli/jvm/_languageFeatures/whenGuards/src/whenGuards.kt:16:21: error: the feature "when guards" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xwhen-guards', but note that no stability guarantees are provided.
+    is Status.Error if status.problem == Problem.AUTHENTICATION -> "could not be authenticated"
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+COMPILATION_ERROR

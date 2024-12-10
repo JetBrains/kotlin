@@ -1,0 +1,7 @@
+$TESTDATA_DIR$/src/apiVersion.kt
+-d
+$TEMP_DIR$
+-api-version
+1.8
+-language-version
+1.9

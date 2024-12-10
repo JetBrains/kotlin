@@ -188,6 +188,380 @@ public class CliTestGenerated extends AbstractCliTest {
     }
   }
 
+  @TestMetadata("compiler/testData/cli/jvm/_suppressWarnings")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class _suppressWarnings extends AbstractCliTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doJvmTest, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentIn_suppressWarnings() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/_suppressWarnings"), Pattern.compile("^(.+)\\.args$"), null, false);
+    }
+
+    @TestMetadata("warningSuppression.args")
+    public void testWarningSuppression() {
+      runTest("compiler/testData/cli/jvm/_suppressWarnings/warningSuppression.args");
+    }
+
+    @TestMetadata("warningSuppressionInvalid.args")
+    public void testWarningSuppressionInvalid() {
+      runTest("compiler/testData/cli/jvm/_suppressWarnings/warningSuppressionInvalid.args");
+    }
+  }
+
+  @TestMetadata("compiler/testData/cli/jvm/_languageFeatures")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class _languageFeatures extends AbstractCliTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doJvmTest, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentIn_languageFeatures() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/_languageFeatures"), Pattern.compile("^(.+)\\.args$"), null, true);
+    }
+
+    @TestMetadata("compiler/testData/cli/jvm/_languageFeatures/contextParameters")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ContextParameters extends AbstractCliTest {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doJvmTest, this, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInContextParameters() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/_languageFeatures/contextParameters"), Pattern.compile("^(.+)\\.args$"), null, true);
+      }
+
+      @TestMetadata("contextParameters.args")
+      public void testContextParameters() {
+        runTest("compiler/testData/cli/jvm/_languageFeatures/contextParameters/contextParameters.args");
+      }
+
+      @TestMetadata("contextReceiversAndParametersAtTheSameTime.args")
+      public void testContextReceiversAndParametersAtTheSameTime() {
+        runTest("compiler/testData/cli/jvm/_languageFeatures/contextParameters/contextReceiversAndParametersAtTheSameTime.args");
+      }
+
+      @TestMetadata("contextReceiversDeprecated.args")
+      public void testContextReceiversDeprecated() {
+        runTest("compiler/testData/cli/jvm/_languageFeatures/contextParameters/contextReceiversDeprecated.args");
+      }
+    }
+
+    @TestMetadata("compiler/testData/cli/jvm/_languageFeatures/coroutines_1_3")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Coroutines_1_3 extends AbstractCliTest {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doJvmTest, this, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInCoroutines_1_3() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/_languageFeatures/coroutines_1_3"), Pattern.compile("^(.+)\\.args$"), null, true);
+      }
+
+      @TestMetadata("coroutinesEnable.args")
+      public void testCoroutinesEnable() {
+        runTest("compiler/testData/cli/jvm/_languageFeatures/coroutines_1_3/coroutinesEnable.args");
+      }
+
+      @TestMetadata("coroutinesError.args")
+      public void testCoroutinesError() {
+        runTest("compiler/testData/cli/jvm/_languageFeatures/coroutines_1_3/coroutinesError.args");
+      }
+
+      @TestMetadata("coroutinesErrorAndEnable.args")
+      public void testCoroutinesErrorAndEnable() {
+        runTest("compiler/testData/cli/jvm/_languageFeatures/coroutines_1_3/coroutinesErrorAndEnable.args");
+      }
+
+      @TestMetadata("coroutinesWarn.args")
+      public void testCoroutinesWarn() {
+        runTest("compiler/testData/cli/jvm/_languageFeatures/coroutines_1_3/coroutinesWarn.args");
+      }
+    }
+
+    @TestMetadata("compiler/testData/cli/jvm/_languageFeatures/enumEntries")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class EnumEntries extends AbstractCliTest {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doJvmTest, this, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInEnumEntries() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/_languageFeatures/enumEntries"), Pattern.compile("^(.+)\\.args$"), null, true);
+      }
+
+      @TestMetadata("enumEntriesForJavaNotEnabled.args")
+      public void testEnumEntriesForJavaNotEnabled() {
+        runTest("compiler/testData/cli/jvm/_languageFeatures/enumEntries/enumEntriesForJavaNotEnabled.args");
+      }
+
+      @TestMetadata("enumEntriesNotEnabled.args")
+      public void testEnumEntriesNotEnabled() {
+        runTest("compiler/testData/cli/jvm/_languageFeatures/enumEntries/enumEntriesNotEnabled.args");
+      }
+    }
+
+    @TestMetadata("compiler/testData/cli/jvm/_languageFeatures/useBuilderInferenceWithoutAnnotation_1_7")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class UseBuilderInferenceWithoutAnnotation_1_7 extends AbstractCliTest {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doJvmTest, this, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInUseBuilderInferenceWithoutAnnotation_1_7() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/_languageFeatures/useBuilderInferenceWithoutAnnotation_1_7"), Pattern.compile("^(.+)\\.args$"), null, true);
+      }
+
+      @TestMetadata("builderInferenceByDefault.args")
+      public void testBuilderInferenceByDefault() {
+        runTest("compiler/testData/cli/jvm/_languageFeatures/useBuilderInferenceWithoutAnnotation_1_7/builderInferenceByDefault.args");
+      }
+
+      @TestMetadata("builderInferenceErrors.args")
+      public void testBuilderInferenceErrors() {
+        runTest("compiler/testData/cli/jvm/_languageFeatures/useBuilderInferenceWithoutAnnotation_1_7/builderInferenceErrors.args");
+      }
+    }
+
+    @TestMetadata("compiler/testData/cli/jvm/_languageFeatures/whenGuards")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class WhenGuards extends AbstractCliTest {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doJvmTest, this, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInWhenGuards() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/_languageFeatures/whenGuards"), Pattern.compile("^(.+)\\.args$"), null, true);
+      }
+
+      @TestMetadata("whenGuardsEnable.args")
+      public void testWhenGuardsEnable() {
+        runTest("compiler/testData/cli/jvm/_languageFeatures/whenGuards/whenGuardsEnable.args");
+      }
+
+      @TestMetadata("whenGuardsError.args")
+      public void testWhenGuardsError() {
+        runTest("compiler/testData/cli/jvm/_languageFeatures/whenGuards/whenGuardsError.args");
+      }
+
+      @TestMetadata("compiler/testData/cli/jvm/_languageFeatures/whenGuards/src")
+      @TestDataPath("$PROJECT_ROOT")
+      @RunWith(JUnit3RunnerWithInners.class)
+      public static class Src extends AbstractCliTest {
+        private void runTest(String testDataFilePath) {
+          KotlinTestUtils.runTest(this::doJvmTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSrc() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/_languageFeatures/whenGuards/src"), Pattern.compile("^(.+)\\.args$"), null, true);
+        }
+      }
+    }
+  }
+
+  @TestMetadata("compiler/testData/cli/jvm/_apiVersion")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class _apiVersion extends AbstractCliTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doJvmTest, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentIn_apiVersion() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/_apiVersion"), Pattern.compile("^(.+)\\.args$"), null, false);
+    }
+
+    @TestMetadata("apiAndLanguageVersionsUnsupported.args")
+    public void testApiAndLanguageVersionsUnsupported() {
+      runTest("compiler/testData/cli/jvm/_apiVersion/apiAndLanguageVersionsUnsupported.args");
+    }
+
+    @TestMetadata("apiVersion.args")
+    public void testApiVersion() {
+      runTest("compiler/testData/cli/jvm/_apiVersion/apiVersion.args");
+    }
+
+    @TestMetadata("apiVersionAndSinceNewerKotlin.args")
+    public void testApiVersionAndSinceNewerKotlin() {
+      runTest("compiler/testData/cli/jvm/_apiVersion/apiVersionAndSinceNewerKotlin.args");
+    }
+
+    @TestMetadata("apiVersionDeprecated.args")
+    public void testApiVersionDeprecated() {
+      runTest("compiler/testData/cli/jvm/_apiVersion/apiVersionDeprecated.args");
+    }
+
+    @TestMetadata("apiVersionGreaterThanLanguage.args")
+    public void testApiVersionGreaterThanLanguage() {
+      runTest("compiler/testData/cli/jvm/_apiVersion/apiVersionGreaterThanLanguage.args");
+    }
+
+    @TestMetadata("apiVersionGreaterThanLanguageSuppress.args")
+    public void testApiVersionGreaterThanLanguageSuppress() {
+      runTest("compiler/testData/cli/jvm/_apiVersion/apiVersionGreaterThanLanguageSuppress.args");
+    }
+
+    @TestMetadata("apiVersionGreaterThanLanguageSuppressUseless.args")
+    public void testApiVersionGreaterThanLanguageSuppressUseless() {
+      runTest("compiler/testData/cli/jvm/_apiVersion/apiVersionGreaterThanLanguageSuppressUseless.args");
+    }
+
+    @TestMetadata("apiVersionInvalid.args")
+    public void testApiVersionInvalid() {
+      runTest("compiler/testData/cli/jvm/_apiVersion/apiVersionInvalid.args");
+    }
+
+    @TestMetadata("apiVersionLessThanLanguage.args")
+    public void testApiVersionLessThanLanguage() {
+      runTest("compiler/testData/cli/jvm/_apiVersion/apiVersionLessThanLanguage.args");
+    }
+
+    @TestMetadata("apiVersionLessThanLanguageUsingArgfile.args")
+    public void testApiVersionLessThanLanguageUsingArgfile() {
+      runTest("compiler/testData/cli/jvm/_apiVersion/apiVersionLessThanLanguageUsingArgfile.args");
+    }
+
+    @TestMetadata("apiVersionUnsupported.args")
+    public void testApiVersionUnsupported() {
+      runTest("compiler/testData/cli/jvm/_apiVersion/apiVersionUnsupported.args");
+    }
+  }
+
+  @TestMetadata("compiler/testData/cli/jvm/_languageVersion")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class _languageVersion extends AbstractCliTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doJvmTest, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentIn_languageVersion() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/_languageVersion"), Pattern.compile("^(.+)\\.args$"), null, false);
+    }
+
+    @TestMetadata("languageVersion.args")
+    public void testLanguageVersion() {
+      runTest("compiler/testData/cli/jvm/_languageVersion/languageVersion.args");
+    }
+
+    @TestMetadata("languageVersionInvalid.args")
+    public void testLanguageVersionInvalid() {
+      runTest("compiler/testData/cli/jvm/_languageVersion/languageVersionInvalid.args");
+    }
+
+    @TestMetadata("languageVersionUnsupported.args")
+    public void testLanguageVersionUnsupported() {
+      runTest("compiler/testData/cli/jvm/_languageVersion/languageVersionUnsupported.args");
+    }
+  }
+
+  @TestMetadata("compiler/testData/cli/jvm/_jdkHome")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class _jdkHome extends AbstractCliTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doJvmTest, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentIn_jdkHome() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/_jdkHome"), Pattern.compile("^(.+)\\.args$"), null, false);
+    }
+
+    @TestMetadata("warningJdkHomeWithNoJdk.args")
+    public void testWarningJdkHomeWithNoJdk() {
+      runTest("compiler/testData/cli/jvm/_jdkHome/warningJdkHomeWithNoJdk.args");
+    }
+
+    @TestMetadata("wrongJdkHome.args")
+    public void testWrongJdkHome() {
+      runTest("compiler/testData/cli/jvm/_jdkHome/wrongJdkHome.args");
+    }
+  }
+
+  @TestMetadata("compiler/testData/cli/jvm/_jdkRelease")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class _jdkRelease extends AbstractCliTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doJvmTest, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentIn_jdkRelease() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/_jdkRelease"), Pattern.compile("^(.+)\\.args$"), null, false);
+    }
+
+    @TestMetadata("jdkRelease.args")
+    public void testJdkRelease() {
+      runTest("compiler/testData/cli/jvm/_jdkRelease/jdkRelease.args");
+    }
+
+    @TestMetadata("jdkRelease20WithCorruptedClass.args")
+    public void testJdkRelease20WithCorruptedClass() {
+      runTest("compiler/testData/cli/jvm/_jdkRelease/jdkRelease20WithCorruptedClass.args");
+    }
+
+    @TestMetadata("jdkRelease6WithJvmTarget8Jdk11.args")
+    public void testJdkRelease6WithJvmTarget8Jdk11() {
+      runTest("compiler/testData/cli/jvm/_jdkRelease/jdkRelease6WithJvmTarget8Jdk11.args");
+    }
+
+    @TestMetadata("jdkRelease6WithJvmTarget8Jdk8.args")
+    public void testJdkRelease6WithJvmTarget8Jdk8() {
+      runTest("compiler/testData/cli/jvm/_jdkRelease/jdkRelease6WithJvmTarget8Jdk8.args");
+    }
+
+    @TestMetadata("jdkRelease6WithJvmTarget9.args")
+    public void testJdkRelease6WithJvmTarget9() {
+      runTest("compiler/testData/cli/jvm/_jdkRelease/jdkRelease6WithJvmTarget9.args");
+    }
+
+    @TestMetadata("jdkRelease6WithoutExplicitJvmTarget.args")
+    public void testJdkRelease6WithoutExplicitJvmTarget() {
+      runTest("compiler/testData/cli/jvm/_jdkRelease/jdkRelease6WithoutExplicitJvmTarget.args");
+    }
+
+    @TestMetadata("jdkRelease7WithJvmTarget8Jdk11.args")
+    public void testJdkRelease7WithJvmTarget8Jdk11() {
+      runTest("compiler/testData/cli/jvm/_jdkRelease/jdkRelease7WithJvmTarget8Jdk11.args");
+    }
+
+    @TestMetadata("jdkRelease7WithJvmTarget8Jdk8.args")
+    public void testJdkRelease7WithJvmTarget8Jdk8() {
+      runTest("compiler/testData/cli/jvm/_jdkRelease/jdkRelease7WithJvmTarget8Jdk8.args");
+    }
+
+    @TestMetadata("jdkRelease8.args")
+    public void testJdkRelease8() {
+      runTest("compiler/testData/cli/jvm/_jdkRelease/jdkRelease8.args");
+    }
+  }
+
+  @TestMetadata("compiler/testData/cli/jvm/_classPath")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class _classPath extends AbstractCliTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doJvmTest, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentIn_classPath() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/_classPath"), Pattern.compile("^(.+)\\.args$"), null, false);
+    }
+
+    @TestMetadata("invalidClassPath.args")
+    public void testInvalidClassPath() {
+      runTest("compiler/testData/cli/jvm/_classPath/invalidClassPath.args");
+    }
+  }
+
   @TestMetadata("compiler/testData/cli/jvm/sourceFilesAndDirectories")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
@@ -258,56 +632,6 @@ public class CliTestGenerated extends AbstractCliTest {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm"), Pattern.compile("^(.+)\\.args$"), null, false);
     }
 
-    @TestMetadata("apiAndLanguageVersionsUnsupported.args")
-    public void testApiAndLanguageVersionsUnsupported() {
-      runTest("compiler/testData/cli/jvm/apiAndLanguageVersionsUnsupported.args");
-    }
-
-    @TestMetadata("apiVersion.args")
-    public void testApiVersion() {
-      runTest("compiler/testData/cli/jvm/apiVersion.args");
-    }
-
-    @TestMetadata("apiVersionAndSinceNewerKotlin.args")
-    public void testApiVersionAndSinceNewerKotlin() {
-      runTest("compiler/testData/cli/jvm/apiVersionAndSinceNewerKotlin.args");
-    }
-
-    @TestMetadata("apiVersionGreaterThanLanguage.args")
-    public void testApiVersionGreaterThanLanguage() {
-      runTest("compiler/testData/cli/jvm/apiVersionGreaterThanLanguage.args");
-    }
-
-    @TestMetadata("apiVersionGreaterThanLanguageSuppress.args")
-    public void testApiVersionGreaterThanLanguageSuppress() {
-      runTest("compiler/testData/cli/jvm/apiVersionGreaterThanLanguageSuppress.args");
-    }
-
-    @TestMetadata("apiVersionGreaterThanLanguageSuppressUseless.args")
-    public void testApiVersionGreaterThanLanguageSuppressUseless() {
-      runTest("compiler/testData/cli/jvm/apiVersionGreaterThanLanguageSuppressUseless.args");
-    }
-
-    @TestMetadata("apiVersionInvalid.args")
-    public void testApiVersionInvalid() {
-      runTest("compiler/testData/cli/jvm/apiVersionInvalid.args");
-    }
-
-    @TestMetadata("apiVersionLessThanLanguage.args")
-    public void testApiVersionLessThanLanguage() {
-      runTest("compiler/testData/cli/jvm/apiVersionLessThanLanguage.args");
-    }
-
-    @TestMetadata("apiVersionLessThanLanguageUsingArgfile.args")
-    public void testApiVersionLessThanLanguageUsingArgfile() {
-      runTest("compiler/testData/cli/jvm/apiVersionLessThanLanguageUsingArgfile.args");
-    }
-
-    @TestMetadata("apiVersionUnsupported.args")
-    public void testApiVersionUnsupported() {
-      runTest("compiler/testData/cli/jvm/apiVersionUnsupported.args");
-    }
-
     @TestMetadata("argfileWithEmptyArgument.args")
     public void testArgfileWithEmptyArgument() {
       runTest("compiler/testData/cli/jvm/argfileWithEmptyArgument.args");
@@ -326,16 +650,6 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("argumentPassedMultipleTimes.args")
     public void testArgumentPassedMultipleTimes() {
       runTest("compiler/testData/cli/jvm/argumentPassedMultipleTimes.args");
-    }
-
-    @TestMetadata("builderInferenceByDefault.args")
-    public void testBuilderInferenceByDefault() {
-      runTest("compiler/testData/cli/jvm/builderInferenceByDefault.args");
-    }
-
-    @TestMetadata("builderInferenceErrors.args")
-    public void testBuilderInferenceErrors() {
-      runTest("compiler/testData/cli/jvm/builderInferenceErrors.args");
     }
 
     @TestMetadata("classAndFileClassClash.args")
@@ -403,56 +717,6 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/conflictingProjection.args");
     }
 
-    @TestMetadata("contextParameters.args")
-    public void testContextParameters() {
-      runTest("compiler/testData/cli/jvm/contextParameters.args");
-    }
-
-    @TestMetadata("contextReceiversAndParametersAtTheSameTime.args")
-    public void testContextReceiversAndParametersAtTheSameTime() {
-      runTest("compiler/testData/cli/jvm/contextReceiversAndParametersAtTheSameTime.args");
-    }
-
-    @TestMetadata("contextReceiversDeprecated.args")
-    public void testContextReceiversDeprecated() {
-      runTest("compiler/testData/cli/jvm/contextReceiversDeprecated.args");
-    }
-
-    @TestMetadata("coroutinesEnable.args")
-    public void testCoroutinesEnable() {
-      runTest("compiler/testData/cli/jvm/coroutinesEnable.args");
-    }
-
-    @TestMetadata("coroutinesError.args")
-    public void testCoroutinesError() {
-      runTest("compiler/testData/cli/jvm/coroutinesError.args");
-    }
-
-    @TestMetadata("coroutinesErrorAndEnable.args")
-    public void testCoroutinesErrorAndEnable() {
-      runTest("compiler/testData/cli/jvm/coroutinesErrorAndEnable.args");
-    }
-
-    @TestMetadata("coroutinesWarn.args")
-    public void testCoroutinesWarn() {
-      runTest("compiler/testData/cli/jvm/coroutinesWarn.args");
-    }
-
-    @TestMetadata("deprecatedApiVersion.args")
-    public void testDeprecatedApiVersion() {
-      runTest("compiler/testData/cli/jvm/deprecatedApiVersion.args");
-    }
-
-    @TestMetadata("deprecatedLanguageUnsupportedApi.args")
-    public void testDeprecatedLanguageUnsupportedApi() {
-      runTest("compiler/testData/cli/jvm/deprecatedLanguageUnsupportedApi.args");
-    }
-
-    @TestMetadata("deprecatedLanguageVersion.args")
-    public void testDeprecatedLanguageVersion() {
-      runTest("compiler/testData/cli/jvm/deprecatedLanguageVersion.args");
-    }
-
     @TestMetadata("diagnosticsOrder.args")
     public void testDiagnosticsOrder() {
       runTest("compiler/testData/cli/jvm/diagnosticsOrder.args");
@@ -486,16 +750,6 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("emptySourcesWithModuleInfo.args")
     public void testEmptySourcesWithModuleInfo() {
       runTest("compiler/testData/cli/jvm/emptySourcesWithModuleInfo.args");
-    }
-
-    @TestMetadata("enumEntriesForJavaNotEnabled.args")
-    public void testEnumEntriesForJavaNotEnabled() {
-      runTest("compiler/testData/cli/jvm/enumEntriesForJavaNotEnabled.args");
-    }
-
-    @TestMetadata("enumEntriesNotEnabled.args")
-    public void testEnumEntriesNotEnabled() {
-      runTest("compiler/testData/cli/jvm/enumEntriesNotEnabled.args");
     }
 
     @TestMetadata("errorSuppressionNoWarning.args")
@@ -768,16 +1022,6 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/functionReferenceWithDefaultValuesFeatureIsEnabledWithXXNewInference.args");
     }
 
-    @TestMetadata("globalWarningSuppression_correct.args")
-    public void testGlobalWarningSuppression_correct() {
-      runTest("compiler/testData/cli/jvm/globalWarningSuppression_correct.args");
-    }
-
-    @TestMetadata("globalWarningSuppression_incorrect.args")
-    public void testGlobalWarningSuppression_incorrect() {
-      runTest("compiler/testData/cli/jvm/globalWarningSuppression_incorrect.args");
-    }
-
     @TestMetadata("help.args")
     public void testHelp() {
       runTest("compiler/testData/cli/jvm/help.args");
@@ -861,56 +1105,6 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("javacKotlinJavaInterdependency.args")
     public void testJavacKotlinJavaInterdependency() {
       runTest("compiler/testData/cli/jvm/javacKotlinJavaInterdependency.args");
-    }
-
-    @TestMetadata("jdkPathDoesNotExist.args")
-    public void testJdkPathDoesNotExist() {
-      runTest("compiler/testData/cli/jvm/jdkPathDoesNotExist.args");
-    }
-
-    @TestMetadata("jdkRelease.args")
-    public void testJdkRelease() {
-      runTest("compiler/testData/cli/jvm/jdkRelease.args");
-    }
-
-    @TestMetadata("jdkRelease20WithCorruptedClass.args")
-    public void testJdkRelease20WithCorruptedClass() {
-      runTest("compiler/testData/cli/jvm/jdkRelease20WithCorruptedClass.args");
-    }
-
-    @TestMetadata("jdkRelease6WithJvmTarget8Jdk11.args")
-    public void testJdkRelease6WithJvmTarget8Jdk11() {
-      runTest("compiler/testData/cli/jvm/jdkRelease6WithJvmTarget8Jdk11.args");
-    }
-
-    @TestMetadata("jdkRelease6WithJvmTarget8Jdk8.args")
-    public void testJdkRelease6WithJvmTarget8Jdk8() {
-      runTest("compiler/testData/cli/jvm/jdkRelease6WithJvmTarget8Jdk8.args");
-    }
-
-    @TestMetadata("jdkRelease6WithJvmTarget9.args")
-    public void testJdkRelease6WithJvmTarget9() {
-      runTest("compiler/testData/cli/jvm/jdkRelease6WithJvmTarget9.args");
-    }
-
-    @TestMetadata("jdkRelease6WithoutExplicitJvmTarget.args")
-    public void testJdkRelease6WithoutExplicitJvmTarget() {
-      runTest("compiler/testData/cli/jvm/jdkRelease6WithoutExplicitJvmTarget.args");
-    }
-
-    @TestMetadata("jdkRelease7WithJvmTarget8Jdk11.args")
-    public void testJdkRelease7WithJvmTarget8Jdk11() {
-      runTest("compiler/testData/cli/jvm/jdkRelease7WithJvmTarget8Jdk11.args");
-    }
-
-    @TestMetadata("jdkRelease7WithJvmTarget8Jdk8.args")
-    public void testJdkRelease7WithJvmTarget8Jdk8() {
-      runTest("compiler/testData/cli/jvm/jdkRelease7WithJvmTarget8Jdk8.args");
-    }
-
-    @TestMetadata("jdkRelease8.args")
-    public void testJdkRelease8() {
-      runTest("compiler/testData/cli/jvm/jdkRelease8.args");
     }
 
     @TestMetadata("jspecifyByLv16.args")
@@ -1098,21 +1292,6 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/kt51846_backendThreadsValidation3.args");
     }
 
-    @TestMetadata("languageVersion.args")
-    public void testLanguageVersion() {
-      runTest("compiler/testData/cli/jvm/languageVersion.args");
-    }
-
-    @TestMetadata("languageVersionInvalid.args")
-    public void testLanguageVersionInvalid() {
-      runTest("compiler/testData/cli/jvm/languageVersionInvalid.args");
-    }
-
-    @TestMetadata("languageVersionUnsupported.args")
-    public void testLanguageVersionUnsupported() {
-      runTest("compiler/testData/cli/jvm/languageVersionUnsupported.args");
-    }
-
     @TestMetadata("legacySmartCastsAfterTry.args")
     public void testLegacySmartCastsAfterTry() {
       runTest("compiler/testData/cli/jvm/legacySmartCastsAfterTry.args");
@@ -1166,11 +1345,6 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("noStdlibK2.args")
     public void testNoStdlibK2() {
       runTest("compiler/testData/cli/jvm/noStdlibK2.args");
-    }
-
-    @TestMetadata("nonExistingClassPathAndAnnotationsPath.args")
-    public void testNonExistingClassPathAndAnnotationsPath() {
-      runTest("compiler/testData/cli/jvm/nonExistingClassPathAndAnnotationsPath.args");
     }
 
     @TestMetadata("nonExistingPhaseName.args")
@@ -1388,19 +1562,9 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/version.args");
     }
 
-    @TestMetadata("warningJdkWithNoJdk.args")
-    public void testWarningJdkWithNoJdk() {
-      runTest("compiler/testData/cli/jvm/warningJdkWithNoJdk.args");
-    }
-
     @TestMetadata("warningsInDummy.args")
     public void testWarningsInDummy() {
       runTest("compiler/testData/cli/jvm/warningsInDummy.args");
-    }
-
-    @TestMetadata("warningsSuppressionDisablesErrors_Jvm.args")
-    public void testWarningsSuppressionDisablesErrors_Jvm() {
-      runTest("compiler/testData/cli/jvm/warningsSuppressionDisablesErrors_Jvm.args");
     }
 
     @TestMetadata("werror.args")
@@ -1423,16 +1587,6 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/werrorWithStrongWarning.args");
     }
 
-    @TestMetadata("whenGuardsEnable.args")
-    public void testWhenGuardsEnable() {
-      runTest("compiler/testData/cli/jvm/whenGuardsEnable.args");
-    }
-
-    @TestMetadata("whenGuardsError.args")
-    public void testWhenGuardsError() {
-      runTest("compiler/testData/cli/jvm/whenGuardsError.args");
-    }
-
     @TestMetadata("wrongAbiVersion.args")
     public void testWrongAbiVersion() {
       runTest("compiler/testData/cli/jvm/wrongAbiVersion.args");
@@ -1446,11 +1600,6 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("wrongArgument.args")
     public void testWrongArgument() {
       runTest("compiler/testData/cli/jvm/wrongArgument.args");
-    }
-
-    @TestMetadata("wrongJdkPath.args")
-    public void testWrongJdkPath() {
-      runTest("compiler/testData/cli/jvm/wrongJdkPath.args");
     }
 
     @TestMetadata("wrongJvmTargetVersion.args")
