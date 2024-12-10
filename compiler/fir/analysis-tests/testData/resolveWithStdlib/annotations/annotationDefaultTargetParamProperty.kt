@@ -57,3 +57,15 @@ class My(
     <!WRONG_ANNOTATION_TARGET!>@Inapplicable<!>
     val z: Int get() = 0
 }
+
+annotation class Your(
+    @ParamOnly
+    @PropertyOnly
+    <!WRONG_ANNOTATION_TARGET_WARNING!>@FieldOnly<!>
+    @ParamProperty
+    <!WRONG_ANNOTATION_TARGET_WARNING!>@ParamField<!>
+    @PropertyField
+    @ParamPropertyField
+    <!WRONG_ANNOTATION_TARGET!>@Inapplicable<!>
+    val s: String
+)
