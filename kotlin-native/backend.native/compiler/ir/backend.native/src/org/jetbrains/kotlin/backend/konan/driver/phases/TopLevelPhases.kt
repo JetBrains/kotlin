@@ -329,9 +329,12 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
             )
         }
     } else if (context.shouldOptimize()) {
-        val modules = input.files.groupBy { it.konanLibrary!!.uniqueName }
-        modules.asSequence().map { (name, files) ->
-            val containsStdlib = name == context.stdlibModule.konanLibrary!!.uniqueName
+        val dependencies = context.findDependenciesToCompile()
+        // TODO: KonanLibraryResolver.TopologicalLibraryOrder actually returns libraries in the reverse topological order.
+        // TODO: Does the order of files really matter with the new MM? (and with lazy top-levels initialization?)
+        val modules = listOf(input) + dependencies.reversed()
+        modules.asSequence().map { module ->
+            val containsStdlib = module.descriptor.konanLibrary?.uniqueName == context.stdlibModule.konanLibrary!!.uniqueName
             val llvmModuleSpecification = object : LlvmModuleSpecificationBase(config.cachedLibraries) {
                 override val isFinal: Boolean
                     get() = containsStdlib
@@ -339,27 +342,14 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
                 override fun containsLibrary(library: KotlinLibrary): Boolean {
                     if (cachedLibraries.isLibraryCached(library))
                         return false
-                    return name == library.uniqueName
+                    return module.descriptor.konanLibrary?.uniqueName == library.uniqueName
                 }
             }
             val dependenciesTracker = DependenciesTrackerImpl(llvmModuleSpecification, context.config, context)
-            val fragment = IrModuleFragmentImpl(input.descriptor)
-            fragment.files.addAll(files)
-            if (containsStdlib)
-                fragment.files += files.filter { it.isFunctionInterfaceFile }
-
-            if (containsStdlib) {
-                files.filter { isReferencedByNativeRuntime(it.declarations) }
-                        .forEach { dependenciesTracker.add(it) }
-            }
-
-            fragment.files.filterIsInstance<IrFileImpl>().forEach {
-                it.module = fragment
-            }
             BackendJobFragment(
-                    name,
-                    fragment,
-                    context.findDependenciesToCompile().filter { llvmModuleSpecification.containsModule(it) },
+                    module.descriptor.konanLibrary?.uniqueName ?: "",
+                    module,
+                    emptyList(),
                     null,
                     dependenciesTracker,
                     llvmModuleSpecification,
