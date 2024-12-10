@@ -106,7 +106,7 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
             KotlinBuildStatsBeanService.initStatsService(project)
 
             val buildReportOutputs = reportingSettings(project).buildReportOutputs
-            val useClasspathSnapshot = PropertiesProvider(project).useClasspathSnapshot
+            val useClasspathSnapshot = PropertiesProvider(project).useClasspathSnapshot.get()
             val gradle = project.gradle
 
             //Workaround for known issues for Gradle 8+: https://github.com/gradle/gradle/issues/24887:
