@@ -7525,6 +7525,18 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("invoke.kt")
+      public void testInvoke() {
+        runTest("compiler/testData/diagnostics/tests/contextParameters/invoke.kt");
+      }
+
+      @Test
+      @TestMetadata("invokeWithReceiverAgainstContextFunctionTypeContextDisabled.kt")
+      public void testInvokeWithReceiverAgainstContextFunctionTypeContextDisabled() {
+        runTest("compiler/testData/diagnostics/tests/contextParameters/invokeWithReceiverAgainstContextFunctionTypeContextDisabled.kt");
+      }
+
+      @Test
       @TestMetadata("overloadAmbiguity.kt")
       public void testOverloadAmbiguity() {
         runTest("compiler/testData/diagnostics/tests/contextParameters/overloadAmbiguity.kt");

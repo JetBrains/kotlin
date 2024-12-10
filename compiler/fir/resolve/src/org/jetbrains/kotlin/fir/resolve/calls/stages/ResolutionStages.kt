@@ -13,7 +13,11 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInfix
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeUnreportedDuplicateDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.*
@@ -40,7 +44,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.runTransaction
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.DISPATCH_RECEIVER
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.DYNAMIC_EXTENSION_FQ_NAME
@@ -199,9 +202,10 @@ object CheckDispatchReceiver : ResolutionStage() {
 
 object CheckContextArguments : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
-        val contextExpectedTypes = (candidate.symbol as? FirCallableSymbol<*>)?.fir?.contextParameters?.map {
-            candidate.substitutor.substituteOrSelf(it.returnTypeRef.coneType)
-        }?.takeUnless { it.isEmpty() } ?: return
+        val contextExpectedTypes = run {
+            candidate.expectedContextParameterTypesForInvoke
+                ?: candidate.obtainRegularExpectedContextTypesOrNull()
+        }?.map(candidate.substitutor::substituteOrSelf) ?: return
 
         if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters) &&
             !context.session.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)
@@ -210,11 +214,55 @@ object CheckContextArguments : ResolutionStage() {
             return
         }
 
-        candidate.contextArguments = candidate.mapContextArgumentsOrNull(
+        val resultingContextArguments = candidate.mapContextArgumentsOrNull(
             contextExpectedTypes,
             context.bodyResolveContext.towerDataContext,
             sink
         )
+
+        when {
+            candidate.expectedContextParameterTypesForInvoke != null -> {
+                candidate.replaceArgumentPrefixForInvokeWithImplicitlyMappedContextValues(
+                    contextExpectedTypes,
+                    resultingContextArguments,
+                )
+            }
+            else -> {
+                candidate.contextArguments = resultingContextArguments
+            }
+        }
+    }
+
+    private fun Candidate.obtainRegularExpectedContextTypesOrNull(): List<ConeKotlinType>? =
+        (symbol as? FirCallableSymbol<*>)?.fir?.contextParameters?.map { it.returnTypeRef.coneType }
+            ?.takeUnless { it.isEmpty() }
+
+    private fun Candidate.replaceArgumentPrefixForInvokeWithImplicitlyMappedContextValues(
+        contextExpectedTypes: List<ConeKotlinType>,
+        resultingContextArguments: List<ConeResolutionAtom>?,
+    ) {
+        val newArgumentPrefix = mutableListOf<ConeResolutionAtom>()
+        for (index in contextExpectedTypes.indices) {
+            val newValue =
+                resultingContextArguments?.get(index) ?: ConeResolutionAtom.createRawAtom(
+                    buildErrorExpression(
+                        source = callInfo.callSite.source,
+                        // `mapContextArgumentsOrNull` should report a diagnostic to the sink
+                        // if `resultingContextArguments == null`
+                        ConeUnreportedDuplicateDiagnostic(
+                            ConeSimpleDiagnostic(
+                                "Unresolved context argument",
+                                DiagnosticKind.Other
+                            )
+                        )
+                    )
+                )
+
+            newArgumentPrefix.add(newValue)
+        }
+
+        @OptIn(Candidate.UpdatingCandidateInvariants::class)
+        replaceArgumentPrefix(newArgumentPrefix)
     }
 }
 
@@ -531,7 +579,18 @@ internal object MapArguments : ResolutionStage() {
         // and then try to re-initialize it second time inside 'preprocessLambdaArgument' -> 'createResolvedLambdaAtom' for a functional one
         //
         // So the pattern is "lambda at use-site with two different candidates"
-        val arguments = callInfo.arguments.map { ConeResolutionAtom.createRawAtom(it) }
+        val arguments = buildList {
+            candidate.getExpectedContextParameterTypesForInvoke(context, function, sink)?.let { expectedContextTypes ->
+                // Those stubs shall be replaced at CheckContextArguments.replaceArgumentPrefixForInvokeWithImplicitlyMappedContextValues
+                addAll(expectedContextTypes.map {
+                    @OptIn(UnsafeExpressionUtility::class) // It's a temporary atom anyway
+                    ConeResolutionAtom.createRawAtomForPotentiallyUnresolvedExpression(buildExpressionStub())
+                })
+                candidate.expectedContextParameterTypesForInvoke = expectedContextTypes
+            }
+            callInfo.arguments.mapTo(this) { ConeResolutionAtom.createRawAtom(it) }
+        }
+
         val mapping = context.bodyResolveComponents.mapArguments(
             arguments,
             function,
@@ -556,6 +615,51 @@ internal object MapArguments : ResolutionStage() {
                 it
             }
         }
+    }
+
+    /**
+     * Non-trivial values are returned only for `invoke` function obtained from a function type like `context(C..) () -> ...`
+     * and only for the case, when explicit arguments for the context part are missing.
+     *
+     * @return expected context parameter types implicit values for which needs to be resolved and bound later
+     * @return or `null` when further candidate processing should work as usual, i.e., no stub arguments need to be added
+     *         and no extra context value resolution has to be done.
+     */
+    private fun Candidate.getExpectedContextParameterTypesForInvoke(
+        context: ResolutionContext,
+        function: FirFunction,
+        sink: CheckerSink,
+    ): List<ConeKotlinType>? {
+        if (!callInfo.isImplicitInvoke) return null
+        if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) return null
+
+        val dispatchReceiverType = dispatchReceiver?.expression?.resolvedType?.fullyExpandedType(callInfo.session)
+        val contextExpectedTypes = dispatchReceiverType?.contextParameterTypes(context.session)
+        // If it's non-empty => `function` is strictly a [FunctionN.invoke]
+        if (contextExpectedTypes.isNullOrEmpty()) return null
+
+        // If there are too many arguments with appended context values, we assume they _all_ should be passed explicitly
+        // NB: We don't consider default/vararg parameters here, as function types don't have such concepts, which is why
+        // we may just compare the number of arguments and parameters instead of trying to make sure none of them
+        // might be defaulted.
+        if (contextExpectedTypes.size + callInfo.arguments.size > function.valueParameters.size) {
+            // The only exception is ImplicitInvokeMode.ReceiverAsArgument:
+            // if the call-site is an implicit invoke-call with receiver,
+            // and the function type has both, context parameters and a receiver,
+            // then we MUST pass context arguments implicitly.
+            // Otherwise, we would allow calling `f: context(String, Int) Boolean.() -> Unit` with `"".f(1, true)`.
+            //
+            // So, in this case if some of the context values (or all of them) are seemingly passed explicitly,
+            // we report a diagnostic.
+            // See compiler/testData/diagnostics/tests/contextParameters/invoke.fir.kt
+            if (callInfo.implicitInvokeMode == ImplicitInvokeMode.ReceiverAsArgument) {
+                sink.reportDiagnostic(UnsupportedContextualDeclarationCall)
+            }
+
+            return null
+        }
+
+        return contextExpectedTypes
     }
 }
 

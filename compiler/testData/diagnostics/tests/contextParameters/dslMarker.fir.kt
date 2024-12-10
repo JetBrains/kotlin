@@ -37,21 +37,21 @@ val contextFunctionTypeVal: context(DslReceiver) () -> Unit = {}
 fun test() {
     with(DslReceiver()) {
         contextFun()
-        contextFunctionTypeVal<!NO_VALUE_FOR_PARAMETER!>()<!>
+        contextFunctionTypeVal()
 
         with(Other()) {
             <!DSL_SCOPE_VIOLATION!>contextFun<!>()
-            contextFunctionTypeVal<!NO_VALUE_FOR_PARAMETER!>()<!>
+            <!DSL_SCOPE_VIOLATION!>contextFunctionTypeVal<!>()
         }
     }
 
     context(DslReceiver()) {
         contextFun()
-        contextFunctionTypeVal<!NO_VALUE_FOR_PARAMETER!>()<!>
+        contextFunctionTypeVal()
 
         context(Other()) {
             <!DSL_SCOPE_VIOLATION!>contextFun<!>()
-            contextFunctionTypeVal<!NO_VALUE_FOR_PARAMETER!>()<!>
+            <!DSL_SCOPE_VIOLATION!>contextFunctionTypeVal<!>()
         }
     }
 
