@@ -5,12 +5,16 @@
 
 package kotlin.test.junit.tests
 
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Assert
+import org.junit.Rule
 import kotlin.test.*
 import java.util.concurrent.*
 import kotlin.test.junit.JUnitAsserter
 
 class JUnitContributorTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun smokeTest() {
         assertSame(JUnitAsserter, kotlin.test.asserter)
