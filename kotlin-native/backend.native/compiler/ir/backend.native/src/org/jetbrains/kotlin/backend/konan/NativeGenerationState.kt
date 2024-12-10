@@ -105,9 +105,6 @@ internal class NativeGenerationState(
 
     lateinit var objCExport: ObjCExport
 
-    var dceResult: Set<IrSimpleFunction>? = null
-    lateinit var lifetimes: Map<IrElement, Lifetime>
-
     fun hasDebugInfo() = debugInfoDelegate.isInitialized()
 
     private var isDisposed = false

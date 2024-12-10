@@ -11,14 +11,17 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
+import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.file.File
@@ -98,20 +101,20 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
             }
         }
 
-        fun runGlobalOptimizations(fragments: List<Pair<BackendJobFragment, NativeGenerationState>>) {
+        fun runGlobalOptimizations(fragments: List<Pair<BackendJobFragment, NativeGenerationState>>): GlobalOptimizationsResult {
             if (context.config.produce.isHeaderCache) {
-                return
+                return GlobalOptimizationsResult.EMPTY
             }
-            rootPerformanceManager.trackIRLowering {
-                fragments.forEach { (fragment, generationState) ->
+            return rootPerformanceManager.trackIRLowering {
+                fragments.map { (fragment, generationState) ->
                     newEngine(generationState) { generationStateEngine ->
                         generationStateEngine.runGlobalOptimizations(fragment.irModule)
                     }
-                }
+                }.fold(GlobalOptimizationsResult.EMPTY) { lhs, rhs -> lhs + rhs }
             }
         }
 
-        fun runAfterLowerings(fragment: BackendJobFragment, generationState: NativeGenerationState) {
+        fun runAfterLowerings(fragment: BackendJobFragment, generationState: NativeGenerationState, globalOptimizationsResult: GlobalOptimizationsResult) {
             val tempFiles = createTempFiles(config, fragment.cacheDeserializationStrategy)
             val outputFiles = generationState.outputFiles
             if (context.config.produce.isHeaderCache) {
@@ -136,7 +139,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                         )
                     } else null
                     // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
-                    generationStateEngine.compileModule(fragment.irModule, backendContext.irBuiltIns, bitcodeFile, objectFile, cExportFiles)
+                    generationStateEngine.compileModule(fragment.irModule, backendContext.irBuiltIns, bitcodeFile, objectFile, cExportFiles, globalOptimizationsResult)
                     ModuleCompilationOutput(listOf(objectFile), generationState.dependenciesTracker.collectResult())
                 }
                 val depsFilePath = config.writeSerializedDependencies
@@ -155,30 +158,30 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
         if (threadsCount == 1) {
             val fragmentsList = fragments.toList()
             val generationStates = fragmentsList.map { fragment -> createGenerationStateAndRunLowerings(fragment) }
-            runGlobalOptimizations(fragmentsList.zip(generationStates))
+            val globalOptimizationsResult = runGlobalOptimizations(fragmentsList.zip(generationStates))
             fragmentsList.zip(generationStates).forEach { (fragment, generationState) ->
-                runAfterLowerings(fragment, generationState)
+                runAfterLowerings(fragment, generationState, globalOptimizationsResult)
             }
         } else {
             val fragmentsList = fragments.toList()
             if (fragmentsList.size == 1) {
                 val fragment = fragmentsList[0]
                 val generationState = createGenerationStateAndRunLowerings(fragment)
-                runGlobalOptimizations(listOf(fragment to generationState))
-                runAfterLowerings(fragment, generationState)
+                val globalOptimizationsResult = runGlobalOptimizations(listOf(fragment to generationState))
+                runAfterLowerings(fragment, generationState, globalOptimizationsResult)
             } else {
                 // We'd love to run entire pipeline in parallel, but it's difficult (mainly because of the lowerings,
                 // which need cross-file access all the time and it's not easy to overcome this). So, for now,
                 // we split the pipeline into two parts - everything before lowerings (including them)
                 // which is run sequentially, and everything else which is run in parallel.
                 val generationStates = fragmentsList.map { fragment -> createGenerationStateAndRunLowerings(fragment) }
-                runGlobalOptimizations(fragmentsList.zip(generationStates))
+                val globalOptimizationsResult = runGlobalOptimizations(fragmentsList.zip(generationStates))
                 val executor = Executors.newFixedThreadPool(threadsCount)
                 val thrownFromThread = AtomicReference<Throwable?>(null)
                 val tasks = fragmentsList.zip(generationStates).map { (fragment, generationState) ->
                     Callable {
                         try {
-                            runAfterLowerings(fragment, generationState)
+                            runAfterLowerings(fragment, generationState, globalOptimizationsResult)
                         } catch (t: Throwable) {
                             thrownFromThread.set(t)
                         }
@@ -297,9 +300,10 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(
         irBuiltIns: IrBuiltIns,
         bitcodeFile: java.io.File,
         objectFile: java.io.File,
-        cExportFiles: CExportFiles?
+        cExportFiles: CExportFiles?,
+        globalOptimizationsResult: GlobalOptimizationsResult
 ) {
-    runBackendCodegen(module, irBuiltIns, cExportFiles)
+    runBackendCodegen(module, irBuiltIns, cExportFiles, globalOptimizationsResult)
     val checkExternalCalls = context.config.checkStateAtExternalCalls
     if (checkExternalCalls) {
         runPhase(CheckExternalCallsPhase)
@@ -394,8 +398,8 @@ internal fun PhaseEngine<NativeGenerationState>.lowerModuleWithDependencies(modu
     mergeDependencies(module, dependenciesToCompile)
 }
 
-internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns, cExportFiles: CExportFiles?) {
-    runCodegen(module, irBuiltIns)
+internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns, cExportFiles: CExportFiles?, globalOptimizationsResult: GlobalOptimizationsResult) {
+    runCodegen(module, irBuiltIns, globalOptimizationsResult)
     val generatedBitcodeFiles = if (context.config.produceCInterface) {
         require(cExportFiles != null)
         val input = CExportGenerateApiInput(
@@ -424,7 +428,30 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
     runPhase(LinkBitcodeDependenciesPhase, generatedBitcodeFiles)
 }
 
-private fun PhaseEngine<NativeGenerationState>.runGlobalOptimizations(module: IrModuleFragment) {
+internal data class GlobalOptimizationsResult(
+        val dceResult: Set<IrSimpleFunction>?,
+        val lifetimes: Map<IrElement, Lifetime>,
+) {
+    companion object {
+        val EMPTY = GlobalOptimizationsResult(null, emptyMap())
+    }
+
+    operator fun plus(rhs: GlobalOptimizationsResult): GlobalOptimizationsResult {
+        require((this.dceResult == null && rhs.dceResult == null) || (this.dceResult != null && rhs.dceResult != null)) {
+            "DCE result mismatch: left is ${if (this.dceResult == null) "" else "not "}null, right is ${if (rhs.dceResult == null) "" else "not "}null"
+        }
+        val intersectingKeys = this.lifetimes.keys.intersect(rhs.lifetimes.keys)
+        require(intersectingKeys.isEmpty()) {
+            "Lifetimes are conflicting at ${intersectingKeys.map { it.dumpKotlinLike() }}"
+        }
+        return GlobalOptimizationsResult(
+                dceResult = this.dceResult?.let { it + rhs.dceResult!! },
+                lifetimes = this.lifetimes + rhs.lifetimes
+        )
+    }
+}
+
+private fun PhaseEngine<NativeGenerationState>.runGlobalOptimizations(module: IrModuleFragment): GlobalOptimizationsResult {
     val optimize = false // context.shouldOptimize()
     val enablePreCodegenInliner = context.config.preCodegenInlineThreshold != 0U && optimize
     module.files.forEach {
@@ -447,22 +474,23 @@ private fun PhaseEngine<NativeGenerationState>.runGlobalOptimizations(module: Ir
         runPhase(UnboxInlinePhase, it, disable = !optimize)
     }
     runPhase(PreCodegenInlinerPhase, PreCodegenInlinerInput(module, moduleDFG), disable = !enablePreCodegenInliner)
-    context.dceResult = runPhase(DCEPhase, DCEInput(module, moduleDFG), disable = !optimize)
+    val dceResult = runPhase(DCEPhase, DCEInput(module, moduleDFG), disable = !optimize)
     module.files.forEach {
         runPhase(CoroutinesVarSpillingPhase, it)
     }
     runPhase(GHAPhase, module, disable = !optimize)
-    context.lifetimes = runPhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG), disable = !optimize)
+    val lifetimes = runPhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG), disable = !optimize)
+    return GlobalOptimizationsResult(dceResult, lifetimes)
 }
 
 /**
  * Compile lowered [module] to object file.
  * @return absolute path to object file.
  */
-private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns) {
+private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns, globalOptimizationsResult: GlobalOptimizationsResult) {
     runPhase(CreateLLVMDeclarationsPhase, module)
-    runPhase(RTTIPhase, RTTIInput(module, context.dceResult))
-    runPhase(CodegenPhase, CodegenInput(module, irBuiltIns, context.lifetimes))
+    runPhase(RTTIPhase, RTTIInput(module, globalOptimizationsResult.dceResult))
+    runPhase(CodegenPhase, CodegenInput(module, irBuiltIns, globalOptimizationsResult.lifetimes))
 }
 
 private fun PhaseEngine<NativeGenerationState>.findDependenciesToCompile(): List<IrModuleFragment> {
