@@ -6062,7 +6062,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     public class Annotations {
       @Test
       public void testAllFilesPresentInAnnotations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
       }
 
       @Test
