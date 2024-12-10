@@ -198,7 +198,8 @@ dependencies {
     testImplementation(projectTests(":kotlin-build-common"))
     testImplementation(project(":kotlin-compiler-runner"))
     testImplementation(kotlinTest("junit"))
-    testImplementation(libs.junit4)
+    testImplementation(libs.junit.jupiter.api)
+
     testImplementation(project(":kotlin-gradle-statistics"))
     testImplementation(project(":kotlin-tooling-metadata"))
     testImplementation(libs.lincheck)

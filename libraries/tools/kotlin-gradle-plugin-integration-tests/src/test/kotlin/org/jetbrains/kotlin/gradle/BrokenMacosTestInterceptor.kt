@@ -9,7 +9,7 @@ import com.intellij.util.text.SemVer
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.GradleAndroidTest
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.junit.AssumptionViolatedException
+import org.junit.jupiter.api.Assumptions.abort
 import org.junit.jupiter.api.extension.*
 import org.junit.jupiter.api.extension.InvocationInterceptor.Invocation
 import java.lang.reflect.Method
@@ -95,10 +95,7 @@ class BrokenMacosTestInterceptor : InvocationInterceptor {
             invocation.proceed()
         } catch (exception: Throwable) {
             if (System.getProperty(SKIP_BROKEN_INTEGRATION_TESTS_PROPERTY).toBoolean()) {
-                throw AssumptionViolatedException(
-                    "Test is broken and will be skipped",
-                    exception,
-                )
+                abort { "Test is broken and will be skipped: ${exception.message}" }
             } else {
                 throw WarnAboutBrokenTest(
                     "This test is marked \"@${BrokenOnMacosTest::class.simpleName}\" and is known to fail on a macOS host. Please fix the test and remove the annotation.",

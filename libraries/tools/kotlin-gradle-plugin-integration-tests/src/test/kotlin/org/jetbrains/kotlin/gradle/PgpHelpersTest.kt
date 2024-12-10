@@ -216,10 +216,10 @@ class PgpHelpersTest : KGPBaseTest() {
     }
 
     private fun runWithKtorService(
-        addEndpointAction: PipelineInterceptor<Unit, ApplicationCall>,
+        handler: suspend RoutingContext.() -> Unit,
         action: (Int) -> Unit,
     ) {
-        var server: ApplicationEngine? = null
+        var server: EmbeddedServer<CIOApplicationEngine, CIOApplicationEngine.Configuration>? = null
         try {
             server = embeddedServer(CIO, host = "localhost", port = 0)
             {
@@ -227,10 +227,10 @@ class PgpHelpersTest : KGPBaseTest() {
                     get("/isReady") {
                         call.respond(HttpStatusCode.OK)
                     }
-                    post("/pks/add", addEndpointAction)
+                    post("/pks/add", handler)
                 }
             }.start()
-            val port = runBlocking { server.resolvedConnectors().single().port }
+            val port = runBlocking { server.engine.resolvedConnectors().single().port }
             awaitInitialization(port)
             action(port)
         } finally {
