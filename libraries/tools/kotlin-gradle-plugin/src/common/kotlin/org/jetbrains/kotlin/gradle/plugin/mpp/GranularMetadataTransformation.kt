@@ -670,7 +670,7 @@ private val KotlinMultiplatformExtension.platformCompilationSourceSets: Set<Stri
         .map { it.name }
         .toSet()
 
-private val KotlinSourceSet.uklibFragmentPlatformAttributes: Set<String>
+internal val KotlinSourceSet.uklibFragmentPlatformAttributes: Set<String>
     get() = internal.compilations
         .map { it.target }
         .filterNot { it is KotlinMetadataTarget }

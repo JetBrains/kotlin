@@ -416,27 +416,6 @@ class UklibPublicationIT : KGPBaseTest() {
         println(res)
     }
 
-    @GradleTest
-    fun `cycles`(
-        gradleVersion: GradleVersion
-    ) {
-        val res = runTestProject("buildScriptInjectionGroovy", gradleVersion) {
-            buildScriptInjection {
-                project.applyMultiplatform {
-                    linuxArm64()
-                    linuxX64()
-                    val a = sourceSets.create("a")
-                    val b = sourceSets.create("b")
-                    val c = sourceSets.create("c")
-                    a.dependsOn(b)
-                    b.dependsOn(c)
-                    c.dependsOn(a)
-                }
-            }
-            publish(PublisherConfiguration(name = "transitive"))
-        }.result
-        println(res)
-    }
 
     @kotlinx.serialization.Serializable
     data class Fragment(

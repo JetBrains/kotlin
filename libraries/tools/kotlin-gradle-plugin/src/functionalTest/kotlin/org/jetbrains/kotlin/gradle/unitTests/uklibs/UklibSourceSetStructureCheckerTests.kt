@@ -6,27 +6,31 @@
 package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
 import org.jetbrains.kotlin.gradle.artifacts.uklibsPublication.*
-import org.jetbrains.kotlin.util.assertThrows
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.reflect.KProperty
 
-class UklibSourceSetStructureCheckerTests {
+internal class UklibSourceSetStructureCheckerTests {
 
     @Test
     fun `empty graph`() {
-        assertThrows<Exception> { checkFGMap() }
+        assertEquals(
+            setOf(
+                UklibFragmentsChecker.Violation.EmptyRefinementGraph,
+            ),
+            checkFGMap()
+        )
     }
 
     @Test
     fun `empty attributes`() {
         assertEquals(
-            Violations(
-                fragmentsWithEmptyAttributes = setOf(VFragment("a", emptySet()))
+            setOf(
+                UklibFragmentsChecker.Violation.FragmentWithEmptyAttributes(FragmentToCheck("a", emptySet()))
             ),
             checkSourceSetStructure(
                 mapOf(
-                    VFragment("a", emptySet()) to emptySet()
+                    FragmentToCheck("a", emptySet()) to emptySet()
                 )
             )
         )
@@ -36,8 +40,8 @@ class UklibSourceSetStructureCheckerTests {
     fun `missing fragments`() {
         val a by FG
         assertEquals(
-            Violations(
-                missingFragments = setOf("b")
+            setOf(
+                UklibFragmentsChecker.Violation.MissingFragment("b")
             ),
             checkSourceSetStructure(
                 mapOf(
@@ -51,8 +55,8 @@ class UklibSourceSetStructureCheckerTests {
     fun `self cycle`() {
         val a by FG
         assertEquals(
-            Violations(
-                firstEncounteredCycle = listOf(a, a)
+            setOf(
+                UklibFragmentsChecker.Violation.FirstEncounteredCycle(listOf(a, a))
             ),
             checkFGMap(
                 a to setOf(a)
@@ -67,16 +71,17 @@ class UklibSourceSetStructureCheckerTests {
         val b by FG
         val c by FG
         assertEquals(
-            Violations(
-                // FIXME: ??? why is entry not first ???
-                firstEncounteredCycle = listOf(a, b, c, entry, a),
-            ).pp(),
+            setOf(
+                UklibFragmentsChecker.Violation.FirstEncounteredCycle(
+                    listOf(a, b, c, entry, a),
+                )
+            ),
             checkFGMap(
                 entry to setOf(a),
                 a to setOf(b),
                 b to setOf(c),
                 c to setOf(a),
-            ).pp()
+            )
         )
     }
 
@@ -84,14 +89,14 @@ class UklibSourceSetStructureCheckerTests {
     fun `single attribute frament - has no violations`() {
         val a by FG
         assertEquals(
-            Violations(),
+            emptySet(),
             checkFGMap(
                 a to emptySet(),
             )
         )
         val b by FG
         assertEquals(
-            Violations(),
+            emptySet(),
             checkFGMap(
                 a to emptySet(),
                 b to emptySet(),
@@ -103,8 +108,8 @@ class UklibSourceSetStructureCheckerTests {
     fun `orphaned intermediate fragment`() {
         val abc by FG
         assertEquals(
-            Violations(
-                orphanedIntermediateFragments = setOf(abc)
+            setOf(
+                UklibFragmentsChecker.Violation.OrphanedIntermediateFragment(abc),
             ),
             checkFGMap(
                 abc to emptySet()
@@ -112,8 +117,8 @@ class UklibSourceSetStructureCheckerTests {
         )
         val ab by FG
         assertEquals(
-            Violations(
-                orphanedIntermediateFragments = setOf(ab)
+            setOf(
+                UklibFragmentsChecker.Violation.OrphanedIntermediateFragment(ab),
             ),
             checkFGMap(
                 abc to emptySet(),
@@ -124,12 +129,13 @@ class UklibSourceSetStructureCheckerTests {
 
     @Test
     fun `multiple-same fragment`() {
-        val jvm8 = VFragment("jvm-8", setOf("jvm"))
-        val jvm11 = VFragment("jvm-11", setOf("jvm"))
+        val jvm8 = FragmentToCheck("jvm-8", setOf("jvm"))
+        val jvm11 = FragmentToCheck("jvm-11", setOf("jvm"))
         assertEquals(
-            Violations(
-                duplicateAttributesFragments = mapOf(
-                    setOf("jvm") to setOf(jvm8, jvm11)
+            setOf(
+                UklibFragmentsChecker.Violation.DuplicateAttributesFragments(
+                    setOf("jvm"),
+                    setOf(jvm8, jvm11)
                 )
             ),
             checkSourceSetStructure(
@@ -140,14 +146,15 @@ class UklibSourceSetStructureCheckerTests {
             )
         )
 
-        val iosArm64 = VFragment("iosArm64", setOf("iosArm64"))
-        val iosX64 = VFragment("iosX64", setOf("iosX64"))
-        val appleMain = VFragment("appleMain", setOf("iosArm64", "iosX64"))
-        val commonMain = VFragment("commonMain", setOf("iosArm64", "iosX64"))
+        val iosArm64 = FragmentToCheck("iosArm64", setOf("iosArm64"))
+        val iosX64 = FragmentToCheck("iosX64", setOf("iosX64"))
+        val appleMain = FragmentToCheck("appleMain", setOf("iosArm64", "iosX64"))
+        val commonMain = FragmentToCheck("commonMain", setOf("iosArm64", "iosX64"))
         assertEquals(
-            Violations(
-                duplicateAttributesFragments = mapOf(
-                    setOf("iosArm64", "iosX64") to setOf(appleMain, commonMain)
+            setOf(
+                UklibFragmentsChecker.Violation.DuplicateAttributesFragments(
+                    setOf("iosArm64", "iosX64"),
+                    setOf(appleMain, commonMain)
                 )
             ),
             checkSourceSetStructure(
@@ -166,7 +173,7 @@ class UklibSourceSetStructureCheckerTests {
         val android by FG
         val a by FG
         assertEquals(
-            Violations(),
+            emptySet(),
             checkFGMap(
                 android to emptySet(),
                 a to setOf(android),
@@ -182,7 +189,7 @@ class UklibSourceSetStructureCheckerTests {
         val b by FG
         val c by FG
         assertEquals(
-            Violations(),
+            emptySet(),
             checkFGMap(
                 ab to emptySet(),
                 bc to emptySet(),
@@ -193,13 +200,11 @@ class UklibSourceSetStructureCheckerTests {
         )
 
         assertEquals(
-            Violations(
-                underRefinementViolations=setOf(
-                    UnderRefinementViolation(
-                        fragment = b,
-                        underRefinedFragments = setOf(bc),
-                        actuallyRefinedFragments = setOf(ab),
-                    )
+            setOf(
+                UklibFragmentsChecker.Violation.UnderRefinementViolation(
+                    fragment = b,
+                    underRefinedFragments = setOf(bc),
+                    actuallyRefinedFragments = setOf(ab),
                 )
             ),
             checkFGMap(
@@ -221,7 +226,7 @@ class UklibSourceSetStructureCheckerTests {
         val c by FG
 
         assertEquals(
-            Violations(),
+            emptySet(),
             checkFGMap(
                 abc to emptySet(),
                 ab to setOf(abc),
@@ -232,7 +237,7 @@ class UklibSourceSetStructureCheckerTests {
         )
         // Also accept non-reduced version of this graph
         assertEquals(
-            Violations(),
+            emptySet(),
             checkFGMap(
                 abc to emptySet(),
                 ab to setOf(abc),
@@ -243,23 +248,21 @@ class UklibSourceSetStructureCheckerTests {
         )
 
         assertEquals(
-            Violations(
-                underRefinementViolations = setOf(
-                    UnderRefinementViolation(
-                        fragment = ab,
-                        underRefinedFragments = setOf(abc),
-                        actuallyRefinedFragments = emptySet(),
-                    ),
-                    UnderRefinementViolation(
-                        fragment = a,
-                        underRefinedFragments = setOf(abc),
-                        actuallyRefinedFragments = setOf(ab),
-                    ),
-                    UnderRefinementViolation(
-                        fragment = b,
-                        underRefinedFragments = setOf(abc),
-                        actuallyRefinedFragments = setOf(ab),
-                    ),
+            setOf(
+                UklibFragmentsChecker.Violation.UnderRefinementViolation(
+                    fragment = ab,
+                    underRefinedFragments = setOf(abc),
+                    actuallyRefinedFragments = emptySet(),
+                ),
+                UklibFragmentsChecker.Violation.UnderRefinementViolation(
+                    fragment = a,
+                    underRefinedFragments = setOf(abc),
+                    actuallyRefinedFragments = setOf(ab),
+                ),
+                UklibFragmentsChecker.Violation.UnderRefinementViolation(
+                    fragment = b,
+                    underRefinedFragments = setOf(abc),
+                    actuallyRefinedFragments = setOf(ab),
                 )
             ),
             checkFGMap(
@@ -273,7 +276,7 @@ class UklibSourceSetStructureCheckerTests {
     }
 
     @Test
-    fun `isolated components`() {
+    fun `isolated components - are allowed`() {
         val abc by FG
         val a by FG
         val b by FG
@@ -282,7 +285,7 @@ class UklibSourceSetStructureCheckerTests {
         val d by FG
 
         assertEquals(
-            Violations(),
+            emptySet(),
             checkFGMap(
                 abc to emptySet(),
                 a to setOf(abc),
@@ -300,16 +303,14 @@ class UklibSourceSetStructureCheckerTests {
         val d by FG
 
         assertEquals(
-            Violations(
-                incompatibleRefinementViolations = setOf(
-                    RefinesIncompatibleFragmentViolation(
-                        fragment = d,
-                        incompatibleFragments = setOf(abc)
-                    ),
-                    RefinesIncompatibleFragmentViolation(
-                        fragment = e,
-                        incompatibleFragments = setOf(d, abc)
-                    )
+            setOf(
+                UklibFragmentsChecker.Violation.IncompatibleRefinementViolation(
+                    fragment = d,
+                    incompatibleFragments = setOf(abc)
+                ),
+                UklibFragmentsChecker.Violation.IncompatibleRefinementViolation(
+                    fragment = e,
+                    incompatibleFragments = setOf(d, abc)
                 )
             ),
             checkFGMap(
@@ -322,19 +323,15 @@ class UklibSourceSetStructureCheckerTests {
         val ab by FG
         val a by FG
         assertEquals(
-            Violations(
-                underRefinementViolations = setOf(
-                    UnderRefinementViolation(
-                        fragment = ab,
-                        underRefinedFragments = setOf(abc),
-                        actuallyRefinedFragments = emptySet(),
-                    ),
+            setOf(
+                UklibFragmentsChecker.Violation.UnderRefinementViolation(
+                    fragment = ab,
+                    underRefinedFragments = setOf(abc),
+                    actuallyRefinedFragments = emptySet(),
                 ),
-                incompatibleRefinementViolations = setOf(
-                    RefinesIncompatibleFragmentViolation(
-                        fragment = abc,
-                        incompatibleFragments = setOf(ab)
-                    ),
+                UklibFragmentsChecker.Violation.IncompatibleRefinementViolation(
+                    fragment = abc,
+                    incompatibleFragments = setOf(ab),
                 )
             ),
             checkFGMap(
@@ -360,7 +357,7 @@ class UklibSourceSetStructureCheckerTests {
 
         // Whether the graph is reduced or not doesn't matter
         assertEquals(
-            Violations(),
+            emptySet(),
             checkFGMap(
                 abcd to emptySet(),
                 abc to setOf(abcd),
@@ -375,7 +372,7 @@ class UklibSourceSetStructureCheckerTests {
             )
         )
         assertEquals(
-            Violations(),
+            emptySet(),
             checkFGMap(
                 abcd to emptySet(),
                 abc to setOf(abcd),
@@ -391,25 +388,23 @@ class UklibSourceSetStructureCheckerTests {
         )
 
         assertEquals(
-            Violations(
-                underRefinementViolations = setOf(
-                    UnderRefinementViolation(
-                        fragment = bc,
-                        underRefinedFragments = setOf(abc, bcd, abcd),
-                        actuallyRefinedFragments = emptySet(),
-                    ),
-                    UnderRefinementViolation(
-                        fragment = b,
-                        underRefinedFragments = setOf(bcd),
-                        actuallyRefinedFragments = setOf(ab, bc, abc, abcd),
-                    ),
-                    UnderRefinementViolation(
-                        fragment = c,
-                        underRefinedFragments = setOf(abc),
-                        actuallyRefinedFragments = setOf(bc, cd, bcd, abcd),
-                    ),
+            setOf(
+                UklibFragmentsChecker.Violation.UnderRefinementViolation(
+                    fragment = bc,
+                    underRefinedFragments = setOf(abc, bcd, abcd),
+                    actuallyRefinedFragments = emptySet(),
+                ),
+                UklibFragmentsChecker.Violation.UnderRefinementViolation(
+                    fragment = b,
+                    underRefinedFragments = setOf(bcd),
+                    actuallyRefinedFragments = setOf(ab, bc, abc, abcd),
+                ),
+                UklibFragmentsChecker.Violation.UnderRefinementViolation(
+                    fragment = c,
+                    underRefinedFragments = setOf(abc),
+                    actuallyRefinedFragments = setOf(bc, cd, bcd, abcd),
                 )
-            ).pp(),
+            ),
             checkFGMap(
                 abcd to emptySet(),
                 abc to setOf(abcd),
@@ -423,19 +418,23 @@ class UklibSourceSetStructureCheckerTests {
                 b to setOf(ab, bc),
                 c to setOf(bc, cd),
                 d to setOf(cd),
-            ).pp()
+            )
         )
     }
-
-    fun checkFGMap(vararg refinementEdges: Pair<VFragment, Set<VFragment>>): Violations {
-        return checkSourceSetStructure(
+    
+    fun checkFGMap(vararg refinementEdges: Pair<FragmentToCheck, Set<FragmentToCheck>>): Set<UklibFragmentsChecker.Violation> {
+        return UklibFragmentsChecker.checkSourceSetStructure(
             refinementEdges.toMap().mapValues { it.value.map { it.identifier }.toHashSet() }
         )
     }
 
+    fun checkSourceSetStructure(
+        refinementEdges: Map<FragmentToCheck, Set<String>>,
+    ): Set<UklibFragmentsChecker.Violation> = UklibFragmentsChecker.checkSourceSetStructure(refinementEdges)
+
     object FG {
-        operator fun getValue(thisRef: Any?, property: KProperty<*>): VFragment {
-            return VFragment(
+        operator fun getValue(thisRef: Any?, property: KProperty<*>): FragmentToCheck {
+            return FragmentToCheck(
                 // "abc"
                 property.name,
                 // setOf("a", "b", "c")
@@ -444,3 +443,5 @@ class UklibSourceSetStructureCheckerTests {
         }
     }
 }
+
+internal typealias FragmentToCheck = UklibFragmentsChecker.FragmentToCheck
