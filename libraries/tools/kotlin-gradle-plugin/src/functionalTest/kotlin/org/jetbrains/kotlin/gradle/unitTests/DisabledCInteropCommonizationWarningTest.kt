@@ -124,9 +124,11 @@ private fun Project.getWarningMessage(): String? {
     return diagnostics.singleOrNull()?.let {
         buildString {
             appendLine(it.message)
-            it.solution?.let {
+            it.solutions.let {
                 appendLine()
-                appendLine(it)
+                it.filter { it.isNotBlank() }.forEach {
+                    appendLine(it)
+                }
             }
 
             it.documentation?.let {

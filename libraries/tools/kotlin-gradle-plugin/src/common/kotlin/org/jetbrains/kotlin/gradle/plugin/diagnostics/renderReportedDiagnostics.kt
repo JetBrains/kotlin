@@ -61,15 +61,11 @@ private fun ToolingDiagnostic.render(
             appendLine(this@render)
         } else {
             appendLine(message)
-            solution?.let {
-                if (it.isNotBlank()) {
-                    appendLine()
-                    appendLine(it)
-                }
+            solutions.filter { it.isNotBlank() }.forEach {
+                appendLine(it)
             }
             documentation?.let {
-                appendLine()
-                appendLine(it.urlWithHint)
+                appendLine(it.additionalUrlContext)
             }
         }
 

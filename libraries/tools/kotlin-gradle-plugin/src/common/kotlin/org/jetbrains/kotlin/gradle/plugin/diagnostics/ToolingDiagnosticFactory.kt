@@ -54,12 +54,12 @@ internal class ToolingDiagnosticBuilderImp : ToolingDiagnosticBuilder {
 
     val name: String get() = _name ?: error("Name is not provided")
     val message: String get() = _message ?: error("Message is not provided")
-    val solution: String? get() = _solution
+    val solutions: List<String> get() = _solutions.toList()
     val documentation: ToolingDiagnostic.Documentation? get() = _documentation
 
     private var _name: String? = null
     private var _message: String? = null
-    private var _solution: String? = null
+    private var _solutions: MutableList<String> = mutableListOf()
     private var _documentation: ToolingDiagnostic.Documentation? = null
 
     private fun checkSolutionIsSingleLine(text: String) {
@@ -74,8 +74,18 @@ internal class ToolingDiagnosticBuilderImp : ToolingDiagnosticBuilder {
         _message = string()
     }
 
-    fun solution(string: () -> String) {
-        _solution = string()
+    override fun solution(singleString: () -> String) {
+        singleString().takeIf { it.isNotBlank() }?.let {
+            checkSolutionIsSingleLine(it)
+            _solutions.add(it)
+        }
+    }
+
+    override fun solutions(stringList: () -> List<String>) {
+        stringList().filter { it.isNotBlank() }.let { strings ->
+            strings.forEach(::checkSolutionIsSingleLine)
+            _solutions.addAll(strings)
+        }
     }
 
     override fun documentation(url: String, urlBuilder: (String) -> String) {
