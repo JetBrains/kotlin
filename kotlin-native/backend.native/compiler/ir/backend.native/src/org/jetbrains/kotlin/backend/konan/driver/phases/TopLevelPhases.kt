@@ -29,7 +29,9 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.impl.javaFile
+import org.jetbrains.kotlin.library.uniqueName
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -315,6 +317,43 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
                     "",
                     fragment,
                     cacheDeserializationStrategy,
+                    dependenciesTracker,
+                    llvmModuleSpecification,
+                    performanceManager?.createChild(),
+            )
+        }
+    } else if (context.shouldOptimize()) {
+        val modules = input.files.groupBy { it.konanLibrary!!.uniqueName }
+        modules.asSequence().map { (name, files) ->
+            val containsStdlib = name == context.stdlibModule.konanLibrary!!.uniqueName
+            val llvmModuleSpecification = object : LlvmModuleSpecificationBase(config.cachedLibraries) {
+                override val isFinal: Boolean
+                    get() = containsStdlib
+
+                override fun containsLibrary(library: KotlinLibrary): Boolean {
+                    if (cachedLibraries.isLibraryCached(library))
+                        return false
+                    return name == library.uniqueName
+                }
+            }
+            val dependenciesTracker = DependenciesTrackerImpl(llvmModuleSpecification, context.config, context)
+            val fragment = IrModuleFragmentImpl(input.descriptor)
+            fragment.files.addAll(files)
+            if (containsStdlib)
+                fragment.files += files.filter { it.isFunctionInterfaceFile }
+
+            if (containsStdlib) {
+                files.filter { isReferencedByNativeRuntime(it.declarations) }
+                        .forEach { dependenciesTracker.add(it) }
+            }
+
+            fragment.files.filterIsInstance<IrFileImpl>().forEach {
+                it.module = fragment
+            }
+            BackendJobFragment(
+                    name,
+                    fragment,
+                    null,
                     dependenciesTracker,
                     llvmModuleSpecification,
                     performanceManager?.createChild(),
