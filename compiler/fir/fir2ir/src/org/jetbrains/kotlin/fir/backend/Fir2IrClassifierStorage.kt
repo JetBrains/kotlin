@@ -5,41 +5,36 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.backend.generators.addDeclarationToParent
 import org.jetbrains.kotlin.fir.backend.generators.isExternalParent
-import org.jetbrains.kotlin.fir.backend.generators.isFakeOverride
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
 import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
-import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
 import org.jetbrains.kotlin.fir.scopes.staticScopeForBackend
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
-import org.jetbrains.kotlin.ir.util.isEnumClass
-import org.jetbrains.kotlin.ir.util.isObject
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.ir.util.classIdOrFail
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.util.concurrent.ConcurrentHashMap
 
@@ -69,6 +64,7 @@ class Fir2IrClassifierStorage(
     )
 
     private val localClassesCreatedOnTheFly: MutableMap<FirClass, IrClass> = mutableMapOf()
+    private val lazyClassesToInitializeMembers = ArrayDeque<Fir2IrLazyClass>()
 
     /**
      * This function is quite messy and doesn't have a good contract of what exactly is traversed.
@@ -230,40 +226,72 @@ class Fir2IrClassifierStorage(
 
         classCache[firClass] = symbol
         check(irParent.isExternalParent()) { "Source classes should be created separately before referencing" }
+        getIrClassRecursionLevel++
         val irClass = lazyDeclarationsGenerator.createIrLazyClass(firClass, irParent, symbol)
         addDeclarationToParent(irClass, irParent)
-        initializeLazyIrClassDeclarations(classId, irClass)
+
+        lazyClassesToInitializeMembers.add(irClass)
+        if (--getIrClassRecursionLevel == 0) {
+            processMembersOfLazyClasses()
+        }
+
         return irClass
     }
 
+    private var getIrClassRecursionLevel = 0
+
+    private fun processMembersOfLazyClasses() {
+        while (true) {
+            val irClass = lazyClassesToInitializeMembers.removeFirstOrNull() ?: break
+            initializeLazyIrClassDeclarations(irClass)
+        }
+    }
+
     @OptIn(UnsafeDuringIrConstructionAPI::class)
-    private fun initializeLazyIrClassDeclarations(classId: ClassId, irClass: Fir2IrLazyClass) {
-        if (classId.packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME) {
+    private fun initializeLazyIrClassDeclarations(irClass: Fir2IrLazyClass) {
+        val classId = irClass.classIdOrFail
+        if (classId.packageFqName.startsWith(Name.identifier("kotlin"))) {
             irClass.computeAllDeclarations()
         } else {
             val lookupTag = irClass.fir.symbol.toLookupTag()
 
-            val callableNames = when (irClass.kind) {
-                ClassKind.ENUM_CLASS ->
-                    Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES.keys
-                ClassKind.INTERFACE -> {
-                    val functions = irClass.fir.declarations.filterIsInstance<FirSimpleFunction>()
-                    val sam = functions.singleOrNull { it.isAbstract }
-                    setOfNotNull(sam?.name)
-                }
-                else -> emptySet()
+            val functionNames = mutableSetOf<Name>()
+            val propertyNames = mutableSetOf<Name>()
+            if (irClass.kind == ClassKind.ENUM_CLASS || classId == StandardClassIds.Enum) {
+                propertyNames += listOf("name", "ordinal", "entries")
+                    .map { Name.identifier(it) }
+                functionNames += listOf("values", "valueOf")
+                    .map { Name.identifier(it) }
+            }
+            if (irClass.kind == ClassKind.INTERFACE) {
+                /*val callableNames = scope.getCallableNames()
+                val singleCallableName = callableNames.singleOrNull()
+                if (singleCallableName != null) {
+                    val singleCallable = scope.getFunctions(singleCallableName).singleOrNull()
+                    if (singleCallable != null && singleCallable.isAbstract) {
+                        functionNames += singleCallable.name
+                    }
+                }*/
+
+                //val functions = irClass.fir.declarations.filterIsInstance<FirSimpleFunction>()
+                val scope = irClass.fir.unsubstitutedScope(c.session, c.scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null)
+                val functions = scope.collectAllFunctions()
+                val sam = functions.singleOrNull { it.isAbstract }
+                functionNames.addIfNotNull(sam?.name)
             }
 
-            if (callableNames.isNotEmpty()) {
+            if (functionNames.isNotEmpty() || propertyNames.isNotEmpty()) {
                 listOfNotNull(
                     irClass.fir.unsubstitutedScope(c),
                     irClass.fir.staticScopeForBackend(session, scopeSession),
                 ).forEach { scope ->
-                    for (name in callableNames) {
+                    for (name in functionNames) {
                         scope.processFunctionsByName(name) { symbol ->
                             declarationStorage.getIrFunctionSymbol(symbol, lookupTag)
                         }
+                    }
 
+                    for (name in propertyNames) {
                         scope.processPropertiesByName(name) { property ->
                             if (property is FirPropertySymbol) {
                                 declarationStorage.getIrPropertySymbol(property, lookupTag)

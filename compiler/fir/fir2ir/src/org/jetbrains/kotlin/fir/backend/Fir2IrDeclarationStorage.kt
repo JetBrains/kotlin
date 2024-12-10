@@ -20,11 +20,14 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.descriptors.FirBuiltInsPackageFragment
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
+import org.jetbrains.kotlin.fir.lazy.AbstractFir2IrLazyDeclaration
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
+import org.jetbrains.kotlin.fir.resolve.isSubclassOf
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -36,6 +39,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.FILLED_FOR_UNBOUND_SYMBOL
+import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.irFlag
@@ -43,6 +47,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
@@ -53,6 +58,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
@@ -654,13 +660,28 @@ class Fir2IrDeclarationStorage(
         return getIrPropertySymbols(firPropertySymbol, fakeOverrideOwnerLookupTag).propertySymbol
     }
 
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun getIrPropertySymbols(
         firPropertySymbol: FirPropertySymbol,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
     ): PropertySymbols {
         val property = prepareProperty(firPropertySymbol.fir)
         getCachedIrPropertySymbols(property, fakeOverrideOwnerLookupTag)?.let { return it }
-        return createAndCacheIrPropertySymbols(property, fakeOverrideOwnerLookupTag)
+        val symbols = createAndCacheIrPropertySymbols(property, fakeOverrideOwnerLookupTag)
+
+        resolveLazyFakeOverrides(property.symbol, symbols.propertySymbol) { symbol, lookupTag -> getIrPropertySymbol(symbol, lookupTag) }
+        (symbols.propertySymbol as? IrPropertySymbolImpl)?.ownerIfBound()?.let { irProperty ->
+            irProperty.getter?.let { accessor ->
+                @OptIn(UnsafeDuringIrConstructionAPI::class)
+                accessor.overriddenSymbols = irProperty.overriddenSymbols.mapNotNull { it.owner.getter?.symbol }
+            }
+            irProperty.setter?.let { accessor ->
+                @OptIn(UnsafeDuringIrConstructionAPI::class)
+                accessor.overriddenSymbols = irProperty.overriddenSymbols.mapNotNull { it.owner.setter?.symbol }
+            }
+        }
+
+        return symbols
     }
 
     private fun createAndCacheIrPropertySymbols(
@@ -1089,6 +1110,7 @@ class Fir2IrDeclarationStorage(
         }
     }
 
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     fun getIrFunctionSymbol(
         firFunctionSymbol: FirFunctionSymbol<*>,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
@@ -1101,6 +1123,20 @@ class Fir2IrDeclarationStorage(
         }
 
         getCachedIrFunctionSymbol(function, fakeOverrideOwnerLookupTag)?.let { return it }
+
+        val symbol = createIrFunction(function, isLocal, fakeOverrideOwnerLookupTag)
+        cacheIrFunctionSymbol(function, symbol, fakeOverrideOwnerLookupTag)
+
+        resolveLazyFakeOverrides(firFunctionSymbol, symbol, ::getIrFunctionSymbol)
+
+        return symbol
+    }
+
+    private fun createIrFunction(
+        function: FirFunction,
+        isLocal: Boolean,
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
+    ): IrSimpleFunctionSymbol {
         if (function is FirSimpleFunction && !isLocal) {
             val irParent = findIrParent(function, fakeOverrideOwnerLookupTag)
             if (irParent?.isExternalParent() == true) {
@@ -1121,14 +1157,11 @@ class Fir2IrDeclarationStorage(
                 ).also {
                     check(it is Fir2IrLazySimpleFunction)
                 }
-                cacheIrFunctionSymbol(function, symbol, fakeOverrideOwnerLookupTag)
                 return symbol
             }
         }
 
-        val symbol = createMemberFunctionSymbol(function, fakeOverrideOwnerLookupTag, parentIsExternal = false)
-        cacheIrFunctionSymbol(function, symbol, fakeOverrideOwnerLookupTag)
-        return symbol
+        return createMemberFunctionSymbol(function, fakeOverrideOwnerLookupTag, parentIsExternal = false)
     }
 
     private inline fun <reified FC : FirCallableDeclaration, reified IS : IrSymbol> getCachedIrCallableSymbol(
@@ -1403,6 +1436,60 @@ class Fir2IrDeclarationStorage(
             firBasedSymbol,
             callableOrigin
         )
+    }
+
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private inline fun <reified F : FirCallableDeclaration, reified S : FirCallableSymbol<F>> resolveLazyFakeOverrides(
+        firSymbol: S,
+        irSymbol: IrSymbol,
+        getIrSymbol: (S, ConeClassLikeLookupTag?) -> IrSymbol,
+    ) {
+        val realDeclaration = firSymbol.fir.unwrapFakeOverrides()
+        val realIrParent = findIrParent(realDeclaration, null)
+        if (realIrParent is Fir2IrLazyClass) {
+            val bottomLevelLazyClasses = when (irSymbol) {
+                is IrFakeOverrideSymbolBase<*, *, *> -> {
+                    val lookupTag = realDeclaration.containingClassLookupTag() ?: return
+
+                    @OptIn(UnsafeDuringIrConstructionAPI::class)
+                    val containingClass = irSymbol.containingClassSymbol.owner
+                    DFS.topologicalOrder(listOf(containingClass)) { it.superTypes.mapNotNull { it.getClass() as? IrClassImpl } }
+                        .flatMap { it.superTypes.mapNotNull { it.getClass() } }
+                        .filterIsInstance<Fir2IrLazyClass>()
+                        .filter { it.fir.isSubclassOf(lookupTag, session, isStrict = false) }
+                        .map { it.fir.symbol.toLookupTag() }
+                }
+                is IrSymbolBase<*, *> -> {
+                    @Suppress("UNCHECKED_CAST")
+                    val lazyDeclaration = (irSymbol.owner as AbstractFir2IrLazyDeclaration<F>).fir.symbol as S
+                    val thisClass = lazyDeclaration.containingClassLookupTag() ?: return
+
+                    var fakeOverridden = lazyDeclaration
+                    var fakeOverriddenClass: ConeClassLikeLookupTag? = null
+                    while (true) {
+                        fakeOverridden = fakeOverridden.originalIfFakeOverride() ?: break
+                        val upperClass = fakeOverridden.containingClassLookupTag() ?: break
+                        if (upperClass != thisClass) {
+                            fakeOverriddenClass = upperClass
+                            break
+                        }
+                    }
+
+                    listOfNotNull(fakeOverriddenClass)
+                }
+                else -> error(irSymbol)
+            }
+
+            val allOverridden = bottomLevelLazyClasses.map {
+                getIrSymbol(realDeclaration.symbol as S, it)
+            }
+            if (irSymbol is IrSymbolBase<*, *>) {
+                check(irSymbol !in allOverridden) { "irSymbol in allOverridden - $irSymbol" }
+                @Suppress("UNCHECKED_CAST")
+                val irDeclaration = irSymbol.owner as IrOverridableDeclaration<IrSymbol>
+                irDeclaration.overriddenSymbols = allOverridden
+            }
+        }
     }
 
     companion object {

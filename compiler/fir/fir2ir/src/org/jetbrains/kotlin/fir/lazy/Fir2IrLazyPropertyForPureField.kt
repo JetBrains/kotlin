@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class Fir2IrLazyPropertyForPureField(
     private val c: Fir2IrComponents,
-    private val field: Fir2IrLazyField,
+    val field: Fir2IrLazyField,
     override val symbol: IrPropertySymbol,
     parent: IrDeclarationParent
 ) : IrProperty(), Fir2IrComponents by c {
@@ -31,15 +31,7 @@ class Fir2IrLazyPropertyForPureField(
         symbol.bind(this)
     }
 
-    override var overriddenSymbols: List<IrPropertySymbol> by symbolsMappingForLazyClasses.lazyMappedPropertyListVar(lock) lazy@{
-        val containingClass = field.containingClass ?: return@lazy emptyList()
-
-        val baseFieldsWithDispatchReceiverTag =
-            lazyFakeOverrideGenerator.computeFakeOverrideKeys(containingClass, field.fir.symbol)
-        baseFieldsWithDispatchReceiverTag.map { (symbol, dispatchReceiverLookupTag) ->
-            declarationStorage.getIrSymbolForField(symbol, dispatchReceiverLookupTag) as IrPropertySymbol
-        }
-    }
+    override var overriddenSymbols: List<IrPropertySymbol> = emptyList()
 
     override var annotations: List<IrConstructorCall>
         get() = emptyList()

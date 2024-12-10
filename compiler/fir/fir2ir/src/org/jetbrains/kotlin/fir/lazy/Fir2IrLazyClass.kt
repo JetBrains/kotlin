@@ -159,6 +159,8 @@ class Fir2IrLazyClass(
     //@UnsafeDuringIrConstructionAPI
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     fun computeAllDeclarations(): List<IrDeclaration> {
+        computedDeclarationsNeededForSubclasses = true
+
         val result = mutableListOf<IrDeclaration>()
         // NB: it's necessary to take all callables from scope,
         // e.g. to avoid accessing un-enhanced Java declarations with FirJavaTypeRef etc. inside

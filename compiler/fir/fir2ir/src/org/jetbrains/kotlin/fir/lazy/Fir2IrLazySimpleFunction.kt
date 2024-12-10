@@ -27,7 +27,7 @@ class Fir2IrLazySimpleFunction(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val fir: FirSimpleFunction,
-    private val firParent: FirRegularClass?,
+    val firParent: FirRegularClass?,
     symbol: IrSimpleFunctionSymbol,
     parent: IrDeclarationParent,
     isFakeOverride: Boolean
@@ -48,15 +48,7 @@ class Fir2IrLazySimpleFunction(
         fir.symbol.resolvedReturnTypeRef.toIrType(typeConverter)
     }
 
-    override var overriddenSymbols: List<IrSimpleFunctionSymbol> by symbolsMappingForLazyClasses.lazyMappedFunctionListVar(lock) lazy@{
-        if (firParent == null || parent !is Fir2IrLazyClass) return@lazy emptyList()
-
-        val baseFunctionWithDispatchReceiverTag =
-            lazyFakeOverrideGenerator.computeFakeOverrideKeys(firParent, fir.symbol)
-        baseFunctionWithDispatchReceiverTag.map { (symbol, dispatchReceiverLookupTag) ->
-            declarationStorage.getIrFunctionSymbol(symbol, dispatchReceiverLookupTag) as IrSimpleFunctionSymbol
-        }
-    }
+    override var overriddenSymbols: List<IrSimpleFunctionSymbol> = emptyList()
 
     override val initialSignatureFunction: IrFunction? by lazy {
         val originalFunction = fir.initialSignatureAttr ?: return@lazy null

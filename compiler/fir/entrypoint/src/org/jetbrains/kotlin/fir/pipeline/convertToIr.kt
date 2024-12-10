@@ -24,7 +24,12 @@ import org.jetbrains.kotlin.fir.backend.generators.Fir2IrDataClassGeneratedMembe
 import org.jetbrains.kotlin.fir.backend.utils.generatedBuiltinsDeclarationsFileName
 import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyPropertyAccessor
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyPropertyForPureField
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.staticScopeForBackend
@@ -39,6 +44,8 @@ import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.classOrFail
@@ -360,7 +367,7 @@ private class Fir2IrPipeline(
                 }
             }
             if (clazz is IrLazyDeclarationBase) {
-                buildFakeOverridesForLazyClass(clazz as Fir2IrLazyClass, resolver)
+                resolveOverridenSymbolsInLazyClass(clazz as Fir2IrLazyClass, resolver)
             } else {
                 buildFakeOverridesForClass(clazz, false)
             }
@@ -420,72 +427,40 @@ private class Fir2IrPipeline(
         }
     }
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
-    private fun buildFakeOverridesForLazyClass(
+    private fun resolveOverridenSymbolsInLazyClass(
         clazz: Fir2IrLazyClass,
         resolver: SpecialFakeOverrideSymbolsResolver,
     ) {
-        val declarationStorage = clazz.declarationStorage
-        val lookupTag = clazz.fir.symbol.toLookupTag()
-
-        val allFromSuper = clazz.superTypes.flatMap { superType ->
-            superType.classOrFail.owner.declarations
-        }
-
-        val functionNames = mutableSetOf<Name>()
-        val propertyNames = mutableSetOf<Name>()
-        for (decl in allFromSuper) {
-            when (decl) {
-                is IrSimpleFunction -> functionNames.add(decl.name)
-                is IrProperty -> propertyNames.add(decl.name)
-            }
-        }
-
-        listOfNotNull(
-            clazz.fir.unsubstitutedScope(clazz),
-            clazz.fir.staticScopeForBackend(clazz.session, clazz.scopeSession)
-        ).forEach { scope ->
-            for (name in functionNames) {
-                scope.processFunctionsByName(name) { function ->
-                    val declaration = declarationStorage.getIrFunctionSymbol(function, lookupTag).owner as IrSimpleFunction
+        /*
+         * Eventually, we should be able to process lazy classes with the same code.
+         *
+         * Now we can't do this, because overriding by Java function is not supported correctly in IR builder.
+         * In most cases, nothing need to be done for lazy classes. For other cases, it is
+         * caller responsibility to handle them.
+         *
+         * Super-classes already have processed fake overrides at this moment.
+         * Also, all Fir2IrLazyClass super-classes are always platform classes,
+         * so it's valid to process it with empty expect-actual mapping.
+         *
+         * But this is still a hack, and should be removed within KT-64352
+         */
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
+        for (declaration in clazz.declarations) {
+            when (declaration) {
+                is IrSimpleFunction -> {
                     declaration.overriddenSymbols = declaration.overriddenSymbols.map { resolver.getReferencedSimpleFunction(it) }
                 }
-            }
-            for (name in propertyNames) {
-                scope.processPropertiesByName(name) { property ->
-                    if (property is FirPropertySymbol) {
-                        val declaration = declarationStorage.getIrPropertySymbol(property, lookupTag).owner as IrProperty
-                        declaration.overriddenSymbols = declaration.overriddenSymbols.map { resolver.getReferencedProperty(it) }
-                        declaration.getter?.let { getter ->
-                            getter.overriddenSymbols = getter.overriddenSymbols.map { resolver.getReferencedSimpleFunction(it) }
-                        }
-                        declaration.setter?.let { setter ->
-                            setter.overriddenSymbols = setter.overriddenSymbols.map { resolver.getReferencedSimpleFunction(it) }
-                        }
+                is IrProperty -> {
+                    declaration.overriddenSymbols = declaration.overriddenSymbols.map { resolver.getReferencedProperty(it) }
+                    declaration.getter?.let { getter ->
+                        getter.overriddenSymbols = getter.overriddenSymbols.map { resolver.getReferencedSimpleFunction(it) }
+                    }
+                    declaration.setter?.let { setter ->
+                        setter.overriddenSymbols = setter.overriddenSymbols.map { resolver.getReferencedSimpleFunction(it) }
                     }
                 }
             }
         }
-
-        /*for (decl in allFromSuper) {
-            when (decl) {
-                is IrSimpleFunction -> {
-                    decl as Fir2IrLazySimpleFunction
-
-                    scope.processOverriddenFunctionsAndSelf(decl.fir.symbol) { func ->
-                        fakeOverrides += declarationStorage.getIrFunctionSymbol(func, lookupTag).owner as IrSimpleFunction
-                        ProcessorAction.NEXT
-                    }
-                }
-                is IrProperty -> {
-                    decl as Fir2IrLazyProperty
-                    scope.processOverriddenProperties(decl.fir.symbol) { property ->
-                        fakeOverrides += declarationStorage.getIrPropertySymbol(property, lookupTag).owner as IrProperty
-                        ProcessorAction.NEXT
-                    }
-                }
-            }
-        }*/
     }
 
 

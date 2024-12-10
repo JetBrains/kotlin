@@ -36,7 +36,7 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
      *
      * For detailed examples see the documentation to [computeFakeOverrideKeysImpl]
      */
-    internal fun computeFakeOverrideKeys(
+    fun computeFakeOverrideKeys(
         klass: FirClass,
         originalFunction: FirNamedFunctionSymbol,
     ): List<Pair<FirNamedFunctionSymbol, ConeClassLikeLookupTag>> {
@@ -60,7 +60,7 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
      *
      * For detailed examples see the documentation to [computeFakeOverrideKeysImpl]
      */
-    internal fun computeFakeOverrideKeys(
+    fun computeFakeOverrideKeys(
         klass: FirClass,
         originalProperty: FirPropertySymbol,
     ): List<Pair<FirPropertySymbol, ConeClassLikeLookupTag>> {
@@ -83,7 +83,7 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
      *
      * For detailed examples see the documentation to [computeFakeOverrideKeysImpl]
      */
-    internal fun computeFakeOverrideKeys(
+    fun computeFakeOverrideKeys(
         klass: FirClass,
         originalField: FirFieldSymbol,
     ): List<Pair<FirFieldSymbol, ConeClassLikeLookupTag>> {
