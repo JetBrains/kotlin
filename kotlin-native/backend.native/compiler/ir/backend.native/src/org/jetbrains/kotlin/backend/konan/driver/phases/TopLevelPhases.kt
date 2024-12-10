@@ -80,7 +80,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
             val outputFiles = OutputFiles(outputPath, config.target, config.produce)
             val generationState = NativeGenerationState(context.config, backendContext,
                     fragment.cacheDeserializationStrategy, fragment.dependenciesTracker, fragment.llvmModuleSpecification, outputFiles,
-                    llvmModuleName = "out" // TODO: Currently, all llvm modules are named as "out" which might lead to collisions.
+                    llvmModuleName = "out${fragment.name}" // TODO: Currently, all llvm modules are named as "out" which might lead to collisions.
             )
             try {
                 val module = fragment.irModule
@@ -130,7 +130,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 fragment.performanceManager?.notifyIRGenerationStarted()
                 val moduleCompilationOutput = backendEngine.useContext(generationState) { generationStateEngine ->
                     val bitcodeFile = tempFiles.create(generationState.llvmModuleName, ".bc").javaFile()
-                    val objectFile = tempFiles.create(File(outputFiles.nativeBinaryFile).name, ".o").javaFile()
+                    val objectFile = tempFiles.create(generationState.llvmModuleName, ".o").javaFile()
                     val cExportFiles = if (config.produceCInterface) {
                         CExportFiles(
                                 cppAdapter = tempFiles.create("api", ".cpp").javaFile(),
@@ -273,6 +273,7 @@ private fun isReferencedByNativeRuntime(declarations: List<IrDeclaration>): Bool
         }
 
 private data class BackendJobFragment(
+        val name: String,
         val irModule: IrModuleFragment,
         val cacheDeserializationStrategy: CacheDeserializationStrategy?,
         val dependenciesTracker: DependenciesTracker,
@@ -311,6 +312,7 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
                 it.module = fragment
             }
             BackendJobFragment(
+                    "",
                     fragment,
                     cacheDeserializationStrategy,
                     dependenciesTracker,
@@ -327,6 +329,7 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
         }
         sequenceOf(
                 BackendJobFragment(
+                        "",
                         input,
                         context.config.libraryToCache?.strategy,
                         DependenciesTrackerImpl(llvmModuleSpecification, context.config, context),
