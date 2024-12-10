@@ -31,6 +31,6 @@ abstract class AbstractValueRemapper : IrElementTransformerVoid() {
     }
 }
 
-open class ValueRemapper(protected open val map: Map<IrValueSymbol, IrValueSymbol>) : AbstractValueRemapper() {
+open class ValueRemapper(protected open val map: Map<out IrValueSymbol, IrValueSymbol>) : AbstractValueRemapper() {
     override fun remapValue(oldValue: IrValueSymbol): IrValueSymbol? = map[oldValue]
 }
