@@ -145,6 +145,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             val moduleChunk = configuration.configureModuleChunk(arguments, buildFile)
 
             val chunk = moduleChunk.modules
+
+            // Report usage of `-Xbuild-file` with multiple modules in case of rollback to K1 just in case
+            messageCollector.reportUsageOfBuildFileWithMultipleModules(buildFile, moduleChunk)
+
             configuration.configureSourceRoots(chunk, buildFile)
             // should be called after configuring jdk home from build file
             configuration.configureJdkClasspathRoots()
@@ -325,6 +329,14 @@ internal fun ModuleChunk.targetDescription(): String {
     return modules
         .map { input -> input.getModuleName() + "-" + input.getModuleType() }
         .let { names -> names.singleOrNull() ?: names.joinToString() }
+}
+
+internal fun MessageCollector.reportUsageOfBuildFileWithMultipleModules(buildFile: File?, moduleChunk: ModuleChunk) {
+    if (buildFile != null && moduleChunk.modules.size > 1) {
+        // TODO: implement correct reporting instead of just throwing an exception
+        // report(INFO, "Multiple modules used for -Xbuild-file=${buildFile}: ${moduleChunk.modules.joinToString(", ")}")
+        throw Exception("Multiple modules used for -Xbuild-file=${buildFile}: ${moduleChunk.modules.joinToString(", ")}")
+    }
 }
 
 fun main(args: Array<String>) = K2JVMCompiler.main(args)

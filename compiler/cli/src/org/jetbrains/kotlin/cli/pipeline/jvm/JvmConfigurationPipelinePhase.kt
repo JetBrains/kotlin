@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.cli.pipeline.jvm
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
+import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.jvm.*
 import org.jetbrains.kotlin.cli.jvm.compiler.applyModuleProperties
 import org.jetbrains.kotlin.cli.jvm.compiler.configureSourceRoots
@@ -103,6 +105,9 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
         val buildFile = this.buildFile
         val moduleChunk = configureModuleChunk(arguments, buildFile)
         this.moduleChunk = moduleChunk
+
+        messageCollector.reportUsageOfBuildFileWithMultipleModules(buildFile, moduleChunk)
+
         if (moduleChunk.modules.size == 1) {
             applyModuleProperties(moduleChunk.modules.single(), buildFile)
         }
