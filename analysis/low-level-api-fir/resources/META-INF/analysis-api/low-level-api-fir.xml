@@ -44,6 +44,11 @@
     <projectService
         serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsService"
     />
+
+    <applicationService
+        serviceInterface="org.jetbrains.kotlin.analysis.api.platform.resolution.KaResolutionActivityTracker"
+        serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirResolutionActivityTracker"
+    />
   </extensions>
 
   <projectListeners>

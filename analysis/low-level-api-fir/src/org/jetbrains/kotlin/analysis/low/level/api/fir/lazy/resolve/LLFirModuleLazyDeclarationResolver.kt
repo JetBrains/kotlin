@@ -126,14 +126,21 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         var currentPhase = getMinResolvePhase(target).coerceAtLeast(FirResolvePhase.IMPORTS)
         if (currentPhase >= toPhase) return
 
-        while (currentPhase < toPhase) {
-            currentPhase = currentPhase.next
-            checkCanceled()
+        val helper = LLFirResolutionActivityTracker.getInstance()
+        try {
+            helper?.beforeLazyResolve()
 
-            LLFirLazyResolverRunner.runLazyResolverByPhase(
-                phase = currentPhase,
-                target = target,
-            )
+            while (currentPhase < toPhase) {
+                currentPhase = currentPhase.next
+                checkCanceled()
+
+                LLFirLazyResolverRunner.runLazyResolverByPhase(
+                    phase = currentPhase,
+                    target = target,
+                )
+            }
+        } finally {
+            helper?.afterLazyResolve()
         }
     }
 
