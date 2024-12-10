@@ -69,7 +69,7 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
         get() = downloadBaseUrlProvider.orNull
 
     @get:OutputDirectory
-    internal val destinationProvider: RegularFileProperty = project.objects.fileProperty()
+    val destinationProvider: RegularFileProperty = project.objects.fileProperty()
         .fileProvider(env.map { it.dir })
 
     @Deprecated("Use destinationProvider instead. It uses Gradle Provider API.")
