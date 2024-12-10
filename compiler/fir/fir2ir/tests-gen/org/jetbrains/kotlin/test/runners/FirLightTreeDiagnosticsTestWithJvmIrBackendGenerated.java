@@ -943,16 +943,6 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
   }
 
   @Nested
-  @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/scripts")
-  @TestDataPath("$PROJECT_ROOT")
-  public class Scripts {
-    @Test
-    public void testAllFilesPresentInScripts() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/scripts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
-    }
-  }
-
-  @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/typeOf")
   @TestDataPath("$PROJECT_ROOT")
   public class TypeOf {

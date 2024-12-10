@@ -29,11 +29,20 @@ class JvmSymbolsForScripting(
     private val moduleFragment: IrModuleFragment
 ) {
     val irBuiltIns: IrBuiltIns = context.irBuiltIns
-    protected val irFactory: IrFactory = context.irFactory
+    private val irFactory: IrFactory = context.irFactory
 
     private val javaLang: IrPackageFragment = createPackage("java.lang")
     private val kotlinJvm: IrPackageFragment = createPackage("kotlin.jvm")
-    internal val javaLangClass: IrClassSymbol = createClass(javaLang, "Class", ClassKind.CLASS, Modality.FINAL)
+
+    internal val javaLangClass: IrClassSymbol =
+        irFactory.buildClass {
+            name = Name.identifier("Class")
+            kind = ClassKind.CLASS
+            modality = Modality.FINAL
+        }.apply {
+            parent = javaLang
+            createThisReceiverParameter()
+        }.symbol
 
     private val kotlinKClassJava: IrPropertySymbol = irFactory.buildProperty {
         name = Name.identifier("java")
@@ -48,25 +57,9 @@ class JvmSymbolsForScripting(
     val kotlinKClassJavaPropertyGetter: IrSimpleFunction =
         kotlinKClassJava.owner.getter!!
 
-    protected fun createPackage(packageName: String): IrPackageFragment =
+    private fun createPackage(packageName: String): IrPackageFragment =
         createEmptyExternalPackageFragment(
             moduleFragment.descriptor,
             FqName(packageName)
         )
-
-    private fun createClass(
-        irPackage: IrPackageFragment,
-        shortName: String,
-        classKind: ClassKind,
-        classModality: Modality,
-        isValueClass: Boolean = false,
-    ): IrClassSymbol = irFactory.buildClass {
-        name = Name.identifier(shortName)
-        kind = classKind
-        modality = classModality
-        isValue = isValueClass
-    }.apply {
-        parent = irPackage
-        createThisReceiverParameter()
-    }.symbol
 }
