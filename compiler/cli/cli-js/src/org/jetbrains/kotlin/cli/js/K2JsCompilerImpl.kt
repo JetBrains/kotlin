@@ -6,24 +6,19 @@
 package org.jetbrains.kotlin.cli.js
 
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.pipeline.web.js.JsBackendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.js.JsConfigurationUpdater
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
-import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputsBuilt
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsCodeGenerator
@@ -187,33 +182,17 @@ internal class K2JsCompilerImpl(
         targetConfiguration: CompilerConfiguration,
         moduleKind: ModuleKind?
     ): ExitCode {
-
-        val moduleKind = moduleKind ?: return INTERNAL_ERROR
-
-        val beforeIc2Js = System.currentTimeMillis()
-
-        val jsArtifacts = icCaches.artifacts.filterIsInstance<JsModuleArtifact>()
-        val jsExecutableProducer = JsExecutableProducer(
-            mainModuleName = moduleName,
-            moduleKind = moduleKind,
-            sourceMapsInfo = SourceMapsInfo.from(targetConfiguration),
-            caches = jsArtifacts,
-            relativeRequirePath = true
+        JsBackendPipelinePhase.compileIncrementally(
+            icCaches,
+            configuration,
+            moduleKind ?: return INTERNAL_ERROR,
+            moduleName,
+            outputDir,
+            outputName,
+            arguments.granularity,
+            arguments.dtsStrategy
         )
-        val (outputs, rebuiltModules) = jsExecutableProducer.buildExecutable(arguments.granularity, outJsProgram = false)
-        outputs.writeAll(outputDir, outputName, arguments.dtsStrategy, moduleName, moduleKind)
-
         performanceManager?.notifyIRTranslationFinished()
-
-        messageCollector.report(INFO, "Executable production duration (IC): ${System.currentTimeMillis() - beforeIc2Js}ms")
-        for ((event, duration) in jsExecutableProducer.getStopwatchLaps()) {
-            messageCollector.report(INFO, "  $event: ${(duration / 1e6).toInt()}ms")
-        }
-
-        for (module in rebuiltModules) {
-            messageCollector.report(INFO, "IC module builder rebuilt JS for module [${File(module).name}]")
-        }
-
         return OK
     }
 
@@ -223,42 +202,23 @@ internal class K2JsCompilerImpl(
             return OK
         }
 
-        val moduleKind = moduleKind ?: return INTERNAL_ERROR
-
-        if (arguments.irDceDumpReachabilityInfoToFile != null) {
-            messageCollector.report(STRONG_WARNING, "Dumping the reachability info to file is not supported for Kotlin/Js.")
-        }
-        if (arguments.irDceDumpDeclarationIrSizesToFile != null) {
-            messageCollector.report(STRONG_WARNING, "Dumping the size of declarations to file is not supported for Kotlin/Js.")
-        }
+        JsConfigurationUpdater.checkWasmArgumentsUsage(arguments, messageCollector)
 
         configuration.phaseConfig = createPhaseConfig(arguments).also {
             if (arguments.listPhases) it.list(getJsPhases(configuration))
         }
+        val ir2JsTransformer = Ir2JsTransformer(arguments, module, messageCollector, mainCallArguments)
+        val outputs = JsBackendPipelinePhase.compileNonIncrementally(
+            messageCollector,
+            ir2JsTransformer,
+            // moduleKind for JS compilation is always not null (see [JsConfigurationUpdater.fillConfiguration])
+            moduleKind!!,
+            moduleName,
+            outputDir,
+            outputName,
+            arguments.dtsStrategy
+        )
 
-        val start = System.currentTimeMillis()
-
-        try {
-            val ir2JsTransformer = Ir2JsTransformer(arguments, module, messageCollector, mainCallArguments)
-            val outputs = ir2JsTransformer.compileAndTransformIrNew()
-
-            messageCollector.report(INFO, "Executable production duration: ${System.currentTimeMillis() - start}ms")
-
-            outputs.writeAll(outputDir, outputName, arguments.dtsStrategy, moduleName, moduleKind)
-        } catch (e: CompilationException) {
-            messageCollector.report(
-                ERROR,
-                e.stackTraceToString(),
-                CompilerMessageLocation.create(
-                    path = e.path,
-                    line = e.line,
-                    column = e.column,
-                    lineContent = e.content
-                )
-            )
-            return INTERNAL_ERROR
-        }
-
-        return OK
+        return if (outputs != null) OK else INTERNAL_ERROR
     }
 }

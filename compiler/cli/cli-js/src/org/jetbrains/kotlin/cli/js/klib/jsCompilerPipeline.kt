@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsCollectorWithSuppress
 import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirSession
@@ -203,7 +202,7 @@ fun compileModulesToAnalyzedFirWithLightTree(
 fun transformFirToIr(
     moduleStructure: ModulesStructure,
     firOutputs: List<ModuleCompilerAnalyzedOutput>,
-    diagnosticsReporter: PendingDiagnosticsCollectorWithSuppress,
+    diagnosticsReporter: BaseDiagnosticsCollector,
 ): Fir2IrActualizedResult {
     val fir2IrExtensions = Fir2IrExtensions.Default
 

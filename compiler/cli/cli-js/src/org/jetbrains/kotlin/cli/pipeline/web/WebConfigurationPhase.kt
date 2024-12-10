@@ -7,26 +7,39 @@ package org.jetbrains.kotlin.cli.pipeline.web
 
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.cli.common.allowKotlinPackage
+import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.js.*
-import org.jetbrains.kotlin.cli.pipeline.ArgumentsPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.ConfigurationUpdater
+import org.jetbrains.kotlin.cli.pipeline.*
+import org.jetbrains.kotlin.cli.pipeline.web.js.JsConfigurationUpdater
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmConfigurationUpdater
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
+import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringPhasesProvider
 import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.js.config.*
+import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.io.File
+import java.io.IOException
+
+object WebConfigurationPhase : AbstractConfigurationPhase<K2JSCompilerArguments>(
+    name = "JsConfigurationPhase",
+    postActions = setOf(CheckCompilationErrors.CheckMessageCollector),
+    configurationUpdaters = listOf(CommonWebConfigurationUpdater, JsConfigurationUpdater, WasmConfigurationUpdater)
+) {
+    override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {
+        return KlibMetadataVersion(*versionArray)
+    }
+}
 
 /**
  * Contains configuration updating logic shared between JS and WASM CLIs
@@ -39,7 +52,21 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         val (arguments, services, rootDisposable, _, _) = input
         setupPlatformSpecificArgumentsAndServices(configuration, arguments, services)
         initializeCommonConfiguration(configuration, arguments)
-        checkOutputArguments(arguments, configuration.messageCollector)
+        configuration.jsIncrementalCompilationEnabled = incrementalCompilationIsEnabledForJs(arguments)
+
+        val messageCollector = configuration.messageCollector
+        when (val outputName = arguments.moduleName) {
+            null -> messageCollector.report(ERROR, "IR: Specify output name via ${K2JSCompilerArguments::moduleName.cliArgument}", null)
+            else -> configuration.outputName = outputName
+        }
+        when (val outputDir = arguments.outputDir) {
+            null -> messageCollector.report(ERROR, "IR: Specify output dir via ${K2JSCompilerArguments::outputDir.cliArgument}", null)
+            else -> try {
+                configuration.outputDir = File(outputDir).canonicalFile
+            } catch (_: IOException) {
+                messageCollector.report(ERROR, "Could not resolve output directory", location = null)
+            }
+        }
 
         configuration.wasmCompilation = arguments.wasm
         arguments.includes?.let { configuration.includes = it }
@@ -52,13 +79,26 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         val zipAccessor = DisposableZipFileSystemAccessor(64)
         Disposer.register(rootDisposable, zipAccessor)
         configuration.zipFileSystemAccessor = zipAccessor
-
-//        TODO: move to facade
-//        if (arguments.verbose) {
-//            reportCompiledSourcesList(messageCollector, sourcesFiles)
-//        }
-
         configuration.perModuleOutputName = arguments.irPerModuleOutputName
+        configuration.icCacheDirectory = arguments.cacheDirectory
+        configuration.icCacheReadOnly = arguments.icCacheReadonly
+        configuration.preserveIcOrder = arguments.preserveIcOrder
+
+        // setup phase config for the first compilation stage (KLIB compilation)
+        if (arguments.includes == null) {
+            configuration.phaseConfig = createPhaseConfig(arguments).also {
+                if (arguments.listPhases) it.list(JsPreSerializationLoweringPhasesProvider.lowerings(configuration))
+            }
+        }
+
+        if (arguments.includes == null && arguments.irProduceJs) {
+            configuration.messageCollector.report(
+                ERROR,
+                "It is not possible to produce a KLIB ('${K2JSCompilerArguments::includes.cliArgument}' is not passed) "
+                        + "and compile the resulting JavaScript artifact ('${K2JSCompilerArguments::irProduceJs.cliArgument}' is passed) at the same time "
+                        + "with the K2 compiler"
+            )
+        }
     }
 
     /**
@@ -220,15 +260,5 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         configuration.moduleName = moduleName
         configuration.allowKotlinPackage = arguments.allowKotlinPackage
         configuration.renderDiagnosticInternalName = arguments.renderInternalDiagnosticNames
-    }
-
-    private fun checkOutputArguments(arguments: K2JSCompilerArguments, messageCollector: MessageCollector) {
-        if (arguments.outputDir == null) {
-            messageCollector.report(ERROR, "IR: Specify output dir via -ir-output-dir", location = null)
-        }
-
-        if (arguments.moduleName == null) {
-            messageCollector.report(ERROR, "IR: Specify output name via -ir-output-name", location = null)
-        }
     }
 }

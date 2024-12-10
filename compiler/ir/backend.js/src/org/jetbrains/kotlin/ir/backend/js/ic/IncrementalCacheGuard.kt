@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
+import org.jetbrains.kotlin.ir.backend.js.ic.IncrementalCacheGuard.AcquireStatus
 import java.io.File
 
 class IncrementalCacheGuard(cacheDir: String, private val readonly: Boolean) {
@@ -39,5 +40,19 @@ class IncrementalCacheGuard(cacheDir: String, private val readonly: Boolean) {
         if (!readonly) {
             guardFile.delete()
         }
+    }
+}
+
+inline fun <R> IncrementalCacheGuard.acquireAndRelease(block: (AcquireStatus) -> R): R {
+    val status = acquire()
+    return block(status).also {
+        release()
+    }
+}
+
+inline fun <R> IncrementalCacheGuard.tryAcquireAndRelease(block: () -> R): R {
+    tryAcquire()
+    return block().also {
+        release()
     }
 }
