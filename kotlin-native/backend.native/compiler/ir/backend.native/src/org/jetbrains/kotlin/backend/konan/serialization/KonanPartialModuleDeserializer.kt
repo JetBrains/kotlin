@@ -393,7 +393,7 @@ internal class KonanPartialModuleDeserializer(
         linker.fakeOverrideBuilder.provideFakeOverrides()
 
         linker.partialLinkageSupport.enqueueDeclaration(function)
-        linker.partialLinkageSupport.generateStubsAndPatchUsages(linker.symbolTable, function)
+        linker.partialLinkageSupport.generateStubsAndPatchUsages(linker.symbolTable)
 
         linker.checkNoUnboundSymbols(
                 linker.symbolTable,

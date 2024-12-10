@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogger
@@ -63,26 +62,14 @@ internal class PartialLinkageSupportForLinkerImpl(
         classifierExplorer.exploreIrElement(function)
     }
 
-    override fun generateStubsAndPatchUsages(symbolTable: SymbolTable, roots: () -> Sequence<IrModuleFragment>) {
-        generateStubsAndPatchUsagesInternal(symbolTable) { patcher.patchModuleFragments(roots()) }
-    }
-
-    override fun generateStubsAndPatchUsages(symbolTable: SymbolTable, root: IrDeclaration) {
-        generateStubsAndPatchUsagesInternal(symbolTable) { patcher.patchDeclarations(listOf(root)) }
-    }
-
-    override fun collectAllStubbedSymbols(): Set<IrSymbol> {
-        return stubGenerator.allStubbedSymbols
-    }
-
-    private fun generateStubsAndPatchUsagesInternal(symbolTable: SymbolTable, patchIrTree: () -> Unit) {
+    override fun generateStubsAndPatchUsages(symbolTable: SymbolTable) {
         // Generate stubs.
         for (symbol in symbolTable.descriptorExtension.allUnboundSymbols) {
             stubGenerator.getDeclaration(symbol)
         }
 
-        // Patch the IR tree.
-        patchIrTree()
+        // Patch all IR declarations scheduled so far.
+        patcher.patchDeclarations(declarationsEnqueuedForProcessing.getCopyAndClear())
 
         // Patch the stubs which were not patched yet.
         patcher.patchDeclarations(stubGenerator.grabDeclarationsToPatch())
@@ -91,5 +78,9 @@ internal class PartialLinkageSupportForLinkerImpl(
         // If there are, abort the current compilation.
         if (logger.logLevel == PartialLinkageLogLevel.ERROR && patcher.linkageIssuesLogged > 0)
             PartialLinkageErrorsLogged.raiseIssue(logger.messageCollector)
+    }
+
+    override fun collectAllStubbedSymbols(): Set<IrSymbol> {
+        return stubGenerator.allStubbedSymbols
     }
 }

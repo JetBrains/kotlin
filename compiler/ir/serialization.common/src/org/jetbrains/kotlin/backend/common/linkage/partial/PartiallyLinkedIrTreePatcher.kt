@@ -48,13 +48,11 @@ internal class PartiallyLinkedIrTreePatcher(
     logger: PartialLinkageLogger
 ) {
     // Avoid revisiting roots that already have been visited.
-    private val visitedModuleFragments = hashSetOf<IrModuleFragment>()
     private val visitedDeclarations = hashSetOf<IrDeclaration>()
 
     private val stdlibModule by lazy { PLModule.determineModuleFor(builtIns.anyClass.owner) }
 
     private val PLModule.shouldBeSkipped: Boolean get() = this == PLModule.SyntheticBuiltInFunctions || this == stdlibModule
-    private val IrModuleFragment.shouldBeSkipped: Boolean get() = files.isEmpty() || name.asString() == stdlibModule.name
 
     // Used only to generate IR expressions that throw linkage errors.
     private val supportForLowerings by lazy { PartialLinkageSupportForLoweringsImpl(builtIns, logger) }
@@ -62,17 +60,6 @@ internal class PartiallyLinkedIrTreePatcher(
     val linkageIssuesLogged get() = supportForLowerings.linkageIssuesLogged
 
     fun shouldBeSkipped(declaration: IrDeclaration): Boolean = PLModule.determineModuleFor(declaration).shouldBeSkipped
-
-    fun patchModuleFragments(roots: Sequence<IrModuleFragment>) {
-        roots.forEach { root ->
-            // Optimization: Don't patch stdlib and already visited fragments.
-            if (!root.shouldBeSkipped && visitedModuleFragments.add(root)) {
-                root.transformVoid(DeclarationTransformer(startingFile = null))
-                root.transformVoid(ExpressionTransformer(startingFile = null))
-                root.transformVoid(NonLocalReturnsPatcher(startingFile = null))
-            }
-        }
-    }
 
     fun patchDeclarations(roots: Collection<IrDeclaration>) {
         roots.forEach { root ->

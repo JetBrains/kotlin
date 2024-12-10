@@ -283,9 +283,7 @@ abstract class KotlinIrLinker(
             fixCallableReferences()
 
             // Finally, generate stubs for the remaining unbound symbols and patch every usage of any unbound symbol inside the IR tree.
-            partialLinkageSupport.generateStubsAndPatchUsages(symbolTable) {
-                deserializersForModules.values.asSequence().map { it.moduleFragment }
-            }
+            partialLinkageSupport.generateStubsAndPatchUsages(symbolTable)
         }
         // TODO: fix IrPluginContext to make it not produce additional external reference
         // symbolTable.noUnboundLeft("unbound after fake overrides:")

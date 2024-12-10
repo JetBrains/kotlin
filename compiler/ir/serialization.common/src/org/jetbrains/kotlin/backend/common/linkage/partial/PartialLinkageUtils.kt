@@ -104,3 +104,11 @@ internal abstract class FileAwareIrElementTransformerVoid(startingFile: PLFile?)
         super.visitFile(declaration)
     }
 }
+
+internal fun <T> MutableCollection<T>.getCopyAndClear(): Collection<T> {
+    if (isEmpty()) return emptyList()
+
+    val result = ArrayList(this)
+    this.clear()
+    return result
+}

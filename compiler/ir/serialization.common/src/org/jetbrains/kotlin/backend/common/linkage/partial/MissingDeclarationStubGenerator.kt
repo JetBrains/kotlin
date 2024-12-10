@@ -36,16 +36,14 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
         createEmptyExternalPackageFragment(ErrorUtils.errorModule, FqName.ROOT)
     }
 
-    private var declarationsToPatch = arrayListOf<IrDeclaration>()
+    private val declarationsToPatch = arrayListOf<IrDeclaration>()
 
     private val stubbedSymbols = hashSetOf<IrSymbol>()
 
     val allStubbedSymbols: Set<IrSymbol> get() = stubbedSymbols
 
     fun grabDeclarationsToPatch(): Collection<IrDeclaration> {
-        val result = declarationsToPatch
-        declarationsToPatch = arrayListOf()
-        return result
+        return declarationsToPatch.getCopyAndClear()
     }
 
     fun getDeclaration(symbol: IrSymbol): IrDeclaration {
