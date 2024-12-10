@@ -132,7 +132,7 @@ class ClassicFrontend2NativeIrConverter(
         val usedLibrariesForManifest = emptyList<KotlinLibrary>()
 
         @OptIn(ObsoleteDescriptorBasedAPI::class)
-        return IrBackendInput.NativeBackendInput(
+        return IrBackendInput.NativeAfterFrontendBackendInput(
             moduleFragment,
             pluginContext,
             diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector),

@@ -1,6 +1,7 @@
 // WITH_STDLIB
 // LANGUAGE: -UseBuilderInferenceOnlyIfNeeded
 // IGNORE_BACKEND_K2: ANY
+// IGNORE_IR_DESERIALIZATION_TEST: NATIVE
 // FIR status: K2 is not intended to handle properly disabling the feature introduced at 1.6
 
 import kotlin.experimental.ExperimentalTypeInference

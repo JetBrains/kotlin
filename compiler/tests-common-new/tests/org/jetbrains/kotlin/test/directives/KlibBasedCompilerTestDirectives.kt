@@ -65,4 +65,8 @@ object KlibBasedCompilerTestDirectives : SimpleDirectivesContainer() {
         Skips ${SerializedIrDumpHandler::class}, when running a test against the deserialized IR
         """
     )
+
+    val IGNORE_IR_DESERIALIZATION_TEST by enumDirective<TargetBackend>(
+        description = "Ignore failures on IR mismatch before Klib serialization vs after Klib deserialization",
+    )
 }

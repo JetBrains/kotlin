@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.CommonKLibResolver
+import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
@@ -132,15 +133,6 @@ fun generateKLib(
         wasmTarget,
     )
 }
-
-data class IrModuleInfo(
-    val module: IrModuleFragment,
-    val allDependencies: List<IrModuleFragment>,
-    val bultins: IrBuiltIns,
-    val symbolTable: SymbolTable,
-    val deserializer: JsIrLinker,
-    val moduleFragmentToUniqueName: Map<IrModuleFragment, String>,
-)
 
 fun sortDependencies(moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>>): Collection<KotlinLibrary> {
     return DFS.topologicalOrder(moduleDependencies.keys) { m ->

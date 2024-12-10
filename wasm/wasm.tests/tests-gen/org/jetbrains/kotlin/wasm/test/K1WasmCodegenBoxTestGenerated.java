@@ -30224,12 +30224,6 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
     }
 
     @Test
-    @TestMetadata("kt752.kt")
-    public void testKt752() {
-      runTest("compiler/testData/codegen/box/primitiveTypes/kt752.kt");
-    }
-
-    @Test
     @TestMetadata("kt753.kt")
     public void testKt753() {
       runTest("compiler/testData/codegen/box/primitiveTypes/kt753.kt");
@@ -38847,12 +38841,6 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
     @TestMetadata("kt1572.kt")
     public void testKt1572() {
       runTest("compiler/testData/codegen/box/safeCall/kt1572.kt");
-    }
-
-    @Test
-    @TestMetadata("kt232.kt")
-    public void testKt232() {
-      runTest("compiler/testData/codegen/box/safeCall/kt232.kt");
     }
 
     @Test
