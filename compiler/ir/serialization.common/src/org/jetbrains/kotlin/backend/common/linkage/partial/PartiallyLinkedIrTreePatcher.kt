@@ -47,9 +47,6 @@ internal class PartiallyLinkedIrTreePatcher(
     private val stubGenerator: MissingDeclarationStubGenerator,
     logger: PartialLinkageLogger
 ) {
-    // Avoid revisiting roots that already have been visited.
-    private val visitedDeclarations = hashSetOf<IrDeclaration>()
-
     private val stdlibModule by lazy { PLModule.determineModuleFor(builtIns.anyClass.owner) }
 
     private val PLModule.shouldBeSkipped: Boolean get() = this == PLModule.SyntheticBuiltInFunctions || this == stdlibModule
@@ -64,8 +61,8 @@ internal class PartiallyLinkedIrTreePatcher(
     fun patchDeclarations(roots: Collection<IrDeclaration>) {
         roots.forEach { root ->
             val startingFile = PLFile.determineFileFor(root)
-            // Optimization: Don't patch already visited declarations and declarations from stdlib/built-ins.
-            if (!startingFile.module.shouldBeSkipped && visitedDeclarations.add(root)) {
+            // Optimization: Don't patch declarations from stdlib/built-ins.
+            if (!startingFile.module.shouldBeSkipped) {
                 root.transformVoid(DeclarationTransformer(startingFile))
                 root.transformVoid(ExpressionTransformer(startingFile))
                 root.transformVoid(NonLocalReturnsPatcher(startingFile))
