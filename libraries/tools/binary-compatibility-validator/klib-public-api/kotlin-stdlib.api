@@ -885,6 +885,16 @@ abstract interface kotlin.text/MatchResult { // kotlin.text/MatchResult|null[0]
     }
 }
 
+abstract interface kotlin.time/Clock { // kotlin.time/Clock|null[0]
+    abstract fun now(): kotlin.time/Instant // kotlin.time/Clock.now|now(){}[0]
+
+    final object Companion // kotlin.time/Clock.Companion|null[0]
+
+    final object System : kotlin.time/Clock { // kotlin.time/Clock.System|null[0]
+        final fun now(): kotlin.time/Instant // kotlin.time/Clock.System.now|now(){}[0]
+    }
+}
+
 abstract interface kotlin.time/ComparableTimeMark : kotlin.time/TimeMark, kotlin/Comparable<kotlin.time/ComparableTimeMark> { // kotlin.time/ComparableTimeMark|null[0]
     abstract fun equals(kotlin/Any?): kotlin/Boolean // kotlin.time/ComparableTimeMark.equals|equals(kotlin.Any?){}[0]
     abstract fun hashCode(): kotlin/Int // kotlin.time/ComparableTimeMark.hashCode|hashCode(){}[0]
@@ -1991,6 +2001,35 @@ final class kotlin.text/StringBuilder : kotlin.text/Appendable, kotlin/CharSeque
 
     // Targets: [js]
     final fun clear(): kotlin.text/StringBuilder // kotlin.text/StringBuilder.clear|clear(){}[0]
+}
+
+final class kotlin.time/Instant : kotlin.io/Serializable, kotlin/Comparable<kotlin.time/Instant> { // kotlin.time/Instant|null[0]
+    final val epochSeconds // kotlin.time/Instant.epochSeconds|{}epochSeconds[0]
+        final fun <get-epochSeconds>(): kotlin/Long // kotlin.time/Instant.epochSeconds.<get-epochSeconds>|<get-epochSeconds>(){}[0]
+    final val nanosecondsOfSecond // kotlin.time/Instant.nanosecondsOfSecond|{}nanosecondsOfSecond[0]
+        final fun <get-nanosecondsOfSecond>(): kotlin/Int // kotlin.time/Instant.nanosecondsOfSecond.<get-nanosecondsOfSecond>|<get-nanosecondsOfSecond>(){}[0]
+
+    final fun compareTo(kotlin.time/Instant): kotlin/Int // kotlin.time/Instant.compareTo|compareTo(kotlin.time.Instant){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // kotlin.time/Instant.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // kotlin.time/Instant.hashCode|hashCode(){}[0]
+    final fun minus(kotlin.time/Duration): kotlin.time/Instant // kotlin.time/Instant.minus|minus(kotlin.time.Duration){}[0]
+    final fun minus(kotlin.time/Instant): kotlin.time/Duration // kotlin.time/Instant.minus|minus(kotlin.time.Instant){}[0]
+    final fun plus(kotlin.time/Duration): kotlin.time/Instant // kotlin.time/Instant.plus|plus(kotlin.time.Duration){}[0]
+    final fun toEpochMilliseconds(): kotlin/Long // kotlin.time/Instant.toEpochMilliseconds|toEpochMilliseconds(){}[0]
+    final fun toString(): kotlin/String // kotlin.time/Instant.toString|toString(){}[0]
+
+    final object Companion { // kotlin.time/Instant.Companion|null[0]
+        final val DISTANT_FUTURE // kotlin.time/Instant.Companion.DISTANT_FUTURE|{}DISTANT_FUTURE[0]
+            final fun <get-DISTANT_FUTURE>(): kotlin.time/Instant // kotlin.time/Instant.Companion.DISTANT_FUTURE.<get-DISTANT_FUTURE>|<get-DISTANT_FUTURE>(){}[0]
+        final val DISTANT_PAST // kotlin.time/Instant.Companion.DISTANT_PAST|{}DISTANT_PAST[0]
+            final fun <get-DISTANT_PAST>(): kotlin.time/Instant // kotlin.time/Instant.Companion.DISTANT_PAST.<get-DISTANT_PAST>|<get-DISTANT_PAST>(){}[0]
+
+        final fun fromEpochMilliseconds(kotlin/Long): kotlin.time/Instant // kotlin.time/Instant.Companion.fromEpochMilliseconds|fromEpochMilliseconds(kotlin.Long){}[0]
+        final fun fromEpochSeconds(kotlin/Long, kotlin/Int): kotlin.time/Instant // kotlin.time/Instant.Companion.fromEpochSeconds|fromEpochSeconds(kotlin.Long;kotlin.Int){}[0]
+        final fun fromEpochSeconds(kotlin/Long, kotlin/Long = ...): kotlin.time/Instant // kotlin.time/Instant.Companion.fromEpochSeconds|fromEpochSeconds(kotlin.Long;kotlin.Long){}[0]
+        final fun now(): kotlin.time/Instant // kotlin.time/Instant.Companion.now|now(){}[0]
+        final fun parse(kotlin/CharSequence): kotlin.time/Instant // kotlin.time/Instant.Companion.parse|parse(kotlin.CharSequence){}[0]
+    }
 }
 
 final class kotlin.time/TestTimeSource : kotlin.time/AbstractLongTimeSource { // kotlin.time/TestTimeSource|null[0]
@@ -4830,6 +4869,10 @@ final val kotlin.text/indices // kotlin.text/indices|@kotlin.CharSequence{}indic
     final fun (kotlin/CharSequence).<get-indices>(): kotlin.ranges/IntRange // kotlin.text/indices.<get-indices>|<get-indices>@kotlin.CharSequence(){}[0]
 final val kotlin.text/lastIndex // kotlin.text/lastIndex|@kotlin.CharSequence{}lastIndex[0]
     final fun (kotlin/CharSequence).<get-lastIndex>(): kotlin/Int // kotlin.text/lastIndex.<get-lastIndex>|<get-lastIndex>@kotlin.CharSequence(){}[0]
+final val kotlin.time/isDistantFuture // kotlin.time/isDistantFuture|@kotlin.time.Instant{}isDistantFuture[0]
+    final inline fun (kotlin.time/Instant).<get-isDistantFuture>(): kotlin/Boolean // kotlin.time/isDistantFuture.<get-isDistantFuture>|<get-isDistantFuture>@kotlin.time.Instant(){}[0]
+final val kotlin.time/isDistantPast // kotlin.time/isDistantPast|@kotlin.time.Instant{}isDistantPast[0]
+    final inline fun (kotlin.time/Instant).<get-isDistantPast>(): kotlin/Boolean // kotlin.time/isDistantPast.<get-isDistantPast>|<get-isDistantPast>@kotlin.time.Instant(){}[0]
 final val kotlin/code // kotlin/code|@kotlin.Char{}code[0]
     final inline fun (kotlin/Char).<get-code>(): kotlin/Int // kotlin/code.<get-code>|<get-code>@kotlin.Char(){}[0]
 final val kotlin/isInitialized // kotlin/isInitialized|@kotlin.reflect.KProperty0<*>{}isInitialized[0]
@@ -14637,10 +14680,16 @@ final val kotlin.js/undefined // kotlin.js/undefined|{}undefined[0]
 final fun (dynamic).kotlin.js/iterator(): kotlin.collections/Iterator<dynamic> // kotlin.js/iterator|iterator@<dynamic>(){}[0]
 
 // Targets: [js]
+final fun (kotlin.js/Date).kotlin.time/toKotlinInstant(): kotlin.time/Instant // kotlin.time/toKotlinInstant|toKotlinInstant@kotlin.js.Date(){}[0]
+
+// Targets: [js]
 final fun (kotlin.js/Json).kotlin.js/add(kotlin.js/Json): kotlin.js/Json // kotlin.js/add|add@kotlin.js.Json(kotlin.js.Json){}[0]
 
 // Targets: [js]
 final fun (kotlin.js/RegExp).kotlin.js/reset() // kotlin.js/reset|reset@kotlin.js.RegExp(){}[0]
+
+// Targets: [js]
+final fun (kotlin.time/Instant).kotlin.time/toJSDate(): kotlin.js/Date // kotlin.time/toJSDate|toJSDate@kotlin.time.Instant(){}[0]
 
 // Targets: [js]
 final fun (kotlin/BooleanArray).kotlin.collections/elementAt(kotlin/Int): kotlin/Boolean // kotlin.collections/elementAt|elementAt@kotlin.BooleanArray(kotlin.Int){}[0]

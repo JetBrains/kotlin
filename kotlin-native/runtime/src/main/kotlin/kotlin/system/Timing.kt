@@ -22,7 +22,7 @@ import kotlin.time.*
  */
 @Deprecated("Use measureTime() or TimeSource.Monotonic.markNow() instead.")
 @DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
-@GCUnsafeCall("Kotlin_system_getTimeMillis")
+@GCUnsafeCall("Kotlin_system_getSteadyTimeMillis")
 public external fun getTimeMillis() : Long
 
 /**
@@ -39,7 +39,7 @@ public external fun getTimeMillis() : Long
  */
 @Deprecated("Use measureTime() or TimeSource.Monotonic.markNow() instead.")
 @DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
-@GCUnsafeCall("Kotlin_system_getTimeNanos")
+@GCUnsafeCall("Kotlin_system_getSteadyTimeNanos")
 public external fun getTimeNanos() : Long
 
 /**
@@ -56,7 +56,7 @@ public external fun getTimeNanos() : Long
  */
 @Deprecated("Use measureTime() or TimeSource.Monotonic.markNow() instead.")
 @DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1")
-@GCUnsafeCall("Kotlin_system_getTimeMicros")
+@GCUnsafeCall("Kotlin_system_getSteadyTimeMicros")
 public external fun getTimeMicros() : Long
 
 /**

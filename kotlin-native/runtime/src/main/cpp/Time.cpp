@@ -20,16 +20,20 @@
 
 extern "C" {
 
-KLong Kotlin_system_getTimeMillis() {
+KLong Kotlin_system_getSteadyTimeMillis() {
   return konan::getTimeMillis();
 }
 
-KLong Kotlin_system_getTimeNanos() {
+KLong Kotlin_system_getSteadyTimeNanos() {
   return konan::getTimeNanos();
 }
 
-KLong Kotlin_system_getTimeMicros() {
+KLong Kotlin_system_getSteadyTimeMicros() {
   return konan::getTimeMicros();
+}
+
+KLong Kotlin_system_getSystemTimeNanos() {
+  return konan::getSystemTimeNanos();
 }
 
 }  // extern "C"

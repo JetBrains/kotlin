@@ -45,6 +45,7 @@ uintptr_t currentThreadId();
 uint64_t getTimeMillis();
 uint64_t getTimeMicros();
 uint64_t getTimeNanos();
+uint64_t getSystemTimeNanos();
 
 // Endianness
 bool isLittleEndian();
