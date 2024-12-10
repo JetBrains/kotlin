@@ -203,10 +203,10 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
         getCoroutineIntrinsic("startCoroutineUninterceptedOrReturnGeneratorVersion").toHashSet()
 
     val startCoroutineUninterceptedOrReturnGeneratorVersion1 by lazy(LazyThreadSafetyMode.NONE) {
-        startCoroutineUninterceptedOrReturnGeneratorVersion.single { it.owner.valueParameters.size == 1 }
+        startCoroutineUninterceptedOrReturnGeneratorVersion.single { it.owner.hasShape(extensionReceiver = true, regularParameters = 1) }
     }
     val startCoroutineUninterceptedOrReturnGeneratorVersion2 by lazy(LazyThreadSafetyMode.NONE) {
-        startCoroutineUninterceptedOrReturnGeneratorVersion.single { it.owner.valueParameters.size == 2 }
+        startCoroutineUninterceptedOrReturnGeneratorVersion.single { it.owner.hasShape(extensionReceiver = true, regularParameters = 2) }
     }
 
     val suspendOrReturnFunctionSymbol: IrSimpleFunctionSymbol = getCoroutineIntrinsic("suspendOrReturn").single()
