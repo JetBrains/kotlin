@@ -527,9 +527,7 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
     } else {
         emptyList()
     }
-    if (!context.shouldOptimize() || context.llvmModuleSpecification.isFinal) {
-        runPhase(CStubsPhase)
-    }
+    runPhase(CStubsPhase)
     // TODO: Consider extracting llvmModule and friends from nativeGenerationState and pass them explicitly.
     //  Motivation: possibility to run LTO on bitcode level after separate IR compilation.
     val llvmModule = context.llvm.module
