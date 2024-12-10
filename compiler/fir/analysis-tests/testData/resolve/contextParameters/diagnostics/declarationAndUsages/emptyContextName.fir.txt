@@ -26,10 +26,12 @@ FILE: emptyContextName.kt
     context(<unused var>: R|A|)
     public final fun test1(): R|kotlin/Unit| {
         R|/implicit|<R|A|>().R|/A.foo|(String())
+        <Unresolved name: _>#.<Unresolved name: foo>#(String())
     }
     context(<unused var>: R|A|)
     public final fun test2(): R|kotlin/Unit| {
         R|/implicit|<R|A|>().R|/A.foo|(String())
+        <Unresolved name: _>#.<Unresolved name: foo>#(String())
     }
     context(<unused var>: R|A|, b: R|B|, <unused var>: R|kotlin/Int|)
     public final fun test3(): R|kotlin/Unit| {
@@ -37,19 +39,16 @@ FILE: emptyContextName.kt
         R|<local>/b|.R|/B.bar|(String())
         R|/implicit|<R|kotlin/Int|>().R|kotlin/Int.inc|()
     }
-    context(<unused var>: R|A|, <unused var>: R|B|)
-    public final fun test4(): R|kotlin/Unit| {
-        <Unresolved name: _>#.<Unresolved name: foo>#(String())
-        <Unresolved name: _>#.<Unresolved name: bar>#(String())
-    }
     context(<unused var>: R|A|)
     public final val property1: R|kotlin/String|
         public get(): R|kotlin/String| {
+            <Unresolved name: _>#.<Unresolved name: foo>#(String())
             ^ R|/implicit|<R|A|>().R|/A.foo|(String())
         }
     context(<unused var>: R|A|)
     public final val property2: R|kotlin/String|
         public get(): R|kotlin/String| {
+            <Unresolved name: _>#.<Unresolved name: foo>#(String())
             ^ R|/implicit|<R|A|>().R|/A.foo|(String())
         }
     context(<unused var>: R|A|, b: R|B|, <unused var>: R|kotlin/Int|)
@@ -58,11 +57,4 @@ FILE: emptyContextName.kt
             R|<local>/b|.R|/B.bar|(String())
             R|/implicit|<R|kotlin/Int|>().R|kotlin/Int.inc|()
             ^ R|/implicit|<R|A|>().R|/A.foo|(String())
-        }
-    context(<unused var>: R|A|, <unused var>: R|B|)
-    public final val property4: R|kotlin/String|
-        public get(): R|kotlin/String| {
-            <Unresolved name: _>#.<Unresolved name: foo>#(String())
-            <Unresolved name: _>#.<Unresolved name: bar>#(String())
-            ^ String()
         }
