@@ -456,7 +456,7 @@ class IrModuleToJsTransformer(
 
         if (shouldReferMainFunction) {
             JsMainFunctionDetector(backendContext).getMainFunctionOrNull(fileExports.file)
-                ?.let { backendContext.mapping.mainFunctionToItsWrapper[it] }
+                ?.mainFunctionWrapper
                 ?.let { result.mainFunctionTag = definitionSet.computeTag(it) }
         }
 

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.mainFunctionWrapper
 import org.jetbrains.kotlin.ir.backend.js.utils.JsMainFunctionDetector
 import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.backend.js.utils.isLoweredSuspendFunction
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  */
 class MainFunctionCallWrapperLowering(private val context: JsIrBackendContext) : FileLoweringPass {
     private val mainFunctionDetector = JsMainFunctionDetector(context)
-    private var IrSimpleFunction.mainFunctionWrapper by context.mapping.mainFunctionToItsWrapper
     private val mainFunctionArgs by lazy(LazyThreadSafetyMode.NONE) {
         context.mainCallArguments ?: error("Expect to have main call args at this point")
     }
