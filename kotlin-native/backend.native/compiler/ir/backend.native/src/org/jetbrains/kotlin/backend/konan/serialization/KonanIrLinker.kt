@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.konan.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.CachedLibraries
 import org.jetbrains.kotlin.backend.konan.PartialCacheInfo
-import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -263,7 +262,7 @@ internal class KonanIrLinker(
         friendModules: Map<String, Collection<String>>,
         private val forwardModuleDescriptor: ModuleDescriptor?,
         private val stubGenerator: DeclarationStubGenerator,
-        private val cenumsProvider: IrProviderForCEnumAndCStructStubs,
+        private val cInteropModuleDeserializerFactory: CInteropModuleDeserializerFactory,
         exportedDependencies: List<ModuleDescriptor>,
         override val partialLinkageSupport: PartialLinkageSupportForLinker,
         private val cachedLibraries: CachedLibraries,
@@ -313,14 +312,10 @@ internal class KonanIrLinker(
                     error("Expecting kotlin library for $moduleDescriptor")
                 }
                 klib.isCInteropLibrary() -> {
-                    KonanInteropModuleDeserializer(
+                    cInteropModuleDeserializerFactory.createIrModuleDeserializer(
                             moduleDescriptor,
                             klib,
                             listOfNotNull(forwardDeclarationDeserializer),
-                            cachedLibraries.isLibraryCached(klib),
-                            cenumsProvider,
-                            stubGenerator,
-                            builtIns
                     )
                 }
                 else -> {
