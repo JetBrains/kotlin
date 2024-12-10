@@ -82,16 +82,22 @@ FILE fqName:<root> fileName:/typeArgumentsMappingForTopLevelTAWithInnerRHS.kt
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun <get-p> (): kotlin.String declared in <root>.Foo.Inner' type=kotlin.String origin=GET_PROPERTY
-                $this: ERROR_EXPR 'Cannot bind 1 type arguments to ??? call with 1 type parameters' type=<root>.Foo.Inner<kotlin.String>
+                $this: CONSTRUCTOR_CALL 'public constructor <init> (p: kotlin.String) declared in <root>.Foo.Inner' type=<root>.Foo.Inner<kotlin.String> origin=null
+                  $outer: GET_VAR 'val foo: <root>.Foo<kotlin.String> declared in <root>.box' type=<root>.Foo<kotlin.String> origin=null
+                  p: CONST String type=kotlin.String value="OK"
               arg1: CONST String type=kotlin.String value="OK"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="FAIL"
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        ERROR_EXPR 'Cannot bind 2 type arguments to ??? call with 2 type parameters' type=<root>.Foo.Inner2<kotlin.Int, kotlin.String>
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Foo.Inner2' type=<root>.Foo.Inner2<kotlin.Int, kotlin.String> origin=null
+          <class: T2>: kotlin.Int
+          $outer: GET_VAR 'val foo: <root>.Foo<kotlin.String> declared in <root>.box' type=<root>.Foo<kotlin.String> origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        ERROR_EXPR 'Cannot bind 2 type arguments to ??? call with 2 type parameters' type=<root>.Foo.Inner2<kotlin.Int, kotlin.String>
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Foo.Inner2' type=<root>.Foo.Inner2<kotlin.Int, kotlin.String> origin=null
+          <class: T2>: kotlin.Int
+          $outer: GET_VAR 'val foo: <root>.Foo<kotlin.String> declared in <root>.box' type=<root>.Foo<kotlin.String> origin=null
       VAR name:aliasedInner type:kotlin.reflect.KFunction2<<root>.Foo<kotlin.String>, kotlin.String, <root>.Foo.Inner<kotlin.String>> [val]
-        ERROR_EXPR 'Cannot bind 1 type arguments to ??? call with 1 type parameters' type=kotlin.reflect.KFunction2<<root>.Foo<kotlin.String>, kotlin.String, <root>.Foo.Inner<kotlin.String>>
+        FUNCTION_REFERENCE 'public constructor <init> (p: kotlin.String) declared in <root>.Foo.Inner' type=kotlin.reflect.KFunction2<<root>.Foo<kotlin.String>, kotlin.String, <root>.Foo.Inner<kotlin.String>> origin=null reflectionTarget=<same>
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
