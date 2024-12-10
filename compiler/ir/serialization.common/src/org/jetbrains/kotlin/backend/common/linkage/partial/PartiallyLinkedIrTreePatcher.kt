@@ -106,7 +106,7 @@ internal class PartiallyLinkedIrTreePatcher(
     }
 
     // Declarations are transformed top-down.
-    private inner class DeclarationTransformer(startingFile: PLFile?) : FileAwareIrElementTransformerVoid(startingFile) {
+    private inner class DeclarationTransformer(startingFile: PLFile) : FileAwareIrElementTransformerVoid(startingFile) {
         private val stack = ArrayDeque<DeclarationTransformerContext>()
 
         private fun <T : IrDeclaration> T.transformChildren(): T {
@@ -434,7 +434,7 @@ internal class PartiallyLinkedIrTreePatcher(
             supportForLowerings.throwLinkageError(this, declaration, currentFile, doNotLog)
     }
 
-    private open inner class ExpressionTransformer(startingFile: PLFile?) : FileAwareIrElementTransformerVoid(startingFile) {
+    private open inner class ExpressionTransformer(startingFile: PLFile) : FileAwareIrElementTransformerVoid(startingFile) {
         override fun visitPackageFragment(declaration: IrPackageFragment): IrPackageFragment {
             (declaration as? IrFile)?.filterUnusableAnnotations()
             return super.visitPackageFragment(declaration)
@@ -1004,7 +1004,7 @@ internal class PartiallyLinkedIrTreePatcher(
         }
     }
 
-    private inner class NonLocalReturnsPatcher(startingFile: PLFile?) : FileAwareIrElementTransformerVoid(startingFile) {
+    private inner class NonLocalReturnsPatcher(startingFile: PLFile) : FileAwareIrElementTransformerVoid(startingFile) {
         private val stack = ArrayDeque<ReturnTargetContext>()
         private val currentContext: ReturnTargetContext get() = stack.peek() ?: ReturnTargetContext.Empty
 

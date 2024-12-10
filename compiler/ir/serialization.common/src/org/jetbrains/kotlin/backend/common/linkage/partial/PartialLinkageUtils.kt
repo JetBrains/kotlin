@@ -86,17 +86,16 @@ internal object PartialLinkageUtils {
 }
 
 /** An optimization to avoid re-computing file for every visited declaration */
-internal abstract class FileAwareIrElementTransformerVoid(startingFile: PLFile?) : IrElementTransformerVoid() {
-    private var _currentFile: PLFile? = startingFile
-    val currentFile: PLFile get() = _currentFile ?: error("No information about current file")
+internal abstract class FileAwareIrElementTransformerVoid(startingFile: PLFile) : IrElementTransformerVoid() {
+    var currentFile: PLFile = startingFile
 
     protected fun <T> runInFile(file: PLFile, block: () -> T): T {
-        val previousFile = _currentFile
-        _currentFile = file
+        val previousFile = currentFile
+        currentFile = file
         try {
             return block()
         } finally {
-            _currentFile = previousFile
+            currentFile = previousFile
         }
     }
 
