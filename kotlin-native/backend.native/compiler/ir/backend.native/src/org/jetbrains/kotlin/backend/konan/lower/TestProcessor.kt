@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.backend.konan.ir.isAbstract
+import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -688,9 +689,14 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
     }
     // endregion
 
-    private fun shouldProcessFile(irFile: IrFile): Boolean = irFile.moduleDescriptor.let {
-        // Process test annotations in source libraries too.
-        it in context.sourcesModules
+    private fun shouldProcessFile(irFile: IrFile): Boolean {
+        if (context.shouldOptimize()) {
+            return generationState.llvmModuleSpecification.containsLibrary(irFile.konanLibrary!!)
+        }
+        return irFile.moduleDescriptor.let {
+            // Process test annotations in source libraries too.
+            it in context.sourcesModules
+        }
     }
 
     override fun lower(irFile: IrFile) {
