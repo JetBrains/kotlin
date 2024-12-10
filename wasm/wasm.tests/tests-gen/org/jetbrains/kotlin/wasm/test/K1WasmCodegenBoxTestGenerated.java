@@ -6688,6 +6688,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
     }
 
     @Test
+    @TestMetadata("breakInDoWhile.kt")
+    public void testBreakInDoWhile() {
+      runTest("compiler/testData/codegen/box/controlStructures/breakInDoWhile.kt");
+    }
+
+    @Test
     @TestMetadata("breakInFinally.kt")
     public void testBreakInFinally() {
       runTest("compiler/testData/codegen/box/controlStructures/breakInFinally.kt");

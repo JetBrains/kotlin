@@ -6782,6 +6782,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("breakInDoWhile.kt")
+    public void testBreakInDoWhile() {
+      runTest("compiler/testData/codegen/box/controlStructures/breakInDoWhile.kt");
+    }
+
+    @Test
     @TestMetadata("breakInFinally.kt")
     public void testBreakInFinally() {
       runTest("compiler/testData/codegen/box/controlStructures/breakInFinally.kt");
