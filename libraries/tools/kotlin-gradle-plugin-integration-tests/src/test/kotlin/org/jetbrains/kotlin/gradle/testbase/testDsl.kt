@@ -649,7 +649,7 @@ private fun collectGradleJvmOptions(
     connectSubprocessVMToDebugger: Boolean,
 ): List<String> = buildList {
     if (useFileLeakDetectorToFile != null) {
-        val fileLeakDetector = File("src/test/resources/common/file-leak-detector-1.15-jar-with-dependencies.jar")
+        val fileLeakDetector = File("src/test/resources/common/file-leak-detector-1.18-jar-with-dependencies.jar")
         add("-javaagent:${fileLeakDetector.absolutePath}=trace=${useFileLeakDetectorToFile.absolutePath}")
     }
     // Limiting Gradle daemon heap size to reduce memory pressure on CI agents
