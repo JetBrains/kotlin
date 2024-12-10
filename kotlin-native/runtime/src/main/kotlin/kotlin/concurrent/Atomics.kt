@@ -16,11 +16,18 @@ import kotlin.native.concurrent.*
  * An [Int] value that is always updated atomically.
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  */
+@Suppress("DEPRECATION")
 @SinceKotlin("1.9")
-public class AtomicInt(@Volatile public var value: Int) {
+@Deprecated(message = "Use kotlin.concurrent.atomics.AtomicInt instead.", replaceWith = ReplaceWith("kotlin.concurrent.atomics.AtomicInt", "kotlin.concurrent.atomics.AtomicInt"))
+public class AtomicInt(
+    @get:Deprecated("Use kotlin.concurrent.atomics.AtomicInt.load instead.", replaceWith = ReplaceWith("this.load()"))
+    @set:Deprecated("Use kotlin.concurrent.atomics.AtomicInt.store instead.", replaceWith = ReplaceWith("this.store(newValue)"))
+    @Volatile public var value: Int
+) {
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
      */
+    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicInt.exchange instead.", replaceWith = ReplaceWith("this.exchange(newValue)"))
     public fun getAndSet(newValue: Int): Int = this::value.getAndSetField(newValue)
 
     /**
@@ -42,31 +49,37 @@ public class AtomicInt(@Volatile public var value: Int) {
     /**
      * Atomically adds the [given value][delta] to the current value and returns the old value.
      */
+    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicInt.fetchAndAdd instead.", replaceWith = ReplaceWith("this.fetchAndAdd(delta)"))
     public fun getAndAdd(delta: Int): Int = this::value.getAndAddField(delta)
 
     /**
      * Atomically adds the [given value][delta] to the current value and returns the new value.
      */
+    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicInt.addAndFetch instead.", replaceWith = ReplaceWith("this.addAndFetch(delta)"))
     public fun addAndGet(delta: Int): Int = this::value.getAndAddField(delta) + delta
 
     /**
      * Atomically increments the current value by one and returns the old value.
      */
+    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicInt.fetchAndIncrement instead.", replaceWith = ReplaceWith("this.fetchAndIncrement()"))
     public fun getAndIncrement(): Int = this::value.getAndAddField(1)
 
     /**
      * Atomically increments the current value by one and returns the new value.
      */
+    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicInt.incrementAndFetch instead.", replaceWith = ReplaceWith("this.incrementAndFetch()"))
     public fun incrementAndGet(): Int = this::value.getAndAddField(1) + 1
 
     /**
      * Atomically decrements the current value by one and returns the new value.
      */
+    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicInt.decrementAndFetch instead.", replaceWith = ReplaceWith("this.decrementAndFetch()"))
     public fun decrementAndGet(): Int = this::value.getAndAddField(-1) - 1
 
     /**
      * Atomically decrements the current value by one and returns the old value.
      */
+    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicInt.fetchAndDecrement instead.", replaceWith = ReplaceWith("this.fetchAndDecrement()"))
     public fun getAndDecrement(): Int = this::value.getAndAddField(-1)
 
     /**
@@ -80,11 +93,18 @@ public class AtomicInt(@Volatile public var value: Int) {
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  *
  */
+@Suppress("DEPRECATION")
 @SinceKotlin("1.9")
-public class AtomicLong(@Volatile public var value: Long)  {
+@Deprecated(message = "Use kotlin.concurrent.atomics.AtomicLong instead.", replaceWith = ReplaceWith("kotlin.concurrent.atomics.AtomicLong", "kotlin.concurrent.atomics.AtomicLong"))
+public class AtomicLong(
+    @get:Deprecated("Use kotlin.concurrent.atomics.AtomicLong.load instead.", replaceWith = ReplaceWith("this.load()"))
+    @set:Deprecated("Use kotlin.concurrent.atomics.AtomicLong.store instead.", replaceWith = ReplaceWith("this.store(newValue)"))
+    @Volatile public var value: Long
+)  {
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
      */
+    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicLong.exchange instead.", replaceWith = ReplaceWith("this.exchange(newValue)"))
     public fun getAndSet(newValue: Long): Long = this::value.getAndSetField(newValue)
 
     /**
@@ -106,31 +126,37 @@ public class AtomicLong(@Volatile public var value: Long)  {
     /**
      * Atomically adds the [given value][delta] to the current value and returns the old value.
      */
+    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicLong.fetchAndAdd instead.", replaceWith = ReplaceWith("this.fetchAndAdd(delta)"))
     public fun getAndAdd(delta: Long): Long = this::value.getAndAddField(delta)
 
     /**
      * Atomically adds the [given value][delta] to the current value and returns the new value.
      */
+    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicLong.addAndFetch instead.", replaceWith = ReplaceWith("this.addAndFetch(delta)"))
     public fun addAndGet(delta: Long): Long = this::value.getAndAddField(delta) + delta
 
     /**
      * Atomically increments the current value by one and returns the old value.
      */
+    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicLong.fetchAndIncrement instead.", replaceWith = ReplaceWith("this.fetchAndIncrement()"))
     public fun getAndIncrement(): Long = this::value.getAndAddField(1L)
 
     /**
      * Atomically increments the current value by one and returns the new value.
      */
+    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicLong.incrementAndFetch instead.", replaceWith = ReplaceWith("this.incrementAndFetch()"))
     public fun incrementAndGet(): Long = this::value.getAndAddField(1L) + 1L
 
     /**
      * Atomically decrements the current value by one and returns the new value.
      */
+    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicLong.decrementAndFetch instead.", replaceWith = ReplaceWith("this.decrementAndFetch()"))
     public fun decrementAndGet(): Long = this::value.getAndAddField(-1L) - 1L
 
     /**
      * Atomically decrements the current value by one and returns the old value.
      */
+    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicLong.fetchAndDecrement instead.", replaceWith = ReplaceWith("this.fetchAndDecrement()"))
     public fun getAndDecrement(): Long = this::value.getAndAddField(-1L)
 
     /**
@@ -140,15 +166,20 @@ public class AtomicLong(@Volatile public var value: Long)  {
 }
 
 /**
- * An object reference that is always updated atomically.
+ * An object reference that is aAtomicLonglways updated atomically.
  */
+@Suppress("DEPRECATION")
 @SinceKotlin("1.9")
-@Suppress("ACTUAL_WITHOUT_EXPECT") // actual visibility mismatch
-public actual class AtomicReference<T> actual constructor(public actual var value: T) {
-
+@Deprecated(message = "Use kotlin.concurrent.atomics.AtomicReference instead.", replaceWith = ReplaceWith("kotlin.concurrent.atomics.AtomicReference", "kotlin.concurrent.atomics.AtomicReference"))
+public class AtomicReference<T>(
+    @get:Deprecated("Use kotlin.concurrent.atomics.AtomicReference.load instead.", replaceWith = ReplaceWith("this.load()"))
+    @set:Deprecated("Use kotlin.concurrent.atomics.AtomicReference.store instead.", replaceWith = ReplaceWith("this.store(newValue)"))
+    public var value: T
+) {
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
      */
+    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicReference.exchange instead.", replaceWith = ReplaceWith("this.exchange(newValue)"))
     public fun getAndSet(newValue: T): T = this::value.getAndSetField(newValue)
 
     /**
@@ -159,7 +190,7 @@ public actual class AtomicReference<T> actual constructor(public actual var valu
      *
      * Comparison of values is done by reference.
      */
-    public actual fun compareAndSet(expected: T, newValue: T): Boolean = this::value.compareAndSetField(expected, newValue)
+    public fun compareAndSet(expected: T, newValue: T): Boolean = this::value.compareAndSetField(expected, newValue)
 
     /**
      * Atomically sets the value to the given [new value][newValue] if the current value equals the [expected value][expected]
@@ -169,13 +200,13 @@ public actual class AtomicReference<T> actual constructor(public actual var valu
      *
      * Comparison of values is done by reference.
      */
-    public actual fun compareAndExchange(expected: T, newValue: T): T = this::value.compareAndExchangeField(expected, newValue)
+    public fun compareAndExchange(expected: T, newValue: T): T = this::value.compareAndExchangeField(expected, newValue)
 
     /**
      * Returns the string representation of the current [value].
      */
     public override fun toString(): String =
-            "${debugString(this)} -> ${debugString(value)}"
+        "${debugString(this)} -> ${debugString(value)}"
 }
 
 /**
@@ -185,8 +216,10 @@ public actual class AtomicReference<T> actual constructor(public actual var valu
  * [kotlinx.cinterop.NativePtr] is a value type, hence it is stored in [AtomicNativePtr] without boxing
  * and [compareAndSet], [compareAndExchange] operations perform comparison by value.
  */
+@Suppress("DEPRECATION")
 @SinceKotlin("1.9")
 @ExperimentalForeignApi
+@Deprecated(message = "Use kotlin.concurrent.atomics.AtomicNativePtr instead.", replaceWith = ReplaceWith("kotlin.concurrent.atomics.AtomicNativePtr", "kotlin.concurrent.atomics.AtomicNativePtr"))
 public class AtomicNativePtr(@Volatile public var value: NativePtr) {
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
@@ -256,6 +289,7 @@ private fun debugString(value: Any?): String {
  */
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.ATOMIC_GET_FIELD)
+@Deprecated(message = "Use kotlin.concurrent.atomics.atomicGetField instead.", replaceWith = ReplaceWith("kotlin.concurrent.atomics.atomicGetField", "kotlin.concurrent.atomics.atomicGetField"))
 internal external fun <T> KMutableProperty0<T>.atomicGetField(): T
 
 /**
@@ -275,6 +309,7 @@ internal external fun <T> KMutableProperty0<T>.atomicGetField(): T
  */
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.ATOMIC_SET_FIELD)
+@Deprecated(message = "Use kotlin.concurrent.atomics.atomicSetField instead.", replaceWith = ReplaceWith("kotlin.concurrent.atomics.atomicSetField", "kotlin.concurrent.atomics.atomicSetField"))
 internal external fun <T> KMutableProperty0<T>.atomicSetField(newValue: T)
 
 /**
@@ -296,6 +331,7 @@ internal external fun <T> KMutableProperty0<T>.atomicSetField(newValue: T)
  */
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.COMPARE_AND_SET_FIELD)
+@Deprecated(message = "Use kotlin.concurrent.atomics.compareAndSetField instead.", replaceWith = ReplaceWith("kotlin.concurrent.atomics.compareAndSetField", "kotlin.concurrent.atomics.compareAndSetField"))
 internal external fun <T> KMutableProperty0<T>.compareAndSetField(expectedValue: T, newValue: T): Boolean
 
 /**
@@ -316,6 +352,7 @@ internal external fun <T> KMutableProperty0<T>.compareAndSetField(expectedValue:
  */
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.COMPARE_AND_EXCHANGE_FIELD)
+@Deprecated(message = "Use kotlin.concurrent.atomics.compareAndExchangeField instead.", replaceWith = ReplaceWith("kotlin.concurrent.atomics.compareAndExchangeField", "kotlin.concurrent.atomics.compareAndExchangeField"))
 internal external fun <T> KMutableProperty0<T>.compareAndExchangeField(expectedValue: T, newValue: T): T
 
 /**
@@ -333,6 +370,7 @@ internal external fun <T> KMutableProperty0<T>.compareAndExchangeField(expectedV
  */
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.GET_AND_SET_FIELD)
+@Deprecated(message = "Use kotlin.concurrent.atomics.getAndSetField instead.", replaceWith = ReplaceWith("kotlin.concurrent.atomics.getAndSetField", "kotlin.concurrent.atomics.getAndSetField"))
 internal external fun <T> KMutableProperty0<T>.getAndSetField(newValue: T): T
 
 /**
@@ -350,6 +388,7 @@ internal external fun <T> KMutableProperty0<T>.getAndSetField(newValue: T): T
  */
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
+@Deprecated(message = "Use kotlin.concurrent.atomics.getAndAddField instead.", replaceWith = ReplaceWith("kotlin.concurrent.atomics.getAndAddField", "kotlin.concurrent.atomics.getAndAddField"))
 internal external fun KMutableProperty0<Short>.getAndAddField(delta: Short): Short
 
 /**
@@ -367,6 +406,7 @@ internal external fun KMutableProperty0<Short>.getAndAddField(delta: Short): Sho
  */
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
+@Deprecated(message = "Use kotlin.concurrent.atomics.getAndAddField instead.", replaceWith = ReplaceWith("kotlin.concurrent.atomics.getAndAddField", "kotlin.concurrent.atomics.getAndAddField"))
 internal external fun KMutableProperty0<Int>.getAndAddField(newValue: Int): Int
 
 /**
@@ -384,6 +424,7 @@ internal external fun KMutableProperty0<Int>.getAndAddField(newValue: Int): Int
  */
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
+@Deprecated(message = "Use kotlin.concurrent.atomics.getAndAddField instead.", replaceWith = ReplaceWith("kotlin.concurrent.atomics.getAndAddField", "kotlin.concurrent.atomics.getAndAddField"))
 internal external fun KMutableProperty0<Long>.getAndAddField(newValue: Long): Long
 
 /**
@@ -401,4 +442,5 @@ internal external fun KMutableProperty0<Long>.getAndAddField(newValue: Long): Lo
  */
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
+@Deprecated(message = "Use kotlin.concurrent.atomics.getAndAddField instead.", replaceWith = ReplaceWith("kotlin.concurrent.atomics.getAndAddField", "kotlin.concurrent.atomics.getAndAddField"))
 internal external fun KMutableProperty0<Byte>.getAndAddField(newValue: Byte): Byte
