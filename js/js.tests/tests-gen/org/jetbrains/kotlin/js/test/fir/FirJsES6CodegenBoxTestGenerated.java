@@ -42915,6 +42915,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     public void testTypeAliasSecondaryConstructor() {
       runTest("compiler/testData/codegen/box/typealias/typeAliasSecondaryConstructor.kt");
     }
+
+    @Test
+    @TestMetadata("typeArgumentsMappingForTopLevelTAWithInnerRHS.kt")
+    public void testTypeArgumentsMappingForTopLevelTAWithInnerRHS() {
+      runTest("compiler/testData/codegen/box/typealias/typeArgumentsMappingForTopLevelTAWithInnerRHS.kt");
+    }
   }
 
   @Nested

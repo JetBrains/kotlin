@@ -60269,6 +60269,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
     }
 
     @Test
+    @TestMetadata("typeArgumentsMappingForTopLevelTAWithInnerRHS.kt")
+    public void testTypeArgumentsMappingForTopLevelTAWithInnerRHS() {
+      runTest("compiler/testData/codegen/box/typealias/typeArgumentsMappingForTopLevelTAWithInnerRHS.kt");
+    }
+
+    @Test
     @TestMetadata("typealiasOnExternalAnnotation.kt")
     public void testTypealiasOnExternalAnnotation() {
       runTest("compiler/testData/codegen/box/typealias/typealiasOnExternalAnnotation.kt");

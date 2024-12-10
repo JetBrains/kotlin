@@ -47979,6 +47979,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/typealias/typeAliasSecondaryConstructor.kt");
     }
 
+    @TestMetadata("typeArgumentsMappingForTopLevelTAWithInnerRHS.kt")
+    public void testTypeArgumentsMappingForTopLevelTAWithInnerRHS() {
+      runTest("compiler/testData/codegen/box/typealias/typeArgumentsMappingForTopLevelTAWithInnerRHS.kt");
+    }
+
     @TestMetadata("typealiasOnExternalAnnotation.kt")
     public void testTypealiasOnExternalAnnotation() {
       runTest("compiler/testData/codegen/box/typealias/typealiasOnExternalAnnotation.kt");
