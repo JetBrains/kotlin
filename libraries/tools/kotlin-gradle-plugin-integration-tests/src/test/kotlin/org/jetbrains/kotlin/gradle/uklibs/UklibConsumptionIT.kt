@@ -501,6 +501,7 @@ class UklibConsumptionIT : KGPBaseTest() {
             }
 
             // FIXME: Is this actually supposed to pass
+            // FIXME: Catch specific compilation failure or reproduce the resolution error
             buildAndFail("assemble", buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion))
         }
     }

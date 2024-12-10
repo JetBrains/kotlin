@@ -31,7 +31,7 @@ fun KotlinSourceSet.compileSource(
 
 fun SourceSet.compileJavaSource(
     project: Project,
-    @Language("JAVA")
+    @Language("java")
     sourceContent: String,
 ) {
     val identifier = "${name}_${UUID.randomUUID().toString().replace("-", "_")}"

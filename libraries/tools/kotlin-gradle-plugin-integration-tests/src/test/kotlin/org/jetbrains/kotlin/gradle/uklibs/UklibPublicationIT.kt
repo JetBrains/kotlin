@@ -387,7 +387,34 @@ class UklibPublicationIT : KGPBaseTest() {
         )
     }
 
-
+    @GradleTest
+    fun `test`(
+        gradleVersion: GradleVersion
+    ) {
+        val res = runTestProject("buildScriptInjectionGroovy", gradleVersion) {
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    linuxArm64()
+                    linuxX64()
+                    macosArm64()
+                    macosX64()
+                    sourceSets.all { it.addIdentifierClass() }
+                    applyDefaultHierarchyTemplate {
+                        group("a") {
+                            withLinuxArm64()
+                            withLinuxX64()
+                        }
+                        group("b") {
+                            withMacosArm64()
+                            withMacosX64()
+                        }
+                    }
+                }
+            }
+            publish(PublisherConfiguration(name = "transitive"))
+        }.result
+        println(res)
+    }
 
     @kotlinx.serialization.Serializable
     data class Fragment(
@@ -417,9 +444,6 @@ class UklibPublicationIT : KGPBaseTest() {
         val publisher = runTestProject(
             template,
             gradleVersion,
-            dependencyManagement = DependencyManagement.DefaultDependencyManagement(
-                gradleRepositoriesMode = RepositoriesMode.PREFER_PROJECT,
-            ),
             // FIXME: Otherwise klib resolver explodes
             projectPathAdditionalSuffix = publisherConfig.name,
         ) {

@@ -720,7 +720,7 @@ class PP(
                 *value.map { it }.sortedBy { it.key.toString() }.map { "${twoSpaces}${it.key}=${it.value?.pp(nextIndentationDepth)}," }.toTypedArray(),
                 "}",
             )
-            is List<*> -> arrayOf(
+            is Iterable<*> -> arrayOf(
                 "[",
                 *value.map { "${twoSpaces}${it?.pp(nextIndentationDepth)}," }.toTypedArray(),
                 "]",
@@ -758,4 +758,4 @@ class PP(
     }
 }
 
-private fun Any.pp(indentation: Int = 0): PP = PP(this, indentation)
+fun Any.pp(indentation: Int = 0): PP = PP(this, indentation)

@@ -47,6 +47,7 @@ internal val Project.shouldCompileIntermediateSourceSetsToMetadata: Boolean
 internal val Project.isCompatibilityMetadataVariantEnabled: Boolean
     get() = PropertiesProvider(this).enableCompatibilityMetadataVariant == true
 
+// FIXME: Test this !!!
 internal val Project.psmJarClassifier: String?
     get() = if (kotlinPropertiesProvider.enableCompatibilityMetadataVariant) {
         "all"

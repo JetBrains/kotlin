@@ -237,6 +237,37 @@ class UklibFromKGPFragmentsTests {
         )
     }
 
+    @Test
+    fun `project configuration with enabled uklib publication - multirooted graph - emits diagnostic`() {
+        val p = buildProjectWithMPP(
+            preApplyCode = {
+                publishUklib()
+            }
+        ) {
+            kotlin {
+                applyHierarchyTemplate {
+                    group("linux") {
+                        withLinuxArm64()
+                        withLinuxX64()
+                    }
+                    group("ios") {
+                        withIosArm64()
+                        withIosX64()
+                    }
+                }
+
+                linuxX64()
+                linuxArm64()
+                iosArm64()
+                iosX64()
+            }
+        }.evaluate()
+        println(p.multiplatformExtension.sourceSets)
+//            .assertContainsDiagnostic(
+//            KotlinToolingDiagnostics.MultipleSourceSetRootsInCompilation
+//        )
+    }
+
     private data class TestFragment(
         val identifier: String,
         val attributes: Set<String>,

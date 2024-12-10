@@ -4,10 +4,10 @@ import java.io.File
 import java.util.Comparator
 
 //    /**
-//     * 1. No parts of the graph are isolated
+//     * 1. No parts of the graph are isolated (this is kind of also checked by everything being rooted)
 //     * 2. There are no cycles (this is already done by KGP)
-//     * 3. Everything is rooted in a single node (already checked in KGP)
-//     * 4. There are no fragments with duplicated attributes
+//     * 3. Everything is rooted in a single node (already checked in KGP in MultipleSourceSetRootsInCompilationChecker)
+//     * 4. There are no fragments with duplicated attributes (so the check for bamboos)
 //     */
 
 data class Module(
@@ -20,7 +20,7 @@ data class Fragment(
     val file: () -> File,
 )
 
-private fun <E> Set<E>.isSubsetOf(another: Set<E>): Boolean = another.containsAll(this)
+fun <E> Set<E>.isSubsetOf(another: Set<E>): Boolean = another.containsAll(this)
 private fun Iterable<Fragment>.visibleByConsumingModulesFragmentWith(
     consumingFragmentAttributes: Set<String>
 ): List<Fragment> = filter { consumingFragmentAttributes.isSubsetOf(it.attributes) }
