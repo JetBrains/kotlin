@@ -5,7 +5,10 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.Processor
 import com.intellij.util.indexing.FileContent
 import com.intellij.util.indexing.ID
+import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.KeyDescriptor
+import java.io.DataInput
+import java.io.DataOutput
 
 data class Box<T>(val value: T)
 
@@ -80,7 +83,7 @@ fun fileBasedIndexExtensions(fileBasedIndexExtensions: List<FileBasedIndexExtens
                 @Suppress("UNCHECKED_CAST")
                 extension.name to KeyType(
                     id = extension.name.name,
-                    serializer = (extension.keyDescriptor as KeyDescriptor<Any>).asSerializer()
+                    serializer = (extension.keyDescriptor as KeyDescriptor<Any>)
                 )
             }),
         extensions = fileBasedIndexExtensions,
@@ -88,37 +91,39 @@ fun fileBasedIndexExtensions(fileBasedIndexExtensions: List<FileBasedIndexExtens
             @Suppress("UNCHECKED_CAST")
             extension as FileBasedIndexExtension<Any, Any?>
             extension.name to ValueType(
-                extension.name.name,
-                MapSerializer(
-                    extension.keyDescriptor.asSerializer(),
-                    BoxSerializer(extension.valueExternalizer.asSerializer())
+                id = extension.name.name,
+                serializer = MapSerializer(
+                    extension.keyDescriptor,
+                    BoxSerializer(extension.valueExternalizer)
                 )
             )
         }
     )
 
 class MapSerializer<K, V>(
-    keySerializer: Serializer<K>,
-    valueSerializer: Serializer<V>,
-) : Serializer<Map<K, V>> {
-    override fun serialize(t: Map<K, V>): ByteArray {
+    keySerializer: DataExternalizer<K>,
+    valueSerializer: DataExternalizer<V>,
+) : DataExternalizer<Map<K, V>> {
+    override fun save(out: DataOutput, value: Map<K, V>?) {
         TODO("Not yet implemented")
     }
 
-    override fun deserialize(bytes: ByteArray): Map<K, V> {
+    override fun read(`in`: DataInput): Map<K, V> {
         TODO("Not yet implemented")
     }
+
 
 }
 
-class BoxSerializer<V>(private val serializer: Serializer<V>) : Serializer<Box<V>> {
-    override fun serialize(t: Box<V>): ByteArray {
+class BoxSerializer<V>(private val serializer: DataExternalizer<V>) : DataExternalizer<Box<V>> {
+    override fun save(out: DataOutput, value: Box<V>?) {
         TODO("Not yet implemented")
     }
 
-    override fun deserialize(bytes: ByteArray): Box<V> {
+    override fun read(`in`: DataInput): Box<V> {
         TODO("Not yet implemented")
     }
+
 }
 
 fun fileBasedIndexesUpdates(

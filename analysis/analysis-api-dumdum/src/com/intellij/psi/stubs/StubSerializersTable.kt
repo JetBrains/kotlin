@@ -16,7 +16,7 @@ data class StubSerializersTable(val map: Map<String, ObjectStubSerializer<*, *>>
                     }
                 }.run {
                     registerSerializer(PsiFileStubImpl.TYPE);
-                    val lazySerializers = IStubElementType.loadRegisteredStubElementTypes()
+//                    val lazySerializers = IStubElementType.loadRegisteredStubElementTypes()
                     val stubElementTypes = IElementType.enumerate { it is StubSerializer<*> }
                     for (type in stubElementTypes) {
                         if (type is StubFileElementType<*> &&
@@ -27,9 +27,9 @@ data class StubSerializersTable(val map: Map<String, ObjectStubSerializer<*, *>>
                         registerSerializer(type as StubSerializer<*>)
                     }
 
-                    for (lazySerializer in lazySerializers) {
-                        registerSerializer(lazySerializer.get());
-                    }
+//                    for (lazySerializer in lazySerializers) {
+//                        registerSerializer(lazySerializer.get());
+//                    }
                 }
             })
     }

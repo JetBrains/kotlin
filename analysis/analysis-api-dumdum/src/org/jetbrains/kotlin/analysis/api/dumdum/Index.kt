@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.analysis.api.dumdum
 
+import com.intellij.util.io.DataExternalizer
+
 interface Index {
     fun <S> value(fileId: FileId, valueType: ValueType<S>): S?
 
@@ -18,7 +20,7 @@ data class IndexKey<K>(
 
 class KeyType<K>(
     val id: String,
-    val serializer: Serializer<K>,
+    val serializer: DataExternalizer<K>,
 ) {
     override fun equals(other: Any?): Boolean =
         other === this || (other is KeyType<*> && other.id == this.id)
@@ -29,36 +31,13 @@ class KeyType<K>(
 
 class ValueType<S>(
     val id: String,
-    val serializer: Serializer<S>,
+    val serializer: DataExternalizer<S>,
 ) {
     override fun equals(other: Any?): Boolean =
         other === this || (other is ValueType<*> && other.id == this.id)
 
     override fun hashCode(): Int =
         id.hashCode() + 2
-}
-
-interface Serializer<T> {
-
-    fun serialize(t: T): ByteArray
-
-    fun deserialize(bytes: ByteArray): T
-
-    companion object {
-
-        private val DUMMY = object : Serializer<Any> {
-            override fun serialize(t: Any): ByteArray {
-                throw UnsupportedOperationException()
-            }
-
-            override fun deserialize(bytes: ByteArray): Any {
-                throw UnsupportedOperationException()
-            }
-        }
-
-        @Suppress("UNCHECKED_CAST")
-        fun <T> dummy(): Serializer<T> = DUMMY as Serializer<T>
-    }
 }
 
 data class IndexUpdate<T>(

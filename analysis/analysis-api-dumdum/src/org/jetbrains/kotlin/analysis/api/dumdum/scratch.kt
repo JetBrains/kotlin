@@ -480,7 +480,7 @@ fun indexFile(
     fileId: FileId,
     file: PsiFile,
     fileBasedIndexExtensions: FileBasedIndexExtensions,
-    stubIndexExtensions: KeyTypesMap,
+    stubIndexExtensions: StubIndexExtensions,
 ): List<IndexUpdate<*>> =
     fileBasedIndexesUpdates(
         fileId = fileId,
