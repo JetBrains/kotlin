@@ -1026,9 +1026,7 @@ internal fun TestProject.enableStableConfigurationCachePreview() {
  * Represents different types of dependency management provided to tests.
  */
 sealed interface DependencyManagement {
-    class DefaultDependencyManagement(
-        val additionalRepos: Set<String> = emptySet(),
-    ) : DependencyManagement
+    class DefaultDependencyManagement(val additionalRepos: Set<String> = emptySet()) : DependencyManagement
     data object DisabledDependencyManagement : DependencyManagement
 }
 
