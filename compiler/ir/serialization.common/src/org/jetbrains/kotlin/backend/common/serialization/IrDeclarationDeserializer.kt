@@ -103,7 +103,9 @@ class IrDeclarationDeserializer(
 
     // Deserializes all annotations, even having SOURCE retention, since they might be needed in backends, like @Volatile
     internal fun deserializeAnnotations(annotations: List<ProtoConstructorCall>): List<IrConstructorCall> {
-        return annotations.memoryOptimizedMap { bodyDeserializer.deserializeAnnotation(it) }
+        return annotations.memoryOptimizedMapNotNull {
+            bodyDeserializer.deserializeAnnotation(it).takeUnless(::isObsoleteSubclassOptInRequiredAnnotation)
+        }
     }
 
     private fun deserializeSimpleTypeNullability(proto: ProtoSimpleTypeNullablity) = when (proto) {
@@ -783,6 +785,18 @@ class IrDeclarationDeserializer(
                 .declaredMemberProperties
                 .mapNotNull { it.get(IrDeclarationOrigin.Companion) as? IrDeclarationOriginImpl }
                 .associateBy { it.name }
+        }
+
+        /**
+         * If this is an annotation constructor call with old (legacy) IR signature of [SubclassOptInRequired] class
+         * that was before 2.1.0 and does not exist in stdlib anymore. For details, see KT-73511.
+         */
+        private fun isObsoleteSubclassOptInRequiredAnnotation(annotation: IrConstructorCall): Boolean {
+            val signature = (annotation.symbol.signature as? IdSignature.CommonSignature) ?: return false
+
+            return signature.packageFqName == "kotlin" &&
+                    signature.declarationFqName == "SubclassOptInRequired.<init>" &&
+                    signature.id == -1505964669299995052L
         }
     }
 
