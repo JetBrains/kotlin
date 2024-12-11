@@ -42,9 +42,9 @@ data class ToolingDiagnostic(
      * Represents the documentation associated with a particular issue or diagnostic in the system.
      *
      * @property url The URL pointing to the primary documentation resource.
-     * @property urlWithHint The URL that includes additional hints or context for better understanding.
+     * @property additionalUrlContext The additional text to the [url] providing hints or context for better understanding.
      */
-    data class Documentation(val url: String, val urlWithHint: String)
+    data class Documentation(val url: String, val additionalUrlContext: String)
 
     enum class Severity {
         /**
@@ -90,7 +90,7 @@ data class ToolingDiagnostic(
     override fun toString() = buildString {
         append("[$id | $severity]")
 
-        val subLines = solutions + listOfNotNull(documentation?.urlWithHint)
+        val subLines = solutions + listOfNotNull(documentation?.additionalUrlContext)
 
         if (subLines.isEmpty()) {
             append(" $message")

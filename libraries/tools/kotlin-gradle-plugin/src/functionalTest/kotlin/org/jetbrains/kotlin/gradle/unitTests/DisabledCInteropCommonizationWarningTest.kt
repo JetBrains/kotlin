@@ -133,7 +133,7 @@ private fun Project.getWarningMessage(): String? {
 
             it.documentation?.let {
                 appendLine()
-                appendLine(it.urlWithHint)
+                appendLine(it.additionalUrlContext)
             }
         }
     }
