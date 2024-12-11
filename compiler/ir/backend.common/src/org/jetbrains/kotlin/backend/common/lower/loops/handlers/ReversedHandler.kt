@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.backend.common.lower.loops.handlers
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfo
 import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfoBuilder
 import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfoHandler
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.name.FqName
 
@@ -22,12 +24,12 @@ internal class ReversedHandler(context: CommonBackendContext, private val visito
     override fun matchIterable(expression: IrCall): Boolean {
         // TODO: Handle reversed String, Progression.withIndex(), etc.
         val callee = expression.symbol.owner
-        return callee.valueParameters.isEmpty() &&
-                callee.extensionReceiverParameter?.type in progressionClassesTypes &&
+        return callee.hasShape(extensionReceiver = true) &&
+                callee.parameters[0].type in progressionClassesTypes &&
                 callee.kotlinFqName == FqName("kotlin.ranges.reversed")
     }
 
     // Reverse the HeaderInfo from the underlying progression or array (if any).
-    override fun build(expression: IrCall, data: Nothing?, scopeOwner: IrSymbol) =
-        expression.extensionReceiver!!.accept(visitor, null)?.asReversed()
+    override fun build(expression: IrCall, data: Nothing?, scopeOwner: IrSymbol): HeaderInfo? =
+        expression.arguments[0]!!.accept(visitor, null)?.asReversed()
 }

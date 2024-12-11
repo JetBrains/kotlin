@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.types.isIterable
 import org.jetbrains.kotlin.ir.types.isSequence
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.isPrimitiveArray
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.isUnsignedArray
@@ -29,25 +30,26 @@ internal class WithIndexHandler(
 
     override fun matchIterable(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
-        if (callee.valueParameters.isNotEmpty() || callee.name.asString() != "withIndex") return false
+        if (!callee.hasShape(extensionReceiver = true) || callee.name.asString() != "withIndex") return false
 
+        val extensionReceiverParameter = callee.parameters[0]
         return when (callee.kotlinFqName.asString()) {
             "kotlin.collections.withIndex" ->
-                callee.extensionReceiverParameter?.type?.run {
+                extensionReceiverParameter.type.run {
                     isArray() || isPrimitiveArray() || isIterable() ||
                             (supportsUnsignedArrays && isUnsignedArray())
-                } == true
+                }
             "kotlin.text.withIndex" ->
-                callee.extensionReceiverParameter?.type?.isSubtypeOfClass(context.ir.symbols.charSequence) == true
+                extensionReceiverParameter.type.isSubtypeOfClass(context.ir.symbols.charSequence)
             "kotlin.sequences.withIndex" ->
-                callee.extensionReceiverParameter?.type?.isSequence() == true
+                extensionReceiverParameter.type.isSequence()
             else -> false
         }
     }
 
     override fun build(expression: IrCall, data: Nothing?, scopeOwner: IrSymbol): HeaderInfo? {
         // WithIndexHeaderInfo is a composite that contains the HeaderInfo for the underlying iterable (if any).
-        val nestedInfo = expression.extensionReceiver!!.accept(visitor, null) ?: return null
+        val nestedInfo = expression.arguments[0]!!.accept(visitor, null) ?: return null
 
         // We cannot lower `iterable.withIndex().withIndex()`.
         // NestedHeaderInfoBuilderForWithIndex should not be yielding a WithIndexHeaderInfo, hence the assert.

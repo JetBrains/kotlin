@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.loops.*
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.name.FqName
 
@@ -20,8 +21,9 @@ internal class UntilHandler(private val context: CommonBackendContext) : HeaderI
 
     override fun matchIterable(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
-        return callee.valueParameters.singleOrNull()?.type in progressionElementTypes &&
-                callee.extensionReceiverParameter?.type in progressionElementTypes &&
+        return callee.hasShape(extensionReceiver = true, regularParameters = 1) &&
+                callee.parameters[0].type in progressionElementTypes &&
+                callee.parameters[1].type in progressionElementTypes &&
                 callee.kotlinFqName == FqName("kotlin.ranges.until")
     }
 
@@ -29,8 +31,8 @@ internal class UntilHandler(private val context: CommonBackendContext) : HeaderI
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             ProgressionHeaderInfo(
                 data,
-                first = expression.extensionReceiver!!,
-                last = expression.getValueArgument(0)!!,
+                first = expression.arguments[0]!!,
+                last = expression.arguments[1]!!,
                 step = irInt(1),
                 canOverflow = false,
                 isLastInclusive = false,

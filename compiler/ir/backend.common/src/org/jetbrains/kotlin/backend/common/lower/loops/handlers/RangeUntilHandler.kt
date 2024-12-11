@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.loops.*
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.hasShape
 
 /** Builds a [HeaderInfo] for progressions built using the `rangeUntil` member function (`..<` operator). */
 internal class RangeUntilHandler(private val context: CommonBackendContext) : HeaderInfoHandler<IrCall, ProgressionType> {
@@ -18,9 +19,9 @@ internal class RangeUntilHandler(private val context: CommonBackendContext) : He
 
     override fun matchIterable(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
-        return callee.valueParameters.singleOrNull()?.type in progressionElementTypes &&
-                callee.extensionReceiverParameter == null &&
-                callee.dispatchReceiverParameter?.type in progressionElementTypes &&
+        return callee.hasShape(dispatchReceiver = true, regularParameters = 1) &&
+                callee.parameters[0].type in progressionElementTypes &&
+                callee.parameters[1].type in progressionElementTypes &&
                 callee.name.asString() == "rangeUntil"
     }
 
@@ -29,7 +30,7 @@ internal class RangeUntilHandler(private val context: CommonBackendContext) : He
             ProgressionHeaderInfo(
                 data,
                 first = expression.dispatchReceiver!!,
-                last = expression.getValueArgument(0)!!,
+                last = expression.arguments[1]!!,
                 step = irInt(1),
                 canOverflow = false,
                 isLastInclusive = false,
