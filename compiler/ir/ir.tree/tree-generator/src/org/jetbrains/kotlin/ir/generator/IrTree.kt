@@ -758,6 +758,8 @@ object IrTree : AbstractTreeBuilder() {
 
         visitorParameterName = "inlinedBlock"
 
+        +field("declarationStartOffset", int)
+        +field("declarationEndOffset", int)
         +field("inlineFunctionSymbol", functionSymbol, isChild = false, nullable = true)
         +field("fileEntry", type(Packages.tree, "IrFileEntry"), isChild = false)
     }
