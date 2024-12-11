@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.isEqualsInheritedFromAny
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -52,13 +53,13 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                 return irCall(call, context.wasmSymbols.throwLinkageError)
             }
             irBuiltins.ieee754equalsFunByOperandType[irBuiltins.floatClass] -> {
-                if (call.getValueArgument(0)!!.type.isNullable() || call.getValueArgument(1)!!.type.isNullable()) {
+                if (call.arguments[0]!!.type.isNullable() || call.arguments[1]!!.type.isNullable()) {
                     return irCall(call, symbols.nullableFloatIeee754Equals)
                 }
                 return irCall(call, symbols.floatEqualityFunctions.getValue(irBuiltins.floatType))
             }
             irBuiltins.ieee754equalsFunByOperandType[irBuiltins.doubleClass] -> {
-                if (call.getValueArgument(0)!!.type.isNullable() || call.getValueArgument(1)!!.type.isNullable()) {
+                if (call.arguments[0]!!.type.isNullable() || call.arguments[1]!!.type.isNullable()) {
                     return irCall(call, symbols.nullableDoubleIeee754Equals)
                 }
                 return irCall(call, symbols.floatEqualityFunctions.getValue(irBuiltins.doubleType))
@@ -73,11 +74,11 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                         error("Unexpected external refs in wasi mode")
                     }
                     val refIsNull = if (expr.type.erasedUpperBound.isExternal) symbols.jsRelatedSymbols.externRefIsNull else symbols.refIsNull
-                    return builder.irCall(refIsNull).apply { putValueArgument(0, expr) }
+                    return builder.irCall(refIsNull).apply { arguments[0] = expr }
                 }
 
-                val lhs = call.getValueArgument(0)!!
-                val rhs = call.getValueArgument(1)!!
+                val lhs = call.arguments[0]!!
+                val rhs = call.arguments[1]!!
 
                 if (lhs.isNullConst()) return callRefIsNull(rhs)
 
@@ -108,7 +109,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
             }
 
             irBuiltins.checkNotNullSymbol -> {
-                val arg = call.getValueArgument(0)!!
+                val arg = call.arguments[0]!!
 
                 if (arg.isNullConst()) {
                     return builder.irCall(symbols.throwNullPointerException)
@@ -134,11 +135,11 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
 
             irBuiltins.illegalArgumentExceptionSymbol ->
                 return builder.irCall(symbols.throwIAE, irBuiltins.nothingType).apply {
-                    putValueArgument(0, call.getValueArgument(0)!!)
+                    arguments[0] = call.arguments[0]!!
                 }
 
             irBuiltins.dataClassArrayMemberHashCodeSymbol, irBuiltins.dataClassArrayMemberToStringSymbol -> {
-                val argument = call.getValueArgument(0)!!
+                val argument = call.arguments[0]!!
                 val argumentType = argument.type
                 val overloadSymbol: IrSimpleFunctionSymbol
                 val returnType: IrType
@@ -154,7 +155,8 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                     overloadSymbol,
                     returnType,
                 ).apply {
-                    extensionReceiver = argument
+                    val extensionIndex = overloadSymbol.owner.parameters.indexOfFirst { it.kind == IrParameterKind.ExtensionReceiver }
+                    arguments[extensionIndex] = argument
                     if (argumentType.classOrNull == irBuiltins.arrayClass) {
                         typeArguments[0] = argumentType.getArrayElementType(irBuiltins)
                     }
@@ -189,7 +191,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                     constructorTypeArgumentsCount = 0
                 ).also {
                     it.putClassTypeArgument(0, type)
-                    it.putValueArgument(0, constructorArgument)
+                    it.arguments[0] = constructorArgument
                 }
             }
 
@@ -213,7 +215,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
 
         if (!klass.isInterface) {
             return builder.irCall(context.wasmSymbols.reflectionSymbols.getTypeInfoTypeDataByPtr).also {
-                it.putValueArgument(0, typeId)
+                it.arguments[0] = typeId
             }
         } else {
             val fqName = type.classFqName!!
@@ -223,9 +225,9 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
             val typeName = fqName.shortName().asString()
 
             return builder.irCallConstructor(symbols.reflectionSymbols.wasmTypeInfoData.constructors.first(), emptyList()).also {
-                it.putValueArgument(0, typeId)
-                it.putValueArgument(1, packageName.toIrConst(context.irBuiltIns.stringType))
-                it.putValueArgument(2, typeName.toIrConst(context.irBuiltIns.stringType))
+                it.arguments[0] = typeId
+                it.arguments[1] = packageName.toIrConst(context.irBuiltIns.stringType)
+                it.arguments[2] = typeName.toIrConst(context.irBuiltIns.stringType)
             }
         }
     }

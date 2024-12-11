@@ -106,7 +106,7 @@ internal class UnhandledExceptionLowering(val context: WasmBackendContext) : Fil
                     type = bodyType,
                     condition = irGet(currentIsNotFirstWasmExportCall, irBooleanType),
                     thenPart = irThrow(irGet(e, throwableType)),
-                    elsePart = irCall(throwAsJsException).apply { putValueArgument(0, irGet(e, throwableType)) }
+                    elsePart = irCall(throwAsJsException).apply { arguments[0] = irGet(e, throwableType) }
                 )
             )
 

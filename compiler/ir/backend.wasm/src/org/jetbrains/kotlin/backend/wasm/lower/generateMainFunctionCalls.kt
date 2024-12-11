@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.name.Name
 class GenerateMainFunctionWrappers(private val backendContext: WasmBackendContext) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
         val mainFunction = JsMainFunctionDetector(backendContext).getMainFunctionOrNull(irModule) ?: return
-        val generateArgv = mainFunction.valueParameters.firstOrNull()?.isStringArrayParameter() ?: false
+        val generateArgv = mainFunction.parameters.firstOrNull()?.isStringArrayParameter() ?: false
         val generateContinuation = mainFunction.isLoweredSuspendFunction(backendContext)
 
         if (!generateArgv && !generateContinuation) {
@@ -90,7 +90,7 @@ private fun IrSimpleFunction.createMainFunctionWrapper(
 
         val wrapperBody = backendContext.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
         val call = irCall(this@createMainFunctionWrapper).also { call ->
-            listOfNotNull(argv, continuation).forEachIndexed { index: Int, arg: IrExpression -> call.putValueArgument(index, arg) }
+            listOfNotNull(argv, continuation).forEachIndexed { index: Int, arg: IrExpression -> call.arguments[index] = arg }
         }
 
         wrapperBody.statements += irReturn(call)

@@ -43,7 +43,7 @@ class WasmSharedVariablesManager(val context: WasmBackendContext) : SharedVariab
                 typeArgumentsCount = boxClass.owner.typeParameters.size,
                 constructorTypeArgumentsCount = constructorSymbol.owner.typeParameters.size
             ).apply {
-                putValueArgument(0, initializer)
+                arguments[0] = initializer
             }
 
         return IrVariableImpl(
@@ -120,7 +120,7 @@ class WasmSharedVariablesManager(val context: WasmBackendContext) : SharedVariab
                 symbol = sharedVariableSymbol,
                 origin = originalSet.origin
             )
-            it.putValueArgument(0, originalSet.value)
+            it.arguments[1] = originalSet.value
         }
 
         return propertySet

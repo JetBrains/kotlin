@@ -1,5 +1,5 @@
 // IGNORE_BACKEND_K1: ANY
-// IGNORE_BACKEND: NATIVE
+// IGNORE_BACKEND_K2: NATIVE, WASM
 // LANGUAGE: +ContextParameters
 
 class X(val a: String) {

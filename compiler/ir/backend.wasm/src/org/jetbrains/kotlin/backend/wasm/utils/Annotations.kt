@@ -26,8 +26,8 @@ fun IrFunction.getWasmImportDescriptor(): WasmImportDescriptor? {
     val annotation = getAnnotation(FqName("kotlin.wasm.WasmImport"))
         ?: return null
 
-    val moduleName = (annotation.getValueArgument(0) as IrConst).value as String
-    val declarationName = (annotation.getValueArgument(1) as? IrConst)?.value as? String
+    val moduleName = (annotation.arguments[0] as IrConst).value as String
+    val declarationName = (annotation.arguments[1] as? IrConst)?.value as? String
     return WasmImportDescriptor(
         moduleName,
         WasmSymbol(declarationName ?: this.name.asString())
@@ -53,8 +53,8 @@ class WasmArrayInfo(val klass: IrClass, val isNullable: Boolean) {
 fun IrAnnotationContainer.getWasmArrayAnnotation(): WasmArrayInfo? =
     getAnnotation(FqName("kotlin.wasm.internal.WasmArrayOf"))?.let {
         WasmArrayInfo(
-            (it.getValueArgument(0) as IrClassReference).symbol.owner as IrClass,
-            (it.getValueArgument(1) as IrConst).value as Boolean,
+            (it.arguments[0] as IrClassReference).symbol.owner as IrClass,
+            (it.arguments[1] as IrConst).value as Boolean,
         )
     }
 
@@ -66,7 +66,7 @@ fun IrAnnotationContainer.getJsPrimitiveType(): String? =
 
 fun IrFunction.getWasmExportNameIfWasmExport(): String? {
     val annotation = getAnnotation(FqName("kotlin.wasm.WasmExport")) ?: return null
-    if (annotation.valueArgumentsCount == 0) return name.identifier
-    val nameFromAnnotation = (annotation.getValueArgument(0) as? IrConst)?.value as? String
+    if (annotation.arguments.isEmpty()) return name.identifier
+    val nameFromAnnotation = (annotation.arguments[0] as? IrConst)?.value as? String
     return nameFromAnnotation ?: name.identifier
 }

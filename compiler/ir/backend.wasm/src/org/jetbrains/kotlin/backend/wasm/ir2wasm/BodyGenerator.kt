@@ -135,7 +135,7 @@ class BodyGenerator(
         val arrayClass = expression.type.getClass()!!
 
         val wasmArrayType = arrayClass.constructors
-            .mapNotNull { it.valueParameters.singleOrNull()?.type }
+            .mapNotNull { it.parameters.singleOrNull()?.type }
             .firstOrNull { it.getClass()?.getWasmArrayAnnotation() != null }
             ?.getRuntimeClass(irBuiltIns)?.symbol
             ?.let(wasmFileCodegenContext::referenceGcType)
@@ -549,8 +549,8 @@ class BodyGenerator(
         val location = expression.getSourceLocation()
 
         if (klass.getWasmArrayAnnotation() != null) {
-            require(expression.valueArgumentsCount == 1) { "@WasmArrayOf constructs must have exactly one argument" }
-            generateExpression(expression.getValueArgument(0)!!)
+            require(expression.arguments.size == 1) { "@WasmArrayOf constructs must have exactly one argument" }
+            generateExpression(expression.arguments[0]!!)
             body.buildInstr(
                 WasmOp.ARRAY_NEW_DEFAULT,
                 location,
@@ -562,9 +562,8 @@ class BodyGenerator(
 
         if (expression.symbol.owner.hasWasmPrimitiveConstructorAnnotation()) {
             generateAnyParameters(klassSymbol, location)
-            for (i in 0 until expression.valueArgumentsCount) {
-                generateExpression(expression.getValueArgument(i)!!)
-            }
+            expression.arguments.forEach { generateExpression(it!!) }
+
             body.buildStructNew(wasmGcType, location)
             body.commentPreviousInstr { "@WasmPrimitiveConstructor ctor call: ${klass.fqNameWhenAvailable}" }
             return
@@ -648,16 +647,16 @@ class BodyGenerator(
         // Box intrinsic has an additional klass ID argument.
         // Processing it separately
         if (call.symbol == wasmSymbols.boxBoolean) {
-            generateBox(call.getValueArgument(0)!!, irBuiltIns.booleanType)
+            generateBox(call.arguments[0]!!, irBuiltIns.booleanType)
             return
         }
         if (call.symbol == wasmSymbols.boxIntrinsic) {
             val type = call.typeArguments[0]!!
             if (type == irBuiltIns.booleanType) {
-                generateExpression(call.getValueArgument(0)!!)
+                generateExpression(call.arguments[0]!!)
                 body.buildCall(wasmFileCodegenContext.referenceFunction(backendContext.wasmSymbols.getBoxedBoolean), location)
             } else {
-                generateBox(call.getValueArgument(0)!!, type)
+                generateBox(call.arguments[0]!!, type)
             }
             return
         }
@@ -678,11 +677,7 @@ class BodyGenerator(
 
         val function: IrFunction = call.symbol.owner.realOverrideTarget
 
-        call.dispatchReceiver?.let { generateExpression(it) }
-        call.extensionReceiver?.let { generateExpression(it) }
-        for (i in 0 until call.valueArgumentsCount) {
-            generateExpression(call.getValueArgument(i)!!)
-        }
+        call.arguments.forEach { generateExpression(it!!) }
 
         if (tryToGenerateIntrinsicCall(call, function)) {
             if (function.returnType.isUnit())
@@ -866,7 +861,7 @@ class BodyGenerator(
 
             wasmSymbols.refCastNull -> {
                 generateRefCast(
-                    fromType = call.getValueArgument(0)!!.type,
+                    fromType = call.arguments[0]!!.type,
                     toType = call.typeArguments[0]!!,
                     isRefNullCast = true,
                     location = location,
@@ -875,7 +870,7 @@ class BodyGenerator(
 
             wasmSymbols.refTest -> {
                 generateRefTest(
-                    fromType = call.getValueArgument(0)!!.type,
+                    fromType = call.arguments[0]!!.type,
                     toType = call.typeArguments[0]!!,
                     location
                 )

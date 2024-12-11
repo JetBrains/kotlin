@@ -513,11 +513,12 @@ fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) 
     }
 
 fun IrFunction.getEffectiveValueParameters(): List<IrValueParameter> {
-    val implicitThis = when (this) {
-        is IrConstructor -> parentAsClass.thisReceiver!!
-        is IrSimpleFunction -> null
+    val result = mutableListOf<IrValueParameter>()
+    if (this is IrConstructor) {
+        result.add(parentAsClass.thisReceiver!!)
     }
-    return listOfNotNull(implicitThis, dispatchReceiverParameter, extensionReceiverParameter) + valueParameters
+    result.addAll(parameters)
+    return result
 }
 
 fun IrFunction.isExported(): Boolean =
