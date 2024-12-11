@@ -5,30 +5,45 @@
 
 package org.jetbrains.kotlin.scripting.test.repl
 
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyCopy
+import org.jetbrains.kotlin.fir.declarations.utils.originalReplSnippetSymbol
 import org.jetbrains.kotlin.fir.extensions.FirReplHistoryProvider
 import org.jetbrains.kotlin.fir.extensions.FirReplSnippetResolveExtension
-import org.jetbrains.kotlin.fir.extensions.replHistoryProvider
-import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.scripting.resolve.FirReplHistoryScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.scripting.resolve.FirReplHistoryScope
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.ScriptingHostConfigurationKeys
+import kotlin.script.experimental.util.PropertiesCollection
+
+val ScriptingHostConfigurationKeys.firReplHistoryProvider by PropertiesCollection.key<FirReplHistoryProvider>(isTransient = true)
+
+class FirReplHistoryProviderImpl : FirReplHistoryProvider() {
+    private val history = LinkedHashSet<FirReplSnippetSymbol>()
+
+    override fun getSnippets(): Iterable<FirReplSnippetSymbol> = history.asIterable()
+
+    override fun putSnippet(symbol: FirReplSnippetSymbol) {
+        history.add(symbol)
+    }
+
+    override fun isFirstSnippet(symbol: FirReplSnippetSymbol): Boolean = history.firstOrNull() == symbol
+}
+
 
 class FirTestReplSnippetResolveExtensionImpl(
     session: FirSession,
-    // TODO: left here because it seems it will be needed soon, remove suppression if used or remove the param if it is not the case
-    @Suppress("UNUSED_PARAMETER", "unused") hostConfiguration: ScriptingHostConfiguration,
+    hostConfiguration: ScriptingHostConfiguration,
 ) : FirReplSnippetResolveExtension(session) {
 
-    private val replHistoryProvider: FirReplHistoryProvider by lazy {
-        session.moduleData.dependencies.firstOrNull()?.session?.replHistoryProvider ?: error("No repl history provider found")
-    }
+    private val replHistoryProvider: FirReplHistoryProvider =
+        hostConfiguration[ScriptingHostConfiguration.firReplHistoryProvider]!!
 
     @OptIn(SymbolInternals::class)
     override fun getSnippetScope(currentSnippet: FirReplSnippet, useSiteSession: FirSession): FirScope? {
@@ -39,11 +54,14 @@ class FirTestReplSnippetResolveExtensionImpl(
         replHistoryProvider.getSnippets().forEach { snippet ->
             if (currentSnippet == snippet) return@forEach
             snippet.fir.body.statements.forEach {
-                when (it) {
-                    is FirProperty -> properties.put(it.name, it.symbol)
-                    is FirSimpleFunction -> functions.getOrPut(it.name, { ArrayList() }).add(it.symbol)
-                    is FirRegularClass -> classLikes.put(it.name, it.symbol)
-                    is FirTypeAlias -> classLikes.put(it.name, it.symbol)
+                if (it is FirDeclaration) {
+                    it.originalReplSnippetSymbol = snippet
+                    when (it) {
+                        is FirProperty -> properties.put(it.name, it.createCopyForState(snippet).symbol)
+                        is FirSimpleFunction -> functions.getOrPut(it.name, { ArrayList() }).add(it.symbol)
+                        is FirRegularClass -> classLikes.put(it.name, it.symbol)
+                        is FirTypeAlias -> classLikes.put(it.name, it.symbol)
+                    }
                 }
             }
         }
@@ -52,6 +70,16 @@ class FirTestReplSnippetResolveExtensionImpl(
 
     override fun updateResolved(snippet: FirReplSnippet) {
         replHistoryProvider.putSnippet(snippet.symbol)
+    }
+
+    private fun FirProperty.createCopyForState(snippet: FirReplSnippetSymbol): FirProperty {
+        return buildPropertyCopy(this) {
+            origin = FirDeclarationOrigin.FromOtherReplSnippet
+            status = this@createCopyForState.status.copy(visibility = Visibilities.Local, isStatic = true)
+            this.symbol = FirPropertySymbol(this@createCopyForState.symbol.callableId)
+        }.also {
+            it.originalReplSnippetSymbol = snippet
+        }
     }
 
     companion object {
