@@ -80,7 +80,7 @@ open class JvmIrLinkageModeTest : CodegenTestCase() {
     }
 
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
-        val idSignatureShouldBePresent = environment.configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES)
+        val idSignatureShouldBePresent = !useFir && environment.configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES)
         IrGenerationExtension.registerExtension(environment.project, LinkageTestIrExtension(idSignatureShouldBePresent))
         super.setupEnvironment(environment)
     }
