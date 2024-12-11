@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.dumdum.filebasedindex.names.*
-import org.jetbrains.kotlin.analysis.api.dumdum.stubindex.IdeStubIndexService
+import org.jetbrains.kotlin.analysis.api.dumdum.stubindex.*
 import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinAnnotationsResolverFactory
@@ -67,7 +67,6 @@ import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.descriptors.CallableDescriptor.UserDataKey
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
@@ -207,18 +206,62 @@ fun main() {
             val psiManager = PsiManager.getInstance(project)
             val psiFileById = virtualFileById.mapValues { (_, virtualFile) -> psiManager.findFile(virtualFile)!! }
 
+            val fileBasedIndexExtensions = fileBasedIndexExtensions(
+                listOf(
+                    KotlinJvmModuleAnnotationsIndex(),
+                    KotlinModuleMappingIndex(),
+                    KotlinPartialPackageNamesIndex(),
+                    KotlinTopLevelCallableByPackageShortNameIndex(),
+                    KotlinTopLevelClassLikeDeclarationByPackageShortNameIndex(),
+                )
+            )
+
+            val stubIndexExtensions = stubIndexExtensions(
+                listOf(
+                    KotlinAnnotationsIndex.Helper,
+                    KotlinClassShortNameIndex.Helper,
+                    KotlinExtensionsInObjectsByReceiverTypeIndex.Helper,
+                    KotlinFileFacadeClassByPackageIndex.Helper,
+                    KotlinFileFacadeFqNameIndex.Helper,
+                    KotlinFileFacadeShortNameIndex.Helper,
+                    KotlinFilePartClassIndex.Helper,
+                    KotlinFullClassNameIndex.Helper,
+                    KotlinFunctionShortNameIndex.Helper,
+                    KotlinInnerTypeAliasClassIdIndex.Helper,
+                    KotlinJvmNameAnnotationIndex.Helper,
+                    KotlinMultiFileClassPartIndex.Helper,
+                    KotlinOverridableInternalMembersShortNameIndex.Helper,
+                    KotlinPrimeSymbolNameIndex.Helper,
+                    KotlinProbablyContractedFunctionShortNameIndex.Helper,
+                    KotlinProbablyNothingFunctionShortNameIndex.Helper,
+                    KotlinProbablyNothingPropertyShortNameIndex.Helper,
+                    KotlinPropertyShortNameIndex.Helper,
+                    KotlinScriptFqnIndex.Helper,
+                    KotlinSubclassObjectNameIndex.Helper,
+                    KotlinSuperClassIndex.Helper,
+                    KotlinTopLevelClassByPackageIndex.Helper,
+                    KotlinTopLevelExpectFunctionFqNameIndex.Helper,
+                    KotlinTopLevelExpectPropertyFqNameIndex.Helper,
+                    KotlinTopLevelExtensionsByReceiverTypeIndex.Helper,
+                    KotlinTopLevelFunctionByPackageIndex.Helper,
+                    KotlinTopLevelFunctionFqnNameIndex.Helper,
+                    KotlinTopLevelPropertyByPackageIndex.Helper,
+                    KotlinTopLevelPropertyFqnNameIndex.Helper,
+                    KotlinTopLevelTypeAliasByPackageIndex.Helper,
+                    KotlinTopLevelTypeAliasFqNameIndex.Helper,
+                    KotlinTypeAliasByExpansionShortNameIndex.Helper,
+                    KotlinTypeAliasShortNameIndex.Helper,
+                    KotlinExactPackagesIndex.Helper,
+                )
+            )
+
             val index = inMemoryIndex(
                 psiFileById.flatMap { (fileId, psiFile) ->
                     indexFile(
                         fileId = fileId,
                         file = psiFile,
-                        extensions = listOf(
-                            KotlinJvmModuleAnnotationsIndex(),
-                            KotlinModuleMappingIndex(),
-                            KotlinPartialPackageNamesIndex(),
-                            KotlinTopLevelCallableByPackageShortNameIndex(),
-                            KotlinTopLevelClassLikeDeclarationByPackageShortNameIndex(),
-                        )
+                        fileBasedIndexExtensions = fileBasedIndexExtensions,
+                        stubIndexExtensions = stubIndexExtensions,
                     )
                 }
             )
@@ -227,13 +270,16 @@ fun main() {
                 virtualFileById[fileId]!!
             }
 
-            val stubIndex: StubIndex = index.stubIndex(virtualFileFactory) { virtualFile ->
+            val stubIndex: StubIndex = index.stubIndex(stubIndexExtensions, virtualFileFactory) { virtualFile ->
                 virtualFile.getUserData(FileIdKey)!!
             }
 
             (applicationEnvironment.application.getService(StubTreeLoader::class.java) as StubTreeLoaderImpl).stubIndex = stubIndex
 
-            val fileBasedIndex: FileBasedIndex = index.fileBased(virtualFileFactory)
+            val fileBasedIndex: FileBasedIndex = index.fileBased(
+                virtualFileFactory = virtualFileFactory,
+                fileBasedIndexExtensions = fileBasedIndexExtensions
+            )
 
             project.apply {
                 registerService(
@@ -433,17 +479,19 @@ fun main() {
 fun indexFile(
     fileId: FileId,
     file: PsiFile,
-    extensions: List<FileBasedIndexExtension<*, *>>,
+    fileBasedIndexExtensions: FileBasedIndexExtensions,
+    stubIndexExtensions: KeyTypesMap,
 ): List<IndexUpdate<*>> =
     fileBasedIndexesUpdates(
         fileId = fileId,
         fileContent = FileContentImpl.createByFile(file.virtualFile, file.project),
-        extensions = extensions
+        fileBasedIndexExtensions = fileBasedIndexExtensions
     ) +
             (file.fileElementType as? IStubFileElementType<*>)?.let { stubFileElementType ->
                 val stubElement = stubFileElementType.builder.buildStubTree(file)
                 listOf(
                     stubIndexesUpdate(
+                        stubIndexExtensions = stubIndexExtensions,
                         fileId = fileId,
                         tree = StubTree(stubElement as PsiFileStub<*>)
                     )

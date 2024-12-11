@@ -8,11 +8,12 @@ import com.intellij.psi.stubs.ObjectStubTree
 import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.util.Processor
 import com.intellij.util.indexing.ID
+import com.intellij.util.io.KeyDescriptor
 
 interface StubIndex {
-    
+
     fun stub(virtualFile: VirtualFile): ObjectStubTree<*>?
-    
+
     fun <K> getContainingFilesIterator(
         indexId: ID<K, *>,
         dataKey: K,
@@ -28,4 +29,10 @@ interface StubIndex {
         requiredClass: Class<Psi>,
         processor: Processor<in Psi>,
     ): Boolean
+}
+
+interface StubIndexExtension<Key, Psi : PsiElement> {
+    val key: StubIndexKey<Key, Psi>
+    val version: Int
+    val keyDescriptor: KeyDescriptor<Key>
 }

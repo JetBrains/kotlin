@@ -8,10 +8,43 @@ import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.util.CommonProcessors
+import com.intellij.util.io.KeyDescriptor
+import org.jetbrains.kotlin.analysis.api.dumdum.KeyType
 import org.jetbrains.kotlin.analysis.api.dumdum.StubIndex
+import org.jetbrains.kotlin.analysis.api.dumdum.StubIndexExtension
+import java.io.DataInput
+import java.io.DataOutput
 
-abstract class KotlinStringStubIndexHelper<Key : NavigatablePsiElement>(private val valueClass: Class<Key>) {
+abstract class KotlinStringStubIndexHelper<Key : NavigatablePsiElement>(
+    private val valueClass: Class<Key>,
+) : StubIndexExtension<String, Key> {
+
+    companion object {
+        object StringKeyDescriptor : KeyDescriptor<String> {
+            override fun getHashCode(value: String?): Int =
+                value.hashCode()
+
+            override fun isEqual(val1: String?, val2: String?): Boolean =
+                val1 == val2
+
+            override fun save(out: DataOutput, value: String?) {
+                out.writeUTF(value!!)
+            }
+
+            override fun read(`in`: DataInput): String =
+                `in`.readUTF()
+        }
+    }
+
+    override val version: Int = 1
+
+    override val keyDescriptor: KeyDescriptor<String> = StringKeyDescriptor
+
     private val logger = Logger.getInstance(this.javaClass)
+
+    override val key: StubIndexKey<String, Key>
+        get() = indexKey
+
     abstract val indexKey: StubIndexKey<String, Key>
 
     operator fun get(stubIndex: StubIndex, fqName: String, project: Project, scope: GlobalSearchScope): Collection<Key> =

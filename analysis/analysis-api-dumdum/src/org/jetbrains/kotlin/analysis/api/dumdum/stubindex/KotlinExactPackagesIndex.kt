@@ -5,9 +5,12 @@ import com.intellij.psi.stubs.StubIndexKey
 import org.jetbrains.kotlin.psi.KtFile
 
 class KotlinExactPackagesIndex internal constructor() {
-    companion object {
+    companion object Helper: KotlinStringStubIndexHelper<KtFile>(KtFile::class.java) {
 
         @JvmField
         val NAME: StubIndexKey<String, KtFile> = StubIndexKey.createIndexKey("org.jetbrains.kotlin.idea.stubindex.KotlinExactPackagesIndex")
+        
+        override val indexKey: StubIndexKey<String, KtFile>
+            get() = NAME
     }
 }

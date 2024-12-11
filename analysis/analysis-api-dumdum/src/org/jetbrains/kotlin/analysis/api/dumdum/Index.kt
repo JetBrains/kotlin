@@ -1,30 +1,42 @@
 package org.jetbrains.kotlin.analysis.api.dumdum
 
 interface Index {
-    fun <S> value(fileId: FileId, valueDescriptor: ValueDescriptor<S>): S?
+    fun <S> value(fileId: FileId, valueType: ValueType<S>): S?
 
     fun <K> files(key: IndexKey<K>): Sequence<FileId>
 
-    fun <K> keys(keyDescriptor: KeyDescriptor<K>): Sequence<K>
+    fun <K> keys(keyType: KeyType<K>): Sequence<K>
 }
 
 @JvmInline
 value class FileId(val id: String)
 
 data class IndexKey<K>(
-    val keyDescriptor: KeyDescriptor<K>,
+    val keyType: KeyType<K>,
     val key: K,
 )
 
-data class KeyDescriptor<K>(
+class KeyType<K>(
     val id: String,
     val serializer: Serializer<K>,
-)
+) {
+    override fun equals(other: Any?): Boolean =
+        other === this || (other is KeyType<*> && other.id == this.id)
 
-data class ValueDescriptor<S>(
+    override fun hashCode(): Int =
+        id.hashCode() + 1
+}
+
+class ValueType<S>(
     val id: String,
     val serializer: Serializer<S>,
-)
+) {
+    override fun equals(other: Any?): Boolean =
+        other === this || (other is ValueType<*> && other.id == this.id)
+
+    override fun hashCode(): Int =
+        id.hashCode() + 2
+}
 
 interface Serializer<T> {
 
@@ -51,7 +63,7 @@ interface Serializer<T> {
 
 data class IndexUpdate<T>(
     val fileId: FileId,
-    val valueType: ValueDescriptor<T>,
+    val valueType: ValueType<T>,
     val value: T,
     val keys: List<IndexKey<*>>,
 )
