@@ -107,7 +107,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
         if (addJdkClassesToClasspath.get()) {
             compileClasspath.addAll(
                 0,
-                getJdkClassesRoots(defaultKotlinJavaToolchain.get().buildJvm.get().javaHome.toPath(), false)
+                getJdkClassesRoots(defaultKotlinJavaToolchain.get().buildJvm.get().javaHome.toPath(), isJre = false)
             )
         }
 
