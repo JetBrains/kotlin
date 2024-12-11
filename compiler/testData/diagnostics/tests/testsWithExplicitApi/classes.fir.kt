@@ -40,8 +40,8 @@ public data class FooData(val i: Int, val s: String)
 
 <!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>data class FooData2<!>(val i: Int, val s: String)
 
-public inline class FooValue(<!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>val i<!>: Int)
-<!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>inline class FooValue2<!>(<!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>val i<!>: Int)
+public inline class FooValue(val i: Int)
+<!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>inline class FooValue2<!>(val i: Int)
 
 public class WithNested {
     <!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>class Nested<!> {}
