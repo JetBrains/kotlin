@@ -223,7 +223,6 @@ class SwiftExportUnitTests {
 
         val linkTask = project.tasks.getByName("linkSwiftExportBinaryDebugStaticIosSimulatorArm64") as KotlinNativeLink
         val projectLibraries = linkTask.libraries
-            .exclude(linkTask.excludeOriginalPlatformLibraries)
             .filter { it.name.contains("stdlib").not() }
 
         val mainProjectLibrary = project.layout.buildDirectory

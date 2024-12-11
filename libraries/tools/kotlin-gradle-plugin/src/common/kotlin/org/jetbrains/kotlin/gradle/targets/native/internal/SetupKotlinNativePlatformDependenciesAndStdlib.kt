@@ -20,9 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
-import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
-import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeDistributionBuildService
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.konanDistribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -40,20 +38,24 @@ internal val SetupKotlinNativePlatformDependenciesAndStdlib = KotlinProjectSetup
         }
     }
 
-    excludeDefaultPlatformDependenciesFromKotlinNativeCompileTasks()
     launch { kotlin.excludeStdlibFromNativeSourceSetDependencies() }
 }
 
 private suspend fun AbstractKotlinNativeCompilation.configureStdlibAndPlatformDependencies(
-    stdlib: FileCollection
+    stdlib: FileCollection,
 ) {
-    // Commonizer target must not be null for AbstractKotlinNativeCompilation, but we are graceful here and just return
+
     val commonizerTarget = commonizerTarget.await() ?: return
-    val nativeDistributionDependencies = project.getNativeDistributionDependencies(commonizerTarget)
+    val nativeBuildService = KotlinNativeDistributionBuildService.registerIfAbsent(project)
+
+    val nativeDependency = nativeBuildService.orNull?.getNativeDistributionDependencies(
+        project,
+        commonizerTarget
+    )
 
     val updatedCompileDependencyFiles = project.files().from(
         stdlib,
-        nativeDistributionDependencies,
+        nativeDependency,
         compileDependencyFiles
     )
 
@@ -71,28 +73,6 @@ private suspend fun KotlinMultiplatformExtension.excludeStdlibFromNativeSourceSe
                 .resolvableMetadataConfiguration
                 .exclude(mapOf("group" to KOTLIN_MODULE_GROUP, "module" to KOTLIN_STDLIB_MODULE_NAME))
         }
-    }
-}
-
-/**
- * Platform dependencies are added to compilation "compile files" in [configureStdlibAndPlatformDependencies]
- * So user code that integrates with Kotlin Native Compilations can safely rely on that classpath.
- * However, for performance optimization reasons, Kotlin Native automatically loads Platform Dependencies from its distribution.
- * And because of that KGP has to explicitly filter out these platform dependencies from tasks.
- *
- * NB: This is not applicable for Native Shared Metadata Compilation, they will receive commonized versions of platform libs.
- */
-private fun Project.excludeDefaultPlatformDependenciesFromKotlinNativeCompileTasks() {
-    tasks.withType<KotlinNativeLink>().configureEach { task ->
-        @Suppress("DEPRECATION")
-        val konanTarget = task.compilation.konanTarget
-        task.excludeOriginalPlatformLibraries = task.project.getOriginalPlatformLibrariesFor(konanTarget)
-    }
-    tasks.withType<KotlinNativeCompile>().configureEach { task ->
-        // metadata compilations should have commonized platform libraries in the classpath i.e. they are not "original"
-        if (task.isMetadataCompilation) return@configureEach
-        val konanTarget = task.konanTarget
-        task.excludeOriginalPlatformLibraries = task.project.getOriginalPlatformLibrariesFor(konanTarget)
     }
 }
 
@@ -125,7 +105,7 @@ internal fun Project.getNativeDistributionDependencies(target: CommonizerTarget)
 private fun Project.getOriginalPlatformLibrariesFor(target: LeafCommonizerTarget): FileCollection =
     getOriginalPlatformLibrariesFor(target.konanTarget)
 
-private fun Project.getOriginalPlatformLibrariesFor(konanTarget: KonanTarget): FileCollection = project.filesProvider {
+internal fun Project.getOriginalPlatformLibrariesFor(konanTarget: KonanTarget): FileCollection = project.filesProvider {
     konanDistribution.platformLibsDir.resolve(konanTarget.name).listLibraryFiles().toSet()
 }
 
