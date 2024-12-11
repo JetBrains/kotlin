@@ -366,43 +366,16 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         nativeProject(
             "native-simple-project", gradleVersion, buildOptions = defaultBuildOptions.copy(
                 nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
-                    version = TestVersions.Kotlin.CURRENT,
+                    version = TestVersions.Kotlin.STABLE_RELEASE,
+                    distributionDownloadFromMaven = true,
                 ),
                 konanDataDir = konanDirTemp,
-            )
+            ),
         ) {
-            val taskName = ":assemble"
-            // separate fix for provision.ok file is required
-            build(
-                taskName,
-                buildOptions = buildOptions,
-            ) {
-                assertTasksExecuted(taskName)
-                if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_5)) {
-                    assertOutputContains(
-                        "Calculating task graph as no configuration cache is available for tasks: ${taskName}"
-                    )
-                } else {
-                    assertOutputContains(
-                        "Calculating task graph as no cached configuration is available for tasks: ${taskName}"
-                    )
-                }
-
-                assertConfigurationCacheStored()
-            }
-
-            build("clean", buildOptions = buildOptions)
-
-            // Then run a build where tasks states are deserialized to check that they work correctly in this mode
-            build(
-                taskName,
-                buildOptions = buildOptions,
-            ) {
-                assertTasksExecuted(taskName)
-                assertOutputContains("provisioned.ok' has been created.")
-            }
+            testConfigurationCacheOf(":assemble")
         }
     }
+
 }
 
 /** @return true when the patch was applied */
