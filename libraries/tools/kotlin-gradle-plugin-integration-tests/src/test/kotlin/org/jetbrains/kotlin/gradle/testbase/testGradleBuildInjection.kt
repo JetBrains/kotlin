@@ -153,8 +153,8 @@ inline fun <reified T> TestProject.buildScriptReturn(
         buildGradle,
         buildGradleKts,
     )
-    val injectionUuid = UUID.randomUUID().toString()
-    val serializedReturnPath = projectPath.resolve("serializedReturnConfiguration_${injectionUuid}").toFile()
+    val injectionIdentifier = generateIdentifier()
+    val serializedReturnPath = projectPath.resolve("serializedReturnConfiguration_${injectionIdentifier}").toFile()
     val injection = object : GradleBuildScriptInjection<Project> {
         override fun inject(target: Project) {
             val returnEvaluationProvider = target.providers.provider {
@@ -182,7 +182,7 @@ inline fun <reified T> TestProject.buildScriptReturn(
         }
     }
 
-    val serializedInjectionName = "serializedInjection_${injectionUuid}"
+    val serializedInjectionName = "serializedInjection_${injectionIdentifier}"
     val serializedInjectionPath = projectPath.resolve(serializedInjectionName)
     serializedInjectionPath.toFile().outputStream().use {
         ObjectOutputStream(it).writeObject(injection)
@@ -191,13 +191,13 @@ inline fun <reified T> TestProject.buildScriptReturn(
     when {
         buildGradleKts.exists() -> buildGradleKts.appendText(
             whenPropertySpecified(
-                injectionUuid,
+                injectionIdentifier,
                 injectionLoadProject(serializedInjectionName)
             )
         )
         buildGradle.exists() -> buildGradle.appendText(
             whenPropertySpecified(
-                injectionUuid,
+                injectionIdentifier,
                 injectionLoadProjectGroovy(serializedInjectionName)
             )
         )
@@ -207,7 +207,7 @@ inline fun <reified T> TestProject.buildScriptReturn(
     return ReturnFromBuildScriptAfterExecution(
         this,
         serializedReturnPath,
-        injectionUuid,
+        injectionIdentifier,
     )
 }
 
