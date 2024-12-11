@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
@@ -19,30 +20,15 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.createConeSubstitutorFromTypeArguments
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeDefinitelyNotNullType
-import org.jetbrains.kotlin.fir.types.ConeErrorType
-import org.jetbrains.kotlin.fir.types.ConeFlexibleType
-import org.jetbrains.kotlin.fir.types.ConeIntersectionType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
-import org.jetbrains.kotlin.fir.types.ProjectionKind
-import org.jetbrains.kotlin.fir.types.abbreviatedType
-import org.jetbrains.kotlin.fir.types.captureArguments
-import org.jetbrains.kotlin.fir.types.create
-import org.jetbrains.kotlin.fir.types.type
-import org.jetbrains.kotlin.fir.types.typeApproximator
-import org.jetbrains.kotlin.fir.types.typeContext
-import org.jetbrains.kotlin.fir.types.withNullabilityOf
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.CaptureStatus
@@ -208,7 +194,7 @@ internal fun <C : ConeKotlinType, T : KaType> createTypePointer(
 
 private class KaGenericTypePointer<C : ConeKotlinType, T : KaType>(
     private val coneTypePointer: ConeTypePointer<C>,
-    private val typeFactory: (C, KaSymbolByFirBuilder) -> T?
+    private val typeFactory: (C, KaSymbolByFirBuilder) -> T?,
 ) : KaTypePointer<T> {
     override fun restore(session: KaSession): T? {
         requireIsInstance<KaFirSession>(session)
@@ -217,3 +203,12 @@ private class KaGenericTypePointer<C : ConeKotlinType, T : KaType>(
         return typeFactory(coneType, session.firSymbolBuilder)
     }
 }
+
+internal fun FirQualifiedAccessExpression.createSubstitutorFromTypeArguments(
+    analysisSession: KaFirSession,
+    discardErrorTypes: Boolean = false,
+): KaSubstitutor? =
+    createConeSubstitutorFromTypeArguments(analysisSession.firSession, discardErrorTypes)?.toKtSubstitutor(analysisSession)
+
+internal fun ConeSubstitutor.toKtSubstitutor(analysisSession: KaFirSession): KaSubstitutor =
+    analysisSession.firSymbolBuilder.typeBuilder.buildSubstitutor(this)

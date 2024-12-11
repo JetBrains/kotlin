@@ -38,7 +38,7 @@ public interface KaCompletionCandidateChecker : KaSessionComponent {
 }
 
 @KaIdeApi
-public interface KaCompletionExtensionCandidateChecker {
+public interface KaCompletionExtensionCandidateChecker : KaLifetimeOwner {
     /**
      * Checks if the given [candidate] is applicable as an extension callable in the current context.
      */
