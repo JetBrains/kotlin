@@ -534,7 +534,6 @@ abstract class CompileServiceImplBase(
         }
     }
 
-
     protected inline fun <R> ifAliveChecksImpl(
         minAliveness: Aliveness = Aliveness.LastSession,
         body: () -> CompileService.CallResult<R>,
@@ -542,7 +541,17 @@ abstract class CompileServiceImplBase(
         val curState = state.alive.get()
         return when {
             curState < minAliveness.ordinal -> {
-                log.info("Cannot perform operation, requested state: ${minAliveness.name} > actual: ${curState.toAlivenessName()}")
+                val stackTrace = Thread.currentThread().stackTrace
+                // the depth to extract stacktrace element like `org.jetbrains.kotlin.daemon.CompileServiceImpl.registerClient`
+                val rmiBusinessCallDepth = 1
+                val callSource = stackTrace.getOrNull(rmiBusinessCallDepth)?.let { " Operation: $it" }
+                    ?: Thread.currentThread().stackTrace.joinToString(prefix = " at ", separator = "\n at ")
+                log.info(
+                    """
+                    |Cannot perform operation, requested state: ${minAliveness.name} > actual: ${curState.toAlivenessName()}
+                    |$callSource
+                    """.trimMargin()
+                )
                 CompileService.CallResult.Dying()
             }
             else -> {
