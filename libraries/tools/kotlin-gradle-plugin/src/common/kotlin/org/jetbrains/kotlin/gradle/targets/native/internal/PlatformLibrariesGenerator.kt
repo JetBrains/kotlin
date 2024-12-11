@@ -6,25 +6,25 @@
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
+import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
-import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
+import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.tasks.CacheBuilder
 import org.jetbrains.kotlin.gradle.tasks.addArg
 import org.jetbrains.kotlin.gradle.utils.lifecycleWithDuration
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeLibraryGenerationRunner
-import org.jetbrains.kotlin.gradle.internal.properties.NativeProperties
 import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
 import org.jetbrains.kotlin.konan.library.KONAN_PLATFORM_LIBS_NAME_PREFIX
@@ -39,13 +39,17 @@ import java.util.concurrent.ConcurrentHashMap
 internal class PlatformLibrariesGenerator(
     objectFactory: ObjectFactory,
     val konanTarget: KonanTarget,
-    private val propertiesProvider: PropertiesProvider,
+    private val kotlinCompilerArgumentsLogLevel: Provider<KotlinCompilerArgumentsLogLevel>,
     private val konanPropertiesService: Provider<KonanPropertiesBuildService>,
     metricsReporter: Provider<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>,
     classLoadersCachingService: Provider<ClassLoadersCachingBuildService>,
     private val platformLibrariesService: Provider<GeneratedPlatformLibrariesService>,
     useXcodeMessageStyle: Provider<Boolean>,
-    private val nativeProperties: NativeProperties,
+    val classpath: FileCollection,
+    val jvmArgs: ListProperty<String>,
+    val actualNativeHomeDirectory: Provider<File>,
+    val konanDataDir: Provider<String?>,
+    nativeCacheKind: Provider<NativeCacheKind>
 ) {
 
     private val logger = Logging.getLogger(this::class.java)
@@ -54,16 +58,17 @@ internal class PlatformLibrariesGenerator(
         metricsReporter,
         classLoadersCachingService,
         useXcodeMessageStyle,
-        nativeProperties,
-        konanPropertiesService
+        classpath,
+        jvmArgs,
+        konanPropertiesService.map { it.environmentBlacklist }
     )
 
     private val konanHome
-        get() = nativeProperties.actualNativeHomeDirectory.get()
+        get() = actualNativeHomeDirectory.get()
 
     private val distribution = customerDistribution(
         konanHome.absolutePath,
-        konanDataDir = nativeProperties.konanDataDir.orNull?.absolutePath
+        konanDataDir = konanDataDir.orNull
     )
 
     private val platformLibsDirectory =
@@ -72,7 +77,7 @@ internal class PlatformLibrariesGenerator(
     private val defDirectory =
         File(distribution.platformDefs(konanTarget)).absoluteFile
 
-    private val konanCacheKind: Provider<NativeCacheKind> = nativeProperties.getKonanCacheKind(konanTarget, konanPropertiesService)
+    private val konanCacheKind: Provider<NativeCacheKind> = nativeCacheKind
 
     private val shouldBuildCaches: Boolean
         get() = konanPropertiesService.get().cacheWorksFor(konanTarget) &&
@@ -127,7 +132,7 @@ internal class PlatformLibrariesGenerator(
         if (logger.isInfoEnabled) {
             args.add("-verbose")
         }
-        nativeProperties.konanDataDir.orNull?.absolutePath?.let {
+        konanDataDir.orNull?.let {
             args.addAll(listOf("-Xkonan-data-dir", it))
         }
 
@@ -144,7 +149,7 @@ internal class PlatformLibrariesGenerator(
             args.addArg(
                 "-cache-directory",
                 CacheBuilder.getRootCacheDirectory(
-                    nativeProperties.actualNativeHomeDirectory.get(),
+                    actualNativeHomeDirectory.get(),
                     konanTarget,
                     true,
                     konanCacheKind.get()
@@ -159,7 +164,7 @@ internal class PlatformLibrariesGenerator(
         libraryGenerationRunner.runTool(
             KotlinNativeToolRunner.ToolArguments(
                 shouldRunInProcessMode = false,
-                compilerArgumentsLogLevel = propertiesProvider.kotlinCompilerArgumentsLogLevel.get(),
+                compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get(),
                 arguments = args
             )
         )

@@ -10,25 +10,26 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.ArchiveOperations
-import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileSystemOperations
-import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
+import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
+import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.konanTargets
+import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForBinariesCompilation
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
-import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionCommonizerLock
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
 import org.jetbrains.kotlin.gradle.targets.native.internal.getNativeDistributionDependencies
@@ -42,7 +43,6 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.loadConfigurables
 import org.jetbrains.kotlin.konan.util.ArchiveExtractor
 import org.jetbrains.kotlin.konan.util.ArchiveType
-import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.BufferedInputStream
 import java.io.File
 import java.nio.file.Files
@@ -51,8 +51,6 @@ import java.nio.file.Paths
 import java.nio.file.attribute.PosixFilePermission
 import java.util.zip.GZIPInputStream
 import javax.inject.Inject
-
-private const val MARKER_FILE = "provisioned.ok"
 
 internal interface UsesKotlinNativeBundleBuildService : Task {
     @get:Internal
@@ -72,14 +70,14 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
     }
 
     @get:Inject
-    abstract val fso: FileSystemOperations
+    abstract val fileSystemOperations: FileSystemOperations
 
     @get:Inject
     abstract val archiveOperations: ArchiveOperations
 
-    private var canBeReinstalled: Boolean = true // we can reinstall a k/n bundle once during the build
-
     companion object {
+        private val log = Logging.getLogger(KotlinNativeBundleBuildService::class.java)
+
         fun registerIfAbsent(project: Project): Provider<KotlinNativeBundleBuildService> {
             val classLoadersCachingService = ClassLoadersCachingBuildService.registerIfAbsent(project)
             val konanPropertiesBuildService = KonanPropertiesBuildService.registerIfAbsent(project)
@@ -119,71 +117,6 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
     }
 
     /**
-     * This function downloads and installs a Kotlin Native bundle if needed
-     * and then prepares its platform libraries if needed.
-     *
-     * @param project The Gradle project object.
-     * @param kotlinNativeBundleConfiguration Gradle configuration for Kotlin Native Bundle
-     * @param kotlinNativeVersion The version of Kotlin/Native to install
-     * @param bundleDir The directory to store the Kotlin/Native bundle.
-     * @param reinstallFlag A flag indicating whether to reinstall the bundle.
-     * @param konanTargets The set of KonanTarget objects representing the targets for the Kotlin/Native bundle.
-     * @param overriddenKonanHome Overridden konan home if present.
-     * @return kotlin native version if toolchain was used, path to konan home if konan home was used
-     */
-    internal fun prepareKotlinNativeBundle(
-        project: Project,
-        kotlinNativeBundleConfiguration: ConfigurableFileCollection,
-        kotlinNativeVersion: String,
-        bundleDir: File,
-        reinstallFlag: Boolean,
-        konanTargets: Set<KonanTarget>,
-        overriddenKonanHome: String?,
-    ) {
-        if (overriddenKonanHome != null) {
-            project.logger.info("A user-provided Kotlin/Native distribution configured: ${overriddenKonanHome}. Disabling Kotlin Native Toolchain auto-provisioning.")
-        } else {
-            processToolchain(bundleDir, project, reinstallFlag, kotlinNativeVersion, kotlinNativeBundleConfiguration)
-        }
-
-        project.setupKotlinNativePlatformLibraries(konanTargets)
-    }
-
-    private fun processToolchain(
-        bundleDir: File,
-        project: Project,
-        reinstallFlag: Boolean,
-        kotlinNativeVersion: String,
-        kotlinNativeBundleConfiguration: ConfigurableFileCollection,
-    ) {
-        val lock =
-            NativeDistributionCommonizerLock(bundleDir) { message -> project.logger.info("Kotlin Native Bundle: $message") }
-
-        lock.withLock {
-            val needToReinstall =
-                KotlinToolingVersion(parameters.kotlinNativeVersion.get()).maturity == KotlinToolingVersion.Maturity.SNAPSHOT
-            if (needToReinstall) {
-                project.logger.debug("Snapshot version could be changed, to be sure that up-to-date version is used, Kotlin/Native should be reinstalled")
-            }
-
-            removeBundleIfNeeded(reinstallFlag || needToReinstall, bundleDir)
-
-            if (!bundleDir.resolve(MARKER_FILE).exists()) {
-                val gradleCachesKotlinNativeDir =
-                    resolveKotlinNativeConfiguration(kotlinNativeVersion, kotlinNativeBundleConfiguration)
-
-                project.logger.info("Moving Kotlin/Native bundle from tmp directory $gradleCachesKotlinNativeDir to ${bundleDir.absolutePath}")
-                fso.copy {
-                    it.from(gradleCachesKotlinNativeDir)
-                    it.into(bundleDir)
-                }
-                createSuccessfulInstallationFile(bundleDir)
-                project.logger.info("Moved Kotlin/Native bundle from $gradleCachesKotlinNativeDir to ${bundleDir.absolutePath}")
-            }
-        }
-    }
-
-    /**
      * Downloads native dependencies for Kotlin Native based on the provided configuration.
      * @return A set of required dependencies that were downloaded.
      */
@@ -191,7 +124,6 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
         bundleDir: File,
         konanDataDir: String?,
         konanTargets: Set<KonanTarget>,
-        logger: Logger,
     ): Set<String> {
         val requiredDependencies = mutableSetOf<String>()
         val distribution = Distribution(bundleDir.absolutePath, konanDataDir = konanDataDir)
@@ -202,7 +134,7 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
                     distribution.properties,
                     distribution.dependenciesDir,
                     progressCallback = { url, currentBytes, totalBytes ->
-                        logger.info("Downloading dependency for Kotlin Native: $url (${currentBytes}/${totalBytes}). ")
+                        log.info("Downloading dependency for Kotlin Native: $url (${currentBytes}/${totalBytes}). ")
                     }
                 ) as KonanPropertiesLoader
 
@@ -213,55 +145,41 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
         return requiredDependencies
     }
 
-    private fun removeBundleIfNeeded(
-        reinstallFlag: Boolean,
-        bundleDir: File,
+    fun setupKotlinNativePlatformLibraries(
+        objectFactory: ObjectFactory,
+        konanTargetsWithNativeCacheKind: Map<KonanTarget, Provider<NativeCacheKind>>,
+        nativeDistributionType: String?,
+        kotlinCompilerArgumentsLogLevel: Provider<KotlinCompilerArgumentsLogLevel>,
+        useXcodeMessageStyle: Provider<Boolean>,
+        classpath: FileCollection,
+        jvmArgs: ListProperty<String>,
+        actualNativeHomeDirectory: Provider<File>,
+        konanDataDir: Provider<String?>,
     ) {
-        if (reinstallFlag && canBeReinstalled) {
-            bundleDir.deleteRecursively()
-            canBeReinstalled = false // we don't need to reinstall k/n if it was reinstalled once during the same build
-        }
-    }
-
-    private fun resolveKotlinNativeConfiguration(
-        kotlinNativeVersion: String,
-        kotlinNativeCompilerConfiguration: ConfigurableFileCollection,
-    ): File {
-        val resolutionErrorMessage = "Kotlin Native dependency has not been properly resolved. " +
-                "Please, make sure that you've declared the repository, which contains $kotlinNativeVersion."
-
-        val gradleCachesKotlinNativeDir = kotlinNativeCompilerConfiguration
-            .singleOrNull()
-            ?.resolve(kotlinNativeVersion)
-            ?: error(resolutionErrorMessage)
-
-        if (!gradleCachesKotlinNativeDir.exists()) {
-            error(
-                "Kotlin Native bundle dependency was used. " +
-                        "Please provide the corresponding version in 'kotlin.native.version' property instead of any other ways."
-            )
-        }
-        return gradleCachesKotlinNativeDir
-    }
-
-    private fun Project.setupKotlinNativePlatformLibraries(konanTargets: Set<KonanTarget>) {
-        val distributionType = NativeDistributionTypeProvider(this).getDistributionType()
+        val distributionType = NativeDistributionTypeProvider(nativeDistributionType).getDistributionType()
         if (distributionType.mustGeneratePlatformLibs) {
-            konanTargets.forEach { konanTarget ->
+            konanTargetsWithNativeCacheKind.forEach { (konanTarget, nativeCacheKind) ->
                 PlatformLibrariesGenerator(
-                    project.objects,
+                    objectFactory,
                     konanTarget,
-                    project.kotlinPropertiesProvider,
+                    kotlinCompilerArgumentsLogLevel,
                     parameters.konanPropertiesBuildService,
-                    project.objects.property(GradleBuildMetricsReporter()),
+                    objectFactory.property(GradleBuildMetricsReporter()),
                     parameters.classLoadersCachingService,
                     parameters.platformLibrariesGeneratorService,
-                    project.useXcodeMessageStyle,
-                    project.nativeProperties
+                    useXcodeMessageStyle,
+                    classpath,
+                    jvmArgs,
+                    actualNativeHomeDirectory,
+                    konanDataDir,
+                    nativeCacheKind
                 ).generatePlatformLibsIfNeeded()
             }
         }
     }
+
+    internal fun getNativeCacheKind(project: Project, konanTargets: KonanTarget) =
+        project.nativeProperties.getKonanCacheKind(konanTargets, parameters.konanPropertiesBuildService)
 
     private inner class DependencyExtractor : ArchiveExtractor {
 
@@ -332,7 +250,4 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
         }
     }
 
-    private fun createSuccessfulInstallationFile(bundleDir: File) {
-        bundleDir.resolve(MARKER_FILE).createNewFile()
-    }
 }
