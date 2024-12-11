@@ -1,0 +1,2 @@
+warning: argument -jdk-home is passed multiple times. Only the last value will be used: $JDK_1_8
+OK

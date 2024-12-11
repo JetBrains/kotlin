@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/src/languageVersion.kt
+-d
+$TEMP_DIR$
+-language-version
+1.7

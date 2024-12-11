@@ -3,9 +3,15 @@ $TESTDATA_DIR$/src/warningSuppressionInvalid.kt
 $TEMP_DIR$
 -Xrender-internal-diagnostic-names
 -Xsuppress-warning=CONFLICTING_PROJECTION
+-Xsuppress-warning=UNCHECKED_CAST,CONFLICTING_PROJECTION
 -Xsuppress-warning=NON_EXISTING_DIAGNOSTIC
--Xsuppress-warning=NON_EXISTING_DIAGNOSTIC
+-Xsuppress-warning=NON_EXISTING_DIAGNOSTIC,UNCHECKED_CAST
 -Xsuppress-warning="UNCHECKED_CAST"
+-Xsuppress-warning=UNCHECKED_CAST
+-Xsuppress-warning=
+-Xsuppress-warning=null
+-Xsuppress-warning=USELESS_.+
+
 
 
 

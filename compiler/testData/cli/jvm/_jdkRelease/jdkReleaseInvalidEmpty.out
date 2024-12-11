@@ -1,0 +1,5 @@
+warning: advanced option value is passed in an obsolete form. Please use the '=' character to specify the value: -Xjdk-release=...
+error: unknown JDK release version: $TESTDATA_DIR$/jdkRelease.kt
+error: unknown JVM target version: $TESTDATA_DIR$/jdkRelease.kt
+Supported versions: 1.8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
+COMPILATION_ERROR

@@ -1,0 +1,7 @@
+$TESTDATA_DIR$/src/jdkHome.kt
+-d
+$TEMP_DIR$
+-jdk-home
+$JDK_17_0
+-jdk-home
+$JDK_1_8

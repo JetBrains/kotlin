@@ -1,0 +1,6 @@
+$TESTDATA_DIR$/classPath.kt
+-Xdisable-default-scripting-plugin
+-classpath
+$TEMP_DIR$
+-d
+$TEMP_DIR$

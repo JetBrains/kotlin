@@ -3,5 +3,4 @@ $TESTDATA_DIR$/src/warningSuppression.kt
 $TEMP_DIR$
 -Xrender-internal-diagnostic-names
 -Xsuppress-warning=UNCHECKED_CAST
--Xsuppress-warning=REDUNDANT_PROJECTION
--Xsuppress-warning=REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION
+-nowarn

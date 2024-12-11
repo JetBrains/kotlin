@@ -200,6 +200,11 @@ public class CliTestGenerated extends AbstractCliTest {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/_suppressWarnings"), Pattern.compile("^(.+)\\.args$"), null, false);
     }
 
+    @TestMetadata("multipleWarningSuppression.args")
+    public void testMultipleWarningSuppression() {
+      runTest("compiler/testData/cli/jvm/_suppressWarnings/multipleWarningSuppression.args");
+    }
+
     @TestMetadata("warningSuppression.args")
     public void testWarningSuppression() {
       runTest("compiler/testData/cli/jvm/_suppressWarnings/warningSuppression.args");
@@ -208,6 +213,21 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("warningSuppressionInvalid.args")
     public void testWarningSuppressionInvalid() {
       runTest("compiler/testData/cli/jvm/_suppressWarnings/warningSuppressionInvalid.args");
+    }
+
+    @TestMetadata("warningSuppressionWithError.args")
+    public void testWarningSuppressionWithError() {
+      runTest("compiler/testData/cli/jvm/_suppressWarnings/warningSuppressionWithError.args");
+    }
+
+    @TestMetadata("warningSuppressionWithNowarn.args")
+    public void testWarningSuppressionWithNowarn() {
+      runTest("compiler/testData/cli/jvm/_suppressWarnings/warningSuppressionWithNowarn.args");
+    }
+
+    @TestMetadata("warningSuppressionWithReportAllWarn.args")
+    public void testWarningSuppressionWithReportAllWarn() {
+      runTest("compiler/testData/cli/jvm/_suppressWarnings/warningSuppressionWithReportAllWarn.args");
     }
   }
 
@@ -324,6 +344,11 @@ public class CliTestGenerated extends AbstractCliTest {
         runTest("compiler/testData/cli/jvm/_languageFeatures/useBuilderInferenceWithoutAnnotation_1_7/builderInferenceByDefault.args");
       }
 
+      @TestMetadata("builderInferenceEnable.args")
+      public void testBuilderInferenceEnable() {
+        runTest("compiler/testData/cli/jvm/_languageFeatures/useBuilderInferenceWithoutAnnotation_1_7/builderInferenceEnable.args");
+      }
+
       @TestMetadata("builderInferenceErrors.args")
       public void testBuilderInferenceErrors() {
         runTest("compiler/testData/cli/jvm/_languageFeatures/useBuilderInferenceWithoutAnnotation_1_7/builderInferenceErrors.args");
@@ -399,6 +424,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/_apiVersion/apiVersionDeprecated.args");
     }
 
+    @TestMetadata("apiVersionEmpty.args")
+    public void testApiVersionEmpty() {
+      runTest("compiler/testData/cli/jvm/_apiVersion/apiVersionEmpty.args");
+    }
+
     @TestMetadata("apiVersionGreaterThanLanguage.args")
     public void testApiVersionGreaterThanLanguage() {
       runTest("compiler/testData/cli/jvm/_apiVersion/apiVersionGreaterThanLanguage.args");
@@ -452,9 +482,29 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/_languageVersion/languageVersion.args");
     }
 
+    @TestMetadata("languageVersionDeprecated.args")
+    public void testLanguageVersionDeprecated() {
+      runTest("compiler/testData/cli/jvm/_languageVersion/languageVersionDeprecated.args");
+    }
+
+    @TestMetadata("languageVersionEmpty.args")
+    public void testLanguageVersionEmpty() {
+      runTest("compiler/testData/cli/jvm/_languageVersion/languageVersionEmpty.args");
+    }
+
+    @TestMetadata("languageVersionExperimental.args")
+    public void testLanguageVersionExperimental() {
+      runTest("compiler/testData/cli/jvm/_languageVersion/languageVersionExperimental.args");
+    }
+
     @TestMetadata("languageVersionInvalid.args")
     public void testLanguageVersionInvalid() {
       runTest("compiler/testData/cli/jvm/_languageVersion/languageVersionInvalid.args");
+    }
+
+    @TestMetadata("languageVersionMupltiple.args")
+    public void testLanguageVersionMupltiple() {
+      runTest("compiler/testData/cli/jvm/_languageVersion/languageVersionMupltiple.args");
     }
 
     @TestMetadata("languageVersionUnsupported.args")
@@ -473,6 +523,31 @@ public class CliTestGenerated extends AbstractCliTest {
 
     public void testAllFilesPresentIn_jdkHome() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/_jdkHome"), Pattern.compile("^(.+)\\.args$"), null, false);
+    }
+
+    @TestMetadata("emptyJdkHome.args")
+    public void testEmptyJdkHome() {
+      runTest("compiler/testData/cli/jvm/_jdkHome/emptyJdkHome.args");
+    }
+
+    @TestMetadata("invalidJdkHome.args")
+    public void testInvalidJdkHome() {
+      runTest("compiler/testData/cli/jvm/_jdkHome/invalidJdkHome.args");
+    }
+
+    @TestMetadata("invalidMultipleArgJdkHome.args")
+    public void testInvalidMultipleArgJdkHome() {
+      runTest("compiler/testData/cli/jvm/_jdkHome/invalidMultipleArgJdkHome.args");
+    }
+
+    @TestMetadata("jdkHome.args")
+    public void testJdkHome() {
+      runTest("compiler/testData/cli/jvm/_jdkHome/jdkHome.args");
+    }
+
+    @TestMetadata("multipleJdkHome.args")
+    public void testMultipleJdkHome() {
+      runTest("compiler/testData/cli/jvm/_jdkHome/multipleJdkHome.args");
     }
 
     @TestMetadata("warningJdkHomeWithNoJdk.args")
@@ -542,6 +617,16 @@ public class CliTestGenerated extends AbstractCliTest {
     public void testJdkRelease8() {
       runTest("compiler/testData/cli/jvm/_jdkRelease/jdkRelease8.args");
     }
+
+    @TestMetadata("jdkReleaseInvalid.args")
+    public void testJdkReleaseInvalid() {
+      runTest("compiler/testData/cli/jvm/_jdkRelease/jdkReleaseInvalid.args");
+    }
+
+    @TestMetadata("jdkReleaseInvalidEmpty.args")
+    public void testJdkReleaseInvalidEmpty() {
+      runTest("compiler/testData/cli/jvm/_jdkRelease/jdkReleaseInvalidEmpty.args");
+    }
   }
 
   @TestMetadata("compiler/testData/cli/jvm/_classPath")
@@ -554,6 +639,16 @@ public class CliTestGenerated extends AbstractCliTest {
 
     public void testAllFilesPresentIn_classPath() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/_classPath"), Pattern.compile("^(.+)\\.args$"), null, false);
+    }
+
+    @TestMetadata("classPath.args")
+    public void testClassPath() {
+      runTest("compiler/testData/cli/jvm/_classPath/classPath.args");
+    }
+
+    @TestMetadata("emptyClassPath.args")
+    public void testEmptyClassPath() {
+      runTest("compiler/testData/cli/jvm/_classPath/emptyClassPath.args");
     }
 
     @TestMetadata("invalidClassPath.args")
