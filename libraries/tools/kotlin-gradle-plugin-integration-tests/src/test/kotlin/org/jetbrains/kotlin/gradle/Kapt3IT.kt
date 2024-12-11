@@ -69,7 +69,7 @@ abstract class Kapt3BaseIT : KGPBaseTest() {
     }
 
     /**
-     * The default value is defined in [org.jetbrains.kotlin.gradle.testbase.runTestProject]
+     * The default value is defined in [org.jetbrains.kotlin.gradle.testbase.project]
      */
     private fun Kapt3BaseIT.calculateGradleDaemonMemoryLimitInMb() = when (this) {
         /*
