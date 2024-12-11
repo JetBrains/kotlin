@@ -40,7 +40,6 @@ public class AtomicIntArray {
     /**
      * Returns the number of elements in the array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicIntArray.size instead.", replaceWith = ReplaceWith("this.size"))
     public val length: Int get() = array.size
 
     /**
@@ -50,7 +49,6 @@ public class AtomicIntArray {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicIntArray.loadAt instead.", replaceWith = ReplaceWith("this.loadAt(index)"))
     public operator fun get(index: Int): Int {
         checkBounds(index)
         return array.atomicGet(index)
@@ -63,7 +61,6 @@ public class AtomicIntArray {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicIntArray.storeAt instead.", replaceWith = ReplaceWith("this.storeAt(index, newValue)"))
     public operator fun set(index: Int, newValue: Int): Unit {
         checkBounds(index)
         array.atomicSet(index, newValue)
@@ -77,7 +74,6 @@ public class AtomicIntArray {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicIntArray.exchangeAt instead.", replaceWith = ReplaceWith("this.exchangeAt(index, newValue)"))
     public fun getAndSet(index: Int, newValue: Int): Int {
         checkBounds(index)
         return array.getAndSet(index, newValue)
@@ -92,7 +88,6 @@ public class AtomicIntArray {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicIntArray.compareAndSetAt instead.", replaceWith = ReplaceWith("this.compareAndSetAt(index, expectedValue, newValue)"))
     public fun compareAndSet(index: Int, expectedValue: Int, newValue: Int): Boolean {
         checkBounds(index)
         return array.compareAndSet(index, expectedValue, newValue)
@@ -106,7 +101,6 @@ public class AtomicIntArray {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicIntArray.compareAndExchangeAt instead.", replaceWith = ReplaceWith("this.compareAndExchangeAt(index, expectedValue, newValue)"))
     public fun compareAndExchange(index: Int, expectedValue: Int, newValue: Int): Int {
         checkBounds(index)
         return array.compareAndExchange(index, expectedValue, newValue)
@@ -119,7 +113,6 @@ public class AtomicIntArray {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicIntArray.fetchAndAddAt instead.", replaceWith = ReplaceWith("this.fetchAndAddAt(index, delta)"))
     public fun getAndAdd(index: Int, delta: Int): Int {
         checkBounds(index)
         return array.getAndAdd(index, delta)
@@ -132,7 +125,6 @@ public class AtomicIntArray {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicIntArray.addAndFetchAt instead.", replaceWith = ReplaceWith("this.addAndFetchAt(index, delta)"))
     public fun addAndGet(index: Int, delta: Int): Int {
         checkBounds(index)
         return array.getAndAdd(index, delta) + delta
@@ -145,7 +137,6 @@ public class AtomicIntArray {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicIntArray.fetchAndIncrementAt instead.", replaceWith = ReplaceWith("this.fetchAndIncrementAt(index)"))
     public fun getAndIncrement(index: Int): Int {
         checkBounds(index)
         return array.getAndAdd(index, 1)
@@ -158,7 +149,6 @@ public class AtomicIntArray {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicIntArray.incrementAndFetchAt instead.", replaceWith = ReplaceWith("this.incrementAndFetchAt(index)"))
     public fun incrementAndGet(index: Int): Int {
         checkBounds(index)
         return array.getAndAdd(index, 1) + 1
@@ -171,7 +161,6 @@ public class AtomicIntArray {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicIntArray.fetchAndDecrementAt instead.", replaceWith = ReplaceWith("this.fetchAndDecrementAt(index)"))
     public fun getAndDecrement(index: Int): Int {
         checkBounds(index)
         return array.getAndAdd(index, -1)
@@ -184,7 +173,6 @@ public class AtomicIntArray {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicIntArray.decrementAndFetchAt instead.", replaceWith = ReplaceWith("this.decrementAndFetchAt(index)"))
     public fun decrementAndGet(index: Int): Int {
         checkBounds(index)
         return array.getAndAdd(index, -1) - 1
@@ -252,7 +240,6 @@ public class AtomicLongArray {
     /**
      * Returns the number of elements in the array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicLongArray.size instead.", replaceWith = ReplaceWith("this.size"))
     public val length: Int get() = array.size
 
     /**
@@ -262,7 +249,6 @@ public class AtomicLongArray {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicLongArray.loadAt instead.", replaceWith = ReplaceWith("this.loadAt(index)"))
     public operator fun get(index: Int): Long {
         checkBounds(index)
         return array.atomicGet(index)
@@ -275,7 +261,6 @@ public class AtomicLongArray {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicLongArray.storeAt instead.", replaceWith = ReplaceWith("this.storeAt(index, newValue)"))
     public operator fun set(index: Int, newValue: Long): Unit {
         checkBounds(index)
         array.atomicSet(index, newValue)
@@ -289,7 +274,6 @@ public class AtomicLongArray {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicLongArray.exchangeAt instead.", replaceWith = ReplaceWith("this.exchangeAt(index, newValue)"))
     public fun getAndSet(index: Int, newValue: Long): Long {
         checkBounds(index)
         return array.getAndSet(index, newValue)
@@ -304,7 +288,6 @@ public class AtomicLongArray {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicLongArray.compareAndSetAt instead.", replaceWith = ReplaceWith("this.compareAndSetAt(index, expectedValue, newValue)"))
     public fun compareAndSet(index: Int, expectedValue: Long, newValue: Long): Boolean {
         checkBounds(index)
         return array.compareAndSet(index, expectedValue, newValue)
@@ -318,7 +301,6 @@ public class AtomicLongArray {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicLongArray.compareAndExchangeAt instead.", replaceWith = ReplaceWith("this.compareAndExchangeAt(index, expectedValue, newValue)"))
     public fun compareAndExchange(index: Int, expectedValue: Long, newValue: Long): Long {
         checkBounds(index)
         return array.compareAndExchange(index, expectedValue, newValue)
@@ -331,7 +313,6 @@ public class AtomicLongArray {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicLongArray.fetchAndAddAt instead.", replaceWith = ReplaceWith("this.fetchAndAddAt(index, delta)"))
     public fun getAndAdd(index: Int, delta: Long): Long {
         checkBounds(index)
         return array.getAndAdd(index, delta)
@@ -344,7 +325,6 @@ public class AtomicLongArray {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicLongArray.addAndFetchAt instead.", replaceWith = ReplaceWith("this.addAndFetchAt(index, delta)"))
     public fun addAndGet(index: Int, delta: Long): Long {
         checkBounds(index)
         return array.getAndAdd(index, delta) + delta
@@ -357,7 +337,6 @@ public class AtomicLongArray {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicLongArray.fetchAndIncrementAt instead.", replaceWith = ReplaceWith("this.fetchAndIncrementAt(index)"))
     public fun getAndIncrement(index: Int): Long {
         checkBounds(index)
         return array.getAndAdd(index, 1L)
@@ -370,7 +349,6 @@ public class AtomicLongArray {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicLongArray.incrementAndFetchAt instead.", replaceWith = ReplaceWith("this.incrementAndFetchAt(index)"))
     public fun incrementAndGet(index: Int): Long {
         checkBounds(index)
         return array.getAndAdd(index, 1L) + 1L
@@ -383,7 +361,6 @@ public class AtomicLongArray {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicLongArray.fetchAndDecrementAt instead.", replaceWith = ReplaceWith("this.fetchAndDecrementAt(index)"))
     public fun getAndDecrement(index: Int): Long {
         checkBounds(index)
         return array.getAndAdd(index, -1L)
@@ -396,7 +373,6 @@ public class AtomicLongArray {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicLongArray.decrementAndFetchAt instead.", replaceWith = ReplaceWith("this.decrementAndFetchAt(index)"))
     public fun decrementAndGet(index: Int): Long {
         checkBounds(index)
         return array.getAndAdd(index, -1L) - 1L
@@ -455,7 +431,6 @@ public class AtomicArray<T> {
     /**
      * Returns the number of elements in the array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicArray.size instead.", replaceWith = ReplaceWith("this.size", "kotlin.concurrent.atomics.AtomicArray"))
     public val length: Int get() = array.size
 
     /**
@@ -465,7 +440,6 @@ public class AtomicArray<T> {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicArray.loadAt instead.", replaceWith = ReplaceWith("this.loadAt(index)"))
     public operator fun get(index: Int): T {
         checkBounds(index)
         return array.atomicGet(index)
@@ -478,7 +452,6 @@ public class AtomicArray<T> {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicArray.storeAt instead.", replaceWith = ReplaceWith("this.storeAt(index, newValue)"))
     public operator fun set(index: Int, newValue: T): Unit {
         checkBounds(index)
         array.atomicSet(index, newValue)
@@ -492,7 +465,6 @@ public class AtomicArray<T> {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicArray.exchangeAt instead.", replaceWith = ReplaceWith("this.exchangeAt(index, newValue)"))
     public fun getAndSet(index: Int, newValue: T): T {
         checkBounds(index)
         return array.getAndSet(index, newValue)
@@ -507,7 +479,6 @@ public class AtomicArray<T> {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicArray.compareAndSetAt instead.", replaceWith = ReplaceWith("this.compareAndSetAt(index, expectedValue, newValue)"))
     public fun compareAndSet(index: Int, expectedValue: T, newValue: T): Boolean {
         checkBounds(index)
         return array.compareAndSet(index, expectedValue, newValue)
@@ -521,7 +492,6 @@ public class AtomicArray<T> {
      *
      * @throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
      */
-    @Deprecated(message = "Use kotlin.concurrent.atomics.AtomicArray.compareAndExchangeAt instead.", replaceWith = ReplaceWith("this.compareAndExchangeAt(index, expectedValue, newValue)"))
     public fun compareAndExchange(index: Int, expectedValue: T, newValue: T): T {
         checkBounds(index)
         return array.compareAndExchange(index, expectedValue, newValue)
