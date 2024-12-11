@@ -38,8 +38,10 @@ data class WasmSignature(
     }
 }
 
-fun IrSimpleFunction.wasmSignature(irBuiltIns: IrBuiltIns): WasmSignature =
-    WasmSignature(
+fun IrSimpleFunction.wasmSignature(irBuiltIns: IrBuiltIns): WasmSignature {
+    val extensionReceiverParameter = parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }
+    val valueParameters = parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
+    return WasmSignature(
         name,
         moduleNameForInternals = if (visibility == INTERNAL) findOriginallyContainingModule()?.name else null,
         extensionReceiverParameter?.type?.toWasmSignatureType(irBuiltIns),
@@ -47,6 +49,7 @@ fun IrSimpleFunction.wasmSignature(irBuiltIns: IrBuiltIns): WasmSignature =
         returnType.toWasmSignatureType(irBuiltIns),
         isOverridableOrOverrides,
     )
+}
 
 private fun IrType.toWasmSignatureType(irBuiltIns: IrBuiltIns): IrType =
     when (this) {

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.JsCommonSymbols
 import org.jetbrains.kotlin.ir.backend.js.ReflectionSymbols
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -264,7 +265,7 @@ class WasmSymbols(
 
     private fun findNullableOverloadForReceiver(arrayType: IrType, overloadsList: List<IrSimpleFunctionSymbol>): IrSimpleFunctionSymbol =
         overloadsList.first {
-            val receiverType = it.owner.extensionReceiverParameter?.type
+            val receiverType = it.owner.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type
             receiverType != null && receiverType.isNullable() && arrayType.classOrNull == receiverType.classOrNull
         }
 
@@ -283,7 +284,7 @@ class WasmSymbols(
 
     override val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
         toUIntSymbols.associateBy {
-            it.owner.extensionReceiverParameter?.type?.classifierOrFail
+            it.owner.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.classifierOrFail
                 ?: error("Expected extension receiver for ${it.owner.render()}")
         }
     }
@@ -292,7 +293,7 @@ class WasmSymbols(
 
     override val toULongByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
         toULongSymbols.associateBy {
-            it.owner.extensionReceiverParameter?.type?.classifierOrFail
+            it.owner.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.classifierOrFail
                 ?: error("Expected extension receiver for ${it.owner.render()}")
         }
     }

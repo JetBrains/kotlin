@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.util.constructedClass
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -46,4 +47,4 @@ class WasmStaticCallableReferenceLowering(val context: WasmBackendContext) : Fil
 }
 
 val IrClass.isSyntheticSingleton: Boolean
-    get() = (origin == LAMBDA_IMPL || origin == FUNCTION_REFERENCE_IMPL) && primaryConstructor!!.valueParameters.isEmpty()
+    get() = (origin == LAMBDA_IMPL || origin == FUNCTION_REFERENCE_IMPL) && primaryConstructor!!.hasShape(regularParameters = 0)

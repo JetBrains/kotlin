@@ -144,7 +144,7 @@ class UnitToVoidLowering(val context: WasmBackendContext) : FileLoweringPass, Ab
             expr.startOffset, expr.endOffset, symbols.voidType, symbols.findVoidConsumer(expr.type),
             typeArgumentsCount = 0,
         ).apply {
-            putValueArgument(0, expr)
+            arguments[0] = expr
         }
     }
 }

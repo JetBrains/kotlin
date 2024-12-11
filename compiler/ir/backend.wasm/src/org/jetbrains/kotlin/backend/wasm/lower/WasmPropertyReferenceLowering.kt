@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
@@ -116,7 +117,7 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
                 val endOffset = expression.endOffset
                 val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset)
                 irBuilder.run {
-                    val receiversCount = listOf(expression.dispatchReceiver, expression.extensionReceiver).count { it != null }
+                    val receiversCount = expression.arguments.count { it != null }
                     return when (receiversCount) {
                         0 -> { // Cache KProperties with no arguments.
                             val field = kProperties.getOrPut(expression.symbol.owner) {
@@ -124,8 +125,8 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
                             }
 
                             irCall(arrayItemGetter).apply {
-                                dispatchReceiver = irGetField(null, kPropertiesField)
-                                putValueArgument(0, irInt(field.second))
+                                arguments[0] = irGetField(null, kPropertiesField)
+                                arguments[1] = irInt(field.second)
                             }
                         }
 
@@ -143,7 +144,9 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
                 val endOffset = expression.endOffset
                 val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset)
                 irBuilder.run {
-                    val receiversCount = listOf(expression.dispatchReceiver, expression.extensionReceiver).count { it != null }
+                    val receiversCount = expression.getter.owner.parameters
+                        .count { it.kind != IrParameterKind.Regular && it.kind != IrParameterKind.Context }
+
                     if (receiversCount == 2)
                         error("Callable reference to properties with two receivers is not allowed: ${expression}")
                     else { // Cache KProperties with no arguments.
@@ -157,8 +160,8 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
                         }
 
                         return irCall(arrayItemGetter).apply {
-                            dispatchReceiver = irGetField(null, kPropertiesField)
-                            putValueArgument(0, irInt(field.second))
+                            arguments[0] = irGetField(null, kPropertiesField)
+                            arguments[1] = irInt(field.second)
                         }
                     }
                 }
@@ -184,22 +187,19 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
         val endOffset = expression.endOffset
         return irBuilder.irBlock(expression) {
             val receiverTypes = mutableListOf<IrType>()
-            val dispatchReceiver = expression.dispatchReceiver?.let {
-                irTemporary(value = it, nameHint = "\$dispatchReceiver${tempIndex++}")
+            val temporaries = expression.arguments.map { argument ->
+                argument?.let {
+                    irTemporary(value = it, nameHint = "\$KPropertyArgument${tempIndex++}")
+                }
             }
-            val extensionReceiver = expression.extensionReceiver?.let {
-                irTemporary(value = it, nameHint = "\$extensionReceiver${tempIndex++}")
-            }
+
             val returnType = expression.getter?.owner?.returnType ?: expression.field!!.owner.type
 
             val getterCallableReference = expression.getter?.owner?.let { getter ->
-                getter.dispatchReceiverParameter.let {
-                    if (it != null && expression.dispatchReceiver == null)
-                        receiverTypes.add(it.type)
-                }
-                getter.extensionReceiverParameter.let {
-                    if (it != null && expression.extensionReceiver == null)
-                        receiverTypes.add(it.type)
+                getter.parameters.zip(temporaries).forEach { (parameter, argument) ->
+                    if (argument == null) {
+                        receiverTypes.add(parameter.type)
+                    }
                 }
                 val getterKFunctionType = this@WasmPropertyReferenceLowering.context.irBuiltIns.getKFunctionType(
                     returnType,
@@ -213,8 +213,9 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
                     typeArgumentsCount = getter.typeParameters.size,
                     reflectionTarget = expression.getter!!
                 ).apply {
-                    this.dispatchReceiver = dispatchReceiver?.let { irGet(it) }
-                    this.extensionReceiver = extensionReceiver?.let { irGet(it) }
+                    temporaries.forEachIndexed { index, argument ->
+                        arguments[index] = argument?.let { irGet(it) }
+                    }
                     for (index in expression.typeArguments.indices) {
                         typeArguments[index] = expression.typeArguments[index]
                     }
@@ -236,8 +237,9 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
                         typeArgumentsCount = setter.typeParameters.size,
                         reflectionTarget = expression.setter!!
                     ).apply {
-                        this.dispatchReceiver = dispatchReceiver?.let { irGet(it) }
-                        this.extensionReceiver = extensionReceiver?.let { irGet(it) }
+                        temporaries.forEachIndexed { index, argument ->
+                            this.arguments[index] = argument?.let { irGet(it) }
+                        }
                         for (index in expression.typeArguments.indices) {
                             typeArguments[index] = expression.typeArguments[index]
                         }
@@ -256,13 +258,13 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
 
             val initializerType = symbol.owner.returnType.classifierOrFail.typeWith(constructorTypeArguments)
             val initializer = irCall(symbol, initializerType, constructorTypeArguments).apply {
-                putValueArgument(0, irString(expression.symbol.owner.name.asString()))
-                putValueArgument(1, irString(expression.symbol.owner.parent.kotlinFqName.asString()))
-                putValueArgument(2, irBoolean(capturedReceiver))
+                arguments[0] = irString(expression.symbol.owner.name.asString())
+                arguments[1] = irString(expression.symbol.owner.parent.kotlinFqName.asString())
+                arguments[2] = irBoolean(capturedReceiver)
                 if (getterCallableReference != null)
-                    putValueArgument(3, getterCallableReference)
+                    arguments[3] = getterCallableReference
                 if (setterCallableReference != null)
-                    putValueArgument(4, setterCallableReference)
+                    arguments[4] = setterCallableReference
             }
             +initializer
         }
@@ -282,7 +284,7 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
             )
             val initializerType = symbol.owner.returnType.classifierOrFail.typeWith(constructorTypeArguments)
             val initializer = irCall(symbol, initializerType, constructorTypeArguments).apply {
-                putValueArgument(0, irString(propertyName))
+                arguments[0] = irString(propertyName)
             }
             return initializer
         }

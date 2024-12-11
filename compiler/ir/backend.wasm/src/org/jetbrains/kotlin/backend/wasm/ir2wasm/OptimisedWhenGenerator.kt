@@ -49,7 +49,7 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(
         }
     }
     if (extractedBranches.isEmpty()) return false
-    val subject = extractedBranches[0].conditions[0].condition.getValueArgument(0) ?: return false
+    val subject = extractedBranches[0].conditions[0].condition.arguments[0] ?: return false
 
     // Do the optimization only if all conditions read and compare the same var or val
     // TODO: consider supporting other cases
@@ -57,7 +57,7 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(
     val subjectValue = subject.symbol
     val allConditionsReadsSameValue = !extractedBranches.all { branch ->
         branch.conditions.all { whenCondition ->
-            (whenCondition.condition.getValueArgument(0) as? IrGetValue)?.symbol == subjectValue
+            (whenCondition.condition.arguments[0] as? IrGetValue)?.symbol == subjectValue
         }
     }
     if (allConditionsReadsSameValue) return false
@@ -176,7 +176,7 @@ private fun tryExtractEqEqNumberConditions(symbols: WasmSymbols, conditions: Lis
     val firstConditionSymbol = firstCondition.symbol
         .takeIf { it in symbols.equalityFunctions.values }
         ?: return null
-    if (firstCondition.valueArgumentsCount != 2) return null
+    if (firstCondition.arguments.size != 2) return null
 
     // All conditions has the same eqeq
     if (conditions.any { it.symbol != firstConditionSymbol }) return null
@@ -184,7 +184,7 @@ private fun tryExtractEqEqNumberConditions(symbols: WasmSymbols, conditions: Lis
     val result = mutableListOf<ExtractedWhenCondition>()
     for (condition in conditions) {
         if (condition.symbol != firstConditionSymbol) return null
-        val conditionConst = condition.getValueArgument(1) as? IrConst ?: return null
+        val conditionConst = condition.arguments[1] as? IrConst ?: return null
         if (conditionConst.value == null) return null
         result.add(ExtractedWhenCondition(condition, conditionConst))
     }

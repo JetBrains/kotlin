@@ -42,8 +42,8 @@ class WasmStringSwitchOptimizerLowering(
 
     private fun IrBlockBuilder.createEqEqForIntVariable(tempIntVariable: IrVariable, value: Int) =
         irCall(context.irBuiltIns.eqeqSymbol, booleanType).also {
-            it.putValueArgument(0, irGet(tempIntVariable))
-            it.putValueArgument(1, value.toIrConst(intType))
+            it.arguments[0] = irGet(tempIntVariable)
+            it.arguments[1] = value.toIrConst(intType)
         }
 
     private fun asEqCall(expression: IrExpression): IrCall? =
@@ -58,10 +58,10 @@ class WasmStringSwitchOptimizerLowering(
 
     private fun tryMatchCaseToNullableStringConstant(condition: IrExpression): IrConst? {
         val eqCall = asEqCall(condition) ?: return null
-        if (eqCall.valueArgumentsCount < 2) return null
+        if (eqCall.arguments.size < 2) return null
         val constantReceiver =
-            eqCall.getValueArgument(0) as? IrConst
-                ?: eqCall.getValueArgument(1) as? IrConst
+            eqCall.arguments[0] as? IrConst
+                ?: eqCall.arguments[1] as? IrConst
                 ?: return null
         return when (constantReceiver.kind) {
             IrConstKind.String, IrConstKind.Null -> constantReceiver
@@ -72,9 +72,9 @@ class WasmStringSwitchOptimizerLowering(
     private fun IrBlockBuilder.addHashCodeVariable(firstEqCall: IrCall): IrVariable {
         val subject: IrExpression
         val subjectArgumentIndex: Int
-        val firstArgument = firstEqCall.getValueArgument(0)!!
+        val firstArgument = firstEqCall.arguments[0]!!
         if (firstArgument is IrConst) {
-            subject = firstEqCall.getValueArgument(1)!!
+            subject = firstEqCall.arguments[1]!!
             subjectArgumentIndex = 1
         } else {
             subject = firstArgument
@@ -94,7 +94,7 @@ class WasmStringSwitchOptimizerLowering(
 
         whenSubject.initializer = subject
         +whenSubject
-        firstEqCall.putValueArgument(subjectArgumentIndex, irGet(whenSubject))
+        firstEqCall.arguments[subjectArgumentIndex] = irGet(whenSubject)
 
         val tmpIntWhenSubject = buildVariable(
             scope.getLocalDeclarationParent(),
@@ -111,8 +111,8 @@ class WasmStringSwitchOptimizerLowering(
 
         val hashCode: IrExpression = if (subjectType.isNullable()) {
             val stringIsNull = irCall(context.irBuiltIns.eqeqeqSymbol, booleanType).also {
-                it.putValueArgument(0, irGet(whenSubject))
-                it.putValueArgument(1, irNull(subjectType))
+                it.arguments[0] = irGet(whenSubject)
+                it.arguments[1] = irNull(subjectType)
             }
             irIfThenElse(intType, stringIsNull, 0.toIrConst(intType), getHashCode)
         } else {

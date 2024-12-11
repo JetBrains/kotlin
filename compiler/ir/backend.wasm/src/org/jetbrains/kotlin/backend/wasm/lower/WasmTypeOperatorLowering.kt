@@ -145,7 +145,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
 
             builtIns.longType ->
                 builder.irCall(symbols.intToLong).apply {
-                    putValueArgument(0, expression.argument)
+                    arguments[0] = expression.argument
                 }
 
             else -> error("Unreachable execution (coercion to non-Integer type")
@@ -191,7 +191,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
                 toType,
                 typeArguments = listOf(fromType, toType)
             ).also {
-                it.putValueArgument(0, value)
+                it.arguments[0] = value
             }
         }
 
@@ -201,7 +201,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
                 toType,
                 typeArguments = listOf(fromType, toType)
             ).also {
-                it.putValueArgument(0, value)
+                it.arguments[0] = value
             }
         }
 
@@ -222,7 +222,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
                 TODO("Implement externalize adapter for wasi mode")
             }
             val narrowingToAny = builder.irCall(jsToKotlinAnyAdapter).also {
-                it.putValueArgument(0, value)
+                it.arguments[0] = value
             }
             // Continue narrowing from Any to expected type
             return narrowType(context.irBuiltIns.anyType, toType, narrowingToAny)
@@ -233,7 +233,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
                 TODO("Implement internalize adapter for wasi mode")
             }
             return builder.irCall(kotlinToJsAnyAdapter).also {
-                it.putValueArgument(0, value)
+                it.arguments[0] = value
             }
         }
 
@@ -251,13 +251,13 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
 
         if (toType == symbols.voidType) {
             return builder.irCall(symbols.findVoidConsumer(value.type)).apply {
-                putValueArgument(0, value)
+                arguments[0] = value
             }
         }
 
         return builder.irCall(symbols.refCastNull, type = toType).apply {
             typeArguments[0] = toType
-            putValueArgument(0, value)
+            arguments[0] = value
         }
     }
 
@@ -314,15 +314,15 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         return typeParameter.superTypes.fold(builder.irTrue() as IrExpression) { r, t ->
             val check = generateTypeCheckNonNull(argument.shallowCopy(), t.makeNotNull())
             builder.irCall(symbols.booleanAnd).apply {
-                putValueArgument(0, r)
-                putValueArgument(1, check)
+                arguments[0] = r
+                arguments[1] = check
             }
         }
     }
 
     private fun generateIsInterface(argument: IrExpression, toType: IrType): IrExpression {
         return builder.irCall(symbols.wasmIsInterface).apply {
-            putValueArgument(0, argument)
+            arguments[0] = argument
             typeArguments[0] = toType
         }
     }
@@ -347,7 +347,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         }
 
         return builder.irCall(symbols.refTest).apply {
-            putValueArgument(0, argument)
+            arguments[0] = argument
             typeArguments[0] = toType
         }
     }
@@ -355,10 +355,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     private fun generateIsExternalClass(argument: IrExpression, klass: IrClass): IrExpression {
         val instanceCheckFunction = context.mapping.wasmExternalClassToInstanceCheck[klass]!!
         return builder.irCall(instanceCheckFunction).also {
-            it.putValueArgument(
-                index = 0,
-                valueArgument = narrowType(argument.type, context.irBuiltIns.anyType, argument) //TODO("Why we need it?)
-            )
+            it.arguments[0] = narrowType(argument.type, context.irBuiltIns.anyType, argument) //TODO("Why we need it?)
         }
     }
 }
