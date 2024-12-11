@@ -6,23 +6,21 @@
 package org.jetbrains.kotlin.cli.pipeline.web
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
-import org.jetbrains.kotlin.cli.js.klib.AnalyzedFirOutput
-import org.jetbrains.kotlin.cli.js.klib.serializeFirKlib
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.incrementalCompilation
-import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.config.phaseConfig
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.phaser.PhaserState
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
-import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringContext
-import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringPhasesProvider
-import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
-import org.jetbrains.kotlin.ir.backend.js.shouldGoToNextIcRound
+import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.js.config.*
+import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.progress.IncrementalNextRoundException
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 
@@ -92,6 +90,47 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifac
             // TODO (KT-73991): investigate the need in this hack
             throw IncrementalNextRoundException()
         }
+    }
+
+    fun serializeFirKlib(
+        moduleStructure: ModulesStructure,
+        firOutputs: List<ModuleCompilerAnalyzedOutput>,
+        fir2IrActualizedResult: Fir2IrActualizedResult,
+        outputKlibPath: String,
+        nopack: Boolean,
+        messageCollector: MessageCollector,
+        diagnosticsReporter: BaseDiagnosticsCollector,
+        jsOutputName: String?,
+        useWasmPlatform: Boolean,
+        wasmTarget: WasmTarget?,
+    ) {
+        val fir2KlibMetadataSerializer = Fir2KlibMetadataSerializer(
+            moduleStructure.compilerConfiguration,
+            firOutputs,
+            fir2IrActualizedResult,
+            exportKDoc = false,
+            produceHeaderKlib = false,
+        )
+        val icData = moduleStructure.compilerConfiguration.incrementalDataProvider?.getSerializedData(fir2KlibMetadataSerializer.sourceFiles)
+
+        serializeModuleIntoKlib(
+            moduleStructure.compilerConfiguration[CommonConfigurationKeys.MODULE_NAME]!!,
+            moduleStructure.compilerConfiguration,
+            diagnosticsReporter,
+            fir2KlibMetadataSerializer,
+            klibPath = outputKlibPath,
+            moduleStructure.allDependencies,
+            fir2IrActualizedResult.irModuleFragment,
+            fir2IrActualizedResult.irBuiltIns,
+            cleanFiles = icData ?: emptyList(),
+            nopack = nopack,
+            perFile = false,
+            containsErrorCode = messageCollector.hasErrors() || diagnosticsReporter.hasErrors,
+            abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
+            jsOutputName = jsOutputName,
+            builtInsPlatform = if (useWasmPlatform) BuiltInsPlatform.WASM else BuiltInsPlatform.JS,
+            wasmTarget = wasmTarget,
+        )
     }
 }
 

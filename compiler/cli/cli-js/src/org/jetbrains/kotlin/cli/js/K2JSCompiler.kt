@@ -8,18 +8,21 @@ package org.jetbrains.kotlin.cli.js
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
-import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
-import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.RUNTIME_DIAGNOSTIC_EXCEPTION
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.RUNTIME_DIAGNOSTIC_LOG
-import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.js.klib.*
+import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForJSIR
+import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForWasm
+import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.cli.pipeline.web.CommonWebConfigurationUpdater
@@ -27,10 +30,7 @@ import org.jetbrains.kotlin.cli.pipeline.web.WebCliPipeline
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ic.IncrementalCacheGuard
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
-import org.jetbrains.kotlin.progress.IncrementalNextRoundException
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
@@ -141,7 +140,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
             val outputKlibPath =
                 if (arguments.irProduceKlibFile) outputDir.resolve("$outputName.klib").normalize().absolutePath
                 else outputDirPath
-            sourceModule = produceSourceModule(configuration, targetEnvironment, libraries, friendLibraries, arguments, outputKlibPath)
+            sourceModule = produceSourceModule(targetEnvironment, libraries, friendLibraries, arguments, outputKlibPath)
 
             if (configuration.get(CommonConfigurationKeys.USE_FIR) != true && !sourceModule.jsFrontEndResult.jsAnalysisResult.shouldGenerateCode)
                 return OK
@@ -229,26 +228,6 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
     }
 
     private fun produceSourceModule(
-        configuration: CompilerConfiguration,
-        environmentForJS: KotlinCoreEnvironment,
-        libraries: List<String>,
-        friendLibraries: List<String>,
-        arguments: K2JSCompilerArguments,
-        outputKlibPath: String,
-    ): ModulesStructure {
-        val performanceManager = configuration.get(CLIConfigurationKeys.PERF_MANAGER)
-        performanceManager?.notifyAnalysisStarted()
-
-        val sourceModule = if (configuration.get(CommonConfigurationKeys.USE_FIR) == true) {
-            processSourceModuleWithK2(environmentForJS, libraries, friendLibraries, arguments, outputKlibPath)
-        } else {
-            processSourceModuleWithK1(environmentForJS, libraries, friendLibraries, arguments, outputKlibPath)
-        }
-
-        return sourceModule
-    }
-
-    private fun processSourceModuleWithK1(
         environmentForJS: KotlinCoreEnvironment,
         libraries: List<String>,
         friendLibraries: List<String>,
@@ -256,6 +235,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         outputKlibPath: String,
     ): ModulesStructure {
         val performanceManager = environmentForJS.configuration.get(CLIConfigurationKeys.PERF_MANAGER)
+        performanceManager?.notifyAnalysisStarted()
         lateinit var sourceModule: ModulesStructure
         do {
             val analyzerFacade = when (arguments.wasm) {
@@ -316,129 +296,6 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
             }
         }
         return sourceModule
-    }
-
-    private fun processSourceModuleWithK2(
-        environmentForJS: KotlinCoreEnvironment,
-        libraries: List<String>,
-        friendLibraries: List<String>,
-        arguments: K2JSCompilerArguments,
-        outputKlibPath: String,
-    ): ModulesStructure {
-        val configuration = environmentForJS.configuration
-        val performanceManager = configuration.get(CLIConfigurationKeys.PERF_MANAGER)
-        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
-
-        val mainModule = MainModule.SourceFiles(environmentForJS.getSourceFiles())
-        val moduleStructure = ModulesStructure(environmentForJS.project, mainModule, configuration, libraries, friendLibraries)
-
-        runStandardLibrarySpecialCompatibilityChecks(moduleStructure.allDependencies, isWasm = arguments.wasm, messageCollector)
-
-        val lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: LookupTracker.DO_NOTHING
-
-        val analyzedOutput = if (
-            configuration.getBoolean(CommonConfigurationKeys.USE_FIR) && configuration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)
-        ) {
-            val groupedSources = collectSources(configuration, environmentForJS.project, messageCollector)
-
-            compileModulesToAnalyzedFirWithLightTree(
-                moduleStructure = moduleStructure,
-                groupedSources = groupedSources,
-                // TODO: Only pass groupedSources, because
-                //  we will need to have them separated again
-                //  in createSessionsForLegacyMppProject anyway
-                ktSourceFiles = groupedSources.commonSources + groupedSources.platformSources,
-                libraries = libraries,
-                friendLibraries = friendLibraries,
-                diagnosticsReporter = diagnosticsReporter,
-                incrementalDataProvider = configuration[JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER],
-                lookupTracker = lookupTracker,
-                useWasmPlatform = arguments.wasm,
-            )
-        } else {
-            compileModuleToAnalyzedFirWithPsi(
-                moduleStructure = moduleStructure,
-                ktFiles = environmentForJS.getSourceFiles(),
-                libraries = libraries,
-                friendLibraries = friendLibraries,
-                diagnosticsReporter = diagnosticsReporter,
-                incrementalDataProvider = configuration[JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER],
-                lookupTracker = lookupTracker,
-                useWasmPlatform = arguments.wasm,
-            )
-        }
-
-        performanceManager?.notifyAnalysisFinished()
-        if (analyzedOutput.reportCompilationErrors(moduleStructure, diagnosticsReporter, messageCollector)) {
-            throw CompilationErrorException()
-        }
-
-        // FIR2IR
-        performanceManager?.notifyIRTranslationStarted()
-        val fir2IrActualizedResult = transformFirToIr(moduleStructure, analyzedOutput.output, diagnosticsReporter)
-        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, true)
-        if (diagnosticsReporter.hasErrors) {
-            throw CompilationErrorException("Compilation failed: there were some diagnostics during fir2ir")
-        }
-
-        if (configuration.getBoolean(CommonConfigurationKeys.INCREMENTAL_COMPILATION)) {
-            // TODO: During checking the next round, fir serializer may throw an exception, e.g.
-            //      during annotation serialization when it cannot find the removed constant
-            //      (see ConstantValueUtils.kt:convertToConstantValues())
-            //  This happens because we check the next round before compilation errors.
-            //  Test reproducer:  testFileWithConstantRemoved
-            //  Issue: https://youtrack.jetbrains.com/issue/KT-58824/
-            val shouldGoToNextIcRound = shouldGoToNextIcRound(moduleStructure.compilerConfiguration) {
-                Fir2KlibMetadataSerializer(
-                    moduleStructure.compilerConfiguration,
-                    analyzedOutput.output,
-                    fir2IrActualizedResult,
-                    exportKDoc = false,
-                    produceHeaderKlib = false,
-                )
-            }
-            if (shouldGoToNextIcRound) {
-                throw IncrementalNextRoundException()
-            }
-        }
-
-        // Serialize klib
-        if (arguments.irProduceKlibDir || arguments.irProduceKlibFile) {
-            val transformedResult = if (!arguments.wasm) {
-                val phaseConfig = createPhaseConfig(arguments).also {
-                    if (arguments.listPhases) it.list(JsPreSerializationLoweringPhasesProvider.lowerings(configuration))
-                }
-
-                PhaseEngine(
-                    phaseConfig,
-                    PhaserState(),
-                    JsPreSerializationLoweringContext(fir2IrActualizedResult.irBuiltIns, configuration),
-                ).runPreSerializationLoweringPhases(fir2IrActualizedResult, JsPreSerializationLoweringPhasesProvider, configuration)
-            } else {
-                fir2IrActualizedResult
-            }
-
-            serializeFirKlib(
-                moduleStructure = moduleStructure,
-                firOutputs = analyzedOutput.output,
-                fir2IrActualizedResult = transformedResult,
-                outputKlibPath = outputKlibPath,
-                nopack = arguments.irProduceKlibDir,
-                messageCollector = messageCollector,
-                diagnosticsReporter = diagnosticsReporter,
-                jsOutputName = arguments.irPerModuleOutputName,
-                useWasmPlatform = arguments.wasm,
-                wasmTarget = arguments.wasmTarget?.let(WasmTarget::fromName)
-            )
-
-            reportCollectedDiagnostics(moduleStructure.compilerConfiguration, diagnosticsReporter, messageCollector)
-            if (diagnosticsReporter.hasErrors) {
-                throw CompilationErrorException()
-            }
-        }
-
-        return moduleStructure
     }
 
     override fun setupPlatformSpecificArgumentsAndServices(

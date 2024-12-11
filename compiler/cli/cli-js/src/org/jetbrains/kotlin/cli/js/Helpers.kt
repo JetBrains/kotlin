@@ -9,13 +9,16 @@ import com.intellij.openapi.Disposable
 import com.intellij.util.ExceptionUtil
 import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.backend.js.TsCompilationStrategy
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
+import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsStandardLibrarySpecialCompatibilityChecker
 import org.jetbrains.kotlin.ir.backend.js.checkers.WasmStandardLibrarySpecialCompatibilityChecker
 import org.jetbrains.kotlin.js.config.EcmaVersion
@@ -164,4 +167,13 @@ internal fun runStandardLibrarySpecialCompatibilityChecks(
 ) {
     val checker = if (isWasm) WasmStandardLibrarySpecialCompatibilityChecker else JsStandardLibrarySpecialCompatibilityChecker
     checker.check(libraries, messageCollector)
+}
+
+internal fun reportCollectedDiagnostics(
+    compilerConfiguration: CompilerConfiguration,
+    diagnosticsReporter: BaseDiagnosticsCollector,
+    messageCollector: MessageCollector
+) {
+    val renderName = compilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+    FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderName)
 }

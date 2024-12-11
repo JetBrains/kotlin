@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.cli.pipeline.web
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
-import org.jetbrains.kotlin.cli.js.klib.AnalyzedFirOutput
 import org.jetbrains.kotlin.cli.pipeline.Fir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.FrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelineArtifact
