@@ -15,7 +15,7 @@ import com.intellij.psi.util.ClassUtil
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.components.KaMetadataCalculator
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
@@ -60,7 +60,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 
 internal class KaFirMetadataCalculator(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaSessionComponent<KaFirSession>(), KaMetadataCalculator, KaFirSessionComponent {
+) : KaBaseSessionComponent<KaFirSession>(), KaMetadataCalculator, KaFirSessionComponent {
     private val firSession: FirSession
         get() = rootModuleSession
 

@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaOriginalPsiProvider
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.psi.KtFile
 @Suppress("OVERRIDE_DEPRECATION")
 internal class KaFe10OriginalPsiProvider(
     override val analysisSessionProvider: () -> KaSession
-) : KaSessionComponent<KaSession>(), KaOriginalPsiProvider {
+) : KaBaseSessionComponent<KaSession>(), KaOriginalPsiProvider {
     override fun KtFile.recordOriginalKtFile(file: KtFile) = withValidityAssertion {
         // Do nothing
     }

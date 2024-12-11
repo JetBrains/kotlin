@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 
 @KaImplementationDetail
-abstract class KaAbstractSignatureSubstitutor<T : KaSession> : KaSessionComponent<T>(), KaSignatureSubstitutor {
+abstract class KaAbstractSignatureSubstitutor<T : KaSession> : KaBaseSessionComponent<T>(), KaSignatureSubstitutor {
     override fun <S : KaFunctionSymbol> S.substitute(substitutor: KaSubstitutor): KaFunctionSignature<S> = withValidityAssertion {
         if (substitutor is KaSubstitutor.Empty) return asSignature()
         return asSignature().substitute(substitutor)

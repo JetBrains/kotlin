@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaCompletionCandidateChecker
 import org.jetbrains.kotlin.analysis.api.components.KaCompletionExtensionCandidateChecker
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
 internal class KaFe10CompletionCandidateChecker(
     override val analysisSessionProvider: () -> KaFe10Session
-) : KaSessionComponent<KaFe10Session>(), KaCompletionCandidateChecker, KaFe10SessionComponent {
+) : KaBaseSessionComponent<KaFe10Session>(), KaCompletionCandidateChecker, KaFe10SessionComponent {
     override fun createExtensionCandidateChecker(
         originalFile: KtFile,
         nameExpression: KtSimpleNameExpression,

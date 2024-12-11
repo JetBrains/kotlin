@@ -9,7 +9,7 @@ import com.google.common.collect.Multimap
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.components.KaMetadataCalculator
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.psi.KtFile
 
 internal class KaFe10MetadataCalculator(
     override val analysisSessionProvider: () -> KaFe10Session
-) : KaSessionComponent<KaFe10Session>(), KaMetadataCalculator {
+) : KaBaseSessionComponent<KaFe10Session>(), KaMetadataCalculator {
     override fun KtFile.calculateMetadata(mapping: Multimap<KtElement, PsiElement>): Metadata = withValidityAssertion {
         throw NotImplementedError("Method is not implemented for FE 1.0")
     }

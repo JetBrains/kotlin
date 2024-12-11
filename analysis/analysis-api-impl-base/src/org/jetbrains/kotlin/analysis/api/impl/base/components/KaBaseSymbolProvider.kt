@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.utils.exceptions.buildAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 @KaImplementationDetail
-abstract class KaBaseSymbolProvider<T : KaSession> : KaSessionComponent<T>(), KaSymbolProvider {
+abstract class KaBaseSymbolProvider<T : KaSession> : KaBaseSessionComponent<T>(), KaSymbolProvider {
     override val KtDeclaration.symbol: KaDeclarationSymbol
         get() = withValidityAssertion {
             when (this) {

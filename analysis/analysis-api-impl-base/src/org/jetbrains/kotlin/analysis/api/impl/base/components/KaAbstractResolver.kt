@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
 @KaImplementationDetail
-abstract class KaAbstractResolver<T : KaSession> : KaSessionComponent<T>(), KaResolver {
+abstract class KaAbstractResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaResolver {
     override fun KtReference.resolveToSymbol(): KaSymbol? = withValidityAssertion {
         return resolveToSymbols().singleOrNull()
     }

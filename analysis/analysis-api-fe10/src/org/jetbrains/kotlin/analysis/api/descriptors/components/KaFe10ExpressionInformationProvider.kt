@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaExpressionInformationProvi
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 
 internal class KaFe10ExpressionInformationProvider(
     override val analysisSessionProvider: () -> KaFe10Session
-) : KaSessionComponent<KaFe10Session>(), KaExpressionInformationProvider, KaFe10SessionComponent {
+) : KaBaseSessionComponent<KaFe10Session>(), KaExpressionInformationProvider, KaFe10SessionComponent {
     override val KtReturnExpression.targetSymbol: KaCallableSymbol?
         get() = withValidityAssertion {
             val bindingContext = analysisContext.analyze(this, AnalysisMode.PARTIAL)

@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.analysis.api.impl.base.components
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 
 @KaImplementationDetail
-abstract class KaSessionComponent<T : KaSession> : KaLifetimeOwner {
+abstract class KaBaseSessionComponent<T : KaSession> : KaSessionComponent {
     abstract val analysisSessionProvider: () -> T
 
     val analysisSession: T
