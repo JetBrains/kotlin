@@ -184,6 +184,7 @@
 /compiler/testData/parseCodeFragment/ "Kotlin Frontend"
 /compiler/testData/psi/ "Kotlin Frontend"
 /compiler/testData/psiUtil/ "Kotlin Frontend"
+/compiler/testData/psiKdocCoverage/ "Kotlin IDE Analysis Core"
 /compiler/testData/recursiveProcessor/ "Kotlin Frontend"
 /compiler/testData/reflection/ "Kotlin Libraries"
 /compiler/testData/repl/ "Kotlin Frontend"
