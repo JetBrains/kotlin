@@ -103,7 +103,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
     val additionalBitcodeFiles = nativeLibraries +
             generatedBitcodeFiles +
             additionalBitcodeFilesToLink +
-            bitcodeLibraries.takeIf { (!generationState.shouldOptimize() || !generationState.producedLlvmModuleContainsStdlib) }.orEmpty() +
+            bitcodeLibraries +
             exceptionsSupportNativeLibrary +
             xcTestRunnerNativeLibrary
 
