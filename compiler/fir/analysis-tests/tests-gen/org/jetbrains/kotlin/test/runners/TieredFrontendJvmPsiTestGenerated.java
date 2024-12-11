@@ -14887,6 +14887,12 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
       }
 
       @Test
+      @TestMetadata("inlineValueClass.kt")
+      public void testInlineValueClass() {
+        runTest("compiler/testData/diagnostics/tests/modifiers/inlineValueClass.kt");
+      }
+
+      @Test
       @TestMetadata("internalInInterface.kt")
       public void testInternalInInterface() {
         runTest("compiler/testData/diagnostics/tests/modifiers/internalInInterface.kt");
