@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
-import org.jetbrains.kotlin.fir.declarations.isInlineOrValueClass
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
@@ -102,7 +101,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Commo
 
     private fun FirTypeRef.isInlineClassThatRequiresMangling(session: FirSession): Boolean {
         val symbol = this.coneType.toRegularClassSymbol(session) ?: return false
-        return symbol.isInlineOrValueClass() && !symbol.isDontMangleClass()
+        return symbol.isInlineOrValue && !symbol.isDontMangleClass()
     }
 
     private fun FirRegularClassSymbol.isDontMangleClass(): Boolean {

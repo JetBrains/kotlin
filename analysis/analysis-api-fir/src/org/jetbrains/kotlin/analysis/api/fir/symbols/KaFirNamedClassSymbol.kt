@@ -114,7 +114,7 @@ internal class KaFirNamedClassSymbol private constructor(
             if (backingPsi != null) {
                 backingPsi.hasModifier(KtTokens.VALUE_KEYWORD) || backingPsi.hasModifier(KtTokens.INLINE_KEYWORD)
             } else {
-                firSymbol.isInline || firSymbol.isValue
+                firSymbol.isInlineOrValue
             }
         }
 

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
-import org.jetbrains.kotlin.fir.declarations.isInlineOrValueClass
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.isPrimitiveType
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -441,7 +440,7 @@ object ConeTypeCompatibilityChecker {
                     firClass.isPrimitiveType() ||
                     (ctx.prohibitComparisonOfIncompatibleClasses && firClass.classId == StandardClassIds.KClass) ||
                     firClass.classId == StandardClassIds.String || firClass.classId == StandardClassIds.Unit ||
-                    (firClass is FirRegularClassSymbol && (firClass.isData || firClass.isInlineOrValueClass()))
+                    (firClass is FirRegularClassSymbol && (firClass.isData || firClass.isInlineOrValue))
         }
 
         private val FirClassSymbol<*>.isFinal: Boolean

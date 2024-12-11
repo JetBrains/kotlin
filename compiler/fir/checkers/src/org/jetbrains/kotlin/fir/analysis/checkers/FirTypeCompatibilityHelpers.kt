@@ -73,7 +73,7 @@ internal fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
         isEnumClass = boundsSymbols.any { it.isEnumClass },
         isPrimitive = bounds.any { it.isPrimitiveOrNullablePrimitive },
         isBuiltin = boundsSymbols.any { it.isBuiltin },
-        isValueClass = boundsSymbols.any { it.isInline || it.isValue },
+        isValueClass = boundsSymbols.any { it.isInlineOrValue },
         isFinal = boundsSymbols.any { it.isFinalClass },
         isClass = boundsSymbols.any { it.isClass },
         // In K1's intersector, `canHaveSubtypes()` is called for `nullabilityStripped`.

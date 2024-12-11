@@ -76,7 +76,7 @@ fun FirSimpleFunction.isTypedEqualsInValueClass(session: FirSession): Boolean =
         with(this@isTypedEqualsInValueClass) {
             contextParameters.isEmpty() && receiverParameter == null
                     && name == OperatorNameConventions.EQUALS
-                    && this@run.isInlineOrValueClass() && valueParameters.size == 1
+                    && this@run.isInlineOrValue && valueParameters.size == 1
                     && returnTypeRef.coneType.fullyExpandedType(session).let {
                 it.isBoolean || it.isNothing
             } && valueParameters[0].returnTypeRef.coneType.let {

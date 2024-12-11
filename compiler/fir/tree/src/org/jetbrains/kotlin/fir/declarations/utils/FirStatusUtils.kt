@@ -38,8 +38,16 @@ inline val FirMemberDeclaration.isOverride: Boolean get() = status.isOverride
 inline val FirMemberDeclaration.isOperator: Boolean get() = status.isOperator
 inline val FirMemberDeclaration.isInfix: Boolean get() = status.isInfix
 inline val FirMemberDeclaration.isInline: Boolean get() = status.isInline
+
+@RequiresOptIn(message = "Please consider using isInlineOrValue, as separate isInline or isValue calls don't cover other case")
+annotation class SuspiciousValueClassCheck
+
+@SuspiciousValueClassCheck
 inline val FirClass.isValue: Boolean get() = status.isValue
+
+@OptIn(SuspiciousValueClassCheck::class)
 inline val FirClass.isInlineOrValue: Boolean get() = status.isInline || status.isValue
+
 inline val FirMemberDeclaration.isTailRec: Boolean get() = status.isTailRec
 inline val FirMemberDeclaration.isExternal: Boolean get() = status.isExternal
 inline val FirMemberDeclaration.isSuspend: Boolean get() = status.isSuspend
