@@ -15842,6 +15842,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
   public static class Elvis extends AbstractLightAnalysisModeTest {
+    @TestMetadata("withNothingConstraintAndExpectedType.kt")
+    public void ignoreWithNothingConstraintAndExpectedType() {
+      runTest("compiler/testData/codegen/box/elvis/withNothingConstraintAndExpectedType.kt");
+    }
+
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }

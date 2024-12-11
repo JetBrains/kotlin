@@ -15410,6 +15410,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       }
 
       @Test
+      @TestMetadata("withNothingConstraintAndExpectedType.kt")
+      public void testWithNothingConstraintAndExpectedType() {
+        runTest("compiler/testData/codegen/box/elvis/withNothingConstraintAndExpectedType.kt");
+      }
+
+      @Test
       @TestMetadata("withReturn.kt")
       public void testWithReturn() {
         runTest("compiler/testData/codegen/box/elvis/withReturn.kt");
