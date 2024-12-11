@@ -1936,7 +1936,20 @@ internal class CodeGeneratorVisitor(
     private inner class InlinedBlockScope(val inlinedBlock: IrInlinedFunctionBlock) : FileScope(file = null, inlinedBlock.fileEntry) {
 
         private val inlineFunctionScope: DIScopeOpaqueRef? by lazy {
-            val owner = inlinedBlock.inlineFunctionSymbol!!.owner
+            val owner = inlinedBlock.inlineFunctionSymbol?.owner
+            if (owner == null) {
+                @Suppress("UNCHECKED_CAST")
+                return@lazy debugInfo.diFunctionScope(
+                        inlinedBlock.fileEntry,
+                        name = "<inlined-lambda>",
+                        linkageName = "<inlined-lambda>",
+                        inlinedBlock.fileEntry.line(inlinedBlock.inlinedFunctionStartOffset),
+                        debugInfo.subroutineType(debugInfo.llvmTargetData, listOf(inlinedBlock.type)),
+                        nodebug = false,
+                        isTransparentStepping = false
+                ) as DIScopeOpaqueRef
+            }
+
             require(owner is IrSimpleFunction) { "Inline constructors should've been lowered: ${owner.render()}" }
             owner.scope(fileEntry().line(inlinedBlock.inlinedFunctionStartOffset))
         }
