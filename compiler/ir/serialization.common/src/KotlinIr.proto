@@ -153,6 +153,8 @@ message IrInlinedFunctionBlock {
   optional int64 inline_function_symbol = 1;
   required FileEntry file_entry = 2;
   required IrBlock base = 3;
+  required int32 declarationStartOffset = 4;
+  required int32 declarationEndOffset = 5;
 }
 
 message MemberAccessCommon {

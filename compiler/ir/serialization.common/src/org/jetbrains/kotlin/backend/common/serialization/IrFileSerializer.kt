@@ -504,6 +504,8 @@ open class IrFileSerializer(
         inlinedFunctionBlock.inlineFunctionSymbol?.let { proto.setInlineFunctionSymbol(serializeIrSymbol(it)) }
         proto.fileEntry = serializeFileEntry(inlinedFunctionBlock.fileEntry)
         proto.base = serializeBlock(inlinedFunctionBlock)
+        proto.declarationStartOffset = inlinedFunctionBlock.startOffset
+        proto.declarationEndOffset = inlinedFunctionBlock.endOffset
         return proto.build()
     }
 
