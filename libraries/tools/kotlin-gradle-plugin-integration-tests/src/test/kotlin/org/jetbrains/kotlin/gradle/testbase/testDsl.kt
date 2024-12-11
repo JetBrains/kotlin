@@ -31,6 +31,15 @@ import kotlin.io.path.*
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
+/**
+ * Create a new test project.
+ *
+ * @param [projectName] test project name in `src/test/resources/testProject` directory.
+ * @param [buildOptions] common Gradle build options
+ * @param [buildJdk] path to JDK build should run with. *Note* Only append to 'gradle.properties'!
+ * @param [enableKotlinDaemonMemoryLimitInMb] limit max heap size for Kotlin Daemon.
+ * `null` enables the default limit inherited from the Gradle process.
+ */
 @OptIn(EnvironmentalVariablesOverride::class)
 fun KGPBaseTest.project(
     projectName: String,
@@ -49,60 +58,6 @@ fun KGPBaseTest.project(
     dependencyManagement: DependencyManagement = DependencyManagement.DefaultDependencyManagement(),
     test: TestProject.() -> Unit = {},
 ): TestProject {
-    val result = runTestProject(
-        projectName = projectName,
-        gradleVersion = gradleVersion,
-        buildOptions = buildOptions,
-        forceOutput = forceOutput,
-        enableBuildScan = enableBuildScan,
-        addHeapDumpOptions = addHeapDumpOptions,
-        enableGradleDebug = enableGradleDebug,
-        enableGradleDaemonMemoryLimitInMb = enableGradleDaemonMemoryLimitInMb,
-        enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
-        projectPathAdditionalSuffix = projectPathAdditionalSuffix,
-        buildJdk = buildJdk,
-        localRepoDir = localRepoDir,
-        environmentVariables = environmentVariables,
-        dependencyManagement = dependencyManagement,
-        test = {
-            test()
-        },
-    )
-    return result.project
-}
-
-/**
- * Create a new test project.
- *
- * @param [projectName] test project name in `src/test/resources/testProject` directory.
- * @param [buildOptions] common Gradle build options
- * @param [buildJdk] path to JDK build should run with. *Note* Only append to 'gradle.properties'!
- * @param [enableKotlinDaemonMemoryLimitInMb] limit max heap size for Kotlin Daemon.
- * `null` enables the default limit inherited from the Gradle process.
- */
-data class TestedProject<Result>(
-    val project: TestProject,
-    val result: Result,
-)
-
-@OptIn(EnvironmentalVariablesOverride::class)
-fun <T> KGPBaseTest.runTestProject(
-    projectName: String,
-    gradleVersion: GradleVersion,
-    buildOptions: BuildOptions = defaultBuildOptions,
-    forceOutput: Boolean = false,
-    enableBuildScan: Boolean = false,
-    addHeapDumpOptions: Boolean = true,
-    enableGradleDebug: EnableGradleDebug = EnableGradleDebug.AUTO,
-    enableGradleDaemonMemoryLimitInMb: Int? = 1024,
-    enableKotlinDaemonMemoryLimitInMb: Int? = 1024,
-    projectPathAdditionalSuffix: String = "",
-    buildJdk: File? = null,
-    localRepoDir: Path? = defaultLocalRepo(gradleVersion),
-    environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
-    dependencyManagement: DependencyManagement = DependencyManagement.DefaultDependencyManagement(),
-    test: TestProject.() -> T,
-): TestedProject<T> {
     val projectPath = setupProjectFromTestResources(
         projectName,
         gradleVersion,
@@ -150,10 +105,8 @@ fun <T> KGPBaseTest.runTestProject(
         testProject.test()
     }
     // A convenient place to place a breakpoint to be able to inspect project output files
-    return TestedProject(
-        testProject,
-        result.getOrThrow()
-    )
+    result.getOrThrow()
+    return testProject
 }
 
 /**
@@ -418,6 +371,11 @@ open class GradleProject(
     fun relativeToProject(
         files: List<Path>,
     ): List<Path> = files.map { projectPath.relativize(it) }
+
+    private var counter = 0
+    fun generateIdentifier(): String {
+        return counter.toString().also { counter += 1 }
+    }
 }
 
 /**
@@ -693,7 +651,6 @@ internal fun Path.addDefaultSettingsToSettingsGradle(
                 )
             } else {
                 addDependencyManagementToSettings(
-                    gradleRepositoriesMode = dependencyManagement.gradleRepositoriesMode,
                     additionalDependencyRepositories = dependencyManagement.additionalRepos,
                     localRepo = localRepo
                 )
@@ -1071,7 +1028,6 @@ internal fun TestProject.enableStableConfigurationCachePreview() {
 sealed interface DependencyManagement {
     class DefaultDependencyManagement(
         val additionalRepos: Set<String> = emptySet(),
-        val gradleRepositoriesMode: RepositoriesMode = RepositoriesMode.PREFER_SETTINGS,
     ) : DependencyManagement
     data object DisabledDependencyManagement : DependencyManagement
 }

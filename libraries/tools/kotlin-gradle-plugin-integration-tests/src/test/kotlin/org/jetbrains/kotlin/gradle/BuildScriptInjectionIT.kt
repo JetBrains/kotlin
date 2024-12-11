@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.uklibs.*
 import kotlin.test.assertEquals
+import kotlin.test.fail
 
 @MppGradlePluginTests
 class BuildScriptInjectionIT : KGPBaseTest() {
@@ -121,7 +122,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
         targetProject: String,
         version: GradleVersion,
     ) {
-        val publishedProject = runTestProject(
+        val publishedProject = project(
             targetProject,
             version,
         ) {
@@ -134,8 +135,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                     }
                 }
             }
-            publish(PublisherConfiguration())
-        }.result
+        }.publish(PublisherConfiguration())
 
         project(
             targetProject,
