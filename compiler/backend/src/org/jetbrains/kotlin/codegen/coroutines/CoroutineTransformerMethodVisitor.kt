@@ -1113,12 +1113,6 @@ class CoroutineTransformerMethodVisitor(
                 }
 
                 visitLabel(continuationLabelAfterLoadedResult.label)
-
-                if (suspendPointLineNumber != null) {
-                    // If there is no clear next linenumber instruction, the continuation is still on the
-                    // same line as the suspend point.
-                    visitLineNumber(suspendPointLineNumber.line, continuationLabelAfterLoadedResult.label)
-                }
             })
         }
 
