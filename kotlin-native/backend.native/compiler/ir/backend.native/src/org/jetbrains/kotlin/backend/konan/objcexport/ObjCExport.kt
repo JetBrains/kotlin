@@ -179,7 +179,7 @@ internal class ObjCExport(
         }
 
         if (!config.isFinalBinary) return // TODO: emit RTTI to the same modules as classes belong to.
-        if (generationState.shouldOptimize() && !generationState.producedLlvmModuleContainsStdlib) return
+        if (generationState.shouldOptimize() && !generationState.llvmModuleSpecification.isFinal) return
 
         val mapper = exportedInterface?.mapper ?: ObjCExportMapper(unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport)
         namer = exportedInterface?.namer ?: ObjCExportNamerImpl(

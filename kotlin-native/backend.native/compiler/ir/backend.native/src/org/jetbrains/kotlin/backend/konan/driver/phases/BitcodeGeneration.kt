@@ -81,7 +81,7 @@ internal val CodegenPhase = createSimpleNamedCompilerPhase<NativeGenerationState
                 it.acceptVoid(visitor)
             }
 
-            visitor.processAllInitializers(generationState.context.config.isFinalBinary && (!generationState.shouldOptimize() || generationState.producedLlvmModuleContainsStdlib))
+            visitor.processAllInitializers(generationState.context.config.isFinalBinary && (!generationState.shouldOptimize() || generationState.llvmModuleSpecification.isFinal))
 
             if (generationState.hasDebugInfo())
                 DIFinalize(generationState.debugInfo.builder)

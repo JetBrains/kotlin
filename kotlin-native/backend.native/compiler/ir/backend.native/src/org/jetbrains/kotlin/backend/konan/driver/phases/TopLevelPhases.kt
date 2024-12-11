@@ -107,19 +107,20 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 val module: IrModuleFragment,
         )
 
+        val FINAL_SUB_FRAGMENT_NAME = "__FINAL__"
+
         fun SubFragment.generationState(topLevel: NativeGenerationState): NativeGenerationState {
-            val containsStdlib = name == "" || name == topLevel.context.stdlibModule.konanLibrary!!.uniqueName
             val llvmModuleSpecification = if (topLevel.llvmModuleSpecification is DefaultLlvmModuleSpecification) {
                 object : LlvmModuleSpecificationBase(config.cachedLibraries) {
                     override val isFinal: Boolean
-                        get() = containsStdlib
+                        get() = name == FINAL_SUB_FRAGMENT_NAME
 
                     override fun containsLibrary(library: KotlinLibrary): Boolean {
                         if (cachedLibraries.isLibraryCached(library))
                             return false
                         if (name == "")
                             return true
-                        if (library.isCInteropLibrary() && name == "stdlib") {
+                        if (library.isCInteropLibrary() && name == FINAL_SUB_FRAGMENT_NAME) {
                             return true
                         }
                         return name == library.uniqueName
@@ -127,11 +128,12 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 }
             } else topLevel.llvmModuleSpecification
             return topLevel.createChild(topLevel.llvmModuleName + name, llvmModuleSpecification).apply {
+                val containsStdlib = name == "" || name == topLevel.context.stdlibModule.konanLibrary!!.uniqueName
                 if (containsStdlib && cacheDeserializationStrategy.containsRuntime) {
                     files.filter { isReferencedByNativeRuntime(it.declarations) }
                             .forEach { dependenciesTracker.add(it) }
                 }
-                if (containsStdlib) {
+                if (name == "" || name == FINAL_SUB_FRAGMENT_NAME) {
                     dependenciesTracker.setParent(topLevel.dependenciesTracker)
                 }
             }
@@ -144,12 +146,12 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
             return buildList {
                 val perLibraryFiles = fragment.irModule.files.groupBy {
                     val library = it.konanLibrary!!
-                    if (library.isCInteropLibrary()) "stdlib" else library.uniqueName
+                    if (library.isCInteropLibrary()) FINAL_SUB_FRAGMENT_NAME else library.uniqueName
                 }
                 perLibraryFiles.mapNotNullTo(this) { (name, files) ->
-                    if (name == "stdlib") null else SubFragment(name, files, fragment.irModule)
+                    SubFragment(name, files, fragment.irModule).takeIf { name != FINAL_SUB_FRAGMENT_NAME }
                 }
-                add(SubFragment("stdlib", perLibraryFiles["stdlib"]!!, fragment.irModule))
+                add(SubFragment(FINAL_SUB_FRAGMENT_NAME, perLibraryFiles[FINAL_SUB_FRAGMENT_NAME].orEmpty(), fragment.irModule))
             }
         }
 
@@ -469,7 +471,7 @@ internal fun PhaseEngine<NativeGenerationState>.lowerModuleWithDependencies(modu
 
 internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment, files: List<IrFile>, irBuiltIns: IrBuiltIns, cExportFiles: CExportFiles?) {
     runCodegen(module, files, irBuiltIns)
-    val generatedBitcodeFiles = if (context.config.produceCInterface && (!context.shouldOptimize() || context.producedLlvmModuleContainsStdlib)) {
+    val generatedBitcodeFiles = if (context.config.produceCInterface && (!context.shouldOptimize() || context.llvmModuleSpecification.isFinal)) {
         require(cExportFiles != null)
         val input = CExportGenerateApiInput(
                 context.context.cAdapterExportedElements!!,
@@ -483,7 +485,7 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
     } else {
         emptyList()
     }
-    if (!context.shouldOptimize() || context.producedLlvmModuleContainsStdlib) {
+    if (!context.shouldOptimize() || context.llvmModuleSpecification.isFinal) {
         runPhase(CStubsPhase)
     }
     // TODO: Consider extracting llvmModule and friends from nativeGenerationState and pass them explicitly.
