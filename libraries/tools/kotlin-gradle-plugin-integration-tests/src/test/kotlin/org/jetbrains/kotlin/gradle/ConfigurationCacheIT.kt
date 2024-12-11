@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -94,12 +95,13 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @NativeGradlePluginTests
     @DisplayName("works with commonizer")
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_11)
     fun testCommonizer(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
             val commonizeNativeDistributionTask = ":lib:commonizeNativeDistribution"
             val cleanNativeDistributionCommonizationTask = ":lib:cleanNativeDistributionCommonization"
 
-            build(":lib:compileCommonMainKotlinMetadata") {
+            build(":lib:compileCommonMainKotlinMetadata", "--stacktrace") {
                 assertTasksExecuted(commonizeNativeDistributionTask)
                 assertTasksExecuted(":lib:compileCommonMainKotlinMetadata")
                 assertConfigurationCacheStored()
@@ -346,6 +348,25 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             build("clean", "assemble", "-Pkotlin.build.report.build_scan.custom_values_limit=0", "--scan", buildOptions = buildOptions) {
                 assertOutputContains("Can't add any more custom values into build scan")
             }
+        }
+    }
+
+    @DisplayName("with native dependencies downloader")
+    @NativeGradlePluginTests
+    @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
+    @Disabled("[KT-66423](http://youtrack.jetbrains.com/issue/KT-66423): ignore test until source-value changes are made")
+    fun testNativeBundleDownloadForConfigurationCache(gradleVersion: GradleVersion, @TempDir konanDirTemp: Path) {
+        nativeProject(
+            "native-simple-project", gradleVersion, buildOptions = defaultBuildOptions.copy(
+                nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
+                    version = TestVersions.Kotlin.STABLE_RELEASE,
+                    distributionDownloadFromMaven = true,
+                ),
+                konanDataDir = konanDirTemp
+            )
+        ) {
+            testConfigurationCacheOf(":assemble")
         }
     }
 }

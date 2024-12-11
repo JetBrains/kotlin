@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
+import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.targets.native.tasks.CompilerPluginData
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NoopKotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
@@ -81,6 +82,15 @@ constructor(
 
     override val destinationDirectory: DirectoryProperty = binary.outputDirectoryProperty
 
+    @Suppress("DEPRECATION")
+    @get:Internal
+    internal val konanTarget = compilation.konanTarget
+
+    // Avoid resolving these dependencies during task graph construction when we can't build the target:
+    @Suppress("DEPRECATION")
+    @get:Internal
+    internal val nativeDependencies = compilation.nativeDependencies
+
     @get:Classpath
     override val libraries: ConfigurableFileCollection = objectFactory.fileCollection().from(
         {
@@ -90,11 +100,6 @@ constructor(
             else objectFactory.fileCollection()
         }
     )
-
-    @get:InputFiles
-    @get:Optional
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    internal var excludeOriginalPlatformLibraries: FileCollection? = null
 
     @get:Input
     val outputKind: CompilerOutputKind by lazyConvention { binary.outputKind.compilerOutputKind }
@@ -110,10 +115,6 @@ constructor(
 
     @get:Input
     internal val binaryName: String by lazyConvention { binary.name }
-
-    @Suppress("DEPRECATION")
-    @get:Internal
-    internal val konanTarget = compilation.konanTarget
 
     @Suppress("DEPRECATION")
     @Deprecated("Use toolOptions to configure the task")
@@ -213,7 +214,7 @@ constructor(
     private val gradleUserHomeDir = project.gradle.gradleUserHomeDir
     private val cacheBuilderSettings
         get() = CacheBuilder.Settings(
-            konanHome = kotlinNativeProvider.flatMap { it.bundleDirectory.asFile },
+            konanHome = kotlinNativeProvider.flatMap { it.bundleDirectory }.map { File(it) },
             konanCacheKind = konanCacheDir,
             gradleUserHomeDir = gradleUserHomeDir,
             konanTarget = konanTarget,
@@ -277,7 +278,7 @@ constructor(
 
         dependencyClasspath { args ->
             args.libraries = runSafe {
-                libraries.exclude(excludeOriginalPlatformLibraries).files.filterKlibsPassedToCompiler()
+                libraries.exclude(originalPlatformLibraries()).files.filterKlibsPassedToCompiler()
             }?.toPathsArray()
             args.exportedLibraries = runSafe { exportLibraries.files.filterKlibsPassedToCompiler() }?.toPathsArray()
             args.friendModules = runSafe { friendModule.files.toList().takeIf { it.isNotEmpty() } }
@@ -288,6 +289,8 @@ constructor(
             args.includes = sourceFiles.files.toPathsArray()
         }
     }
+
+    internal fun originalPlatformLibraries() = objectFactory.fileCollection().from(nativeDependencies)
 
     private fun validatedExportedLibraries() {
         if (exportLibrariesResolvedConfiguration == null) return
@@ -383,7 +386,7 @@ constructor(
         message = "This property will be removed in future releases. Don't use it in your code.",
     )
     @get:Internal
-    val konanHome: Provider<String> = kotlinNativeProvider.map { it.bundleDirectory.get().asFile.absolutePath }
+    val konanHome: Provider<String> = kotlinNativeProvider.flatMap { it.bundleDirectory }
 
     @get:Internal
     internal abstract val kotlinCompilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel>
