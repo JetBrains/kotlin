@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.impl.javaFile
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
@@ -118,6 +119,9 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                             return false
                         if (name == "")
                             return true
+                        if (library.isCInteropLibrary() && name == "stdlib") {
+                            return true
+                        }
                         return name == library.uniqueName
                     }
                 }
@@ -138,7 +142,10 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 return listOf(SubFragment("", fragment.irModule.files, fragment.irModule))
             }
             return buildList {
-                val perLibraryFiles = fragment.irModule.files.groupBy { it.konanLibrary!!.uniqueName }
+                val perLibraryFiles = fragment.irModule.files.groupBy {
+                    val library = it.konanLibrary!!
+                    if (library.isCInteropLibrary()) "stdlib" else library.uniqueName
+                }
                 perLibraryFiles.mapNotNullTo(this) { (name, files) ->
                     if (name == "stdlib") null else SubFragment(name, files, fragment.irModule)
                 }
