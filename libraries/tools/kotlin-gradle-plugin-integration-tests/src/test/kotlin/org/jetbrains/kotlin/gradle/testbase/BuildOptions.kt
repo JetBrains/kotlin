@@ -64,6 +64,7 @@ data class BuildOptions(
     val compilerArgumentsLogLevel: String? = "info",
     val kmpIsolatedProjectsSupport: KmpIsolatedProjectsSupport? = null,
     val fileLeaksReportFile: File? = null,
+    val continueAfterFailure: Boolean = false,
     /**
      * Override the directory to store flag files indicating "daemon process is alive" controlled by Kotlin Daemon.
      *
@@ -189,6 +190,10 @@ data class BuildOptions(
             arguments.add("--max-workers=$maxWorkers")
         } else {
             arguments.add("--no-parallel")
+        }
+
+        if (continueAfterFailure) {
+            arguments.add("--continue")
         }
 
         if (incremental != null) {

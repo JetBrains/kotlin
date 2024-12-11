@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.testkit.runner.UnexpectedBuildSuccess
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -116,6 +117,82 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                 configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
             )
         }
+    }
+
+    @GradleTest
+    fun catchExceptions(version: GradleVersion) {
+        data class A(val name: String = "A") : Exception()
+        data class B(val name: String = "B") : Exception()
+
+        val a1 = A("1")
+        val a2 = A("2")
+
+        // Catch exceptions emitted by tasks at execution
+        project("buildScriptInjectionGroovy", version) {
+            buildScriptInjection {
+                project.tasks.register("throwA1") {
+                    it.doLast { throw a1 }
+                }
+                project.tasks.register("throwA2") {
+                    it.doLast { throw a2 }
+                }
+                project.tasks.register("throwA") {
+                    it.dependsOn("throwA1", "throwA2")
+                }
+                project.tasks.register("throwB") {
+                    it.doLast { throw B() }
+                }
+                project.tasks.register("noBuildFailure") {}
+            }
+            assertEquals(
+                CaughtBuildFailure.Expected(setOf(a1, a2)),
+                catchBuildFailures<A>().buildAndReturn(
+                    "throwA",
+                    deriveBuildOptions = { defaultBuildOptions.copy(continueAfterFailure = true) }
+                )
+            )
+            assert(
+                assertIsInstance<CaughtBuildFailure.Unexpected<A>>(
+                    catchBuildFailures<A>().buildAndReturn("throwB")
+                ).stackTraceDump.contains("Caused by: B(name=B)")
+            )
+            assertIsInstance<UnexpectedBuildSuccess>(
+                runCatching {
+                    catchBuildFailures<A>().buildAndReturn("noBuildFailure")
+                }.exceptionOrNull()
+            )
+        }
+
+        // Build failures caused by configuration errors are also catchable
+        project("buildScriptInjectionGroovy", version) {
+            buildScriptInjection {
+                project.afterEvaluate {
+                    throw A()
+                }
+            }
+            assertEquals(
+                CaughtBuildFailure.Expected(setOf(A())),
+                catchBuildFailures<A>().buildAndReturn("tasks")
+            )
+        }
+
+        project("buildScriptInjectionGroovy", version) {
+            buildScriptInjection {
+                project.afterEvaluate {
+                    throw B()
+                }
+            }
+            assert(
+                assertIsInstance<CaughtBuildFailure.Unexpected<A>>(
+                    catchBuildFailures<A>().buildAndReturn("tasks")
+                ).stackTraceDump.contains("Caused by: B(name=B)")
+            )
+        }
+    }
+
+    private inline fun <reified T> assertIsInstance(value: Any?): T {
+        if (value is T) return value
+        fail("Expected $value to implement ${T::class.java}")
     }
 
     private fun publishAndConsumeProject(
