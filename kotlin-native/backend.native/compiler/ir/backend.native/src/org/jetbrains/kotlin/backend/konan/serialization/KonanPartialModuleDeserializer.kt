@@ -83,6 +83,13 @@ internal class KonanPartialModuleDeserializer(
         else -> null
     }
 
+    override fun init(delegate: IrModuleDeserializer) {
+        super.init(delegate)
+
+        /** Enable the workaround for KT-73511 only for Kotlin/Native. */
+        fileDeserializationStates.forEach { it.declarationDeserializer.enableWorkaroundForKt73511() }
+    }
+
     private val IrClass.firstNonClassParent: IrDeclarationParent
         get() {
             var parent = parent

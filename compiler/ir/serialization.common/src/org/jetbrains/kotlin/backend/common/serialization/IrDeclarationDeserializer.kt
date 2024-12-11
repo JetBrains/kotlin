@@ -79,6 +79,27 @@ class IrDeclarationDeserializer(
     private val specialProcessingForMismatchedSymbolKind: ((deserializedSymbol: IrSymbol, fallbackSymbolKind: SymbolKind?) -> IrSymbol)?,
     private val irInterner: IrInterningService,
 ) {
+    /** Enable the workaround for KT-73511 only if it was explicitly called. */
+    fun enableWorkaroundForKt73511() {
+        useWorkaroundForKt73511 = true
+    }
+
+    private var useWorkaroundForKt73511 = false
+
+    /**
+     * If this is an annotation constructor call with old (legacy) IR signature of [SubclassOptInRequired] class
+     * that was before 2.1.0 and does not exist in stdlib anymore. For details, see KT-73511.
+     */
+    private fun isObsoleteSubclassOptInRequiredAnnotation(annotation: IrConstructorCall): Boolean {
+        if (!useWorkaroundForKt73511) return false
+
+        val signature = (annotation.symbol.signature as? IdSignature.CommonSignature) ?: return false
+
+        return signature.packageFqName == "kotlin" &&
+                signature.declarationFqName == "SubclassOptInRequired.<init>" &&
+                signature.id == -1505964669299995052L
+    }
+
 
     private val bodyDeserializer = IrBodyDeserializer(builtIns, allowErrorNodes, irFactory, libraryFile, this)
 
@@ -105,7 +126,9 @@ class IrDeclarationDeserializer(
 
     // Deserializes all annotations, even having SOURCE retention, since they might be needed in backends, like @Volatile
     internal fun deserializeAnnotations(annotations: List<ProtoConstructorCall>): List<IrConstructorCall> {
-        return annotations.memoryOptimizedMap { bodyDeserializer.deserializeAnnotation(it) }
+        return annotations.memoryOptimizedMapNotNull {
+            bodyDeserializer.deserializeAnnotation(it).takeUnless(::isObsoleteSubclassOptInRequiredAnnotation)
+        }
     }
 
     private fun deserializeSimpleTypeNullability(proto: ProtoSimpleTypeNullablity) = when (proto) {
