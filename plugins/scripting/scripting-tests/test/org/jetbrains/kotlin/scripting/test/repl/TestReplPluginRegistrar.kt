@@ -20,6 +20,7 @@ class FirTestReplCompilerExtensionRegistrar(
     override fun ExtensionRegistrarContext.configurePlugin() {
         +FirTestReplSnippetConfiguratorExtensionImpl.getFactory(hostConfiguration)
         +FirTestReplSnippetResolveExtensionImpl.getFactory(hostConfiguration)
+        +Fir2IrReplSnippetConfiguratorExtensionImpl.getFactory(hostConfiguration)
     }
 }
 
