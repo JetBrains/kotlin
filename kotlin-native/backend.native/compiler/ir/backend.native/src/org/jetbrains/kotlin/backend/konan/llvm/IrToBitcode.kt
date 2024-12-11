@@ -2743,12 +2743,6 @@ internal class CodeGeneratorVisitor(
                 listOf(
                     appendStaticInitializers(ctorProto(ctorName), initializers + otherInitializers)
                 )
-            } else if (library.isCInteropLibrary() == true) {
-                check(initializers.isEmpty()) { "cinterop library ${library.uniqueName} has ${initializers.size} initializers" }
-
-                listOf(generateFunctionNoRuntime(codegen, ctorProto(ctorName, LLVMLinkage.LLVMLinkOnceAnyLinkage)) {
-                    ret(null)
-                })
             } else {
                 // A cached library.
                 check(initializers.isEmpty()) {
