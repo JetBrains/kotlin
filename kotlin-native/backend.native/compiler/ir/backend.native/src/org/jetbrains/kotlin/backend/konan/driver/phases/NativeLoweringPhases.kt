@@ -296,6 +296,12 @@ private val propertyReferencePhase = createFileLoweringPhase(
         prerequisite = setOf(volatilePhase, delegatedPropertyOptimizationPhase)
 )
 
+
+private val volatileLambdaPhase = createFileLoweringPhase(
+        lowering = ::VolatileLambdaLowering,
+        name = "VolatileLambdaLowering",
+)
+
 private val functionReferencePhase = createFileLoweringPhase(
         lowering = ::FunctionReferenceLowering,
         name = "FunctionReference",
@@ -564,6 +570,7 @@ internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNu
         testProcessorPhase.takeIf { this.configuration.getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE },
         delegatedPropertyOptimizationPhase,
         propertyReferencePhase,
+        volatileLambdaPhase,
         functionReferencePhase,
         postInlinePhase,
         contractsDslRemovePhase,
