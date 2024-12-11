@@ -758,6 +758,16 @@ object IrTree : AbstractTreeBuilder() {
 
         visitorParameterName = "inlinedBlock"
 
+        +field("inlinedFunctionStartOffset", int) {
+            kDoc = """
+                Represents the start offset of the inlined function that was located inside `fileEntry`.
+            """.trimIndent()
+        }
+        +field("inlinedFunctionEndOffset", int) {
+            kDoc = """
+                Represents the end offset of the inlined function that was located inside `fileEntry`.                
+            """.trimIndent()
+        }
         +field("inlineFunctionSymbol", functionSymbol, isChild = false, nullable = true)
         +field("fileEntry", type(Packages.tree, "IrFileEntry"), isChild = false)
     }
