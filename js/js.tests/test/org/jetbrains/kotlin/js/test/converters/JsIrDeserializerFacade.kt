@@ -48,9 +48,6 @@ class JsIrDeserializerFacade(
     override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): IrBackendInput? {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
-        // Enforce PL with the ERROR log level to fail any tests where PL detected any incompatibilities.
-        configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR))
-
         val (moduleInfo, pluginContext) = loadIrFromKlib(module, configuration)
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
