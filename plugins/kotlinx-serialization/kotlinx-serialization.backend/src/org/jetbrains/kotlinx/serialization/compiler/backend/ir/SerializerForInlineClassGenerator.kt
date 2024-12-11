@@ -38,7 +38,7 @@ class SerializerForInlineClassGenerator(
         val inlineEncoder = irTemporary(encodeInlineCall, nameHint = "inlineEncoder")
 
         val property = serializableProperties.first()
-        val value = getProperty(irGet(saveFunc.valueParameters[1]), property.ir)
+        val value = getProperty(irGet(saveFunc.valueParameters[1]), property.ir, property.type)
 
         // inlineEncoder.encodeInt/String/SerializableValue
         val elementCall = formEncodeDecodePropertyCall(irGet(inlineEncoder), saveFunc.dispatchReceiverParameter!!, property, {innerSerial, sti ->
