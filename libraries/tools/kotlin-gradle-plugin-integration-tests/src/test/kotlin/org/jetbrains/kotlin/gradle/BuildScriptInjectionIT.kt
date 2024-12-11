@@ -5,10 +5,20 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.DefaultTask
+import org.gradle.api.InvalidUserCodeException
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.plugins.UnknownPluginException
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.OutputFile
+import org.gradle.testkit.runner.UnexpectedBuildSuccess
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.uklibs.*
+import java.io.File
+import java.io.NotSerializableException
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
@@ -109,6 +119,20 @@ class BuildScriptInjectionIT : KGPBaseTest() {
     )
     @GradleTest
     fun buildScriptReturnIsCCFriendly(version: GradleVersion) {
+        // Sanity check that enabling CC produces CC serialization errors with inappropriately constructed providers in providerBuildScriptReturn
+        project("buildScriptInjectionGroovy", version) {
+            val returnValue = providerBuildScriptReturn {
+                project.provider { project }
+            }
+            buildAndFail(
+                "tasks", "-P${returnValue.injectionLoadProperty}",
+                buildOptions = defaultBuildOptions.withConfigurationCache,
+            ) {
+                assertOutputContains("cannot serialize object of type")
+            }
+        }
+
+        // Check that in the simple case we don't fail to return value with CC
         project("buildScriptInjectionGroovy", version) {
             buildScriptReturn {
                 project.layout.projectDirectory.file("foo").asFile
@@ -116,6 +140,121 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                 configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
             )
         }
+
+        // Make sure delayed task providers (e.g. mapped from a task) get queried at the correct time even in runs with CC
+        abstract class MappedTaskOutput : DefaultTask() {
+            @get:OutputFile
+            abstract val out: RegularFileProperty
+        }
+        project("buildScriptInjectionGroovy", version) {
+            val taskName = "foo"
+            val produceCCSerializationError = "produceCCSerializationError"
+            val mappedTaskOutputProvider: GradleProjectBuildScriptInjectionContext.() -> Provider<File> = {
+                project.tasks.named(taskName, MappedTaskOutput::class.java).flatMap {
+                    it.out
+                }.map {
+                    it.asFile
+                }
+            }
+
+            buildScriptInjection {
+                project.tasks.register(taskName, MappedTaskOutput::class.java) {
+                    it.out.set(project.layout.buildDirectory.file("foo"))
+                }
+                if (project.hasProperty(produceCCSerializationError)) {
+                    mappedTaskOutputProvider().get()
+                }
+            }
+
+            assertContains(
+                catchBuildFailures<InvalidUserCodeException>().buildAndReturn(
+                    "tasks", "-P${produceCCSerializationError}",
+                ).unwrap().single().message!!,
+                "Querying the mapped value of",
+            )
+
+            providerBuildScriptReturn {
+                mappedTaskOutputProvider()
+            }.buildAndReturn(
+                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+            )
+        }
+    }
+
+    @GradleTest
+    fun catchExceptions(version: GradleVersion) {
+        data class A(val name: String = "A") : Exception()
+        data class B(val name: String = "B") : Exception()
+
+        val a1 = A("1")
+        val a2 = A("2")
+
+        // Catch exceptions emitted by tasks at execution
+        project("buildScriptInjectionGroovy", version) {
+            buildScriptInjection {
+                project.tasks.register("throwA1") {
+                    it.doLast { throw a1 }
+                }
+                project.tasks.register("throwA2") {
+                    it.doLast { throw a2 }
+                }
+                project.tasks.register("throwA") {
+                    it.dependsOn("throwA1", "throwA2")
+                }
+                project.tasks.register("throwB") {
+                    it.doLast { throw B() }
+                }
+                project.tasks.register("noBuildFailure") {}
+            }
+            assertEquals(
+                CaughtBuildFailure.Expected(setOf(a1, a2)),
+                catchBuildFailures<A>().buildAndReturn(
+                    "throwA",
+                    deriveBuildOptions = { defaultBuildOptions.copy(continueAfterFailure = true) }
+                )
+            )
+            assert(
+                assertIsInstance<CaughtBuildFailure.Unexpected<A>>(
+                    catchBuildFailures<A>().buildAndReturn("throwB")
+                ).stackTraceDump.contains("Caused by: B(name=B)")
+            )
+            assertIsInstance<UnexpectedBuildSuccess>(
+                runCatching {
+                    catchBuildFailures<A>().buildAndReturn("noBuildFailure")
+                }.exceptionOrNull()
+            )
+        }
+
+        // Build failures caused by configuration errors are also catchable
+        project("buildScriptInjectionGroovy", version) {
+            buildScriptInjection {
+                project.afterEvaluate {
+                    throw A()
+                }
+            }
+            assertEquals(
+                CaughtBuildFailure.Expected(setOf(A())),
+                catchBuildFailures<A>().buildAndReturn("tasks")
+            )
+        }
+
+        project("buildScriptInjectionGroovy", version) {
+            buildScriptInjection {
+                project.afterEvaluate {
+                    throw B()
+                }
+            }
+            assert(
+                assertIsInstance<CaughtBuildFailure.Unexpected<A>>(
+                    catchBuildFailures<A>().buildAndReturn("tasks")
+                ).stackTraceDump.contains("Caused by: B(name=B)")
+            )
+        }
+    }
+
+    private inline fun <reified T> assertIsInstance(value: Any?): T {
+        if (value is T) return value
+        fail("Expected $value to implement ${T::class.java}")
     }
 
     private fun publishAndConsumeProject(
