@@ -1093,6 +1093,10 @@ internal class PartiallyLinkedIrTreePatcher(
                 val inlinedLambdaArgumentsWithPermittedNonLocalReturns = ArrayList<IrFunctionSymbol>(function.valueParameters.size + 1)
 
                 fun IrExpression?.countInAsInlinedLambdaArgumentWithPermittedNonLocalReturns() {
+                    // IR inliner can sometimes insert casts to inline lambda parameters before calling `invoke` on them.
+                    if (this is IrTypeOperatorCall && this.operator == IrTypeOperator.IMPLICIT_CAST) {
+                        return this.argument.countInAsInlinedLambdaArgumentWithPermittedNonLocalReturns()
+                    }
                     inlinedLambdaArgumentsWithPermittedNonLocalReturns.addIfNotNull((this as? IrFunctionExpression)?.function?.symbol)
                 }
 
