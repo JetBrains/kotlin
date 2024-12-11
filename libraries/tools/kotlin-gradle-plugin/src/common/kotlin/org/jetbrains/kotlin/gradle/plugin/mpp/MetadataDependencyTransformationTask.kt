@@ -64,7 +64,8 @@ abstract class MetadataDependencyTransformationTask
 ) : DefaultTask(), UsesKotlinToolingDiagnostics {
 
     //region Task Configuration State & Inputs
-    private val transformationParameters = GranularMetadataTransformation.Params(project, kotlinSourceSet)
+    @get:Internal
+    internal val transformationParameters = GranularMetadataTransformation.Params(project, kotlinSourceSet)
 
     @Suppress("unused") // task inputs for up-to-date checks
     @get:Nested
@@ -89,8 +90,9 @@ abstract class MetadataDependencyTransformationTask
                         "Probably it is accessed it during Task Execution with state loaded from Configuration Cache"
             )
 
+    // FIXME: Is this ok to move to internal?
     @get:OutputFile
-    protected val transformedLibrariesIndexFile: RegularFileProperty = objectFactory
+    internal val transformedLibrariesIndexFile: RegularFileProperty = objectFactory
         .fileProperty()
         .apply { set(outputsDir.resolve("${kotlinSourceSet.name}.json")) }
 
@@ -139,6 +141,7 @@ abstract class MetadataDependencyTransformationTask
 
     @TaskAction
     fun transformMetadata() {
+        // Не понимаю, это parent всмысле как commonMain для iosMain
         val parentLibrariesRecords: List<List<TransformedMetadataLibraryRecord>> = parentLibrariesIndexFiles
             .get()
             .map { librariesIndexFile -> librariesIndexFile.records() }

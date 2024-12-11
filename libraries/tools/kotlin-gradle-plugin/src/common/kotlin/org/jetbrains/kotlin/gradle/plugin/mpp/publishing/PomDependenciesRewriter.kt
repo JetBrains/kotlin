@@ -30,6 +30,7 @@ internal data class ModuleCoordinates(
     }
 }
 
+// FIXME: 28.11.2024 - Наверное смысл PomDependenciesRewriter'а в том чтобы переписывать зависимости на платформенные слайсы
 internal abstract class PomDependenciesRewriter {
 
     open val taskDependencies: Any? get() = null

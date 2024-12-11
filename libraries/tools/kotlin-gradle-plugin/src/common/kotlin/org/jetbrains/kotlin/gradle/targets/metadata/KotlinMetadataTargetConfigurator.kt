@@ -11,6 +11,8 @@ import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibStateAttribute
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibStateUnzipped
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.metadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -44,6 +46,16 @@ internal val Project.shouldCompileIntermediateSourceSetsToMetadata: Boolean
 
 internal val Project.isCompatibilityMetadataVariantEnabled: Boolean
     get() = PropertiesProvider(this).enableCompatibilityMetadataVariant == true
+
+// FIXME: Test this !!!
+internal val Project.psmJarClassifier: String?
+    get() = if (kotlinPropertiesProvider.enableCompatibilityMetadataVariant) {
+        "all"
+    } else if (kotlinPropertiesProvider.publishUklib) {
+        "psm"
+    } else {
+        null
+    }
 
 class KotlinMetadataTargetConfigurator :
     KotlinOnlyTargetConfigurator<KotlinCompilation<*>, KotlinMetadataTarget>(createTestCompilation = false) {
@@ -261,6 +273,7 @@ class KotlinMetadataTargetConfigurator :
     }
 
     private val ResolvedArtifactResult.isMpp: Boolean get() = variant.attributes.containsMultiplatformAttributes
+            || variant.attributes.getAttribute(uklibStateAttribute) == uklibStateUnzipped
 }
 
 internal fun Project.locateOrRegisterGenerateProjectStructureMetadataTask(): TaskProvider<GenerateProjectStructureMetadata> =

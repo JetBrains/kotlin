@@ -95,6 +95,7 @@ internal fun createKlibArtifact(
     } else {
         klibProducingTask.flatMap { it.klibFile }
     }
+    // FIXME: Что такое DefaultArtifactPublicationSet?
     with(compilation.project.configurations.getByName(apiElementsName)) {
         outgoing.registerKlibArtifact(packedArtifactFile, compilation.compilationName, classifier)
         attributes.setAttribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, NativeArtifactFormat.KLIB) // should we do it here?

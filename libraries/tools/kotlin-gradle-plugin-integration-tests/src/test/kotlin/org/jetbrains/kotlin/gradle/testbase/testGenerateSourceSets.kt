@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import org.gradle.api.Project
+import org.gradle.api.tasks.SourceSet
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import java.util.UUID
@@ -18,6 +20,23 @@ fun KotlinSourceSet.compileSource(
     val identifier = "${name}_${UUID.randomUUID().toString().replace("-", "_")}"
     val identifierPath = project.layout.buildDirectory.dir("compileSourceIn_${identifier}")
     kotlin.srcDir(
+        project.tasks.create("compileSourceIn_${identifier}") { task ->
+            task.outputs.dir(identifierPath)
+            task.doLast {
+                identifierPath.get().asFile.resolve("compileSourceIn_${identifier}.kt").writeText(sourceContent)
+            }
+        }
+    )
+}
+
+fun SourceSet.compileJavaSource(
+    project: Project,
+    @Language("java")
+    sourceContent: String,
+) {
+    val identifier = "${name}_${UUID.randomUUID().toString().replace("-", "_")}"
+    val identifierPath = project.layout.buildDirectory.dir("compileSourceIn_${identifier}")
+    java.srcDir(
         project.tasks.create("compileSourceIn_${identifier}") { task ->
             task.outputs.dir(identifierPath)
             task.doLast {

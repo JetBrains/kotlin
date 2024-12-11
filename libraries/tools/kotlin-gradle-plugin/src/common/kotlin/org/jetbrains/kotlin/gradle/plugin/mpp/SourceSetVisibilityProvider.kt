@@ -81,21 +81,41 @@ internal class SourceSetVisibilityProvider(
      * the Gradle API for dependency variants behaves differently for project dependencies and published ones.
      */
     fun getVisibleSourceSets(
+        // e.g. commonMain
         visibleFromSourceSet: KotlinSourceSetName,
+        // Это порезолвленная зависимость (вероятно ее компонент в котором лежит PSM)
         resolvedRootMppDependency: ResolvedDependencyResult,
+        // Это видимо PSM этой зависимости
         dependencyProjectStructureMetadata: KotlinProjectStructureMetadata,
+        // Это просто значит, что это проектная зависимость
         resolvedToOtherProject: Boolean,
     ): SourceSetVisibilityResult {
         val resolvedRootMppDependencyId = resolvedRootMppDependency.selected.id
 
         val platformCompilationsByResolvedVariantName = mutableMapOf<String, PlatformCompilationData>()
 
+        /** Откуда берутся platformCompilations?
+         * platformCompilations это платформенные компиляции текущего модуля который делает GMT резолв
+         *
+         * 1. Берем платформенные компиляции
+         * 2. Только те которые участвуют в компиляции этого SS
+         * 3. Смотрим какие variant'ы порезолвили эти конфигурации и восстанавливаем
+        */
         val visiblePlatformVariantNames: List<Set<String>> = platformCompilations
+            /**
+             * Visibility алгоритм работает на конкретном SS. Тут мы отфильтировываем платформенные компиляции до тех который включают в себя этот SS
+             */
             .filter { visibleFromSourceSet in it.allSourceSets }
             .mapNotNull { platformCompilationData ->
                 val resolvedPlatformDependencies = platformCompilationData
+                    /**
+                     * resolvedDependenciesConfiguration это конфигурация которую платформенная компиляция будет резолвить для получения платформенных артефактов
+                     */
                     .resolvedDependenciesConfiguration
                     .allResolvedDependencies
+                    /**
+                     * Мне кажется тут Антон рассказывал про проблемы с shouldResolveConsistently
+                     */
                     .filter { it.selected.id isEqualsIgnoringVersion resolvedRootMppDependencyId }
                     /*
                     Returning null if we can't find the given dependency in a certain platform compilations dependencies.
@@ -111,7 +131,14 @@ internal class SourceSetVisibilityProvider(
                     */
                     .ifEmpty { return@mapNotNull null }
 
+                /**
+                 * Смотрим на зависимости которые порезолвила плафтморенная compileDependencyConfiguration. А именно на variant'ы которые
+                 * она порезолвила
+                 */
                 resolvedPlatformDependencies.map { resolvedPlatformDependency ->
+                    /**
+                     * Дропаем "-published" маркер названия варианта и восстанавливаем из него resolved variant
+                     */
                     val resolvedVariant = kotlinVariantNameFromPublishedVariantName(
                         resolvedPlatformDependency.resolvedVariant.displayName
                     )
@@ -127,6 +154,7 @@ internal class SourceSetVisibilityProvider(
         if (visiblePlatformVariantNames.isEmpty()) {
             return SourceSetVisibilityResult(emptySet(), emptyMap())
         }
+
 
         val visibleSourceSetNames = visiblePlatformVariantNames
             .mapNotNull { platformVariants ->

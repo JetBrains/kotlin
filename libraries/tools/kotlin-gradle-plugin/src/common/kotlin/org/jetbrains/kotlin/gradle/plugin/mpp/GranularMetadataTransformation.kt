@@ -15,6 +15,12 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
+import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibStateAttribute
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibStateUnzipped
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.Uklib
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.formCompilationClasspathInConsumingModuleFragment
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.uklibFragmentPlatformAttribute
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -26,6 +32,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.Choos
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.projectStructureMetadataResolvedConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.*
+import java.io.File
 import java.util.*
 
 internal sealed class MetadataDependencyResolution(
@@ -43,6 +50,9 @@ internal sealed class MetadataDependencyResolution(
         return "$verb, dependency = $dependency"
     }
 
+    /**
+     * KeepOriginalDependency нужен для кейса если в GMT попали настоящие jar'ники?
+     */
     class KeepOriginalDependency(
         dependency: ResolvedComponentResult,
     ) : MetadataDependencyResolution(dependency)
@@ -69,7 +79,8 @@ internal sealed class MetadataDependencyResolution(
 
     class ChooseVisibleSourceSets internal constructor(
         dependency: ResolvedComponentResult,
-        val projectStructureMetadata: KotlinProjectStructureMetadata,
+        // FIXME: Why do we even have this?
+        val projectStructureMetadata: KotlinProjectStructureMetadata?,
         val allVisibleSourceSetNames: Set<String>,
         val visibleSourceSetNamesExcludingDependsOn: Set<String>,
         val visibleTransitiveDependencies: Set<ResolvedDependencyResult>,
@@ -112,6 +123,7 @@ internal class GranularMetadataTransformation(
         val kotlinKmpProjectIsolationEnabled: Boolean,
         val sourceSetMetadataLocationsOfProjectDependencies: KotlinProjectSharedDataProvider<SourceSetMetadataLocations>,
         val transformProjectDependencies: Boolean,
+        val uklibFragmentAttributes: Set<String>,
     ) {
         constructor(project: Project, kotlinSourceSet: KotlinSourceSet, transformProjectDependencies: Boolean = true) : this(
             build = project.currentBuild,
@@ -127,6 +139,7 @@ internal class GranularMetadataTransformation(
             sourceSetMetadataLocationsOfProjectDependencies = project.kotlinSecondaryVariantsDataSharing
                 .consumeCommonSourceSetMetadataLocations(kotlinSourceSet.internal.resolvableMetadataConfiguration),
             transformProjectDependencies = transformProjectDependencies,
+            uklibFragmentAttributes = kotlinSourceSet.uklibFragmentPlatformAttributes,
         )
     }
 
@@ -149,6 +162,7 @@ internal class GranularMetadataTransformation(
     private fun doTransform(): Iterable<MetadataDependencyResolution> {
         val result = mutableListOf<MetadataDependencyResolution>()
 
+        // Это очередь из порезолвленных компонентнов?
         val resolvedDependencyQueue: Queue<ResolvedDependencyResult> = ArrayDeque<ResolvedDependencyResult>().apply {
             addAll(
                 params.resolvedMetadataConfiguration
@@ -230,6 +244,108 @@ internal class GranularMetadataTransformation(
         val moduleId = module.id
 
         logger.debug("Process dependency: $moduleId")
+        
+        /**
+         * FIXME: 01.12-2024 - Add diagnostics:
+         *
+         * 1. Look at the graph of
+         */
+
+        // Это .jar ник с метадатными klib'ами
+        val artifact = params
+            .resolvedMetadataConfiguration
+            .getArtifacts(dependency)
+            // FIXME: Check this is correct?
+            .singleOrNull() ?: return MetadataDependencyResolution.KeepOriginalDependency(module)
+        // expected only Composite Metadata Klib, but if dependency got resolved into platform variant
+        // when a source set is a leaf, then we might get multiple artifacts in such a case we must return KeepOriginal
+
+        // Make sure that resolved metadata artifact is actually Multiplatform one
+        if (artifact.variant.attributes.containsCompositeMetadataJarAttributes) {
+            return processPSMDependency(
+                artifact,
+                dependency,
+                module,
+                moduleId,
+                sourceSetsVisibleInParents
+            )
+        } else if (artifact.variant.attributes.getAttribute(uklibStateAttribute) == uklibStateUnzipped) {
+            return processUklibDependency(
+                artifact,
+                dependency,
+                sourceSetsVisibleInParents,
+                params.uklibFragmentAttributes,
+            )
+        } else {
+            return MetadataDependencyResolution.KeepOriginalDependency(module)
+        }
+    }
+
+    internal class MetadataTransformUklibException(
+        val unzippedUklib: File,
+        val targetFragmentAttribute: List<String>,
+        val availablePlatformFragments: List<String>,
+    ) : IllegalStateException(
+        "Couldn't resolve metadata compilation artifacts from $unzippedUklib failed. Needed fragment with attributes '${targetFragmentAttribute}', but only the following fragments were available $availablePlatformFragments"
+    )
+
+    private fun processUklibDependency(
+        compositeMetadataArtifact: ResolvedArtifactResult,
+        dependency: ResolvedDependencyResult,
+        sourceSetsVisibleInParents: Set<String>,
+        uklibFragmentAttributes: Set<String>,
+    ): MetadataDependencyResolution {
+        // FIXME: Validate that the uklib we are consuming is valid ???
+
+        val uklibDependency = Uklib.deserializeFromDirectory(
+            compositeMetadataArtifact.file,
+        )
+        val allVisibleFragments = uklibDependency.module.fragments.formCompilationClasspathInConsumingModuleFragment(
+            consumingFragmentAttributes = uklibFragmentAttributes,
+        )
+
+        if (allVisibleFragments.isEmpty()) {
+            throw MetadataTransformUklibException(
+                unzippedUklib = compositeMetadataArtifact.file,
+                targetFragmentAttribute = uklibFragmentAttributes.sorted(),
+                availablePlatformFragments = uklibDependency.module.fragments.map { it.identifier }.sorted(),
+            )
+        }
+
+        val fragmentsVisibleByThisSourceSet = allVisibleFragments.filterNot {
+            it.identifier in sourceSetsVisibleInParents
+        }
+
+        val moduleVersion = dependency.selected.moduleVersion!!
+
+        return MetadataDependencyResolution.ChooseVisibleSourceSets(
+            dependency = dependency.selected,
+            projectStructureMetadata = null,
+            allVisibleSourceSetNames = allVisibleFragments.map {
+                it.identifier
+            }.toHashSet(),
+            visibleSourceSetNamesExcludingDependsOn = fragmentsVisibleByThisSourceSet.map {
+                it.identifier
+            }.toHashSet(),
+            visibleTransitiveDependencies = dependency.selected.dependencies.filterIsInstance<ResolvedDependencyResult>().toHashSet(),
+            metadataProvider = ArtifactMetadataProvider(
+                UklibCompositeMetadataArtifact(
+                    moduleVersion,
+                    // FIXME: Should this be fragmentsVisibleByThisSourceSet?
+                    allVisibleFragments,
+                )
+            )
+        )
+    }
+
+    private fun processPSMDependency(
+        compositeMetadataArtifact: ResolvedArtifactResult,
+        dependency: ResolvedDependencyResult,
+        module: ResolvedComponentResult,
+        moduleId: ComponentIdentifier,
+        sourceSetsVisibleInParents: Set<String>,
+    ): MetadataDependencyResolution {
+        logger.debug("Transform composite metadata artifact: '${compositeMetadataArtifact.file}'")
 
         /** Due to [KotlinUsages.KotlinMetadataCompatibility], non kotlin-metadata resolutions can happen */
         if (!dependency.resolvedVariant.attributes.containsCompositeMetadataJarAttributes) {
@@ -249,11 +365,18 @@ internal class GranularMetadataTransformation(
             isResolvedToProject
         )
 
+        // Тут будут те SS которые видит потребитель? Но где тогда происходит маппинг между SS?
+        /**
+         * 24.11.2024 - Все это происходит в рамках resolve'а classpath текущего SS
+         */
         val allVisibleSourceSets = sourceSetVisibility.visibleSourceSetNames
 
         // Keep only the transitive dependencies requested by the visible source sets:
         // Visit the transitive dependencies visible by parents, too (i.e. allVisibleSourceSets), as this source set might get a more
         // concrete view on them:
+        /**
+         * Набираем то, какие зависимости были указаны в рамках SS
+         */
         val requestedTransitiveDependencies: Set<ModuleDependencyIdentifier> =
             mutableSetOf<ModuleDependencyIdentifier>().apply {
                 projectStructureMetadata.sourceSetModuleDependencies.forEach { (sourceSetName, moduleDependencies) ->
@@ -267,9 +390,15 @@ internal class GranularMetadataTransformation(
             .filterIsInstance<ResolvedDependencyResult>()
             .filterTo(mutableSetOf()) { it.toModuleDependencyIdentifier() in requestedTransitiveDependencies }
 
+        /**
+         * Кажется мы проверяем, что SS в котором мы сейчас не платформенный и что он не порезолвился в проектную зависимость
+         *
+         * Не понимаю зачем это нужно, особенно как работает часть про !isResolvedToProject
+         */
         if (params.sourceSetName in params.platformCompilationSourceSets && !isResolvedToProject)
             return MetadataDependencyResolution.Exclude.PublishedPlatformSourceSetDependency(module, transitiveDependenciesToVisit)
 
+        // Наверное тут будут только новые видимые SS которые еще не были видны в parent SS
         val visibleSourceSetsExcludingDependsOn = allVisibleSourceSets.filterTo(mutableSetOf()) { it !in sourceSetsVisibleInParents }
 
         val metadataProvider = sourceSetVisibility.getMetadataProviderForVisibleSourceSets(dependency, projectStructureMetadata)
@@ -465,10 +594,18 @@ internal fun ResolvedComponentResult.toProjectOrNull(currentProject: Project): P
 }
 
 private val KotlinMultiplatformExtension.platformCompilationSourceSets: Set<String>
-    get() = targets.filterNot { it is KotlinMetadataTarget }
+    get() = targets
+        .filterNot { it is KotlinMetadataTarget }
         .flatMap { target -> target.compilations }
         .flatMap { it.kotlinSourceSets }
         .map { it.name }
+        .toSet()
+
+internal val KotlinSourceSet.uklibFragmentPlatformAttributes: Set<String>
+    get() = internal.compilations
+        .map { it.target }
+        .filterNot { it is KotlinMetadataTarget }
+        .map { it.uklibFragmentPlatformAttribute.unwrap() }
         .toSet()
 
 internal val GranularMetadataTransformation?.metadataDependencyResolutionsOrEmpty get() = this?.metadataDependencyResolutions ?: emptyList()

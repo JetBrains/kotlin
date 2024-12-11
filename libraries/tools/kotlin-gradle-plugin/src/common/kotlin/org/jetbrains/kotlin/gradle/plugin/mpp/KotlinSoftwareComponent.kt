@@ -46,10 +46,12 @@ abstract class KotlinSoftwareComponent(
 
     private val metadataTarget get() = project.multiplatformExtension.metadataTarget
 
+    internal val targetsWithDedicatedComponents = kotlinTargets
+        .filter { target -> target !is KotlinMetadataTarget }
+
     private val _variants = project.future {
         AfterFinaliseCompilations.await()
-        kotlinTargets
-            .filter { target -> target !is KotlinMetadataTarget }
+        targetsWithDedicatedComponents
             .flatMap { target ->
                 val targetPublishableComponentNames = target.internal.kotlinComponents
                     .filter { component -> component.publishable }
@@ -60,7 +62,9 @@ abstract class KotlinSoftwareComponent(
             }.toSet()
     }
 
-    override fun getVariants(): Set<SoftwareComponent> = _variants.getOrThrow()
+    // FIXME: 19.11.2024 - These variants are output in the header component
+    override fun getVariants(): Set<SoftwareComponent> = if (project.kotlinPropertiesProvider.disablePlatformSpecificComponentsReferences)
+        emptySet() else _variants.getOrThrow()
 
     private val _usages: Future<Set<DefaultKotlinUsageContext>> = project.future {
         metadataTarget.awaitMetadataCompilationsCreated()
@@ -71,15 +75,17 @@ abstract class KotlinSoftwareComponent(
         }
 
         mutableSetOf<DefaultKotlinUsageContext>().apply {
+            // FIXME: Is this jar even needed here at all?
             val allMetadataJar = project.tasks.named(KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)
             val allMetadataArtifact = project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, allMetadataJar) { allMetadataArtifact ->
-                allMetadataArtifact.classifier = if (project.isCompatibilityMetadataVariantEnabled) "all" else ""
+                allMetadataArtifact.classifier = project.psmJarClassifier ?: "" // FIXME: Is this fallback needed?
             }
 
             this += DefaultKotlinUsageContext(
                 compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
                 mavenScope = KotlinUsageContext.MavenScope.COMPILE,
                 dependencyConfigurationName = metadataTarget.apiElementsConfigurationName,
+                // FIXME: Why do we override this here if we output it in metadataApiElements anyway ???
                 overrideConfigurationArtifacts = project.setProperty { listOf(allMetadataArtifact) }
             )
 
@@ -165,7 +171,10 @@ class DefaultKotlinUsageContext(
     internal val overrideConfigurationAttributes: AttributeContainer? = null,
     override val includeIntoProjectStructureMetadata: Boolean = true,
     internal val publishOnlyIf: PublishOnlyIf = PublishOnlyIf { true },
-) : KotlinUsageContext {
+) : KotlinUsageContext
+    // FIXME: This is public API!!! and this is only available in Gradle 8.0+ and was MavenPublishingAwareContext before
+    // MavenPublishingAwareVariant
+{
     fun interface PublishOnlyIf {
         fun predicate(): Boolean
     }
@@ -191,10 +200,15 @@ class DefaultKotlinUsageContext(
     override fun getDependencyConstraints(): MutableSet<out DependencyConstraint> =
         configuration.incoming.dependencyConstraints
 
-    override fun getArtifacts(): Set<PublishArtifact> =
-        overrideConfigurationArtifacts?.get()?.toSet() ?:
+    override fun getArtifacts(): Set<PublishArtifact> {
+        // Don't publish anything except the uklib
+        // FIXME: 11.11.2024 - I used this to disable the publication of all other artifacts
+        // FIXME: 19.11.2024 - Use this under a feature toggle?
+        // if (configuration.name != "metadataUklibElements") return emptySet()
+        return overrideConfigurationArtifacts?.get()?.toSet() ?:
         // TODO Gradle Java plugin does that in a different way; check whether we can improve this
         configuration.artifacts
+    }
 
     override fun getAttributes(): AttributeContainer {
         val configurationAttributes = overrideConfigurationAttributes ?: configuration.attributes
@@ -219,6 +233,15 @@ class DefaultKotlinUsageContext(
     override fun getCapabilities(): Set<Capability> = emptySet()
 
     override fun getGlobalExcludes(): Set<ExcludeRule> = emptySet()
+
+//    override fun getScopeMapping(): MavenPublishingAwareVariant.ScopeMapping {
+//        return when (mavenScope) {
+//            KotlinUsageContext.MavenScope.COMPILE -> MavenPublishingAwareVariant.ScopeMapping.compile
+//            KotlinUsageContext.MavenScope.RUNTIME -> MavenPublishingAwareVariant.ScopeMapping.runtime
+//            // FIXME: Copypaste logic from MavenPublishingAwareVariant.scopeForVariant?
+//            null -> MavenPublishingAwareVariant.ScopeMapping.compile
+//        }
+//    }
 
     private val publishJvmEnvironmentAttribute get() = project.kotlinPropertiesProvider.publishJvmEnvironmentAttribute
 

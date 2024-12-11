@@ -38,8 +38,11 @@ private constructor(
     ): MppDependencyProjectStructureMetadataExtractor {
         val moduleId = metadataArtifact.variant.owner
 
+
         return if (moduleId is ProjectComponentIdentifier) {
+            // Чекаем участвует ли эта зависимость в билде? Зачем
             if (moduleId in currentBuild) {
+                // Это легаси логика которая ходит в рутовый проект и ищет там (in-memory?) PSM
                 val projectStructureMetadataProvider = currentBuildProjectStructureMetadataProviders[moduleId.projectPath]
                     ?: error("Project structure metadata not found for project '${moduleId.projectPath}'")
 
@@ -48,6 +51,7 @@ private constructor(
                     projectStructureMetadataProvider = projectStructureMetadataProvider::value
                 )
             } else {
+                // Это что-то про included build
                 /*
                 We switched to using 'buildPath' instead of 'buildName' in 1.9.20,
                 (See: https://youtrack.jetbrains.com/issue/KT-58157/)
@@ -67,6 +71,7 @@ private constructor(
                 )
             }
         } else {
+            // Просто достаем PSM из jar'ника
             JarMppDependencyProjectStructureMetadataExtractor(metadataArtifact.file)
         }
     }

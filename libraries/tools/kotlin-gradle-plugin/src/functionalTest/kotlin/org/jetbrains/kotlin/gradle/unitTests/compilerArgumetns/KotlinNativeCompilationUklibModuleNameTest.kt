@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.util.main
 import org.jetbrains.kotlin.gradle.util.test
 import kotlin.test.*
 
-class KotlinNativeCompilationModuleNameTest {
+class KotlinNativeCompilationUklibModuleNameTest {
 
     @Test
     fun `main compilation module name convention`() {

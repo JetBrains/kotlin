@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.artifacts.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.UklibPublicationDiagnosticsSetupAction
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.CustomizeKotlinDependenciesSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.MultiplatformPublishing
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.RegisterMultiplatformResourcesPublicationExtensionAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.SetUpMultiplatformAndroidAssetsAndResourcesPublicationAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.SetUpMultiplatformJvmResourcesPublicationAction
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibConsumptionSetupAction
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinMultiplatformSourceSetSetupAction
 import org.jetbrains.kotlin.gradle.plugin.sources.LanguageSettingsSetupAction
 import org.jetbrains.kotlin.gradle.plugin.statistics.FinalizeConfigurationFusMetricAction
@@ -103,6 +105,8 @@ internal fun Project.registerKotlinPluginExtensions() {
             }
 
             register(project, NativeToolchainProjectSetupAction)
+            register(project, UklibConsumptionSetupAction)
+            register(project, UklibPublicationDiagnosticsSetupAction)
         }
 
     }
@@ -136,6 +140,8 @@ internal fun Project.registerKotlinPluginExtensions() {
     }
 
     KotlinTargetArtifact.extensionPoint.apply {
+        // FIXME: This isn't mpp only
+        // FIXME: Disabling this breaks KotlinTargetSoftwareComponentImpl
         register(project, KotlinMetadataArtifact)
         register(project, KotlinLegacyCompatibilityMetadataArtifact)
         register(project, KotlinLegacyMetadataArtifact)

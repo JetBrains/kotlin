@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetConstraint
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.*
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyTransformers.IdePlatformStdlibCommonDependencyFilter
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizerTarget
 
 internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMultiplatformImport {
@@ -65,6 +67,7 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
             priority = IdeMultiplatformImport.Priority.normal
         )
 
+        // Этот мы используем для резолва метадаты
         registerDependencyResolver(
             resolver = IdeTransformedMetadataDependencyResolver,
             constraint = !SourceSetConstraint.isSingleKotlinTarget and !SourceSetConstraint.isJvmAndAndroid,
@@ -72,6 +75,7 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
             priority = IdeMultiplatformImport.Priority.normal
         )
 
+        // Не понимаю зачем это нужно если есть верхний матчер
         registerDependencyResolver(
             resolver = IdeOriginalMetadataDependencyResolver,
             constraint = !SourceSetConstraint.isLeaf,
@@ -81,6 +85,7 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
 
         registerDependencyResolver(
             resolver = IdeBinaryDependencyResolver(),
+            // FIXME: Why is this single platform and not target?
             constraint = SourceSetConstraint.isSinglePlatformType,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             priority = IdeMultiplatformImport.Priority.normal

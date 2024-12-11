@@ -14,6 +14,9 @@ import org.gradle.api.logging.Logging
 import org.gradle.internal.component.local.model.OpaqueComponentArtifactIdentifier
 import org.gradle.internal.resolve.ModuleVersionResolveException
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibDestinationAttribute
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibStateAttribute
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibStateUnzipped
 import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.artifactsClasspath
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isOpaqueFileDependency
@@ -23,7 +26,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.*
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver.Companion.gradleArtifact
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeBinaryDependencyResolver.ArtifactResolutionStrategy
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
@@ -164,11 +166,28 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
                 }
 
                 is ModuleComponentIdentifier -> {
-                    IdeaKotlinResolvedBinaryDependency(
-                        coordinates = IdeaKotlinBinaryCoordinates(componentId, artifact.variant.capabilities, artifact.variant.attributes),
-                        binaryType = binaryType,
-                        classpath = IdeaKotlinClasspath(artifact.file),
-                    )
+                    // FIXME: Где-то тут разламывается AS интеграция из-за того что совпадает id?
+                    if (artifact.variant.attributes.getAttribute(uklibStateAttribute) == uklibStateUnzipped) {
+                        val platform = artifact.variant.attributes.getAttribute(uklibDestinationAttribute)
+                        IdeaKotlinResolvedBinaryDependency(
+                            coordinates = IdeaKotlinBinaryCoordinates(
+                                group = componentId.group,
+                                module = componentId.module,
+                                version = componentId.version,
+                                sourceSetName = platform,
+                                capabilities = artifact.variant.capabilities.map(::IdeaKotlinBinaryCapability).toSet(),
+                                attributes = IdeaKotlinBinaryAttributes(artifact.variant.attributes)
+                            ),
+                            binaryType = binaryType,
+                            classpath = IdeaKotlinClasspath(artifact.file),
+                        )
+                    } else {
+                        IdeaKotlinResolvedBinaryDependency(
+                            coordinates = IdeaKotlinBinaryCoordinates(componentId, artifact.variant.capabilities, artifact.variant.attributes),
+                            binaryType = binaryType,
+                            classpath = IdeaKotlinClasspath(artifact.file),
+                        )
+                    }
                 }
 
                 is LibraryBinaryIdentifier -> {
@@ -234,10 +253,11 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
         Prevent case where this resolver was configured to resolve dependencies for a metadata compilation:
         Refuse resolution. Write your own code if you really want to do this!
          */
-        if (compilation is KotlinMetadataCompilation<*>) {
-            logger.warn("Unexpected ${KotlinMetadataCompilation::class.java}(${compilation.name}) for $sourceSet")
-            return null
-        }
+        // FIXME: Why?
+//        if (compilation is KotlinMetadataCompilation<*>) {
+//            logger.warn("Unexpected ${KotlinMetadataCompilation::class.java}(${compilation.name}) for $sourceSet")
+//            return null
+//        }
 
         return createArtifactViewFromConfiguration(sourceSet, compilation.internal.configurations.compileDependencyConfiguration)
     }

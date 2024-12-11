@@ -88,7 +88,7 @@ abstract class AbstractKotlinTarget(
             )
         )
 
-        val result = createKotlinVariant(componentName, mainCompilation, usageContexts)
+        val result = createKotlinVariant(componentName, usageContexts)
 
         setOf(result)
     }
@@ -103,19 +103,18 @@ abstract class AbstractKotlinTarget(
 
     protected open fun createKotlinVariant(
         componentName: String,
-        compilation: KotlinCompilation<*>,
         usageContexts: Set<DefaultKotlinUsageContext>
     ): KotlinVariant {
         val kotlinExtension = project.kotlinExtension
 
         val result =
             if (kotlinExtension !is KotlinMultiplatformExtension || targetName == KotlinMetadataTarget.METADATA_TARGET_NAME)
-                KotlinVariantWithCoordinates(compilation, usageContexts)
+                KotlinVariantWithCoordinates(this, usageContexts)
             else {
                 val metadataTarget =
                     kotlinExtension.targets.getByName(KotlinMetadataTarget.METADATA_TARGET_NAME) as AbstractKotlinTarget
 
-                KotlinVariantWithMetadataVariant(compilation, usageContexts, metadataTarget)
+                KotlinVariantWithMetadataVariant(this, usageContexts, metadataTarget)
             }
 
         result.componentName = componentName

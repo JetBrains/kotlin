@@ -85,7 +85,7 @@ private val TargetPublicationCoordinates.GAV.moduleCoordinates
         moduleVersion = version
     )
 
-private fun collectProjectsPublicationCoordinatesFromDependencies(
+internal fun collectProjectsPublicationCoordinatesFromDependencies(
     project: Project,
     component: KotlinTargetComponent,
 ): List<KotlinProjectSharedDataProvider<TargetPublicationCoordinates>> {

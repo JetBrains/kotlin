@@ -9,7 +9,7 @@ import java.io.File
 
 class ProcessRunResult(
     private val cmd: List<String>,
-    private val workingDir: File,
+    private val workingDir: File?,
     val exitCode: Int,
     val output: String,
     val stdErr: String,
@@ -20,20 +20,22 @@ class ProcessRunResult(
     override fun toString(): String = """
 Executing process was ${if (isSuccessful) "successful" else "unsuccessful"}
     Command: ${cmd.joinToString()}
-    Working directory: ${workingDir.absolutePath}
+    Working directory: ${workingDir?.absolutePath}
     Exit code: $exitCode
 """
 }
 
 fun runProcess(
     cmd: List<String>,
-    workingDir: File,
+    workingDir: File?,
     environmentVariables: Map<String, String> = mapOf(),
     redirectErrorStream: Boolean = true,
 ): ProcessRunResult {
     val builder = ProcessBuilder(cmd)
     builder.environment().putAll(environmentVariables)
-    builder.directory(workingDir)
+    workingDir?.let {
+        builder.directory(it)
+    }
     // redirectErrorStream merges stdout and stderr, so it can be gotten from process.inputStream
     builder.redirectErrorStream(redirectErrorStream)
 
