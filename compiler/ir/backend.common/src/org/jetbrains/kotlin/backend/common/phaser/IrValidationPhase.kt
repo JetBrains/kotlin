@@ -46,6 +46,7 @@ open class IrValidationBeforeLoweringPhase<Context : LoweringContext>(context: C
         )
 }
 
+@PhaseDescription(name = "IrValidationAfterInliningOnlyPrivateFunctionsPhase")
 class IrValidationAfterInliningOnlyPrivateFunctionsPhase<Context : LoweringContext>(
     context: Context,
     private val checkInlineFunctionCallSites: InlineFunctionUseSiteChecker
