@@ -44,10 +44,6 @@ object StandardClassIds {
         BASE_REFLECT_PACKAGE,
         BASE_INTERNAL_PACKAGE,
         BASE_COROUTINES_PACKAGE,
-        // TODO: atomic builtins are moving from kotlin.concurrent to kotlin.concurrent.atomics package (see KT-73816),
-        // builtins from kotlin.concurrent package are kept till Atomic API is completely moved to kotlin.concurrent.atomics
-        // and built with the new bootstrap compiler which provides builtins from the new package.
-        BASE_CONCURRENT_PACKAGE,
         BASE_CONCURRENT_ATOMICS_PACKAGE
     )
 

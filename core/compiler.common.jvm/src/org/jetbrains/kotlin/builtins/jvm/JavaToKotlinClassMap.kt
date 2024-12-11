@@ -103,17 +103,6 @@ object JavaToKotlinClassMap {
             addKotlinToJava(FqName(kSuspendFun + i), K_FUNCTION_CLASS_ID)
         }
 
-        // TODO: atomic builtins are moving from kotlin.concurrent to kotlin.concurrent.atomics package (see KT-73816),
-        // builtins from kotlin.concurrent package are kept till Atomic API is completely moved to kotlin.concurrent.atomics
-        // and built with the new bootstrap compiler which provides builtins from the new package.
-        addKotlinToJava(FqName("kotlin.concurrent.AtomicInt"), classId(AtomicInteger::class.java))
-        addKotlinToJava(FqName("kotlin.concurrent.AtomicLong"), classId(AtomicLong::class.java))
-        addKotlinToJava(FqName("kotlin.concurrent.AtomicBoolean"), classId(AtomicBoolean::class.java))
-        addKotlinToJava(FqName("kotlin.concurrent.AtomicReference"), classId(AtomicReference::class.java))
-        addKotlinToJava(FqName("kotlin.concurrent.AtomicIntArray"), classId(AtomicIntegerArray::class.java))
-        addKotlinToJava(FqName("kotlin.concurrent.AtomicLongArray"), classId(AtomicLongArray::class.java))
-        addKotlinToJava(FqName("kotlin.concurrent.AtomicArray"), classId(AtomicReferenceArray::class.java))
-
         addKotlinToJava(FqName("kotlin.concurrent.atomics.AtomicInt"), classId(AtomicInteger::class.java))
         addKotlinToJava(FqName("kotlin.concurrent.atomics.AtomicLong"), classId(AtomicLong::class.java))
         addKotlinToJava(FqName("kotlin.concurrent.atomics.AtomicBoolean"), classId(AtomicBoolean::class.java))
