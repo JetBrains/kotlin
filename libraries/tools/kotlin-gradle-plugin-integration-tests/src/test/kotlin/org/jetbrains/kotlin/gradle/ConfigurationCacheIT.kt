@@ -348,6 +348,24 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             }
         }
     }
+
+    @DisplayName("with native dependencies downloader")
+    @NativeGradlePluginTests
+    @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
+    fun testNativeBundleDownloadForConfigurationCache(gradleVersion: GradleVersion, @TempDir konanDirTemp: Path) {
+        nativeProject(
+            "native-simple-project", gradleVersion, buildOptions = defaultBuildOptions.copy(
+                nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
+                    version = TestVersions.Kotlin.STABLE_RELEASE,
+                    distributionDownloadFromMaven = true,
+                ),
+                konanDataDir = konanDirTemp
+            )
+        ) {
+            testConfigurationCacheOf(":assemble")
+        }
+    }
 }
 
 /** @return true when the patch was applied */
