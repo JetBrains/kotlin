@@ -140,7 +140,7 @@ class KotlinCoreApplicationEnvironment private constructor(
 private class KotlinCoreUnitTestApplication(parentDisposable: Disposable) : MockApplication(parentDisposable) {
     override fun isUnitTestMode(): Boolean = true
 
-    override fun isWriteAccessAllowed(): Boolean = KotlinTestThreadingSupport.isWriteAccessAllowed()
+    override fun isWriteAccessAllowed(): Boolean = PlatformWriteAccessSupport.isWriteAccessAllowed()
 
     override fun runWriteAction(action: Runnable) {
         withWriteAccessAllowedInThread {
@@ -154,14 +154,14 @@ private class KotlinCoreUnitTestApplication(parentDisposable: Disposable) : Mock
     override fun <T : Any?, E : Throwable?> runWriteAction(computation: ThrowableComputable<T?, E?>): T? =
         withWriteAccessAllowedInThread { computation.compute() }
 
-    private inline fun <A> withWriteAccessAllowedInThread(action: () -> A): A = KotlinTestThreadingSupport.withWriteAccessAllowedInThread(action)
+    private inline fun <A> withWriteAccessAllowedInThread(action: () -> A): A = PlatformWriteAccessSupport.withWriteAccessAllowedInThread(action)
 }
 
 /**
  * This object is required because write access may be requested during the entire tree disposal.
  * Thus, if at that moment the application was already disposed, the information about requested write access may be lost.
  */
-private object KotlinTestThreadingSupport {
+private object PlatformWriteAccessSupport {
     /**
      * We need to remember whether write access is allowed per thread because the application can be shared between multiple concurrent test
      * runs.
