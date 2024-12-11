@@ -6848,6 +6848,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeCompile : or
 	public final fun getLanguageVersion ()Ljava/lang/String;
 	public final fun getModuleName ()Ljava/lang/String;
 	public fun getMultiplatformStructure ()Lorg/jetbrains/kotlin/gradle/tasks/K2MultiplatformStructure;
+	public final fun getNativeDistributionDependencies ()Lorg/gradle/api/provider/Provider;
 	public final fun getOptInAnnotationsInUse ()Ljava/util/Set;
 	public fun getOptimized ()Z
 	public fun getOutputKind ()Lorg/jetbrains/kotlin/konan/target/CompilerOutputKind;
