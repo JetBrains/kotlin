@@ -4,9 +4,7 @@
 // WITH_STDLIB
 
 @JvmInline
-inline value class A(val x: Int)
+<!INCOMPATIBLE_MODIFIERS!>inline<!> <!INCOMPATIBLE_MODIFIERS!>value<!> class A(val x: Int)
 
 @JvmInline
-value inline class B(val x: Int)
-
-<!SYNTAX!>thisIsToMakeDiagnosticTestHaveDiagnostics<!>
+<!INCOMPATIBLE_MODIFIERS!>value<!> <!INCOMPATIBLE_MODIFIERS!>inline<!> class B(val x: Int)
