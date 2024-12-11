@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.isSubclassOf
-import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKaSymbolDeclarationOverridesProvider
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSymbolDeclarationOverridesProvider
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 
 internal class KaFirSymbolDeclarationOverridesProvider(
     override val analysisSessionProvider: () -> KaFirSession,
-) : AbstractKaSymbolDeclarationOverridesProvider<KaFirSession>(), KaFirSessionComponent {
+) : KaBaseSymbolDeclarationOverridesProvider<KaFirSession>(), KaFirSessionComponent {
     fun <T : KaSymbol> getAllOverriddenSymbols(
         callableSymbol: T,
     ): Sequence<KaCallableSymbol> {

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 
 @KaImplementationDetail
-abstract class AbstractKaSymbolDeclarationOverridesProvider<T : KaSession> : KaBaseSessionComponent<T>() {
+abstract class KaBaseSymbolDeclarationOverridesProvider<T : KaSession> : KaBaseSessionComponent<T>() {
     protected fun getDirectlyOverriddenSymbolsForParameter(symbol: KaValueParameterSymbol): Sequence<KaCallableSymbol> {
         symbol.generatedPrimaryConstructorProperty?.let {
             return with(analysisSession) { it.directlyOverriddenSymbols }

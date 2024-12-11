@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractResolver
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseResolver
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseAnnotationCall
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseApplicableCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCompoundArrayAccessCall
@@ -103,7 +103,7 @@ import org.jetbrains.kotlin.utils.checkWithAttachment
 
 internal class KaFe10Resolver(
     override val analysisSessionProvider: () -> KaFe10Session,
-) : KaAbstractResolver<KaFe10Session>(), KaFe10SessionComponent {
+) : KaBaseResolver<KaFe10Session>(), KaFe10SessionComponent {
     override fun KtReference.isImplicitReferenceToCompanion(): Boolean = withValidityAssertion {
         if (this !is KtSimpleNameReference) {
             return false
