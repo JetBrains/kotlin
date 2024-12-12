@@ -657,7 +657,9 @@ class CoroutineTransformerMethodVisitor(
             // Also, we spill and unspill null for visible dead variables
             // `generateSpillAndUnspill` calls the probe from stdlib for us.
             for (referenceToSpill in referencesToSpillBySuspensionPointIndex[suspensionPointIndex]) {
-                generateSpillAndUnspill(methodNode, suspension, referenceToSpill, suspendLambdaParameters)
+                // skip restoring this
+                val isInstanceThisVariable = !isStatic(methodNode.access) && referenceToSpill.slot == 0
+                generateSpillAndUnspill(methodNode, suspension, referenceToSpill, suspendLambdaParameters, !isInstanceThisVariable)
             }
 
             // Then, we cleanup invisible dead variables
@@ -690,7 +692,8 @@ class CoroutineTransformerMethodVisitor(
         methodNode: MethodNode,
         suspension: SuspensionPoint,
         spillableVariable: SpillableVariable,
-        suspendLambdaParameters: List<Int>
+        suspendLambdaParameters: List<Int>,
+        shouldRestore: Boolean = true
     ) {
         val local: LocalVariableNode? =
             findLocalCorrespondingToSpillableVariable(
@@ -739,7 +742,7 @@ class CoroutineTransformerMethodVisitor(
                 )
             })
 
-            if (spillableVariable.slot !in suspendLambdaParameters) {
+            if (spillableVariable.slot !in suspendLambdaParameters && shouldRestore) {
                 // restore variable after suspension call
                 insert(suspension.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
                     load(continuationIndex, AsmTypes.OBJECT_TYPE)
