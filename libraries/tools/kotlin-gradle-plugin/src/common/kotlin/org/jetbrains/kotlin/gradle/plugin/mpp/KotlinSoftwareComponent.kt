@@ -46,10 +46,12 @@ abstract class KotlinSoftwareComponent(
 
     private val metadataTarget get() = project.multiplatformExtension.metadataTarget
 
+    internal val subcomponentTargets = kotlinTargets
+        .filter { target -> target !is KotlinMetadataTarget }
+
     private val _variants = project.future {
         AfterFinaliseCompilations.await()
-        kotlinTargets
-            .filter { target -> target !is KotlinMetadataTarget }
+        subcomponentTargets
             .flatMap { target ->
                 val targetPublishableComponentNames = target.internal.kotlinComponents
                     .filter { component -> component.publishable }
@@ -73,7 +75,7 @@ abstract class KotlinSoftwareComponent(
         mutableSetOf<DefaultKotlinUsageContext>().apply {
             val allMetadataJar = project.tasks.named(KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)
             val allMetadataArtifact = project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, allMetadataJar) { allMetadataArtifact ->
-                allMetadataArtifact.classifier = if (project.isCompatibilityMetadataVariantEnabled) "all" else ""
+                allMetadataArtifact.classifier = project.psmJarClassifier ?: ""
             }
 
             this += DefaultKotlinUsageContext(

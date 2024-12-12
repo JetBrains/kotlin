@@ -45,6 +45,16 @@ internal val Project.shouldCompileIntermediateSourceSetsToMetadata: Boolean
 internal val Project.isCompatibilityMetadataVariantEnabled: Boolean
     get() = PropertiesProvider(this).enableCompatibilityMetadataVariant == true
 
+// FIXME: Test this !!!
+internal val Project.psmJarClassifier: String?
+    get() = if (kotlinPropertiesProvider.enableCompatibilityMetadataVariant) {
+        "all"
+    } else if (kotlinPropertiesProvider.publishUklib) {
+        "psm"
+    } else {
+        null
+    }
+
 class KotlinMetadataTargetConfigurator :
     KotlinOnlyTargetConfigurator<KotlinCompilation<*>, KotlinMetadataTarget>(createTestCompilation = false) {
     companion object {
