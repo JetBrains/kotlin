@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.external.createExternalKotlinTarge
 import org.jetbrains.kotlin.gradle.plugin.mpp.locateOrRegisterMetadataDependencyTransformationTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.EmptyConsumingFragmentAttributes
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.formCompilationClasspathInConsumingModuleFragment
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.findAllConsumableFor
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.validateKgpModelIsUklibCompliantAndCreateKgpFragments
 import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.Test
@@ -54,8 +54,8 @@ class UklibFromKGPFragmentsGMTTests {
                     ),
                     multiplatformExtension.validateKgpModelIsUklibCompliantAndCreateKgpFragments().map {
                         it.fragment
-                    }.formCompilationClasspathInConsumingModuleFragment(
-                        consumingFragmentAttributes = setOf("ios_arm64", "ios_x64", "jvm"),
+                    }.findAllConsumableFor(
+                        attributes = setOf("ios_arm64", "ios_x64", "jvm"),
                     ).map { it.toTestFragment() },
                 )
 
@@ -77,8 +77,8 @@ class UklibFromKGPFragmentsGMTTests {
                     ).toSet(),
                     multiplatformExtension.validateKgpModelIsUklibCompliantAndCreateKgpFragments().map {
                         it.fragment
-                    }.formCompilationClasspathInConsumingModuleFragment(
-                        consumingFragmentAttributes = setOf("ios_arm64", "ios_x64"),
+                    }.findAllConsumableFor(
+                        attributes = setOf("ios_arm64", "ios_x64"),
                     ).map { it.toTestFragment() }.toSet(),
                 )
 
@@ -173,22 +173,22 @@ class UklibFromKGPFragmentsGMTTests {
             // Subset of consuming attributes
             assertEquals(
                 expectedCompilationClasspath,
-                fragments.formCompilationClasspathInConsumingModuleFragment(
-                    consumingFragmentAttributes = setOf("ios_arm64", "ios_x64"),
+                fragments.findAllConsumableFor(
+                    attributes = setOf("ios_arm64", "ios_x64"),
                 ).map { it.toTestFragment() }
             )
             // Exactly matching consuming attributes
             assertEquals(
                 expectedCompilationClasspath,
-                fragments.formCompilationClasspathInConsumingModuleFragment(
-                    consumingFragmentAttributes = setOf("ios_arm64", "ios_x64", "ios_simulator_arm64"),
+                fragments.findAllConsumableFor(
+                    attributes = setOf("ios_arm64", "ios_x64", "ios_simulator_arm64"),
                 ).map { it.toTestFragment() }
             )
 
             assertEquals(
                 emptyList(),
-                fragments.formCompilationClasspathInConsumingModuleFragment(
-                    consumingFragmentAttributes = setOf("ios_arm64", "ios_x64", "missing"),
+                fragments.findAllConsumableFor(
+                    attributes = setOf("ios_arm64", "ios_x64", "missing"),
                 ).map { it.toTestFragment() }
             )
 
@@ -246,7 +246,7 @@ class UklibFromKGPFragmentsGMTTests {
                     runCatching {
                         multiplatformExtension.validateKgpModelIsUklibCompliantAndCreateKgpFragments().map {
                             it.fragment
-                        }.formCompilationClasspathInConsumingModuleFragment(consumingFragmentAttributes = emptySet())
+                        }.findAllConsumableFor(attributes = emptySet())
                     }.exceptionOrNull()
                 )
             }
