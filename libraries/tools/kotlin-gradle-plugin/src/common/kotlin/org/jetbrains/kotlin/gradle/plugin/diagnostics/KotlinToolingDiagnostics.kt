@@ -1081,6 +1081,24 @@ object KotlinToolingDiagnostics {
                 """.trimIndent()
             )
     }
+
+    object AndroidExtensionPluginRemoval : ToolingDiagnosticFactory(
+        null // severity level would be configured on creating the diagnostic message depending on user configuration
+    ) {
+        operator fun invoke(
+            severity: ToolingDiagnostic.Severity = ERROR
+        ): ToolingDiagnostic = build(
+            """
+            The 'kotlin-android-extensions' Gradle plugin is no longer supported and will be removed in future release.
+            Please use this migration guide (https://goo.gle/kotlin-android-extensions-deprecation) to start
+            working with View Binding (https://developer.android.com/topic/libraries/view-binding)
+            and the 'kotlin-parcelize' plugin.
+            
+            If you want to continue using this plugin add '${PropertiesProvider.PropertyNames.KOTLIN_ENABLE_ANDROID_EXTENSIONS_PLUGIN}=true' into 'gradle.properties'.
+            """.trimIndent(),
+            severity = severity
+        )
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {

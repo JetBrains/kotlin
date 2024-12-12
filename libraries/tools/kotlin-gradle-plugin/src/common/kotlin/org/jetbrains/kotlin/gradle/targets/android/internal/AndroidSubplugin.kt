@@ -16,6 +16,10 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.model.builder.KotlinAndroidExtensionModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.*
@@ -29,17 +33,19 @@ import javax.xml.parsers.DocumentBuilderFactory
 class AndroidExtensionsSubpluginIndicator @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) :
     Plugin<Project> {
     override fun apply(project: Project) {
-        project.extensions.create("androidExtensions", AndroidExtensionsExtension::class.java)
-        addAndroidExtensionsRuntime(project)
-        registry.register(KotlinAndroidExtensionModelBuilder())
-        project.plugins.apply(AndroidSubplugin::class.java)
-
-        project.logger.error(
-            "Error: The 'kotlin-android-extensions' Gradle plugin is no longer supported. " +
-                    "Please use this migration guide (https://goo.gle/kotlin-android-extensions-deprecation) to start " +
-                    "working with View Binding (https://developer.android.com/topic/libraries/view-binding) " +
-                    "and the 'kotlin-parcelize' plugin."
-        )
+        if (project.kotlinPropertiesProvider.enableAndroidExtensionPlugin.get()) {
+            project.extensions.create("androidExtensions", AndroidExtensionsExtension::class.java)
+            addAndroidExtensionsRuntime(project)
+            registry.register(KotlinAndroidExtensionModelBuilder())
+            project.plugins.apply(AndroidSubplugin::class.java)
+            project.reportDiagnosticOncePerProject(
+                KotlinToolingDiagnostics.AndroidExtensionPluginRemoval(ToolingDiagnostic.Severity.WARNING)
+            )
+        } else {
+            project.reportDiagnosticOncePerProject(
+                KotlinToolingDiagnostics.AndroidExtensionPluginRemoval()
+            )
+        }
     }
 
     private fun addAndroidExtensionsRuntime(project: Project) {
@@ -269,7 +275,7 @@ class AndroidSubplugin : KotlinCompilerPluginSupportPlugin {
             if (result is String && result.isNotEmpty()) {
                 return result
             }
-        } catch (e: ReflectiveOperationException) {
+        } catch (_: ReflectiveOperationException) {
             // Ignore and try parsing manifest.
         }
 
@@ -277,7 +283,7 @@ class AndroidSubplugin : KotlinCompilerPluginSupportPlugin {
         // manifest to find the "package" attribute from there.
         return try {
             manifestFile.parseXml().documentElement.getAttribute("package")
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
