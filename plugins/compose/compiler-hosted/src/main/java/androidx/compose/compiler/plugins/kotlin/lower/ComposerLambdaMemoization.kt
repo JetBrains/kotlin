@@ -944,7 +944,7 @@ class ComposerLambdaMemoization(
             }
 
             // block parameter
-            putValueArgument(index, expression.markIsTransformedLambda())
+            putValueArgument(index, expression.deepCopyWithSymbols().markIsTransformedLambda())
         }
 
         return composableLambdaExpression.markHasTransformedLambda()
