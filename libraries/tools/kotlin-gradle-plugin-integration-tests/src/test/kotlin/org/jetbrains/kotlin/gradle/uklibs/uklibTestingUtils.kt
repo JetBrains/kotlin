@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.gradle.uklibs
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
+import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.nativeCompilerClasspath
 import java.io.File
@@ -177,4 +179,22 @@ fun TestProject.dumpKlibMetadataSignatures(klib: File): String {
     build(dumpName)
 
     return outputFile.readText()
+}
+
+val Project.propertiesExtension: ExtraPropertiesExtension
+    get() = extensions.getByType(ExtraPropertiesExtension::class.java)
+
+fun Project.enableUklibPublication(enable: Boolean = true) {
+    propertiesExtension.set(
+        PropertiesProvider.PropertyNames.KOTLIN_MPP_PUBLISH_UKLIB,
+        enable.toString(),
+    )
+    if (enable) enableCrossCompilation()
+}
+
+fun Project.enableCrossCompilation(enable: Boolean = true) {
+    propertiesExtension.set(
+        PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION,
+        enable.toString(),
+    )
 }

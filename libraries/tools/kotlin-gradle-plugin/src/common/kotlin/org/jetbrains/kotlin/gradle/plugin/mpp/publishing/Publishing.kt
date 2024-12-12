@@ -12,6 +12,9 @@ import org.gradle.api.publish.PublicationContainer
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.UklibPomDependenciesRewriter
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.locateOrRegisterArchiveUklibTask
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -55,6 +58,12 @@ private fun createRootPublication(project: Project, publishing: PublishingExtens
         (this as MavenPublicationInternal).publishWithOriginalFileName()
 
         addKotlinToolingMetadataArtifactIfNeeded(project)
+        if (project.kotlinPropertiesProvider.publishUklib) {
+            configureRootComponentForUklibPublication(
+                project,
+                kotlinSoftwareComponent,
+            )
+        }
     }
 }
 
@@ -64,6 +73,24 @@ private fun MavenPublication.addKotlinToolingMetadataArtifactIfNeeded(project: P
     artifact(buildKotlinToolingMetadataTask.map { it.outputFile }) { artifact ->
         artifact.classifier = "kotlin-tooling-metadata"
         artifact.builtBy(buildKotlinToolingMetadataTask)
+    }
+}
+
+private fun MavenPublication.configureRootComponentForUklibPublication(
+    project: Project,
+    rootComponent: KotlinSoftwareComponent,
+) {
+    val scopeRewritingMapping = UklibPomDependenciesRewriter.deriveUklibDependencyScopeMapping(project, rootComponent)
+    // FIXME: This might break coroutines !!! - https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core/1.9.0/kotlinx-coroutines-core-1.9.0.pom
+    pom.packaging = Uklib.UKLIB_PACKAGING
+    pom.withXml {
+        UklibPomDependenciesRewriter().rewriteDependencies(it, scopeRewritingMapping.get())
+    }
+    project.launch {
+        // FIXME: We also need to put jvm jar here and maybe stub it when the jvm target is not registered
+        artifact(project.locateOrRegisterArchiveUklibTask()) { artifact ->
+            artifact.extension = Uklib.UKLIB_EXTENSION
+        }
     }
 }
 

@@ -43,7 +43,17 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
         isVisible = false
         attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
         attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+
         extendsFrom(apiElementScope)
+        if (target.project.kotlinPropertiesProvider.publishUklib && target.platformType == KotlinPlatformType.common) {
+            /**
+             * Force dependencies into pom
+             *
+             * FIXME: Initially I accidentally had a uklibApiElements configuration which merged dependencies into pom. Does this affect Gradle metadata in an incorrect way?
+             */
+            extendsFrom(implementationConfiguration)
+        }
+
         @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
         if (mainCompilation is DeprecatedKotlinCompilationToRunnableFiles) {
             val runtimeConfiguration = mainCompilation.internal.configurations.deprecatedRuntimeConfiguration
