@@ -103,6 +103,7 @@ open class IrPluginContextImpl constructor(
         }
     }
 
+    @ExperimentalAPIForScriptingPlugin
     override val diagnosticReporter: IrDiagnosticReporter =
         KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, languageVersionSettings)
 

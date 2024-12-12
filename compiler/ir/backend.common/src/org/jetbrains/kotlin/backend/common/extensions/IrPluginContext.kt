@@ -32,6 +32,9 @@ import org.jetbrains.kotlin.resolve.BindingContext
 @RequiresOptIn("This API is deprecated. It will be removed after the release of K2 compiler")
 annotation class FirIncompatiblePluginAPI(val hint: String = "")
 
+@RequiresOptIn("This API is experimental and may be changed or dropped in the future")
+annotation class ExperimentalAPIForScriptingPlugin(val hint: String = "")
+
 interface IrPluginContext : IrGeneratorContext {
     val languageVersionSettings: LanguageVersionSettings
 
@@ -77,6 +80,7 @@ interface IrPluginContext : IrGeneratorContext {
     /**
      * Returns a diagnostic reporter instance to report IR diagnostics from plugin
      */
+    @ExperimentalAPIForScriptingPlugin("This API is experimental, use message collector instead")
     val diagnosticReporter: IrDiagnosticReporter
 
     // The following API is experimental
