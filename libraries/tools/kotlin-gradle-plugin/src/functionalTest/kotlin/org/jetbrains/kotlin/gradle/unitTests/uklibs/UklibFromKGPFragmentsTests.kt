@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+@ExperimentalWasmDsl
 class UklibFromKGPFragmentsTests {
 
     @Test
