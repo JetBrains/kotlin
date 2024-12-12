@@ -1,0 +1,2 @@
+error: unrecognized -Xjspecify-annotations option: invalid. Possible values are 'ignore'/'warn'/'strict'
+COMPILATION_ERROR

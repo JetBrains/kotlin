@@ -1,0 +1,5 @@
+@JvmDefaultWithCompatibility
+interface With
+
+@JvmDefaultWithoutCompatibility
+interface Without

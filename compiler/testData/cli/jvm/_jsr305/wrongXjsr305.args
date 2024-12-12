@@ -1,6 +1,9 @@
-$TESTDATA_DIR$/simple.kt
+$TESTDATA_DIR$/jsr305Usage.kt
 -d
 $TEMP_DIR$
+-Xjsr305=
+-Xjsr305=invalid
+-Xjsr305=
 -Xjsr305=enable
 -Xjsr305=under-migration\:stct
 -Xjsr305=@hello\:warning
@@ -12,3 +15,4 @@ $TEMP_DIR$
 -Xjsr305=under-migration\:ignore
 -Xjsr305=under-migration\:strict
 -Xjsr305=under-migration\:ignore
+-Xjsr305=strict
