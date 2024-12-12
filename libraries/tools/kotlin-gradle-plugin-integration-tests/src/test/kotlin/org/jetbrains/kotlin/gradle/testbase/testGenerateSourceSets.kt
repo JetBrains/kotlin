@@ -31,6 +31,23 @@ fun KotlinSourceSet.compileSource(
     )
 }
 
+fun SourceSet.compileJavaSource(
+    project: Project,
+    @Language("java")
+    sourceContent: String,
+) {
+    val identifier = "${name}_${project.generateIdentifier()}"
+    val identifierPath = project.layout.buildDirectory.dir("generatedSourceDir_${identifier}")
+    java.srcDir(
+        project.tasks.create("generateSourceIn_${identifier}") { task ->
+            task.outputs.dir(identifierPath)
+            task.doLast {
+                identifierPath.get().asFile.resolve("generatedSource_${identifier}.kt").writeText(sourceContent)
+            }
+        }
+    )
+}
+
 private fun Project.generateIdentifier(): String {
     val counter = "counterIdentifier"
     if (!extraProperties.has(counter)) extraProperties.set(counter, 0)
