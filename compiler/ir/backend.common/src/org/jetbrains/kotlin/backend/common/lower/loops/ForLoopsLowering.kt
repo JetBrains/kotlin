@@ -314,20 +314,18 @@ private class RangeLoopTransformer(
         val initializer = iterator.initializer as? IrCall ?: return
         if (!initializer.symbol.owner.hasEqualFqName(STDLIB_ITERATOR_FUNCTION_FQ_NAME)) return
 
-        val receiverType = initializer.extensionReceiver?.type ?: return
+        val receiverType = initializer.arguments[0]?.type ?: return
         if (!receiverType.isStrictSubtypeOfClass(context.irBuiltIns.iteratorClass)) return
 
         val receiverClass = receiverType.getClass() ?: return
         val next = receiverClass.functions.singleOrNull {
             it.name == OperatorNameConventions.NEXT &&
-                    it.dispatchReceiverParameter != null &&
-                    it.extensionReceiverParameter == null &&
-                    it.valueParameters.isEmpty()
+                    it.hasShape(dispatchReceiver = true)
         } ?: return
 
         iterator.apply {
             this.type = receiverType
-            this.initializer = initializer.extensionReceiver
+            this.initializer = initializer.arguments[0]
         }
 
         val loop = statements[1] as IrWhileLoop

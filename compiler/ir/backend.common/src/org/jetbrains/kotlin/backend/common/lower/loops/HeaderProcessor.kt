@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -105,11 +106,9 @@ internal class HeaderProcessor(
         //   val it = someIterable.iterator()
         val iteratorCall = variable.initializer as? IrCall
         val iterable = iteratorCall?.run {
-            if (extensionReceiver != null) {
-                extensionReceiver
-            } else {
-                dispatchReceiver
-            }
+            arguments.zip(symbol.owner.parameters).last { (_, parameter) ->
+                parameter.kind == IrParameterKind.ExtensionReceiver || parameter.kind == IrParameterKind.DispatchReceiver
+            }.first
         }
 
         // Collect loop information from the iterable expression.

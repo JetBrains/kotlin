@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class WithIndexLoopHeader(
@@ -62,8 +63,11 @@ class WithIndexLoopHeader(
                 // TODO: KT-34665: Check for overflow for Iterable and Sequence (call to checkIndexOverflow()).
                 val plusFun = indexVariable.type.getClass()!!.functions.first {
                     it.name == OperatorNameConventions.PLUS &&
-                            it.valueParameters.size == 1 &&
-                            it.valueParameters[0].type.isInt()
+                            it.hasShape(
+                                dispatchReceiver = true,
+                                regularParameters = 1,
+                                parameterTypes = listOf(null, context.irBuiltIns.intType)
+                            )
                 }
                 incrementIndexStatement =
                     irSet(
