@@ -274,7 +274,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBitcodeBackend(context: Bitcod
         val bitcodeFile = tempFiles.create(context.config.shortModuleName ?: "out", ".bc").javaFile()
         val outputPath = context.config.outputPath
         val outputFiles = OutputFiles(outputPath, context.config.target, context.config.produce)
-        bitcodeEngine.runBitcodePostProcessing(context.config.isFinalBinary)
+        bitcodeEngine.runBitcodePostProcessing()
         runPhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
         val objectFile = tempFiles.create(File(outputFiles.nativeBinaryFile).name, ".o").javaFile()
         runPhase(ObjectFilesPhase, ObjectFilesPhaseInput(bitcodeFile, objectFile))
@@ -379,7 +379,7 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(
     if (checkExternalCalls) {
         runPhase(CheckExternalCallsPhase)
     }
-    newEngine(context as BitcodePostProcessingContext) { it.runBitcodePostProcessing(context.config.isFinalBinary && (!context.shouldOptimize() || context.llvmModuleSpecification.isFinal)) }
+    newEngine(context as BitcodePostProcessingContext) { it.runBitcodePostProcessing() }
     if (checkExternalCalls) {
         runPhase(RewriteExternalCallsCheckerGlobals)
     }
