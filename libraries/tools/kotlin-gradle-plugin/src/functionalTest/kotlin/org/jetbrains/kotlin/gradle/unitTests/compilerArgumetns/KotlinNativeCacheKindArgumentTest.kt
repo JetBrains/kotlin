@@ -24,7 +24,7 @@ class KotlinNativeCacheKindArgumentTest {
         project.evaluate()
 
         project.assertCacheKind(
-            if (SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_MAC) NativeCacheKind.STATIC
+            if (SystemUtils.IS_OS_LINUX) NativeCacheKind.STATIC
             else NativeCacheKind.NONE
         )
     }
