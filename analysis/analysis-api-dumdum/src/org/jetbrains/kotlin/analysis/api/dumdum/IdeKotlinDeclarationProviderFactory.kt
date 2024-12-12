@@ -14,6 +14,7 @@ import com.intellij.psi.stubs.StubIndexKey
 import org.jetbrains.kotlin.analysis.api.dumdum.filebasedindex.names.KotlinTopLevelCallableByPackageShortNameIndex
 import org.jetbrains.kotlin.analysis.api.dumdum.filebasedindex.names.KotlinTopLevelClassLikeDeclarationByPackageShortNameIndex
 import org.jetbrains.kotlin.analysis.api.dumdum.filebasedindex.names.getNamesInPackage
+import org.jetbrains.kotlin.analysis.api.dumdum.index.*
 import org.jetbrains.kotlin.analysis.api.dumdum.stubindex.*
 import org.jetbrains.kotlin.analysis.api.platform.declarations.*
 import org.jetbrains.kotlin.analysis.api.platform.mergeSpecificProviders

@@ -10,7 +10,7 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.util.indexing.*
 import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.IOUtil
-import org.jetbrains.kotlin.analysis.api.dumdum.FileBasedIndexExtension
+import org.jetbrains.kotlin.analysis.api.dumdum.index.FileBasedIndexExtension
 import org.jetbrains.kotlin.analysis.decompiler.konan.KlibLoadingMetadataCache
 import org.jetbrains.kotlin.analysis.decompiler.konan.KlibMetaFileType
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInFileType

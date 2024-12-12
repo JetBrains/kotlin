@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.analysis.api.dumdum
+package org.jetbrains.kotlin.analysis.api.dumdum.index
 
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.search.GlobalSearchScope
@@ -29,9 +29,7 @@ interface FileBasedIndexExtension<K, V> {
     val version: Int
     val keyDescriptor: KeyDescriptor<K>
     val valueExternalizer: DataExternalizer<V>
-
     val inputFilter: List<FileType>
-
     val indexer: DataIndexer<K, V, FileContent>
 }
 

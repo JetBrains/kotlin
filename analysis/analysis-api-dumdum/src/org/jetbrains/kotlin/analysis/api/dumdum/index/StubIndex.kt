@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.analysis.api.dumdum
+package org.jetbrains.kotlin.analysis.api.dumdum.index
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile

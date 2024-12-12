@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.dumdum.filebasedindex.names.*
+import org.jetbrains.kotlin.analysis.api.dumdum.index.*
 import org.jetbrains.kotlin.analysis.api.dumdum.stubindex.*
 import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
@@ -111,17 +112,17 @@ fun main() {
                         InternalPersistentJavaLanguageLevelReaderService::class.java,
                         InternalPersistentJavaLanguageLevelReaderService.DefaultImpl()
                     )
-                    application.registerService(
+                    registerService(
                         BuiltinsVirtualFileProvider::class.java,
                         BuiltinsVirtualFileProviderCliImpl()
                     )
 
-                    application.registerService(
+                    registerService(
                         StubTreeLoader::class.java,
                         StubTreeLoaderImpl::class.java
                     )
 
-                    application.registerService(PluginUtil::class.java, object : PluginUtil {
+                    registerService(PluginUtil::class.java, object : PluginUtil {
                         val id = PluginId.getId("dumdum")
 
                         override fun getCallerPlugin(stackFrameCount: Int): PluginId? = id
@@ -132,7 +133,7 @@ fun main() {
 
                     });
 
-                    application.registerService(StubIndexService::class.java, IdeStubIndexService())
+                    registerService(StubIndexService::class.java, IdeStubIndexService())
                 }
 
                 registerFileType(PlainTextFileType.INSTANCE, "xml")
@@ -166,8 +167,11 @@ fun main() {
 
             val files = mapOf(
                 FileId("/src/foo/foo.kt") to """
+                    
                 package foo
+                
                 import bar.Bar
+                
                 class Foo {
                     fun foo() { Bar().bar() }
                 }
@@ -179,6 +183,7 @@ fun main() {
                 FileId("/src/bar/bar.kt") to """
                     
                 package bar
+                
                 import foo.Foo
                 import foo.foo 
                 
@@ -253,7 +258,7 @@ fun main() {
                     KotlinTypeAliasShortNameIndex.Helper,
                     KotlinExactPackagesIndex.Helper,
                 ),
-                stubSerializersTable = StubSerializersTable.build()
+                stubSerializersTable = stubSerializersTable()
             )
 
             val index = inMemoryIndex(
@@ -476,35 +481,6 @@ fun main() {
         }
     }
 }
-
-fun indexFile(
-    fileId: FileId,
-    file: PsiFile,
-    fileBasedIndexExtensions: FileBasedIndexExtensions,
-    stubIndexExtensions: StubIndexExtensions,
-): List<IndexUpdate<*>> =
-    fileBasedIndexesUpdates(
-        fileId = fileId,
-        fileContent = FileContentImpl.createByFile(file.virtualFile, file.project),
-        fileBasedIndexExtensions = fileBasedIndexExtensions
-    ) +
-            (file.fileElementType as? IStubFileElementType<*>)?.let { stubFileElementType ->
-                val stubElement = stubFileElementType.builder.buildStubTree(file)
-                listOf(
-                    stubIndexesUpdate(
-                        stubIndexExtensions = stubIndexExtensions,
-                        fileId = fileId,
-                        tree = StubTree(stubElement as PsiFileStub<*>)
-                    )
-                )
-            }.orEmpty()
-
-
-fun Stub.serializer(): ObjectStubSerializer<*, *> =
-    when (this) {
-        is PsiFileStub<*> -> type
-        else -> stubType
-    }
 
 internal data class KaSourceModuleImpl(
     override val directRegularDependencies: List<KaModule>,

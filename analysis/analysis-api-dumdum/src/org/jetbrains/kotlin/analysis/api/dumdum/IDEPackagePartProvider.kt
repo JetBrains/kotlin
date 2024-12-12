@@ -5,6 +5,8 @@ package org.jetbrains.kotlin.analysis.api.dumdum
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.dumdum.filebasedindex.names.KotlinJvmModuleAnnotationsIndex
 import org.jetbrains.kotlin.analysis.api.dumdum.filebasedindex.names.KotlinModuleMappingIndex
+import org.jetbrains.kotlin.analysis.api.dumdum.index.FileBasedIndex
+import org.jetbrains.kotlin.analysis.api.dumdum.index.getValues
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.name.ClassId

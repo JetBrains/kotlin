@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.analysis.api.dumdum
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.dumdum.index.StubIndex
 import org.jetbrains.kotlin.analysis.api.dumdum.stubindex.KotlinAnnotationsIndex
 import org.jetbrains.kotlin.analysis.api.dumdum.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinAnnotationsResolver

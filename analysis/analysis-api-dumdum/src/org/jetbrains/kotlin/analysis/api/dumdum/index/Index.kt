@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.analysis.api.dumdum
+package org.jetbrains.kotlin.analysis.api.dumdum.index
 
 interface Index {
     fun <S> value(fileId: FileId, valueType: ValueType<S>): S?
@@ -42,10 +42,3 @@ class ValueType<S>(
     override fun hashCode(): Int =
         id.hashCode() + 2
 }
-
-data class IndexUpdate<T>(
-    val fileId: FileId,
-    val valueType: ValueType<T>,
-    val value: T,
-    val keys: List<IndexKey<*>>,
-)

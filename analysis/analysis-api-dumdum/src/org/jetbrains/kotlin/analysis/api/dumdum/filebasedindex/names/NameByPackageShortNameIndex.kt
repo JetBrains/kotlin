@@ -11,8 +11,7 @@ import com.intellij.util.indexing.*
 import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
-import org.jetbrains.kotlin.analysis.api.dumdum.FileBasedIndex
-import org.jetbrains.kotlin.analysis.api.dumdum.FileBasedIndexExtension
+import org.jetbrains.kotlin.analysis.api.dumdum.index.*
 import org.jetbrains.kotlin.analysis.decompiler.konan.FileWithMetadata
 import org.jetbrains.kotlin.analysis.decompiler.konan.KlibMetaFileType
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInFileType

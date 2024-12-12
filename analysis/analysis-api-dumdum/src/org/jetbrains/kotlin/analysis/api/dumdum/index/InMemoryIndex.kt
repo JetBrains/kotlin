@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.analysis.api.dumdum
+package org.jetbrains.kotlin.analysis.api.dumdum.index
 
 import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 

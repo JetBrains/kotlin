@@ -6,6 +6,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.stubs.CoreStubTreeLoader
 import com.intellij.psi.stubs.ObjectStubTree
 import com.intellij.psi.stubs.StubTreeLoader
+import org.jetbrains.kotlin.analysis.api.dumdum.index.StubIndex
 
 class StubTreeLoaderImpl : StubTreeLoader() {
     lateinit var stubIndex: StubIndex

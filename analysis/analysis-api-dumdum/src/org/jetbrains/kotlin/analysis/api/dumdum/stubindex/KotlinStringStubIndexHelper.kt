@@ -9,9 +9,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.util.CommonProcessors
 import com.intellij.util.io.KeyDescriptor
-import org.jetbrains.kotlin.analysis.api.dumdum.KeyType
-import org.jetbrains.kotlin.analysis.api.dumdum.StubIndex
-import org.jetbrains.kotlin.analysis.api.dumdum.StubIndexExtension
+import org.jetbrains.kotlin.analysis.api.dumdum.index.*
+import org.jetbrains.kotlin.analysis.api.dumdum.index.StubIndexExtension
 import java.io.DataInput
 import java.io.DataOutput
 

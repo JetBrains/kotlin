@@ -3,10 +3,9 @@ package org.jetbrains.kotlin.analysis.api.dumdum
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.util.Processor
-import com.intellij.util.indexing.ID
 import org.jetbrains.kotlin.analysis.api.dumdum.filebasedindex.names.KotlinPartialPackageNamesIndex
-import org.jetbrains.kotlin.analysis.api.dumdum.stubindex.KotlinExactPackagesIndex
+import org.jetbrains.kotlin.analysis.api.dumdum.index.FileBasedIndex
+import org.jetbrains.kotlin.analysis.api.dumdum.index.getValues
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile

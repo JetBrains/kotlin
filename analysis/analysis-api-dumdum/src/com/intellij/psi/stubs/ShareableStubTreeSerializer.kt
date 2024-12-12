@@ -3,7 +3,7 @@ package com.intellij.psi.stubs
 
 //import org.jetbrains.annotations.ApiStatus
 //import org.jetbrains.annotations.ApiStatus.Internal
-import org.jetbrains.annotations.NotNull
+import org.jetbrains.kotlin.analysis.api.dumdum.index.StubSerializersTable
 import java.io.*
 
 //@Internal
