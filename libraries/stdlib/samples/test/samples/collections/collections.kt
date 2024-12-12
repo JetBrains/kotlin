@@ -1209,4 +1209,60 @@ class Collections {
         }
 
     }
+
+    class BinaryOperations {
+        @Sample
+        fun intersectOfGeneric() {
+            val intersect: Set<String> = listOf("green", "amber", "purple", "green") intersect listOf("cyan", "green", "white")
+            assertPrints(intersect, "[green]")
+        }
+
+        @Sample
+        fun intersectOfByte() {
+            val intersect: Set<Byte> = byteArrayOf(1.toByte(), 2.toByte(), 3.toByte(), 2.toByte()) intersect listOf(4.toByte(), 3.toByte(), 2.toByte())
+            assertPrints(intersect, "[2, 3]")
+        }
+
+        @Sample
+        fun intersectOfShort() {
+            val intersect: Set<Short> = shortArrayOf(1.toShort(), 2.toShort(), 3.toShort(), 2.toShort()) intersect listOf(4.toShort(), 3.toShort(), 2.toShort())
+            assertPrints(intersect, "[2, 3]")
+        }
+
+        @Sample
+        fun intersectOfInt() {
+            val intersect: Set<Int> = intArrayOf(1, 2, 3, 2) intersect listOf(4, 3, 2)
+            assertPrints(intersect, "[2, 3]")
+        }
+
+        @Sample
+        fun intersectOfLong() {
+            val intersect: Set<Long> = longArrayOf(1L, 2L, 3L, 2L) intersect listOf(4L, 3L, 2L)
+            assertPrints(intersect, "[2, 3]")
+        }
+
+        @Sample
+        fun intersectOfFloat() {
+            val intersect: Set<Float> = floatArrayOf(1F, 2F, 3F, 1F) intersect listOf(4F, 3F, 2F)
+            assertPrints(intersect, "[2.0, 3.0]")
+        }
+
+        @Sample
+        fun intersectOfDouble() {
+            val intersect: Set<Double> = doubleArrayOf(1.0, 2.0, 3.0, 2.0) intersect listOf(4.0, 3.0, 2.0)
+            assertPrints(intersect, "[2.0, 3.0]")
+        }
+
+        @Sample
+        fun intersectOfBoolean() {
+            val intersect: Set<Boolean> = booleanArrayOf(true, false, true) intersect listOf(true)
+            assertPrints(intersect, "[true]")
+        }
+
+        @Sample
+        fun intersectOfChar() {
+            val intersect: Set<Char> = charArrayOf('a', 'b', 'c', 'a') intersect listOf('c', 'b')
+            assertPrints(intersect, "[b, c]")
+        }
+    }
 }
