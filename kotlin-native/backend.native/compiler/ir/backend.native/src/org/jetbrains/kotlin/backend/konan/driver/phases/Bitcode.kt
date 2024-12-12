@@ -138,7 +138,7 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
     val optimizationConfig = createLTOFinalPipelineConfig(
             context,
             context.llvm.targetTriple,
-            closedWorld = context.config.isFinalBinary && !context.shouldOptimize(),
+            closedWorld = context.config.isFinalBinary,
             timePasses = context.config.flexiblePhaseConfig.needProfiling,
     )
     useContext(OptimizationState(context.config, optimizationConfig)) {

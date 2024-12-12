@@ -141,13 +141,13 @@ internal fun createLTOFinalPipelineConfig(
     val globalDce = true
     // Since we are in a "closed world" internalization can be safely used
     // to reduce size of a bitcode with global dce.
-    val internalize = closedWorld
+    val internalize = closedWorld && !context.shouldOptimize()
     // Hidden visibility makes symbols internal when linking the binary.
     // When producing dynamic library, this enables stripping unused symbols from binary with -dead_strip flag,
     // similar to DCE enabled by internalize but later:
     //
     // Important for binary size, workarounds references to undefined symbols from interop libraries.
-    val makeDeclarationsHidden = config.produce == CompilerOutputKind.STATIC_CACHE
+    val makeDeclarationsHidden = config.produce == CompilerOutputKind.STATIC_CACHE || context.shouldOptimize()
     val objcPasses = configurables is AppleConfigurables
 
     // Null value means that LLVM should use default inliner params
