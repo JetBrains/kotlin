@@ -1,0 +1,40 @@
+FILE: KotlinClass.kt
+    public open class KotlinClass : R|kotlin/Any| {
+        public constructor(): R|KotlinClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open fun foo(a: R|kotlin/concurrent/atomics/AtomicInt|): R|kotlin/Unit| {
+        }
+
+        public open val a: R|kotlin/concurrent/atomics/AtomicInt| = R|kotlin/concurrent/atomics/AtomicInt.AtomicInt|(Int(0))
+            public get(): R|kotlin/concurrent/atomics/AtomicInt|
+
+    }
+FILE: test.kt
+    public final class KotlinChildWithFakeOverride : R|JavaClassWithFakeOverride| {
+        public constructor(): R|KotlinChildWithFakeOverride| {
+            super<R|JavaClassWithFakeOverride|>()
+        }
+
+    }
+    public final class KotlinChildWithExplicitOverride : R|JavaClassWithFakeOverride| {
+        public constructor(): R|KotlinChildWithExplicitOverride| {
+            super<R|JavaClassWithFakeOverride|>()
+        }
+
+        public open override fun foo(i: R|java/util/concurrent/atomic/AtomicInteger|): R|kotlin/Unit| {
+        }
+
+        public open override val a: R|java/util/concurrent/atomic/AtomicInteger|
+            public get(): R|java/util/concurrent/atomic/AtomicInteger| {
+                ^ R|java/util/concurrent/atomic/AtomicInteger.AtomicInteger|(Int(1))
+            }
+
+    }
+    public final fun usage(a: R|KotlinChildWithFakeOverride|): R|kotlin/Unit| {
+        R|<local>/a|.R|/KotlinClass.foo|(R|kotlin/concurrent/atomics/AtomicInt.AtomicInt|(Int(0)))
+        R|<local>/a|.R|/KotlinClass.foo<Inapplicable(INAPPLICABLE): /KotlinClass.foo>#|(R|java/util/concurrent/atomic/AtomicInteger.AtomicInteger|(Int(0)))
+        lval t1: R|kotlin/concurrent/atomics/AtomicInt| = R|<local>/a|.R|/KotlinClass.a|
+        lval t2: R|java/util/concurrent/atomic/AtomicInteger| = R|<local>/a|.R|/KotlinClass.a|
+    }

@@ -37,6 +37,12 @@ public class DiagnosticsNativeTestGenerated extends AbstractDiagnosticsNativeTes
   }
 
   @Test
+  @TestMetadata("commonAtomicType.kt")
+  public void testCommonAtomicType() {
+    runTest("compiler/testData/diagnostics/nativeTests/commonAtomicType.kt");
+  }
+
+  @Test
   @TestMetadata("dynamic.kt")
   public void testDynamic() {
     runTest("compiler/testData/diagnostics/nativeTests/dynamic.kt");

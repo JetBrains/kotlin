@@ -28033,6 +28033,15 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     @Tag("klib")
     public class JavaInterop {
       @Nested
+      @TestMetadata("compiler/testData/codegen/box/javaInterop/commonAtomicTypes")
+      @TestDataPath("$PROJECT_ROOT")
+      @Tag("frontend-fir")
+      @FirPipeline()
+      @Tag("klib")
+      public class CommonAtomicTypes {
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests")
       @TestDataPath("$PROJECT_ROOT")
       @Tag("frontend-fir")

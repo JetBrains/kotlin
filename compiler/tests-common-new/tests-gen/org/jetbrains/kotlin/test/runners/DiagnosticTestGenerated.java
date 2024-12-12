@@ -30062,6 +30062,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("atomicTypes.kt")
+        public void testAtomicTypes() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/java/atomicTypes.kt");
+        }
+
+        @Test
         @TestMetadata("flexibleTypes.kt")
         public void testFlexibleTypes() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/java/flexibleTypes.kt");

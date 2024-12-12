@@ -1,0 +1,20 @@
+FILE: KotlinClass.kt
+    public open class KotlinClass : R|kotlin/Any| {
+        public constructor(): R|KotlinClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open fun foo(a: R|kotlin/concurrent/atomics/AtomicInt|): R|kotlin/Unit| {
+        }
+
+        public open val a: R|kotlin/concurrent/atomics/AtomicInt| = R|kotlin/concurrent/atomics/AtomicInt.AtomicInt|(Int(0))
+            public get(): R|kotlin/concurrent/atomics/AtomicInt|
+
+    }
+FILE: test.kt
+    public final fun usage(x: R|JavaClassWithFakeOverride|): R|kotlin/Unit| {
+        R|<local>/x|.R|/KotlinClass.foo|(R|kotlin/concurrent/atomics/AtomicInt.AtomicInt|(Int(0)))
+        R|<local>/x|.R|/KotlinClass.foo<Inapplicable(INAPPLICABLE): /KotlinClass.foo>#|(R|java/util/concurrent/atomic/AtomicInteger.AtomicInteger|(Int(0)))
+        lval t1: R|kotlin/concurrent/atomics/AtomicInt| = R|<local>/x|.R|/KotlinClass.a|
+        lval t2: R|java/util/concurrent/atomic/AtomicInteger| = R|<local>/x|.R|/KotlinClass.a|
+    }
