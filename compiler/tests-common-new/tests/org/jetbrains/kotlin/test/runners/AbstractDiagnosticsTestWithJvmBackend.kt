@@ -121,6 +121,7 @@ abstract class AbstractClassicDiagnosticsTestWithConverter : AbstractDiagnostics
         get() = ::ClassicFrontend2IrConverter
 }
 
+// TODO: Unify this runner with tiered ones (KT-73848)
 abstract class AbstractFirDiagnosticsTestWithConverterBase(
     val parser: FirParser
 ) : AbstractDiagnosticsTestWithConverter<FirOutputArtifact>() {
