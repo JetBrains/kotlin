@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.putArgument
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.*
 
 /**
@@ -46,10 +47,10 @@ internal class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendC
             }
         }
 
-        val (newFunction, superFunction) =
+        val (newFunction, superFunction, callee) =
             context.cachedDeclarations.getClassFakeOverrideReplacement(declaration) as? ClassFakeOverrideReplacement.DefaultImplsRedirection
                 ?: return declaration
-        return generateDefaultImplsRedirectionBody(newFunction, superFunction)
+        return generateDefaultImplsRedirectionBody(newFunction, superFunction, callee)
     }
 
     private fun generateCloneImplementation(fakeOverride: IrSimpleFunction, cloneFun: IrSimpleFunction): IrSimpleFunction {
@@ -71,24 +72,31 @@ internal class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendC
     private fun generateDefaultImplsRedirectionBody(
         irFunction: IrSimpleFunction,
         superFunction: IrSimpleFunction,
+        callee: IrSimpleFunction,
     ): IrSimpleFunction {
-        val defaultImplFun = context.cachedDeclarations.getDefaultImplsFunction(superFunction)
+        val superQualifierSymbol = if (callee == superFunction) superFunction.parentAsClass.symbol else null
         val offset = irFunction.parentAsClass.startOffset
         val backendContext = context
         context.createIrBuilder(irFunction.symbol, offset, offset).apply {
             irFunction.body = irExprBody(irBlock {
                 val parameter2arguments = backendContext.multiFieldValueClassReplacements
-                    .mapFunctionMfvcStructures(this, defaultImplFun, irFunction) { sourceParameter, _ ->
+                    .mapFunctionMfvcStructures(this, callee, irFunction) { sourceParameter, _ ->
                         irGet(sourceParameter).let {
-                            if (sourceParameter != irFunction.dispatchReceiverParameter) it
+                            if (sourceParameter != irFunction.dispatchReceiverParameter || superQualifierSymbol != null) it
                             else it.reinterpretAsDispatchReceiverOfType(superFunction.parentAsClass.defaultType)
                         }
                     }
-                +irCall(defaultImplFun.symbol, irFunction.returnType).apply {
-                    for (index in superFunction.parentAsClass.typeParameters.indices) {
-                        typeArguments[index] = createPlaceholderAnyNType(context.irBuiltIns)
+
+                +irCall(callee.symbol, irFunction.returnType).apply {
+                    if (superQualifierSymbol == null) {
+                        for (index in superFunction.parentAsClass.typeParameters.indices) {
+                            typeArguments[index] = createPlaceholderAnyNType(context.irBuiltIns)
+                        }
+                        passTypeArgumentsFrom(irFunction, offset = superFunction.parentAsClass.typeParameters.size)
+                    } else {
+                        this.superQualifierSymbol = superQualifierSymbol
+                        passTypeArgumentsFrom(irFunction)
                     }
-                    passTypeArgumentsFrom(irFunction, offset = superFunction.parentAsClass.typeParameters.size)
 
                     for ((parameter, argument) in parameter2arguments) {
                         if (argument != null) {

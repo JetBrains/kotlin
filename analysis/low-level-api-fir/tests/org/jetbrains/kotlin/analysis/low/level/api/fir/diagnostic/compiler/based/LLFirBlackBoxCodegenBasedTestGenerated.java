@@ -37013,6 +37013,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
         }
 
         @Test
+        @TestMetadata("multiModuleClassInheritanceWithSuperCall.kt")
+        public void testMultiModuleClassInheritanceWithSuperCall() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/multiModuleClassInheritanceWithSuperCall.kt");
+        }
+
+        @Test
         @TestMetadata("oneImplementation.kt")
         public void testOneImplementation() {
           runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/oneImplementation.kt");

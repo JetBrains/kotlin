@@ -5,7 +5,7 @@
 // WITH_REFLECT
 // FULL_JDK
 
-// Before KT-73954 is resolved, this test is checking that no overrides of 'test' are generated in TestClass, TestClass2 or Test3.
+// This test is checking that there are overrides of 'test' generated in TestClass and TestClass2 (see KT-73954), but not Test3.
 // CHECK_BYTECODE_LISTING
 
 interface Test {

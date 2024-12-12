@@ -27,7 +27,8 @@ class Foo: KInterface2 {
 fun box(): String {
     var result = Foo().call()
     if (result[1] != "KInterface.call") return "fail 1: ${result[1]}"
-    if (result[2] != "MainKt.box") return "fail 2: ${result[2]}"
+    if (result[2] != "Foo.call") return "fail 2: ${result[2]}"
+    if (result[3] != "MainKt.box") return "fail 3: ${result[3]}"
 
     result = Foo().superCall2()
     if (result[1] != "KInterface.superCall") return "fail 1: ${result[1]}"

@@ -574,7 +574,7 @@ class ExpressionCodegen(
             handleParameter(
                 callee.dispatchReceiverParameter!!,
                 receiver,
-                if (expression.superQualifierSymbol != null) receiver.asmType else callable.owner,
+                if (expression.superQualifierSymbol != null) typeMapper.mapTypeAsDeclaration(receiver.type) else callable.owner,
             )
         }
 

@@ -14,23 +14,35 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
  */
 sealed class ClassFakeOverrideReplacement {
     /**
-     * This class means that a fake override should be replaced by a "DefaultImpls redirection" method. This is done only in the
-     * `-Xjvm-default=disable` mode. For example:
+     * The fake override should be replaced by a "DefaultImpls redirection" method. There are two cases when this is happening:
+     *
+     * 1) In the `-Xjvm-default=disable` mode, we generate a method which calls the method from the super-interface's DefaultImpls.
+     * 2) In the compatibility mode (`-Xjvm-default=all-compatibility` without `@JvmDefaultWithoutCompatibility` on the class),
+     *    we generate a method which calls the super method.
+     *
+     * For example:
      *
      *     interface A {
      *         fun f(s: String) {}
      *     }
      *     class B : A
      *
-     * If this is compiled with `-Xjvm-default=disable`, the fake override for `B.f` will be replaced by a DefaultImpls redirection:
-     * a method will be generated in `B` that calls `A$DefaultImpls.f`.
+     * Suppose that `A` is compiled with `-Xjvm-default=disable`.
+     *
+     * If `B` is compiled with `-Xjvm-default=disable`, the fake override `B.f` will be replaced by a method which calls `A$DefaultImpls.f`.
+     *
+     * If `B` is compiled with `-Xjvm-default=all-compatibility`, the fake override will be replaced by a method which calls `super.f`.
      *
      * @param newFunction the newly created non-fake function in the same class, whose body (in case this class is from sources) will be
      *   filled by the corresponding lowering phase (`InheritedDefaultMethodsOnClassesLowering`).
      * @param superFunction the non-abstract function from an immediate super-interface which should be called in the body of [newFunction].
+     * @param callee in case of DefaultImpls redirection, the method from the super-interface's DefaultImpls class, corresponding
+     *   to [superFunction], otherwise [superFunction].
      */
     data class DefaultImplsRedirection(
-        val newFunction: IrSimpleFunction, val superFunction: IrSimpleFunction,
+        val newFunction: IrSimpleFunction,
+        val superFunction: IrSimpleFunction,
+        val callee: IrSimpleFunction,
     ) : ClassFakeOverrideReplacement()
 
     /**

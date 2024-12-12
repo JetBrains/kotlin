@@ -1895,6 +1895,12 @@ public class FirPsiBytecodeListingTestGenerated extends AbstractFirPsiBytecodeLi
         }
 
         @Test
+        @TestMetadata("bridgesInClassWithDisableAgainstAllCompatibility.kt")
+        public void testBridgesInClassWithDisableAgainstAllCompatibility() {
+          runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/allCompatibility/bridgesInClassWithDisableAgainstAllCompatibility.kt");
+        }
+
+        @Test
         @TestMetadata("deprecation.kt")
         public void testDeprecation() {
           runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/allCompatibility/deprecation.kt");

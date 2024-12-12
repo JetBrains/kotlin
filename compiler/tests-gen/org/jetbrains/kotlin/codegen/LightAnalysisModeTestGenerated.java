@@ -18932,6 +18932,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/funInterface/inheritProperty.kt");
     }
 
+    @TestMetadata("inheritPropertyJvmDefaultAllCompatibility.kt")
+    public void ignoreInheritPropertyJvmDefaultAllCompatibility() {
+      runTest("compiler/testData/codegen/box/funInterface/inheritPropertyJvmDefaultAllCompatibility.kt");
+    }
+
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
@@ -19013,11 +19018,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestMetadata("inheritPropertyJvmDefaultAll.kt")
     public void testInheritPropertyJvmDefaultAll() {
       runTest("compiler/testData/codegen/box/funInterface/inheritPropertyJvmDefaultAll.kt");
-    }
-
-    @TestMetadata("inheritPropertyJvmDefaultAllCompatibility.kt")
-    public void testInheritPropertyJvmDefaultAllCompatibility() {
-      runTest("compiler/testData/codegen/box/funInterface/inheritPropertyJvmDefaultAllCompatibility.kt");
     }
 
     @TestMetadata("inlinedSamWrapper.kt")
@@ -31019,6 +31019,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       @TestDataPath("$PROJECT_ROOT")
       @RunWith(JUnit3RunnerWithInners.class)
       public static class AllCompatibility extends AbstractLightAnalysisModeTest {
+        @TestMetadata("multiModuleClassInheritanceWithSuperCall.kt")
+        public void ignoreMultiModuleClassInheritanceWithSuperCall() {
+          runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/multiModuleClassInheritanceWithSuperCall.kt");
+        }
+
         private void runTest(String testDataFilePath) {
           KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
         }

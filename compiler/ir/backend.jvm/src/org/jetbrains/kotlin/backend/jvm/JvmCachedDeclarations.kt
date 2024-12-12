@@ -10,11 +10,13 @@ import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isMappedIntrinsicCompanionObjectClassId
+import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -255,28 +257,46 @@ class JvmCachedDeclarations(
         }
 
     fun getClassFakeOverrideReplacement(fakeOverride: IrSimpleFunction): ClassFakeOverrideReplacement =
-        if (!fakeOverride.isFakeOverride || fakeOverride.parentAsClass.isJvmInterface)
+        if (!fakeOverride.isFakeOverride || fakeOverride.parentAsClass.isJvmInterface) {
             ClassFakeOverrideReplacement.None
-        else fakeOverride::classFakeOverrideReplacement.getOrSetIfNull {
-            findDefaultImplsRedirection(fakeOverride)
-                ?: findDefaultCompatibilityBridge(fakeOverride)
-                ?: ClassFakeOverrideReplacement.None
+        } else fakeOverride::classFakeOverrideReplacement.getOrSetIfNull {
+            computeClassFakeOverrideReplacement(fakeOverride) ?: ClassFakeOverrideReplacement.None
         }
 
-    private fun findDefaultImplsRedirection(fakeOverride: IrSimpleFunction): ClassFakeOverrideReplacement.DefaultImplsRedirection? {
-        val implementation = fakeOverride.findInterfaceImplementation(context.config.jvmDefaultMode) ?: return null
+    private fun computeClassFakeOverrideReplacement(fakeOverride: IrSimpleFunction): ClassFakeOverrideReplacement? {
+        val implementation = fakeOverride.findInterfaceImplementation(context.config.jvmDefaultMode, allowJvmDefault = true) ?: return null
         val newFunction = context.irFactory.createDefaultImplsRedirection(fakeOverride)
         context.remapMultiFieldValueClassStructure(fakeOverride, newFunction, parametersMappingOrNull = null)
         val superFunction = firstSuperMethodFromKotlin(newFunction, implementation).owner
-        return ClassFakeOverrideReplacement.DefaultImplsRedirection(newFunction, superFunction)
+
+        findDefaultImplsRedirection(implementation, newFunction, superFunction)?.let { return it }
+        if (needsJvmDefaultCompatibilityBridge(fakeOverride)) {
+            return ClassFakeOverrideReplacement.DefaultCompatibilityBridge(newFunction, superFunction)
+        }
+        return null
     }
 
-    private fun findDefaultCompatibilityBridge(fakeOverride: IrSimpleFunction): ClassFakeOverrideReplacement.DefaultCompatibilityBridge? {
-        val implementation = fakeOverride.findInterfaceImplementation(context.config.jvmDefaultMode, allowJvmDefault = true) ?: return null
-        if (!needsJvmDefaultCompatibilityBridge(fakeOverride)) return null
-        val newFunction = context.irFactory.createDefaultImplsRedirection(fakeOverride)
-        val superFunction = firstSuperMethodFromKotlin(newFunction, implementation).owner
-        return ClassFakeOverrideReplacement.DefaultCompatibilityBridge(newFunction, superFunction)
+    private fun findDefaultImplsRedirection(
+        implementation: IrSimpleFunction, newFunction: IrSimpleFunction, superFunction: IrSimpleFunction,
+    ): ClassFakeOverrideReplacement.DefaultImplsRedirection? {
+        val callee =
+            if (implementation.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB ||
+                implementation.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
+                implementation.hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME)
+            ) {
+                return null
+            } else if (implementation.isDefinitelyNotDefaultImplsMethod(context.config.jvmDefaultMode, implementation)) {
+                val klass = newFunction.parentAsClass
+                when (context.config.jvmDefaultMode) {
+                    JvmDefaultMode.ALL -> return null
+                    JvmDefaultMode.ALL_COMPATIBILITY if klass.hasJvmDefaultNoCompatibilityAnnotation() -> return null
+                    else -> superFunction
+                }
+            } else {
+                getDefaultImplsFunction(superFunction)
+            }
+
+        return ClassFakeOverrideReplacement.DefaultImplsRedirection(newFunction, superFunction, callee)
     }
 
     // Generating the default compatibility bridge is only necessary if there's a risk that some other method will be called at runtime
