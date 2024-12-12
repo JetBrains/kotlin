@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.ERROR
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.WARNING
+import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.createCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.createExternalKotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.validateKgpModelIsUklibCompliantAndCreateKgpFragments
 import org.jetbrains.kotlin.gradle.util.*
@@ -275,6 +277,26 @@ class UklibFromKGPFragmentsTests {
                 iosX64()
             }
         }.evaluate().assertNoDiagnostics()
+    }
+
+    @Test
+    fun `project configuration with enabled uklib publication - source set dependencies`() {
+        val p = buildProjectWithMPP(
+            preApplyCode = {
+                publishUklib()
+            }
+        ) {
+            kotlin {
+                sourceSets.commonMain.get().dependencies {
+                    implementation("foo:bar:1")
+                }
+                iosArm64()
+            }
+        }.evaluate()
+        println(p)
+//            .multiplatformExtension.iosArm64().internal
+//            .compilations
+//            .getByName("main").internal.configurations.compileDependencyConfiguration.dependencies
     }
 
     private data class TestFragment(

@@ -10,6 +10,7 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.UklibResolutionStrategy
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheOrchestration
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_ANDROID_STYLE_NO_WARN
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_COMPUTE_UKLIB_CHECKSUM
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_COMPATIBILITY_METADATA_VARIANT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_GRANULAR_SOURCE_SETS_METADATA
@@ -46,6 +48,8 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_KGP_DEPENDENCY_RESOLUTION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_RESOURCES_RESOLUTION_STRATEGY
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_FAKE_UKLIB_TRANSFORMS
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_UKLIB_RESOLUTION_STRATEGY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE
@@ -193,6 +197,17 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val publishUklib: Boolean
         get() = booleanProperty(KOTLIN_MPP_PUBLISH_UKLIB) ?: false
+
+    val uklibResolutionStrategy: UklibResolutionStrategy
+        get() = this.get(KOTLIN_MPP_UKLIB_RESOLUTION_STRATEGY)?.let {
+            UklibResolutionStrategy.fromProperty(it)
+        } ?: UklibResolutionStrategy.IgnoreUklibs
+
+    val fakeUkibTransforms: Boolean
+        get() = booleanProperty(KOTLIN_MPP_FAKE_UKLIB_TRANSFORMS) ?: false
+
+    val computeUklibChecksum: Boolean
+        get() = booleanProperty(KOTLIN_MPP_COMPUTE_UKLIB_CHECKSUM) ?: true
 
     val hierarchicalStructureSupport: Boolean
         get() = booleanProperty(KOTLIN_MPP_HIERARCHICAL_STRUCTURE_SUPPORT) ?: mppHierarchicalStructureByDefault
@@ -635,6 +650,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_JS_STDLIB_DOM_API_INCLUDED = property("kotlin.js.stdlib.dom.api.included")
         val KOTLIN_JS_YARN = property("kotlin.js.yarn")
         val KOTLIN_MPP_PUBLISH_UKLIB = property("kotlin.mpp.publishUklib")
+        val KOTLIN_MPP_UKLIB_RESOLUTION_STRATEGY = property("kotlin.mpp.uklibResolutionStrategy")
+        val KOTLIN_MPP_FAKE_UKLIB_TRANSFORMS = property("kotlin.internal.mpp.fakeUklibTransforms")
+        val KOTLIN_MPP_COMPUTE_UKLIB_CHECKSUM = property("kotlin.internal.mpp.computeUklibChecksum")
         val KOTLIN_MPP_ENABLE_GRANULAR_SOURCE_SETS_METADATA = property("kotlin.mpp.enableGranularSourceSetsMetadata")
         val KOTLIN_MPP_ENABLE_COMPATIBILITY_METADATA_VARIANT = property("kotlin.mpp.enableCompatibilityMetadataVariant")
         val KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION = property("kotlin.mpp.enableCInteropCommonization")

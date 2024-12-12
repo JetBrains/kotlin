@@ -14,6 +14,7 @@ import org.gradle.api.logging.Logging
 import org.gradle.internal.component.local.model.OpaqueComponentArtifactIdentifier
 import org.gradle.internal.resolve.ModuleVersionResolveException
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibTargetAttributeAttribute
 import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.artifactsClasspath
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isOpaqueFileDependency
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeBinaryDepen
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.containsUnzippedUklibAttributes
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -164,11 +166,28 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
                 }
 
                 is ModuleComponentIdentifier -> {
-                    IdeaKotlinResolvedBinaryDependency(
-                        coordinates = IdeaKotlinBinaryCoordinates(componentId, artifact.variant.capabilities, artifact.variant.attributes),
-                        binaryType = binaryType,
-                        classpath = IdeaKotlinClasspath(artifact.file),
-                    )
+                    // FIXME: Come up with a better workaround?
+                    if (artifact.variant.attributes.containsUnzippedUklibAttributes) {
+                        val targetAttribute = artifact.variant.attributes.getAttribute(uklibTargetAttributeAttribute)
+                        IdeaKotlinResolvedBinaryDependency(
+                            coordinates = IdeaKotlinBinaryCoordinates(
+                                group = componentId.group,
+                                module = componentId.module,
+                                version = componentId.version,
+                                sourceSetName = targetAttribute,
+                                capabilities = artifact.variant.capabilities.map(::IdeaKotlinBinaryCapability).toSet(),
+                                attributes = IdeaKotlinBinaryAttributes(artifact.variant.attributes)
+                            ),
+                            binaryType = binaryType,
+                            classpath = IdeaKotlinClasspath(artifact.file),
+                        )
+                    } else {
+                        IdeaKotlinResolvedBinaryDependency(
+                            coordinates = IdeaKotlinBinaryCoordinates(componentId, artifact.variant.capabilities, artifact.variant.attributes),
+                            binaryType = binaryType,
+                            classpath = IdeaKotlinClasspath(artifact.file),
+                        )
+                    }
                 }
 
                 is LibraryBinaryIdentifier -> {
