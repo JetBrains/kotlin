@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
-import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 interface VisibilityPolicy {
     fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility =
@@ -310,7 +310,7 @@ open class LocalDeclarationsLowering(
                         this.body?.let { localContext.remapTypes(it) }
                     }
 
-                    for (argument in original.valueParameters) {
+                    for (argument in original.parameters) {
                         val body = argument.defaultValue ?: continue
                         if (remapTypesInExtractedLocalFunctions) {
                             localContext.remapTypes(body)
@@ -376,7 +376,7 @@ open class LocalDeclarationsLowering(
                 return constructorContext.transformedDeclaration.apply {
                     this.body = declaration.body!!
 
-                    declaration.valueParameters.filter { it.defaultValue != null }.forEach { argument ->
+                    declaration.parameters.filter { it.defaultValue != null }.forEach { argument ->
                         oldParameterToNew[argument]!!.defaultValue = argument.defaultValue
                     }
                     acceptChildren(SetDeclarationsParentVisitor, this)
@@ -449,25 +449,15 @@ open class LocalDeclarationsLowering(
                 }
             }
 
-            inline fun <T : IrMemberAccessExpression<*>> T.mapValueParameters(
-                newTarget: IrFunction,
-                transform: (IrValueParameter) -> IrExpression?
-            ): T =
-                apply {
-                    for (p in newTarget.valueParameters) {
-                        putValueArgument(p.indexInOldValueParameters, transform(p))
-                    }
-                }
-
             private fun <T : IrMemberAccessExpression<*>> T.fillArguments2(
                 oldExpression: IrMemberAccessExpression<*>,
                 newTarget: IrFunction
             ): T {
-                mapValueParameters(newTarget) { newValueParameterDeclaration ->
+                val transformedNewTargetParameters = newTarget.parameters.map { newValueParameterDeclaration ->
                     val oldParameter = newParameterToOld[newValueParameterDeclaration]
 
                     if (oldParameter != null) {
-                        oldExpression.getValueArgument(oldParameter.indexInOldValueParameters)
+                        oldExpression.arguments[oldParameter.indexInParameters]
                     } else {
                         // The callee expects captured value as argument.
                         val capturedValueSymbol =
@@ -484,9 +474,7 @@ open class LocalDeclarationsLowering(
                     }
 
                 }
-
-                dispatchReceiver = oldExpression.dispatchReceiver
-                extensionReceiver = oldExpression.extensionReceiver
+                arguments.assignFrom(transformedNewTargetParameters)
 
                 return this
             }
@@ -543,7 +531,7 @@ open class LocalDeclarationsLowering(
                 val oldFunction = expression.symbol.owner
                 val newFunction = oldFunction.transformed
                 if (newFunction != null) {
-                    require(newFunction.valueParameters.size == oldFunction.valueParameters.size) {
+                    require(newFunction.parameters.size == oldFunction.parameters.size) {
                         "Capturing variables is not supported for raw function references"
                     }
                     expression.symbol = newFunction.symbol
@@ -779,24 +767,13 @@ open class LocalDeclarationsLowering(
 
             newDeclaration.parent = ownerParent
             newDeclaration.returnType = localFunctionContext.remapType(oldDeclaration.returnType)
-            newDeclaration.dispatchReceiverParameter = null
-            newDeclaration.extensionReceiverParameter = oldDeclaration.extensionReceiverParameter?.run {
-                copyTo(newDeclaration, type = localFunctionContext.remapType(this.type)).also {
-                    newParameterToOld.putAbsentOrSame(it, this)
-                }
-            }
             newDeclaration.copyAttributes(oldDeclaration)
 
-            newDeclaration.valueParameters = newDeclaration.valueParameters memoryOptimizedPlus createTransformedValueParameters(
+            newDeclaration.parameters = createTransformedValueParameters(
                 capturedValues, localFunctionContext, oldDeclaration, newDeclaration,
                 isExplicitLocalFunction = oldDeclaration.origin == IrDeclarationOrigin.LOCAL_FUNCTION
             )
             newDeclaration.recordTransformedValueParameters(localFunctionContext)
-            val parametersMapping = buildMap {
-                oldDeclaration.extensionReceiverParameter?.let { put(it, newDeclaration.extensionReceiverParameter!!) }
-                putAll(oldDeclaration.valueParameters zip newDeclaration.valueParameters.takeLast(oldDeclaration.valueParameters.size))
-            }
-            context.remapMultiFieldValueClassStructure(oldDeclaration, newDeclaration, parametersMapping)
 
             newDeclaration.annotations = oldDeclaration.annotations
 
@@ -809,17 +786,34 @@ open class LocalDeclarationsLowering(
             oldDeclaration: IrFunction,
             newDeclaration: IrFunction,
             isExplicitLocalFunction: Boolean = false
-        ) = ArrayList<IrValueParameter>(capturedValues.size + oldDeclaration.valueParameters.size).apply {
+        ): List<IrValueParameter> {
+            val transformedParameters = oldDeclaration.parameters.map { param ->
+                param.copyTo(
+                    newDeclaration,
+                    type = localFunctionContext.remapType(param.type),
+                    varargElementType = param.varargElementType?.let { localFunctionContext.remapType(it) },
+                ).also {
+                    newParameterToOld.putAbsentOrSame(it, param)
+                }
+            }
+
+            val parametersMapping = (oldDeclaration.parameters zip transformedParameters).toMap()
+            context.remapMultiFieldValueClassStructure(oldDeclaration, newDeclaration, parametersMapping)
+
             val generatedNames = mutableSetOf<String>()
-            capturedValues.mapTo(this) { capturedValue ->
+            val parametersForCapturedValues = capturedValues.map { capturedValue ->
                 val p = capturedValue.owner
                 buildValueParameter(newDeclaration) {
                     startOffset = p.startOffset
                     endOffset = p.endOffset
                     origin =
-                        if (p is IrValueParameter && p.indexInOldValueParameters < 0 && newDeclaration is IrConstructor) BOUND_RECEIVER_PARAMETER
+                        if (p is IrValueParameter &&
+                            p.kind in listOf(IrParameterKind.DispatchReceiver, IrParameterKind.ExtensionReceiver) &&
+                            newDeclaration is IrConstructor
+                        ) BOUND_RECEIVER_PARAMETER
                         else BOUND_VALUE_PARAMETER
                     name = suggestNameForCapturedValue(p, generatedNames, isExplicitLocalFunction = isExplicitLocalFunction)
+                    kind = IrParameterKind.Regular
                     type = localFunctionContext.remapType(p.type)
                     isCrossInline = (capturedValue as? IrValueParameterSymbol)?.owner?.isCrossinline == true
                     isNoinline = (capturedValue as? IrValueParameterSymbol)?.owner?.isNoinline == true
@@ -828,27 +822,25 @@ open class LocalDeclarationsLowering(
                 }
             }
 
-            oldDeclaration.valueParameters.mapTo(this) { v ->
-                v.copyTo(
-                    newDeclaration,
-                    type = localFunctionContext.remapType(v.type),
-                    varargElementType = v.varargElementType?.let { localFunctionContext.remapType(it) }
-                ).also {
-                    newParameterToOld.putAbsentOrSame(it, v)
-                }
+            // For now, we must preserve the parameter kind order since the old API is still in use, and the bridge expects the canonical order.
+            val capturedValuesStartIndex = transformedParameters.indexOfFirst { it.kind == IrParameterKind.Regular }
+                .takeIf { it != -1 } ?: transformedParameters.size
+            return buildList {
+                addAll(transformedParameters)
+                addAll(capturedValuesStartIndex, parametersForCapturedValues)
             }
         }
 
         private fun IrFunction.recordTransformedValueParameters(localContext: LocalContextWithClosureAsParameters) {
 
-            valueParameters.forEach {
+            parameters.forEach {
                 val capturedValue = newParameterToCaptured[it]
                 if (capturedValue != null) {
                     localContext.capturedValueToParameter[capturedValue.owner] = it
                 }
             }
 
-            (listOfNotNull(dispatchReceiverParameter, extensionReceiverParameter) + valueParameters).forEach {
+            parameters.forEach {
                 val oldParameter = newParameterToOld[it]
                 if (oldParameter != null) {
                     oldParameterToNew.putAbsentOrSame(oldParameter, it)
@@ -867,10 +859,10 @@ open class LocalDeclarationsLowering(
             context.mapping.capturedConstructors[oldDeclaration]?.let { newDeclaration ->
                 transformedDeclarations[oldDeclaration] = newDeclaration
                 constructorContext.transformedDeclaration = newDeclaration
-                newDeclaration.valueParameters.zip(capturedValues).forEach { (it, capturedValue) ->
+                newDeclaration.parameters.zip(capturedValues).forEach { (it, capturedValue) ->
                     newParameterToCaptured[it] = capturedValue
                 }
-                oldDeclaration.valueParameters.zip(newDeclaration.valueParameters).forEach { (v, it) ->
+                oldDeclaration.parameters.zip(newDeclaration.parameters).forEach { (v, it) ->
                     newParameterToOld.putAbsentOrSame(it, v)
                 }
                 newDeclaration.recordTransformedValueParameters(constructorContext)
@@ -888,14 +880,11 @@ open class LocalDeclarationsLowering(
             newDeclaration.parent = localClassContext.declaration
             newDeclaration.copyTypeParametersFrom(oldDeclaration)
 
-            oldDeclaration.dispatchReceiverParameter?.run {
-                throw AssertionError("Local class constructor can't have dispatch receiver: ${ir2string(oldDeclaration)}")
-            }
-            oldDeclaration.extensionReceiverParameter?.run {
-                throw AssertionError("Local class constructor can't have extension receiver: ${ir2string(oldDeclaration)}")
-            }
+            oldDeclaration.parameters
+                .firstOrNull { it.kind == IrParameterKind.DispatchReceiver || it.kind == IrParameterKind.ExtensionReceiver }
+                ?.run { throw AssertionError("Local class constructor can't have $kind: ${ir2string(oldDeclaration)}") }
 
-            newDeclaration.valueParameters = newDeclaration.valueParameters memoryOptimizedPlus createTransformedValueParameters(
+            newDeclaration.parameters = createTransformedValueParameters(
                 capturedValues, localClassContext, oldDeclaration, newDeclaration
             )
             newDeclaration.recordTransformedValueParameters(constructorContext)
@@ -944,11 +933,11 @@ open class LocalDeclarationsLowering(
 
         private fun suggestNameForCapturedValue(declaration: IrValueDeclaration, usedNames: MutableSet<String>, isExplicitLocalFunction: Boolean = false): Name {
             if (declaration is IrValueParameter) {
-                if (declaration.name.asString() == "<this>" && declaration.isDispatchReceiver()) {
+                if (declaration.name.asString() == "<this>" && declaration.kind == IrParameterKind.DispatchReceiver) {
                     return findFirstUnusedName("this\$0", usedNames) {
                         "this\$$it"
                     }
-                } else if (declaration.name.asString() == "<this>" && declaration.isExtensionReceiver()) {
+                } else if (declaration.name.asString() == "<this>" && declaration.kind == IrParameterKind.ExtensionReceiver) {
                     val parentNameSuffix = declaration.parentNameSuffixForExtensionReceiver
                     return findFirstUnusedName("\$this_$parentNameSuffix", usedNames) {
                         "\$this_$parentNameSuffix\$$it"
@@ -984,21 +973,6 @@ open class LocalDeclarationsLowering(
             while (!usedNames.add(chosen))
                 chosen = nextName(++suffix)
             return Name.identifier(chosen)
-        }
-
-        private fun IrValueParameter.isDispatchReceiver(): Boolean =
-            when (val parent = this.parent) {
-                is IrFunction ->
-                    parent.dispatchReceiverParameter == this
-                is IrClass ->
-                    parent.thisReceiver == this
-                else ->
-                    false
-            }
-
-        private fun IrValueParameter.isExtensionReceiver(): Boolean {
-            val parentFun = parent as? IrFunction ?: return false
-            return parentFun.extensionReceiverParameter == this
         }
 
         private val CAPTURED_RECEIVER_PREFIX = "\$this\$"
