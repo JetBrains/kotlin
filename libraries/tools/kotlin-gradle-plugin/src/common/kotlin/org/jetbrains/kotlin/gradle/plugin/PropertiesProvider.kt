@@ -574,6 +574,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
             .map { it.toLongOrNull() ?: defaultClassLoaderCacheTimeout }
             .orElse(defaultClassLoaderCacheTimeout)
 
+    internal val enableAndroidExtensionPlugin: Provider<Boolean>
+        get() = booleanProvider(PropertyNames.KOTLIN_ENABLE_ANDROID_EXTENSIONS_PLUGIN)
+            .orElse(false)
+
     /**
      * Retrieves a comma-separated list of browsers to use when running karma tests for [target]
      * @see KOTLIN_JS_KARMA_BROWSERS
@@ -702,6 +706,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_COLLECT_FUS_METRICS_ENABLED = property("$KOTLIN_INTERNAL_NAMESPACE.collectFUSMetrics")
         val KOTLIN_USE_NON_PACKED_KLIBS = property("$KOTLIN_INTERNAL_NAMESPACE.klibs.non-packed")
         val KOTLIN_CLASSLOADER_CACHE_TIMEOUT = property("$KOTLIN_INTERNAL_NAMESPACE.classloaderCache.timeoutSeconds")
+        val KOTLIN_ENABLE_ANDROID_EXTENSIONS_PLUGIN = property("kotlin.androidExtensionsPlugin.enabled")
     }
 
     companion object {
