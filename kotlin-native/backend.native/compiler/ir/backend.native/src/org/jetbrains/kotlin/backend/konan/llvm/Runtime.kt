@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 
@@ -23,6 +25,9 @@ internal class Runtime(
     val llvmModule: LLVMModuleRef = parseBitcodeFile(phaseContext, phaseContext.messageCollector, llvmContext, bitcodeFile)
     val calculatedLLVMTypes: MutableMap<IrType, LLVMTypeRef> = HashMap()
     val addedLLVMExternalFunctions: MutableMap<IrFunction, LlvmCallable> = HashMap()
+    val addedLLVMExternalInstanceFields: MutableMap<IrField, FieldLlvmDeclarations> = HashMap()
+    val addedLLVMExternalStaticFields: MutableMap<IrField, StaticFieldLlvmDeclarations> = HashMap()
+    val addedLLVMExternalClasses: MutableMap<IrClass, ClassBodyAndAlignmentInfo> = HashMap()
 
     private fun getStructTypeOrNull(name: String, isClass: Boolean = false) =
             LLVMGetTypeByName(llvmModule, "${if (isClass) "class" else "struct"}.$name")

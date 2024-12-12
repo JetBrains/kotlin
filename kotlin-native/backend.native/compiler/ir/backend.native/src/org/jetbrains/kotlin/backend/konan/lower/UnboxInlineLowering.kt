@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorI
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
 import org.jetbrains.kotlin.backend.konan.getUnboxFunction
+import org.jetbrains.kotlin.backend.konan.llvm.FieldStorageKind
+import org.jetbrains.kotlin.backend.konan.llvm.storageKind
 import org.jetbrains.kotlin.ir.builders.irGetField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -27,6 +29,10 @@ internal class NativePropertyAccessorInlineLowering(context: Context) : Property
         if ((container as? IrSimpleFunction)?.bridgeTarget != null)
             return
         super.lower(irBody, container)
+    }
+
+    override fun IrProperty.isSafeToInline(accessContainer: IrDeclaration): Boolean {
+        return isSafeToInlineInClosedWorld() && this.backingField?.storageKind != FieldStorageKind.THREAD_LOCAL
     }
 }
 

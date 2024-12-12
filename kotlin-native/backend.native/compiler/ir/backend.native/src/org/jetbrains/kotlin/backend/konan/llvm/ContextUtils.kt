@@ -10,6 +10,7 @@ import kotlinx.cinterop.toKString
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.ir.requiredAlignment
 import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
 import org.jetbrains.kotlin.descriptors.konan.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -234,6 +235,59 @@ internal interface ContextUtils : RuntimeAware {
     val IrClass.llvmTypeInfoPtr: LLVMValueRef
         get() = typeInfoPtr.llvm
 
+    private tailrec fun gcd(a: Long, b: Long) : Long = if (b == 0L) a else gcd(b, a % b)
+
+    val IrField.llvmDeclarationForInstanceField: FieldLlvmDeclarations
+        get() {
+            check(!isStatic)
+            return if (isExternal(this)) {
+                runtime.addedLLVMExternalInstanceFields.getOrPut(this) {
+                    val containingClass = parent as? IrClass
+                    checkNotNull(containingClass)
+                    val classDeclarations = containingClass.llvmDeclarationForClass
+                    val index = classDeclarations.fieldsIndices[symbol]!!
+                    val bodyType = classDeclarations.body
+                    FieldLlvmDeclarations(
+                            index,
+                            bodyType,
+                            gcd(LLVMOffsetOfElement(llvm.runtime.targetData, bodyType, index), llvm.runtime.objectAlignment.toLong()).toInt()
+                    )
+                }
+            } else {
+                generationState.llvmDeclarations.forField(this)
+            }
+        }
+
+    val IrField.llvmDeclarationForStaticField: StaticFieldLlvmDeclarations
+        get() {
+            check(isStatic)
+            return if (isExternal(this)) {
+                check(storageKind == FieldStorageKind.GLOBAL)
+                runtime.addedLLVMExternalStaticFields.getOrPut(this) {
+                    val containerName = parentClassOrNull?.fqNameForIrSerialization?.asString()
+                            ?: context.irLinker.getExternalDeclarationFileName(this)
+                    val symbolName = computePrivateStaticFieldName(containerName)
+
+                    val address = importGlobal(symbolName, type.toLLVMType(llvm), this)
+                    val storage = GlobalAddressAccess(address)
+                    val alignmnet = requiredAlignment(llvm)
+                    StaticFieldLlvmDeclarations(storage, alignmnet)
+                }
+            } else {
+                generationState.llvmDeclarations.forStaticField(this)
+            }
+        }
+
+    val IrClass.llvmDeclarationForClass: ClassBodyAndAlignmentInfo
+        get() {
+            check(isExternal(this))
+            check(requiresRtti())
+            return runtime.addedLLVMExternalClasses.getOrPut(this) {
+                val fields = createFieldsFor(this)
+                val name = this.computePrivateObjectBodyName(context.irLinker.getExternalDeclarationFileName(this))
+                createClassBody(name, fields)
+            }
+        }
 }
 
 /**

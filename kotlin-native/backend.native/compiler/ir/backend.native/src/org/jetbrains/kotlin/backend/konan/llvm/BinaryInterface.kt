@@ -35,6 +35,7 @@ object KonanBinaryInterface {
 
     internal const val MANGLE_FUN_PREFIX = "kfun"
     internal const val MANGLE_CLASS_PREFIX = "kclass"
+    internal const val MANGLE_CLASS_BODY_PREFIX = "kclassbody"
     internal const val MANGLE_FIELD_PREFIX = "kfield"
 
     private val mangler = object : AbstractKonanIrMangler(withReturnType = true, allowOutOfScopeTypeParameters = true) {}
@@ -54,9 +55,15 @@ object KonanBinaryInterface {
 
     val IrClass.typeInfoSymbolName: String get() = typeInfoSymbolNameImpl(null)
 
+    val IrClass.objectBodyName: String get() = objectBodyNameImpl(null)
+
     fun IrFunction.privateSymbolName(containerName: String): String = funSymbolNameImpl(containerName)
 
     fun IrClass.privateTypeInfoSymbolName(containerName: String): String = typeInfoSymbolNameImpl(containerName)
+
+    fun IrClass.privateObjectBodyName(containerName: String) = objectBodyNameImpl(containerName)
+
+    fun IrField.privateStaticFieldName(containerName: String) = withPrefix("kvar", "$containerName.${fqNameForIrSerialization}#internal")
 
     fun isExported(declaration: IrDeclaration) = exportChecker.run {
         check(declaration, SpecialDeclarationType.REGULAR) || declaration.isPlatformSpecificExported()
@@ -94,6 +101,11 @@ object KonanBinaryInterface {
     private fun IrClass.typeInfoSymbolNameImpl(containerName: String?): String {
         val fqName = fqNameForIrSerialization.toString()
         return withPrefix(MANGLE_CLASS_PREFIX, containerName?.plus(".$fqName") ?: fqName)
+    }
+
+    private fun IrClass.objectBodyNameImpl(containerName: String?): String {
+        val fqName = fqNameForIrSerialization.toString()
+        return withPrefix(MANGLE_CLASS_BODY_PREFIX, containerName?.plus(".$fqName") ?: fqName)
     }
 }
 
@@ -142,6 +154,12 @@ fun IrField.computeSymbolName() = with(KonanBinaryInterface) { symbolName }.repl
 fun IrClass.computeTypeInfoSymbolName() = with(KonanBinaryInterface) { typeInfoSymbolName }.replaceSpecialSymbols()
 
 fun IrClass.computePrivateTypeInfoSymbolName(containerName: String) = with(KonanBinaryInterface) { privateTypeInfoSymbolName(containerName) }.replaceSpecialSymbols()
+
+fun IrClass.computeObjectBodyName() = with(KonanBinaryInterface) { objectBodyName }.replaceSpecialSymbols()
+
+fun IrClass.computePrivateObjectBodyName(containerName: String) = with(KonanBinaryInterface) { privateObjectBodyName(containerName) }.replaceSpecialSymbols()
+
+fun IrField.computePrivateStaticFieldName(containerName: String) = with(KonanBinaryInterface) { privateStaticFieldName(containerName) }.replaceSpecialSymbols()
 
 private fun String.replaceSpecialSymbols() =
         // '@' is used for symbol versioning in GCC: https://gcc.gnu.org/wiki/SymbolVersioning.
