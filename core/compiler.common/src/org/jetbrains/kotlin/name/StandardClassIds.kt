@@ -25,6 +25,7 @@ object StandardClassIds {
     val BASE_ENUMS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("enums"))
     val BASE_CONTRACTS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("contracts"))
     val BASE_CONCURRENT_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("concurrent"))
+    val BASE_CONCURRENT_ATOMICS_PACKAGE = BASE_CONCURRENT_PACKAGE.child(Name.identifier("atomics"))
     val BASE_TEST_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("test"))
     val BASE_TEXT_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("text"))
 
@@ -43,7 +44,11 @@ object StandardClassIds {
         BASE_REFLECT_PACKAGE,
         BASE_INTERNAL_PACKAGE,
         BASE_COROUTINES_PACKAGE,
-        BASE_CONCURRENT_PACKAGE
+        // TODO: atomic builtins are moving from kotlin.concurrent to kotlin.concurrent.atomics package (see KT-73816),
+        // builtins from kotlin.concurrent package are kept till Atomic API is completely moved to kotlin.concurrent.atomics
+        // and built with the new bootstrap compiler which provides builtins from the new package.
+        BASE_CONCURRENT_PACKAGE,
+        BASE_CONCURRENT_ATOMICS_PACKAGE
     )
 
     val Nothing = "Nothing".baseId()
