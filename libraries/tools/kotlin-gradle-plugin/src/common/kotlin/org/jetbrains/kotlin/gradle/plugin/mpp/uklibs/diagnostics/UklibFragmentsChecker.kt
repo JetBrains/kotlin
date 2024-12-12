@@ -40,9 +40,12 @@ internal object UklibFragmentsChecker {
 
         /**
          * Checks for:
-         * - "Targets of `F1` are compatible with `F2` => Fragment `F1` refines fragment `F2`"
-         * - "Fragment `F1` refines fragment `F2` => Targets of `F1` are compatible with `F2`"
+         * - "Targets of `F1` are compatible with `F2` <=> Fragment `F1` refines fragment `F2`"
+         * - "Fragment `F1` refines fragment `F2` <=> Targets of `F1` are compatible with `F2`"
          * - "Fragment `F` doesn't have refiners <=> it has exactly one `KotlinTarget`"
+         *
+         * FIXME: Is the spec actually missing a restriction that will prevent components? We can now have components (with weird
+         * expect/actuals?) where separate components can have conflicting expects?
          */
         data class UnderRefinementViolation(
             val fragment: FragmentToCheck,
