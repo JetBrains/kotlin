@@ -1,0 +1,6 @@
+$TESTDATA_DIR$/explicitApi.kt
+-d
+$TEMP_DIR$
+-Xexplicit-api=strict
+-XXexplicit-return-types=warning
+

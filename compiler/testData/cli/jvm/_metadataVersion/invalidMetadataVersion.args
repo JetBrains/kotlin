@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/metadataVersion
+.kt
+-d
+$TEMP_DIR$
+-Xmetadata-version=1..2.3

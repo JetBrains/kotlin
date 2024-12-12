@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/backendThreads.kt
+-d
+$TEMP_DIR$
+-Xbackend-threads=-3
