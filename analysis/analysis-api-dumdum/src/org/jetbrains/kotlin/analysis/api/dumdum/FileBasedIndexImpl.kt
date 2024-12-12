@@ -7,22 +7,43 @@ import com.intellij.util.indexing.FileContent
 import com.intellij.util.indexing.ID
 import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.KeyDescriptor
+import com.intellij.util.io.UnsyncByteArrayInputStream
+import com.intellij.util.io.UnsyncByteArrayOutputStream
 import java.io.DataInput
+import java.io.DataInputStream
 import java.io.DataOutput
+import java.io.DataOutputStream
 
-data class Box<T>(val value: T)
+data class Box<T>(val value: T?)
 
 fun interface VirtualFileFactory {
     fun virtualFile(fileId: FileId): VirtualFile
 }
 
-data class KeyTypesMap(private val map: Map<ID<*, *>, KeyType<Any?>>) {
+data class KeyTypesMap(
+    private val keyDescriptors: Map<ID<*, *>, KeyDescriptor<*>>,
+    private val keyTypes: Map<ID<*, *>, KeyType<*>>,
+) {
+    @Suppress("UNCHECKED_CAST")
+    fun <K> keyDescriptor(indexId: ID<K, *>): KeyDescriptor<K> =
+        requireNotNull(keyDescriptors[indexId]) {
+            "keyType is not found for indexId $indexId"
+        } as KeyDescriptor<K>
+
     @Suppress("UNCHECKED_CAST")
     fun <K> keyType(indexId: ID<K, *>): KeyType<K> =
-        requireNotNull(map[indexId]) {
+        requireNotNull(keyTypes[indexId]) {
             "keyType is not found for indexId $indexId"
         } as KeyType<K>
 }
+
+fun keyTypesMap(keys: List<Pair<ID<*, *>, KeyDescriptor<*>>>): KeyTypesMap =
+    KeyTypesMap(
+        keyDescriptors = keys.toMap(),
+        keyTypes = keys.associate { (indexId, keyDescriptor) ->
+            indexId to KeyType(indexId.name, keyDescriptor.asSerializer())
+        }
+    )
 
 fun Index.fileBased(
     virtualFileFactory: VirtualFileFactory,
@@ -78,13 +99,10 @@ data class FileBasedIndexExtensions(
 
 fun fileBasedIndexExtensions(fileBasedIndexExtensions: List<FileBasedIndexExtension<*, *>>): FileBasedIndexExtensions =
     FileBasedIndexExtensions(
-        keyTypesMap = KeyTypesMap(
-            fileBasedIndexExtensions.associate { extension ->
+        keyTypesMap = keyTypesMap(
+            fileBasedIndexExtensions.map { extension ->
                 @Suppress("UNCHECKED_CAST")
-                extension.name to KeyType(
-                    id = extension.name.name,
-                    serializer = (extension.keyDescriptor as KeyDescriptor<Any>)
-                )
+                extension.name to (extension.keyDescriptor as KeyDescriptor<Any?>)
             }),
         extensions = fileBasedIndexExtensions,
         mapTypes = fileBasedIndexExtensions.associate { extension ->
@@ -92,38 +110,71 @@ fun fileBasedIndexExtensions(fileBasedIndexExtensions: List<FileBasedIndexExtens
             extension as FileBasedIndexExtension<Any, Any?>
             extension.name to ValueType(
                 id = extension.name.name,
-                serializer = MapSerializer(
+                serializer = MapExternalizer(
                     extension.keyDescriptor,
-                    BoxSerializer(extension.valueExternalizer)
-                )
+                    BoxExternalizer(extension.valueExternalizer)
+                ).asSerializer()
             )
         }
     )
 
-class MapSerializer<K, V>(
-    keySerializer: DataExternalizer<K>,
-    valueSerializer: DataExternalizer<V>,
+fun <T> DataExternalizer<T>.asSerializer(): Serializer<T> = let { externalizer ->
+    object : Serializer<T> {
+        override fun serialize(value: T): ByteArray {
+            val baos = UnsyncByteArrayOutputStream()
+            baos.use { os ->
+                DataOutputStream(os).use { dos ->
+                    externalizer.save(dos, value)
+                }
+            }
+            return baos.toByteArray()
+        }
+
+        override fun deserialize(bytes: ByteArray): T =
+            UnsyncByteArrayInputStream(bytes).use { i ->
+                DataInputStream(i).use { dis ->
+                    externalizer.read(dis)
+                }
+            }
+    }
+}
+
+class MapExternalizer<K, V>(
+    val keySerializer: DataExternalizer<K>,
+    val valueSerializer: DataExternalizer<V>,
 ) : DataExternalizer<Map<K, V>> {
-    override fun save(out: DataOutput, value: Map<K, V>?) {
-        TODO("Not yet implemented")
+    override fun save(out: DataOutput, value: Map<K, V>) {
+        out.writeInt(value.size)
+        for ((k, v) in value) {
+            keySerializer.save(out, k)
+            valueSerializer.save(out, v)
+        }
     }
 
     override fun read(`in`: DataInput): Map<K, V> {
-        TODO("Not yet implemented")
+        val size = `in`.readInt()
+        return buildMap(size) {
+            repeat(size) {
+                val k = keySerializer.read(`in`)
+                val v = valueSerializer.read(`in`)
+                put(k, v)
+            }
+        }
     }
-
-
 }
 
-class BoxSerializer<V>(private val serializer: DataExternalizer<V>) : DataExternalizer<Box<V>> {
-    override fun save(out: DataOutput, value: Box<V>?) {
-        TODO("Not yet implemented")
+class BoxExternalizer<V>(private val serializer: DataExternalizer<V>) : DataExternalizer<Box<V>> {
+    override fun save(out: DataOutput, value: Box<V>) {
+        out.writeBoolean(value.value != null)
+        value.value?.let { x ->
+            serializer.save(out, x)
+        }
     }
 
     override fun read(`in`: DataInput): Box<V> {
-        TODO("Not yet implemented")
+        val some = `in`.readBoolean()
+        return Box(if (some) serializer.read(`in`) else null)
     }
-
 }
 
 fun fileBasedIndexesUpdates(
@@ -135,7 +186,7 @@ fun fileBasedIndexesUpdates(
         @Suppress("UNCHECKED_CAST")
         extension as FileBasedIndexExtension<Any, Any?>
         val indexId = extension.name
-        val map = extension.indexer.map(fileContent).mapValues { (_, v) -> Box(v) }
+        val map = extension.indexer.map(fileContent).mapValues { (_, v) -> Box<Any?>(v) }
         val keyType = fileBasedIndexExtensions.keyTypesMap.keyType(indexId)
         IndexUpdate(
             fileId = fileId,

@@ -8,44 +8,108 @@ import com.intellij.psi.stubs.*
 import com.intellij.util.Processor
 import com.intellij.util.containers.HashingStrategy
 import com.intellij.util.indexing.ID
-import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.KeyDescriptor
-import java.io.DataInput
-import java.io.DataOutput
+import com.intellij.util.io.UnsyncByteArrayInputStream
+import com.intellij.util.io.UnsyncByteArrayOutputStream
+import java.io.DataInputStream
+import java.io.DataOutputStream
 
 data class StubValue(
     val stub: StubTree,
-    val index: Map<StubIndexKey<*, *>, Map<Any, IntArray>>,
-)
+    val index: Map<StubIndexKey<*, *>, Map<Any?, IntArray>>,
+) {
+    companion object {
+        fun serializer(
+            keyTypesMap: KeyTypesMap,
+            stubSerializersTable: StubSerializersTable,
+        ): Serializer<StubValue> {
+
+            val stubSerializer = ShareableStubTreeSerializer(stubSerializersTable)
+            return object : Serializer<StubValue> {
+                override fun serialize(value: StubValue): ByteArray {
+                    val baos = UnsyncByteArrayOutputStream()
+                    baos.use { os ->
+                        stubSerializer.serialize(value.stub.root, os)
+                        DataOutputStream(os).use { dos ->
+                            val indexesCount = value.index.size
+                            dos.writeInt(indexesCount)
+                            for ((indexId, map) in value.index) {
+                                dos.writeUTF(indexId.name)
+                                dos.writeInt(map.size)
+
+                                @Suppress("UNCHECKED_CAST")
+                                val keyDescriptor = keyTypesMap.keyDescriptor(indexId) as KeyDescriptor<Any?>
+                                for ((k, ids) in map) {
+                                    keyDescriptor.save(dos, k)
+                                    dos.writeInt(ids.size)
+                                    for (id in ids) {
+                                        dos.writeInt(id)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return baos.toByteArray()
+                }
+
+                override fun deserialize(bytes: ByteArray): StubValue =
+                    UnsyncByteArrayInputStream(bytes).use { i ->
+                        val root = stubSerializer.deserialize(i)
+                        val tree = StubTree(root as PsiFileStub<*>)
+                        val index = DataInputStream(i).use { dis ->
+                            val indexesCount = dis.readInt()
+                            buildMap(indexesCount) {
+                                repeat(indexesCount) {
+                                    val indexName = dis.readUTF()
+                                    val indexId = StubIndexKey.createIndexKey<Any?, PsiElement>(indexName) as StubIndexKey<*, *>
+
+                                    @Suppress("UNCHECKED_CAST")
+                                    val keyDescriptor = keyTypesMap.keyDescriptor(indexId) as KeyDescriptor<Any?>
+                                    val keysCount = dis.readInt()
+                                    val index = buildMap(keysCount) {
+                                        repeat(keysCount) {
+                                            val key = keyDescriptor.read(dis)
+                                            val idCount = dis.readInt()
+                                            val ids = IntArray(idCount) {
+                                                val id = dis.readInt()
+                                                id
+                                            }
+                                            put(key, ids)
+                                        }
+                                    }
+                                    put(indexId, index)
+                                }
+                            }
+                        }
+                        StubValue(tree, index)
+                    }
+            }
+        }
+    }
+}
 
 fun interface FilePathExtractor {
     fun filePath(virtualFile: VirtualFile): FileId
 }
 
-fun stubIndexExtensions(stubIndexExtensions: List<StubIndexExtension<*, *>>): StubIndexExtensions {
-    val stubSerializersTable = StubSerializersTable.build()
-    val stubSerializer = ShareableStubTreeSerializer(stubSerializersTable)
+fun stubIndexExtensions(
+    stubIndexExtensions: List<StubIndexExtension<*, *>>,
+    stubSerializersTable: StubSerializersTable,
+): StubIndexExtensions {
+    val keyTypesMap = keyTypesMap(
+        stubIndexExtensions.map { extension ->
+            @Suppress("UNCHECKED_CAST")
+            extension.key to extension.keyDescriptor as KeyDescriptor<Any?>
+        }
+    )
     return StubIndexExtensions(
-        keyTypesMap = KeyTypesMap(
-            stubIndexExtensions.associate { extension ->
-                @Suppress("UNCHECKED_CAST")
-                extension.key to KeyType(
-                    id = extension.key.name,
-                    serializer = (extension.keyDescriptor as KeyDescriptor<Any?>)
-                )
-            }
-        ),
+        keyTypesMap = keyTypesMap,
         stubValueType = ValueType(
             id = "stub",
-            serializer = object : DataExternalizer<StubValue> {
-                override fun save(out: DataOutput, value: StubValue) {
-                    TODO("Not yet implemented")
-                }
-
-                override fun read(`in`: DataInput): StubValue {
-                    TODO("Not yet implemented")
-                }
-            }
+            serializer = StubValue.serializer(
+                keyTypesMap = keyTypesMap,
+                stubSerializersTable = stubSerializersTable
+            )
         ),
     )
 }

@@ -1,7 +1,5 @@
 package org.jetbrains.kotlin.analysis.api.dumdum
 
-import com.intellij.util.io.DataExternalizer
-
 interface Index {
     fun <S> value(fileId: FileId, valueType: ValueType<S>): S?
 
@@ -18,9 +16,14 @@ data class IndexKey<K>(
     val key: K,
 )
 
+interface Serializer<T> {
+    fun serialize(value: T): ByteArray
+    fun deserialize(bytes: ByteArray): T
+}
+
 class KeyType<K>(
     val id: String,
-    val serializer: DataExternalizer<K>,
+    val serializer: Serializer<K>,
 ) {
     override fun equals(other: Any?): Boolean =
         other === this || (other is KeyType<*> && other.id == this.id)
@@ -31,7 +34,7 @@ class KeyType<K>(
 
 class ValueType<S>(
     val id: String,
-    val serializer: DataExternalizer<S>,
+    val serializer: Serializer<S>,
 ) {
     override fun equals(other: Any?): Boolean =
         other === this || (other is ValueType<*> && other.id == this.id)

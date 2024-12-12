@@ -217,7 +217,7 @@ fun main() {
             )
 
             val stubIndexExtensions = stubIndexExtensions(
-                listOf(
+                stubIndexExtensions = listOf(
                     KotlinAnnotationsIndex.Helper,
                     KotlinClassShortNameIndex.Helper,
                     KotlinExtensionsInObjectsByReceiverTypeIndex.Helper,
@@ -252,7 +252,8 @@ fun main() {
                     KotlinTypeAliasByExpansionShortNameIndex.Helper,
                     KotlinTypeAliasShortNameIndex.Helper,
                     KotlinExactPackagesIndex.Helper,
-                )
+                ),
+                stubSerializersTable = StubSerializersTable.build()
             )
 
             val index = inMemoryIndex(
