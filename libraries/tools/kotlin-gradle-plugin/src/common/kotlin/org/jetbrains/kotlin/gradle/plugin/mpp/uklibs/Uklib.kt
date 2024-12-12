@@ -14,7 +14,7 @@ internal data class Uklib(
         // Use this symbol in diagnostics
         const val UKLIB_NAME = "uklib"
 
-        // This extension has to be stable because we need to filter transitive jars in transforms and we need it for pom resolution
+        // This extension has to be stable because we need it for pom resolution
         const val UKLIB_EXTENSION = "uklib"
 
         /**
