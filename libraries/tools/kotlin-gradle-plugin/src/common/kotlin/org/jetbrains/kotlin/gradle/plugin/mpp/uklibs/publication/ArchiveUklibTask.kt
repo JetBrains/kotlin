@@ -12,6 +12,7 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.serializeToZipArchive
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragment
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.diagnostics.UklibFragmentsChecker
 import org.jetbrains.kotlin.gradle.utils.getFile
 
+@DisableCachingByDefault(because = "This task only compresses Uklib into an archive")
 internal abstract class ArchiveUklibTask : DefaultTask() {
     // FIXME: Write FT to check the graph that is passed here
     @get:Internal
