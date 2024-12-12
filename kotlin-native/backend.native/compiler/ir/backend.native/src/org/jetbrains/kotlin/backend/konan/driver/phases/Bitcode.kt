@@ -134,11 +134,11 @@ internal val PrintBitcodePhase = createSimpleNamedCompilerPhase<PhaseContext, LL
         op = { _, llvmModule -> LLVMDumpModule(llvmModule) }
 )
 
-internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostProcessing() {
+internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostProcessing(finalBinary: Boolean) {
     val optimizationConfig = createLTOFinalPipelineConfig(
             context,
             context.llvm.targetTriple,
-            closedWorld = context.config.isFinalBinary && !context.shouldOptimize(),
+            closedWorld = finalBinary,
             timePasses = context.config.flexiblePhaseConfig.needProfiling,
     )
     useContext(OptimizationState(context.config, optimizationConfig)) {
