@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings
 
+import org.jetbrains.kotlin.backend.common.extensions.ExperimentalAPIForScriptingPlugin
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -529,6 +530,7 @@ internal fun patchDeclarationsDispatchReceiver(statements: List<IrStatement>, co
     }
 }
 
+@OptIn(ExperimentalAPIForScriptingPlugin::class)
 internal fun Collection<IrClass>.collectCapturersByReceivers(
     context: IrPluginContext,
     parentDeclaration: IrDeclaration,
