@@ -57,6 +57,8 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
  * @property renderOriginForExternalDeclarations If `true`, we only print a declaration's origin if it is not
  * [IrDeclarationOrigin.DEFINED]. If `false`, we don't print the [IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB] origin as well.
  * @property printSignatures Whether to print signatures for nodes that have public signatures
+ * @property printDispatchReceiverTypeInFakeOverrides If the dispatch receiver type should be printed.
+ *   Otherwise, it will be substituted with some fixed placeholder value.
  * @property isHiddenDeclaration The filter that can be used to exclude some declarations from printing.
  */
 data class DumpIrTreeOptions(
@@ -73,6 +75,7 @@ data class DumpIrTreeOptions(
     val printFilePath: Boolean = true,
     val printExpectDeclarations: Boolean = true,
     val printSourceRetentionAnnotations: Boolean = true,
+    val printDispatchReceiverTypeInFakeOverrides: Boolean = true,
     val isHiddenDeclaration: (IrDeclaration) -> Boolean = { false },
 )
 

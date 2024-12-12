@@ -283,12 +283,11 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
                     renderSimpleFunctionFlags()
         }
 
-    private fun IrFunction.renderValueParameterTypes(): String =
-        ArrayList<String>().apply {
-            addIfNotNull(dispatchReceiverParameter?.run { "\$this:${type.render()}" })
-            addIfNotNull(extensionReceiverParameter?.run { "\$receiver:${type.render()}" })
-            valueParameters.mapTo(this) { "${it.name}:${it.type.render()}" }
-        }.joinToString(separator = ", ", prefix = "(", postfix = ")")
+    private fun IrFunction.renderValueParameterTypes(): String = buildList {
+        addIfNotNull(dispatchReceiverParameter?.run { "\$this:${renderValueParameterType(options)}" })
+        addIfNotNull(extensionReceiverParameter?.run { "\$receiver:${type.render()}" })
+        valueParameters.mapTo(this) { "${it.name}:${it.type.render()}" }
+    }.joinToString(separator = ", ", prefix = "(", postfix = ")")
 
     override fun visitConstructor(declaration: IrConstructor, data: Nothing?): String =
         declaration.runTrimEnd {
@@ -335,7 +334,7 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
             "VALUE_PARAMETER ${renderOriginIfNonTrivial(options)}" +
                     "name:$name " +
                     (if (indexInOldValueParameters >= 0) "index:$indexInOldValueParameters " else "") +
-                    "type:${type.render()} " +
+                    "type:${renderValueParameterType(options)} " +
                     (varargElementType?.let { "varargElementType:${it.render()} " } ?: "") +
                     renderValueParameterFlags()
         }
@@ -578,6 +577,17 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
 
 
     private val descriptorRendererForErrorDeclarations = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES
+}
+
+private fun IrValueParameter.renderValueParameterType(options: DumpIrTreeOptions): String {
+    return if (!options.printDispatchReceiverTypeInFakeOverrides &&
+        kind == IrParameterKind.DispatchReceiver &&
+        (parent as? IrFunction)?.isFakeOverride == true
+    ) {
+        "HIDDEN_DISPATCH_RECEIVER_TYPE"
+    } else {
+        type.render(options)
+    }
 }
 
 internal fun DescriptorRenderer.renderDescriptor(descriptor: DeclarationDescriptor): String =
