@@ -65,7 +65,7 @@ or the following command on Windows:
 
     gradlew <tasks-and-options>
 
-On the first project configuration gradle will download and setup the dependencies on
+On the first project configuration gradle will download and setup the dependencies on:
 
 * `intellij-core` is a part of command line compiler and contains only necessary APIs.
 * `idea-full` is a full blown IntelliJ IDEA Community Edition to be used in the plugin module.
@@ -99,8 +99,7 @@ It is recommended to use the latest released version of Intellij IDEA (Community
 
 After cloning the project, import the project in IntelliJ by choosing the project directory in the Open project dialog.
 
-For handy work with compiler tests it's recommended to use [
-Kotlin Compiler Test Helper](https://github.com/demiurg906/test-data-helper-plugin)
+For handy work with compiler tests it's recommended to use [Kotlin Compiler Test Helper](https://github.com/demiurg906/test-data-helper-plugin).
 
 ### Dependency verification
 
