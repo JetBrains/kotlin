@@ -24,6 +24,9 @@ object BuiltinSpecialProperties {
         StandardNames.FqNames.atomicIntArray.child("size") to Name.identifier("length"),
         StandardNames.FqNames.atomicLongArray.child("size") to Name.identifier("length"),
         StandardNames.FqNames.atomicArray.child("size") to Name.identifier("length"),
+        StandardNames.FqNames.atomicIntArray_migration.child("size") to Name.identifier("length"),
+        StandardNames.FqNames.atomicLongArray_migration.child("size") to Name.identifier("length"),
+        StandardNames.FqNames.atomicArray_migration.child("size") to Name.identifier("length"),
     )
 
     private val GETTER_JVM_NAME_TO_PROPERTIES_SHORT_NAME_MAP: Map<Name, List<Name>> =

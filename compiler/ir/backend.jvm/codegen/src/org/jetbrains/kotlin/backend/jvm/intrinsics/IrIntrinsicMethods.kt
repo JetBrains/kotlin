@@ -197,6 +197,15 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
 
     private fun atomicIntrinsicsForJdk8(): List<Pair<Key, IntrinsicMethod>> =
         listOf(
+            Key(StandardNames.FqNames.atomicInt_migration, null, "compareAndExchange", listOf(intFqn, intFqn)) to AtomicCompareAndExchange(Type.INT),
+            Key(StandardNames.FqNames.atomicLong_migration, null, "compareAndExchange", listOf(longFqn, longFqn)) to AtomicCompareAndExchange(Type.LONG),
+            Key(StandardNames.FqNames.atomicBoolean_migration, null, "compareAndExchange", listOf(booleanFqn, booleanFqn)) to AtomicCompareAndExchange(Type.BOOLEAN),
+            Key(StandardNames.FqNames.atomicReference_migration, null, "compareAndExchange", listOf(FqName("T"), FqName("T"))) to AtomicCompareAndExchange(Type.OBJECT),
+
+            Key(StandardNames.FqNames.atomicIntArray_migration, null, "compareAndExchangeAt", listOf(intFqn, intFqn, intFqn)) to AtomicArrayCompareAndExchange(Type.INT),
+            Key(StandardNames.FqNames.atomicLongArray_migration, null, "compareAndExchangeAt", listOf(intFqn, longFqn, longFqn)) to AtomicArrayCompareAndExchange(Type.LONG),
+            Key(StandardNames.FqNames.atomicArray_migration, null, "compareAndExchangeAt", listOf(intFqn, FqName("T"), FqName("T"))) to AtomicArrayCompareAndExchange(Type.OBJECT),
+
             Key(StandardNames.FqNames.atomicInt, null, "compareAndExchange", listOf(intFqn, intFqn)) to AtomicCompareAndExchange(Type.INT),
             Key(StandardNames.FqNames.atomicLong, null, "compareAndExchange", listOf(longFqn, longFqn)) to AtomicCompareAndExchange(Type.LONG),
             Key(StandardNames.FqNames.atomicBoolean, null, "compareAndExchange", listOf(booleanFqn, booleanFqn)) to AtomicCompareAndExchange(Type.BOOLEAN),
