@@ -28,6 +28,12 @@ public class FirNativeHeaderKlibComparisonTestGenerated extends AbstractNativeHe
   }
 
   @Test
+  @TestMetadata("annotations")
+  public void testAnnotations() {
+    runTest("native/native.tests/testData/klib/header-klibs/comparison/annotations/");
+  }
+
+  @Test
   @TestMetadata("anonymousObjects")
   public void testAnonymousObjects() {
     runTest("native/native.tests/testData/klib/header-klibs/comparison/anonymousObjects/");

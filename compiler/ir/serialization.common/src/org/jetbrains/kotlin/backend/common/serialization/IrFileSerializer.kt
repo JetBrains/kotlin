@@ -213,7 +213,8 @@ open class IrFileSerializer(
     private fun serializeIrStatementOrigin(origin: IrStatementOrigin): Int =
         serializeString(origin.debugName)
 
-    private fun serializeCoordinates(start: Int, end: Int): Long = BinaryCoordinates.encode(start, end)
+    private fun serializeCoordinates(start: Int, end: Int): Long =
+        if (settings.bodiesOnlyForInlines && !isInsideInline) 0 else BinaryCoordinates.encode(start, end)
 
     /* ------- Strings ---------------------------------------------------------- */
 
