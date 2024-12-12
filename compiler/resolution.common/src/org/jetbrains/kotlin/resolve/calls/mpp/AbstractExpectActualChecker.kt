@@ -115,7 +115,7 @@ object AbstractExpectActualChecker {
 
         if (!areCompatibleClassKinds(expectClassSymbol, actualClass)) return ExpectActualCheckingCompatibility.ClassKind
 
-        if (!equalBy(expectClassSymbol, actualClass) { listOf(it.isCompanion, it.isInner, it.isInline || it.isValue) }) {
+        if (!equalBy(expectClassSymbol, actualClass) { listOf(it.isCompanion, it.isInner, it.isInlineOrValue) }) {
             return ExpectActualCheckingCompatibility.ClassModifiers
         }
 
