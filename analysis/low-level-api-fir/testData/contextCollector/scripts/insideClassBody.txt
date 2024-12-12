@@ -38,13 +38,13 @@ FILE: [ResolvedTo(IMPORTS)] insideClassBody.kts
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] constructor(): R|Foo| {
+            public? [ResolvedTo(RAW_FIR)] constructor(): R|Foo| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(STATUS)] val x: <implicit> = LAZY_EXPRESSION
-                public [ResolvedTo(STATUS)] get(): <implicit>
+            public? final? [ResolvedTo(RAW_FIR)] val x: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-            public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+            public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }

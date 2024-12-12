@@ -1864,22 +1864,22 @@ TARGET: public final [ResolvedTo(BODY_RESOLVE)] class Int : R|kotlin/Number|, R|
         super<R|kotlin/Number|>()
     }
 
-    public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|kotlin/Int.Companion| {
+    public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|kotlin/Int.Companion| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final const [ResolvedTo(STATUS)] val MIN_VALUE: R|kotlin/Int| = LAZY_EXPRESSION
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
+        public final const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        public final const [ResolvedTo(STATUS)] val MAX_VALUE: R|kotlin/Int| = LAZY_EXPRESSION
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
+        public final const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @R|kotlin/SinceKotlin|[Types]() public final const [ResolvedTo(STATUS)] val SIZE_BYTES: R|kotlin/Int| = LAZY_EXPRESSION
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
+        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @R|kotlin/SinceKotlin|[Types]() public final const [ResolvedTo(STATUS)] val SIZE_BITS: R|kotlin/Int| = LAZY_EXPRESSION
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
+        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
     }
 

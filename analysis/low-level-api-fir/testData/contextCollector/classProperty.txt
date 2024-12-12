@@ -18,14 +18,14 @@ Tower Data Context:
 
 FILE: [ResolvedTo(IMPORTS)] classProperty.kt
     public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] constructor(): R|Foo| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] val x: <implicit> = LAZY_EXPRESSION
-            public [ResolvedTo(STATUS)] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val x: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(STATUS)] val y: <implicit> = LAZY_EXPRESSION
-            public [ResolvedTo(STATUS)] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
     }

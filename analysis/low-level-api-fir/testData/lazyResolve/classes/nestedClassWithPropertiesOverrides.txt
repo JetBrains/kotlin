@@ -193,8 +193,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
     public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] val originalExpressions: R|A|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
+        public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
         public final [ResolvedTo(CONTRACTS)] class ResolveMe : R|OV| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
@@ -217,8 +217,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
     public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] val originalExpressions: R|A|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
+        public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class ResolveMe : R|OV| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
@@ -241,8 +241,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
     public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] val originalExpressions: R|A|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
+        public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
         public final [ResolvedTo(CONSTANT_EVALUATION)] class ResolveMe : R|OV| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
@@ -265,8 +265,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
     public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] val originalExpressions: R|A|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
+        public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class ResolveMe : R|OV| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {

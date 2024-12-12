@@ -21,8 +21,8 @@ Tower Data Context:
         Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] receiverInjection_wrongScope.kt
-    public abstract [ResolvedTo(STATUS)] interface Algebra<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
-        public abstract operator [ResolvedTo(STATUS)] fun [ResolvedTo(STATUS)] R|T|.plus([ResolvedTo(STATUS)] other: R|T|): R|T|
+    public final? [ResolvedTo(RAW_FIR)] interface Algebra<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? final? operator [ResolvedTo(RAW_FIR)] fun [ResolvedTo(RAW_FIR)] T.plus([ResolvedTo(RAW_FIR)] other: T): T
 
     }
     public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {

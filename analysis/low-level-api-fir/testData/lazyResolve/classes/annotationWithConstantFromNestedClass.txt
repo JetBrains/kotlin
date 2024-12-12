@@ -290,17 +290,17 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
 
     }
     public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|Outer| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
         public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
-            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|Outer.Companion| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Outer.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final const [ResolvedTo(STATUS)] val CONSTANT_FROM_COMPANION: <implicit> = LAZY_EXPRESSION
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+            public? final? const [ResolvedTo(RAW_FIR)] val CONSTANT_FROM_COMPANION: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
             @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] class Nested : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|Outer.Companion.Nested| {
@@ -325,17 +325,17 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
 
     }
     public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|Outer| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
         public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
-            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|Outer.Companion| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Outer.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final const [ResolvedTo(STATUS)] val CONSTANT_FROM_COMPANION: <implicit> = LAZY_EXPRESSION
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+            public? final? const [ResolvedTo(RAW_FIR)] val CONSTANT_FROM_COMPANION: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
             @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Nested : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|Outer.Companion.Nested| {
@@ -360,17 +360,17 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
 
     }
     public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|Outer| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
         public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
-            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|Outer.Companion| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Outer.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final const [ResolvedTo(STATUS)] val CONSTANT_FROM_COMPANION: <implicit> = LAZY_EXPRESSION
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+            public? final? const [ResolvedTo(RAW_FIR)] val CONSTANT_FROM_COMPANION: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
             @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class Nested : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|Outer.Companion.Nested| {

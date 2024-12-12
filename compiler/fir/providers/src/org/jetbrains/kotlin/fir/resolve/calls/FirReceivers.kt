@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -99,14 +99,25 @@ sealed class ImplicitReceiverValue<S>(
 
     abstract val isContextReceiver: Boolean
 
-    var implicitScope: FirTypeScope? =
-        type.scope(
+    val implicitScope: FirTypeScope?
+        get() = lazyImplicitScope.value
+
+    /**
+     * This scope is lazy to avoid redundant computation in the case where this scope is unused.
+     * This is especially the case for lazy resolution.
+     *
+     * KT-73900 is an example where computation during the class initialization leads to a visible performance
+     * difference.
+     * In particular, it is triggered by [createSnapshot].
+     */
+    private var lazyImplicitScope: Lazy<FirTypeScope?> = lazy(LazyThreadSafetyMode.PUBLICATION) {
+        originalType.scope(
             useSiteSession,
             scopeSession,
             CallableCopyTypeCalculator.DoNothing,
-            requiredMembersPhase = FirResolvePhase.STATUS
+            requiredMembersPhase = FirResolvePhase.STATUS,
         )
-        private set
+    }
 
     override val originalExpression: FirExpression =
         receiverExpression(boundSymbol, type, inaccessibleReceiver)
@@ -119,12 +130,14 @@ sealed class ImplicitReceiverValue<S>(
     @ImplicitValueInternals
     override fun updateTypeFromSmartcast(type: ConeKotlinType) {
         super.updateTypeFromSmartcast(type)
-        implicitScope = type.scope(
-            useSiteSession = useSiteSession,
-            scopeSession = scopeSession,
-            callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
-            requiredMembersPhase = FirResolvePhase.STATUS,
-        )
+        lazyImplicitScope = lazy(LazyThreadSafetyMode.PUBLICATION) {
+            type.scope(
+                useSiteSession = useSiteSession,
+                scopeSession = scopeSession,
+                callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
+                requiredMembersPhase = FirResolvePhase.STATUS,
+            )
+        }
     }
 
     abstract override fun createSnapshot(keepMutable: Boolean): ImplicitReceiverValue<S>

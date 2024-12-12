@@ -12,7 +12,7 @@ FILE: [ResolvedTo(IMPORTS)] memberTypeAliasScript.kts
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-memberTypeAliasScript.kts>] class Y : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Y] constructor(): R|Y| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Y] constructor(): R|Y| {
                 LAZY_super<R|kotlin/Any|>
             }
 

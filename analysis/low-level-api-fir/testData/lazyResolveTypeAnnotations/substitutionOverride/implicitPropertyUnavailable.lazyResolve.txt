@@ -118,13 +118,13 @@ FILE: [ResolvedTo(IMPORTS)] implicitPropertyUnavailable.kt
             @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=AbstractClass] get(): <implicit>
             @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=AbstractClass] set([ResolvedTo(CONTRACTS)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: <implicit>): R|kotlin/Unit|
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
-            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/AbstractClass.Companion| {
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/AbstractClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            private final const [ResolvedTo(STATUS)] val constant: <implicit> = LAZY_EXPRESSION
-                private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+            private final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
         }
 
@@ -162,13 +162,13 @@ FILE: [ResolvedTo(IMPORTS)] implicitPropertyUnavailable.kt
             @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=AbstractClass] get(): R|@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  T>>?|
             @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=AbstractClass] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: R|@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  T>>?|): R|kotlin/Unit|
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
-            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/AbstractClass.Companion| {
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/AbstractClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            private final const [ResolvedTo(STATUS)] val constant: <implicit> = LAZY_EXPRESSION
-                private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+            private final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
         }
 
@@ -206,13 +206,13 @@ FILE: [ResolvedTo(IMPORTS)] implicitPropertyUnavailable.kt
             @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=AbstractClass] get(): R|@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  T>>?|
             @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=AbstractClass] set([ResolvedTo(CONSTANT_EVALUATION)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: R|@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  T>>?|): R|kotlin/Unit|
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
-            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/AbstractClass.Companion| {
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/AbstractClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            private final const [ResolvedTo(STATUS)] val constant: <implicit> = LAZY_EXPRESSION
-                private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+            private final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
         }
 

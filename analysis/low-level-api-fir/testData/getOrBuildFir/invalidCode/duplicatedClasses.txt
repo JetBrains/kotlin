@@ -8,13 +8,13 @@ public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] duplicatedClasses.kt
-    public final [ResolvedTo(STATUS)] class SomeClass : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=SomeClass] constructor(): R|SomeClass| {
+    public final? [ResolvedTo(RAW_FIR)] class SomeClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SomeClass] constructor(): R|SomeClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] val prop: <implicit> = LAZY_EXPRESSION
-            public [ResolvedTo(STATUS)] [ContainingClassKey=SomeClass] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SomeClass] get(): <implicit>
 
     }
     public final [ResolvedTo(STATUS)] class SomeClass : R|kotlin/Any| {
