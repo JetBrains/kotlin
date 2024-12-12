@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Attribute
 import org.gradle.kotlin.dsl.maven
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.UklibResolutionStrategy
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.utils.keysToMap
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+@ExperimentalWasmDsl
 class UklibResolutionTests {
 
     @Test

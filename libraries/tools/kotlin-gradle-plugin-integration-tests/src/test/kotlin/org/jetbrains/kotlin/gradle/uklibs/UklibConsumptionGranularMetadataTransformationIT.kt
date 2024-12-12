@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.uklibs
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.locateOrRegisterMetadataDependencyTransformationTask
@@ -14,7 +15,7 @@ import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.pathString
 import kotlin.test.assertEquals
 
-
+@OptIn(ExperimentalKotlinGradlePluginApi::class)
 @MppGradlePluginTests
 @DisplayName("Test the GMT runtime behavior")
 class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
@@ -92,6 +93,8 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
             addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(directPublisher)
             addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(transitivePublisher)
             buildScriptInjection {
+                project.setUklibResolutionStrategy()
+                project.computeUklibChecksum(false)
                 project.applyMultiplatform {
                     iosArm64()
                     iosX64()
@@ -139,12 +142,12 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
 
             assertEquals(
                 listOf(
-                    listOf("consumerIosMain", "uklib-foo-direct-1.0-directProducerIosMain"),
-                    listOf("consumerIosMain", "uklib-foo-transitive-1.0-transitiveProducerIosMain"),
-                    listOf("consumerAppleMain", "uklib-foo-direct-1.0-directProducerAppleMain"),
-                    listOf("consumerAppleMain", "uklib-foo-transitive-1.0-transitiveProducerAppleMain"),
-                    listOf("consumerCommonMain", "uklib-foo-direct-1.0-directProducerCommonMain"),
-                    listOf("consumerCommonMain", "uklib-foo-transitive-1.0-transitiveProducerCommonMain"),
+                    listOf("consumerIosMain", "uklib-foo-direct-1.0-directProducerIosMain-"),
+                    listOf("consumerIosMain", "uklib-foo-transitive-1.0-transitiveProducerIosMain-"),
+                    listOf("consumerAppleMain", "uklib-foo-direct-1.0-directProducerAppleMain-"),
+                    listOf("consumerAppleMain", "uklib-foo-transitive-1.0-transitiveProducerAppleMain-"),
+                    listOf("consumerCommonMain", "uklib-foo-direct-1.0-directProducerCommonMain-"),
+                    listOf("consumerCommonMain", "uklib-foo-transitive-1.0-transitiveProducerCommonMain-"),
                 ),
                 outputClasspath.map {
                     it.toPath().toList().takeLast(2).map { it.pathString }

@@ -241,3 +241,10 @@ internal fun Project.setUklibResolutionStrategy(strategy: UklibResolutionStrateg
         strategy.propertyName,
     )
 }
+
+fun Project.computeUklibChecksum(enable: Boolean = false) {
+    propertiesExtension.set(
+        PropertiesProvider.PropertyNames.KOTLIN_MPP_COMPUTE_UKLIB_CHECKSUM,
+        enable.toString(),
+    )
+}

@@ -26,6 +26,7 @@ internal data class IncompatibleUklibVersion(
 internal fun deserializeUklibFromDirectory(directory: File): Uklib {
     val umanifest = directory.resolve(UMANIFEST_FILE_NAME)
     if (!umanifest.exists()) error("Can't deserialize Uklib from ${directory} because $UMANIFEST_FILE_NAME doesn't exist")
+    @Suppress("UNCHECKED_CAST")
     val json = Gson().fromJson(umanifest.reader(), Map::class.java) as Map<String, Any>
 
     val manifestVersion = json.property<String>(UMANIFEST_VERSION)

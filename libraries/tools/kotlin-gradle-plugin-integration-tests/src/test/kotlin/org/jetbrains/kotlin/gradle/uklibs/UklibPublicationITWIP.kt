@@ -20,6 +20,7 @@ import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 import kotlin.test.assertEquals
 import com.android.build.api.dsl.LibraryExtension
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.ArchiveUklibTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.w3c.dom.Document
@@ -27,6 +28,7 @@ import org.w3c.dom.Element
 import java.io.File
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.diagnostics.UklibFragmentsChecker
 
+@ExperimentalKotlinGradlePluginApi
 @MppGradlePluginTests
 @DisplayName("Smoke test uklib artifact publication")
 class UklibPublicationITWIP : KGPBaseTest() {

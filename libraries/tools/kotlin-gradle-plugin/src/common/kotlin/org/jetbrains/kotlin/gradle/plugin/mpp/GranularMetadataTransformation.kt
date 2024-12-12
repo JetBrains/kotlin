@@ -119,6 +119,7 @@ internal class GranularMetadataTransformation(
         val sourceSetMetadataLocationsOfProjectDependencies: KotlinProjectSharedDataProvider<SourceSetMetadataLocations>,
         val transformProjectDependencies: Boolean,
         val uklibFragmentAttributes: Set<String>,
+        val computeUklibChecksum: Boolean,
     ) {
         constructor(project: Project, kotlinSourceSet: KotlinSourceSet, transformProjectDependencies: Boolean = true) : this(
             build = project.currentBuild,
@@ -135,6 +136,7 @@ internal class GranularMetadataTransformation(
                 .consumeCommonSourceSetMetadataLocations(kotlinSourceSet.internal.resolvableMetadataConfiguration),
             transformProjectDependencies = transformProjectDependencies,
             uklibFragmentAttributes = kotlinSourceSet.metadataFragmentAttributes.map { it.safeToConsume() }.toSet(),
+            computeUklibChecksum = project.kotlinPropertiesProvider.computeUklibChecksum,
         )
     }
 
@@ -319,6 +321,7 @@ internal class GranularMetadataTransformation(
                     ),
                     // FIXME: Should this be fragmentsVisibleByThisSourceSet?
                     allVisibleFragments,
+                    params.computeUklibChecksum,
                 )
             )
         )

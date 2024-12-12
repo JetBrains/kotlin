@@ -12,6 +12,7 @@ import org.gradle.api.internal.GradleInternal
 import org.gradle.api.internal.project.ProjectStateRegistry
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -25,6 +26,7 @@ import java.io.Serializable
 import kotlin.io.path.pathString
 import kotlin.test.assertEquals
 
+@OptIn(ExperimentalWasmDsl::class)
 @MppGradlePluginTests
 @DisplayName("Smoke test uklib consumption")
 class UklibConsumptionIT : KGPBaseTest() {
@@ -370,6 +372,7 @@ class UklibConsumptionIT : KGPBaseTest() {
             addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(direct)
             addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(transitive)
             buildScriptInjection {
+                project.computeUklibChecksum(false)
                 project.setUklibResolutionStrategy()
                 project.applyMultiplatform {
                     linuxArm64()
@@ -400,7 +403,7 @@ class UklibConsumptionIT : KGPBaseTest() {
             assertEquals(
                 listOf(
                     listOf("foo", "direct", "1.0", "direct-1.0.jar"),
-                    listOf("build", "kotlinTransformedMetadataLibraries", "commonMain", "uklib-foo-transitive-1.0-commonMain"),
+                    listOf("build", "kotlinTransformedMetadataLibraries", "commonMain", "uklib-foo-transitive-1.0-commonMain-"),
                 ),
                 classpath.filterNot {
                     "kotlin-stdlib" in it.name
