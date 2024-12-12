@@ -129,6 +129,8 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
     companion object {
         val COLUMNS_CONTAINER_ID =
             CallableId(ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("ColumnsContainer")), Name.identifier("get"))
+        val COLUMNS_SCOPE_ID =
+            CallableId(ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("ColumnsScope")), Name.identifier("get"))
         val DATA_ROW_ID =
             CallableId(ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("DataRow")), Name.identifier("get"))
     }
@@ -196,7 +198,7 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
 
         val get = if (isDataColumn) {
             context
-                .referenceFunctions(COLUMNS_CONTAINER_ID)
+                .referenceFunctions(COLUMNS_SCOPE_ID)
                 .single {
                     it.owner.valueParameters.size == 1 && it.owner.valueParameters[0].type == context.irBuiltIns.stringType
                 }

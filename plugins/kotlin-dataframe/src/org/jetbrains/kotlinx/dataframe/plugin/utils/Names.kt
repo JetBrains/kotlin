@@ -33,6 +33,12 @@ object Names {
             FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")),
             Name.identifier("ColumnsContainer")
         )
+
+    val COLUMNS_SCOPE_CLASS_ID: ClassId
+        get() = ClassId(
+            FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")),
+            Name.identifier("ColumnsScope")
+        )
     val DATA_ROW_CLASS_ID: ClassId
         get() = ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), Name.identifier("DataRow"))
     val DF_ANNOTATIONS_PACKAGE: Name
