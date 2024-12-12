@@ -77,7 +77,7 @@ analyses with `KaReadActionConfinementLifetimeToken`
 
 ## KaSymbol
 
-`KaSymbol`is an **Lifecycle Owner** that describes Kotlin or Java (as Kotlin sees it) declaration. `KaSymbol`represents:
+`KaSymbol` is an **Lifecycle Owner** that describes Kotlin or Java (as Kotlin sees it) declaration. `KaSymbol`represents:
 
 * Source Kotlin/Java declarations
 * Decompiled Kotlin/Java declarations
