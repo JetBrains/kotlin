@@ -1792,7 +1792,7 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
         public class DeclarationAndUsages {
           @Test
           public void testAllFilesPresentInDeclarationAndUsages() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
           }
 
           @Test
