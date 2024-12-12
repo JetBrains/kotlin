@@ -66,7 +66,7 @@ fun fooUnsigned1(): UInt = 42u
 @WasmExport()
 fun fooUnsigned2(): UByte = 42u
 
-<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(x: <!DEBUG_INFO_MISSING_UNRESOLVED!>Int<!>)<!>
+<!EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS!>context(x: Int)
 @WasmExport()
 fun fooWithContext() {
-}
+}<!>

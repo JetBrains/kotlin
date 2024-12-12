@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.wasm.checkers.declaration
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -39,7 +40,11 @@ object FirWasmExportAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKin
             if (declaration.symbol.isEffectivelyExternal(context.session) || declaration.hasValidJsCodeBody()) {
                 reporter.reportOn(annotation.source, FirWasmErrors.WASM_EXPORT_ON_EXTERNAL_DECLARATION, context)
             }
-
+            if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+                if (declaration.contextParameters.isNotEmpty()) {
+                    reporter.reportOn(declaration.source, FirWasmErrors.EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS, context)
+                }
+            }
             checkWasmInteropSignature(declaration, context, reporter)
         }
     }

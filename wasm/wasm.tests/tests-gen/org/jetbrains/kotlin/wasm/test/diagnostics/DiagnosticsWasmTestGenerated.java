@@ -58,6 +58,12 @@ public class DiagnosticsWasmTestGenerated extends AbstractDiagnosticsWasmTest {
     }
 
     @Test
+    @TestMetadata("contextParameters.kt")
+    public void testContextParameters() {
+      runTest("compiler/testData/diagnostics/wasmTests/jsInterop/contextParameters.kt");
+    }
+
+    @Test
     @TestMetadata("correctJsInteropTypes.kt")
     public void testCorrectJsInteropTypes() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/correctJsInteropTypes.kt");

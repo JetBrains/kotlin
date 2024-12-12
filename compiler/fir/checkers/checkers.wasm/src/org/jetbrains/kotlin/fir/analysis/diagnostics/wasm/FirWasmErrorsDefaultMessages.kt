@@ -25,7 +25,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.NON_EXTE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.WASM_EXPORT_ON_EXTERNAL_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.WASM_IMPORT_EXPORT_PARAMETER_DEFAULT_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE
@@ -107,5 +109,8 @@ object FirWasmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT, "External functions must be annotated with '@WasmImport'.")
 
         map.put(ASSOCIATED_OBJECT_INVALID_BINDING, "Invalid associated object binding.")
+
+        map.put(EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS, "External declaration cannot have context parameters.")
+        map.put(EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS, "Exported declaration cannot have context parameters.")
     }
 }
