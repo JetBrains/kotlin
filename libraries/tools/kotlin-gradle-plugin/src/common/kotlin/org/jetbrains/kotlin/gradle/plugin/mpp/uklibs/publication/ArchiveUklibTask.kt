@@ -26,7 +26,7 @@ internal abstract class ArchiveUklibTask : DefaultTask() {
 
     @get:OutputFile
     val outputZip: RegularFileProperty = project.objects.fileProperty().convention(
-        project.layout.buildDirectory.file("package.${Uklib.UKLIB_EXTENSION}")
+        project.layout.buildDirectory.file("library.${Uklib.UKLIB_EXTENSION}")
     )
 
     @get:Internal
