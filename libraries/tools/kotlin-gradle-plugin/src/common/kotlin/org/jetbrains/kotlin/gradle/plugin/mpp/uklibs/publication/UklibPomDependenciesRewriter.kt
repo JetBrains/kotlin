@@ -11,8 +11,10 @@ import org.gradle.api.Project
 import org.gradle.api.XmlProvider
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.utils.future
 
 internal class UklibPomDependenciesRewriter {
     data class DependencyGA(
@@ -56,30 +58,32 @@ internal class UklibPomDependenciesRewriter {
 
             val map = project.provider {
                 val dependencyRemapping = mutableMapOf<DependencyGA, KotlinUsageContext.MavenScope>()
-                rootComponent.subcomponentTargets.flatMap {
-                    it.internal.kotlinComponents
-                        .filterIsInstance<KotlinVariant>()
-                        .flatMap { publishedComponent ->
-                            publishedComponent.internal.usages
-                                .filterIsInstance<DefaultKotlinUsageContext>()
-                                .filter { it.publishOnlyIf.predicate() }
-                                .map { publishedVariant ->
-                                    // FIXME: This breaks with project dependencies with PI
-                                    ScopedConfigurationDependencies(
-                                        project.configurations.getByName(publishedVariant.dependencyConfigurationName)
-                                            .allDependencies.toList(),
-                                        publishedVariant.mavenScope,
-                                    )
-                                }
-                        }
-                }.forEach { set ->
-                    set.dependencySet.forEach { dependency ->
-                        val dep = DependencyGA(dependency.group, dependency.name)
-                        val exScope = dependencyRemapping[dep]
-                        when (exScope) {
-                            KotlinUsageContext.MavenScope.COMPILE -> {}
-                            KotlinUsageContext.MavenScope.RUNTIME -> dependencyRemapping[dep] = set.scope ?: KotlinUsageContext.MavenScope.COMPILE
-                            null -> dependencyRemapping[dep] = set.scope ?: KotlinUsageContext.MavenScope.COMPILE
+                project.launch {
+                    rootComponent.subcomponentTargets().flatMap {
+                        it.internal.kotlinComponents
+                            .filterIsInstance<KotlinVariant>()
+                            .flatMap { publishedComponent ->
+                                publishedComponent.internal.usages
+                                    .filterIsInstance<DefaultKotlinUsageContext>()
+                                    .filter { it.publishOnlyIf.predicate() }
+                                    .map { publishedVariant ->
+                                        // FIXME: This breaks with project dependencies with PI
+                                        ScopedConfigurationDependencies(
+                                            project.configurations.getByName(publishedVariant.dependencyConfigurationName)
+                                                .allDependencies.toList(),
+                                            publishedVariant.mavenScope,
+                                        )
+                                    }
+                            }
+                    }.forEach { set ->
+                        set.dependencySet.forEach { dependency ->
+                            val dep = DependencyGA(dependency.group, dependency.name)
+                            val exScope = dependencyRemapping[dep]
+                            when (exScope) {
+                                KotlinUsageContext.MavenScope.COMPILE -> {}
+                                KotlinUsageContext.MavenScope.RUNTIME -> dependencyRemapping[dep] = set.scope ?: KotlinUsageContext.MavenScope.COMPILE
+                                null -> dependencyRemapping[dep] = set.scope ?: KotlinUsageContext.MavenScope.COMPILE
+                            }
                         }
                     }
                 }

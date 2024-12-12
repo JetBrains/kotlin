@@ -46,12 +46,14 @@ abstract class KotlinSoftwareComponent(
 
     private val metadataTarget get() = project.multiplatformExtension.metadataTarget
 
-    internal val subcomponentTargets = kotlinTargets
-        .filter { target -> target !is KotlinMetadataTarget }
+    internal suspend fun subcomponentTargets(): List<KotlinTarget> {
+        AfterFinaliseCompilations.await()
+        return kotlinTargets
+            .filter { target -> target !is KotlinMetadataTarget }
+    }
 
     private val _variants = project.future {
-        AfterFinaliseCompilations.await()
-        subcomponentTargets
+        subcomponentTargets()
             .flatMap { target ->
                 val targetPublishableComponentNames = target.internal.kotlinComponents
                     .filter { component -> component.publishable }
