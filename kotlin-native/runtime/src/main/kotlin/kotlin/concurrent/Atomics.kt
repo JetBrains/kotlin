@@ -16,7 +16,7 @@ import kotlin.reflect.*
  */
 @Suppress("DEPRECATION")
 @SinceKotlin("1.9")
-@Deprecated(message = "Use kotlin.concurrent.atomics.AtomicInt instead.", replaceWith = ReplaceWith("kotlin.concurrent.atomics.AtomicInt", "kotlin.concurrent.atomics.AtomicInt"))
+@Deprecated(message = "Use kotlin.concurrent.atomics.AtomicInt instead.", replaceWith = ReplaceWith("kotlin.concurrent.atomics.AtomicInt"))
 public class AtomicInt(@Volatile public var value: Int) {
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
@@ -82,7 +82,7 @@ public class AtomicInt(@Volatile public var value: Int) {
  */
 @Suppress("DEPRECATION")
 @SinceKotlin("1.9")
-@Deprecated(message = "Use kotlin.concurrent.atomics.AtomicLong instead.", replaceWith = ReplaceWith("kotlin.concurrent.atomics.AtomicLong", "kotlin.concurrent.atomics.AtomicLong"))
+@Deprecated(message = "Use kotlin.concurrent.atomics.AtomicLong instead.", replaceWith = ReplaceWith("kotlin.concurrent.atomics.AtomicLong"))
 public class AtomicLong(@Volatile public var value: Long)  {
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
@@ -146,7 +146,7 @@ public class AtomicLong(@Volatile public var value: Long)  {
  */
 @Suppress("DEPRECATION")
 @SinceKotlin("1.9")
-@Deprecated(message = "Use kotlin.concurrent.atomics.AtomicReference instead.", replaceWith = ReplaceWith("kotlin.concurrent.atomics.AtomicReference", "kotlin.concurrent.atomics.AtomicReference"))
+@Deprecated(message = "Use kotlin.concurrent.atomics.AtomicReference instead.", replaceWith = ReplaceWith("kotlin.concurrent.atomics.AtomicReference"))
 public class AtomicReference<T>(public var value: T) {
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
@@ -190,7 +190,7 @@ public class AtomicReference<T>(public var value: T) {
 @Suppress("DEPRECATION")
 @SinceKotlin("1.9")
 @ExperimentalForeignApi
-@Deprecated(message = "Use kotlin.concurrent.atomics.AtomicNativePtr instead.", replaceWith = ReplaceWith("kotlin.concurrent.atomics.AtomicNativePtr", "kotlin.concurrent.atomics.AtomicNativePtr"))
+@Deprecated(message = "Use kotlin.concurrent.atomics.AtomicNativePtr instead.", replaceWith = ReplaceWith("kotlin.concurrent.atomics.AtomicNativePtr"))
 public class AtomicNativePtr(@Volatile public var value: NativePtr) {
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
