@@ -517,6 +517,15 @@ fun TestProject.addKgpToBuildScriptCompilationClasspath() {
     }
 }
 
+fun TestProject.addAgpToBuildScriptCompilationClasspath(androidVersion: String) {
+    transferPluginRepositoriesIntoBuildScript()
+    buildScriptBuildscriptBlockInjection {
+        buildscript.configurations.getByName("classpath").dependencies.add(
+            buildscript.dependencies.create("com.android.tools.build:gradle:${androidVersion}")
+        )
+    }
+}
+
 /**
  * Inject the [buildscript] block of the project build script. The primary use case for this injection is the configuration of the build
  * script classpath before plugin application

@@ -17,5 +17,8 @@ internal val KotlinJvmJarArtifact = KotlinTargetArtifact { target, apiElements, 
         jar.from(mainCompilation.output.allOutputs)
     }
 
+    /**
+     * FIXME: Move platform artifact publication in Uklib to KotlinTargetArtifact extensions
+     */
     target.createPublishArtifact(jvmJarTask, JAR_TYPE, apiElements, runtimeElements)
 }
