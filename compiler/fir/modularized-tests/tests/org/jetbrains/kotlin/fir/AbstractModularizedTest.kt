@@ -77,17 +77,13 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
 
     override fun setUp() {
         super.setUp()
-        if (!ENABLE_SLOW_ASSERTIONS) {
-            AbstractTypeChecker.RUN_SLOW_ASSERTIONS = false
-        }
+        AbstractTypeChecker.RUN_SLOW_ASSERTIONS = ENABLE_SLOW_ASSERTIONS
         reportDate = detectReportDate()
     }
 
     override fun tearDown() {
         super.tearDown()
-        if (!ENABLE_SLOW_ASSERTIONS) {
-            AbstractTypeChecker.RUN_SLOW_ASSERTIONS = true
-        }
+        AbstractTypeChecker.RUN_SLOW_ASSERTIONS = true
     }
 
     private fun loadModule(moduleElement: Element): ModuleData {
