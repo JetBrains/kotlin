@@ -7,11 +7,14 @@ package org.jetbrains.kotlin.gradle.uklibs
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
+import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.nativeCompilerClasspath
 import java.io.File
@@ -55,6 +58,7 @@ data class PublishedProject(
         val pom: File get() = path.resolve("${artifactsPrefix}.pom")
         val uklib: File get() = path.resolve("${artifactsPrefix}.uklib")
         val jar: File get() = path.resolve("${artifactsPrefix}.jar")
+        val psmJar: File get() = path.resolve("${artifactsPrefix}-psm.jar")
     }
 
     val rootCoordinate: String = "$group:$name:$version"
@@ -88,11 +92,12 @@ fun Project.setupMavenPublication(
     }
 }
 
-fun TestProject.publish(
-    publisherConfiguration: PublisherConfiguration,
-    deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
-): PublishedProject {
-    val repositoryIdentifier = "_KotlinPublication_${generateIdentifier()}_"
+fun TestProject.publishReturn(
+    publisherConfiguration: PublisherConfiguration = PublisherConfiguration(
+        group = "default_kotlin_${generateIdentifier()}"
+    ),
+    repositoryIdentifier: String,
+): ReturnFromBuildScriptAfterExecution<PublishedProject> {
     buildScriptInjection {
         if (project.hasProperty(repositoryIdentifier)) {
             project.setupMavenPublication(repositoryIdentifier, publisherConfiguration)
@@ -105,15 +110,32 @@ fun TestProject.publish(
             project.name,
             publisherConfiguration.version,
         )
-    }.buildAndReturn(
+    }
+}
+
+fun TestProject.publish(
+    vararg buildArguments: String = emptyArray(),
+    publisherConfiguration: PublisherConfiguration = PublisherConfiguration(
+        group = "default_kotlin_${generateIdentifier()}"
+    ),
+    deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
+): PublishedProject {
+    val repositoryIdentifier = "_KotlinPublication_${generateIdentifier()}_"
+    return publishReturn(
+        publisherConfiguration = publisherConfiguration,
+        repositoryIdentifier = repositoryIdentifier,
+    ).buildAndReturn(
         "publishAllPublicationsTo${repositoryIdentifier}Repository",
         "-P${repositoryIdentifier}",
+        *buildArguments,
         deriveBuildOptions = deriveBuildOptions,
     )
 }
 
 fun TestProject.publishJava(
-    publisherConfiguration: PublisherConfiguration,
+    publisherConfiguration: PublisherConfiguration = PublisherConfiguration(
+        group = "default_java_${generateIdentifier()}"
+    ),
     deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
 ): PublishedProject {
     val repositoryIdentifier = "_JavaPublication_${generateIdentifier()}_"
@@ -221,4 +243,22 @@ fun TestProject.dumpKlibMetadataSignatures(klib: File): String {
     build(dumpName)
 
     return outputFile.readText()
+}
+
+val Project.propertiesExtension: ExtraPropertiesExtension
+    get() = extensions.getByType(ExtraPropertiesExtension::class.java)
+
+fun Project.enableUklibPublication(enable: Boolean = true) {
+    propertiesExtension.set(
+        PropertiesProvider.PropertyNames.KOTLIN_MPP_PUBLISH_UKLIB,
+        enable.toString(),
+    )
+    if (enable) enableCrossCompilation()
+}
+
+fun Project.enableCrossCompilation(enable: Boolean = true) {
+    propertiesExtension.set(
+        PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION,
+        enable.toString(),
+    )
 }

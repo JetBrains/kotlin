@@ -34,6 +34,14 @@ internal val Project.shouldCompileIntermediateSourceSetsToMetadata: Boolean
     get() = true // hierarchical structure is always enabled
 
 
+// FIXME: Test this !!!
+internal val Project.psmJarClassifier: String?
+    get() = if (kotlinPropertiesProvider.publishUklib) {
+        "psm"
+    } else {
+        null
+    }
+
 class KotlinMetadataTargetConfigurator :
     KotlinOnlyTargetConfigurator<KotlinCompilation<*>, KotlinMetadataTarget>(createTestCompilation = false) {
     companion object {
