@@ -1,0 +1,7 @@
+public final class com/example/home/MainKt {
+    // source: 'main.kt'
+    private final static method callMe$lambda$2(p0: com.example.home.Status, p1: int, p2: androidx.compose.runtime.Composer, p3: int): kotlin.Unit
+    public final static method callMe(p0: com.example.home.Status, p1: androidx.compose.runtime.Composer, p2: int): void
+    private final static method ttt$lambda$1(p0: com.example.home.LLL, p1: int, p2: androidx.compose.runtime.Composer, p3: int): kotlin.Unit
+    public final static method ttt(p0: com.example.home.LLL, p1: androidx.compose.runtime.Composer, p2: int): void
+}

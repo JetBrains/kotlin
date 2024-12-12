@@ -24,6 +24,12 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("annotatedParamInImmutable.kt")
+  public void testAnnotatedParamInImmutable() {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/annotatedParamInImmutable.kt");
+  }
+
+  @Test
   @TestMetadata("classContainingInlineFunction.kt")
   public void testClassContainingInlineFunction() {
     runTest("plugins/compose/compiler-hosted/testData/codegen/classContainingInlineFunction.kt");
