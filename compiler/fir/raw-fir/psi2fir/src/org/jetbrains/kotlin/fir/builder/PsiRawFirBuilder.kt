@@ -1553,7 +1553,7 @@ open class PsiRawFirBuilder(
                 baseSession.extensionService.scriptConfigurators.firstOrNull { it.accepts(sourceFile, scriptSource) }
             return convertScript(script, scriptSource, fileName) {
                 scriptConfigurator?.run {
-                    // TODO: looks like we may loose the implicit imports here, find out whether and how the file could be configured too
+                    // TODO: looks like we may loose the implicit imports here, find out whether and how the file could be configured too (KT-73847)
 //                    configureContainingFile(fileBuilder)
                     configure(sourceFile, context)
                 }
