@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.fir.analysis.wasm.checkers.declaration
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonExternalChecker
 import org.jetbrains.kotlin.fir.declarations.*
@@ -37,11 +39,21 @@ object FirWasmExternalChecker : FirWebCommonExternalChecker(allowCompanionInInte
             if (declaration.isSuspend) {
                 reporter.reportOn(declaration.source, FirWebCommonErrors.WRONG_EXTERNAL_DECLARATION, "suspend function", context)
             }
+            if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+                if (declaration.contextParameters.isNotEmpty()) {
+                    reporter.reportOn(declaration.source, FirWasmErrors.EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS, context)
+                }
+            }
         }
 
         if (declaration is FirProperty) {
             if (declaration.isLateInit) {
                 reporter.reportOn(declaration.source, FirWebCommonErrors.WRONG_EXTERNAL_DECLARATION, "lateinit property", context)
+            }
+            if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+                if (declaration.contextParameters.isNotEmpty()) {
+                    reporter.reportOn(declaration.source, FirWasmErrors.EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS, context)
+                }
             }
         }
     }
