@@ -316,7 +316,7 @@ open class LocalDeclarationsLowering(
                         this.body?.let { localContext.remapTypes(it) }
                     }
 
-                    for (argument in original.valueParameters) {
+                    for (argument in original.parameters) {
                         val body = argument.defaultValue ?: continue
                         if (remapTypesInExtractedLocalFunctions) {
                             localContext.remapTypes(body)
