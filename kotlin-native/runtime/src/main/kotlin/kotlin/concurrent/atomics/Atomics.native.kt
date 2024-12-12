@@ -23,9 +23,9 @@ import kotlin.reflect.KMutableProperty0
 @SinceKotlin("2.1")
 @ExperimentalStdlibApi
 public actual class AtomicInt public actual constructor(
-        @get:Deprecated("To read the atomic value use load().", ReplaceWith("this.load()"))
-        @set:Deprecated("To atomically set the new value use store(newValue: Int).", ReplaceWith("this.store(newValue)"))
-        @Volatile public var value: Int
+    @get:Deprecated("To read the atomic value use load().", ReplaceWith("this.load()"))
+    @set:Deprecated("To atomically set the new value use store(newValue: Int).", ReplaceWith("this.store(newValue)"))
+    @Volatile public var value: Int,
 ) {
     /**
      * Atomically loads the value from this [AtomicInt].
@@ -59,7 +59,8 @@ public actual class AtomicInt public actual constructor(
      *
      * Comparison of values is done by value.
      */
-    public actual fun compareAndExchange(expectedValue: Int, newValue: Int): Int = this::value.compareAndExchangeField(expectedValue, newValue)
+    public actual fun compareAndExchange(expectedValue: Int, newValue: Int): Int =
+        this::value.compareAndExchangeField(expectedValue, newValue)
 
     /**
      * Atomically adds the [given value][delta] to the current value of this [AtomicInt] and returns the old value.
@@ -134,9 +135,9 @@ public actual class AtomicInt public actual constructor(
 @SinceKotlin("2.1")
 @ExperimentalStdlibApi
 public actual class AtomicLong public actual constructor(
-        @get:Deprecated("To read the atomic value use load().", ReplaceWith("this.load()"))
-        @set:Deprecated("To atomically set the new value use store(newValue: Long).", ReplaceWith("this.store(newValue)"))
-        @Volatile public var value: Long
+    @get:Deprecated("To read the atomic value use load().", ReplaceWith("this.load()"))
+    @set:Deprecated("To atomically set the new value use store(newValue: Long).", ReplaceWith("this.store(newValue)"))
+    @Volatile public var value: Long,
 ) {
     /**
      * Atomically loads the value from this [AtomicLong].
@@ -170,7 +171,8 @@ public actual class AtomicLong public actual constructor(
      *
      * Comparison of values is done by value.
      */
-    public actual fun compareAndExchange(expectedValue: Long, newValue: Long): Long = this::value.compareAndExchangeField(expectedValue, newValue)
+    public actual fun compareAndExchange(expectedValue: Long, newValue: Long): Long =
+        this::value.compareAndExchangeField(expectedValue, newValue)
 
     /**
      * Atomically adds the [given value][delta] to the current value of this [AtomicLong] and returns the old value.
@@ -270,7 +272,8 @@ public actual class AtomicBoolean actual constructor(@Volatile private var value
      *
      * Comparison of values is done by value.
      */
-    public actual fun compareAndSet(expectedValue: Boolean, newValue: Boolean): Boolean = this::value.compareAndSetField(expectedValue, newValue)
+    public actual fun compareAndSet(expectedValue: Boolean, newValue: Boolean): Boolean =
+        this::value.compareAndSetField(expectedValue, newValue)
 
     /**
      * Atomically stores the given [new value][newValue] into this [AtomicBoolean] if the current value equals the [expected value][expectedValue]
@@ -278,7 +281,8 @@ public actual class AtomicBoolean actual constructor(@Volatile private var value
      *
      * Comparison of values is done by value.
      */
-    public actual fun compareAndExchange(expectedValue: Boolean, newValue: Boolean): Boolean = this::value.compareAndExchangeField(expectedValue, newValue)
+    public actual fun compareAndExchange(expectedValue: Boolean, newValue: Boolean): Boolean =
+        this::value.compareAndExchangeField(expectedValue, newValue)
 
     /**
      * Returns the string representation of the underlying [Boolean] value.
@@ -301,9 +305,9 @@ public actual class AtomicBoolean actual constructor(@Volatile private var value
 @SinceKotlin("2.1")
 @ExperimentalStdlibApi
 public actual class AtomicReference<T> actual constructor(
-        @get:Deprecated("To read the atomic value use load().", ReplaceWith("this.load()"))
-        @set:Deprecated("To atomically set the new value use store(newValue: T).", ReplaceWith("this.store(newValue)"))
-        @Volatile public var value: T
+    @get:Deprecated("To read the atomic value use load().", ReplaceWith("this.load()"))
+    @set:Deprecated("To atomically set the new value use store(newValue: T).", ReplaceWith("this.store(newValue)"))
+    @Volatile public var value: T,
 ) {
 
     /**
@@ -312,14 +316,14 @@ public actual class AtomicReference<T> actual constructor(
     public actual fun load(): T = this::value.atomicGetField()
 
     /**
-     * Atomically stores the given [new value][newValue] into this [AtomicReference] and returns the old value.
-     */
-    public actual fun exchange(newValue: T): T = this::value.getAndSetField(newValue)
-
-    /**
      * Atomically stores the [new value][newValue] into this [AtomicReference].
      */
     public actual fun store(newValue: T): Unit = this::value.atomicSetField(newValue)
+
+    /**
+     * Atomically stores the given [new value][newValue] into this [AtomicReference] and returns the old value.
+     */
+    public actual fun exchange(newValue: T): T = this::value.getAndSetField(newValue)
 
     /**
      * Atomically stores the given [new value][newValue] into this [AtomicReference] if the current value equals the [expected value][expectedValue],
@@ -352,7 +356,7 @@ public actual class AtomicReference<T> actual constructor(
      * This operation does not provide any atomicity guarantees.
      */
     public actual override fun toString(): String =
-            "${debugString(this)} -> ${debugString(value)}"
+        "${debugString(this)} -> ${debugString(value)}"
 }
 
 /**
@@ -371,9 +375,9 @@ public actual class AtomicReference<T> actual constructor(
 @SinceKotlin("2.1")
 @ExperimentalForeignApi
 public class AtomicNativePtr(
-        @get:Deprecated("To read the atomic value use load().", ReplaceWith("this.load()"))
-        @set:Deprecated("To atomically set the new value use store(newValue: T).", ReplaceWith("this.store(newValue)"))
-        @Volatile public var value: NativePtr
+    @get:Deprecated("To read the atomic value use load().", ReplaceWith("this.load()"))
+    @set:Deprecated("To atomically set the new value use store(newValue: T).", ReplaceWith("this.store(newValue)"))
+    @Volatile public var value: NativePtr,
 ) {
 
     /**
@@ -401,7 +405,7 @@ public class AtomicNativePtr(
      * Comparison of values is done by value.
      */
     public fun compareAndSet(expectedValue: NativePtr, newValue: NativePtr): Boolean =
-            this::value.compareAndSetField(expectedValue, newValue)
+        this::value.compareAndSetField(expectedValue, newValue)
 
     /**
      * Atomically stores the given [new value][newValue] into this [AtomicNativePtr] if the current value equals the [expected value][expectedValue]
@@ -410,7 +414,7 @@ public class AtomicNativePtr(
      * Comparison of values is done by value.
      */
     public fun compareAndExchange(expectedValue: NativePtr, newValue: NativePtr): NativePtr =
-            this::value.compareAndExchangeField(expectedValue, newValue)
+        this::value.compareAndExchangeField(expectedValue, newValue)
 
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.

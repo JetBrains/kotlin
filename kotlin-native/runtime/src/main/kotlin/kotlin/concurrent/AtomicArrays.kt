@@ -16,7 +16,10 @@ import kotlin.concurrent.atomics.*
 @SinceKotlin("1.9")
 @RequireKotlin(version = "1.9.20", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 @ExperimentalStdlibApi
-@Deprecated(message = "Use kotlin.concurrent.atomics.AtomicIntArray instead.", replaceWith = ReplaceWith("kotlin.concurrent.atomics.AtomicIntArray"))
+@Deprecated(
+    message = "Use kotlin.concurrent.atomics.AtomicIntArray instead.",
+    replaceWith = ReplaceWith("kotlin.concurrent.atomics.AtomicIntArray")
+)
 public class AtomicIntArray {
     private val array: IntArray
 
@@ -200,7 +203,10 @@ public class AtomicIntArray {
 @RequireKotlin(version = "1.9.20", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 @ExperimentalStdlibApi
 @Suppress("DEPRECATION")
-@Deprecated(message = "Use kotlin.concurrent.atomics.AtomicIntArray instead.", replaceWith = ReplaceWith("AtomicIntArray(size, init)", "kotlin.concurrent.atomics.AtomicIntArray"))
+@Deprecated(
+    message = "Use kotlin.concurrent.atomics.AtomicIntArray instead.",
+    replaceWith = ReplaceWith("AtomicIntArray(size, init)", "kotlin.concurrent.atomics.AtomicIntArray")
+)
 public inline fun AtomicIntArray(size: Int, init: (Int) -> Int): AtomicIntArray {
     val inner = IntArray(size)
     for (index in 0 until size) {
@@ -216,7 +222,10 @@ public inline fun AtomicIntArray(size: Int, init: (Int) -> Int): AtomicIntArray 
 @SinceKotlin("1.9")
 @RequireKotlin(version = "1.9.20", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 @ExperimentalStdlibApi
-@Deprecated(message = "Use kotlin.concurrent.atomics.AtomicLongArray instead.", replaceWith = ReplaceWith("kotlin.concurrent.atomics.AtomicLongArray"))
+@Deprecated(
+    message = "Use kotlin.concurrent.atomics.AtomicLongArray instead.",
+    replaceWith = ReplaceWith("kotlin.concurrent.atomics.AtomicLongArray")
+)
 public class AtomicLongArray {
     private val array: LongArray
 
@@ -400,7 +409,10 @@ public class AtomicLongArray {
 @RequireKotlin(version = "1.9.20", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 @ExperimentalStdlibApi
 @Suppress("DEPRECATION")
-@Deprecated(message = "Use kotlin.concurrent.atomics.AtomicLongArray instead.", replaceWith = ReplaceWith("AtomicLongArray(size, init)", "kotlin.concurrent.atomics.AtomicIntArray"))
+@Deprecated(
+    message = "Use kotlin.concurrent.atomics.AtomicLongArray instead.",
+    replaceWith = ReplaceWith("AtomicLongArray(size, init)", "kotlin.concurrent.atomics.AtomicIntArray")
+)
 public inline fun AtomicLongArray(size: Int, init: (Int) -> Long): AtomicLongArray {
     val inner = LongArray(size)
     for (index in 0 until size) {
@@ -416,7 +428,10 @@ public inline fun AtomicLongArray(size: Int, init: (Int) -> Long): AtomicLongArr
 @SinceKotlin("1.9")
 @RequireKotlin(version = "1.9.20", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 @ExperimentalStdlibApi
-@Deprecated(message = "Use kotlin.concurrent.atomics.AtomicArray instead.", replaceWith = ReplaceWith("kotlin.concurrent.atomics.AtomicArray"))
+@Deprecated(
+    message = "Use kotlin.concurrent.atomics.AtomicArray instead.",
+    replaceWith = ReplaceWith("kotlin.concurrent.atomics.AtomicArray")
+)
 public class AtomicArray<T> {
     private val array: Array<T>
 
@@ -519,7 +534,10 @@ public class AtomicArray<T> {
 @RequireKotlin(version = "1.9.20", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 @ExperimentalStdlibApi
 @Suppress("UNCHECKED_CAST", "DEPRECATION")
-@Deprecated(message = "Use kotlin.concurrent.atomics.AtomicArray instead.", replaceWith = ReplaceWith("AtomicArray(size, init)", "kotlin.concurrent.atomics.AtomicArray"))
+@Deprecated(
+    message = "Use kotlin.concurrent.atomics.AtomicArray instead.",
+    replaceWith = ReplaceWith("AtomicArray(size, init)", "kotlin.concurrent.atomics.AtomicArray")
+)
 public inline fun <reified T> AtomicArray(size: Int, init: (Int) -> T): AtomicArray<T> {
     val inner = arrayOfNulls<T>(size)
     for (index in 0 until size) {
