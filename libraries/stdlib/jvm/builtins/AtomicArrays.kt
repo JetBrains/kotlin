@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.concurrent
+package kotlin.concurrent.atomics
 
 /**
  * An array of ints in which elements may be updated atomically.
