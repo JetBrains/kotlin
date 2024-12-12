@@ -13,6 +13,7 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.testing.base.TestingExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.UklibResolutionStrategy
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -140,6 +141,14 @@ fun Project.publishUklib(enabled: Boolean = true) {
 
 fun Project.enableCrossCompilation(enabled: Boolean = true) {
     propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION, enabled.toString())
+}
+
+internal fun Project.setUklibResolutionStrategy(strategy: UklibResolutionStrategy) {
+    propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_KMP_UKLIB_RESOLUTION_STRATEGY, strategy.propertyName)
+}
+
+fun Project.fakeUklibTransforms() {
+    propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_FAKE_UKLIB_TRANSFORMS, true.toString())
 }
 
 fun Project.enableIntransitiveMetadataConfiguration(enabled: Boolean = true) {

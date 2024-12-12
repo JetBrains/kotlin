@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "1.1.0",
+  "buildSystem": "Gradle",
+  "buildSystemVersion": "8.10",
+  "buildPlugin": "org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper",
+  "buildPluginVersion": "2.1.0-RC2",
+  "projectSettings": {
+    "isHmppEnabled": true,
+    "isCompatibilityMetadataVariantEnabled": false,
+    "isKPMEnabled": false
+  },
+  "projectTargets": [
+    {
+      "target": "org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget",
+      "platformType": "native",
+      "extras": {
+        "native": {
+          "konanTarget": "ios_arm64",
+          "konanVersion": "2.1.0-RC2",
+          "konanAbiVersion": "1.201.0"
+        }
+      }
+    },
+    {
+      "target": "org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithSimulatorTests",
+      "platformType": "native",
+      "extras": {
+        "native": {
+          "konanTarget": "ios_x64",
+          "konanVersion": "2.1.0-RC2",
+          "konanAbiVersion": "1.201.0"
+        }
+      }
+    },
+    {
+      "target": "org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget",
+      "platformType": "js",
+      "extras": {
+        "js": {
+          "isBrowserConfigured": false,
+          "isNodejsConfigured": false
+        }
+      }
+    },
+    {
+      "target": "org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget",
+      "platformType": "jvm",
+      "extras": {
+        "jvm": {
+          "jvmTarget": "17",
+          "withJavaEnabled": false
+        }
+      }
+    },
+    {
+      "target": "org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget",
+      "platformType": "native",
+      "extras": {
+        "native": {
+          "konanTarget": "linux_arm64",
+          "konanVersion": "2.1.0-RC2",
+          "konanAbiVersion": "1.201.0"
+        }
+      }
+    },
+    {
+      "target": "org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests",
+      "platformType": "native",
+      "extras": {
+        "native": {
+          "konanTarget": "linux_x64",
+          "konanVersion": "2.1.0-RC2",
+          "konanAbiVersion": "1.201.0"
+        }
+      }
+    },
+    {
+      "target": "org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget",
+      "platformType": "common"
+    },
+    {
+      "target": "org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget",
+      "platformType": "wasm",
+      "extras": {
+        "js": {
+          "isBrowserConfigured": false,
+          "isNodejsConfigured": false
+        }
+      }
+    },
+    {
+      "target": "org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget",
+      "platformType": "wasm",
+      "extras": {
+        "js": {
+          "isBrowserConfigured": false,
+          "isNodejsConfigured": false
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "url": "../../uklib-maven-gradle-packaging/1.0/uklib-maven-gradle-packaging-1.0.module",
+    "group": "foo.bar",
+    "module": "uklib-maven-gradle-packaging",
+    "version": "1.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.10"
+    }
+  },
+  "variants": [
+    {
+      "name": "iosX64ApiElements-published",
+      "attributes": {
+        "artifactType": "org.jetbrains.kotlin.klib",
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-api",
+        "org.jetbrains.kotlin.native.target": "ios_x64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "dependencies": [
+      ],
+      "files": [
+        {
+          "name": "uklib-maven-gradle-packaging-iosX64Main-1.0.klib",
+          "url": "uklib-maven-gradle-packaging-iosx64-1.0.klib",
+          "size": 3088,
+          "sha512": "c24b358a99005822a32e6c1d40970d9150d9810dd0fc97cf91dd9cecc06eb65a75618dc26d474990e763f1dea17e7b8799888bf0f7cb5199ed8352571fafba60",
+          "sha256": "de88efa26ed392fd30134cbacd70fe91d83c497d939282a7b6fb45c1c057c415",
+          "sha1": "e53c4b91e369b9d0afb03903d1e6da21be646046",
+          "md5": "876a0ca6b2f6b8f3fe377a89e34edcf7"
+        },
+        {
+          "name": "uklib-maven-gradle-packaging-iosX64Cinterop-fooMain-1.0.klib",
+          "url": "uklib-maven-gradle-packaging-iosx64-1.0-cinterop-foo.klib",
+          "size": 4618,
+          "sha512": "250314b3c6912e7c182403ab5cfd61de487698c290ed1641bfb58bb35ae6a4050e93d6883b2c99739ac1fdd247ee69eb90803e85e3ff647ccbe75ab32f4f9346",
+          "sha256": "c1e2c29498f31240d72e8cd77ddbe520fddb7615175df6701257a8eaf44920ec",
+          "sha1": "d25c53b22b97bc8344aa69efe8d89bd679f65dc8",
+          "md5": "77b9e799781339de873148911c96267b"
+        }
+      ]
+    },
+    {
+      "name": "iosX64SourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.native.target": "ios_x64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "files": [
+        {
+          "name": "uklib-maven-gradle-packaging-iosx64-1.0-sources.jar",
+          "url": "uklib-maven-gradle-packaging-iosx64-1.0-sources.jar",
+          "size": 701,
+          "sha512": "9196477fa6ba546e9064eec1a8884a3a1842ee45f5d955cd119bd2f509f6501c00edfb5d3eb01113591f9abf02fbc355c934f6518db27c838fa5082bc11c5c22",
+          "sha256": "be0a3e7b970835c29d41376d30f0c12f1caa0e3287ba8104754700c89e88593e",
+          "sha1": "5cc36000e5870498303205c0f0d2e5bc90b27f15",
+          "md5": "6edb37351c5910c56d408e1c204bb3c0"
+        }
+      ]
+    },
+    {
+      "name": "iosX64MetadataElements-published",
+      "attributes": {
+        "artifactType": "org.jetbrains.kotlin.klib",
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-metadata",
+        "org.jetbrains.kotlin.native.target": "ios_x64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "dependencies": [
+      ],
+      "files": [
+        {
+          "name": "uklib-maven-gradle-packaging-iosx64-1.0-metadata.jar",
+          "url": "uklib-maven-gradle-packaging-iosx64-1.0-metadata.jar",
+          "size": 7426,
+          "sha512": "2fe5d26062aaeac218adbd9cac827815fe4b8d4d2e69744caf6644d62dbb7f8cbe7af8b5e6aa5f1be58303773e4fbf56c68bad1434bfaede7f7ab3bb0ba31646",
+          "sha256": "3b990e8e4cfe3fa06290cb32026fcce2b99b81fb708de10e224a395710b9180f",
+          "sha1": "c79923c2d34ac8d5a83ce88d394e19c1e55faeb6",
+          "md5": "86ec15d436fcc94146249547d63f87ea"
+        }
+      ]
+    }
+  ]
+}
