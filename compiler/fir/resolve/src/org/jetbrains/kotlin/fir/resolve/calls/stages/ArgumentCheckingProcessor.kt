@@ -499,7 +499,10 @@ internal object ArgumentCheckingProcessor {
 }
 
 fun getCollectionLiteralElementType(expectedType: ConeKotlinType, session: FirSession, scopeSession: ScopeSession): ConeKotlinType? {
-    if (expectedType.isList || expectedType.isMutableList || expectedType.isSet || expectedType.isMutableSet || expectedType.isArrayType) {
+    if (expectedType.isArrayType) {
+        return expectedType.arrayElementType()
+    }
+    if (expectedType.isList || expectedType.isMutableList || expectedType.isSet || expectedType.isMutableSet) {
         return expectedType.typeArguments.firstOrNull()?.type
     }
     val symbol = expectedType.toSymbol(session)

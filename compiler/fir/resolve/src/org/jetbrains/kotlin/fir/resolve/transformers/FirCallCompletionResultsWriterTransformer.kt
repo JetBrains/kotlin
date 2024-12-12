@@ -1206,10 +1206,12 @@ class FirCallCompletionResultsWriterTransformer(
             resolutionContext,
             resolutionMode = ResolutionMode.ContextIndependent
         )
-        components.callResolver.resolveCallAndSelectCandidate(
-            call,
-            ResolutionMode.WithExpectedType(expectedArrayType.toFirResolvedTypeRef())
-        )
+        if (!call.isResolved) { // hack: otherwise, intArrayOf resolves to arrayOf for some weird reason
+            components.callResolver.resolveCallAndSelectCandidate(
+                call,
+                ResolutionMode.WithExpectedType(expectedArrayType.toFirResolvedTypeRef())
+            )
+        }
         val result = call.transform<FirExpression, _>(this, data)
         result.resultType = expectedArrayType
         return result

@@ -303,6 +303,7 @@ class FirSyntheticCallGenerator(
         val arrayOfSymbol = calculateArrayOfSymbol(expectedTypeConeType)
         return buildFunctionCall {
             this.argumentList = argumentList
+            coneTypeOrNull = expectedTypeConeType
             calleeReference = arrayOfSymbol?.let {
                 generateCalleeReferenceWithCandidate(
                     arrayLiteral,
