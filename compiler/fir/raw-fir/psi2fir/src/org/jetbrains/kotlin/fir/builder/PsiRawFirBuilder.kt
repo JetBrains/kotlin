@@ -1088,8 +1088,7 @@ open class PsiRawFirBuilder(
                     containingClassIsExpectClass,
                     copyConstructedTypeRefWithImplicitSource = true,
                     isErrorConstructor = !hasPrimaryConstructor,
-                    isImplicitlyActual = container.status.isActual &&
-                            (container.status.isInline || container.status.isValue || classKind == ClassKind.ANNOTATION_CLASS),
+                    isImplicitlyActual = isImplicitlyActual(container.status, classKind),
                     isKotlinAny = isKotlinAny,
                 )
                 container.declarations += firPrimaryConstructor

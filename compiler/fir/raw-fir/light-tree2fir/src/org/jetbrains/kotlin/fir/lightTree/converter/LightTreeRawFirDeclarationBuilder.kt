@@ -598,8 +598,7 @@ class LightTreeRawFirDeclarationBuilder(
                             classWrapper,
                             delegatedConstructorSource,
                             containingClassIsExpectClass = status.isExpect,
-                            isImplicitlyActual = status.isActual &&
-                                    (status.isInline || status.isValue || classKind == ClassKind.ANNOTATION_CLASS),
+                            isImplicitlyActual = isImplicitlyActual(status, classKind),
                             isKotlinAny = classIsKotlinAny,
                         )
                         val firPrimaryConstructor = primaryConstructorWrapper?.firConstructor
