@@ -50,6 +50,7 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
              * Force dependencies into pom
              *
              * FIXME: Initially I accidentally had a uklibApiElements configuration which merged dependencies into pom. Does this affect Gradle metadata in an incorrect way?
+             * FIXME: Return the uklibApiElements configuration, wire it into rootSoftwareComponent and output with a custom Usage? We could add a Uklib-only resolution strategy using this Usage and compatibility with java variants for POM only uklibs
              */
             extendsFrom(implementationConfiguration)
         }
