@@ -148,6 +148,11 @@ class UklibFromKGPFragmentsTests {
         }
     }
 
+    //@Test
+    fun `uklib fragments - correct and incorrect diamonds`() {
+        // FIXME: ...
+    }
+
     @Test
     fun `project configuration with enabled uklib publication - with external target - emits diagnostic`() {
         buildProjectWithMPP(
