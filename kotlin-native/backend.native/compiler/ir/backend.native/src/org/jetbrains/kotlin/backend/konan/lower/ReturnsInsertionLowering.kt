@@ -51,19 +51,6 @@ internal class ReturnsInsertionLowering(val context: Context) : FileLoweringPass
                     }
                 }
             }
-
-            override fun visitBlock(expression: IrBlock) {
-                expression.acceptChildrenVoid(this)
-                if (expression !is IrReturnableBlock) return
-                val inlinedBlock = expression.innerInlinedBlockOrThis as? IrInlinedFunctionBlock ?: return
-                if (inlinedBlock.inlineFunctionSymbol?.owner?.returnType == context.irBuiltIns.unitType) {
-                    val container = inlinedBlock.statements
-                    val offset = (container.lastOrNull() ?: expression).endOffset
-                    context.createIrBuilder(expression.symbol, offset, offset).run {
-                        container += irReturn(irCall(symbols.theUnitInstance, context.irBuiltIns.unitType))
-                    }
-                }
-            }
         })
     }
 }

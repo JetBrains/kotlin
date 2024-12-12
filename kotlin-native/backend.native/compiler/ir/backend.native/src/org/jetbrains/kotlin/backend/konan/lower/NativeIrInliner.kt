@@ -16,4 +16,5 @@ internal class NativeIrInliner(
         context = context.context,
         NativeInlineFunctionResolver(context, inlineMode),
         produceOuterThisFields = false,
+        insertMissingReturn = true,
 )

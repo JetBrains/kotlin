@@ -24,9 +24,8 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.isPrivate
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.Scope
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
-import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -152,6 +151,7 @@ open class FunctionInlining(
     val context: LoweringContext,
     private val inlineFunctionResolver: InlineFunctionResolver,
     private val insertAdditionalImplicitCasts: Boolean = true,
+    private val insertMissingReturn: Boolean = false,
     private val regenerateInlinedAnonymousObjects: Boolean = false,
     private val produceOuterThisFields: Boolean = true,
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
@@ -220,6 +220,7 @@ open class FunctionInlining(
             context,
             inlineFunctionResolver,
             insertAdditionalImplicitCasts,
+            insertMissingReturn,
             produceOuterThisFields
         )
         return inliner.inline().markAsRegenerated()
@@ -250,6 +251,7 @@ open class FunctionInlining(
         val context: LoweringContext,
         private val inlineFunctionResolver: InlineFunctionResolver,
         private val insertAdditionalImplicitCasts: Boolean,
+        private val insertMissingReturn: Boolean,
         private val produceOuterThisFields: Boolean
     ) {
         private val elementsWithLocationToPatch = hashSetOf<IrGetValue>()
@@ -311,6 +313,16 @@ open class FunctionInlining(
                 this.inlineCall = callSite
                 @OptIn(JvmIrInlineExperimental::class)
                 this.inlinedElement = originalInlinedElement
+
+                // Insert a return statement for the function that supposes to return Unit
+                if (insertMissingReturn && inlineFunctionToStore.returnType.isUnit()) {
+                    val potentialReturn = this.statements.lastOrNull() as? IrReturn
+                    if (potentialReturn == null) {
+                        irBuilder.at(this.endOffset, this.endOffset).run {
+                            this@apply.statements += irReturn(irGetObject(context.irBuiltIns.unitClass))
+                        }
+                    }
+                }
             }
 
             val retBlock = IrReturnableBlockImpl(
