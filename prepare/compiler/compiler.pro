@@ -43,6 +43,7 @@
 -dontwarn kotlinx.coroutines.future.FutureKt
 -dontwarn kotlinx.serialization.**
 -dontwarn net.sf.cglib.**
+-dontwarn io.opentelemetry.api.**
 -dontwarn io.opentelemetry.context.**
 -dontwarn org.apache.hadoop.io.compress.*
 -dontwarn org.apache.xerces.dom.**

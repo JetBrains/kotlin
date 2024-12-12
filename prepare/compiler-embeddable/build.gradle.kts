@@ -23,6 +23,7 @@ dependencies {
     runtimeOnly(project(":kotlin-daemon-embeddable"))
     runtimeOnly(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
     runtimeOnly(libs.kotlinx.coroutines.core) { isTransitive = false }
+    runtimeOnly(libs.opentelemetry.api)
     testImplementation(libs.junit4)
     testApi(kotlinTest("junit"))
     testCompilationClasspath(kotlinStdlib())

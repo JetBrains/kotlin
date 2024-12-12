@@ -23,6 +23,7 @@ dependencies {
     compileOnly(libs.intellij.fastutil)
     compileOnly(libs.intellij.asm)
     runtimeOnly(libs.kotlinx.coroutines.core)
+    runtimeOnly(libs.opentelemetry.api)
 }
 
 sourceSets {

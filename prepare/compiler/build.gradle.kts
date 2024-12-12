@@ -151,6 +151,7 @@ dependencies {
     api(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     api(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
     api(libs.kotlinx.coroutines.core)
+    runtimeOnly(libs.opentelemetry.api)
 
     proguardLibraries(project(":kotlin-annotations-jvm"))
 
