@@ -178,3 +178,18 @@ fun TestProject.dumpKlibMetadataSignatures(klib: File): String {
 
     return outputFile.readText()
 }
+
+fun Project.enableUklibPublication(enable: Boolean = true) {
+    propertiesExtension.set(
+        PropertiesProvider.PropertyNames.KOTLIN_MPP_PUBLISH_UKLIB,
+        enable.toString(),
+    )
+    if (enable) enableCrossCompilation()
+}
+
+fun Project.enableCrossCompilation(enable: Boolean = true) {
+    propertiesExtension.set(
+        PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION,
+        enable.toString(),
+    )
+}
