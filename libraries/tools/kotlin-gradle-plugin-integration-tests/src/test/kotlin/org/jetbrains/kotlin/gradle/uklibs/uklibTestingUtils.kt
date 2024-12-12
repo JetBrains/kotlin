@@ -93,10 +93,40 @@ fun TestProject.publishReturn(
     }
 }
 
+fun TestProject.publishJavaReturn(
+    publisherConfiguration: PublisherConfiguration,
+): ReturnFromBuildScriptAfterExecution<PublishedProject> {
+    buildScriptInjection {
+        project.applyMavenPublish(publisherConfiguration)
+        val publishingExtension = project.extensions.getByType(PublishingExtension::class.java)
+
+        publishingExtension.publications.create("java", MavenPublication::class.java) {
+            it.from(project.components.getByName("java"))
+        }
+    }
+
+    return buildScriptReturn {
+        PublishedProject(
+            project.layout.projectDirectory.dir(publisherConfiguration.repoPath).asFile,
+            publisherConfiguration.group,
+            publisherConfiguration.name,
+            publisherConfiguration.version,
+        )
+    }
+}
+
 fun TestProject.publish(
     publisherConfiguration: PublisherConfiguration,
     deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
 ): PublishedProject = publishReturn(publisherConfiguration).buildAndReturn(
+    "publishAllPublicationsToMavenRepository",
+    deriveBuildOptions = deriveBuildOptions,
+)
+
+fun TestProject.publishJava(
+    publisherConfiguration: PublisherConfiguration,
+    deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
+): PublishedProject = publishJavaReturn(publisherConfiguration).buildAndReturn(
     "publishAllPublicationsToMavenRepository",
     deriveBuildOptions = deriveBuildOptions,
 )
