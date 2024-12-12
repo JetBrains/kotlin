@@ -12,6 +12,7 @@ import com.intellij.psi.stubs.Stub
 import com.intellij.psi.stubs.StubTreeLoader
 import com.intellij.psi.util.PsiUtilCore
 import org.jetbrains.kotlin.KtRealPsiSourceElement
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -84,10 +85,14 @@ internal fun <S, T> loadStubByElement(ktElement: T): S? where T : StubBasedPsiEl
     val virtualFile = PsiUtilCore.getVirtualFile(ktFile) ?: return null
     var stubList = ktFile.getUserData(STUBS_KEY)?.get()
     if (stubList == null) {
-        val stubTree = StubTreeLoader.getInstance().readOrBuild(ktElement.project, virtualFile, null)
+        val stubTree = ClsClassFinder.allowMultifileClassPart {
+            StubTreeLoader.getInstance().readOrBuild(ktElement.project, virtualFile, null)
+        }
+
         stubList = stubTree?.plainList ?: emptyList()
-        ktFile.putUserData(STUBS_KEY, WeakReference(stubList))
+        ktFile.putUserDataIfAbsent(STUBS_KEY, WeakReference(stubList))
     }
+
     val nodeList = (ktFile.node as FileElement).stubbedSpine.spineNodes
     if (stubList.size != nodeList.size) return null
     @Suppress("UNCHECKED_CAST")

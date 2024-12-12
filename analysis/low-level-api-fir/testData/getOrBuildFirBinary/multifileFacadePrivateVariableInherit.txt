@@ -1,0 +1,10 @@
+KT element: KtProperty
+KT element text:
+private var privateVariable1: kotlin.Long /* compiled code */
+FIR element: FirPropertyImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+private final [ResolvedTo(BODY_RESOLVE)] var privateVariable1: R|kotlin/Long|
+    private [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Long|
+    private [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Long|): R|kotlin/Unit|

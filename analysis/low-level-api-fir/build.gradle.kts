@@ -23,6 +23,7 @@ dependencies {
     api(project(":compiler:fir:java"))
     api(project(":compiler:backend.common.jvm"))
     api(project(":compiler:cli-common"))
+    implementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     implementation(project(":analysis:decompiled:decompiler-to-psi"))
     testImplementation(project(":analysis:analysis-api-fir"))
     implementation(project(":compiler:frontend.common"))
