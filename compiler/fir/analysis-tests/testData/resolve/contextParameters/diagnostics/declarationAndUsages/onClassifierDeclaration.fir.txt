@@ -72,7 +72,7 @@ FILE: onClassifierDeclaration.kt
 
     }
     context(c: R|A|)
-    @R|kotlin/jvm/JvmInline|() public final inline class Test8 : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|() public final value class Test8 : R|kotlin/Any| {
         public constructor(a: R|kotlin/Int|): R|Test8| {
             super<R|kotlin/Any|>()
         }
