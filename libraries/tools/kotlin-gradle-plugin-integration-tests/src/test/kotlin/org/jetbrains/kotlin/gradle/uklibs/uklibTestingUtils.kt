@@ -11,7 +11,9 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.UklibResolutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.nativeCompilerClasspath
 import java.io.File
@@ -152,6 +154,15 @@ fun TestProject.addPublishedProjectToRepositories(
     }
 }
 
+fun TestProject.addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(
+    publishedProject: PublishedProject
+) = addPublishedProjectToRepositories(publishedProject) {
+    metadataSources {
+        it.mavenPom()
+        it.ignoreGradleMetadataRedirection()
+    }
+}
+
 fun TestProject.include(
     subproject: TestProject,
     name: String,
@@ -221,5 +232,12 @@ fun Project.enableCrossCompilation(enable: Boolean = true) {
     propertiesExtension.set(
         PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION,
         enable.toString(),
+    )
+}
+
+internal fun Project.setUklibResolutionStrategy(strategy: UklibResolutionStrategy = UklibResolutionStrategy.ResolveUklibsInMavenComponents) {
+    project.propertiesExtension.set(
+        PropertiesProvider.PropertyNames.KOTLIN_MPP_UKLIB_RESOLUTION_STRATEGY,
+        strategy.propertyName,
     )
 }

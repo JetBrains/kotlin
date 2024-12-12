@@ -32,7 +32,7 @@ internal sealed class UklibFragmentPlatformAttribute {
     fun safeToPublish(): String = when (this) {
         is PublishAndConsumeInAllCompilations -> attribute
         is PublishAndConsumeInMetadataCompilations -> attribute
-        is FailOnPublicationAndUseTargetNameForMetadataCompilations -> error("Publication with ${unsupportedTargetName} is not supported")
+        is FailOnPublicationAndUseTargetNameForMetadataCompilations -> error("Publication with $unsupportedTargetName is not supported")
     }
 
     fun safeToConsume(): String = when (this) {
