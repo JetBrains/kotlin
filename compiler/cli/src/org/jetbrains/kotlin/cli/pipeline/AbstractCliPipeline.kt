@@ -87,7 +87,7 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
             reportException(t)
         } finally {
             messageCollector.flush()
-            Disposer.dispose(rootDisposable)
+            disposeRootInWriteAction(rootDisposable)
         }
     }
 
