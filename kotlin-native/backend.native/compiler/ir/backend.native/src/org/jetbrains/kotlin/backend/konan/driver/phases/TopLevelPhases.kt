@@ -524,7 +524,7 @@ private fun PhaseEngine<NativeGenerationState>.runGlobalOptimizations(module: Ir
         runPhase(UnboxInlinePhase, it, disable = !optimize)
     }
     runPhase(PreCodegenInlinerPhase, PreCodegenInlinerInput(module, moduleDFG), disable = !enablePreCodegenInliner)
-    context.dceResult = runPhase(DCEPhase, DCEInput(module, moduleDFG), disable = !optimize)
+    context.dceResult = runPhase(DCEPhase, DCEInput(module, moduleDFG), disable = !optimize || true)
     module.files.forEach {
         runPhase(CoroutinesVarSpillingPhase, it)
     }
