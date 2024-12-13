@@ -4,6 +4,7 @@
  */
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.bitcode.CompileToBitcodeExtension
+import org.jetbrains.kotlin.cpp.ClangFrontend
 import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCompileTask
@@ -486,6 +487,14 @@ bitcode {
             }
             onlyIf { it.family.isAppleFamily }
         }
+    }
+}
+
+// See KT-73559.
+// As we use ClangArgs from the bootstrap compiler, we have to add workaround here.
+tasks.withType<ClangFrontend>().all {
+    if (targetName.get().lowercase() == "android_arm64") {
+        arguments.add("-mno-outline-atomics")
     }
 }
 
