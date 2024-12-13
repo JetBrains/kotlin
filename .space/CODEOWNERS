@@ -308,6 +308,7 @@
 /libraries/tools/abi-comparator "Kotlin JVM"
 /libraries/tools/atomicfu/ "Kotlin Libraries"
 /libraries/tools/binary-compatibility-validator/ "Kotlin Libraries"
+/libraries/tools/abi-validation/ "Kotlin Libraries"
 /libraries/tools/dukat/ "Kotlin Wasm"
 /libraries/tools/ide-plugin-dependencies-validator "Kotlin IDE Analysis Core"
 /libraries/kotlin-dom-api-compat/ Ilya.Goncharov Stanislav.Erokhin
