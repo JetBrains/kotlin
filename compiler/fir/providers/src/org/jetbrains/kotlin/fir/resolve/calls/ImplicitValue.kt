@@ -47,7 +47,16 @@ sealed class ImplicitValue(
     // Type before smart cast
     val originalType: ConeKotlinType = type
 
-    protected abstract val originalExpression: FirExpression
+    protected abstract fun computeOriginalExpression(): FirExpression
+
+    /**
+     * This property should have only one instance, but in some cases its calculation is not needed,
+     * so it is lazy to avoid unnecessary calculation which may affect performance, at least in the Analysis API mode
+     *
+     * Issue: KT-73900
+     * @see computeOriginalExpression
+     */
+    protected val originalExpression: FirExpression by lazy(LazyThreadSafetyMode.PUBLICATION, ::computeOriginalExpression)
 
     private var isSmartCasted: Boolean = false
     private var cachedCurrentExpression: FirExpression? = null
@@ -120,13 +129,13 @@ class ImplicitContextParameterValue(
     type: ConeKotlinType,
     mutable: Boolean = true,
 ) : ImplicitValue(type, mutable) {
-    override val originalExpression: FirExpression = buildPropertyAccessExpression {
+    override fun computeOriginalExpression(): FirExpression = buildPropertyAccessExpression {
         source = boundSymbol.source?.fakeElement(KtFakeSourceElementKind.ImplicitContextParameterArgument)
         calleeReference = buildResolvedNamedReference {
             name = boundSymbol.name
             resolvedSymbol = boundSymbol
         }
-        coneTypeOrNull = type
+        coneTypeOrNull = originalType
     }
 
     override fun createSnapshot(keepMutable: Boolean): ImplicitContextParameterValue {
