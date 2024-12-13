@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
@@ -261,6 +262,22 @@ internal val FirElementWithResolveState.isPartialBodyResolvable: Boolean
         else -> false
     }
 
+/**
+ * Whether a declaration body block supports partial body analysis.
+ * For empty blocks and blocks with a single statement, partial analysis is unavailable.
+ */
+internal val FirBlock.isPartialAnalyzable: Boolean
+    get() = statements.size > 1
+
+/**
+ * A declaration body (a block with statements).
+ */
+internal val FirElementWithResolveState.body: FirBlock?
+    get() = when (this) {
+        is FirFunction -> body
+        is FirAnonymousInitializer -> body
+        else -> null
+    }
 
 /**
  * Some "local" declarations are not local from the lazy resolution perspective.

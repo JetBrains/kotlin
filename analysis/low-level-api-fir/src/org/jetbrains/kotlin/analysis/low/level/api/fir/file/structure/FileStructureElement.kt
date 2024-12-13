@@ -5,17 +5,30 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.body
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isPartialBodyResolvable
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findStringPlusSymbol
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isPartialAnalyzable
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
+import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
+import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
+import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
+import org.jetbrains.kotlin.fir.realPsi
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.psi.*
@@ -33,8 +46,9 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 internal sealed class FileStructureElement(
     val declaration: FirDeclaration,
     val diagnostics: FileStructureElementDiagnostics,
+    elementProvider: DeclarationFirElementProvider = EagerDeclarationFirElementProvider(declaration)
 ) {
-    val mappings: KtToFirMapping = KtToFirMapping(declaration)
+    val mappings: KtToFirMapping = KtToFirMapping(elementProvider)
 
     companion object {
         fun recorderFor(fir: FirDeclaration): FirElementsRecorder = when (fir) {
@@ -46,16 +60,9 @@ internal sealed class FileStructureElement(
     }
 }
 
-internal class KtToFirMapping(firElement: FirDeclaration) {
-    private val session = firElement.moduleData.session
-
-    private val mapping = FirElementsRecorder.recordElementsFrom(
-        firElement = firElement,
-        recorder = FileStructureElement.recorderFor(firElement),
-    )
-
-    fun getFir(element: KtElement): FirElement? {
-        return getFir(element, session, mapping)
+internal class KtToFirMapping(private val elementProvider: DeclarationFirElementProvider) {
+    fun get(element: KtElement): FirElement? {
+        return elementProvider(element)
     }
 
     companion object {
@@ -288,8 +295,116 @@ internal class DeclarationStructureElement(
             moduleComponents = moduleComponents,
         )
     ),
+    elementProvider = createFirElementProvider(declaration),
 ) {
-    object Recorder : FirElementsRecorder() {
+    private companion object {
+        private val IS_PARTIAL_RESOLVE_ENABLED by lazy(LazyThreadSafetyMode.PUBLICATION) {
+            Registry.`is`("kotlin.analysis.partialBodyAnalysis", true)
+        }
+
+        private fun createFirElementProvider(declaration: FirDeclaration): DeclarationFirElementProvider {
+            val partialBodyProvider = createPartialBodyFirElementProviderIfApplicable(declaration)
+            if (partialBodyProvider != null) {
+                return partialBodyProvider
+            }
+
+            declaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+            return EagerDeclarationFirElementProvider(declaration)
+        }
+
+        private fun createPartialBodyFirElementProviderIfApplicable(declaration: FirDeclaration): DeclarationFirElementProvider? {
+            if (!IS_PARTIAL_RESOLVE_ENABLED) {
+                return null
+            }
+
+            val bodyBlock = declaration.body
+            if (!declaration.isPartialBodyResolvable || bodyBlock == null || declaration.resolvePhase >= FirResolvePhase.BODY_RESOLVE) {
+                return null
+            }
+
+            require(declaration.resolvePhase >= FirResolvePhase.BODY_RESOLVE.previous)
+
+            val isPartiallyResolvable = when (bodyBlock) {
+                is FirSingleExpressionBlock -> false
+                is FirEmptyExpressionBlock -> false
+                is FirLazyBlock -> true // Optimistic (however, below we also check the PSI statement count)
+                else -> bodyBlock.isPartialAnalyzable
+            }
+
+            if (!isPartiallyResolvable) {
+                return null
+            }
+
+            val session = declaration.llFirResolvableSession ?: return null
+            val psiDeclaration = declaration.realPsi as? KtDeclaration
+            val psiBodyBlock = psiDeclaration?.bodyBlock
+            val psiStatements = psiBodyBlock?.statements?.takeIf { it.size > 1 } ?: return null
+
+            // Although we don't require the body to be resolved here, its changes must invalidate the element provider.
+            // Note that there might be changes in a number of statements, so here we keep the guarantee – a partial provider
+            // is only created if there are more than one body statement.
+            LLFirDeclarationModificationService.bodyResolved(declaration, phase = FirResolvePhase.BODY_RESOLVE)
+
+            return PartialBodyDeclarationFirElementProvider(declaration, psiDeclaration, psiBodyBlock, psiStatements, session)
+        }
+    }
+
+    object Recorder : AbstractRecorder()
+
+    /**
+     * A recorder that skips content analyzed on the [FirResolvePhase.BODY_RESOLVE] phase.
+     *
+     * Sic! The recorder currently is only intended to be used for computing signature mappings in [LLPartialBodyElementMapper]
+     * for [isPartialBodyResolvable] declarations.
+     * For other usages, the behavior is unspecified.
+     */
+    class SignatureRecorder(private val declaration: FirDeclaration) : AbstractRecorder() {
+        private var parent: FirElement? = null
+
+        // Sic! The declaration might be resolved to 'BODY_RESOLVE' in some other thread while we traverse over it.
+        override fun visitElement(element: FirElement, data: MutableMap<KtElement, FirElement>) {
+            // Skip elements only directly nested in the declaration.
+            // Note that annotation values technically can contain arbitrary code that we don't want to filter out here.
+            val currentParent = parent
+
+            if (element is FirBlock && currentParent == declaration) {
+                // Skip declaration body
+                return
+            }
+
+            if (element is FirExpression && currentParent is FirValueParameter && currentParent.defaultValue == element) {
+                // Skip default value parameters
+                return
+            }
+
+            if (element is FirDelegatedConstructorCall && currentParent is FirConstructor && currentParent == declaration) {
+                // Skip delegated constructors
+                return
+            }
+
+            cacheElement(element, data)
+
+            try {
+                parent = element
+                element.acceptChildren(this, data)
+            } finally {
+                parent = currentParent
+            }
+        }
+    }
+
+    class BodyBlockRecorder(block: FirBlock) : AbstractRecorder() {
+        private val statements = block.statements.toSet()
+
+        override fun visitElement(element: FirElement, data: MutableMap<KtElement, FirElement>) {
+            // Statements are already registered
+            if (element !in statements) {
+                super.visitElement(element, data)
+            }
+        }
+    }
+
+    abstract class AbstractRecorder : FirElementsRecorder() {
         override fun visitConstructor(constructor: FirConstructor, data: MutableMap<KtElement, FirElement>) {
             super.visitConstructor(constructor, data)
 

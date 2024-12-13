@@ -9,6 +9,21 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
 
+private object PartialBodyAnalysisStateKey : FirDeclarationDataKey()
+
+/**
+ * Represents the partial (incomplete) body resolve state.
+ *
+ * If the function body was ever analyzed partially, this attribute must be present.
+ * This includes cases when the function was once analyzed partially, and then fully – the attribute still must be there.
+ *
+ * The attribute must be removed, though, if the declaration phase is reverted (for example, because of in-block modifications).
+ *
+ * @see LLPartialBodyAnalysisState
+ */
+internal var FirDeclaration.partialBodyAnalysisState: LLPartialBodyAnalysisState?
+        by FirDeclarationDataRegistry.data(PartialBodyAnalysisStateKey)
+
 /**
  * [LLFirResolveTarget] representing single target to resolve. The [target] can be any of [FirElementWithResolveState]
  */

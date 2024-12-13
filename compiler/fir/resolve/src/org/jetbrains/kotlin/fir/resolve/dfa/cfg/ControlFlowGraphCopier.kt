@@ -30,6 +30,15 @@ internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit
     private var isFinished = false
 
     /**
+     * Mapping between the original graphs and their copies.
+     */
+    val graphMapping: Map<ControlFlowGraph, ControlFlowGraph>
+        get() {
+            check(isFinished) { "Call 'finish()' first" }
+            return cachedGraphs
+        }
+
+    /**
      * Copies the [graph].
      * Both [graph] and the resulting graph cannot be used until [finish] is called.
      */

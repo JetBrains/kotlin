@@ -756,7 +756,7 @@ open class FirDeclarationsResolveTransformer(
             }
 
             if (accessor is FirDefaultPropertyAccessor || accessor.body == null) {
-                transformFunction(accessor, resolutionModeForBody = ResolutionMode.ContextIndependent, shouldResolveEverything)
+                transformFunctionContent(accessor, resolutionModeForBody = ResolutionMode.ContextIndependent, shouldResolveEverything)
             } else {
                 transformFunctionWithGivenSignature(accessor, shouldResolveEverything)
             }
@@ -985,7 +985,11 @@ open class FirDeclarationsResolveTransformer(
 
     private fun <F : FirFunction> transformFunctionWithGivenSignature(function: F, shouldResolveEverything: Boolean): F {
         @Suppress("UNCHECKED_CAST")
-        val result = transformFunction(function, resolutionModeForBody = ResolutionMode.ContextIndependent, shouldResolveEverything) as F
+        val result = transformFunctionContent(
+            function,
+            resolutionModeForBody = ResolutionMode.ContextIndependent,
+            shouldResolveEverything
+        ) as F
 
         val body = result.body
         if (result.returnTypeRef is FirImplicitTypeRef) {
@@ -1029,11 +1033,11 @@ open class FirDeclarationsResolveTransformer(
         error("Concrete transform functions should be called")
     }
 
-    private fun transformFunction(
+    protected open fun transformFunctionContent(
         function: FirFunction,
         resolutionModeForBody: ResolutionMode,
         shouldResolveEverything: Boolean,
-    ): FirFunction = whileAnalysing(session, function) {
+    ): FirFunction {
         val bodyResolved = function.bodyResolved
         dataFlowAnalyzer.enterFunction(function)
 
@@ -1069,11 +1073,11 @@ open class FirDeclarationsResolveTransformer(
             val container = context.containerIfAny as? FirRegularClass
             if (constructor.isPrimary && container?.classKind == ClassKind.ANNOTATION_CLASS) {
                 return withFirArrayOfCallTransformer {
-                    doTransformConstructor(constructor, data)
+                    transformConstructorContent(constructor, data)
                 }
             }
 
-            return doTransformConstructor(constructor, data)
+            return transformConstructorContent(constructor, data)
         }
 
     override fun transformErrorPrimaryConstructor(
@@ -1081,7 +1085,7 @@ open class FirDeclarationsResolveTransformer(
         data: ResolutionMode,
     ): FirErrorPrimaryConstructor = transformConstructor(errorPrimaryConstructor, data) as FirErrorPrimaryConstructor
 
-    private fun doTransformConstructor(constructor: FirConstructor, data: ResolutionMode): FirConstructor {
+    protected open fun transformConstructorContent(constructor: FirConstructor, data: ResolutionMode): FirConstructor {
         val owningClass = context.containerIfAny as? FirRegularClass
 
         dataFlowAnalyzer.enterFunction(constructor)
@@ -1111,10 +1115,16 @@ open class FirDeclarationsResolveTransformer(
         data: ResolutionMode
     ): FirAnonymousInitializer = whileAnalysing(session, anonymousInitializer) {
         if (implicitTypeOnly) return anonymousInitializer
+        transformAnonymousInitializerContent(anonymousInitializer, data)
+    }
+
+    protected open fun transformAnonymousInitializerContent(
+        anonymousInitializer: FirAnonymousInitializer,
+        data: ResolutionMode
+    ): FirAnonymousInitializer {
         dataFlowAnalyzer.enterInitBlock(anonymousInitializer)
         return context.withAnonymousInitializer(anonymousInitializer, session) {
-            val result =
-                transformDeclarationContent(anonymousInitializer, ResolutionMode.ContextIndependent) as FirAnonymousInitializer
+            val result = transformDeclarationContent(anonymousInitializer, ResolutionMode.ContextIndependent) as FirAnonymousInitializer
             val graph = dataFlowAnalyzer.exitInitBlock(result)
             result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(graph))
             result
@@ -1464,11 +1474,13 @@ open class FirDeclarationsResolveTransformer(
                     anonymousFunction.transformReturnTypeRef(transformer, ResolutionMode.UpdateImplicitTypeRef(expectedReturnTypeRef))
                 }
 
-                transformFunction(
-                    anonymousFunction,
-                    resolutionModeForBody = expectedReturnTypeRef?.let(::withExpectedType) ?: ResolutionMode.ContextDependent,
-                    shouldResolveEverything = true,
-                ) as FirAnonymousFunction
+                whileAnalysing(session, anonymousFunction) {
+                    transformFunctionContent(
+                        anonymousFunction,
+                        resolutionModeForBody = expectedReturnTypeRef?.let(::withExpectedType) ?: ResolutionMode.ContextDependent,
+                        shouldResolveEverything = true,
+                    ) as FirAnonymousFunction
+                }
             }
         }.apply { replaceTypeRef(lambdaType) }
     }
