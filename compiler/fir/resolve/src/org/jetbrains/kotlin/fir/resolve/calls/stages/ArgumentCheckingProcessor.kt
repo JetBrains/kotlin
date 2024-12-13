@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -88,7 +89,7 @@ internal object ArgumentCheckingProcessor {
         sourceForReceiver: KtSourceElement? = null,
     ) {
         val argumentContext = ArgumentContext(candidate, candidate.csBuilder, expectedType, sink, context, isReceiver, isDispatch)
-        argumentContext.resolvePlainArgumentType(atom, argumentType, sourceForReceiver = sourceForReceiver)
+        argumentContext.resolvePlainArgumentType(atom.expression, argumentType, sourceForReceiver = sourceForReceiver)
     }
 
     fun createResolvedLambdaAtomDuringCompletion(
@@ -119,26 +120,36 @@ internal object ArgumentCheckingProcessor {
                 if (collectionLiteralArgumentContext.expectedType == null) {
                     return
                 }
+                val scopeSession = collectionLiteralArgumentContext.context.bodyResolveComponents.scopeSession
                 val collectionLiteralElementType = getCollectionLiteralElementType(
                     collectionLiteralArgumentContext.expectedType,
                     session,
-                    collectionLiteralArgumentContext.context.bodyResolveComponents.scopeSession
+                    scopeSession
                 )
                 if (collectionLiteralElementType == null) {
                     if (listOfNothingConeType.isSubtypeOf(expectedType, session)) {
                         return // Just don't infer anything. The candidate is successful
                     }
+                    println("Type '${expectedType}' doesn't have member 'operator fun of' function declared in its Companion")
                     val diag = ArgumentTypeMismatch(expectedType, expectedType, atom.expression, isMismatchDueToNullability = false)
                     reportDiagnostic(diag) // todo create new diagnostic
                     return
                 }
-                val collectionLiteralElementContext = collectionLiteralArgumentContext.copy(expectedType = collectionLiteralElementType)
+                val ofFunction = resolveVarargOfMemberFunction(collectionLiteralArgumentContext.expectedType, session, scopeSession)
+                if (ofFunction != null) {
+                    val s = candidate.substitutor.substituteOrSelf(ofFunction.resolvedReturnType)
+                    resolvePlainExpressionArgument(atom.expression, argumentType = s)
+                } else { // if ofFunction is null, then the type is hardcoded
+                    resolvePlainExpressionArgument(atom.expression, argumentType = expectedType)
+                }
+                val collectionLiteralElementContext =
+                    collectionLiteralArgumentContext.copy(expectedType = candidate.substitutor.substituteOrSelf(collectionLiteralElementType))
                 for (atom in atom.subAtoms) {
                     collectionLiteralElementContext.resolveArgumentExpression(atom)
                 }
             }
 
-            is ConeSimpleLeafResolutionAtom, is ConeAtomWithCandidate -> resolvePlainExpressionArgument(atom)
+            is ConeSimpleLeafResolutionAtom, is ConeAtomWithCandidate -> resolvePlainExpressionArgument(atom.expression)
 
             is ConePostponedResolvedAtom -> error("Unexpected type of atom: ${atom::class.java}")
             is ConeResolutionAtomWithSingleChild -> {
@@ -152,12 +163,12 @@ internal object ArgumentCheckingProcessor {
                     is FirSafeCallExpression -> when (val selectorAtom = atom.subAtom) {
                         // Assignment
                         null -> checkApplicabilityForArgumentType(
-                            atom,
+                            atom.expression,
                             StandardClassIds.Unit.constructClassLikeType(emptyArray(), isMarkedNullable = false),
                             SimpleConstraintSystemConstraintPosition,
                         )
                         else -> resolvePlainExpressionArgument(
-                            selectorAtom,
+                            selectorAtom.expression,
                             useNullableArgumentType = true
                         )
                     }
@@ -165,7 +176,7 @@ internal object ArgumentCheckingProcessor {
                         null -> {
                             val newContext = this.copy(isReceiver = false, isDispatch = false)
                             newContext.checkApplicabilityForArgumentType(
-                                atom,
+                                atom.expression,
                                 atom.expression.resolvedType,
                                 SimpleConstraintSystemConstraintPosition,
                             )
@@ -173,7 +184,7 @@ internal object ArgumentCheckingProcessor {
                         else -> resolveArgumentExpression(lastExpression)
                     }
                     else -> when (val subAtom = atom.subAtom) {
-                        null -> resolvePlainExpressionArgument(atom)
+                        null -> resolvePlainExpressionArgument(atom.expression)
                         else -> resolveArgumentExpression(subAtom)
                     }
                 }
@@ -182,23 +193,20 @@ internal object ArgumentCheckingProcessor {
     }
 
     private fun ArgumentContext.resolvePlainExpressionArgument(
-        atom: ConeResolutionAtom,
+        expression: FirExpression,
+        argumentType: ConeKotlinType? = null,
         useNullableArgumentType: Boolean = false
     ) {
         if (expectedType == null) return
-        val expression = atom.expression
-
-        val argumentType = expression.resolvedType
-        resolvePlainArgumentType(atom, argumentType, useNullableArgumentType)
+        resolvePlainArgumentType(expression, argumentType ?: expression.resolvedType, useNullableArgumentType)
     }
 
     private fun ArgumentContext.resolvePlainArgumentType(
-        atom: ConeResolutionAtom,
+        expression: FirExpression,
         argumentType: ConeKotlinType,
         useNullableArgumentType: Boolean = false,
         sourceForReceiver: KtSourceElement? = null,
     ) {
-        val expression = atom.expression
         val position = when {
             isReceiver -> ConeReceiverConstraintPosition(expression, sourceForReceiver)
             else -> ConeArgumentConstraintPosition(expression)
@@ -223,11 +231,11 @@ internal object ArgumentCheckingProcessor {
             }
         }
 
-        checkApplicabilityForArgumentType(atom, argumentTypeForApplicabilityCheck, position)
+        checkApplicabilityForArgumentType(expression, argumentTypeForApplicabilityCheck, position)
     }
 
     private fun ArgumentContext.checkApplicabilityForArgumentType(
-        atom: ConeResolutionAtom,
+        expression: FirExpression,
         argumentTypeBeforeCapturing: ConeKotlinType,
         position: ConstraintPosition,
     ) {
@@ -235,7 +243,6 @@ internal object ArgumentCheckingProcessor {
 
         // todo. Fix behavior. argumentTypeBeforeCapturing is Array<Int>
         val argumentType = captureFromTypeParameterUpperBoundIfNeeded(argumentTypeBeforeCapturing, expectedType, session)
-        val expression = atom.expression
 
         fun subtypeError(actualExpectedType: ConeKotlinType): ResolutionDiagnostic {
             if (expression.isNullLiteral && !actualExpectedType.isMarkedOrFlexiblyNullable) {
@@ -498,16 +505,12 @@ internal object ArgumentCheckingProcessor {
         get() = expression as? FirCallableReferenceAccess ?: error("Expected callable reference")
 }
 
-fun getCollectionLiteralElementType(expectedType: ConeKotlinType, session: FirSession, scopeSession: ScopeSession): ConeKotlinType? {
-    if (expectedType.isArrayType) {
-        return expectedType.arrayElementType()
-    }
-    if (expectedType.isList || expectedType.isMutableList || expectedType.isSet || expectedType.isMutableSet) {
-        return expectedType.typeArguments.firstOrNull()?.type
-    }
+fun resolveVarargOfMemberFunction(expectedType: ConeKotlinType, session: FirSession, scopeSession: ScopeSession): FirNamedFunctionSymbol? {
     val symbol = expectedType.toSymbol(session)
-    val clazz = symbol?.fir as? FirRegularClass
-        ?: error("WTF2 $expectedType ${symbol?.fir} ${symbol?.fir?.let { it::class }}")
+    val clazz = symbol?.fir as? FirRegularClass ?: return null
+    // run {
+    //     error("WTF2 $expectedType ${symbol?.fir} ${symbol?.fir?.let { it::class }}")
+    // }
     val companion = clazz.companionObjectSymbol
     val scope = companion?.unsubstitutedScope(
         session,
@@ -515,13 +518,34 @@ fun getCollectionLiteralElementType(expectedType: ConeKotlinType, session: FirSe
         withForcedTypeCalculator = false,
         FirResolvePhase.BODY_RESOLVE
     )
-    val ofFunction =
-        scope?.getFunctions(Name.identifier("of"))?.singleOrNull { it.valueParameterSymbols.singleOrNull()?.isVararg == true }
-    if (ofFunction == null) {
-        return null
-    }
+    return scope?.getFunctions(Name.identifier("of"))
+        ?.singleOrNull<FirNamedFunctionSymbol> { it.valueParameterSymbols.singleOrNull()?.isVararg == true }
+}
+
+fun getCollectionLiteralElementType(ofFunction: FirNamedFunctionSymbol): ConeKotlinType {
     val collectionElementType = ofFunction.valueParameterSymbols.single().resolvedReturnType.arrayElementType()!!
     return collectionElementType
+}
+
+// todo drop after adding of functions in stdib
+fun getHardcodedCollectionLiteralElementType(expectedType: ConeKotlinType): ConeKotlinType? {
+    if (expectedType.isArrayType) {
+        return expectedType.arrayElementType()
+    }
+    if (expectedType.isList || expectedType.isMutableList || expectedType.isSet || expectedType.isMutableSet) {
+        return expectedType.typeArguments.firstOrNull()?.type
+    }
+    return null
+}
+
+fun getCollectionLiteralElementType(
+    expectedType: ConeKotlinType,
+    session: FirSession,
+    scopeSession: ScopeSession,
+): ConeKotlinType? {
+    getHardcodedCollectionLiteralElementType(expectedType)?.let { return it }
+    val ofFunction = resolveVarargOfMemberFunction(expectedType, session, scopeSession) ?: return null
+    return getCollectionLiteralElementType(ofFunction)
 }
 
 internal val listOfNothingConeType = ConeClassLikeTypeImpl(
