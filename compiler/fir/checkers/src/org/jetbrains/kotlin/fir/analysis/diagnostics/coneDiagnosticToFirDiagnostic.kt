@@ -320,6 +320,13 @@ private fun mapInapplicableCandidateError(
                 )
             }
 
+            is ExpectedTypeDoesntContainCompanionOperatorOfFunction -> {
+                FirErrors.EXPECTED_TYPE_DOESNT_CONTAIN_COMPANION_OPERATOR_OF_FUNCTION.createOn(
+                    rootCause.argument.source ?: source,
+                    rootCause.expectedType
+                )
+            }
+
             is UnitReturnTypeLambdaContradictsExpectedType -> {
                 FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
                     rootCause.sourceForFunctionExpression ?: rootCause.lambda.source ?: source,

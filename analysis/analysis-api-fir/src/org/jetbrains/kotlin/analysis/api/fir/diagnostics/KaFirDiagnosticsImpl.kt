@@ -1813,6 +1813,12 @@ internal class ArgumentTypeMismatchImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ArgumentTypeMismatch
 
+internal class ExpectedTypeDoesntContainCompanionOperatorOfFunctionImpl(
+    override val expectedType: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ExpectedTypeDoesntContainCompanionOperatorOfFunction
+
 internal class MemberProjectedOutImpl(
     override val receiver: KaType,
     override val projection: String,

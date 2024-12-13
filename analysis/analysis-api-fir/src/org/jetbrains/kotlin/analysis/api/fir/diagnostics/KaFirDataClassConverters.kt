@@ -2112,6 +2112,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.EXPECTED_TYPE_DOESNT_CONTAIN_COMPANION_OPERATOR_OF_FUNCTION) { firDiagnostic ->
+        ExpectedTypeDoesntContainCompanionOperatorOfFunctionImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.MEMBER_PROJECTED_OUT) { firDiagnostic ->
         MemberProjectedOutImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),

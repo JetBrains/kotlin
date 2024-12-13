@@ -1514,6 +1514,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val isMismatchDueToNullability: Boolean
     }
 
+    interface ExpectedTypeDoesntContainCompanionOperatorOfFunction : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = ExpectedTypeDoesntContainCompanionOperatorOfFunction::class
+        val expectedType: KaType
+    }
+
     interface MemberProjectedOut : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = MemberProjectedOut::class
         val receiver: KaType
