@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.getRuntimeClass
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExternalType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.backend.js.utils.erasedUpperBound
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -102,9 +102,6 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     private fun IrType.isInlined(): Boolean =
         context.inlineClassesUtils.isTypeInlined(this)
 
-    private val IrType.eraseToClassOrInterface: IrClass
-        get() = this.erasedUpperBound ?: builtIns.anyClass.owner
-
     private fun generateTypeCheck(
         valueProvider: () -> IrExpression,
         toType: IrType
@@ -116,7 +113,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         // Inlined values have no type information on runtime.
         // But since they are final we can compute type checks on compile time.
         if (fromType.isInlined()) {
-            val result = fromType.eraseToClassOrInterface.isSubclassOf(toType.eraseToClassOrInterface)
+            val result = fromType.erasedUpperBound.isSubclassOf(toType.erasedUpperBound)
             return builder.irBoolean(result)
         }
 
@@ -153,7 +150,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
 
     private fun generateTypeCheckNonNull(argument: IrExpression, toType: IrType): IrExpression {
         assert(!toType.isMarkedNullable())
-        val classOrInterface = toType.eraseToClassOrInterface
+        val classOrInterface = toType.erasedUpperBound
         return when {
             classOrInterface.isExternal -> {
                 if (classOrInterface.kind == ClassKind.INTERFACE)
@@ -205,8 +202,8 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             }
         }
 
-        val fromClass = fromType.eraseToClassOrInterface
-        val toClass = toType.eraseToClassOrInterface
+        val fromClass = fromType.erasedUpperBound
+        val toClass = toType.erasedUpperBound
 
         if (fromClass.isExternal && toClass.isExternal) {
             return value
@@ -268,7 +265,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         val toType = expression.typeOperand
         val fromType = expression.argument.type
 
-        if (fromType.eraseToClassOrInterface.isSubclassOf(expression.type.eraseToClassOrInterface)) {
+        if (fromType.erasedUpperBound.isSubclassOf(expression.type.erasedUpperBound)) {
             return narrowType(fromType, expression.type, expression.argument)
         }
 

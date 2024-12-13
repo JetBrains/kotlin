@@ -14,38 +14,9 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-
-// TODO: Similar to IrType.erasedUpperBound from jvm.ir
-internal fun IrType.erasure(): IrType {
-    if (this !is IrSimpleType) return this
-
-    val upperBound = when (val classifier = classifier) {
-        is IrClassSymbol -> classifier.defaultType
-        is IrTypeParameterSymbol -> {
-            // Pick the (necessarily unique) non-interface upper bound if it exists
-            classifier.owner.superTypes.firstOrNull {
-                it.classOrNull?.owner?.isInterface == false
-            } ?:
-            // Otherwise, choose either the first IrClass supertype or recurse.
-            // In the first case, all supertypes are interface types and the choice was arbitrary.
-            // In the second case, there is only a single supertype.
-            classifier.owner.superTypes.first().erasure()
-        }
-        is IrScriptSymbol -> classifier.unexpectedSymbolKind<IrClassifierSymbol>()
-    }
-
-    return upperBound.mergeNullability(this)
-}
-
-internal val IrType.erasedUpperBound get() = this.erasure().getClass() ?: error(this.render())
 
 internal class TypeOperatorLowering(val context: CommonBackendContext) : FileLoweringPass, IrBuildingTransformer(context) {
 
@@ -54,7 +25,7 @@ internal class TypeOperatorLowering(val context: CommonBackendContext) : FileLow
     }
 
     private fun effectiveCheckType(type: IrType) : IrType {
-        val erasedType = type.erasure()
+        val erasedType = type.eraseTypeParameters()
         return if (erasedType.classOrNull?.owner?.isObjCForwardDeclaration() == true) {
             context.irBuiltIns.anyType.mergeNullability(erasedType)
         } else {

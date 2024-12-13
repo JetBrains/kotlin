@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 internal class WasmUsefulDeclarationProcessor(
@@ -148,7 +149,7 @@ internal class WasmUsefulDeclarationProcessor(
         context.wasmSymbols.voidType -> null
         else -> when {
             isBuiltInWasmRefType(this) -> null
-            erasedUpperBound?.isExternal == true -> null
+            erasedUpperBound.isExternal -> null
             else -> when (val ic = context.inlineClassesUtils.getInlinedClass(this)) {
                 null -> this
                 else -> context.inlineClassesUtils.getInlineClassUnderlyingType(ic).getInlinedValueTypeIfAny()

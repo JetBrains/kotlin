@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.parentOrNull
@@ -531,8 +532,8 @@ fun generateConstExpression(
 ) =
     when (val kind = expression.kind) {
         is IrConstKind.Null -> {
-            val isExternal = expression.type.getClass()?.isExternal ?: expression.type.erasedUpperBound?.isExternal
-            val bottomType = if (isExternal == true) WasmRefNullExternrefType else WasmRefNullrefType
+            val isExternal = expression.type.getClass()?.isExternal ?: expression.type.erasedUpperBound.isExternal
+            val bottomType = if (isExternal) WasmRefNullExternrefType else WasmRefNullrefType
             body.buildInstr(WasmOp.REF_NULL, location, WasmImmediate.HeapType(bottomType))
         }
         is IrConstKind.Boolean -> body.buildConstI32(if (expression.value as Boolean) 1 else 0, location)

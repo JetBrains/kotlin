@@ -154,7 +154,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         val conversion = context.getTypeConversion(actualType, expectedType)
         return if (conversion == null) {
             val actualClass = actualType.classOrNull?.owner
-            val erasedExpectedType = expectedType.erasure()
+            val erasedExpectedType = expectedType.eraseTypeParameters()
             val erasedExpectedClass = erasedExpectedType.classOrFail.owner
             return when {
                 actualType.makeNotNull() == expectedType.makeNotNull() -> this

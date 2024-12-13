@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.backend.js.utils.erasedUpperBound
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.packageFqName
 import org.jetbrains.kotlin.name.FqName
@@ -94,7 +94,7 @@ class WasmTypeTransformer(
                 error("Void type can't be used as a value")
 
             else -> {
-                val klass = this.erasedUpperBound ?: builtIns.anyClass.owner
+                val klass = this.erasedUpperBound
                 val ic = backendContext.inlineClassesUtils.getInlinedClass(this)
 
                 if (klass.isExternal) {
@@ -122,7 +122,7 @@ fun isBuiltInWasmRefType(type: IrType): Boolean {
 }
 
 fun isExternalType(type: IrType): Boolean =
-    type.erasedUpperBound?.isExternal ?: false
+    type.erasedUpperBound.isExternal
 
 fun IrType.getRuntimeClass(irBuiltIns: IrBuiltIns): IrClass =
-    erasedUpperBound?.takeIf { !it.isInterface } ?: irBuiltIns.anyClass.owner
+    erasedUpperBound.takeIf { !it.isInterface } ?: irBuiltIns.anyClass.owner

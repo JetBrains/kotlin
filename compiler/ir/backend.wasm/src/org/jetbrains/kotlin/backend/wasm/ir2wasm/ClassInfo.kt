@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.backend.js.utils.erasedUpperBound
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.name.Name
 
@@ -63,7 +63,7 @@ private fun IrSimpleType.toWasmSignatureSimpleType(irBuiltIns: IrBuiltIns): IrSi
         )
     }
 
-    val klass = (this.erasedUpperBound?.symbol ?: irBuiltIns.anyClass).owner
+    val klass = this.erasedUpperBound.symbol.owner
     return klass.defaultType.withNullability(this.isNullable())
 }
 

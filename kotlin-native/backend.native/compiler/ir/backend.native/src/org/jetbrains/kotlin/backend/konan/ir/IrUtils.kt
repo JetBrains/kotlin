@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.arrayTypes
 import org.jetbrains.kotlin.backend.konan.descriptors.arraysWithFixedSizeItems
 import org.jetbrains.kotlin.backend.konan.llvm.isVoidAsReturnType
-import org.jetbrains.kotlin.backend.konan.lower.erasure
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
@@ -81,7 +80,7 @@ private enum class TypeKind {
 private data class TypeWithKind(val erasedType: IrType?, val kind: TypeKind) {
     companion object {
         fun fromType(irType: IrType?): TypeWithKind {
-            val erasedType = irType?.erasure()
+            val erasedType = irType?.eraseTypeParameters()
             return when {
                 irType == null -> TypeWithKind(null, TypeKind.ABSENT)
                 irType.isInlinedNative() -> TypeWithKind(erasedType, TypeKind.VALUE_TYPE)

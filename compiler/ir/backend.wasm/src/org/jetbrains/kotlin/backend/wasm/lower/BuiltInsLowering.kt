@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.EnumIntrinsicsUtils
-import org.jetbrains.kotlin.ir.backend.js.utils.erasedUpperBound
 import org.jetbrains.kotlin.ir.backend.js.utils.isEqualsInheritedFromAny
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.getArrayElementType
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -68,11 +68,11 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                 fun callRefIsNull(expr: IrExpression): IrCall {
                     if (
                         !context.isWasmJsTarget &&
-                        expr.type.erasedUpperBound?.isExternal == true
+                        expr.type.erasedUpperBound.isExternal
                     ) {
                         error("Unexpected external refs in wasi mode")
                     }
-                    val refIsNull = if (expr.type.erasedUpperBound?.isExternal == true) symbols.jsRelatedSymbols.externRefIsNull else symbols.refIsNull
+                    val refIsNull = if (expr.type.erasedUpperBound.isExternal) symbols.jsRelatedSymbols.externRefIsNull else symbols.refIsNull
                     return builder.irCall(refIsNull).apply { putValueArgument(0, expr) }
                 }
 

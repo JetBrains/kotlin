@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.ir.util.eraseTypeParameters
 import org.jetbrains.kotlin.ir.util.target
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -40,7 +41,7 @@ internal class GenericCallsReturnTypeEraser(val context: Context) : BodyLowering
 
                 val callee = expression.target
                 if (callee != reinterpret && callee.returnType.classifierOrNull is IrTypeParameterSymbol) {
-                    val actualType = callee.returnType.erasure()
+                    val actualType = callee.returnType.eraseTypeParameters()
                     val expectedType = expression.type
                     if (actualType != expectedType) {
                         expression.type = actualType
