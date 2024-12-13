@@ -148,333 +148,335 @@ fun main() {
 
                 PluginStructureProvider.registerApplicationServices(application, "/META-INF/analysis-api/analysis-api-fir.xml")
             }
+        repeat(1000) {
+            println("time: ${System.currentTimeMillis()}")
+            Disposer.newDisposable(applicationDisposable).use { projectDisposable ->
+                //        val env = KotlinCoreEnvironment.createForProduction(d, CompilerConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES)
+                val project = object : JavaCoreProjectEnvironment(projectDisposable, applicationEnvironment) {
+                    override fun createCoreFileManager(): JavaFileManager {
+                        return JavaFileManagerImpl()
+                    }
 
-        Disposer.newDisposable(applicationDisposable).use { projectDisposable ->
-            //        val env = KotlinCoreEnvironment.createForProduction(d, CompilerConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES)
-            val project = object : JavaCoreProjectEnvironment(projectDisposable, applicationEnvironment) {
-                override fun createCoreFileManager(): JavaFileManager {
-                    return JavaFileManagerImpl()
-                }
+                    override fun createCorePackageIndex(): PackageIndex {
+                        return PackageIndexImpl()
+                    }
 
-                override fun createCorePackageIndex(): PackageIndex {
-                    return PackageIndexImpl()
-                }
+                    override fun createFileIndexFacade(): FileIndexFacade {
+                        return FileIndexFacadeImpl(project)
+                    }
+                }.project
 
-                override fun createFileIndexFacade(): FileIndexFacade {
-                    return FileIndexFacadeImpl(project)
-                }
-            }.project
-
-            val files = mapOf(
-                FileId("/src/foo/foo.kt") to """
+                val files = mapOf(
+                    FileId("/src/foo/foo.kt") to """
                     
-                package foo
-                
-                import bar.Bar
-                
-                class Foo {
-                    fun foo() { Bar().bar() }
-                }
-                
-                fun foo() { }
-
-                """.trimIndent(),
-
-                FileId("/src/bar/bar.kt") to """
+                    package foo
                     
-                package bar
-                
-                import foo.Foo
-                import foo.foo 
-                
-                class Bar {
-                    fun bar() { Foo().foo() }
-                }
-                
-                fun bar() { foo() }
-                
-                """.trimIndent()
-            )
+                    import bar.Bar
+                    
+                    class Foo {
+                        fun foo() { Bar().bar() }
+                    }
+                    
+                    fun foo() { }
+                    
+                    """.trimIndent(),
 
-            val FileIdKey = Key<FileId>("dumdum.fileId")
+                    FileId("/src/bar/bar.kt") to """
 
-            val virtualFileById = files.mapValues { (fileId, content) ->
-                LightVirtualFile(
-                    fileId.id.split('/').last(),
-                    KotlinFileType.INSTANCE,
-                    content
-                ).also {
-                    it.putUserData(FileIdKey, fileId)
-                }
-            }
-
-            val psiManager = PsiManager.getInstance(project)
-            val psiFileById = virtualFileById.mapValues { (_, virtualFile) -> psiManager.findFile(virtualFile)!! }
-
-            val fileBasedIndexExtensions = fileBasedIndexExtensions(
-                listOf(
-                    KotlinJvmModuleAnnotationsIndex(),
-                    KotlinModuleMappingIndex(),
-                    KotlinPartialPackageNamesIndex(),
-                    KotlinTopLevelCallableByPackageShortNameIndex(),
-                    KotlinTopLevelClassLikeDeclarationByPackageShortNameIndex(),
+                    package bar
+                    
+                    import foo.Foo
+                    import foo.foo 
+                    
+                    class Bar {
+                        fun bar() { Foo().foo() }
+                    }
+                    
+                    fun bar() { foo() }
+                    
+                    """.trimIndent()
                 )
-            )
 
-            val stubIndexExtensions = stubIndexExtensions(
-                stubIndexExtensions = listOf(
-                    KotlinAnnotationsIndex.Helper,
-                    KotlinClassShortNameIndex.Helper,
-                    KotlinExtensionsInObjectsByReceiverTypeIndex.Helper,
-                    KotlinFileFacadeClassByPackageIndex.Helper,
-                    KotlinFileFacadeFqNameIndex.Helper,
-                    KotlinFileFacadeShortNameIndex.Helper,
-                    KotlinFilePartClassIndex.Helper,
-                    KotlinFullClassNameIndex.Helper,
-                    KotlinFunctionShortNameIndex.Helper,
-                    KotlinInnerTypeAliasClassIdIndex.Helper,
-                    KotlinJvmNameAnnotationIndex.Helper,
-                    KotlinMultiFileClassPartIndex.Helper,
-                    KotlinOverridableInternalMembersShortNameIndex.Helper,
-                    KotlinPrimeSymbolNameIndex.Helper,
-                    KotlinProbablyContractedFunctionShortNameIndex.Helper,
-                    KotlinProbablyNothingFunctionShortNameIndex.Helper,
-                    KotlinProbablyNothingPropertyShortNameIndex.Helper,
-                    KotlinPropertyShortNameIndex.Helper,
-                    KotlinScriptFqnIndex.Helper,
-                    KotlinSubclassObjectNameIndex.Helper,
-                    KotlinSuperClassIndex.Helper,
-                    KotlinTopLevelClassByPackageIndex.Helper,
-                    KotlinTopLevelExpectFunctionFqNameIndex.Helper,
-                    KotlinTopLevelExpectPropertyFqNameIndex.Helper,
-                    KotlinTopLevelExtensionsByReceiverTypeIndex.Helper,
-                    KotlinTopLevelFunctionByPackageIndex.Helper,
-                    KotlinTopLevelFunctionFqnNameIndex.Helper,
-                    KotlinTopLevelPropertyByPackageIndex.Helper,
-                    KotlinTopLevelPropertyFqnNameIndex.Helper,
-                    KotlinTopLevelTypeAliasByPackageIndex.Helper,
-                    KotlinTopLevelTypeAliasFqNameIndex.Helper,
-                    KotlinTypeAliasByExpansionShortNameIndex.Helper,
-                    KotlinTypeAliasShortNameIndex.Helper,
-                    KotlinExactPackagesIndex.Helper,
-                ),
-                stubSerializersTable = stubSerializersTable()
-            )
+                val FileIdKey = Key<FileId>("dumdum.fileId")
 
-            val index = inMemoryIndex(
-                psiFileById.flatMap { (fileId, psiFile) ->
-                    indexFile(
-                        fileId = fileId,
-                        file = psiFile,
-                        fileBasedIndexExtensions = fileBasedIndexExtensions,
-                        stubIndexExtensions = stubIndexExtensions,
+                val virtualFileById = files.mapValues { (fileId, content) ->
+                    LightVirtualFile(
+                        fileId.id.split('/').last(),
+                        KotlinFileType.INSTANCE,
+                        content
+                    ).also {
+                        it.putUserData(FileIdKey, fileId)
+                    }
+                }
+
+                val psiManager = PsiManager.getInstance(project)
+                val psiFileById = virtualFileById.mapValues { (_, virtualFile) -> psiManager.findFile(virtualFile)!! }
+
+                val fileBasedIndexExtensions = fileBasedIndexExtensions(
+                    listOf(
+                        KotlinJvmModuleAnnotationsIndex(),
+                        KotlinModuleMappingIndex(),
+                        KotlinPartialPackageNamesIndex(),
+                        KotlinTopLevelCallableByPackageShortNameIndex(),
+                        KotlinTopLevelClassLikeDeclarationByPackageShortNameIndex(),
+                    )
+                )
+
+                val stubIndexExtensions = stubIndexExtensions(
+                    stubIndexExtensions = listOf(
+                        KotlinAnnotationsIndex.Helper,
+                        KotlinClassShortNameIndex.Helper,
+                        KotlinExtensionsInObjectsByReceiverTypeIndex.Helper,
+                        KotlinFileFacadeClassByPackageIndex.Helper,
+                        KotlinFileFacadeFqNameIndex.Helper,
+                        KotlinFileFacadeShortNameIndex.Helper,
+                        KotlinFilePartClassIndex.Helper,
+                        KotlinFullClassNameIndex.Helper,
+                        KotlinFunctionShortNameIndex.Helper,
+                        KotlinInnerTypeAliasClassIdIndex.Helper,
+                        KotlinJvmNameAnnotationIndex.Helper,
+                        KotlinMultiFileClassPartIndex.Helper,
+                        KotlinOverridableInternalMembersShortNameIndex.Helper,
+                        KotlinPrimeSymbolNameIndex.Helper,
+                        KotlinProbablyContractedFunctionShortNameIndex.Helper,
+                        KotlinProbablyNothingFunctionShortNameIndex.Helper,
+                        KotlinProbablyNothingPropertyShortNameIndex.Helper,
+                        KotlinPropertyShortNameIndex.Helper,
+                        KotlinScriptFqnIndex.Helper,
+                        KotlinSubclassObjectNameIndex.Helper,
+                        KotlinSuperClassIndex.Helper,
+                        KotlinTopLevelClassByPackageIndex.Helper,
+                        KotlinTopLevelExpectFunctionFqNameIndex.Helper,
+                        KotlinTopLevelExpectPropertyFqNameIndex.Helper,
+                        KotlinTopLevelExtensionsByReceiverTypeIndex.Helper,
+                        KotlinTopLevelFunctionByPackageIndex.Helper,
+                        KotlinTopLevelFunctionFqnNameIndex.Helper,
+                        KotlinTopLevelPropertyByPackageIndex.Helper,
+                        KotlinTopLevelPropertyFqnNameIndex.Helper,
+                        KotlinTopLevelTypeAliasByPackageIndex.Helper,
+                        KotlinTopLevelTypeAliasFqNameIndex.Helper,
+                        KotlinTypeAliasByExpansionShortNameIndex.Helper,
+                        KotlinTypeAliasShortNameIndex.Helper,
+                        KotlinExactPackagesIndex.Helper,
+                    ),
+                    stubSerializersTable = stubSerializersTable()
+                )
+
+                val index = inMemoryIndex(
+                    psiFileById.flatMap { (fileId, psiFile) ->
+                        indexFile(
+                            fileId = fileId,
+                            file = psiFile,
+                            fileBasedIndexExtensions = fileBasedIndexExtensions,
+                            stubIndexExtensions = stubIndexExtensions,
+                        )
+                    }
+                )
+
+                val virtualFileFactory = VirtualFileFactory { fileId ->
+                    virtualFileById[fileId]!!
+                }
+
+                val stubIndex: StubIndex = index.stubIndex(stubIndexExtensions, virtualFileFactory) { virtualFile ->
+                    virtualFile.getUserData(FileIdKey)!!
+                }
+
+                (applicationEnvironment.application.getService(StubTreeLoader::class.java) as StubTreeLoaderImpl).stubIndex = stubIndex
+
+                val fileBasedIndex: FileBasedIndex = index.fileBased(
+                    virtualFileFactory = virtualFileFactory,
+                    fileBasedIndexExtensions = fileBasedIndexExtensions
+                )
+
+                project.apply {
+                    registerService(
+                        JavaModuleResolver::class.java,
+                        object : JavaModuleResolver {
+                            override fun checkAccessibility(
+                                fileFromOurModule: VirtualFile?,
+                                referencedFile: VirtualFile,
+                                referencedPackage: FqName?,
+                            ): JavaModuleResolver.AccessError? {
+                                return null
+                            }
+
+                            override fun getAnnotationsForModuleOwnerOfClass(classId: ClassId): List<JavaAnnotation>? {
+                                TODO("Not yet implemented")
+                            }
+
+                        }
+                    )
+
+                    CoreApplicationEnvironment.registerExtensionPoint(
+                        project.extensionArea,
+                        PsiTreeChangePreprocessor.EP.name,
+                        PsiTreeChangePreprocessor::class.java
+                    )
+                    CoreApplicationEnvironment.registerExtensionPoint(
+                        project.extensionArea,
+                        PsiElementFinder.EP.name,
+                        PsiElementFinder::class.java
+                    )
+                    CoreApplicationEnvironment.registerExtensionPoint(
+                        project.extensionArea,
+                        JvmElementProvider.EP_NAME,
+                        JvmElementProvider::class.java
+                    )
+
+                    PluginStructureProvider.registerProjectServices(project, "/META-INF/analysis-api/analysis-api-fir.xml")
+                    PluginStructureProvider.registerProjectListeners(project, "/META-INF/analysis-api/analysis-api-fir.xml")
+                    PluginStructureProvider.registerProjectExtensionPoints(project, "/META-INF/analysis-api/analysis-api-fir.xml")
+
+                    with(PsiElementFinder.EP.getPoint(project)) {
+                        registerExtension(JavaElementFinder(project), applicationDisposable)
+                        registerExtension(PsiElementFinderImpl(project), applicationDisposable)
+                    }
+
+
+                    registerService(
+                        KotlinGlobalSearchScopeMerger::class.java,
+                        KotlinSimpleGlobalSearchScopeMerger()
+                    )
+
+                    registerService(
+                        SmartTypePointerManager::class.java,
+                        SmartTypePointerManagerImpl(project)
+                    )
+
+                    registerService(
+                        KotlinLifetimeTokenFactory::class.java,
+                        KotlinAlwaysAccessibleLifetimeTokenFactory()
+                    )
+
+                    registerService(
+                        KotlinPlatformSettings::class.java,
+                        object : KotlinPlatformSettings {
+                            override val deserializedDeclarationsOrigin: KotlinDeserializedDeclarationsOrigin
+                                get() = KotlinDeserializedDeclarationsOrigin.BINARIES
+                        }
+                    )
+
+                    val singleModule = KaSourceModuleImpl(
+                        directRegularDependencies = emptyList(),
+                        directDependsOnDependencies = emptyList(),
+                        directFriendDependencies = emptyList(),
+                        contentScope = GlobalSearchScope.filesScope(project, virtualFileById.values),
+                        targetPlatform = JvmPlatforms.defaultJvmPlatform,
+                        project = project,
+                        name = "dumdum",
+                        languageVersionSettings = LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST),
+                        psiRoots = psiFileById.values.toList()
+                    )
+
+                    registerService(
+                        KotlinProjectStructureProvider::class.java,
+                        object : KotlinProjectStructureProvider {
+                            override fun getModule(element: PsiElement, useSiteModule: KaModule?): KaModule {
+                                return singleModule
+                            }
+                        }
+                    )
+
+                    registerService(
+                        KotlinModuleDependentsProvider::class.java,
+                        object : KotlinModuleDependentsProvider {
+                            override fun getDirectDependents(module: KaModule): Set<KaModule> {
+                                TODO("Not yet implemented")
+                            }
+
+                            override fun getTransitiveDependents(module: KaModule): Set<KaModule> {
+                                TODO("Not yet implemented")
+                            }
+
+                            override fun getRefinementDependents(module: KaModule): Set<KaModule> {
+                                TODO("Not yet implemented")
+                            }
+                        }
+                    )
+
+                    registerService(
+                        KotlinModificationTrackerFactory::class.java,
+                        object : KotlinModificationTrackerFactory {
+                            override fun createProjectWideOutOfBlockModificationTracker(): ModificationTracker {
+                                return ModificationTracker.NEVER_CHANGED
+                            }
+
+                            override fun createLibrariesWideModificationTracker(): ModificationTracker {
+                                return ModificationTracker.NEVER_CHANGED
+                            }
+                        }
+                    )
+
+                    registerService(
+                        KotlinGlobalModificationService::class.java,
+                        object : KotlinGlobalModificationService {
+                            override fun publishGlobalModuleStateModification() {
+                                TODO("Not yet implemented")
+                            }
+
+                            override fun publishGlobalSourceModuleStateModification() {
+                                TODO("Not yet implemented")
+                            }
+
+                            override fun publishGlobalSourceOutOfBlockModification() {
+                                TODO("Not yet implemented")
+                            }
+                        }
+                    )
+
+
+                    registerService(
+                        KotlinDirectInheritorsProvider::class.java,
+                        object : KotlinDirectInheritorsProvider {
+                            override fun getDirectKotlinInheritors(
+                                ktClass: KtClass,
+                                scope: GlobalSearchScope,
+                                includeLocalInheritors: Boolean,
+                            ): Iterable<KtClassOrObject> {
+                                TODO("Not yet implemented")
+                            }
+                        }
+                    )
+
+                    registerService(
+                        KotlinAnnotationsResolverFactory::class.java,
+                        IdeKotlinAnnotationsResolverFactory(project, stubIndex),
+                    )
+
+                    registerService(
+                        KotlinResolutionScopeProvider::class.java,
+                        KotlinByModulesResolutionScopeProvider()
+                    )
+
+                    registerService(
+                        KotlinDeclarationProviderFactory::class.java,
+                        IdeKotlinDeclarationProviderFactory(project, stubIndex, fileBasedIndex)
+                    )
+                    registerService(
+                        KotlinDeclarationProviderMerger::class.java,
+                        IdeKotlinDeclarationProviderMerger(project, stubIndex, fileBasedIndex)
+                    )
+                    registerService(
+                        KotlinPackageProviderFactory::class.java,
+                        IdeKotlinPackageProviderFactory(project, fileBasedIndex)
+                    )
+                    registerService(
+                        KotlinPackageProviderMerger::class.java,
+                        IdeKotlinPackageProviderMerger(project, fileBasedIndex)
+                    )
+
+                    registerService(
+                        KotlinPackagePartProviderFactory::class.java,
+                        IdeKotlinPackagePartProviderFactory(fileBasedIndex)
                     )
                 }
-            )
 
-            val virtualFileFactory = VirtualFileFactory { fileId ->
-                virtualFileById[fileId]!!
-            }
-
-            val stubIndex: StubIndex = index.stubIndex(stubIndexExtensions, virtualFileFactory) { virtualFile ->
-                virtualFile.getUserData(FileIdKey)!!
-            }
-
-            (applicationEnvironment.application.getService(StubTreeLoader::class.java) as StubTreeLoaderImpl).stubIndex = stubIndex
-
-            val fileBasedIndex: FileBasedIndex = index.fileBased(
-                virtualFileFactory = virtualFileFactory,
-                fileBasedIndexExtensions = fileBasedIndexExtensions
-            )
-
-            project.apply {
-                registerService(
-                    JavaModuleResolver::class.java,
-                    object : JavaModuleResolver {
-                        override fun checkAccessibility(
-                            fileFromOurModule: VirtualFile?,
-                            referencedFile: VirtualFile,
-                            referencedPackage: FqName?,
-                        ): JavaModuleResolver.AccessError? {
-                            return null
+                for (psiFile in psiFileById) {
+                    analyze(psiFile.value as KtFile) {
+                        psiFile.value.descendantsOfType<KtCallElement>().forEach { call ->
+                            val callInfo = (call.resolveToCall() as KaSuccessCallInfo).call as KaCallableMemberCall<*, *>
+                            println(callInfo.partiallyAppliedSymbol.signature.callableId)
                         }
-
-                        override fun getAnnotationsForModuleOwnerOfClass(classId: ClassId): List<JavaAnnotation>? {
-                            TODO("Not yet implemented")
-                        }
-
-                    }
-                )
-
-                CoreApplicationEnvironment.registerExtensionPoint(
-                    project.extensionArea,
-                    PsiTreeChangePreprocessor.EP.name,
-                    PsiTreeChangePreprocessor::class.java
-                )
-                CoreApplicationEnvironment.registerExtensionPoint(
-                    project.extensionArea,
-                    PsiElementFinder.EP.name,
-                    PsiElementFinder::class.java
-                )
-                CoreApplicationEnvironment.registerExtensionPoint(
-                    project.extensionArea,
-                    JvmElementProvider.EP_NAME,
-                    JvmElementProvider::class.java
-                )
-
-                PluginStructureProvider.registerProjectServices(project, "/META-INF/analysis-api/analysis-api-fir.xml")
-                PluginStructureProvider.registerProjectListeners(project, "/META-INF/analysis-api/analysis-api-fir.xml")
-                PluginStructureProvider.registerProjectExtensionPoints(project, "/META-INF/analysis-api/analysis-api-fir.xml")
-
-                with(PsiElementFinder.EP.getPoint(project)) {
-                    registerExtension(JavaElementFinder(project), applicationDisposable)
-                    registerExtension(PsiElementFinderImpl(project), applicationDisposable)
-                }
-
-
-                registerService(
-                    KotlinGlobalSearchScopeMerger::class.java,
-                    KotlinSimpleGlobalSearchScopeMerger()
-                )
-
-                registerService(
-                    SmartTypePointerManager::class.java,
-                    SmartTypePointerManagerImpl(project)
-                )
-
-                registerService(
-                    KotlinLifetimeTokenFactory::class.java,
-                    KotlinAlwaysAccessibleLifetimeTokenFactory()
-                )
-
-                registerService(
-                    KotlinPlatformSettings::class.java,
-                    object : KotlinPlatformSettings {
-                        override val deserializedDeclarationsOrigin: KotlinDeserializedDeclarationsOrigin
-                            get() = KotlinDeserializedDeclarationsOrigin.BINARIES
-                    }
-                )
-
-                val singleModule = KaSourceModuleImpl(
-                    directRegularDependencies = emptyList(),
-                    directDependsOnDependencies = emptyList(),
-                    directFriendDependencies = emptyList(),
-                    contentScope = GlobalSearchScope.filesScope(project, virtualFileById.values),
-                    targetPlatform = JvmPlatforms.defaultJvmPlatform,
-                    project = project,
-                    name = "dumdum",
-                    languageVersionSettings = LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST),
-                    psiRoots = psiFileById.values.toList()
-                )
-
-                registerService(
-                    KotlinProjectStructureProvider::class.java,
-                    object : KotlinProjectStructureProvider {
-                        override fun getModule(element: PsiElement, useSiteModule: KaModule?): KaModule {
-                            return singleModule
-                        }
-                    }
-                )
-
-                registerService(
-                    KotlinModuleDependentsProvider::class.java,
-                    object : KotlinModuleDependentsProvider {
-                        override fun getDirectDependents(module: KaModule): Set<KaModule> {
-                            TODO("Not yet implemented")
-                        }
-
-                        override fun getTransitiveDependents(module: KaModule): Set<KaModule> {
-                            TODO("Not yet implemented")
-                        }
-
-                        override fun getRefinementDependents(module: KaModule): Set<KaModule> {
-                            TODO("Not yet implemented")
-                        }
-                    }
-                )
-
-                registerService(
-                    KotlinModificationTrackerFactory::class.java,
-                    object : KotlinModificationTrackerFactory {
-                        override fun createProjectWideOutOfBlockModificationTracker(): ModificationTracker {
-                            return ModificationTracker.NEVER_CHANGED
-                        }
-
-                        override fun createLibrariesWideModificationTracker(): ModificationTracker {
-                            return ModificationTracker.NEVER_CHANGED
-                        }
-                    }
-                )
-
-                registerService(
-                    KotlinGlobalModificationService::class.java,
-                    object : KotlinGlobalModificationService {
-                        override fun publishGlobalModuleStateModification() {
-                            TODO("Not yet implemented")
-                        }
-
-                        override fun publishGlobalSourceModuleStateModification() {
-                            TODO("Not yet implemented")
-                        }
-
-                        override fun publishGlobalSourceOutOfBlockModification() {
-                            TODO("Not yet implemented")
-                        }
-                    }
-                )
-
-
-                registerService(
-                    KotlinDirectInheritorsProvider::class.java,
-                    object : KotlinDirectInheritorsProvider {
-                        override fun getDirectKotlinInheritors(
-                            ktClass: KtClass,
-                            scope: GlobalSearchScope,
-                            includeLocalInheritors: Boolean,
-                        ): Iterable<KtClassOrObject> {
-                            TODO("Not yet implemented")
-                        }
-                    }
-                )
-
-                registerService(
-                    KotlinAnnotationsResolverFactory::class.java,
-                    IdeKotlinAnnotationsResolverFactory(project, stubIndex),
-                )
-
-                registerService(
-                    KotlinResolutionScopeProvider::class.java,
-                    KotlinByModulesResolutionScopeProvider()
-                )
-
-                registerService(
-                    KotlinDeclarationProviderFactory::class.java,
-                    IdeKotlinDeclarationProviderFactory(project, stubIndex, fileBasedIndex)
-                )
-                registerService(
-                    KotlinDeclarationProviderMerger::class.java,
-                    IdeKotlinDeclarationProviderMerger(project, stubIndex, fileBasedIndex)
-                )
-                registerService(
-                    KotlinPackageProviderFactory::class.java,
-                    IdeKotlinPackageProviderFactory(project, fileBasedIndex)
-                )
-                registerService(
-                    KotlinPackageProviderMerger::class.java,
-                    IdeKotlinPackageProviderMerger(project, fileBasedIndex)
-                )
-
-                registerService(
-                    KotlinPackagePartProviderFactory::class.java,
-                    IdeKotlinPackagePartProviderFactory(fileBasedIndex)
-                )
-            }
-
-            for (psiFile in psiFileById) {
-                analyze(psiFile.value as KtFile) {
-                    psiFile.value.descendantsOfType<KtCallElement>().forEach { call ->
-                        val callInfo = (call.resolveToCall() as KaSuccessCallInfo).call as KaCallableMemberCall<*, *>
-                        println(callInfo.partiallyAppliedSymbol.signature.callableId)
                     }
                 }
             }

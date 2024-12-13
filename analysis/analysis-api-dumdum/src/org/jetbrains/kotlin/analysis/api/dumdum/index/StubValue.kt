@@ -17,7 +17,6 @@ data class StubValue(
             keyTypesMap: KeyTypesMap,
             stubSerializersTable: StubSerializersTable,
         ): Serializer<StubValue> {
-
             val stubSerializer = ShareableStubTreeSerializer(stubSerializersTable)
             return object : Serializer<StubValue> {
                 override fun serialize(value: StubValue): ByteArray {
@@ -63,10 +62,9 @@ data class StubValue(
                                     val index = buildMap(keysCount) {
                                         repeat(keysCount) {
                                             val key = keyDescriptor.read(dis)
-                                            val idCount = dis.readInt()
-                                            val ids = IntArray(idCount) {
-                                                val id = dis.readInt()
-                                                id
+                                            val idSize = dis.readInt()
+                                            val ids = IntArray(idSize) {
+                                                dis.readInt()
                                             }
                                             put(key, ids)
                                         }

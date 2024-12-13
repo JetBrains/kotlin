@@ -2,22 +2,73 @@ package org.jetbrains.kotlin.analysis.api.dumdum.index
 
 import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 
+class ByteArrayKey(
+    val bytes: ByteArray,
+) {
+    override fun equals(other: Any?): Boolean =
+        other === this || (other is ByteArrayKey && other.bytes contentEquals bytes)
+
+    override fun hashCode(): Int =
+        bytes.contentHashCode()
+}
+
+data class ValueKey<T>(
+    val fileId: FileId,
+    val valueType: ValueType<T>,
+)
+
 fun inMemoryIndex(updates: List<IndexUpdate<*>>): Index {
-    val byFile = updates.groupBy { it.fileId to it.valueType }
-    val byKey = updates.flatGroupBy { it.keys }
-    val byKeyDescriptor = updates.flatGroupBy { it.keys.map(IndexKey<*>::keyType) }
+    val fileToValue: Map<ValueKey<*>, List<ByteArray>> =
+        updates.groupBy(
+            keySelector = { indexUpdate ->
+                ValueKey(indexUpdate.fileId, indexUpdate.valueType)
+            },
+            valueTransform = { indexUpdate ->
+                indexUpdate.serializeValue()
+            }
+        )
+
+    val keyToFiles: Map<ByteArrayKey, List<FileId>> =
+        updates.flatGroupBy(
+            keySelector = { it.keys },
+            keyTransformer = { key ->
+                ByteArrayKey(key.serialize())
+            },
+            valueTransformer = { it.fileId }
+        )
+
+    val keyTypeToKeys: Map<KeyType<*>, List<ByteArray>> =
+        updates
+            .flatMap { indexUpdate ->
+                indexUpdate.keys.map { key ->
+                    key.keyType to key.serialize()
+                }
+            }
+            .groupBy(
+                keySelector = { it.first },
+                valueTransform = { it.second }
+            )
+
     return object : Index {
-        @Suppress("UNCHECKED_CAST")
+
         override fun <S> value(fileId: FileId, valueType: ValueType<S>): S? =
-            byFile[fileId to valueType]?.firstOrNull()?.value as S?
+            fileToValue[ValueKey(fileId, valueType)]
+                ?.firstOrNull()
+                ?.let { bb ->
+                    valueType.serializer.deserialize(bb)
+                }
 
         override fun <K> files(key: IndexKey<K>): Sequence<FileId> =
-            byKey[key]?.asSequence()?.map { it.fileId }.orEmpty()
+            keyToFiles[ByteArrayKey(key.serialize())]
+                ?.asSequence()
+                .orEmpty()
 
         override fun <K> keys(keyType: KeyType<K>): Sequence<K> =
-            byKeyDescriptor[keyType]?.asSequence()?.flatMap { it.keys }?.map {
-                @Suppress("UNCHECKED_CAST")
-                it.key as K
-            }.orEmpty()
+            keyTypeToKeys[keyType]
+                ?.asSequence()
+                ?.map { key ->
+                    keyType.serializer.deserialize(key)
+                }
+                .orEmpty()
     }
 }

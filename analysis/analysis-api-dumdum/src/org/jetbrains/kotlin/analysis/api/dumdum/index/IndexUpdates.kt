@@ -80,3 +80,5 @@ private fun fileBasedIndexesUpdates(
         )
     }
 
+fun<T> IndexUpdate<T>.serializeValue(): ByteArray = 
+    valueType.serializer.serialize(value)
