@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         mavenLocal()
-        maven { url 'https://maven.google.com' }
+        maven { url = 'https://maven.google.com' }
         mavenCentral()
     }
     dependencies {
@@ -13,7 +13,7 @@ buildscript {
 subprojects {
     repositories {
         mavenLocal()
-        maven { url 'https://maven.google.com' }
+        maven { url = 'https://maven.google.com' }
         mavenCentral()
     }
 }

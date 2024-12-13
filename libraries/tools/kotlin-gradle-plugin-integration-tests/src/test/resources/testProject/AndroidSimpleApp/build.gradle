@@ -10,20 +10,20 @@ repositories {
 }
 
 android {
-    namespace "com.example"
+    namespace = "com.example"
 
-    compileSdkVersion 34
+    compileSdkVersion = 34
 
     kotlin {
         jvmToolchain(8)
     }
 
     defaultConfig {
-        applicationId "com.example"
-        minSdkVersion 24
-        targetSdkVersion 33
-        versionCode 1
-        versionName "1.0"
+        applicationId = "com.example"
+        minSdkVersion = 24
+        targetSdkVersion = 33
+        versionCode = 1
+        versionName = "1.0"
     }
 }
 

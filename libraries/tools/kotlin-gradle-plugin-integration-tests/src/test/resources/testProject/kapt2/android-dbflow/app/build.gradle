@@ -3,14 +3,14 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    namespace "mobi.porquenao.poc.kotlin"
-    compileSdkVersion 23
+    namespace = "mobi.porquenao.poc.kotlin"
+    compileSdkVersion = 23
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 23
-        versionCode 1
-        versionName '1.0'
+        minSdkVersion = 14
+        targetSdkVersion = 23
+        versionCode = 1
+        versionName = '1.0'
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'

@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         mavenLocal()
-        maven { url 'https://maven.google.com' }
+        maven { url = 'https://maven.google.com' }
         mavenCentral()
     }
     dependencies {
@@ -17,19 +17,19 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs'
 
 android {
-    namespace "test.androidx.navigation"
-    compileSdkVersion 28
+    namespace = "test.androidx.navigation"
+    compileSdkVersion = 28
     defaultConfig {
-        applicationId 'test.androidx.navigation'
-        minSdkVersion 14
-        targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        applicationId = 'test.androidx.navigation'
+        minSdkVersion = 14
+        targetSdkVersion = 28
+        versionCode = 1
+        versionName = "1.0"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled = false
         }
     }
 
@@ -38,7 +38,7 @@ android {
     }
 
     dexOptions {
-        incremental false
+        incremental = false
     }
 
     packagingOptions {
@@ -57,7 +57,7 @@ android {
 
 repositories {
     mavenLocal()
-    maven { url 'https://maven.google.com' }
+    maven { url = 'https://maven.google.com' }
     mavenCentral()
 }
 

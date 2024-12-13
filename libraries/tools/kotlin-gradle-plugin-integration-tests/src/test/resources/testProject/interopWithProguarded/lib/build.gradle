@@ -49,8 +49,8 @@ configurations {
 
 artifacts {
     proguarded(file(obfuscate.outJarFiles[0])) {
-        name 'out'
-        type 'jar'
-        builtBy obfuscate
+        name =  'out'
+        type = 'jar'
+        builtBy(obfuscate)
     }
 }
