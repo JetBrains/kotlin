@@ -36,6 +36,36 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleActualsForExpected
 
+inline fun <reified T : MemberDescriptor> T.findActualForExpect(): T {
+    if (!this.isExpect) error(this)
+    return (findCompatibleActualsForExpected(module).singleOrNull() ?: error(this)) as T
+}
+
+inline fun <reified T : IrFunction> IrPluginContext.findActualForExpect(expected: T): T {
+    val symbol = symbolTable.referenceFunction(expected.descriptor.findActualForExpect())
+    if (!symbol.isBound) {
+        // some actual symbols might be coming from incremental compilation and they are not
+        // directly linked by default.
+        (this as? IrPluginContextImpl)?.linker?.getDeclaration(symbol)
+    }
+    return symbol.owner as T
+}
+
+private fun IrPluginContext.findActualForExpect(property: IrProperty): IrProperty =
+    symbolTable.descriptorExtension.referenceProperty(
+        property.descriptor.findActualForExpect()
+    ).owner
+
+private fun IrPluginContext.findActualForExpect(klass: IrClass): IrClass =
+    symbolTable.descriptorExtension.referenceClass(
+        klass.descriptor.findActualForExpect()
+    ).owner
+
+private fun IrPluginContext.findActualForExpect(enum: IrEnumEntry): IrEnumEntry =
+    symbolTable.descriptorExtension.referenceEnumEntry(
+        enum.descriptor.findActualForExpect()
+    ).owner
+
 /**
  * [ComposableFunctionBodyTransformer] relies on presence of default values in
  * Composable functions' parameters.
@@ -82,7 +112,7 @@ class CopyDefaultValuesFromExpectLowering(
             return original
         }
 
-        val actualForExpected = original.findActualForExpected()
+        val actualForExpected = pluginContext.findActualForExpect(original)
 
         original.valueParameters.forEachIndexed { index, expectValueParameter ->
             val actualValueParameter = actualForExpected.valueParameters[index]
@@ -104,41 +134,11 @@ class CopyDefaultValuesFromExpectLowering(
         irModule.transformChildrenVoid(this)
     }
 
-    private inline fun <reified T : IrFunction> T.findActualForExpected(): T {
-        val symbol = symbolTable.referenceFunction(descriptor.findActualForExpect())
-        if (!symbol.isBound) {
-            // some actual symbols might be coming from incremental compilation and they are not
-            // directly linked by default.
-            (pluginContext as? IrPluginContextImpl)?.linker?.getDeclaration(symbol)
-        }
-        return symbol.owner as T
-    }
-
-    private fun IrProperty.findActualForExpected(): IrProperty =
-        symbolTable.descriptorExtension.referenceProperty(
-            descriptor.findActualForExpect()
-        ).owner
-
-    private fun IrClass.findActualForExpected(): IrClass =
-        symbolTable.descriptorExtension.referenceClass(
-            descriptor.findActualForExpect()
-        ).owner
-
-    private fun IrEnumEntry.findActualForExpected(): IrEnumEntry =
-        symbolTable.descriptorExtension.referenceEnumEntry(
-            descriptor.findActualForExpect()
-        ).owner
-
-    private inline fun <reified T : MemberDescriptor> T.findActualForExpect(): T {
-        if (!this.isExpect) error(this)
-        return (findCompatibleActualsForExpected(module).singleOrNull() ?: error(this)) as T
-    }
-
     private fun IrExpressionBody.remapExpectValueSymbols(): IrExpressionBody {
         class SymbolRemapper : DeepCopySymbolRemapper() {
             override fun getReferencedClass(symbol: IrClassSymbol) =
                 if (symbol.descriptor.isExpect)
-                    symbol.owner.findActualForExpected().symbol
+                    pluginContext.findActualForExpect(symbol.owner).symbol
                 else super.getReferencedClass(symbol)
 
             override fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol): IrTypeParameterSymbol =
@@ -149,11 +149,11 @@ class CopyDefaultValuesFromExpectLowering(
 
             override fun getReferencedConstructor(symbol: IrConstructorSymbol) =
                 if (symbol.descriptor.isExpect)
-                    symbol.owner.findActualForExpected().symbol
+                    pluginContext.findActualForExpect(symbol.owner).symbol
                 else super.getReferencedConstructor(symbol)
 
             override fun getReferencedSimpleFunction(symbol: IrSimpleFunctionSymbol) = when {
-                symbol.descriptor.isExpect -> symbol.owner.findActualForExpected().symbol
+                symbol.descriptor.isExpect -> pluginContext.findActualForExpect(symbol.owner).symbol
 
                 symbol.descriptor.propertyIfAccessor.isExpect -> {
                     val property = symbol.owner.correspondingPropertySymbol!!.owner
@@ -171,13 +171,13 @@ class CopyDefaultValuesFromExpectLowering(
 
             override fun getReferencedProperty(symbol: IrPropertySymbol) =
                 if (symbol.descriptor.isExpect)
-                    symbol.owner.findActualForExpected().symbol
+                    pluginContext.findActualForExpect(symbol.owner).symbol
                 else
                     super.getReferencedProperty(symbol)
 
             override fun getReferencedEnumEntry(symbol: IrEnumEntrySymbol): IrEnumEntrySymbol =
                 if (symbol.descriptor.isExpect)
-                    symbol.owner.findActualForExpected().symbol
+                    pluginContext.findActualForExpect(symbol.owner).symbol
                 else
                     super.getReferencedEnumEntry(symbol)
 
@@ -199,12 +199,12 @@ class CopyDefaultValuesFromExpectLowering(
             is IrClass ->
                 if (!parent.descriptor.isExpect)
                     parameter
-                else parent.findActualForExpected().typeParameters[parameter.index]
+                else pluginContext.findActualForExpect(parent).typeParameters[parameter.index]
 
             is IrFunction ->
                 if (!parent.descriptor.isExpect)
                     parameter
-                else parent.findActualForExpected().typeParameters[parameter.index]
+                else pluginContext.findActualForExpect(parent).typeParameters[parameter.index]
 
             else -> error(parent)
         }
@@ -224,7 +224,7 @@ class CopyDefaultValuesFromExpectLowering(
                     null
                 else {
                     assert(parameter == parent.thisReceiver)
-                    parent.findActualForExpected().thisReceiver!!
+                    pluginContext.findActualForExpect(parent).thisReceiver!!
                 }
 
             is IrFunction ->
@@ -232,14 +232,14 @@ class CopyDefaultValuesFromExpectLowering(
                     null
                 else when (parameter) {
                     parent.dispatchReceiverParameter ->
-                        parent.findActualForExpected().dispatchReceiverParameter!!
+                        pluginContext.findActualForExpect(parent).dispatchReceiverParameter!!
 
                     parent.extensionReceiverParameter ->
-                        parent.findActualForExpected().extensionReceiverParameter!!
+                        pluginContext.findActualForExpect(parent).extensionReceiverParameter!!
 
                     else -> {
                         assert(parent.valueParameters[parameter.indexInOldValueParameters] == parameter)
-                        parent.findActualForExpected().valueParameters[parameter.indexInOldValueParameters]
+                        pluginContext.findActualForExpect(parent).valueParameters[parameter.indexInOldValueParameters]
                     }
                 }
 

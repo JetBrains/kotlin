@@ -271,10 +271,6 @@ class ComposerParamTransformer(
             return this
         }
 
-        // we don't bother transforming expect functions. They exist only for type resolution and
-        // don't need to be transformed to have a composer parameter
-        if (isExpect) return this
-
         // cache the transformed function with composer parameter
         return copyWithComposerParam()
     }
@@ -401,10 +397,16 @@ class ComposerParamTransformer(
             )
         }
 
+        val actual: IrSimpleFunction? = if (this.isExpect) {
+            context.findActualForExpect(this.symbol.owner)
+        } else null
+
+
         // $default[n]
-        if (this.requiresDefaultParameter()) {
+        if (this.requiresDefaultParameter() || actual != null) {
             val defaults = ComposeNames.DEFAULT_PARAMETER.identifier
-            for (i in 0 until defaultParamCount(currentParams)) {
+            val paramsCount = if (isExpect) actual!!.valueParameters.size else currentParams
+            for (i in 0 until defaultParamCount(paramsCount)) {
                 this.addValueParameter(
                     if (i == 0) defaults else "$defaults$i",
                     context.irBuiltIns.intType,
