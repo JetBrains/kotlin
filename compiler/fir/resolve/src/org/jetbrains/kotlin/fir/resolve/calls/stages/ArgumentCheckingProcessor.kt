@@ -130,9 +130,7 @@ internal object ArgumentCheckingProcessor {
                     if (listOfNothingConeType.isSubtypeOf(expectedType, session)) {
                         return // Just don't infer anything. The candidate is successful
                     }
-                    println("Type '${expectedType}' doesn't have member 'operator fun of' function declared in its Companion")
-                    val diag = ArgumentTypeMismatch(expectedType, expectedType, atom.expression, isMismatchDueToNullability = false)
-                    reportDiagnostic(diag) // todo create new diagnostic
+                    reportDiagnostic(ExpectedTypeDoesntContainCompanionOperatorOfFunction(expectedType, atom.expression))
                     return
                 }
                 val ofFunction = resolveVarargOfMemberFunction(collectionLiteralArgumentContext.expectedType, session, scopeSession)

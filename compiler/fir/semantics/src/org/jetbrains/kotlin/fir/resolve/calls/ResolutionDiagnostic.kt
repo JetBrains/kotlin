@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
@@ -136,6 +137,9 @@ class ArgumentTypeMismatch(
     val argument: FirExpression,
     val isMismatchDueToNullability: Boolean,
 ) : ResolutionDiagnostic(if (isMismatchDueToNullability) UNSAFE_CALL else INAPPLICABLE)
+
+class ExpectedTypeDoesntContainCompanionOperatorOfFunction(val expectedType: ConeKotlinType, val argument: FirArrayLiteral) :
+    ResolutionDiagnostic(INAPPLICABLE)
 
 class UnitReturnTypeLambdaContradictsExpectedType(
     val lambda: FirAnonymousFunction,

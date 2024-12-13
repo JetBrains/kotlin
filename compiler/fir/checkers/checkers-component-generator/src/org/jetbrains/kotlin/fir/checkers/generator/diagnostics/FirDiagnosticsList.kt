@@ -662,6 +662,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Boolean>("isMismatchDueToNullability")
         }
 
+        val EXPECTED_TYPE_DOESNT_CONTAIN_COMPANION_OPERATOR_OF_FUNCTION by error<PsiElement> {
+            parameter<ConeKotlinType>("expectedType")
+        }
+
         val MEMBER_PROJECTED_OUT by error<PsiElement> {
             parameter<ConeKotlinType>("receiver")
             parameter<String>("projection")
