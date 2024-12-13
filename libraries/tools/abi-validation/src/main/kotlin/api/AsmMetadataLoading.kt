@@ -6,8 +6,8 @@
 package kotlinx.validation.api
 
 import kotlin.metadata.jvm.*
-import org.objectweb.asm.*
-import org.objectweb.asm.tree.*
+import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.tree.*
 
 internal val ACCESS_NAMES = mapOf(
     Opcodes.ACC_PUBLIC to "public",
