@@ -274,6 +274,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
       runTest("native/native.tests/testData/codegen/cinterop/toKString.kt");
     }
 
+    @Test
+    @TestMetadata("workers.kt")
+    public void testWorkers() {
+      runTest("native/native.tests/testData/codegen/cinterop/workers.kt");
+    }
+
     @Nested
     @TestMetadata("native/native.tests/testData/codegen/cinterop/basics")
     @TestDataPath("$PROJECT_ROOT")
