@@ -52,7 +52,7 @@ class SerializedIrDumpHandler(
         val dumpOptions = DumpIrTreeOptions(
             normalizeNames = true,
             stableOrder = true,
-            stableOrderOfFakeOverrides = true, // We need to print overridden symbols always in stable order.
+            stableOrderOfOverriddenSymbols = true, // We need to print overridden symbols always in stable order.
             printFlagsInDeclarationReferences = true,
             // External declarations origin differs between frontend-generated and deserialized IR,
             // which prevents us from running irText tests against deserialized IR,
