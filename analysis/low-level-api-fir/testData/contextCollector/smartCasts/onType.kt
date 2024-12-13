@@ -4,6 +4,9 @@ fun test(a: Any) {
     }
 
     call<List<<expr>Int</expr>>>()
+
+    // Force partial body resolution
+    call<Unit>()
 }
 
 inline fun <reified T : Any> call() {}

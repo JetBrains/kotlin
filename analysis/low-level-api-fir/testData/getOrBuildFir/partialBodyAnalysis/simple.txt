@@ -9,7 +9,7 @@ Int(1).R|kotlin/Int.plus|(Int(2))
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] simple.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyResolveStateKey=1(1/3) #1] fun test(): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=1(1/3) #1] fun test(): R|kotlin/Unit| {
         R|/consume|(Int(1).R|kotlin/Int.plus|(Int(2)))
         consume#(String(foo))
         consume#(Char(b))
@@ -29,7 +29,7 @@ String(foo)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] simple.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyResolveStateKey=2(2/3) #2] fun test(): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=2(2/3) #2] fun test(): R|kotlin/Unit| {
         R|/consume|(Int(1).R|kotlin/Int.plus|(Int(2)))
         R|/consume<Inapplicable(INAPPLICABLE): /consume>#|(String(foo))
         consume#(Char(b))

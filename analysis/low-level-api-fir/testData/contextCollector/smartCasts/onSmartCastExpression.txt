@@ -37,8 +37,8 @@ FILE: [ResolvedTo(IMPORTS)] onSmartCastExpression.kt
         public? final? [ResolvedTo(RAW_FIR)] fun boo(): Int { LAZY_BLOCK }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] fun main(): R|kotlin/Unit| {
-        [ResolvedTo(BODY_RESOLVE)] lval x: R|Base| = R|/Base.Base|()
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=3(3/4) #1] fun main(): R|kotlin/Unit| {
+        [ResolvedTo(RAW_FIR)] lval x: R|Base| = R|/Base.Base|()
         String().R|kotlin/String.toString|()
         when () {
             (R|<local>/x| !is R|Derived|) ->  {
@@ -46,5 +46,5 @@ FILE: [ResolvedTo(IMPORTS)] onSmartCastExpression.kt
             }
         }
 
-        String().R|kotlin/String.toString|()
+        String().toString#()
     }
