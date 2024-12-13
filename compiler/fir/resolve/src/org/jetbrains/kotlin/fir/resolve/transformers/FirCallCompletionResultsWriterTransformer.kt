@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConeNoInferSubtyping
 import org.jetbrains.kotlin.resolve.calls.inference.model.InferredEmptyIntersection
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -1193,28 +1194,36 @@ class FirCallCompletionResultsWriterTransformer(
         if (arrayLiteral.isResolved) return arrayLiteral
         val expectedArrayType = data?.getExpectedType(arrayLiteral)
         val expectedArrayElementType = expectedArrayType?.let { getCollectionLiteralElementType(it, session, scopeSession) }
-        if (expectedArrayType == null || expectedArrayElementType == null) {
-            println("InferenceError: Collection literal type is unknown. Overload resolution ambiguity?")
-            arrayLiteral.resultType = buildErrorTypeRef { // todo
-                source = arrayLiteral.source
-                diagnostic = ConeSimpleDiagnostic("Collection literal type is unknown", kind = DiagnosticKind.InferenceError)
-            }.coneType
-            return arrayLiteral
-        }
-        val call = components.syntheticCallGenerator.generateCollectionCall(
-            transformElement(arrayLiteral, expectedArrayElementType.toExpectedType()),
-            expectedArrayType,
-            resolutionContext,
-            resolutionMode = ResolutionMode.ContextIndependent
-        )
-        if (!call.isResolved) { // hack: otherwise, intArrayOf resolves to arrayOf for some weird reason
-            components.callResolver.resolveCallAndSelectCandidate(
-                call,
-                ResolutionMode.WithExpectedType(expectedArrayType.toFirResolvedTypeRef())
+        val call: FirFunctionCall
+        val actualArrayType: ConeKotlinType
+        if (expectedArrayType != null && expectedArrayElementType != null) {
+            actualArrayType = expectedArrayType
+            call = components.syntheticCallGenerator.generateCollectionCall(
+                transformElement(arrayLiteral, expectedArrayElementType.toExpectedType()),
+                expectedArrayType,
+                resolutionContext,
+                resolutionMode = ResolutionMode.ContextIndependent
             )
+            if (!call.isResolved) { // hack: otherwise, intArrayOf resolves to arrayOf for some weird reason
+                components.callResolver.resolveCallAndSelectCandidate(
+                    call,
+                    ResolutionMode.WithExpectedType(expectedArrayType.toFirResolvedTypeRef())
+                )
+            }
+        } else {
+            call = components.syntheticCallGenerator.generateCollectionOfCall( // Just a default fallback
+                Name.identifier("listOf"),
+                arrayLiteral,
+                resolutionContext,
+                ResolutionMode.ContextIndependent
+            )
+            components.callCompleter.completeCall(call, ResolutionMode.ContextIndependent)
+            actualArrayType = call.resolvedType
         }
         val result = call.transform<FirExpression, _>(this, data)
-        result.resultType = expectedArrayType
+        result.resultType = actualArrayType
+        // todo for some reason overload_resolution_ambiguity test fails with exception without this line. Do we leak FirArrayLiteral somehow?
+        arrayLiteral.resultType = actualArrayType
         return result
     }
 
