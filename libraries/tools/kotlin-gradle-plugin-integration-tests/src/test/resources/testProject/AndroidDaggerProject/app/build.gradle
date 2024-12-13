@@ -18,26 +18,26 @@ apply plugin: 'kotlin-parcelize'
 
 android {
 
-    namespace "com.example.dagger.kotlin"
+    namespace = "com.example.dagger.kotlin"
 
-    compileSdkVersion 23
+    compileSdkVersion = 23
 
     buildFeatures {
         buildConfig = true
     }
 
     defaultConfig {
-        applicationId "com.example.dagger.kotlin"
-        minSdkVersion 14
-        targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        applicationId = "com.example.dagger.kotlin"
+        minSdkVersion = 14
+        targetSdkVersion = 23
+        versionCode = 1
+        versionName = "1.0"
         buildConfigField "long", "BUILD_TIME_MILLIS", "${System.currentTimeMillis()}L"
     }
 
     compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
     }
 
     sourceSets {

@@ -2,13 +2,13 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion = 23
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion = 19
+        targetSdkVersion = 23
+        versionCode = 1
+        versionName = "1.0"
     }
 }
 

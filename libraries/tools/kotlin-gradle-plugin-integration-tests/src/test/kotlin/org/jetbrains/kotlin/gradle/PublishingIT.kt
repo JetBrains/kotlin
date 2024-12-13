@@ -44,10 +44,10 @@ class PublishingIT : KGPBaseTest() {
                 
                 plugins.apply('maven-publish')
                 
-                group "com.example"
-                version "1.0"
+                group = "com.example"
+                version = "1.0"
                 publishing {
-                    repositories { maven { url file("${'$'}buildDir/repo").toURI() } }
+                    repositories { maven { url = file("${'$'}buildDir/repo").toURI() } }
                     publications { maven(MavenPublication) { from components.java } }
                 }
                 """.trimIndent()
