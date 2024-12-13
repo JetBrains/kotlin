@@ -280,12 +280,20 @@ internal interface ContextUtils : RuntimeAware {
 
     val IrClass.llvmDeclarationForClass: ClassBodyAndAlignmentInfo
         get() {
-            check(isExternal(this))
             check(requiresRtti())
-            return runtime.addedLLVMExternalClasses.getOrPut(this) {
-                val fields = createFieldsFor(this)
-                val name = this.computePrivateObjectBodyName(context.irLinker.getExternalDeclarationFileName(this))
-                createClassBody(name, fields)
+            return if (isExternal(this)) {
+                return runtime.addedLLVMExternalClasses.getOrPut(this) {
+                    val fields = createFieldsFor(this)
+                    val name = this.computePrivateObjectBodyName(context.irLinker.getExternalDeclarationFileName(this))
+                    createClassBody(name, fields)
+                }
+            } else {
+                val classInfo = generationState.llvmDeclarations.forClass(this)
+                return ClassBodyAndAlignmentInfo(
+                        body = classInfo.bodyType.llvmBodyType,
+                        alignment = classInfo.alignment,
+                        fieldsIndices = classInfo.fieldIndices,
+                )
             }
         }
 }

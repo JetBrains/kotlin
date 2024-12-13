@@ -408,8 +408,8 @@ internal class StackLocalsManagerImpl(
             alloca(kObjHeaderPtr, true)
 
     override fun alloc(irClass: IrClass): LLVMValueRef = with(functionGenerationContext) {
-        val classInfo = llvmDeclarations.forClass(irClass)
-        val type = classInfo.bodyType.llvmBodyType
+        val classInfo = irClass.llvmDeclarationForClass
+        val type = classInfo.body
         val stackLocal = appendingTo(bbInitStackLocals) {
             val stackSlot = LLVMBuildAlloca(builder, type, "")!!
             LLVMSetAlignment(stackSlot, classInfo.alignment)
@@ -436,7 +436,7 @@ internal class StackLocalsManagerImpl(
     // Returns generated special type for local array.
     // It's needed to prevent changing variables order on stack.
     private fun localArrayType(irClass: IrClass, count: Int) = with(functionGenerationContext) {
-        val name = "local#${irClass.name}${count}#internal"
+        val name = "local#${irClass.name}${generationState.llvmModuleName}${count}#internal"
         // Create new type or get already created.
         context.declaredLocalArrays.getOrPut(name) {
             val fieldTypes = listOf(kArrayHeader, LLVMArrayType(arrayToElementType[irClass.symbol]!!, count))
@@ -508,9 +508,9 @@ internal class StackLocalsManagerImpl(
                 )
             }
         } else {
-            val info = llvmDeclarations.forClass(stackLocal.irClass)
-            val type = info.bodyType.llvmBodyType
-            for ((fieldSymbol, fieldIndex) in info.fieldIndices.entries.sortedBy{ e -> e.value }) {
+            val info = stackLocal.irClass.llvmDeclarationForClass
+            val type = info.body
+            for ((fieldSymbol, fieldIndex) in info.fieldsIndices.entries.sortedBy{ e -> e.value }) {
 
                 if (fieldSymbol.owner.type.binaryTypeIsReference()) {
                     val fieldPtr = structGep(type, stackLocal.stackAllocationPtr, fieldIndex, "")
