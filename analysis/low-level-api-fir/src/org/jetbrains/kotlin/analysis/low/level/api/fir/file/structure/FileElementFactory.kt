@@ -33,11 +33,14 @@ internal object FileElementFactory {
         }
 
         else -> {
-            firDeclaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             if (firDeclaration is FirPrimaryConstructor) {
+                firDeclaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
                 firDeclaration.valueParameters.forEach { parameter ->
                     parameter.correspondingProperty?.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
                 }
+            } else {
+                /** Reserve the [FirResolvePhase.BODY_RESOLVE] for partial body analysis. */
+                firDeclaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE.previous)
             }
 
             DeclarationStructureElement(firFile, firDeclaration, moduleComponents)

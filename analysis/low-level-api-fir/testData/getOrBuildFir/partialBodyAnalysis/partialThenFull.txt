@@ -1,0 +1,41 @@
+KT element: KtCallExpression
+KT element text:
+consume(3)
+FIR element: FirFunctionCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|/consume|(Int(3))
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] partialThenFull.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyResolveStateKey=3(3/5) #1] fun foo(): R|kotlin/Unit| {
+        R|/consume|(Int(1))
+        R|/consume|(Int(2))
+        R|/consume|(Int(3))
+        consume#(IntegerLiteral(4))
+        consume#(IntegerLiteral(5))
+    }
+    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] n: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+
+=====
+
+KT element: KtCallExpression
+KT element text:
+consume(5)
+FIR element: FirFunctionCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|/consume|(Int(5))
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] partialThenFull.kt
+    public final [ResolvedTo(BODY_RESOLVE)] [PartialBodyResolveStateKey=5(5/5) #2] fun foo(): R|kotlin/Unit| {
+        R|/consume|(Int(1))
+        R|/consume|(Int(2))
+        R|/consume|(Int(3))
+        R|/consume|(Int(4))
+        R|/consume|(Int(5))
+    }
+    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] n: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }

@@ -1,0 +1,15 @@
+KT element: KtValueArgument
+FIR element: FirBooleanOperatorExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|<local>/flag| || R|<local>/another|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] logicalOperators.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyResolveStateKey=2(2/3) #1] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] flag: R|kotlin/Boolean|, [ResolvedTo(ANNOTATION_ARGUMENTS)] another: R|kotlin/Boolean|): R|kotlin/Unit| {
+        R|/consume|(R|<local>/flag| && R|<local>/another|)
+        R|/consume|(R|<local>/flag| || R|<local>/another|)
+        consume#(flag#.xor#(another#))
+    }
+    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] a: R|kotlin/Boolean|): R|kotlin/Unit| { LAZY_BLOCK }
