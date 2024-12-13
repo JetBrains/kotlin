@@ -76,24 +76,6 @@ class IrTextDumpHandler(
             }
         }
 
-        fun defaultDumpIrTreeOptions(module: TestModule, irBuiltins: IrBuiltIns): DumpIrTreeOptions = DumpIrTreeOptions(
-            normalizeNames = true,
-            printFacadeClassInFqNames = false,
-            printFlagsInDeclarationReferences = false,
-            // External declarations origin differs between frontend-generated and deserialized IR,
-            // which prevents us from running irText tests against deserialized IR,
-            // since it uses the same golden data as when we run them against frontend-generated IR.
-            renderOriginForExternalDeclarations = false,
-            // KT-60248 Abbreviations should not be rendered to make K2 IR dumps closer to K1 IR dumps during irText tests.
-            // PSI2IR assigns field `abbreviation` with type abbreviation. It serves only debugging purposes, and no compiler functionality relies on it.
-            // FIR2IR does not initialize field `abbreviation` at all.
-            printTypeAbbreviations = false,
-            isHiddenDeclaration = { isHiddenDeclaration(it, irBuiltins) },
-            stableOrder = true,
-            // Expect declarations exist in K1 IR just before serialization, but won't be serialized. Though, dumps should be same before and after
-            printExpectDeclarations = module.languageVersionSettings.languageVersion.usesK2,
-        )
-
         fun isHiddenDeclaration(declaration: IrDeclaration, irBuiltIns: IrBuiltIns): Boolean =
             (declaration as? IrSimpleFunction)?.isHiddenEnumMethod(irBuiltIns) == true
     }
@@ -114,7 +96,23 @@ class IrTextDumpHandler(
 
         if (DUMP_IR !in module.directives) return
 
-        val dumpOptions = defaultDumpIrTreeOptions(module, info.irPluginContext.irBuiltIns)
+        val dumpOptions = DumpIrTreeOptions(
+            normalizeNames = true,
+            printFacadeClassInFqNames = false,
+            printFlagsInDeclarationReferences = false,
+            // External declarations origin differs between frontend-generated and deserialized IR,
+            // which prevents us from running irText tests against deserialized IR,
+            // since it uses the same golden data as when we run them against frontend-generated IR.
+            renderOriginForExternalDeclarations = false,
+            // KT-60248 Abbreviations should not be rendered to make K2 IR dumps closer to K1 IR dumps during irText tests.
+            // PSI2IR assigns field `abbreviation` with type abbreviation. It serves only debugging purposes, and no compiler functionality relies on it.
+            // FIR2IR does not initialize field `abbreviation` at all.
+            printTypeAbbreviations = false,
+            isHiddenDeclaration = { isHiddenDeclaration(it, info.irPluginContext.irBuiltIns) },
+            stableOrder = true,
+            // Expect declarations exist in K1 IR just before serialization, but won't be serialized. Though, dumps should be same before and after
+            printExpectDeclarations = module.languageVersionSettings.languageVersion.usesK2,
+        )
         val builder = baseDumper.builderForModule(module.name)
 
         val testFileToIrFile = info.irModuleFragment.files.groupWithTestFiles(module, ordered = dumpOptions.stableOrder)

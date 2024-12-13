@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.ir.declarations.IrPossiblyExternalDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
+import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.dumpTreesFromLineNumber
-import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler.Companion.defaultDumpIrTreeOptions
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.SKIP_IR_DESERIALIZATION_CHECKS
@@ -49,11 +49,21 @@ class SerializedIrDumpHandler(
     override fun processModule(module: TestModule, info: IrBackendInput) {
         if (module.isSkipped) return
 
-        val dumpOptions = defaultDumpIrTreeOptions(module, info.irPluginContext.irBuiltIns).copy(
-            stableOrderOfFakeOverrides = true,
+        val dumpOptions = DumpIrTreeOptions(
+            normalizeNames = true,
+            stableOrder = true,
+            stableOrderOfFakeOverrides = true, // We need to print overridden symbols always in stable order.
             printFlagsInDeclarationReferences = true,
+            // External declarations origin differs between frontend-generated and deserialized IR,
+            // which prevents us from running irText tests against deserialized IR,
+            // since it uses the same golden data as when we run them against frontend-generated IR.
+            renderOriginForExternalDeclarations = false,
+            printTypeAbbreviations = false,
+            printExpectDeclarations = false, // Expect declarations do not survive during serialization to KLIB.
             printSourceRetentionAnnotations = false, // KT-69965: Don't dump annotations having source retention
+            isHiddenDeclaration = { IrTextDumpHandler.isHiddenDeclaration(it, info.irPluginContext.irBuiltIns) },
         )
+
         val builder = dumper.builderForModule(module.name)
 
         val irFiles = info.irModuleFragment.files.sortedBy { it.fileEntry.name }
