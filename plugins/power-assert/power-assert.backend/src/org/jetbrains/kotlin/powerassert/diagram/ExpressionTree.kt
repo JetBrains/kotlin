@@ -20,7 +20,6 @@
 package org.jetbrains.kotlin.powerassert.diagram
 
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
-import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.nameWithPackage
@@ -29,6 +28,8 @@ import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.powerassert.isImplicitArgument
+import org.jetbrains.kotlin.powerassert.isInnerOfComparisonOperator
+import org.jetbrains.kotlin.powerassert.isInnerOfNotEqualOperator
 
 abstract class Node {
     private val _children = mutableListOf<Node>()
@@ -194,13 +195,11 @@ fun buildTree(
             }
 
             override fun visitCall(expression: IrCall, data: Node) {
-                val isExcleq = expression.symbol.owner.name.asString() == BuiltInOperatorNames.EQEQ
-                        && expression.origin == IrStatementOrigin.EXCLEQ
-                val isExcleqeq = expression.symbol.owner.name.asString() == BuiltInOperatorNames.EQEQEQ
-                        && expression.origin == IrStatementOrigin.EXCLEQEQ
-
-                if (isExcleq || isExcleqeq) {
+                if (expression.isInnerOfNotEqualOperator()) {
                     // Skip the EQEQ/EQEQEQ part of a EXCLEQ/EXCLEQEQ call
+                    expression.acceptChildren(this, data)
+                } else if (expression.isInnerOfComparisonOperator()) {
+                    // Skip the `compareTo` part of any compareTo operator call
                     expression.acceptChildren(this, data)
                 } else if (expression.origin == IrStatementOrigin.NOT_IN) {
                     // Exclude the wrapped "contains" call for `!in` operator expressions and only display the final result

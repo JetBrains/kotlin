@@ -156,3 +156,13 @@ fun IrStatementOrigin.isAssignmentOperator(): Boolean =
         IrStatementOrigin.PERCEQ -> true
         else -> isAssignmentOperatorWithResult()
     }
+
+fun IrStatementOrigin.isComparisonOperator() =
+    when (this) {
+        IrStatementOrigin.LT,
+        IrStatementOrigin.GT,
+        IrStatementOrigin.LTEQ,
+        IrStatementOrigin.GTEQ,
+            -> true
+        else -> false
+    }
