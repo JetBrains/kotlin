@@ -124,6 +124,7 @@ internal class K2WasmCompilerImpl(
         moduleKind: ModuleKind?,
     ): ExitCode {
         val generateDts = configuration.getBoolean(JSConfigurationKeys.GENERATE_DTS)
+        val isDebugBuild = configuration.getBoolean(WasmConfigurationKeys.WASM_DEBUG_BUILD)
         val generateSourceMaps = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)
         val useDebuggerCustomFormatters = configuration.getBoolean(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS)
 
@@ -137,7 +138,7 @@ internal class K2WasmCompilerImpl(
         )
 
         configuration.phaseConfig = createPhaseConfig(arguments).also {
-            if (arguments.listPhases) it.list(getWasmPhases(configuration, isIncremental = false))
+            if (arguments.listPhases) it.list(getWasmPhases(configuration, isIncremental = false, isDebugBuild))
         }
 
         val (allModules, backendContext, typeScriptFragment) = compileToLoweredIr(
