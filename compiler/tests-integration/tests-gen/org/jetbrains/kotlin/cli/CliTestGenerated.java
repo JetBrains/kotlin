@@ -907,14 +907,14 @@ public class CliTestGenerated extends AbstractCliTest {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/_progressive"), Pattern.compile("^(.+)\\.args$"), null, false);
     }
 
-    @TestMetadata("progressiveModeOff.args")
-    public void testProgressiveModeOff() {
-      runTest("compiler/testData/cli/jvm/_progressive/progressiveModeOff.args");
+    @TestMetadata("progressiveModeOffForDeprecatedVersion.args")
+    public void testProgressiveModeOffForDeprecatedVersion() {
+      runTest("compiler/testData/cli/jvm/_progressive/progressiveModeOffForDeprecatedVersion.args");
     }
 
-    @TestMetadata("progressiveModeOn.args")
-    public void testProgressiveModeOn() {
-      runTest("compiler/testData/cli/jvm/_progressive/progressiveModeOn.args");
+    @TestMetadata("progressiveModeOnForDeprecatedVersion.args")
+    public void testProgressiveModeOnForDeprecatedVersion() {
+      runTest("compiler/testData/cli/jvm/_progressive/progressiveModeOnForDeprecatedVersion.args");
     }
   }
 
@@ -951,29 +951,6 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("reportAllWarnings.args")
     public void testReportAllWarnings() {
       runTest("compiler/testData/cli/jvm/_reportAllWarnings/reportAllWarnings.args");
-    }
-  }
-
-  @TestMetadata("compiler/testData/cli/jvm/_samConversionForKotlinFunctions")
-  @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class _samConversionForKotlinFunctions extends AbstractCliTest {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doJvmTest, this, testDataFilePath);
-    }
-
-    public void testAllFilesPresentIn_samConversionForKotlinFunctions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/_samConversionForKotlinFunctions"), Pattern.compile("^(.+)\\.args$"), null, false);
-    }
-
-    @TestMetadata("explicitlyDisableSamConversionsWithOldFlag.args")
-    public void testExplicitlyDisableSamConversionsWithOldFlag() {
-      runTest("compiler/testData/cli/jvm/_samConversionForKotlinFunctions/explicitlyDisableSamConversionsWithOldFlag.args");
-    }
-
-    @TestMetadata("explicitlyDisabledSamConversions.args")
-    public void testExplicitlyDisabledSamConversions() {
-      runTest("compiler/testData/cli/jvm/_samConversionForKotlinFunctions/explicitlyDisabledSamConversions.args");
     }
   }
 
@@ -1022,9 +999,24 @@ public class CliTestGenerated extends AbstractCliTest {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/_suppressVersionWarnings"), Pattern.compile("^(.+)\\.args$"), null, false);
     }
 
+    @TestMetadata("doNotSuppressVersionErrorsWithNoWarn.args")
+    public void testDoNotSuppressVersionErrorsWithNoWarn() {
+      runTest("compiler/testData/cli/jvm/_suppressVersionWarnings/doNotSuppressVersionErrorsWithNoWarn.args");
+    }
+
     @TestMetadata("kt48833_doNotSuppressVersionErrors.args")
     public void testKt48833_doNotSuppressVersionErrors() {
       runTest("compiler/testData/cli/jvm/_suppressVersionWarnings/kt48833_doNotSuppressVersionErrors.args");
+    }
+
+    @TestMetadata("suppressVersionWarnings.args")
+    public void testSuppressVersionWarnings() {
+      runTest("compiler/testData/cli/jvm/_suppressVersionWarnings/suppressVersionWarnings.args");
+    }
+
+    @TestMetadata("suppressVersionWarningsWithReportAllWarn.args")
+    public void testSuppressVersionWarningsWithReportAllWarn() {
+      runTest("compiler/testData/cli/jvm/_suppressVersionWarnings/suppressVersionWarningsWithReportAllWarn.args");
     }
   }
 
@@ -1284,6 +1276,29 @@ public class CliTestGenerated extends AbstractCliTest {
       @TestMetadata("functionReferenceWithDefaultValuesFeatureIsEnabledWithXXNewInference.args")
       public void testFunctionReferenceWithDefaultValuesFeatureIsEnabledWithXXNewInference() {
         runTest("compiler/testData/cli/jvm/_languageFeatures/newInference_1_4/functionReferenceWithDefaultValuesFeatureIsEnabledWithXXNewInference.args");
+      }
+    }
+
+    @TestMetadata("compiler/testData/cli/jvm/_languageFeatures/samConversionForKotlinFunctions_1_4")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SamConversionForKotlinFunctions_1_4 extends AbstractCliTest {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doJvmTest, this, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInSamConversionForKotlinFunctions_1_4() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/_languageFeatures/samConversionForKotlinFunctions_1_4"), Pattern.compile("^(.+)\\.args$"), null, true);
+      }
+
+      @TestMetadata("explicitlyDisableSamConversionsWithOldFlag.args")
+      public void testExplicitlyDisableSamConversionsWithOldFlag() {
+        runTest("compiler/testData/cli/jvm/_languageFeatures/samConversionForKotlinFunctions_1_4/explicitlyDisableSamConversionsWithOldFlag.args");
+      }
+
+      @TestMetadata("explicitlyDisabledSamConversions.args")
+      public void testExplicitlyDisabledSamConversions() {
+        runTest("compiler/testData/cli/jvm/_languageFeatures/samConversionForKotlinFunctions_1_4/explicitlyDisabledSamConversions.args");
       }
     }
 

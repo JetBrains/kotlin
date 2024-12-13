@@ -1,2 +1,2 @@
 -script
-$TESTDATA_DIR$/_plugin
+$TESTDATA_DIR$/script

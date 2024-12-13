@@ -1,4 +1,4 @@
-$TESTDATA_DIR$/src/jdkPath.kt
+$TESTDATA_DIR$/src/jdkHome.kt
 -d
 $TEMP_DIR$
 -jdk-home

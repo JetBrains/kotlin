@@ -1,2 +1,2 @@
-warning: incorrect internal argument syntax, missing modificator: -XXLanguage:SoundSmartCastAfterTry
+warning: incorrect internal argument syntax, missing modificator: -XXLanguage:ProhibitImplementingVarByInheritedVal
 OK

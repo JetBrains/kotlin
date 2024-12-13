@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/experimentalCheckers.kt:2:12: warning: redundant explicit type.
+compiler/testData/cli/jvm/_useFirExperimentalCheckers/experimentalCheckers.kt:2:12: warning: redundant explicit type.
     val i: Int = 1
            ^^^
 OK

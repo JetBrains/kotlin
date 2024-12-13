@@ -87,7 +87,6 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("cli/jvm/_progressive", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/jvm/_renderInternalDiagnosticNames", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/jvm/_reportAllWarnings", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/_samConversionForKotlinFunctions", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/jvm/_script", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/jvm/_suppressVersionWarnings", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/jvm/_suppressWarnings", extension = "args", testMethod = "doJvmTest", recursive = false)

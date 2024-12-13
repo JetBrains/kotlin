@@ -1,4 +1,6 @@
 $TESTDATA_DIR$/progressive
 -d
 $TEMP_DIR$
+-language-version
+1.7
 -progressive
