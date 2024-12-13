@@ -101,7 +101,7 @@ FILE fqName:<root> fileName:/setters.kt
       VALUE_PARAMETER name:value index:0 type:kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <set-bar> (value: kotlin.Int): kotlin.Unit declared in <root>'
-          GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
   PROPERTY name:baz visibility:public modality:FINAL [var]
     FUN name:<get-baz> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:baz visibility:public modality:FINAL [var]
@@ -113,7 +113,7 @@ FILE fqName:<root> fileName:/setters.kt
       VALUE_PARAMETER name:param index:0 type:kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <set-baz> (param: kotlin.Int): kotlin.Unit declared in <root>'
-          GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
   PROPERTY name:qux visibility:public modality:FINAL [var]
     FUN name:<get-qux> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:qux visibility:public modality:FINAL [var]
@@ -125,4 +125,4 @@ FILE fqName:<root> fileName:/setters.kt
       VALUE_PARAMETER UNDERSCORE_PARAMETER name:<anonymous parameter 0> index:0 type:kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <set-qux> (<anonymous parameter 0>: kotlin.Int): kotlin.Unit declared in <root>'
-          GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit

@@ -361,7 +361,7 @@ FILE fqName:<root> fileName:/main.kt
         <T>: <root>.ExternalInterface
         <R>: kotlin.Unit
         receiver: CALL 'public final fun getExternalInterface (): <root>.ExternalInterface declared in <root>.ExternalInterface.Companion' type=<root>.ExternalInterface origin=null
-          $this: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=<root>.ExternalInterface.Companion
+          $this: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=<root>.ExternalInterface.Companion
         block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.ExternalInterface, kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ExternalInterface) returnType:kotlin.Unit
             $receiver: VALUE_PARAMETER name:$this$with type:<root>.ExternalInterface
@@ -398,7 +398,7 @@ FILE fqName:<root> fileName:/main.kt
       CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Unit origin=null
         <T>: <root>.ExternalInterface.Companion
         <R>: kotlin.Unit
-        receiver: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=<root>.ExternalInterface.Companion
+        receiver: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=<root>.ExternalInterface.Companion
         block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.ExternalInterface.Companion, kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ExternalInterface.Companion) returnType:kotlin.Unit
             $receiver: VALUE_PARAMETER name:$this$with type:<root>.ExternalInterface.Companion
@@ -489,7 +489,7 @@ FILE fqName:<root> fileName:/main.kt
       CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Unit origin=null
         <T>: <root>.ExternalClass.NestedObject
         <R>: kotlin.Unit
-        receiver: GET_OBJECT 'CLASS OBJECT name:NestedObject modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.ExternalClass.NestedObject
+        receiver: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:NestedObject modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.ExternalClass.NestedObject
         block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.ExternalClass.NestedObject, kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ExternalClass.NestedObject) returnType:kotlin.Unit
             $receiver: VALUE_PARAMETER name:$this$with type:<root>.ExternalClass.NestedObject

@@ -2,8 +2,8 @@ Module: lib
 FILE fqName:<root> fileName:/lib.kt
   CLASS ANNOTATION_CLASS name:Binary modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     annotations:
-      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY name:TYPE' type=kotlin.annotation.AnnotationTarget, GET_ENUM 'ENUM_ENTRY name:VALUE_PARAMETER' type=kotlin.annotation.AnnotationTarget] type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget)
-      Retention(value = GET_ENUM 'ENUM_ENTRY name:BINARY' type=kotlin.annotation.AnnotationRetention)
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:TYPE' type=kotlin.annotation.AnnotationTarget, GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:VALUE_PARAMETER' type=kotlin.annotation.AnnotationTarget] type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget)
+      Retention(value = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:BINARY' type=kotlin.annotation.AnnotationRetention)
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Binary
     CONSTRUCTOR visibility:public <> () returnType:<root>.Binary [primary]
       BLOCK_BODY
@@ -24,8 +24,8 @@ FILE fqName:<root> fileName:/lib.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS ANNOTATION_CLASS name:Runtime modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     annotations:
-      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY name:TYPE' type=kotlin.annotation.AnnotationTarget, GET_ENUM 'ENUM_ENTRY name:VALUE_PARAMETER' type=kotlin.annotation.AnnotationTarget] type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget)
-      Retention(value = GET_ENUM 'ENUM_ENTRY name:RUNTIME' type=kotlin.annotation.AnnotationRetention)
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:TYPE' type=kotlin.annotation.AnnotationTarget, GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:VALUE_PARAMETER' type=kotlin.annotation.AnnotationTarget] type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget)
+      Retention(value = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:RUNTIME' type=kotlin.annotation.AnnotationRetention)
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Runtime
     CONSTRUCTOR visibility:public <> () returnType:<root>.Runtime [primary]
       BLOCK_BODY
@@ -46,8 +46,8 @@ FILE fqName:<root> fileName:/lib.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS ANNOTATION_CLASS name:Source modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     annotations:
-      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY name:TYPE' type=kotlin.annotation.AnnotationTarget, GET_ENUM 'ENUM_ENTRY name:VALUE_PARAMETER' type=kotlin.annotation.AnnotationTarget] type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget)
-      Retention(value = GET_ENUM 'ENUM_ENTRY name:SOURCE' type=kotlin.annotation.AnnotationRetention)
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:TYPE' type=kotlin.annotation.AnnotationTarget, GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:VALUE_PARAMETER' type=kotlin.annotation.AnnotationTarget] type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget)
+      Retention(value = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:SOURCE' type=kotlin.annotation.AnnotationRetention)
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Source
     CONSTRUCTOR visibility:public <> () returnType:<root>.Source [primary]
       BLOCK_BODY
