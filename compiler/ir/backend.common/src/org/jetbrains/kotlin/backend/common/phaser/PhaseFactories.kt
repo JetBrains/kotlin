@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
-import org.jetbrains.kotlin.config.phaser.PhaseConfigurationService
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.config.phaser.SimpleNamedCompilerPhase
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -52,7 +52,7 @@ fun <Context : LoweringContext> buildModuleLoweringsPhase(
 
 private fun <Context : LoweringContext, T> noopPhase(): CompilerPhase<Context, T, T> =
     object : CompilerPhase<Context, T, T> {
-        override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<T>, context: Context, input: T): T = input
+        override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<T>, context: Context, input: T): T = input
     }
 
 private inline fun <ReturnType, reified FunctionType : Function<ReturnType>>

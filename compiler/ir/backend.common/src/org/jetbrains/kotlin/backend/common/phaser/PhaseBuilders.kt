@@ -16,7 +16,7 @@ private class CompositePhase<Context : LoggingContext, Input, Output>(
     val phases: List<CompilerPhase<Context, Any?, Any?>>
 ) : CompilerPhase<Context, Input, Output> {
 
-    override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Input>, context: Context, input: Input): Output {
+    override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input): Output {
         @Suppress("UNCHECKED_CAST") var currentState = phaserState as PhaserState<Any?>
         var result = phases.first().invoke(phaseConfig, currentState, context, input)
         for ((previous, next) in phases.zip(phases.drop(1))) {
@@ -51,7 +51,7 @@ fun <Context : LoggingContext, Input, Output> createSimpleNamedCompilerPhase(
     preactions: Set<Action<Input, Context>> = emptySet(),
     postactions: Set<Action<Output, Context>> = emptySet(),
     prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
-    outputIfNotEnabled: (PhaseConfigurationService, PhaserState<Input>, Context, Input) -> Output,
+    outputIfNotEnabled: (PhaseConfig, PhaserState<Input>, Context, Input) -> Output,
     op: (Context, Input) -> Output
 ): SimpleNamedCompilerPhase<Context, Input, Output> = object : SimpleNamedCompilerPhase<Context, Input, Output>(
     name,
@@ -61,7 +61,7 @@ fun <Context : LoggingContext, Input, Output> createSimpleNamedCompilerPhase(
     }.toSet(),
     prerequisite = prerequisite,
 ) {
-    override fun outputIfNotEnabled(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Input>, context: Context, input: Input): Output =
+    override fun outputIfNotEnabled(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input): Output =
         outputIfNotEnabled(phaseConfig, phaserState, context, input)
 
     override fun phaseBody(context: Context, input: Input): Output =
@@ -82,7 +82,7 @@ fun <Context : LoggingContext, Input> createSimpleNamedCompilerPhase(
     }.toSet(),
     prerequisite = prerequisite,
 ) {
-    override fun outputIfNotEnabled(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Input>, context: Context, input: Input) {}
+    override fun outputIfNotEnabled(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input) {}
 
     override fun phaseBody(context: Context, input: Input): Unit =
         op(context, input)
