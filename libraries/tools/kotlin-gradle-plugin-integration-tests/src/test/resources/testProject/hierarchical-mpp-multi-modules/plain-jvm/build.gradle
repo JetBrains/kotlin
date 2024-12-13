@@ -1,5 +1,5 @@
-group 'org.jetbrains.qa.combompp'
-version publishing_version
+group = 'org.jetbrains.qa.combompp'
+version = publishing_version
 
 apply plugin: 'java'
 apply plugin: 'kotlin'
@@ -24,9 +24,9 @@ kotlin.jvmToolchain(8)
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId 'org.jetbrains.qa.combompp'
-            artifactId 'plain-jvm'
-            version publishing_version
+            groupId = 'org.jetbrains.qa.combompp'
+            artifactId = 'plain-jvm'
+            version = publishing_version
             from components.java
         }
     }

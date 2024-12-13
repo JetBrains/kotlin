@@ -230,7 +230,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
                 |
                 |configurations {
                 |    customConfiguration.extendsFrom implementation
-                |    customConfiguration.canBeResolved(true)
+                |    customConfiguration.canBeResolved = true
                 |}
                 |
                 """.trimMargin()

@@ -5,14 +5,14 @@ plugins {
 }
 
 android {
-    namespace 'org.example.test'
-    compileSdkVersion 34
+    namespace = 'org.example.test'
+    compileSdkVersion = 34
 
     defaultConfig {
-        minSdk 23
-        targetSdk 33
-        versionCode 1
-        versionName "1.0"
+        minSdk = 23
+        targetSdk = 33
+        versionCode = 1
+        versionName = "1.0"
     }
 
     kotlin {

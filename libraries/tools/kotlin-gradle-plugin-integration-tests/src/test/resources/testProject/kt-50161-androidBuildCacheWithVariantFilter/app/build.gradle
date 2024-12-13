@@ -11,12 +11,12 @@ repositories {
 
 android {
 
-    namespace "com.revolut.cmdemo"
+    namespace = "com.revolut.cmdemo"
 
-    compileSdkVersion 31
+    compileSdkVersion = 31
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled = false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }

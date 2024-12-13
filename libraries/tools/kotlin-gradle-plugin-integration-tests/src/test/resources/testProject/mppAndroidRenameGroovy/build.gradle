@@ -15,8 +15,8 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-multiplatform'
 
 android {
-    compileSdkVersion 31
-    namespace 'app.example.com.lib'
+    compileSdkVersion = 31
+    namespace = 'app.example.com.lib'
 }
 
 

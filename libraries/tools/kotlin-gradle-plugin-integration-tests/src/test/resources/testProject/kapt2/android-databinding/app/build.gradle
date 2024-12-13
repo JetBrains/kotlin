@@ -5,26 +5,26 @@ plugins {
 }
 
 android {
-    namespace "com.example.databinding"
+    namespace = "com.example.databinding"
 
-    compileSdkVersion 33
+    compileSdkVersion = 33
 
     defaultConfig {
-        applicationId "com.example.databinding"
-        minSdkVersion 21
-        targetSdkVersion 33
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        applicationId = "com.example.databinding"
+        minSdkVersion = 21
+        targetSdkVersion = 33
+        versionCode = 1
+        versionName = "1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildFeatures {
-        dataBinding true
+        dataBinding = true
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled = false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

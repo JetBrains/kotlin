@@ -19,6 +19,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
+import kotlin.io.path.writeText
 import kotlin.test.assertContains
 import kotlin.test.fail
 
@@ -141,27 +142,27 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
                 konanDataDir = konanTemp,
             ),
         ) {
-            buildGradleKts.replaceFirst(
-                "plugins {",
+            buildGradleKts.writeText(
                 """
                 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
                 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleArtifactFormat
+                import org.jetbrains.kotlin.gradle.plugin.KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME
                 plugins {
-                """.trimIndent()
-            )
-            buildGradleKts.appendText(
-                """
-                    
-                tasks.create("taskWithConfigurationResolvedConfiguration") {
-                    dependsOn(":commonizeNativeDistribution")
-                    notCompatibleWithConfigurationCache("Passing the project is not compatible with the configuration cache")
-                    doFirst {
-                        KotlinNativeBundleArtifactFormat.addKotlinNativeBundleConfiguration(project.rootProject)
-                    }
+                    kotlin("multiplatform") apply false
                 }
+                
+                repositories {
+                    mavenLocal()
+                    mavenCentral()
+                }
+                                                
+                KotlinNativeBundleArtifactFormat.addKotlinNativeBundleConfiguration(project.rootProject)
+                val nativeConfiguration = configurations.getByName(KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME)
+                nativeConfiguration.resolve()
+                KotlinNativeBundleArtifactFormat.addKotlinNativeBundleConfiguration(project.rootProject)
                 """.trimIndent()
             )
-            build(":commonizeNativeDistribution", "taskWithConfigurationResolvedConfiguration")
+            build(":help")
         }
     }
 

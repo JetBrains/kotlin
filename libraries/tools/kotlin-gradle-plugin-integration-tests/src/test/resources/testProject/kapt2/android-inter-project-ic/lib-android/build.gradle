@@ -2,15 +2,15 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    namespace "org.example.inter.project.ic.androidLib"
+    namespace = "org.example.inter.project.ic.androidLib"
 
-    compileSdkVersion 23
+    compileSdkVersion = 23
 
     defaultConfig {
-        minSdkVersion 15
-        targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion = 15
+        targetSdkVersion = 23
+        versionCode = 1
+        versionName = "1.0"
     }
 
     kotlin {

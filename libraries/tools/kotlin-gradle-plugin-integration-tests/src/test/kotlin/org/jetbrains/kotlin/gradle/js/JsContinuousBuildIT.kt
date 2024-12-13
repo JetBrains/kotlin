@@ -78,6 +78,7 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
                     continuousBuild = true,
                 ),
                 inputStream = daemonStdin,
+                forwardBuildOutput = true,
             ) {
                 checker.join()
 
@@ -99,13 +100,23 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
 
                 // Verify webpack starts and is aborted.
                 // (Webpack is launched using DeploymentHandle and runs continuously until Gradle stops the handle.)
-                assertEquals(
+                val expectedMessage = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_12)) {
                     // language=text
                     """
                     |[ExecAsyncHandle webpack webpack/bin/webpack.js jsmain] started
                     |[ExecAsyncHandle webpack webpack/bin/webpack.js jsmain] finished {exitValue=?, failure=null}
                     |[ExecAsyncHandle webpack webpack/bin/webpack.js jsmain] aborted
-                    """.trimMargin(),
+                    """.trimMargin()
+                } else {
+                    // language=text
+                    """
+                    |[ExecAsyncHandle webpack webpack/bin/webpack.js jsmain] started
+                    |[ExecAsyncHandle webpack webpack/bin/webpack.js jsmain] aborted
+                    |[ExecAsyncHandle webpack webpack/bin/webpack.js jsmain] failed org.gradle.internal.UncheckedException: java.lang.InterruptedException
+                    """.trimMargin()
+                }
+                assertEquals(
+                    expectedMessage,
                     output
                         .filterLinesStartingWith("[ExecAsyncHandle webpack webpack/bin/webpack.js jsmain]")
                         // For some reason webpack doesn't close with a consistent exit code.

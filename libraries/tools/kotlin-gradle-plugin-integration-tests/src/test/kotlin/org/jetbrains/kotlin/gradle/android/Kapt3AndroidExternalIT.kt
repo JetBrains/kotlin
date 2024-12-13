@@ -120,7 +120,7 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {
         val realmVersion = if (agpVersion != TestVersions.AGP.AGP_73) {
-            "10.13.1-transformer-api"
+            "10.19.0"
         } else {
             "10.11.0"
         }

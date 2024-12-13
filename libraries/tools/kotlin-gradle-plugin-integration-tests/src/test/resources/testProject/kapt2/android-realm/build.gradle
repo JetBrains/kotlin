@@ -17,14 +17,14 @@ plugins {
 apply plugin: 'realm-android'
 
 android {
-    namespace "io.realm.examples.kotlin"
-    compileSdkVersion 23
+    namespace = "io.realm.examples.kotlin"
+    compileSdkVersion = 23
     defaultConfig {
-        applicationId 'io.realm.examples.kotlin'
-        minSdkVersion 16
-        targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        applicationId = 'io.realm.examples.kotlin'
+        minSdkVersion = 16
+        targetSdkVersion = 23
+        versionCode = 1
+        versionName = "1.0"
     }
 
     buildTypes {
