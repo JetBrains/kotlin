@@ -52,6 +52,7 @@ abstract class FirModuleVisibilityChecker : FirSessionComponent {
  */
 abstract class FirPrivateVisibleFromDifferentModuleExtension : FirSessionComponent {
     abstract fun canSeePrivateDeclarationsOfModule(otherModuleData: FirModuleData): Boolean
+    abstract fun canSeePrivateTopLevelDeclarationsFromFile(useSiteFile: FirFile, targetFile: FirFile): Boolean
 }
 
 abstract class FirVisibilityChecker : FirSessionComponent {
@@ -219,7 +220,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
                     when {
                         ownerLookupTag == null -> {
                             // Top-level: visible in file
-                            declaration.moduleData.session.firProvider.getContainingFile(symbol) == useSiteFile
+                            canSeePrivateTopLevelDeclarationFromFile(session, useSiteFile, symbol)
                         }
                         else -> {
                             // Member: visible inside parent class, including all its member classes
@@ -478,6 +479,20 @@ abstract class FirVisibilityChecker : FirSessionComponent {
     private fun canSeePrivateDeclarationsOfModule(session: FirSession, otherModuleData: FirModuleData): Boolean {
         return session.moduleData == otherModuleData ||
                 session.privateVisibleFromDifferentModulesExtension?.canSeePrivateDeclarationsOfModule(otherModuleData) == true
+    }
+
+    private fun canSeePrivateTopLevelDeclarationFromFile(
+        session: FirSession,
+        useSiteFile: FirFile,
+        declarationSymbol: FirBasedSymbol<*>,
+    ): Boolean {
+        val declarationContainingFile = declarationSymbol.moduleData.session.firProvider.getContainingFile(declarationSymbol)
+            ?: return false
+        return useSiteFile == declarationContainingFile ||
+                session.privateVisibleFromDifferentModulesExtension?.canSeePrivateTopLevelDeclarationsFromFile(
+                    useSiteFile,
+                    declarationContainingFile
+                ) == true
     }
 }
 
