@@ -15,8 +15,14 @@ import kotlin.wasm.internal.wasm_f32_demote_f64
 public actual fun String?.toBoolean(): Boolean = this != null && this.lowercase() == "true"
 
 /**
- * Parses the string as a signed [Byte] number and returns the result.
- * @throws NumberFormatException if the string is not a valid representation of a number.
+ * Parses the string to a [Byte] number.
+ *
+ * The string must consist of an optional leading `+` or `-` sign and decimal digits (`0-9`),
+ * and fit the valid [Byte] value range (within `Byte.MIN_VALUE..Byte.MAX_VALUE`),
+ * otherwise a [NumberFormatException] will be thrown.
+ *
+ * @throws NumberFormatException if the string is not a valid representation of a [Byte].
+ * @sample samples.text.Numbers.toByte
  */
 public actual fun String.toByte(): Byte = toByteOrNull() ?: numberFormatError(this)
 
@@ -28,8 +34,14 @@ public actual fun String.toByte(): Byte = toByteOrNull() ?: numberFormatError(th
 public actual fun String.toByte(radix: Int): Byte = toByteOrNull(radix) ?: numberFormatError(this)
 
 /**
- * Parses the string as a [Short] number and returns the result.
- * @throws NumberFormatException if the string is not a valid representation of a number.
+ * Parses the string to a [Short] number.
+ *
+ * The string must consist of an optional leading `+` or `-` sign and decimal digits (`0-9`),
+ * and fit the valid [Short] value range (within `Short.MIN_VALUE..Short.MAX_VALUE`),
+ * otherwise a [NumberFormatException] will be thrown.
+ *
+ * @throws NumberFormatException if the string is not a valid representation of a [Short].
+ * @sample samples.text.Numbers.toShort
  */
 public actual fun String.toShort(): Short = toShortOrNull() ?: numberFormatError(this)
 
@@ -41,8 +53,14 @@ public actual fun String.toShort(): Short = toShortOrNull() ?: numberFormatError
 public actual fun String.toShort(radix: Int): Short = toShortOrNull(radix) ?: numberFormatError(this)
 
 /**
- * Parses the string as an [Int] number and returns the result.
- * @throws NumberFormatException if the string is not a valid representation of a number.
+ * Parses the string to an [Int] number.
+ *
+ * The string must consist of an optional leading `+` or `-` sign and decimal digits (`0-9`),
+ * and fit the valid [Int] value range (within `Int.MIN_VALUE..Int.MAX_VALUE`),
+ * otherwise a [NumberFormatException] will be thrown.
+ *
+ * @throws NumberFormatException if the string is not a valid representation of an [Int].
+ * @sample samples.text.Numbers.toInt
  */
 public actual fun String.toInt(): Int = toIntOrNull() ?: numberFormatError(this)
 
@@ -54,8 +72,14 @@ public actual fun String.toInt(): Int = toIntOrNull() ?: numberFormatError(this)
 public actual fun String.toInt(radix: Int): Int = toIntOrNull(radix) ?: numberFormatError(this)
 
 /**
- * Parses the string as a [Long] number and returns the result.
- * @throws NumberFormatException if the string is not a valid representation of a number.
+ * Parses the string to a [Long] number.
+ *
+ * The string must consist of an optional leading `+` or `-` sign and decimal digits (`0-9`),
+ * and fit the valid [Long] value range (within `Long.MIN_VALUE..Long.MAX_VALUE`),
+ * otherwise a [NumberFormatException] will be thrown.
+ *
+ * @throws NumberFormatException if the string is not a valid representation of a [Long].
+ * @sample samples.text.Numbers.toLong
  */
 public actual fun String.toLong(): Long = toLongOrNull() ?: numberFormatError(this)
 
