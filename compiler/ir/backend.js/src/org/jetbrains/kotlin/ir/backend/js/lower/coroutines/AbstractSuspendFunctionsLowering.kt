@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val context: C) : BodyLoweringPass {
     companion object {
         val DECLARATION_ORIGIN_COROUTINE_IMPL = IrDeclarationOriginImpl("COROUTINE_IMPL")
+        val DECLARATION_ORIGIN_COROUTINE_IMPL_INVOKE by IrDeclarationOriginImpl
     }
 
     protected abstract val stateMachineMethodName: Name
@@ -236,7 +237,7 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
             val smFunction = context.irFactory.buildFun {
                 startOffset = function.startOffset
                 endOffset = function.endOffset
-                origin = DECLARATION_ORIGIN_COROUTINE_IMPL
+                origin = DECLARATION_ORIGIN_COROUTINE_IMPL_INVOKE
                 name = stateMachineFunction.name
                 visibility = stateMachineFunction.visibility
                 modality = Modality.FINAL
@@ -423,17 +424,18 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
             if (delegatingCall.isReturnIfSuspendedCall(context))
                 delegatingCall.getValueArgument(0)!!
             else delegatingCall
+
         val body = irFunction.body as IrBlockBody
+        val statements = body.statements
+        val lastStatement = statements.last()
 
         // Set both offsets to body.endOffset.previousOffset (check the description of the `previousOffset` method)
         // so that a breakpoint set at the closing brace of a lambda expression could be hit.
         context.createIrBuilder(
             irFunction.symbol,
-            startOffset = body.endOffset.previousOffset,
-            endOffset = body.endOffset.previousOffset
+            startOffset = lastStatement.startOffset,
+            endOffset = lastStatement.endOffset
         ).run {
-            val statements = body.statements
-            val lastStatement = statements.last()
             assert(lastStatement == delegatingCall || lastStatement is IrReturn) { "Unexpected statement $lastStatement" }
 
             // Instead of returning right away, we save the value to a temporary variable and after that return that variable.

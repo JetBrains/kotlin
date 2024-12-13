@@ -126,7 +126,11 @@ class DeclarationGenerator(
             return
         }
 
-        val function = WasmFunction.Defined(watName, functionTypeSymbol)
+        val locationTarget = declaration.locationTarget
+        val declarationBodyEndLocation =
+            locationTarget.getSourceLocation(declaration.symbol, declaration.fileOrNull?.fileEntry, LocationType.END)
+
+        val function = WasmFunction.Defined(watName, functionTypeSymbol, endLocation = declarationBodyEndLocation)
 
         val functionCodegenContext = WasmFunctionCodegenContext(
             declaration,
@@ -152,16 +156,11 @@ class DeclarationGenerator(
         val declarationBody = declaration.body
         require(declarationBody is IrBlockBody) { "Only IrBlockBody is supported" }
 
-        val locationTarget = declaration.locationTarget
-
         if (declaration is IrConstructor) {
             bodyBuilder.generateObjectCreationPrefixIfNeeded(declaration)
         }
 
         declarationBody.acceptVoid(bodyBuilder)
-
-        val declarationBodyEndLocation =
-            locationTarget.getSourceLocation(declaration.symbol, declaration.fileOrNull?.fileEntry, LocationType.END)
 
         // Return implicit this from constructions to avoid extra tmp
         // variables on constructor call sites.
@@ -561,6 +560,7 @@ fun generateConstExpression(
 val IrFunction.locationTarget: IrElement
     get() = when (origin) {
         IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER -> this
+        IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA -> this
         else -> when (parentClassOrNull?.origin) {
             CallableReferenceLowering.LAMBDA_IMPL,
             IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA -> this

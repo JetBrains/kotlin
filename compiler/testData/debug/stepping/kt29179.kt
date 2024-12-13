@@ -34,12 +34,11 @@ fun box() {
 // test.kt:16 box
 
 // EXPECTATIONS WASM
-// test.kt:14 $box (10)
-// test.kt:15 $box (4, 8)
+// test.kt:15 $box (4)
 // test.kt:4 $A.<init> (0)
 // test.kt:5 $A.<init> (12)
-// test.kt:12 $A.<init> (1)
-// test.kt:7 $A.foo (14)
+// test.kt:15 $box (8)
 // test.kt:10 $A.foo (13)
 // test.kt:11 $A.foo (5)
+// test.kt:15 $box (8)
 // test.kt:16 $box (1)

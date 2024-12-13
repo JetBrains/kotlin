@@ -115,7 +115,7 @@ internal class HeaderProcessor(
         val headerInfo = iterable?.accept(headerInfoBuilder, iteratorCall)
             ?: return null  // If the iterable is not supported.
 
-        val builder = context.createIrBuilder(scopeOwnerSymbol(), variable.startOffset, variable.endOffset)
+        val builder = context.createIrBuilder(scopeOwnerSymbol())
         return when (headerInfo) {
             is IndexedGetHeaderInfo -> IndexedGetLoopHeader(headerInfo, builder, context)
             is ProgressionHeaderInfo -> ProgressionLoopHeader(headerInfo, builder, context)

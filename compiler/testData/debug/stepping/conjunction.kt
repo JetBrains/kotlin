@@ -56,4 +56,5 @@ fun getD() = true
 // test.kt:6 $box (11)
 // test.kt:7 $box (11)
 // test.kt:10 $box (8)
+// test.kt:4 $box (12)
 // test.kt:12 $box (1)

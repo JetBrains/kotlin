@@ -77,7 +77,7 @@ class SourceMapGenerator(
                 }
                 is SourceLocation.WithSourceInformation -> {
                     // TODO resulting path goes too deep since temporary directory we compiled first is deeper than final destination.
-                    val relativePath = if (sourceLocation is SourceLocation.Location)
+                    val relativePath = if (sourceLocation is SourceLocation.DefinedLocation)
                         pathResolver
                             .getPathRelativeToSourceRoots(File(sourceLocation.file))
                             .replace(Regex("^\\.\\./"), "")

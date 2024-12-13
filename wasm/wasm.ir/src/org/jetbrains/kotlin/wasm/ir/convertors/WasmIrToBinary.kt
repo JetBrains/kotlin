@@ -327,9 +327,7 @@ class WasmIrToBinary(
         withVarUInt32PayloadSizePrepended { content() }
     }
 
-    private fun withVarUInt32PayloadSizePrepended(sourceLocation: SourceLocation? = null, fn: () -> Unit) {
-        sourceLocation?.let { debugInformationGenerator?.addSourceLocation(SourceLocationMappingToBinary(it, offsets + Box(b.written))) }
-
+    private fun withVarUInt32PayloadSizePrepended(fn: () -> Unit) {
         val box = Box(-1)
         val previousOffsets = offsets
         offsets += box
@@ -564,10 +562,20 @@ class WasmIrToBinary(
     }
 
     private fun appendCode(function: WasmFunction.Defined) {
-        withVarUInt32PayloadSizePrepended(SourceLocation.NextLocation) {
-//            debugInformationGenerator?.addSourceLocation(
-//                SourceLocationMappingToBinary(SourceLocation.NextLocation, offsets + Box(b.written))
-//            )
+        val shouldWriteLocationBeforeFunctionHeader = function.endLocation is SourceLocation.IgnoredLocation
+
+        if (shouldWriteLocationBeforeFunctionHeader) {
+            debugInformationGenerator?.addSourceLocation(
+                SourceLocationMappingToBinary(SourceLocation.IgnoredLocation, offsets + Box(b.written))
+            )
+        }
+
+        withVarUInt32PayloadSizePrepended {
+            if (!shouldWriteLocationBeforeFunctionHeader) {
+                debugInformationGenerator?.addSourceLocation(
+                    SourceLocationMappingToBinary(SourceLocation.NextLocation, offsets + Box(b.written))
+                )
+            }
 
             b.writeVarUInt32(function.locals.count { !it.isParameter })
             function.locals.forEach { local ->
@@ -758,8 +766,8 @@ private class SourceLocationMappingToBinary(
     // we can't calculate absolute offsets inside those blocks until we generate whole block and generate size.
     private val offsets: List<Box>,
 ) : SourceLocationMapping() {
-    override val generatedLocation: SourceLocation.Location by lazy {
-        SourceLocation.Location(
+    override val generatedLocation: SourceLocation.DefinedLocation by lazy {
+        SourceLocation.DefinedLocation(
             file = "",
             line = 0,
             column = offsets.sumOf {

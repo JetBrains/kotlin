@@ -40,11 +40,14 @@ fun foo(n :Int ) : Int {
 // test.kt:6 box
 
 // EXPECTATIONS WASM
-// test.kt:3 $box (10)
 // test.kt:4 $box (12)
 // test.kt:5 $box (16, 12)
-// test.kt:8 $foo (23)
-// test.kt:9 $foo (8, 13, 18, 23)
-// test.kt:10 $foo (8, 15)
-// test.kt:12 $foo (15, 17, 11, 22, 4)
+// test.kt:9 $foo (8, 13, 8, 18, 23, 18)
+// test.kt:12 $foo (15, 17, 15, 11)
+// test.kt:9 $foo (8, 13, 8, 18, 23, 18)
+// test.kt:12 $foo (15, 17, 15, 11)
+// test.kt:9 $foo (8, 13, 8, 18)
+// test.kt:10 $foo (15, 8)
+// test.kt:12 $foo (22, 11, 4, 22, 11, 4)
+// test.kt:5 $box (12)
 // test.kt:6 $box (1)

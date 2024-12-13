@@ -237,7 +237,109 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
             sourceModule!!
         }
 
+<<<<<<< HEAD
         return compilerImpl.compileNoIC(mainCallArguments, module, moduleKind)
+=======
+        if (arguments.wasm) {
+            val generateDts = configuration.getBoolean(JSConfigurationKeys.GENERATE_DTS)
+            val isDebugBuild = configuration.getBoolean(WasmConfigurationKeys.WASM_DEBUG_BUILD)
+            val generateSourceMaps = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)
+            val useDebuggerCustomFormatters = configuration.getBoolean(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS)
+
+            val irFactory = IrFactoryImplForWasmIC(WholeWorldStageController())
+
+            val irModuleInfo = loadIr(
+                depsDescriptors = module,
+                irFactory = irFactory,
+                verifySignatures = false,
+                loadFunctionInterfacesIntoStdlib = true,
+            )
+
+            val (allModules, backendContext, typeScriptFragment) = compileToLoweredIr(
+                irModuleInfo,
+                module.mainModule,
+                configuration,
+                performanceManager,
+                phaseConfig = createPhaseConfig(getWasmPhases(isIncremental = false, isDebugBuild), arguments, messageCollector),
+                exportedDeclarations = setOf(FqName("main")),
+                generateTypeScriptFragment = generateDts,
+                propertyLazyInitialization = arguments.irPropertyLazyInitialization,
+            )
+
+            performanceManager?.notifyIRGenerationStarted()
+            val dceDumpNameCache = DceDumpNameCache()
+            if (arguments.irDce) {
+                eliminateDeadDeclarations(allModules, backendContext, dceDumpNameCache)
+            }
+
+            dumpDeclarationIrSizesIfNeed(arguments.irDceDumpDeclarationIrSizesToFile, allModules, dceDumpNameCache)
+
+            val wasmModuleMetadataCache = WasmModuleMetadataCache(backendContext)
+            val codeGenerator = WasmModuleFragmentGenerator(
+                backendContext,
+                wasmModuleMetadataCache,
+                irFactory,
+                allowIncompleteImplementations = arguments.irDce,
+            )
+            val wasmCompiledFileFragments = allModules.map { codeGenerator.generateModuleAsSingleFileFragment(it) }
+
+            val res = compileWasm(
+                wasmCompiledFileFragments = wasmCompiledFileFragments,
+                moduleName = allModules.last().descriptor.name.asString(),
+                configuration = configuration,
+                typeScriptFragment = typeScriptFragment,
+                baseFileName = outputName,
+                emitNameSection = arguments.wasmDebug,
+                generateWat = configuration.get(WasmConfigurationKeys.WASM_GENERATE_WAT, false),
+                generateSourceMaps = generateSourceMaps,
+                useDebuggerCustomFormatters = useDebuggerCustomFormatters
+            )
+
+            performanceManager?.notifyIRGenerationFinished()
+            performanceManager?.notifyGenerationFinished()
+
+            writeCompilationResult(
+                result = res,
+                dir = outputDir,
+                fileNameBase = outputName,
+                useDebuggerCustomFormatters = useDebuggerCustomFormatters
+            )
+
+            return OK
+        } else {
+            if (arguments.irDceDumpReachabilityInfoToFile != null) {
+                messageCollector.report(STRONG_WARNING, "Dumping the reachability info to file is supported only for Kotlin/Wasm.")
+            }
+            if (arguments.irDceDumpDeclarationIrSizesToFile != null) {
+                messageCollector.report(STRONG_WARNING, "Dumping the size of declarations to file is supported only for Kotlin/Wasm.")
+            }
+        }
+
+        val start = System.currentTimeMillis()
+
+        try {
+            val ir2JsTransformer = Ir2JsTransformer(arguments, module, phaseConfig, messageCollector, mainCallArguments)
+            val outputs = ir2JsTransformer.compileAndTransformIrNew()
+
+            messageCollector.report(INFO, "Executable production duration: ${System.currentTimeMillis() - start}ms")
+
+            outputs.writeAll(outputDir, outputName, arguments.dtsStrategy, moduleName, moduleKind)
+        } catch (e: CompilationException) {
+            messageCollector.report(
+                ERROR,
+                e.stackTraceToString(),
+                CompilerMessageLocation.create(
+                    path = e.path,
+                    line = e.line,
+                    column = e.column,
+                    lineContent = e.content
+                )
+            )
+            return INTERNAL_ERROR
+        }
+
+        return OK
+>>>>>>> f5714260a243 (the great SourceMap improvements are here)
     }
 
     private fun produceSourceModule(

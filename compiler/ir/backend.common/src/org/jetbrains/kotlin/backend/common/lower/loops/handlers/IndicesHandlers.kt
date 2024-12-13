@@ -27,7 +27,7 @@ internal abstract class IndicesHandler(protected val context: CommonBackendConte
     private val preferJavaLikeCounterLoop = context.preferJavaLikeCounterLoop
 
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol): HeaderInfo? =
-        with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
+        with(context.createIrBuilder(scopeOwner)) {
             val last: IrExpression
             val lastInclusive: IrExpression?
             val isLastInclusive: Boolean

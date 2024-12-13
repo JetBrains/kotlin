@@ -7,5 +7,5 @@ package org.jetbrains.kotlin.wasm.ir.source.location
 
 abstract class SourceLocationMapping {
     abstract val sourceLocation: SourceLocation
-    abstract val generatedLocation: SourceLocation.Location
+    abstract val generatedLocation: SourceLocation.DefinedLocation
 }

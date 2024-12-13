@@ -26,7 +26,7 @@ internal class RangeUntilHandler(private val context: CommonBackendContext) : He
     }
 
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol): HeaderInfo =
-        with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
+        with(context.createIrBuilder(scopeOwner)) {
             ProgressionHeaderInfo(
                 data,
                 first = expression.dispatchReceiver!!,

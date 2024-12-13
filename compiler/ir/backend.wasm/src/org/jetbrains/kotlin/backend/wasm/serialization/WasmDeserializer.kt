@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.wasm.ir.convertors.MyByteReader
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 import java.io.ByteArrayInputStream
 import java.io.InputStream
-import kotlin.collections.ArrayList
 import kotlin.collections.LinkedHashMap
 import kotlin.collections.LinkedHashSet
 
@@ -401,7 +400,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                     val file = deserializeString()
                     val line = deserializeInt()
                     val column = deserializeInt()
-                    SourceLocation.Location(file, line, column)
+                    SourceLocation.DefinedLocation(file, line, column)
                 }
                 else -> tagError(tag)
             }

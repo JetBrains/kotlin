@@ -28,9 +28,11 @@ import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmen
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 
 class WasmBackendContext(
@@ -47,6 +49,7 @@ class WasmBackendContext(
     override var inVerbosePhase: Boolean = false
     override val irFactory: IrFactory = symbolTable.irFactory
 
+    val isDebugBuild = configuration.getBoolean(WasmConfigurationKeys.WASM_DEBUG_BUILD)
     val isWasmJsTarget: Boolean = configuration.wasmTarget == WasmTarget.JS
 
     // Place to store declarations excluded from code generation

@@ -176,23 +176,48 @@ fun box() {
 // test.kt:26 box
 
 // EXPECTATIONS WASM
-// test.kt:13 $box (10)
 // test.kt:14 $box (14, 17, 12)
-// test.kt:4 $D.<init> (12, 13, 25, 39)
-// test.kt:15 $box (4, 15, 18, 13, 6)
+// test.kt:4 $D.<init> (12, 13, 25)
+// test.kt:15 $box (4, 15, 18, 13)
+// test.kt:4 $D.<init> (12, 13, 25)
+// test.kt:15 $box (6)
 // test.kt:16 $box (4, 6)
 // test.kt:17 $box (4, 6)
+
+// EXPECTATIONS ClassicFrontend WASM
+// test.kt:18 $box (17, 9, 17, 12)
+
+// EXPECTATIONS FIR WASM
 // test.kt:18 $box (17, 9, 12)
+
+// EXPECTATIONS WASM
 // test.kt:19 $box (4, 6)
+// test.kt:4 $D.<init> (12, 13, 25)
+// test.kt:19 $box (6)
 // test.kt:20 $box (14, 17, 12)
-// test.kt:6 $E.<init> (12, 13, 25, 39)
-// test.kt:21 $box (4, 15, 18, 13, 6)
+// test.kt:6 $E.<init> (12, 13, 25)
+// test.kt:21 $box (4, 15, 18, 13)
+// test.kt:6 $E.<init> (12, 13, 25)
+// test.kt:21 $box (6)
 // test.kt:8 $E.equals (39)
+// test.kt:21 $box (6)
 // test.kt:22 $box (4, 6)
 // test.kt:9 $E.hashCode (30)
+// test.kt:22 $box (6)
 // test.kt:23 $box (4, 6)
 // test.kt:7 $E.toString (30)
+// test.kt:23 $box (6)
+
+// EXPECTATIONS ClassicFrontend WASM
+// test.kt:24 $box (19, 9, 19, 13)
+
+// EXPECTATIONS FIR WASM
 // test.kt:24 $box (19, 9, 13)
+
+// EXPECTATIONS WASM
 // test.kt:25 $box (4, 6)
-// test.kt:10 $E.copy (17, 19, 22)
+// test.kt:10 $E.copy (19, 22, 17)
+// test.kt:6 $E.<init> (12, 13, 25)
+// test.kt:10 $E.copy (17)
+// test.kt:25 $box (6)
 // test.kt:26 $box (1)

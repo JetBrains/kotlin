@@ -28,7 +28,7 @@ internal class UntilHandler(private val context: CommonBackendContext) : HeaderI
     }
 
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol): HeaderInfo? =
-        with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
+        with(context.createIrBuilder(scopeOwner)) {
             ProgressionHeaderInfo(
                 data,
                 first = expression.arguments[0]!!,

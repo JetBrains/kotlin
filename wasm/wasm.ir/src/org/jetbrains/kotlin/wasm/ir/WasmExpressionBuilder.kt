@@ -98,8 +98,12 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>) {
         buildInstrWithNoLocation(WasmOp.IF, WasmImmediate.BlockType.Value(resultType))
     }
 
-    fun buildElse() {
-        buildInstrWithNoLocation(WasmOp.ELSE)
+    fun buildElse(location: SourceLocation? = null) {
+        if (location != null) {
+            buildInstr(WasmOp.ELSE, location)
+        } else {
+            buildInstrWithNoLocation(WasmOp.ELSE)
+        }
     }
 
     fun buildBlock(resultType: WasmType? = null, location: SourceLocation? = null): Int {
@@ -209,8 +213,8 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>) {
         )
     }
 
-    fun buildCatch(tagIdx: WasmSymbol<Int>) {
-        buildInstrWithNoLocation(WasmOp.CATCH, WasmImmediate.TagIdx(tagIdx))
+    fun buildCatch(tagIdx: WasmSymbol<Int>, location: SourceLocation = SourceLocation.NoLocation("Catch")) {
+        buildInstr(WasmOp.CATCH, location, WasmImmediate.TagIdx(tagIdx))
     }
 
     fun buildCatchAll() {

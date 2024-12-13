@@ -79,9 +79,11 @@ fun <T : IrBuilder> T.at(element: IrElement) = this.at(element.startOffset, elem
 inline fun IrGeneratorWithScope.irBlock(
     expression: IrExpression, origin: IrStatementOrigin? = null,
     resultType: IrType? = expression.type,
+    startOffset: Int = expression.startOffset,
+    endOffset: Int = expression.endOffset,
     body: IrBlockBuilder.() -> Unit
 ) =
-    this.irBlock(expression.startOffset, expression.endOffset, origin, resultType, body)
+    this.irBlock(startOffset, endOffset, origin, resultType, body)
 
 inline fun IrGeneratorWithScope.irComposite(
     expression: IrExpression, origin: IrStatementOrigin? = null,

@@ -44,6 +44,9 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
 
     private lateinit var builder: DeclarationIrBuilder
 
+    private val IrTypeOperator.isImplicit: Boolean
+        get() = TODO()
+
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
         super.visitTypeOperator(expression)
         builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).at(expression)

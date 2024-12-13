@@ -255,8 +255,7 @@ private class RangeLoopTransformer(
         //
         //   val i = inductionVariable  // For progressions, or `array[inductionVariable]` for arrays
         //   inductionVariable = inductionVariable + step
-        val initializer = mainLoopVariable.initializer!!
-        val replacement = with(context.createIrBuilder(getScopeOwnerSymbol(), initializer.startOffset, initializer.endOffset)) {
+        val replacement = with(context.createIrBuilder(getScopeOwnerSymbol())) {
             IrCompositeImpl(
                 mainLoopVariable.startOffset,
                 mainLoopVariable.endOffset,
@@ -287,7 +286,7 @@ private class RangeLoopTransformer(
             loopBodyTransformer.transform(context, newBody, mainLoopVariable, loopHeader, loopVariableComponents)
         }
 
-        return loopHeader.buildLoop(context.createIrBuilder(getScopeOwnerSymbol(), loop.startOffset, loop.endOffset), loop, newBody)
+        return loopHeader.buildLoop(context.createIrBuilder(getScopeOwnerSymbol()), loop, newBody)
     }
 
     /**

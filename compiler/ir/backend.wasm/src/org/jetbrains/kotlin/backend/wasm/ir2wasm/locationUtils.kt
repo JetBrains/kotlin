@@ -5,19 +5,23 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
+import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.LineAndColumn
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.ENUM_ENTRIES_INITIALIZER_ORIGIN
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.AbstractSuspendFunctionsLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.wasm.ir.WasmExpressionBuilder
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
@@ -45,14 +49,27 @@ private val debugFriendlyOrigins = IdentityHashMap<IrDeclarationOrigin, Boolean>
     set(IrDeclarationOrigin.LOCAL_FUNCTION, true)
     set(IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA, true)
     set(IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER, true)
+    set(IrDeclarationOrigin.LOWERED_SUSPEND_FUNCTION, true)
+    set(AbstractSuspendFunctionsLowering.DECLARATION_ORIGIN_COROUTINE_IMPL_INVOKE, true)
+    set(ENUM_ENTRIES_INITIALIZER_ORIGIN, true)
 }
 
+private val IrDeclaration.isInlinedCode: Boolean
+    get() = this is IrFunction && (isInline || origin == LoweredDeclarationOrigins.INLINE_LAMBDA)
+
+private val IrDeclaration.isStdlibDeclaration: Boolean
+    get() = getPackageFragment().packageFqName.startsWith(StandardClassIds.BASE_KOTLIN_PACKAGE)
+
+private val IrDeclaration.isArtificialDeclarationOfLambdaImpl: Boolean
+    get() = parentClassOrNull?.origin == CallableReferenceLowering.LAMBDA_IMPL &&
+            origin != IrDeclarationOrigin.DEFINED &&
+            origin != AbstractSuspendFunctionsLowering.DECLARATION_ORIGIN_COROUTINE_IMPL_INVOKE
+
 private val IrSymbol?.shouldIgnore: Boolean
-    get() = this?.let {
-        val owner = it.owner as? IrDeclaration ?: return@let false
-        owner.getPackageFragment().packageFqName.startsWith(StandardClassIds.BASE_KOTLIN_PACKAGE) ||
-                owner.origin !in debugFriendlyOrigins
-    } == true
+    get() {
+        val owner = this?.owner as? IrDeclaration ?: return false
+        return owner.isStdlibDeclaration || owner.isArtificialDeclarationOfLambdaImpl || owner.origin !in debugFriendlyOrigins
+    }
 
 fun IrElement.getSourceLocation(
     declaration: IrSymbol?,
@@ -60,7 +77,7 @@ fun IrElement.getSourceLocation(
     type: LocationType = LocationType.START
 ): SourceLocation {
     if (declaration.shouldIgnore) {
-        return if (declaration is IrFunctionSymbol && declaration.owner.isInline)
+        return if (declaration is IrFunctionSymbol && declaration.owner.isInlinedCode)
             SourceLocation.NoLocation("Inlined function body")
         else SourceLocation.IgnoredLocation
     }
@@ -71,7 +88,7 @@ fun IrElement.getSourceLocation(
     val path = fileEntry.name
     var (line, column) = type.getLineAndColumnNumberFor(this, fileEntry)
 
-    return SourceLocation.Location(
+    return SourceLocation.DefinedLocation(
         path,
         line,
         column

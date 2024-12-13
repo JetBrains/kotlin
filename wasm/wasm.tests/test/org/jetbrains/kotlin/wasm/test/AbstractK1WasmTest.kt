@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.wasm.test.converters.FirWasmKlibSerializerFacade
 import org.jetbrains.kotlin.wasm.test.converters.WasmBackendFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDebugRunner
+import org.jetbrains.kotlin.wasm.test.providers.WasmJsSteppingTestAdditionalSourceProvider
 
 abstract class AbstractK1WasmTest(
     pathToTestDir: String,
@@ -75,16 +76,13 @@ open class AbstractK1WasmSteppingTest : AbstractK1WasmTest(
     override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
         get() = ::WasmDebugRunner
 
-    override val afterBackendFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Wasm>>
-        // We need in stepping tests act like in incremental compilations
-        // to turn off some "optimization" lowerings
-        get() = { WasmBackendFacade(it, isIncremental = true) }
-
     override fun TestConfigurationBuilder.configuration() {
         commonConfigurationForWasmBlackBoxCodegenTest()
         defaultDirectives {
             +WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP
+            +WasmEnvironmentConfigurationDirectives.DEBUG_BUILD
         }
+        useAdditionalSourceProviders(::WasmJsSteppingTestAdditionalSourceProvider)
     }
 }
 

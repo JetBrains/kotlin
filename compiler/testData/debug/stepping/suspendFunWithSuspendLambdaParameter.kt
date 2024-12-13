@@ -33,3 +33,14 @@ suspend fun box() {
 // test.kt:13 doResume
 
 // EXPECTATIONS WASM
+// test.kt:13 $box (1)
+// coroutineHelpers.kt:7 $EmptyContinuation.<get-context> (16)
+// test.kt:13 $box (1)
+// test.kt:10 $$boxCOROUTINE$0.doResume (8, 4)
+// test.kt:6 $foo (14, 11, 14)
+// test.kt:11 $box$slambda.doResume (8)
+// test.kt:6 $foo (4)
+// test.kt:10 $$boxCOROUTINE$0.doResume (4)
+// test.kt:13 $$boxCOROUTINE$0.doResume (1)
+// test.kt:10 $$boxCOROUTINE$0.doResume (8, 4)
+// test.kt:13 $box (1)

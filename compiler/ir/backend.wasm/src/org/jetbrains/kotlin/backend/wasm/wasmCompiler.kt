@@ -67,7 +67,8 @@ fun compileToLoweredIr(
     exportedDeclarations: Set<FqName> = emptySet(),
     generateTypeScriptFragment: Boolean,
     propertyLazyInitialization: Boolean,
-    isIncremental: Boolean = false
+    isIncremental: Boolean = false,
+    isDebugBuild: Boolean = false,
 ): LoweredIrWithExtraArtifacts {
     val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, irLinker) = irModuleInfo
 
@@ -106,7 +107,8 @@ fun compileToLoweredIr(
         allModules,
         context,
         context.irFactory.stageController as WholeWorldStageController,
-        isIncremental = isIncremental
+        isIncremental,
+        isDebugBuild
     )
 
     performanceManager?.notifyIRLoweringFinished()
@@ -118,13 +120,14 @@ fun lowerPreservingTags(
     modules: Iterable<IrModuleFragment>,
     context: WasmBackendContext,
     controller: WholeWorldStageController,
-    isIncremental: Boolean
+    isIncremental: Boolean,
+    isDebugBuild: Boolean
 ) {
     // Lower all the things
     controller.currentStage = 0
 
     val phaserState = PhaserState<IrModuleFragment>()
-    val wasmLowerings = getWasmLowerings(context.configuration, isIncremental)
+    val wasmLowerings = getWasmLowerings(context.configuration, isIncremental, isDebugBuild)
 
     wasmLowerings.forEachIndexed { i, lowering ->
         controller.currentStage = i + 1
@@ -145,7 +148,7 @@ fun compileWasm(
     emitNameSection: Boolean = false,
     generateWat: Boolean = false,
     generateSourceMaps: Boolean = false,
-    useDebuggerCustomFormatters: Boolean = false
+    useDebuggerCustomFormatters: Boolean = false,
 ): WasmCompilerResult {
     val useJsTag = configuration.getBoolean(WasmConfigurationKeys.WASM_USE_JS_TAG)
     val isWasmJsTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET) != WasmTarget.WASI

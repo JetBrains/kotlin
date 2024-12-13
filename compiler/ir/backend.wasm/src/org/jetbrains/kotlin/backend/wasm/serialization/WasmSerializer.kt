@@ -414,7 +414,7 @@ class WasmSerializer(outputStream: OutputStream) {
             SourceLocation.NoLocation -> setTag(LocationTags.NO_LOCATION)
             SourceLocation.NextLocation -> setTag(LocationTags.NEXT_LOCATION)
             SourceLocation.IgnoredLocation -> setTag(LocationTags.IGNORED_LOCATION)
-            is SourceLocation.Location -> withTag(LocationTags.LOCATION) {
+            is SourceLocation.DefinedLocation -> withTag(LocationTags.LOCATION) {
                 serializeString(sl.file)
                 b.writeUInt32(sl.line.toUInt())
                 b.writeUInt32(sl.column.toUInt())

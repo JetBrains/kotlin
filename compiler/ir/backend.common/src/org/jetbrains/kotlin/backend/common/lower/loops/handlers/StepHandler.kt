@@ -39,7 +39,7 @@ internal class StepHandler(
     }
 
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol): HeaderInfo? =
-        with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
+        with(context.createIrBuilder(scopeOwner)) {
             // Retrieve the HeaderInfo from the underlying progression (if any).
             var nestedInfo = expression.arguments[0]!!.accept(visitor, null) as? ProgressionHeaderInfo
                 ?: return null

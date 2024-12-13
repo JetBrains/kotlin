@@ -34,7 +34,7 @@ internal class DefaultProgressionHandler(
         ProgressionType.fromIrType(expression.getMostPreciseTypeFromValInitializer(), symbols, allowUnsignedBounds) != null
 
     override fun build(expression: IrExpression, data: Nothing?, scopeOwner: IrSymbol): HeaderInfo =
-        with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
+        with(context.createIrBuilder(scopeOwner)) {
             // Directly use the `first/last/step` properties of the progression.
             val unwrappedType = expression.getMostPreciseTypeFromValInitializer()
             val (progressionVar, progressionExpression) = createTemporaryVariableIfNecessary(

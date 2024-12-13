@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.test.services.ModuleStructureExtractor
 import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
 
-class JsSteppingTestAdditionalSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
+open class JsSteppingTestAdditionalSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
+    protected open val commonTestHelpersFile: String = "$HELPERS_DIR/jsCommonTestHelpers.kt"
+    protected open val minimalTestHelpersLocation: String? = "$HELPERS_DIR/jsMinimalTestHelpers.kt"
+    protected open val withStdlibTestHelpersFile: String? = "$HELPERS_DIR/jsWithStdlibTestHelpers.kt"
 
     override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
         // HACK: For some reason if we add the same additional files to each module (not only the main one),
@@ -25,19 +28,16 @@ class JsSteppingTestAdditionalSourceProvider(testServices: TestServices) : Addit
         return if (module.name == ModuleStructureExtractor.DEFAULT_MODULE_NAME) {
             buildList {
                 if (containsDirective(globalDirectives, module, ConfigurationDirectives.WITH_STDLIB))
-                    add(File(WITH_STDLIB_HELPER_PATH).toTestFile())
+                    withStdlibTestHelpersFile?.let { add(File(it).toTestFile()) }
                 else
-                    add(File(MINIMAL_HELPER_PATH).toTestFile())
-                add(File(COMMON_HELPER_PATH).toTestFile())
+                    minimalTestHelpersLocation?.let { add(File(it).toTestFile()) }
+                add(File(commonTestHelpersFile).toTestFile())
             }
         } else
             emptyList()
     }
 
-    companion object {
+    private companion object {
         private const val HELPERS_DIR = "compiler/testData/debug/jsTestHelpers"
-        private const val COMMON_HELPER_PATH = "$HELPERS_DIR/jsCommonTestHelpers.kt"
-        private const val MINIMAL_HELPER_PATH = "$HELPERS_DIR/jsMinimalTestHelpers.kt"
-        private const val WITH_STDLIB_HELPER_PATH = "$HELPERS_DIR/jsWithStdlibTestHelpers.kt"
     }
 }

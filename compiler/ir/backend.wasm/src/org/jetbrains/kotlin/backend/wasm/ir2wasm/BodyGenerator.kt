@@ -394,7 +394,7 @@ class BodyGenerator(
         else
             wasmFileCodegenContext.jsExceptionTagIndex
 
-        body.buildCatch(tag)
+        body.buildCatch(tag, SourceLocation.NextLocation)
 
         if (tag === wasmFileCodegenContext.jsExceptionTagIndex) {
             lastCatchBlock.wrapJsThrownValueIntoJsException()
@@ -956,8 +956,8 @@ class BodyGenerator(
     }
 
     override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
-        body.buildNop(inlinedBlock.getSourceLocation())
         val locationTarget = inlinedBlock.inlineFunctionSymbol?.owner?.locationTarget
+
         functionContext.stepIntoInlinedFunction(inlinedBlock.inlineFunctionSymbol, inlinedBlock.fileEntry)
         locationTarget?.nextLocation()?.let { body.buildNop(it) }
         super.visitInlinedFunctionBlock(inlinedBlock)
@@ -976,11 +976,14 @@ class BodyGenerator(
     }
 
     override fun visitReturnableBlock(expression: IrReturnableBlock) {
+        val callLocation = expression.getSourceLocation()
+        body.buildNop(callLocation)
         functionContext.defineNonLocalReturnLevel(
             expression.symbol,
             body.buildBlock(wasmModuleTypeTransformer.transformBlockResultType(expression.type))
         )
         super.visitReturnableBlock(expression)
+        body.buildNop(callLocation)
     }
 
     private fun processContainerExpression(expression: IrContainerExpression) {
@@ -1158,7 +1161,13 @@ class BodyGenerator(
     }
 
     override fun visitWhen(expression: IrWhen) {
-        if (tryGenerateOptimisedWhen(expression, backendContext.wasmSymbols, functionContext, wasmModuleTypeTransformer)) {
+        if (!backendContext.isDebugBuild && tryGenerateOptimisedWhen(
+                expression,
+                backendContext.wasmSymbols,
+                functionContext,
+                wasmModuleTypeTransformer
+            )
+        ) {
             return
         }
 
@@ -1173,6 +1182,8 @@ class BodyGenerator(
         val resultType = wasmModuleTypeTransformer.transformBlockResultType(expression.type)
         var ifCount = 0
         var seenElse = false
+        val isLogicalOperator = expression.origin == IrStatementOrigin.ANDAND || expression.origin == IrStatementOrigin.OROR
+        val expressionLocation = expression.takeIf { isLogicalOperator }?.getSourceLocation()
 
         for (branch in branches) {
             if (!isElseBranch(branch)) {
@@ -1182,7 +1193,7 @@ class BodyGenerator(
                 generateWithExpectedType(branch.result, expression.type)
                 ifCount++
             } else {
-                body.buildElse()
+                body.buildElse(expressionLocation)
                 generateWithExpectedType(branch.result, expression.type)
                 seenElse = true
                 break
@@ -1202,9 +1213,7 @@ class BodyGenerator(
         }
 
         repeat(ifCount) {
-            val endLocation = branches[branches.lastIndex - it]
-                .takeIf { expression.origin != IrStatementOrigin.ANDAND }
-                ?.nextLocation()
+            val endLocation = branches[branches.lastIndex - it].takeIf { !isLogicalOperator }?.nextLocation()
             body.buildEnd(endLocation)
         }
     }
@@ -1269,7 +1278,7 @@ class BodyGenerator(
         val init = declaration.initializer!!
         generateExpression(init)
         val varName = functionContext.referenceLocal(declaration.symbol)
-        body.buildSetLocal(varName, SourceLocation.NoLocation("Set local defined variable ${declaration.name.asString()}"))
+        body.buildSetLocal(varName, init.getSourceLocation())
     }
 
     // Return true if function is recognized as intrinsic.
@@ -1330,7 +1339,7 @@ class BodyGenerator(
 
     private fun IrElement.nextLocation() =
         when (getSourceLocation(functionContext.currentFunctionSymbol, functionContext.currentFileEntry)) {
-            is SourceLocation.Location -> SourceLocation.NextLocation
+            is SourceLocation.DefinedLocation -> SourceLocation.NextLocation
             else -> SourceLocation.NoLocation
         }
 

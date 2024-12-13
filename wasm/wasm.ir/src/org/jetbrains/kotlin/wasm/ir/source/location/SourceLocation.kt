@@ -16,7 +16,7 @@ sealed class SourceLocation {
     }
 
     // Both line and column are zero-based
-    data class Location(
+    data class DefinedLocation(
         override val file: String,
         override val line: Int,
         override val column: Int

@@ -36,6 +36,7 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
         val collectedJsArtifacts = collectJsArtifacts(originalFile)
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
 
+        // language=js
         val testFileContent = """
             let messageId = 0;
             const locations = [];
@@ -75,7 +76,11 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
             enableDebugger();
             setBreakpoint(box);
             try {
-                box();
+                if (box.length) {
+                  box(jsModule.makeEmptyContinuation());
+                } else {
+                  box();
+                }
             } catch(e) { console.error(e) }
             disableDebugger();
             print(JSON.stringify(locations))
@@ -94,6 +99,7 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
 
             if (debugMode >= DebugMode.DEBUG) {
                 File(dir, "index.html").writeText(
+                    // language=html
                     """
                         <!DOCTYPE html>
                         <html lang="en">
@@ -103,7 +109,13 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
                                 let test = document.getElementById("test")
                                 try {
                                     const jsModule = await import('./index.mjs');
-                                    try { jsModule.box(); } catch(e) { alert(e) }
+                                    try { 
+                                        if (jsModule.box.length) {
+                                          jsModule.box(jsModule.makeEmptyContinuation());
+                                        } else {
+                                          jsModule.box();
+                                        }
+                                    } catch(e) { alert(e) }
                                     
                                     test.style.backgroundColor = "#0f0";
                                     test.textContent = "OK"
@@ -118,9 +130,9 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
                     """.trimIndent()
                 )
                 // To have access to the content of original files from a browser's DevTools
-                testServices.moduleStructure.modules.last().files.forEach {
-                    if (it.originalFile === originalFile) File(dir, it.name).writeText(it.originalContent)
-                }
+                testServices.moduleStructure.modules
+                    .flatMap { it.files }
+                    .forEach { File(dir, it.name).writeText(it.originalContent) }
             }
 
             val exception = try {

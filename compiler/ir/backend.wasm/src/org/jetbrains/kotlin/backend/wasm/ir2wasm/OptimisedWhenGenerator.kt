@@ -20,6 +20,7 @@ private class ExtractedWhenBranch(val conditions: List<ExtractedWhenCondition>, 
 
 private class ExtractedWhenBranchWithIntConditions(val intConditions: List<Int>, val expression: IrExpression)
 
+// Break the debug information completely, so, it will be not used if there is a "debug" mode
 internal fun BodyGenerator.tryGenerateOptimisedWhen(
     expression: IrWhen,
     symbols: WasmSymbols,

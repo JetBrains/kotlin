@@ -47,6 +47,11 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
+    val DEBUG_BUILD by directive(
+        description = "Disable all the things that break debuggability",
+        applicability = DirectiveApplicability.Global
+    )
+
     val GENERATE_SOURCE_MAP by directive(
         description = "Enables generation of source map",
         applicability = DirectiveApplicability.Global

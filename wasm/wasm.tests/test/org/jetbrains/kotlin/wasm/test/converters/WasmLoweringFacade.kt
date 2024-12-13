@@ -33,10 +33,7 @@ import org.jetbrains.kotlin.wasm.test.handlers.getWasmTestOutputDirectory
 import org.jetbrains.kotlin.wasm.test.tools.WasmOptimizer
 import java.io.File
 
-class WasmLoweringFacade(
-    testServices: TestServices,
-    private val isIncremental: Boolean = false,
-) : BackendFacade<IrBackendInput, BinaryArtifacts.Wasm>(testServices, BackendKinds.IrBackend, ArtifactKinds.Wasm) {
+class WasmLoweringFacade(testServices: TestServices) : BackendFacade<IrBackendInput, BinaryArtifacts.Wasm>(testServices, BackendKinds.IrBackend, ArtifactKinds.Wasm) {
     private val supportedOptimizer: WasmOptimizer = WasmOptimizer.Binaryen
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {
@@ -47,9 +44,10 @@ class WasmLoweringFacade(
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.Wasm? {
         require(WasmEnvironmentConfigurator.isMainModule(module, testServices))
         require(inputArtifact is IrBackendInput.WasmDeserializedFromKlibBackendInput)
-
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val moduleInfo = inputArtifact.moduleInfo
+        val isDebugBuild = WasmEnvironmentConfigurationDirectives.DEBUG_BUILD in testServices.moduleStructure.allDirectives
+
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
         val phaseConfig = if (debugMode >= DebugMode.SUPER_DEBUG) {
             val outputDirBase = testServices.getWasmTestOutputDirectory()
@@ -78,7 +76,7 @@ class WasmLoweringFacade(
             exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, "box"))),
             propertyLazyInitialization = true,
             generateTypeScriptFragment = generateDts,
-            isIncremental = isIncremental,
+            isDebugBuild = isDebugBuild,
         )
         val generateWat = debugMode >= DebugMode.DEBUG || configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_WAT)
         val baseFileName = "index"
