@@ -7,7 +7,7 @@ package kotlinx.validation.api
 
 import kotlin.metadata.*
 import kotlin.metadata.jvm.*
-import org.objectweb.asm.tree.*
+import org.jetbrains.org.objectweb.asm.tree.*
 
 internal class ClassVisibility(
     val name: String,
