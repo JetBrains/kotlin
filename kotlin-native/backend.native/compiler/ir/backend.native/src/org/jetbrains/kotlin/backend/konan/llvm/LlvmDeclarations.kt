@@ -287,7 +287,8 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             if (!(context.config.producePerFileCache || context.shouldOptimize()))
                 "${KonanBinaryInterface.MANGLE_CLASS_PREFIX}:$internalName"
             else {
-                val containerName = (generationState.cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile)?.filePath ?: generationState.llvmModuleName
+                val containerName = (generationState.cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile)?.filePath
+                        ?: context.irLinker.getExternalDeclarationFileName(declaration)
                 declaration.computePrivateTypeInfoSymbolName(containerName)
             }
         }
@@ -473,7 +474,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                 else {
                     val containerName = declaration.parentClassOrNull?.fqNameForIrSerialization?.asString()
                             ?: (generationState.cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile)?.filePath
-                            ?: generationState.llvmModuleName
+                            ?: context.irLinker.getExternalDeclarationFileName(declaration)
                     declaration.computePrivateSymbolName(containerName)
                 }
             }
