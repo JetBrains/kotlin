@@ -11,6 +11,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.ir.requiredAlignment
+import org.jetbrains.kotlin.backend.konan.lower.isStaticInitializer
 import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
 import org.jetbrains.kotlin.descriptors.konan.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -169,6 +170,8 @@ internal interface ContextUtils : RuntimeAware {
         if (context.config.producePerFileCache || context.shouldOptimize()) {
             val originalFunction = irFunction.originalConstructor ?: irFunction
             if (originalFunction in generationState.calledFromExportedInlineFunctions)
+                return LLVMLinkage.LLVMExternalLinkage
+            if (context.shouldOptimize() && irFunction.isStaticInitializer)
                 return LLVMLinkage.LLVMExternalLinkage
         }
 
