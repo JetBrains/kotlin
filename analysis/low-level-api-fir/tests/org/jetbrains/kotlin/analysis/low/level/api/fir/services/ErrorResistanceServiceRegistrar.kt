@@ -21,11 +21,23 @@ import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.services.TestServices
 
 internal object ErrorResistanceServiceRegistrar : AnalysisApiTestServiceRegistrar() {
-    fun withInterruption(block: () -> Unit) {
+    fun handleInterruption(block: () -> Unit) {
+        try {
+            withInterruption(block)
+            error("The block should have been interrupted")
+        } catch (e: Throwable) {
+            val exceptionChain = generateSequence(e) { it.cause }
+            if (exceptionChain.none { it is AnalysisInterruptedException }) {
+                throw e
+            }
+        }
+    }
+
+    private fun <T> withInterruption(block: () -> T): T {
         require(!ENABLE_INTERRUPTION.get())
         ENABLE_INTERRUPTION.set(true)
         try {
-            block()
+            return block()
         } finally {
             ENABLE_INTERRUPTION.set(false)
         }

@@ -102,10 +102,8 @@ class ControlFlowGraphBuilder private constructor(
      * Builds a deep independent copy of this [ControlFlowGraphBuilder].
      * The copy is not affected by changes in this storage.
      */
-    internal fun createSnapshot(): ControlFlowGraphBuilder {
-        val copier = ControlFlowGraphCopier()
-
-        val result = ControlFlowGraphBuilder(
+    internal fun createSnapshot(copier: ControlFlowGraphCopier): ControlFlowGraphBuilder {
+        return ControlFlowGraphBuilder(
             graphs = graphs.createSnapshot { copier[it] },
             lastNodes = lastNodes.createSnapshot { copier[it] },
             exitTargetsForReturn = exitTargetsForReturn.mapValuesTo(mutableMapOf()) { copier[it.value] },
@@ -142,9 +140,6 @@ class ControlFlowGraphBuilder private constructor(
             equalityOperatorCallLhsExitNodes = equalityOperatorCallLhsExitNodes.createSnapshot { copier[it] },
             notCompletedFunctionCalls = notCompletedFunctionCalls.createSnapshot { it.mapTo(mutableListOf(), copier::get) },
         )
-
-        copier.finish()
-        return result
     }
 
     val isTopLevel: Boolean

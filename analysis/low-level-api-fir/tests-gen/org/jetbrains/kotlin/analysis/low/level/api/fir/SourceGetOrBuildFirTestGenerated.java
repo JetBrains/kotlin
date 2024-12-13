@@ -1553,6 +1553,76 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis")
+  @TestDataPath("$PROJECT_ROOT")
+  public class PartialBodyAnalysis {
+    @Test
+    public void testAllFilesPresentInPartialBodyAnalysis() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("conditions.kt")
+    public void testConditions() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/conditions.kt");
+    }
+
+    @Test
+    @TestMetadata("conditions2.kt")
+    public void testConditions2() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/conditions2.kt");
+    }
+
+    @Test
+    @TestMetadata("contract.kt")
+    public void testContract() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/contract.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedConstructorCallPrimary.kt")
+    public void testDelegatedConstructorCallPrimary() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/delegatedConstructorCallPrimary.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedConstructorCallSecondary.kt")
+    public void testDelegatedConstructorCallSecondary() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/delegatedConstructorCallSecondary.kt");
+    }
+
+    @Test
+    @TestMetadata("fullThenPartial.kt")
+    public void testFullThenPartial() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/fullThenPartial.kt");
+    }
+
+    @Test
+    @TestMetadata("logicalOperators.kt")
+    public void testLogicalOperators() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/logicalOperators.kt");
+    }
+
+    @Test
+    @TestMetadata("partialThenFull.kt")
+    public void testPartialThenFull() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/partialThenFull.kt");
+    }
+
+    @Test
+    @TestMetadata("simple.kt")
+    public void testSimple() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/simple.kt");
+    }
+
+    @Test
+    @TestMetadata("simpleDataFlow.kt")
+    public void testSimpleDataFlow() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/simpleDataFlow.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/qualifiedExpressions")
   @TestDataPath("$PROJECT_ROOT")
   public class QualifiedExpressions {

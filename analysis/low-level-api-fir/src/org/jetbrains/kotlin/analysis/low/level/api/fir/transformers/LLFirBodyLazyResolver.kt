@@ -5,18 +5,28 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
+import com.intellij.psi.util.descendantsOfType
 import kotlinx.collections.immutable.toPersistentList
+import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getModule
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirPartialBodyResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyResolveRequest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyAnalysisResult
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyAnalysisSnapshot
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyAnalysisState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.partialBodyAnalysisState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.codeFragmentScopeProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.canHaveDeferredReturnTypeCalculation
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
@@ -31,23 +41,34 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitThisReference
+import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.FirCodeFragmentContext
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.codeFragmentContext
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForClass
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForFile
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForScript
+import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.writeResultType
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.isResolved
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtCodeFragment
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -66,6 +87,317 @@ internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_R
             }
             is FirFunction -> checkBodyIsResolved(target)
         }
+    }
+}
+
+/**
+ * An exception signifying that the requested part of the declaration body was successfully resolved.
+ * The exception is thrown to stop analysis finalization steps in the LL API.
+ *
+ * The exception must always be handled on the LL API side (so it must be user-invisible).
+ */
+internal object PartialBodyAnalysisSuspendedException :
+    RuntimeException(
+        /* message = */ "Partial body analysis was suspended",
+        /* cause = */ null,
+        /* enableSuppression = */ false,
+        /* writableStackTrace = */ false
+    )
+
+/**
+ * A declaration transformer providing fast-track for declarations with partial analysis state.
+ * Signatures of such declarations (e.g., value of type parameters) are already resolved, so we can skip them.
+ *
+ * Logic of implementations should be consistent with those in the [FirDeclarationsResolveTransformer].
+ * In particular, all work that happens after body resolution should also happen in the [FirPartialBodyDeclarationResolveTransformer].
+ */
+private class FirPartialBodyDeclarationResolveTransformer(
+    transformer: FirAbstractBodyResolveTransformerDispatcher
+) : FirDeclarationsResolveTransformer(transformer) {
+    override fun transformFunctionContent(
+        function: FirFunction,
+        resolutionModeForBody: ResolutionMode,
+        shouldResolveEverything: Boolean
+    ): FirFunction {
+        if (function.partialBodyAnalysisState != null) {
+            function.transformBody(this, resolutionModeForBody)
+            function.replaceControlFlowGraphReference(dataFlowAnalyzer.exitFunction(function))
+            return function
+        }
+
+        return super.transformFunctionContent(function, resolutionModeForBody, shouldResolveEverything)
+    }
+
+    override fun transformConstructorContent(constructor: FirConstructor, data: ResolutionMode): FirConstructor {
+        if (constructor.partialBodyAnalysisState != null) {
+            context.forConstructor(constructor) {
+                context.forConstructorBody(constructor, session) {
+                    constructor.transformBody(this, data)
+                }
+                constructor.replaceControlFlowGraphReference(dataFlowAnalyzer.exitFunction(constructor))
+                return constructor
+            }
+        }
+
+        return super.transformConstructorContent(constructor, data)
+    }
+}
+
+private class FirPartialBodyExpressionResolveTransformer(
+    transformer: FirAbstractBodyResolveTransformerDispatcher,
+    private val target: LLFirResolveTarget
+) : FirExpressionsResolveTransformer(transformer) {
+    private companion object {
+        // After a certain number of partial analyses,
+        // trigger the full analysis so we don't return to the same declaration over and over again.
+        // Note that the first analysis can also perform only default parameter value analysis and exit just after it.
+        private const val MAX_ANALYSES_COUNT = 3
+    }
+
+    override fun transformBlock(block: FirBlock, data: ResolutionMode): FirStatement {
+        val declaration = context.containerIfAny
+
+        val isApplicable = declaration is FirDeclaration
+                && !declaration.isLocalMember
+                && declaration.isPartialBodyResolvable
+                && declaration.body == block
+                && block.isPartialAnalyzable
+
+        if (!isApplicable) {
+            return super.transformBlock(block, data)
+        }
+
+        require(data is ResolutionMode.ContextIndependent)
+
+        val state = declaration.partialBodyAnalysisState
+
+        if (target is LLFirPartialBodyResolveTarget && (state == null || state.performedAnalysesCount < MAX_ANALYSES_COUNT)) {
+            transformPartially(target.request, block, data, state)
+        } else {
+            transformFully(declaration, block, data, state)
+        }
+
+        return block
+    }
+
+    private fun transformPartially(
+        request: LLPartialBodyResolveRequest,
+        block: FirBlock,
+        data: ResolutionMode,
+        state: LLPartialBodyAnalysisState?
+    ): FirStatement {
+        val declaration = target.target as FirDeclaration
+
+        if (state == null) {
+            if (request.stopElement == null) {
+                // Without a 'stopElement', we resolve "the rest of the body".
+                // We didn't analyze the body yet, though.
+                // So here we just delegate to the non-partial implementation.
+                require(request.targetPsiStatementCount == request.totalPsiStatementCount)
+                return super.transformBlock(block, data)
+            }
+
+            context.forBlock(session) {
+                dataFlowAnalyzer.enterBlock(block)
+                if (transformStatementsPartially(request, block, data, startIndex = 0, performedAnalysesCount = 0)) {
+                    dataFlowAnalyzer.exitBlock(block)
+                }
+            }
+
+            return block
+        }
+
+        // Required statements might already be analyzed
+        if (state.analyzedPsiStatementCount >= request.targetPsiStatementCount) {
+            if (!state.isFullyAnalyzed) {
+                // Execution should never finish normally if the body is not entirely analyzed
+                throw PartialBodyAnalysisSuspendedException
+            }
+
+            return block
+        }
+
+        val resolveSnapshot = state.analysisStateSnapshot
+        checkWithAttachment(resolveSnapshot != null, { "Snapshot should be available for a partially analyzed declaration" }) {
+            withFirEntry("target", declaration)
+            withEntry("state", state) { it.toString() }
+        }
+
+        // Run analysis with the previous tower data context
+        context.withTowerDataContext(resolveSnapshot.towerDataContext) {
+            // Also, restore the previous data flow analyzer state.
+            // Here we create a snapshot right before the analysis, so if an exception occurs during this partial analysis,
+            // we can still safely use the original 'dataFlowAnalyzerContext' from the 'analysisStateSnapshot' the next time.
+            val originalContext = resolveSnapshot.dataFlowAnalyzerContext
+            val contextSnapshot = originalContext.createSnapshot()
+
+            if (declaration is FirFunction) {
+                patchControlFlowGraphReferences(declaration.valueParameters, contextSnapshot.graphMapping)
+            }
+
+            patchControlFlowGraphReferences(block.statements.subList(0, state.analyzedFirStatementCount), contextSnapshot.graphMapping)
+
+            context.dataFlowAnalyzerContext.resetFrom(contextSnapshot.context)
+
+            /** No [BodyResolveContext.forBlock] as here we manually restore the tower data context from the snapshot. */
+            val isAnalyzedEntirely = transformStatementsPartially(
+                request, block, data,
+                startIndex = state.analyzedFirStatementCount,
+                performedAnalysesCount = state.performedAnalysesCount
+            )
+
+            if (isAnalyzedEntirely) {
+                dataFlowAnalyzer.exitBlock(block)
+            }
+        }
+
+        return block
+    }
+
+    /**
+     * Replaces references to stale [ControlFlowGraph]s in already analyzed [FirElement]s to one from the newly created snapshot.
+     * Patching does not require explicit locking as clients must only access the [ControlFlowGraph] nodes through
+     * the [LLPartialBodyAnalysisSnapshot].
+     */
+    private fun patchControlFlowGraphReferences(elements: Collection<FirElement>, graphMapping: Map<ControlFlowGraph, ControlFlowGraph>) {
+        val visitor = object : FirVisitorVoid() {
+            override fun visitElement(element: FirElement) {
+                if (element is FirControlFlowGraphOwner) {
+                    patchReference(element)
+                }
+                element.acceptChildren(this)
+            }
+
+            private fun patchReference(owner: FirControlFlowGraphOwner) {
+                val reference = owner.controlFlowGraphReference ?: return
+                val existingGraph = reference.controlFlowGraph ?: return
+                val newGraph = graphMapping[existingGraph] ?: return
+                owner.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(newGraph))
+            }
+        }
+
+        for (element in elements) {
+            element.accept(visitor)
+        }
+    }
+
+    private fun transformStatementsPartially(
+        request: LLPartialBodyResolveRequest,
+        block: FirBlock,
+        data: ResolutionMode,
+        startIndex: Int,
+        performedAnalysesCount: Int,
+    ): Boolean {
+        val declaration = request.target
+
+        val stopElement = request.stopElement
+        val stopElements = stopElement?.descendantsOfType<KtElement>(childrenFirst = false)?.toHashSet().orEmpty()
+
+        var index = 0
+        val iterator = (block.statements as MutableList<FirStatement>).listIterator()
+
+        while (iterator.hasNext()) {
+            val statement = iterator.next()
+
+            // Skip already analyzed statements
+            if (index >= startIndex) {
+                if (stopElement != null && !shouldTransform(statement, stopElement, stopElements)) {
+                    // Here we reached a stop element.
+                    // It means all statements up to the target one are now analyzed.
+                    // So now we save the current context and suspend further analysis.
+                    declaration.partialBodyAnalysisState = LLPartialBodyAnalysisState(
+                        totalPsiStatementCount = request.totalPsiStatementCount,
+                        analyzedPsiStatementCount = request.targetPsiStatementCount,
+                        analyzedFirStatementCount = index,
+                        performedAnalysesCount = performedAnalysesCount + 1,
+                        analysisStateSnapshot = LLPartialBodyAnalysisSnapshot(
+                            result = LLPartialBodyAnalysisResult(
+                                statements = block.statements.take(index),
+                                delegatedConstructorCall = (declaration as? FirConstructor)?.delegatedConstructor,
+                                defaultParameterValues = collectDefaultParameterValues(declaration)
+                            ),
+                            towerDataContext = context.towerDataContext.createSnapshot(keepMutable = true),
+                            dataFlowAnalyzerContext = context.dataFlowAnalyzerContext
+                        )
+                    )
+                    throw PartialBodyAnalysisSuspendedException
+                }
+
+                val newStatement = statement.transform<FirStatement, ResolutionMode>(transformer, data)
+                if (statement !== newStatement) {
+                    iterator.set(newStatement)
+                }
+            }
+
+            index += 1
+        }
+
+        // Nothing stopped us from analyzing all statements for some reason.
+        // Most likely, we missed the stop element.
+        // Let's still wrap things out – the function is now fully analyzed.
+        block.transformOtherChildren(transformer, data)
+
+        // This makes the compiler think the declaration is fully resolved (see 'FirExpression.isResolved')
+        block.writeResultType(session)
+
+        declaration.partialBodyAnalysisState = LLPartialBodyAnalysisState(
+            totalPsiStatementCount = request.totalPsiStatementCount,
+            analyzedPsiStatementCount = request.totalPsiStatementCount,
+            analyzedFirStatementCount = index,
+            performedAnalysesCount = performedAnalysesCount + 1,
+            analysisStateSnapshot = null
+        )
+
+        return true
+    }
+
+    private fun collectDefaultParameterValues(declaration: FirDeclaration): List<FirExpression> {
+        if (declaration is FirFunction) {
+            val result = declaration.valueParameters.mapNotNull { it.defaultValue }
+            return result.ifEmpty { emptyList() }
+        }
+
+        return emptyList()
+    }
+
+    /**
+     * Analyzes the body completely.
+     * Note that even in [transformFully], [transformPartially] may be called if the body was already partially analyzed.
+     */
+    private fun transformFully(
+        declaration: FirDeclaration,
+        block: FirBlock,
+        data: ResolutionMode,
+        currentState: LLPartialBodyAnalysisState?
+    ): FirStatement {
+        if (currentState == null) {
+            // The declaration body is not resolved at all, and a full resolution is requested.
+            // So, here we delegate straight to the non-partial implementation.
+            return super.transformBlock(block, data)
+        }
+
+        val request = LLPartialBodyResolveRequest(
+            target = declaration,
+            totalPsiStatementCount = currentState.totalPsiStatementCount,
+            targetPsiStatementCount = currentState.totalPsiStatementCount,
+            stopElement = null
+        )
+
+        // Otherwise, use the partial resolve to finish the ongoing resolution
+        return transformPartially(request, block, data, currentState)
+    }
+
+    private fun shouldTransform(element: FirElement, stopElement: KtElement, stopElements: Set<KtElement>): Boolean {
+        val source = element.source
+        if (source is KtPsiSourceElement) {
+            // Potentially, more expensive `source.psi in stopElements` check may be dropped, but then we need a strong guarantee that
+            // all topmost FIR statements have corresponding topmost PSI statements in source elements.
+            if (source.psi == stopElement || source.psi in stopElements) {
+                return false
+            }
+        }
+
+        return true
     }
 }
 
@@ -91,17 +423,23 @@ internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_R
  * @see FirBodyResolveTransformer
  * @see FirResolvePhase.BODY_RESOLVE
  */
-private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstractBodyTargetResolver(
-    target,
-    FirResolvePhase.BODY_RESOLVE,
-) {
-    override val transformer = object : FirBodyResolveTransformer(
+private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstractBodyTargetResolver(target, FirResolvePhase.BODY_RESOLVE) {
+    override val transformer = BodyTransformerDispatcher()
+
+    inner class BodyTransformerDispatcher : FirAbstractBodyResolveTransformerDispatcher(
         resolveTargetSession,
         phase = resolverPhase,
         implicitTypeOnly = false,
         scopeSession = resolveTargetScopeSession,
         returnTypeCalculator = createReturnTypeCalculator(),
+        expandTypeAliases = true
     ) {
+        override val expressionsTransformer: FirExpressionsResolveTransformer =
+            FirPartialBodyExpressionResolveTransformer(this, resolveTarget)
+
+        override val declarationsTransformer: FirDeclarationsResolveTransformer =
+            FirPartialBodyDeclarationResolveTransformer(this)
+
         override val preserveCFGForClasses: Boolean get() = false
         override val buildCfgForScripts: Boolean get() = false
         override val buildCfgForFiles: Boolean get() = false
@@ -356,7 +694,13 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
     }
 
     override fun rawResolve(target: FirElementWithResolveState) {
-        super.rawResolve(target)
+        try {
+            super.rawResolve(target)
+        } catch (e: PartialBodyAnalysisSuspendedException) {
+            // We successfully analyzed some part of the body so need to keep track of it
+            LLFirDeclarationModificationService.bodyResolved(target, resolverPhase)
+            throw e
+        }
 
         LLFirDeclarationModificationService.bodyResolved(target, resolverPhase)
     }
@@ -367,7 +711,14 @@ internal object BodyStateKeepers {
         builder.add(FirCodeFragment::block, FirCodeFragment::replaceBlock, ::blockGuard)
     }
 
-    val ANONYMOUS_INITIALIZER: StateKeeper<FirAnonymousInitializer, FirDesignation> = stateKeeper { builder, _, _ ->
+    val PARTIAL_BODY_RESOLVABLE: StateKeeper<FirDeclaration, FirDesignation> = stateKeeper { builder, declaration, context ->
+        builder.add(FirDeclaration::partialBodyAnalysisState::get, FirDeclaration::partialBodyAnalysisState::set)
+    }
+
+    val ANONYMOUS_INITIALIZER: StateKeeper<FirAnonymousInitializer, FirDesignation> = stateKeeper { builder, initializer, designation ->
+        builder.add(PARTIAL_BODY_RESOLVABLE, designation)
+        preserveResolvedState(builder, initializer)
+
         builder.add(FirAnonymousInitializer::body, FirAnonymousInitializer::replaceBody, ::blockGuard)
         builder.add(FirAnonymousInitializer::controlFlowGraphReference, FirAnonymousInitializer::replaceControlFlowGraphReference)
     }
@@ -384,7 +735,8 @@ internal object BodyStateKeepers {
         builder.add(FirFunction::returnTypeRef, FirFunction::replaceReturnTypeRef)
 
         if (!isCallableWithSpecialBody(function)) {
-            preserveContractBlock(builder, function)
+            builder.add(PARTIAL_BODY_RESOLVABLE, designation)
+            preserveResolvedState(builder, function)
 
             builder.add(FirFunction::body, FirFunction::replaceBody, ::blockGuard)
             builder.entityList(function.valueParameters, VALUE_PARAMETER, designation)
@@ -438,7 +790,21 @@ internal object BodyStateKeepers {
     }
 }
 
-private fun StateKeeperScope<FirFunction, FirDesignation>.preserveContractBlock(builder: StateKeeperBuilder, function: FirFunction) {
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+private fun StateKeeperScope<FirAnonymousInitializer, FirDesignation>.preserveResolvedState(
+    builder: StateKeeperBuilder,
+    initializer: FirAnonymousInitializer
+) {
+    preservePartialBodyResolveResult(builder, initializer, FirAnonymousInitializer::body) { emptyList() }
+}
+
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+private fun StateKeeperScope<FirFunction, FirDesignation>.preserveResolvedState(builder: StateKeeperBuilder, function: FirFunction) {
+    if (preservePartialBodyResolveResult(builder, function, FirFunction::body, FirFunction::valueParameters)) {
+        // If the function is partially analyzed, its contract (if present) is also copied, so we don't need to patch it once more.
+        return
+    }
+
     val oldBody = function.body
     if (oldBody == null || oldBody is FirLazyBlock) {
         return
@@ -460,6 +826,48 @@ private fun StateKeeperScope<FirFunction, FirDesignation>.preserveContractBlock(
 
         return
     }
+}
+
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+private fun <T : FirDeclaration> StateKeeperScope<T, FirDesignation>.preservePartialBodyResolveResult(
+    builder: StateKeeperBuilder,
+    declaration: T,
+    bodySupplier: (T) -> FirBlock?,
+    parameterSupplier: (T) -> List<FirValueParameter>
+): Boolean {
+    val oldBody = bodySupplier(declaration)
+    val oldDefaultValues = parameterSupplier(declaration).map { it.defaultValue }
+
+    // No need to check parameters explicitly as they are substituted together with the body
+    if (oldBody == null || oldBody is FirLazyBlock) {
+        return false
+    }
+
+    val state = declaration.partialBodyAnalysisState
+    if (state == null) {
+        return false
+    }
+
+    builder.postProcess {
+        val newBody = bodySupplier(declaration)
+        if (newBody != null && newBody.statements.isNotEmpty()) {
+            require(oldBody.statements.size == newBody.statements.size) { "Bodies do not match" }
+
+            val newBodyStatements = newBody.statements as MutableList<FirStatement>
+            for (index in 0..<state.analyzedFirStatementCount) {
+                newBodyStatements[index] = oldBody.statements[index]
+            }
+        }
+
+        val newParameters = parameterSupplier(declaration)
+        for ((index, newParameter) in newParameters.withIndex()) {
+            if (newParameter.defaultValue != null) {
+                newParameter.replaceDefaultValue(oldDefaultValues[index])
+            }
+        }
+    }
+
+    return true
 }
 
 private val FirFunction.isCertainlyResolved: Boolean
@@ -501,6 +909,13 @@ private val FirProperty.setterIfUnresolved: FirPropertyAccessor?
     get() = if (bodyResolveState < FirPropertyBodyResolveState.ALL_BODIES_RESOLVED) setter else null
 
 private fun delegatedConstructorCallGuard(fir: FirDelegatedConstructorCall): FirDelegatedConstructorCall {
+    val originalCalleeReference = fir.calleeReference
+
+    if (originalCalleeReference is FirResolvedNamedReference || originalCalleeReference.isError()) {
+        // The reference is already resolved – no need in resolving it once more
+        return fir
+    }
+
     if (fir is FirLazyDelegatedConstructorCall) {
         return fir
     } else if (fir is FirMultiDelegatedConstructorCall) {
@@ -513,7 +928,8 @@ private fun delegatedConstructorCallGuard(fir: FirDelegatedConstructorCall): Fir
 
     return buildLazyDelegatedConstructorCall {
         constructedTypeRef = fir.constructedTypeRef
-        when (val originalCalleeReference = fir.calleeReference) {
+
+        when (originalCalleeReference) {
             is FirThisReference -> {
                 isThis = true
                 calleeReference = buildExplicitThisReference {

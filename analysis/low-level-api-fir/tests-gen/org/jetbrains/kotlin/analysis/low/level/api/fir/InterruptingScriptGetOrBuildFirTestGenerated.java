@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir")
 @TestDataPath("$PROJECT_ROOT")
-public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFirTest {
+public class InterruptingScriptGetOrBuildFirTestGenerated extends AbstractInterruptingScriptGetOrBuildFirTest {
   @Test
   public void testAllFilesPresentInGetOrBuildFir() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir"), Pattern.compile("^(.+)\\.(kts)$"), null, true);

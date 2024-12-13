@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.elementCanBeLazilyResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isPartialBodyResolvable
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.parentsWithSelfCodeFragmentAware
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.requireTypeIntersectionWith
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
@@ -117,7 +118,18 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
 
         val structureElement = fileStructure.getStructureElementFor(element, nonLocalContainer)
         val mappings = structureElement.mappings
-        return mappings.getFir(psi)
+
+        val firElement = mappings.get(psi)
+
+        if (firElement is FirElementWithResolveState) {
+            // Partially resolvable declarations might have unresolved bodies in the mapping.
+            // Here we forcibly resolve them to obey to the 'getOrBuildFirFor()' contract.
+            if (firElement.isPartialBodyResolvable && firElement.resolvePhase < FirResolvePhase.BODY_RESOLVE) {
+                firElement.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+            }
+        }
+
+        return firElement
     }
 
     /**

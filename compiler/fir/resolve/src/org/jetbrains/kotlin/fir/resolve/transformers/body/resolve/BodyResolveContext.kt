@@ -125,6 +125,17 @@ class BodyResolveContext(
         }
     }
 
+    @OptIn(PrivateForInline::class)
+    inline fun <T> withTowerDataContext(newContext: FirTowerDataContext, f: () -> T): T {
+        val initialContext = towerDataContext
+        return try {
+            replaceTowerDataContext(newContext)
+            f()
+        } finally {
+            replaceTowerDataContext(initialContext)
+        }
+    }
+
     inline fun <R> withLambdaBeingAnalyzedInDependentContext(lambda: FirAnonymousFunctionSymbol, l: () -> R): R {
         anonymousFunctionsAnalyzedInDependentContext.add(lambda)
         return try {

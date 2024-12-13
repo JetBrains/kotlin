@@ -1,0 +1,24 @@
+KT element: KtValueArgument
+FIR element: FirLiteralExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+Int(5)
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] delegatedConstructorCallPrimary.kt
+    public open [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Foo.a] a: R|kotlin/Int|): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] get(): R|kotlin/Int|
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Bar : R|Foo| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Bar] constructor(): R|Bar| {
+            super<R|Foo|>(Int(5))
+        }
+
+    }
