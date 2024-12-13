@@ -42,23 +42,75 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class DataFlowAnalyzerContext(private val session: FirSession) {
-    val graphBuilder: ControlFlowGraphBuilder = ControlFlowGraphBuilder()
-    internal val variableAssignmentAnalyzer: FirLocalVariableAssignmentAnalyzer = FirLocalVariableAssignmentAnalyzer()
+class DataFlowAnalyzerContext private constructor(
+    private val session: FirSession,
+    graphBuilder: ControlFlowGraphBuilder,
+    variableAssignmentAnalyzer: FirLocalVariableAssignmentAnalyzer,
+    variableStorage: VariableStorage,
+    private var assignmentCounter: Int
+) {
+    constructor(session: FirSession) : this(
+        session,
+        graphBuilder = ControlFlowGraphBuilder(),
+        variableAssignmentAnalyzer = FirLocalVariableAssignmentAnalyzer(),
+        variableStorage = VariableStorage(session),
+        assignmentCounter = 0
+    )
 
-    var variableStorage: VariableStorage = VariableStorage(session)
-        private set
-
-    private var assignmentCounter = 0
-
-    fun newAssignmentIndex(): Int {
-        return assignmentCounter++
+    /**
+     * Builds a deep independent copy of this [DataFlowAnalyzerContext].
+     * The copy is not affected by changes in this context.
+     */
+    fun createSnapshot(): DataFlowAnalyzerContext {
+        return DataFlowAnalyzerContext(
+            session,
+            graphBuilder = graphBuilder.createSnapshot(),
+            variableAssignmentAnalyzer = variableAssignmentAnalyzer.createSnapshot(),
+            variableStorage = variableStorage.createSnapshot(),
+            assignmentCounter = assignmentCounter
+        )
     }
 
+    /**
+     * Replaces all state of this [DataFlowAnalyzerContext] with those from [source].
+     *
+     * The method does not perform any deep copying, so the [source] context will be affected by changes in this one.
+     * If you need to avoid this, call [createSnapshot] first.
+     */
+    fun resetFrom(source: DataFlowAnalyzerContext) {
+        reset()
+
+        graphBuilder = source.graphBuilder
+        variableAssignmentAnalyzer = source.variableAssignmentAnalyzer
+        variableStorage = source.variableStorage
+        assignmentCounter = source.assignmentCounter
+    }
+
+    /**
+     * Clears all intermediate state of this [DataFlowAnalyzerContext].
+     * Are calling [reset], the context is identical to the newly created one.
+     */
     fun reset() {
         graphBuilder.reset()
         variableAssignmentAnalyzer.reset()
         variableStorage = VariableStorage(session)
+    }
+
+    @CfgInternals
+    val currentGraph: ControlFlowGraph
+        get() = graphBuilder.currentGraph
+
+    internal var graphBuilder: ControlFlowGraphBuilder = graphBuilder
+        private set
+
+    internal var variableAssignmentAnalyzer: FirLocalVariableAssignmentAnalyzer = variableAssignmentAnalyzer
+        private set
+
+    internal var variableStorage: VariableStorage = variableStorage
+        private set
+
+    fun newAssignmentIndex(): Int {
+        return assignmentCounter++
     }
 }
 
