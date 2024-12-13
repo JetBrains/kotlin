@@ -1,9 +1,0 @@
-compiler/testData/cli/jvm/twoDiagnosticsOnSingleElement.kt:11:1: error: class 'C' is not abstract and does not implement abstract members:
-fun <T> foo(): Unit
-fun foo(): Unit
-class C : I1, I2
-^^^^^^^
-compiler/testData/cli/jvm/twoDiagnosticsOnSingleElement.kt:11:1: error: 'C' inherits conflicting members: 'fun <T> foo(): Unit' defined in 'test/I1', 'fun foo(): Unit' defined in 'test/I2'.
-class C : I1, I2
-^^^^^^^
-COMPILATION_ERROR

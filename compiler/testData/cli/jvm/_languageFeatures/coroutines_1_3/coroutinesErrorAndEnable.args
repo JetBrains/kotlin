@@ -1,4 +1,4 @@
-$TESTDATA_DIR$/simple.kt
+$TESTDATA_DIR$/coroutines.kt
 -Xcoroutines=error
 -Xcoroutines=enable
 -d

@@ -1,8 +1,0 @@
-warning: advanced option value is passed in an obsolete form. Please use the '=' character to specify the value: -Xexplicit-api=...
-compiler/testData/cli/jvm/_advancedOptionCommonChecks/advancedOption.kt:1:1: warning: visibility must be specified in explicit API mode.
-fun foo() = "hello"
-^^^^^^^
-compiler/testData/cli/jvm/_advancedOptionCommonChecks/advancedOption.kt:1:5: warning: return type must be specified in explicit API mode.
-fun foo() = "hello"
-    ^^^
-OK
