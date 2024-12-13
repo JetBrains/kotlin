@@ -1194,6 +1194,7 @@ class FirCallCompletionResultsWriterTransformer(
         val expectedArrayType = data?.getExpectedType(arrayLiteral)
         val expectedArrayElementType = expectedArrayType?.let { getCollectionLiteralElementType(it, session, scopeSession) }
         if (expectedArrayType == null || expectedArrayElementType == null) {
+            println("InferenceError: Collection literal type is unknown. Overload resolution ambiguity?")
             arrayLiteral.resultType = buildErrorTypeRef { // todo
                 source = arrayLiteral.source
                 diagnostic = ConeSimpleDiagnostic("Collection literal type is unknown", kind = DiagnosticKind.InferenceError)
