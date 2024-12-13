@@ -26,9 +26,80 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
     val subGraphs: List<ControlFlowGraph>
         get() = nodes.flatMap { (it as? CFGNodeWithSubgraphs<*>)?.subGraphs ?: emptyList() }
 
+    /**
+     * `true` if the graph is in its final state.
+     * Completed graphs are not supposed to be changed afterward.
+     */
+    val isComplete: Boolean
+        get() = ::nodes.isInitialized
+
+    /**
+     * Copies relation data from the [from] graph.
+     * The [mapper] must provide nodes of the same type that belong to this graph.
+     */
+    @CfgInternals
+    fun copyData(from: ControlFlowGraph, mapper: (CFGNode<*>) -> CFGNode<*>) {
+        /** Sic! [nodeCount] is intentionally ignored as it's incremented on node creation. See [CFGNode.id]. */
+
+        if (from::nodes.isInitialized) {
+            nodes = from.nodes.map(mapper)
+        }
+        if (from::enterNode.isInitialized) {
+            enterNode = mapper(from.enterNode)
+        }
+        if (from::exitNode.isInitialized) {
+            exitNode = mapper(from.exitNode)
+        }
+    }
+
     @CfgInternals
     fun complete() {
-        nodes = orderNodes()
+        nodes = orderNodes(isComplete = true)
+    }
+
+    /**
+     * Traverses all nodes starting from [enterNode], making a flat list of nodes.
+     *
+     * Normally, you do not need to call [orderNodes] manually.
+     * When working with complete graphs, use [nodes] instead.
+     */
+    @CfgInternals
+    fun orderNodes(isComplete: Boolean): List<CFGNode<*>> {
+        // NOTE: this produces a BFS order. If desired, a DFS order can be created instead by using a linked list,
+        // iterating over `followingNodes` in reverse order, and inserting new nodes at the current iteration point.
+        val result = ArrayList<CFGNode<*>>(nodeCount).apply { add(enterNode) }
+        val countdowns = IntArray(nodeCount)
+        var i = 0
+        while (i < result.size) {
+            val node = result[i++]
+            for (next in node.followingNodes) {
+                if (next.owner != this) {
+                    // Assume nodes in this graph can be ordered in isolation. If necessary, dead edges
+                    // should be used to go around subgraphs that always execute.
+                } else if (next.previousNodes.size == 1) {
+                    // Fast path: assume `next.previousNodes` is `listOf(node)`, and the edge is forward.
+                    // In tests, the consistency checker will validate this assumption.
+                    result.add(next)
+                } else if (!node.edgeTo(next).kind.isBack) {
+                    // Can only read a 0 if never seen this node before.
+                    val remaining = countdowns[next.id].let { if (it == 0) next.previousNodeCount else it } - 1
+                    if (remaining == 0) {
+                        result.add(next)
+                    }
+                    countdowns[next.id] = remaining
+                }
+            }
+        }
+
+        if (isComplete) {
+            assert(result.size == nodeCount) {
+                // TODO: can theoretically dump loop nodes into the output in some order so that `ControlFlowGraphRenderer`
+                //  could show them for debugging purposes.
+                "some nodes ${if (countdowns.all { it == 0 }) "are not reachable" else "form loops"} in control flow graph $name"
+            }
+        }
+
+        return result
     }
 
     enum class Kind {
@@ -158,37 +229,3 @@ enum class EdgeKind(
 
 private val CFGNode<*>.previousNodeCount
     get() = previousNodes.count { it.owner == owner && !edgeFrom(it).kind.isBack }
-
-private fun ControlFlowGraph.orderNodes(): List<CFGNode<*>> {
-    // NOTE: this produces a BFS order. If desired, a DFS order can be created instead by using a linked list,
-    // iterating over `followingNodes` in reverse order, and inserting new nodes at the current iteration point.
-    val result = ArrayList<CFGNode<*>>(nodeCount).apply { add(enterNode) }
-    val countdowns = IntArray(nodeCount)
-    var i = 0
-    while (i < result.size) {
-        val node = result[i++]
-        for (next in node.followingNodes) {
-            if (next.owner != this) {
-                // Assume nodes in this graph can be ordered in isolation. If necessary, dead edges
-                // should be used to go around subgraphs that always execute.
-            } else if (next.previousNodes.size == 1) {
-                // Fast path: assume `next.previousNodes` is `listOf(node)`, and the edge is forward.
-                // In tests, the consistency checker will validate this assumption.
-                result.add(next)
-            } else if (!node.edgeTo(next).kind.isBack) {
-                // Can only read a 0 if never seen this node before.
-                val remaining = countdowns[next.id].let { if (it == 0) next.previousNodeCount else it } - 1
-                if (remaining == 0) {
-                    result.add(next)
-                }
-                countdowns[next.id] = remaining
-            }
-        }
-    }
-    assert(result.size == nodeCount) {
-        // TODO: can theoretically dump loop nodes into the output in some order so that `ControlFlowGraphRenderer`
-        //  could show them for debugging purposes.
-        "some nodes ${if (countdowns.all { it == 0 }) "are not reachable" else "form loops"} in control flow graph $name"
-    }
-    return result
-}
