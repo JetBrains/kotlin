@@ -6,9 +6,8 @@ assert("aaa".compareTo("bbb") > 0)
 ---
 test2: ---
 assert("aaa" > "bbb")
-       |     |
-       |     -1
-       false
+             |
+             false
 ---
 test3: ---
 assert("aaa".compareTo("bbb") >= 0)
@@ -18,9 +17,8 @@ assert("aaa".compareTo("bbb") >= 0)
 ---
 test4: ---
 assert("aaa" >= "bbb")
-       |     |
-       |     -1
-       false
+             |
+             false
 ---
 test5: ---
 assert("bbb".compareTo("aaa") < 0)
@@ -30,9 +28,8 @@ assert("bbb".compareTo("aaa") < 0)
 ---
 test6: ---
 assert("bbb" < "aaa")
-       |     |
-       |     1
-       false
+             |
+             false
 ---
 test7: ---
 assert("bbb".compareTo("aaa") <= 0)
@@ -42,7 +39,6 @@ assert("bbb".compareTo("aaa") <= 0)
 ---
 test8: ---
 assert("bbb" <= "aaa")
-       |     |
-       |     1
-       false
+             |
+             false
 ---

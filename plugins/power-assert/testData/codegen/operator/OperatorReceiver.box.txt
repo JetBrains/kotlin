@@ -62,30 +62,30 @@ assert(dispatch in extension)
 ---
 test9: ---
 assert(extension in extension)
-       |            |
-       |            Extension(n=1)
-       false
+       |         |  |
+       |         |  Extension(n=1)
+       |         false
        Extension(n=1)
 ---
 test10: ---
 assert(context in dispatch)
-       |          |
-       |          Dispatch(n=1)
-       false
+       |       |  |
+       |       |  Dispatch(n=1)
+       |       false
        Context(n=1)
 ---
 test11: ---
 assert(dispatch in extension)
-       |           |
-       |           Extension(n=1)
-       false
+       |        |  |
+       |        |  Extension(n=1)
+       |        false
        Dispatch(n=1)
 ---
 test12: ---
 assert(context in extension)
-       |          |
-       |          Extension(n=1)
-       false
+       |       |  |
+       |       |  Extension(n=1)
+       |       false
        Context(n=1)
 ---
 test13: ---

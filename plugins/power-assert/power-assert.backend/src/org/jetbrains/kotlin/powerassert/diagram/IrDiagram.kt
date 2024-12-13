@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.powerassert.getExplicitReceiver
 import org.jetbrains.kotlin.powerassert.irString
+import org.jetbrains.kotlin.powerassert.isInnerOfComparisonOperator
+import org.jetbrains.kotlin.powerassert.isInnerOfNotEqualOperator
 
 fun IrBuilderWithScope.irDiagramString(
     sourceFile: SourceFile,
@@ -258,21 +260,24 @@ private fun binaryOperatorOffset(lhs: IrExpression, wholeOperatorSourceRangeInfo
  * that have a more complex structure than just a single call with two arguments.
  */
 private fun IrCall.binaryOperatorLhs(): IrExpression? = when (origin) {
-    IrStatementOrigin.EXCLEQ -> {
+    IrStatementOrigin.EXCLEQ, IrStatementOrigin.EXCLEQEQ -> {
         // The `!=` operator call is actually a sugar for `lhs.equals(rhs).not()`.
-        (arguments[0] as? IrCall)?.simpleBinaryOperatorLhs()
-    }
-    IrStatementOrigin.EXCLEQEQ -> {
         // The `!==` operator call is actually a sugar for `(lhs === rhs).not()`.
-        (arguments[0] as? IrCall)?.simpleBinaryOperatorLhs()
+        val innerCall = (arguments[0] as? IrCall)?.takeIf { it.isInnerOfNotEqualOperator() } ?: this
+        innerCall.simpleBinaryOperatorLhs()
     }
     IrStatementOrigin.IN -> {
         // The `in` operator call is actually a sugar for `rhs.contains(lhs)`.
-        arguments[1]
+        arguments.last()
     }
     IrStatementOrigin.NOT_IN -> {
         // The `!in` operator call is actually a sugar for `rhs.contains(lhs).not()`.
-        (arguments[0] as? IrCall)?.arguments?.get(1)
+        (arguments[0] as? IrCall)?.arguments?.last()
+    }
+    IrStatementOrigin.LT, IrStatementOrigin.GT, IrStatementOrigin.LTEQ, IrStatementOrigin.GTEQ -> {
+        // Comparison operator calls are actually sugar for `lhs.compareTo(rhs) <> 0`.
+        val innerCall = (arguments[0] as? IrCall)?.takeIf { it.isInnerOfComparisonOperator() } ?: this
+        innerCall.simpleBinaryOperatorLhs()
     }
     else -> simpleBinaryOperatorLhs()
 }

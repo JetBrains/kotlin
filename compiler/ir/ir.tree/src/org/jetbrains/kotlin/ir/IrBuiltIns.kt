@@ -222,6 +222,7 @@ object BuiltInOperatorNames {
     const val LESS_OR_EQUAL = "lessOrEqual"
     const val GREATER = "greater"
     const val GREATER_OR_EQUAL = "greaterOrEqual"
+    const val COMPARE_TO = "compareTo"
     const val EQEQ = "EQEQ"
     const val EQEQEQ = "EQEQEQ"
     const val IEEE754_EQUALS = "ieee754equals"
