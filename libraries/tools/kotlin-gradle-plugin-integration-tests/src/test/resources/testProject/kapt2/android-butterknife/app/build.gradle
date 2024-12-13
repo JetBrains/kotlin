@@ -3,21 +3,21 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    namespace "org.example.kotlin.butterknife"
+    namespace = "org.example.kotlin.butterknife"
 
-    compileSdkVersion 23
+    compileSdkVersion = 23
 
     defaultConfig {
-        applicationId "org.example.kotlin.butterknife"
-        minSdkVersion 15
-        targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        applicationId = "org.example.kotlin.butterknife"
+        minSdkVersion = 15
+        targetSdkVersion = 23
+        versionCode = 1
+        versionName = "1.0"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled = false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

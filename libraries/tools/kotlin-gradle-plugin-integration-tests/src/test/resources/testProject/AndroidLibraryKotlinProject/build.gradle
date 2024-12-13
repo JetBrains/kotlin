@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         mavenLocal()
-        maven { url 'https://maven.google.com' }
+        maven { url = 'https://maven.google.com' }
         mavenCentral()
     }
     dependencies {
@@ -12,7 +12,7 @@ buildscript {
 
 repositories {
     mavenLocal()
-    maven { url 'https://maven.google.com' }
+    maven { url = 'https://maven.google.com' }
     mavenCentral()
 }
 
@@ -20,8 +20,8 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    namespace "org.jetbrains.kotlin.gradle.test.android.libalfa"
-    compileSdkVersion 23
+    namespace = "org.jetbrains.kotlin.gradle.test.android.libalfa"
+    compileSdkVersion = 23
 }
 
 dependencies {

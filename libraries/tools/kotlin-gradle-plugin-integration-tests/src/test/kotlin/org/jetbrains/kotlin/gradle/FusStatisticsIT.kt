@@ -105,7 +105,7 @@ class FusStatisticsIT : KGPBaseTest() {
                 "repositories {",
                 """
                     repositories {
-                         maven { url "https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev/" }
+                         maven { url = "https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev/" }
                 """.trimIndent()
             )
 
@@ -114,7 +114,7 @@ class FusStatisticsIT : KGPBaseTest() {
                 "repositories {",
                 """
                     repositories {
-                         maven { url "https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev/" }
+                         maven { url = "https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev/" }
                 """.trimIndent()
             )
 

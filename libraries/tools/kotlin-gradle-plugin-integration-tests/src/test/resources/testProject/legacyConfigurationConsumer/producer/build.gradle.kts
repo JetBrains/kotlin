@@ -6,8 +6,9 @@ val publishedFile = layout.buildDirectory.file("publication/output.txt")
 
 val producerTask by tasks.registering {
     outputs.file(publishedFile)
+    val projectName = project.name
     doLast {
-        publishedFile.get().asFile.writeText("Hello World from ${project.name}")
+        publishedFile.get().asFile.writeText("Hello World from ${projectName}")
     }
 }
 

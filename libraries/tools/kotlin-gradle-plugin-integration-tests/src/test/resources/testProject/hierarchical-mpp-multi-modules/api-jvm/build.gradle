@@ -22,9 +22,9 @@ kotlin.jvmToolchain(8)
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId 'org.jetbrains.qa.combompp'
-            artifactId 'api-jvm'
-            version publishing_version
+            groupId = 'org.jetbrains.qa.combompp'
+            artifactId = 'api-jvm'
+            version = publishing_version
             from components.java
         }
     }

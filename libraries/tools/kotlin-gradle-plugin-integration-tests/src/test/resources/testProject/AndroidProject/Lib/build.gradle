@@ -18,27 +18,27 @@ java {
 }
 
 android {
-    compileSdkVersion 34
-    namespace "org.jetbrains.kotlin.gradle.test.android.libalfa"
+    compileSdkVersion = 34
+    namespace = "org.jetbrains.kotlin.gradle.test.android.libalfa"
 
     defaultConfig {
-        minSdkVersion 22
-        targetSdkVersion 34
+        minSdkVersion = 22
+        targetSdkVersion = 34
     }
 
     compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
     }
 
     flavorDimensions "myFlavor"
     productFlavors {
-        flavor1 { dimension "myFlavor" }
-        flavor2 { dimension "myFlavor" }
+        flavor1 { dimension = "myFlavor" }
+        flavor2 { dimension = "myFlavor" }
     }
 
     if (GradleVersion.current() < GradleVersion.version("8.5")) {
-        publishNonDefault true
+        publishNonDefault = true
     }
     lintOptions.abortOnError = false
 }
