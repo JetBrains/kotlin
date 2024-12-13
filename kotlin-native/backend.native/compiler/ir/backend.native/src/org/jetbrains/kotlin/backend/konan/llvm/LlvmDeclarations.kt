@@ -310,7 +310,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             val typeInfoOffsetInGlobal = LLVMOffsetOfElement(llvmTargetData, typeInfoWithVtableType, 0)
             check(typeInfoOffsetInGlobal == 0L) { "Offset for $typeInfoSymbolName TypeInfo is $typeInfoOffsetInGlobal" }
 
-            if ((context.config.producePerFileCache || context.shouldOptimize()) && declaration in generationState.constructedFromExportedInlineFunctions) {
+            if ((context.config.producePerFileCache && declaration in generationState.constructedFromExportedInlineFunctions) || context.shouldOptimize()) {
                 // This is required because internal inline functions can access private classes.
                 // So, in the generated code, the class type info can be accessed outside the file.
                 // With per-file caches involved, this can mean accessing from a different object file.
