@@ -1,0 +1,7 @@
+$TESTDATA_DIR$/simple.kt
+-d
+$TEMP_DIR$
+-language-version
+1.7
+-Xsuppress-version-warnings
+-Xreport-all-warnings
