@@ -175,9 +175,6 @@ fun collectVisibleTypeParameters(scopeOwner: IrTypeParametersContainer): Set<IrT
         .flatMap { it.typeParameters }
         .toSet()
 
-val IrType.isReifiedTypeParameter: Boolean
-    get() = (classifierOrNull as? IrTypeParameterSymbol)?.owner?.isReified == true
-
 val IrTypeParameter.representativeUpperBound: IrType
     get() {
         assert(superTypes.isNotEmpty()) { "Upper bounds should not be empty: ${render()}" }
