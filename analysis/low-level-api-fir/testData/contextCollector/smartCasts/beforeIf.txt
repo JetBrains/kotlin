@@ -19,15 +19,15 @@ Tower Data Context:
         Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] beforeIf.kt
-    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
     }
-    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] obj: R|kotlin/Any|): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=1(1/2) #1] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] obj: R|kotlin/Any|): R|kotlin/Unit| {
         R|<local>/obj|.R|kotlin/Any.hashCode|()
         when () {
-            (R|<local>/obj| is R|Foo|) ->  {
-                R|/consume|(R|<local>/obj|)
+            (obj# is Foo) ->  {
+                consume#(obj#)
             }
         }
 
     }
-    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] obj: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] obj: Foo): R|kotlin/Unit| { LAZY_BLOCK }

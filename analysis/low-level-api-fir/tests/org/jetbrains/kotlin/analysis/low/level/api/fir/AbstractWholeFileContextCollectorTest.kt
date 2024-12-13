@@ -33,6 +33,7 @@ abstract class AbstractWholeFileContextCollectorTest : AbstractAnalysisApiBasedT
                 firFile,
                 designation = null,
                 preferBodyContext = false,
+                shouldTriggerBodyAnalysis = true,
                 filter = { FilterResponse.CONTINUE }
             )
 

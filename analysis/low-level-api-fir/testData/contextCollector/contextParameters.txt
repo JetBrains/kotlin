@@ -1,0 +1,35 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol <unused var>: R|Bar|
+                FirValueParameterSymbol foo: R|Foo|
+    Element 7
+    Element 8
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] contextParameters.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): Int
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface Bar : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): Int
+
+    }
+    context([ResolvedTo(BODY_RESOLVE)] foo: R|Foo|, [ResolvedTo(BODY_RESOLVE)] <unused var>: R|Bar|)
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        R|<local>/foo|
+    }

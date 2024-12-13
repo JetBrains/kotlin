@@ -7,7 +7,7 @@ R|<local>/flag| || R|<local>/another|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] logicalOperators.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyResolveStateKey=2(2/3) #1] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] flag: R|kotlin/Boolean|, [ResolvedTo(ANNOTATION_ARGUMENTS)] another: R|kotlin/Boolean|): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=2(2/3) #1] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] flag: R|kotlin/Boolean|, [ResolvedTo(ANNOTATION_ARGUMENTS)] another: R|kotlin/Boolean|): R|kotlin/Unit| {
         R|/consume|(R|<local>/flag| && R|<local>/another|)
         R|/consume|(R|<local>/flag| || R|<local>/another|)
         consume#(flag#.xor#(another#))

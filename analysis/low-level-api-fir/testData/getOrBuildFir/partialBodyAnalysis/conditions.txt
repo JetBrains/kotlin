@@ -26,7 +26,7 @@ while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.h
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] conditions.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyResolveStateKey=3(3/4) #1] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] lines: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=3(3/4) #1] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] lines: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit| {
         when () {
             R|<local>/lines|.R|SubstitutionOverride<kotlin/collections/List.isEmpty: R|kotlin/Boolean|>|() ->  {
                 ^test Unit
@@ -69,7 +69,7 @@ R|/log|(R|<local>/count|.R|kotlin/Int.toString|())
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] conditions.kt
-    public final [ResolvedTo(BODY_RESOLVE)] [PartialBodyResolveStateKey=4(4/4) #2] fun test([ResolvedTo(BODY_RESOLVE)] lines: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit| {
+    public final [ResolvedTo(BODY_RESOLVE)] [PartialBodyAnalysisStateKey=4(4/4) #2] fun test([ResolvedTo(BODY_RESOLVE)] lines: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit| {
         when () {
             R|<local>/lines|.R|SubstitutionOverride<kotlin/collections/List.isEmpty: R|kotlin/Boolean|>|() ->  {
                 ^test Unit

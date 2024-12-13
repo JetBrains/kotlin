@@ -43,6 +43,12 @@ public class WholeSourceFileContextCollectorTestGenerated extends AbstractWholeS
   }
 
   @Test
+  @TestMetadata("contextParameters.kt")
+  public void testContextParameters() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/contextParameters.kt");
+  }
+
+  @Test
   @TestMetadata("contextReceivers.kt")
   public void testContextReceivers() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/contextReceivers.kt");
@@ -214,6 +220,12 @@ public class WholeSourceFileContextCollectorTestGenerated extends AbstractWholeS
   @TestMetadata("propertyDelegateInitializer.kt")
   public void testPropertyDelegateInitializer() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/propertyDelegateInitializer.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyValueParameter.kt")
+  public void testPropertyValueParameter() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/propertyValueParameter.kt");
   }
 
   @Test

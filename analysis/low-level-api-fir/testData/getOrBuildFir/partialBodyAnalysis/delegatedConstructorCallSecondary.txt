@@ -17,7 +17,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedConstructorCallSecondary.kt
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Bar : R|Foo| {
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Bar, PartialBodyResolveStateKey=0(0/2) #1] constructor(): R|Bar| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Bar, PartialBodyAnalysisStateKey=0(0/2) #1] constructor(): R|Bar| {
             super<R|Foo|>(Int(5))
             consume#(String(foo))
             consume#(IntegerLiteral(100))

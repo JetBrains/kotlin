@@ -64,7 +64,7 @@ FILE: [ResolvedTo(IMPORTS)] conditions2.kt
         public final [ResolvedTo(CONTRACTS)] fun findChild([ResolvedTo(CONTRACTS)] name: R|kotlin/String|): R|Foo?| { LAZY_BLOCK }
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyResolveStateKey=9(9/10) #1] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] file: R|Foo?|, [ResolvedTo(ANNOTATION_ARGUMENTS)] includeSelf: R|kotlin/Boolean|): R|kotlin/collections/List<Foo>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=9(9/10) #1] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] file: R|Foo?|, [ResolvedTo(ANNOTATION_ARGUMENTS)] includeSelf: R|kotlin/Boolean|): R|kotlin/collections/List<Foo>| {
         when () {
             ==(R|<local>/file|, Null(null)) ->  {
                 ^test <Unresolved name: emptyList>#()
@@ -153,7 +153,7 @@ FILE: [ResolvedTo(IMPORTS)] conditions2.kt
         public final [ResolvedTo(CONTRACTS)] fun findChild([ResolvedTo(CONTRACTS)] name: R|kotlin/String|): R|Foo?| { LAZY_BLOCK }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] [PartialBodyResolveStateKey=10(10/10) #2] fun test([ResolvedTo(BODY_RESOLVE)] file: R|Foo?|, [ResolvedTo(BODY_RESOLVE)] includeSelf: R|kotlin/Boolean|): R|kotlin/collections/List<Foo>| {
+    public final [ResolvedTo(BODY_RESOLVE)] [PartialBodyAnalysisStateKey=10(10/10) #2] fun test([ResolvedTo(BODY_RESOLVE)] file: R|Foo?|, [ResolvedTo(BODY_RESOLVE)] includeSelf: R|kotlin/Boolean|): R|kotlin/collections/List<Foo>| {
         when () {
             ==(R|<local>/file|, Null(null)) ->  {
                 ^test <Unresolved name: emptyList>#()

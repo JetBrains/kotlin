@@ -125,7 +125,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
         val firFile = element.containingKtFile.getOrBuildFirFile(resolutionFacade)
 
         // Set up needed context to get all candidates.
-        val towerContext = ContextCollector.process(firFile, element)?.towerDataContext
+        val towerContext = ContextCollector.process(resolutionFacade, firFile, element)?.towerDataContext
         towerContext?.let { bodyResolveComponents.context.replaceTowerDataContext(it) }
         val containingDeclarations =
             element.parentsOfType<KtDeclaration>().map { it.resolveToFirSymbol(resolutionFacade).fir }.toList().asReversed()

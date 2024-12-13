@@ -24,7 +24,7 @@ Smart Casts:
         kotlin.Any
 
 FILE: [ResolvedTo(IMPORTS)] onType.kt
-    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Any|): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=2(2/3) #1] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|kotlin/Any|): R|kotlin/Unit| {
         when () {
             (R|<local>/a| !is R|Foo|) ->  {
                 ^test Unit
@@ -32,6 +32,7 @@ FILE: [ResolvedTo(IMPORTS)] onType.kt
         }
 
         R|/call|<R|kotlin/collections/List<kotlin/Int>|>()
+        call#<Unit>()
     }
     public final inline [ResolvedTo(CONTRACTS)] fun <reified [ResolvedTo(CONTRACTS)] T : R|kotlin/Any|> call(): R|kotlin/Unit| { LAZY_BLOCK }
     public final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {

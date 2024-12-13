@@ -6,6 +6,9 @@
     }
 
     check(a.process())
+
+    // Force partial body resolution
+    check(true)
 }
 
 fun check(condition: Boolean) {}
@@ -13,7 +16,7 @@ fun check(condition: Boolean) {}
 interface Foo {
     fun process(): Boolean
 }
-</ELEMENT> [(0,167)]:
+</ELEMENT> [(0,221)]:
 Tower Data Context:
     Element 0
         Scope: FirDefaultStarImportingScope
@@ -53,7 +56,10 @@ Tower Data Context:
     }
 
     check(a.process())
-}</ELEMENT> [(0,86)]:
+
+    // Force partial body resolution
+    check(true)
+}</ELEMENT> [(0,140)]:
 Tower Data Context:
     Element 0
         Scope: FirDefaultStarImportingScope
@@ -76,6 +82,9 @@ fun test(<ELEMENT>a: Any</ELEMENT>) {
     }
 
     check(a.process())
+
+    // Force partial body resolution
+    check(true)
 } [(9,15)]:
 Tower Data Context:
     Element 0
@@ -103,6 +112,9 @@ fun test(a: <ELEMENT>Any</ELEMENT>) {
     }
 
     check(a.process())
+
+    // Force partial body resolution
+    check(true)
 } [(12,15)]:
 Tower Data Context:
     Element 0
@@ -130,7 +142,10 @@ fun test(a: Any) <ELEMENT>{
     }
 
     check(a.process())
-}</ELEMENT> [(17,86)]:
+
+    // Force partial body resolution
+    check(true)
+}</ELEMENT> [(17,140)]:
 Tower Data Context:
     Element 0
         Scope: FirDefaultStarImportingScope
@@ -157,6 +172,9 @@ fun test(a: Any) {
     }</ELEMENT>
 
     check(a.process())
+
+    // Force partial body resolution
+    check(true)
 } [(23,60)]:
 Tower Data Context:
     Element 0
@@ -186,6 +204,9 @@ fun test(a: Any) {
     }
 
     check(a.process())
+
+    // Force partial body resolution
+    check(true)
 } [(27,36)]:
 Tower Data Context:
     Element 0
@@ -215,6 +236,9 @@ fun test(a: Any) {
     }
 
     check(a.process())
+
+    // Force partial body resolution
+    check(true)
 } [(27,28)]:
 Tower Data Context:
     Element 0
@@ -244,6 +268,9 @@ fun test(a: Any) {
     }
 
     check(a.process())
+
+    // Force partial body resolution
+    check(true)
 } [(33,36)]:
 Tower Data Context:
     Element 0
@@ -273,6 +300,9 @@ fun test(a: Any) {
     }</ELEMENT>
 
     check(a.process())
+
+    // Force partial body resolution
+    check(true)
 } [(38,60)]:
 Tower Data Context:
     Element 0
@@ -302,6 +332,9 @@ fun test(a: Any) {
     }
 
     check(a.process())
+
+    // Force partial body resolution
+    check(true)
 } [(48,54)]:
 Tower Data Context:
     Element 0
@@ -333,6 +366,9 @@ fun test(a: Any) {
     }
 
     <ELEMENT>check(a.process())</ELEMENT>
+
+    // Force partial body resolution
+    check(true)
 } [(66,84)]:
 Tower Data Context:
     Element 0
@@ -367,6 +403,9 @@ fun test(a: Any) {
     }
 
     <ELEMENT>check</ELEMENT>(a.process())
+
+    // Force partial body resolution
+    check(true)
 } [(66,71)]:
 Tower Data Context:
     Element 0
@@ -401,6 +440,9 @@ fun test(a: Any) {
     }
 
     check<ELEMENT>(a.process())</ELEMENT>
+
+    // Force partial body resolution
+    check(true)
 } [(71,84)]:
 Tower Data Context:
     Element 0
@@ -435,6 +477,9 @@ fun test(a: Any) {
     }
 
     check(<ELEMENT>a.process()</ELEMENT>)
+
+    // Force partial body resolution
+    check(true)
 } [(72,83)]:
 Tower Data Context:
     Element 0
@@ -469,6 +514,9 @@ fun test(a: Any) {
     }
 
     check(<ELEMENT>a</ELEMENT>.process())
+
+    // Force partial body resolution
+    check(true)
 } [(72,73)]:
 Tower Data Context:
     Element 0
@@ -503,6 +551,9 @@ fun test(a: Any) {
     }
 
     check(a.<ELEMENT>process</ELEMENT>())
+
+    // Force partial body resolution
+    check(true)
 } [(74,81)]:
 Tower Data Context:
     Element 0
@@ -537,7 +588,158 @@ fun test(a: Any) {
     }
 
     check(a.process<ELEMENT>()</ELEMENT>)
+
+    // Force partial body resolution
+    check(true)
 } [(81,83)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol a: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtCallExpression ---
+<File name: onReference.kt, Physical: true>
+fun test(a: Any) {
+    if (a !is Foo) {
+        return
+    }
+
+    check(a.process())
+
+    // Force partial body resolution
+    <ELEMENT>check(true)</ELEMENT>
+} [(127,138)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol a: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtNameReferenceExpression ---
+<File name: onReference.kt, Physical: true>
+fun test(a: Any) {
+    if (a !is Foo) {
+        return
+    }
+
+    check(a.process())
+
+    // Force partial body resolution
+    <ELEMENT>check</ELEMENT>(true)
+} [(127,132)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol a: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtValueArgumentList ---
+<File name: onReference.kt, Physical: true>
+fun test(a: Any) {
+    if (a !is Foo) {
+        return
+    }
+
+    check(a.process())
+
+    // Force partial body resolution
+    check<ELEMENT>(true)</ELEMENT>
+} [(132,138)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol a: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtConstantExpression ---
+<File name: onReference.kt, Physical: true>
+fun test(a: Any) {
+    if (a !is Foo) {
+        return
+    }
+
+    check(a.process())
+
+    // Force partial body resolution
+    check(<ELEMENT>true</ELEMENT>)
+} [(133,137)]:
 Tower Data Context:
     Element 0
         Scope: FirDefaultStarImportingScope
@@ -565,7 +767,7 @@ Smart Casts:
 
 --- KtNamedFunction ---
 <File name: onReference.kt, Physical: true>
-<ELEMENT>fun check(condition: Boolean) {}</ELEMENT> [(88,120)]:
+<ELEMENT>fun check(condition: Boolean) {}</ELEMENT> [(142,174)]:
 Tower Data Context:
     Element 0
         Scope: FirDefaultStarImportingScope
@@ -582,7 +784,7 @@ Tower Data Context:
 
 --- KtParameter ---
 <File name: onReference.kt, Physical: true>
-fun check(<ELEMENT>condition: Boolean</ELEMENT>) {} [(98,116)]:
+fun check(<ELEMENT>condition: Boolean</ELEMENT>) {} [(152,170)]:
 Tower Data Context:
     Element 0
         Scope: FirDefaultStarImportingScope
@@ -603,7 +805,7 @@ Tower Data Context:
 
 --- KtTypeReference ---
 <File name: onReference.kt, Physical: true>
-fun check(condition: <ELEMENT>Boolean</ELEMENT>) {} [(109,116)]:
+fun check(condition: <ELEMENT>Boolean</ELEMENT>) {} [(163,170)]:
 Tower Data Context:
     Element 0
         Scope: FirDefaultStarImportingScope
@@ -624,7 +826,7 @@ Tower Data Context:
 
 --- KtBlockExpression ---
 <File name: onReference.kt, Physical: true>
-fun check(condition: Boolean) <ELEMENT>{}</ELEMENT> [(118,120)]:
+fun check(condition: Boolean) <ELEMENT>{}</ELEMENT> [(172,174)]:
 Tower Data Context:
     Element 0
         Scope: FirDefaultStarImportingScope
@@ -647,7 +849,7 @@ Tower Data Context:
 <File name: onReference.kt, Physical: true>
 <ELEMENT>interface Foo {
     fun process(): Boolean
-}</ELEMENT> [(122,166)]:
+}</ELEMENT> [(176,220)]:
 Tower Data Context:
     Element 0
         Scope: FirDefaultStarImportingScope
@@ -664,7 +866,7 @@ Tower Data Context:
 
 --- KtNamedFunction ---
 <File name: onReference.kt, Physical: true>
-<ELEMENT>fun process(): Boolean</ELEMENT> [(142,164)]:
+<ELEMENT>fun process(): Boolean</ELEMENT> [(196,218)]:
 Tower Data Context:
     Element 0
         Scope: FirDefaultStarImportingScope
@@ -685,7 +887,7 @@ Tower Data Context:
 
 --- KtTypeReference ---
 <File name: onReference.kt, Physical: true>
-fun process(): <ELEMENT>Boolean</ELEMENT> [(157,164)]:
+fun process(): <ELEMENT>Boolean</ELEMENT> [(211,218)]:
 Tower Data Context:
     Element 0
         Scope: FirDefaultStarImportingScope
@@ -713,6 +915,7 @@ FILE: [ResolvedTo(IMPORTS)] onReference.kt
         }
 
         R|/check|(R|<local>/a|.R|/Foo.process|())
+        R|/check|(Boolean(true))
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun check([ResolvedTo(BODY_RESOLVE)] condition: R|kotlin/Boolean|): R|kotlin/Unit| {
     }
