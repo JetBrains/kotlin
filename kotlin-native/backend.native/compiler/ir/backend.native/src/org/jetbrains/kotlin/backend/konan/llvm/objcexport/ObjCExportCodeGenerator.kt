@@ -1028,14 +1028,14 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
 
     val methodBridge = baseMethod.bridge
 
-    val parameterToBase = irFunction.allParameters.zip(baseIrFunction.allParameters).toMap()
+    val parameterToBase = irFunction.parameters.zip(baseIrFunction.parameters).toMap()
 
     val functionType = LlvmFunctionSignature(irFunction, codegen)
     val functionName = "kotlin2objc_${baseIrFunction.computeSymbolName()}"
     val result = functionGenerator(functionType.toProto(functionName, null, LLVMLinkage.LLVMInternalLinkage)).generate {
         var errorOutPtr: LLVMValueRef? = null
 
-        val parameters = irFunction.allParameters.mapIndexed { index, parameterDescriptor ->
+        val parameters = irFunction.parameters.mapIndexed { index, parameterDescriptor ->
             parameterDescriptor to param(index)
         }.toMap()
 

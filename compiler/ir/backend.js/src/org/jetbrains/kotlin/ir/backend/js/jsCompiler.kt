@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
-import org.jetbrains.kotlin.config.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -38,7 +38,6 @@ class LoweredIr(
 fun compile(
     mainCallArguments: List<String>?,
     depsDescriptors: ModulesStructure,
-    phaseConfig: PhaseConfig,
     irFactory: IrFactory,
     exportedDeclarations: Set<FqName> = emptySet(),
     keep: Set<String> = emptySet(),
@@ -62,7 +61,6 @@ fun compile(
         irBuiltIns,
         symbolTable,
         deserializer,
-        phaseConfig,
         exportedDeclarations,
         keep,
         dceRuntimeDiagnostic,
@@ -81,8 +79,7 @@ fun compileIr(
     moduleToName: Map<IrModuleFragment, String>,
     irBuiltIns: IrBuiltIns,
     symbolTable: SymbolTable,
-    irLinker: JsIrLinker,
-    phaseConfig: PhaseConfig,
+    irLinker: KotlinIrLinker,
     exportedDeclarations: Set<FqName>,
     keep: Set<String>,
     dceRuntimeDiagnostic: RuntimeDiagnostic?,
@@ -90,6 +87,9 @@ fun compileIr(
     safeExternalBooleanDiagnostic: RuntimeDiagnostic?,
     granularity: JsGenerationGranularity,
 ): LoweredIr {
+    require(irLinker is JsIrLinker) {
+        "jsCompiler needs JsIrLinker, but got ${irLinker.javaClass.name}"
+    }
     val moduleDescriptor = moduleFragment.descriptor
     val irFactory = symbolTable.irFactory
     val shouldGeneratePolyfills = configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)
@@ -138,12 +138,12 @@ fun compileIr(
     performanceManager?.notifyGenerationStarted()
     performanceManager?.notifyIRLoweringStarted()
     (irFactory.stageController as? WholeWorldStageController)?.let {
-        lowerPreservingTags(allModules, context, phaseConfig, it)
+        lowerPreservingTags(allModules, context, it)
     } ?: run {
         val phaserState = PhaserState<IrModuleFragment>()
         getJsLowerings(configuration).forEachIndexed { _, lowering ->
             allModules.forEach { module ->
-                lowering.invoke(phaseConfig, phaserState, context, module)
+                lowering.invoke(context.phaseConfig, phaserState, context, module)
             }
         }
     }

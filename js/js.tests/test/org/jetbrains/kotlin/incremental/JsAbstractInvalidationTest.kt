@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.config.phaser.PhaseConfig
-import org.jetbrains.kotlin.config.phaser.toPhaseMap
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.phaseConfig
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
+import org.jetbrains.kotlin.config.phaser.PhaseSet
 import org.jetbrains.kotlin.ir.backend.js.JsICContext
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.ic.*
-import org.jetbrains.kotlin.ir.backend.js.getJsPhases
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
@@ -106,10 +106,10 @@ abstract class JsAbstractInvalidationTest(
                     else -> projStep.dirtyJsModules
                 }
 
+                configuration.phaseConfig = getPhaseConfig(projStep.id)
                 val icContext = JsICContext(
                     mainArguments,
                     granularity,
-                    getPhaseConfig(configuration, projStep.id),
                     setOf(FqName(BOX_FUNCTION_NAME)),
                 )
 
@@ -193,14 +193,13 @@ abstract class JsAbstractInvalidationTest(
             }
         }
 
-        private fun getPhaseConfig(configuration: CompilerConfiguration, stepId: Int): PhaseConfig {
+        private fun getPhaseConfig(stepId: Int): PhaseConfig {
             if (DebugMode.fromSystemProperty("kotlin.js.debugMode") < DebugMode.SUPER_DEBUG) {
                 return PhaseConfig()
             }
 
-            val jsPhases = getJsPhases(configuration)
             return PhaseConfig(
-                toDumpStateAfter = jsPhases.toPhaseMap().values.toSet(),
+                toDumpStateAfter = PhaseSet.ALL,
                 dumpToDirectory = buildDir.resolve("irdump").resolve("step-$stepId").path
             )
         }

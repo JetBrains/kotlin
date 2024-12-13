@@ -248,16 +248,6 @@ abstract class AbstractKotlinPluginWrapper(
         get() = KotlinJvmProjectExtension::class
 }
 
-abstract class AbstractKotlinCommonPluginWrapper(
-    protected val registry: ToolingModelBuilderRegistry,
-) : KotlinBasePluginWrapper() {
-    override fun getPlugin(project: Project): Plugin<Project> =
-        KotlinCommonPlugin(registry)
-
-    override val projectExtensionClass: KClass<out KotlinCommonProjectExtension>
-        get() = KotlinCommonProjectExtension::class
-}
-
 abstract class AbstractKotlinAndroidPluginWrapper(
     protected val registry: ToolingModelBuilderRegistry,
 ) : KotlinBasePluginWrapper() {
@@ -266,22 +256,6 @@ abstract class AbstractKotlinAndroidPluginWrapper(
 
     override val projectExtensionClass: KClass<out KotlinAndroidProjectExtension>
         get() = KotlinAndroidProjectExtension::class
-}
-
-@Deprecated(
-    message = "Should be removed with JS platform plugin",
-    level = DeprecationLevel.ERROR
-)
-abstract class AbstractKotlin2JsPluginWrapper(
-    protected val registry: ToolingModelBuilderRegistry,
-) : KotlinBasePluginWrapper() {
-
-    @Suppress("DEPRECATION_ERROR")
-    override fun getPlugin(project: Project): Plugin<Project> =
-        Kotlin2JsPlugin(registry)
-
-    override val projectExtensionClass: KClass<out Kotlin2JsProjectExtension>
-        get() = Kotlin2JsProjectExtension::class
 }
 
 abstract class AbstractKotlinJsPluginWrapper : KotlinBasePluginWrapper() {

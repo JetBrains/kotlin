@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.approximateDeclarationType
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
+import org.jetbrains.kotlin.fir.scopes.impl.toConeType
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorSubstitutor
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -35,7 +37,6 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -50,7 +51,6 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -1334,77 +1334,114 @@ class CallAndReferenceGenerator(
         callableFir: FirCallableDeclaration?,
         originalTypeArguments: List<FirTypeProjection>,
     ): IrExpression {
-        // If we have a constructor call through a type alias, we can't apply the type arguments as is.
-        // The type arguments in FIR correspond to the original type arguments as passed to the type alias.
-        // However, the type alias can map the type arguments arbitrarily (change order, change count by mapping K,V -> Map<K,V> or by
-        // having an unused argument).
-        // We need to map the type arguments using the expansion of the type alias.
-
-        val typeArguments = (callableFir as? FirConstructor)
-            ?.typeAliasForConstructor
-            ?.let { originalTypeArguments.toExpandedTypeArguments(it) }
-            ?: originalTypeArguments
+        val refinedTypeArguments = callableFir.refineTypeArgumentsOfTypeAliasConstructor(originalTypeArguments)
 
         return applyTypeArguments(
-            typeArguments,
+            refinedTypeArguments,
             (callableFir as? FirTypeParametersOwner)?.typeParameters
         )
     }
 
     /**
-     * Applies the list of type arguments to the given type alias, expands it fully and returns the list of type arguments for the
-     * resulting type.
+     * If the given `FirCallableDeclaration` is `FirConstructor` with `TypeAliasConstructor` origin,
+     * it applies the list of passed type arguments (`originalTypeArguments`) to the corresponding type alias, expands it fully
+     * and returns the list of type arguments for the resulting type.
+     * Otherwise, it returns the passed type arguments.
+     *
+     * In the case of type alias constructor, the type arguments can be mapped arbitrarily because of the following reasons:
+     *   * Changed order
+     *   * Changed count by mapping K,V -> Map<K,V> or by having an unused argument
+     *   * Extra type arguments that correspond to outer type parameters of an inner class (they are used while resolving, but not needed on backend)
+     * We need to map them using the typealias parameters and typealias constructor substitutors.
      */
-    private fun List<FirTypeProjection>.toExpandedTypeArguments(typeAliasSymbol: FirTypeAliasSymbol): List<FirTypeProjection> {
-        return typeAliasSymbol
-            .constructType(map { it.toConeTypeProjection() }.toTypedArray())
-            .fullyExpandedType(session)
-            .typeArguments
-            .map { typeProjection ->
-                buildTypeProjectionWithVariance {
-                    variance = when (typeProjection) {
-                        is ConeKotlinTypeProjectionIn -> Variance.IN_VARIANCE
-                        is ConeKotlinTypeProjectionOut -> Variance.OUT_VARIANCE
-                        else -> Variance.INVARIANT
+    private fun FirCallableDeclaration?.refineTypeArgumentsOfTypeAliasConstructor(originalTypeArguments: List<FirTypeProjection>): List<FirTypeRef> {
+        val typeAliasSymbol = (this as? FirConstructor)?.typeAliasForConstructor
+            ?: return originalTypeArguments.map { (it as FirTypeProjectionWithVariance).typeRef }
+
+        val parametersSubstitutor = createParametersSubstitutor(
+            session,
+            typeAliasSymbol.typeParameterSymbols.zip(originalTypeArguments) { typeParameter, typeArgument ->
+                typeParameter to typeArgument.toConeTypeProjection()
+            }.toMap()
+        )
+
+        /**
+         * Filter out type arguments that correspond outer type parameters of an inner class
+         * To perform it, we should use two substitutors: `typeAliasConstructorSubstitutor` and `parametersSubstitutor`.
+         * Consider the following example:
+         *
+         * ```kt
+         * class Foo<T> {
+         *     inner class Inner
+         * }
+         *
+         * typealias InnerAlias<K> = Foo<K>.Inner
+         *
+         * fun test() {
+         *     val foo = Foo<String>()
+         *     foo.InnerAlias() // Filter out `String` type argument (String <- K <- T, where T is `FirOuterClassTypeParameterRef`)
+         * }
+         * ```
+         *
+         * In the example above, `parametersSubstitutor` holds `K -> String` substitution, `typeAliasConstructorSubstitutor` holds `T` -> K` substituion.
+         */
+        val containingInnerClass = originalConstructorIfTypeAlias?.takeIf { it.isInner }?.getContainingClass()
+        val typeAliasConstructorSubstitutor = typeAliasConstructorSubstitutor
+        val ignoredTypeArguments = if (typeAliasConstructorSubstitutor != null && containingInnerClass != null) {
+            containingInnerClass.typeParameters.filterIsInstance<FirOuterClassTypeParameterRef>().mapNotNullTo(mutableSetOf()) {
+                typeAliasConstructorSubstitutor.substituteOrNull(it.toConeType())
+            }
+        } else {
+            emptySet()
+        }
+
+        return buildList {
+            for ((index, typeArgument) in typeAliasSymbol.resolvedExpandedTypeRef.coneType.typeArguments.withIndex()) {
+                if (ignoredTypeArguments.contains(typeArgument)) continue
+
+                val typeProjection = parametersSubstitutor.substituteArgument(typeArgument, index) ?: typeArgument
+                val typeRef = if (typeProjection is ConeKotlinType) {
+                    buildResolvedTypeRef {
+                        coneType = typeProjection
                     }
-                    typeRef = (typeProjection as? ConeKotlinType)?.let {
-                        buildResolvedTypeRef { coneType = it }
-                    } ?: buildErrorTypeRef {
+                } else {
+                    buildErrorTypeRef {
                         diagnostic = ConeSimpleDiagnostic("Expansion contains unexpected type ${typeProjection.javaClass}")
                     }
                 }
+                add(typeRef)
             }
+        }
     }
 
     private fun IrExpression.applyTypeArguments(
-        typeArguments: List<FirTypeProjection>?,
+        typeArguments: List<FirTypeRef>?,
         typeParameters: List<FirTypeParameter>?,
     ): IrExpression {
         if (this !is IrMemberAccessExpression<*>) return this
 
         val argumentsCount = typeArguments?.size ?: return this
-        if (argumentsCount <= typeArgumentsCount) {
+        if (argumentsCount <= this.typeArguments.size) {
             for ((index, argument) in typeArguments.withIndex()) {
                 val typeParameter = typeParameters?.get(index)
-                val argumentFirType = (argument as FirTypeProjectionWithVariance).typeRef
                 val argumentIrType = if (typeParameter?.isReified == true) {
-                    argumentFirType.approximateDeclarationType(
+                    argument.approximateDeclarationType(
                         session,
                         containingCallableVisibility = null,
                         isLocal = false,
                         stripEnhancedNullability = false
                     ).toIrType()
                 } else {
-                    argumentFirType.toIrType()
+                    argument.toIrType()
                 }
-                putTypeArgument(index, argumentIrType)
+                this.typeArguments[index] = argumentIrType
             }
             return this
         } else {
             val name = if (this is IrCallImpl) symbol.signature.toString() else "???"
             return IrErrorExpressionImpl(
                 startOffset, endOffset, type,
-                "Cannot bind $argumentsCount type arguments to $name call with $typeArgumentsCount type parameters"
+                "Cannot bind $argumentsCount type arguments to $name call with ${typeArguments.size} type parameters"
             )
         }
     }

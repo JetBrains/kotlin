@@ -5,24 +5,17 @@
 
 package org.jetbrains.kotlin.config.phaser
 
-fun CompilerPhase<*, *, *>.toPhaseMap(): MutableMap<String, AnyNamedPhase> =
-    getNamedSubphases().fold(mutableMapOf()) { acc, (_, phase) ->
-        check(phase.name !in acc) { "Duplicate phase name '${phase.name}'" }
-        acc[phase.name] = phase
-        acc
-    }
-
 /**
- * Phase configuration that defines and configures [CompilerPhase]s that the compiler should execute.
- * It is defined before compilation and can't be modified in the process.
+ * Phase configuration that does not know anything
+ * about actual compiler pipeline upfront.
  */
 class PhaseConfig(
-    disabledPhases: Set<AnyNamedPhase> = emptySet(),
-    val verbose: Set<AnyNamedPhase> = emptySet(),
-    val toDumpStateBefore: Set<AnyNamedPhase> = emptySet(),
-    val toDumpStateAfter: Set<AnyNamedPhase> = emptySet(),
-    private val toValidateStateBefore: Set<AnyNamedPhase> = emptySet(),
-    private val toValidateStateAfter: Set<AnyNamedPhase> = emptySet(),
+    disabledPhases: Set<String> = emptySet(),
+    val verbose: PhaseSet = PhaseSet.Enum(emptySet()),
+    val toDumpStateBefore: PhaseSet = PhaseSet.Enum(emptySet()),
+    val toDumpStateAfter: PhaseSet = PhaseSet.Enum(emptySet()),
+    private val toValidateStateBefore: PhaseSet = PhaseSet.Enum(emptySet()),
+    private val toValidateStateAfter: PhaseSet = PhaseSet.Enum(emptySet()),
     override val dumpToDirectory: String? = null,
     override val dumpOnlyFqName: String? = null,
     override val needProfiling: Boolean = false,
@@ -32,13 +25,13 @@ class PhaseConfig(
     private val disabledMut = disabledPhases.toMutableSet()
 
     override fun isEnabled(phase: AnyNamedPhase): Boolean =
-        phase !in disabledMut
+        phase.name !in disabledMut
 
     override fun isVerbose(phase: AnyNamedPhase): Boolean =
         phase in verbose
 
     override fun disable(phase: AnyNamedPhase) {
-        disabledMut.add(phase)
+        disabledMut += phase.name
     }
 
     override fun shouldDumpStateBefore(phase: AnyNamedPhase): Boolean =

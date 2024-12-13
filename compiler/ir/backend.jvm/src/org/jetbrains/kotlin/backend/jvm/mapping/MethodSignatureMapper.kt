@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.NameUtils
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallArgument.DefaultArgument.arguments
 import org.jetbrains.kotlin.resolve.jvm.JAVA_LANG_RECORD_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
@@ -240,23 +241,18 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
         sw.writeParametersStart()
 
-        for (i in 0 until function.contextReceiverParametersCount) {
-            val contextReceiver = function.valueParameters[i]
-            writeParameter(sw, false, contextReceiver.type, function)
-        }
-
-        val receiverParameter = function.extensionReceiverParameter
-        if (receiverParameter != null) {
-            writeParameter(sw, false, receiverParameter.type, function)
-        }
-
-        for (i in function.contextReceiverParametersCount until function.valueParameters.size) {
-            val parameter = function.valueParameters[i]
+        for (parameter in function.nonDispatchParameters) {
             val type =
-                if (shouldBoxSingleValueParameterForSpecialCaseOfRemove(function))
+                if (parameter.kind == IrParameterKind.Regular && shouldBoxSingleValueParameterForSpecialCaseOfRemove(function))
                     parameter.type.makeNullable()
                 else parameter.type
-            writeParameter(sw, parameter.isSkippedInGenericSignature, type, function, materialized)
+            writeParameter(
+                sw = sw,
+                isSkippedInGenericSignature = parameter.kind == IrParameterKind.Regular && parameter.isSkippedInGenericSignature,
+                type = type,
+                function = function,
+                materialized = parameter.kind == IrParameterKind.Regular && materialized
+            )
         }
 
         sw.writeReturnType()
@@ -278,8 +274,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             if (irFunction !is IrSimpleFunction) return false
             if (irFunction.name.asString() != "remove" && !irFunction.name.asString().startsWith("remove-")) return false
             if (irFunction.isFromJava()) return false
-            if (irFunction.valueParameters.size != 1) return false
-            val valueParameterType = irFunction.valueParameters[0].type
+            if (irFunction.parameters.size != 2) return false
+            val valueParameterType = irFunction.parameters[1].type
             if (!valueParameterType.unboxInlineClass().isInt()) return false
             return irFunction.allOverridden(false).any { it.parent.kotlinFqName == StandardNames.FqNames.mutableCollection }
         }
@@ -326,7 +322,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
         private fun IrAnnotationContainer.getSuppressWildcardsAnnotationValue(): Boolean? =
             getAnnotation(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME)?.run {
-                if (valueArgumentsCount > 0) (getValueArgument(0) as? IrConst)?.value as? Boolean ?: true else null
+                if (arguments.size >= 1) (arguments[0] as? IrConst)?.value as? Boolean ?: true else null
             }
     }
 

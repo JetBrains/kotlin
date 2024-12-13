@@ -371,4 +371,27 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Changed output module name")
+    @GradleTest
+    fun testChangedOutputModuleName(gradleVersion: GradleVersion) {
+        project("wasm-browser-simple-project", gradleVersion) {
+            val moduleName = "hello"
+            buildGradleKts.modify {
+                it.replace(
+                    "wasmJs {",
+                    """
+                        wasmJs {
+                            outputModuleName.set("$moduleName")
+                    """.trimIndent()
+                )
+            }
+
+            build("assemble") {
+                assertFileExists(
+                    projectPath.resolve("build/compileSync/wasmJs/main/productionExecutable/kotlin/$moduleName.mjs")
+                )
+            }
+        }
+    }
 }

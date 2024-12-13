@@ -5,14 +5,17 @@
 
 package org.jetbrains.kotlin.wasm.test.converters
 
-import org.jetbrains.kotlin.config.phaser.PhaseConfig
-import org.jetbrains.kotlin.config.phaser.toPhaseMap
-import org.jetbrains.kotlin.backend.wasm.*
+import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
+import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
+import org.jetbrains.kotlin.backend.wasm.compileWasm
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.config.phaseConfig
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
+import org.jetbrains.kotlin.config.phaser.PhaseSet
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
@@ -44,15 +47,15 @@ class WasmLoweringFacade(
         require(WasmEnvironmentConfigurator.isMainModule(module, testServices))
         require(inputArtifact is IrBackendInput.WasmDeserializedFromKlibBackendInput)
 
+        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val moduleInfo = inputArtifact.moduleInfo
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
-        val wasmPhases = getWasmPhases(isIncremental = false)
         val phaseConfig = if (debugMode >= DebugMode.SUPER_DEBUG) {
             val outputDirBase = testServices.getWasmTestOutputDirectory()
             val dumpOutputDir = File(outputDirBase, "irdump")
             println("\n ------ Dumping phases to file://${dumpOutputDir.absolutePath}")
             PhaseConfig(
-                toDumpStateAfter = wasmPhases.toPhaseMap().values.toSet(),
+                toDumpStateAfter = PhaseSet.ALL,
                 dumpToDirectory = dumpOutputDir.path,
             )
         } else {
@@ -60,7 +63,7 @@ class WasmLoweringFacade(
         }
 
         val mainModule = MainModule.Klib(inputArtifact.klib.absolutePath)
-        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        configuration.phaseConfig = phaseConfig
 
         val testPackage = extractTestPackage(testServices)
         val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
@@ -71,7 +74,6 @@ class WasmLoweringFacade(
             mainModule,
             configuration,
             performanceManager,
-            phaseConfig = phaseConfig,
             exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, "box"))),
             propertyLazyInitialization = true,
             generateTypeScriptFragment = generateDts

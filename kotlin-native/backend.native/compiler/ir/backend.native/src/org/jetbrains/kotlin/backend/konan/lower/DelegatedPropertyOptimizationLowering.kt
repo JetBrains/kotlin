@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
 import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.expressions.IrRichPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
@@ -86,6 +87,11 @@ internal class DelegatedPropertyOptimizationLowering(val generationState: Native
             override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrExpression {
                 super.visitLocalDelegatedPropertyReference(expression)
                 return delegatedProperties[expression.symbol]?.invoke(expression) ?: expression
+            }
+
+            override fun visitRichPropertyReference(expression: IrRichPropertyReference): IrExpression {
+                super.visitRichPropertyReference(expression)
+                return expression.reflectionTargetSymbol?.let { delegatedProperties[it] }?.invoke(expression) ?: expression
             }
         })
         irFile.declarations.addAll(0, newFields)

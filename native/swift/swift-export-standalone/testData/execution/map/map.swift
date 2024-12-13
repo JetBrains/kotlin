@@ -22,14 +22,13 @@ func testDictionaryLongBox() throws {
     try assertInversed(inversed: inverseMapBoxLong(m: b2l), original: b2l)
 }
 
-// TODO(KT-71920)
-//func testDictionaryOptIntListInt() throws {
-//    let l2b = Dictionary(uniqueKeysWithValues: data.map { (k, v) in
-//        let optKey: Int32? = if k == 3 { nil } else { Int32(k) }
-//        return (optKey, [Int32(v), Int32(108)])
-//    })
-//    try assertInversed(inversed: inverseMapOptIntListInt(m: l2b), original: l2b)
-//}
+func testDictionaryOptIntListInt() throws {
+    let l2b = Dictionary(uniqueKeysWithValues: data.map { (k, v) in
+        let optKey: Int32? = if k == 3 { nil } else { Int32(k) }
+        return (optKey, [Int32(v), Int32(108)])
+    })
+    try assertInversed(inversed: inverseMapOptIntListInt(m: l2b), original: l2b)
+}
 
 func testDictionaryNeverNever() throws {
     let dict: [Never: Never] = [:]
@@ -44,7 +43,7 @@ class MapTests : TestProvider {
         tests = [
             TestCase(name: "testDictionaryIntString", method: withAutorelease(testDictionaryIntString)),
             TestCase(name: "testDictionaryLongBox", method: withAutorelease(testDictionaryLongBox)),
-            // TODO(KT-71920) TestCase(name: "testDictionaryOptIntListInt", method: withAutorelease(testDictionaryOptIntListInt)),
+            TestCase(name: "testDictionaryOptIntListInt", method: withAutorelease(testDictionaryOptIntListInt)),
             TestCase(name: "testDictionaryNeverOptNever", method: withAutorelease(testDictionaryNeverNever)),
         ]
     }

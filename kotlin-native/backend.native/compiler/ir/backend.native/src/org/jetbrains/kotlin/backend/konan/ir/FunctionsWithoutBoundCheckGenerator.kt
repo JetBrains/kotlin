@@ -47,7 +47,7 @@ internal class FunctionsWithoutBoundCheckGenerator(val context: KonanBackendCont
                     isExternal = true,
             ).also { function ->
                 function.parent = baseFunction.parent
-                function.createDispatchReceiverParameter()
+                function.parameters += function.createDispatchReceiverParameterWithClassParent()
                 function.valueParameters = baseFunction.valueParameters.map { it.copyTo(function) }
                 // Copy annotations.
                 val setWithoutBEAnnotations = (delegatingToFunction ?: baseFunction).annotations.map { annotation ->

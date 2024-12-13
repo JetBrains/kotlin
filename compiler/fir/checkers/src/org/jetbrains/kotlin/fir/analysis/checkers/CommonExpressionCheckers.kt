@@ -78,6 +78,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirProtectedConstructorNotInSuperCallChecker,
             FirOptionalExpectationExpressionChecker,
             FirParenthesizedLhsSetOperatorChecker,
+            FirGenericQualifierOnConstructorCallChecker,
         )
 
     override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker>

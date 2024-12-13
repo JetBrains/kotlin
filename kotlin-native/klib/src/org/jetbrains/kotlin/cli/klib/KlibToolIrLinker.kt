@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 internal class KlibToolIrLinker(
         output: KlibToolOutput,
@@ -36,8 +35,6 @@ internal class KlibToolIrLinker(
     )
 
     override val returnUnboundSymbolsIfSignatureNotFound get() = true
-
-    override val translationPluginContext get() = shouldNotBeCalled()
 
     override fun createModuleDeserializer(
             moduleDescriptor: ModuleDescriptor,

@@ -4,7 +4,7 @@ import KotlinRuntime
 import dep
 import flattened
 
-public final class ClassWithFactoryWithoutParameters : KotlinRuntime.KotlinBase {
+public final class ClassWithFactoryWithoutParameters: KotlinRuntime.KotlinBase {
     public var value: Swift.Int32 {
         get {
             return ClassWithFactoryWithoutParameters_value_get(self.__externalRCRef())
@@ -23,7 +23,7 @@ public final class ClassWithFactoryWithoutParameters : KotlinRuntime.KotlinBase 
         __root___ClassWithFactoryWithoutParameters_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt, value)
     }
 }
-public final class EnumWithFactory : KotlinRuntime.KotlinBase, Swift.CaseIterable {
+public final class EnumWithFactory: KotlinRuntime.KotlinBase, Swift.CaseIterable {
     public static var ONE: main.EnumWithFactory {
         get {
             return main.EnumWithFactory(__externalRCRef: EnumWithFactory_ONE_get())
@@ -45,7 +45,7 @@ public final class EnumWithFactory : KotlinRuntime.KotlinBase, Swift.CaseIterabl
         return main.EnumWithFactory(__externalRCRef: EnumWithFactory_valueOf__TypesOfArguments__Swift_String__(value))
     }
 }
-public final class ObjectWithFactory : KotlinRuntime.KotlinBase {
+public final class ObjectWithFactory: KotlinRuntime.KotlinBase {
     public static var shared: main.ObjectWithFactory {
         get {
             return main.ObjectWithFactory(__externalRCRef: __root___ObjectWithFactory_get())
@@ -60,7 +60,7 @@ public final class ObjectWithFactory : KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
-public final class UtcOffset : KotlinRuntime.KotlinBase {
+public final class UtcOffset: KotlinRuntime.KotlinBase {
     public override init() {
         let __kt = __root___UtcOffset_init_allocate()
         super.init(__externalRCRef: __kt)
@@ -107,7 +107,7 @@ public func utcOffset(
     return main.UtcOffset(__externalRCRef: __root___UtcOffset__TypesOfArguments__Swift_Int32__(x))
 }
 public extension ExportedKotlinPackages.test.factory {
-    public final class ClassWithFactoryInAPackage : KotlinRuntime.KotlinBase {
+    public final class ClassWithFactoryInAPackage: KotlinRuntime.KotlinBase {
         public override init() {
             let __kt = test_factory_ClassWithFactoryInAPackage_init_allocate()
             super.init(__externalRCRef: __kt)
@@ -119,8 +119,8 @@ public extension ExportedKotlinPackages.test.factory {
             super.init(__externalRCRef: __externalRCRef)
         }
     }
-    public final class Outer : KotlinRuntime.KotlinBase {
-        public final class Nested : KotlinRuntime.KotlinBase {
+    public final class Outer: KotlinRuntime.KotlinBase {
+        public final class Nested: KotlinRuntime.KotlinBase {
             public override init() {
                 let __kt = test_factory_Outer_Nested_init_allocate()
                 super.init(__externalRCRef: __kt)

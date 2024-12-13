@@ -552,6 +552,9 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         if (status.isInline) {
             keyword("inline ")
         }
+        if (status.isValue) {
+            keyword("value ")
+        }
         if (status.isInfix) {
             keyword("infix ")
         }

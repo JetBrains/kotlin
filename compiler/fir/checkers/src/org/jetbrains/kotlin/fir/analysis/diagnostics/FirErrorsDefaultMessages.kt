@@ -100,6 +100,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_ON_ILL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_ON_SUPERCLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_USED_AS_ANNOTATION_ARGUMENT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANONYMOUS_FUNCTION_WITH_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANONYMOUS_INITIALIZER_IN_INTERFACE
@@ -712,6 +713,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER_WITHOUT_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER_WITH_DEFAULT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PARAMETER_NAME_CHANGED_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_FEATURE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_INHERITANCE_FROM_JAVA_MEMBER_REFERENCING_KOTLIN_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_SEALED_FUN_INTERFACE
@@ -1192,6 +1196,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             POTENTIALLY_NON_REPORTED_ANNOTATION,
             "Deprecations and opt-ins on a method overridden from 'Any' may not be reported.",
         )
+        map.put(
+            ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD,
+            "This annotation is currently applied to the value parameter only, but in the future it will also be applied to ''{0}''. " +
+                    "See https://youtrack.jetbrains.com/issue/KT-73255 for more details. " +
+                    "To remove this warning, use the ''@param:'' annotation target.",
+            TO_STRING,
+        )
 
         // OptIn
         map.put(OPT_IN_USAGE, "{1}", CLASS_ID, STRING)
@@ -1446,6 +1457,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION,
             "Intersection types are supported only for definitely non-nullable types: right part must be non-nullable 'Any'."
+        )
+        map.put(
+            GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL,
+            "Usage of a qualifier with type arguments to call nested class constructor is deprecated. The type arguments must be removed."
         )
 
         map.put(TYPE_MISMATCH, "Type mismatch: inferred type is ''{1}'', but ''{0}'' was expected.", RENDER_TYPE, RENDER_TYPE, NOT_RENDERED)
@@ -2021,6 +2036,22 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             VIRTUAL_MEMBER_HIDDEN, "''{0}'' hides member of supertype ''{1}'' and needs an ''override'' modifier.", DECLARATION_NAME,
             DECLARATION_NAME
+        )
+        map.put(
+            PARAMETER_NAME_CHANGED_ON_OVERRIDE,
+            "The corresponding parameter in the supertype ''{0}'' is named ''{1}''. " +
+                    "This may cause problems when calling this function with named arguments.",
+            DECLARATION_NAME,
+            VARIABLE_NAME,
+        )
+        map.put(
+            DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES,
+            "Names ''{0}'' and ''{1}'' of parameter #{2} conflict in the following members of supertypes: {3}. " +
+                    "This may cause problems when calling this function with named arguments.",
+            DECLARATION_NAME,
+            DECLARATION_NAME,
+            TO_STRING,
+            commaSeparated(SYMBOL_WITH_CONTAINING_DECLARATION),
         )
         map.put(
             DATA_CLASS_OVERRIDE_CONFLICT,

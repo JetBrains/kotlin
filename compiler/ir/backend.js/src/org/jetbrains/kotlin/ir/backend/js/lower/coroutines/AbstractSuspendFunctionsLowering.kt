@@ -132,7 +132,7 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
             val functionBody = body as IrBlockBody
             functionBody.statements.clear()
             functionBody.statements.addAll(irBuilder.irBlockBody {
-                generateCoroutineStart(coroutine.stateMachineFunction, createCoroutineInstance(this@with, explicitParameters, coroutine))
+                generateCoroutineStart(coroutine.stateMachineFunction, createCoroutineInstance(this@with, parameters, coroutine))
             }.statements)
         }
 
@@ -144,7 +144,7 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
         private val endOffset = function.endOffset
         private val isSuspendLambda = function.isOperator && function.name.asString() == "invoke" && function.parentClassOrNull
             ?.let { it.origin === CallableReferenceLowering.Companion.LAMBDA_IMPL } == true
-        private val functionParameters = if (isSuspendLambda) function.valueParameters else function.explicitParameters
+        private val functionParameters = if (isSuspendLambda) function.valueParameters else function.parameters
 
         private val coroutineClass: IrClass = getCoroutineClass(function)
 
@@ -257,11 +257,12 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
                         .apply { superTypes = superTypes memoryOptimizedPlus parameter.superTypes }
                 }
 
-                valueParameters = stateMachineFunction.valueParameters.memoryOptimizedMap { parameter ->
-                    parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL)
-                }
+                parameters += createDispatchReceiverParameterWithClassParent()
 
-                this.createDispatchReceiverParameter()
+                parameters += stateMachineFunction.nonDispatchParameters
+                    .memoryOptimizedMap { parameter ->
+                        parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL)
+                    }
 
                 overriddenSymbols = listOf(stateMachineFunction.symbol)
             }
@@ -298,9 +299,9 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
                     parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL)
                 }
 
-                valueParameters = createValueParameters
+                this.parameters += this.createDispatchReceiverParameterWithClassParent()
 
-                this.createDispatchReceiverParameter()
+                this.parameters += createValueParameters
 
                 superCreateFunction?.let {
                     overriddenSymbols = ArrayList<IrSimpleFunctionSymbol>(it.overriddenSymbols.size + 1).apply {

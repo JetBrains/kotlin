@@ -83,15 +83,6 @@ public interface KaModule {
      */
     @KaExperimentalApi
     public val moduleDescription: String
-}
-
-/**
- * A module which consists of a set of source declarations inside a project.
- *
- * Generally, a main or test Source Set.
- */
-public interface KaSourceModule : KaModule {
-    public val name: String
 
     /**
      * A stable binary name of module from the *Kotlin* point of view.
@@ -102,6 +93,15 @@ public interface KaSourceModule : KaModule {
     @KaExperimentalApi
     public val stableModuleName: String?
         get() = null
+}
+
+/**
+ * A module which consists of a set of source declarations inside a project.
+ *
+ * Generally, a main or test Source Set.
+ */
+public interface KaSourceModule : KaModule {
+    public val name: String
 
     @KaExperimentalApi
     override val moduleDescription: String

@@ -98,7 +98,7 @@ internal class MainMethodGenerationLowering(private val context: JvmBackendConte
         if ((getJvmNameFromAnnotation() ?: name.asString()) != "main") return false
         if (!returnType.isUnit()) return false
 
-        val parameter = allParameters.singleOrNull() ?: return false
+        val parameter = parameters.singleOrNull() ?: return false
         if (!parameter.type.isArray() && !parameter.type.isNullableArray()) return false
 
         val argType = (parameter.type as IrSimpleType).arguments.first()

@@ -66,15 +66,11 @@ fun generateIrForKlibSerialization(
         messageCollector::checkNoUnboundSymbols
     )
     val psi2IrContext = psi2Ir.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable)
-    val irBuiltIns = psi2IrContext.irBuiltIns
 
-    val feContext = psi2IrContext.run {
-        JsIrLinker.JsFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
-    }
     val stubGenerator = DeclarationStubGeneratorImpl(
         psi2IrContext.moduleDescriptor,
         symbolTable,
-        irBuiltIns,
+        psi2IrContext.irBuiltIns,
         DescriptorByIdSignatureFinderImpl(psi2IrContext.moduleDescriptor, JsManglerDesc),
     )
     val irLinker = JsIrLinker(
@@ -87,7 +83,6 @@ fun generateIrForKlibSerialization(
             builtIns = psi2IrContext.irBuiltIns,
             messageCollector = messageCollector
         ),
-        feContext,
         ICData(icData.map { it.irData!! }, containsErrorCode = false),
         stubGenerator = stubGenerator
     )

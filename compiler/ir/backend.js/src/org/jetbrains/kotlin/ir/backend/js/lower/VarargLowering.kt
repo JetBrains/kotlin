@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.getAllArgumentsWithIr
 import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -105,7 +106,7 @@ private class VarargTransformer(
             concatFun,
             typeArgumentsCount = 0
         ).apply {
-            putValueArgument(0, arrayLiteral)
+            arguments[0] = arrayLiteral
         }
 
         return arrayInfo.boxArrayIfNeeded(res)
@@ -136,8 +137,8 @@ private class VarargTransformer(
                 copyFunction,
                 typeArgumentsCount = 1
             ).apply {
-                putTypeArgument(0, arrayInfo.primitiveArrayType)
-                putValueArgument(0, segment)
+                typeArguments[0] = arrayInfo.primitiveArrayType
+                arguments[0] = segment
             }
         } else segment
     }
@@ -146,22 +147,16 @@ private class VarargTransformer(
         expression.transformChildrenVoid()
 
         if (expression.symbol.owner.isExternal) {
-            for (i in 0 until expression.valueArgumentsCount) {
-                val parameter = expression.symbol.owner.valueParameters[i]
-                val varargElementType = parameter.varargElementType
-                if (varargElementType != null) {
-                    (expression.getValueArgument(i) as? IrVararg)?.let {
+            for (parameter in expression.symbol.owner.parameters) {
+                if (parameter.varargElementType != null) {
+                    (expression.arguments[parameter] as? IrVararg)?.let {
                         externalVarargs.add(it)
                     }
                 }
             }
         }
 
-        val size = expression.valueArgumentsCount
-
-        for (i in 0 until size) {
-            val argument = expression.getValueArgument(i)
-            val parameter = expression.symbol.owner.valueParameters[i]
+        for ((parameter, argument) in expression.getAllArgumentsWithIr()) {
             val varargElementType = parameter.varargElementType
             if (argument == null && varargElementType != null) {
                 val arrayInfo = InlineClassArrayInfo(context, varargElementType, parameter.type)
@@ -169,7 +164,7 @@ private class VarargTransformer(
                     boxArrayIfNeeded(toPrimitiveArrayLiteral(emptyList()))
                 }
 
-                expression.putValueArgument(i, emptyArray)
+                expression.arguments[parameter] = emptyArray
             }
         }
 
@@ -198,10 +193,10 @@ private fun List<IrExpression>.toArrayLiteral(context: JsIrBackendContext, type:
         type, intrinsic,
         typeArgumentsCount = if (intrinsic.owner.typeParameters.isNotEmpty()) 1 else 0
     ).apply {
-        if (typeArgumentsCount == 1) {
-            putTypeArgument(0, varargElementType)
+        if (typeArguments.size == 1) {
+            typeArguments[0] = varargElementType
         }
-        putValueArgument(0, irVararg)
+        arguments[0] = irVararg
     }
 }
 
@@ -238,8 +233,8 @@ internal class InlineClassArrayInfo(val context: JsIrBackendContext, val element
                 arrayInlineClass.defaultType,
                 arrayInlineClass.constructors.single { it.isPrimary }.symbol,
                 arrayInlineClass.typeParameters.size
-            ).also {
-                it.putValueArgument(0, array)
+            ).apply {
+                arguments[0] = array
             }
         }
 

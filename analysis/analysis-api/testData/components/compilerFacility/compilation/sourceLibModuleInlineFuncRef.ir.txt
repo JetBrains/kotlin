@@ -4,9 +4,9 @@ MODULE_FRAGMENT
       VALUE_PARAMETER name:name index:0 type:kotlin.String
       BLOCK_BODY
         VAR name:ref type:kotlin.reflect.KFunction0<kotlin.String> [val]
-          FUNCTION_REFERENCE 'public final fun giveMeString (): kotlin.String [inline] declared in com.example.myModule.OtherModule' type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget=<same>
-            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in com.example.myModule.OtherModule' type=com.example.myModule.OtherModule origin=null
-        CALL 'public final fun Text (text: kotlin.String): kotlin.Unit declared in com.example.ui' type=kotlin.Unit origin=null
+          FUNCTION_REFERENCE 'public final fun getInline (): kotlin.String [inline] declared in com.example.common.OtherModule' type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget=<same>
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in com.example.common.OtherModule' type=com.example.common.OtherModule origin=null
+        CALL 'public final fun Text (text: kotlin.String): kotlin.Unit declared in com.example.jvmLib' type=kotlin.Unit origin=null
           text: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
             $this: STRING_CONCATENATION type=kotlin.String
               GET_VAR 'name: kotlin.String declared in home.Greeting' type=kotlin.String origin=null

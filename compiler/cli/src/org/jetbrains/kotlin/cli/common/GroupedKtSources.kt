@@ -31,6 +31,9 @@ data class GroupedKtSources(
     fun isEmpty(): Boolean = platformSources.isEmpty() && commonSources.isEmpty()
 }
 
+val GroupedKtSources.allFiles: List<KtSourceFile>
+    get() = platformSources + commonSources
+
 fun collectSources(
     compilerConfiguration: CompilerConfiguration,
     projectEnvironment: VfsBasedProjectEnvironment,

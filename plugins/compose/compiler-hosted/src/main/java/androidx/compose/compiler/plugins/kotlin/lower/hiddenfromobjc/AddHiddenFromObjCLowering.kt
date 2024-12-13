@@ -62,12 +62,12 @@ class AddHiddenFromObjCLowering(
 
     private var currentShouldAnnotateClass = false
 
-    override fun lower(module: IrModuleFragment) {
+    override fun lower(irModule: IrModuleFragment) {
         require(context.platform.isNative()) {
             "AddHiddenFromObjCLowering is expected to run only for k/native. " +
                     "The platform - ${context.platform}"
         }
-        module.transformChildrenVoid(this)
+        irModule.transformChildrenVoid(this)
     }
 
     /** `visitClass` is only needed until [issue](https://youtrack.jetbrains.com/issue/KT-65288/) fix

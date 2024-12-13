@@ -300,7 +300,7 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
             } ?: return expression
             return IrCallImpl(
                     expression.startOffset, expression.endOffset, expression.type, operatorWithoutBoundCheck.symbol,
-                    typeArgumentsCount = expression.typeArgumentsCount
+                    typeArgumentsCount = expression.typeArguments.size
             ).apply {
                 dispatchReceiver = expression.dispatchReceiver
                 for (argIndex in 0 until expression.valueArgumentsCount) {

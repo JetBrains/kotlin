@@ -13,23 +13,31 @@ internal data class Platform(
     }
 }
 
+internal enum class OsType(val osName: String) {
+    WINDOWS("win"),
+    MAC("darwin"),
+    LINUX("linux"),
+    FREEBSD("linux"), // https://github.com/node-gradle/gradle-node-plugin/issues/178
+}
+
 internal fun parsePlatform(name: String, arch: String, uname: Provider<String>): Platform {
+    val osType = parseOsType(name)
+    val osArch = if (osType == OsType.WINDOWS) parseWindowsArch(arch.toLowerCase(), uname)
+    else parseOsArch(arch.toLowerCase(), uname)
+
     return Platform(
-        parseOsName(name.toLowerCase()),
-        parseOsArch(
-            arch.toLowerCase(),
-            uname
-        )
+        osType.osName,
+        osArch
     )
 }
 
-internal fun parseOsName(name: String): String {
+internal fun parseOsType(type: String): OsType {
+    val name = type.toLowerCase()
     return when {
-        name.contains("windows") -> "win"
-        name.contains("mac") -> "darwin"
-        name.contains("linux") -> "linux"
-        name.contains("freebsd") -> "linux"
-        name.contains("sunos") -> "sunos"
+        name.contains("windows") -> OsType.WINDOWS
+        name.contains("mac") -> OsType.MAC
+        name.contains("linux") -> OsType.LINUX
+        name.contains("freebsd") -> OsType.FREEBSD
         else -> error("Unsupported OS: $name")
     }
 }
@@ -53,6 +61,31 @@ internal fun parseOsArch(arch: String, uname: Provider<String>): String {
             }
         arch == "ppc64le" -> "ppc64le"
         arch == "s390x" -> "s390x"
+        arch.contains("64") -> "x64"
+        else -> "x86"
+    }
+}
+
+internal fun parseWindowsArch(arch: String, uname: Provider<String>): String {
+    return when {
+        arch.startsWith("aarch") || arch.startsWith("arm")
+            -> {
+            val wmiArch = uname.get()
+            return when (wmiArch) {
+                /*
+                 * Parse Win32_Processor.Architectures to real processor type
+                 *
+                 * Table from https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/ns-sysinfoapi-system_info#members
+                 */
+                "12" -> "arm64"
+                "9" -> "x64"
+                // "6" -> "IA64"
+                // "5" -> "arm" // 32-bit
+                "0" -> "x86"
+                // "0xffff" -> "Unknown"
+                else -> error("Unexpected Win32_Processor.Architecture: $arch")
+            }
+        }
         arch.contains("64") -> "x64"
         else -> "x86"
     }

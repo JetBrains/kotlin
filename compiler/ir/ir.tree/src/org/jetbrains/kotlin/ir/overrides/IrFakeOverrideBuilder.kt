@@ -271,7 +271,7 @@ class IrFakeOverrideBuilder(
     }
 
     private fun determineModalityForFakeOverride(
-        members: List<FakeOverride>,
+        members: Collection<FakeOverride>,
     ): Modality {
         // Optimization: avoid creating hash sets in frequent cases when modality can be computed trivially
         var hasOpen = false
@@ -332,9 +332,11 @@ class IrFakeOverrideBuilder(
         addedFakeOverrides: MutableList<IrOverridableMember>,
         compatibilityMode: Boolean
     ) {
-        val modality = determineModalityForFakeOverride(overridables)
-        val maxVisibilityMember = findMemberWithMaxVisibility(overridables).override
-        val mostSpecific = selectMostSpecificMember(overridables)
+        val onlyNonCustomizedOverridables = filterOutCustomizedFakeOverrides(overridables)
+
+        val modality = determineModalityForFakeOverride(onlyNonCustomizedOverridables)
+        val maxVisibilityMember = findMemberWithMaxVisibility(onlyNonCustomizedOverridables).override
+        val mostSpecific = selectMostSpecificMember(onlyNonCustomizedOverridables)
 
         val fakeOverride = mostSpecific.override.apply {
             when (this) {

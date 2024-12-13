@@ -6,6 +6,7 @@ class Box(val x: Int)
 
 fun reverseListInt(l: List<Int>) = l.reversed()
 fun reverseListShort(l: List<Short>) = l.reversed()
+fun reverseListChar(l: List<Char>) = l.reversed()
 fun reverseListString(l: List<String>) = l.reversed()
 fun reverseListBox(l: List<Box>) = l.reversed()
 

@@ -145,7 +145,6 @@ internal class JsIrLinkerLoader(
                 builtIns = irBuiltIns,
                 messageCollector = messageCollector
             ),
-            translationPluginContext = null,
             friendModules = mapOf(mainLibrary.uniqueName to mainModuleFriends.map { it.uniqueName })
         )
         return LinkerContext(symbolTable, typeTranslator, irBuiltIns, linker)
@@ -213,7 +212,7 @@ internal class JsIrLinkerLoader(
         val (_, stdlibFragment) = findStdlib(mainFragment, irModules)
         linkerContext.loadFunctionInterfacesIntoStdlib(stdlibFragment)
 
-        linkerContext.linker.init(null, emptyList())
+        linkerContext.linker.init(null)
 
         if (!loadAllIr) {
             for ((loadingLibFile, loadingSrcFiles) in modifiedFiles) {

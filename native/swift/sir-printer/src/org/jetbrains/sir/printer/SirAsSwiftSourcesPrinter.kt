@@ -11,13 +11,14 @@ import org.jetbrains.kotlin.utils.IndentingPrinter
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 
-public class SirAsSwiftSourcesPrinter(
-    private val printer: SmartPrinter,
+private data class Context(val declaration: SirDeclarationParent)
+
+public class SirAsSwiftSourcesPrinter private constructor(
+    private val printer: ContextualizedPrinter<Context>,
     private val stableDeclarationsOrder: Boolean,
     private val renderDocComments: Boolean,
     private val emptyBodyStub: SirFunctionBody
-) : IndentingPrinter by printer {
-
+) : ContextualizedPrinter<Context> by printer {
     public companion object {
 
         private val fatalErrorBodyStub: SirFunctionBody = SirFunctionBody(
@@ -31,7 +32,7 @@ public class SirAsSwiftSourcesPrinter(
             emptyBodyStub: SirFunctionBody = fatalErrorBodyStub
         ): String {
             val childrenPrinter = SirAsSwiftSourcesPrinter(
-                SmartPrinter(StringBuilder()),
+                ContextualizedPrinterImpl(SmartPrinter(StringBuilder()), Context(module)),
                 stableDeclarationsOrder = stableDeclarationsOrder,
                 renderDocComments = renderDocComments,
                 emptyBodyStub = emptyBodyStub,
@@ -43,7 +44,7 @@ public class SirAsSwiftSourcesPrinter(
             val importsString = if (module.imports.isNotEmpty()) {
                 // We print imports after module declarations as they might lazily add new imports.
                 val importsPrinter = SirAsSwiftSourcesPrinter(
-                    SmartPrinter(StringBuilder()),
+                    ContextualizedPrinterImpl(SmartPrinter(StringBuilder()), Context(module)),
                     stableDeclarationsOrder = stableDeclarationsOrder,
                     renderDocComments = renderDocComments,
                     emptyBodyStub = emptyBodyStub,
@@ -77,9 +78,23 @@ public class SirAsSwiftSourcesPrinter(
             }
     }
 
-    private fun SirTypealias.print() {
+    private fun SirDeclaration.print() {
         printDocumentation()
         printAttributes()
+
+        when (this) {
+            is SirClass -> printDeclaration()
+            is SirEnum -> printDeclaration()
+            is SirExtension -> printDeclaration()
+            is SirStruct -> printDeclaration()
+            is SirProtocol -> printDeclaration()
+            is SirCallable -> printDeclaration()
+            is SirVariable -> printDeclaration()
+            is SirTypealias -> printDeclaration()
+        }
+    }
+
+    private fun SirTypealias.printDeclaration() {
         printVisibility()
         print("typealias ")
         printName()
@@ -87,29 +102,54 @@ public class SirAsSwiftSourcesPrinter(
         println(type.swiftRender)
     }
 
-    private fun SirDeclarationContainer.print() {
-        if (this is SirDeclaration) {
-            printDocumentation()
-            printAttributes()
-            if (this is SirClass) {
-                printModifiers()
-            } else {
-                printVisibility()
-            }
-        }
-
-        printContainerKeyword()
-        print(" ")
+    private fun SirClass.printDeclaration() {
+        printModifiers()
+        print("class ")
         printName()
-        print(" ")
-        if (this is SirClass) {
-            printSuperClassAndInterface()
+        printInheritanceClause()
+        printBody()
+    }
+
+    private fun SirEnum.printDeclaration() {
+        printVisibility()
+        print("enum ")
+        printName()
+        printInheritanceClause()
+        printBody()
+    }
+
+    private fun SirStruct.printDeclaration() {
+        printVisibility()
+        print("struct ")
+        printName()
+        printInheritanceClause()
+        printBody()
+    }
+
+    private fun SirExtension.printDeclaration() {
+        printVisibility()
+        print("extension ")
+        printName()
+        printInheritanceClause()
+        printBody()
+    }
+
+    private fun SirProtocol.printDeclaration() {
+        printVisibility()
+        print("protocol ")
+        printName()
+        printInheritanceClause()
+        printBody()
+    }
+
+    private fun SirDeclarationContainer.printBody() {
+        printer.withContext(Context(this)) {
+            println(" {")
+            withIndent {
+                printChildren()
+            }
+            println("}")
         }
-        println("{")
-        withIndent {
-            printChildren()
-        }
-        println("}")
     }
 
     private fun SirDeclaration.printAttributes() {
@@ -125,6 +165,9 @@ public class SirAsSwiftSourcesPrinter(
             .sortedWithIfNeeded(Comparators.stableNamedComparator)
             .forEach { it.print() }
         allTypealiases()
+            .sortedWithIfNeeded(Comparators.stableNamedComparator)
+            .forEach { it.print() }
+        allProtocols()
             .sortedWithIfNeeded(Comparators.stableNamedComparator)
             .forEach { it.print() }
         allClasses()
@@ -152,11 +195,11 @@ public class SirAsSwiftSourcesPrinter(
     private inline fun <reified T : SirElement> Sequence<T>.sortedWithIfNeeded(comparator: Comparator<in T>): Sequence<T> =
         if (stableDeclarationsOrder) sortedWith(comparator) else this
 
-    private fun SirVariable.print() {
-        printDocumentation()
-        printAttributes()
-        printModifiers()
-        printOverride()
+    private fun SirVariable.printDeclaration() {
+        if (currentContext.declaration !is SirProtocol) {
+            printModifiers()
+            printOverride()
+        }
         print(
             "var ",
             name.swiftIdentifier,
@@ -171,11 +214,11 @@ public class SirAsSwiftSourcesPrinter(
         println("}")
     }
 
-    private fun SirCallable.print() {
-        printDocumentation()
-        printAttributes()
-        printModifiers()
-        printOverride()
+    private fun SirCallable.printDeclaration() {
+        if (currentContext.declaration !is SirProtocol) {
+            printModifiers()
+            printOverride()
+        }
         printPreNameKeywords()
         printName()
         printPostNameKeywords()
@@ -188,11 +231,15 @@ public class SirAsSwiftSourcesPrinter(
         }
         printEffects()
         printReturnType()
-        println(" {")
-        withIndent {
-            body.print()
+        if (currentContext.declaration !is SirProtocol) {
+            println(" {")
+            withIndent {
+                body.print()
+            }
+            println("}")
+        } else {
+            println()
         }
-        println("}")
     }
 
     private fun SirClassMemberDeclaration.printOverride() {
@@ -238,13 +285,20 @@ public class SirAsSwiftSourcesPrinter(
         }
     )
 
-    private fun SirClass.printSuperClassAndInterface() {
-        val targetString = listOfNotNull(
-            superClass?.swiftRender,
-            protocols.joinToString(" & ") { it.swiftFqName }.takeIf { it.isNotEmpty() }
-        )
-            .joinToString(", ")
-        if (targetString.isNotEmpty()) print(": $targetString ")
+    private val SirDeclaration.inheritedTypes: Pair<SirType?, List<SirProtocol>>
+        get() = when (this) {
+            is SirClass -> superClass to protocols
+            is SirProtocol -> superClass to protocols
+            else -> null to emptyList()
+        }
+
+    private fun SirDeclaration.printInheritanceClause() {
+        val (superclass, interfaces) = this.inheritedTypes
+
+        (listOfNotNull(superclass?.swiftRender) + interfaces.map { it.swiftFqName })
+            .takeIf { it.isNotEmpty() }
+            ?.joinToString(", ")
+            ?.let { print(": $it") }
     }
 
     private fun SirElement.printName() = print(

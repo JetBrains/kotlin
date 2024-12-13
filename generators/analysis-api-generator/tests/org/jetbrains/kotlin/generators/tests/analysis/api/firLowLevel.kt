@@ -317,8 +317,8 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         "compiler/fir/analysis-tests/testData",
     ) {
         fun TestGroup.TestClass.modelInit() {
-            model("resolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
-            model("resolveWithStdlib", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+            model("resolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME, excludeDirsRecursively = listOf("lightTree"))
+            model("resolveWithStdlib", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME, excludeDirsRecursively = listOf("lightTree"))
         }
 
         testClass<AbstractDiagnosticCompilerTestDataTest>(suiteTestClassName = "DiagnosticCompilerTestFirTestdataTestGenerated") {
@@ -380,6 +380,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
                 "diagnostics/tests",
                 excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                 pattern = KT_OR_KTS,
+                excludeDirsRecursively = listOf("lightTree"),
             )
             model(
                 "diagnostics/testsWithStdLib",
@@ -482,38 +483,6 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
 
         testClass<AbstractCodeFragmentContextModificationLLFirSessionInvalidationTest> {
             model("sessions/sessionInvalidation")
-        }
-    }
-
-    testGroup(testsRoot = "analysis/low-level-api-fir/tests", testDataRoot = "plugins/kotlinx-serialization/testData") {
-        run {
-            fun TestGroup.TestClass.diagnosticsModelInit() {
-                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-                model("firMembers")
-            }
-
-            testClass<AbstractLLFirSerializationDiagnosticTest> {
-                diagnosticsModelInit()
-            }
-
-            testClass<AbstractLLFirReversedSerializationDiagnosticTest> {
-                diagnosticsModelInit()
-            }
-        }
-
-        run {
-            fun TestGroup.TestClass.blackBoxModelInit() {
-                model("boxIr")
-                model("codegen")
-            }
-
-            testClass<AbstractLLFirSerializationBlackBoxCodegenBasedTest> {
-                blackBoxModelInit()
-            }
-
-            testClass<AbstractLLFirReversedSerializationBlackBoxCodegenBasedTest> {
-                blackBoxModelInit()
-            }
         }
     }
 }

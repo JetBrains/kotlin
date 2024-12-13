@@ -63,12 +63,12 @@ class ComposerParamTransformer(
 
     private var inlineLambdaInfo = ComposeInlineLambdaLocator(context)
 
-    override fun lower(module: IrModuleFragment) {
-        currentModule = module
+    override fun lower(irModule: IrModuleFragment) {
+        currentModule = irModule
 
-        inlineLambdaInfo.scan(module)
+        inlineLambdaInfo.scan(irModule)
 
-        module.transformChildrenVoid(this)
+        irModule.transformChildrenVoid(this)
 
         val typeRemapper = ComposableTypeRemapper(
             context,
@@ -76,11 +76,11 @@ class ComposerParamTransformer(
         )
         val transformer = ComposableTypeTransformer(context, typeRemapper)
         // for each declaration, we remap types to ensure that @Composable lambda types are realized
-        module.transformChildrenVoid(transformer)
+        irModule.transformChildrenVoid(transformer)
 
         // just go through and patch all of the parents to make sure things are properly wired
         // up.
-        module.patchDeclarationParents()
+        irModule.patchDeclarationParents()
     }
 
     private val transformedFunctions: MutableMap<IrSimpleFunction, IrSimpleFunction> =
@@ -150,7 +150,7 @@ class ComposerParamTransformer(
             endOffset,
             type,
             ownerFn.symbol,
-            typeArgumentsCount,
+            typeArguments.size,
             origin,
             superQualifierSymbol
         ).also {
@@ -416,7 +416,7 @@ class ComposerParamTransformer(
     }
 
     private fun IrSimpleFunction.copyWithComposerParam(): IrSimpleFunction {
-        assert(explicitParameters.lastOrNull()?.name != ComposeNames.COMPOSER_PARAMETER) {
+        assert(parameters.lastOrNull()?.name != ComposeNames.COMPOSER_PARAMETER) {
             "Attempted to add composer param to $this, but it has already been added."
         }
         return copy().also { fn ->
@@ -451,8 +451,8 @@ class ComposerParamTransformer(
                 }
             }
 
-            val valueParametersMapping = explicitParameters
-                .zip(fn.explicitParameters)
+            val valueParametersMapping = parameters
+                .zip(fn.parameters)
                 .toMap()
 
             val currentParams = fn.valueParameters.size
@@ -629,7 +629,7 @@ class ComposerParamTransformer(
                         dispatchReceiver = copy.dispatchReceiverParameter?.let { irGet(it) }
                         extensionReceiver = copy.extensionReceiverParameter?.let { irGet(it) }
                         copy.typeParameters.fastForEachIndexed { index, param ->
-                            putTypeArgument(index, param.defaultType)
+                            typeArguments[index] = param.defaultType
                         }
                         copy.valueParameters.fastForEachIndexed { index, param ->
                             putValueArgument(index, irGet(param))

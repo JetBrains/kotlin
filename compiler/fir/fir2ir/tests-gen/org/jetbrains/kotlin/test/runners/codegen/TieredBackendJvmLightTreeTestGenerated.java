@@ -12293,12 +12293,6 @@ public class TieredBackendJvmLightTreeTestGenerated extends AbstractTieredBacken
         }
 
         @Test
-        @TestMetadata("annotationArgRendering.kt")
-        public void testAnnotationArgRendering() {
-          runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/annotationArgRendering.kt");
-        }
-
-        @Test
         @TestMetadata("annotationArgumentsConstExpressions.kt")
         public void testAnnotationArgumentsConstExpressions() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/annotationArgumentsConstExpressions.kt");
@@ -12482,6 +12476,17 @@ public class TieredBackendJvmLightTreeTestGenerated extends AbstractTieredBacken
         @TestMetadata("withAnnotationActualTypealias.kt")
         public void testWithAnnotationActualTypealias() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/withAnnotationActualTypealias.kt");
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/lightTree")
+        @TestDataPath("$PROJECT_ROOT")
+        public class LightTree {
+          @Test
+          @TestMetadata("annotationArgRendering.kt")
+          public void testAnnotationArgRendering() {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/lightTree/annotationArgRendering.kt");
+          }
         }
       }
 
@@ -13246,6 +13251,12 @@ public class TieredBackendJvmLightTreeTestGenerated extends AbstractTieredBacken
       @TestMetadata("allowForJavaAnnotation.kt")
       public void testAllowForJavaAnnotation() {
         runTest("compiler/testData/diagnostics/tests/namedArguments/allowForJavaAnnotation.kt");
+      }
+
+      @Test
+      @TestMetadata("differentNamesForTheSameParametersInSupertypesForLibraryDependency.kt")
+      public void testDifferentNamesForTheSameParametersInSupertypesForLibraryDependency() {
+        runTest("compiler/testData/diagnostics/tests/namedArguments/differentNamesForTheSameParametersInSupertypesForLibraryDependency.kt");
       }
 
       @Test
@@ -22417,12 +22428,6 @@ public class TieredBackendJvmLightTreeTestGenerated extends AbstractTieredBacken
     }
 
     @Test
-    @TestMetadata("nestedAnnotationConstExprArguments.kt")
-    public void testNestedAnnotationConstExprArguments() {
-      runTest("compiler/fir/analysis-tests/testData/resolve/nestedAnnotationConstExprArguments.kt");
-    }
-
-    @Test
     @TestMetadata("nestedClass.kt")
     public void testNestedClass() {
       runTest("compiler/fir/analysis-tests/testData/resolve/nestedClass.kt");
@@ -23145,6 +23150,71 @@ public class TieredBackendJvmLightTreeTestGenerated extends AbstractTieredBacken
         public void testSubtyping() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/subtyping.kt");
         }
+
+        @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages")
+        @TestDataPath("$PROJECT_ROOT")
+        public class DeclarationAndUsages {
+          @Test
+          @TestMetadata("contextParameterIsNotInlined.kt")
+          public void testContextParameterIsNotInlined() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/contextParameterIsNotInlined.kt");
+          }
+
+          @Test
+          @TestMetadata("contextParameterToDefaultArgument.kt")
+          public void testContextParameterToDefaultArgument() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/contextParameterToDefaultArgument.kt");
+          }
+
+          @Test
+          @TestMetadata("inFunctionDeclaration.kt")
+          public void testInFunctionDeclaration() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/inFunctionDeclaration.kt");
+          }
+
+          @Test
+          @TestMetadata("inFunctionalType.kt")
+          public void testInFunctionalType() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/inFunctionalType.kt");
+          }
+
+          @Test
+          @TestMetadata("inPropertyDeclaration.kt")
+          public void testInPropertyDeclaration() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/inPropertyDeclaration.kt");
+          }
+
+          @Test
+          @TestMetadata("moreThenOneContext.kt")
+          public void testMoreThenOneContext() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/moreThenOneContext.kt");
+          }
+
+          @Test
+          @TestMetadata("parameterType.kt")
+          public void testParameterType() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/parameterType.kt");
+          }
+
+          @Test
+          @TestMetadata("parameterTypeWithContext.kt")
+          public void testParameterTypeWithContext() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/parameterTypeWithContext.kt");
+          }
+
+          @Test
+          @TestMetadata("propertyWithContextAndContextType.kt")
+          public void testPropertyWithContextAndContextType() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/propertyWithContextAndContextType.kt");
+          }
+
+          @Test
+          @TestMetadata("visibilityOfContextTypeOnProperty.kt")
+          public void testVisibilityOfContextTypeOnProperty() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/visibilityOfContextTypeOnProperty.kt");
+          }
+        }
       }
     }
 
@@ -23252,6 +23322,12 @@ public class TieredBackendJvmLightTreeTestGenerated extends AbstractTieredBacken
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/diagnostics")
     @TestDataPath("$PROJECT_ROOT")
     public class Diagnostics {
+      @Test
+      @TestMetadata("conflictingOverloads2.kt")
+      public void testConflictingOverloads2() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/conflictingOverloads2.kt");
+      }
+
       @Test
       @TestMetadata("javaInheritsPrivateJavaClass.kt")
       public void testJavaInheritsPrivateJavaClass() {
@@ -23686,6 +23762,23 @@ public class TieredBackendJvmLightTreeTestGenerated extends AbstractTieredBacken
         @TestMetadata("plus.kt")
         public void testPlus() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/plus.kt");
+        }
+
+        @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/lightTree")
+        @TestDataPath("$PROJECT_ROOT")
+        public class LightTree {
+          @Test
+          @TestMetadata("binaryOpFolding.kt")
+          public void testBinaryOpFolding() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/lightTree/binaryOpFolding.kt");
+          }
+
+          @Test
+          @TestMetadata("binaryOpStackOverflow.kt")
+          public void testBinaryOpStackOverflow() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/lightTree/binaryOpStackOverflow.kt");
+          }
         }
       }
     }
@@ -24373,6 +24466,17 @@ public class TieredBackendJvmLightTreeTestGenerated extends AbstractTieredBacken
       @TestMetadata("innerTypeFromSuperClassInBody.kt")
       public void testInnerTypeFromSuperClassInBody() {
         runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/innerTypeFromSuperClassInBody.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/lightTree")
+    @TestDataPath("$PROJECT_ROOT")
+    public class LightTree {
+      @Test
+      @TestMetadata("nestedAnnotationConstExprArguments.kt")
+      public void testNestedAnnotationConstExprArguments() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/lightTree/nestedAnnotationConstExprArguments.kt");
       }
     }
 
@@ -25307,12 +25411,6 @@ public class TieredBackendJvmLightTreeTestGenerated extends AbstractTieredBacken
     }
 
     @Test
-    @TestMetadata("annotationUseSites.kt")
-    public void testAnnotationUseSites() {
-      runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotationUseSites.kt");
-    }
-
-    @Test
     @TestMetadata("arrayFilterCapturedType.kt")
     public void testArrayFilterCapturedType() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/arrayFilterCapturedType.kt");
@@ -25589,12 +25687,6 @@ public class TieredBackendJvmLightTreeTestGenerated extends AbstractTieredBacken
     }
 
     @Test
-    @TestMetadata("topLevelResolve.kt")
-    public void testTopLevelResolve() {
-      runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/topLevelResolve.kt");
-    }
-
-    @Test
     @TestMetadata("typeAliasDeserialization.kt")
     public void testTypeAliasDeserialization() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/typeAliasDeserialization.kt");
@@ -25628,6 +25720,17 @@ public class TieredBackendJvmLightTreeTestGenerated extends AbstractTieredBacken
     @TestMetadata("withInInitializer.kt")
     public void testWithInInitializer() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/withInInitializer.kt");
+    }
+
+    @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Annotations {
+      @Test
+      @TestMetadata("annotationUseSites.kt")
+      public void testAnnotationUseSites() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationUseSites.kt");
+      }
     }
 
     @Nested
@@ -26453,6 +26556,17 @@ public class TieredBackendJvmLightTreeTestGenerated extends AbstractTieredBacken
       @TestMetadata("UsingObject.kt")
       public void testUsingObject() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/UsingObject.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/lightTree")
+    @TestDataPath("$PROJECT_ROOT")
+    public class LightTree {
+      @Test
+      @TestMetadata("topLevelResolve.kt")
+      public void testTopLevelResolve() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/lightTree/topLevelResolve.kt");
       }
     }
 

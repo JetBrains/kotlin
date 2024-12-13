@@ -144,6 +144,12 @@ inline fun TestConfigurationBuilder.configureIrHandlersStep(
     configureNamedHandlersStep(RAW_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, init)
 }
 
+inline fun TestConfigurationBuilder.configureDeserializedIrHandlersStep(
+    init: HandlersStepBuilder<IrBackendInput, BackendKinds.IrBackend>.() -> Unit = {}
+) {
+    configureNamedHandlersStep(DESERIALIZED_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, init)
+}
+
 inline fun TestConfigurationBuilder.configureJvmArtifactsHandlersStep(
     init: HandlersStepBuilder<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.() -> Unit = {}
 ) {

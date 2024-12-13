@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.codegen.coroutines.DEBUG_METADATA_ANNOTATION_ASM_TYP
 import org.jetbrains.kotlin.codegen.coroutines.isCoroutineSuperClass
 import org.jetbrains.kotlin.codegen.inline.coroutines.CoroutineTransformer
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
-import org.jetbrains.kotlin.codegen.serialization.JvmCodegenStringTable
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -44,9 +42,6 @@ class AnonymousObjectTransformer(
     private var constructor: MethodNode? = null
     private lateinit var sourceMap: SMAP
     private lateinit var sourceMapper: SourceMapper
-
-    // TODO: use IrTypeMapper in the IR backend
-    private val typeMapper: KotlinTypeMapperBase = state.typeMapper
 
     override fun doTransform(parentRemapper: FieldRemapper): InlineResult {
         val innerClassNodes = ArrayList<InnerClassNode>()
@@ -126,7 +121,7 @@ class AnonymousObjectTransformer(
 
             override fun visitEnd() {}
         }, ClassReader.SKIP_FRAMES)
-        val header = metadataReader.createHeader(inliningContext.state.languageVersionSettings.languageVersion.toMetadataVersion())
+        val header = metadataReader.createHeader(inliningContext.state.config.languageVersionSettings.languageVersion.toMetadataVersion())
         assert(isSameModule || (header != null && isPublicAbi(header))) {
             "Trying to inline an anonymous object which is not part of the public ABI: ${oldObjectType.className}"
         }
@@ -199,7 +194,9 @@ class AnonymousObjectTransformer(
         }
 
         if (GENERATE_SMAP && !inliningContext.isInliningLambda) {
-            classBuilder.visitSMAP(sourceMapper, !state.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax))
+            classBuilder.visitSMAP(
+                sourceMapper, !state.config.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax),
+            )
         } else if (debugFileName != null) {
             classBuilder.visitSource(debugFileName!!, debugInfo)
         }
@@ -271,7 +268,7 @@ class AnonymousObjectTransformer(
         when (header.kind) {
             KotlinClassHeader.Kind.CLASS -> {
                 val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(data, strings)
-                val newStringTable = JvmCodegenStringTable(typeMapper, nameResolver)
+                val newStringTable = JvmStringTable(nameResolver)
                 val newProto = classProto.toBuilder().apply {
                     setExtension(JvmProtoBuf.anonymousObjectOriginName, newStringTable.getStringIndex(oldObjectType.internalName))
                 }.build()
@@ -279,7 +276,7 @@ class AnonymousObjectTransformer(
             }
             KotlinClassHeader.Kind.SYNTHETIC_CLASS -> {
                 val (nameResolver, functionProto) = JvmProtoBufUtil.readFunctionDataFrom(data, strings)
-                val newStringTable = JvmCodegenStringTable(typeMapper, nameResolver)
+                val newStringTable = JvmStringTable(nameResolver)
                 val newProto = functionProto.toBuilder().apply {
                     setExtension(JvmProtoBuf.lambdaClassOriginName, newStringTable.getStringIndex(oldObjectType.internalName))
                 }.build()

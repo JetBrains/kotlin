@@ -72,7 +72,11 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                 if (it) listOf(task.destinationDirectory.get().asFile, task.taskBuildLocalStateDirectory.get().asFile) else emptyList()
             })
             task.keepIncrementalCompilationCachesInMemory
-                .convention(task.preciseCompilationResultsBackup.map { it && propertiesProvider.keepIncrementalCompilationCachesInMemory })
+                .convention(
+                    task.preciseCompilationResultsBackup.zip(propertiesProvider.keepIncrementalCompilationCachesInMemory) { thisTaskPreciseCompilationResultsBackup, defaultKeepIncrementalCompilationCachesInMemory ->
+                        thisTaskPreciseCompilationResultsBackup && defaultKeepIncrementalCompilationCachesInMemory
+                    }
+                )
                 .finalizeValueOnRead()
             task.taskOutputsBackupExcludes.addAll(task.keepIncrementalCompilationCachesInMemory.map {
                 if (it) listOf(task.taskBuildCacheableOutputDirectory.get().asFile) else emptyList()

@@ -111,9 +111,17 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         impl(`class`) {
-            defaultNull("thisReceiver", "valueClassRepresentation")
+            additionalImports(ArbitraryImportable("org.jetbrains.kotlin.ir.declarations", "IrParameterKind"))
+            defaultNull("valueClassRepresentation")
             defaultEmptyList("superTypes", "sealedSubclasses")
             defaultFalse("isExternal", "isCompanion", "isInner", "isData", "isValue", "isExpect", "isFun", "hasEnumEntries")
+            default("thisReceiver") {
+                value = "null"
+                customSetter = """
+                    field = value
+                    value?.kind = IrParameterKind.DispatchReceiver
+                """.trimIndent()
+            }
         }
 
         impl(enumEntry) {
@@ -350,6 +358,10 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                     }
                 """.trimIndent())
             }
+        }
+
+        allImplOf(memberAccessExpression) {
+            default("typeArguments", "ArrayList(0)")
         }
 
         impl(call) {

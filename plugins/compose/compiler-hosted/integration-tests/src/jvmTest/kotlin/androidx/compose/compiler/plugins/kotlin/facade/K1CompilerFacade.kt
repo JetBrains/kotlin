@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.psi.KtFile
@@ -93,40 +92,21 @@ class K1CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             throw TestsCompilerError(e)
         }
 
-        val codegenFactory = JvmIrCodegenFactory(
+        val codegenFactory = JvmIrCodegenFactory(environment.configuration)
+
+        val state = GenerationState(
+            environment.project,
+            analysisResult.moduleDescriptor,
             environment.configuration,
-            environment.configuration.phaseConfig
+            ClassBuilderFactories.TEST,
         )
 
-        val state = GenerationState.Builder(
-            environment.project,
-            ClassBuilderFactories.TEST,
-            analysisResult.moduleDescriptor,
-            analysisResult.bindingContext,
-            analysisResult.files,
-            environment.configuration
-        ).codegenFactory(codegenFactory).build()
-
-        state.beforeCompile()
-
         val psi2irInput = CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(
-            state,
-            analysisResult.files
+            state, analysisResult.files, analysisResult.bindingContext,
         )
         val backendInput = codegenFactory.convertToIr(psi2irInput)
 
-        // For JVM-specific errors
-        try {
-            AnalyzingUtils.throwExceptionOnErrors(state.collectedExtraJvmDiagnostics)
-        } catch (e: Throwable) {
-            throw TestsCompilerError(e)
-        }
-
-        return K1FrontendResult(
-            state,
-            backendInput,
-            codegenFactory
-        )
+        return K1FrontendResult(state, backendInput, codegenFactory)
     }
 
     override fun compileToIr(files: List<SourceFile>): IrModuleFragment =

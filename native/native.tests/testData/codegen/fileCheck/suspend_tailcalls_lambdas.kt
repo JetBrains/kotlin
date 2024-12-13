@@ -71,18 +71,18 @@ fun box(): String {
 }
 
 fun s1() {
-    // CHECK-LABEL: define internal ptr @"kfun:s1$lambda${{[0-9]*}}
+    // CHECK-LABEL: define internal ptr @"kfun:s1${{[0-9]*}}.invoke
     builderUnit {
-        // CHECK-NOT: call void @"kfun:$s1$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
+        // CHECK-NOT: call void @"kfun:s1${{[0-9]*}}.$invokeCOROUTINE${{[0-9]*}}.<init>
         println("s1")
     }
     // CHECK-LABEL: epilogue:
 }
 
 fun s2() {
-    // CHECK-LABEL: define internal ptr @"kfun:s2$lambda${{[0-9]*}}
+    // CHECK-LABEL: define internal ptr @"kfun:s2${{[0-9]*}}.invoke
     builderUnit {
-        // CHECK-NOT: call void @"kfun:$s2$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
+        // CHECK-NOT: call void @"kfun:s2${{[0-9]*}}.$invokeCOROUTINE${{[0-9]*}}.<init>
         println("s2")
         sUnit()
     }
@@ -90,9 +90,9 @@ fun s2() {
 }
 
 fun s3() {
-    // CHECK-LABEL: define internal ptr @"kfun:s3$lambda${{[0-9]*}}
+    // CHECK-LABEL: define internal ptr @"kfun:s3${{[0-9]*}}.invoke
     builderUnit {
-        // CHECK-NOT: call void @"kfun:$s3$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
+        // CHECK-NOT: call void @"kfun:s3${{[0-9]*}}.$invokeCOROUTINE${{[0-9]*}}.<init>
         println("s3")
         sUnit()
         return@builderUnit
@@ -101,9 +101,9 @@ fun s3() {
 }
 
 fun s4() {
-    // CHECK-LABEL: define internal ptr @"kfun:s4$lambda${{[0-9]*}}
+    // CHECK-LABEL: define internal ptr @"kfun:s4${{[0-9]*}}.invoke
     builderInt {
-        // CHECK-NOT: call void @"kfun:$s4$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
+        // CHECK-NOT: call void @"kfun:s4${{[0-9]*}}.$invokeCOROUTINE${{[0-9]*}}.<init>
         println("s4")
         return@builderInt sInt()
     }
@@ -111,9 +111,9 @@ fun s4() {
 }
 
 fun s5() {
-    // CHECK-LABEL: define internal ptr @"kfun:s5$lambda${{[0-9]*}}
+    // CHECK-LABEL: define internal ptr @"kfun:s5${{[0-9]*}}.invoke
     builderUnit {
-        // CHECK-NOT: call void @"kfun:$s5$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
+        // CHECK-NOT: call void @"kfun:s5${{[0-9]*}}.$invokeCOROUTINE${{[0-9]*}}.<init>
         println("s5")
         run { sUnit() }
     }
@@ -121,9 +121,9 @@ fun s5() {
 }
 
 fun s6() {
-    // CHECK-LABEL: define internal ptr @"kfun:s6$lambda${{[0-9]*}}
+    // CHECK-LABEL: define internal ptr @"kfun:s6${{[0-9]*}}.invoke
     builderUnit {
-        // CHECK-NOT: call void @"kfun:$s6$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
+        // CHECK-NOT: call void @"kfun:s6${{[0-9]*}}.$invokeCOROUTINE${{[0-9]*}}.<init>
         run {
             println("s6")
             sUnit()
@@ -133,9 +133,9 @@ fun s6() {
 }
 
 fun s7() {
-    // CHECK-LABEL: define internal ptr @"kfun:s7$lambda${{[0-9]*}}
+    // CHECK-LABEL: define internal ptr @"kfun:s7${{[0-9]*}}.invoke
     builderInt {
-        // CHECK-NOT: call void @"kfun:$s7$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
+        // CHECK-NOT: call void @"kfun:s7${{[0-9]*}}.$invokeCOROUTINE${{[0-9]*}}.<init>
         run {
             println("s7")
             sInt()
@@ -145,9 +145,9 @@ fun s7() {
 }
 
 fun s8() {
-    // CHECK-LABEL: define internal ptr @"kfun:s8$lambda${{[0-9]*}}
+    // CHECK-LABEL: define internal ptr @"kfun:s8${{[0-9]*}}.invoke
     builderInt {
-        // CHECK-NOT: call void @"kfun:$s8$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
+        // CHECK-NOT: call void @"kfun:s8${{[0-9]*}}.$invokeCOROUTINE${{[0-9]*}}.<init>
         run {
             println("s8")
             return@builderInt sInt()
@@ -157,9 +157,9 @@ fun s8() {
 }
 
 fun s9() {
-    // CHECK-LABEL: define internal ptr @"kfun:s9$lambda${{[0-9]*}}
+    // CHECK-LABEL: define internal ptr @"kfun:s9${{[0-9]*}}.invoke
     builderUnit {
-        // CHECK-NOT: call void @"kfun:$s9$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
+        // CHECK-NOT: call void @"kfun:s9${{[0-9]*}}.$invokeCOROUTINE${{[0-9]*}}.<init>
         run {
             println("s9-1")
             run {
@@ -172,9 +172,9 @@ fun s9() {
 }
 
 fun s10() {
-    // CHECK-LABEL: define internal ptr @"kfun:s10$lambda${{[0-9]*}}
+    // CHECK-LABEL: define internal ptr @"kfun:s10${{[0-9]*}}.invoke
     builderInt {
-        // CHECK-NOT: call void @"kfun:$s10$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
+        // CHECK-NOT: call void @"kfun:s10${{[0-9]*}}.$invokeCOROUTINE${{[0-9]*}}.<init>
         run {
             println("s10-1")
             return@builderInt run {
@@ -187,9 +187,9 @@ fun s10() {
 }
 
 fun s11() {
-    // CHECK-LABEL: define internal ptr @"kfun:s11$lambda${{[0-9]*}}
+    // CHECK-LABEL: define internal ptr @"kfun:s11${{[0-9]*}}.invoke
     builderUnit {
-        // CHECK-NOT: call void @"kfun:$s11$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
+        // CHECK-NOT: call void @"kfun:s11${{[0-9]*}}.$invokeCOROUTINE${{[0-9]*}}.<init>
         println("s11")
         sUnit()
         return@builderUnit
@@ -198,9 +198,9 @@ fun s11() {
 }
 
 fun s12() {
-    // CHECK-LABEL: define internal ptr @"kfun:s12$lambda${{[0-9]*}}
+    // CHECK-LABEL: define internal ptr @"kfun:s12${{[0-9]*}}.invoke
     builderUnit {
-        // CHECK-NOT: call void @"kfun:$s12$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
+        // CHECK-NOT: call void @"kfun:s12${{[0-9]*}}.$invokeCOROUTINE${{[0-9]*}}.<init>
         run {
             println("s12")
             sUnit()
@@ -211,9 +211,9 @@ fun s12() {
 }
 
 fun s13() {
-    // CHECK-LABEL: define internal ptr @"kfun:s13$lambda${{[0-9]*}}
+    // CHECK-LABEL: define internal ptr @"kfun:s13${{[0-9]*}}.invoke
     builderUnit {
-        // CHECK-NOT: call void @"kfun:$s13$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
+        // CHECK-NOT: call void @"kfun:s13${{[0-9]*}}.$invokeCOROUTINE${{[0-9]*}}.<init>
         run {
             println("s13")
             sUnit()
@@ -224,9 +224,9 @@ fun s13() {
 }
 
 fun s14() {
-    // CHECK-LABEL: define internal ptr @"kfun:s14$lambda${{[0-9]*}}
+    // CHECK-LABEL: define internal ptr @"kfun:s14${{[0-9]*}}.invoke
     builderUnit {
-        // CHECK-NOT: call void @"kfun:$s14$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
+        // CHECK-NOT: call void @"kfun:s14${{[0-9]*}}.$invokeCOROUTINE${{[0-9]*}}.<init>
         run {
             println("s14")
             sUnit()
@@ -238,9 +238,9 @@ fun s14() {
 
 @Suppress("UNREACHABLE_CODE")
 fun s15() {
-    // CHECK-LABEL: define internal ptr @"kfun:s15$lambda${{[0-9]*}}
+    // CHECK-LABEL: define internal ptr @"kfun:s15${{[0-9]*}}.invoke
     builderInt {
-        // CHECK-NOT: call void @"kfun:$s15$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
+        // CHECK-NOT: call void @"kfun:s15${{[0-9]*}}.$invokeCOROUTINE${{[0-9]*}}.<init>
         run {
             println("s15-1")
             return@builderInt run {
@@ -253,9 +253,9 @@ fun s15() {
 }
 
 fun s16() {
-    // CHECK-LABEL: define internal ptr @"kfun:s16$lambda${{[0-9]*}}
+    // CHECK-LABEL: define internal ptr @"kfun:s16${{[0-9]*}}.invoke
     builderInt {
-        // CHECK-NOT: call void @"kfun:$s16$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
+        // CHECK-NOT: call void @"kfun:s16${{[0-9]*}}.$invokeCOROUTINE${{[0-9]*}}.<init>
         run outer@{
             println("s16-1")
             return@builderInt run inner@{
@@ -269,9 +269,9 @@ fun s16() {
 
 @Suppress("UNREACHABLE_CODE")
 fun s17() {
-    // CHECK-LABEL: define internal ptr @"kfun:s17$lambda${{[0-9]*}}
+    // CHECK-LABEL: define internal ptr @"kfun:s17${{[0-9]*}}.invoke
     builderInt {
-        // CHECK-NOT: call void @"kfun:$s17$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
+        // CHECK-NOT: call void @"kfun:s17${{[0-9]*}}.$invokeCOROUTINE${{[0-9]*}}.<init>
         return@builderInt run outer@{
             println("s17-1")
             return@builderInt run inner@{
@@ -284,9 +284,9 @@ fun s17() {
 }
 
 fun s18(f: Boolean) {
-    // CHECK-LABEL: define internal ptr @"kfun:s18$lambda${{[0-9]*}}
+    // CHECK-LABEL: define internal ptr @"kfun:s18${{[0-9]*}}.invoke
     builderUnit {
-        // CHECK-NOT: call void @"kfun:$s18$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
+        // CHECK-NOT: call void @"kfun:s18${{[0-9]*}}.$invokeCOROUTINE${{[0-9]*}}.<init>
         if (f) {
             println("s18-1")
             sUnit()
@@ -299,9 +299,9 @@ fun s18(f: Boolean) {
 }
 
 fun s19(f: Boolean) {
-    // CHECK-LABEL: define internal ptr @"kfun:s19$lambda${{[0-9]*}}
+    // CHECK-LABEL: define internal ptr @"kfun:s19${{[0-9]*}}.invoke
     builderInt {
-        // CHECK-NOT: call void @"kfun:$s19$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
+        // CHECK-NOT: call void @"kfun:s19${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
         if (f) {
             println("s19-1")
             return@builderInt sInt()
@@ -314,9 +314,9 @@ fun s19(f: Boolean) {
 }
 
 fun s20(f: Boolean) {
-    // CHECK-LABEL: define internal ptr @"kfun:s20$lambda${{[0-9]*}}
+    // CHECK-LABEL: define internal ptr @"kfun:s20${{[0-9]*}}.invoke
     builderInt {
-        // CHECK-NOT: call void @"kfun:$s20$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
+        // CHECK-NOT: call void @"kfun:s20${{[0-9]*}}.$invokeCOROUTINE${{[0-9]*}}.<init>
         return@builderInt if (f) {
             println("s20-1")
             sInt()
@@ -329,9 +329,9 @@ fun s20(f: Boolean) {
 }
 
 fun s21() {
-    // CHECK-LABEL: define internal ptr @"kfun:s21$lambda${{[0-9]*}}
+    // CHECK-LABEL: define internal ptr @"kfun:s21${{[0-9]*}}.invoke
     builderUnit {
-        // CHECK-NOT: call void @"kfun:$s21$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
+        // CHECK-NOT: call void @"kfun:s21${{[0-9]*}}.$invokeCOROUTINE${{[0-9]*}}.<init>
         try {
             println("s21")
         } catch (t: Throwable) {
@@ -342,9 +342,9 @@ fun s21() {
 }
 
 fun s22() {
-    // CHECK-LABEL: define internal ptr @"kfun:s22$lambda${{[0-9]*}}
+    // CHECK-LABEL: define internal ptr @"kfun:s22${{[0-9]*}}.invoke
     builderInt {
-        // CHECK-NOT: call void @"kfun:$s22$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
+        // CHECK-NOT: call void @"kfun:s22${{[0-9]*}}.$invokeCOROUTINE${{[0-9]*}}.<init>
         try {
             println("s22")
         } catch (t: Throwable) {
@@ -356,9 +356,9 @@ fun s22() {
 }
 
 fun s23(f: Boolean) {
-    // CHECK-LABEL: define internal ptr @"kfun:s23$lambda${{[0-9]*}}
+    // CHECK-LABEL: define internal ptr @"kfun:s23${{[0-9]*}}.invoke
     builderUnit {
-        // CHECK-NOT: call void @"kfun:$s23$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
+        // CHECK-NOT: call void @"kfun:s23${{[0-9]*}}.$invokeCOROUTINE${{[0-9]*}}.<init>
         val x = run {
             if (f) {
                 println("s23")
@@ -373,9 +373,9 @@ fun s23(f: Boolean) {
 }
 
 fun s24() {
-    // CHECK-LABEL: define internal ptr @"kfun:s24$lambda${{[0-9]*}}
+    // CHECK-LABEL: define internal ptr @"kfun:s24${{[0-9]*}}.invoke
     builderUnit {
-        // CHECK: call void @"kfun:$s24$lambda${{[0-9]*}}COROUTINE${{[0-9]*}}.<init>
+        // CHECK: call void @"kfun:s24${{[0-9]*}}.$invokeCOROUTINE${{[0-9]*}}.<init>
         sInt()
     }
     // CHECK-LABEL: epilogue:

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import kotlinx.cinterop.toCValues
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.*
 
@@ -17,7 +16,6 @@ private fun LLVMValueRef.isLLVMBuiltin(): Boolean {
 
 private class CallsChecker(generationState: NativeGenerationState, goodFunctions: List<String>) {
     private val llvm = generationState.llvm
-    private val context = generationState.context
     private val goodFunctionsExact = goodFunctions.filterNot { it.endsWith("*") }.toSet()
     private val goodFunctionsByPrefix = goodFunctions.filter { it.endsWith("*") }.map { it.substring(0, it.length - 1) }.sorted()
 

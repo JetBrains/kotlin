@@ -166,22 +166,8 @@ internal class KaFirResolver(
         }
     }
 
-    /**
-     * The lifetime of this cache is the same as the corresponding [org.jetbrains.kotlin.analysis.api.KaSession],
-     * so it doesn't require additional invalidation.
-     *
-     * The only case where we need to invalidate FIR
-     * without the containing session being invalidated is
-     * [in-block modification][org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService].
-     */
-    private val cache: CachedValue<NullableConcurrentCache<KtElement, KaCallInfo?>> by lazy {
-        softCachedValue(project, LLFirInBlockModificationTracker.getInstance(project)) {
-            NullableConcurrentCache<KtElement, KaCallInfo?>()
-        }
-    }
-
     override fun doResolveCall(psi: KtElement): KaCallInfo? = wrapError(psi) {
-        cache.value.getOrPut(psi) {
+        analysisSession.cacheStorage.resolveToCallCache.value.getOrPut(psi) {
             val ktCallInfos = getCallInfo(
                 psi,
                 getErrorCallInfo = { psiToResolve ->

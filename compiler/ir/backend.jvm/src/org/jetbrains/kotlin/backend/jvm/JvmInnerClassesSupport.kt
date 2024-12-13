@@ -65,11 +65,12 @@ class JvmInnerClassesSupport(private val irFactory: IrFactory) : InnerClassesSup
             copyTypeParametersFrom(oldConstructor)
 
             val outerThisValueParameter = buildValueParameter(this) {
+                kind = IrParameterKind.Regular
                 origin = JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS
                 name = Name.identifier(AsmUtil.CAPTURED_THIS_FIELD)
                 type = oldConstructor.parentAsClass.parentAsClass.defaultType
             }
-            valueParameters = listOf(outerThisValueParameter) + oldConstructor.valueParameters.map { it.copyTo(this) }
+            parameters = listOf(outerThisValueParameter) + oldConstructor.nonDispatchParameters.map { it.copyTo(this) }
             metadata = oldConstructor.metadata
         }
 }

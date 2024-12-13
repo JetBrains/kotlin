@@ -464,6 +464,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     @TestDataPath("$PROJECT_ROOT")
     public class Exceptions {
       @Test
+      @TestMetadata("uninitializedTypeArgumentsMappingIfErrorCandidates.kt")
+      public void testUninitializedTypeArgumentsMappingIfErrorCandidates() {
+        runTest("compiler/testData/diagnostics/tests/exceptions/uninitializedTypeArgumentsMappingIfErrorCandidates.kt");
+      }
+
+      @Test
       @TestMetadata("unresolvedReferenceDuringProjectionRelationChecking.kt")
       public void testUnresolvedReferenceDuringProjectionRelationChecking() {
         runTest("compiler/testData/diagnostics/tests/exceptions/unresolvedReferenceDuringProjectionRelationChecking.kt");
@@ -569,6 +575,18 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     @TestMetadata("compiler/testData/diagnostics/tests/generics")
     @TestDataPath("$PROJECT_ROOT")
     public class Generics {
+      @Test
+      @TestMetadata("constructorOnGenericQualifier.kt")
+      public void testConstructorOnGenericQualifier() {
+        runTest("compiler/testData/diagnostics/tests/generics/constructorOnGenericQualifier.kt");
+      }
+
+      @Test
+      @TestMetadata("constructorOnGenericQualifierForbidden.kt")
+      public void testConstructorOnGenericQualifierForbidden() {
+        runTest("compiler/testData/diagnostics/tests/generics/constructorOnGenericQualifierForbidden.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/generics/innerClasses")
       @TestDataPath("$PROJECT_ROOT")

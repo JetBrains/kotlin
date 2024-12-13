@@ -11,6 +11,7 @@ import com.intellij.openapi.util.Disposer
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.GroupedKtSources
+import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
 import org.jetbrains.kotlin.cli.common.collectSources
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
@@ -18,16 +19,18 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.FirKotlinToJvmBytecodeCompiler
-import org.jetbrains.kotlin.cli.jvm.compiler.FirKotlinToJvmBytecodeCompiler.runFrontendForKapt
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.createSourceFilesFromSourceRoots
-import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.*
+import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.ModuleCompilerEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.convertAnalyzedFirToIr
+import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.generateCodeFromIr
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.USE_FIR
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt3.EfficientProcessorLoader
 import org.jetbrains.kotlin.kapt3.KAPT_OPTIONS
@@ -42,6 +45,7 @@ import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.util.prettyPrint
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.kapt.MemoryLeakDetector
 import java.io.File
 
@@ -51,6 +55,7 @@ import java.io.File
  * It is supposed to replace the old AA-based implementation ([Kapt4AnalysisHandlerExtension]) once we ensure that there are no critical
  * problems with it.
  */
+@OptIn(LegacyK2CliPipeline::class)
 open class FirKaptAnalysisHandlerExtension(
     private val kaptLogger: MessageCollectorBackedKaptLogger? = null,
 ) : FirAnalysisHandlerExtension() {
@@ -215,7 +220,7 @@ open class FirKaptAnalysisHandlerExtension(
 
         val (classFilesCompilationTime, codegenOutput) = measureTimeMillis {
             // Ignore all FE errors
-            val cleanDiagnosticReporter = FirKotlinToJvmBytecodeCompiler.createPendingReporter(messageCollector)
+            val cleanDiagnosticReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
             val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, cleanDiagnosticReporter)
             val irInput = convertAnalyzedFirToIr(configuration, TargetId(module), analysisResults, compilerEnvironment)
 
@@ -230,7 +235,7 @@ open class FirKaptAnalysisHandlerExtension(
         logger.info { "Compiled classes: " + compiledClasses.joinToString { it.name } }
 
         return KaptContextForStubGeneration(
-            options, false, logger, compiledClasses, origins, codegenOutput.generationState,
+            options, false, logger, compiledClasses, origins, codegenOutput.generationState, BindingContext.EMPTY,
             analysisResults.outputs.flatMap { it.fir },
         )
     }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.sir.printer
 import com.intellij.util.containers.addAllIfNotNull
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.*
+import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.addChild
@@ -1320,6 +1321,75 @@ class SirAsSwiftSourcesPrinterTests {
         runTest(
             module,
             "testData/simple_function_returns_nullable"
+        )
+    }
+
+    @Test
+    fun `should print protocol declarations`() {
+        val proto1 = buildProtocol {
+            name = "Fooable"
+        }.apply {
+            parent = KotlinRuntimeModule
+        }
+
+        val proto2 = buildProtocol {
+            name = "Barable"
+        }.apply {
+            parent = KotlinRuntimeModule
+        }
+
+        val module = buildModule {
+            name = "Test"
+            declarations.add(
+                buildProtocol {
+                    name = "Foo"
+                    superClass = SirNominalType(KotlinRuntimeModule.kotlinBase)
+                    protocols.addAll(listOf(proto1, proto2))
+
+                    declarations.add(
+                        buildFunction {
+                            origin = SirOrigin.Unknown
+                            visibility = SirVisibility.PUBLIC
+                            name = "foo"
+                            returnType = SirNominalType(
+                                SirSwiftModule.bool
+                            )
+                            body = SirFunctionBody(listOf("<SHOULD NOT BE VISIBLE>"))
+                        }
+                    )
+
+                    declarations.add(
+                        buildVariable {
+                            origin = SirOrigin.Unknown
+                            visibility = SirVisibility.PUBLIC
+                            name = "bar"
+                            type = SirNominalType(
+                                SirSwiftModule.bool
+                            )
+                            getter = buildGetter {
+                                body = SirFunctionBody(listOf("<SHOULD NOT BE VISIBLE>"))
+                            }
+                            setter = buildSetter {
+                                body = SirFunctionBody(listOf("<SHOULD NOT BE VISIBLE>"))
+                            }
+                        }
+                    )
+
+                    declarations.add(
+                        buildInit {
+                            origin = SirOrigin.Unknown
+                            visibility = SirVisibility.PUBLIC
+                            isFailable = false
+                            body = SirFunctionBody(listOf("<SHOULD NOT BE VISIBLE>"))
+                        }
+                    )
+                }.attachDeclarations()
+            )
+        }.attachDeclarations()
+
+        runTest(
+            module,
+            "testData/protocol_declarations"
         )
     }
 }

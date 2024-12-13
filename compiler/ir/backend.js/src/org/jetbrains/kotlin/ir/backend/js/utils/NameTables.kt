@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -138,15 +139,24 @@ fun calculateJsFunctionSignature(declaration: IrFunction, context: JsIrBackendCo
             nameBuilder.append("_").append(typeParam.name.asString()).append(typeParam.superTypes.joinTypes(context))
         }
     }
-    declaration.extensionReceiverParameter?.let {
-        val superTypes = it.type.superTypes().joinTypes(context)
-        nameBuilder.append("_r$${it.type.asString(context)}$superTypes")
-    }
-    declaration.valueParameters.ifNotEmpty {
-        joinTo(nameBuilder, "") {
-            val defaultValueSign = if (it.origin == JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER) "?" else ""
-            val superTypes = it.type.superTypes().joinTypes(context)
-            "_${it.type.asString(context)}$superTypes$defaultValueSign"
+
+    for (parameter in declaration.parameters) {
+        when (parameter.kind) {
+            IrParameterKind.DispatchReceiver -> continue
+            IrParameterKind.ExtensionReceiver -> {
+                nameBuilder.append("_r$")
+            }
+            IrParameterKind.Context -> {
+                nameBuilder.append("_c$")
+            }
+            IrParameterKind.Regular -> {
+                nameBuilder.append("_")
+            }
+        }
+        nameBuilder.append(parameter.type.asString(context))
+        nameBuilder.append(parameter.type.superTypes().joinTypes(context))
+        if (parameter.origin == JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER) {
+            nameBuilder.append("?")
         }
     }
     declaration.returnType.let {

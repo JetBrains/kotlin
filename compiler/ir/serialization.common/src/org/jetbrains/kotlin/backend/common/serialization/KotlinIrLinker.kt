@@ -11,18 +11,21 @@ import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
-import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.isPublicApi
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -40,17 +43,28 @@ abstract class KotlinIrLinker(
 ) : IrDeserializer, FileLocalAwareLinker {
     val irInterner = IrInterningService()
 
+    /**
+     * This is the queue of modules containing top-level declarations to be deserialized. This is
+     * the third-layer queue on top of [BasicIrModuleDeserializer.ModuleDeserializationState.filesWithPendingTopLevels] and
+     * [FileDeserializationState.reachableTopLevels].
+     *
+     * A module can be enqueued using [BasicIrModuleDeserializer.ModuleDeserializationState.enqueueFile].
+     * TODO: provide a more clear API for enqueueing IR modules, KT-73819
+     *
+     * The deserialization happens on invocation of [deserializeAllReachableTopLevels]. This in its turn
+     * invokes [IrModuleDeserializer.deserializeReachableDeclarations] for each scheduled module.
+     *
+     * Note: A module is removed from the queue after all top-level declarations scheduled for
+     * deserialization in that module have been actually deserialized. Later the module can be enqueued
+     * once again to deserialize other top-level declaration(s). This process can be repeated multiple times.
+     */
     val modulesWithReachableTopLevels = linkedSetOf<IrModuleDeserializer>()
 
     protected val deserializersForModules = linkedMapOf<String, IrModuleDeserializer>()
 
     abstract val fakeOverrideBuilder: IrLinkerFakeOverrideProvider
 
-    abstract val translationPluginContext: TranslationPluginContext?
-
     private val triedToDeserializeDeclarationForSymbol = hashSetOf<IrSymbol>()
-
-    private lateinit var linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>
 
     open val partialLinkageSupport: PartialLinkageSupportForLinker get() = PartialLinkageSupportForLinker.DISABLED
 
@@ -102,6 +116,9 @@ abstract class KotlinIrLinker(
 
     protected abstract fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean
 
+    /**
+     * Run deserialization of top-level declarations previously scheduled for deserialization in the current [KotlinIrLinker].
+     */
     fun deserializeAllReachableTopLevels() {
         while (modulesWithReachableTopLevels.isNotEmpty()) {
             val moduleDeserializer = modulesWithReachableTopLevels.first()
@@ -125,24 +142,6 @@ abstract class KotlinIrLinker(
 
     protected open fun platformSpecificSymbol(symbol: IrSymbol): Boolean = false
 
-    private fun tryResolveCustomDeclaration(symbol: IrSymbol): IrDeclaration? {
-        val descriptor = if (symbol.hasDescriptor) symbol.descriptor else return null
-        if (descriptor is CallableMemberDescriptor) {
-            if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-                // skip fake overrides
-                return null
-            }
-        }
-
-        return translationPluginContext?.let { ctx ->
-            linkerExtensions.firstNotNullOfOrNull {
-                it.resolveSymbol(symbol, ctx)
-            }?.also {
-                require(symbol.owner == it)
-            }
-        }
-    }
-
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration? =
         deserializeOrResolveDeclaration(symbol, false)
 
@@ -155,9 +154,7 @@ abstract class KotlinIrLinker(
 
         if (!symbol.isBound) {
             try {
-                findDeserializedDeclarationForSymbol(symbol)
-                    ?: tryResolveCustomDeclaration(symbol)
-                    ?: return null
+                findDeserializedDeclarationForSymbol(symbol) ?: return null
             } catch (e: IrSymbolTypeMismatchException) {
                 SymbolTypeMismatch(e, deserializersForModules.values, userVisibleIrModulesSupport).raiseIssue(messageCollector)
             }
@@ -195,8 +192,7 @@ abstract class KotlinIrLinker(
     protected open fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>): IrModuleDeserializer =
         CurrentModuleDeserializer(moduleFragment, dependencies)
 
-    override fun init(moduleFragment: IrModuleFragment?, extensions: Collection<IrDeserializer.IrLinkerExtension>) {
-        linkerExtensions = extensions
+    override fun init(moduleFragment: IrModuleFragment?) {
         if (moduleFragment != null) {
             val currentModuleDependencies = moduleFragment.descriptor.allDependencyModules.map {
                 resolveModuleDeserializer(it, null)
@@ -287,9 +283,7 @@ abstract class KotlinIrLinker(
             fixCallableReferences()
 
             // Finally, generate stubs for the remaining unbound symbols and patch every usage of any unbound symbol inside the IR tree.
-            partialLinkageSupport.generateStubsAndPatchUsages(symbolTable) {
-                deserializersForModules.values.asSequence().map { it.moduleFragment }
-            }
+            partialLinkageSupport.generateStubsAndPatchUsages(symbolTable)
         }
         // TODO: fix IrPluginContext to make it not produce additional external reference
         // symbolTable.noUnboundLeft("unbound after fake overrides:")

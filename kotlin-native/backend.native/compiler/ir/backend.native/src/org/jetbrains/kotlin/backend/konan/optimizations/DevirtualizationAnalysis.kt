@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
@@ -1340,7 +1339,7 @@ internal object DevirtualizationAnalysis {
                     val argument = coercion.getValueArgument(0)!!
                     val symbol = coercion.symbol
                     if (tempName != null)
-                        PossiblyCoercedValue.OverVariable(irTemporary(parent, argument, tempName, symbol.owner.explicitParameters.single().type), symbol)
+                        PossiblyCoercedValue.OverVariable(irTemporary(parent, argument, tempName, symbol.owner.parameters.single().type), symbol)
                     else PossiblyCoercedValue.OverExpression(argument, symbol)
                 } else {
                     if (tempName != null)
@@ -1390,8 +1389,8 @@ internal object DevirtualizationAnalysis {
                     callSite.origin,
                     actualCallee.parentAsClass.symbol
             )
-            assert(actualCallee.explicitParametersCount == arguments.size) {
-                "Incorrect number of arguments: expected [${actualCallee.explicitParametersCount}] but was [${arguments.size}]\n" +
+            assert(actualCallee.parameters.size == arguments.size) {
+                "Incorrect number of arguments: expected [${actualCallee.parameters.size}] but was [${arguments.size}]\n" +
                         actualCallee.dump()
             }
             arguments.forEachIndexed { index, argument -> call.putArgument(index, argument) }

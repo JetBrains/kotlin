@@ -50,7 +50,7 @@ internal class NativeRuntimeReflectionIrBuilder(
 
     override fun irKTypeOfReified(type: IrType): IrExpression {
         return irCall(symbols.typeOf).apply {
-            putTypeArgument(0, type)
+            typeArguments[0] = type
         }
     }
 

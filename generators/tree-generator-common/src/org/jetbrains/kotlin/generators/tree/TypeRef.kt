@@ -276,7 +276,11 @@ class TypeVariable(
 
 fun <P : TypeParameterRef> KClass<*>.asRef(): ClassRef<P> {
     val qualifiedName = this.qualifiedName ?: error("$this doesn't have qualified name and thus cannot be converted to ClassRef")
-    val kind = if (java.isInterface) TypeKind.Interface else TypeKind.Class
+    return java.asRef(qualifiedName)
+}
+
+fun <P : TypeParameterRef> Class<*>.asRef(qualifiedName: String = this.name): ClassRef<P> {
+    val kind = if (isInterface) TypeKind.Interface else TypeKind.Class
     val parts = qualifiedName.split('.')
     val indexWhereClassNameStarts = parts.indexOfFirst { it.first().isUpperCase() }
     val packageName = parts.take(indexWhereClassNameStarts).joinToString(separator = ".")

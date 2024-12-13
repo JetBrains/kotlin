@@ -1,4 +1,6 @@
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
+// RENDER_DIAGNOSTICS_FULL_TEXT
 interface A {
     fun b(a : Int)
 }

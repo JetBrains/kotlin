@@ -144,7 +144,7 @@ fun IrDeclarationWithName.hasTopLevelEqualFqName(packageName: String, declaratio
     }
 
 fun IrSymbol.hasEqualFqName(fqName: FqName): Boolean {
-    return this is IrClassSymbol && with(signature as? IdSignature.CommonSignature ?: return false) {
+    return with(signature as? IdSignature.CommonSignature ?: return false) {
         // optimized version of FqName("$packageFqName.$declarationFqName") == fqName
         val fqNameAsString = fqName.asString()
         fqNameAsString.length == packageFqName.length + 1 + declarationFqName.length &&
@@ -155,7 +155,7 @@ fun IrSymbol.hasEqualFqName(fqName: FqName): Boolean {
 }
 
 private fun IrSymbol.hasTopLevelEqualFqName(packageName: String, declarationName: String): Boolean {
-    return this is IrClassSymbol && with(signature as? IdSignature.CommonSignature ?: return false) {
+    return with(signature as? IdSignature.CommonSignature ?: return false) {
         // optimized version of FqName("$packageFqName.$declarationFqName") == fqName
         packageFqName == packageName && declarationFqName == declarationName
     }

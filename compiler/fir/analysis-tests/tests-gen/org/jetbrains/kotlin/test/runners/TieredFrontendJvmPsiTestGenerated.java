@@ -4483,6 +4483,24 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
       }
 
       @Test
+      @TestMetadata("dslMarker.kt")
+      public void testDslMarker() {
+        runTest("compiler/testData/diagnostics/tests/contextParameters/dslMarker.kt");
+      }
+
+      @Test
+      @TestMetadata("invoke.kt")
+      public void testInvoke() {
+        runTest("compiler/testData/diagnostics/tests/contextParameters/invoke.kt");
+      }
+
+      @Test
+      @TestMetadata("invokeWithReceiverAgainstContextFunctionTypeContextDisabled.kt")
+      public void testInvokeWithReceiverAgainstContextFunctionTypeContextDisabled() {
+        runTest("compiler/testData/diagnostics/tests/contextParameters/invokeWithReceiverAgainstContextFunctionTypeContextDisabled.kt");
+      }
+
+      @Test
       @TestMetadata("overloadAmbiguity.kt")
       public void testOverloadAmbiguity() {
         runTest("compiler/testData/diagnostics/tests/contextParameters/overloadAmbiguity.kt");
@@ -7756,6 +7774,12 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
       }
 
       @Test
+      @TestMetadata("uninitializedTypeArgumentsMappingIfErrorCandidates.kt")
+      public void testUninitializedTypeArgumentsMappingIfErrorCandidates() {
+        runTest("compiler/testData/diagnostics/tests/exceptions/uninitializedTypeArgumentsMappingIfErrorCandidates.kt");
+      }
+
+      @Test
       @TestMetadata("unresolvedReferenceDuringProjectionRelationChecking.kt")
       public void testUnresolvedReferenceDuringProjectionRelationChecking() {
         runTest("compiler/testData/diagnostics/tests/exceptions/unresolvedReferenceDuringProjectionRelationChecking.kt");
@@ -8802,6 +8826,18 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
       @TestMetadata("conflictingStarAndTypeParameterBounds.kt")
       public void testConflictingStarAndTypeParameterBounds() {
         runTest("compiler/testData/diagnostics/tests/generics/conflictingStarAndTypeParameterBounds.kt");
+      }
+
+      @Test
+      @TestMetadata("constructorOnGenericQualifier.kt")
+      public void testConstructorOnGenericQualifier() {
+        runTest("compiler/testData/diagnostics/tests/generics/constructorOnGenericQualifier.kt");
+      }
+
+      @Test
+      @TestMetadata("constructorOnGenericQualifierForbidden.kt")
+      public void testConstructorOnGenericQualifierForbidden() {
+        runTest("compiler/testData/diagnostics/tests/generics/constructorOnGenericQualifierForbidden.kt");
       }
 
       @Test
@@ -14361,6 +14397,12 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
         }
 
         @Test
+        @TestMetadata("syntheticPropertyFromKotlin_error.kt")
+        public void testSyntheticPropertyFromKotlin_error() {
+          runTest("compiler/testData/diagnostics/tests/j+k/properties/syntheticPropertyFromKotlin_error.kt");
+        }
+
+        @Test
         @TestMetadata("syntheticPropertyFromKotlin_k1Like.kt")
         public void testSyntheticPropertyFromKotlin_k1Like() {
           runTest("compiler/testData/diagnostics/tests/j+k/properties/syntheticPropertyFromKotlin_k1Like.kt");
@@ -14854,6 +14896,12 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
       @TestMetadata("inlineParameters.kt")
       public void testInlineParameters() {
         runTest("compiler/testData/diagnostics/tests/modifiers/inlineParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineValueClass.kt")
+      public void testInlineValueClass() {
+        runTest("compiler/testData/diagnostics/tests/modifiers/inlineValueClass.kt");
       }
 
       @Test
@@ -19047,9 +19095,21 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
         }
 
         @Test
+        @TestMetadata("callableReferenceAsCallArgument.kt")
+        public void testCallableReferenceAsCallArgument() {
+          runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/callableReferenceAsCallArgument.kt");
+        }
+
+        @Test
         @TestMetadata("callableReferences.kt")
         public void testCallableReferences() {
           runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/callableReferences.kt");
+        }
+
+        @Test
+        @TestMetadata("dslMarkerOnExpectedTypeForInvokeExtensionCall.kt")
+        public void testDslMarkerOnExpectedTypeForInvokeExtensionCall() {
+          runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/dslMarkerOnExpectedTypeForInvokeExtensionCall.kt");
         }
 
         @Test
@@ -28486,15 +28546,104 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
         }
 
         @Test
-        @TestMetadata("nameClashes.kt")
-        public void testNameClashes() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/nameClashes.kt");
-        }
-
-        @Test
         @TestMetadata("unsupportedContextParameters.kt")
         public void testUnsupportedContextParameters() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/unsupportedContextParameters.kt");
+        }
+
+        @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages")
+        @TestDataPath("$PROJECT_ROOT")
+        public class DeclarationAndUsages {
+          @Test
+          @TestMetadata("contextOnGetterSetter.kt")
+          public void testContextOnGetterSetter() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/contextOnGetterSetter.kt");
+          }
+
+          @Test
+          @TestMetadata("emptyContextName.kt")
+          public void testEmptyContextName() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/emptyContextName.kt");
+          }
+
+          @Test
+          @TestMetadata("emptyListOfContextParameters.kt")
+          public void testEmptyListOfContextParameters() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/emptyListOfContextParameters.kt");
+          }
+
+          @Test
+          @TestMetadata("initializerInProperty.kt")
+          public void testInitializerInProperty() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/initializerInProperty.kt");
+          }
+
+          @Test
+          @TestMetadata("inlineForTypeWithContext.kt")
+          public void testInlineForTypeWithContext() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/inlineForTypeWithContext.kt");
+          }
+
+          @Test
+          @TestMetadata("multipleContextsWithTheSameType.kt")
+          public void testMultipleContextsWithTheSameType() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/multipleContextsWithTheSameType.kt");
+          }
+
+          @Test
+          @TestMetadata("nameClashes.kt")
+          public void testNameClashes() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/nameClashes.kt");
+          }
+
+          @Test
+          @TestMetadata("onClassifierDeclaration.kt")
+          public void testOnClassifierDeclaration() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/onClassifierDeclaration.kt");
+          }
+
+          @Test
+          @TestMetadata("onConstructor.kt")
+          public void testOnConstructor() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/onConstructor.kt");
+          }
+
+          @Test
+          @TestMetadata("parameterModifiersOnContextParameter.kt")
+          public void testParameterModifiersOnContextParameter() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/parameterModifiersOnContextParameter.kt");
+          }
+
+          @Test
+          @TestMetadata("parameterWithDefault.kt")
+          public void testParameterWithDefault() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/parameterWithDefault.kt");
+          }
+
+          @Test
+          @TestMetadata("usageWithoutContext.kt")
+          public void testUsageWithoutContext() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/usageWithoutContext.kt");
+          }
+
+          @Test
+          @TestMetadata("usageWithoutContextForMultipleParameters.kt")
+          public void testUsageWithoutContextForMultipleParameters() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/usageWithoutContextForMultipleParameters.kt");
+          }
+
+          @Test
+          @TestMetadata("valVarOnContextParameter.kt")
+          public void testValVarOnContextParameter() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/valVarOnContextParameter.kt");
+          }
+
+          @Test
+          @TestMetadata("visibilityOfContextTypeOnFunction.kt")
+          public void testVisibilityOfContextTypeOnFunction() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/visibilityOfContextTypeOnFunction.kt");
+          }
         }
       }
     }
@@ -29135,6 +29284,12 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/expresssions/operators")
       @TestDataPath("$PROJECT_ROOT")
       public class Operators {
+        @Test
+        @TestMetadata("binaryOpIntStackOverflow.kt")
+        public void testBinaryOpIntStackOverflow() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/binaryOpIntStackOverflow.kt");
+        }
+
         @Test
         @TestMetadata("plusAndPlusAssign.kt")
         public void testPlusAndPlusAssign() {
@@ -30206,6 +30361,29 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
     }
 
     @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Annotations {
+      @Test
+      @TestMetadata("annotationDefaultTargetFirstOnly.kt")
+      public void testAnnotationDefaultTargetFirstOnly() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationDefaultTargetFirstOnly.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationDefaultTargetFirstOnlyWarn.kt")
+      public void testAnnotationDefaultTargetFirstOnlyWarn() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationDefaultTargetFirstOnlyWarn.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationDefaultTargetParamProperty.kt")
+      public void testAnnotationDefaultTargetParamProperty() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationDefaultTargetParamProperty.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences")
     @TestDataPath("$PROJECT_ROOT")
     public class CallableReferences {
@@ -30476,6 +30654,18 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
       @TestMetadata("builderInferenceFromStdlib.kt")
       public void testBuilderInferenceFromStdlib() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/builderInferenceFromStdlib.kt");
+      }
+
+      @Test
+      @TestMetadata("subAtomAlreadyInitialized.kt")
+      public void testSubAtomAlreadyInitialized() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/subAtomAlreadyInitialized.kt");
+      }
+
+      @Test
+      @TestMetadata("subAtomAlreadyInitialized2.kt")
+      public void testSubAtomAlreadyInitialized2() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/subAtomAlreadyInitialized2.kt");
       }
     }
 

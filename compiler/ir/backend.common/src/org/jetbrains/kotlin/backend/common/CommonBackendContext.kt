@@ -7,14 +7,10 @@ package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.phaser.BackendContextHolder
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.LoggingContext
-import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irString
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.ir.types.IrType
@@ -26,14 +22,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
  * A context that is used to pass data to the second stage compiler lowerings
  * (those that are executed after deserializing IR from KLIBs, or any lowering in the JVM backend).
  */
-interface CommonBackendContext : LoweringContext, LoggingContext, ErrorReportingContext, BackendContextHolder {
+interface CommonBackendContext : LoweringContext, BackendContextHolder {
     val typeSystem: IrTypeSystemContext
 
     override val heldBackendContext: CommonBackendContext
         get() = this
-
-    override val messageCollector: MessageCollector
-        get() = configuration.messageCollector
 
     val preferJavaLikeCounterLoop: Boolean
         get() = false

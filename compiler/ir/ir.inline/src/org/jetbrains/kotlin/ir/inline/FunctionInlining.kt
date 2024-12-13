@@ -54,7 +54,7 @@ interface CallInlinerStrategy {
     object DEFAULT : CallInlinerStrategy {
         override fun postProcessTypeOf(expression: IrCall, nonSubstitutedTypeArgument: IrType): IrExpression {
             return expression.apply {
-                putTypeArgument(0, nonSubstitutedTypeArgument)
+                typeArguments[0] = nonSubstitutedTypeArgument
             }
         }
     }
@@ -196,15 +196,15 @@ open class FunctionInlining(
         if (actualCallee?.body == null) {
             if (expression is IrCall && Symbols.isTypeOfIntrinsic(calleeSymbol)) {
                 inlineFunctionResolver.callInlinerStrategy.at(currentScope!!.scope, expression)
-                return inlineFunctionResolver.callInlinerStrategy.postProcessTypeOf(expression, expression.getTypeArgument(0)!!)
+                return inlineFunctionResolver.callInlinerStrategy.postProcessTypeOf(expression, expression.typeArguments[0]!!)
             }
             return expression
         }
 
         withinScope(actualCallee) {
             actualCallee.body?.transformChildrenVoid()
-            actualCallee.valueParameters.forEachIndexed { index, param ->
-                if (expression.getValueArgument(index) == null) {
+            actualCallee.parameters.forEachIndexed { index, param ->
+                if (expression.arguments[index] == null) {
                     // Default values can recursively reference [callee] - transform only needed.
                     param.defaultValue = param.defaultValue?.transform(this@FunctionInlining, null)
                 }
@@ -261,8 +261,8 @@ open class FunctionInlining(
                     is IrSimpleFunction -> callee.typeParameters
                 }
             val typeArguments =
-                (0 until callSite.typeArgumentsCount).associate {
-                    typeParameters[it].symbol to callSite.getTypeArgument(it)
+                callSite.typeArguments.indices.associate {
+                    typeParameters[it].symbol to callSite.typeArguments[it]
                 }
             InlineFunctionBodyPreprocessor(typeArguments, parent, inlineFunctionResolver.callInlinerStrategy)
         }
@@ -432,7 +432,7 @@ open class FunctionInlining(
                 irFunctionReference.transformChildrenVoid(this)
 
                 val function = irFunctionReference.symbol.owner
-                val functionParameters = function.explicitParameters
+                val functionParameters = function.parameters
                 val boundFunctionParameters = irFunctionReference.getArgumentsWithIr()
                 val unboundFunctionParameters = functionParameters - boundFunctionParameters.map { it.first }
                 val boundFunctionParametersMap = boundFunctionParameters.associate { it.first to it.second }
@@ -509,16 +509,13 @@ open class FunctionInlining(
                                 )
                             }
                         }
-                        val parameterToSet = when (parameter) {
-                            function.dispatchReceiverParameter -> inlinedFunction.dispatchReceiverParameter!!
-                            function.extensionReceiverParameter -> inlinedFunction.extensionReceiverParameter!!
-                            else -> inlinedFunction.valueParameters[parameter.indexInOldValueParameters]
-                        }
-                        putArgument(parameterToSet, argument.doImplicitCastIfNeededTo(parameterToSet.type))
+                        val parameterToSet = inlinedFunction.parameters[parameter.indexInParameters]
+                        arguments[parameterToSet] = argument.doImplicitCastIfNeededTo(parameterToSet.type)
                     }
                     assert(unboundIndex == valueParameters.size) { "Not all arguments of the callee are used" }
-                    for (index in 0 until irFunctionReference.typeArgumentsCount)
-                        putTypeArgument(index, irFunctionReference.getTypeArgument(index))
+                    for (index in irFunctionReference.typeArguments.indices) {
+                        typeArguments[index] = irFunctionReference.typeArguments[index]
+                    }
                 }
 
                 return if (inlineFunctionResolver.needsInlining(inlinedFunction) || inlinedFunction.isStubForInline()) {
@@ -689,7 +686,7 @@ open class FunctionInlining(
 
                     else -> {
                         val message = "Incomplete expression: call to ${callee.render()} " +
-                                "has no argument at index ${parameter.indexInOldValueParameters}"
+                                "has no argument at index ${parameter.indexInParameters}"
                         throw Error(message)
                     }
                 }
@@ -705,11 +702,6 @@ open class FunctionInlining(
             val arguments = reference.getArgumentsWithIr().map { ParameterToArgument(it.first, it.second) }
             val evaluationStatements = mutableListOf<IrVariable>()
             val substitutor = ParameterSubstitutor()
-            val referenced = when (reference) {
-                is IrFunctionReference -> reference.symbol.owner
-                is IrPropertyReference -> reference.getter!!.owner
-                else -> error(this)
-            }
             arguments.forEach {
                 // Arguments may reference the previous ones - substitute them.
                 val irExpression = it.argumentExpression.transform(substitutor, data = null)
@@ -733,11 +725,7 @@ open class FunctionInlining(
 
                     irGetValueWithoutLocation(newVariable.symbol)
                 }
-                when (it.parameter) {
-                    referenced.dispatchReceiverParameter -> reference.dispatchReceiver = newArgument
-                    referenced.extensionReceiverParameter -> reference.extensionReceiver = newArgument
-                    else -> reference.putValueArgument(it.parameter.indexInOldValueParameters, newArgument)
-                }
+                reference.arguments[it.parameter] = newArgument
             }
             return evaluationStatements
         }
@@ -828,7 +816,7 @@ open class FunctionInlining(
                     statements.add(variableInitializer.doImplicitCastIfNeededTo(parameter.type))
                 },
                 isMutable = false,
-                origin = if (parameter == callee.extensionReceiverParameter) {
+                origin = if (parameter.kind == IrParameterKind.ExtensionReceiver) {
                     IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER
                 } else {
                     IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER

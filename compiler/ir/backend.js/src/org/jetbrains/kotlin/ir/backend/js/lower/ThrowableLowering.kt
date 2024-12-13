@@ -41,15 +41,15 @@ class ThrowableLowering(val context: JsIrBackendContext, val extendThrowableFunc
     }
 
     private fun IrFunctionAccessExpression.extractThrowableArguments(): ThrowableArguments =
-        when (valueArgumentsCount) {
+        when (arguments.size) {
             0 -> ThrowableArguments(undefinedValue(), undefinedValue())
             2 -> ThrowableArguments(
-                message = getValueArgument(0)!!,
-                cause = getValueArgument(1)!!
+                message = arguments[0]!!,
+                cause = arguments[1]!!
             )
             else -> {
-                val arg = getValueArgument(0)!!
-                val parameter = symbol.owner.valueParameters[0]
+                val arg = arguments[0]!!
+                val parameter = symbol.owner.parameters[0]
                 when {
                     parameter.type.isNullableString() -> ThrowableArguments(message = arg, cause = undefinedValue())
                     else -> {
@@ -76,8 +76,8 @@ class ThrowableLowering(val context: JsIrBackendContext, val extendThrowableFunc
                     startOffset, endOffset, type, newThrowableFunction,
                     typeArgumentsCount = 0
                 ).also {
-                    it.putValueArgument(0, messageArg)
-                    it.putValueArgument(1, causeArg)
+                    it.arguments[0] = messageArg
+                    it.arguments[1] = causeArg
                 }
             }
         }
@@ -95,10 +95,10 @@ class ThrowableLowering(val context: JsIrBackendContext, val extendThrowableFunc
                 IrCallImpl(
                     startOffset, endOffset, type, extendThrowableFunction,
                     typeArgumentsCount = 0
-                ).also {
-                    it.putValueArgument(0, thisReceiver)
-                    it.putValueArgument(1, messageArg)
-                    it.putValueArgument(2, causeArg)
+                ).apply {
+                    arguments[0] = thisReceiver
+                    arguments[1] = messageArg
+                    arguments[2] = causeArg
                 }
             }
 

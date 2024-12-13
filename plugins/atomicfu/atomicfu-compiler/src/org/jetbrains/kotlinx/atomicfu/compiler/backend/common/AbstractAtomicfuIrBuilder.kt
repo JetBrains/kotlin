@@ -276,10 +276,10 @@ abstract class AbstractAtomicfuIrBuilder(
         atomicArrayClass.getSingleArgCtorOrNull { argType -> argType.isArray() }?.let { cons ->
             return irCall(cons).apply {
                 val arrayOfNulls = irCall(atomicfuSymbols.arrayOfNulls).apply {
-                    putTypeArgument(0, valueType)
+                    typeArguments[0] = valueType
                     putValueArgument(0, size)
                 }
-                putTypeArgument(0, valueType)
+                typeArguments[0] = valueType
                 putValueArgument(0, arrayOfNulls)
                 this.dispatchReceiver = dispatchReceiver
             }

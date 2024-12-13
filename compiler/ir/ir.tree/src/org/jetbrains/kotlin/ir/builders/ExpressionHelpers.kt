@@ -220,7 +220,7 @@ fun IrBuilderWithScope.irCall(
 ): IrMemberAccessExpression<*> =
     irCall(callee, type).apply {
         typeArguments.forEachIndexed { index, irType ->
-            this.putTypeArgument(index, irType)
+            this.typeArguments[index] = irType
         }
     }
 
@@ -233,7 +233,7 @@ fun IrBuilderWithScope.irCallConstructor(callee: IrConstructorSymbol, typeArgume
         typeArguments.size - callee.owner.typeParameters.size
     ).apply {
         typeArguments.forEachIndexed { index, irType ->
-            this.putTypeArgument(index, irType)
+            this.typeArguments[index] = irType
         }
     }
 
@@ -465,4 +465,23 @@ fun IrBuilderWithScope.irConstantObject(
         },
         typeArguments
     )
+}
+
+fun IrBuilder.irRichFunctionReference(
+    invokeFunction: IrSimpleFunction,
+    superType: IrType,
+    reflectionTargetSymbol: IrFunctionSymbol?,
+    overriddenFunctionSymbol: IrSimpleFunctionSymbol,
+    captures: List<IrExpression>,
+    origin: IrStatementOrigin?,
+): IrRichFunctionReferenceImpl = IrRichFunctionReferenceImpl(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = superType,
+    reflectionTargetSymbol = reflectionTargetSymbol,
+    overriddenFunctionSymbol = overriddenFunctionSymbol,
+    invokeFunction = invokeFunction,
+    origin = origin
+).apply {
+    boundValues += captures
 }

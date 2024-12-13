@@ -24,18 +24,19 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
-import org.jetbrains.kotlin.cli.jvm.compiler.*
-import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.convertToIrAndActualizeForJvm
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
+import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.convertToIrAndActualizeForJvm
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.*
@@ -229,22 +230,15 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         val irModuleFragment = frontendResult.firResult.irModuleFragment
         val components = frontendResult.firResult.components
 
-        val generationState = GenerationState.Builder(
+        val generationState = GenerationState(
             project,
-            ClassBuilderFactories.TEST,
             irModuleFragment.descriptor,
-            NoScopeRecordCliBindingTrace(project).bindingContext,
-            configuration
-        ).jvmBackendClassResolver(
-            FirJvmBackendClassResolver(components)
-        ).build()
-
-        generationState.beforeCompile()
-        val codegenFactory = JvmIrCodegenFactory(
             configuration,
-            configuration.phaseConfig
+            ClassBuilderFactories.TEST,
+            jvmBackendClassResolver = FirJvmBackendClassResolver(components),
         )
-        codegenFactory.generateModuleInFrontendIRMode(
+
+        JvmIrCodegenFactory(configuration).generateModuleInFrontendIRMode(
             generationState,
             irModuleFragment,
             frontendResult.firResult.symbolTable,

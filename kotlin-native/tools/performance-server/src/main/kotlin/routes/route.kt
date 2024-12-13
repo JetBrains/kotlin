@@ -235,16 +235,20 @@ class ExportedPair<T, U>(val first: T, val second: U)
 
 
 // Routing of requests to current server.
-fun router(connector: ElasticSearchConnector) {
-    val express = require("express")
-    val router = express.Router()
+fun router(app: dynamic, connector: ElasticSearchConnector) {
+    val router = app
     val benchmarksDispatcher = BenchmarksIndexesDispatcher(connector, "target",
             listOf("Linux", "Mac OS X", "Windows 10", "Mac OS X Arm64")
     )
     val goldenIndex = GoldenResultsIndex(connector)
     val buildInfoIndex = BuildInfoIndex(connector)
 
-    router.get("/showMappingsQueries") { _, response ->
+    // Main page.
+    router.route("/").get { _, response ->
+        response.render("index")
+    }
+
+    router.route("/showMappingsQueries").get { _, response ->
         val queries = listOf(
                 buildInfoIndex.createMappingQuery,
                 goldenIndex.createMappingQuery,
@@ -274,7 +278,7 @@ fun router(connector: ElasticSearchConnector) {
     }
 
     // Register build on Artifactory.
-    router.post("/register") { request, response ->
+    router.route("/register").post { request, response ->
         val register = BuildRegister.create(JSON.stringify(request.body))
 
         // Get information from TeamCity.
@@ -345,7 +349,7 @@ fun router(connector: ElasticSearchConnector) {
     }
 
     // Register golden results to normalize on Artifactory.
-    router.post("/registerGolden", { request, response ->
+    router.route("/registerGolden").post { request, response ->
         val goldenResultsInfo: GoldenResultsInfo = JSON.parse<GoldenResultsInfo>(JSON.stringify(request.body))
         val goldenReport = goldenResultsInfo.toBenchmarksReport()
         goldenIndex.insert(goldenReport).then { _ ->
@@ -353,10 +357,10 @@ fun router(connector: ElasticSearchConnector) {
         }.catch {
             response.sendStatus(400)
         }
-    })
+    }
 
     // Get builds description with additional information.
-    router.get("/buildsDesc/:target", { request, response ->
+    router.route("/buildsDesc/:target").get { request, response ->
         CachableResponseDispatcher.getResponse(request, response) { success, reject ->
             val target = request.params.target.toString().replace('_', ' ')
 
@@ -403,10 +407,10 @@ fun router(connector: ElasticSearchConnector) {
                 reject()
             }
         }
-    })
+    }
 
     // Get values of current metric.
-    router.get("/metricValue/:target/:metric", { request, response ->
+    router.route("/metricValue/:target/:metric").get { request, response ->
         CachableResponseDispatcher.getResponse(request, response) { success, reject ->
             val metric = request.params.metric
             val target = request.params.target.toString().replace('_', ' ')
@@ -484,10 +488,10 @@ fun router(connector: ElasticSearchConnector) {
                 reject()
             }
         }
-    })
+    }
 
     // Get branches for [target].
-    router.get("/branches", { request, response ->
+    router.route("/branches").get { request, response ->
         CachableResponseDispatcher.getResponse(request, response) { success, reject ->
             distinctValues("branch", buildInfoIndex).then { results ->
                 success(results)
@@ -496,10 +500,10 @@ fun router(connector: ElasticSearchConnector) {
                 reject()
             }
         }
-    })
+    }
 
     // Get build numbers for [target].
-    router.get("/buildsNumbers/:target", { request, response ->
+    router.route("/buildsNumbers/:target").get { request, response ->
         CachableResponseDispatcher.getResponse(request, response) { success, reject ->
             distinctValues("buildNumber", buildInfoIndex).then { results ->
                 success(results)
@@ -508,10 +512,10 @@ fun router(connector: ElasticSearchConnector) {
                 reject()
             }
         }
-    })
+    }
 
     // Conert data and migrate it from Artifactory to DB.
-    router.get("/migrate/:target", { request, response ->
+    router.route("/migrate/:target").get { request, response ->
         val target = urlParameterToBaseFormat(request.params.target)
         val targetPathName = target.replace(" ", "")
         var buildNumber: String? = null
@@ -622,9 +626,9 @@ fun router(connector: ElasticSearchConnector) {
         }.catch {
             response.sendStatus(400)
         }
-    })
+    }
 
-    router.get("/delete/:target", { request, response ->
+    router.route("/delete/:target").get { request, response ->
         val target = urlParameterToBaseFormat(request.params.target)
         var buildNumber: String? = null
         if (request.query != undefined) {
@@ -641,10 +645,10 @@ fun router(connector: ElasticSearchConnector) {
         }.catch {
             response.sendStatus(400)
         }
-    })
+    }
 
     // Get builds description with additional information.
-    router.get("/unstable", { request, response ->
+    router.route("/unstable").get { request, response ->
         CachableResponseDispatcher.getResponse(request, response) { success, reject ->
             getUnstableResults(goldenIndex).then { unstableBenchmarks ->
                 success(unstableBenchmarks)
@@ -654,9 +658,9 @@ fun router(connector: ElasticSearchConnector) {
                 reject()
             }
         }
-    })
+    }
 
-    router.get("/report/:target/:buildNumber", { request, response ->
+    router.route("/report/:target/:buildNumber").get { request, response ->
         val target = urlParameterToBaseFormat(request.params.target)
         val buildNumber = request.params.buildNumber.toString()
         benchmarksDispatcher.getBenchmarksReports(buildNumber, target).then { reports ->
@@ -664,17 +668,12 @@ fun router(connector: ElasticSearchConnector) {
         }.catch {
             response.sendStatus(400)
         }
-    })
+    }
 
-    router.get("/clear", { _, response ->
+    router.route("/clear").get { _, response ->
         CachableResponseDispatcher.clear()
         response.sendStatus(200)
-    })
-
-    // Main page.
-    router.get("/", { _, response ->
-        response.render("index")
-    })
+    }
 
     return router
 }

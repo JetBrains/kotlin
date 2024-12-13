@@ -196,7 +196,7 @@ internal class ComposableTypeTransformer(
                     expression.endOffset,
                     expression.type,
                     newFn.symbol,
-                    expression.typeArgumentsCount,
+                    expression.typeArguments.size,
                     expression.origin,
                     expression.superQualifierSymbol,
                 ).apply {
@@ -279,11 +279,7 @@ internal class ComposableTypeTransformer(
     }
 
     override fun visitMemberAccess(expression: IrMemberAccessExpression<*>): IrExpression {
-        for (i in 0 until expression.typeArgumentsCount) {
-            expression.getTypeArgument(i)?.let {
-                expression.putTypeArgument(i, it.remapType())
-            }
-        }
+        expression.typeArguments.replaceAll { it?.remapType() }
         return super.visitMemberAccess(expression)
     }
 

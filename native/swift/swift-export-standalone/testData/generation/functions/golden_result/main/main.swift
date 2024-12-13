@@ -2,7 +2,7 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 
-public final class Foo : KotlinRuntime.KotlinBase {
+public final class Foo: KotlinRuntime.KotlinBase {
     public override init() {
         let __kt = __root___Foo_init_allocate()
         super.init(__externalRCRef: __kt)
@@ -27,7 +27,7 @@ public func foo(
 public func foo(
     receiver: Swift.Int32?
 ) -> Swift.Void {
-    return __root___foo__TypesOfArguments__Swift_Int32_opt___(receiver.map { it in NSNumber(value: it) } ?? .none)
+    return __root___foo__TypesOfArguments__Swift_Int32_opt___(receiver.map { it in NSNumber(value: it) } ?? nil)
 }
 public func foo(
     receiver: main.Foo
@@ -86,7 +86,7 @@ public extension ExportedKotlinPackages.namespace2 {
     }
 }
 public extension ExportedKotlinPackages.overload {
-    public final class Foo : KotlinRuntime.KotlinBase {
+    public final class Foo: KotlinRuntime.KotlinBase {
         public override init() {
             let __kt = overload_Foo_init_allocate()
             super.init(__externalRCRef: __kt)

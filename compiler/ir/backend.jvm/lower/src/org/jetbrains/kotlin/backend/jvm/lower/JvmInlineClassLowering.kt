@@ -56,7 +56,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
     private val valueMap = mutableMapOf<IrValueSymbol, IrValueDeclaration>()
 
     override fun addBindingsFor(original: IrFunction, replacement: IrFunction) {
-        for ((param, newParam) in original.explicitParameters.zip(replacement.explicitParameters)) {
+        for ((param, newParam) in original.parameters.zip(replacement.parameters)) {
             valueMap[param.symbol] = newParam
         }
     }
@@ -67,7 +67,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             name = mangledName
             returnType = source.returnType
         }.apply {
-            copyParameterDeclarationsFrom(source)
+            copyValueAndTypeParametersFrom(source)
             annotations = source.annotations
             parent = source.parent
             // We need to ensure that this bridge has the same attribute owner as its static inline class replacement, since this
@@ -133,7 +133,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         source.body = context.createIrBuilder(source.symbol, source.startOffset, source.endOffset).run {
             irExprBody(irCall(target).apply {
                 passTypeArgumentsFrom(source)
-                for ((parameter, newParameter) in source.explicitParameters.zip(target.explicitParameters)) {
+                for ((parameter, newParameter) in source.parameters.zip(target.parameters)) {
                     putArgument(newParameter, irGet(parameter))
                 }
             })
@@ -207,7 +207,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         replacement: IrSimpleFunction
     ) {
         copyTypeArgumentsFrom(original)
-        val valueParameterMap = originalFunction.explicitParameters.zip(replacement.explicitParameters).toMap()
+        val valueParameterMap = originalFunction.parameters.zip(replacement.parameters).toMap()
         for ((parameter, argument) in typedArgumentList(originalFunction, original)) {
             if (argument == null) continue
             val newParameter = valueParameterMap.getValue(parameter)
@@ -257,16 +257,16 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         return IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, to, context.ir.symbols.unsafeCoerceIntrinsic).apply {
             val underlyingType = from.erasedUpperBound.inlineClassRepresentation?.underlyingType
             if (underlyingType?.isTypeParameter() == true && !skipCast) {
-                putTypeArgument(0, from)
-                putTypeArgument(1, underlyingType)
+                typeArguments[0] = from
+                typeArguments[1] = underlyingType
                 putValueArgument(
                     0, IrTypeOperatorCallImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET, to, IrTypeOperator.IMPLICIT_CAST, underlyingType, argument
                     )
                 )
             } else {
-                putTypeArgument(0, from)
-                putTypeArgument(1, to)
+                typeArguments[0] = from
+                typeArguments[1] = to
                 putValueArgument(0, argument)
             }
         }
@@ -439,7 +439,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         }.apply {
             // Don't create a default argument stub for the primary constructor
             irConstructor.valueParameters.forEach { it.defaultValue = null }
-            copyParameterDeclarationsFrom(irConstructor)
+            copyValueAndTypeParametersFrom(irConstructor)
             annotations = irConstructor.annotations
             body = context.createIrBuilder(this.symbol).irBlockBody(this) {
                 +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())

@@ -178,8 +178,8 @@ class Fir2IrDelegatedMembersGenerationStrategy(
         origin = IrDeclarationOrigin.DELEGATED_MEMBER
         modality = Modality.OPEN
         if (this is IrSimpleFunction) {
-            dispatchReceiverParameter = null
-            createDispatchReceiverParameter()
+            val dispatchReceiver = createDispatchReceiverParameterWithClassParent()
+            parameters = listOf(dispatchReceiver) + nonDispatchParameters
         }
     }
 
@@ -386,13 +386,11 @@ class Fir2IrDelegatedMembersGenerationStrategy(
             }
             for (index in delegatedFunction.typeParameters.indices) {
                 val parameter = delegatedFunction.typeParameters[index]
-                putTypeArgument(
-                    index, IrSimpleTypeImpl(
-                        parameter.symbol,
-                        hasQuestionMark = false,
-                        arguments = emptyList(),
-                        annotations = emptyList()
-                    )
+                typeArguments[index] = IrSimpleTypeImpl(
+                    parameter.symbol,
+                    hasQuestionMark = false,
+                    arguments = emptyList(),
+                    annotations = emptyList()
                 )
             }
         }

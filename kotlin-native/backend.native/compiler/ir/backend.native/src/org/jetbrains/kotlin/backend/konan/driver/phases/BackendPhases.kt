@@ -6,16 +6,17 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.NativePreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
+import org.jetbrains.kotlin.backend.konan.lower.NativeAssertionWrapperLowering
 import org.jetbrains.kotlin.backend.konan.lower.SpecialBackendChecksTraversal
 import org.jetbrains.kotlin.backend.konan.makeEntryPoint
 import org.jetbrains.kotlin.backend.konan.objcexport.createTestBundle
@@ -82,23 +83,27 @@ internal fun <T : PhaseContext> PhaseEngine<T>.runK2SpecialBackendChecks(fir2IrO
     runPhase(K2SpecialBackendChecksPhase, fir2IrOutput)
 }
 
-private object NativePreSerializationLoweringPhasesProvider : PreSerializationLoweringPhasesProvider<PreSerializationLoweringContext>() {
+private object NativePreSerializationLoweringPhasesProvider : PreSerializationLoweringPhasesProvider<NativePreSerializationLoweringContext>() {
 
-    override val klibAssertionWrapperLowering: ((PreSerializationLoweringContext) -> FileLoweringPass)?
-        get() = null // TODO(KT-71415): Return the actual lowering here
+    override val klibAssertionWrapperLowering: ((NativePreSerializationLoweringContext) -> FileLoweringPass)?
+        get() = ::NativeAssertionWrapperLowering
 
     override val irMangler: KotlinMangler.IrMangler
         get() = KonanManglerIr
 }
 
-internal fun <T : PhaseContext> PhaseEngine<T>.runIrInliner(fir2IrOutput: Fir2IrOutput, environment: KotlinCoreEnvironment): Fir2IrOutput =
-        fir2IrOutput.copy(
-                fir2irActualizedResult = runPreSerializationLoweringPhases(
+internal fun <T : PhaseContext> PhaseEngine<T>.runIrInliner(fir2IrOutput: Fir2IrOutput, environment: KotlinCoreEnvironment): Fir2IrOutput {
+    val loweringContext = NativePreSerializationLoweringContext(fir2IrOutput.fir2irActualizedResult.irBuiltIns, environment.configuration)
+    return fir2IrOutput.copy(
+            fir2irActualizedResult = newEngine(loweringContext) { engine ->
+                engine.runPreSerializationLoweringPhases(
                         fir2IrOutput.fir2irActualizedResult,
                         NativePreSerializationLoweringPhasesProvider,
                         environment.configuration
                 )
-        )
+            }
+    )
+}
 
 internal val EntryPointPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
         name = "addEntryPoint",

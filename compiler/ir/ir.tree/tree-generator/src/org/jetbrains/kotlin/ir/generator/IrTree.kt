@@ -677,10 +677,10 @@ object IrTree : AbstractTreeBuilder() {
         +listField(
             name = "typeArguments",
             baseType = irTypeType.copy(nullable = true),
-            mutability = Array,
+            mutability = MutableList,
         ) {
-            visibility = Visibility.PROTECTED
             deepCopyExcludeFromConstructor = true
+            deepCopyExcludeFromApply = true
         }
     }
     val functionAccessExpression: Element by sealedElement(Expression) {

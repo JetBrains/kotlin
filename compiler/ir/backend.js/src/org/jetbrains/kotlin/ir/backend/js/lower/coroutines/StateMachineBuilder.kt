@@ -50,7 +50,7 @@ class IrDispatchPoint(val target: SuspendState) : IrExpression() {
         set(value) {
             target.entryBlock.type = value
         }
-    
+
     override var attributeOwnerId: IrAttributeContainer = this
     override var originalBeforeInline: IrAttributeContainer? = null
 
@@ -124,8 +124,8 @@ class StateMachineBuilder(
             val thenBlock = JsIrBuilder.buildBlock(unit)
             val elseBlock = JsIrBuilder.buildBlock(unit)
             val check = JsIrBuilder.buildCall(eqeqeqSymbol).apply {
-                putValueArgument(0, exceptionState())
-                putValueArgument(1, IrDispatchPoint(rootExceptionTrap))
+                arguments[0] = exceptionState()
+                arguments[1] = IrDispatchPoint(rootExceptionTrap)
             }
             block.statements += JsIrBuilder.buildIfElse(unit, check, thenBlock, elseBlock)
             thenBlock.statements += JsIrBuilder.buildThrow(
@@ -135,12 +135,12 @@ class StateMachineBuilder(
 
             // TODO: exception table
             elseBlock.statements += JsIrBuilder.buildCall(stateSymbolSetter.symbol, unit).apply {
-                dispatchReceiver = thisReceiver
-                putValueArgument(0, exceptionState())
+                arguments[0] = thisReceiver
+                arguments[1] = exceptionState()
             }
             elseBlock.statements += JsIrBuilder.buildCall(exceptionSymbolSetter.symbol, unit).apply {
-                dispatchReceiver = thisReceiver
-                putValueArgument(0, JsIrBuilder.buildGetValue(globalExceptionSymbol))
+                arguments[0] = thisReceiver
+                arguments[1] = JsIrBuilder.buildGetValue(globalExceptionSymbol)
             }
         } else {
             block.statements += JsIrBuilder.buildThrow(
@@ -201,8 +201,8 @@ class StateMachineBuilder(
         val irDispatch = IrDispatchPoint(target)
         currentState.successors.add(target)
         block.addStatement(JsIrBuilder.buildCall(stateSymbolSetter.symbol, unit).apply {
-            dispatchReceiver = thisReceiver
-            putValueArgument(0, irDispatch)
+            arguments[0] = thisReceiver
+            arguments[1] = irDispatch
         })
         if (andContinue) doContinue(block)
     }
@@ -298,8 +298,8 @@ class StateMachineBuilder(
 
             transformLastExpression {
                 JsIrBuilder.buildCall(stateSymbolSetter.symbol, unit).apply {
-                    dispatchReceiver = thisReceiver
-                    putValueArgument(0, dispatch)
+                    arguments[0] = thisReceiver
+                    arguments[1] = dispatch
                 }
             }
 
@@ -307,8 +307,8 @@ class StateMachineBuilder(
 
             val irReturn = JsIrBuilder.buildReturn(function, getSuspendResultAsType(anyN), nothing)
             val check = JsIrBuilder.buildCall(eqeqeqSymbol).apply {
-                putValueArgument(0, getSuspendResultAsType(anyN))
-                putValueArgument(1, JsIrBuilder.buildCall(context.ir.symbols.coroutineSuspendedGetter))
+                arguments[0] = getSuspendResultAsType(anyN)
+                arguments[1] = JsIrBuilder.buildCall(context.ir.symbols.coroutineSuspendedGetter)
             }
 
             val suspensionBlock = JsIrBuilder.buildBlock(unit, listOf(irReturn))
@@ -316,8 +316,8 @@ class StateMachineBuilder(
 
             if (isInlineClassExpected) {
                 addStatement(JsIrBuilder.buildCall(stateSymbolSetter.symbol, unit).apply {
-                    dispatchReceiver = thisReceiver
-                    putValueArgument(0, IrDispatchPoint(continueState))
+                    arguments[0] = thisReceiver
+                    arguments[1] = IrDispatchPoint(continueState)
                 })
             }
 
@@ -504,13 +504,7 @@ class StateMachineBuilder(
 
     override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression) {
         if (expression !in suspendableNodes) return addStatement(expression)
-
-        val newArguments = transformArguments(expression.arguments.toTypedArray())
-
-        for (i in 0 until expression.arguments.size) {
-            expression.arguments[i] = newArguments[i]!!
-        }
-
+        transformArguments(expression.arguments)
         addStatement(expression)
     }
 
@@ -523,8 +517,8 @@ class StateMachineBuilder(
     override fun visitVararg(expression: IrVararg) {
         if (expression !in suspendableNodes) return addStatement(expression)
         val spreadIndices = mutableSetOf<Int>()
-        val arguments: Array<IrExpression?> = expression.elements
-            .mapIndexed { index, item ->
+        val newArgs = expression.elements
+            .mapIndexedTo(mutableListOf()) { index, item ->
                 if (item is IrSpreadElement) {
                     spreadIndices.add(index)
                     item.expression
@@ -532,10 +526,8 @@ class StateMachineBuilder(
                     item as IrExpression
                 }
             }
-            .toTypedArray()
-        val newArgs = transformArguments(arguments)
+            .apply(this::transformArguments)
             .mapIndexed { index, item ->
-                requireNotNull(item)
                 if (index in spreadIndices) {
                     IrSpreadElementImpl(
                         item.startOffset,
@@ -546,7 +538,6 @@ class StateMachineBuilder(
                     item
                 }
             }
-            .toList()
         addStatement(
             IrVarargImpl(
                 expression.startOffset,
@@ -558,14 +549,10 @@ class StateMachineBuilder(
         )
     }
 
-    private fun transformArguments(arguments: Array<IrExpression?>): Array<IrExpression?> {
-
+    private fun <E : IrExpression?> transformArguments(arguments: MutableList<E>) {
         var suspendableCount = arguments.fold(0) { r, n -> if (n != null && n in suspendableNodes) r + 1 else r }
-
-        val newArguments = arrayOfNulls<IrExpression>(arguments.size)
-
-        for ((i, arg) in arguments.withIndex()) {
-            newArguments[i] = if (arg.isPure(false)) arg else {
+        arguments.replaceAll { arg ->
+            if (arg.isPure(false)) arg else {
                 require(arg != null)
                 if (suspendableCount > 0) {
                     if (arg in suspendableNodes) suspendableCount--
@@ -574,14 +561,13 @@ class StateMachineBuilder(
                     transformLastExpression {
                         irVar.apply { initializer = it }
                     }
-                    JsIrBuilder.buildGetValue(irVar.symbol)
+                    @Suppress("UNCHECKED_CAST")
+                    JsIrBuilder.buildGetValue(irVar.symbol) as E
                 } else {
                     arg.deepCopyWithSymbols(function.owner)
                 }
             }
         }
-
-        return newArguments
     }
 
     override fun visitMemberAccess(expression: IrMemberAccessExpression<*>) {
@@ -591,21 +577,7 @@ class StateMachineBuilder(
             return addStatement(expression)
         }
 
-        val arguments = arrayOfNulls<IrExpression>(expression.valueArgumentsCount + 2)
-        arguments[0] = expression.dispatchReceiver
-        arguments[1] = expression.extensionReceiver
-
-        for (i in 0 until expression.valueArgumentsCount) {
-            arguments[i + 2] = expression.getValueArgument(i)
-        }
-
-        val newArguments = transformArguments(arguments)
-
-        expression.dispatchReceiver = newArguments[0]
-        expression.extensionReceiver = newArguments[1]
-        for (i in 0 until expression.valueArgumentsCount) {
-            expression.putValueArgument(i, newArguments[i + 2])
-        }
+        transformArguments(expression.arguments)
 
         addExceptionEdge()
         addStatement(expression)
@@ -614,10 +586,10 @@ class StateMachineBuilder(
     override fun visitSetField(expression: IrSetField) {
         if (expression !in suspendableNodes) return addStatement(expression)
 
-        val newArguments = transformArguments(arrayOf(expression.receiver, expression.value))
+        val newArguments = mutableListOf(expression.receiver, expression.value).also(this::transformArguments)
 
         val receiver = newArguments[0]
-        val value = newArguments[1] as IrExpression
+        val value = newArguments[1]!!
 
         addStatement(expression.run {
             IrSetFieldImpl(
@@ -637,18 +609,15 @@ class StateMachineBuilder(
     override fun visitStringConcatenation(expression: IrStringConcatenation) {
         if (expression !in suspendableNodes) return addStatement(expression)
 
-        val arguments = arrayOfNulls<IrExpression>(expression.arguments.size)
-
-        expression.arguments.forEachIndexed { i, a -> arguments[i] = a }
-
-        val newArguments = transformArguments(arguments)
+        val newArguments = expression.arguments.toMutableList().apply(this::transformArguments)
 
         addStatement(expression.run {
             IrStringConcatenationImpl(
                 startOffset,
                 endOffset,
                 type,
-                newArguments.map { it!! })
+                newArguments
+            )
         })
     }
 
@@ -779,8 +748,8 @@ class StateMachineBuilder(
     private fun setupExceptionState(target: SuspendState) {
         addStatement(
             JsIrBuilder.buildCall(exStateSymbolSetter.symbol, unit).apply {
-                dispatchReceiver = thisReceiver
-                putValueArgument(0, IrDispatchPoint(target))
+                arguments[0] = thisReceiver
+                arguments[1] = IrDispatchPoint(target)
             }
         )
     }

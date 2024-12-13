@@ -8,8 +8,7 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.Symbols
-import org.jetbrains.kotlin.backend.common.ir.addDispatchReceiver
-import org.jetbrains.kotlin.backend.common.ir.addExtensionReceiver
+import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_CALL_RESULT_NAME
@@ -178,10 +177,14 @@ class JvmSymbols(
         intrinsicsClass.functions.single { it.owner.name.asString() == "checkNotNullExpressionValue" }
 
     val checkNotNull: IrSimpleFunctionSymbol =
-        intrinsicsClass.owner.functions.single { it.name.asString() == "checkNotNull" && it.valueParameters.size == 1 }.symbol
+        intrinsicsClass.owner.functions.single {
+            it.name.asString() == "checkNotNull" && it.hasShape(regularParameters = 1)
+        }.symbol
 
     val checkNotNullWithMessage: IrSimpleFunctionSymbol =
-        intrinsicsClass.owner.functions.single { it.name.asString() == "checkNotNull" && it.valueParameters.size == 2 }.symbol
+        intrinsicsClass.owner.functions.single {
+            it.name.asString() == "checkNotNull" && it.hasShape(regularParameters = 2)
+        }.symbol
 
     val throwNpe: IrSimpleFunctionSymbol =
         intrinsicsClass.functions.single { it.owner.name.asString() == "throwNpe" }
@@ -802,7 +805,7 @@ class JvmSymbols(
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
         }.apply {
             parent = kotlinJvmInternalPackage
-            addDispatchReceiver {
+            parameters += buildReceiverParameter {
                 type = irBuiltIns.anyNType
             }
             addValueParameter("owner", irBuiltIns.stringType)
@@ -851,10 +854,14 @@ class JvmSymbols(
     }
 
     val nonGenericToArray: IrSimpleFunctionSymbol =
-        collectionToArrayClass.functions.single { it.owner.name.asString() == "toArray" && it.owner.valueParameters.size == 1 }
+        collectionToArrayClass.functions.single {
+            it.owner.name.asString() == "toArray" && it.owner.hasShape(regularParameters = 1)
+        }
 
     val genericToArray: IrSimpleFunctionSymbol =
-        collectionToArrayClass.functions.single { it.owner.name.asString() == "toArray" && it.owner.valueParameters.size == 2 }
+        collectionToArrayClass.functions.single {
+            it.owner.name.asString() == "toArray" && it.owner.hasShape(regularParameters = 2)
+        }
 
     val jvmName: IrClassSymbol = createClass(FqName("kotlin.jvm.JvmName"), ClassKind.ANNOTATION_CLASS) { klass ->
         klass.addConstructor().apply {
@@ -870,10 +877,10 @@ class JvmSymbols(
             addGetter().apply {
                 annotations = listOf(
                     IrConstructorCallImpl.fromSymbolOwner(jvmName.typeWith(), jvmName.constructors.single()).apply {
-                        putValueArgument(0, IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irBuiltIns.stringType, "getJavaClass"))
+                        arguments[0] = IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irBuiltIns.stringType, "getJavaClass")
                     }
                 )
-                addExtensionReceiver(irBuiltIns.kClassClass.starProjectedType)
+                parameters += createExtensionReceiver(irBuiltIns.kClassClass.starProjectedType)
                 returnType = javaLangClass.starProjectedType
             }
         }.symbol
@@ -1037,13 +1044,15 @@ class JvmSymbols(
         }
 
     private val defaultValueOfFunction = javaLangString.functions.single {
-        it.owner.name.asString() == "valueOf" && it.owner.valueParameters.singleOrNull()?.type?.isNullableAny() == true
+        it.owner.name.asString() == "valueOf"
+                && it.owner.hasShape(regularParameters = 1, parameterTypes = listOf(irBuiltIns.anyNType))
     }
 
     private val valueOfFunctions: Map<IrType, IrSimpleFunctionSymbol?> =
         context.irBuiltIns.primitiveIrTypes.associateWith { type ->
             javaLangString.functions.singleOrNull {
-                it.owner.name.asString() == "valueOf" && it.owner.valueParameters.singleOrNull()?.type == type
+                it.owner.name.asString() == "valueOf"
+                        && it.owner.hasShape(regularParameters = 1, parameterTypes = listOf(type))
             }
         }
 

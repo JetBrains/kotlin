@@ -58,7 +58,7 @@ abstract class FirWebCommonExternalChecker(private val allowCompanionInInterface
             val classKind = when {
                 declaration.status.isData -> "data class"
                 declaration.status.isInner -> "inner class"
-                declaration.status.isInline -> "value class"
+                declaration.status.isInline || declaration.status.isValue -> "value class"
                 declaration.status.isFun -> "fun interface"
                 declaration.classKind == ClassKind.ANNOTATION_CLASS -> "annotation class"
                 else -> null

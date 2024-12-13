@@ -129,8 +129,6 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(JAVA_TYPE_MISMATCH,
                 "Java type mismatch expected {1} but found {0}. Use explicit cast", RENDER_TYPE, RENDER_TYPE);
 
-        MAP.put(DUPLICATE_CLASS_NAMES, "Duplicate JVM class name ''{0}'' generated from: {1}", STRING, STRING);
-
         MAP.put(UPPER_BOUND_CANNOT_BE_ARRAY, "Upper bound of a type parameter cannot be an array");
 
         MAP.put(INAPPLICABLE_JVM_FIELD, "{0}", STRING);

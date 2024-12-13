@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen.optimization.boxing
 
 import com.intellij.openapi.util.Pair
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.AsmUtil.isBoxedPrimitiveType
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.GenerationState.MultiFieldValueClassUnboxInfo
@@ -78,7 +79,7 @@ class BoxedValueDescriptor(
     fun getUnboxTypeOrOtherwiseMethodReturnType(methodInsnNode: MethodInsnNode?) =
         unboxedTypes.singleOrNull() ?: Type.getReturnType(methodInsnNode!!.desc)
 
-    val isValueClassValue = isValueClassValue(boxedType)
+    val isValueClassValue = !isBoxedPrimitiveType(boxedType)
 
     fun getAssociatedInsns() = associatedInsns.toList()
 
@@ -182,8 +183,4 @@ fun getMultiFieldValueClassUnboxInfo(boxedType: Type, state: GenerationState): M
         state.jvmBackendClassResolver.resolveToClassDescriptors(boxedType).singleOrNull()?.takeIf { it.isMultiFieldValueClass() }
             ?: return null
     return state.multiFieldValueClassUnboxInfo(descriptor)
-}
-
-private fun isValueClassValue(boxedType: Type): Boolean {
-    return !AsmUtil.isBoxedPrimitiveType(boxedType) && boxedType != AsmTypes.K_CLASS_TYPE
 }

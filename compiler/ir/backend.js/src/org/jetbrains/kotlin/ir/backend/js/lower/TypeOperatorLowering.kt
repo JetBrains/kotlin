@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrArithBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.AbstractValueUsageLowering.Companion.getActualType
-import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
@@ -194,8 +193,8 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
             }
 
             private fun nullCheck(value: IrExpression) = JsIrBuilder.buildCall(eqeq).apply {
-                putValueArgument(0, value)
-                putValueArgument(1, litNull)
+                arguments[0] = value
+                arguments[1] = litNull
             }
 
             private fun cacheValue(
@@ -314,8 +313,8 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
 
                 val irBuiltIns = context.irBuiltIns
                 return JsIrBuilder.buildCall(isSuspendFunctionSymbol, irBuiltIns.booleanType).apply {
-                    putValueArgument(0, argument)
-                    putValueArgument(1, JsIrBuilder.buildInt(irBuiltIns.intType, arity))
+                    arguments[0] = argument
+                    arguments[1] = JsIrBuilder.buildInt(irBuiltIns.intType, arity)
                 }
             }
 
@@ -327,54 +326,56 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                     else -> numberMarker
                 }
 
-                val typeOf = JsIrBuilder.buildCall(typeOfIntrinsicSymbol).apply { putValueArgument(0, argument) }
+                val typeOf = JsIrBuilder.buildCall(typeOfIntrinsicSymbol).apply { arguments[0] = argument }
                 return JsIrBuilder.buildCall(eqeq).apply {
-                    putValueArgument(0, typeOf)
-                    putValueArgument(1, marker)
+                    arguments[0] = typeOf
+                    arguments[1] = marker
                 }
             }
 
             private fun wrapTypeReference(toType: IrType) =
-                JsIrBuilder.buildCall(jsClassIntrinsicSymbol).apply { putTypeArgument(0, toType) }
+                JsIrBuilder.buildCall(jsClassIntrinsicSymbol).apply {
+                    typeArguments[0] = toType
+                }
 
             private fun generateGenericArrayCheck(argument: IrExpression) =
-                JsIrBuilder.buildCall(isArraySymbol).apply { putValueArgument(0, argument) }
+                JsIrBuilder.buildCall(isArraySymbol).apply { arguments[0] = argument }
 
             private fun generateNumberCheck(argument: IrExpression) =
-                JsIrBuilder.buildCall(context.intrinsics.isNumberSymbol).apply { putValueArgument(0, argument) }
+                JsIrBuilder.buildCall(context.intrinsics.isNumberSymbol).apply { arguments[0] = argument }
 
             private fun generateComparableCheck(argument: IrExpression) =
-                JsIrBuilder.buildCall(context.intrinsics.isComparableSymbol).apply { putValueArgument(0, argument) }
+                JsIrBuilder.buildCall(context.intrinsics.isComparableSymbol).apply { arguments[0] = argument }
 
             private fun generateCharSequenceCheck(argument: IrExpression) =
-                JsIrBuilder.buildCall(context.intrinsics.isCharSequenceSymbol).apply { putValueArgument(0, argument) }
+                JsIrBuilder.buildCall(context.intrinsics.isCharSequenceSymbol).apply { arguments[0] = argument }
 
             private fun generatePrimitiveArrayTypeCheck(argument: IrExpression, toType: IrType): IrExpression {
                 val f = context.intrinsics.isPrimitiveArray[toType.getPrimitiveArrayElementType()]!!
-                return JsIrBuilder.buildCall(f).apply { putValueArgument(0, argument) }
+                return JsIrBuilder.buildCall(f).apply { arguments[0] = argument }
             }
 
             private fun generateInterfaceCheck(argument: IrExpression, toType: IrType): IrExpression {
                 val irType = wrapTypeReference(toType)
                 return JsIrBuilder.buildCall(isInterfaceSymbol).apply {
-                    putValueArgument(0, argument)
-                    putValueArgument(1, irType)
+                    arguments[0] = argument
+                    arguments[1] = irType
                 }
             }
 
             private fun generateIsExternalObject(argument: IrExpression, toType: IrType): IrExpression {
                 val irType = wrapTypeReference(toType)
                 return JsIrBuilder.buildCall(isExternalObjectSymbol).apply {
-                    putValueArgument(0, argument)
-                    putValueArgument(1, irType)
+                    arguments[0] = argument
+                    arguments[1] = irType
                 }
             }
 
             private fun generateNativeInstanceOf(argument: IrExpression, toType: IrType): IrExpression {
                 val irType = wrapTypeReference(toType)
                 return JsIrBuilder.buildCall(instanceOfIntrinsicSymbol).apply {
-                    putValueArgument(0, argument)
-                    putValueArgument(1, irType)
+                    arguments[0] = argument
+                    arguments[1] = irType
                 }
             }
 
@@ -401,7 +402,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                     toType.isByte() -> maskOp(argument(), byteMask, lit24)
                     toType.isShort() -> maskOp(argument(), shortMask, lit16)
                     toType.isLong() -> JsIrBuilder.buildCall(context.intrinsics.jsToLong).apply {
-                        putValueArgument(0, argument())
+                        arguments[0] = argument()
                     }
                     else -> compilationException(
                         "Unreachable execution (coercion to non-Integer type)",

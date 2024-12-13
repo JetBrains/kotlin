@@ -64,19 +64,18 @@ class JsStaticLowering(private val context: JsIrBackendContext) : DeclarationTra
             copyAnnotationsFrom(originalFun)
 
             parent = proxyParent
-            extensionReceiverParameter = originalFun.extensionReceiverParameter?.copyTo(this)
-            valueParameters = originalFun.valueParameters.map { it.copyTo(this) }
+
+            val substitutionMap = makeTypeParameterSubstitutionMap(originalFun, this)
+            parameters = originalFun.nonDispatchParameters.map { it.copyTo(this, type = it.type.substitute(substitutionMap)) }
 
             body = context.createIrBuilder(symbol).irBlockBody {
                 val delegatingCall = irCall(originalFun).apply {
                     passTypeArgumentsFrom(this@proxy)
+                    arguments.clear()
                     if (originalFun.dispatchReceiverParameter != null) {
-                        dispatchReceiver = irGetObject(originalFun.parentAsClass.symbol)
+                        arguments.add(irGetObject(originalFun.parentAsClass.symbol))
                     }
-                    extensionReceiverParameter?.let { extensionReceiver = irGet(it) }
-                    for ((i, valueParameter) in valueParameters.withIndex()) {
-                        putValueArgument(i, irGet(valueParameter))
-                    }
+                    this@proxy.parameters.mapTo(arguments) { irGet(it) }
                 }
 
                 +irReturn(delegatingCall)

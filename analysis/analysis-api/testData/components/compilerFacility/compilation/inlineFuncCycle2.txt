@@ -3,25 +3,25 @@ Inline functions have a cyclic dependency:
 [home/main.kt]
 FILE: main.kt
     public final fun Greeting(name: R|kotlin/String|): R|kotlin/Unit| {
-        R|com/example/ui/Text|(<strcat>(R|<local>/name|, String(!)).R|kotlin/String.plus|(Q|com/example/module1/moduleClass1|.R|com/example/module1/moduleClass1.Companion.giveMeString|()))
+        R|com/example/jvmLib/Text|(<strcat>(R|<local>/name|, String(!)).R|kotlin/String.plus|(Q|com/example/common/Foo|.R|com/example/common/Foo.Companion.getInline|()))
     }
 
-[com.example.module1/moduleClass1.kt]
-public final inline fun giveMeString(): R|kotlin/String| {
-    ^giveMeString this@R|com/example/module1/moduleClass1.Companion|.R|com/example/module1/moduleClass1.Companion.secret|().R|kotlin/String.plus|(R|com/example/module2/a|())
+[com.example.common/common.kt]
+public final inline fun getInline(): R|kotlin/String| {
+    ^getInline this@R|com/example/common/Foo.Companion|.R|com/example/common/Foo.Companion.getPublished|().R|kotlin/String.plus|(R|com/example/commonDep/a|())
 }
 
-[com.example.module2/A.kt]
+[com.example.commonDep/commonDepA.kt]
 public final inline fun a(): R|kotlin/String| {
-    ^a String(Hi).R|kotlin/String.plus|(R|com/example/module2/b|())
+    ^a String(Hi).R|kotlin/String.plus|(R|com/example/commonDep/b|())
 }
 
-[com.example.module2/B.kt]
+[com.example.commonDep/commonDepB.kt]
 public final inline fun b(): R|kotlin/String| {
-    ^b String(Hi).R|kotlin/String.plus|(R|com/example/module2/c|())
+    ^b String(Hi).R|kotlin/String.plus|(R|com/example/commonDep/c|())
 }
 
-[com.example.module2/C.kt]
+[com.example.commonDep/commonDepC.kt]
 public final inline fun c(): R|kotlin/String| {
-    ^c String(Hi).R|kotlin/String.plus|(R|com/example/module2/a|())
+    ^c String(Hi).R|kotlin/String.plus|(R|com/example/commonDep/a|())
 }

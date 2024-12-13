@@ -538,7 +538,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, RigidTypeMarker>>? {
         val firClass = toClassLikeSymbol()?.fullyExpandedClass(session)?.fir ?: return null
-        if (!firClass.isInline) return null
+        if (!firClass.isInlineOrValue) return null
         return firClass.primaryConstructorIfAny(session)?.valueParameterSymbols?.map { it.name to it.resolvedReturnType as RigidTypeMarker }
     }
 

@@ -157,11 +157,11 @@ class FqNameUnsafe {
         return if (isRoot) ROOT_NAME.asString() else fqName
     }
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o !is FqNameUnsafe) return false
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is FqNameUnsafe) return false
 
-        if (fqName != o.fqName) return false
+        if (fqName != other.fqName) return false
 
         return true
     }

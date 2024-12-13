@@ -23,34 +23,9 @@ open class KotlinPluginWrapper @Inject constructor(
     }
 }
 
-open class KotlinCommonPluginWrapper @Inject constructor(
-    registry: ToolingModelBuilderRegistry
-) : AbstractKotlinCommonPluginWrapper(registry) {
-
-    override val pluginVariant: String = PLUGIN_VARIANT_NAME
-
-    override fun apply(project: Project) {
-        project.registerVariantImplementations()
-        super.apply(project)
-    }
-}
-
 open class KotlinAndroidPluginWrapper @Inject constructor(
     registry: ToolingModelBuilderRegistry
 ) : AbstractKotlinAndroidPluginWrapper(registry) {
-
-    override val pluginVariant: String = PLUGIN_VARIANT_NAME
-
-    override fun apply(project: Project) {
-        project.registerVariantImplementations()
-        super.apply(project)
-    }
-}
-
-@Suppress("DEPRECATION_ERROR")
-open class Kotlin2JsPluginWrapper @Inject constructor(
-    registry: ToolingModelBuilderRegistry
-) : AbstractKotlin2JsPluginWrapper(registry) {
 
     override val pluginVariant: String = PLUGIN_VARIANT_NAME
 

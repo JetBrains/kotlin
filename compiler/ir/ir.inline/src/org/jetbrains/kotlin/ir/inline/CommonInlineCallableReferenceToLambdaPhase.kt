@@ -26,7 +26,7 @@ open class CommonInlineCallableReferenceToLambdaPhase(
     override fun visitFunction(declaration: IrFunction, data: IrDeclarationParent?): IrStatement {
         super.visitFunction(declaration, data)
         if (inlineFunctionResolver.needsInlining(declaration)) {
-            for (parameter in declaration.valueParameters) {
+            for (parameter in declaration.parameters) {
                 if (parameter.isInlineParameter()) {
                     val defaultExpression = parameter.defaultValue?.expression ?: continue
                     parameter.defaultValue?.expression = defaultExpression.transformToLambda(declaration)

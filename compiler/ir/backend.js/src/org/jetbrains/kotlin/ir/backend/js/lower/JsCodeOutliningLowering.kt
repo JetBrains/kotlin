@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.syntheticBodyIsNotSupported
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -81,6 +82,7 @@ import java.io.File
  *
  * The outlined functions are inlined again later by [FunctionWithJsFuncAnnotationInliner] during the codegen phase.
  */
+@PhaseDescription("JsCodeOutliningLowering")
 class JsCodeOutliningLowering(
     val loweringContext: LoweringContext,
     val intrinsics: JsIntrinsics,

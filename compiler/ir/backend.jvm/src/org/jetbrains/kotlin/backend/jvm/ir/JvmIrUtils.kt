@@ -71,7 +71,7 @@ import java.io.File
 
 fun IrDeclaration.getJvmNameFromAnnotation(): String? {
     // TODO lower @JvmName?
-    val const = getAnnotation(DescriptorUtils.JVM_NAME)?.getValueArgument(0) as? IrConst ?: return null
+    val const = getAnnotation(DescriptorUtils.JVM_NAME)?.arguments[0] as? IrConst ?: return null
     val value = const.value as? String ?: return null
     return when (origin) {
         IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER -> "$value\$default"
@@ -106,7 +106,11 @@ fun IrClass.hasJvmDefaultWithCompatibilityAnnotation(): Boolean = hasAnnotation(
 fun IrFunction.hasPlatformDependent(): Boolean = propertyIfAccessor.hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME)
 
 fun IrFunction.getJvmVisibilityOfDefaultArgumentStub() =
-    if (DescriptorVisibilities.isPrivate(visibility) || isInlineOnly()) JavaDescriptorVisibilities.PACKAGE_VISIBILITY else DescriptorVisibilities.PUBLIC
+    when {
+        DescriptorVisibilities.isPrivate(visibility) || isInlineOnly() -> JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+        visibility == DescriptorVisibilities.INTERNAL -> DescriptorVisibilities.INTERNAL
+        else -> DescriptorVisibilities.PUBLIC
+    }
 
 fun IrDeclaration.isInCurrentModule(): Boolean =
     getPackageFragment() is IrFile
@@ -190,10 +194,10 @@ fun IrMemberAccessExpression<IrFunctionSymbol>.copyFromWithPlaceholderTypeArgume
     copyValueArgumentsFrom(existingCall, this.symbol.owner, receiversAsArguments = true, argumentsAsReceivers = false)
     var offset = 0
     existingCall.symbol.owner.parentAsClass.typeParameters.forEach { _ ->
-        putTypeArgument(offset++, createPlaceholderAnyNType(irBuiltIns))
+        typeArguments[offset++] = createPlaceholderAnyNType(irBuiltIns)
     }
-    for (i in 0 until existingCall.typeArgumentsCount) {
-        putTypeArgument(i + offset, existingCall.getTypeArgument(i))
+    for (i in existingCall.typeArguments.indices) {
+        typeArguments[i + offset] = existingCall.typeArguments[i]
     }
 }
 
@@ -241,10 +245,11 @@ fun IrProperty.needsAccessor(accessor: IrSimpleFunction): Boolean = when {
     // Properties in annotation classes become abstract methods named after the property.
     (parent as? IrClass)?.kind == ClassKind.ANNOTATION_CLASS -> true
     // Multi-field value class accessors must always be added.
-    accessor.isGetter && accessor.contextReceiverParametersCount == 0 && accessor.extensionReceiverParameter == null &&
+    accessor.isGetter &&
+            accessor.nonDispatchParameters.isEmpty() &&
             accessor.returnType.needsMfvcFlattening() -> true
-    accessor.isSetter && accessor.contextReceiverParametersCount == 0 && accessor.extensionReceiverParameter == null &&
-            accessor.valueParameters.single().type.needsMfvcFlattening() -> true
+    accessor.isSetter &&
+            accessor.nonDispatchParameters.singleOrNull()?.type?.needsMfvcFlattening() == true -> true
     // @JvmField properties have no getters/setters
     resolveFakeOverride()?.backingField?.hasAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME) == true -> false
     // We do not produce default accessors for private fields
@@ -303,7 +308,7 @@ val IrClass.isSyntheticSingleton: Boolean
     get() = (origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL
             || origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
             || origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE)
-            && primaryConstructor!!.valueParameters.isEmpty()
+            && primaryConstructor!!.parameters.isEmpty()
 
 fun IrSimpleFunction.suspendFunctionOriginal(): IrSimpleFunction =
     if (isSuspend &&
@@ -528,15 +533,11 @@ private fun IrClass.hasEnumEntriesFunction(): Boolean {
 
 private fun IrSimpleFunction.isGetEntries(): Boolean =
     name.toString() == "<get-entries>"
-            && dispatchReceiverParameter == null
-            && extensionReceiverParameter == null
-            && valueParameters.isEmpty()
+            && hasShape(regularParameters = 0)
 
 fun IrClass.findEnumValuesFunction(context: JvmBackendContext): IrSimpleFunction = functions.single {
     it.name.toString() == "values"
-            && it.dispatchReceiverParameter == null
-            && it.extensionReceiverParameter == null
-            && it.valueParameters.isEmpty()
+            && it.hasShape(regularParameters = 0)
             && it.returnType.isBoxedArray
             && it.returnType.getArrayElementType(context.irBuiltIns).classOrNull == this.symbol
 }

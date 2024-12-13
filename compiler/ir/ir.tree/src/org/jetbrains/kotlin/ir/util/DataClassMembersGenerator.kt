@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.expressions.addArgument
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImplWithShape
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.putArgument
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -115,7 +114,7 @@ abstract class DataClassMembersGenerator(
                     constructedClass = irClass
                 ).apply {
                     for ((i, typeParameterType) in constructorSymbol.typesOfTypeParameters().withIndex()) {
-                        putTypeArgument(i, typeParameterType)
+                        typeArguments[i] = typeParameterType
                     }
                     for (param in irFunction.nonDispatchParameters) {
                         arguments[param.indexInParameters - 1] = irGet(param.type, param.symbol)

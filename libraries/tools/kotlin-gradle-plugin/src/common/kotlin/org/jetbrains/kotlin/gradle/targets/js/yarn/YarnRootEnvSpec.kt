@@ -91,6 +91,7 @@ abstract class YarnRootEnvSpec : EnvSpec<YarnEnv>() {
             YarnEnv(
                 download = downloadValue,
                 downloadBaseUrl = downloadBaseUrl.orNull,
+                allowInsecureProtocol = allowInsecureProtocol.get(),
                 cleanableStore = cleanableStore,
                 dir = home,
                 executable = getExecutable("yarn", command.get(), "cmd"),

@@ -134,7 +134,7 @@ class JsBridgesConstruction(context: JsIrBackendContext) : BridgesConstruction<J
         }
 
         val varargCopiedAsArray = irCall(sliceIntrinsic).apply {
-            putTypeArgument(0, varargElement.varargElementType!!)
+            typeArguments[0] = varargElement.varargElementType!!
             sliceIntrinsicArgs.forEachIndexed(this::putValueArgument)
         }.let { arrayExpr ->
             val arrayInfo =

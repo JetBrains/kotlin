@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.makeNotNull
-import org.jetbrains.kotlin.ir.util.irError
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
 import org.jetbrains.kotlin.name.JsStandardClassIds.BASE_JS_PACKAGE
 import org.jetbrains.kotlin.name.Name
@@ -74,7 +73,7 @@ class JsSymbols(
 
     // Can't use .owner until ExternalStubGenerator is invoked, hence get() = here.
     override val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol>
-        get() = _arraysContentEquals.associateBy { it.owner.extensionReceiverParameter!!.type.makeNotNull() }
+        get() = _arraysContentEquals.associateBy { it.owner.parameters[0].type.makeNotNull() }
 
     override val getContinuation = symbolFinder.topLevelFunction(BASE_JS_PACKAGE, "getContinuation")
 
@@ -110,10 +109,7 @@ class JsSymbols(
 
     override val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
         toUIntSymbols.associateBy {
-            it.owner.extensionReceiverParameter?.type?.classifierOrFail
-                ?: irError("Expected extension receiver for") {
-                    withIrEntry("it.owner", it.owner)
-                }
+            it.owner.parameters[0].type.classifierOrFail
         }
     }
 
@@ -121,10 +117,7 @@ class JsSymbols(
 
     override val toULongByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
         toULongSymbols.associateBy {
-            it.owner.extensionReceiverParameter?.type?.classifierOrFail
-                ?: irError("Expected extension receiver for") {
-                    withIrEntry("it.owner", it.owner)
-                }
+            it.owner.parameters[0].type.classifierOrFail
         }
     }
 

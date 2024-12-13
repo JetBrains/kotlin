@@ -83,7 +83,7 @@ public class DebugSymbolRenderer(
                 }
 
                 if (symbol is KaNamedFunctionSymbol) {
-                    renderComputedValue("canBeOperator", printer, currentSymbolStack) { symbol.canBeOperator() }
+                    renderComputedValue("canBeOperator", printer, currentSymbolStack) { symbol.canBeOperator }
                 }
 
                 renderComputedValue("getContainingModule", printer, currentSymbolStack) { symbol.containingModule }

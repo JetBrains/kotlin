@@ -5,7 +5,7 @@ uintptr_t Enum_a_get();
 
 uintptr_t Enum_b_get();
 
-NSArray * Enum_entries_get();
+NSArray<id> * Enum_entries_get();
 
 int32_t Enum_i_get(uintptr_t self);
 

@@ -237,7 +237,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             val outputDir = File(pathManager.getOutputForCompiledFiles(flavorName))
             println("Generating ${filesToCompile.size} files into ${outputDir.name}, configuration: '${environment.configuration}'...")
 
-            val outputFiles = GenerationUtils.compileFiles(filesToCompile, environment).run { destroy(); factory }
+            val state = GenerationUtils.compileFiles(filesToCompile, environment)
 
             if (!outputDir.exists()) {
                 outputDir.mkdirs()
@@ -251,7 +251,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                 )
             }
             unitTestFileWriter.addTests(unitTestDescriptions)
-            outputFiles.writeAllTo(outputDir)
+            state.factory.writeAllTo(outputDir)
         }
 
         private fun getFlavorUnitTestFolder(flavourName: String): String {

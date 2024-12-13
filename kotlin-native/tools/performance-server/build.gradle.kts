@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind.MODULE_COMMONJS
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 
 buildscript {
     val rootBuildDirectory by extra(file("../.."))
@@ -61,9 +62,11 @@ kotlin {
             moduleName = "app"
             nodejs()
             compilations.all {
-                compilerOptions.configure {
-                    moduleKind.set(MODULE_COMMONJS)
-                    sourceMap.set(true)
+                compileTaskProvider.configure {
+                    compilerOptions {
+                        moduleKind.set(MODULE_COMMONJS)
+                        sourceMap.set(true)
+                    }
                 }
             }
             binaries.executable()
@@ -73,4 +76,9 @@ kotlin {
 
 tasks.withType<KotlinJsIrLink> {
     destinationDirectory.set(project.file("server"))
+}
+
+// Fixes Gradle complaint about the same input of this task and production one
+tasks.named<KotlinJsIrLink>("compileTestDevelopmentExecutableKotlinJs") {
+    destinationDirectory.set(project.file("server-test"))
 }

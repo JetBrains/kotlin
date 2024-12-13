@@ -71,10 +71,18 @@ fun FirVisibilityChecker.isVisible(
     // Moreover, a constructor call can be obtained from a typealias,
     // and it's a single way to use the typealias with a specified dispatch receiver (for instance, nested typealias).
     // That's why the checking for only typealias symbol is also valid.
-    val dispatchReceiverExpression = if (candidate.symbol.let { it is FirConstructorSymbol || it is FirTypeAliasSymbol })
-        null
-    else
-        candidate.dispatchReceiver?.expression
+    if (candidate.symbol.let { it is FirConstructorSymbol || it is FirTypeAliasSymbol }) {
+        return isVisible(
+            declaration,
+            callInfo.session,
+            callInfo.containingFile,
+            callInfo.containingDeclarations,
+            dispatchReceiver = null,
+            skipCheckForContainingClassVisibility = skipCheckForContainingClassVisibility,
+        )
+    }
+
+    val dispatchReceiverExpression = candidate.dispatchReceiver?.expression
 
     if (!isVisible(declaration, callInfo, dispatchReceiverExpression, skipCheckForContainingClassVisibility)) {
         // There are some examples when applying smart cast makes a callable invisible

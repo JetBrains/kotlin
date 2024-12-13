@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.fir.declarations.utils.klibSourceFile
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
@@ -1215,8 +1216,8 @@ abstract class AbstractComposeLowering(
             to,
             unsafeCoerceIntrinsic!!
         ).apply {
-            putTypeArgument(0, from)
-            putTypeArgument(1, to)
+            typeArguments[0] = from
+            typeArguments[1] = to
             putValueArgument(0, argument)
         }
 
@@ -1302,7 +1303,7 @@ abstract class AbstractComposeLowering(
             extensionReceiver = currentComposer
             putValueArgument(0, invalid)
             putValueArgument(1, calculation)
-            putTypeArgument(0, returnType)
+            typeArguments[0] = returnType
         }
     }
 
@@ -1322,7 +1323,7 @@ abstract class AbstractComposeLowering(
         // boxed, then we don't want to unnecessarily _unbox_ it. Note that if Kotlin allows for
         // an overridden equals method of inline classes in the future, we may have to avoid the
         // boxing in a different way.
-        val expr = value.unboxValueIfInline()
+        val expr = value.unboxValueIfInline().ordinalIfEnum()
         val type = expr.type
         val stability = stabilityInferencer.stabilityOf(value)
 
@@ -1351,6 +1352,37 @@ abstract class AbstractComposeLowering(
             }
             irMethodCall(currentComposer, descriptor).also {
                 it.putValueArgument(0, expr)
+            }
+        }
+    }
+
+    private val irEnumOrdinal =
+        context.irBuiltIns.enumClass.owner.properties.single { it.name.asString() == "ordinal" }.getter!!
+
+    private val protobufEnumClassId = ClassId.fromString("com/google/protobuf/Internal/EnumLite")
+
+    private fun IrExpression.ordinalIfEnum(): IrExpression {
+        val cls = type.classOrNull?.owner
+        return when (cls?.kind) {
+            ClassKind.ENUM_CLASS, ClassKind.ENUM_ENTRY -> {
+                val function = if (cls.isSubclassOf(protobufEnumClassId)) {
+                    // For protobuf enums, we need to use the `getNumber` method instead of `ordinal`
+                    cls.functions
+                        .single {
+                            it.name.asString() == "getNumber" &&
+                                    it.parameters.size == 1 &&
+                                    it.parameters[0].kind == IrParameterKind.DispatchReceiver
+                        }
+                } else {
+                    irEnumOrdinal
+                }
+                irCall(
+                    function.symbol,
+                    dispatchReceiver = this
+                )
+            }
+            else -> {
+                this
             }
         }
     }
@@ -1610,6 +1642,9 @@ inline fun <T> includeFileNameInExceptionTrace(file: IrFile, body: () -> T): T {
 
 fun FqName.topLevelName() =
     asString().substringBefore(".")
+
+private fun IrClass.isSubclassOf(classId: ClassId) =
+    superTypes.any { it.classOrNull?.owner?.classId == classId }
 
 internal inline fun <reified T : IrElement> T.copyWithNewTypeParams(
     source: IrFunction,

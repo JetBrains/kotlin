@@ -239,7 +239,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
         // `irClass` is a source class and definitely is not a lazy class
         @OptIn(UnsafeDuringIrConstructionAPI::class)
         fun generateBodies(functions: List<IrSimpleFunction>) {
-            val propertyParametersCount = irClass.primaryConstructor?.explicitParameters?.size ?: 0
+            val propertyParametersCount = irClass.primaryConstructor?.parameters?.size ?: 0
             val properties = irClass.properties.filter { it.backingField != null }.take(propertyParametersCount).toList()
 
             for (irFunction in functions) {

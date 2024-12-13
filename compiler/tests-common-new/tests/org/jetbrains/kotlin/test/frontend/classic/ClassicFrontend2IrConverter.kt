@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.KlibMetadataIncrementalSerializer
@@ -61,17 +60,15 @@ class ClassicFrontend2IrConverter(
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
-        val codegenFactory = JvmIrCodegenFactory(configuration, configuration.phaseConfig)
-        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        val state = GenerationState.Builder(
-            project, ClassBuilderFactories.TEST, analysisResult.moduleDescriptor, analysisResult.bindingContext,
-            configuration
-        ).ignoreErrors(CodegenTestDirectives.IGNORE_ERRORS in module.directives)
-            .diagnosticReporter(DiagnosticReporterFactory.createReporter(messageCollector))
-            .build()
+        val codegenFactory = JvmIrCodegenFactory(configuration)
+        val state = GenerationState(
+            project, analysisResult.moduleDescriptor, configuration, ClassBuilderFactories.TEST,
+            ignoreErrors = CodegenTestDirectives.IGNORE_ERRORS in module.directives,
+        )
 
-        val conversionResult =
-            codegenFactory.convertToIr(CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(state, psiFiles.values))
+        val conversionResult = codegenFactory.convertToIr(
+            CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(state, psiFiles.values, analysisResult.bindingContext)
+        )
         return IrBackendInput.JvmIrBackendInput(
             state,
             codegenFactory,

@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.*
+import org.gradle.api.artifacts.ModuleIdentifier
+import org.gradle.api.artifacts.ModuleVersionIdentifier
+import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.component.ComponentWithCoordinates
 import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.publish.maven.MavenPublication
@@ -18,10 +20,24 @@ import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
+internal const val UNSPECIFIED_GAV_FIELD = "unspecified"
+
 internal interface KotlinTargetComponentWithPublication : KotlinTargetComponent {
     // This property is declared in the separate parent type to allow the usages to reference it without forcing the subtypes to load,
     // which is needed for compatibility with older Gradle versions
     var publicationDelegate: MavenPublication?
+}
+
+internal data class ModuleVersionIdentifierWithUnspecifiedValue(private val moduleCoordinates: ModuleCoordinates) :
+    ModuleVersionIdentifier {
+    override fun getGroup() = moduleCoordinates.group ?: UNSPECIFIED_GAV_FIELD
+    override fun getName() = moduleCoordinates.name
+    override fun getVersion() = moduleCoordinates.version ?: UNSPECIFIED_GAV_FIELD
+
+    override fun getModule(): ModuleIdentifier = object : ModuleIdentifier {
+        override fun getGroup(): String = moduleCoordinates.group ?: UNSPECIFIED_GAV_FIELD
+        override fun getName(): String = moduleCoordinates.name
+    }
 }
 
 internal fun getCoordinatesFromGroupNameAndVersion(
@@ -29,7 +45,7 @@ internal fun getCoordinatesFromGroupNameAndVersion(
     moduleName: String,
     moduleVersion: String?,
 ): ModuleVersionIdentifier {
-    return ModuleCoordinates(moduleGroup, moduleName, moduleVersion)
+    return ModuleVersionIdentifierWithUnspecifiedValue(ModuleCoordinates(moduleGroup, moduleName, moduleVersion))
 }
 
 internal fun getCoordinatesFromPublicationDelegateAndProject(
@@ -51,7 +67,7 @@ private interface KotlinTargetComponentWithCoordinatesAndPublication :
 
 open class KotlinVariant(
     val producingCompilation: KotlinCompilation<*>,
-    private val usages: Set<DefaultKotlinUsageContext>
+    private val usages: Set<DefaultKotlinUsageContext>,
 ) : InternalKotlinTargetComponent(), KotlinTargetComponentWithPublication {
     var componentName: String? = null
 

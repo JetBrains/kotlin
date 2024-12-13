@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.copy
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.DirectedGraphCondensationBuilder
 import org.jetbrains.kotlin.backend.konan.DirectedGraphMultiNode
@@ -510,7 +511,14 @@ internal object StaticInitializersOptimization {
         }
     }
 
-    fun removeRedundantCalls(context: Context, irModule: IrModuleFragment, callGraph: CallGraph, rootSet: Set<IrSimpleFunction>) {
+    fun removeRedundantCalls(
+            generationState: NativeGenerationState,
+            irModule: IrModuleFragment,
+            moduleDFG: ModuleDFG,
+            callGraph: CallGraph,
+            rootSet: Set<IrSimpleFunction>
+    ) {
+        val context = generationState.context
         val analysisResult = InterproceduralAnalysis(context, callGraph, rootSet).analyze()
 
         var numberOfFunctionsWithGlobalInitializerCall = 0
@@ -522,9 +530,15 @@ internal object StaticInitializersOptimization {
         var numberOfCallSitesWithExtractedGlobalInitializerCall = 0
         var numberOfCallSitesWithExtractedThreadLocalInitializerCall = 0
 
+        val changedDeclarations = mutableSetOf<IrDeclaration>()
         irModule.transformChildren(object : IrTransformer<IrBuilderWithScope?>() {
             override fun visitDeclaration(declaration: IrDeclarationBase, data: IrBuilderWithScope?): IrStatement {
-                return super.visitDeclaration(declaration, context.createIrBuilder(declaration.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET))
+                return super.visitDeclaration(declaration,
+                        if (declaration is IrVariable) // It doesn't make sense to create a new builder for just a variable.
+                            data ?: error("A standalone variable: ${declaration.render()}")
+                        else
+                            context.createIrBuilder(declaration.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
+                )
             }
 
             override fun visitCall(expression: IrCall, data: IrBuilderWithScope?): IrExpression {
@@ -557,7 +571,8 @@ internal object StaticInitializersOptimization {
                         }
                 if (initializerCalls.isEmpty()) return expression
 
-                return data!!.irBlock(expression) {
+                changedDeclarations.add(data!!.scope.scopeOwnerSymbol.owner as IrDeclaration)
+                return data.irBlock(expression) {
                     initializerCalls.forEach { +irCallFileInitializer((it as IrCall).symbol) }
                     +expression
                 }
@@ -579,6 +594,7 @@ internal object StaticInitializersOptimization {
                     if (declaration !in analysisResult.functionsRequiringGlobalInitializerCall) {
                         ++numberOfRemovedGlobalInitializerCalls
                         statements.removeAt(globalInitializerCallIndex)
+                        changedDeclarations.add(declaration)
                     }
                 }
                 val threadLocalInitializerCallIndex = statements
@@ -593,11 +609,19 @@ internal object StaticInitializersOptimization {
                     if (declaration !in analysisResult.functionsRequiringThreadLocalInitializerCall) {
                         ++numberOfRemovedThreadLocalInitializerCalls
                         statements.removeAt(threadLocalInitializerCallIndex)
+                        changedDeclarations.add(declaration)
                     }
                 }
                 return declaration
             }
         })
+
+
+        for (declaration in changedDeclarations) {
+            val rebuiltFunction = FunctionDFGBuilder(generationState, moduleDFG.symbolTable).build(declaration)
+            val functionSymbol = moduleDFG.symbolTable.mapFunction(declaration)
+            moduleDFG.functions[functionSymbol] = rebuiltFunction
+        }
 
         context.log { "Removed ${numberOfRemovedGlobalInitializerCalls * 100.0 / numberOfFunctionsWithGlobalInitializerCall}% global initializers" }
         context.log { "Removed ${numberOfRemovedThreadLocalInitializerCalls * 100.0 / numberOfFunctionsWithThreadLocalInitializerCall}% thread local initializers" }

@@ -73,6 +73,7 @@ abstract class D8EnvSpec : EnvSpec<D8Env>() {
             D8Env(
                 download = downloadValue,
                 downloadBaseUrl = downloadBaseUrl.orNull,
+                allowInsecureProtocol = allowInsecureProtocol.get(),
                 ivyDependency = "google.d8:v8:$requiredVersion@zip",
                 executable = getExecutable("d8", command.get(), "exe"),
                 dir = targetPath,

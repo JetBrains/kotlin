@@ -64,8 +64,8 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
                             1
                         )
                     }
-                    //for other versions KGP from buildSrc registered both services
-                    else -> {
+                    //for gradle 8.5+ kotlin 1.9.20+ versions KGP from buildSrc registered both services
+                    gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_11) -> {
                         assertOutputContainsExactlyTimes(
                             "Instantiated class org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService: new instance", // the legacy service for compatibility
                             1
@@ -75,6 +75,21 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
                             1
                         )
 
+                    }
+                    // Since Gradle 8.11 Kotlin version 2.0.20 is used which contains only one service
+                    else -> {
+                        assertOutputContainsExactlyTimes(
+                            "class org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsBeanService_v2 is already instantiated in another classpath",
+                            1
+                        )
+                        assertOutputContainsExactlyTimes(
+                            "class org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsBeanService is already instantiated in another classpath",
+                            1
+                        )
+                        assertOutputContainsExactlyTimes(
+                            "[KOTLIN] Initialize BuildFusService${'$'}Inject",
+                            2
+                        )
                     }
                 }
 

@@ -1,0 +1,13 @@
+MODULE_FRAGMENT
+  FILE fqName:home fileName:main.kt
+    FUN name:Greeting visibility:public modality:FINAL <> (name:kotlin.String, d:com.example.data.Data) returnType:kotlin.Unit
+      VALUE_PARAMETER name:name index:0 type:kotlin.String
+      VALUE_PARAMETER name:d index:1 type:com.example.data.Data
+      BLOCK_BODY
+        CALL 'public final fun Text (text: kotlin.String): kotlin.Unit declared in com.example.ui' type=kotlin.Unit origin=null
+          text: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
+            $this: STRING_CONCATENATION type=kotlin.String
+              GET_VAR 'name: kotlin.String declared in home.Greeting' type=kotlin.String origin=null
+              CONST String type=kotlin.String value="!"
+            other: CALL 'public final fun <get-imageUrl> (): kotlin.String [inline] declared in com.example.data.Data' type=kotlin.String origin=GET_PROPERTY
+              $this: GET_VAR 'd: com.example.data.Data declared in home.Greeting' type=com.example.data.Data origin=null

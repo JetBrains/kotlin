@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.config.JvmClosureGenerationScheme
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
@@ -319,7 +318,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }
 
             for (typeParameterIndex in targetFun.typeParameters.indices) {
-                targetCall.putTypeArgument(typeParameterIndex, reference.getTypeArgument(typeParameterIndex))
+                targetCall.typeArguments[typeParameterIndex] = reference.typeArguments[typeParameterIndex]
             }
 
             val proxyFunBody = context.irFactory.createBlockBody(startOffset, endOffset).also { proxyFun.body = it }
@@ -419,7 +418,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         return context.createJvmIrBuilder(currentScope!!, startOffset, endOffset).run {
             // See [org.jetbrains.kotlin.backend.jvm.JvmSymbols::indyLambdaMetafactoryIntrinsic].
             irCall(jvmIndyLambdaMetafactoryIntrinsic, notNullSamType).apply {
-                putTypeArgument(0, notNullSamType)
+                typeArguments[0] = notNullSamType
                 putValueArgument(0, irRawFunctionRef(lambdaMetafactoryArguments.samMethod))
                 putValueArgument(1, lambdaMetafactoryArguments.implMethodReference)
                 putValueArgument(2, irRawFunctionRef(lambdaMetafactoryArguments.fakeInstanceMethod))
@@ -732,11 +731,10 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }.apply {
                 metadata = functionReferenceClass.metadata
                 overriddenSymbols += superMethod.symbol
-                dispatchReceiverParameter = buildReceiverParameter(
-                    this,
-                    IrDeclarationOrigin.INSTANCE_RECEIVER,
-                    functionReferenceClass.symbol.defaultType
-                )
+                dispatchReceiverParameter = buildReceiverParameter {
+                    origin = IrDeclarationOrigin.INSTANCE_RECEIVER
+                    type = functionReferenceClass.symbol.defaultType
+                }
 
                 when {
                     isLambda ->
@@ -751,7 +749,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         // Inline the body of an anonymous function into the generated lambda subclass.
         private fun IrSimpleFunction.createLambdaInvokeMethod() {
             annotations += callee.annotations
-            val valueParameterMap = callee.explicitParameters.associate { param ->
+            val valueParameterMap = callee.parameters.associate { param ->
                 param to param.copyTo(this)
             }
             valueParameters += valueParameterMap.values
@@ -780,10 +778,10 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 var unboundIndex = 0
                 val call = irCall(callee.symbol, referenceReturnType).apply {
                     for (typeParameter in irFunctionReference.symbol.owner.allTypeParameters) {
-                        putTypeArgument(typeParameter.index, typeArgumentsMap[typeParameter.symbol])
+                        typeArguments[typeParameter.index] = typeArgumentsMap[typeParameter.symbol]
                     }
 
-                    for (parameter in callee.explicitParameters) {
+                    for (parameter in callee.parameters) {
                         when {
                             boundReceiver?.first == parameter ->
                                 // Bound receiver parameter. For function references, this is stored in a field of the superclass.
@@ -914,7 +912,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     //don't pass receivers otherwise LocalDeclarationLowering will create additional captured parameters
                     IrFunctionReferenceImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunctionReference.type, target,
-                        irFunctionReference.typeArgumentsCount,
+                        irFunctionReference.typeArguments.size,
                         irFunctionReference.reflectionTarget, null
                     ).apply {
                         copyTypeArgumentsFrom(irFunctionReference)

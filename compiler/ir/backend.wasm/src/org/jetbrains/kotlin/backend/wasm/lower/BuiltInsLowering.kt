@@ -156,7 +156,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                 ).apply {
                     extensionReceiver = argument
                     if (argumentType.classOrNull == irBuiltins.arrayClass) {
-                        putTypeArgument(0, argumentType.getArrayElementType(irBuiltins))
+                        typeArguments[0] = argumentType.getArrayElementType(irBuiltins)
                     }
                 }
             }
@@ -166,7 +166,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                 return irCall(call, newSymbol, argumentsAsReceivers = true)
             }
             context.reflectionSymbols.getKClass -> {
-                val type = call.getTypeArgument(0)!!
+                val type = call.typeArguments[0]!!
                 val klass = type.classOrNull?.owner ?: error("Invalid type")
 
                 val constructorArgument: IrExpression
@@ -208,7 +208,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
         val klass = type.classOrNull?.owner ?: error("Invalid type")
 
         val typeId = builder.irCall(symbols.wasmTypeId).also {
-            it.putTypeArgument(0, type)
+            it.typeArguments[0] = type
         }
 
         if (!klass.isInterface) {

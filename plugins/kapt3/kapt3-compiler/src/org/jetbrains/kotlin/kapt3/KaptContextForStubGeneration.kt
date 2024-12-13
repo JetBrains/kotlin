@@ -37,12 +37,12 @@ class KaptContextForStubGeneration(
     val compiledClasses: List<ClassNode>,
     val origins: Map<Any, JvmDeclarationOrigin>,
     val generationState: GenerationState,
+    val bindingContext: BindingContext,
     val firFiles: List<FirFile>,
 ) : KaptContext(options, withJdk, logger) {
     private val treeMaker = TreeMaker.instance(context)
 
     val project: Project get() = generationState.project
-    val bindingContext: BindingContext get() = generationState.bindingContext
 
     val firSession: FirSession? = firFiles.firstOrNull()?.moduleData?.session
 
@@ -52,7 +52,6 @@ class KaptContextForStubGeneration(
 
     override fun close() {
         (treeMaker as? KaptTreeMaker)?.dispose()
-        generationState.destroy()
         super.close()
     }
 }

@@ -619,11 +619,11 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         val propertyState = KPropertyState(propertyReference, receiver)
 
         fun List<IrTypeParameter>.addToFields() {
-            (0 until propertyReference.typeArgumentsCount).forEach { index ->
+            propertyReference.typeArguments.indices.forEach { index ->
                 // We need nullable check for java case in FIR
                 // For some reason it is possible that typeArgumentsCount > 0, but all args are null
                 // TODO report as error after fix KT-52480
-                val typeArgument = propertyReference.getTypeArgument(index) ?: return@forEach
+                val typeArgument = propertyReference.typeArguments[index] ?: return@forEach
                 val kTypeState = KTypeState(typeArgument, environment.kTypeClass.owner)
                 propertyState.setField(this[index].symbol, kTypeState)
             }

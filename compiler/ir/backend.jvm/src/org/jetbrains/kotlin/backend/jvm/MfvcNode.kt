@@ -247,7 +247,7 @@ fun MfvcNodeWithSubnodes.makeBoxedExpression(
     val resultType = type.substitute(typeArguments) as IrSimpleType
     require(resultType.erasedUpperBound == type.erasedUpperBound) { "Substitution of $type led to $resultType" }
     for ((index, typeArgument) in resultType.arguments.withIndex()) {
-        putTypeArgument(index, typeArgument.typeOrNull ?: resultType.erasedUpperBound.typeParameters[index].defaultType)
+        this.typeArguments[index] = typeArgument.typeOrNull ?: resultType.erasedUpperBound.typeParameters[index].defaultType
     }
     for ((index, valueArgument) in valueArguments.withIndex()) {
         putValueArgument(index, valueArgument)
@@ -317,9 +317,9 @@ private fun requireSameSizes(vararg sizes: Int?) {
 }
 
 private fun validateGettingAccessorParameters(function: IrSimpleFunction) {
-    require(function.valueParameters.isEmpty()) { "Value parameters are not expected for ${function.render()}" }
-    require(function.extensionReceiverParameter == null) { "Extension receiver is not expected for ${function.render()}" }
-    require(function.contextReceiverParametersCount == 0) { "Context receivers is not expected for ${function.render()}" }
+    require(function.nonDispatchParameters.isEmpty()) {
+        "Parameters other than dispatch receiver are not expected for ${function.render()}"
+    }
     require(function.typeParameters.isEmpty()) { "Type parameters are not expected for ${function.render()}" }
 }
 
@@ -490,19 +490,21 @@ class RootMfvcNode internal constructor(
         require(specializedEqualsMethod.typeParameters.isEmpty()) {
             "Specialized equals method must not contain type parameters but has ${specializedEqualsMethod.typeParameters.map { it.defaultType.render() }}"
         }
-        oldPrimaryConstructor?.let { requireSameSizes(it.valueParameters.size, subnodes.size) }
+        oldPrimaryConstructor?.let { requireSameSizes(it.parameters.size, subnodes.size) }
         requireSameSizes(
             leavesCount,
-            newPrimaryConstructor?.valueParameters?.size,
-            primaryConstructorImpl?.valueParameters?.size,
-            boxMethod.valueParameters.size,
+            newPrimaryConstructor?.parameters?.size,
+            primaryConstructorImpl?.parameters?.size,
+            boxMethod.parameters.size,
         )
-        require(specializedEqualsMethod.valueParameters.size == 1) {
-            "Specialized equals method must contain single value parameter but has\n${specializedEqualsMethod.valueParameters.joinToString("\n") { it.dump() }}"
+        specializedEqualsMethod.parameters.filterNot { it.kind == IrParameterKind.DispatchReceiver }.let { regularParameters ->
+            require(regularParameters.size == 1) {
+                "Specialized equals method must contain single value parameter but has\n${regularParameters.joinToString("\n") { it.dump() }}"
+            }
         }
         for (function in listOfNotNull(oldPrimaryConstructor, newPrimaryConstructor, primaryConstructorImpl, boxMethod, specializedEqualsMethod)) {
-            require(function.extensionReceiverParameter == null) { "Extension receiver is not expected for ${function.render()}" }
-            require(function.contextReceiverParametersCount == 0) { "Context receivers are not expected for ${function.render()}" }
+            require(function.parameters.none { it.kind == IrParameterKind.ExtensionReceiver }) { "Extension receiver is not expected for ${function.render()}" }
+            require(function.parameters.none { it.kind == IrParameterKind.Context }) { "Context receivers are not expected for ${function.render()}" }
         }
     }
 

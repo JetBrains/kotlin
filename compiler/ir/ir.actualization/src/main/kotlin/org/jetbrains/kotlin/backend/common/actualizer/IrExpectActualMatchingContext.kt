@@ -119,9 +119,7 @@ internal abstract class IrExpectActualMatchingContext(
         get() = asIr().isCompanion
     override val RegularClassSymbolMarker.isInner: Boolean
         get() = asIr().isInner
-    override val RegularClassSymbolMarker.isInline: Boolean
-        get() = asIr().isValue
-    override val RegularClassSymbolMarker.isValue: Boolean
+    override val RegularClassSymbolMarker.isInlineOrValue: Boolean
         get() = asIr().isValue
 
     override val RegularClassSymbolMarker.isFun: Boolean

@@ -529,7 +529,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
                 val superDeclaration = replacement.allOverridden().singleOrNull { it.body != null }
                     ?: error("${this.render()} is fake override and has no implementation")
                 superDeclaration.parameterTemplateStructureOfThisNewMfvcBidingFunction
-                    ?: superDeclaration.explicitParameters.map { RegularMapping(it) }
+                    ?: superDeclaration.parameters.map { RegularMapping(it) }
             } else {
                 replacement.parameterTemplateStructureOfThisNewMfvcBidingFunction
                     ?: error("${replacement.render()} must have MFVC structure")
@@ -620,25 +620,25 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
                 it.needsMfvcFlattening() && it.erasedUpperBound.typeParameters.size == targetOffset
             }) { "Unexpected dispatcher receiver type: ${dispatchReceiverType.render()}" }
             dispatchReceiverType.erasedUpperBound.typeParameters.forEachIndexed { index, typeParameter ->
-                putTypeArgument(index, typeParameter.defaultType)
+                this.typeArguments[index] = typeParameter.defaultType
             }
         }
         for (i in 0 until passedTypeParametersSize) {
-            putTypeArgument(i + targetOffset, forCommonTypeParameters(i + sourceOffset))
+            this.typeArguments[i + targetOffset] = forCommonTypeParameters(i + sourceOffset)
         }
     }
 
     override fun addBindingsFor(original: IrFunction, replacement: IrFunction) {
         val parametersStructure = original.parameterTemplateStructureOfThisOldMfvcBidingFunction!!
-        require(parametersStructure.size == original.explicitParameters.size) {
+        require(parametersStructure.size == original.parameters.size) {
             "Wrong value parameters structure: $parametersStructure"
         }
-        require(parametersStructure.sumOf { it.valueParameters.size } == replacement.explicitParameters.size) {
+        require(parametersStructure.sumOf { it.valueParameters.size } == replacement.parameters.size) {
             "Wrong value parameters structure: $parametersStructure"
         }
-        val old2newList = original.explicitParameters.zip(
+        val old2newList = original.parameters.zip(
             parametersStructure.scan(0) { partial: Int, templates: RemappedParameter -> partial + templates.valueParameters.size }
-                .zipWithNext { start: Int, finish: Int -> replacement.explicitParameters.slice(start until finish) }
+                .zipWithNext { start: Int, finish: Int -> replacement.parameters.slice(start until finish) }
         )
         for (i in old2newList.indices) {
             val (oldParameter, newParamList) = old2newList[i]
@@ -771,7 +771,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
             }
             with(context.createJvmIrBuilder(wrapper.symbol)) {
                 irExprBody(irBlock {
-                    val newArguments: List<IrValueDeclaration> = wrapper.explicitParameters.flatMap { parameter ->
+                    val newArguments: List<IrValueDeclaration> = wrapper.parameters.flatMap { parameter ->
                         if (!parameter.type.needsMfvcFlattening()) {
                             listOf(parameter)
                         } else {
@@ -850,7 +850,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
             endOffset = UNDEFINED_OFFSET,
             type = expression.type,
             symbol = wrapper.symbol,
-            typeArgumentsCount = expression.typeArgumentsCount,
+            typeArgumentsCount = expression.typeArguments.size,
             reflectionTarget = expression.reflectionTarget,
             origin = expression.origin,
         ).apply {
@@ -918,7 +918,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
                     is IrEnumConstructorCall -> { constructorSymbol ->
                         IrEnumConstructorCallImpl(
                             expression.startOffset, expression.endOffset, expression.type, constructorSymbol,
-                            expression.typeArgumentsCount,
+                            expression.typeArguments.size,
                         )
                     }
                     else -> error("Unknown constructor call type:\n${expression.dump()}")
@@ -1016,12 +1016,12 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
         val parameter2expression = typedArgumentList(originalFunction, original)
         val structure = originalFunction.parameterTemplateStructureOfThisOldMfvcBidingFunction!!
         require(parameter2expression.size == structure.size)
-        require(structure.sumOf { it.valueParameters.size } == replacement.explicitParametersCount)
+        require(structure.sumOf { it.valueParameters.size } == replacement.parameters.size)
         val newArguments: List<IrExpression?> =
             makeNewArguments(parameter2expression.map { (_, argument) -> argument }, structure)
         val resultExpression = makeMemberAccessExpression(replacement.symbol).apply {
-            passTypeArgumentsWithOffsets(replacement, originalFunction) { original.getTypeArgument(it)!! }
-            for ((parameter, argument) in replacement.explicitParameters zip newArguments) {
+            passTypeArgumentsWithOffsets(replacement, originalFunction) { original.typeArguments[it]!! }
+            for ((parameter, argument) in replacement.parameters zip newArguments) {
                 if (argument == null) continue
                 putArgument(replacement, parameter, argument)
             }

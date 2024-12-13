@@ -39,6 +39,7 @@ abstract class AnalysisApiFirBinaryTestConfigurator : AnalysisApiTestConfigurato
         builder.apply {
             useAdditionalService<KtTestModuleFactory> { testModuleFactory }
             useAdditionalService { AnalysisApiIndexingConfiguration(AnalysisApiBinaryLibraryIndexingMode.INDEX_STUBS) }
+            configurePlatformEnvironmentConfigurators()
             configureLibraryCompilationSupport()
             configureOptionalTestCompilerPlugin()
         }

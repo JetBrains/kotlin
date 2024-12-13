@@ -176,6 +176,7 @@ data class BuildOptions(
         if (configurationCacheFlag != null) {
             arguments.add("-Dorg.gradle.unsafe.configuration-cache=$configurationCacheFlag")
             arguments.add("-Dorg.gradle.unsafe.configuration-cache-problems=${configurationCacheProblems.name.lowercase(Locale.getDefault())}")
+            arguments.add("-Dorg.gradle.configuration-cache.parallel=true")
         }
 
         if (gradleVersion >= GradleVersion.version("7.1")) {

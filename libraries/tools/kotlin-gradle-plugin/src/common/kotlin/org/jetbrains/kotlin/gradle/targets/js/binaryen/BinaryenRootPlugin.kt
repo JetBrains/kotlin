@@ -71,6 +71,7 @@ open class BinaryenRootPlugin : Plugin<Project> {
     ) {
         download.convention(rootBinaryen.downloadProperty)
         downloadBaseUrl.convention(rootBinaryen.downloadBaseUrlProperty)
+        allowInsecureProtocol.convention(false)
         installationDirectory.convention(rootBinaryen.installationDirectory)
         version.convention(rootBinaryen.versionProperty)
         command.convention(rootBinaryen.commandProperty)

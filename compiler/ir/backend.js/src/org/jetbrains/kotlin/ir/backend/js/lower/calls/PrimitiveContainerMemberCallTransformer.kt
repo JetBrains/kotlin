@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.util.getSimpleFunction
+import org.jetbrains.kotlin.ir.util.hasShape
 
 class PrimitiveContainerMemberCallTransformer(private val context: JsIrBackendContext) : CallsTransformer {
     private val intrinsics = context.intrinsics
@@ -41,7 +42,7 @@ class PrimitiveContainerMemberCallTransformer(private val context: JsIrBackendCo
                         context.intrinsics.primitiveToSizeConstructor[elementType]!!,
                         typeArgumentsCount = 0
                     ).apply {
-                        putValueArgument(0, call.getValueArgument(0))
+                        arguments[0] = call.arguments[0]
                     }
                 }
             }
@@ -81,7 +82,7 @@ private val IrClassSymbol.iterator
     get() = getSimpleFunction("iterator")!!
 
 private val IrClassSymbol.sizeConstructor
-    get() = owner.declarations.asSequence().filterIsInstance<IrConstructor>().first { it.valueParameters.size == 1 }.symbol
+    get() = owner.declarations.asSequence().filterIsInstance<IrConstructor>().first { it.hasShape(regularParameters = 1) }.symbol
 
 private val IrClassSymbol.lengthProperty
     get() = getPropertyGetter("length")!!

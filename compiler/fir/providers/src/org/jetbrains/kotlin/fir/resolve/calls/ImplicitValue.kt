@@ -8,9 +8,13 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildSmartCastExpression
+import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.toResolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -79,6 +83,18 @@ sealed class ImplicitValue(
         }.also {
             cachedCurrentExpression = it
         }
+    }
+
+    fun isSameImplicitReceiverInstance(other: FirExpression): Boolean {
+        val otherOriginal = other.unwrapSmartcastExpression()
+
+        val otherBoundSymbol = when (otherOriginal) {
+            is FirThisReceiverExpression -> otherOriginal.calleeReference.boundSymbol
+            is FirPropertyAccessExpression -> otherOriginal.calleeReference.toResolvedSymbol<FirBasedSymbol<*>>()
+            else -> null
+        }
+
+        return boundSymbol === otherBoundSymbol
     }
 
     @RequiresOptIn

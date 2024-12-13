@@ -65,6 +65,18 @@ public class FirIdeNormalAnalysisSourceModuleScopeContextForPositionTestGenerate
   }
 
   @Test
+  @TestMetadata("classifiersCompanionObject.kt")
+  public void testClassifiersCompanionObject() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/classifiersCompanionObject.kt");
+  }
+
+  @Test
+  @TestMetadata("classifiersFromParentCompanionObject.kt")
+  public void testClassifiersFromParentCompanionObject() {
+    runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/classifiersFromParentCompanionObject.kt");
+  }
+
+  @Test
   @TestMetadata("contextReceiver.kt")
   public void testContextReceiver() {
     runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/contextReceiver.kt");

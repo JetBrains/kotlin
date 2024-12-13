@@ -203,12 +203,8 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
 
         fun IrSerializableProperty.irGet(): IrExpression {
             val ownerType = objectToSerialize.symbol.owner.type
-            return getProperty(
-                irGet(
-                    type = ownerType,
-                    variable = objectToSerialize.symbol
-                ), ir
-            )
+            val propertyType = this.type
+            return getProperty(irGet(ownerType, objectToSerialize.symbol), ir, propertyType)
         }
 
         for ((index, property) in serializableProperties.withIndex()) {

@@ -30,3 +30,10 @@ internal var IrClass.defaultConstructorForReflection: IrConstructor? by irAttrib
  * The factory function which this constructor is replaced by.
  */
 internal var IrConstructor.constructorFactory: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+
+/**
+ * If [this] is a `main` function, the wrapper that actually calls the `main` function.
+ *
+ * @see org.jetbrains.kotlin.ir.backend.js.lower.MainFunctionCallWrapperLowering
+ */
+internal var IrSimpleFunction.mainFunctionWrapper: IrSimpleFunction? by irAttribute(followAttributeOwner = false)

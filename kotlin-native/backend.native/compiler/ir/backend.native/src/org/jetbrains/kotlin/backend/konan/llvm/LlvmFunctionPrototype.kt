@@ -120,7 +120,7 @@ internal fun ContextUtils.getLlvmFunctionReturnType(function: IrSimpleFunction):
 
 internal fun LlvmFunctionSignature(irFunction: IrSimpleFunction, contextUtils: ContextUtils): LlvmFunctionSignature {
     val returnType = contextUtils.getLlvmFunctionReturnType(irFunction)
-    val parameterTypes = ArrayList(irFunction.allParameters.map {
+    val parameterTypes = ArrayList(irFunction.parameters.map {
         LlvmParamType(it.type.toLLVMType(contextUtils.llvm), contextUtils.argumentAbiInfo.defaultParameterAttributesForIrType(it.type))
     })
 

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.js.test.fir
 
 import org.jetbrains.kotlin.js.test.converters.FirJsKlibSerializerFacade
-import org.jetbrains.kotlin.js.test.converters.JsIrInliningFacade
 import org.jetbrains.kotlin.js.test.ir.commonConfigurationForJsCodegenTest
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -24,15 +23,14 @@ abstract class AbstractFirLoadCompiledJsKotlinTestBase<F : ResultingArtifact.Fro
 {
     protected abstract val frontendKind: FrontendKind<F>
     protected abstract val frontendFacade: Constructor<FrontendFacade<F>>
-    protected abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<F, IrBackendInput>>
+    protected abstract val frontendToIrConverter: Constructor<Frontend2BackendConverter<F, IrBackendInput>>
 
     override fun TestConfigurationBuilder.configuration() {
         commonConfigurationForJsCodegenTest(
-            frontendKind,
-            frontendFacade,
-            frontendToBackendConverter,
-            ::JsIrInliningFacade,
-            ::FirJsKlibSerializerFacade,
+            targetFrontend = frontendKind,
+            frontendFacade = frontendFacade,
+            frontendToIrConverter = frontendToIrConverter,
+            serializerFacade = ::FirJsKlibSerializerFacade,
         )
 
         configureKlibArtifactsHandlersStep {
@@ -48,7 +46,7 @@ open class AbstractFirLoadK2CompiledJsKotlinTest : AbstractFirLoadCompiledJsKotl
         get() = FrontendKinds.FIR
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
         get() = ::FirFrontendFacade
-    override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
+    override val frontendToIrConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
         get() = ::Fir2IrResultsConverter
 
     override fun configure(builder: TestConfigurationBuilder) {

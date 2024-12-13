@@ -67,6 +67,7 @@ open class D8Plugin : Plugin<Project> {
     ) {
         download.convention(d8.downloadProperty)
         downloadBaseUrl.convention(d8.downloadBaseUrlProperty)
+        allowInsecureProtocol.convention(false)
         installationDirectory.convention(d8.installationDirectory)
         version.convention(d8.versionProperty)
         edition.convention(d8.edition)

@@ -153,7 +153,7 @@ class KlibSyntheticAccessorGenerator(
             visibility = DescriptorVisibilities.PRIVATE
         }.apply {
             parent = innerClass
-            dispatchReceiverParameter = innerClassThisReceiver.copyTo(
+            parameters += innerClassThisReceiver.copyTo(
                 this,
                 IrDeclarationOrigin.SYNTHETIC_ACCESSOR,
                 type = innerClassThisReceiver.type // This is the type of the inner class.

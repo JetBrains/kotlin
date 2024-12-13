@@ -4,7 +4,7 @@ interface I<F> {
 }
 
 abstract class Base<E> {
-    fun <D : Comparable<D>> f(t: List<D>, e: List<E>) {}
+    fun <D : Comparable<D>> f(t: List<D>, f: List<E>) {}
 }
 
 

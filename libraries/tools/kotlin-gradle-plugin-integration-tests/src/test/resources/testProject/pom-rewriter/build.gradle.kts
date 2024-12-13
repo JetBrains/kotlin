@@ -11,6 +11,8 @@ kotlin {
         api("test:included:1.0")
         api("test:substituted:1.0")
         api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+        api(platform("org.springframework.boot:spring-boot-dependencies:3.4.0"))
+        api("org.springframework.boot:spring-boot-starter-web")
         implementation("test:custom-substituted:1.0")
     }
 }

@@ -10,13 +10,13 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
-import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil.*
 import org.jetbrains.kotlin.codegen.replaceValueParametersIn
 import org.jetbrains.kotlin.codegen.sanitizeNameIfNeeded
 import org.jetbrains.kotlin.codegen.signature.AsmTypeFactory
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
@@ -54,23 +54,12 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
 class KotlinTypeMapper @JvmOverloads constructor(
-    val bindingContext: BindingContext,
-    val classBuilderMode: ClassBuilderMode,
     private val moduleName: String,
     val languageVersionSettings: LanguageVersionSettings,
     private val useOldInlineClassesManglingScheme: Boolean,
-    val jvmTarget: JvmTarget = JvmTarget.DEFAULT,
-    private val isIrBackend: Boolean = false,
     private val typePreprocessor: ((KotlinType) -> KotlinType?)? = null,
     private val namePreprocessor: ((ClassDescriptor) -> String?)? = null
 ) : KotlinTypeMapperBase() {
-    val jvmDefaultMode = languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
-    var useOldManglingRulesForFunctionAcceptingInlineClass: Boolean = useOldInlineClassesManglingScheme
-        set(value) {
-            require(!useOldInlineClassesManglingScheme)
-            field = value
-        }
-
     override val typeSystem: TypeSystemCommonBackendContext
         get() = SimpleClassicTypeSystemContext
 
@@ -92,9 +81,6 @@ class KotlinTypeMapper @JvmOverloads constructor(
         }
 
         override fun processErrorType(kotlinType: KotlinType, descriptor: ClassDescriptor) {
-            if (classBuilderMode.generateBodies) {
-                throw IllegalStateException(generateErrorMessageForErrorType(kotlinType, descriptor))
-            }
         }
 
         override fun preprocessType(kotlinType: KotlinType): KotlinType? {
@@ -170,10 +156,6 @@ class KotlinTypeMapper @JvmOverloads constructor(
         signatureVisitor: JvmSignatureWriter? = null,
         mode: TypeMappingMode = TypeMappingMode.DEFAULT
     ): Type {
-        if (isIrBackend) {
-            throw AssertionError("IR backend shouldn't call KotlinTypeMapper.mapType: $type")
-        }
-
         return mapType(
             type, AsmTypeFactory, mode, typeMappingConfiguration, signatureVisitor
         ) { ktType, asmType, typeMappingMode ->
@@ -344,7 +326,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
         val suffix = getManglingSuffixBasedOnKotlinSignature(
             descriptor,
             shouldMangleByReturnType,
-            useOldManglingRulesForFunctionAcceptingInlineClass
+            useOldInlineClassesManglingScheme
         )
         if (suffix != null) {
             newName += suffix
@@ -487,10 +469,10 @@ class KotlinTypeMapper @JvmOverloads constructor(
         }
     }
 
-    fun writeFormalTypeParameters(typeParameters: List<TypeParameterDescriptor>, sw: JvmSignatureWriter) {
+    private fun writeFormalTypeParameters(typeParameters: List<TypeParameterDescriptor>, sw: JvmSignatureWriter) {
         if (sw.skipGenericSignature()) return
         for (typeParameter in typeParameters) {
-            if (!classBuilderMode.generateBodies && typeParameter.name.isSpecial) {
+            if (typeParameter.name.isSpecial) {
                 // If a type parameter has no name, the code below fails, but it should recover in case of light classes
                 continue
             }
@@ -564,12 +546,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
     }
 
     companion object {
-        /**
-         * Use proper LanguageVersionSettings where possible.
-         */
-        val LANGUAGE_VERSION_SETTINGS_DEFAULT: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
-
-        fun getContainingClassesForDeserializedCallable(
+        private fun getContainingClassesForDeserializedCallable(
             deserializedDescriptor: DescriptorWithContainerSource
         ): ContainingClassesInfo {
             val parentDeclaration = deserializedDescriptor.containingDeclaration
@@ -630,25 +607,6 @@ class KotlinTypeMapper @JvmOverloads constructor(
                 kotlinType.getUnsubstitutedUnderlyingType()
             } ?: throw IllegalStateException("There should be underlying type for inline class type: $kotlinType")
             return typeMapper.mapTypeCommon(underlyingType, TypeMappingMode.DEFAULT)
-        }
-
-        internal fun generateErrorMessageForErrorType(type: KotlinType, descriptor: DeclarationDescriptor): String {
-            val declarationElement = DescriptorToSourceUtils.descriptorToDeclaration(descriptor)
-                ?: return "Error type encountered: $type (${type.javaClass.simpleName})."
-
-            val containingDeclaration = descriptor.containingDeclaration
-            val parentDeclarationElement =
-                if (containingDeclaration != null) DescriptorToSourceUtils.descriptorToDeclaration(containingDeclaration) else null
-
-            return "Error type encountered: %s (%s). Descriptor: %s. For declaration %s:%s in %s:%s".format(
-                type,
-                type.javaClass.simpleName,
-                descriptor,
-                declarationElement,
-                declarationElement.text,
-                parentDeclarationElement,
-                if (parentDeclarationElement != null) parentDeclarationElement.text else "null"
-            )
         }
 
         private fun getJvmShortName(klass: ClassDescriptor): String {
@@ -731,7 +689,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
                 processUnboundedWildcard = {
                     signatureVisitor.writeUnboundedWildcard()
                 },
-                processTypeArgument = { _, type, projectionKind, parameterVariance, newMode ->
+                processTypeArgument = { _, type, projectionKind, _, newMode ->
                     signatureVisitor.writeTypeArgument(projectionKind)
                     mapType(type, signatureVisitor, newMode)
                     signatureVisitor.writeTypeArgumentEnd()

@@ -126,9 +126,9 @@ internal abstract class UnsignedProgressionType(
                 unsafeCoerceIntrinsic,
                 typeArgumentsCount = 2
             ).apply {
-                putTypeArgument(0, fromType)
-                putTypeArgument(1, unsignedType)
-                putValueArgument(0, this@asUnsigned)
+                typeArguments[0] = fromType
+                typeArguments[1] = unsignedType
+                arguments[0] = this@asUnsigned
             }
         } else {
             // Fallback to calling `toUInt/ULong()` extension function.
@@ -137,7 +137,7 @@ internal abstract class UnsignedProgressionType(
                 unsignedConversionFunction,
                 typeArgumentsCount = 0
             ).apply {
-                extensionReceiver = this@asUnsigned
+                arguments[0] = this@asUnsigned
             }
         }
     }
@@ -152,9 +152,9 @@ internal abstract class UnsignedProgressionType(
                 unsafeCoerceIntrinsic,
                 typeArgumentsCount = 2
             ).apply {
-                putTypeArgument(0, unsignedType)
-                putTypeArgument(1, toType)
-                putValueArgument(0, this@asSigned)
+                typeArguments[0] = unsignedType
+                typeArguments[1] = toType
+                arguments[0] = this@asSigned
             }
         } else {
             // Fallback to calling `toInt/Long()` function.

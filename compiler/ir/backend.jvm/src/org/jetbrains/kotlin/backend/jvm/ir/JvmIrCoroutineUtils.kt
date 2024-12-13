@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 
 fun IrFunction.continuationParameter(): IrValueParameter? = when {
     isInvokeSuspendOfLambda() || isInvokeSuspendForInlineOfLambda() -> dispatchReceiverParameter
-    else -> valueParameters.singleOrNull { it.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS }
+    else -> parameters.singleOrNull { it.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS }
 }
 
 fun IrFunction.isInvokeSuspendOfLambda(): Boolean =

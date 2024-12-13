@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.powerassert.earliestStartOffset
@@ -36,18 +37,24 @@ data class SourceFile(
         .replace("\r\n", "\n") // Normalize line endings in the same way the compiler does.
 
     fun getSourceRangeInfo(element: IrElement): SourceRangeInfo {
+        return irFile.fileEntry.getSourceRangeInfo(element.startOffset, element.endOffset)
+    }
+
+    fun getCompleteSourceRangeInfo(element: IrElement): SourceRangeInfo {
         var range = element.startOffset..element.endOffset
         when (element) {
             is IrCall -> {
-                val receiver = element.extensionReceiver ?: element.dispatchReceiver
-                if (element.symbol.owner.isInfix && receiver != null) {
-                    // When an infix function is called *not* with infix notation, the startOffset will not include the receiver.
-                    // Force the range to include the receiver, so it is always present.
+                val receiverArgument = element.symbol.owner.parameters
+                    .lastOrNull { it.kind == IrParameterKind.DispatchReceiver || it.kind == IrParameterKind.ExtensionReceiver }
+                    ?.let { element.arguments[it] }
+                if (receiverArgument != null) {
+                    // When a function is called *not* with infix notation, the startOffset will not include the receiver.
+                    // Force the range to include the receiver, so it is visible.
                     range = element.earliestStartOffset..element.endOffset
 
-                    // The offsets of the receiver will *not* include surrounding parentheses so these need to be checked for
-                    // manually.
-                    val substring = getText(range.first - 1, receiver.endOffset + 1)
+                    // The offsets of the receiver will *not* include surrounding parentheses,
+                    // so these need to be checked for manually.
+                    val substring = getText(range.first - 1, receiverArgument.endOffset + 1)
                     if (substring.startsWith('(') && substring.endsWith(')')) {
                         range = (range.first - 1)..range.last
                     }

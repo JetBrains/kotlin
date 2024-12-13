@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: NATIVE
-// ISSUE: KT-68388
 fun interface Base {
     fun String.print(): String
 }

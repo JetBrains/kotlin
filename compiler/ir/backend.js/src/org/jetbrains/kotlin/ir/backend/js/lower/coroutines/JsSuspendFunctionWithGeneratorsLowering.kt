@@ -12,14 +12,19 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.copyValueAndTypeParametersFrom
+import org.jetbrains.kotlin.ir.util.previousOffset
+import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
@@ -84,15 +89,12 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
             function.isInfix,
             function.isExternal,
         ).apply {
-            copyParameterDeclarationsFrom(function)
+            copyValueAndTypeParametersFrom(function)
             parent = function.parent
             annotations = function.annotations
             body = functionBody.apply {
-                val valueSymbols = function.valueParameters.zip(valueParameters)
-                    .plus(function.dispatchReceiverParameter to dispatchReceiverParameter)
-                    .plus(function.extensionReceiverParameter to extensionReceiverParameter)
-                    .mapNotNull { (old, new) -> new?.let { old?.symbol?.to(it.symbol) } }
-                    .toMap<IrValueSymbol, IrValueSymbol>()
+                val valueSymbols = function.parameters.zip(parameters)
+                    .associate { (old, new) -> old.symbol to new.symbol }
                 transformChildrenVoid(object : ValueRemapper(valueSymbols) {
                     override fun visitCall(expression: IrCall): IrExpression {
                         val call = super.visitCall(expression)
@@ -104,7 +106,7 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
                                     val tmp = createTmpVariable(call, irType = context.irBuiltIns.anyNType)
                                     val coroutineSuspended = irCall(coroutineSuspendedGetterSymbol)
                                     val condition = irEqeqeq(irGet(tmp), coroutineSuspended)
-                                    val yield = irCall(jsYieldFunctionSymbol).apply { putValueArgument(0, irGet(tmp)) }
+                                    val yield = irCall(jsYieldFunctionSymbol).apply { arguments[0] = irGet(tmp) }
                                     +irIfThen(context.irBuiltIns.unitType, condition, irSet(tmp, yield))
                                     +irImplicitCast(irGet(tmp), call.type)
                                 }
@@ -119,12 +121,10 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
         function.body = context.createIrBuilder(function.symbol).irBlockBody {
             +irReturn(
                 irCall(suspendOrReturnFunctionSymbol).also {
-                    it.putValueArgument(0, irCall(generatorFunction.symbol).apply {
-                        dispatchReceiver = function.dispatchReceiverParameter?.let(::irGet)
-                        extensionReceiver = function.extensionReceiverParameter?.let(::irGet)
-                        function.valueParameters.forEachIndexed { i, v -> putValueArgument(i, irGet(v)) }
-                    })
-                    it.putValueArgument(1, irCall(getContinuationSymbol))
+                    it.arguments[0] = irCall(generatorFunction.symbol).apply {
+                        arguments.assignFrom(function.parameters, ::irGet)
+                    }
+                    it.arguments[1] = irCall(getContinuationSymbol)
                 }
             )
         }
@@ -134,7 +134,7 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
 
     private fun removeReturnIfSuspendedCallAndSimplifyDelegatingCall(irFunction: IrFunction, delegatingCall: IrCall) {
         val returnValue = runIf(delegatingCall.isReturnIfSuspendedCall(context)) {
-            delegatingCall.getValueArgument(0)
+            delegatingCall.arguments[0]
         } ?: delegatingCall
 
         val body = irFunction.body as IrBlockBody

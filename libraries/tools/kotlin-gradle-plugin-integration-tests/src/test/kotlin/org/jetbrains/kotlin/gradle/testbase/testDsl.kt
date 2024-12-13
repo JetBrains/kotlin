@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.io.File
+import java.lang.management.ManagementFactory
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -44,10 +45,10 @@ fun KGPBaseTest.project(
     projectName: String,
     gradleVersion: GradleVersion,
     buildOptions: BuildOptions = defaultBuildOptions,
-    forceOutput: Boolean = false,
+    forceOutput: EnableGradleDebug = EnableGradleDebug.AUTO,
     enableBuildScan: Boolean = false,
     addHeapDumpOptions: Boolean = true,
-    enableGradleDebug: Boolean = false,
+    enableGradleDebug: EnableGradleDebug = EnableGradleDebug.AUTO,
     enableGradleDaemonMemoryLimitInMb: Int? = 1024,
     enableKotlinDaemonMemoryLimitInMb: Int? = 1024,
     projectPathAdditionalSuffix: String = "",
@@ -122,10 +123,10 @@ fun KGPBaseTest.nativeProject(
     projectName: String,
     gradleVersion: GradleVersion,
     buildOptions: BuildOptions = defaultBuildOptions,
-    forceOutput: Boolean = false,
+    forceOutput: EnableGradleDebug = EnableGradleDebug.AUTO,
     enableBuildScan: Boolean = false,
     addHeapDumpOptions: Boolean = true,
-    enableGradleDebug: Boolean = false,
+    enableGradleDebug: EnableGradleDebug = EnableGradleDebug.AUTO,
     enableGradleDaemonMemoryLimitInMb: Int? = 1024,
     enableKotlinDaemonMemoryLimitInMb: Int? = 1024,
     projectPathAdditionalSuffix: String = "",
@@ -162,8 +163,8 @@ fun KGPBaseTest.nativeProject(
  */
 fun TestProject.build(
     vararg buildArguments: String,
-    forceOutput: Boolean = this.forceOutput,
-    enableGradleDebug: Boolean = this.enableGradleDebug,
+    forceOutput: EnableGradleDebug = this.forceOutput,
+    enableGradleDebug: EnableGradleDebug = this.enableGradleDebug,
     kotlinDaemonDebugPort: Int? = this.kotlinDaemonDebugPort,
     enableBuildCacheDebug: Boolean = false,
     enableBuildScan: Boolean = this.enableBuildScan,
@@ -176,7 +177,7 @@ fun TestProject.build(
     if (enableBuildScan) agreeToBuildScanService()
     ensureKotlinCompilerArgumentsPluginAppliedCorrectly(buildOptions)
 
-    if (enableGradleDebug && isTeamCityRun) {
+    if (enableGradleDebug.toBooleanFlag() && isTeamCityRun) {
         fail("Please don't set `enableGradleDebug = true` in teamcity run, this can fail build")
     }
 
@@ -191,9 +192,9 @@ fun TestProject.build(
         kotlinDaemonDebugPort
     )
     val gradleRunnerForBuild = gradleRunner
-        .also { if (forceOutput) it.forwardOutput() }
+        .also { if (forceOutput.toBooleanFlag()) it.forwardOutput() }
         .also { if (environmentVariables.environmentalVariables.isNotEmpty()) it.withEnvironment(System.getenv() + environmentVariables.environmentalVariables) }
-        .withDebug(enableGradleDebug)
+        .withDebug(enableGradleDebug.toBooleanFlag())
         .withArguments(allBuildArguments)
     withBuildSummary(allBuildArguments) {
         val buildResult = gradleRunnerForBuild.build()
@@ -208,8 +209,8 @@ fun TestProject.build(
  */
 fun TestProject.buildAndFail(
     vararg buildArguments: String,
-    forceOutput: Boolean = this.forceOutput,
-    enableGradleDebug: Boolean = this.enableGradleDebug,
+    forceOutput: EnableGradleDebug = this.forceOutput,
+    enableGradleDebug: EnableGradleDebug = this.enableGradleDebug,
     kotlinDaemonDebugPort: Int? = this.kotlinDaemonDebugPort,
     enableBuildCacheDebug: Boolean = false,
     enableBuildScan: Boolean = this.enableBuildScan,
@@ -233,9 +234,9 @@ fun TestProject.buildAndFail(
         kotlinDaemonDebugPort
     )
     val gradleRunnerForBuild = gradleRunner
-        .also { if (forceOutput) it.forwardOutput() }
+        .also { if (forceOutput.toBooleanFlag()) it.forwardOutput() }
         .also { if (environmentVariables.environmentalVariables.isNotEmpty()) it.withEnvironment(System.getenv() + environmentVariables.environmentalVariables) }
-        .withDebug(enableGradleDebug)
+        .withDebug(enableGradleDebug.toBooleanFlag())
         .withArguments(allBuildArguments)
     withBuildSummary(allBuildArguments) {
         val buildResult = gradleRunnerForBuild.buildAndFail()
@@ -391,15 +392,11 @@ class TestProject(
     projectPath: Path,
     val buildOptions: BuildOptions,
     val gradleVersion: GradleVersion,
-    val forceOutput: Boolean,
+    val forceOutput: EnableGradleDebug,
     val enableBuildScan: Boolean,
     val enableGradleDaemonMemoryLimitInMb: Int?,
     val enableKotlinDaemonMemoryLimitInMb: Int?,
-    /**
-     * Whether the test and the Gradle build launched by the test should be executed in the same process so that we can use the same
-     * debugger for both (see https://docs.gradle.org/current/javadoc/org/gradle/testkit/runner/GradleRunner.html#isDebug--).
-     */
-    val enableGradleDebug: Boolean,
+    val enableGradleDebug: EnableGradleDebug,
     /**
      * A port to debug the Kotlin daemon at.
      * Note that we'll need to let the debugger start listening at this port first *before* the Kotlin daemon is launched.
@@ -1071,6 +1068,26 @@ private fun acceptAndroidSdkLicenses(androidHome: File) {
     } else {
         if (sdkPreviewLicense != sdkPreviewLicenseFile.readText().trim()) {
             sdkPreviewLicenseFile.writeText(sdkPreviewLicense)
+        }
+    }
+}
+
+/**
+ * Indicates if the test and the Gradle build started by the test should run in the same process.
+ * This setup allows using a single debugger for both the test and the build process (including build script injections).
+ *
+ * Add debugTargetProcessWhenDebuggingKGP-IT=true to local.properties to automatically run IT withDebug when debugging the tests in IDE.
+ */
+enum class EnableGradleDebug {
+    DISABLED,
+    ENABLED,
+    AUTO;
+
+    fun toBooleanFlag(): Boolean = when (this) {
+        DISABLED -> false
+        ENABLED -> true
+        AUTO -> {
+            System.getProperty("debugTargetProcessWhenDebuggingKGP-IT").toBoolean() && ManagementFactory.getRuntimeMXBean().inputArguments.toString().contains("-agentlib:jdwp")
         }
     }
 }

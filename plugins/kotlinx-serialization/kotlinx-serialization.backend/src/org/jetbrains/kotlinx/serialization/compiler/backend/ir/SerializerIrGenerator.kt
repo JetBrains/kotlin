@@ -211,7 +211,7 @@ open class SerializerIrGenerator(
                 primaryCtor.symbol
             ).apply {
                 irClass.typeParameters.forEachIndexed { index, irTypeParameter ->
-                    putTypeArgument(index, irTypeParameter.defaultType)
+                    typeArguments[index] = irTypeParameter.defaultType
                 }
             }
 
@@ -346,8 +346,11 @@ open class SerializerIrGenerator(
     )
 
     // returns null: Any? for boxed types and 0: <number type> for primitives
-    private fun IrBuilderWithScope.defaultValueAndType(descriptor: IrProperty): Pair<IrExpression, IrType> {
-        val T = descriptor.getter!!.returnType
+    private fun IrBuilderWithScope.defaultValueAndType(
+        property: IrProperty,
+        expectedPropertyType: IrType? = null,
+    ): Pair<IrExpression, IrType> {
+        val T = expectedPropertyType ?: property.getter!!.returnType
         val defaultPrimitive: IrExpression? =
             if (T.isMarkedNullable()) null
             else when (T.getPrimitiveType()) {
@@ -402,14 +405,15 @@ open class SerializerIrGenerator(
         // var bitMask0 = 0, bitMask1 = 0...
         val bitMasks = (0 until blocksCnt).map { irTemporary(irInt(0), "bitMask$it", isMutable = true) }
         // var local0 = null, local1 = null ...
-        val serialPropertiesMap = serializableProperties.mapIndexed { i, prop -> i to prop.ir }.associate { (i, descriptor) ->
-            val (expr, type) = defaultValueAndType(descriptor)
-            descriptor to irTemporary(expr, "local$i", type, isMutable = true)
+        val serialPropertiesMap = serializableProperties.mapIndexed { i, prop -> i to prop }.associate { (i, serializableProp) ->
+            val ir = serializableProp.ir
+            val (expr, type) = defaultValueAndType(ir, serializableProp.type)
+            ir to irTemporary(expr, "local$i", type, isMutable = true)
         }
-        // var transient0 = null, transient0 = null ...
-        val transientsPropertiesMap = transients.mapIndexed { i, prop -> i to prop }.associate { (i, descriptor) ->
-            val (expr, type) = defaultValueAndType(descriptor)
-            descriptor to irTemporary(expr, "transient$i", type, isMutable = true)
+        // var transient0 = null, transient1 = null ...
+        val transientsPropertiesMap = transients.mapIndexed { i, prop -> i to prop }.associate { (i, irProperty) ->
+            val (expr, type) = defaultValueAndType(irProperty)
+            irProperty to irTemporary(expr, "transient$i", type, isMutable = true)
         }
 
         //input = input.beginStructure(...)

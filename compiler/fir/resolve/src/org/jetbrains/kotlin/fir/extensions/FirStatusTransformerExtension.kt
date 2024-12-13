@@ -132,6 +132,7 @@ inline fun FirDeclarationStatus.transform(
         isOperator = this@transform.isOperator
         isInfix = this@transform.isInfix
         isInline = this@transform.isInline
+        isValue = this@transform.isValue
         isTailRec = this@transform.isTailRec
         isExternal = this@transform.isExternal
         isConst = this@transform.isConst

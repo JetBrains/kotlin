@@ -16,10 +16,13 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import androidx.compose.compiler.plugins.EnumTestProtos
+import androidx.compose.compiler.plugins.StabilityTestProtos
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.protobuf.Internal.EnumLite
 import org.junit.Test
 
 class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
@@ -1056,5 +1059,38 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 }           
             }
         """.trimIndent()
+    )
+
+    @Test
+    fun compileEnums() = verifyGoldenComposeIrTransform(
+        """
+            import androidx.compose.runtime.*
+
+            enum class Test {
+                A, B, C
+            }
+
+            @Composable
+            fun Test(parameter: Test) {
+                val lambda = { println(parameter) }
+            }
+        """
+    )
+
+    @Test
+    fun compileProtobufEnums() = verifyGoldenComposeIrTransform(
+        """
+            import androidx.compose.runtime.*
+            import androidx.compose.compiler.plugins.EnumTestProtos
+
+            @Composable
+            fun Test(parameter: EnumTestProtos.Enum) {
+                val lambda = { println(parameter) }
+            }
+        """,
+        additionalPaths = listOf(
+            Classpath.jarFor<EnumTestProtos>(), // protobuf-test-classes
+            Classpath.jarFor<EnumLite>() // protobuf-lite
+        )
     )
 }

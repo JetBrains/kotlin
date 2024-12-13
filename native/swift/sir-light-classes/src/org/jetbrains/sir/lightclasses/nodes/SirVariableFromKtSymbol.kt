@@ -22,8 +22,7 @@ import org.jetbrains.sir.lightclasses.extensions.*
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
-import org.jetbrains.sir.lightclasses.utils.isSubtypeOf
-import org.jetbrains.sir.lightclasses.utils.overridableCandidates
+import org.jetbrains.sir.lightclasses.utils.*
 import org.jetbrains.sir.lightclasses.utils.translateReturnType
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
 
@@ -72,14 +71,14 @@ internal abstract class SirAbstractVariableFromKtSymbol(
         }
         set(_) = Unit
 
-    override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
+    override val attributes: List<SirAttribute> by lazy {
+        this.translatedAttributes + listOfNotNull(SirAttribute.NonOverride.takeIf { overrideStatus is OverrideStatus.Conflicts })
+    }
 
     override val isOverride: Boolean
-        get() = isInstance && overridableCandidates.any {
-            this.name == it.name &&
-            (it.setter == null && this.type.isSubtypeOf(it.type) || this.type == it.type) &&
-            this.isInstance == it.isInstance
-        }
+        get() = overrideStatus is OverrideStatus.Overrides
+
+    private val overrideStatus: OverrideStatus<SirVariable>? by lazy { computeIsOverride() }
 
     override val modality: SirModality
         get() = ktSymbol.modality.sirModality

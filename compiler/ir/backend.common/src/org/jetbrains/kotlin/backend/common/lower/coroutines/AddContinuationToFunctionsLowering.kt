@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 /**
@@ -67,7 +66,8 @@ class AddContinuationToLocalSuspendFunctionsLowering(val context: CommonBackendC
 private fun transformSuspendFunction(context: CommonBackendContext, function: IrSimpleFunction): IrSimpleFunction {
     val newFunctionWithContinuation = function.getOrCreateFunctionWithContinuationStub(context)
     // Using custom mapping because number of parameters doesn't match
-    val parameterMapping : Map<IrValueParameter, IrValueParameter> = function.explicitParameters.zip(newFunctionWithContinuation.explicitParameters).toMap()
+    val parameterMapping : Map<IrValueParameter, IrValueParameter> =
+        function.parameters.zip(newFunctionWithContinuation.parameters).toMap()
     val newBody = function.moveBodyTo(newFunctionWithContinuation, parameterMapping)
     for ((old, new) in parameterMapping.entries) {
         new.defaultValue = old.defaultValue?.transform(VariableRemapper(parameterMapping), null)
@@ -118,14 +118,13 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: CommonBackendCon
         function.copyAttributes(this)
         function.copyTypeParametersFrom(this)
         val substitutionMap = makeTypeParameterSubstitutionMap(this, function)
-        function.copyReceiverParametersFrom(this, substitutionMap)
+        function.copyParametersFrom(this, substitutionMap)
 
         function.overriddenSymbols = function.overriddenSymbols memoryOptimizedPlus overriddenSymbols.map {
             factory.stageController.restrictTo(it.owner) {
                 it.owner.getOrCreateFunctionWithContinuationStub(context).symbol
             }
         }
-        function.valueParameters = valueParameters.memoryOptimizedMap { it.copyTo(function) }
 
         function.addValueParameter {
             startOffset = function.startOffset

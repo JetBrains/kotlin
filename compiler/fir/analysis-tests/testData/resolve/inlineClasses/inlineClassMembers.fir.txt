@@ -1,5 +1,5 @@
 FILE: inlineClassMembers.kt
-    public final inline class BackingFields : R|kotlin/Any| {
+    public final value class BackingFields : R|kotlin/Any| {
         public constructor(x: R|kotlin/Int|): R|BackingFields| {
             super<R|kotlin/Any|>()
         }
@@ -108,7 +108,7 @@ FILE: inlineClassMembers.kt
         }
 
     }
-    public final inline class WithInner : R|kotlin/Any| {
+    public final value class WithInner : R|kotlin/Any| {
         public constructor(x: R|kotlin/String|): R|WithInner| {
             super<R|kotlin/Any|>()
         }

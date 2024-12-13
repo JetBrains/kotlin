@@ -314,7 +314,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             return false
         }
 
-        if (classSymbol.isInline && !session.versionReader.canSupportInlineClasses) {
+        if (classSymbol.isInlineOrValue && !session.versionReader.canSupportInlineClasses) {
             reporter.reportOn(
                 classSymbol.serializableOrMetaAnnotationSource(session),
                 FirSerializationErrors.INLINE_CLASSES_NOT_SUPPORTED,

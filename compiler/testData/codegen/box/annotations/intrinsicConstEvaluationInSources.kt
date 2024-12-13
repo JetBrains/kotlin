@@ -2,6 +2,8 @@
 // IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6, WASM, NATIVE
 //   non-jvm backends are ignored because of KT-66432
 // ISSUE: KT-65415, KT-66432
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
+// ^^^ Source code is not compiled in JS.
 
 // FILE: IntrinsicConstEvaluation.kt
 package kotlin.internal

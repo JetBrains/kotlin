@@ -48,6 +48,25 @@
     <inspection_tool class="ContinueOrBreakFromFinallyBlock" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="CovariantCompareTo" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="CovariantEquals" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="CustomRegExpInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="myConfigurations">
+        <list>
+          <RegExpInspectionConfiguration>
+            <option name="name" value="Deprecated compiler API usage (dispatchReceiverParameter setter)" />
+            <option name="uuid" value="e11eeaf1-b3a1-41ab-8f7f-1348991e97fa" />
+            <option name="patterns">
+              <list>
+                <InspectionPattern>
+                  <option name="regExp" value="(?&lt;!va[lr]\s)\bdispatchReceiverParameter(?=\s+=[^=])" />
+                  <option name="_fileType" value="Kotlin" />
+                  <option name="searchContext" value="ANY" />
+                </InspectionPattern>
+              </list>
+            </option>
+          </RegExpInspectionConfiguration>
+        </list>
+      </option>
+    </inspection_tool>
     <inspection_tool class="DataFlowIssue" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="runtime.classes" level="WARNING" enabled="false">
         <option name="SUGGEST_NULLABLE_ANNOTATIONS" value="false" />
@@ -472,6 +491,10 @@
         <constraint name="__context__" within="" contains="" />
         <constraint name="Reference" reference="Deprecated compiler API - property" within="" contains="" />
       </searchConfiguration>
+      <searchConfiguration name="Deprecated compiler API usage" uuid="fa590a8d-4fac-48d3-b2bb-81756ba56c6e" text="$Reference$" recursive="true" caseInsensitive="true" type="Kotlin" pattern_context="default">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="Reference" reference="Deprecated compiler API - interface" within="" contains="" />
+      </searchConfiguration>
     </inspection_tool>
     <inspection_tool class="SameParameterValue" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="SetReplaceableByEnumSet" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -568,5 +591,6 @@
       <option name="ignoreNonEmtpyLoops" value="false" />
     </inspection_tool>
     <inspection_tool class="fa590a8d-4fac-48d3-b2bb-81756ba56c6e" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="DEPRECATED_ATTRIBUTES" />
+    <inspection_tool class="e11eeaf1-b3a1-41ab-8f7f-1348991e97fa" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="DEPRECATED_ATTRIBUTES" />
   </profile>
 </component>

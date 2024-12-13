@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.addDispatchReceiver
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irAttribute
@@ -66,10 +66,10 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
         require(scope is IrClass || scope is IrFile)
         parent = scope
         if (scope is IrClass) {
-            addDispatchReceiver {
+            parameters += buildReceiverParameter {
+                type = scope.defaultType
                 startOffset = irField.startOffset
                 endOffset = irField.endOffset
-                type = scope.defaultType
             }
         }
         builder()

@@ -173,7 +173,7 @@ internal object ArgumentCheckingProcessor {
             else -> ConeArgumentConstraintPosition(expression)
         }
 
-        val capturedType = prepareCapturedType(argumentType, context)
+        val capturedType = prepareCapturedType(argumentType, context.session)
 
         var argumentTypeForApplicabilityCheck = capturedType.applyIf(useNullableArgumentType) {
             withNullability(nullable = true, session.typeContext)
@@ -300,29 +300,39 @@ internal object ArgumentCheckingProcessor {
         candidate.addPostponedAtom(postponedAtom)
     }
 
-    private fun ArgumentContext.preprocessLambdaArgument(atom: ConeResolutionAtomWithPostponedChild): ConePostponedResolvedAtom {
-        createLambdaWithTypeVariableAsExpectedTypeAtomIfNeeded(atom)?.let { return it }
-        return createResolvedLambdaAtom(atom, duringCompletion = false, returnTypeVariable = null)
+    private fun ArgumentContext.preprocessLambdaArgument(atom: ConeResolutionAtomWithPostponedChild) {
+        if (createLambdaWithTypeVariableAsExpectedTypeAtomIfNeeded(atom)) {
+            return
+        }
+        createResolvedLambdaAtom(atom, duringCompletion = false, returnTypeVariable = null)
     }
 
+    /**
+     * @return true in case [ConeLambdaWithTypeVariableAsExpectedTypeAtom] was created and set as
+     * [ConeResolutionAtomWithPostponedChild.subAtom] of the [atom] and a postponed atom of the
+     * [ArgumentCheckingProcessor.ArgumentContext.candidate].
+     * In case of false result, this function works as pure (it does not change inference state).
+     */
     private fun ArgumentContext.createLambdaWithTypeVariableAsExpectedTypeAtomIfNeeded(
         atom: ConeResolutionAtomWithPostponedChild
-    ): ConeLambdaWithTypeVariableAsExpectedTypeAtom? {
-        if (expectedType == null || !csBuilder.isTypeVariable(expectedType)) return null
+    ): Boolean {
+        if (expectedType == null || !csBuilder.isTypeVariable(expectedType)) return false
         val expectedTypeVariableWithConstraints = csBuilder.currentStorage()
             .notFixedTypeVariables[expectedType.typeConstructor(context.typeContext)]
-            ?: return null
+            ?: return false
 
         val explicitTypeArgument = expectedTypeVariableWithConstraints.constraints.find {
             it.kind == ConstraintKind.EQUALITY && it.position.from is ConeExplicitTypeParameterConstraintPosition
         }?.type as ConeKotlinType?
 
-        return runIf(explicitTypeArgument == null || explicitTypeArgument.typeArguments.isNotEmpty()) {
-            ConeLambdaWithTypeVariableAsExpectedTypeAtom(atom.lambdaExpression, expectedType, candidate).also {
-                candidate.addPostponedAtom(it)
-                atom.subAtom = it
-            }
+        if (explicitTypeArgument != null && explicitTypeArgument.typeArguments.isEmpty()) {
+            return false
         }
+        ConeLambdaWithTypeVariableAsExpectedTypeAtom(atom.lambdaExpression, expectedType, candidate).also {
+            candidate.addPostponedAtom(it)
+            atom.subAtom = it
+        }
+        return true
     }
 
     private fun ArgumentContext.createResolvedLambdaAtom(

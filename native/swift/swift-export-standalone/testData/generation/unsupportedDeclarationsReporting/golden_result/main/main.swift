@@ -1,8 +1,8 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 
-public final class Foo : KotlinRuntime.KotlinBase {
-    public final class Nested : KotlinRuntime.KotlinBase {
+public final class Foo: KotlinRuntime.KotlinBase {
+    public final class Nested: KotlinRuntime.KotlinBase {
         public override init() {
             let __kt = Foo_Nested_init_allocate()
             super.init(__externalRCRef: __kt)
@@ -26,7 +26,7 @@ public final class Foo : KotlinRuntime.KotlinBase {
     }
 }
 public extension main.a.b.c {
-    public final class E : KotlinRuntime.KotlinBase, Swift.CaseIterable {
+    public final class E: KotlinRuntime.KotlinBase, Swift.CaseIterable {
         public static var A: main.a.b.c.E {
             get {
                 return main.a.b.c.E(__externalRCRef: a_b_c_E_A_get())

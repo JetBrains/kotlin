@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
+import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.absolute
@@ -183,8 +185,13 @@ object TestModuleStructureFactory {
                     "Unknown library format: ${libraryRoot.absolute()}"
                 }
 
+                val platform = when (libraryRoot.extension.toLowerCaseAsciiOnly()) {
+                    "jar" -> JvmPlatforms.defaultJvmPlatform
+                    else -> testModule.targetPlatform
+                }
+
                 val libraryModule = libraryCache(setOf(libraryRoot)) {
-                    createLibraryModule(project, libraryRoot, JvmPlatforms.defaultJvmPlatform, testServices)
+                    createLibraryModule(project, libraryRoot, platform, testServices)
                 }
 
                 ktModule.directRegularDependencies.add(libraryModule)

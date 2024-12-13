@@ -90,10 +90,8 @@ class FirExpectActualMatchingContextImpl private constructor(
         get() = asSymbol().resolvedStatus.isCompanion
     override val RegularClassSymbolMarker.isInner: Boolean
         get() = asSymbol().resolvedStatus.isInner
-    override val RegularClassSymbolMarker.isInline: Boolean
-        get() = asSymbol().resolvedStatus.isInline
-    override val RegularClassSymbolMarker.isValue: Boolean
-        get() = asSymbol().resolvedStatus.isInline
+    override val RegularClassSymbolMarker.isInlineOrValue: Boolean
+        get() = asSymbol().resolvedStatus.let { it.isInline || it.isValue }
 
     override val RegularClassSymbolMarker.isFun: Boolean
         get() = asSymbol().resolvedStatus.isFun

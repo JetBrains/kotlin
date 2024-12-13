@@ -45,8 +45,8 @@ class BooCase1() {
 // TESTCASE NUMBER: 2
 
 class KotlinClass(private val name: String) : Comparable<KotlinClass> {
-    override operator fun compareTo(that: KotlinClass): Int {
-        return name.compareTo(that.name)
+    override operator fun compareTo(other: KotlinClass): Int {
+        return name.compareTo(other.name)
     }
 }
 

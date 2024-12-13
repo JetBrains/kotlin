@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.util.copyParameterDeclarationsFrom
+import org.jetbrains.kotlin.ir.util.copyValueAndTypeParametersFrom
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isClass
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -102,7 +102,7 @@ class GenerateJvmDefaultCompatibilityBridges(private val context: JvmBackendCont
         }.apply {
             parent = irClass
             overriddenSymbols = declaration.overriddenSymbols
-            copyParameterDeclarationsFrom(declaration)
+            copyValueAndTypeParametersFrom(declaration)
             dispatchReceiverParameter?.type = irClass.defaultType
             annotations = declaration.annotations
             copyCorrespondingPropertyFrom(declaration)
@@ -116,7 +116,7 @@ class GenerateJvmDefaultCompatibilityBridges(private val context: JvmBackendCont
                         dispatchReceiver = irGet(dispatchReceiverParameter!!)
                         extensionReceiverParameter?.let { extensionReceiver = irGet(it) }
                         for ((index, parameter) in typeParameters.withIndex()) {
-                            putTypeArgument(index, parameter.defaultType)
+                            typeArguments[index] = parameter.defaultType
                         }
                         for ((index, parameter) in valueParameters.withIndex()) {
                             putValueArgument(index, irGet(parameter))

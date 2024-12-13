@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls.candidate
 
 import org.jetbrains.kotlin.fir.resolve.calls.stages.*
 
-sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
+sealed class CallKind(vararg val resolutionSequence: ResolutionStage) {
     object VariableAccess : CallKind(
         CheckHiddenDeclaration,
         CheckVisibility,
@@ -114,8 +114,6 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
     )
 
     internal class CustomForIde(vararg resolutionSequence: ResolutionStage) : CallKind(*resolutionSequence)
-
-    val resolutionSequence: List<ResolutionStage> = resolutionSequence.toList()
 
     final override fun toString(): String {
         return this::class.simpleName ?: super.toString()

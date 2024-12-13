@@ -23,6 +23,7 @@ import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.utils.OverrideStatus
 import org.jetbrains.sir.lightclasses.utils.computeIsOverride
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
 
@@ -184,9 +185,14 @@ internal class SirObjectSyntheticInit(ktSymbol: KaNamedClassSymbol) : SirInit() 
     override val documentation: String? = null
     override val isRequired: Boolean = false
     override val isConvenience: Boolean = false
-    override val isOverride: Boolean get() = computeIsOverride()
+    override val isOverride: Boolean get() = overrideStatus is OverrideStatus.Overrides
+    private val overrideStatus: OverrideStatus<SirInit>? by lazy { computeIsOverride() }
     override lateinit var parent: SirDeclarationParent
-    override val attributes: MutableList<SirAttribute> = mutableListOf()
+    override val attributes: List<SirAttribute> by lazy {
+        listOfNotNull(
+            SirAttribute.NonOverride.takeIf { overrideStatus is OverrideStatus.Conflicts }
+        )
+    }
     override val errorType: SirType get() = SirType.never
     override var body: SirFunctionBody? = null
 }

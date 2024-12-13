@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.CommonKLibResolver
+import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
@@ -133,15 +134,6 @@ fun generateKLib(
     )
 }
 
-data class IrModuleInfo(
-    val module: IrModuleFragment,
-    val allDependencies: List<IrModuleFragment>,
-    val bultins: IrBuiltIns,
-    val symbolTable: SymbolTable,
-    val deserializer: JsIrLinker,
-    val moduleFragmentToUniqueName: Map<IrModuleFragment, String>,
-)
-
 fun sortDependencies(moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>>): Collection<KotlinLibrary> {
     return DFS.topologicalOrder(moduleDependencies.keys) { m ->
         moduleDependencies.getValue(m)
@@ -252,7 +244,6 @@ fun getIrModuleInfoForKlib(
             builtIns = irBuiltIns,
             messageCollector = messageCollector
         ),
-        translationPluginContext = null,
         icData = null,
         friendModules = friendModules
     )
@@ -271,7 +262,7 @@ fun getIrModuleInfoForKlib(
 
     val moduleFragment = deserializedModuleFragments.last()
 
-    irLinker.init(null, emptyList())
+    irLinker.init(null)
     ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
     irLinker.postProcess(inOrAfterLinkageStep = true)
 
@@ -300,10 +291,6 @@ fun getIrModuleInfoForSourceFiles(
     mapping: (KotlinLibrary) -> ModuleDescriptor
 ): IrModuleInfo {
     val irBuiltIns = psi2IrContext.irBuiltIns
-    val feContext = psi2IrContext.run {
-        JsIrLinker.JsFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
-    }
-
     val irLinker = JsIrLinker(
         currentModule = psi2IrContext.moduleDescriptor,
         messageCollector = messageCollector,
@@ -314,7 +301,6 @@ fun getIrModuleInfoForSourceFiles(
             builtIns = irBuiltIns,
             messageCollector = messageCollector
         ),
-        translationPluginContext = feContext,
         icData = null,
         friendModules = friendModules,
     )
@@ -384,7 +370,6 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
     stubGenerator: DeclarationStubGenerator? = null
 ): Pair<IrModuleFragment, IrPluginContext> {
     val psi2Ir = Psi2IrTranslator(languageVersionSettings, configuration, messageCollector::checkNoUnboundSymbols)
-    val extensions = IrGenerationExtension.getInstances(project)
 
     // plugin context should be instantiated before postprocessing steps
     val pluginContext = IrPluginContextImpl(
@@ -397,27 +382,19 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
         linker = irLinker,
         messageCollector
     )
-    if (extensions.isNotEmpty()) {
-        for (extension in extensions) {
-            psi2Ir.addPostprocessingStep { module ->
-                val old = stubGenerator?.unboundSymbolGeneration
-                try {
-                    stubGenerator?.unboundSymbolGeneration = true
-                    extension.generate(module, pluginContext)
-                } finally {
-                    stubGenerator?.unboundSymbolGeneration = old!!
-                }
+    for (extension in IrGenerationExtension.getInstances(project)) {
+        psi2Ir.addPostprocessingStep { module ->
+            val old = stubGenerator?.unboundSymbolGeneration
+            try {
+                stubGenerator?.unboundSymbolGeneration = true
+                extension.generate(module, pluginContext)
+            } finally {
+                stubGenerator?.unboundSymbolGeneration = old!!
             }
         }
-
     }
 
-    return psi2Ir.generateModuleFragment(
-        this,
-        files,
-        listOf(stubGenerator ?: irLinker),
-        extensions
-    ) to pluginContext
+    return psi2Ir.generateModuleFragment(this, files, listOf(stubGenerator ?: irLinker)) to pluginContext
 }
 
 private fun createBuiltIns(storageManager: StorageManager) = object : KotlinBuiltIns(storageManager) {}

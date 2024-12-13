@@ -283,8 +283,8 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
             return expression
 
         val symbol = createStubFunction(expression) ?: return expression
-        for (i in 0 until expression.typeArgumentsCount) {
-            log { "$symbol[$i]: ${expression.getTypeArgument(i)}" }
+        for (i in expression.typeArguments.indices) {
+            log { "$symbol[$i]: ${expression.typeArguments[i]}" }
         }
         val stubFunction = symbol.owner
         stubFunction.typeParameters.forEach { log { "$stubFunction[${it.index}] : $it" } }
@@ -296,8 +296,8 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
         ).irBlock {
             val newCall = builder(symbol).apply {
                 val offset = if (needsTypeArgumentOffset(declaration)) declaration.parentAsClass.typeParameters.size else 0
-                for (i in 0 until typeArgumentsCount) {
-                    putTypeArgument(i, expression.getTypeArgument(i + offset))
+                for (i in typeArguments.indices) {
+                    typeArguments[i] = expression.typeArguments[i + offset]
                 }
                 val parameter2arguments = argumentsForCall(expression, stubFunction)
 
@@ -326,7 +326,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
             with(expression) {
                 IrDelegatingConstructorCallImpl(
                     startOffset, endOffset, type, it as IrConstructorSymbol,
-                    typeArgumentsCount = typeArgumentsCount,
+                    typeArgumentsCount = typeArguments.size,
                 )
             }
         }
@@ -353,7 +353,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
             with(expression) {
                 IrEnumConstructorCallImpl(
                     startOffset, endOffset, type, it as IrConstructorSymbol,
-                    typeArgumentsCount = typeArgumentsCount,
+                    typeArgumentsCount = typeArguments.size,
                 )
             }
         }
@@ -367,7 +367,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
             return visitFunctionAccessExpression(expression) {
                 IrCallImpl(
                     startOffset, endOffset, (it as IrSimpleFunctionSymbol).owner.returnType, it,
-                    typeArgumentsCount = typeArgumentsCount - typeParametersToRemove,
+                    typeArgumentsCount = typeArguments.size - typeParametersToRemove,
                     origin = LoweredStatementOrigins.DEFAULT_DISPATCH_CALL,
                     superQualifierSymbol = superQualifierSymbol
                 )
@@ -406,9 +406,9 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
         val realArgumentsNumber = declaration.valueParameters.filterNot { it.isMovedReceiver() }.size
         val maskValues = IntArray((realArgumentsNumber + 31) / 32)
 
-        assert(stubFunction.explicitParametersCount - declaration.explicitParametersCount - maskValues.size in listOf(0, 1)) {
+        assert(stubFunction.parameters.size - declaration.parameters.size - maskValues.size in listOf(0, 1)) {
             "argument count mismatch: expected $realArgumentsNumber arguments + ${maskValues.size} masks + optional handler/marker, " +
-                    "got ${stubFunction.explicitParametersCount} total in ${stubFunction.render()}"
+                    "got ${stubFunction.parameters.size} total in ${stubFunction.render()}"
         }
 
         var sourceParameterIndex = -1
@@ -552,7 +552,7 @@ open class MaskedDefaultArgumentFunctionFactory(context: CommonBackendContext) :
             )
         }
         context.remapMultiFieldValueClassStructure(
-            original, this, parametersMappingOrNull = original.explicitParameters.zip(explicitParameters).toMap()
+            original, this, parametersMappingOrNull = original.parameters.zip(parameters).toMap()
         )
     }
 }

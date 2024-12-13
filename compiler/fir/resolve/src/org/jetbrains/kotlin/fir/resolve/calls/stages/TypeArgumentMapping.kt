@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.InapplicableCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.WrongNumberOfTypeArguments
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeWrongNumberOfTypeArgumentsError
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.ConeTypeIntersector
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -91,10 +90,10 @@ internal object MapTypeArguments : ResolutionStage() {
 
 internal object NoTypeArguments : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
+        candidate.typeArgumentMapping = TypeArgumentMapping.NoExplicitArguments
         if (callInfo.typeArguments.isNotEmpty()) {
             sink.yieldDiagnostic(InapplicableCandidate)
         }
-        candidate.typeArgumentMapping = TypeArgumentMapping.NoExplicitArguments
     }
 }
 

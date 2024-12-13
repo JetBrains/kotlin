@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 /**
  * Generates visible synthetic accessor functions for symbols that are otherwise inaccessible, for example,
@@ -221,7 +222,7 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
     ): IrBody {
         val maybeDispatchReceiver =
             if (targetField.isStatic) null
-            else IrGetValueImpl(accessor.startOffset, accessor.endOffset, accessor.valueParameters[0].symbol)
+            else IrGetValueImpl(accessor.startOffset, accessor.endOffset, accessor.parameters[0].symbol)
         return context.irFactory.createExpressionBody(
             accessor.startOffset, accessor.endOffset,
             IrGetFieldImpl(
@@ -278,10 +279,10 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
     ): IrBody {
         val maybeDispatchReceiver =
             if (targetField.isStatic) null
-            else IrGetValueImpl(accessor.startOffset, accessor.endOffset, accessor.valueParameters[0].symbol)
+            else IrGetValueImpl(accessor.startOffset, accessor.endOffset, accessor.parameters[0].symbol)
         val value = IrGetValueImpl(
             accessor.startOffset, accessor.endOffset,
-            accessor.valueParameters[if (targetField.isStatic) 0 else 1].symbol
+            accessor.parameters[if (targetField.isStatic) 0 else 1].symbol
         )
         return context.irFactory.createExpressionBody(
             accessor.startOffset, accessor.endOffset,
@@ -315,26 +316,13 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
         }
         call.passTypeArgumentsFrom(syntheticFunction, offset = typeArgumentOffset)
 
-        var offset = 0
         val delegateTo = call.symbol.owner
-        delegateTo.dispatchReceiverParameter?.let {
-            call.dispatchReceiver =
-                IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, syntheticFunction.valueParameters[offset++].symbol)
-        }
 
-        delegateTo.extensionReceiverParameter?.let {
-            call.extensionReceiver =
-                IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, syntheticFunction.valueParameters[offset++].symbol)
-        }
-
-        delegateTo.valueParameters.forEachIndexed { i, _ ->
-            call.putValueArgument(
-                i,
-                IrGetValueImpl(
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    syntheticFunction.valueParameters[i + offset].symbol
-                )
+        delegateTo.parameters.indices.forEach { index ->
+            call.arguments[index] = IrGetValueImpl(
+                startOffset = UNDEFINED_OFFSET,
+                endOffset = UNDEFINED_OFFSET,
+                symbol = syntheticFunction.parameters[index].symbol
             )
         }
     }
@@ -420,13 +408,12 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
             else -> accessorSymbol.produceCallToSyntheticFunction(oldExpression)
         }
         newExpression.copyTypeArgumentsFrom(oldExpression)
-        val receiverAndArgs = oldExpression.receiverAndArgs()
-        receiverAndArgs.forEachIndexed { i, irExpression ->
-            newExpression.putValueArgument(i, irExpression)
+        val newExpressionArguments = if (accessorSymbol is IrConstructorSymbol) {
+            oldExpression.receiverAndArgs() + createAccessorMarkerArgument()
+        } else {
+            oldExpression.receiverAndArgs()
         }
-        if (accessorSymbol is IrConstructorSymbol) {
-            newExpression.putValueArgument(receiverAndArgs.size, createAccessorMarkerArgument())
-        }
+        newExpression.arguments.assignFrom(newExpressionArguments)
         return newExpression
     }
 
@@ -500,7 +487,7 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
             oldExpression.origin
         )
         oldExpression.receiver?.let {
-            call.putValueArgument(0, oldExpression.receiver)
+            call.arguments[0] = oldExpression.receiver
         }
         return call
     }
@@ -544,10 +531,12 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
             accessorSymbol, 0,
             oldExpression.origin
         )
-        oldExpression.receiver?.let {
-            call.putValueArgument(0, oldExpression.receiver)
+        if (oldExpression.receiver != null) {
+            call.arguments[0] = oldExpression.receiver
+            call.arguments[1] = oldExpression.value
+        } else {
+            call.arguments[0] = oldExpression.value
         }
-        call.putValueArgument(call.valueArgumentsCount - 1, oldExpression.value)
         return call
     }
 }

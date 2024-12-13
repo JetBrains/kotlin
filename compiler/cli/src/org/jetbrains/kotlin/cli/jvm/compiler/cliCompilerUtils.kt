@@ -21,11 +21,7 @@ import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
@@ -73,21 +69,11 @@ fun getBuildFilePaths(buildFile: File?, sourceFilePaths: List<String>): List<Str
         (File(path).takeIf(File::isAbsolute) ?: buildFile.resolveSibling(path)).absolutePath
     }
 
-fun GenerationState.Builder.withModule(module: Module?) =
-    apply {
-        if (module != null) {
-            targetId(TargetId(module))
-            moduleName(module.getModuleName())
-            outDirectory(File(module.getOutputDirectory()))
-        }
-    }
-
-
-fun createOutputFilesFlushingCallbackIfPossible(configuration: CompilerConfiguration): GenerationStateEventCallback {
+fun createOutputFilesFlushingCallbackIfPossible(configuration: CompilerConfiguration): (GenerationState) -> Unit {
     if (configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY) == null) {
-        return GenerationStateEventCallback.DO_NOTHING
+        return {}
     }
-    return GenerationStateEventCallback { state ->
+    return { state ->
         val currentOutput = SimpleOutputFileCollection(state.factory.currentOutput)
         writeOutput(configuration, currentOutput, null)
         if (!configuration.get(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, false)) {
@@ -124,12 +110,11 @@ fun writeOutput(
         return
     }
 
-    val outputDir = configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
-        ?.takeUnless { it.path.isBlank() }
-        ?: File(".")
-
-    outputFiles.writeAll(outputDir, messageCollector, reportOutputFiles)
+    outputFiles.writeAll(configuration.outputDirOrCurrentDirectory(), messageCollector, reportOutputFiles)
 }
+
+private fun CompilerConfiguration.outputDirOrCurrentDirectory(): File =
+    outputDirectory?.takeUnless { it.path.isBlank() } ?: File(".")
 
 fun writeOutputsIfNeeded(
     project: Project,
@@ -142,20 +127,16 @@ fun writeOutputsIfNeeded(
         return false
     }
 
-    try {
-        for (state in outputs) {
-            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-            writeOutput(state.configuration, state.factory, mainClassFqName)
-        }
-    } finally {
-        outputs.forEach(GenerationState::destroy)
+    for (state in outputs) {
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+        writeOutput(state.configuration, state.factory, mainClassFqName)
     }
 
     if (configuration.getBoolean(JVMConfigurationKeys.COMPILE_JAVA)) {
         val singleState = outputs.singleOrNull()
         if (singleState != null) {
             return JavacWrapper.getInstance(project).use {
-                it.compile(singleState.outDirectory)
+                it.compile(configuration.outputDirOrCurrentDirectory())
             }
         } else {
             messageCollector.report(
@@ -177,6 +158,8 @@ fun ModuleBuilder.configureFromArgs(args: K2JVMCompilerArguments) {
     }
 
     val commonSources = args.commonSources?.toSet().orEmpty()
+    // With `-script` flag, the first free arg is considered as a path to the script file and others are as script arguments
+    if (args.script) return
     for (arg in args.freeArgs) {
         if (arg.endsWith(JavaFileType.DOT_DEFAULT_EXTENSION)) {
             addJavaSourceRoot(JavaRootPath(arg, args.javaPackagePrefix))

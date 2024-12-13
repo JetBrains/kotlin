@@ -1,7 +1,10 @@
 // WITH_STDLIB
 // LANGUAGE: -UseBuilderInferenceOnlyIfNeeded
 // IGNORE_BACKEND_K2: ANY
+// IGNORE_IR_DESERIALIZATION_TEST: NATIVE
 // FIR status: K2 is not intended to handle properly disabling the feature introduced at 1.6
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
+// ^^^ Source code is not compiled in JS.
 
 import kotlin.experimental.ExperimentalTypeInference
 

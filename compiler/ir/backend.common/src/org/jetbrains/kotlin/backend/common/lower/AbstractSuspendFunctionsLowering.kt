@@ -112,7 +112,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                                        irCallConstructor(constructor.symbol, irFunction.typeParameters.map {
                                            it.defaultType.makeNullable()
                                        }).apply {
-                                           val functionParameters = irFunction.explicitParameters
+                                           val functionParameters = irFunction.parameters
                                            functionParameters.forEachIndexed { index, argument ->
                                                putValueArgument(index, irGet(argument))
                                            }
@@ -131,7 +131,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
     private class BuiltCoroutine(val clazz: IrClass, val constructor: IrConstructor, val stateMachineFunction: IrFunction)
 
     private inner class CoroutineBuilder(val irFunction: IrFunction) {
-        private val functionParameters = irFunction.explicitParameters
+        private val functionParameters = irFunction.parameters
 
         private val coroutineClass: IrClass =
             context.irFactory.buildClass {
@@ -242,11 +242,12 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                         .apply { superTypes = superTypes memoryOptimizedPlus parameter.superTypes }
                 }
 
-                valueParameters = stateMachineFunction.valueParameters.memoryOptimizedMap { parameter ->
-                    parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL)
-                }
+                this.parameters += this.createDispatchReceiverParameterWithClassParent()
 
-                this.createDispatchReceiverParameter()
+                this.parameters += stateMachineFunction.nonDispatchParameters
+                    .memoryOptimizedMap { parameter ->
+                        parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL)
+                    }
 
                 overriddenSymbols = overriddenSymbols memoryOptimizedPlus stateMachineFunction.symbol
             }

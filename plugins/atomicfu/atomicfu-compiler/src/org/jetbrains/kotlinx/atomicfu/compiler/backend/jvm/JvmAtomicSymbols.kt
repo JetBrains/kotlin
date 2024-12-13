@@ -6,7 +6,7 @@
 package org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.ir.addExtensionReceiver
+import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -266,7 +266,7 @@ class JvmAtomicSymbols(
     }.apply {
         parent = kotlinJvm
         addGetter().apply {
-            addExtensionReceiver(irBuiltIns.kClassClass.starProjectedType)
+            parameters += createExtensionReceiver(irBuiltIns.kClassClass.starProjectedType)
             returnType = javaLangClass.defaultType
         }
     }.symbol

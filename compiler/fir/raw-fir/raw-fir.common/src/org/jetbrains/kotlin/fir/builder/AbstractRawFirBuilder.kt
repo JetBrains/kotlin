@@ -1238,6 +1238,10 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         }
     }
 
+    protected fun isImplicitlyActual(status: FirDeclarationStatus, classKind: ClassKind): Boolean {
+        return status.isActual && (status.isInline || status.isValue || classKind == ClassKind.ANNOTATION_CLASS)
+    }
+
     enum class ValueParameterDeclaration(val shouldExplicitParameterTypeBePresent: Boolean) {
         FUNCTION(shouldExplicitParameterTypeBePresent = true),
         CATCH(shouldExplicitParameterTypeBePresent = true),

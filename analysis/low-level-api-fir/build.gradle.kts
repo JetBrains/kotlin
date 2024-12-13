@@ -60,7 +60,6 @@ dependencies {
     testImplementation(project(":analysis:symbol-light-classes"))
     testImplementation(projectTests(":plugins:scripting:scripting-tests"))
     testImplementation(project(":kotlin-scripting-common"))
-    testImplementation(projectTests(":kotlinx-serialization-compiler-plugin"))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
@@ -88,7 +87,14 @@ kotlin {
     }
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_21_0)) {
+projectTest(
+    jUnitMode = JUnitMode.JUnit5,
+    defineJDKEnvVariables = listOf(
+        JdkMajorVersion.JDK_17_0, // TestsWithJava11 and others
+        JdkMajorVersion.JDK_17_0, // TestsWithJava17 and others
+        JdkMajorVersion.JDK_21_0  // TestsWithJava21 and others
+    )
+) {
     dependsOn(":dist", ":plugins:scripting:test-script-definition:testJar")
     workingDir = rootDir
     useJUnitPlatform()

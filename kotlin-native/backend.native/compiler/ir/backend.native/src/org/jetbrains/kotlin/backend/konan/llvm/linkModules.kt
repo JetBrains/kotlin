@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 
 internal fun llvmLinkModules2(generationState: NativeGenerationState, dest: LLVMModuleRef, src: LLVMModuleRef): LLVMBool {

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.descriptors
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
@@ -21,6 +20,3 @@ internal val CallableMemberDescriptor.propertyIfAccessor
     get() = if (this is PropertyAccessorDescriptor)
                 this.correspondingProperty
                 else this
-
-val ModuleDescriptor.isForwardDeclarationModule: Boolean
-    get() = name == FORWARD_DECLARATIONS_MODULE_NAME

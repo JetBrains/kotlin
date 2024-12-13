@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.dsl
 import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KOTLIN_JS_DCE_TOOL_DEPRECATION_MESSAGE
@@ -56,7 +57,14 @@ interface KotlinJsTargetDsl :
     HasBinaries<KotlinJsBinaryContainer>,
     HasConfigurableKotlinCompilerOptions<KotlinJsCompilerOptions> {
 
+    @Deprecated("Use outputModuleName with Provider API instead")
     var moduleName: String?
+
+    /**
+     * Represents the name of the output module for a Kotlin/JS and Kotlin/Wasm target.
+     * This property allows customization of output filenames
+     */
+    val outputModuleName: Property<String>
 
     fun browser() = browser { }
     fun browser(body: KotlinJsBrowserDsl.() -> Unit)

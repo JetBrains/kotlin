@@ -266,7 +266,7 @@ class SerializableIrGenerator(
         superTypeCallArguments?.forEachIndexed { index, irTypeArgument ->
             val argType =
                 irTypeArgument as? IrTypeProjection ?: throw IllegalStateException("Star projection in immediate argument for supertype")
-            putTypeArgument(index, argType.type)
+            typeArguments[index] = argType.type
         }
     }
 

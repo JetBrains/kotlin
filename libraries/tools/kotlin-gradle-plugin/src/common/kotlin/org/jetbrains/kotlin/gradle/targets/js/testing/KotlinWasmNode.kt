@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.writeWasmUnitTestRunner
 
@@ -34,13 +32,12 @@ internal class KotlinWasmNode(kotlinJsTest: KotlinJsTest) : KotlinJsTestFramewor
     private val projectLayout = kotlinJsTest.project.layout
 
     override val workingDir: Provider<Directory> =
-        (compilation.target as KotlinJsIrTarget).wasmTargetType.let { wasmTargetType ->
-            if (wasmTargetType != KotlinWasmTargetType.WASI) {
-                compilation.npmProject.dir
-            } else {
-                projectLayout.dir(kotlinJsTest.inputFileProperty.asFile.map { it.parentFile })
-            }
+        if (compilation.target.wasmTargetType != KotlinWasmTargetType.WASI) {
+            compilation.npmProject.dir
+        } else {
+            projectLayout.dir(kotlinJsTest.inputFileProperty.asFile.map { it.parentFile })
         }
+
 
     override val executable: Provider<String> = nodeJs.executable
 

@@ -14,13 +14,15 @@ package kotlin
 @SinceKotlin("1.3")
 public annotation class Metadata(
     /**
-     * A kind of the metadata this annotation encodes. Kotlin compiler recognizes the following kinds (see KotlinClassHeader.Kind):
+     * A kind of the metadata this annotation encodes. Kotlin compiler recognizes the following kinds:
      *
-     * 1 Class
-     * 2 File
-     * 3 Synthetic class
-     * 4 Multi-file class facade
-     * 5 Multi-file class part
+     * | Value | Class kind              |
+     * |-------|-------------------------|
+     * | 1     | Class                   |
+     * | 2     | File                    |
+     * | 3     | Synthetic class         |
+     * | 4     | Multi-file class facade |
+     * | 5     | Multi-file class part   |
      *
      * The class file with a kind not listed here is treated as a non-Kotlin file.
      */

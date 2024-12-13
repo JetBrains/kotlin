@@ -152,10 +152,12 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
 
     private fun IrFunction.getVisibilityForDefaultArgumentStub(): Int =
         when {
+            visibility == DescriptorVisibilities.PUBLIC || visibility == DescriptorVisibilities.INTERNAL -> Opcodes.ACC_PUBLIC
             // TODO: maybe best to generate private default in interface as private
-            visibility == DescriptorVisibilities.PUBLIC || parentAsClass.isJvmInterface -> Opcodes.ACC_PUBLIC
+            parentAsClass.isJvmInterface -> Opcodes.ACC_PUBLIC
             visibility == JavaDescriptorVisibilities.PACKAGE_VISIBILITY -> AsmUtil.NO_FLAG_PACKAGE_PRIVATE
-            else -> throw IllegalStateException("Default argument stub should be either public or package private: ${ir2string(this)}")
+            else ->
+                throw IllegalStateException("Default argument stub should be public, internal, or package private: ${ir2string(this)}")
         }
 
     private fun IrFunction.calculateMethodFlags(): Int {

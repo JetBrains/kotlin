@@ -1,7 +1,7 @@
 @_implementationOnly import KotlinBridges_overrides
 import KotlinRuntime
 
-open class AbstractBase : KotlinRuntime.KotlinBase {
+open class AbstractBase: KotlinRuntime.KotlinBase {
     open var abstractVal: Swift.Int32 {
         get {
             return AbstractBase_abstractVal_get(self.__externalRCRef())
@@ -27,7 +27,7 @@ open class AbstractBase : KotlinRuntime.KotlinBase {
         return AbstractBase_abstractFun2(self.__externalRCRef())
     }
 }
-open class AbstractDerived2 : overrides.OpenDerived1 {
+open class AbstractDerived2: overrides.OpenDerived1 {
     package override init() {
         fatalError()
     }
@@ -45,7 +45,7 @@ open class AbstractDerived2 : overrides.OpenDerived1 {
         return AbstractDerived2_abstractFun1(self.__externalRCRef())
     }
 }
-open class Child : overrides.Parent {
+open class Child: overrides.Parent {
     open override var objectOptionalVar: overrides.Parent? {
         get {
             return switch Child_objectOptionalVar_get(self.__externalRCRef()) { case 0: .none; case let res: overrides.Parent(__externalRCRef: res); }
@@ -109,7 +109,7 @@ open class Child : overrides.Parent {
         poly: overrides.Parent,
         nullablePoly: overrides.Parent?
     ) -> Swift.Void {
-        return Child_actuallyOverride__TypesOfArguments__Swift_Int32_opt__overrides_Parent_overrides_Parent_opt___(self.__externalRCRef(), nullable.map { it in NSNumber(value: it) } ?? .none, poly.__externalRCRef(), nullablePoly.map { it in it.__externalRCRef() } ?? 0)
+        return Child_actuallyOverride__TypesOfArguments__Swift_Int32_opt__overrides_Parent_overrides_Parent_opt___(self.__externalRCRef(), nullable.map { it in NSNumber(value: it) } ?? nil, poly.__externalRCRef(), nullablePoly.map { it in it.__externalRCRef() } ?? 0)
     }
     public final override func finalOverrideFunc() -> Swift.Void {
         return Child_finalOverrideFunc(self.__externalRCRef())
@@ -150,7 +150,7 @@ open class Child : overrides.Parent {
         return Child_subtypeOptionalPrimitiveFunc(self.__externalRCRef())
     }
 }
-public final class GrandChild : overrides.Child {
+public final class GrandChild: overrides.Child {
     package override init(
         __externalRCRef: Swift.UInt
     ) {
@@ -173,7 +173,7 @@ public final class GrandChild : overrides.Child {
         return GrandChild_overrideChainFunc(self.__externalRCRef())
     }
 }
-open class OpenDerived1 : overrides.AbstractBase {
+open class OpenDerived1: overrides.AbstractBase {
     open override var abstractVal: Swift.Int32 {
         get {
             return OpenDerived1_abstractVal_get(self.__externalRCRef())
@@ -203,7 +203,7 @@ open class OpenDerived1 : overrides.AbstractBase {
         return OpenDerived1_abstractFun2(self.__externalRCRef())
     }
 }
-open class Parent : KotlinRuntime.KotlinBase {
+open class Parent: KotlinRuntime.KotlinBase {
     open var objectOptionalVar: overrides.Parent? {
         get {
             return switch Parent_objectOptionalVar_get(self.__externalRCRef()) { case 0: .none; case let res: overrides.Parent(__externalRCRef: res); }

@@ -5,7 +5,7 @@ public typealias NonoptionalRef = main.Bar
 public typealias OptOptRef = main.OptionalRef
 public typealias OptToNonOptTypealias = main.NonoptionalRef?
 public typealias OptionalRef = main.Bar?
-public final class Bar : KotlinRuntime.KotlinBase {
+public final class Bar: KotlinRuntime.KotlinBase {
     public override init() {
         let __kt = __root___Bar_init_allocate()
         super.init(__externalRCRef: __kt)
@@ -17,7 +17,7 @@ public final class Bar : KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
-public final class Foo : KotlinRuntime.KotlinBase {
+public final class Foo: KotlinRuntime.KotlinBase {
     public var any_value: KotlinRuntime.KotlinBase? {
         get {
             return switch Foo_any_value_get(self.__externalRCRef()) { case 0: .none; case let res: KotlinRuntime.KotlinBase(__externalRCRef: res); }
@@ -62,7 +62,7 @@ public var primitive: Swift.Double? {
         return __root___primitive_get().map { it in it.doubleValue }
     }
     set {
-        return __root___primitive_set__TypesOfArguments__Swift_Double_opt___(newValue.map { it in NSNumber(value: it) } ?? .none)
+        return __root___primitive_set__TypesOfArguments__Swift_Double_opt___(newValue.map { it in NSNumber(value: it) } ?? nil)
     }
 }
 public var str: Swift.String? {
@@ -70,7 +70,7 @@ public var str: Swift.String? {
         return __root___str_get()
     }
     set {
-        return __root___str_set__TypesOfArguments__Swift_String_opt___(newValue ?? .none)
+        return __root___str_set__TypesOfArguments__Swift_String_opt___(newValue ?? nil)
     }
 }
 public func foo(
@@ -126,7 +126,7 @@ public func primitive_in(
     arg11: Swift.Double?,
     arg12: Swift.Unicode.UTF16.CodeUnit?
 ) -> Swift.Void {
-    return __root___primitive_in__TypesOfArguments__Swift_Bool_opt__Swift_Int8_opt__Swift_Int16_opt__Swift_Int32_opt__Swift_Int64_opt__Swift_UInt8_opt__Swift_UInt16_opt__Swift_UInt32_opt__Swift_UInt64_opt__Swift_Float_opt__Swift_Double_opt__Swift_Unicode_UTF16_CodeUnit_opt___(arg1.map { it in NSNumber(value: it) } ?? .none, arg2.map { it in NSNumber(value: it) } ?? .none, arg3.map { it in NSNumber(value: it) } ?? .none, arg4.map { it in NSNumber(value: it) } ?? .none, arg5.map { it in NSNumber(value: it) } ?? .none, arg6.map { it in NSNumber(value: it) } ?? .none, arg7.map { it in NSNumber(value: it) } ?? .none, arg8.map { it in NSNumber(value: it) } ?? .none, arg9.map { it in NSNumber(value: it) } ?? .none, arg10.map { it in NSNumber(value: it) } ?? .none, arg11.map { it in NSNumber(value: it) } ?? .none, arg12.map { it in NSNumber(value: it) } ?? .none)
+    return __root___primitive_in__TypesOfArguments__Swift_Bool_opt__Swift_Int8_opt__Swift_Int16_opt__Swift_Int32_opt__Swift_Int64_opt__Swift_UInt8_opt__Swift_UInt16_opt__Swift_UInt32_opt__Swift_UInt64_opt__Swift_Float_opt__Swift_Double_opt__Swift_Unicode_UTF16_CodeUnit_opt___(arg1.map { it in NSNumber(value: it) } ?? nil, arg2.map { it in NSNumber(value: it) } ?? nil, arg3.map { it in NSNumber(value: it) } ?? nil, arg4.map { it in NSNumber(value: it) } ?? nil, arg5.map { it in NSNumber(value: it) } ?? nil, arg6.map { it in NSNumber(value: it) } ?? nil, arg7.map { it in NSNumber(value: it) } ?? nil, arg8.map { it in NSNumber(value: it) } ?? nil, arg9.map { it in NSNumber(value: it) } ?? nil, arg10.map { it in NSNumber(value: it) } ?? nil, arg11.map { it in NSNumber(value: it) } ?? nil, arg12.map { it in NSNumber(value: it) } ?? nil)
 }
 public func primitive_out() -> Swift.Bool? {
     return __root___primitive_out().map { it in it.boolValue }
@@ -134,7 +134,7 @@ public func primitive_out() -> Swift.Bool? {
 public func string_in(
     a: Swift.String?
 ) -> Swift.Void {
-    return __root___string_in__TypesOfArguments__Swift_String_opt___(a ?? .none)
+    return __root___string_in__TypesOfArguments__Swift_String_opt___(a ?? nil)
 }
 public func string_out() -> Swift.String? {
     return __root___string_out()

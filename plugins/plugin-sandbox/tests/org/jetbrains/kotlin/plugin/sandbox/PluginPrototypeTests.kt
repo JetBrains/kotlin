@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.plugin.sandbox
 
 import org.jetbrains.kotlin.js.test.fir.AbstractFirLoadK2CompiledJsKotlinTest
+import org.jetbrains.kotlin.plugin.sandbox.PluginSandboxDirectives.DONT_LOAD_IN_SYNTHETIC_MODULES
 import org.jetbrains.kotlin.test.backend.handlers.IrPrettyKotlinDumpHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
@@ -38,6 +39,9 @@ open class AbstractFirLoadK2CompiledWithPluginJvmKotlinTest : AbstractFirLoadK2C
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
+            defaultDirectives {
+                +DONT_LOAD_IN_SYNTHETIC_MODULES
+            }
             commonFirWithPluginFrontendConfiguration()
             configureIrHandlersStep {
                 useHandlers(::IrPrettyKotlinDumpHandler)
@@ -49,7 +53,12 @@ open class AbstractFirLoadK2CompiledWithPluginJvmKotlinTest : AbstractFirLoadK2C
 open class AbstractFirLoadK2CompiledWithPluginJsKotlinTest : AbstractFirLoadK2CompiledJsKotlinTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        builder.commonFirWithPluginFrontendConfiguration()
+        with(builder) {
+            defaultDirectives {
+                +DONT_LOAD_IN_SYNTHETIC_MODULES
+            }
+            commonFirWithPluginFrontendConfiguration()
+        }
     }
 }
 

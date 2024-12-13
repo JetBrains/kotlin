@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.util
 
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.applyIf
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -864,17 +865,29 @@ private fun IrTypeArgument.renderTypeArgument(renderer: RenderIrElementVisitor?,
         }
     }
 
-private fun renderTypeAnnotations(annotations: List<IrConstructorCall>, renderer: RenderIrElementVisitor?, options: DumpIrTreeOptions) =
-    if (annotations.isEmpty())
-        ""
-    else
-        buildString {
-            appendIterableWith(annotations, prefix = "", postfix = " ", separator = " ") {
-                append("@[")
-                renderAsAnnotation(it, renderer, options)
-                append("]")
-            }
+internal fun List<IrConstructorCall>.filterOutSourceRetentions(options: DumpIrTreeOptions): List<IrConstructorCall> =
+    applyIf(!options.printSourceRetentionAnnotations) {
+        filterNot { it: IrConstructorCall ->
+            (it.symbol.owner.returnType.classifierOrNull?.owner as? IrClass)?.annotations?.any { it: IrConstructorCall ->
+                it.symbol.owner.returnType.classFqName?.asString() == Retention::class.java.name &&
+                        (it.arguments.first() as? IrGetEnumValue)?.symbol?.owner?.name?.asString() == AnnotationRetention.SOURCE.name
+            } == true
         }
+    }
+
+private fun renderTypeAnnotations(annotations: List<IrConstructorCall>, renderer: RenderIrElementVisitor?, options: DumpIrTreeOptions): String =
+    annotations.filterOutSourceRetentions(options).let {
+        if (it.isEmpty())
+            ""
+        else
+            buildString {
+                appendIterableWith(it, prefix = "", postfix = " ", separator = " ") {
+                    append("@[")
+                    renderAsAnnotation(it, renderer, options)
+                    append("]")
+                }
+            }
+    }
 
 private fun StringBuilder.renderAsAnnotation(
     irAnnotation: IrConstructorCall,
@@ -884,9 +897,9 @@ private fun StringBuilder.renderAsAnnotation(
     val annotationClassName = irAnnotation.symbol.takeIf { it.isBound }?.owner?.parentAsClass?.name?.asString() ?: "<unbound>"
     append(annotationClassName)
 
-    if (irAnnotation.typeArgumentsCount != 0) {
-        (0 until irAnnotation.typeArgumentsCount).joinTo(this, ", ", "<", ">") { i ->
-            irAnnotation.getTypeArgument(i)?.renderTypeWithRenderer(renderer, options) ?: "null"
+    if (irAnnotation.typeArguments.isNotEmpty()) {
+        irAnnotation.typeArguments.joinTo(this, ", ", "<", ">") {
+            it?.renderTypeWithRenderer(renderer, options) ?: "null"
         }
     }
 

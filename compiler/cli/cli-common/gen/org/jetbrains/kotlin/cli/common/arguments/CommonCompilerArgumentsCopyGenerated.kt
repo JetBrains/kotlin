@@ -12,6 +12,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
 
     to.allowAnyScriptsInSourceRoots = from.allowAnyScriptsInSourceRoots
     to.allowKotlinPackage = from.allowKotlinPackage
+    to.annotationDefaultTarget = from.annotationDefaultTarget
     to.apiVersion = from.apiVersion
     to.autoAdvanceApiVersion = from.autoAdvanceApiVersion
     to.autoAdvanceLanguageVersion = from.autoAdvanceLanguageVersion
@@ -21,6 +22,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.consistentDataClassCopyVisibility = from.consistentDataClassCopyVisibility
     to.contextParameters = from.contextParameters
     to.contextReceivers = from.contextReceivers
+    to.debugLevelCompilerChecks = from.debugLevelCompilerChecks
     to.directJavaActualization = from.directJavaActualization
     to.disableDefaultScriptingPlugin = from.disableDefaultScriptingPlugin
     to.disablePhases = from.disablePhases?.copyOf()

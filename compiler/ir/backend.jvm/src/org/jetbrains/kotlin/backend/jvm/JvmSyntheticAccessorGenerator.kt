@@ -51,7 +51,7 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
             accessor.copyTypeParametersFrom(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
             accessor.copyValueParametersToStatic(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
             if (source.constructedClass.modality == Modality.SEALED) {
-                for (accessorValueParameter in accessor.valueParameters) {
+                for (accessorValueParameter in accessor.parameters) {
                     accessorValueParameter.annotations = emptyList()
                 }
             }
@@ -193,7 +193,7 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
                 }
                 accessor.annotations += declaration.annotations
                 declaration.annotations = emptyList()
-                declaration.valueParameters.forEach { it.annotations = emptyList() }
+                declaration.parameters.forEach { it.annotations = emptyList() }
             }
         }
 

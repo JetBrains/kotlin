@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl.Companion.provideDelegate
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -322,7 +321,10 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
                     superMethod.symbol,
                     secondSuperMethod?.symbol
                 )
-                dispatchReceiverParameter = buildReceiverParameter(this, clazz.origin, clazz.defaultType, startOffset, endOffset)
+                parameters += buildReceiverParameter {
+                    origin = clazz.origin
+                    type = clazz.defaultType
+                }
 
                 if (isLambda) createLambdaInvokeMethod() else createFunctionReferenceInvokeMethod()
             }
@@ -330,7 +332,7 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
 
         private fun IrSimpleFunction.createLambdaInvokeMethod() {
             annotations = function.annotations
-            val valueParameterMap = function.explicitParameters
+            val valueParameterMap = function.parameters
                 .associate { param ->
                     param to param.copyTo(this)
                 }
@@ -400,8 +402,8 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
             var i = 0
             val valueParameters = valueParameters
 
-            for (ti in 0 until funRef.typeArgumentsCount) {
-                irCall.putTypeArgument(ti, funRef.getTypeArgument(ti))
+            for (ti in funRef.typeArguments.indices) {
+                irCall.typeArguments[ti] = funRef.typeArguments[ti]
             }
 
             if (hasReceiver) {

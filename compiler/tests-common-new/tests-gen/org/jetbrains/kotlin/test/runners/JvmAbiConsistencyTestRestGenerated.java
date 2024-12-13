@@ -7590,6 +7590,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       }
 
       @Test
+      @TestMetadata("checkcastAndInstanceOf_before.kt")
+      public void testCheckcastAndInstanceOf_before() {
+        runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/checkcastAndInstanceOf_before.kt");
+      }
+
+      @Test
       @TestMetadata("fold.kt")
       public void testFold() {
         runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/fold.kt");
@@ -13467,6 +13473,18 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       @TestMetadata("annotationCtorCallNoSynthetic.kt")
       public void testAnnotationCtorCallNoSynthetic() {
         runTest("compiler/testData/codegen/bytecodeListing/annotations/annotationCtorCallNoSynthetic.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationDefaultTargetFirstOnly.kt")
+      public void testAnnotationDefaultTargetFirstOnly() {
+        runTest("compiler/testData/codegen/bytecodeListing/annotations/annotationDefaultTargetFirstOnly.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationDefaultTargetParamProperty.kt")
+      public void testAnnotationDefaultTargetParamProperty() {
+        runTest("compiler/testData/codegen/bytecodeListing/annotations/annotationDefaultTargetParamProperty.kt");
       }
 
       @Test

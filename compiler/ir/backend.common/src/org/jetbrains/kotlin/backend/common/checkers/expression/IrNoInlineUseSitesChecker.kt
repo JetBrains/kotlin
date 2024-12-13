@@ -15,7 +15,7 @@ internal object IrNoInlineUseSitesChecker : IrMemberAccessChecker {
         expression: IrMemberAccessExpression<IrFunctionSymbol>,
         context: CheckerContext,
     ) {
-        context.config.checkInlineFunctionUseSites?.let {
+        context.checkInlineFunctionUseSites?.let {
             checkFunctionUseSite(expression, it, context)
         }
     }

@@ -15,6 +15,7 @@ data class NodeJsEnv(
     val architectureName: String,
     override val ivyDependency: String,
     override val downloadBaseUrl: String?,
+    override val allowInsecureProtocol: Boolean,
 ) : AbstractEnv {
     val isWindows: Boolean
         get() = platformName == "win"

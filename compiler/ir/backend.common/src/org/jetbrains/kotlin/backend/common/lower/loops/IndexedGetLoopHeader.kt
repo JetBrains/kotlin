@@ -40,8 +40,8 @@ class IndexedGetLoopHeader(
             // Making sure that expression type has type of the variable when it exists.
             // Return type of get function can be a type parameter (for example Array<T>::get) which is not a subtype of loopVariable type.
             val get = irCall(indexedGetFun.symbol, indexedGetFun.returnType).apply {
-                dispatchReceiver = irGet(headerInfo.objectVariable)
-                putValueArgument(0, irGet(inductionVariable))
+                arguments[0] = irGet(headerInfo.objectVariable)
+                arguments[1] = irGet(inductionVariable)
             }.implicitCastIfNeededTo(loopVariable?.type ?: indexedGetFun.returnType)
             // The call could be wrapped in an IMPLICIT_NOTNULL type-cast (see comment in ForLoopsLowering.gatherLoopVariableInfo()).
             // Find and replace the call to preserve any type-casts.

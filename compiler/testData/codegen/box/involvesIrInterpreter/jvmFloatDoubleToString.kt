@@ -1,5 +1,7 @@
 // TARGET_BACKEND: JVM_IR
 // TARGET_BACKEND: NATIVE
+// IGNORE_IR_DESERIALIZATION_TEST: NATIVE
+// ^^^ KT-73621: EVALUATED{IR} is missing
 fun <T> T.id() = this
 
 const val toStringDouble1 = 1.0.<!EVALUATED("1.0")!>toString()<!>

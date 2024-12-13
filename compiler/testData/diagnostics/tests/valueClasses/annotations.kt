@@ -4,6 +4,7 @@
 // SKIP_TXT
 // WORKS_WHEN_VALUE_CLASS
 // FIR_IDENTICAL
+// LATEST_LV_DIFFERENCE
 
 import kotlin.reflect.KProperty
 

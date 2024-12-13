@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.backend.wasm
 
+import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
-import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.backend.wasm.export.ExportModelGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
 import org.jetbrains.kotlin.backend.wasm.utils.SourceMapGenerator
 import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.backend.js.IrModuleInfo
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.export.ExportModelToTsDeclarations
@@ -65,7 +64,6 @@ fun compileToLoweredIr(
     mainModule: MainModule,
     configuration: CompilerConfiguration,
     performanceManager: CommonCompilerPerformanceManager?,
-    phaseConfig: PhaseConfig,
     exportedDeclarations: Set<FqName> = emptySet(),
     generateTypeScriptFragment: Boolean,
     propertyLazyInitialization: Boolean,
@@ -106,7 +104,6 @@ fun compileToLoweredIr(
     lowerPreservingTags(
         allModules,
         context,
-        phaseConfig,
         context.irFactory.stageController as WholeWorldStageController,
         isIncremental = false
     )
@@ -119,7 +116,6 @@ fun compileToLoweredIr(
 fun lowerPreservingTags(
     modules: Iterable<IrModuleFragment>,
     context: WasmBackendContext,
-    phaseConfig: PhaseConfig,
     controller: WholeWorldStageController,
     isIncremental: Boolean
 ) {
@@ -127,12 +123,12 @@ fun lowerPreservingTags(
     controller.currentStage = 0
 
     val phaserState = PhaserState<IrModuleFragment>()
-    val wasmLowerings = getWasmLowerings(isIncremental)
+    val wasmLowerings = getWasmLowerings(context.configuration, isIncremental)
 
     wasmLowerings.forEachIndexed { i, lowering ->
         controller.currentStage = i + 1
         modules.forEach { module ->
-            lowering.invoke(phaseConfig, phaserState, context, module)
+            lowering.invoke(context.phaseConfig, phaserState, context, module)
         }
     }
 

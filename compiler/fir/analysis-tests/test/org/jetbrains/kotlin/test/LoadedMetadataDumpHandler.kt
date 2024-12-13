@@ -8,11 +8,14 @@ package org.jetbrains.kotlin.test
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import org.jetbrains.kotlin.backend.common.CommonKLibResolver
+import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
 import org.jetbrains.kotlin.cli.common.SessionWithSources
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.cli.common.prepareJsSessions
-import org.jetbrains.kotlin.cli.common.prepareJvmSessionsWithoutFiles
+import org.jetbrains.kotlin.cli.common.prepareJvmSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.MinimizedFrontendContext
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -68,6 +71,7 @@ class JvmLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoadedM
     override val dependencyKind: DependencyKind
         get() = DependencyKind.Binary
 
+    @OptIn(LegacyK2CliPipeline::class)
     override fun prepareSessions(
         module: TestModule,
         configuration: CompilerConfiguration,
@@ -77,6 +81,26 @@ class JvmLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoadedM
     ): List<SessionWithSources<KtFile>> {
         return prepareJvmSessionsWithoutFiles(configuration, environment, moduleName, libraryList)
     }
+
+    @LegacyK2CliPipeline
+    private fun prepareJvmSessionsWithoutFiles(
+        configuration: CompilerConfiguration,
+        environment: VfsBasedProjectEnvironment,
+        moduleName: Name,
+        libraryList: DependencyListForCliModule
+    ): List<SessionWithSources<KtFile>> {
+        return MinimizedFrontendContext(environment, MessageCollector.NONE, emptyList(), configuration).prepareJvmSessions(
+            files = emptyList(),
+            moduleName,
+            environment.getSearchScopeForProjectLibraries(),
+            libraryList,
+            isCommonSource = { false },
+            isScript = { false },
+            fileBelongsToModule = { _, _ -> false },
+            createProviderAndScopeForIncrementalCompilation = { null }
+        )
+    }
+
 }
 
 class KlibLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoadedMetadataDumpHandler<BinaryArtifacts.KLib>(

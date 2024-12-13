@@ -11,5 +11,6 @@ import org.jetbrains.kotlin.ir.inline.InlineMode
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 
 class WasmInlineFunctionResolver(
-    context: WasmBackendContext
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<WasmBackendContext>(context, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS)
+    context: WasmBackendContext,
+    inlineMode: InlineMode,
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<WasmBackendContext>(context, inlineMode)

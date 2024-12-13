@@ -72,6 +72,10 @@ internal class KotlinStandaloneProjectStructureProvider(
                 .withAttachment("modules", allModules.joinToString(separator = System.lineSeparator()) { it.asDebugString() })
     }
 
+    override fun getImplementingModules(module: KaModule): List<KaModule> {
+        return allModules.filter { module in it.directDependsOnDependencies }
+    }
+
     internal val binaryModules: List<KaLibraryModule> by lazy {
         allModules
             .flatMap { it.allDirectDependencies() }

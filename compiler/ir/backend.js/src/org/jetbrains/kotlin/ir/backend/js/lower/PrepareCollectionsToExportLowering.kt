@@ -26,12 +26,11 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
-import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 private class ExportedCollectionsInfo(context: JsIrBackendContext) {
@@ -140,15 +139,13 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
             isExternal = false
         ).also {
             it.parent = companionObject
-            it.copyParameterDeclarationsFrom(factoryMethodForTheCollectionSymbol.owner)
+            it.copyValueAndTypeParametersFrom(factoryMethodForTheCollectionSymbol.owner)
             it.dispatchReceiverParameter = companionObject.thisReceiver?.copyTo(it)
             it.body = context.createIrBuilder(it.symbol).run {
                 irBlockBody(it) {
                     +irReturn(
                         irCall(factoryMethodForTheCollectionSymbol).apply {
-                            it.valueParameters.forEachIndexed { index, parameter ->
-                                putValueArgument(index, irGet(parameter))
-                            }
+                            arguments.assignFrom(it.nonDispatchParameters) { parameter -> irGet(parameter) }
                         }
                     )
                 }
@@ -191,13 +188,13 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
 
     private fun IrDeclarationWithName.addJsName() {
         annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsNameCtor).apply {
-            putValueArgument(0, "Kt${name.asString()}".toIrConst(context.irBuiltIns.stringType))
+            arguments[0] = "Kt${name.asString()}".toIrConst(context.irBuiltIns.stringType)
         }
     }
 
     private fun IrDeclaration.markWithJsImplicitExport() {
         annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsImplicitExportCtor).apply {
-            putValueArgument(0, true.toIrConst(context.irBuiltIns.booleanType))
+            arguments[0] = true.toIrConst(context.irBuiltIns.booleanType)
         }
     }
 

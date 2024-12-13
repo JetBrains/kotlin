@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -36,6 +35,8 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as Prot
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInit as ProtoAnonymousInit
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock as ProtoReturnableBlock
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock as ProtoInlinedFunctionBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody as ProtoBlockBody
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBranch as ProtoBranch
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBreak as ProtoBreak
@@ -278,15 +279,21 @@ open class IrFileSerializer(
             ?: when (symbol) {
                 is IrFileSymbol -> IdSignature.FileSignature(symbol) // TODO: special signature for files?
                 else -> {
-                    val declaration = symbol.owner as? IrDeclaration
-                        ?: error("Expected IrDeclaration: ${symbol.owner.render()}")
+                    val symbolOwner = symbol.owner
 
                     // Compute the signature:
-                    declarationTable.signatureByDeclaration(
-                        declaration,
-                        settings.compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations,
-                        recordInSignatureClashDetector = isDeclared
-                    )
+                    when {
+                        symbolOwner is IrDeclaration -> declarationTable.signatureByDeclaration(
+                            symbolOwner,
+                            settings.compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations,
+                            recordInSignatureClashDetector = isDeclared
+                        )
+
+                        symbolOwner is IrReturnableBlock && settings.allow220Nodes ->
+                            declarationTable.signatureByReturnableBlock(symbolOwner)
+
+                        else -> error("Expected symbol owner: ${symbolOwner.render()}")
+                    }
                 }
             }
 
@@ -485,6 +492,21 @@ open class IrFileSerializer(
         return proto.build()
     }
 
+    private fun serializeReturnableBlock(returnableBlock: IrReturnableBlock): ProtoReturnableBlock {
+        val proto = ProtoReturnableBlock.newBuilder()
+        proto.symbol = serializeIrSymbol(returnableBlock.symbol)
+        proto.base = serializeBlock(returnableBlock)
+        return proto.build()
+    }
+
+    private fun serializeInlinedFunctionBlock(inlinedFunctionBlock: IrInlinedFunctionBlock): ProtoInlinedFunctionBlock {
+        val proto = ProtoInlinedFunctionBlock.newBuilder()
+        inlinedFunctionBlock.inlineFunctionSymbol?.let { proto.setInlineFunctionSymbol(serializeIrSymbol(it)) }
+        proto.fileEntry = serializeFileEntry(inlinedFunctionBlock.fileEntry)
+        proto.base = serializeBlock(inlinedFunctionBlock)
+        return proto.build()
+    }
+
     private fun serializeComposite(composite: IrComposite): ProtoComposite {
         val proto = ProtoComposite.newBuilder()
 
@@ -520,9 +542,9 @@ open class IrFileSerializer(
             proto.dispatchReceiver = serializeExpression(call.dispatchReceiver!!)
         }
 
-        for (index in 0 until call.typeArgumentsCount) {
+        for (typeArg in call.typeArguments) {
             // See `ForbidUsingExtensionPropertyTypeParameterInDelegate` language feature
-            val typeArgumentIndex = call.getTypeArgument(index)?.let { serializeIrType(it) } ?: -1
+            val typeArgumentIndex = typeArg?.let { serializeIrType(it) } ?: -1
             proto.addTypeArgument(typeArgumentIndex)
         }
 
@@ -970,7 +992,15 @@ open class IrFileSerializer(
 
         // TODO: make me a visitor.
         when (expression) {
-            is IrBlock -> operationProto.block = serializeBlock(expression)
+            is IrBlock -> {
+                if (expression is IrReturnableBlock && settings.allow220Nodes) {
+                    operationProto.returnableBlock = serializeReturnableBlock(expression)
+                } else if (expression is IrInlinedFunctionBlock && settings.allow220Nodes) {
+                    operationProto.inlinedFunctionBlock = serializeInlinedFunctionBlock(expression)
+                } else {
+                    operationProto.block = serializeBlock(expression)
+                }
+            }
             is IrBreak -> operationProto.`break` = serializeBreak(expression)
             is IrClassReference -> operationProto.classReference = serializeClassReference(expression)
             is IrCall -> operationProto.call = serializeCall(expression)

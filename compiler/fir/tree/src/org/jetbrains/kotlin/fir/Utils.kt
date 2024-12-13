@@ -100,6 +100,7 @@ fun FirDeclarationStatus.copy(
     isOperator: Boolean = this.isOperator,
     isInfix: Boolean = this.isInfix,
     isInline: Boolean = this.isInline,
+    isValue: Boolean = this.isValue,
     isTailRec: Boolean = this.isTailRec,
     isExternal: Boolean = this.isExternal,
     isConst: Boolean = this.isConst,
@@ -130,6 +131,7 @@ fun FirDeclarationStatus.copy(
         isOperator = isOperator,
         isInfix = isInfix,
         isInline = isInline,
+        isValue = isValue,
         isTailRec = isTailRec,
         isExternal = isExternal,
         isConst = isConst,
@@ -179,6 +181,7 @@ private fun copyStatusAttributes(
     isOperator: Boolean = from.isOperator,
     isInfix: Boolean = from.isInfix,
     isInline: Boolean = from.isInline,
+    isValue: Boolean = from.isValue,
     isTailRec: Boolean = from.isTailRec,
     isExternal: Boolean = from.isExternal,
     isConst: Boolean = from.isConst,
@@ -199,6 +202,7 @@ private fun copyStatusAttributes(
     to.isOperator = isOperator
     to.isInfix = isInfix
     to.isInline = isInline
+    to.isValue = isValue
     to.isTailRec = isTailRec
     to.isExternal = isExternal
     to.isConst = isConst

@@ -7,7 +7,7 @@
           <value>
             <array>
               <option
-                  value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/codegen/{box,irBox,firBox,firEs6Box}/$TEST_DATA_FILE$_v5.js"/>
+                  value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/codegen/{box,irBox,irEs6Box,firBox,firEs6Box}/$TEST_DATA_FILE$_v5.js"/>
               <option value="$PROJECT_DIR$/js/js.translator/testData/out/codegen/wasmBox/$TEST_DATA_FILE$.wat"/>
             </array>
           </value>
@@ -16,7 +16,7 @@
           <value>
             <array>
               <option
-                  value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/codegen/{boxInline,irBoxInline,firBoxInline,firEs6BoxInline}/$TEST_DATA_FILE$_v5.js"/>
+                  value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/codegen/{boxInline,irBoxInline,irEs6BoxInline,firBoxInline,firEs6BoxInline}/$TEST_DATA_FILE$_v5.js"/>
             </array>
           </value>
         </entry>
@@ -55,7 +55,7 @@
           <value>
             <array>
               <option
-                  value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/typescript-export/$TEST_DATA_FILE$-JS_TESTS{.d.ts,_v5.js}"/>
+                  value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/typescript-export/{fir,fir-es6,ir,ir-es6}/$TEST_DATA_FILE$-JS_TESTS{.d.ts,_v5.js}"/>
               <option value="$PROJECT_DIR$/js/js.translator/testData/typescript-export/$TEST_DATA_FILE$__main.{js,ts}"/>
             </array>
           </value>

@@ -162,16 +162,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val usePreciseJavaTracking: Boolean?
         get() = booleanProperty("kotlin.incremental.usePreciseJavaTracking")
 
-    val useClasspathSnapshot: Boolean
-        get() {
-            val propValue = booleanProperty(KOTLIN_INCREMENTAL_USE_CLASSPATH_SNAPSHOT)
-            if (propValue == false) project.reportDiagnosticOncePerBuild(
-                KotlinToolingDiagnostics.DeprecatedJvmHistoryBasedIncrementalCompilationDiagnostic()
-            )
-
-            return propValue ?: true
-        }
-
     /**
      * Enable exposing secondary 'classes' variant for JVM compilations.
      */
@@ -411,15 +401,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val kotlinDaemonUseFallbackStrategy: Boolean
         get() = booleanProperty("kotlin.daemon.useFallbackStrategy") ?: true
 
-    val preciseCompilationResultsBackup: Boolean
-        get() = booleanProperty(KOTLIN_COMPILER_USE_PRECISE_COMPILATION_RESULTS_BACKUP) ?: true
-
-    /**
-     * This property should be enabled together with [preciseCompilationResultsBackup]
-     */
-    val keepIncrementalCompilationCachesInMemory: Boolean
-        get() = booleanProperty(KOTLIN_COMPILER_KEEP_INCREMENTAL_COMPILATION_CACHES_IN_MEMORY) ?: true
-
     val createDefaultMultiplatformPublications: Boolean
         get() = booleanProperty(KOTLIN_CREATE_DEFAULT_MULTIPLATFORM_PUBLICATIONS) ?: true
 
@@ -492,6 +473,30 @@ internal class PropertiesProvider private constructor(private val project: Proje
     private val propertiesBuildService = PropertiesBuildService.registerIfAbsent(project).get()
 
     internal fun property(propertyName: String): Provider<String> = propertiesBuildService.property(propertyName, project)
+
+    private fun <T : Any> propertyWithDeprecatedValues(
+        propertyName: String,
+        deprecatedValues: Set<T>,
+        valueTransformer: (String?) -> T?,
+        reportDiagnostic: () -> Unit,
+    ): Provider<T> {
+        val propValue = property(propertyName)
+        return propValue.map { value ->
+            val transformedValue = valueTransformer(value)
+            if (transformedValue in deprecatedValues) {
+                reportDiagnostic()
+            }
+            // Gradle has problems with nullability annotations: https://github.com/gradle/gradle/issues/24767
+            @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+            transformedValue
+        }
+    }
+
+    internal fun booleanPropertyWithDeprecatedValues(
+        propertyName: String,
+        deprecatedValues: Set<Boolean>,
+        reportDiagnostic: () -> Unit,
+    ): Provider<Boolean> = propertyWithDeprecatedValues(propertyName, deprecatedValues, { it?.toBoolean() }, reportDiagnostic)
 
     internal fun get(propertyName: String): String? = propertiesBuildService.get(propertyName, project)
 
@@ -573,6 +578,34 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = property(KOTLIN_CLASSLOADER_CACHE_TIMEOUT)
             .map { it.toLongOrNull() ?: defaultClassLoaderCacheTimeout }
             .orElse(defaultClassLoaderCacheTimeout)
+
+    val useClasspathSnapshot: Provider<Boolean> =
+        booleanPropertyWithDeprecatedValues(KOTLIN_INCREMENTAL_USE_CLASSPATH_SNAPSHOT, setOf(false)) {
+            project.reportDiagnosticOncePerBuild(
+                KotlinToolingDiagnostics.DeprecatedJvmHistoryBasedIncrementalCompilationDiagnostic()
+            )
+        }.orElse(true)
+
+    val preciseCompilationResultsBackup: Provider<Boolean> =
+        booleanPropertyWithDeprecatedValues(KOTLIN_COMPILER_USE_PRECISE_COMPILATION_RESULTS_BACKUP, setOf(false)) {
+            project.reportDiagnosticOncePerBuild(
+                KotlinToolingDiagnostics.DeprecatedLegacyCompilationOutputsBackup()
+            )
+        }.orElse(true)
+
+    /**
+     * This property should be enabled together with [preciseCompilationResultsBackup]
+     */
+    val keepIncrementalCompilationCachesInMemory: Provider<Boolean> =
+        booleanPropertyWithDeprecatedValues(KOTLIN_COMPILER_KEEP_INCREMENTAL_COMPILATION_CACHES_IN_MEMORY, setOf(false)) {
+            project.reportDiagnosticOncePerBuild(
+                KotlinToolingDiagnostics.DeprecatedLegacyCompilationOutputsBackup()
+            )
+        }.orElse(true)
+
+    internal val enableAndroidExtensionPlugin: Provider<Boolean> =
+        booleanProvider(PropertyNames.KOTLIN_ENABLE_ANDROID_EXTENSIONS_PLUGIN)
+            .orElse(false)
 
     /**
      * Retrieves a comma-separated list of browsers to use when running karma tests for [target]
@@ -702,6 +735,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_COLLECT_FUS_METRICS_ENABLED = property("$KOTLIN_INTERNAL_NAMESPACE.collectFUSMetrics")
         val KOTLIN_USE_NON_PACKED_KLIBS = property("$KOTLIN_INTERNAL_NAMESPACE.klibs.non-packed")
         val KOTLIN_CLASSLOADER_CACHE_TIMEOUT = property("$KOTLIN_INTERNAL_NAMESPACE.classloaderCache.timeoutSeconds")
+        val KOTLIN_ENABLE_ANDROID_EXTENSIONS_PLUGIN = property("kotlin.androidExtensionsPlugin.enabled")
     }
 
     companion object {

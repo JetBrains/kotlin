@@ -90,10 +90,14 @@ private fun SirCallable.patchCallableBodyAndGenerateRequest(
 
 private val SirType.isSupported: Boolean
     get() = when (this) {
-        is SirNominalType -> when (val declaration = typeDeclaration) {
-            is SirTypealias -> declaration.type.isSupported
-            else -> true
+        is SirNominalType -> {
+            val declarationSupported = when (val declaration = typeDeclaration) {
+                is SirTypealias -> declaration.type.isSupported
+                else -> true
+            }
+            declarationSupported && typeArguments.all { it.isSupported }
         }
+        is SirFunctionalType -> returnType.isSupported && parameterTypes.all { it.isSupported }
         else -> false
     }
 

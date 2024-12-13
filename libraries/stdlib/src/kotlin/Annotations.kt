@@ -172,14 +172,15 @@ public annotation class DslMarker
 
 
 /**
- * When applied to a class or a member with internal visibility allows to use it from public inline functions and
+ * When applied to a class or a member with internal visibility allows using it from public inline functions and
  * makes it effectively public.
  *
  * Public inline functions cannot use non-public API, since if they are inlined, those non-public API references
- * would violate access restrictions at a call site (https://kotlinlang.org/docs/reference/inline-functions.html#public-inline-restrictions).
+ * would violate access restrictions at a call site
+ * (see [restrictions for public API inline functions](https://kotlinlang.org/docs/inline-functions.html#restrictions-for-public-api-inline-functions)).
  *
  * To overcome this restriction an `internal` declaration can be annotated with the `@PublishedApi` annotation:
- * - this allows to call that declaration from public inline functions;
+ * - this allows calling that declaration from public inline functions;
  * - the declaration becomes effectively public, and this should be considered with respect to binary compatibility maintaining.
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)

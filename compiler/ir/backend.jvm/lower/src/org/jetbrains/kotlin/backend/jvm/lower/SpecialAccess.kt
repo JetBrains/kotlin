@@ -101,17 +101,12 @@ internal class SpecialAccessLowering(
             return expression
         }
 
-        val isAccessToProperty = expression.symbol.owner.correspondingPropertySymbol != null
-        return if (isAccessToProperty && expression.origin == IrStatementOrigin.GET_PROPERTY) {
-            generateReflectiveAccessForGetter(expression)
-        } else if (isAccessToProperty && expression.origin?.isAssignmentOperator() == true) {
-            generateReflectiveAccessForSetter(expression)
-        } else if (expression.dispatchReceiver == null && expression.extensionReceiver == null) {
-            generateReflectiveStaticCall(expression)
-        } else if (superQualifier != null) {
-            generateInvokeSpecialForCall(expression, superQualifier)
-        } else {
-            generateReflectiveMethodInvocation(expression)
+        return when {
+            expression.symbol.owner.isGetter -> generateReflectiveAccessForGetter(expression)
+            expression.symbol.owner.isSetter -> generateReflectiveAccessForSetter(expression)
+            expression.dispatchReceiver == null && expression.extensionReceiver == null -> generateReflectiveStaticCall(expression)
+            superQualifier != null -> generateInvokeSpecialForCall(expression, superQualifier)
+            else -> generateReflectiveMethodInvocation(expression)
         }
     }
 
@@ -310,8 +305,8 @@ internal class SpecialAccessLowering(
 
     private fun IrBuilderWithScope.coerceToUnboxed(expression: IrExpression): IrCall =
         irCall(symbols.unsafeCoerceIntrinsic).apply {
-            putTypeArgument(0, expression.type)
-            putTypeArgument(1, expression.type.unboxInlineClass())
+            typeArguments[0] = expression.type
+            typeArguments[1] = expression.type.unboxInlineClass()
             putValueArgument(0, expression)
         }
 
@@ -396,7 +391,7 @@ internal class SpecialAccessLowering(
     private fun IrBuilderWithScope.coerceResult(value: IrExpression, type: IrType) =
         irCall(symbols.handleResultOfReflectiveAccess).apply {
             putValueArgument(0, value)
-            putTypeArgument(0, type)
+            typeArguments[0] = type
         }
 
 

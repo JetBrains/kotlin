@@ -35,7 +35,7 @@ internal class NativeSuspendFunctionsLowering(
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun getCoroutineBaseClass(function: IrFunction): IrClassSymbol =
-            if (function.descriptor.isRestrictedSuspendFunction()) {
+            if (function.descriptor.isRestrictedSuspendFunction() || function.isRestrictedSuspensionInvokeMethod) {
                 symbols.restrictedContinuationImpl
             } else {
                 symbols.continuationImpl

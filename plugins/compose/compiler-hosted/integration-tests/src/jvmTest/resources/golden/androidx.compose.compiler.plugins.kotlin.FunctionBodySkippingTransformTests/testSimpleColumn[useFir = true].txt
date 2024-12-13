@@ -54,7 +54,7 @@ fun RowColumnImpl(orientation: LayoutOrientation, modifier: Modifier?, arrangeme
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b0110
   } else if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(orientation)) 0b0100 else 0b0010
+    %dirty = %dirty or if (%composer.changed(orientation.ordinal)) 0b0100 else 0b0010
   }
   if (%default and 0b0010 != 0) {
     %dirty = %dirty or 0b00110000
@@ -74,7 +74,7 @@ fun RowColumnImpl(orientation: LayoutOrientation, modifier: Modifier?, arrangeme
   if (%default and 0b00010000 != 0) {
     %dirty = %dirty or 0b0110000000000000
   } else if (%changed and 0b0110000000000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(crossAxisSize)) 0b0100000000000000 else 0b0010000000000000
+    %dirty = %dirty or if (%composer.changed(crossAxisSize.ordinal)) 0b0100000000000000 else 0b0010000000000000
   }
   if (%default and 0b00100000 != 0) {
     %dirty = %dirty or 0b00110000000000000000

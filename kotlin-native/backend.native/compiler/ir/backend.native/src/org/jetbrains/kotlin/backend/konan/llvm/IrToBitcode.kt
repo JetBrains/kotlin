@@ -720,7 +720,7 @@ internal class CodeGeneratorVisitor(
      */
     private fun bindParameters(function: IrSimpleFunction?): Map<IrValueParameter, LLVMValueRef> {
         if (function == null) return emptyMap()
-        return function.allParameters.mapIndexed { i, irParameter ->
+        return function.parameters.mapIndexed { i, irParameter ->
             val parameter = codegen.param(function, i)
             assert(irParameter.type.toLLVMType(llvm) == parameter.type)
             irParameter to parameter
@@ -1363,7 +1363,7 @@ internal class CodeGeneratorVisitor(
                     functionScope = locationInfo.scope,
                     diType        = with(debugInfo) { element.type.diType(codegen.llvmTargetData) },
                     name          = element.debugNameConversion(),
-                    argNo         = function.allParameters.indexOf(element) + 1,
+                    argNo         = function.parameters.indexOf(element) + 1,
                     file          = file,
                     line          = locationInfo.line,
                     location      = location)
@@ -2262,7 +2262,7 @@ internal class CodeGeneratorVisitor(
         val result = expression.getArgumentsWithIr().map { (_, argExpr) ->
             evaluateExpression(argExpr)
         }
-        val explicitParametersCount = expression.symbol.owner.explicitParametersCount
+        val explicitParametersCount = expression.symbol.owner.parameters.size
         if (result.size != explicitParametersCount) {
             error("Number of arguments explicitly represented in the IR ${result.size} differs from expected " +
                     "$explicitParametersCount in ${ir2string(expression)}")

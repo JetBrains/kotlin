@@ -28,6 +28,7 @@ interface FirDeclarationStatus : FirElement {
     val isOperator: Boolean
     val isInfix: Boolean
     val isInline: Boolean
+    val isValue: Boolean
     val isTailRec: Boolean
     val isExternal: Boolean
     val isConst: Boolean

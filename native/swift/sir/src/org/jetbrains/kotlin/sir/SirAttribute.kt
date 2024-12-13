@@ -37,4 +37,10 @@ public sealed interface SirAttribute {
                 message?.let { SirArgument("message", SirExpression.StringLiteral(message)) },
             )
     }
+
+    object NonOverride : SirAttribute {
+        override val identifier: String get() = "_nonoverride"
+
+        override val arguments: List<SirArgument>? get() = null
+    }
 }

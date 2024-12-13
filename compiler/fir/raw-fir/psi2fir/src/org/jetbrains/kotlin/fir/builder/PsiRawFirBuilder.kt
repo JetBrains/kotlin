@@ -1088,7 +1088,7 @@ open class PsiRawFirBuilder(
                     containingClassIsExpectClass,
                     copyConstructedTypeRefWithImplicitSource = true,
                     isErrorConstructor = !hasPrimaryConstructor,
-                    isImplicitlyActual = container.status.isActual && (container.status.isInline || classKind == ClassKind.ANNOTATION_CLASS),
+                    isImplicitlyActual = isImplicitlyActual(container.status, classKind),
                     isKotlinAny = isKotlinAny,
                 )
                 container.declarations += firPrimaryConstructor
@@ -1703,7 +1703,8 @@ open class PsiRawFirBuilder(
                         isInner = classOrObject.hasInnerModifier() && classOrObject.parent.parent !is KtScript
                         isCompanion = (classOrObject as? KtObjectDeclaration)?.isCompanion() == true
                         isData = classOrObject.hasModifier(DATA_KEYWORD)
-                        isInline = classOrObject.hasModifier(INLINE_KEYWORD) || classOrObject.hasModifier(VALUE_KEYWORD)
+                        isInline = classOrObject.hasModifier(INLINE_KEYWORD)
+                        isValue = classOrObject.hasModifier(VALUE_KEYWORD)
                         isFun = classOrObject.hasModifier(FUN_KEYWORD)
                         isExternal = classOrObject.hasModifier(EXTERNAL_KEYWORD)
                     }

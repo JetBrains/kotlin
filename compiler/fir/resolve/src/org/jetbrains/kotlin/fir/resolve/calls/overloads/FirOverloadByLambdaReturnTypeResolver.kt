@@ -9,11 +9,12 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.resolve.calls.CandidateChosenUsingOverloadResolutionByLambdaAnnotation
+import org.jetbrains.kotlin.fir.resolve.calls.ConeLambdaWithTypeVariableAsExpectedTypeAtom
+import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtomWithPostponedChild
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
-import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
 import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
@@ -30,8 +31,6 @@ class FirOverloadByLambdaReturnTypeResolver(
     private val session = components.session
     private val callCompleter: FirCallCompleter
         get() = components.callCompleter
-    private val inferenceSession: FirInferenceSession
-        get() = components.transformer.context.inferenceSession
 
     fun <T> reduceCandidates(
         qualifiedAccess: T,
@@ -129,7 +128,18 @@ class FirOverloadByLambdaReturnTypeResolver(
                     candidate.system,
                     atom,
                     candidate,
-                    results,
+                    results.copy(
+                        returnArguments = results.returnArguments.map {
+                            if (it !is ConeResolutionAtomWithPostponedChild) it
+                            /**
+                             * This atom may already have a sub-atom bound to a previous candidate,
+                             * like [ConeLambdaWithTypeVariableAsExpectedTypeAtom] (we don't know yet a return type of final candidate),
+                             * and in this state we cannot validly start resolve of a current candidate.
+                             * For this reason we copy these atoms and reset their sub-atoms.
+                             */
+                            else ConeResolutionAtomWithPostponedChild(it.expression)
+                        }
+                    ),
                 )
             }
 

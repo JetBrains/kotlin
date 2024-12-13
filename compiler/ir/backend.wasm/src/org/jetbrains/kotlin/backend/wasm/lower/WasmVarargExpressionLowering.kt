@@ -81,9 +81,9 @@ internal class WasmVarargExpressionLowering(
     private fun IrBlockBuilder.irCreateArray(size: IrExpression, arrDescr: ArrayDescr) =
         irCall(arrDescr.primaryConstructor).apply {
             putValueArgument(0, size)
-            if (typeArgumentsCount >= 1) {
-                check(typeArgumentsCount == 1 && arrDescr.arrayClass.typeParameters.size == 1)
-                putTypeArgument(0, arrDescr.elementType)
+            if (typeArguments.size >= 1) {
+                check(typeArguments.size == 1 && arrDescr.arrayClass.typeParameters.size == 1)
+                typeArguments[0] = arrDescr.elementType
             }
             type = arrDescr.arrayType
         }
@@ -140,9 +140,9 @@ internal class WasmVarargExpressionLowering(
                 val destIdx = indexVar?.let { irGet(it) } ?: irInt(0)
 
                 +irCall(srcArrDescr.copyInto).apply {
-                    if (typeArgumentsCount >= 1) {
-                        check(typeArgumentsCount == 1 && srcArrDescr.arrayClass.typeParameters.size == 1)
-                        putTypeArgument(0, srcArrDescr.elementType)
+                    if (typeArguments.size >= 1) {
+                        check(typeArguments.size == 1 && srcArrDescr.arrayClass.typeParameters.size == 1)
+                        typeArguments[0] = srcArrDescr.elementType
                     }
                     extensionReceiver = irGet(exprVar)  // source
                     putValueArgument(0, irGet(destArr)) // destination
@@ -270,7 +270,7 @@ internal class WasmVarargExpressionLowering(
                         putValueArgument(0, irInt(0))
                         if (primaryConstructor.typeParameters.isNotEmpty()) {
                             check(primaryConstructor.typeParameters.size == 1)
-                            putTypeArgument(0, parameter.varargElementType)
+                            typeArguments[0] = parameter.varargElementType
                         }
                     }
                 }

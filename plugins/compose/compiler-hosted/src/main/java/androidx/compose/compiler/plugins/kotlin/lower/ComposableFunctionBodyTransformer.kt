@@ -389,11 +389,11 @@ class ComposableFunctionBodyTransformer(
 
     private var inlineLambdaInfo = ComposeInlineLambdaLocator(context)
 
-    override fun lower(module: IrModuleFragment) {
-        inlineLambdaInfo.scan(module)
-        module.transformChildrenVoid(this)
+    override fun lower(irModule: IrModuleFragment) {
+        inlineLambdaInfo.scan(irModule)
+        irModule.transformChildrenVoid(this)
         applySourceFixups()
-        module.patchDeclarationParents()
+        irModule.patchDeclarationParents()
     }
 
     override fun lower(irFile: IrFile) {
@@ -1784,7 +1784,7 @@ class ComposableFunctionBodyTransformer(
                         extensionReceiver = function.extensionReceiverParameter?.let { irGet(it) }
                         dispatchReceiver = outerReceiver?.let { irGet(it) }
                         function.typeParameters.fastForEachIndexed { index, parameter ->
-                            putTypeArgument(index, parameter.defaultType)
+                            typeArguments[index] = parameter.defaultType
                         }
                     }
                 )

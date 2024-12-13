@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSyntheticJavaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.references.KaBaseSimpleNameReference
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
@@ -44,11 +45,13 @@ internal class KaFirSimpleNameReference(
         return super<KaFirReference>.isReferenceToImportAlias(alias)
     }
 
-    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
+    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> = withValidityAssertion {
         check(this is KaFirSession)
-        val results = FirReferenceResolveHelper.resolveSimpleNameReference(this@KaFirSimpleNameReference, this)
-        //This fix-up needed to resolve annotation call into annotation constructor (but not into the annotation type)
-        return fixUpAnnotationCallResolveToCtor(results)
+        return cacheStorage.resolveToSymbolsCache.value.getOrPut(this@KaFirSimpleNameReference) {
+            val results = FirReferenceResolveHelper.resolveSimpleNameReference(this@KaFirSimpleNameReference, this)
+            //This fix-up needed to resolve annotation call into annotation constructor (but not into the annotation type)
+            fixUpAnnotationCallResolveToCtor(results)
+        }
     }
 
     override fun getResolvedToPsi(analysisSession: KaSession): Collection<PsiElement> = with(analysisSession) {

@@ -190,7 +190,7 @@ internal class FirInvokeResolveTowerExtension(
                 info.copy(
                     explicitReceiver = invokeReceiverExpression,
                     name = OperatorNameConventions.INVOKE,
-                    isImplicitInvoke = true,
+                    implicitInvokeMode = ImplicitInvokeMode.Regular,
                     candidateForCommonInvokeReceiver = invokeReceiverCandidate.takeUnless { invokeBuiltinExtensionMode }
                 ).let {
                     when {

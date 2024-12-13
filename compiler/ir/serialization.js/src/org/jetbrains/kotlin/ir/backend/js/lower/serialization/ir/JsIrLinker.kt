@@ -11,11 +11,12 @@ import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 class JsIrLinker(
     private val currentModule: ModuleDescriptor?, messageCollector: MessageCollector, builtIns: IrBuiltIns, symbolTable: SymbolTable,
     override val partialLinkageSupport: PartialLinkageSupportForLinker,
-    override val translationPluginContext: TranslationPluginContext?,
     private val icData: ICData? = null,
     friendModules: Map<String, Collection<String>> = emptyMap(),
     private val stubGenerator: DeclarationStubGenerator? = null
@@ -105,11 +105,4 @@ class JsIrLinker(
     fun getDeserializedFilesInKlibOrder(fragment: IrModuleFragment): List<IrFile> {
         return deserializedFilesInKlibOrder[fragment] ?: emptyList()
     }
-
-    class JsFePluginContext(
-        override val moduleDescriptor: ModuleDescriptor,
-        override val symbolTable: ReferenceSymbolTable,
-        override val typeTranslator: TypeTranslator,
-        override val irBuiltIns: IrBuiltIns,
-    ) : TranslationPluginContext
 }

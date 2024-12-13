@@ -422,13 +422,13 @@ private class BackendChecker(
                 val signatureTypes = target.allParameters.map { it.type } + target.returnType
 
                 callee.typeParameters.indices.forEach { index ->
-                    val typeArgument = expression.getTypeArgument(index)!!
+                    val typeArgument = expression.typeArguments[index]!!
                     val signatureType = signatureTypes[index]
                     if (typeArgument.classifierOrNull != signatureType.classifierOrNull ||
                             typeArgument.isMarkedNullable() != signatureType.isMarkedNullable()
                     ) {
                         reportError(expression, "C function signature element mismatch: " +
-                                "expected '${signatureTypes[index].classFqName}', got '${expression.getTypeArgument(index)!!.classFqName}'")
+                                "expected '${signatureTypes[index].classFqName}', got '${expression.typeArguments[index]!!.classFqName}'")
                     }
                 }
 
@@ -467,7 +467,7 @@ private class BackendChecker(
             }
             IntrinsicType.INTEROP_CONVERT -> {
                 val integerClasses = symbols.allIntegerClasses
-                val typeOperand = expression.getTypeArgument(0)!!
+                val typeOperand = expression.typeArguments[0]!!
                 val receiverType = expression.symbol.owner.extensionReceiverParameter!!.type
 
                 if (typeOperand !is IrSimpleType || typeOperand.classifier !in integerClasses || typeOperand.isNullable())
@@ -499,7 +499,7 @@ private class BackendChecker(
                     }
                 }
                 Symbols.isTypeOfIntrinsic(callee.symbol) ->
-                    checkIrKType(expression, expression.getTypeArgument(0)!!)
+                    checkIrKType(expression, expression.typeArguments[0]!!)
             }
         }
     }
@@ -570,7 +570,7 @@ private class BackendChecker(
 
     private fun IrCall.getSingleTypeArgument(): IrType {
         val typeParameter = symbol.owner.typeParameters.single()
-        return getTypeArgument(typeParameter.index)!!
+        return typeArguments[typeParameter.index]!!
     }
 
     private fun checkIrKType(
@@ -617,14 +617,14 @@ private fun BackendChecker.checkCanGenerateCCall(expression: IrCall, isInvoke: B
     if (isInvoke) {
         (0 until expression.valueArgumentsCount).forEach {
             checkCanMapCalleeFunctionParameter(
-                    type = expression.getTypeArgument(it)!!,
-                    isObjCMethod = false,
-                    variadic = false,
-                    parameter = null,
-                    argument = expression.getValueArgument(it)!!)
+                type = expression.typeArguments[it]!!,
+                isObjCMethod = false,
+                variadic = false,
+                parameter = null,
+                argument = expression.getValueArgument(it)!!)
         }
 
-        val returnType = expression.getTypeArgument(expression.typeArgumentsCount - 1)!!
+        val returnType = expression.typeArguments.last()!!
         checkCanMapReturnType(returnType, TypeLocation.FunctionCallResult(expression))
     } else {
         val arguments = (0 until expression.valueArgumentsCount).map(expression::getValueArgument)

@@ -1,4 +1,4 @@
-// LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses, +AvoidWrongOptimizationOfTypeOperatorsOnValueClasses
 
 // FILE: Test.kt
 
@@ -39,7 +39,7 @@ fun baz() {
 // @TestInlinedKt.class:
 // 0 valueOf
 // 0 Value\s\(\)
-// 0 INSTANCEOF
-// 0 CHECKCAST
+// 2 INSTANCEOF
+// 2 CHECKCAST
 // 0 INVOKESTATIC InlinedInt\$Erased.box
-// 0 INVOKEVIRTUAL InlinedInt.unbox
+// 1 INVOKEVIRTUAL InlinedInt.unbox

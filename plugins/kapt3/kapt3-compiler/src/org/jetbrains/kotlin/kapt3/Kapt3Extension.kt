@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -245,15 +244,14 @@ abstract class AbstractKapt3Extension(
             type = "java-production"
         )
 
-        val generationState = GenerationState.Builder(project, builderFactory, module, bindingContext, configuration)
-            .targetId(targetId)
-            .build()
+        val generationState = GenerationState(project, module, configuration, builderFactory, targetId = targetId)
 
         val (classFilesCompilationTime) = measureTimeMillis {
             KotlinCodegenFacade.compileCorrectFiles(
                 files,
                 generationState,
-                JvmIrCodegenFactory(configuration, configuration.phaseConfig)
+                bindingContext,
+                JvmIrCodegenFactory(configuration)
             )
         }
 
@@ -263,7 +261,7 @@ abstract class AbstractKapt3Extension(
         logger.info { "Stubs compilation took $classFilesCompilationTime ms" }
         logger.info { "Compiled classes: " + compiledClasses.joinToString { it.name } }
 
-        return KaptContextForStubGeneration(options, false, logger, compiledClasses, origins, generationState, emptyList())
+        return KaptContextForStubGeneration(options, false, logger, compiledClasses, origins, generationState, bindingContext, emptyList())
     }
 
     private fun generateKotlinSourceStubs(kaptContext: KaptContextForStubGeneration) {

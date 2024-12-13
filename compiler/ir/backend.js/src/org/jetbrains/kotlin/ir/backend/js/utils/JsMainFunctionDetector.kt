@@ -8,20 +8,19 @@ package org.jetbrains.kotlin.ir.backend.js.utils
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.types.Variance
 
 class JsMainFunctionDetector(val context: JsCommonBackendContext) {
 
-    private fun IrSimpleFunction.isSuitableForMainParametersSize(allowEmptyParameters: Boolean): Boolean =
-        when (valueParameters.size) {
-            1, 2 -> true
-            0 -> allowEmptyParameters
-            else -> false
-        }
-
     private fun IrSimpleFunction.isMain(allowEmptyParameters: Boolean): Boolean {
         if (typeParameters.isNotEmpty()) return false
-        if (!isSuitableForMainParametersSize(allowEmptyParameters)) return false
+
+        val hasSingleParameter = hasShape(regularParameters = 1)
+        val hasTwoParameters = hasShape(regularParameters = 2)
+        val hasCorrectShape = hasSingleParameter || hasTwoParameters || allowEmptyParameters && hasShape(regularParameters = 0)
+        if (!hasCorrectShape) return false
+
         val isLoweredSuspendFunction = isLoweredSuspendFunction(context)
         if (!returnType.isUnit() &&
             !(isLoweredSuspendFunction &&
@@ -30,15 +29,13 @@ class JsMainFunctionDetector(val context: JsCommonBackendContext) {
             return false
 
         if (name.asString() != "main") return false
-        if (extensionReceiverParameter != null) return false
 
-        if (valueParameters.size == 1) {
-            return isLoweredSuspendFunction || valueParameters.single().isStringArrayParameter()
-        } else if (valueParameters.size == 2) {
-            return valueParameters[0].isStringArrayParameter() && isLoweredSuspendFunction
+        if (hasSingleParameter) {
+            return isLoweredSuspendFunction || parameters[0].isStringArrayParameter()
+        } else if (hasTwoParameters) {
+            return parameters[0].isStringArrayParameter() && isLoweredSuspendFunction
         } else {
             require(allowEmptyParameters)
-            require(valueParameters.isEmpty())
 
             val file = parent as IrFile
 
@@ -100,12 +97,7 @@ fun IrValueParameter.isStringArrayParameter(): Boolean {
 }
 
 fun IrFunction.isLoweredSuspendFunction(context: JsCommonBackendContext): Boolean {
-    val parameter = valueParameters.lastOrNull() ?: return false
+    val parameter = parameters.lastOrNull() ?: return false
     val type = parameter.type as? IrSimpleType ?: return false
-    return type.classifier == context.symbols.coroutineSymbols.continuationClass
-}
-
-fun IrValueParameter.isContinuationParameter(context: JsCommonBackendContext): Boolean {
-    val type = this.type as? IrSimpleType ?: return false
     return type.classifier == context.symbols.coroutineSymbols.continuationClass
 }

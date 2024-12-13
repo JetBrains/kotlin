@@ -237,6 +237,7 @@ val gradleVersions = listOf(
     "8.8",
     "8.9",
     "8.10.2",
+    "8.11.1",
 )
 
 if (project.kotlinBuildProperties.isTeamcityBuild) {
@@ -411,7 +412,22 @@ tasks.withType<Test>().configureEach {
     onlyIf { !noTestProperty.isPresent }
 
     // Trigger task timeout earlier than TC timeout, so we could collect more info what went wrong with IT tests
-    timeout.set(Duration.ofHours(2))
+    // The longest one are on MacOS/X64 agents in release configurations
+    timeout.set(Duration.ofHours(7))
+
+    /**
+     * Gradle needs these opens to serialize CC and adds them implicitly:
+     * - https://github.com/gradle/gradle/blob/2c7035c5fc5c18c044d2de45764f88ada143e4a7/platforms/core-runtime/base-services/src/main/java/org/gradle/internal/jvm/JpmsConfiguration.java#L41
+     * - https://github.com/gradle/gradle/blob/2c7035c5fc5c18c044d2de45764f88ada143e4a7/platforms/core-runtime/client-services/src/main/java/org/gradle/launcher/daemon/client/DefaultDaemonStarter.java#L142
+     *
+     * Since runs withDebug will happen in-process, add these to make sure IT that run with CC are debuggable
+     */
+    jvmArgs(
+        "--add-opens", "java.base/java.util=ALL-UNNAMED",
+        "--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED",
+        "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+        "--add-opens", "java.base/java.net=ALL-UNNAMED",
+    )
 
     dependsOn(":kotlin-gradle-plugin:validatePlugins")
     dependsOnKotlinGradlePluginInstall()
@@ -426,6 +442,11 @@ tasks.withType<Test>().configureEach {
     systemProperty("runnerGradleVersion", gradle.gradleVersion)
     systemProperty("composeSnapshotVersion", composeRuntimeSnapshot.versions.snapshot.version.get())
     systemProperty("composeSnapshotId", composeRuntimeSnapshot.versions.snapshot.id.get())
+
+    // Add debugTargetProcessWhenDebuggingKGP-IT=true to local.properties to run IT withDebug when debugging the tests in IDE
+    if (kotlinBuildProperties.getBoolean("debugTargetProcessWhenDebuggingKGP-IT", false)) {
+        systemProperty("debugTargetProcessWhenDebuggingKGP-IT", true)
+    }
 
     val installCocoapods = project.findProperty("installCocoapods") as String?
     if (installCocoapods != null) {

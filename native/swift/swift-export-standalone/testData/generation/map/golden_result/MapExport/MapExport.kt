@@ -38,6 +38,20 @@ public fun __root___testMapNothingOptNothing__TypesOfArguments__Swift_Dictionary
     return _result.objcPtr()
 }
 
+@ExportedBridge("__root___testMapOptIntListInt__TypesOfArguments__Swift_Dictionary_Swift_Optional_Swift_Int32__Swift_Array_Swift_Int32____")
+public fun __root___testMapOptIntListInt__TypesOfArguments__Swift_Dictionary_Swift_Optional_Swift_Int32__Swift_Array_Swift_Int32____(m: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __m = interpretObjCPointer<kotlin.collections.Map<Int?, kotlin.collections.List<Int>>>(m)
+    val _result = testMapOptIntListInt(__m)
+    return _result.objcPtr()
+}
+
+@ExportedBridge("__root___testMapOptNothingNothing__TypesOfArguments__Swift_Dictionary_Swift_Optional_Swift_Never__Swift_Never___")
+public fun __root___testMapOptNothingNothing__TypesOfArguments__Swift_Dictionary_Swift_Optional_Swift_Never__Swift_Never___(m: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __m = interpretObjCPointer<kotlin.collections.Map<Nothing?, Nothing>>(m)
+    val _result = testMapOptNothingNothing(__m)
+    return _result.objcPtr()
+}
+
 @ExportedBridge("__root___testMapSetIntMapIntInt__TypesOfArguments__Swift_Dictionary_Swift_Set_Swift_Int32__Swift_Dictionary_Swift_Int32_Swift_Int32____")
 public fun __root___testMapSetIntMapIntInt__TypesOfArguments__Swift_Dictionary_Swift_Set_Swift_Int32__Swift_Dictionary_Swift_Int32_Swift_Int32____(m: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __m = interpretObjCPointer<kotlin.collections.Map<kotlin.collections.Set<Int>, kotlin.collections.Map<Int, Int>>>(m)

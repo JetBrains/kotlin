@@ -1,0 +1,3 @@
+/differentNamesInSupertypesDiagnostic.kt:(155,166): warning: Names 'a' and 'b' of parameter #0 conflict in the following members of supertypes: 'fun foo(a: Int): Unit' defined in '/C', 'fun foo(b: Int): Unit' defined in '/D'. This may cause problems when calling this function with named arguments.
+
+/differentNamesInSupertypesDiagnostic.kt:(217,218): warning: The corresponding parameter in the supertype 'D' is named 'b'. This may cause problems when calling this function with named arguments.

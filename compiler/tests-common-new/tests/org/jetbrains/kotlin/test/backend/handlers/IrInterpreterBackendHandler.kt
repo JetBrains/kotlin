@@ -76,7 +76,7 @@ private class Evaluator(private val interpreter: IrInterpreter, private val glob
                         val default = parameter.defaultValue?.expression as? IrCall ?: return@forEach
                         val callWithNewOffsets = IrCallImpl(
                             expression.startOffset, expression.endOffset, default.type, default.symbol,
-                            default.typeArgumentsCount, default.origin, default.superQualifierSymbol
+                            default.typeArguments.size, default.origin, default.superQualifierSymbol
                         )
                         callWithNewOffsets.copyTypeAndValueArgumentsFrom(default)
                         interpreter.interpret(callWithNewOffsets, irFile)

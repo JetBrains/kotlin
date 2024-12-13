@@ -32,9 +32,15 @@ public class IrBlackBoxCodegenTestForPowerAssertGenerated extends AbstractIrBlac
   }
 
   @Test
-  @TestMetadata("Constants.kt")
-  public void testConstants() {
-    runTest("plugins/power-assert/testData/codegen/Constants.kt");
+  @TestMetadata("ConstantsK1.kt")
+  public void testConstantsK1() {
+    runTest("plugins/power-assert/testData/codegen/ConstantsK1.kt");
+  }
+
+  @Test
+  @TestMetadata("ConstantsK2.kt")
+  public void testConstantsK2() {
+    runTest("plugins/power-assert/testData/codegen/ConstantsK2.kt");
   }
 
   @Test
@@ -695,9 +701,21 @@ public class IrBlackBoxCodegenTestForPowerAssertGenerated extends AbstractIrBlac
     }
 
     @Test
+    @TestMetadata("ContextReceivers.kt")
+    public void testContextReceivers() {
+      runTest("plugins/power-assert/testData/codegen/parameters/ContextReceivers.kt");
+    }
+
+    @Test
     @TestMetadata("implicitReceiver.kt")
     public void testImplicitReceiver() {
       runTest("plugins/power-assert/testData/codegen/parameters/implicitReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("Receivers.kt")
+    public void testReceivers() {
+      runTest("plugins/power-assert/testData/codegen/parameters/Receivers.kt");
     }
 
     @Test

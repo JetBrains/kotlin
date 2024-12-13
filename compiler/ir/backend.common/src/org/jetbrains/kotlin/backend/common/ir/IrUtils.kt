@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.ir
 
+import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
+import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
@@ -28,6 +30,10 @@ fun IrReturnTarget.returnType(context: CommonBackendContext) =
         else -> error("Unknown ReturnTarget: $this")
     }
 
+@DeprecatedForRemovalCompilerApi(
+    deprecatedSince = CompilerVersionOfApiDeprecation._2_1_20,
+    replaceWith = "org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter",
+)
 inline fun IrSimpleFunction.addDispatchReceiver(builder: IrValueParameterBuilder.() -> Unit): IrValueParameter =
     IrValueParameterBuilder().run {
         builder()
@@ -37,6 +43,10 @@ inline fun IrSimpleFunction.addDispatchReceiver(builder: IrValueParameterBuilder
         }
     }
 
+@DeprecatedForRemovalCompilerApi(
+    deprecatedSince = CompilerVersionOfApiDeprecation._2_1_20,
+    replaceWith = "org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver",
+)
 fun IrSimpleFunction.addExtensionReceiver(type: IrType, origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED): IrValueParameter =
     IrValueParameterBuilder().run {
         this.type = type
@@ -45,6 +55,15 @@ fun IrSimpleFunction.addExtensionReceiver(type: IrType, origin: IrDeclarationOri
         factory.buildValueParameter(this, this@addExtensionReceiver).also { receiver ->
             extensionReceiverParameter = receiver
         }
+    }
+
+fun IrSimpleFunction.createExtensionReceiver(type: IrType, origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED): IrValueParameter =
+    IrValueParameterBuilder().run {
+        this.type = type
+        this.origin = origin
+        this.name = "receiver".synthesizedName
+        this.kind = IrParameterKind.ExtensionReceiver
+        factory.buildValueParameter(this, this@createExtensionReceiver)
     }
 
 // TODO: support more cases like built-in operator call and so on
@@ -70,13 +89,7 @@ fun IrExpression?.isPure(
                                 operator == IrTypeOperator.REINTERPRET_CAST ||
                                 operator == IrTypeOperator.NOT_INSTANCEOF
                         ) && argument.isPure(anyVariable, checkFields, symbols)
-            is IrCall -> if (symbols?.isSideEffectFree(this) == true) {
-                for (i in 0 until valueArgumentsCount) {
-                    val valueArgument = getValueArgument(i)
-                    if (!valueArgument.isPure(anyVariable, checkFields, symbols)) return false
-                }
-                true
-            } else false
+            is IrCall -> symbols?.isSideEffectFree(this) == true && arguments.all { it.isPure(anyVariable, checkFields, symbols) }
             is IrGetObjectValue -> type.isUnit()
             is IrVararg -> elements.all { (it as? IrExpression)?.isPure(anyVariable, checkFields, symbols) == true }
             else -> false
@@ -115,8 +128,8 @@ fun CommonBackendContext.createArrayOfExpression(
         ir.symbols.arrayOf,
         typeArgumentsCount = 1,
     ).apply {
-        putTypeArgument(0, arrayElementType)
-        putValueArgument(0, arg0)
+        typeArguments[0] = arrayElementType
+        arguments[0] = arg0
     }
 }
 

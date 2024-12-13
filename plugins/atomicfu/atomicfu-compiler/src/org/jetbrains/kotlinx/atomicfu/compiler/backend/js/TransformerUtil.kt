@@ -49,7 +49,9 @@ internal fun buildCall(
         origin
     ).apply {
         typeArguments.let {
-            it.withIndex().forEach { (i, t) -> putTypeArgument(i, t) }
+            it.withIndex().forEach { (i, t) ->
+                this.typeArguments[i] = t
+            }
         }
         valueArguments.let {
             it.withIndex().forEach { (i, arg) -> putValueArgument(i, arg) }

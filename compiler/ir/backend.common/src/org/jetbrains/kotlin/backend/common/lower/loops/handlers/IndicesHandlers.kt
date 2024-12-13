@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.isPrimitiveArray
 import org.jetbrains.kotlin.ir.util.isUnsignedArray
 import org.jetbrains.kotlin.ir.util.kotlinFqName
@@ -34,13 +35,13 @@ internal abstract class IndicesHandler(protected val context: CommonBackendConte
             if (preferJavaLikeCounterLoop) {
                 // Convert range with inclusive upper bound to exclusive upper bound if possible.
                 // This affects loop code performance on JVM.
-                last = irCall(expression.symbol.owner.extensionReceiverParameter!!.type.sizePropertyGetter)
-                    .apply { dispatchReceiver = expression.extensionReceiver!! }
+                last = irCall(expression.symbol.owner.parameters[0].type.sizePropertyGetter)
+                    .apply { arguments[0] = expression.arguments[0] }
                 lastInclusive = last.decrement()
                 isLastInclusive = false
             } else {
-                last = irCall(expression.symbol.owner.extensionReceiverParameter!!.type.sizePropertyGetter)
-                    .apply { dispatchReceiver = expression.extensionReceiver!! }
+                last = irCall(expression.symbol.owner.parameters[0].type.sizePropertyGetter)
+                    .apply { dispatchReceiver = expression.arguments[0] }
                     .decrement()
                 lastInclusive = null
                 isLastInclusive = true
@@ -64,8 +65,8 @@ internal abstract class IndicesHandler(protected val context: CommonBackendConte
 internal class CollectionIndicesHandler(context: CommonBackendContext) : IndicesHandler(context) {
     override fun matchIterable(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
-        return callee.valueParameters.isEmpty() &&
-                callee.extensionReceiverParameter?.type?.isCollection() == true &&
+        return callee.hasShape(extensionReceiver = true) &&
+                callee.parameters[0].type.isCollection() &&
                 callee.kotlinFqName == FqName("kotlin.collections.<get-indices>")
     }
 
@@ -78,10 +79,10 @@ internal class ArrayIndicesHandler(context: CommonBackendContext) : IndicesHandl
 
     override fun matchIterable(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
-        return callee.valueParameters.isEmpty() &&
-                callee.extensionReceiverParameter?.type?.let {
+        return callee.hasShape(extensionReceiver = true) &&
+                callee.parameters[0].type.let {
                     it.isArray() || it.isPrimitiveArray() || (supportsUnsignedArrays && it.isUnsignedArray())
-                } == true &&
+                } &&
                 callee.kotlinFqName == FqName("kotlin.collections.<get-indices>")
     }
 
@@ -92,8 +93,8 @@ internal class ArrayIndicesHandler(context: CommonBackendContext) : IndicesHandl
 internal class CharSequenceIndicesHandler(context: CommonBackendContext) : IndicesHandler(context) {
     override fun matchIterable(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
-        return callee.valueParameters.isEmpty() &&
-                callee.extensionReceiverParameter?.type?.isCharSequence() == true &&
+        return callee.hasShape(extensionReceiver = true) &&
+                callee.parameters[0].type.isCharSequence() &&
                 callee.kotlinFqName == FqName("kotlin.text.<get-indices>")
     }
 

@@ -19,10 +19,7 @@
 package androidx.compose.compiler.test
 
 import androidx.compose.runtime.*
-import androidx.compose.runtime.mock.InlineLinear
-import androidx.compose.runtime.mock.Text
-import androidx.compose.runtime.mock.compositionTest
-import androidx.compose.runtime.mock.validate
+import androidx.compose.runtime.mock.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -228,6 +225,36 @@ class CompositionTests {
         state = false
         advance()
     }
+
+    @Test
+    fun enumParameter() = compositionTest {
+        var state by mutableStateOf(TestComposeEnum.A)
+        compose {
+            EnumParameter(state)
+        }
+        validate {
+            Text(state.name)
+        }
+
+        state = TestComposeEnum.B
+        advance()
+        revalidate()
+    }
+
+    @Test
+    fun enumParameterInLambda() = compositionTest {
+        var state by mutableStateOf(TestComposeEnum.A)
+        compose {
+            EnumParameterLambda { state }
+        }
+        validate {
+            Text(state.name)
+        }
+
+        state = TestComposeEnum.B
+        advance()
+        revalidate()
+    }
 }
 
 @Composable
@@ -273,3 +300,16 @@ fun DefaultValueClass(
 @Composable
 fun OuterComposable(content: @Composable () -> Unit) = content()
 
+enum class TestComposeEnum {
+    A, B
+}
+
+@Composable
+fun EnumParameter(enum: TestComposeEnum) {
+    Text(enum.name)
+}
+
+@Composable
+fun EnumParameterLambda(enum: () -> TestComposeEnum) {
+    Text(enum().name)
+}

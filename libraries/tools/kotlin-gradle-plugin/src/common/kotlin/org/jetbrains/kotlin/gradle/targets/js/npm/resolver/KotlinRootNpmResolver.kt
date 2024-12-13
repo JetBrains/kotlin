@@ -69,7 +69,7 @@ class KotlinRootNpmResolver internal constructor(
         for (npmResolver in mainCompilations) {
             val compilation = npmResolver.compilation
             if (compilation.platformType == KotlinPlatformType.wasm) {
-                val jsTarget = compilation.target as KotlinJsIrTarget
+                val jsTarget = compilation.target
                 if (jsTarget.wasmTargetType == KotlinWasmTargetType.JS) {
                     check(!containsWasmJs) { errorMessage }
                     containsWasmJs = true

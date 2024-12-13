@@ -295,29 +295,15 @@ inline fun IrClass.addConstructor(builder: IrFunctionBuilder.() -> Unit = {}): I
         constructor.parent = this@addConstructor
     }
 
-fun <D> buildReceiverParameter(
-    parent: D,
-    origin: IrDeclarationOrigin,
-    type: IrType,
-    startOffset: Int = parent.startOffset,
-    endOffset: Int = parent.endOffset
-): IrValueParameter
+inline fun <D> D.buildReceiverParameter(builder: IrValueParameterBuilder.() -> Unit): IrValueParameter
         where D : IrDeclaration, D : IrDeclarationParent =
-    parent.factory.createValueParameter(
-        startOffset = startOffset,
-        endOffset = endOffset,
-        origin = origin,
-        kind = IrParameterKind.DispatchReceiver,
-        name = SpecialNames.THIS,
-        type = type,
-        isAssignable = false,
-        symbol = IrValueParameterSymbolImpl(),
-        varargElementType = null,
-        isCrossinline = false,
-        isNoinline = false,
-        isHidden = false,
-    ).also {
-        it.parent = parent
+    IrValueParameterBuilder().run {
+        name = SpecialNames.THIS
+        kind = IrParameterKind.DispatchReceiver
+        startOffset = this@buildReceiverParameter.startOffset
+        endOffset = this@buildReceiverParameter.endOffset
+        builder()
+        factory.buildValueParameter(this, this@buildReceiverParameter)
     }
 
 fun IrFactory.buildValueParameter(builder: IrValueParameterBuilder, parent: IrDeclarationParent): IrValueParameter =

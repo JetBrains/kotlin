@@ -66,7 +66,7 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
                 substitutionMap.putAll(makeTypeParameterSubstitutionMap(parent, this))
             }
 
-            copyValueParametersFrom(declaration, substitutionMap)
+            copyParametersFrom(declaration, substitutionMap)
 
             extensionReceiverParameter = dispatchReceiverParameter
             dispatchReceiverParameter = null
@@ -103,7 +103,7 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
                         putValueArgument(index, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.symbol))
                     }
                     for ((index, type) in declaration.typeParameters.withIndex()) {
-                        putTypeArgument(index, type.defaultType)
+                        typeArguments[index] = type.defaultType
                     }
                 }
             )

@@ -91,10 +91,12 @@ internal class FragmentLocalFunctionPatchLowering(
                                 name = capturedValueSymbol.owner.name
                             }
 
-                            context.state.recordNewFragmentCaptureParameter(
-                                newParameter.name.asString(),
-                                capturedValueSymbol.owner.type.toIrBasedKotlinType(),
-                                capturedValueSymbol.owner.toIrBasedDescriptor()
+                            context.state.newFragmentCaptureParameters.add(
+                                Triple(
+                                    newParameter.name.asString(),
+                                    capturedValueSymbol.owner.type.toIrBasedKotlinType(),
+                                    capturedValueSymbol.owner.toIrBasedDescriptor()
+                                )
                             )
 
                             irBuilder.irGet(newParameter)

@@ -49,7 +49,7 @@ fun main() {
             elasticPassword
     )
 
-    app.use("/", router(connector))
+    router(app, connector)
 }
 
 fun normalizePort(port: Int) =

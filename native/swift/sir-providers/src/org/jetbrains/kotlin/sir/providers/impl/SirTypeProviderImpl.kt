@@ -25,19 +25,40 @@ public class SirTypeProviderImpl(
     override val unsupportedTypeStrategy: ErrorTypeStrategy,
 ) : SirTypeProvider {
 
+    private data class TypeTranslationCtx(
+        val ktAnalysisSession: KaSession,
+        val reportErrorType: (String) -> Nothing,
+        val reportUnsupportedType: () -> Nothing,
+        val processTypeImports: (List<SirImport>) -> Unit,
+    )
+
     override fun KaType.translateType(
         ktAnalysisSession: KaSession,
         reportErrorType: (String) -> Nothing,
         reportUnsupportedType: () -> Nothing,
         processTypeImports: (List<SirImport>) -> Unit,
+    ): SirType = translateType(
+        TypeTranslationCtx(
+            ktAnalysisSession,
+            reportErrorType,
+            reportUnsupportedType,
+            processTypeImports,
+        )
+    )
+
+    private fun KaType.translateType(
+        ctx: TypeTranslationCtx,
     ): SirType =
-        buildSirNominalType(this@translateType, ktAnalysisSession)
-            .handleErrors(reportErrorType, reportUnsupportedType)
-            .handleImports(ktAnalysisSession, processTypeImports)
+        buildSirNominalType(
+            this@translateType,
+            ctx
+        )
+            .handleErrors(ctx.reportErrorType, ctx.reportUnsupportedType)
+            .handleImports(ctx.ktAnalysisSession, ctx.processTypeImports)
 
     @OptIn(KaNonPublicApi::class)
-    private fun buildSirNominalType(ktType: KaType, ktAnalysisSession: KaSession): SirType {
-        fun buildPrimitiveType(ktType: KaType): SirType? = with(ktAnalysisSession) {
+    private fun buildSirNominalType(ktType: KaType, ctx: TypeTranslationCtx): SirType {
+        fun buildPrimitiveType(ktType: KaType): SirType? = with(ctx.ktAnalysisSession) {
             when {
                 ktType.isCharType -> SirNominalType(SirSwiftModule.utf16CodeUnit)
                 ktType.isUnitType -> SirNominalType(SirSwiftModule.void)
@@ -62,7 +83,7 @@ public class SirTypeProviderImpl(
                 ?.optionalIfNeeded(ktType)
         }
 
-        fun buildRegularType(kaType: KaType): SirType = with(ktAnalysisSession) {
+        fun buildRegularType(kaType: KaType): SirType = with(ctx.ktAnalysisSession) {
             when (kaType) {
                 is KaUsualClassType -> with(sirSession) {
                     when {
@@ -71,30 +92,23 @@ public class SirTypeProviderImpl(
                         kaType.isAnyType -> SirNominalType(KotlinRuntimeModule.kotlinBase)
 
                         kaType.isClassType(StandardClassIds.List) -> {
-                            val elementType = buildSirNominalType(kaType.typeArguments.first().type!!, ktAnalysisSession)
+                            val elementType = buildSirNominalType(kaType.typeArguments.single().type!!, ctx)
                             SirArrayType(elementType)
                         }
 
                         kaType.isClassType(StandardClassIds.Set) -> {
-                            val elementType = buildSirNominalType(kaType.typeArguments.first().type!!, ktAnalysisSession)
+                            val elementType = buildSirNominalType(kaType.typeArguments.single().type!!, ctx)
                             SirNominalType(SirSwiftModule.set, typeArguments = listOf(elementType))
                         }
 
                         kaType.isClassType(StandardClassIds.Map) -> {
-                            val keyType = buildSirNominalType(kaType.typeArguments[0].type!!, ktAnalysisSession)
-                            val valueType = buildSirNominalType(kaType.typeArguments[1].type!!, ktAnalysisSession)
-
-                            if (keyType is SirNominalType && keyType.typeDeclaration == SirSwiftModule.optional) {
-                                // TODO(KT-71920) At the moment optional keys are not supported
-                                null
-                            } else {
-                                SirDictionaryType(keyType, valueType)
-                            }
+                            val (keyType, valueType) = kaType.typeArguments.map { buildSirNominalType(it.type!!, ctx) }
+                            SirDictionaryType(keyType, valueType)
                         }
 
                         else -> {
                             val classSymbol = kaType.symbol
-                            if (classSymbol.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC) {
+                            if (classSymbol.sirVisibility(ctx.ktAnalysisSession) == SirVisibility.PUBLIC) {
                                 SirNominalType(classSymbol.sirDeclarations().first() as SirNamedDeclaration)
                             } else {
                                 null
@@ -104,8 +118,17 @@ public class SirTypeProviderImpl(
                         ?.optionalIfNeeded(kaType)
                         ?: SirUnsupportedType
                 }
-                is KaFunctionType,
-                is KaTypeParameterType,
+                is KaFunctionType -> {
+                    if (kaType.isSuspendFunctionType) {
+                        return SirUnsupportedType
+                    } else {
+                        SirFunctionalType(
+                            parameterTypes = kaType.parameterTypes.map { it.translateType(ctx) },
+                            returnType = kaType.returnType.translateType(ctx)
+                        )
+                    }
+                }
+                is KaTypeParameterType
                     -> SirUnsupportedType
                 is KaErrorType
                     -> SirErrorType(kaType.errorMessage)
@@ -124,7 +147,7 @@ public class SirTypeProviderImpl(
         reportUnsupportedType: () -> Nothing,
     ): SirType {
         if (this is SirErrorType && sirSession.errorTypeStrategy == ErrorTypeStrategy.Fail) {
-            reportErrorType(this.reason)
+            reportErrorType(reason)
         }
         if (this is SirUnsupportedType && sirSession.unsupportedTypeStrategy == ErrorTypeStrategy.Fail) {
             reportUnsupportedType()

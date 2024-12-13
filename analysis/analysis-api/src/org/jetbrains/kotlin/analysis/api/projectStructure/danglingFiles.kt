@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.analysis.api.projectStructure
 
 import com.intellij.openapi.util.Key
+import com.intellij.psi.PsiElement
+import com.intellij.testFramework.LightVirtualFile
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
@@ -24,10 +27,47 @@ public enum class KaDanglingFileResolutionMode {
     IGNORE_SELF
 }
 
-@OptIn(KaImplementationDetail::class)
+private val CONTEXT_MODULE_KEY = Key.create<KaModule>("CONTEXT_MODULE")
+
+/**
+ * A context module, against which analysis of this in-memory file should be performed.
+ *
+ * A [contextModule] can only be specified for an in-memory file.
+ */
+@KaExperimentalApi
+public var KtFile.contextModule: KaModule?
+    get() = getUserData(CONTEXT_MODULE_KEY)
+    set(value) {
+        require(this !is KtCodeFragment) { "'contextModule' cannot be set for code fragments" }
+
+        val virtualFile = this.virtualFile
+        if (virtualFile != null) {
+            require(virtualFile is LightVirtualFile) { "'contextModule' is only available for in-memory files" }
+        }
+        putUserData(CONTEXT_MODULE_KEY, value)
+    }
+
+/**
+ * A context module, against which analysis of this code fragment should be performed.
+ * This is a [KtCodeFragment]-tailored version of [KtFile.contextModule].
+ *
+ * Normally, the context module is taken from the [PsiElement.getContext] element.
+ * However, in some cases the code fragment needs to be analyzed in a refined environment.
+ * Such as, the context element may be in the common module, while the code fragment is analyzed in its JVM counterpart.
+ *
+ * This is an advanced and rarely needed feature.
+ * Use with caution.
+ */
+@KaImplementationDetail
+public var KtCodeFragment.refinedContextModule: KaModule?
+    get() = getUserData(CONTEXT_MODULE_KEY)
+    set(value) = putUserData(CONTEXT_MODULE_KEY, value)
+
+@OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
 public val KtFile.isDangling: Boolean
     get() = when {
         this is KtCodeFragment -> true
+        contextModule != null -> true
         virtualFile?.analysisContextModule != null -> false
         !isPhysical -> true
         analysisContext != null -> true

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolD
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -38,7 +37,6 @@ class JvmIrLinker(
     messageCollector: MessageCollector,
     typeSystem: IrTypeSystemContext,
     symbolTable: SymbolTable,
-    override val translationPluginContext: TranslationPluginContext?,
     private val stubGenerator: DeclarationStubGenerator,
     private val manglerDesc: JvmDescriptorMangler,
     private val enableIdSignatures: Boolean,

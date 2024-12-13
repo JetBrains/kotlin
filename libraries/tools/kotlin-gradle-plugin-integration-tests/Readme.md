@@ -52,8 +52,10 @@ to understand what test is about.
 - Add to test related Kotlin tag. For example for Kotlin/Jvm tests - `@JvmGradlePluginTests`. Other available tags are located nearby 
 `@JvmGradlePluginTests` - check yourself what suites best for the test. You could add tag onto test suite once, but then all tests 
 in test suite should be for the related tag. Preferably add tag for each test.
-- Consider using [Gradle Plugin DSL](https://docs.gradle.org/current/userguide/plugins.html#sec:plugins_block) while adding new/modifying 
-existing test projects.
+- Consider using [Gradle Plugin DSL](https://docs.gradle.org/current/userguide/plugins.html#sec:plugins_block) while adding new/modifying existing test projects.
+- <a name="autodebug"></a> Use `debugTargetProcessWhenDebuggingKGP-IT=true` in `local.properties`. When debugging tests in IDE, Gradle will 
+also stream daemon logs and runs target project build in-process. This is especially useful for [build script injections](#injections) since 
+you will be able to break transparently in the injection. 
 
 Tests run using [Gradle TestKit](https://docs.gradle.org/current/userguide/test_kit.html) and may reuse already active Gradle TestKit daemon.
 Shared TestKit caches are located in [./.testKitDir](.testKitDir) directory. It is cleared on CI after test run is finished, but not locally.
@@ -179,7 +181,7 @@ pluginManagement {
 ```
 </details>
 
-## build.gradle.kts injections from main test code
+## <a name="injections"></a> build.gradle.kts injections from main test code
 
 It is possible to inject code from IT test directly into the build files of the test project.
 To do that use `buildScriptInjection` DSL function as follows:
@@ -199,5 +201,7 @@ nativeProject("native-fat-framework/smoke", gradleVersion) {
 
 It is possible to inject the same code to both groovy and kts buildscript files. 
 
-Invocation of `buildGradleKtsInjection` adds  to the build script classpath classes from test. And injects in build script this line:
+Invocation of `buildGradleKtsInjection` adds to the build script classpath classes from test. And injects in build script this line:
 `org.jetbrains.kotlin.gradle.testbase.invokeBuildScriptInjection(project, "<FQN to class produced from lambda>")`
+
+Use `debugTargetProcessWhenDebuggingKGP-IT=true` in `local.properties` for an [improved DevX](#autodebug). 

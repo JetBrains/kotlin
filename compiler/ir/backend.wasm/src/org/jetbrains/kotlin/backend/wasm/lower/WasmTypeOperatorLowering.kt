@@ -256,7 +256,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         }
 
         return builder.irCall(symbols.refCastNull, type = toType).apply {
-            putTypeArgument(0, toType)
+            typeArguments[0] = toType
             putValueArgument(0, value)
         }
     }
@@ -323,7 +323,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     private fun generateIsInterface(argument: IrExpression, toType: IrType): IrExpression {
         return builder.irCall(symbols.wasmIsInterface).apply {
             putValueArgument(0, argument)
-            putTypeArgument(0, toType)
+            typeArguments[0] = toType
         }
     }
 
@@ -348,7 +348,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
 
         return builder.irCall(symbols.refTest).apply {
             putValueArgument(0, argument)
-            putTypeArgument(0, toType)
+            typeArguments[0] = toType
         }
     }
 

@@ -20,17 +20,16 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.types.*
-import java.util.*
 
 /**
  * Given a function descriptor, creates another function descriptor with type parameters copied from outer context(s).
  * This is needed because once we're serializing this to a proto, there's no place to store information about external type parameters.
  */
-fun createFreeFakeLambdaDescriptor(descriptor: FunctionDescriptor, typeApproximator: TypeApproximator?): FunctionDescriptor {
+fun createFreeFakeLambdaDescriptor(descriptor: FunctionDescriptor, typeApproximator: TypeApproximator): FunctionDescriptor {
     return createFreeDescriptor(descriptor, typeApproximator)
 }
 
-private fun <D : CallableMemberDescriptor> createFreeDescriptor(descriptor: D, typeApproximator: TypeApproximator?): D {
+private fun <D : CallableMemberDescriptor> createFreeDescriptor(descriptor: D, typeApproximator: TypeApproximator): D {
     @Suppress("UNCHECKED_CAST")
     val builder = descriptor.newCopyBuilder() as CallableMemberDescriptor.CopyBuilder<D>
 
@@ -47,7 +46,7 @@ private fun <D : CallableMemberDescriptor> createFreeDescriptor(descriptor: D, t
         container = container.containingDeclaration
     }
 
-    val approximated = typeApproximator?.approximate(descriptor, builder) ?: false
+    val approximated = typeApproximator.approximate(descriptor, builder)
 
     return if (typeParameters.isEmpty() && !approximated) descriptor else builder.build()!!
 }
@@ -124,7 +123,7 @@ private fun TypeApproximator.approximate(type: UnwrappedType, toSuper: Boolean):
  * when using reflection on that local variable at runtime.
  * Only members used by [DescriptorSerializer.propertyProto] are implemented correctly in this property descriptor.
  */
-fun createFreeFakeLocalPropertyDescriptor(descriptor: LocalVariableDescriptor, typeApproximator: TypeApproximator?): PropertyDescriptor {
+fun createFreeFakeLocalPropertyDescriptor(descriptor: LocalVariableDescriptor, typeApproximator: TypeApproximator): PropertyDescriptor {
     val property = PropertyDescriptorImpl.create(
         descriptor.containingDeclaration, descriptor.annotations, Modality.FINAL, descriptor.visibility, descriptor.isVar,
         descriptor.name, CallableMemberDescriptor.Kind.DECLARATION, descriptor.source, false, descriptor.isConst,

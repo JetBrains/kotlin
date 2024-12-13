@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.config.LanguageFeature.ForbidSyntheticPropertiesWithoutBaseJavaGetter
+import org.jetbrains.kotlin.config.LanguageFeature.DontCreateSyntheticPropertiesWithoutBaseJavaGetter
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
@@ -274,7 +274,7 @@ class FirSyntheticPropertiesScope private constructor(
      * - `HasKotlinOrigin` shows that there is no base java getter overridden. Property will be created only with some LV (KT-64358)
      */
     private fun FirNamedFunctionSymbol.computeGetterCompatibility(): GetterCompatibilityResult {
-        val kotlinBaseAllowed = !session.languageVersionSettings.supportsFeature(ForbidSyntheticPropertiesWithoutBaseJavaGetter)
+        val kotlinBaseAllowed = !session.languageVersionSettings.supportsFeature(DontCreateSyntheticPropertiesWithoutBaseJavaGetter)
 
         var isHiddenEverywhereBesideSuperCalls = false
         var isDeprecatedOverrideOfHidden = false

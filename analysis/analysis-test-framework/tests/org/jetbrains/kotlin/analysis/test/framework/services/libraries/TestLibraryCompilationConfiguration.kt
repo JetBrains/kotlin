@@ -11,14 +11,17 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 
-fun TestConfigurationBuilder.configureLibraryCompilationSupport() {
-    useAdditionalService<TestModuleCompiler> { DispatchingTestModuleCompiler }
-    useAdditionalService<TestModuleDecompiler> { TestModuleDecompilerJar() }
+fun TestConfigurationBuilder.configurePlatformEnvironmentConfigurators() {
     useConfigurators(
         ::CommonEnvironmentConfigurator,
         ::AnalysisApiJvmEnvironmentConfigurator,
         ::JsEnvironmentConfigurator
     )
+}
+
+fun TestConfigurationBuilder.configureLibraryCompilationSupport() {
+    useAdditionalService<TestModuleCompiler> { DispatchingTestModuleCompiler }
+    useAdditionalService<TestModuleDecompiler> { TestModuleDecompilerJar() }
 }
 
 class LibraryWasNotCompiledDueToExpectedCompilationError : SkipTestException()

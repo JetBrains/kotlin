@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isLong
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
@@ -202,10 +203,10 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
         getCoroutineIntrinsic("startCoroutineUninterceptedOrReturnGeneratorVersion").toHashSet()
 
     val startCoroutineUninterceptedOrReturnGeneratorVersion1 by lazy(LazyThreadSafetyMode.NONE) {
-        startCoroutineUninterceptedOrReturnGeneratorVersion.single { it.owner.valueParameters.size == 1 }
+        startCoroutineUninterceptedOrReturnGeneratorVersion.single { it.owner.hasShape(extensionReceiver = true, regularParameters = 1) }
     }
     val startCoroutineUninterceptedOrReturnGeneratorVersion2 by lazy(LazyThreadSafetyMode.NONE) {
-        startCoroutineUninterceptedOrReturnGeneratorVersion.single { it.owner.valueParameters.size == 2 }
+        startCoroutineUninterceptedOrReturnGeneratorVersion.single { it.owner.hasShape(extensionReceiver = true, regularParameters = 2) }
     }
 
     val suspendOrReturnFunctionSymbol: IrSimpleFunctionSymbol = getCoroutineIntrinsic("suspendOrReturn").single()
@@ -214,10 +215,10 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
     val jsNumberRangeToLong = getInternalFunction("numberRangeToLong")
 
     private val _rangeUntilFunctions = symbolFinder.findFunctions(Name.identifier("until"), "kotlin", "ranges")
-    val rangeUntilFunctions by lazy(LazyThreadSafetyMode.NONE) {
+    val rangeUntilFunctions: Map<Pair<IrType, IrType>, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
         _rangeUntilFunctions
-            .filter { it.owner.extensionReceiverParameter != null && it.owner.valueParameters.size == 1 }
-            .associateBy { it.owner.extensionReceiverParameter!!.type to it.owner.valueParameters[0].type }
+            .filter { it.owner.hasShape(extensionReceiver = true, regularParameters = 1) }
+            .associateBy { it.owner.parameters[0].type to it.owner.parameters[1].type }
     }
 
     val longClassSymbol = irBuiltIns.longClass

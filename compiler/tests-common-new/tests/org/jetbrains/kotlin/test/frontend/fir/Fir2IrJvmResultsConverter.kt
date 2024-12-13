@@ -7,12 +7,13 @@ package org.jetbrains.kotlin.test.frontend.fir
 
 import org.jetbrains.kotlin.backend.common.IrSpecialAnnotationsProvider
 import org.jetbrains.kotlin.backend.common.actualizer.IrExtraActualDeclarationExtractor
-import org.jetbrains.kotlin.backend.jvm.*
-import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
+import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
+import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
+import org.jetbrains.kotlin.backend.jvm.JvmIrSpecialAnnotationSymbolProvider
+import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
@@ -86,7 +87,6 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
         fir2IrResult: Fir2IrActualizedResult,
         fir2KlibMetadataSerializer: Fir2KlibMetadataSerializer,
     ): IrBackendInput {
-        val phaseConfig = compilerConfiguration.phaseConfig
         // TODO: handle fir from light tree
         val sourceFiles = inputArtifact.mainFirFiles.mapNotNull { it.value.sourceFile }
 
@@ -94,7 +94,6 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
             fir2IrResult.irModuleFragment,
             fir2IrResult.irBuiltIns,
             fir2IrResult.symbolTable,
-            phaseConfig,
             fir2IrResult.components.irProviders,
             createFir2IrExtensions(compilerConfiguration),
             FirJvmBackendExtension(
@@ -106,19 +105,15 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
         )
 
         val project = testServices.compilerConfigurationProvider.getProject(module)
-        val codegenFactory = JvmIrCodegenFactory(compilerConfiguration, phaseConfig)
-        val generationState = GenerationState.Builder(
-            project, ClassBuilderFactories.TEST,
-            fir2IrResult.irModuleFragment.descriptor, NoScopeRecordCliBindingTrace(project).bindingContext, compilerConfiguration
-        ).jvmBackendClassResolver(
-            FirJvmBackendClassResolver(fir2IrResult.components)
-        ).diagnosticReporter(
-            diagnosticReporter
-        ).build()
+        val generationState = GenerationState(
+            project, fir2IrResult.irModuleFragment.descriptor, compilerConfiguration, ClassBuilderFactories.TEST,
+            jvmBackendClassResolver = FirJvmBackendClassResolver(fir2IrResult.components),
+            diagnosticReporter = diagnosticReporter,
+        )
 
         return IrBackendInput.JvmIrBackendInput(
             generationState,
-            codegenFactory,
+            JvmIrCodegenFactory(compilerConfiguration),
             backendInput,
             sourceFiles,
             descriptorMangler = null,

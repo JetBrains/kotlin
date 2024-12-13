@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.codegen.serialization
 
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.createFreeFakeLocalPropertyDescriptor
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
@@ -41,26 +41,26 @@ import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
 
-class JvmSerializerExtension @JvmOverloads constructor(
+class JvmSerializerExtension(
     private val bindings: JvmSerializationBindings,
     state: GenerationState,
-    private val typeMapper: KotlinTypeMapperBase = state.typeMapper
+    private val typeMapper: KotlinTypeMapperBase,
 ) : SerializerExtension() {
     private val globalBindings = state.globalSerializationBindings
-    private val codegenBinding = state.bindingContext
     override val stringTable = JvmCodegenStringTable(typeMapper)
     private val useTypeTable = state.config.useTypeTableInSerializer
     private val moduleName = state.moduleName
     private val classBuilderMode = state.classBuilderMode
-    private val languageVersionSettings = state.languageVersionSettings
+    private val languageVersionSettings = state.config.languageVersionSettings
     private val isParamAssertionsDisabled = state.config.isParamAssertionsDisabled
     private val unifiedNullChecks = state.config.unifiedNullChecks
     private val functionsWithInlineClassReturnTypesMangled = state.config.functionsWithInlineClassReturnTypesMangled
     override val metadataVersion = state.config.metadataVersion
-    private val jvmDefaultMode = state.jvmDefaultMode
+    private val jvmDefaultMode = state.config.jvmDefaultMode
     private val approximator = state.typeApproximator
     private val useOldManglingScheme = state.config.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
     private val signatureSerializer = JvmSignatureSerializerImpl(stringTable)
+    private val localDelegatedProperties = state.localDelegatedProperties
 
     override fun shouldUseTypeTable(): Boolean = useTypeTable
 
@@ -122,9 +122,8 @@ class JvmSerializerExtension @JvmOverloads constructor(
         classAsmType: Type,
         extension: GeneratedMessageLite.GeneratedExtension<MessageType, List<ProtoBuf.Property>>
     ) {
-        val localVariables = CodegenBinding.getLocalDelegatedProperties(codegenBinding, classAsmType) ?: return
-
-        for (localVariable in localVariables) {
+        for (localVariable in localDelegatedProperties[classAsmType].orEmpty()) {
+            if (localVariable !is LocalVariableDescriptor) continue
             val propertyDescriptor = createFreeFakeLocalPropertyDescriptor(localVariable, approximator)
             val serializer = DescriptorSerializer.createForLambda(this, languageVersionSettings)
             proto.addExtension(extension, serializer.propertyProto(propertyDescriptor)?.build() ?: continue)

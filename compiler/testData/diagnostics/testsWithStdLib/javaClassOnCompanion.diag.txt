@@ -1,0 +1,3 @@
+/javaClassOnCompanion.kt:27:12: error: unresolved reference: javaClass
+val e0 = E.javaClass
+           ^^^^^^^^^

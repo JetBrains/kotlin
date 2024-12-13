@@ -9,26 +9,15 @@ import groovy.util.Node
 import groovy.util.NodeList
 import org.gradle.api.Project
 import org.gradle.api.XmlProvider
-import org.gradle.api.artifacts.ModuleIdentifier
-import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.GenerateMavenPom
 
 internal data class ModuleCoordinates(
-    private val moduleGroup: String?,
-    private val moduleName: String,
-    private val moduleVersion: String?,
-) : ModuleVersionIdentifier {
-    override fun getGroup() = moduleGroup ?: "unspecified"
-    override fun getName() = moduleName
-    override fun getVersion() = moduleVersion ?: "unspecified"
-
-    override fun getModule(): ModuleIdentifier = object : ModuleIdentifier {
-        override fun getGroup(): String = moduleGroup ?: "unspecified"
-        override fun getName(): String = moduleName
-    }
-}
+    val group: String?,
+    val name: String,
+    val version: String?,
+)
 
 internal abstract class PomDependenciesRewriter {
 

@@ -51,8 +51,8 @@ class SwitchOptimizer(
             // check weather the irCall is `s === #CONST`
             if (irCall.symbol !== jsEqeqeq && irCall.symbol !== jsEqeq) return null
 
-            val op1 = irCall.getValueArgument(0)!!
-            val op2 = irCall.getValueArgument(1)!!
+            val op1 = irCall.arguments[0]!!
+            val op2 = irCall.arguments[1]!!
 
             val constOp = op1 as? IrConst ?: op2 as? IrConst ?: return null
             val varOp = op1 as? IrGetValue ?: op2 as? IrGetValue ?: return null

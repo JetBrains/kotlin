@@ -7,23 +7,39 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
+import org.jetbrains.kotlin.cli.common.SessionWithSources
+import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi
+import org.jetbrains.kotlin.cli.common.fileBelongsToModuleForPsi
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
+import org.jetbrains.kotlin.cli.common.isCommonSourceForPsi
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.jvm.compiler.*
-import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.*
+import org.jetbrains.kotlin.cli.common.prepareJvmSessions
+import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.MinimizedFrontendContext
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
+import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.*
+import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
-import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
+import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
+import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.psi.KtFile
@@ -268,32 +284,30 @@ private fun analyze(sourceFiles: Collection<KtFile>, environment: KotlinCoreEnvi
 }
 
 private fun generate(
-    analysisResult: AnalysisResult, sourceFiles: List<KtFile>, kotlinCompilerConfiguration: CompilerConfiguration,
-    messageCollector: MessageCollector
+    analysisResult: AnalysisResult, sourceFiles: List<KtFile>, configuration: CompilerConfiguration, messageCollector: MessageCollector,
 ): GenerationState {
     val diagnosticsReporter = DiagnosticReporterFactory.createReporter(messageCollector)
-    return GenerationState.Builder(
+    val state = GenerationState(
         sourceFiles.first().project,
-        ClassBuilderFactories.BINARIES,
         analysisResult.moduleDescriptor,
+        configuration,
+        diagnosticReporter = diagnosticsReporter,
+    )
+    KotlinCodegenFacade.compileCorrectFiles(
+        sourceFiles,
+        state,
         analysisResult.bindingContext,
-        kotlinCompilerConfiguration
-    ).diagnosticReporter(
-        diagnosticsReporter
-    ).build().also {
-        KotlinCodegenFacade.compileCorrectFiles(
-            sourceFiles,
-            it,
-            JvmIrCodegenFactory(kotlinCompilerConfiguration, kotlinCompilerConfiguration.phaseConfig),
-        )
-        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
-            diagnosticsReporter,
-            messageCollector,
-            kotlinCompilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
-        )
-    }
+        JvmIrCodegenFactory(configuration),
+    )
+    FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
+        diagnosticsReporter,
+        messageCollector,
+        configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+    )
+    return state
 }
 
+@OptIn(LegacyK2CliPipeline::class)
 private fun doCompileWithK2(
     context: SharedScriptCompilationContext,
     script: SourceCode,
@@ -424,4 +438,22 @@ private fun doCompileWithK2(
     ).onSuccess { compiledScript ->
         ResultWithDiagnostics.Success(compiledScript, messageCollector.diagnostics)
     }
+}
+
+@LegacyK2CliPipeline
+private fun prepareJvmSessionsForScripting(
+    projectEnvironment: VfsBasedProjectEnvironment,
+    configuration: CompilerConfiguration,
+    files: List<KtFile>,
+    rootModuleNameAsString: String,
+    friendPaths: List<String>,
+    librariesScope: AbstractProjectFileSearchScope,
+    isScript: (KtFile) -> Boolean,
+    createProviderAndScopeForIncrementalCompilation: (List<KtFile>) -> IncrementalCompilationContext?,
+): List<SessionWithSources<KtFile>> {
+    val extensionRegistrars = FirExtensionRegistrar.getInstances(projectEnvironment.project)
+    return MinimizedFrontendContext(projectEnvironment, MessageCollector.NONE, extensionRegistrars, configuration).prepareJvmSessions(
+        files, rootModuleNameAsString, friendPaths, librariesScope, isCommonSourceForPsi, isScript,
+        fileBelongsToModuleForPsi, createProviderAndScopeForIncrementalCompilation
+    )
 }

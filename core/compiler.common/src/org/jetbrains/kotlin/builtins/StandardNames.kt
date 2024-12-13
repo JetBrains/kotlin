@@ -90,6 +90,9 @@ object StandardNames {
     @JvmField
     val CONCURRENT_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("concurrent"))
 
+    @JvmField
+    val CONCURRENT_ATOMICS_PACKAGE_FQ_NAME = CONCURRENT_PACKAGE_FQ_NAME.child(Name.identifier("atomics"))
+
     val NON_EXISTENT_CLASS = FqName("error.NonExistentClass")
 
     @JvmField
@@ -101,7 +104,11 @@ object StandardNames {
         KOTLIN_REFLECT_FQ_NAME,
         KOTLIN_INTERNAL_FQ_NAME,
         COROUTINES_PACKAGE_FQ_NAME,
-        CONCURRENT_PACKAGE_FQ_NAME
+        // TODO: atomic builtins are moving from kotlin.concurrent to kotlin.concurrent.atomics package (see KT-73816),
+        // builtins from kotlin.concurrent package are kept till Atomic API is completely moved to kotlin.concurrent.atomics
+        // and built with the new bootstrap compiler which provides builtins from the new package.
+        CONCURRENT_PACKAGE_FQ_NAME,
+        CONCURRENT_ATOMICS_PACKAGE_FQ_NAME
     )
 
     object FqNames {
@@ -203,13 +210,24 @@ object StandardNames {
         @JvmField val uIntArrayFqName: FqName = fqName("UIntArray")
         @JvmField val uLongArrayFqName: FqName = fqName("ULongArray")
 
-        @JvmField val atomicInt: FqName = concurrent("AtomicInt")
-        @JvmField val atomicLong: FqName = concurrent("AtomicLong")
-        @JvmField val atomicBoolean: FqName = concurrent("AtomicBoolean")
-        @JvmField val atomicReference: FqName = concurrent("AtomicReference")
-        @JvmField val atomicIntArray: FqName = concurrent("AtomicIntArray")
-        @JvmField val atomicLongArray: FqName = concurrent("AtomicLongArray")
-        @JvmField val atomicArray: FqName = concurrent("AtomicArray")
+        // TODO: atomic builtins are moving from kotlin.concurrent to kotlin.concurrent.atomics package (see KT-73816),
+        // builtins from kotlin.concurrent package are kept till Atomic API is completely moved to kotlin.concurrent.atomics
+        // and built with the new bootstrap compiler which provides builtins from the new package.
+        @JvmField val atomicInt_migration: FqName = concurrent("AtomicInt")
+        @JvmField val atomicLong_migration: FqName = concurrent("AtomicLong")
+        @JvmField val atomicBoolean_migration: FqName = concurrent("AtomicBoolean")
+        @JvmField val atomicReference_migration: FqName = concurrent("AtomicReference")
+        @JvmField val atomicIntArray_migration: FqName = concurrent("AtomicIntArray")
+        @JvmField val atomicLongArray_migration: FqName = concurrent("AtomicLongArray")
+        @JvmField val atomicArray_migration: FqName = concurrent("AtomicArray")
+
+        @JvmField val atomicInt: FqName = concurrentAtomics("AtomicInt")
+        @JvmField val atomicLong: FqName = concurrentAtomics("AtomicLong")
+        @JvmField val atomicBoolean: FqName = concurrentAtomics("AtomicBoolean")
+        @JvmField val atomicReference: FqName = concurrentAtomics("AtomicReference")
+        @JvmField val atomicIntArray: FqName = concurrentAtomics("AtomicIntArray")
+        @JvmField val atomicLongArray: FqName = concurrentAtomics("AtomicLongArray")
+        @JvmField val atomicArray: FqName = concurrentAtomics("AtomicArray")
 
         @JvmField val primitiveTypeShortNames: Set<Name> = newHashSetWithExpectedSize<Name>(PrimitiveType.values().size).apply {
             PrimitiveType.values().mapTo(this) { it.typeName }
@@ -265,6 +283,10 @@ object StandardNames {
 
         private fun concurrent(simpleName: String): FqName {
             return CONCURRENT_PACKAGE_FQ_NAME.child(Name.identifier(simpleName))
+        }
+
+        private fun concurrentAtomics(simpleName: String): FqName {
+            return CONCURRENT_ATOMICS_PACKAGE_FQ_NAME.child(Name.identifier(simpleName))
         }
     }
 

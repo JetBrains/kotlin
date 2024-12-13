@@ -6,11 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
-import org.jetbrains.kotlin.analysis.api.components.KaCodeCompilationException
-import org.jetbrains.kotlin.analysis.api.components.KaCompilationResult
-import org.jetbrains.kotlin.analysis.api.components.KaCompilerFacility
-import org.jetbrains.kotlin.analysis.api.components.KaCompilerTarget
-import org.jetbrains.kotlin.analysis.api.components.classBuilderFactory
+import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
@@ -25,12 +21,17 @@ import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.config.phaser.PhaseConfig
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.load.kotlin.toSourceElement
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtCodeFragment
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -104,50 +105,27 @@ internal class KaFe10CompilerFacility(
                 return file === ktFile || inlineObjectDeclarationFiles.contains(ktFile)
             }
 
-            override fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean {
-                return true
-            }
-
             override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean {
                 return processingClassOrObject.containingKtFile === file ||
                         processingClassOrObject is KtObjectDeclaration && inlineObjectDeclarations.contains(processingClassOrObject)
             }
-
-            override fun shouldGenerateScript(script: KtScript): Boolean {
-                return script.containingKtFile === file
-            }
-
-            override fun shouldGenerateCodeFragment(script: KtCodeFragment) = false
         }
 
         val generateClassFilter = GenerateClassFilter()
 
         val codegenFactory = createJvmIrCodegenFactory(effectiveConfiguration)
 
-        val state = GenerationState.Builder(
+        val state = GenerationState(
             file.project,
-            target.classBuilderFactory,
             analysisContext.resolveSession.moduleDescriptor,
-            bindingContext,
-            filesToCompile,
             effectiveConfiguration,
-        ).generateDeclaredClassFilter(generateClassFilter)
-            .codegenFactory(codegenFactory)
-            .build()
+            target.classBuilderFactory,
+            generateDeclaredClassFilter = generateClassFilter,
+        )
 
-        try {
-            KotlinCodegenFacade.compileCorrectFiles(state)
-
-            val backendErrors = computeErrors(state.collectedExtraJvmDiagnostics, allowedErrorFilter)
-            if (backendErrors.isNotEmpty()) {
-                return KaCompilationResult.Failure(backendErrors)
-            }
-
-            val outputFiles = state.factory.asList().map(::KaBaseCompiledFileForOutputFile)
-            return KaCompilationResult.Success(outputFiles, capturedValues = emptyList())
-        } finally {
-            state.destroy()
-        }
+        KotlinCodegenFacade.compileCorrectFiles(filesToCompile, state, bindingContext, codegenFactory)
+        val outputFiles = state.factory.asList().map(::KaBaseCompiledFileForOutputFile)
+        return KaCompilationResult.Success(outputFiles, capturedValues = emptyList())
     }
 
     private fun computeErrors(diagnostics: Diagnostics, allowedErrorFilter: (KaDiagnostic) -> Boolean): List<KaDiagnostic> {
@@ -198,7 +176,6 @@ internal class KaFe10CompilerFacility(
 
         return JvmIrCodegenFactory(
             configuration,
-            PhaseConfig(),
             jvmGeneratorExtensions = jvmGeneratorExtensions,
             ideCodegenSettings = ideCodegenSettings,
         )

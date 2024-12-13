@@ -111,6 +111,15 @@ class Strings {
     }
 
     @Sample
+    fun findLast() {
+        val text = "a1b2c3d4e5"
+
+        assertPrints(text.findLast { it.isLetter() }, "e")
+        assertPrints(text.findLast { it.isUpperCase() }, "null")
+        assertPrints("".findLast { it.isLowerCase() }, "null")
+    }
+
+    @Sample
     fun zip() {
         val stringA = "abcd"
         val stringB = "zyx"
@@ -711,5 +720,43 @@ class Strings {
 
         // Using a backslash to include the special character '$' as a literal in the result
         assertPrints(text.replaceFirst(dateRegex, "$3-\\$2-$1"), "The events are on 2024-\$2-15 and 16-10-2024.")
+    }
+
+    @Sample
+    fun removeRangeString() {
+        val text = "Hello, world!"
+
+        // Removing the range that correspond to the "world" substring
+        assertPrints(text.removeRange(startIndex = 7, endIndex = 12), "Hello, !")
+
+        // Also possible to remove using a Range
+        assertPrints(text.removeRange(7..11), "Hello, !")
+
+        // The original string is not changed
+        assertPrints(text, "Hello, world!")
+
+        // Throws if startIndex is greater than endIndex
+        assertFails { text.removeRange(startIndex = 7, endIndex = 4) }
+        // Throws if startIndex or endIndex is out of range of the string indices
+        assertFails { text.removeRange(startIndex = 7, endIndex = 20) }
+    }
+
+    @Sample
+    fun removeRangeCharSequence() {
+        val text = StringBuilder("Hello, world!")
+
+        // Removing the range that correspond to the "world" subsequence
+        assertPrints(text.removeRange(startIndex = 7, endIndex = 12), "Hello, !")
+
+        // Also possible to remove using a Range
+        assertPrints(text.removeRange(7..11), "Hello, !")
+
+        // The original char sequence is not changed
+        assertPrints(text, "Hello, world!")
+
+        // Throws if startIndex is greater than endIndex
+        assertFails { text.removeRange(startIndex = 7, endIndex = 4) }
+        // Throws if startIndex or endIndex is out of range of the char sequence indices
+        assertFails { text.removeRange(startIndex = 7, endIndex = 20) }
     }
 }

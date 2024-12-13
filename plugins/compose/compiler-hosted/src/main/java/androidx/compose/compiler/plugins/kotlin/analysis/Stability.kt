@@ -434,9 +434,9 @@ class StabilityInferencer(
             null -> baseStability
             0 -> Stability.Stable
             else -> Stability.Combined(
-                (0 until expr.typeArgumentsCount).mapNotNull { index ->
+                expr.typeArguments.indices.mapNotNull { index ->
                     if (mask and (0b1 shl index) != 0) {
-                        val sub = expr.getTypeArgument(index)
+                        val sub = expr.typeArguments[index]
                         if (sub != null)
                             stabilityOf(sub)
                         else

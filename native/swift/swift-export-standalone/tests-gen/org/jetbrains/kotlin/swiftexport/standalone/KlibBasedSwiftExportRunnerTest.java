@@ -72,6 +72,12 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   }
 
   @Test
+  @TestMetadata("functional_type")
+  public void testFunctional_type() {
+    runTest("native/swift/swift-export-standalone/testData/generation/functional_type/");
+  }
+
+  @Test
   @TestMetadata("functions")
   public void testFunctions() {
     runTest("native/swift/swift-export-standalone/testData/generation/functions/");

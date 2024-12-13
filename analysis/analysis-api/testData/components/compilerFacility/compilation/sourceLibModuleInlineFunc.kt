@@ -1,15 +1,16 @@
 // DUMP_IR
 
-// MODULE: ui
+// MODULE: jvmLib
 // MODULE_KIND: LibraryBinary
-// FILE: com/example/ui/Text.kt
-package com.example.ui
+// FILE: jvmLib.kt
+package com.example.jvmLib
 
 fun Text(text: String) {}
 
-// MODULE: myModule
+
+// MODULE: common
 // TARGET_PLATFORM: Common
-// FILE: com/example/myModule/OtherModule.kt
+// FILE: common.kt
 package com.example.myModule
 
 class OtherModule {
@@ -23,13 +24,14 @@ class OtherModule {
     }
 }
 
-// MODULE: main(myModule, ui)
+
+// MODULE: main(jvmLib)()(common)
 // TARGET_PLATFORM: JVM
 // FILE: main.kt
 package home
 
 import com.example.myModule.OtherModule
-import com.example.ui.Text
+import com.example.jvmLib.Text
 
 fun Greeting(name: String) {
     Text(

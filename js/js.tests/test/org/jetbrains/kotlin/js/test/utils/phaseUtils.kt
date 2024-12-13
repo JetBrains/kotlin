@@ -5,16 +5,15 @@
 
 package org.jetbrains.kotlin.js.test.utils
 
-import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
-import org.jetbrains.kotlin.config.phaser.toPhaseMap
+import org.jetbrains.kotlin.config.phaser.PhaseSet
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import java.io.File
 
-fun createTestPhaseConfig(testServices: TestServices, module: TestModule, topLevelPhase: CompilerPhase<*, *, *>): PhaseConfig {
+fun createTestPhaseConfig(testServices: TestServices, module: TestModule): PhaseConfig {
     val debugMode = DebugMode.fromSystemProperty("kotlin.js.debugMode")
     return if (debugMode >= DebugMode.SUPER_DEBUG) {
         val dumpOutputDir = File(
@@ -22,7 +21,7 @@ fun createTestPhaseConfig(testServices: TestServices, module: TestModule, topLev
             JsEnvironmentConfigurator.getKlibArtifactSimpleName(testServices, module.name) + "-irdump"
         )
         PhaseConfig(
-            toDumpStateAfter = topLevelPhase.toPhaseMap().values.toSet(),
+            toDumpStateAfter = PhaseSet.ALL,
             dumpToDirectory = dumpOutputDir.path,
         )
     } else {

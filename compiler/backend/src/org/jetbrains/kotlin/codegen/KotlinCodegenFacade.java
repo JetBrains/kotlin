@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.resolve.BindingContext;
 
 import java.util.Collection;
 
@@ -27,13 +28,13 @@ public class KotlinCodegenFacade {
     public static void compileCorrectFiles(
             Collection<KtFile> files,
             @NotNull GenerationState state,
+            @NotNull BindingContext bindingContext,
             CodegenFactory codegenFactory
     ) {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
-        state.beforeCompile();
-
-        CodegenFactory.IrConversionInput psi2irInput = CodegenFactory.IrConversionInput.Companion.fromGenerationStateAndFiles(state, files);
+        CodegenFactory.IrConversionInput psi2irInput =
+                CodegenFactory.IrConversionInput.Companion.fromGenerationStateAndFiles(state, files, bindingContext);
         CodegenFactory.BackendInput backendInput = codegenFactory.convertToIr(psi2irInput);
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
@@ -42,13 +43,6 @@ public class KotlinCodegenFacade {
 
         CodegenFactory.Companion.doCheckCancelled(state);
         state.getFactory().done();
-    }
-
-    // TODO: remove after cleanin up IDE counterpart
-    public static void compileCorrectFiles(@NotNull GenerationState state) {
-        CodegenFactory codegenFactory = state.getCodegenFactory();
-        assert codegenFactory != null : "CodegenFactory should be initialized";
-        compileCorrectFiles(state.getFiles(), state, codegenFactory);
     }
 
     private KotlinCodegenFacade() {}

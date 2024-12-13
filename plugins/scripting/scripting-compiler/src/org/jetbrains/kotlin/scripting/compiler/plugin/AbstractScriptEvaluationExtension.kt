@@ -8,13 +8,17 @@ package org.jetbrains.kotlin.scripting.compiler.plugin
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.defaultExtensionForScripts
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
+import org.jetbrains.kotlin.cli.common.freeArgsForScript
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.scriptMode
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.expressionToEvaluate
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import java.io.File
@@ -45,6 +49,39 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
         configuration: CompilerConfiguration,
         projectEnvironment: KotlinCoreEnvironment.ProjectEnvironment
     ): ExitCode {
+        val jvmArgs = arguments as? K2JVMCompilerArguments
+        return eval(
+            configuration,
+            projectEnvironment,
+            jvmArgs?.defaultScriptExtension,
+            jvmArgs?.expression,
+            arguments.script,
+            arguments.freeArgs
+        )
+    }
+
+    override fun eval(
+        configuration: CompilerConfiguration,
+        projectEnvironment: KotlinCoreEnvironment.ProjectEnvironment,
+    ): ExitCode {
+        return eval(
+            configuration,
+            projectEnvironment,
+            configuration.defaultExtensionForScripts,
+            configuration.expressionToEvaluate,
+            configuration.scriptMode,
+            configuration.freeArgsForScript
+        )
+    }
+
+    private fun eval(
+        configuration: CompilerConfiguration,
+        projectEnvironment: KotlinCoreEnvironment.ProjectEnvironment,
+        defaultScriptExtensionFromArguments: String?,
+        expressionToEvaluate: String?,
+        scriptMode: Boolean,
+        freeArgs: List<String>,
+    ): ExitCode {
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(projectEnvironment.project)
         if (scriptDefinitionProvider == null) {
@@ -54,15 +91,14 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
 
         setupScriptConfiguration(configuration)
 
-        val defaultScriptExtension =
-            (arguments as? K2JVMCompilerArguments)?.defaultScriptExtension?.let { if (it.startsWith('.')) it else ".$it" }
+        val defaultScriptExtension = defaultScriptExtensionFromArguments?.let { if (it.startsWith('.')) it else ".$it" }
 
         val script = when {
-            arguments is K2JVMCompilerArguments && arguments.expression != null -> {
-                StringScriptSource(arguments.expression!!, "script${defaultScriptExtension ?: ".kts"}")
+            expressionToEvaluate != null -> {
+                StringScriptSource(expressionToEvaluate, "script${defaultScriptExtension ?: ".kts"}")
             }
-            arguments.script -> {
-                val scriptFile = File(arguments.freeArgs.first()).normalize()
+            scriptMode -> {
+                val scriptFile = File(freeArgs.first()).normalize()
 
                 fun invalidScript(error: String): ExitCode {
                     val extensionHint =
@@ -111,8 +147,8 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
         val scriptCompilationConfiguration = definition.compilationConfiguration
 
         val scriptArgs =
-            if (arguments.script) arguments.freeArgs.subList(1, arguments.freeArgs.size)
-            else arguments.freeArgs
+            if (scriptMode) freeArgs.subList(1, freeArgs.size)
+            else freeArgs
 
         val evaluationConfiguration = definition.evaluationConfiguration.with {
             constructorArgs(scriptArgs.toTypedArray())

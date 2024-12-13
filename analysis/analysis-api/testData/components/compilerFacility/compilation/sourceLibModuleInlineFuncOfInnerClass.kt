@@ -1,41 +1,43 @@
 // DUMP_IR
 
-// MODULE: ui
+// MODULE: jvmLib
 // MODULE_KIND: LibraryBinary
-// FILE: com/example/ui/Text.kt
-package com.example.ui
+// FILE: jvmLib.kt
+package com.example.jvmLib
 
 fun Text(text: String) {}
 
-// MODULE: myModule
+
+// MODULE: common
 // TARGET_PLATFORM: Common
-// FILE: com/example/myModule/OtherModule.kt
+// FILE: common.kt
 @file:JvmName("SpecialName")
-package com.example.myModule
+package com.example.common
 
 class OtherModule {
     class Inner {
-        inline fun giveMeString(): String {
-            return secret()
+        inline fun getInline(): String {
+            return getPublished()
         }
 
         @PublishedApi
-        internal fun secret(): String {
-            return "what is up!!!!!!!"
+        internal fun getPublished(): String {
+            return "foo"
         }
     }
 }
 
-// MODULE: main(myModule, ui)
+
+// MODULE: main(jvmLib)()(common)
 // TARGET_PLATFORM: JVM
 // FILE: main.kt
 package home
 
-import com.example.myModule.OtherModule
-import com.example.ui.Text
+import com.example.common.OtherModule
+import com.example.jvmLib.Text
 
 fun Greeting(name: String) {
     Text(
-        text = "$name!" + OtherModule.Inner().giveMeString()
+        text = "$name!" + OtherModule.Inner().getInline()
     )
 }

@@ -1,7 +1,7 @@
 @_implementationOnly import KotlinBridges_inheritance
 import KotlinRuntime
 
-public final class INHERITANCE_SINGLE_CLASS : inheritance.OPEN_CLASS {
+public final class INHERITANCE_SINGLE_CLASS: inheritance.OPEN_CLASS {
     public var value: Swift.Int32 {
         get {
             return INHERITANCE_SINGLE_CLASS_value_get(self.__externalRCRef())
@@ -23,7 +23,7 @@ public final class INHERITANCE_SINGLE_CLASS : inheritance.OPEN_CLASS {
         __root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__Swift_UInt_Swift_Int32__(__kt, value)
     }
 }
-public final class OBJECT_WITH_CLASS_INHERITANCE : inheritance.OPEN_CLASS {
+public final class OBJECT_WITH_CLASS_INHERITANCE: inheritance.OPEN_CLASS {
     public static var shared: inheritance.OBJECT_WITH_CLASS_INHERITANCE {
         get {
             return inheritance.OBJECT_WITH_CLASS_INHERITANCE(__externalRCRef: __root___OBJECT_WITH_CLASS_INHERITANCE_get())
@@ -38,7 +38,7 @@ public final class OBJECT_WITH_CLASS_INHERITANCE : inheritance.OPEN_CLASS {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
-open class OPEN_CLASS : KotlinRuntime.KotlinBase {
+open class OPEN_CLASS: KotlinRuntime.KotlinBase {
     public override init() {
         let __kt = __root___OPEN_CLASS_init_allocate()
         super.init(__externalRCRef: __kt)

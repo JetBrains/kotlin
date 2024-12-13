@@ -11,10 +11,8 @@ import org.jetbrains.kotlin.asJava.classes.KtUltraLightSupport
 import org.jetbrains.kotlin.asJava.classes.cleanFromAnonymousTypes
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.classes.tryGetPredefinedName
-import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.load.java.components.JavaDeprecationSettings
@@ -45,7 +43,6 @@ class CliLightClassGenerationSupport(
     private class CliLightClassSupport(
         private val project: Project,
         override val languageVersionSettings: LanguageVersionSettings,
-        override val jvmTarget: JvmTarget
     ) : KtUltraLightSupport {
 
         // This is the way to untie CliLightClassSupport and CliLightClassGenerationSupport to prevent descriptors leak
@@ -67,12 +64,9 @@ class CliLightClassGenerationSupport(
 
         override val typeMapper: KotlinTypeMapper by lazyPub {
             KotlinTypeMapper(
-                BindingContext.EMPTY,
-                ClassBuilderMode.LIGHT_CLASSES,
                 moduleName,
                 languageVersionSettings,
                 useOldInlineClassesManglingScheme = false,
-                jvmTarget = jvmTarget,
                 typePreprocessor = KotlinType::cleanFromAnonymousTypes,
                 namePreprocessor = ::tryGetPredefinedName
             )
@@ -80,7 +74,7 @@ class CliLightClassGenerationSupport(
     }
 
     private val ultraLightSupport: KtUltraLightSupport by lazyPub {
-        CliLightClassSupport(project, traceHolder.languageVersionSettings, traceHolder.jvmTarget)
+        CliLightClassSupport(project, traceHolder.languageVersionSettings)
     }
 
     override fun getUltraLightClassSupport(element: KtElement): KtUltraLightSupport {

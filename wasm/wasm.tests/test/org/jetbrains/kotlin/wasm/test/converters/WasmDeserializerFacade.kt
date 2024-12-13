@@ -47,6 +47,7 @@ class WasmDeserializerFacade(
         require(WasmEnvironmentConfigurator.isMainModule(module, testServices))
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
+        // TODO: turn on PL only when it's really necessary, see KT-73841
         // Enforce PL with the ERROR log level to fail any tests where PL detected any incompatibilities.
         configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR))
 

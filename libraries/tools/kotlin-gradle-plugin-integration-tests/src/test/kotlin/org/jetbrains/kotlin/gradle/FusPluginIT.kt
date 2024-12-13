@@ -50,7 +50,8 @@ class FusPluginIT : KGPBaseTest() {
 
     @DisplayName("with configuration cache and project isolation")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_1]
+        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_1],
+        maxVersion = TestVersions.Gradle.G_8_10, // https://youtrack.jetbrains.com/issue/KT-73702/
     )
     @GradleTest
     fun withConfigurationCacheAndProjectIsolation(gradleVersion: GradleVersion) {
@@ -67,18 +68,18 @@ class FusPluginIT : KGPBaseTest() {
             listOf(subProject("lib"), subProject("app")).forEach { project ->
                 project.buildGradle.modify {
                     """
-                    ${applyFusPluginAndCreateTestFusTask(it)}
-                    
-                    ${registerTaskAndReportMetric("test-fus", project.projectName, executionTimeValue)}
-                    
-                    import org.jetbrains.kotlin.gradle.fus.ConfigurationMetricsKt
-                    import org.jetbrains.kotlin.gradle.fus.Metric
-                    import org.jetbrains.kotlin.gradle.fus.UniqueId
-                    
-                    use(ConfigurationMetricsKt) {
-                        project.addGradleConfigurationPhaseMetric( { [ Metric.newInstance("$configurationTimeMetricName","${project.projectName}", UniqueId.@Companion.DEFAULT) ] } )
-                    }
-                """.trimIndent()
+                    |${applyFusPluginAndCreateTestFusTask(it)}
+                    |
+                    |${registerTaskAndReportMetric("test-fus", project.projectName, executionTimeValue)}
+                    |
+                    |import org.jetbrains.kotlin.gradle.fus.ConfigurationMetricsKt
+                    |import org.jetbrains.kotlin.gradle.fus.Metric
+                    |import org.jetbrains.kotlin.gradle.fus.UniqueId
+                    |
+                    |use(ConfigurationMetricsKt) {
+                    |    project.addGradleConfigurationPhaseMetric( { [ Metric.newInstance("$configurationTimeMetricName","${project.projectName}", UniqueId.@Companion.DEFAULT) ] } )
+                    |}
+                    """.trimMargin()
                 }
             }
 
@@ -235,52 +236,56 @@ class FusPluginIT : KGPBaseTest() {
         }
     }
 
-    private fun addBuildScriptDependency() = """
-        buildscript {
-            dependencies {
-                classpath "org.jetbrains.kotlin:fus-statistics-gradle-plugin:${'$'}kotlin_version"
-            }
-        }
-    """.trimIndent()
+    private fun addBuildScriptDependency() =
+        """
+        |buildscript {
+        |    dependencies {
+        |        classpath "org.jetbrains.kotlin:fus-statistics-gradle-plugin:${'$'}kotlin_version"
+        |    }
+        |}
+        """.trimMargin()
 
-    private fun applyFusStatisticPlugin(buildScript: String/*, apply: Boolean = true*/) = """
-        $buildScript
-        
-        plugins.apply("org.jetbrains.kotlin.fus-statistics-gradle-plugin")
-    """.trimIndent()
+    private fun applyFusStatisticPlugin(buildScript: String/*, apply: Boolean = true*/) =
+        """
+        |$buildScript
+        |
+        |plugins.apply("org.jetbrains.kotlin.fus-statistics-gradle-plugin")
+        """.trimMargin()
 
-    private fun createTestFusTaskClass() = """
-        import org.jetbrains.kotlin.gradle.fus.GradleBuildFusStatisticsService
-        import org.jetbrains.kotlin.gradle.fus.UsesGradleBuildFusStatisticsService
+    private fun createTestFusTaskClass() =
+        """
+        |import org.jetbrains.kotlin.gradle.fus.GradleBuildFusStatisticsService
+        |import org.jetbrains.kotlin.gradle.fus.UsesGradleBuildFusStatisticsService
+        |
+        |class TestFusTask extends DefaultTask implements UsesGradleBuildFusStatisticsService {
+        |
+        |    private Property<GradleBuildFusStatisticsService> fusStatisticsBuildService = project.objects.property(GradleBuildFusStatisticsService.class)
+        |
+        |    Property getFusStatisticsBuildService(){
+        |        return fusStatisticsBuildService
+        |    }
+        |
+        |}
+        """.trimMargin()
 
-        class TestFusTask extends DefaultTask implements UsesGradleBuildFusStatisticsService {
-
-            private Property<GradleBuildFusStatisticsService> fusStatisticsBuildService = project.objects.property(GradleBuildFusStatisticsService.class)
-
-            Property getFusStatisticsBuildService(){
-                return fusStatisticsBuildService
-            }
-
-        }
-    """.trimIndent()
-
-    private fun applyFusPluginAndCreateTestFusTask(buildScript: String) = """
-        ${addBuildScriptDependency()}    
-                    
-        ${applyFusStatisticPlugin(buildScript)}
-                    
-        ${createTestFusTaskClass()}
-    """
+    private fun applyFusPluginAndCreateTestFusTask(buildScript: String) =
+        """
+        |${addBuildScriptDependency()}    
+        |            
+        |${applyFusStatisticPlugin(buildScript)}
+        |            
+        |${createTestFusTaskClass()}
+        """.trimMargin()
 
 
     private fun registerTaskAndReportMetric(taskName: String, metricName: String, metricValue: Any) =
         """
-            import org.jetbrains.kotlin.gradle.fus.TaskId
-            tasks.register("$taskName", TestFusTask.class) {
-                doLast {
-                      fusStatisticsBuildService.get().reportMetric("$metricName", "$metricValue", TaskId.newInstance(null, "$taskName"))
-                }
-           }
-           """
+        |import org.jetbrains.kotlin.gradle.fus.TaskId
+        |tasks.register("$taskName", TestFusTask.class) {
+        |   doLast {
+        |        fusStatisticsBuildService.get().reportMetric("$metricName", "$metricValue", TaskId.newInstance(null, "$taskName"))
+        |   }
+        |}
+        """.trimMargin()
 
 }

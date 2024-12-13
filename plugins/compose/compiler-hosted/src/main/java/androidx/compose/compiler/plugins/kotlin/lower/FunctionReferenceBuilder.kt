@@ -117,7 +117,7 @@ class FunctionReferenceBuilder(
     // Inline the body of an anonymous function into the generated lambda subclass.
     private fun IrSimpleFunction.createLambdaInvokeMethod() {
         annotations += callee.annotations
-        val valueParameterMap = callee.explicitParameters.associate { param ->
+        val valueParameterMap = callee.parameters.associate { param ->
             param to param.copyTo(this)
         }
         valueParameters += valueParameterMap.values

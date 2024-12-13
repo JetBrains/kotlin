@@ -408,8 +408,8 @@
 /plugins/kapt4/ "Kotlin JVM"
 /plugins/kotlinx-serialization/ Sergey.Shanshin Leonid.Startsev
 /plugins/kotlinx-serialization/kotlinx-serialization.k2/src/org/jetbrains/kotlinx/serialization/compiler/fir/checkers/KtDefaultErrorMessagesSerialization.kt Brian.Norman Kirill.Rakhman
-/plugins/js-plain-objects/ Artem.Kobzar
-/libraries/tools/js-plain-objects Artem.Kobzar
+/plugins/js-plain-objects/ Artem.Kobzar "Kotlin Common Backend"
+/libraries/tools/js-plain-objects Artem.Kobzar "Kotlin Common Backend"
 /plugins/lombok/ "Kotlin Frontend"
 /plugins/noarg/ "Kotlin Frontend"
 /plugins/parcelize/ Parcelize
