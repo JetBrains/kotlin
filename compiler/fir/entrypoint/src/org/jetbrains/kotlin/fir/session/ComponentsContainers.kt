@@ -111,7 +111,6 @@ fun FirSession.registerCliCompilerOnlyComponents(languageVersionSettings: Langua
     register(SealedClassInheritorsProvider::class, SealedClassInheritorsProviderImpl)
     register(FirLazyDeclarationResolver::class, FirDummyCompilerLazyDeclarationResolver)
     register(FirExceptionHandler::class, FirCliExceptionHandler)
-    register(FirModulePrivateVisibilityChecker::class, FirModulePrivateVisibilityChecker.Standard(this))
     register(
         FirLookupDefaultStarImportsInSourcesSettingHolder::class,
         FirLookupDefaultStarImportsInSourcesSettingHolder.createDefault(languageVersionSettings)

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirExceptionHandler
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.FirExceptionHandler
-import org.jetbrains.kotlin.fir.FirModulePrivateVisibilityChecker
+import org.jetbrains.kotlin.fir.FirPrivateVisibleFromDifferentModuleExtension
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
@@ -43,7 +43,7 @@ internal fun LLFirSession.registerIdeComponents(project: Project, languageVersio
     register(FirExceptionHandler::class, LLFirExceptionHandler)
     register(CodeFragmentScopeProvider::class, CodeFragmentScopeProvider(this))
     register(FirElementFinder::class, FirElementFinder())
-    register(FirModulePrivateVisibilityChecker::class, LLFirModulePrivateVisibilityChecker(this))
+    register(FirPrivateVisibleFromDifferentModuleExtension::class, LLFirPrivateVisibleFromDifferentModuleExtension(this))
     register(
         FirLookupDefaultStarImportsInSourcesSettingHolder::class,
         createLookupDefaultStarImportsInSourcesSettingHolder(languageVersionSettings)
