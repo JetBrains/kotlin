@@ -28,15 +28,15 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
  *  [isUnstableInCurrentScope] only works for an access during the natural FIR tree traversal. This class will not work if one
  *  queries after the traversal is done.
  **/
-internal class FirLocalVariableAssignmentAnalyzer {
+internal class FirLocalVariableAssignmentAnalyzer private constructor(
     /**
      * Symbol of a topmost declaration containing a code block which is under analysis
      */
-    private var rootSymbol: FirBasedSymbol<*>? = null
-    private var assignedLocalVariablesByDeclaration: Map<Any /* FirBasedSymbol<*> | FirLoop */, Fork>? = null
-    private var variableAssignments: Map<FirProperty, List<Assignment>>? = null
+    private var rootSymbol: FirBasedSymbol<*>?,
+    private var assignedLocalVariablesByDeclaration: Map<Any /* FirBasedSymbol<*> | FirLoop */, Fork>?,
+    private var variableAssignments: Map<FirProperty, List<Assignment>>?,
 
-    private val scopes: Stack<Pair<Fork?, VariableAssignments>> = stackOf()
+    private val scopes: Stack<Pair<Fork?, VariableAssignments>>,
 
     // Example of control-flow-postponed lambdas: callBoth({ a.x }, { a = null })
     // Lambdas are called in an unknown order, so control flow edges to both of them go from before the call.
@@ -49,7 +49,31 @@ internal class FirLocalVariableAssignmentAnalyzer {
     // from the result of `run` to the result of `genericFunction` so smart casts should be prohibited in `a.x`.
     //
     // This mirrors `ControlFlowGraphBuilder.postponedLambdaExits`.
-    private val postponedLambdas: Stack<MutableMap<Fork, Boolean /* data-flow only */>> = stackOf()
+    private val postponedLambdas: Stack<MutableMap<Fork, Boolean /* data-flow only */>>
+) {
+    constructor() : this(
+        rootSymbol = null,
+        assignedLocalVariablesByDeclaration = null,
+        variableAssignments = null,
+        scopes = stackOf(),
+        postponedLambdas = stackOf(),
+    )
+
+    /**
+     * Builds a deep independent copy of this [FirLocalVariableAssignmentAnalyzer].
+     * The copy is not affected by changes in this storage.
+     */
+    internal fun createSnapshot(): FirLocalVariableAssignmentAnalyzer {
+        return FirLocalVariableAssignmentAnalyzer(
+            rootSymbol,
+            assignedLocalVariablesByDeclaration = assignedLocalVariablesByDeclaration?.toMap(),
+            variableAssignments = variableAssignments?.toMap(),
+            scopes = scopes.createSnapshot { (fork, assignments) -> fork to assignments.copy() },
+            postponedLambdas = postponedLambdas.createSnapshot { list ->
+                list.mapKeysTo(mutableMapOf()) { it.key.createSnapshot() }
+            }
+        )
+    }
 
     fun reset() {
         rootSymbol = null
@@ -351,7 +375,11 @@ internal class FirLocalVariableAssignmentAnalyzer {
         private class Fork(
             val assignedLater: VariableAssignments,
             val assignedInside: VariableAssignments,
-        )
+        ) {
+            fun createSnapshot(): Fork {
+                return Fork(assignedLater.copy(), assignedInside.copy())
+            }
+        }
 
         private class Assignment(
             val operatorAssignment: Boolean,
