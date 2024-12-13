@@ -293,7 +293,7 @@ internal class KaFirScopeProvider(
         val correctedPosition = parentKDoc?.owner ?: position
 
         val firFakeFile = fakeFile.getOrBuildFirFile(resolutionFacade)
-        val context = ContextCollector.process(firFakeFile, correctedPosition)
+        val context = ContextCollector.process(resolutionFacade, firFakeFile, correctedPosition)
 
         val towerDataContext =
             context?.towerDataContext

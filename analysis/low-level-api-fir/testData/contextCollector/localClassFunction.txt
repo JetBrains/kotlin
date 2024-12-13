@@ -27,17 +27,17 @@ Tower Data Context:
         Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] localClassFunction.kt
-    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
-        local final [ResolvedTo(BODY_RESOLVE)] class Local : R|kotlin/Any| {
-            public [ResolvedTo(BODY_RESOLVE)] constructor(): R|<local>/Local| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=1(1/2) #1] fun test(): R|kotlin/Unit| {
+        local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
+            public [ResolvedTo(RAW_FIR)] constructor(): R|<local>/Local| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/String| {
+            public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/String| {
                 ^foo String(foo)
             }
 
         }
 
-        R|<local>/Local.Local|().R|<local>/foo|()
+        Local#().foo#()
     }

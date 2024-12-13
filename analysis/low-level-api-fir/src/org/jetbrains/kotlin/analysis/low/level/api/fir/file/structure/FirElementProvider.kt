@@ -57,7 +57,7 @@ internal class EagerDeclarationFirElementProvider(declaration: FirDeclaration) :
  * A provider for a partially analyzable [declaration].
  * The declaration must be full analyzed up to the [FirResolvePhase.ANNOTATION_ARGUMENTS].
  *
- * @param declaration The declaration to be resolved. Must be [isPartiallyResolvable].
+ * @param declaration The declaration to be resolved. Must be [isPartiallyAnalyzable].
  * @param psiDeclaration The PSI version of the [declaration].
  * @param psiBlock The block body of the [psiDeclaration].
  * @param psiStatements All statements from the [psiBlock].
@@ -81,6 +81,19 @@ internal class PartialBodyDeclarationFirElementProvider(
                 performedAnalysesCount = 0,
                 analysisStateSnapshot = null
             )
+        }
+
+        /**
+         * Checks whether the [declaration] can be analyzed partially to get the [element] resolved.
+         * The [element] must belong to a [declaration].
+         */
+        fun isPartiallyAnalyzable(element: KtElement, declaration: KtDeclaration): Boolean {
+            val block = declaration.bodyBlock ?: return false
+            val container = findContainer(element, declaration, block, block.statements)
+            return when (container) {
+                is ElementContainer.Body, ElementContainer.SignatureBody -> true
+                else -> false
+            }
         }
 
         private fun findContainer(

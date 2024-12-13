@@ -27,22 +27,22 @@ Tower Data Context:
                 FirPropertySymbol lvar innerVariable: R|kotlin/Boolean|
 
 FILE: [ResolvedTo(IMPORTS)] doWhile.kt
-    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
-        local final [ResolvedTo(BODY_RESOLVE)] fun outerFunction(): R|kotlin/Boolean| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=3(3/5) #1] fun foo(): R|kotlin/Unit| {
+        local final [ResolvedTo(RAW_FIR)] fun outerFunction(): R|kotlin/Boolean| {
             ^outerFunction Boolean(true)
         }
 
-        [ResolvedTo(BODY_RESOLVE)] lvar outerVariable: R|kotlin/Boolean| = Boolean(true)
+        [ResolvedTo(RAW_FIR)] lvar outerVariable: R|kotlin/Boolean| = Boolean(true)
         do {
-            [ResolvedTo(BODY_RESOLVE)] lvar innerVariable: R|kotlin/Boolean| = Boolean(true)
-            local final [ResolvedTo(BODY_RESOLVE)] fun innerFunction(): R|kotlin/Boolean| {
+            [ResolvedTo(RAW_FIR)] lvar innerVariable: R|kotlin/Boolean| = Boolean(true)
+            local final [ResolvedTo(RAW_FIR)] fun innerFunction(): R|kotlin/Boolean| {
                 ^innerFunction Boolean(true)
             }
 
         }
         while(R|<local>/outerVariable| || R|<local>/outerFunction|() || R|<local>/innerVariable| || R|<local>/innerFunction|())
-        [ResolvedTo(BODY_RESOLVE)] lvar unrelatedVariable: R|kotlin/Boolean| = Boolean(false)
-        local final [ResolvedTo(BODY_RESOLVE)] fun unrelatedFunction(): R|kotlin/Unit| {
+        [ResolvedTo(RAW_FIR)] lvar unrelatedVariable: <implicit> = Boolean(false)
+        local final? [ResolvedTo(RAW_FIR)] fun unrelatedFunction(): R|kotlin/Unit| {
         }
 
     }
