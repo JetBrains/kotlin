@@ -333,7 +333,7 @@ private fun CodeGenerator.getVirtualFunctionTrampolineImpl(irFunction: IrSimpleF
                     name = "$targetName-trampoline",
                     signature = LlvmFunctionSignature(irFunction, this),
                     origin = null,
-                    linkage = if(generationState.shouldOptimize()) LLVMLinkage.LLVMExternalLinkage else linkageOf(irFunction)
+                    linkage = linkageOf(irFunction)
             )
             if (isExternal(irFunction))
                 llvm.externalFunction(proto)
