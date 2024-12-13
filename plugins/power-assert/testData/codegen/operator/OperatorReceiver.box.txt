@@ -1,0 +1,192 @@
+test1: ---
+assert(dispatch + dispatch == Failure)
+       |        | |        |  |
+       |        | |        |  Failure
+       |        | |        false
+       |        | Dispatch(n=1)
+       |        Dispatch(n=2)
+       Dispatch(n=1)
+---
+test2: ---
+assert(extension + extension == Failure)
+       |         | |         |  |
+       |         | |         |  Failure
+       |         | |         false
+       |         | Extension(n=1)
+       |         Extension(n=2)
+       Extension(n=1)
+---
+test3: ---
+assert(extension - extension == Failure)
+       |           |         |  |
+       |           |         |  Failure
+       |           |         false
+       |           Extension(n=1)
+       Extension(n=0)
+       Extension(n=1)
+---
+test4: ---
+assert(dispatch - dispatch == Failure)
+       |        | |        |  |
+       |        | |        |  Failure
+       |        | |        false
+       |        | Dispatch(n=1)
+       |        Dispatch(n=0)
+       Dispatch(n=1)
+---
+test5: ---
+assert(extension - extension == Failure)
+       |         | |         |  |
+       |         | |         |  Failure
+       |         | |         false
+       |         | Extension(n=1)
+       |         Extension(n=2)
+       Extension(n=1)
+---
+test6: ---
+assert(extension * extension == Failure)
+       |           |         |  |
+       |           |         |  Failure
+       |           |         false
+       |           Extension(n=1)
+       Extension(n=1)
+       Extension(n=1)
+---
+test7: ---
+assert(dispatch in dispatch)
+       |        |  |
+       |        |  Dispatch(n=1)
+       |        false
+       Dispatch(n=1)
+---
+test8: ---
+assert(dispatch in extension)
+       |        |  |
+       |        |  Extension(n=1)
+       |        false
+       Dispatch(n=1)
+---
+test9: ---
+assert(extension in extension)
+       |            |
+       |            Extension(n=1)
+       false
+       Extension(n=1)
+---
+test10: ---
+assert(context in dispatch)
+       |          |
+       |          Dispatch(n=1)
+       false
+       Context(n=1)
+---
+test11: ---
+assert(dispatch in extension)
+       |           |
+       |           Extension(n=1)
+       false
+       Dispatch(n=1)
+---
+test12: ---
+assert(context in extension)
+       |          |
+       |          Extension(n=1)
+       false
+       Context(n=1)
+---
+test13: ---
+assert(dispatch.plus(dispatch) == Failure)
+       |        |    |         |  |
+       |        |    |         |  Failure
+       |        |    |         false
+       |        |    Dispatch(n=1)
+       |        Dispatch(n=2)
+       Dispatch(n=1)
+---
+test14: ---
+assert(extension.plus(extension) == Failure)
+       |         |    |          |  |
+       |         |    |          |  Failure
+       |         |    |          false
+       |         |    Extension(n=1)
+       |         Extension(n=2)
+       Extension(n=1)
+---
+test15: ---
+assert(extension.minus(extension) == Failure)
+       |         |     |          |  |
+       |         |     |          |  Failure
+       |         |     |          false
+       |         |     Extension(n=1)
+       |         Extension(n=0)
+       Extension(n=1)
+---
+test16: ---
+assert(dispatch.minus(dispatch) == Failure)
+       |        |     |         |  |
+       |        |     |         |  Failure
+       |        |     |         false
+       |        |     Dispatch(n=1)
+       |        Dispatch(n=0)
+       Dispatch(n=1)
+---
+test17: ---
+assert(extension.minus(extension) == Failure)
+       |         |     |          |  |
+       |         |     |          |  Failure
+       |         |     |          false
+       |         |     Extension(n=1)
+       |         Extension(n=2)
+       Extension(n=1)
+---
+test18: ---
+assert(extension.times(extension) == Failure)
+       |         |     |          |  |
+       |         |     |          |  Failure
+       |         |     |          false
+       |         |     Extension(n=1)
+       |         Extension(n=1)
+       Extension(n=1)
+---
+test19: ---
+assert(dispatch.contains(dispatch))
+       |        |        |
+       |        |        Dispatch(n=1)
+       |        false
+       Dispatch(n=1)
+---
+test20: ---
+assert(extension.contains(dispatch))
+       |         |        |
+       |         |        Dispatch(n=1)
+       |         false
+       Extension(n=1)
+---
+test21: ---
+assert(extension.contains(extension))
+       |         |        |
+       |         |        Extension(n=1)
+       |         false
+       Extension(n=1)
+---
+test22: ---
+assert(dispatch.contains(context))
+       |        |        |
+       |        |        Context(n=1)
+       |        false
+       Dispatch(n=1)
+---
+test23: ---
+assert(extension.contains(dispatch))
+       |         |        |
+       |         |        Dispatch(n=1)
+       |         false
+       Extension(n=1)
+---
+test24: ---
+assert(extension.contains(context))
+       |         |        |
+       |         |        Context(n=1)
+       |         false
+       Extension(n=1)
+---

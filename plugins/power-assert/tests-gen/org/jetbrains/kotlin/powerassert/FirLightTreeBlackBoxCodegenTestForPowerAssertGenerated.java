@@ -341,6 +341,24 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("DispatchContextInfix.kt")
+    public void testDispatchContextInfix() {
+      runTest("plugins/power-assert/testData/codegen/infix/DispatchContextInfix.kt");
+    }
+
+    @Test
+    @TestMetadata("DispatchExtensionContextInfix.kt")
+    public void testDispatchExtensionContextInfix() {
+      runTest("plugins/power-assert/testData/codegen/infix/DispatchExtensionContextInfix.kt");
+    }
+
+    @Test
+    @TestMetadata("DispatchExtensionInfix.kt")
+    public void testDispatchExtensionInfix() {
+      runTest("plugins/power-assert/testData/codegen/infix/DispatchExtensionInfix.kt");
+    }
+
+    @Test
     @TestMetadata("DispatchInfix.kt")
     public void testDispatchInfix() {
       runTest("plugins/power-assert/testData/codegen/infix/DispatchInfix.kt");
@@ -398,6 +416,12 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
     @TestMetadata("DispatchNonInfixOnlyConstants.kt")
     public void testDispatchNonInfixOnlyConstants() {
       runTest("plugins/power-assert/testData/codegen/infix/DispatchNonInfixOnlyConstants.kt");
+    }
+
+    @Test
+    @TestMetadata("ExtensionContextInfix.kt")
+    public void testExtensionContextInfix() {
+      runTest("plugins/power-assert/testData/codegen/infix/ExtensionContextInfix.kt");
     }
 
     @Test
@@ -649,6 +673,12 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("CompareOperator.kt")
+    public void testCompareOperator() {
+      runTest("plugins/power-assert/testData/codegen/operator/CompareOperator.kt");
+    }
+
+    @Test
     @TestMetadata("ContainsFunction.kt")
     public void testContainsFunction() {
       runTest("plugins/power-assert/testData/codegen/operator/ContainsFunction.kt");
@@ -688,6 +718,12 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
     @TestMetadata("NegativeContainsOperator.kt")
     public void testNegativeContainsOperator() {
       runTest("plugins/power-assert/testData/codegen/operator/NegativeContainsOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("OperatorReceiver.kt")
+    public void testOperatorReceiver() {
+      runTest("plugins/power-assert/testData/codegen/operator/OperatorReceiver.kt");
     }
   }
 
