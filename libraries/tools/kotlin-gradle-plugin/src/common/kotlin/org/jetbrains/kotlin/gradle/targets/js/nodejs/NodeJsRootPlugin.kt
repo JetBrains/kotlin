@@ -12,7 +12,6 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.internal.unameExecResult
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
@@ -124,6 +123,31 @@ open class NodeJsRootPlugin : Plugin<Project> {
             task.description = "Create root package.json"
 
             task.npmResolutionManager.value(npmResolutionManager)
+                .disallowChanges()
+            task.rootPackageDirectory.value(nodeJsRoot.rootPackageDirectory)
+                .disallowChanges()
+            task.projectPackagesDirectory.value(nodeJsRoot.projectPackagesDirectory)
+                .disallowChanges()
+            task.rootPackageManagerEnvironment
+                .value(
+                    nodeJsRoot.packageManagerExtension.map { it.environment }
+                )
+                .disallowChanges()
+            task.rootNodeJsEnvironment
+                .value(
+                    nodeJs.env.map {
+                        asNodeJsEnvironment(nodeJsRoot, it)
+                    }
+                )
+                .disallowChanges()
+            task.compilationsNpmResolution
+                .value(
+                    project.providers.provider {
+                        nodeJsRoot.resolver.projectResolvers.values
+                            .flatMap { it.compilationResolvers }
+                            .map { it.compilationNpmResolution }
+                    }
+                )
                 .disallowChanges()
 
             task.onlyIfCompat("Prepare NPM project only in configuring state") {

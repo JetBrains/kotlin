@@ -6,18 +6,19 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.PackageManagerEnvironment
+import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.UsesKotlinNpmResolutionManager
-import org.jetbrains.kotlin.gradle.targets.js.npm.asNodeJsEnvironment
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 
@@ -32,32 +33,24 @@ abstract class RootPackageJsonTask :
     // Only in configuration phase
     // Not part of configuration caching
 
-    private val nodeJsRoot
-        get() = project.rootProject.kotlinNodeJsRootExtension
+    @get:Internal
+    internal abstract val rootPackageDirectory: DirectoryProperty
 
-    private val nodeJs
-        get() = project.rootProject.kotlinNodeJsEnvSpec
+    @get:Internal
+    internal abstract val projectPackagesDirectory: DirectoryProperty
 
-    private val rootResolver: KotlinRootNpmResolver
-        get() = nodeJsRoot.resolver
+    @get:Internal
+    internal abstract val rootPackageManagerEnvironment: Property<PackageManagerEnvironment>
 
-    private val packagesDir: Provider<Directory>
-        get() = nodeJsRoot.projectPackagesDirectory
+    @get:Internal
+    internal abstract val rootNodeJsEnvironment: Property<NodeJsEnvironment>
 
-    // -----
-
-    private val nodeJsEnvironment by lazy {
-        asNodeJsEnvironment(nodeJsRoot, nodeJs.env.get())
-    }
-
-    private val packageManagerEnv by lazy {
-        nodeJsRoot.packageManagerExtension.get().environment
-    }
+    @get:Internal
+    internal abstract val compilationsNpmResolution: ListProperty<KotlinCompilationNpmResolution>
 
     @get:OutputFile
-    val rootPackageJsonFile: Provider<RegularFile> =
-        nodeJsRoot.rootPackageDirectory.map { it.file(NpmProject.PACKAGE_JSON) }
-
+    val rootPackageJsonFile: Provider<RegularFile> = rootPackageDirectory
+        .map { it.file(NpmProject.PACKAGE_JSON) }
 
     @Deprecated(
         "This property is deprecated and will be removed in future. Use rootPackageJsonFile instead",
@@ -72,18 +65,24 @@ abstract class RootPackageJsonTask :
     @get:NormalizeLineEndings
     @get:InputFiles
     val packageJsonFiles: List<RegularFile> by lazy {
-        rootResolver.projectResolvers.values
-            .flatMap { it.compilationResolvers }
-            .map { it.compilationNpmResolution }
-            .map { resolution ->
-                val name = resolution.npmProjectName
-                packagesDir.map { it.dir(name).file(NpmProject.PACKAGE_JSON) }.get()
+        projectPackagesDirectory
+            .zip(compilationsNpmResolution) { packagesDir, compilationsNpmResolution ->
+                compilationsNpmResolution
+                    .map { resolution ->
+                        val name = resolution.npmProjectName
+                        packagesDir.dir(name).file(NpmProject.PACKAGE_JSON)
+                    }
             }
+            .get()
     }
 
     @TaskAction
     fun resolve() {
-        npmResolutionManager.get().prepare(logger, nodeJsEnvironment, packageManagerEnv)
+        npmResolutionManager.get().prepare(
+            logger,
+            rootNodeJsEnvironment.get(),
+            rootPackageManagerEnvironment.get()
+        )
     }
 
     companion object {
