@@ -1060,7 +1060,6 @@ class CoroutineTransformerMethodVisitor(
         suspendPointLineNumber: LineNumberNode?
     ): LabelNode {
         val continuationLabelAfterLoadedResult = LabelNode()
-        val suspendElementLineNumber = lineNumber
         with(methodNode.instructions) {
             // Save state
             insertBefore(
@@ -1080,8 +1079,6 @@ class CoroutineTransformerMethodVisitor(
                 // Exit
                 val returnLabel = LabelNode()
                 visitLabel(returnLabel.label)
-                // Special line number to stop in debugger before suspend return
-                visitLineNumber(suspendElementLineNumber, returnLabel.label)
                 load(suspendMarkerVarIndex, AsmTypes.OBJECT_TYPE)
                 areturn(AsmTypes.OBJECT_TYPE)
                 // Mark place for continuation
@@ -1114,9 +1111,31 @@ class CoroutineTransformerMethodVisitor(
 
                 visitLabel(continuationLabelAfterLoadedResult.label)
             })
+
+            // Do not insert any linenumbers after the last instruction in the original method. I.e. ARETURN.
+            val lastState = continuationLabelAfterLoadedResult.next == null
+            if (nextDefinitelyHitLineNumber(suspension) == null && suspendPointLineNumber != null && !lastState) {
+                // If there is no clear next linenumber instruction, the continuation is still on the
+                // same line as the suspend point.
+                visitLineNumber(suspendPointLineNumber.line, continuationLabelAfterLoadedResult.label)
+            }
         }
 
         return suspension.stateLabel
+    }
+
+    // Find the next line number instruction that is defintely hit. That is, a line number
+    // that comes before any branch or method call.
+    private fun nextDefinitelyHitLineNumber(suspension: SuspensionPoint): LineNumberNode? {
+        var next = suspension.suspensionCallEnd.next
+        while (next != null) {
+            when {
+                next.isBranchOrCall -> return null
+                next is LineNumberNode -> return next
+                else -> next = next.next
+            }
+        }
+        return null
     }
 
     // It's necessary to preserve some sensible invariants like there should be no jump in the middle of try-catch-block

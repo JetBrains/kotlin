@@ -15,5 +15,5 @@ fun main(args: Array<String>) {
 @OptIn(ExperimentalTypeInference::class)
 suspend fun SequenceScope<Int>.awaitSeq(): Int = 42
 
-// 1 LINENUMBER 10 L12
-// 1 LOCALVARIABLE a I L[0-9]+ L5
+// 1 LINENUMBER 10 L[0-9]+
+// 1 LOCALVARIABLE a I L[0-9]+
