@@ -16,7 +16,7 @@ fun createPhaseConfig(
     val toValidateBoth = createPhaseSetFromArguments(arguments.phasesToValidate)
 
     return PhaseConfig(
-        arguments.disablePhases.orEmpty().toSet(),
+        createPhaseSetFromArguments(arguments.disablePhases),
         createPhaseSetFromArguments(arguments.verbosePhases),
         createPhaseSetFromArguments(arguments.phasesToDumpBefore) + toDumpBoth,
         createPhaseSetFromArguments(arguments.phasesToDumpAfter) + toDumpBoth,
@@ -44,5 +44,5 @@ fun PhaseConfig.list(compoundPhase: CompilerPhase<*, *, *>) {
 private fun createPhaseSetFromArguments(names: Array<String>?): PhaseSet = when {
     names == null -> PhaseSet.Enum(emptySet())
     "all" in names.map { it.toLowerCaseAsciiOnly() } -> PhaseSet.ALL
-    else -> PhaseSet.Enum(names.map { it.toLowerCaseAsciiOnly() }.toSet())
+    else -> PhaseSet.Enum(names.toSet())
 }

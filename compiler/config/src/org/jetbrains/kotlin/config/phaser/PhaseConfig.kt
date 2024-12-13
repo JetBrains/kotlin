@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.config.phaser
  * Control which parts of compilation pipeline are enabled and how compiler should validate their invariants.
  * Phase configuration does not know anything about actual compiler pipeline upfront.
  *
+ * @property disabled specify a set of phases that must not be executed.
  * @property verbose specify a set of phases that must print additional information during phase execution.
  * @property toDumpStateBefore specify a set of phases for which the state must be dumped right before phase execution.
  * @property toDumpStateAfter specify a set of phases for which the state must be dumped right after phase execution.
@@ -21,7 +22,7 @@ package org.jetbrains.kotlin.config.phaser
  * @property checkStickyConditions returns true if compiler should check post-conditions that are applicable to subsequent (thus "sticky") phases.
  */
 class PhaseConfig(
-    disabledPhases: Set<String> = emptySet(),
+    private var disabled: PhaseSet = PhaseSet.Enum(emptySet()),
     val verbose: PhaseSet = PhaseSet.Enum(emptySet()),
     val toDumpStateBefore: PhaseSet = PhaseSet.Enum(emptySet()),
     val toDumpStateAfter: PhaseSet = PhaseSet.Enum(emptySet()),
@@ -33,13 +34,11 @@ class PhaseConfig(
     val checkConditions: Boolean = false,
     val checkStickyConditions: Boolean = false
 ) {
-    private val disabledMut = disabledPhases.toMutableSet()
-
     /**
      * Check if the given [phase] should be executed during compilation.
      */
     fun isEnabled(phase: AnyNamedPhase): Boolean =
-        phase.name !in disabledMut
+        phase !in disabled
 
     /**
      * Check if the compiler should print additional information during [phase] execution.
@@ -51,7 +50,7 @@ class PhaseConfig(
      * Prevent compiler from executing the given [phase].
      */
     fun disable(phase: AnyNamedPhase) {
-        disabledMut += phase.name
+        disabled += PhaseSet.Enum(setOf(phase.name))
     }
 
     /**

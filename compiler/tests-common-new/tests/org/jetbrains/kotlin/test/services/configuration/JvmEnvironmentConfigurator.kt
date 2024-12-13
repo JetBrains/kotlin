@@ -348,8 +348,8 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         val phases = module.directives[CodegenTestDirectives.DUMP_IR_FOR_GIVEN_PHASES]
         if (phases.isNotEmpty()) {
             phaseConfig = PhaseConfig(
-                toDumpStateBefore = PhaseSet.Enum(phases.map { it.toLowerCaseAsciiOnly() }.toSet()),
-                toDumpStateAfter = PhaseSet.Enum(phases.map { it.toLowerCaseAsciiOnly() }.toSet()),
+                toDumpStateBefore = PhaseSet.Enum(phases.toSet()),
+                toDumpStateAfter = PhaseSet.Enum(phases.toSet()),
                 dumpToDirectory = dumpDirectory.absolutePath
             )
         }

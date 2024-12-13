@@ -12,7 +12,9 @@ sealed class PhaseSet {
 
     abstract operator fun plus(phaseSet: PhaseSet): PhaseSet
 
-    class Enum(val phases: Set<String>) : PhaseSet() {
+    class Enum(phases: Set<String>) : PhaseSet() {
+        private val phases: Set<String> = phases.map { it.toLowerCaseAsciiOnly() }.toSet()
+
         override fun contains(phase: AnyNamedPhase): Boolean =
             phase.name.toLowerCaseAsciiOnly() in phases
 
