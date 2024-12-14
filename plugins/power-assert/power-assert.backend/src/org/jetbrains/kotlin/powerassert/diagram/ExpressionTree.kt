@@ -22,6 +22,7 @@ package org.jetbrains.kotlin.powerassert.diagram
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.nameWithPackage
 import org.jetbrains.kotlin.ir.expressions.*
@@ -82,6 +83,7 @@ fun buildTree(
     constTracker: EvaluatedConstTracker?,
     sourceFile: SourceFile,
     expression: IrExpression,
+    surroundingCall: IrCall? = null,
 ): Node? {
     class RootNode : Node() {
         override fun toString() = "RootNode"
@@ -93,25 +95,38 @@ fun buildTree(
     val tree = RootNode()
     expression.accept(
         object : IrElementVisitor<Unit, Node> {
-            private var currentCall: IrCall? = null
+            private var currentCall = surroundingCall
 
             private fun IrExpression.isImplicitReceiverOf(irCall: IrCall): Boolean {
-                val otherReceiver = when (this) {
-                    irCall.dispatchReceiver -> irCall.extensionReceiver
-                    irCall.extensionReceiver -> irCall.dispatchReceiver
-                    else -> return false // Not a receiver of the call
-                }
-
                 // In K1, an implicit receiver will either have a zero-width offset,
                 // or have the same start and end offsets as the call.
                 //
                 // In K2, the end offsets of the implicit receiver and the call will match,
                 // but the implicit receiver may start at the beginning of an explicit receiver,
                 // while the call starts at a later offset.
-                //
-                // The following is a generalization all of these conditions into a single check.
-                return startOffset == endOffset ||
-                        endOffset == irCall.endOffset && (startOffset == irCall.startOffset || otherReceiver?.startOffset == startOffset)
+
+                val arguments = irCall.arguments
+                val argumentIndex = arguments.indexOfFirst { this == it }
+                if (argumentIndex == -1) return false // Not an argument of the call.
+
+                val parameters = irCall.symbol.owner.parameters
+                val parameter = parameters[argumentIndex]
+                if (parameter.kind == IrParameterKind.Context) return true // Always implicit.
+                if (parameter.kind == IrParameterKind.Regular) return false // Never implicit.
+
+                if (startOffset == endOffset || endOffset == irCall.endOffset && startOffset == irCall.startOffset) return true
+                if (endOffset != irCall.endOffset) return false
+
+                val dispatchReceiver = parameters.firstOrNull { it.kind == IrParameterKind.DispatchReceiver }
+                    ?.let { arguments[it] } ?: return false
+                val extensionReceiver = parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }
+                    ?.let { arguments[it] } ?: return false
+
+                return when (this) {
+                    dispatchReceiver -> startOffset == extensionReceiver.startOffset
+                    extensionReceiver -> startOffset == dispatchReceiver.startOffset
+                    else -> false
+                }
             }
 
             override fun visitElement(element: IrElement, data: Node) {
@@ -119,22 +134,21 @@ fun buildTree(
             }
 
             override fun visitExpression(expression: IrExpression, data: Node) {
-                val chainNode = data as? ChainNode ?: ChainNode().also { data.addChild(it) }
                 val call = currentCall
                 if (call != null && expression.isImplicitReceiverOf(call)) {
                     // Do not diagram implicit receivers.
-                    chainNode.addChild(ConstantNode(expression))
+                    data.addChild(ConstantNode(expression))
                 } else if (expression is IrFunctionExpression) {
                     // Do not transform lambda expressions, especially their body.
-                    chainNode.addChild(ConstantNode(expression))
+                    data.addChild(ConstantNode(expression))
                 } else {
+                    val chainNode = data as? ChainNode ?: ChainNode().also { data.addChild(it) }
                     expression.acceptChildren(this, chainNode)
                     chainNode.addChild(ExpressionNode(expression))
                 }
             }
 
             override fun visitContainerExpression(expression: IrContainerExpression, data: Node) {
-                val chainNode = data as? ChainNode ?: ChainNode().also { data.addChild(it) }
                 when (expression.origin) {
                     IrStatementOrigin.SAFE_CALL -> {
                         // Safe call operators only have their temporary variable processed
@@ -145,8 +159,8 @@ fun buildTree(
                         val variable = statements[0] as? IrVariable
                             ?: error("Expected the first statement of the safe call expression to be a variable.\n${expression.dump()}")
 
+                        val chainNode = data as? ChainNode ?: ChainNode().also { data.addChild(it) }
                         variable.acceptChildren(this, chainNode)
-
                         chainNode.addChild(ExpressionNode(expression))
                     }
                     IrStatementOrigin.ELVIS -> {
@@ -160,6 +174,7 @@ fun buildTree(
                         val conditional = statements[1] as? IrWhen
                             ?: error("Expected the second statement of the elvis expression to be a when.\n${expression.dump()}")
 
+                        val chainNode = data as? ChainNode ?: ChainNode().also { data.addChild(it) }
                         variable.acceptChildren(this, chainNode)
 
                         val elvisNode = ElvisNode(expression, variable)
@@ -189,7 +204,7 @@ fun buildTree(
                     }
                     else -> {
                         // Everything else is considered unsafe and terminates the expression tree
-                        chainNode.addChild(ExpressionNode(expression))
+                        data.addChild(ExpressionNode(expression))
                     }
                 }
             }
@@ -216,6 +231,10 @@ fun buildTree(
                         && expression.origin == IrStatementOrigin.EXCLEQ
                 val isExcleqeq = expression.symbol.owner.name.asString() == BuiltInOperatorNames.EQEQEQ
                         && expression.origin == IrStatementOrigin.EXCLEQEQ
+
+                val previousCall = currentCall
+                currentCall = expression
+
                 if (isExcleq || isExcleqeq) {
                     // Skip the EQEQ/EQEQEQ part of a EXCLEQ/EXCLEQEQ call
                     expression.acceptChildren(this, data)
@@ -225,11 +244,10 @@ fun buildTree(
                     expression.dispatchReceiver!!.acceptChildren(this, chainNode)
                     chainNode.addChild(ExpressionNode(expression))
                 } else {
-                    val previousCall = currentCall
-                    currentCall = expression
                     super.visitCall(expression, data)
-                    currentCall = previousCall
                 }
+
+                currentCall = previousCall
             }
 
             override fun visitVararg(expression: IrVararg, data: Node) {

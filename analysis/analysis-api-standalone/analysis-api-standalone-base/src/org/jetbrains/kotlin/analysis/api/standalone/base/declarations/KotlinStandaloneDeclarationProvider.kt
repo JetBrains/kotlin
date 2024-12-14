@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getImportedSimpleNameByImportAlias
 import org.jetbrains.kotlin.psi.psiUtil.getSuperNames
+import org.jetbrains.kotlin.psi.psiUtil.visitBinaryExpressionUsingStack
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
@@ -215,6 +216,7 @@ class KotlinStandaloneDeclarationProviderFactory(
         val fileViewProvider = KtClassFileViewProvider(psiManager, virtualFile)
         val fakeFile = object : KtFile(fileViewProvider, isCompiled = true), SmartPointerIncompatiblePsiFile {
             override fun getStub(): KotlinFileStub? = resultStub
+            override val greenStub: KotlinFileStub? get() = resultStub
             override fun isPhysical() = false
         }
 
@@ -229,6 +231,9 @@ class KotlinStandaloneDeclarationProviderFactory(
     ) : SingleRootFileViewProvider(psiManager, virtualFile, true, KotlinLanguage.INSTANCE)
 
     private inner class KtDeclarationRecorder : KtVisitorVoid() {
+        override fun visitBinaryExpression(expression: KtBinaryExpression) {
+            visitBinaryExpressionUsingStack(expression)
+        }
 
         override fun visitElement(element: PsiElement) {
             element.acceptChildren(this)

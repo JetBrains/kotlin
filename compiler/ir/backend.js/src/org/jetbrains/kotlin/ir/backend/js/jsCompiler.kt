@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
-import org.jetbrains.kotlin.config.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -79,7 +79,7 @@ fun compileIr(
     moduleToName: Map<IrModuleFragment, String>,
     irBuiltIns: IrBuiltIns,
     symbolTable: SymbolTable,
-    irLinker: JsIrLinker,
+    irLinker: KotlinIrLinker,
     exportedDeclarations: Set<FqName>,
     keep: Set<String>,
     dceRuntimeDiagnostic: RuntimeDiagnostic?,
@@ -87,6 +87,9 @@ fun compileIr(
     safeExternalBooleanDiagnostic: RuntimeDiagnostic?,
     granularity: JsGenerationGranularity,
 ): LoweredIr {
+    require(irLinker is JsIrLinker) {
+        "jsCompiler needs JsIrLinker, but got ${irLinker.javaClass.name}"
+    }
     val moduleDescriptor = moduleFragment.descriptor
     val irFactory = symbolTable.irFactory
     val shouldGeneratePolyfills = configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)

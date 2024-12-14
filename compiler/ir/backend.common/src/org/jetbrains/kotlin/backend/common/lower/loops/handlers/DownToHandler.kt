@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.name.FqName
 
@@ -25,15 +26,16 @@ internal class DownToHandler(private val context: CommonBackendContext) : Header
 
     override fun matchIterable(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
-        return callee.valueParameters.singleOrNull()?.type in progressionElementTypes &&
-                callee.extensionReceiverParameter?.type in progressionElementTypes &&
+        return callee.hasShape(extensionReceiver = true, regularParameters = 1) &&
+                callee.parameters[0].type in progressionElementTypes &&
+                callee.parameters[1].type in progressionElementTypes &&
                 callee.kotlinFqName == FqName("kotlin.ranges.downTo")
     }
 
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol) =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
-            val first = expression.extensionReceiver!!
-            val last = expression.getValueArgument(0)!!
+            val first = expression.arguments[0]!!
+            val last = expression.arguments[1]!!
             val step = irInt(-1)
             val direction = ProgressionDirection.DECREASING
 

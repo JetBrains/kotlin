@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.common.phaser
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.phaser.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -15,7 +15,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
-fun <Context : CommonBackendContext> performByIrFile(
+fun <Context : LoweringContext> performByIrFile(
     name: String,
     lower: List<CompilerPhase<Context, IrFile, IrFile>>,
     supportParallel: Boolean,
@@ -25,7 +25,7 @@ fun <Context : CommonBackendContext> performByIrFile(
         setOf(getIrDumper()), nlevels = 1,
     )
 
-private class PerformByIrFilePhase<Context : CommonBackendContext>(
+private class PerformByIrFilePhase<Context : LoweringContext>(
     private val lower: List<CompilerPhase<Context, IrFile, IrFile>>,
     private val supportParallel: Boolean,
 ) : SameTypeCompilerPhase<Context, IrModuleFragment> {

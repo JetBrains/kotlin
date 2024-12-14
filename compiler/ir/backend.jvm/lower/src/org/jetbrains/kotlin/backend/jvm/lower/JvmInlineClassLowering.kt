@@ -67,7 +67,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             name = mangledName
             returnType = source.returnType
         }.apply {
-            copyParameterDeclarationsFrom(source)
+            copyValueAndTypeParametersFrom(source)
             annotations = source.annotations
             parent = source.parent
             // We need to ensure that this bridge has the same attribute owner as its static inline class replacement, since this
@@ -257,16 +257,16 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         return IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, to, context.ir.symbols.unsafeCoerceIntrinsic).apply {
             val underlyingType = from.erasedUpperBound.inlineClassRepresentation?.underlyingType
             if (underlyingType?.isTypeParameter() == true && !skipCast) {
-                putTypeArgument(0, from)
-                putTypeArgument(1, underlyingType)
+                typeArguments[0] = from
+                typeArguments[1] = underlyingType
                 putValueArgument(
                     0, IrTypeOperatorCallImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET, to, IrTypeOperator.IMPLICIT_CAST, underlyingType, argument
                     )
                 )
             } else {
-                putTypeArgument(0, from)
-                putTypeArgument(1, to)
+                typeArguments[0] = from
+                typeArguments[1] = to
                 putValueArgument(0, argument)
             }
         }
@@ -439,7 +439,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         }.apply {
             // Don't create a default argument stub for the primary constructor
             irConstructor.valueParameters.forEach { it.defaultValue = null }
-            copyParameterDeclarationsFrom(irConstructor)
+            copyValueAndTypeParametersFrom(irConstructor)
             annotations = irConstructor.annotations
             body = context.createIrBuilder(this.symbol).irBlockBody(this) {
                 +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())

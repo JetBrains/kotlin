@@ -1,3 +1,6 @@
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
+// ^ Suppressed errors
+
 // FILE: 1.kt
 
 package test

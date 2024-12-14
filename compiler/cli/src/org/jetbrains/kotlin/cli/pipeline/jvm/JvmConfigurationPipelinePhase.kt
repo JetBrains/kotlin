@@ -62,7 +62,9 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
         configuration.setupJvmSpecificArguments(arguments)
         configuration.setupIncrementalCompilationServices(arguments, services)
 
-        configuration.phaseConfig = createPhaseConfig(jvmPhases, arguments, messageCollector)
+        configuration.phaseConfig = createPhaseConfig(arguments).also {
+            if (arguments.listPhases) it.list(jvmPhases)
+        }
         if (!configuration.configureJdkHome(arguments)) return
         configuration.disableStandardScriptDefinition = arguments.disableStandardScript
         val moduleName = arguments.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME

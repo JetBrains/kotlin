@@ -84,6 +84,12 @@ public class NativePartialLinkageTestGenerated extends AbstractNativePartialLink
   }
 
   @Test
+  @TestMetadata("kt73511")
+  public void testKt73511() {
+    runTest("compiler/testData/klib/partial-linkage/kt73511/");
+  }
+
+  @Test
   @TestMetadata("noNonImplementedCallableFalsePositives")
   public void testNoNonImplementedCallableFalsePositives() {
     runTest("compiler/testData/klib/partial-linkage/noNonImplementedCallableFalsePositives/");

@@ -15,12 +15,9 @@ import org.jetbrains.kotlin.backend.wasm.ic.WasmModuleArtifact
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
-import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.OK
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.createPhaseConfig
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -139,7 +136,10 @@ internal class K2WasmCompilerImpl(
             loadFunctionInterfacesIntoStdlib = true,
         )
 
-        configuration.phaseConfig = createPhaseConfig(getWasmPhases(configuration, isIncremental = false), arguments, messageCollector)
+        configuration.phaseConfig = createPhaseConfig(arguments).also {
+            if (arguments.listPhases) it.list(getWasmPhases(configuration, isIncremental = false))
+        }
+
         val (allModules, backendContext, typeScriptFragment) = compileToLoweredIr(
             irModuleInfo,
             module.mainModule,

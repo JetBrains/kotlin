@@ -321,7 +321,10 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
                     superMethod.symbol,
                     secondSuperMethod?.symbol
                 )
-                dispatchReceiverParameter = buildReceiverParameter(this, clazz.origin, clazz.defaultType, startOffset, endOffset)
+                parameters += buildReceiverParameter {
+                    origin = clazz.origin
+                    type = clazz.defaultType
+                }
 
                 if (isLambda) createLambdaInvokeMethod() else createFunctionReferenceInvokeMethod()
             }
@@ -399,8 +402,8 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
             var i = 0
             val valueParameters = valueParameters
 
-            for (ti in 0 until funRef.typeArgumentsCount) {
-                irCall.putTypeArgument(ti, funRef.getTypeArgument(ti))
+            for (ti in funRef.typeArguments.indices) {
+                irCall.typeArguments[ti] = funRef.typeArguments[ti]
             }
 
             if (hasReceiver) {

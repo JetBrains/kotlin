@@ -121,7 +121,7 @@ private fun makeUnboxMethod(
         this.parent = parent
         overriddenSymbols = overriddenNode?.let { it.unboxMethod.overriddenSymbols + it.unboxMethod.symbol } ?: listOf()
         if (!static) {
-            createDispatchReceiverParameter()
+            parameters += createDispatchReceiverParameterWithClassParent()
         }
     }
 
@@ -394,7 +394,7 @@ private fun makeSpecializedEqualsMethod(
     returnType = context.irBuiltIns.booleanType
 }.apply {
     parent = mfvc
-    createDispatchReceiverParameter()
+    parameters += createDispatchReceiverParameterWithClassParent()
 
     val other = addValueParameter {
         name = Name.identifier("other")

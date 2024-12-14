@@ -44,6 +44,36 @@ import kotlin.contracts.contract
 
 // ----------- Walking children/siblings/parents -------------------------------------------------------------------------------------------
 
+/**
+ * Emulates recursion using a stack to prevent StackOverflow exception on big concatenation expressions like
+ * `val x = "a0" + "a1" + ... + "a9999"`
+
+ * Traversing order is different from using default [KtVisitorVoid]!
+ * However, it is the same at least for regular left-associative expression.
+ * For instance, the "a" + "b" + "c" is represented as
+ *
+ * ```
+ *          '+'
+ *      '+'     'c'
+ *  'a'     'b'
+ * ```
+ *
+ * And it's traversed as: 'a', '+', 'b', '+', 'c'
+ */
+fun KtVisitorVoid.visitBinaryExpressionUsingStack(expression: KtBinaryExpression) {
+    val stack = kotlin.collections.ArrayDeque<PsiElement>().also { it.add(expression) }
+    while (stack.isNotEmpty()) {
+        val element = stack.removeLast()
+        if (element is KtBinaryExpression) {
+            for (i in element.children.size - 1 downTo 0) {
+                stack.addLast(element.children[i])
+            }
+        } else {
+            element.accept(this)
+        }
+    }
+}
+
 val PsiElement.allChildren: PsiChildRange
     get() {
         val first = firstChild

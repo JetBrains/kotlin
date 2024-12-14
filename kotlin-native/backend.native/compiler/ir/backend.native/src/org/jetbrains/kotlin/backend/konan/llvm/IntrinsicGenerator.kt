@@ -468,13 +468,13 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     }
 
     private fun FunctionGenerationContext.emitCreateUninitializedInstance(callSite: IrCall, resultSlot: LLVMValueRef?): LLVMValueRef {
-        val type = callSite.getTypeArgument(0)!!
+        val type = callSite.typeArguments[0]!!
         val clazz = type.getClass()!!
         return allocInstance(clazz, environment.calculateLifetime(callSite), resultSlot)
     }
 
     private fun FunctionGenerationContext.emitCreateUninitializedArray(callSite: IrCall, resultSlot: LLVMValueRef?, args: List<LLVMValueRef>): LLVMValueRef {
-        val type = callSite.getTypeArgument(0)!!
+        val type = callSite.typeArguments[0]!!
         val clazz = type.getClass()!!
         return allocArray(clazz, args.single(), environment.calculateLifetime(callSite), environment.exceptionHandler, resultSlot)
     }
@@ -483,7 +483,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
             with(VirtualTablesLookup) {
                 checkIsSubtype(
                         objTypeInfo = bitcast(pointerType(llvm.kTypeInfo), args.single()),
-                        dstClass = callSite.getTypeArgument(0)!!.classOrNull!!.owner
+                        dstClass = callSite.typeArguments[0]!!.classOrNull!!.owner
                 )
             }
 
@@ -595,7 +595,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     }
 
     private fun FunctionGenerationContext.emitGetObjCClass(callSite: IrCall): LLVMValueRef {
-        val typeArgument = callSite.getTypeArgument(0)
+        val typeArgument = callSite.typeArguments[0]
         return getObjCClass(typeArgument!!.getClass()!!, environment.exceptionHandler)
     }
 

@@ -53,6 +53,7 @@ abstract class BinaryenRootEnvSpec : EnvSpec<BinaryenEnv>() {
             BinaryenEnv(
                 download = downloadValue,
                 downloadBaseUrl = downloadBaseUrl.orNull,
+                allowInsecureProtocol = allowInsecureProtocol.get(),
                 ivyDependency = "com.github.webassembly:binaryen:$versionValue:${platformValue.platform}@tar.gz",
                 executable = getExecutable("wasm-opt", command.get(), "exe"),
                 dir = targetPath,

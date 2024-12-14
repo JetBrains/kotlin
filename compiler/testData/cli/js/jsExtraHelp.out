@@ -43,6 +43,12 @@ where advanced options include:
   -Xallow-any-scripts-in-source-roots
                              Allow compiling scripts along with regular Kotlin sources.
   -Xallow-kotlin-package     Allow compiling code in the 'kotlin' package, and allow not requiring 'kotlin.stdlib' in 'module-info'.
+  -Xannotation-default-target=first-only|first-only-warn|param-property
+                             Change the default annotation targets for constructor properties:
+                             -Xannotation-default-target=first-only:      use the first of the following allowed targets: '@param:', '@property:', '@field:';
+                             -Xannotation-default-target=first-only-warn: same as first-only, and raise warnings when both '@param:' and either '@property:' or '@field:' are allowed;
+                             -Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
+                             default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before.
   -Xcheck-phase-conditions   Check pre- and postconditions of IR lowering phases.
   -Xcheck-sticky-phase-conditions
                              Run sticky condition checks on subsequent phases. Implicitly enables '-Xcheck-phase-conditions'.
@@ -151,11 +157,6 @@ where advanced options include:
   -Xverify-ir={none|warning|error}
                              IR verification mode (no verification by default).
   -Xverify-ir-visibility     Check for visibility violations in IR when validating it before running any lowerings. Only has effect if '-Xverify-ir' is not 'none'.
-  -Xverify-ir-visibility-after-inlining
-                             Check for visibility violations in IR when validating it after the function inlining phase.
-                             Only has effect if '-Xverify-ir' is not 'none'.
-                             This flag is deprecated and will soon be removed in favor of '-Xverify-ir-visibility'.
-                             
   -Xwasm                     Use the WebAssembly compiler backend.
   -Xwasm-debug-info          Add debug info to the compiled WebAssembly module.
   -Xwasm-enable-array-range-checks

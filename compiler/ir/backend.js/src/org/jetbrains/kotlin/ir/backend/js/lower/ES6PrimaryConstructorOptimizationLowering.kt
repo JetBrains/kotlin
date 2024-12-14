@@ -67,7 +67,7 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
             origin = IrDeclarationOrigin.DEFINED
         }.also { constructor ->
             constructor.copyAnnotationsFrom(original)
-            constructor.copyParameterDeclarationsFrom(original)
+            constructor.copyValueAndTypeParametersFrom(original)
             constructor.parent = irClass
 
             if (irClass.isExported(context)) {

@@ -6,9 +6,9 @@ import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
+import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Ir2DescriptorManglerAdapter
-import org.jetbrains.kotlin.backend.konan.descriptors.isForwardDeclarationModule
 import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrContext
 import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrInput
 import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrOutput
@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.SymbolOverDescriptorsLookupUtils
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
+import org.jetbrains.kotlin.backend.konan.serialization.CInteropModuleDeserializerFactory
+import org.jetbrains.kotlin.backend.konan.serialization.KonanInteropModuleDeserializer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
@@ -30,12 +32,15 @@ import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.StubGeneratorExtensions
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isHeader
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.impl.isForwardDeclarationModule
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
@@ -97,7 +102,12 @@ internal fun PsiToIrContext.psiToIr(
             else
                 BuiltInFictitiousFunctionIrClassFactory(symbolTable, irBuiltInsOverDescriptors, reflectionTypes)
     irBuiltInsOverDescriptors.functionFactory = functionIrClassFactory
-    val symbols = KonanSymbols(this, SymbolOverDescriptorsLookupUtils(generatorContext.symbolTable), generatorContext.irBuiltIns)
+    val symbols = KonanSymbols(
+            this,
+            SymbolOverDescriptorsLookupUtils(generatorContext.symbolTable),
+            generatorContext.irBuiltIns,
+            this.config.configuration
+    )
 
     val irDeserializer = if (isProducingLibrary && !useLinkerWhenProducingLibrary) {
         // Enable lazy IR generation for newly-created symbols inside BE
@@ -117,6 +127,11 @@ internal fun PsiToIrContext.psiToIr(
         val exportedDependencies = (moduleDescriptor.getExportedDependencies(config) + libraryToCacheModule?.let { listOf(it) }.orEmpty()).distinct()
         val irProviderForCEnumsAndCStructs =
                 IrProviderForCEnumAndCStructStubs(generatorContext, symbols)
+        val cInteropModuleDeserializerFactory = KonanCInteropModuleDeserializerFactory(
+                cachedLibraries = config.cachedLibraries,
+                cenumsProvider = irProviderForCEnumsAndCStructs,
+                stubGenerator = stubGenerator,
+        )
 
         val friendModules = config.resolvedLibraries.getFullList()
                 .filter { it.libraryFile in config.friendModuleFiles }
@@ -135,7 +150,7 @@ internal fun PsiToIrContext.psiToIr(
                 friendModules = friendModulesMap,
                 forwardModuleDescriptor = forwardDeclarationsModuleDescriptor,
                 stubGenerator = stubGenerator,
-                cenumsProvider = irProviderForCEnumsAndCStructs,
+                cInteropModuleDeserializerFactory = cInteropModuleDeserializerFactory,
                 exportedDependencies = exportedDependencies,
                 partialLinkageSupport = createPartialLinkageSupportForLinker(
                         partialLinkageConfig = partialLinkageConfig,
@@ -199,7 +214,7 @@ internal fun PsiToIrContext.psiToIr(
                 generatorContext.typeTranslator,
                 generatorContext.irBuiltIns,
                 linker = irDeserializer,
-                diagnosticReporter = messageCollector
+                messageCollector = messageCollector
         )
         pluginExtensions.forEach { extension ->
             extension.generate(module, pluginContext)
@@ -259,4 +274,23 @@ internal fun PsiToIrContext.psiToIr(
                 irLinker = irDeserializer as KonanIrLinker
         )
     }
+}
+
+internal class KonanCInteropModuleDeserializerFactory(
+        private val cachedLibraries: CachedLibraries,
+        private val cenumsProvider: IrProviderForCEnumAndCStructStubs,
+        private val stubGenerator: DeclarationStubGenerator,
+): CInteropModuleDeserializerFactory {
+    override fun createIrModuleDeserializer(
+            moduleDescriptor: ModuleDescriptor,
+            klib: KotlinLibrary,
+            moduleDependencies: Collection<IrModuleDeserializer>,
+    ): IrModuleDeserializer = KonanInteropModuleDeserializer(
+            moduleDescriptor,
+            klib,
+            moduleDependencies,
+            cachedLibraries.isLibraryCached(klib),
+            cenumsProvider,
+            stubGenerator,
+    )
 }

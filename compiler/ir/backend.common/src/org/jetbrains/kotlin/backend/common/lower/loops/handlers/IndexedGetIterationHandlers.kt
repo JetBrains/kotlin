@@ -79,8 +79,8 @@ internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGet
         if (expression.type.isArrayType()) return true
 
         val callee = (expression as? IrCall)?.symbol?.owner ?: return false
-        return callee.valueParameters.isEmpty() &&
-                callee.extensionReceiverParameter?.type?.let { it.isArray() || it.isPrimitiveArray() } == true &&
+        return callee.hasShape(extensionReceiver = true) &&
+                callee.parameters[0].type.let { it.isArray() || it.isPrimitiveArray() } &&
                 callee.kotlinFqName == FqName("kotlin.collections.reversed")
     }
 
@@ -102,8 +102,11 @@ internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGet
     override val IrType.getFunction
         get() = getClass()!!.functions.single {
             it.name == getFunctionName &&
-                    it.valueParameters.size == 1 &&
-                    it.valueParameters[0].type.isInt()
+                    it.hasShape(
+                        dispatchReceiver = true,
+                        regularParameters = 1,
+                        parameterTypes = listOf(null, context.irBuiltIns.intType)
+                    )
         }
 }
 
@@ -125,8 +128,8 @@ internal open class CharSequenceIterationHandler(
     // extension function, and the behavior of those custom iterators is unknown.
     override fun matchIteratorCall(call: IrCall): Boolean {
         val callee = call.symbol.owner
-        return callee.valueParameters.isEmpty() &&
-                callee.extensionReceiverParameter?.type?.isCharSequence() == true &&
+        return callee.hasShape(extensionReceiver = true) &&
+                callee.parameters[0].type.isCharSequence() &&
                 callee.kotlinFqName == FqName("kotlin.text.${OperatorNameConventions.ITERATOR}")
     }
 

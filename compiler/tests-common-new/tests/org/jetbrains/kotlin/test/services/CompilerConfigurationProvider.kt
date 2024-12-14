@@ -151,10 +151,6 @@ fun createCompilerConfiguration(module: TestModule, configurators: List<Abstract
         !CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS.isApplicableTo(module),
     )
     configuration.put(
-        KlibConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING,
-        KlibBasedCompilerTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING in module.directives
-    )
-    configuration.put(
         CommonConfigurationKeys.ENABLE_IR_VARARG_TYPES_CHECKS,
         !CodegenTestDirectives.DISABLE_IR_VARARG_TYPE_CHECKS.isApplicableTo(module),
     )

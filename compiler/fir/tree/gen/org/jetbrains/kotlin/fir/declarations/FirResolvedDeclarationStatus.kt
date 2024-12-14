@@ -28,6 +28,7 @@ interface FirResolvedDeclarationStatus : FirDeclarationStatus {
     override val isOperator: Boolean
     override val isInfix: Boolean
     override val isInline: Boolean
+    override val isValue: Boolean
     override val isTailRec: Boolean
     override val isExternal: Boolean
     override val isConst: Boolean

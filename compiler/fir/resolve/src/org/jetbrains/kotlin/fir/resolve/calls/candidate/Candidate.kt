@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
+import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpressionCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpressionCopy
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
@@ -170,6 +173,25 @@ class Candidate(
         _argumentMapping = argumentMapping
     }
 
+    @UpdatingCandidateInvariants
+    fun replaceArgumentPrefix(newArgumentPrefix: List<ConeResolutionAtom>) {
+        val remainingArguments = arguments.subList(newArgumentPrefix.size, arguments.size)
+
+        val newArgumentMapping = LinkedHashMap<ConeResolutionAtom, FirValueParameter>()
+        for ((oldArgument, newArgument) in arguments.zip(newArgumentPrefix)) {
+            newArgumentMapping[newArgument] = argumentMapping.getValue(oldArgument)
+        }
+
+        for (argument in remainingArguments) {
+            newArgumentMapping[argument] = argumentMapping.getValue(argument)
+        }
+
+        val newArguments = newArgumentPrefix + remainingArguments
+
+        _arguments = newArguments
+        _argumentMapping = newArgumentMapping
+    }
+
     var numDefaults: Int = 0
 
     // ---------------------------------------- Type argument mapping ----------------------------------------
@@ -232,6 +254,12 @@ class Candidate(
     override var chosenExtensionReceiver: ConeResolutionAtom? = givenExtensionReceiverOptions.singleOrNull()
 
     override var contextArguments: List<ConeResolutionAtom>? = null
+
+    /**
+     * In case `f: context(C..) (V) -> ..`, `f(e..)`, context values are still being introduced as a prefix of
+     * regular arguments for `invoke` function.
+     */
+    var expectedContextParameterTypesForInvoke: List<ConeKotlinType>? = null
 
     // FirExpressionStub can be located here in case of callable reference resolution
     fun dispatchReceiverExpression(): FirExpression? {

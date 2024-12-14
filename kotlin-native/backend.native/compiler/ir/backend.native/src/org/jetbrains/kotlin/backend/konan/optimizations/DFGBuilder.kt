@@ -378,7 +378,9 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                         typeArgumentsCount = if (isGeneric) 1 else 0
                 ).apply {
                     dispatchReceiver = expression
-                    if (isGeneric) putTypeArgument(0, value.type)
+                    if (isGeneric) {
+                        typeArguments[0] = value.type
+                    }
                     val constInt = IrConstImpl.int(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.irBuiltIns.intType, index)
                     expressions += constInt to currentLoop
                     putValueArgument(0, constInt)
@@ -635,12 +637,12 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
 
                                 createUninitializedInstanceSymbol ->
                                     DataFlowIR.Node.AllocInstance(symbolTable.mapClassReferenceType(
-                                            value.getTypeArgument(0)!!.getClass()!!
+                                            value.typeArguments[0]!!.getClass()!!
                                     ), value)
 
                                 createUninitializedArraySymbol ->
                                     DataFlowIR.Node.AllocArray(symbolTable.mapClassReferenceType(
-                                            value.getTypeArgument(0)!!.getClass()!!
+                                            value.typeArguments[0]!!.getClass()!!
                                     ), size = expressionToEdge(value.getValueArgument(0)!!), value)
 
                                 reinterpret -> getNode(value.extensionReceiver!!).value

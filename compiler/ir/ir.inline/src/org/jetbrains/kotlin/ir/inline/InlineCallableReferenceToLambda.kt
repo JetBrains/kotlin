@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
-import org.jetbrains.kotlin.backend.common.ir.addExtensionReceiver
+import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -88,7 +88,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
             }
             when {
                 // References to generic synthetic Java properties aren't inlined in K1. Fixes KT-57103
-                typeArgumentsCount > 0 && isReferenceToSyntheticJavaProperty -> this
+                typeArguments.isNotEmpty() && isReferenceToSyntheticJavaProperty -> this
                 // ::property -> { receiver -> receiver.property }; prefer direct field access if allowed.
                 field != null -> wrapField(field!!.owner).toLambda(this, scope!!)
                 else -> wrapFunction(getter!!.owner).toLambda(this, scope!!)
@@ -111,7 +111,11 @@ abstract class InlineCallableReferenceToLambdaPhase(
                 val boundReceiver = boundReceiver()
                 val fieldReceiver = when {
                     field.isStatic -> null
-                    boundReceiver != null -> irGet(addExtensionReceiver(boundReceiver.type))
+                    boundReceiver != null -> {
+                        val extensionReceiver = createExtensionReceiver(boundReceiver.type)
+                        parameters += extensionReceiver
+                        irGet(extensionReceiver)
+                    }
                     else -> irGet(addValueParameter("receiver", field.parentAsClass.defaultType))
                 }
                 irBlockBody {
@@ -155,7 +159,11 @@ abstract class InlineCallableReferenceToLambdaPhase(
                         for (parameter in referencedFunction.parameters) {
                             val next = parameters.count { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
                             val getOnNewParameter = when {
-                                boundReceiverParameter == parameter -> irGet(addExtensionReceiver(boundReceiver!!.type))
+                                boundReceiverParameter == parameter -> {
+                                    val extensionReceiver = createExtensionReceiver(boundReceiver!!.type)
+                                    parameters += extensionReceiver
+                                    irGet(extensionReceiver)
+                                }
                                 next >= argumentTypes.size ->
                                     error(
                                         "The number of parameters for reference and referenced function is different\n" +
@@ -181,7 +189,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
             this@toLambda.parent = scope
             +this@toLambda
             +IrFunctionReferenceImpl.fromSymbolOwner(
-                startOffset, endOffset, original.type.convertKPropertyToKFunction(context.irBuiltIns), symbol,
+                startOffset, endOffset, original.type.convertToFunctionIfNeeded(context.irBuiltIns), symbol,
                 typeArgumentsCount = 0, reflectionTarget = null,
                 origin = LoweredStatementOrigins.INLINE_LAMBDA
             ).apply {
@@ -204,11 +212,17 @@ abstract class InlineCallableReferenceToLambdaPhase(
 private val IrStatementOrigin?.isInlinable: Boolean
     get() = isLambda || this == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || this == IrStatementOrigin.SUSPEND_CONVERSION
 
-private fun IrType.convertKPropertyToKFunction(irBuiltIns: IrBuiltIns): IrType {
-    if (this !is IrSimpleType) return this
-    if (!this.isKProperty() && !this.isKMutableProperty()) return this
-
-    return this.toBuilder().apply { classifier = irBuiltIns.functionN(arguments.size - 1).symbol }.buildSimpleType()
+private fun IrType.convertToFunctionIfNeeded(irBuiltIns: IrBuiltIns): IrType {
+    return when {
+        this !is IrSimpleType -> this
+        isKProperty() || isKMutableProperty() || isKFunction() -> {
+            this.toBuilder().apply { classifier = irBuiltIns.functionN(arguments.size - 1).symbol }.buildSimpleType()
+        }
+        isKSuspendFunction() -> {
+            this.toBuilder().apply { classifier = irBuiltIns.suspendFunctionN(arguments.size - 1).symbol }.buildSimpleType()
+        }
+        else -> this
+    }
 }
 
 // Returns dispatch or extension receiver of function or property reference, if any. Otherwise, return null.

@@ -305,8 +305,8 @@ internal class SpecialAccessLowering(
 
     private fun IrBuilderWithScope.coerceToUnboxed(expression: IrExpression): IrCall =
         irCall(symbols.unsafeCoerceIntrinsic).apply {
-            putTypeArgument(0, expression.type)
-            putTypeArgument(1, expression.type.unboxInlineClass())
+            typeArguments[0] = expression.type
+            typeArguments[1] = expression.type.unboxInlineClass()
             putValueArgument(0, expression)
         }
 
@@ -391,7 +391,7 @@ internal class SpecialAccessLowering(
     private fun IrBuilderWithScope.coerceResult(value: IrExpression, type: IrType) =
         irCall(symbols.handleResultOfReflectiveAccess).apply {
             putValueArgument(0, value)
-            putTypeArgument(0, type)
+            typeArguments[0] = type
         }
 
 

@@ -15,11 +15,10 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNullableAny
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.invokeFun
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isMethodOfAny
-import org.jetbrains.kotlin.ir.util.isTopLevel
-import org.jetbrains.kotlin.ir.util.isTopLevelDeclaration
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -58,17 +57,8 @@ fun IrFunction.hasStableJsName(context: JsIrBackendContext): Boolean {
 
 fun IrFunction.isEqualsInheritedFromAny(): Boolean =
     name == OperatorNameConventions.EQUALS &&
-            dispatchReceiverParameter != null &&
-            extensionReceiverParameter == null &&
-            valueParameters.size == 1 &&
-            valueParameters[0].type.isNullableAny()
-
-fun IrDeclaration.hasStaticDispatch() = when (this) {
-    is IrSimpleFunction -> dispatchReceiverParameter == null
-    is IrProperty -> isTopLevelDeclaration
-    is IrField -> isStatic
-    else -> true
-}
+            hasShape(dispatchReceiver = true, regularParameters = 1) &&
+            parameters[1].type.isNullableAny()
 
 val IrValueDeclaration.isDispatchReceiver: Boolean
     get() {
@@ -112,12 +102,14 @@ fun JsCommonBackendContext.findUnitInstanceField(): IrField =
 val JsCommonBackendContext.compileSuspendAsJsGenerator: Boolean
     get() = this is JsIrBackendContext && configuration[JSConfigurationKeys.COMPILE_SUSPEND_AS_JS_GENERATOR] == true
 
-fun IrDeclaration.isImportedFromModuleOnly(): Boolean {
-    return isTopLevel && isEffectivelyExternal() && (getJsModule() != null && !isJsNonModule() || (parent as? IrAnnotationContainer)?.getJsModule() != null)
-}
-
-fun invokeFunForLambda(call: IrCall) =
-    call.extensionReceiver!!
+/**
+ * Precondition: this is a call to either of the following intrinsics:
+ * - `kotlin.coroutines.intrinsics.invokeSuspendSuperType`
+ * - `kotlin.coroutines.intrinsics.invokeSuspendSuperTypeWithReceiver`
+ * - `kotlin.coroutines.intrinsics.invokeSuspendSuperTypeWithReceiverAndParam`
+ */
+internal fun invokeFunForLambda(call: IrCall): IrSimpleFunction =
+    call.arguments[0]!!
         .type
         .getClass()!!
         .invokeFun!!

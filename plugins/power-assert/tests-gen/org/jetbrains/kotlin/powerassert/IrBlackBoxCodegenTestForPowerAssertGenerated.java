@@ -32,9 +32,15 @@ public class IrBlackBoxCodegenTestForPowerAssertGenerated extends AbstractIrBlac
   }
 
   @Test
-  @TestMetadata("Constants.kt")
-  public void testConstants() {
-    runTest("plugins/power-assert/testData/codegen/Constants.kt");
+  @TestMetadata("ConstantsK1.kt")
+  public void testConstantsK1() {
+    runTest("plugins/power-assert/testData/codegen/ConstantsK1.kt");
+  }
+
+  @Test
+  @TestMetadata("ConstantsK2.kt")
+  public void testConstantsK2() {
+    runTest("plugins/power-assert/testData/codegen/ConstantsK2.kt");
   }
 
   @Test
@@ -335,6 +341,24 @@ public class IrBlackBoxCodegenTestForPowerAssertGenerated extends AbstractIrBlac
     }
 
     @Test
+    @TestMetadata("DispatchContextInfix.kt")
+    public void testDispatchContextInfix() {
+      runTest("plugins/power-assert/testData/codegen/infix/DispatchContextInfix.kt");
+    }
+
+    @Test
+    @TestMetadata("DispatchExtensionContextInfix.kt")
+    public void testDispatchExtensionContextInfix() {
+      runTest("plugins/power-assert/testData/codegen/infix/DispatchExtensionContextInfix.kt");
+    }
+
+    @Test
+    @TestMetadata("DispatchExtensionInfix.kt")
+    public void testDispatchExtensionInfix() {
+      runTest("plugins/power-assert/testData/codegen/infix/DispatchExtensionInfix.kt");
+    }
+
+    @Test
     @TestMetadata("DispatchInfix.kt")
     public void testDispatchInfix() {
       runTest("plugins/power-assert/testData/codegen/infix/DispatchInfix.kt");
@@ -392,6 +416,12 @@ public class IrBlackBoxCodegenTestForPowerAssertGenerated extends AbstractIrBlac
     @TestMetadata("DispatchNonInfixOnlyConstants.kt")
     public void testDispatchNonInfixOnlyConstants() {
       runTest("plugins/power-assert/testData/codegen/infix/DispatchNonInfixOnlyConstants.kt");
+    }
+
+    @Test
+    @TestMetadata("ExtensionContextInfix.kt")
+    public void testExtensionContextInfix() {
+      runTest("plugins/power-assert/testData/codegen/infix/ExtensionContextInfix.kt");
     }
 
     @Test
@@ -643,6 +673,12 @@ public class IrBlackBoxCodegenTestForPowerAssertGenerated extends AbstractIrBlac
     }
 
     @Test
+    @TestMetadata("CompareOperator.kt")
+    public void testCompareOperator() {
+      runTest("plugins/power-assert/testData/codegen/operator/CompareOperator.kt");
+    }
+
+    @Test
     @TestMetadata("ContainsFunction.kt")
     public void testContainsFunction() {
       runTest("plugins/power-assert/testData/codegen/operator/ContainsFunction.kt");
@@ -683,6 +719,12 @@ public class IrBlackBoxCodegenTestForPowerAssertGenerated extends AbstractIrBlac
     public void testNegativeContainsOperator() {
       runTest("plugins/power-assert/testData/codegen/operator/NegativeContainsOperator.kt");
     }
+
+    @Test
+    @TestMetadata("OperatorReceiver.kt")
+    public void testOperatorReceiver() {
+      runTest("plugins/power-assert/testData/codegen/operator/OperatorReceiver.kt");
+    }
   }
 
   @Nested
@@ -695,9 +737,21 @@ public class IrBlackBoxCodegenTestForPowerAssertGenerated extends AbstractIrBlac
     }
 
     @Test
+    @TestMetadata("ContextReceivers.kt")
+    public void testContextReceivers() {
+      runTest("plugins/power-assert/testData/codegen/parameters/ContextReceivers.kt");
+    }
+
+    @Test
     @TestMetadata("implicitReceiver.kt")
     public void testImplicitReceiver() {
       runTest("plugins/power-assert/testData/codegen/parameters/implicitReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("Receivers.kt")
+    public void testReceivers() {
+      runTest("plugins/power-assert/testData/codegen/parameters/Receivers.kt");
     }
 
     @Test

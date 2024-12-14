@@ -96,7 +96,7 @@ class SecondaryConstructorLowering(val context: JsIrBackendContext) : Declaratio
             val irCreateCall = JsIrBuilder.buildCall(createFunctionIntrinsic, type, listOf(type))
             val irDelegateCall = JsIrBuilder.buildCall(delegate.symbol, type).also { call ->
                 for (i in 0 until stub.typeParameters.size) {
-                    call.putTypeArgument(i, stub.typeParameters[i].toIrType())
+                    call.typeArguments[i] = stub.typeParameters[i].toIrType()
                 }
 
                 call.arguments.assignFrom(stub.parameters) { JsIrBuilder.buildGetValue(it.symbol) }
@@ -317,7 +317,7 @@ private class CallsiteRedirectionTransformer(private val context: JsIrBackendCon
         val irClass = call.symbol.owner.parentAsClass
         return IrCallImpl(
             call.startOffset, call.endOffset, call.type, newTarget,
-            typeArgumentsCount = call.typeArgumentsCount,
+            typeArgumentsCount = call.typeArguments.size,
             superQualifierSymbol = irClass.symbol.takeIf { context.es6mode && call.isSyntheticDelegatingReplacement }
         ).apply {
             copyTypeArgumentsFrom(call)

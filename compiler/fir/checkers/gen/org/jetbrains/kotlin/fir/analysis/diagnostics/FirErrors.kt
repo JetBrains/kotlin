@@ -347,6 +347,7 @@ object FirErrors {
     val VOLATILE_ON_DELEGATE: KtDiagnosticFactory0 = KtDiagnosticFactory0("VOLATILE_ON_DELEGATE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val POTENTIALLY_NON_REPORTED_ANNOTATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("POTENTIALLY_NON_REPORTED_ANNOTATION", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
+    val ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
 
     // OptIn
     val OPT_IN_USAGE: KtDiagnosticFactory2<ClassId, String> = KtDiagnosticFactory2("OPT_IN_USAGE", WARNING, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, PsiElement::class)
@@ -605,6 +606,8 @@ object FirErrors {
     val NON_FINAL_MEMBER_IN_FINAL_CLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("NON_FINAL_MEMBER_IN_FINAL_CLASS", WARNING, SourceElementPositioningStrategies.OPEN_MODIFIER, KtNamedDeclaration::class)
     val NON_FINAL_MEMBER_IN_OBJECT: KtDiagnosticFactory0 = KtDiagnosticFactory0("NON_FINAL_MEMBER_IN_OBJECT", WARNING, SourceElementPositioningStrategies.OPEN_MODIFIER, KtNamedDeclaration::class)
     val VIRTUAL_MEMBER_HIDDEN: KtDiagnosticFactory2<FirCallableSymbol<*>, FirRegularClassSymbol> = KtDiagnosticFactory2("VIRTUAL_MEMBER_HIDDEN", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtNamedDeclaration::class)
+    val PARAMETER_NAME_CHANGED_ON_OVERRIDE: KtDiagnosticFactory2<FirRegularClassSymbol, FirValueParameterSymbol> = KtDiagnosticFactory2("PARAMETER_NAME_CHANGED_ON_OVERRIDE", WARNING, SourceElementPositioningStrategies.NAME_IDENTIFIER, KtParameter::class)
+    val DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES: KtDiagnosticFactory4<FirValueParameterSymbol, FirValueParameterSymbol, Int, List<FirNamedFunctionSymbol>> = KtDiagnosticFactory4("DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES", WARNING, SourceElementPositioningStrategies.DECLARATION_NAME, KtClassOrObject::class)
 
     // Redeclarations
     val MANY_COMPANION_OBJECTS: KtDiagnosticFactory0 = KtDiagnosticFactory0("MANY_COMPANION_OBJECTS", ERROR, SourceElementPositioningStrategies.COMPANION_OBJECT, KtObjectDeclaration::class)

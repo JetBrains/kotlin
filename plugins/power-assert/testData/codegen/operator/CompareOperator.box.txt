@@ -1,0 +1,48 @@
+test1: ---
+assert("aaa".compareTo("bbb") > 0)
+             |                |
+             |                false
+             -1
+---
+test2: ---
+assert("aaa" > "bbb")
+       |     |
+       |     -1
+       false
+---
+test3: ---
+assert("aaa".compareTo("bbb") >= 0)
+             |                |
+             |                false
+             -1
+---
+test4: ---
+assert("aaa" >= "bbb")
+       |     |
+       |     -1
+       false
+---
+test5: ---
+assert("bbb".compareTo("aaa") < 0)
+             |                |
+             |                false
+             1
+---
+test6: ---
+assert("bbb" < "aaa")
+       |     |
+       |     1
+       false
+---
+test7: ---
+assert("bbb".compareTo("aaa") <= 0)
+             |                |
+             |                false
+             1
+---
+test8: ---
+assert("bbb" <= "aaa")
+       |     |
+       |     1
+       false
+---

@@ -59,7 +59,7 @@ internal open class KotlinJvmPlugin(
 
     override fun configureClassInspectionForIC(project: Project) {
         // For new IC this task is not needed
-        if (!project.kotlinPropertiesProvider.useClasspathSnapshot) {
+        if (!project.kotlinPropertiesProvider.useClasspathSnapshot.get()) {
             super.configureClassInspectionForIC(project)
         }
     }

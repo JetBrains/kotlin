@@ -214,7 +214,7 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
         }.also { factory ->
             factory.parent = irClass
             factory.copyTypeParametersFrom(irClass)
-            factory.copyValueParametersFrom(constructor)
+            factory.copyParametersFrom(constructor)
             factory.annotations = annotations
             factory.dispatchReceiverParameter = irClass.thisReceiver?.copyTo(factory)
 

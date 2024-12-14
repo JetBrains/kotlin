@@ -6,6 +6,7 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irGet
@@ -22,9 +23,9 @@ import org.jetbrains.kotlin.ir.util.deepCopyWithoutPatchingParents
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
-fun IrBuilderWithScope.getProperty(receiver: IrExpression, property: IrProperty): IrExpression {
+fun IrBuilderWithScope.getProperty(receiver: IrExpression, property: IrProperty, expectedPropertyType: IrType? = null): IrExpression {
     return if (property.getter != null)
-        irGet(property.getter!!.returnType, receiver, property.getter!!.symbol)
+        irGet(expectedPropertyType ?: property.getter!!.returnType, receiver, property.getter!!.symbol)
     else
         irGetField(receiver, property.backingField!!)
 }

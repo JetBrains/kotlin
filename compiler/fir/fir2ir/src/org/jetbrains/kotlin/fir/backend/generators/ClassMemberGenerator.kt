@@ -404,7 +404,7 @@ internal class ClassMemberGenerator(
                         for ((index, typeArgument) in typeArguments.withIndex()) {
                             if (index >= constructor.typeParameters.size) break
                             val irType = (typeArgument as ConeKotlinTypeProjection).type.toIrType(c)
-                            it.putTypeArgument(index, irType)
+                            it.typeArguments[index] = irType
                         }
                     }
                 }

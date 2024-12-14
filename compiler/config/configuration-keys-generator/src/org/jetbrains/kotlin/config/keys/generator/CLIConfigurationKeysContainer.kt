@@ -47,8 +47,6 @@ object CLIConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.cli.c
 
     val METADATA_DESTINATION_DIRECTORY by key<File>("metadata destination directory", comment = "See K2MetadataCompilerArguments")
 
-    val FLEXIBLE_PHASE_CONFIG by key<PhaseConfigurationService>("flexible phase configuration")
-
     val PATH_TO_KOTLIN_COMPILER_JAR by key<File>("jar of Kotlin compiler in Kotlin plugin", comment = "used in FIR IDE uast tests")
 
     val PRINT_VERSION by key<Boolean>("Print compiler version")

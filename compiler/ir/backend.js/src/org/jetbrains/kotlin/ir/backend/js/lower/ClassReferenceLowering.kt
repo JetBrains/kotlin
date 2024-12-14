@@ -274,7 +274,7 @@ abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : Bod
 
             override fun visitCall(expression: IrCall): IrExpression =
                 if (Symbols.isTypeOfIntrinsic(expression.symbol)) {
-                    createKType(expression.getTypeArgument(0)!!, hashSetOf())
+                    createKType(expression.typeArguments[0]!!, hashSetOf())
                 } else {
                     super.visitCall(expression)
                 }

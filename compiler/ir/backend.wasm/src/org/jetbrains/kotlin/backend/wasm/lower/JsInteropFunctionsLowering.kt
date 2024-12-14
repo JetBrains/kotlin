@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
-import org.jetbrains.kotlin.backend.common.ir.addDispatchReceiver
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExternalType
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.toJsStringLiteral
 import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
 import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
-import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArgumentsFromEnvironment
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
@@ -595,7 +593,9 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             name = Name.identifier("invoke")
             returnType = info.originalResultType
         }.apply {
-            addDispatchReceiver { type = closureClass.defaultType }
+            parameters += buildReceiverParameter {
+                type = closureClass.defaultType
+            }
             info.originalParameterTypes.forEachIndexed { index, irType ->
                 addValueParameter {
                     name = Name.identifier("p$index")
@@ -791,7 +791,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         override fun adapt(expression: IrExpression, builder: IrBuilderWithScope): IrExpression {
             val call = builder.irCall(context.wasmSymbols.refCastNull)
             call.putValueArgument(0, expression)
-            call.putTypeArgument(0, toType)
+            call.typeArguments[0] = toType
             return call
         }
     }

@@ -1,0 +1,7 @@
+compiler/testData/cli/jvm/annotationDefaultTarget.kt:3:104: warning: this annotation is currently applied to the value parameter only, but in the future it will also be applied to 'property'. See https://youtrack.jetbrains.com/issue/KT-73255 for more details. To remove this warning, use the '@param:' annotation target.
+class My(@Deprecated(message = "Please don't use this bad callable", level = DeprecationLevel.WARNING) @Simple val x: String)
+                                                                                                       ^^^^^^^
+compiler/testData/cli/jvm/annotationDefaultTarget.kt:7:8: warning: 'val x: String' is deprecated. Please don't use this bad callable.
+    my.x
+       ^
+OK

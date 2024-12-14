@@ -840,6 +840,31 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
             field = value
         }
 
+    @Argument(
+        value = "-Xannotation-default-target",
+        valueDescription = "first-only|first-only-warn|param-property",
+        description = """Change the default annotation targets for constructor properties:
+-Xannotation-default-target=first-only:      use the first of the following allowed targets: '@param:', '@property:', '@field:';
+-Xannotation-default-target=first-only-warn: same as first-only, and raise warnings when both '@param:' and either '@property:' or '@field:' are allowed;
+-Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
+default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before."""
+    )
+    var annotationDefaultTarget: String? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-XXdebug-level-compiler-checks",
+        description = "Enable debug level compiler checks. ATTENTION: these checks can slow compiler down or even crash it."
+    )
+    var debugLevelCompilerChecks = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @OptIn(IDEAPluginsCompatibilityAPI::class)
     open fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
@@ -876,6 +901,22 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
     open fun configureLanguageFeatures(collector: MessageCollector): MutableMap<LanguageFeature, LanguageFeature.State> =
         HashMap<LanguageFeature, LanguageFeature.State>().apply {
             configureCommonLanguageFeatures(this@CommonCompilerArguments)
+
+            // Non-automatic logic as it's more complex
+            when (AnnotationDefaultTargetMode.fromStringOrNull(annotationDefaultTarget)) {
+                null -> {}
+                AnnotationDefaultTargetMode.FIRST_ONLY -> {
+                    put(LanguageFeature.AnnotationDefaultTargetMigrationWarning, LanguageFeature.State.DISABLED)
+                    put(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, LanguageFeature.State.DISABLED)
+                }
+                AnnotationDefaultTargetMode.FIRST_ONLY_WARN -> {
+                    put(LanguageFeature.AnnotationDefaultTargetMigrationWarning, LanguageFeature.State.ENABLED)
+                    put(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, LanguageFeature.State.DISABLED)
+                }
+                AnnotationDefaultTargetMode.PARAM_PROPERTY -> {
+                    put(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, LanguageFeature.State.ENABLED)
+                }
+            }
 
             if (progressiveMode) {
                 LanguageFeature.entries.filter { it.enabledInProgressiveMode }.forEach {

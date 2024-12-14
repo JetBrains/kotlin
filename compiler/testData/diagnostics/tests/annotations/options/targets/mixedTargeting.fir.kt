@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-69058
+// LATEST_LV_DIFFERENCE
 
 // FILE: test/AnnotationTargets.java
 

@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.collectUpperBounds
-import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
-import org.jetbrains.kotlin.fir.declarations.utils.isFinal
-import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.declarations.utils.isInterface
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
@@ -76,7 +73,7 @@ internal fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
         isEnumClass = boundsSymbols.any { it.isEnumClass },
         isPrimitive = bounds.any { it.isPrimitiveOrNullablePrimitive },
         isBuiltin = boundsSymbols.any { it.isBuiltin },
-        isValueClass = boundsSymbols.any { it.isInline },
+        isValueClass = boundsSymbols.any { it.isInlineOrValue },
         isFinal = boundsSymbols.any { it.isFinalClass },
         isClass = boundsSymbols.any { it.isClass },
         // In K1's intersector, `canHaveSubtypes()` is called for `nullabilityStripped`.

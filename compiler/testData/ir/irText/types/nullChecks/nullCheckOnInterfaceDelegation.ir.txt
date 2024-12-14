@@ -57,8 +57,8 @@ FILE fqName:<root> fileName:/nullCheckOnInterfaceDelegation.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.Derived) returnType:@[FlexibleNullability] kotlin.String?
       overridden:
-        public abstract fun foo (): kotlin.String declared in <root>.IFoo
         public open fun foo (): @[FlexibleNullability] kotlin.String? declared in <root>.A
+        public abstract fun foo (): kotlin.String declared in <root>.IFoo
       $this: VALUE_PARAMETER name:<this> type:<root>.Derived
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): @[FlexibleNullability] kotlin.String? declared in <root>.Derived'

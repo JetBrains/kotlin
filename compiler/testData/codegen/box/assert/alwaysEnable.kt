@@ -1,6 +1,8 @@
 // IGNORE_BACKEND: WASM
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
+// ^^^ Assertions not supported for JS.
 // ASSERTIONS_MODE: always-enable
 // WITH_STDLIB
 

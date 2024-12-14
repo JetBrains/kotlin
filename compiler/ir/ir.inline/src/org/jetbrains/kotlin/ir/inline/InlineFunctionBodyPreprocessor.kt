@@ -10,11 +10,9 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
-import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -186,7 +184,7 @@ internal class InlineFunctionBodyPreprocessor(
                 // So we postpone the postprocessor call for a separate run. This shouldn't be a significant performance hit,
                 // as typeOf calls are rare.
                 if (Symbols.isTypeOfIntrinsic(expression.symbol)) {
-                    typeOfNodes[it] = expression.getTypeArgument(0)!!.leaveNonReifiedAsIs()
+                    typeOfNodes[it] = expression.typeArguments[0]!!.leaveNonReifiedAsIs()
                 }
             }
         }

@@ -62,6 +62,7 @@ abstract class NodeJsEnvSpec : EnvSpec<NodeJsEnv>() {
                 architectureName = architecture,
                 ivyDependency = getIvyDependency(),
                 downloadBaseUrl = downloadBaseUrl.orNull,
+                allowInsecureProtocol = allowInsecureProtocol.get(),
             )
         }
     }

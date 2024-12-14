@@ -440,7 +440,7 @@ object ConeTypeCompatibilityChecker {
                     firClass.isPrimitiveType() ||
                     (ctx.prohibitComparisonOfIncompatibleClasses && firClass.classId == StandardClassIds.KClass) ||
                     firClass.classId == StandardClassIds.String || firClass.classId == StandardClassIds.Unit ||
-                    (firClass is FirRegularClassSymbol && (firClass.isData || firClass.isInline))
+                    (firClass is FirRegularClassSymbol && (firClass.isData || firClass.isInlineOrValue))
         }
 
         private val FirClassSymbol<*>.isFinal: Boolean

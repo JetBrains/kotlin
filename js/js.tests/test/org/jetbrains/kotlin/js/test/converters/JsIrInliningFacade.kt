@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
-import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringContext
 import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringPhasesProvider
 import org.jetbrains.kotlin.js.test.utils.createTestPhaseConfig
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -34,12 +34,12 @@ class JsIrInliningFacade(
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val phases = JsPreSerializationLoweringPhasesProvider.lowerings(configuration)
-        val phaseConfig = createTestPhaseConfig(testServices, module, phases)
+        val phaseConfig = createTestPhaseConfig(testServices, module)
 
         val transformedModule = PhaseEngine(
             phaseConfig,
             PhaserState(),
-            PreSerializationLoweringContext(inputArtifact.irPluginContext.irBuiltIns, configuration)
+            JsPreSerializationLoweringContext(inputArtifact.irPluginContext.irBuiltIns, configuration)
         ).runPreSerializationLoweringPhases(
             inputArtifact.irModuleFragment,
             JsPreSerializationLoweringPhasesProvider,

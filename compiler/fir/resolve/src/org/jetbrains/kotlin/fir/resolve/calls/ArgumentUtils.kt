@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.model.TypeSystemCommonSuperTypesContext
 
-internal fun prepareCapturedType(argumentType: ConeKotlinType, context: ResolutionContext): ConeKotlinType {
+internal fun prepareCapturedType(argumentType: ConeKotlinType, session: FirSession): ConeKotlinType {
     if (argumentType.isRaw()) return argumentType
-    return context.typeContext.captureFromExpression(argumentType.fullyExpandedType(context.session)) ?: argumentType
+    return session.typeContext.captureFromExpression(argumentType.fullyExpandedType(session)) ?: argumentType
 }
 
 fun FirExpression.getExpectedType(

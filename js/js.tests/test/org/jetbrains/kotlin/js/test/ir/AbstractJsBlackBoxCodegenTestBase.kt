@@ -144,9 +144,11 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
             }
 
             is JsBackendFacades.WithSeparatedDeserialization -> {
-                configureIrHandlersStep { useHandlers(backendFacades.preSerializationHandler) }
+                // TODO: KT-73171 uncomment the following line
+                //configureIrHandlersStep { useHandlers(backendFacades.preSerializationHandler) }
                 facadeStep(backendFacades.deserializerFacade)
-                configureDeserializedIrHandlersStep { useHandlers(backendFacades.postDeserializationHandler) }
+                // TODO: KT-73171 uncomment the following line
+                //deserializedIrHandlersStep { useHandlers(backendFacades.postDeserializationHandler) }
             }
         }
 
@@ -164,7 +166,7 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
         forTestsMatching("compiler/testData/codegen/box/involvesIrInterpreter/*") {
             enableMetaInfoHandler()
             configureKlibArtifactsHandlersStep {
-                useHandlers(::KlibInterpreterDumpHandler)
+                useHandlers(::JsKlibInterpreterDumpHandler)
             }
             configureJsArtifactsHandlersStep {
                 useHandlers(::JsIrInterpreterDumpHandler)

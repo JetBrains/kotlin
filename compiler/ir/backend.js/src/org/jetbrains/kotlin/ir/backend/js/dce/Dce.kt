@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.dce
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
+import org.jetbrains.kotlin.ir.backend.js.mainFunctionWrapper
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -121,7 +122,7 @@ private fun buildRoots(
     }
 
     JsMainFunctionDetector(context).getMainFunctionOrNull(modules.last())
-        ?.let { context.mapping.mainFunctionToItsWrapper[it] }
+        ?.mainFunctionWrapper
         ?.let { add(it) }
 
     addIfNotNull(context.intrinsics.void.owner.backingField)

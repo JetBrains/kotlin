@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
@@ -75,7 +75,7 @@ fun FirConstructorSymbol.getConstructedClass(session: FirSession): FirRegularCla
 fun FirRegularClassSymbol.isInlineOrValueClass(): Boolean {
     if (this.classKind != ClassKind.CLASS) return false
 
-    return isInline
+    return isInlineOrValue
 }
 
 @PrivateForInline

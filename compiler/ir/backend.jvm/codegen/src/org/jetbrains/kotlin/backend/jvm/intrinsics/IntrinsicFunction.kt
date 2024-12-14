@@ -54,7 +54,7 @@ abstract class IntrinsicFunction(
                 valueParameter.isVararg -> {
                     // TODO: is there an easier way to get the substituted type of an empty vararg argument?
                     val arrayType = codegen.typeMapper.mapType(
-                        valueParameter.type.substitute(expression.symbol.owner.typeParameters, expression.typeArguments)
+                        valueParameter.type.substitute(expression.symbol.owner.typeParameters, expression.typeArguments.map { it!! })
                     )
                     codegen.mv.aconst(0)
                     codegen.mv.newarray(AsmUtil.correctElementType(arrayType))
@@ -67,9 +67,6 @@ abstract class IntrinsicFunction(
     private fun genArg(expression: IrExpression, codegen: ExpressionCodegen, index: Int, data: BlockInfo) {
         codegen.gen(expression, argsTypes[index], expression.type, data)
     }
-
-    private val IrFunctionAccessExpression.typeArguments: List<IrType>
-        get() = (0 until typeArgumentsCount).map { getTypeArgument(it)!! }
 
     companion object {
         fun create(

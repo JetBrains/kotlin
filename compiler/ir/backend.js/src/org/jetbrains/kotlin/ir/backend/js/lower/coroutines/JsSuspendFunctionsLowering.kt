@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.isSuspend
+import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
@@ -152,11 +153,11 @@ class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendF
         stateMachineBuilder.entryState.entryBlock.run {
             val receiver = JsIrBuilder.buildGetValue(coroutineClass.thisReceiver!!.symbol)
             val exceptionTrapId = stateMachineBuilder.rootExceptionTrap.id
-            assert(exceptionTrapId >= 0)
+            check(exceptionTrapId >= 0)
             val id = JsIrBuilder.buildInt(context.irBuiltIns.intType, exceptionTrapId)
             statements.add(0, JsIrBuilder.buildCall(coroutineImplExceptionStatePropertySetter.symbol).also { call ->
-                call.dispatchReceiver = receiver
-                call.putValueArgument(0, id)
+                call.arguments[0] = receiver
+                call.arguments[1] = id
             })
         }
 
@@ -192,10 +193,10 @@ class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendF
             }
         }
         val isSuspendLambda = transformingFunction.parent === coroutineClass
-        val parameters = if (isSuspendLambda) simplifiedFunction.valueParameters else simplifiedFunction.parameters
-        parameters.forEach {
-            localToPropertyMap.getOrPut(it.symbol) {
-                argumentToPropertiesMap.getValue(it).symbol
+        val parameters = if (isSuspendLambda) simplifiedFunction.nonDispatchParameters else simplifiedFunction.parameters
+        for (parameter in parameters) {
+            localToPropertyMap.getOrPut(parameter.symbol) {
+                argumentToPropertiesMap.getValue(parameter).symbol
             }
         }
 
@@ -214,8 +215,8 @@ class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendF
 
         for (state in sortedStates) {
             val condition = JsIrBuilder.buildCall(eqeqeqInt).apply {
-                putValueArgument(0, JsIrBuilder.buildGetValue(subject))
-                putValueArgument(1, JsIrBuilder.buildInt(context.irBuiltIns.intType, state.id))
+                arguments[0] = JsIrBuilder.buildGetValue(subject)
+                arguments[1] = JsIrBuilder.buildInt(context.irBuiltIns.intType, state.id)
             }
 
             switch.branches += IrBranchImpl(state.entryBlock.startOffset, state.entryBlock.endOffset, condition, state.entryBlock)
@@ -273,15 +274,15 @@ class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendF
     override fun IrBlockBodyBuilder.generateCoroutineStart(invokeSuspendFunction: IrFunction, receiver: IrExpression) {
         val dispatchReceiverVar = createTmpVariable(receiver, irType = receiver.type)
         +irCall(coroutineImplResultSymbolSetter).apply {
-            dispatchReceiver = irGet(dispatchReceiverVar)
-            putValueArgument(0, irGetObject(context.irBuiltIns.unitClass))
+            arguments[0] = irGet(dispatchReceiverVar)
+            arguments[1] = irGetObject(context.irBuiltIns.unitClass)
         }
         +irCall(coroutineImplExceptionPropertySetter).apply {
-            dispatchReceiver = irGet(dispatchReceiverVar)
-            putValueArgument(0, irNull())
+            arguments[0] = irGet(dispatchReceiverVar)
+            arguments[1] = irNull()
         }
         val call = irCall(invokeSuspendFunction.symbol).apply {
-            dispatchReceiver = irGet(dispatchReceiverVar)
+            arguments[0] = irGet(dispatchReceiverVar)
         }
         val functionReturnType = scope.scopeOwnerSymbol.assertedCast<IrSimpleFunctionSymbol> { "Expected function symbol" }.owner.returnType
         +irReturn(generateDelegatedCall(functionReturnType, call))

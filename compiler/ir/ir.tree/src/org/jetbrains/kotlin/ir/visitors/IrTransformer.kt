@@ -11,4 +11,5 @@ package org.jetbrains.kotlin.ir.visitors
  * Once we migrate all usages of [IrElementTransformer] to [IrTransformer],
  * it will be made auto-generated, and [IrElementTransformer] will be deleted.
  */
+@Suppress("DEPRECATED_COMPILER_API")
 abstract class IrTransformer<in D> : IrElementTransformer<D>

@@ -48,6 +48,7 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
 /**
  * @property normalizeNames Rename temporary local variables using a stable naming scheme
  * @property stableOrder Print declarations in a sorted order
+ * @property stableOrderOfFakeOverrides Print fake overrides for functions and properties in a sorted order
  * @property verboseErrorTypes Whether to dump the value of [IrErrorType.kotlinType] for [IrErrorType] nodes
  * @property printFacadeClassInFqNames Whether printed fully-qualified names of top-level declarations should include the name of
  *   the file facade class (see [IrDeclarationOrigin.FILE_CLASS]) TODO: use [isHiddenDeclaration] instead.
@@ -61,6 +62,7 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
 data class DumpIrTreeOptions(
     val normalizeNames: Boolean = false,
     val stableOrder: Boolean = false,
+    val stableOrderOfFakeOverrides: Boolean = false,
     val verboseErrorTypes: Boolean = true,
     val printFacadeClassInFqNames: Boolean = true,
     val printFlagsInDeclarationReferences: Boolean = true,
@@ -190,7 +192,7 @@ class DumpIrTreeVisitor(
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             declaration.correspondingPropertySymbol?.dumpInternal("correspondingProperty")
-            declaration.overriddenSymbols.dumpSymbolReferences("overridden")
+            declaration.overriddenSymbols.dumpFakeOverrideSymbols()
             declaration.typeParameters.dumpElements()
             declaration.dispatchReceiverParameter?.accept(this, "\$this")
 
@@ -233,7 +235,7 @@ class DumpIrTreeVisitor(
         if (declaration.isHidden()) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
-            declaration.overriddenSymbols.dumpSymbolReferences("overridden")
+            declaration.overriddenSymbols.dumpFakeOverrideSymbols()
             declaration.backingField?.accept(this, "")
             declaration.getter?.accept(this, "")
             declaration.setter?.accept(this, "")
@@ -296,15 +298,15 @@ class DumpIrTreeVisitor(
     }
 
     private fun dumpTypeArguments(expression: IrMemberAccessExpression<*>) {
-        val typeParameterNames = expression.getTypeParameterNames(expression.typeArgumentsCount)
-        for (index in 0 until expression.typeArgumentsCount) {
+        val typeParameterNames = expression.getTypeParameterNames(expression.typeArguments.size)
+        for (index in 0 until expression.typeArguments.size) {
             printer.println("<${typeParameterNames[index]}>: ${expression.renderTypeArgument(index)}")
         }
     }
 
     private fun dumpTypeArguments(expression: IrConstructorCall) {
-        val typeParameterNames = expression.getTypeParameterNames(expression.typeArgumentsCount)
-        for (index in 0 until expression.typeArgumentsCount) {
+        val typeParameterNames = expression.getTypeParameterNames(expression.typeArguments.size)
+        for (index in 0 until expression.typeArguments.size) {
             val typeParameterName = typeParameterNames[index]
             val parameterLabel =
                 if (index < expression.classTypeArgumentsCount)
@@ -344,7 +346,7 @@ class DumpIrTreeVisitor(
     }
 
     private fun IrMemberAccessExpression<*>.renderTypeArgument(index: Int): String =
-        getTypeArgument(index)?.render() ?: "<none>"
+        this.typeArguments[index]?.render() ?: "<none>"
 
     override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: String) {
         inlinedBlock.dumpLabeledElementWith(data) {
@@ -468,11 +470,11 @@ class DumpIrTreeVisitor(
         }
     }
 
-    private fun Collection<IrSymbol>.dumpSymbolReferences(caption: String) {
+    private fun Collection<IrSymbol>.dumpFakeOverrideSymbols() {
         if (isEmpty()) return
-        indented(caption) {
+        indented("overridden") {
             map(elementRenderer::renderSymbolReference)
-                .applyIf(options.stableOrder) { sorted() }
+                .applyIf(options.stableOrderOfFakeOverrides) { sorted() }
                 .forEach { printer.println(it) }
         }
     }

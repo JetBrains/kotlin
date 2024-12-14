@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.types.isLong
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.util.shallowCopy
 import org.jetbrains.kotlin.name.FqName
@@ -31,15 +32,16 @@ internal class StepHandler(
 ) : HeaderInfoHandler<IrCall, ProgressionType> {
     override fun matchIterable(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
-        return callee.valueParameters.singleOrNull()?.type?.let { it.isInt() || it.isLong() } == true &&
-                callee.extensionReceiverParameter?.type?.classOrNull in context.ir.symbols.progressionClasses &&
+        return callee.hasShape(extensionReceiver = true, regularParameters = 1) &&
+                callee.parameters[0].type.classOrNull in context.ir.symbols.progressionClasses &&
+                callee.parameters[1].type.let { it.isInt() || it.isLong() } &&
                 callee.kotlinFqName == FqName("kotlin.ranges.step")
     }
 
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             // Retrieve the HeaderInfo from the underlying progression (if any).
-            var nestedInfo = expression.extensionReceiver!!.accept(visitor, null) as? ProgressionHeaderInfo
+            var nestedInfo = expression.arguments[0]!!.accept(visitor, null) as? ProgressionHeaderInfo
                 ?: return null
 
             if (!nestedInfo.isLastInclusive) {
@@ -51,7 +53,7 @@ internal class StepHandler(
                     ?: return null
             }
 
-            val stepArg = expression.getValueArgument(0)!!
+            val stepArg = expression.arguments[1]!!
             // We can return the nested info if its step is constant and its absolute value is the same as the step argument. Examples:
             //
             //   1..10 step 1               // Nested step is 1, argument is 1. Equivalent to `1..10`.
@@ -78,7 +80,7 @@ internal class StepHandler(
                     exceptionMessage.addArgument(irString("Step must be positive, was: "))
                     exceptionMessage.addArgument(stepArgExpression.shallowCopy())
                     exceptionMessage.addArgument(irString("."))
-                    putValueArgument(0, exceptionMessage)
+                    arguments[0] = exceptionMessage
                 }
             }
             val stepArgValueAsLong = stepArgExpression.constLongValue
@@ -86,8 +88,8 @@ internal class StepHandler(
                 stepArgValueAsLong == null -> {
                     // Step argument is not a constant. In this case, we check if step <= 0.
                     val stepNonPositiveCheck = irCall(stepCompFun).apply {
-                        putValueArgument(0, stepArgExpression.shallowCopy())
-                        putValueArgument(1, data.run { zeroStepExpression() })
+                        arguments[0] = stepArgExpression.shallowCopy()
+                        arguments[1] = data.run { zeroStepExpression() }
                     }
                     irIfThen(
                         context.irBuiltIns.unitType,
@@ -130,8 +132,8 @@ internal class StepHandler(
                     val (tmpNestedStepVar, nestedStepExpression) = createLoopTemporaryVariableIfNecessary(nestedStep, "nestedStep")
                     nestedStepVar = tmpNestedStepVar
                     val nestedStepNonPositiveCheck = irCall(stepCompFun).apply {
-                        putValueArgument(0, nestedStepExpression.shallowCopy())
-                        putValueArgument(1, data.run { zeroStepExpression() })
+                        arguments[0] = nestedStepExpression.shallowCopy()
+                        arguments[1] = data.run { zeroStepExpression() }
                     }
                     if (stepArgVar == null) {
                         // Create a temporary variable for the possibly-negated step, so we don't have to re-check every time step is used.
@@ -301,17 +303,17 @@ internal class StepHandler(
                 // Bounds are signed for unsigned progressions but `getProgressionLastElement` expects unsigned.
                 // The return value is finally converted back to signed since it will be assigned back to `last`.
                 irCall(getProgressionLastElementFun).apply {
-                    putValueArgument(0, first.shallowCopy().asElementType().asUnsigned())
-                    putValueArgument(1, last.shallowCopy().asElementType().asUnsigned())
-                    putValueArgument(2, step.shallowCopy().asStepType())
+                    arguments[0] = first.shallowCopy().asElementType().asUnsigned()
+                    arguments[1] = last.shallowCopy().asElementType().asUnsigned()
+                    arguments[2] = step.shallowCopy().asStepType()
                 }.asSigned()
             } else {
                 irCall(getProgressionLastElementFun).apply {
                     // Step type is used for casting because it works for all signed progressions. In particular,
                     // getProgressionLastElement(Int, Int, Int) is called for CharProgression, which uses an Int step.
-                    putValueArgument(0, first.shallowCopy().asStepType())
-                    putValueArgument(1, last.shallowCopy().asStepType())
-                    putValueArgument(2, step.shallowCopy().asStepType())
+                    arguments[0] = first.shallowCopy().asStepType()
+                    arguments[1] = last.shallowCopy().asStepType()
+                    arguments[2] = step.shallowCopy().asStepType()
                 }
             }
         }

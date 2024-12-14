@@ -1,0 +1,33 @@
+FILE: usageWithoutContextForMultipleParameters.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context(a: R|A|, b: R|B|)
+    public final fun test(): R|kotlin/Unit| {
+    }
+    context(a: R|A|, b: R|B|)
+    public final val property: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String()
+        }
+    public final fun usage(): R|kotlin/Unit| {
+        R|kotlin/with|<R|A|, R|kotlin/String|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/test<Inapplicable(INAPPLICABLE): /test>#|()
+            ^ R|/property<Inapplicable(INAPPLICABLE): /property>#|
+        }
+        )
+    }
+    context(a: R|A|)
+    public final fun usage2(): R|kotlin/Unit| {
+        R|/test<Inapplicable(INAPPLICABLE): /test>#|()
+        R|/property<Inapplicable(INAPPLICABLE): /property>#|
+    }

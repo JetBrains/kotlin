@@ -42,9 +42,9 @@ class ComposableFunInterfaceLowering(private val context: IrPluginContext) :
     IrElementTransformerVoidWithContext(),
     ModuleLoweringPass {
 
-    override fun lower(module: IrModuleFragment) {
+    override fun lower(irModule: IrModuleFragment) {
         if (context.platform.isJvm()) {
-            module.transformChildrenVoid(this)
+            irModule.transformChildrenVoid(this)
         }
     }
 

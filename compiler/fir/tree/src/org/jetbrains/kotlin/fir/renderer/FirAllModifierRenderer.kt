@@ -53,6 +53,10 @@ class FirAllModifierRenderer : FirModifierRenderer() {
         if (memberDeclaration.isInline) {
             renderModifier("inline")
         }
+        @OptIn(SuspiciousValueClassCheck::class)
+        if (memberDeclaration is FirClass && memberDeclaration.isValue) {
+            renderModifier("value")
+        }
         if (memberDeclaration.isOperator) {
             renderModifier("operator")
         }

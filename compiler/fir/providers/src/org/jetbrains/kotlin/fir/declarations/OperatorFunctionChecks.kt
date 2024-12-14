@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.declarations
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.overriddenFunctions
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.Name
@@ -106,7 +107,7 @@ object OperatorFunctionChecks {
                     }
                     return buildString {
                         append("must override 'equals()' in Any")
-                        if (customEqualsSupported && containingClassSymbol.isInline) {
+                        if (customEqualsSupported && containingClassSymbol.isInlineOrValue) {
                             val expectedParameterTypeRendered =
                                 containingClassSymbol.defaultType().replaceArgumentsWithStarProjections().renderReadable()
                             append(" or define 'equals(other: ${expectedParameterTypeRendered}): Boolean'")
@@ -163,15 +164,31 @@ private abstract class Check {
 }
 
 private object Checks {
-    fun simple(message: String, predicate: (FirSimpleFunction, FirSession) -> Boolean) = object : Check() {
-        override fun check(function: FirSimpleFunction, session: FirSession, scopeSession: ScopeSession?): String? =
-            message.takeIf { !predicate(function, session) }
-    }
+    fun simple(
+        message: String,
+        requiredResolvePhase: ((FirSimpleFunction) -> FirResolvePhase?)? = null,
+        predicate: (FirSimpleFunction, FirSession) -> Boolean,
+    ) =
+        object : Check() {
+            override fun check(function: FirSimpleFunction, session: FirSession, scopeSession: ScopeSession?): String? =
+                message.takeIf {
+                    requiredResolvePhase?.invoke(function)?.let { function.lazyResolveToPhase(it) }
+                    !predicate(function, session)
+                }
+        }
 
-    fun full(message: String, predicate: (FirSession, FirSimpleFunction) -> Boolean) = object : Check() {
-        override fun check(function: FirSimpleFunction, session: FirSession, scopeSession: ScopeSession?): String? =
-            message.takeIf { !predicate(session, function) }
-    }
+    fun full(
+        message: String,
+        requiredResolvePhase: ((FirSimpleFunction) -> FirResolvePhase?)? = null,
+        predicate: (FirSession, FirSimpleFunction) -> Boolean,
+    ) =
+        object : Check() {
+            override fun check(function: FirSimpleFunction, session: FirSession, scopeSession: ScopeSession?): String? =
+                message.takeIf {
+                    requiredResolvePhase?.invoke(function)?.let { function.lazyResolveToPhase(it) }
+                    !predicate(session, function)
+                }
+        }
 
     val memberOrExtension = simple("must be a member or an extension function") { it, _ ->
         it.dispatchReceiverType != null || it.receiverParameter != null
@@ -181,7 +198,7 @@ private object Checks {
         it.dispatchReceiverType != null
     }
 
-    val nonSuspend = simple("must not be suspend") { it, _ ->
+    val nonSuspend = simple("must not be suspend", { _ -> FirResolvePhase.STATUS }) { it, _ ->
         !it.isSuspend
     }
 
@@ -204,24 +221,38 @@ private object Checks {
     }
 
     object Returns {
-        val boolean = simple("must return 'Boolean'") { it, session ->
+        fun returnsCheck(message: String, predicate: (FirSimpleFunction, FirSession) -> Boolean): Check =
+            simple(
+                message,
+                { fn ->
+                    when (fn.returnTypeRef) {
+                        is FirResolvedTypeRef -> null
+                        is FirImplicitTypeRef -> FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
+                        else -> FirResolvePhase.TYPES
+                    }
+                },
+                predicate
+            )
+
+        val boolean = returnsCheck("must return 'Boolean'") { it, session ->
             it.returnTypeRef.coneType.fullyExpandedType(session).isBoolean
         }
 
-        val int = simple("must return 'Int'") { it, session ->
+        val int = returnsCheck("must return 'Int'") { it, session ->
             it.returnTypeRef.coneType.fullyExpandedType(session).isInt
         }
 
-        val unit = simple("must return 'Unit'") { it, session ->
+        val unit = returnsCheck("must return 'Unit'") { it, session ->
             it.returnTypeRef.coneType.fullyExpandedType(session).isUnit
         }
     }
 
-    val noDefaultAndVarargs = simple("should not have varargs or parameters with default values") { it, _ ->
-        it.valueParameters.all { param ->
-            param.defaultValue == null && !param.isVararg
+    val noDefaultAndVarargs =
+        simple("should not have varargs or parameters with default values", { _ -> FirResolvePhase.BODY_RESOLVE }) { it, _ ->
+            it.valueParameters.all { param ->
+                param.defaultValue == null && !param.isVararg
+            }
         }
-    }
 
     private val kPropertyType = ConeClassLikeTypeImpl(
         StandardClassIds.KProperty.toLookupTag(),
@@ -229,8 +260,9 @@ private object Checks {
         isMarkedNullable = false
     )
 
-    val isKProperty = full("second parameter must be of type KProperty<*> or its supertype") { session, function ->
-        val paramType = function.valueParameters.getOrNull(1)?.returnTypeRef?.coneType ?: return@full false
-        kPropertyType.isSubtypeOf(paramType, session, errorTypesEqualToAnything = true)
-    }
+    val isKProperty =
+        full("second parameter must be of type KProperty<*> or its supertype", { _ -> FirResolvePhase.TYPES }) { session, function ->
+            val paramType = function.valueParameters.getOrNull(1)?.returnTypeRef?.coneType ?: return@full false
+            kPropertyType.isSubtypeOf(paramType, session, errorTypesEqualToAnything = true)
+        }
 }

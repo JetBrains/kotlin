@@ -1,0 +1,6 @@
+/changeOnOverrideDiagnostic.kt:11:20: warning: the corresponding parameter in the supertype 'A' is named 'a'. This may cause problems when calling this function with named arguments.
+    override fun b(b : Int) {}
+                   ^
+/changeOnOverrideDiagnostic.kt:15:20: warning: the corresponding parameter in the supertype 'B' is named 'a'. This may cause problems when calling this function with named arguments.
+    override fun b(b : Int) {}
+                   ^

@@ -11,4 +11,5 @@ package org.jetbrains.kotlin.ir.visitors
  * Once we migrate all usages of [IrElementVisitorVoid] to [IrVisitorVoid],
  * it will be made auto-generated, and [IrElementVisitorVoid] will be deleted.
  */
+@Suppress("DEPRECATED_COMPILER_API")
 abstract class IrVisitorVoid : IrVisitor<Unit, Nothing?>(), IrElementVisitorVoid

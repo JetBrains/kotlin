@@ -981,6 +981,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = PotentiallyNonReportedAnnotation::class
     }
 
+    interface AnnotationWillBeAppliedAlsoToPropertyOrField : KaFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass get() = AnnotationWillBeAppliedAlsoToPropertyOrField::class
+        val useSiteDescription: String
+    }
+
     interface JsModuleProhibitedOnVar : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = JsModuleProhibitedOnVar::class
     }
@@ -2403,6 +2408,20 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = VirtualMemberHidden::class
         val declared: KaCallableSymbol
         val overriddenContainer: KaClassLikeSymbol
+    }
+
+    interface ParameterNameChangedOnOverride : KaFirDiagnostic<KtParameter> {
+        override val diagnosticClass get() = ParameterNameChangedOnOverride::class
+        val superType: KaClassLikeSymbol
+        val conflictingParameter: KaSymbol
+    }
+
+    interface DifferentNamesForTheSameParameterInSupertypes : KaFirDiagnostic<KtClassOrObject> {
+        override val diagnosticClass get() = DifferentNamesForTheSameParameterInSupertypes::class
+        val currentParameter: KaSymbol
+        val conflictingParameter: KaSymbol
+        val parameterNumber: Int
+        val conflictingFunctions: List<KaFunctionSymbol>
     }
 
     interface ManyCompanionObjects : KaFirDiagnostic<KtObjectDeclaration> {

@@ -111,7 +111,7 @@ internal class AnonymousObjectSuperConstructorLowering(val context: JvmBackendCo
             }
         }
 
-        val classTypeParametersCount = objectConstructorCall.typeArgumentsCount - objectConstructorCall.symbol.owner.typeParameters.size
+        val classTypeParametersCount = objectConstructorCall.typeArguments.size - objectConstructorCall.symbol.owner.typeParameters.size
         context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
             expression.statements[expression.statements.size - 1] = irBlock(objectConstructorCall) {
                 +IrConstructorCallImpl.fromSymbolOwner(

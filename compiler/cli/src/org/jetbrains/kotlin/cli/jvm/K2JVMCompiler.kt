@@ -69,7 +69,9 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     ): ExitCode {
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
-        configuration.phaseConfig = createPhaseConfig(jvmPhases, arguments, messageCollector)
+        configuration.phaseConfig = createPhaseConfig(arguments).also {
+            if (arguments.listPhases) it.list(jvmPhases)
+        }
 
         if (!configuration.configureJdkHome(arguments)) return COMPILATION_ERROR
 
@@ -252,15 +254,22 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         internal fun kaptIsEnabled(arguments: K2JVMCompilerArguments): Boolean {
             return arguments.pluginOptions?.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") } == true
         }
+
+        internal fun createCustomPerformanceManagerOrNull(
+            arguments: K2JVMCompilerArguments,
+            services: Services,
+        ): CommonCompilerPerformanceManager? {
+            val externalManager = services[CommonCompilerPerformanceManager::class.java]
+            if (externalManager != null) return externalManager
+            val argument = arguments.profileCompilerCommand ?: return null
+            return ProfilingCompilerPerformanceManager.create(argument)
+        }
     }
 
     override val defaultPerformanceManager: K2JVMCompilerPerformanceManager = K2JVMCompilerPerformanceManager()
 
     override fun createPerformanceManager(arguments: K2JVMCompilerArguments, services: Services): CommonCompilerPerformanceManager {
-        val externalManager = services[CommonCompilerPerformanceManager::class.java]
-        if (externalManager != null) return externalManager
-        val argument = arguments.profileCompilerCommand ?: return defaultPerformanceManager
-        return ProfilingCompilerPerformanceManager.create(argument)
+        return createCustomPerformanceManagerOrNull(arguments, services) ?: defaultPerformanceManager
     }
 
     private fun isUseOldBackendAllowed(): Boolean =

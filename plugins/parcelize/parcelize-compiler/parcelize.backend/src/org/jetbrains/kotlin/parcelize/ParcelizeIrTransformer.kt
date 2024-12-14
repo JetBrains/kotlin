@@ -51,7 +51,7 @@ class ParcelizeIrTransformer(
             override fun visitCall(expression: IrCall): IrExpression {
                 val callee = expression.symbol.owner
                 if (callee.isParcelableCreatorIntrinsic()) {
-                    expression.getTypeArgument(0)?.getClass()?.let { parcelableClass ->
+                    expression.typeArguments[0]?.getClass()?.let { parcelableClass ->
                         androidSymbols.createBuilder(expression.symbol).apply {
                             return getParcelableCreator(parcelableClass)
                         }

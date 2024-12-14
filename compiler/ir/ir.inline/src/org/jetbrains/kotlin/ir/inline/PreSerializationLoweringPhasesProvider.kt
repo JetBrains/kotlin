@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.ir.inline
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.phaser.SameTypeNamedCompilerPhase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.KotlinMangler.IrMangler
 
-abstract class PreSerializationLoweringPhasesProvider<Context : CommonBackendContext> {
+abstract class PreSerializationLoweringPhasesProvider<Context : LoweringContext> {
 
     protected open val klibAssertionWrapperLowering: ((Context) -> FileLoweringPass)?
         get() = null

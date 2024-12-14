@@ -89,7 +89,9 @@ class JvmSharedVariablesManager(
         val refConstructorCall = IrConstructorCallImpl.fromSymbolOwner(
             originalDeclaration.startOffset, originalDeclaration.startOffset, refType, provider.refConstructor.symbol
         ).apply {
-            typeArguments.forEachIndexed(::putTypeArgument)
+            typeArguments.forEachIndexed { index, type ->
+                this.typeArguments[index] = type
+            }
         }
         return with(originalDeclaration) {
             IrVariableImpl(
@@ -124,8 +126,8 @@ class JvmSharedVariablesManager(
 
     private fun unsafeCoerce(value: IrExpression, from: IrType, to: IrType): IrExpression =
         IrCallImpl.fromSymbolOwner(value.startOffset, value.endOffset, to, symbols.unsafeCoerceIntrinsic).apply {
-            putTypeArgument(0, from)
-            putTypeArgument(1, to)
+            typeArguments[0] = from
+            typeArguments[1] = to
             arguments[0] = value
         }
 

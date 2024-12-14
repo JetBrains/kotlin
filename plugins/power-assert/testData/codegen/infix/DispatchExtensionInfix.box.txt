@@ -1,0 +1,51 @@
+test1: ---Assertion failed---
+test2: ---
+1 mustEqual (2 + 4)
+               |
+               6
+---
+test3: ---
+(1 + 1) mustEqual 6
+   |
+   2
+---
+test4: ---
+(1 + 1) mustEqual (2 + 4)
+   |                 |
+   |                 6
+   2
+---
+test5: ---
+"hello".substring(1, 4).length mustEqual "world".length
+        |               |                        |
+        |               |                        5
+        |               3
+        ell
+---
+test6: ---Assertion failed---
+test7: ---
+1.mustEqual(2 + 4)
+              |
+              6
+---
+test8: ---
+(1 + 1).mustEqual(6)
+|  |
+|  2
+Asserter
+---
+test9: ---
+(1 + 1).mustEqual(2 + 4)
+|  |                |
+|  |                6
+|  2
+Asserter
+---
+test10: ---
+"hello".substring(1, 4).length.mustEqual("world".length)
+|       |               |                        |
+|       |               |                        5
+|       |               3
+|       ell
+Asserter
+---

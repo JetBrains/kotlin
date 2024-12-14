@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /** Builds a [HeaderInfo] for progressions built using the `rangeTo` function. */
@@ -22,15 +23,16 @@ internal class RangeToHandler(private val context: CommonBackendContext) : Heade
 
     override fun matchIterable(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
-        return callee.valueParameters.singleOrNull()?.type in progressionElementTypes &&
-                callee.dispatchReceiverParameter?.type in progressionElementTypes &&
+        return callee.hasShape(dispatchReceiver = true, regularParameters = 1) &&
+                callee.parameters[0].type in progressionElementTypes &&
+                callee.parameters[1].type in progressionElementTypes &&
                 callee.name == OperatorNameConventions.RANGE_TO
     }
 
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol) =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
-            val first = expression.dispatchReceiver!!
-            val last = expression.getValueArgument(0)!!
+            val first = expression.arguments[0]!!
+            val last = expression.arguments[1]!!
             val step = irInt(1)
             val direction = ProgressionDirection.INCREASING
 
@@ -91,7 +93,7 @@ internal class RangeToHandler(private val context: CommonBackendContext) : Heade
         fun IrCall.dispatchReceiverName() = (dispatchReceiver as? IrCall)?.symbol?.owner?.fqNameWhenAvailable.toString()
 
         return if (irCall.origin == IrStatementOrigin.MINUS
-            && (irCall.getValueArgument(0) as? IrConst)?.value == 1
+            && (irCall.arguments[1] as? IrConst)?.value == 1
             && irCall.dispatchReceiverName() in allowedMethods // to avoid possible underflow
         ) irCall.dispatchReceiver
         else null

@@ -23,6 +23,7 @@ class FirScriptResolutionConfigurationExtensionImpl(
     session: FirSession,
     @Suppress("UNUSED_PARAMETER") hostConfiguration: ScriptingHostConfiguration
 ) : FirScriptResolutionConfigurationExtension(session) {
+
     override fun getScriptDefaultImports(script: FirScript): List<FirImport> {
         val scriptSession = script.moduleData.session
         val scriptFile = scriptSession.firProvider.getFirScriptContainerFile(script.symbol) ?: return emptyList()

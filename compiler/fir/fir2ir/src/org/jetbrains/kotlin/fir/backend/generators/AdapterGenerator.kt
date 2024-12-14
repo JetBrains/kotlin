@@ -801,7 +801,7 @@ internal class AdapterGenerator(
                                 hasExtensionReceiver = false,
                                 origin = IrStatementOrigin.EXCLEXCL
                             ).apply {
-                                putTypeArgument(0, irFunctionType)
+                                typeArguments[0] = irFunctionType
                                 putValueArgument(0, IrGetValueImpl(startOffset, endOffset, irFunctionParameter.symbol))
                             }
                         )

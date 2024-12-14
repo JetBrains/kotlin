@@ -36,7 +36,7 @@ internal fun IrExpression.negate(): IrExpression {
 
             val unaryMinusFun = type.getClass()!!.functions.single {
                 it.name == OperatorNameConventions.UNARY_MINUS &&
-                        it.valueParameters.isEmpty()
+                        it.hasShape(dispatchReceiver = true)
             }
             IrCallImpl(
                 startOffset, endOffset, unaryMinusFun.returnType,
@@ -58,7 +58,7 @@ internal fun IrExpression.decrement(): IrExpression {
         else -> {
             val decFun = type.getClass()!!.functions.single {
                 it.name == OperatorNameConventions.DEC &&
-                        it.valueParameters.isEmpty()
+                        it.hasShape(dispatchReceiver = true)
             }
             IrCallImpl(
                 startOffset, endOffset, type,
@@ -196,7 +196,7 @@ private fun IrExpression.makeIrCallConversionToTargetClass(
     val numberCastFunctionName = Name.identifier("to${targetClass.name}")
     val castFun = sourceClass.functions.singleOrNull {
         it.name == numberCastFunctionName &&
-                it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null && it.valueParameters.isEmpty()
+                it.hasShape(dispatchReceiver = true)
     } ?: error("Internal error: cannot convert ${sourceClass.name} to ${targetClass.name}: ${render()}")
 
     return IrCallImpl(

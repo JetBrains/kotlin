@@ -41,7 +41,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
 
     init {
         configureTaskProvider { taskProvider ->
-            val useClasspathSnapshot = propertiesProvider.useClasspathSnapshot
+            val useClasspathSnapshot = propertiesProvider.useClasspathSnapshot.get()
 
             val classpathConfiguration = if (useClasspathSnapshot) {
                 val jvmToolchain = taskProvider.flatMap { it.defaultKotlinJavaToolchain }

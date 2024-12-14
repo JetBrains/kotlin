@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.cli.jvm.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.findMainClass
 import org.jetbrains.kotlin.cli.jvm.compiler.forAllFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.*
+import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.*
 import org.jetbrains.kotlin.cli.jvm.compiler.writeOutputsIfNeeded
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import java.io.File
 
+@OptIn(LegacyK2CliPipeline::class)
 open class IncrementalFirJvmCompilerRunner(
     workingDir: File,
     reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
@@ -200,15 +201,15 @@ open class IncrementalFirJvmCompilerRunner(
                         sourcesByModuleName = dirtySourcesByModuleName
                     )
 
-                    val analysisResults =
-                        @OptIn(IncrementalCompilationApi::class) compileModuleToAnalyzedFirViaLightTreeIncrementally(
-                            projectEnvironment,
-                            messageCollector,
-                            configuration,
-                            ModuleCompilerInput(targetId, groupedSources, configuration),
-                            diagnosticsReporter,
-                            incrementalExcludesScope,
-                        )
+                    @OptIn(IncrementalCompilationApi::class)
+                    val analysisResults = compileModuleToAnalyzedFirViaLightTreeIncrementally(
+                        projectEnvironment,
+                        messageCollector,
+                        configuration,
+                        ModuleCompilerInput(targetId, groupedSources, configuration),
+                        diagnosticsReporter,
+                        incrementalExcludesScope,
+                    )
 
                     // TODO: consider what to do if many compilations find a main class
                     if (mainClassFqName == null && configuration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {

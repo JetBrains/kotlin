@@ -70,8 +70,8 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
     override fun IrExpression.transformArrayEqualsArgument(type: IrType, irBuilder: IrBlockBodyBuilder): IrExpression =
         if (!type.isUnsignedArray()) this
         else irBuilder.irCall(jvmContext.ir.symbols.unsafeCoerceIntrinsic).apply {
-            putTypeArgument(0, type)
-            putTypeArgument(1, type.unboxInlineClass())
+            typeArguments[0] = type
+            typeArguments[1] = type.unboxInlineClass()
             putValueArgument(0, this@transformArrayEqualsArgument)
         }
 

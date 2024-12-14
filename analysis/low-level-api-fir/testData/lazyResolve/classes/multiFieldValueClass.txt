@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] multiFieldValueClass.kt
-    @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    @JvmInline[Unresolved]() public final? value [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.a] a: T, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.b] b: T): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -15,7 +15,7 @@ FILE: [ResolvedTo(RAW_FIR)] multiFieldValueClass.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
-    @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    @JvmInline[Unresolved]() public final? value [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.a] a: T, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.b] b: T): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -30,7 +30,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
-    @JvmInline[Unresolved]() public final? inline [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Foo<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T> : R|kotlin/Any| {
+    @JvmInline[Unresolved]() public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Foo<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.a] a: T, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.b] b: T): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
-    @JvmInline[Unresolved]() public final? inline [ResolvedTo(COMPANION_GENERATION)] class Foo<[ResolvedTo(COMPANION_GENERATION)] T> : R|kotlin/Any| {
+    @JvmInline[Unresolved]() public final? value [ResolvedTo(COMPANION_GENERATION)] class Foo<[ResolvedTo(COMPANION_GENERATION)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(COMPANION_GENERATION)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.a] a: T, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.b] b: T): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -60,7 +60,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
-    @JvmInline[Unresolved]() public final? inline [ResolvedTo(SUPER_TYPES)] class Foo<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    @JvmInline[Unresolved]() public final? value [ResolvedTo(SUPER_TYPES)] class Foo<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(SUPER_TYPES)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.a] a: T, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.b] b: T): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -75,7 +75,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
-    @R|kotlin/jvm/JvmInline|[Types]() public final? inline [ResolvedTo(TYPES)] class Foo<[ResolvedTo(TYPES)] T> : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final? value [ResolvedTo(TYPES)] class Foo<[ResolvedTo(TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(TYPES)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.a] a: T, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Foo.b] b: T): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -90,7 +90,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
-    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(a, T), (b, T)])] class Foo<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(a, T), (b, T)])] class Foo<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=Foo] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Foo.a] a: R|T|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Foo.b] b: R|T|): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -105,7 +105,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
-    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(a, T), (b, T)])] class Foo<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T> : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(a, T), (b, T)])] class Foo<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T> : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=Foo] constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Foo.a] a: R|T|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Foo.b] b: R|T|): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -120,7 +120,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
-    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(CONTRACTS)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(a, T), (b, T)])] class Foo<[ResolvedTo(CONTRACTS)] T> : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(CONTRACTS)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(a, T), (b, T)])] class Foo<[ResolvedTo(CONTRACTS)] T> : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=Foo] constructor<[ResolvedTo(CONTRACTS)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Foo.a] a: R|T|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Foo.b] b: R|T|): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -135,7 +135,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
-    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(a, T), (b, T)])] class Foo<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T> : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(a, T), (b, T)])] class Foo<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T> : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=Foo] constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Foo.a] a: R|T|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Foo.b] b: R|T|): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -150,7 +150,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
-    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(CONSTANT_EVALUATION)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(a, T), (b, T)])] class Foo<[ResolvedTo(CONSTANT_EVALUATION)] T> : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(CONSTANT_EVALUATION)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(a, T), (b, T)])] class Foo<[ResolvedTo(CONSTANT_EVALUATION)] T> : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=Foo] constructor<[ResolvedTo(CONSTANT_EVALUATION)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Foo.a] a: R|T|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Foo.b] b: R|T|): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -165,7 +165,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
-    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(a, T), (b, T)])] class Foo<[ResolvedTo(ANNOTATION_ARGUMENTS)] T> : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(a, T), (b, T)])] class Foo<[ResolvedTo(ANNOTATION_ARGUMENTS)] T> : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=Foo] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Foo.a] a: R|T|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/Foo.b] b: R|T|): R|pack/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -180,7 +180,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
-    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(a, T), (b, T)])] class Foo<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(a, T), (b, T)])] class Foo<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Foo.a] a: R|T|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Foo.b] b: R|T|): R|pack/Foo<T>| {
             super<R|kotlin/Any|>()
         }
@@ -195,7 +195,7 @@ FILE: [ResolvedTo(IMPORTS)] multiFieldValueClass.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] multiFieldValueClass.kt
-    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(a, T), (b, T)])] class Foo<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes=[(a, T), (b, T)])] class Foo<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Foo.a] a: R|T|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Foo.b] b: R|T|): R|pack/Foo<T>| {
             super<R|kotlin/Any|>()
         }

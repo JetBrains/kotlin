@@ -1,0 +1,60 @@
+FILE: emptyContextName.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(a: R|kotlin/String|): R|kotlin/String| {
+            ^foo R|<local>/a|
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun bar(b: R|kotlin/String|): R|kotlin/String| {
+            ^bar R|<local>/b|
+        }
+
+    }
+    context(ctx: R|T|)
+    public final fun <T> implicit(): R|T| {
+        ^implicit R|<local>/ctx|
+    }
+    context(<unused var>: R|A|)
+    public final fun test1(): R|kotlin/Unit| {
+        R|/implicit|<R|A|>().R|/A.foo|(String())
+        <Unresolved name: _>#.<Unresolved name: foo>#(String())
+    }
+    context(<unused var>: R|A|)
+    public final fun test2(): R|kotlin/Unit| {
+        R|/implicit|<R|A|>().R|/A.foo|(String())
+        <Unresolved name: _>#.<Unresolved name: foo>#(String())
+    }
+    context(<unused var>: R|A|, b: R|B|, <unused var>: R|kotlin/Int|)
+    public final fun test3(): R|kotlin/Unit| {
+        R|/implicit|<R|A|>().R|/A.foo|(String())
+        R|<local>/b|.R|/B.bar|(String())
+        R|/implicit|<R|kotlin/Int|>().R|kotlin/Int.inc|()
+    }
+    context(<unused var>: R|A|)
+    public final val property1: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            <Unresolved name: _>#.<Unresolved name: foo>#(String())
+            ^ R|/implicit|<R|A|>().R|/A.foo|(String())
+        }
+    context(<unused var>: R|A|)
+    public final val property2: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            <Unresolved name: _>#.<Unresolved name: foo>#(String())
+            ^ R|/implicit|<R|A|>().R|/A.foo|(String())
+        }
+    context(<unused var>: R|A|, b: R|B|, <unused var>: R|kotlin/Int|)
+    public final val property3: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            R|<local>/b|.R|/B.bar|(String())
+            R|/implicit|<R|kotlin/Int|>().R|kotlin/Int.inc|()
+            ^ R|/implicit|<R|A|>().R|/A.foo|(String())
+        }

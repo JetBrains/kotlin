@@ -3,8 +3,6 @@ package org.jetbrains.kotlin.gradle.targets.js
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnEnv
 
 /**
  * Instance which describes specific runtimes for JS and Wasm targets
@@ -25,6 +23,14 @@ abstract class EnvSpec<T : AbstractEnv> {
      * so this can be used to add your own repository where the tool is located
      */
     abstract val downloadBaseUrl: Property<String>
+
+    /**
+     * Indicates whether the use of an insecure protocol is allowable for downloading the tool.
+     *
+     * This property determines if insecure protocols (such as HTTP instead of HTTPS) can be permitted
+     * for downloading the required tool.
+     */
+    abstract val allowInsecureProtocol: Property<Boolean>
 
     /**
      * Specify where the tool is installed

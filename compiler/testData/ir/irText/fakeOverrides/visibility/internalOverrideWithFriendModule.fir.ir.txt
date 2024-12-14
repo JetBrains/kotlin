@@ -394,8 +394,8 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.K) returnType:kotlin.Unit
       overridden:
-        internal open fun foo (): kotlin.Unit declared in <root>.KotlinInternal
         public abstract fun foo (): kotlin.Unit declared in <root>.JavaPublic
+        internal open fun foo (): kotlin.Unit declared in <root>.KotlinInternal
       $this: VALUE_PARAMETER name:<this> type:<root>.K
       BLOCK_BODY
     PROPERTY name:a visibility:public modality:OPEN [val]
@@ -433,8 +433,8 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.L) returnType:kotlin.Unit
       overridden:
-        internal open fun foo (): kotlin.Unit declared in <root>.KotlinInternal
         public abstract fun foo (): kotlin.Unit declared in <root>.JavaDefault
+        internal open fun foo (): kotlin.Unit declared in <root>.KotlinInternal
       $this: VALUE_PARAMETER name:<this> type:<root>.L
       BLOCK_BODY
     PROPERTY name:a visibility:public modality:OPEN [val]

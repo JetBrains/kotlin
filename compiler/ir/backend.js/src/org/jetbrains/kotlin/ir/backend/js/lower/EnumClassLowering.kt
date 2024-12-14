@@ -105,7 +105,7 @@ class EnumClassConstructorLowering(val context: JsCommonBackendContext) : Declar
             additionalParameters.forEach { (name, type) ->
                 valueParameters = valueParameters memoryOptimizedPlus JsIrBuilder.buildValueParameter(this, name, type)
             }
-            copyParameterDeclarationsFrom(enumConstructor)
+            copyValueAndTypeParametersFrom(enumConstructor)
 
             val newConstructor = this
             enumConstructor.newConstructor = this
@@ -217,8 +217,8 @@ class EnumClassConstructorBodyTransformer(val context: JsCommonBackendContext) :
                 for (i in 0..1) {
                     putValueArgument(i, builder.irGet(constructor.valueParameters[i]))
                 }
-                for (i in 0 until expression.typeArgumentsCount) {
-                    putTypeArgument(i, expression.getTypeArgument(i))
+                for (i in expression.typeArguments.indices) {
+                    typeArguments[i] = expression.typeArguments[i]
                 }
             }
 
@@ -233,8 +233,8 @@ class EnumClassConstructorBodyTransformer(val context: JsCommonBackendContext) :
                 for (i in 0 until expression.valueArgumentsCount) {
                     putValueArgument(valueArgIdx++, expression.getValueArgument(i))
                 }
-                for (i in 0 until expression.typeArgumentsCount) {
-                    putTypeArgument(i, expression.getTypeArgument(i))
+                for (i in expression.typeArguments.indices) {
+                    typeArguments[i] = expression.typeArguments[i]
                 }
             }
         }

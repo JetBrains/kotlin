@@ -111,7 +111,7 @@ internal val validateIrAfterInliningAllFunctions = createSimpleNamedCompilerPhas
 
                             // it's fine to have typeOf<T> with reified T, it would be correctly handled by inliner on inlining to next use-sites.
                             // maybe it should be replaced by separate node to avoid this special case and simplify detection code - KT-70360
-                            Symbols.isTypeOfIntrinsic(inlineFunction.symbol) && inlineFunctionUseSite.getTypeArgument(0)?.isReifiedTypeParameter == true -> true
+                            Symbols.isTypeOfIntrinsic(inlineFunction.symbol) && inlineFunctionUseSite.typeArguments[0]?.isReifiedTypeParameter == true -> true
 
                             else -> false // forbidden
                         }
@@ -149,6 +149,11 @@ private val annotationImplementationPhase = createFileLoweringPhase(
 private val inlineCallableReferenceToLambdaPhase = createFileLoweringPhase(
         lowering = { context: NativeGenerationState -> NativeInlineCallableReferenceToLambdaPhase(context) },
         name = "NativeInlineCallableReferenceToLambdaPhase",
+)
+
+private val upgradeCallableReferencesPhase = createFileLoweringPhase(
+        ::UpgradeCallableReferences,
+        name = "UpgradeCallableReferences",
 )
 
 private val arrayConstructorPhase = createFileLoweringPhase(
@@ -202,12 +207,6 @@ private val postInlinePhase = createFileLoweringPhase(
 private val contractsDslRemovePhase = createFileLoweringPhase(
         { context: Context -> ContractsDslRemover(context) },
         name = "RemoveContractsDsl",
-)
-
-// TODO make all lambda-related stuff work with IrFunctionExpression and drop this phase (see kotlin: dd3f8ecaacd)
-private val provisionalFunctionExpressionPhase = createFileLoweringPhase(
-        ::ProvisionalFunctionExpressionLowering,
-        name = "FunctionExpression",
 )
 
 private val flattenStringConcatenationPhase = createFileLoweringPhase(
@@ -573,10 +572,10 @@ internal fun KonanConfig.getLoweringsUpToAndIncludingSyntheticAccessors(): Lower
 )
 
 internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNull(
+        upgradeCallableReferencesPhase,
         removeExpectDeclarationsPhase,
         stripTypeAliasDeclarationsPhase,
         assertionRemoverPhase,
-        provisionalFunctionExpressionPhase,
         volatilePhase,
         testProcessorPhase.takeIf { this.configuration.getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE },
         delegatedPropertyOptimizationPhase,

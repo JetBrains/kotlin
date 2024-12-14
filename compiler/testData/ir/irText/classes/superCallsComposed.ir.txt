@@ -56,21 +56,21 @@ FILE fqName:<root> fileName:/superCallsComposed.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.Derived) returnType:kotlin.Unit
       overridden:
-        public abstract fun foo (): kotlin.Unit declared in <root>.BaseI
         public open fun foo (): kotlin.Unit declared in <root>.Base
+        public abstract fun foo (): kotlin.Unit declared in <root>.BaseI
       $this: VALUE_PARAMETER name:<this> type:<root>.Derived
       BLOCK_BODY
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.Base' superQualifier='CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit origin=null
           $this: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.foo' type=<root>.Derived origin=null
     PROPERTY name:bar visibility:public modality:OPEN [val]
       overridden:
-        public abstract bar: kotlin.String declared in <root>.BaseI
         public open bar: kotlin.String declared in <root>.Base
+        public abstract bar: kotlin.String declared in <root>.BaseI
       FUN name:<get-bar> visibility:public modality:OPEN <> ($this:<root>.Derived) returnType:kotlin.String
         correspondingProperty: PROPERTY name:bar visibility:public modality:OPEN [val]
         overridden:
-          public abstract fun <get-bar> (): kotlin.String declared in <root>.BaseI
           public open fun <get-bar> (): kotlin.String declared in <root>.Base
+          public abstract fun <get-bar> (): kotlin.String declared in <root>.BaseI
         $this: VALUE_PARAMETER name:<this> type:<root>.Derived
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-bar> (): kotlin.String declared in <root>.Derived'

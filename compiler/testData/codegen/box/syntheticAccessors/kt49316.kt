@@ -2,6 +2,7 @@
 // some hacks are required, which isn't worth it considering that test contains invalid code (reassign of val property).
 // DISABLE_NATIVE
 // IGNORE_BACKEND_K2: ANY
+// IGNORE_IR_DESERIALIZATION_TEST: NATIVE
 // FIR_STATUS: KT-35565
 //  java.lang.AssertionError
 //    at org.jetbrains.kotlin.js.translate.context.TranslationContext.getDispatchReceiver(TranslationContext.java:590)
@@ -14,6 +15,9 @@
 // ^ Caused by this error:
 //   [IR VALIDATION] IrValidationBeforeLoweringPhase: The following element references a 'private' declaration that is invisible in the current scope.
 //   SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]' type=kotlin.Unit origin=null
+
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
+// ^^^ Source code is not compiled in JS.
 
 // FILE: kt49316.kt
 import a.*

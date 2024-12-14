@@ -63,14 +63,22 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
         it.downloadBaseUrl
     }
 
+    @get:Input
+    val allowInsecureProtocol: Provider<Boolean> = env.map {
+        it.allowInsecureProtocol
+    }
+
     @Deprecated("Use downloadBaseUrlProvider instead. It uses Gradle Provider API.")
     val downloadBaseUrl: String?
         @Internal
         get() = downloadBaseUrlProvider.orNull
 
     @get:OutputDirectory
-    internal val destinationProvider: RegularFileProperty = project.objects.fileProperty()
+    val destinationProvider: RegularFileProperty = project.objects.fileProperty()
         .fileProvider(env.map { it.dir })
+        .also {
+            it.disallowChanges()
+        }
 
     @Deprecated("Use destinationProvider instead. It uses Gradle Provider API.")
     val destination: File
@@ -83,7 +91,9 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
                 val file = it.asFile
                 file.parentFile.resolve("${file.name}.hash")
             }
-        )
+        ).also {
+            it.disallowChanges()
+        }
 
     @Deprecated("Use destinationHashFileProvider instead. It uses Gradle Provider API.")
     val destinationHashFile: File
@@ -138,6 +148,8 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
             project.repositories.ivy { repo ->
                 repo.name = "Distributions at ${it}"
                 repo.url = URI(it)
+
+                repo.isAllowInsecureProtocol = allowInsecureProtocol.get()
 
                 repo.patternLayout {
                     it.artifact(artifactPattern)

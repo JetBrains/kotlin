@@ -49,15 +49,13 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                 if (!rootCallee.isInline)
                     return super.visitCall(expression, data)
 
-                expression.extensionReceiver = expression.extensionReceiver?.transform(this, data)
-                expression.dispatchReceiver = expression.dispatchReceiver?.transform(this, data)
                 val inlineLambdas = mutableListOf<IrFunction>()
-                for (index in 0 until expression.valueArgumentsCount) {
-                    val argument = expression.getValueArgument(index)
+                for (index in expression.arguments.indices) {
+                    val argument = expression.arguments[index]
                     val inlineLambda = (argument as? IrFunctionExpression)?.function
-                        ?.takeIf { rootCallee.valueParameters[index].isInlineParameter() }
+                        ?.takeIf { rootCallee.parameters[index].isInlineParameter() }
                     if (inlineLambda == null)
-                        expression.putValueArgument(index, argument?.transform(this, data))
+                        expression.arguments[index] = argument?.transform(this, data)
                     else
                         inlineLambdas.add(inlineLambda)
                 }
@@ -95,11 +93,7 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                                 return
                             }
 
-                            expression.extensionReceiver?.acceptVoid(this)
-                            expression.dispatchReceiver?.acceptVoid(this)
-                            (0 until expression.valueArgumentsCount).forEach { index ->
-                                val argument = expression.getValueArgument(index)
-                                val parameter = callee.valueParameters[index]
+                            expression.arguments.zip(callee.parameters).forEach { (argument, parameter) ->
                                 // Skip adapted function references - they will be inlined later.
                                 if (parameter.isInlineParameter() && argument?.isAdaptedFunctionReference() == true)
                                     adaptedFunctions += (argument as IrBlock).statements[0] as IrSimpleFunction
@@ -142,7 +136,7 @@ private fun IrFunction.collectExtractableLocalClassesInto(classesToExtract: Muta
     // Conservatively assume that functions with reified type parameters must be copied.
     if (typeParameters.any { it.isReified }) return
 
-    val crossinlineParameters = valueParameters.filter { it.isCrossinline }.toSet()
+    val crossinlineParameters = parameters.filter { it.isCrossinline }.toSet()
     acceptChildrenVoid(object : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)

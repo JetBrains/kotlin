@@ -221,7 +221,7 @@ private class IrLinkerFakeOverrideBuilderStrategy(
         }.apply {
             parent = function.parent
             copyAnnotationsFrom(function)
-            copyParameterDeclarationsFrom(function)
+            copyValueAndTypeParametersFrom(function)
 
             typeParameters = typeParameters + buildTypeParameter(this) {
                 name = Name.identifier("disambiguation type parameter")

@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.*
+import org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences
+import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
@@ -21,8 +22,9 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
@@ -81,11 +83,42 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
         ignored: Boolean
     ) = add(TestFunction(function, kind, ignored))
 
+    fun IrFunction.toReference(parent: IrDeclarationParent) : IrRichFunctionReference {
+        val wrapper = factory.buildFun {
+            setSourceRange(this@toReference)
+            name = this@toReference.name
+            visibility = DescriptorVisibilities.LOCAL
+            returnType = this@toReference.returnType
+        }.apply {
+            this.parent = parent
+            copyParametersFrom(this@toReference)
+            val builder = context.createIrBuilder(this@apply.symbol).at(this@toReference)
+            body = builder.irBlockBody {
+                +irReturn(irCall(this@toReference).apply {
+                    for ((index, param) in parameters.withIndex()) {
+                        arguments[index] = irGet(param)
+                    }
+                })
+            }
+        }
+        val builder = context.createIrBuilder(symbol).at(this@toReference)
+        val referenceType = context.irBuiltIns.functionN(parameters.size).typeWith(parameters.map { it.type } + context.irBuiltIns.unitType)
+        return builder.irRichFunctionReference(
+                superType = referenceType,
+                reflectionTargetSymbol = symbol,
+                overriddenFunctionSymbol = UpgradeCallableReferences.selectSAMOverriddenFunction(referenceType),
+                invokeFunction = wrapper,
+                captures = emptyList(),
+                origin = IrStatementOrigin.LAMBDA,
+        )
+    }
+
     private fun <T : IrElement> IrStatementsBuilder<T>.generateFunctionRegistration(
             receiver: IrValueDeclaration,
             registerTestCase: IrFunction,
             registerFunction: IrFunction,
             functions: Collection<TestFunction>,
+            parent: IrDeclarationParent,
     ) {
         functions.forEach {
             if (it.kind == FunctionKind.TEST) {
@@ -93,13 +126,7 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
                 +irCall(registerTestCase).apply {
                     dispatchReceiver = irGet(receiver)
                     putValueArgument(0, irString(it.functionName))
-                    putValueArgument(1, IrFunctionReferenceImpl(
-                            it.function.startOffset,
-                            it.function.endOffset,
-                            registerTestCase.valueParameters[1].type,
-                            it.function.symbol,
-                            typeArgumentsCount = 0,
-                            reflectionTarget = null))
+                    putValueArgument(1, it.function.toReference(parent))
                     putValueArgument(2, irBoolean(it.ignored))
                 }
             } else {
@@ -113,13 +140,7 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
                             symbols.testFunctionKind.typeWithArguments(emptyList()),
                             testKindEntry)
                     )
-                    putValueArgument(1, IrFunctionReferenceImpl(
-                            it.function.startOffset,
-                            it.function.endOffset,
-                            registerFunction.valueParameters[1].type,
-                            it.function.symbol,
-                            typeArgumentsCount = 0,
-                            reflectionTarget = null))
+                    putValueArgument(1, it.function.toReference(parent))
                 }
             }
         }
@@ -354,7 +375,7 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
             val superFunction = baseClassSuite.simpleFunctions()
                     .single { it.name == getterName && it.valueParameters.isEmpty() }
 
-            createDispatchReceiverParameter()
+            parameters += createDispatchReceiverParameterWithClassParent()
             overriddenSymbols += superFunction.symbol
 
             body = context.createIrBuilder(symbol, symbol.owner.startOffset, symbol.owner.endOffset).irBlockBody {
@@ -391,7 +412,7 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
             val superFunction = baseClassSuite.simpleFunctions()
                     .single { it.name == getterName && it.valueParameters.isEmpty() }
 
-            createDispatchReceiverParameter()
+            parameters += createDispatchReceiverParameterWithClassParent()
             overriddenSymbols += superFunction.symbol
 
             body = context.createIrBuilder(symbol, symbol.owner.startOffset, symbol.owner.endOffset).irBlockBody {
@@ -450,14 +471,19 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
                 val irBuilder = context.createIrBuilder(symbol, symbol.owner.startOffset, symbol.owner.endOffset)
                 body = irBuilder.irBlockBody {
                     +irDelegatingConstructorCall(baseClassSuiteConstructor).apply {
-                        putTypeArgument(0, testClassType)
-                        putTypeArgument(1, testCompanionType)
+                        typeArguments[0] = testClassType
+                        typeArguments[1] = testCompanionType
 
                         putValueArgument(0, irString(suiteName))
                         putValueArgument(1, irBoolean(ignored))
                     }
-                    generateFunctionRegistration(testSuite.owner.thisReceiver!!,
-                            registerTestCase, registerFunction, functions)
+                    generateFunctionRegistration(
+                            testSuite.owner.thisReceiver!!,
+                            registerTestCase,
+                            registerFunction,
+                            functions,
+                            this@apply
+                    )
                 }
             }
 
@@ -573,7 +599,9 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
                     testSuiteVal,
                     topLevelSuiteRegisterTestCase,
                     topLevelSuiteRegisterFunction,
-                    functions)
+                    functions,
+                    irFile,
+            )
         }
     }
 

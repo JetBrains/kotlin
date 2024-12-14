@@ -73,6 +73,12 @@ open class FirDeclarationStatusImpl(
             this[INLINE] = value
         }
 
+    override var isValue: Boolean
+        get() = this[VALUE]
+        set(value) {
+            this[VALUE] = value
+        }
+
     override var isTailRec: Boolean
         get() = this[TAILREC]
         set(value) {
@@ -171,6 +177,7 @@ open class FirDeclarationStatusImpl(
         FROM_ENUM(0x10000),
         FUN(0x20000),
         HAS_STABLE_PARAMETER_NAMES(0x40000),
+        VALUE(0x80000),
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}

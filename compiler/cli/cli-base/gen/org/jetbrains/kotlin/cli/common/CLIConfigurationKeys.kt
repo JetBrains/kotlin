@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.config.phaser.PhaseConfigurationService
 import org.jetbrains.kotlin.utils.KotlinPaths
 
 object CLIConfigurationKeys {
@@ -56,9 +55,6 @@ object CLIConfigurationKeys {
     // See K2MetadataCompilerArguments
     @JvmField
     val METADATA_DESTINATION_DIRECTORY = CompilerConfigurationKey.create<File>("metadata destination directory")
-
-    @JvmField
-    val FLEXIBLE_PHASE_CONFIG = CompilerConfigurationKey.create<PhaseConfigurationService>("flexible phase configuration")
 
     // used in FIR IDE uast tests
     @JvmField
@@ -117,10 +113,6 @@ var CompilerConfiguration.intellijPluginRoot: String?
 var CompilerConfiguration.metadataDestinationDirectory: File?
     get() = get(CLIConfigurationKeys.METADATA_DESTINATION_DIRECTORY)
     set(value) { put(CLIConfigurationKeys.METADATA_DESTINATION_DIRECTORY, requireNotNull(value) { "nullable values are not allowed" }) }
-
-var CompilerConfiguration.flexiblePhaseConfig: PhaseConfigurationService?
-    get() = get(CLIConfigurationKeys.FLEXIBLE_PHASE_CONFIG)
-    set(value) { put(CLIConfigurationKeys.FLEXIBLE_PHASE_CONFIG, requireNotNull(value) { "nullable values are not allowed" }) }
 
 var CompilerConfiguration.pathToKotlinCompilerJar: File?
     get() = get(CLIConfigurationKeys.PATH_TO_KOTLIN_COMPILER_JAR)

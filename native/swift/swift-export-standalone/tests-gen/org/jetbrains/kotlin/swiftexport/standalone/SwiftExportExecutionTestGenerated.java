@@ -54,6 +54,12 @@ public class SwiftExportExecutionTestGenerated extends AbstractSwiftExportExecut
   }
 
   @Test
+  @TestMetadata("functional_type")
+  public void testFunctional_type() {
+    runTest("native/swift/swift-export-standalone/testData/execution/functional_type/");
+  }
+
+  @Test
   @TestMetadata("inheritance")
   public void testInheritance() {
     runTest("native/swift/swift-export-standalone/testData/execution/inheritance/");

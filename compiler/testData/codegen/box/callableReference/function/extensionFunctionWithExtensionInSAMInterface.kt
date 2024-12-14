@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: NATIVE
-// ISSUE: KT-68388
 var result = ""
 
 fun interface SamInterface {

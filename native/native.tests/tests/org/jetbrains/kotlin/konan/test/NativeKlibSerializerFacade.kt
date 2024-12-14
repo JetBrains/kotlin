@@ -47,8 +47,8 @@ abstract class AbstractNativeKlibSerializerFacade(
     }
 
     final override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.KLib {
-        require(inputArtifact is IrBackendInput.NativeBackendInput) {
-            "${this::class.java.simpleName} expects IrBackendInput.NativeBackendInput as input"
+        require(inputArtifact is IrBackendInput.NativeAfterFrontendBackendInput) {
+            "${this::class.java.simpleName} expects IrBackendInput.NativeAfterFrontendBackendInput as input"
         }
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
@@ -85,7 +85,7 @@ abstract class AbstractNativeKlibSerializerFacade(
         configuration: CompilerConfiguration,
         usedLibrariesForManifest: List<KotlinLibrary>,
         module: TestModule,
-        inputArtifact: IrBackendInput.NativeBackendInput,
+        inputArtifact: IrBackendInput.NativeAfterFrontendBackendInput,
     ): SerializerOutput<KotlinLibrary>
 
     protected open fun updateTestConfiguration(
@@ -106,7 +106,7 @@ class ClassicNativeKlibSerializerFacade(testServices: TestServices) : AbstractNa
         configuration: CompilerConfiguration,
         usedLibrariesForManifest: List<KotlinLibrary>,
         module: TestModule,
-        inputArtifact: IrBackendInput.NativeBackendInput,
+        inputArtifact: IrBackendInput.NativeAfterFrontendBackendInput,
     ): SerializerOutput<KotlinLibrary> {
         testServices.assertions.assertTrue(inputArtifact.metadataSerializer == null) { "unexpected single-file metadata serializer" }
 
@@ -176,7 +176,7 @@ class FirNativeKlibSerializerFacade(testServices: TestServices) : AbstractNative
         configuration: CompilerConfiguration,
         usedLibrariesForManifest: List<KotlinLibrary>,
         module: TestModule,
-        inputArtifact: IrBackendInput.NativeBackendInput,
+        inputArtifact: IrBackendInput.NativeAfterFrontendBackendInput,
     ) = serializeModuleIntoKlib(
         moduleName = inputArtifact.irModuleFragment.name.asString(),
         inputArtifact.irModuleFragment,

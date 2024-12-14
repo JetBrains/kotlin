@@ -191,7 +191,7 @@ class IrBodyDeserializer(
         }
 
         proto.typeArgumentList.forEachIndexed { i, arg ->
-            access.putTypeArgument(i, declarationDeserializer.deserializeNullableIrType(arg))
+            access.typeArguments[i] = declarationDeserializer.deserializeNullableIrType(arg)
         }
 
         if (proto.hasDispatchReceiver()) {
@@ -256,7 +256,7 @@ class IrBodyDeserializer(
             val typeParametersToArguments = HashMap<IrTypeParameterSymbol, IrTypeArgument>(typeParameters.size)
             for (i in typeParameters.indices) {
                 val typeParameter = typeParameters[i]
-                val callTypeArgument = constructorCall.getTypeArgument(i) ?: error("No type argument for id $i")
+                val callTypeArgument = constructorCall.typeArguments[i] ?: error("No type argument for id $i")
                 val typeArgument = makeTypeProjection(callTypeArgument, typeParameter.variance)
                 typeParametersToArguments[typeParameter.symbol] = typeArgument
             }

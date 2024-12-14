@@ -123,7 +123,7 @@ class ClassicFrontend2NativeIrConverter(
             generatorContext.typeTranslator,
             generatorContext.irBuiltIns,
             linker = irDeserializer,
-            diagnosticReporter = configuration.messageCollector
+            messageCollector = configuration.messageCollector
         )
 
         // N.B. The list of libraries to be written to manifest `depends=` property is not computed here.
@@ -132,7 +132,7 @@ class ClassicFrontend2NativeIrConverter(
         val usedLibrariesForManifest = emptyList<KotlinLibrary>()
 
         @OptIn(ObsoleteDescriptorBasedAPI::class)
-        return IrBackendInput.NativeBackendInput(
+        return IrBackendInput.NativeAfterFrontendBackendInput(
             moduleFragment,
             pluginContext,
             diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector),

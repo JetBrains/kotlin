@@ -125,9 +125,9 @@ class CurrentModuleWithICDeserializer(
 
     override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = delegate.deserializedSymbolNotFound(idSig)
 
-    override fun addModuleReachableTopLevel(idSig: IdSignature) {
-        assert(idSig in icDeserializer)
-        icDeserializer.addModuleReachableTopLevel(idSig)
+    override fun addModuleReachableTopLevel(topLevelDeclarationSignature: IdSignature) {
+        assert(topLevelDeclarationSignature in icDeserializer)
+        icDeserializer.addModuleReachableTopLevel(topLevelDeclarationSignature)
     }
 
     override fun deserializeReachableDeclarations() {

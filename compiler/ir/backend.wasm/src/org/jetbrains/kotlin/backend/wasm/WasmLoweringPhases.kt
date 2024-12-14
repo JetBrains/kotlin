@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.ir.Symbols.Companion.isTypeOfIntrinsi
 import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
-import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.OuterThisInInlineFunctionsSpecialAccessorLowering
@@ -18,7 +17,7 @@ import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorI
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.wasm.lower.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.noDoubleInlining
+import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.config.phaser.SameTypeNamedCompilerPhase
 import org.jetbrains.kotlin.config.phaser.SimpleNamedCompilerPhase
@@ -28,6 +27,8 @@ import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLow
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.inline.DumpSyntheticAccessors
+import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.inline.InlineMode
 import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
 import org.jetbrains.kotlin.ir.inline.isConsideredAsPrivateForInlining
@@ -84,6 +85,11 @@ private val validateIrAfterInliningAllFunctionsPhase = makeIrModulePhase(
     name = "IrValidationAfterInliningAllFunctionsPhase",
 )
 
+private val dumpSyntheticAccessorsPhase = makeIrModulePhase<WasmBackendContext>(
+    ::DumpSyntheticAccessors,
+    name = "DumpSyntheticAccessorsPhase",
+)
+
 private val validateIrAfterLowering = makeIrModulePhase(
     ::IrValidationAfterLoweringPhase,
     name = "ValidateIrAfterLowering",
@@ -124,6 +130,12 @@ private val inlineCallableReferenceToLambdaPhase = makeIrModulePhase(
     name = "WasmInlineCallableReferenceToLambdaPhase",
 )
 
+
+private val wrapInlineDeclarationsWithReifiedTypeParametersLowering = makeIrModulePhase(
+    ::WrapInlineDeclarationsWithReifiedTypeParametersLowering,
+    name = "WrapInlineDeclarationsWithReifiedTypeParametersLowering",
+)
+
 private val arrayConstructorPhase = makeIrModulePhase(
     ::ArrayConstructorLowering,
     name = "ArrayConstructor",
@@ -144,18 +156,6 @@ private val localClassesInInlineLambdasPhase = makeIrModulePhase(
 private val localClassesInInlineFunctionsPhase = makeIrModulePhase(
     ::LocalClassesInInlineFunctionsLowering,
     name = "LocalClassesInInlineFunctionsPhase",
-)
-
-private val localClassesExtractionFromInlineFunctionsPhase = makeIrModulePhase(
-    { context -> LocalClassesExtractionFromInlineFunctionsLowering(context) },
-    name = "localClassesExtractionFromInlineFunctionsPhase",
-    prerequisite = setOf(localClassesInInlineFunctionsPhase)
-)
-
-
-private val wrapInlineDeclarationsWithReifiedTypeParametersPhase = makeIrModulePhase(
-    ::WrapInlineDeclarationsWithReifiedTypeParametersLowering,
-    name = "WrapInlineDeclarationsWithReifiedTypeParametersPhase",
 )
 
 private val outerThisSpecialAccessorInInlineFunctionsPhase = makeIrModulePhase(
@@ -179,14 +179,15 @@ internal val syntheticAccessorGenerationPhase = makeIrModulePhase(
 )
 
 private val inlineAllFunctionsPhase = makeIrModulePhase(
-    ::WasmFunctionInlining.bind(InlineMode.ALL_INLINE_FUNCTIONS),
+    { context: WasmBackendContext ->
+        FunctionInlining(
+            context,
+            WasmInlineFunctionResolver(context, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS),
+            produceOuterThisFields = false,
+        )
+    },
     name = "InlineAllFunctions",
-    prerequisite = setOf(
-        outerThisSpecialAccessorInInlineFunctionsPhase,
-        expectDeclarationsRemovingPhase,
-        wrapInlineDeclarationsWithReifiedTypeParametersPhase,
-        localClassesInInlineLambdasPhase,
-    )
+    prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
 )
 
 private val removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase = makeIrModulePhase(
@@ -596,33 +597,38 @@ fun getWasmLowerings(
     configuration: CompilerConfiguration,
     isIncremental: Boolean
 ): List<SimpleNamedCompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFragment>> = listOfNotNull(
+    // BEGIN: Common Native/JS/Wasm prefix.
     validateIrBeforeLowering,
-    jsCodeCallsLowering,
-    generateTests.takeIf { !isIncremental },
-    generateTestsIC.takeIf { isIncremental },
-    excludeDeclarationsFromCodegenPhase,
-    expectDeclarationsRemovingPhase,
-
     lateinitPhase,
-    rangeContainsLoweringPhase,
-
     sharedVariablesLoweringPhase,
     outerThisSpecialAccessorInInlineFunctionsPhase,
     localClassesInInlineLambdasPhase,
-    localClassesInInlineFunctionsPhase.takeIf { configuration.noDoubleInlining },
-    localClassesExtractionFromInlineFunctionsPhase.takeIf { configuration.noDoubleInlining },
-
     inlineCallableReferenceToLambdaPhase,
     arrayConstructorPhase,
-    wrapInlineDeclarationsWithReifiedTypeParametersPhase,
-
-    inlineOnlyPrivateFunctionsPhase.takeUnless { configuration.noDoubleInlining },
-    syntheticAccessorGenerationPhase.takeUnless { configuration.noDoubleInlining },
-    validateIrAfterInliningOnlyPrivateFunctionsPhase.takeUnless { configuration.noDoubleInlining },
+    wrapInlineDeclarationsWithReifiedTypeParametersLowering,
+    inlineOnlyPrivateFunctionsPhase,
+    syntheticAccessorGenerationPhase,
+    // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
+    // just because it goes so in Native.
+    validateIrAfterInliningOnlyPrivateFunctionsPhase,
     inlineAllFunctionsPhase,
+    dumpSyntheticAccessorsPhase.takeIf {
+        configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR] != null
+    },
     validateIrAfterInliningAllFunctionsPhase,
+    // END: Common Native/JS/Wasm prefix.
+
     constEvaluationPhase,
     removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,
+
+    jsCodeCallsLowering,
+
+    generateTests.takeIf { !isIncremental },
+    generateTestsIC.takeIf { isIncremental },
+
+    excludeDeclarationsFromCodegenPhase,
+    expectDeclarationsRemovingPhase,
+    rangeContainsLoweringPhase,
 
     tailrecLoweringPhase,
 

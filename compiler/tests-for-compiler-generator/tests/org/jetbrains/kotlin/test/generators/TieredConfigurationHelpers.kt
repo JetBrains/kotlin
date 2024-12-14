@@ -38,6 +38,7 @@ fun configureTierModelsForDeclaredAs(
     vararg tiers: TestTierLabel,
     relativeRootPaths: List<String>,
     excludeDirs: List<String>,
+    excludeDirsRecursively: List<String> = emptyList(),
     extension: String? = "kt",
     pattern: String = if (extension == null) """^([^\.]+)$""" else "^(.+)\\.$extension\$",
     excludedPattern: String? = null,
@@ -52,6 +53,7 @@ fun configureTierModelsForDeclaredAs(
             extension = extension,
             pattern = pattern,
             excludedPattern = excludedPattern,
+            excludeDirsRecursively = excludeDirsRecursively,
         )
     }
 }
@@ -62,6 +64,7 @@ fun configureTierModelsForDeclaredAs(
 fun configureTierModelsForK1AlongsideDiagnosticTestsStating(
     vararg tiers: TestTierLabel,
     allowKts: Boolean,
+    excludeDirsRecursively: List<String> = emptyList(),
 ): TestGroup.TestClass.() -> Unit =
     configureTierModelsForDeclaredAs(
         *tiers,
@@ -80,4 +83,5 @@ fun configureTierModelsForK1AlongsideDiagnosticTestsStating(
             else -> "^(.*)\\.(kt|nkt)$"
         },
         excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
+        excludeDirsRecursively = excludeDirsRecursively,
     )

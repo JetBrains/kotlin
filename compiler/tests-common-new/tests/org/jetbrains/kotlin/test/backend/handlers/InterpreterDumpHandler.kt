@@ -274,7 +274,16 @@ class WasmIrInterpreterDumpHandler(testServices: TestServices) : FirAndIrDumpHan
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 }
 
-class KlibInterpreterDumpHandler(testServices: TestServices) : FirAndIrDumpHandler, KlibArtifactHandler(testServices) {
+// Processes all klibs before 2nd compilation phase: dependencies and main modules
+class NativeKlibInterpreterDumpHandler(testServices: TestServices) : FirAndIrDumpHandler, KlibArtifactHandler(testServices) {
+    override fun processModule(module: TestModule, info: BinaryArtifacts.KLib) {
+        processModule(module)
+    }
+
+    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
+}
+
+class JsKlibInterpreterDumpHandler(testServices: TestServices) : FirAndIrDumpHandler, KlibArtifactHandler(testServices) {
     override fun processModule(module: TestModule, info: BinaryArtifacts.KLib) {
         if (JsEnvironmentConfigurator.isMainModule(module, testServices)) return
         processModule(module)

@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.deserializedIr
 import org.jetbrains.kotlin.ir.util.isEnumClass
 import org.jetbrains.kotlin.ir.util.isObject
@@ -111,7 +110,7 @@ class Fir2IrLazyClass(
         set(_) = mutationNotSupported()
 
     override var isValue: Boolean
-        get() = fir.isInline
+        get() = fir.isInlineOrValue
         set(_) = mutationNotSupported()
 
     override var isExpect: Boolean
@@ -259,7 +258,14 @@ class Fir2IrLazyClass(
         set(_) = error("We should never need to store metadata of external declarations.")
 
     override val moduleName: String?
-        get() = fir.moduleName
+        get() {
+            fir.moduleName?.let { return it }
+            val moduleNameFromModuleData = fir.moduleData.stableModuleName ?: return null
+            require(moduleNameFromModuleData.startsWith("<") && moduleNameFromModuleData.endsWith(">")) {
+                "Stable module name is expected to be wrapped in '<>' brackets, but got `$moduleNameFromModuleData` instead"
+            }
+            return moduleNameFromModuleData.substring(1, moduleNameFromModuleData.length - 1)
+        }
 
     override val isNewPlaceForBodyGeneration: Boolean
         get() = fir.isNewPlaceForBodyGeneration == true

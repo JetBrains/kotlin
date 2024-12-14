@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrScriptConfiguratorExtension
-import org.jetbrains.kotlin.fir.backend.Fir2IrScriptConfiguratorExtension.Factory
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
@@ -28,12 +27,14 @@ class Fir2IrScriptConfiguratorExtensionImpl(
         val compilationConfiguration = session.getScriptCompilationConfiguration(scriptSourceFile, getDefault = { null }) ?: return
 
         // assuming that if the script is compiled, the import files should be all resolved already
-        val importedScripts = compilationConfiguration[ScriptCompilationConfiguration.resolvedImportScripts]?.takeIf { it.isNotEmpty() } ?: return
-        val importedScriptSymbols = importedScripts.mapNotNull {
-            session.firProvider.getFirScriptByFilePath(it.locationId!!)  // TODO: all !! should be converted to diagnostics
-        }
+        val importedScripts = compilationConfiguration[ScriptCompilationConfiguration.resolvedImportScripts]
+        if (importedScripts?.isNotEmpty() == true) {
+            val importedScriptSymbols = importedScripts.mapNotNull {
+                session.firProvider.getFirScriptByFilePath(it.locationId!!)  // TODO: all !! should be converted to diagnostics
+            }
 
-        this.importedScripts = importedScriptSymbols.map { getIrScriptByFirSymbol(it)!! }.takeIf { it.isNotEmpty() }
+            this.importedScripts = importedScriptSymbols.map { getIrScriptByFirSymbol(it)!! }.takeIf { it.isNotEmpty() }
+        }
     }
 
     companion object {

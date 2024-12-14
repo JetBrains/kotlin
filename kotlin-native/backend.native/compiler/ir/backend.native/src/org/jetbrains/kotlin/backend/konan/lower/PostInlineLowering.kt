@@ -73,7 +73,7 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
                     if (arguments.all { it.isConvertibleToConst() }) {
                         return data.at(expression).irConstantObject(expression.symbol,
                                 arguments.map { it.convertToConst() },
-                                (0 until expression.typeArgumentsCount).map { expression.getTypeArgument(it)!! }
+                                expression.typeArguments.map { it!! }
                         )
                     }
                 }

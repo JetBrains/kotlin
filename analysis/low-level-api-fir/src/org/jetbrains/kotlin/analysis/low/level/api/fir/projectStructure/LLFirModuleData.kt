@@ -61,6 +61,9 @@ class LLFirModuleData private constructor(val ktModule: KaModule) : FirModuleDat
         get() = boundSession?.let { it as LLFirSession }
             ?: LLFirSessionCache.getInstance(ktModule.project).getSession(ktModule, preferBinary = true)
 
+    override val stableModuleName: String?
+        get() = ktModule.stableModuleName
+
     override fun equals(other: Any?): Boolean = this === other || other is LLFirModuleData && ktModule == other.ktModule
     override fun hashCode(): Int = ktModule.hashCode()
 }

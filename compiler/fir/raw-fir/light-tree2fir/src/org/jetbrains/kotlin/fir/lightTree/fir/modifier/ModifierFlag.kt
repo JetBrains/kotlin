@@ -44,7 +44,8 @@ enum class ModifierFlag(val value: Long) {
     VARIANCE_IN(1L shl 31),
     VARIANCE_OUT(1L shl 32),
     VARIANCE_INVARIANT(1L shl 33),
-    REIFICATION_REIFIED(1L shl 34);
+    REIFICATION_REIFIED(1L shl 34),
+    CLASS_VALUE(1L shl 35);
 
     companion object {
         val ElementTypeToModifierFlagMap: Map<IElementType, ModifierFlag> = mutableMapOf(

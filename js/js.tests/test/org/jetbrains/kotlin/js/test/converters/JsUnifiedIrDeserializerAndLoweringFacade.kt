@@ -5,12 +5,17 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
+import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.model.AbstractTestFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 
 /**
  * The unified facade that runs internally [JsIrDeserializerFacade] and then [JsIrLoweringFacade].
@@ -35,8 +40,14 @@ class JsUnifiedIrDeserializerAndLoweringFacade(
         return deserializerFacade.shouldRunAnalysis(module) && loweringFacade.shouldRunAnalysis(module)
     }
 
-    override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): BinaryArtifacts.Js? =
-        deserializerFacade.transform(module, inputArtifact)?.let {
+    override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): BinaryArtifacts.Js? {
+        val configuration = deserializerFacade.testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+
+        // Enforce PL with the ERROR log level to fail any tests where PL detected any incompatibilities.
+        configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR))
+
+        return deserializerFacade.transform(module, inputArtifact)?.let {
             loweringFacade.transform(module, it)
         }
+    }
 }

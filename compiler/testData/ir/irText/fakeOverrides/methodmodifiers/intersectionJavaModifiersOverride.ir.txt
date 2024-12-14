@@ -48,18 +48,18 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:foo visibility:public modality:FINAL <> ($this:<root>.Java2) returnType:kotlin.Unit [fake_override]
       overridden:
-        public abstract fun foo (): kotlin.Unit declared in <root>.Java3
         public final fun foo (): kotlin.Unit declared in <root>.Java2
+        public abstract fun foo (): kotlin.Unit declared in <root>.Java3
       $this: VALUE_PARAMETER name:<this> type:<root>.Java2
     FUN FAKE_OVERRIDE name:foo2 visibility:public modality:OPEN <> ($this:<root>.Java2) returnType:kotlin.Unit [fake_override]
       overridden:
-        public abstract fun foo2 (): kotlin.Unit declared in <root>.Java3
         public open fun foo2 (): kotlin.Unit declared in <root>.Java2
+        public abstract fun foo2 (): kotlin.Unit declared in <root>.Java3
       $this: VALUE_PARAMETER name:<this> type:<root>.Java2
     FUN FAKE_OVERRIDE name:foo3 visibility:public modality:OPEN <> ($this:<root>.Java2) returnType:kotlin.Unit [fake_override]
       overridden:
-        public abstract fun foo3 (): kotlin.Unit declared in <root>.Java3
         public open fun foo3 (): kotlin.Unit declared in <root>.Java2
+        public abstract fun foo3 (): kotlin.Unit declared in <root>.Java3
       $this: VALUE_PARAMETER name:<this> type:<root>.Java2
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
@@ -85,8 +85,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:foo visibility:public modality:FINAL <> ($this:<root>.Java2) returnType:kotlin.Unit [fake_override]
       overridden:
-        public abstract fun foo (): kotlin.Unit declared in <root>.Java3
         public final fun foo (): kotlin.Unit declared in <root>.Java2
+        public abstract fun foo (): kotlin.Unit declared in <root>.Java3
       $this: VALUE_PARAMETER name:<this> type:<root>.Java2
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
@@ -100,14 +100,14 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:foo2 visibility:public modality:OPEN <> ($this:<root>.C) returnType:kotlin.Unit
       overridden:
-        public abstract fun foo2 (): kotlin.Unit declared in <root>.Java3
         public open fun foo2 (): kotlin.Unit declared in <root>.Java2
+        public abstract fun foo2 (): kotlin.Unit declared in <root>.Java3
       $this: VALUE_PARAMETER name:<this> type:<root>.C
       BLOCK_BODY
     FUN name:foo3 visibility:public modality:OPEN <> ($this:<root>.C) returnType:kotlin.Unit
       overridden:
-        public abstract fun foo3 (): kotlin.Unit declared in <root>.Java3
         public open fun foo3 (): kotlin.Unit declared in <root>.Java2
+        public abstract fun foo3 (): kotlin.Unit declared in <root>.Java3
       $this: VALUE_PARAMETER name:<this> type:<root>.C
       BLOCK_BODY
   CLASS CLASS name:D modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.Java3]
@@ -197,18 +197,18 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:foo visibility:public modality:FINAL <> ($this:<root>.Java2) returnType:kotlin.Unit [fake_override]
       overridden:
-        public abstract fun foo (): kotlin.Unit declared in <root>.KotlinInterface
         public final fun foo (): kotlin.Unit declared in <root>.Java2
+        public abstract fun foo (): kotlin.Unit declared in <root>.KotlinInterface
       $this: VALUE_PARAMETER name:<this> type:<root>.Java2
     FUN FAKE_OVERRIDE name:foo2 visibility:public modality:OPEN <> ($this:<root>.Java2) returnType:kotlin.Unit [fake_override]
       overridden:
-        public abstract fun foo2 (): kotlin.Unit declared in <root>.KotlinInterface
         public open fun foo2 (): kotlin.Unit declared in <root>.Java2
+        public abstract fun foo2 (): kotlin.Unit declared in <root>.KotlinInterface
       $this: VALUE_PARAMETER name:<this> type:<root>.Java2
     FUN FAKE_OVERRIDE name:foo3 visibility:public modality:OPEN <> ($this:<root>.Java2) returnType:kotlin.Unit [fake_override]
       overridden:
-        public abstract fun foo3 (): kotlin.Unit declared in <root>.KotlinInterface
         public open fun foo3 (): kotlin.Unit declared in <root>.Java2
+        public abstract fun foo3 (): kotlin.Unit declared in <root>.KotlinInterface
       $this: VALUE_PARAMETER name:<this> type:<root>.Java2
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
@@ -234,8 +234,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:foo visibility:public modality:FINAL <> ($this:<root>.Java2) returnType:kotlin.Unit [fake_override]
       overridden:
-        public abstract fun foo (): kotlin.Unit declared in <root>.KotlinInterface
         public final fun foo (): kotlin.Unit declared in <root>.Java2
+        public abstract fun foo (): kotlin.Unit declared in <root>.KotlinInterface
       $this: VALUE_PARAMETER name:<this> type:<root>.Java2
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
@@ -249,14 +249,14 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:foo2 visibility:public modality:OPEN <> ($this:<root>.G) returnType:kotlin.Unit
       overridden:
-        public abstract fun foo2 (): kotlin.Unit declared in <root>.KotlinInterface
         public open fun foo2 (): kotlin.Unit declared in <root>.Java2
+        public abstract fun foo2 (): kotlin.Unit declared in <root>.KotlinInterface
       $this: VALUE_PARAMETER name:<this> type:<root>.G
       BLOCK_BODY
     FUN name:foo3 visibility:public modality:OPEN <> ($this:<root>.G) returnType:kotlin.Unit
       overridden:
-        public abstract fun foo3 (): kotlin.Unit declared in <root>.KotlinInterface
         public open fun foo3 (): kotlin.Unit declared in <root>.Java2
+        public abstract fun foo3 (): kotlin.Unit declared in <root>.KotlinInterface
       $this: VALUE_PARAMETER name:<this> type:<root>.G
       BLOCK_BODY
   CLASS CLASS name:H modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface]

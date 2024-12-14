@@ -181,7 +181,7 @@ class FirElementSerializer private constructor(
             regularClass?.isData == true,
             regularClass?.isExternal == true,
             regularClass?.isExpect == true,
-            regularClass?.isInline == true,
+            regularClass?.isInlineOrValue == true,
             regularClass?.isFun == true,
             hasEnumEntries,
         )
@@ -472,7 +472,7 @@ class FirElementSerializer private constructor(
                 val dispatchReceiverLookupTag = declaration.dispatchReceiverClassLookupTagOrNull()
                 // Special case for data/value class equals/hashCode/toString, see KT-57510
                 val isFakeOverrideOfAnyFunctionInDataOrValueClass = this@collectDeclarations is FirRegularClass &&
-                        (this@collectDeclarations.isData || this@collectDeclarations.isInline) &&
+                        (this@collectDeclarations.isData || this@collectDeclarations.isInlineOrValue) &&
                         dispatchReceiverLookupTag?.classId == StandardClassIds.Any && !declaration.isFinal
                 // Related: https://youtrack.jetbrains.com/issue/KT-20427#focus=Comments-27-8652759.0-0
                 if (isFakeOverrideOfAnyFunctionInDataOrValueClass && !this@collectDeclarations.isExpect ||
@@ -1477,11 +1477,5 @@ class FirElementSerializer private constructor(
     }
 }
 
-internal fun scriptClassId(script: FirScript): ClassId {
-    val name = script.name.let {
-        if (it.isSpecial) {
-            NameUtils.getScriptNameForFile(it.asStringStripSpecialMarkers().removePrefix("script-"))
-        } else it
-    }
-    return ClassId(script.symbol.fqName.parentOrNull() ?: FqName.ROOT, name)
-}
+internal fun scriptClassId(script: FirScript): ClassId =
+    ClassId(script.symbol.fqName.parentOrNull() ?: FqName.ROOT, NameUtils.getScriptTargetClassName(script.name))

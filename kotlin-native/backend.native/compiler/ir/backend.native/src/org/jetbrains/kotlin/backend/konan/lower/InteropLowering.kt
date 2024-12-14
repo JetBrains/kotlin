@@ -284,7 +284,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
                 isInfix = false,
         ).also { result ->
             result.parent = irClass
-            result.createDispatchReceiverParameter()
+            result.parameters += result.createDispatchReceiverParameterWithClassParent()
             result.valueParameters += constructor.valueParameters.map { it.copyTo(result) }
 
             result.overriddenSymbols += initMethod.symbol
@@ -857,7 +857,7 @@ private class InteropTransformer(
                         irCall(callee).apply {
                             extensionReceiver = irGet(tmp)
                             typeArguments.forEachIndexed { index, arg ->
-                                putTypeArgument(index, arg.typeOrNull!!)
+                                this.typeArguments[index] = arg.typeOrNull!!
                             }
                         }
                 )
@@ -947,9 +947,8 @@ private class InteropTransformer(
                         putValueArgument(0,
                                 irCall(interopGetPtr).apply {
                                     extensionReceiver = irGet(tmp)
-                                    putTypeArgument(0,
-                                            (correspondingInit.valueParameters.first().type as IrSimpleType).arguments.single().typeOrNull!!
-                                    )
+                                    typeArguments[0] =
+                                        (correspondingInit.valueParameters.first().type as IrSimpleType).arguments.single().typeOrNull!!
                                 }
                         )
                         for (index in 0 until expression.valueArgumentsCount) {
@@ -1132,7 +1131,7 @@ private class InteropTransformer(
                     val signatureTypes = target.allParameters.map { it.type } + target.returnType
 
                     function.typeParameters.indices.forEach { index ->
-                        val typeArgument = expression.getTypeArgument(index)!!.toKotlinType()
+                        val typeArgument = expression.typeArguments[index]!!.toKotlinType()
                         val signatureType = signatureTypes[index].toKotlinType()
 
                         require(typeArgument.constructor == signatureType.constructor &&
@@ -1184,7 +1183,7 @@ private class InteropTransformer(
                 }
                 IntrinsicType.INTEROP_CONVERT -> {
                     val integerClasses = symbols.allIntegerClasses
-                    val typeOperand = expression.getTypeArgument(0)!!
+                    val typeOperand = expression.typeArguments[0]!!
                     val receiverType = expression.symbol.owner.extensionReceiverParameter!!.type
                     val source = receiverType.classifierOrFail as IrClassSymbol
                     require(source in integerClasses) { renderCompilerError(expression) }
@@ -1295,12 +1294,13 @@ private class InteropTransformer(
                     }.toIrConst(context.irBuiltIns.booleanType)
                     putValueArgument(0,
                         irCall(symbols.interopInterpretNullablePointed).apply {
-                            putValueArgument(0,
-                                    irCall(symbols.interopCPointerGetRawValue).apply {
-                                        extensionReceiver = ccall
-                                    }
+                            putValueArgument(
+                                0,
+                                irCall(symbols.interopCPointerGetRawValue).apply {
+                                    extensionReceiver = ccall
+                                }
                             )
-                            putTypeArgument(0, pointed)
+                            typeArguments[0] = pointed
                         }
                     )
                     putValueArgument(1, managed)
@@ -1369,12 +1369,13 @@ private class InteropTransformer(
                     }.toIrConst(context.irBuiltIns.booleanType)
                     putValueArgument(0,
                             irCall(symbols.interopInterpretNullablePointed).apply {
-                                putValueArgument(0,
-                                        irCall(symbols.interopCPointerGetRawValue).apply {
-                                            extensionReceiver = ccall
-                                        }
+                                putValueArgument(
+                                    0,
+                                    irCall(symbols.interopCPointerGetRawValue).apply {
+                                        extensionReceiver = ccall
+                                    }
                                 )
-                                putTypeArgument(0, pointed)
+                                typeArguments[0] = pointed
                             }
                     )
                     putValueArgument(1, managed)
@@ -1443,7 +1444,7 @@ private class InteropTransformer(
 
 private fun IrCall.getSingleTypeArgument(): IrType {
     val typeParameter = symbol.owner.typeParameters.single()
-    return getTypeArgument(typeParameter.index)!!
+    return typeArguments[typeParameter.index]!!
 }
 
 private fun IrBuilder.irFloat(value: Float) =

@@ -72,6 +72,14 @@ abstract class FirModuleData : FirSessionComponent {
     override fun toString(): String {
         return "Module $name"
     }
+
+    /**
+     * For the Analysis API-originated modules, returns the stable module name of the corresponding KaModule.
+     * See [org.jetbrains.kotlin.analysis.api.projectStructure.KaModule.stableModuleName]
+     *
+     * For others, returns null.
+     */
+    abstract val stableModuleName: String?
 }
 
 class FirModuleDataImpl(
@@ -86,6 +94,9 @@ class FirModuleDataImpl(
     override val session: FirSession
         get() = boundSession
             ?: error("module data ${this::class.simpleName}:${name} not bound to session")
+
+    override val stableModuleName: String?
+        get() = null
 
     override val allDependsOnDependencies: List<FirModuleData> = topologicalSort(dependsOnDependencies) { it.dependsOnDependencies }
 }

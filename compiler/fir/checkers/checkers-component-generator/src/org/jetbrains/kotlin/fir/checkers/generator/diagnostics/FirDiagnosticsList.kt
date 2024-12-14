@@ -452,6 +452,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION by error<KtAnnotationEntry>()
 
         val POTENTIALLY_NON_REPORTED_ANNOTATION by warning<KtAnnotationEntry>()
+
+        val ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD by warning<KtAnnotationEntry> {
+            parameter<String>("useSiteDescription")
+        }
     }
 
     val OPT_IN by object : DiagnosticGroup("OptIn") {
@@ -1202,6 +1206,16 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val VIRTUAL_MEMBER_HIDDEN by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME) {
             parameter<FirCallableSymbol<*>>("declared")
             parameter<FirRegularClassSymbol>("overriddenContainer")
+        }
+        val PARAMETER_NAME_CHANGED_ON_OVERRIDE by warning<KtParameter>(PositioningStrategy.NAME_IDENTIFIER) {
+            parameter<FirRegularClassSymbol>("superType")
+            parameter<FirValueParameterSymbol>("conflictingParameter")
+        }
+        val DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES by warning<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirValueParameterSymbol>("currentParameter")
+            parameter<FirValueParameterSymbol>("conflictingParameter")
+            parameter<Int>("parameterNumber")
+            parameter<List<FirNamedFunctionSymbol>>("conflictingFunctions")
         }
     }
 

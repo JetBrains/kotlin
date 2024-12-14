@@ -84,11 +84,11 @@ internal fun IrMemberAccessExpression<*>.checkArgumentSlotAccess(kind: String, i
 }
 
 fun IrMemberAccessExpression<*>.copyTypeArgumentsFrom(other: IrMemberAccessExpression<*>, shift: Int = 0) {
-    assert(typeArgumentsCount == other.typeArgumentsCount + shift) {
-        "Mismatching type arguments: $typeArgumentsCount vs ${other.typeArgumentsCount} + $shift"
+    assert(this.typeArguments.size == other.typeArguments.size + shift) {
+        "Mismatching type arguments: ${this.typeArguments.size} vs ${other.typeArguments.size} + $shift"
     }
-    for (i in 0 until other.typeArgumentsCount) {
-        putTypeArgument(i + shift, other.getTypeArgument(i))
+    for (i in other.typeArguments.indices) {
+        this.typeArguments[i + shift] = other.typeArguments[i]
     }
 }
 

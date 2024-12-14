@@ -451,16 +451,25 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
                 index
 
 
-    protected abstract val typeArguments: Array<IrType?>
+    abstract val typeArguments: MutableList<IrType?>
 
+    internal fun initializeEmptyTypeArguments(count: Int) {
+        repeat((count - typeArguments.size).coerceAtLeast(0)) {
+            typeArguments.add(null)
+        }
+    }
+
+    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20, replaceWith = "typeArguments.size")
     val typeArgumentsCount: Int
         get() = typeArguments.size
 
+    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20, replaceWith = "typeArguments[index]")
     fun getTypeArgument(index: Int): IrType? {
         checkArgumentSlotAccess("type", index, typeArguments.size)
         return typeArguments[index]
     }
 
+    @DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_1_20, replaceWith = "typeArguments[index] = value")
     fun putTypeArgument(index: Int, type: IrType?) {
         checkArgumentSlotAccess("type", index, typeArguments.size)
         typeArguments[index] = type

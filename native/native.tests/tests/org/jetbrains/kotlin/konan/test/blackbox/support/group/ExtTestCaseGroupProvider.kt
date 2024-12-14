@@ -189,11 +189,6 @@ private class ExtTestDataFile(
         ) {
             args.add("-Xverify-ir-visibility")
         }
-        if (KlibBasedCompilerTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING in structure.directives ||
-            KlibBasedCompilerTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING in defaultDirectives
-        ) {
-            args.add("-Xverify-ir-visibility-after-inlining")
-        }
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNative" // for `Any.isPermanent()` and `Any.isLocal()`
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNativeTests" // for ReflectionPackageName
         val freeCInteropArgs = structure.directives.listValues(FREE_CINTEROP_ARGS.name)

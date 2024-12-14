@@ -13,11 +13,9 @@ import org.jetbrains.kotlin.test.backend.handlers.JvmBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
-import org.jetbrains.kotlin.test.builders.firHandlersStep
-import org.jetbrains.kotlin.test.builders.jvmArtifactsHandlersStep
+import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
@@ -40,7 +38,7 @@ import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConf
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
-abstract class AbstractDiagnosticsTestWithJvmBackend<R : ResultingArtifact.FrontendOutput<R>> :
+abstract class AbstractDiagnosticsTestWithConverter<R : ResultingArtifact.FrontendOutput<R>> :
     AbstractKotlinCompilerTest() {
     abstract val targetFrontend: FrontendKind<R>
     abstract val frontend: Constructor<FrontendFacade<R>>
@@ -103,12 +101,61 @@ abstract class AbstractDiagnosticsTestWithJvmBackend<R : ResultingArtifact.Front
         }
 
         facadeStep(converter)
-        facadeStep(::JvmIrBackendFacade)
 
-        jvmArtifactsHandlersStep {
+        irHandlersStep {
             useHandlers(
-                ::JvmBackendDiagnosticsHandler
+                ::IrDiagnosticsHandler,
             )
+        }
+    }
+}
+
+abstract class AbstractClassicDiagnosticsTestWithConverter : AbstractDiagnosticsTestWithConverter<ClassicFrontendOutputArtifact>() {
+    override val targetFrontend: FrontendKind<ClassicFrontendOutputArtifact>
+        get() = FrontendKinds.ClassicFrontend
+
+    override val frontend: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
+        get() = ::ClassicFrontendFacade
+
+    override val converter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
+        get() = ::ClassicFrontend2IrConverter
+}
+
+// TODO: Unify this runner with tiered ones (KT-73848)
+abstract class AbstractFirDiagnosticsTestWithConverterBase(
+    val parser: FirParser
+) : AbstractDiagnosticsTestWithConverter<FirOutputArtifact>() {
+    override val targetFrontend: FrontendKind<FirOutputArtifact>
+        get() = FrontendKinds.FIR
+
+    override val frontend: Constructor<FrontendFacade<FirOutputArtifact>>
+        get() = ::FirFrontendFacade
+
+    override val converter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
+        get() = ::Fir2IrResultsConverter
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureFirParser(parser)
+    }
+}
+
+abstract class AbstractFirPsiDiagnosticsTestWithConverter : AbstractFirDiagnosticsTestWithConverterBase(FirParser.Psi)
+
+abstract class AbstractDiagnosticsTestWithJvmBackend<R : ResultingArtifact.FrontendOutput<R>> :
+    AbstractDiagnosticsTestWithConverter<R>() {
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+
+        with(builder) {
+            facadeStep(::JvmIrBackendFacade)
+
+            jvmArtifactsHandlersStep {
+                useHandlers(
+                    ::JvmBackendDiagnosticsHandler
+                )
+            }
         }
     }
 }

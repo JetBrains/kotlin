@@ -3,6 +3,8 @@
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 // See related issue: https://youtrack.jetbrains.com/issue/KT-59059/Native-Assert-does-not-evaluate-argument-value-when-disabled
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
+// ^^^ Assertions not supported for JS.
 // ASSERTIONS_MODE: always-disable
 // WITH_STDLIB
 

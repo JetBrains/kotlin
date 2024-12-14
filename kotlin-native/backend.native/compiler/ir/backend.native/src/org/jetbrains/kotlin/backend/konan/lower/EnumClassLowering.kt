@@ -117,7 +117,7 @@ internal class EnumUsageLowering(val context: Context) : IrTransformer<IrBuilder
 
         data!!.at(expression)
 
-        val irClassSymbol = expression.getTypeArgument(0)!!.classifierOrNull as? IrClassSymbol
+        val irClassSymbol = expression.typeArguments[0]!!.classifierOrNull as? IrClassSymbol
 
         if (irClassSymbol == null || irClassSymbol == context.ir.symbols.enum) {
             // Either a type parameter or a type parameter erased to 'Enum'.

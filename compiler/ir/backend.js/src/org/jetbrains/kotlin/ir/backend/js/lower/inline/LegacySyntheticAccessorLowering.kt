@@ -141,7 +141,7 @@ class LegacySyntheticAccessorLowering(private val context: LoweringContext) : Bo
         val irCall = IrCallImpl(startOffset, endOffset, newFunction.returnType, symbol, typeParameters.size)
 
         newFunction.typeParameters.forEachIndexed { i, tp ->
-            irCall.putTypeArgument(i, tp.defaultType)
+            irCall.typeArguments[i] = tp.defaultType
         }
 
         newFunction.valueParameters.forEachIndexed { i, vp ->
@@ -167,7 +167,7 @@ class LegacySyntheticAccessorLowering(private val context: LoweringContext) : Bo
 
             functionMap[callee]?.let { newFunction ->
                 val newExpression = expression.run {
-                    IrCallImpl(startOffset, endOffset, type, newFunction.symbol, typeArgumentsCount, origin)
+                    IrCallImpl(startOffset, endOffset, type, newFunction.symbol, typeArguments.size, origin)
                 }
 
                 newExpression.copyTypeArgumentsFrom(expression)
@@ -190,7 +190,7 @@ class LegacySyntheticAccessorLowering(private val context: LoweringContext) : Bo
             functionMap[callee]?.let { newFunction ->
                 val newExpression = expression.run {
                     // TODO: What has to be done with `reflectionTarget`?
-                    IrFunctionReferenceImpl(startOffset, endOffset, type, newFunction.symbol, typeArgumentsCount)
+                    IrFunctionReferenceImpl(startOffset, endOffset, type, newFunction.symbol, typeArguments.size)
                 }
 
                 newExpression.copyTypeArgumentsFrom(expression)

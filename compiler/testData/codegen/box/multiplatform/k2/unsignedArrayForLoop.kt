@@ -1,6 +1,8 @@
 // LANGUAGE: +MultiPlatformProjects
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM, NATIVE
 // Reason: non-jvm tests don't support overriding stdlib declarations: KT-71950
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
+// ^^^ Source code is not compiled in JS.
 // PREFER_IN_TEST_OVER_STDLIB
 
 // MODULE: common

@@ -175,12 +175,19 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns) {
     val memberStringPlus: IrSimpleFunctionSymbol get() = irBuiltIns.memberStringPlus
 
     fun isStringPlus(functionSymbol: IrFunctionSymbol): Boolean {
-        val plusSymbol = if (functionSymbol.owner.dispatchReceiverParameter?.type?.isString() == true)
-            memberStringPlus
-        else if (functionSymbol.owner.extensionReceiverParameter?.type?.isNullableString() == true)
-            extensionStringPlus
-        else
-            return false
+        val plusSymbol = when {
+            functionSymbol.owner.hasShape(
+                dispatchReceiver = true,
+                regularParameters = 1,
+                parameterTypes = listOf(irBuiltIns.stringType, null)
+            ) -> memberStringPlus
+            functionSymbol.owner.hasShape(
+                extensionReceiver = true,
+                regularParameters = 1,
+                parameterTypes = listOf(irBuiltIns.stringType.makeNullable(), null)
+            ) -> extensionStringPlus
+            else -> return false
+        }
 
         return functionSymbol == plusSymbol
     }
@@ -245,18 +252,14 @@ abstract class Symbols(
                 function.name.asString() == "<get-isInitialized>" &&
                         function.isTopLevel &&
                         function.getPackageFragment().packageFqName.asString() == "kotlin" &&
-                        function.valueParameters.isEmpty() &&
-                        symbol.owner.extensionReceiverParameter?.type?.classOrNull?.owner.let { receiverClass ->
-                            receiverClass?.fqNameWhenAvailable?.toUnsafe() == StandardNames.FqNames.kProperty0
-                        }
+                        function.hasShape(extensionReceiver = true) &&
+                        function.parameters[0].type.classOrNull?.owner?.fqNameWhenAvailable?.toUnsafe() == StandardNames.FqNames.kProperty0
             }
 
         fun isTypeOfIntrinsic(symbol: IrFunctionSymbol): Boolean =
             symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
                 function.isTopLevelInPackage("typeOf", KOTLIN_REFLECT_FQ_NAME)
-                        && function.valueParameters.isEmpty()
-                        && function.dispatchReceiverParameter == null
-                        && function.extensionReceiverParameter == null
+                        && function.hasShape()
             }
     }
 }

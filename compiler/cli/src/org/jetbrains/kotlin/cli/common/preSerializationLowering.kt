@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.cli.common
 
-import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -15,9 +14,9 @@ import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.inline.PreSerializationLoweringPhasesProvider
 
-fun PhaseEngine<PreSerializationLoweringContext>.runPreSerializationLoweringPhases(
+fun <T : PreSerializationLoweringContext> PhaseEngine<T>.runPreSerializationLoweringPhases(
     irModuleFragment: IrModuleFragment,
-    loweringProvider: PreSerializationLoweringPhasesProvider<PreSerializationLoweringContext>,
+    loweringProvider: PreSerializationLoweringPhasesProvider<T>,
     configuration: CompilerConfiguration,
 ): IrModuleFragment =
     runPhase(
@@ -26,9 +25,9 @@ fun PhaseEngine<PreSerializationLoweringContext>.runPreSerializationLoweringPhas
         disable = !configuration.languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization),
     )
 
-fun PhaseEngine<PreSerializationLoweringContext>.runPreSerializationLoweringPhases(
+fun <T : PreSerializationLoweringContext> PhaseEngine<T>.runPreSerializationLoweringPhases(
     fir2IrActualizedResult: Fir2IrActualizedResult,
-    loweringProvider: PreSerializationLoweringPhasesProvider<PreSerializationLoweringContext>,
+    loweringProvider: PreSerializationLoweringPhasesProvider<T>,
     configuration: CompilerConfiguration,
 ): Fir2IrActualizedResult = fir2IrActualizedResult.copy(
     irModuleFragment = runPreSerializationLoweringPhases(
@@ -37,12 +36,3 @@ fun PhaseEngine<PreSerializationLoweringContext>.runPreSerializationLoweringPhas
         configuration,
     )
 )
-
-@JvmName("runPreSerializationLoweringPhasesWithNewEngine")
-fun <Context : LoggingContext> PhaseEngine<Context>.runPreSerializationLoweringPhases(
-    fir2IrActualizedResult: Fir2IrActualizedResult,
-    loweringProvider: PreSerializationLoweringPhasesProvider<PreSerializationLoweringContext>,
-    configuration: CompilerConfiguration,
-): Fir2IrActualizedResult = newEngine(PreSerializationLoweringContext(fir2IrActualizedResult.irBuiltIns, configuration)) { engine ->
-    engine.runPreSerializationLoweringPhases(fir2IrActualizedResult, loweringProvider, configuration)
-}

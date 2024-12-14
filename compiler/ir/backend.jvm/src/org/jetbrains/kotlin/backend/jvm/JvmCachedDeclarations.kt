@@ -122,7 +122,7 @@ class JvmCachedDeclarations(
                     copyAttributes(jvmStaticFunction)
                     copyAnnotationsFrom(jvmStaticFunction)
                     copyCorrespondingPropertyFrom(jvmStaticFunction)
-                    copyParameterDeclarationsFrom(jvmStaticFunction)
+                    copyValueAndTypeParametersFrom(jvmStaticFunction)
                     dispatchReceiverParameter = null
                     metadata = jvmStaticFunction.metadata
                 }
@@ -278,7 +278,7 @@ class JvmCachedDeclarations(
             }.apply {
                 parent = irClass
                 overriddenSymbols = fakeOverride.overriddenSymbols
-                copyParameterDeclarationsFrom(fakeOverride)
+                copyValueAndTypeParametersFrom(fakeOverride)
                 // The fake override's dispatch receiver has the same type as the real declaration's,
                 // i.e. some superclass of the current class. This is not good for accessibility checks.
                 dispatchReceiverParameter?.type = irClass.defaultType

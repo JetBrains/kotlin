@@ -66,8 +66,8 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toSet visibility:public modality:OPEN <> ($this:<root>.Java1, elements:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>?) returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? [fake_override]
       overridden:
-        public abstract fun toSet (elements: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.String?>?): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.String?>? declared in <root>.Java3
         public open fun toSet (elements: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>?): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? declared in <root>.Java1
+        public abstract fun toSet (elements: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.String?>?): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.String?>? declared in <root>.Java3
       $this: VALUE_PARAMETER name:<this> type:<root>.Java1
       VALUE_PARAMETER name:elements index:0 type:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>?
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
@@ -94,8 +94,8 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toSet visibility:public modality:OPEN <> ($this:<root>.Java1, elements:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>?) returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? [fake_override]
       overridden:
-        public abstract fun toSet (elements: kotlin.collections.Collection<kotlin.String>): kotlin.collections.Set<kotlin.String?> declared in <root>.KotlinInterface
         public open fun toSet (elements: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>?): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? declared in <root>.Java1
+        public abstract fun toSet (elements: kotlin.collections.Collection<kotlin.String>): kotlin.collections.Set<kotlin.String?> declared in <root>.KotlinInterface
       $this: VALUE_PARAMETER name:<this> type:<root>.Java1
       VALUE_PARAMETER name:elements index:0 type:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>?
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]

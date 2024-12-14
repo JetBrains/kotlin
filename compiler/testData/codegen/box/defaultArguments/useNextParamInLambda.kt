@@ -1,7 +1,10 @@
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM, NATIVE
 // IGNORE_BACKEND_K2: JVM_IR
 // WASM_MUTE_REASON: IGNORED_IN_JS
+// IGNORE_IR_DESERIALIZATION_TEST: NATIVE
 // FIR status: don't support legacy feature. UNINITIALIZED_PARAMETER y. See KT-49800
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
+// ^^^ Source code is not compiled in JS.
 // LANGUAGE: -ProhibitIllegalValueParameterUsageInDefaultArguments
 
 fun f(

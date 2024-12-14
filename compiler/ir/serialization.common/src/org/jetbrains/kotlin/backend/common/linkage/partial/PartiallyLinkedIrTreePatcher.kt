@@ -47,14 +47,9 @@ internal class PartiallyLinkedIrTreePatcher(
     private val stubGenerator: MissingDeclarationStubGenerator,
     logger: PartialLinkageLogger
 ) {
-    // Avoid revisiting roots that already have been visited.
-    private val visitedModuleFragments = hashSetOf<IrModuleFragment>()
-    private val visitedDeclarations = hashSetOf<IrDeclaration>()
-
     private val stdlibModule by lazy { PLModule.determineModuleFor(builtIns.anyClass.owner) }
 
     private val PLModule.shouldBeSkipped: Boolean get() = this == PLModule.SyntheticBuiltInFunctions || this == stdlibModule
-    private val IrModuleFragment.shouldBeSkipped: Boolean get() = files.isEmpty() || name.asString() == stdlibModule.name
 
     // Used only to generate IR expressions that throw linkage errors.
     private val supportForLowerings by lazy { PartialLinkageSupportForLoweringsImpl(builtIns, logger) }
@@ -63,25 +58,44 @@ internal class PartiallyLinkedIrTreePatcher(
 
     fun shouldBeSkipped(declaration: IrDeclaration): Boolean = PLModule.determineModuleFor(declaration).shouldBeSkipped
 
-    fun patchModuleFragments(roots: Sequence<IrModuleFragment>) {
-        roots.forEach { root ->
-            // Optimization: Don't patch stdlib and already visited fragments.
-            if (!root.shouldBeSkipped && visitedModuleFragments.add(root)) {
-                root.transformVoid(DeclarationTransformer(startingFile = null))
-                root.transformVoid(ExpressionTransformer(startingFile = null))
-                root.transformVoid(NonLocalReturnsPatcher(startingFile = null))
-            }
+    fun removeUnusableAnnotationsFromFiles(files: Collection<IrFile>) {
+        for (file in files) {
+            val currentFile: PLFile = PLFile.IrBased(file)
+
+            // Optimization: Don't patch declarations from stdlib/built-ins.
+            if (currentFile.module.shouldBeSkipped)
+                continue
+
+            with(ExpressionTransformer(currentFile)) { file.filterUnusableAnnotations() }
         }
     }
 
-    fun patchDeclarations(roots: Collection<IrDeclaration>) {
-        roots.forEach { root ->
-            val startingFile = PLFile.determineFileFor(root)
-            // Optimization: Don't patch already visited declarations and declarations from stdlib/built-ins.
-            if (!startingFile.module.shouldBeSkipped && visitedDeclarations.add(root)) {
-                root.transformVoid(DeclarationTransformer(startingFile))
-                root.transformVoid(ExpressionTransformer(startingFile))
-                root.transformVoid(NonLocalReturnsPatcher(startingFile))
+    fun patchDeclarations(declarations: Collection<IrDeclaration>) {
+        val declarationsGroupedByDirectParent = declarations.groupBy { it.parent }
+
+        for ((directParent: IrDeclarationParent, declarationsWithSameParent: List<IrDeclaration>) in declarationsGroupedByDirectParent) {
+            val currentFile: PLFile = PLFile.determineFileFor(declarationsWithSameParent[0])
+
+            // Optimization: Don't patch declarations from stdlib/built-ins.
+            if (currentFile.module.shouldBeSkipped)
+                continue
+
+            val directParentAsPackageFragment: IrPackageFragment? = directParent as? IrPackageFragment
+
+            val declarationTransformer = DeclarationTransformer(currentFile)
+            val expressionTransformer = ExpressionTransformer(currentFile)
+            val nonLocalReturnsPatcher = NonLocalReturnsPatcher(currentFile)
+
+            // For top-level declarations, we need to supply their declaration container (either IR file or
+            // IR package fragment in case of Lazy IR) to `DeclarationTransformer` before starting visiting
+            // these declarations. This is necessary to be able to remove problematic declarations from
+            // the container after finishing visiting (i.e., on exit from `withRemoval***()`).
+            declarationTransformer.withRemovalOfChildrenIn(directParentAsPackageFragment) {
+                for (declaration in declarationsWithSameParent) {
+                    declaration.transformVoid(declarationTransformer)
+                    declaration.transformVoid(expressionTransformer)
+                    declaration.transformVoid(nonLocalReturnsPatcher)
+                }
             }
         }
     }
@@ -122,7 +136,7 @@ internal class PartiallyLinkedIrTreePatcher(
     }
 
     // Declarations are transformed top-down.
-    private inner class DeclarationTransformer(startingFile: PLFile?) : FileAwareIrElementTransformerVoid(startingFile) {
+    private inner class DeclarationTransformer(startingFile: PLFile) : FileAwareIrElementTransformerVoid(startingFile) {
         private val stack = ArrayDeque<DeclarationTransformerContext>()
 
         private fun <T : IrDeclaration> T.transformChildren(): T {
@@ -130,15 +144,22 @@ internal class PartiallyLinkedIrTreePatcher(
             return this
         }
 
-        private fun <T : IrDeclarationContainer> T.transformChildrenWithRemoval(): T =
-            transformChildrenWithRemoval(DeclarationTransformerContext.DeclarationContainer(this))
+        inline fun withRemovalOfChildrenIn(declarationContainer: IrPackageFragment?, action: () -> Unit) {
+            if (declarationContainer != null)
+                declarationContainer.withRemovalOfChildren { action() }
+            else
+                action()
+        }
 
-        private fun <T : IrStatementContainer> T.transformChildrenWithRemoval(): T =
-            transformChildrenWithRemoval(DeclarationTransformerContext.StatementContainer(this))
+        private inline fun <T : IrDeclarationContainer> T.withRemovalOfChildren(action: T.() -> Unit): T =
+            withRemovalInContext(DeclarationTransformerContext.DeclarationContainer(this), action)
 
-        private fun <T : IrElement> T.transformChildrenWithRemoval(context: DeclarationTransformerContext): T {
+        private inline fun <T : IrStatementContainer> T.withRemovalOfChildren(action: T.() -> Unit): T =
+            withRemovalInContext(DeclarationTransformerContext.StatementContainer(this), action)
+
+        private inline fun <T : IrElement> T.withRemovalInContext(context: DeclarationTransformerContext, action: T.() -> Unit): T {
             stack.push(context)
-            transformChildrenVoid()
+            action()
             assert(stack.pop() === context)
 
             context.performRemoval()
@@ -150,10 +171,6 @@ internal class PartiallyLinkedIrTreePatcher(
             // The declarations with origin = PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION are already effectively removed.
             if (origin != PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION)
                 stack.peek().scheduleForRemoval(this)
-        }
-
-        override fun visitPackageFragment(declaration: IrPackageFragment): IrPackageFragment {
-            return declaration.transformChildrenWithRemoval()
         }
 
         override fun visitClass(declaration: IrClass): IrStatement {
@@ -217,7 +234,7 @@ internal class PartiallyLinkedIrTreePatcher(
             }
 
             // Process underlying declarations. Collect declarations to remove.
-            return declaration.transformChildrenWithRemoval()
+            return declaration.withRemovalOfChildren { transformChildrenVoid() }
         }
 
         override fun visitConstructor(declaration: IrConstructor): IrStatement {
@@ -428,11 +445,11 @@ internal class PartiallyLinkedIrTreePatcher(
         }
 
         override fun visitBlockBody(body: IrBlockBody): IrBody {
-            return body.transformChildrenWithRemoval()
+            return body.withRemovalOfChildren { transformChildrenVoid() }
         }
 
         override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
-            return expression.transformChildrenWithRemoval()
+            return expression.withRemovalOfChildren { transformChildrenVoid() }
         }
 
         private fun <S : IrSymbol> IrOverridableDeclaration<S>.filterOverriddenSymbols() {
@@ -450,7 +467,7 @@ internal class PartiallyLinkedIrTreePatcher(
             supportForLowerings.throwLinkageError(this, declaration, currentFile, doNotLog)
     }
 
-    private open inner class ExpressionTransformer(startingFile: PLFile?) : FileAwareIrElementTransformerVoid(startingFile) {
+    private open inner class ExpressionTransformer(startingFile: PLFile) : FileAwareIrElementTransformerVoid(startingFile) {
         override fun visitPackageFragment(declaration: IrPackageFragment): IrPackageFragment {
             (declaration as? IrFile)?.filterUnusableAnnotations()
             return super.visitPackageFragment(declaration)
@@ -578,7 +595,7 @@ internal class PartiallyLinkedIrTreePatcher(
             // TODO: is it necessary to check that the number of type parameters matches the number of type arguments?
             return ExpressionWithUnusableClassifier(
                 this,
-                (0 until typeArgumentsCount).firstNotNullOfOrNull { index -> getTypeArgument(index)?.explore() } ?: return null
+                this.typeArguments.firstNotNullOfOrNull { it?.explore() } ?: return null
             )
         }
 
@@ -867,7 +884,7 @@ internal class PartiallyLinkedIrTreePatcher(
                 null
         }
 
-        private fun <T> T.filterUnusableAnnotations() where T : IrMutableAnnotationContainer, T : IrSymbolOwner {
+        fun <T> T.filterUnusableAnnotations() where T : IrMutableAnnotationContainer, T : IrSymbolOwner {
             if (annotations.isNotEmpty()) {
                 annotations = annotations.filterTo(ArrayList(annotations.size)) { annotation ->
                     // Visit the annotation as an expression.
@@ -1020,7 +1037,7 @@ internal class PartiallyLinkedIrTreePatcher(
         }
     }
 
-    private inner class NonLocalReturnsPatcher(startingFile: PLFile?) : FileAwareIrElementTransformerVoid(startingFile) {
+    private inner class NonLocalReturnsPatcher(startingFile: PLFile) : FileAwareIrElementTransformerVoid(startingFile) {
         private val stack = ArrayDeque<ReturnTargetContext>()
         private val currentContext: ReturnTargetContext get() = stack.peek() ?: ReturnTargetContext.Empty
 

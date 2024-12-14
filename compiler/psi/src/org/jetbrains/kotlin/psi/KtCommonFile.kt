@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi
 
 import com.intellij.extapi.psi.PsiFileBase
+import com.intellij.lang.ASTNode
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.vfs.VirtualFileWithId
 import com.intellij.psi.*
@@ -14,16 +15,17 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ArrayFactory
 import com.intellij.util.FileContentUtilCore
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
-import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
+import org.jetbrains.kotlin.psi.psiUtil.children
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
+import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 /**
@@ -49,8 +51,8 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     @Volatile
     private var pathCached: String? = null
 
-    val importList: KtImportList?
-        get() = importLists.firstOrNull()
+    open val importList: KtImportList?
+        get() = findChildByTypeOrClass(KtStubElementTypes.IMPORT_LIST, KtImportList::class.java)
 
     @Volatile
     private var hasImportAlias: Boolean? = null
@@ -68,30 +70,16 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         get() = findChildrenByTypeOrClass(KtStubElementTypes.IMPORT_LIST, KtImportList::class.java).asList()
 
     val fileAnnotationList: KtFileAnnotationList?
-        get() = findChildByTypeOrClass(KtStubElementTypes.FILE_ANNOTATION_LIST, KtFileAnnotationList::class.java)
+        get() = findChildBeforeFirstDeclarationInclusiveByType(KtStubElementTypes.FILE_ANNOTATION_LIST)
 
     open val importDirectives: List<KtImportDirective>
         get() = importLists.flatMap { it.imports }
 
-    // scripts have no package directive, all other files must have package directives
     val packageDirective: KtPackageDirective?
-        get() {
-            val stub = stub
-            if (stub != null) {
-                val packageDirectiveStub = stub.findChildStubByType(KtStubElementTypes.PACKAGE_DIRECTIVE)
-                return packageDirectiveStub?.psi
-            }
-            return packageDirectiveByTree
-        }
-
-    private val packageDirectiveByTree: KtPackageDirective?
-        get() {
-            val ast = node.findChildByType(KtNodeTypes.PACKAGE_DIRECTIVE)
-            return if (ast != null) ast.psi as KtPackageDirective else null
-        }
+        get() = findChildBeforeFirstDeclarationInclusiveByType(KtStubElementTypes.PACKAGE_DIRECTIVE)
 
     var packageFqName: FqName
-        get() = stub?.getPackageFqName() ?: packageFqNameByTree
+        get() = greenStub?.getPackageFqName() ?: packageDirective?.fqName ?: FqName.ROOT
         set(value) {
             val packageDirective = packageDirective
             if (packageDirective != null) {
@@ -102,15 +90,16 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
             }
         }
 
+    @Deprecated("Use 'packageFqName' property instead", ReplaceWith("packageFqName"))
     val packageFqNameByTree: FqName
-        get() = packageDirectiveByTree?.fqName ?: FqName.ROOT
+        get() = packageFqName
 
     val script: KtScript?
         get() {
             isScript?.let { if (!it) return null }
-            stub?.let { if (!it.isScript()) return null }
+            greenStub?.let { if (!it.isScript()) return null }
 
-            val result = getChildOfType<KtScript>()
+            val result = findChildBeforeFirstDeclarationInclusiveByType<KtScript>(KtStubElementTypes.SCRIPT)
             if (isScript == null) {
                 isScript = result != null
             }
@@ -127,20 +116,18 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
             }
         }
 
+    @Deprecated("Use 'isScript()' instead", ReplaceWith("isScript()"))
     val isScriptByTree: Boolean
-        get() = script != null
+        get() = isScript()
 
     /**
      * @return modifier lists that do not belong to any declaration due to incomplete code or syntax errors
      */
     val danglingModifierLists: Array<out KtModifierList>
-        get() {
-            val stub = stub
-            return stub?.getChildrenByType(
-                KtStubElementTypes.MODIFIER_LIST,
-                KtStubElementTypes.MODIFIER_LIST.arrayFactory
-            ) ?: findChildrenByClass(KtModifierList::class.java)
-        }
+        get() = greenStub?.getChildrenByType(
+            KtStubElementTypes.MODIFIER_LIST,
+            KtStubElementTypes.MODIFIER_LIST.arrayFactory
+        ) ?: findChildrenByClass(KtModifierList::class.java)
 
     /**
      * @return annotations that do not belong to any declaration due to incomplete code or syntax errors
@@ -153,16 +140,68 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     override fun toString(): String = "KtFile: $name"
 
     override fun getDeclarations(): List<KtDeclaration> {
-        val stub = stub
-        return stub?.getChildrenByType(KtFile.FILE_DECLARATION_TYPES, KtDeclaration.ARRAY_FACTORY)?.toList()
+        return greenStub?.getChildrenByType(KtFile.FILE_DECLARATION_TYPES, KtDeclaration.ARRAY_FACTORY)?.toList()
             ?: PsiTreeUtil.getChildrenOfTypeAsList(this, KtDeclaration::class.java)
+    }
+
+    /**
+     * This is an optimized way to find a file child element in the header.
+     *
+     * Regular [findChildByTypeOrClass] will iterate through all childen that is especially quite expensive in the
+     * case of [findChildByClass].
+     * It will trigger psi calculation for all children even if the wanted element in the first child.
+     *
+     * So this function will iterate as a maximum only through all non-declarations in the beginning plus one declaration.
+     * This one declaration processing is required to support the optimization for [KtScript] as well as it can be only in the beginning.
+     */
+    private fun <T : KtElementImplStub<out StubElement<T>>> findChildBeforeFirstDeclarationInclusiveByType(
+        elementType: KtStubElementType<out StubElement<T>, T>,
+    ): T? {
+        val stub = greenStub
+        if (stub != null) {
+            for (stubElement in stub.childrenStubs) {
+                val stubType = stubElement.stubType
+                when (stubType) {
+                    // Required element found
+                    elementType -> {
+                        @Suppress("UNCHECKED_CAST")
+                        return stubElement.psi as T
+                    }
+
+                    // Elements from the header can be declared only before declarations
+                    in KtFile.FILE_DECLARATION_TYPES -> return null
+                    else -> {}
+                }
+            }
+
+            // No element found, there is no sense to search further via ast
+            return null
+        }
+
+        val children: Sequence<ASTNode> = node.children()
+        for (child in children) {
+            val childType = child.elementType
+            when (childType) {
+                // Required element found
+                elementType -> {
+                    @Suppress("UNCHECKED_CAST")
+                    return child.psi as T
+                }
+
+                // Elements from the header can be declared only before declarations
+                in KtFile.FILE_DECLARATION_TYPES -> return null
+                else -> {}
+            }
+        }
+
+        return null
     }
 
     fun <T : KtElementImplStub<out StubElement<*>>> findChildByTypeOrClass(
         elementType: KtPlaceHolderStubElementType<T>,
         elementClass: Class<T>
     ): T? {
-        val stub = stub
+        val stub = greenStub
         if (stub != null) {
             val importListStub = stub.findChildStubByType(elementType)
             return importListStub?.psi
@@ -174,7 +213,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         elementType: KtPlaceHolderStubElementType<T>,
         elementClass: Class<T>
     ): Array<out T> {
-        val stub = stub
+        val stub = greenStub
         if (stub != null) {
             val arrayFactory: ArrayFactory<T> = elementType.arrayFactory
             return stub.getChildrenByType(elementType, arrayFactory)
@@ -203,14 +242,20 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         return importDirectives.find { it.importedName == name }?.importedFqName?.pathSegments()?.last()
     }
 
-    override fun getStub(): KotlinFileStub? {
+    override fun getStub(): KotlinFileStub? = getFileStub {
+        super.getStub()
+    }
+
+    protected open val greenStub: KotlinFileStub? get() = getFileStub(this::getGreenStub)
+
+    private fun getFileStub(getter: () -> StubElement<*>?): KotlinFileStub? {
         if (virtualFile !is VirtualFileWithId) return null
-        val stub = super.getStub()
+        val stub = getter()
         if (stub is KotlinFileStub?) {
             return stub
         }
 
-        error("Illegal stub for KtFile: type=${this.javaClass}, stub=${stub?.javaClass} name=$name")
+        error("Illegal stub for KtFile: type=${this.javaClass}, stub=${stub.javaClass} name=$name")
     }
 
     override fun clearCaches() {
@@ -222,7 +267,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         hasImportAlias = null
     }
 
-    fun isScript(): Boolean = isScript ?: stub?.isScript() ?: isScriptByTree
+    fun isScript(): Boolean = isScript ?: greenStub?.isScript() ?: (script != null)
 
     fun hasTopLevelCallables(): Boolean {
         hasTopLevelCallables?.let { return it }
@@ -283,14 +328,15 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
 }
 
 private fun KtImportList.computeHasImportAlias(): Boolean {
-    var child: PsiElement? = firstChild
-    while (child != null) {
-        if (child is KtImportDirective && child.alias != null) {
-            return true
+    val stub = greenStub
+    if (stub != null) {
+        return stub.childrenStubs.any {
+            it is KotlinImportDirectiveStub && it.findChildStubByType(KtStubElementTypes.IMPORT_ALIAS) != null
         }
-
-        child = child.nextSibling
     }
 
-    return false
+    return node.children().any {
+        val psi = it.psi
+        psi is KtImportDirective && psi.alias != null
+    }
 }

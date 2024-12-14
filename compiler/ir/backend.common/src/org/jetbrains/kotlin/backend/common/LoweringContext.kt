@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.backend.common.ir.Ir
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LoggingContext
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -27,11 +30,14 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
  * A context that is used to pass data to both first (before IR serialization) and second (after IR deserialization) stage compiler
  * lowerings.
  */
-interface LoweringContext {
+interface LoweringContext : LoggingContext, ErrorReportingContext {
     val configuration: CompilerConfiguration
     val ir: Ir
     val irBuiltIns: IrBuiltIns
     val irFactory: IrFactory
+
+    override val messageCollector: MessageCollector
+        get() = configuration.messageCollector
 
     // TODO(KT-73155): Pull this down to CommonBackendContext
     val mapping: Mapping

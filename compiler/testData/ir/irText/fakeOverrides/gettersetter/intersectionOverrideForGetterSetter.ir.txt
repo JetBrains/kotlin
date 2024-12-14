@@ -13,8 +13,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:getA visibility:public modality:OPEN <> ($this:<root>.Java1) returnType:kotlin.Int [fake_override]
       overridden:
-        public abstract fun getA (): @[FlexibleNullability] kotlin.Any? declared in <root>.Java2
         public open fun getA (): kotlin.Int declared in <root>.Java1
+        public abstract fun getA (): @[FlexibleNullability] kotlin.Any? declared in <root>.Java2
       $this: VALUE_PARAMETER name:<this> type:<root>.Java1
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
@@ -23,8 +23,8 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:isB visibility:public modality:OPEN <> ($this:<root>.Java1) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun isB (): kotlin.Boolean declared in <root>.Java2
         public open fun isB (): kotlin.Boolean declared in <root>.Java1
+        public abstract fun isB (): kotlin.Boolean declared in <root>.Java2
       $this: VALUE_PARAMETER name:<this> type:<root>.Java1
     FUN FAKE_OVERRIDE name:setA visibility:public modality:ABSTRACT <> ($this:<root>.Java2, t:@[FlexibleNullability] kotlin.Any?) returnType:kotlin.Unit [fake_override]
       overridden:
@@ -60,8 +60,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:getA visibility:public modality:OPEN <> ($this:<root>.Java1) returnType:kotlin.Int [fake_override]
       overridden:
-        public abstract fun getA (): @[FlexibleNullability] kotlin.Any? declared in <root>.Java2
         public open fun getA (): kotlin.Int declared in <root>.Java1
+        public abstract fun getA (): @[FlexibleNullability] kotlin.Any? declared in <root>.Java2
       $this: VALUE_PARAMETER name:<this> type:<root>.Java1
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
@@ -70,8 +70,8 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:isB visibility:public modality:OPEN <> ($this:<root>.Java1) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun isB (): kotlin.Boolean declared in <root>.Java2
         public open fun isB (): kotlin.Boolean declared in <root>.Java1
+        public abstract fun isB (): kotlin.Boolean declared in <root>.Java2
       $this: VALUE_PARAMETER name:<this> type:<root>.Java1
     FUN FAKE_OVERRIDE name:setA visibility:public modality:OPEN <> ($this:<root>.Java1, t:kotlin.Int) returnType:kotlin.Unit [fake_override]
       overridden:

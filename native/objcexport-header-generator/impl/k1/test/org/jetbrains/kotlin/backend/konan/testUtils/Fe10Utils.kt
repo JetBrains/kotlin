@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.backend.konan.testUtils
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
-import org.jetbrains.kotlin.cli.common.createFlexiblePhaseConfig
+import org.jetbrains.kotlin.cli.common.createPhaseConfig
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
@@ -126,7 +125,7 @@ fun createKotlinCoreEnvironment(
 private fun createCompilerConfiguration(): CompilerConfiguration {
     val configuration = KotlinTestUtils.newConfiguration()
     configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, createLanguageVersionSettings())
-    configuration.put(CLIConfigurationKeys.FLEXIBLE_PHASE_CONFIG, createFlexiblePhaseConfig(K2NativeCompilerArguments()))
+    configuration.phaseConfig = createPhaseConfig(K2NativeCompilerArguments())
     return configuration
 }
 

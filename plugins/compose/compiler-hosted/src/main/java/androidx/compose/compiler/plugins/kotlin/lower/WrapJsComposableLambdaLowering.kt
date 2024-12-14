@@ -101,9 +101,9 @@ class WrapJsComposableLambdaLowering(
             }.symbol
     }
 
-    override fun lower(module: IrModuleFragment) {
-        module.transformChildrenVoid(this)
-        module.patchDeclarationParents()
+    override fun lower(irModule: IrModuleFragment) {
+        irModule.transformChildrenVoid(this)
+        irModule.patchDeclarationParents()
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
@@ -182,7 +182,7 @@ class WrapJsComposableLambdaLowering(
             symbol = rememberFunSymbol,
             typeArgumentsCount = 1
         ).apply {
-            putTypeArgument(0, lambda.type)
+            typeArguments[0] = lambda.type
             putValueArgument(0, irGet(composableLambdaVar)) // key1
             putValueArgument(1, rememberBlock) // calculation
             putValueArgument(2, currentComposer) // composer
@@ -221,7 +221,7 @@ class WrapJsComposableLambdaLowering(
             symbol = runSymbol,
             typeArgumentsCount = 1
         ).apply {
-            putTypeArgument(0, returnType)
+            typeArguments[0] = returnType
             putValueArgument(0, runBlock)
         }
     }

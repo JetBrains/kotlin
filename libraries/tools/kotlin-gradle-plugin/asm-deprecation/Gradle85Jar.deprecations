@@ -13,7 +13,7 @@ package org.jetbrains.kotlin.cli.common.profiling
 package org.jetbrains.kotlin.cli.common.repl
 package org.jetbrains.kotlin.cli.jvm
 package org.jetbrains.kotlin.cli.jvm.compiler
-package org.jetbrains.kotlin.cli.jvm.compiler.pipeline
+package org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline
 package org.jetbrains.kotlin.cli.jvm.config
 package org.jetbrains.kotlin.cli.jvm.plugins
 package org.jetbrains.kotlin.cli.metadata

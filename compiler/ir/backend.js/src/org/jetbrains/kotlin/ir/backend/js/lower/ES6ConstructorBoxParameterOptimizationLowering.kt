@@ -152,7 +152,7 @@ class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBa
             endOffset,
             type,
             replacementWithoutBoxParameter,
-            typeArgumentsCount,
+            typeArguments.size,
             origin,
             superQualifierSymbol,
         ).apply {
