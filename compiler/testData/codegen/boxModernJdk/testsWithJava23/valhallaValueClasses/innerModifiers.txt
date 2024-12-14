@@ -1,0 +1,157 @@
+@kotlin.Metadata
+public final class A$B {
+    // source: 'innerModifiers.kt'
+    private final field x: char
+    public method <init>(p0: char): void
+    public final method getX(): char
+    public final inner class A$B
+}
+
+@kotlin.Metadata
+public class A$C {
+    // source: 'innerModifiers.kt'
+    private final field x: char
+    public method <init>(p0: char): void
+    public final method getX(): char
+    public inner class A$C
+}
+
+@kotlin.Metadata
+public final class A$Companion {
+    // source: 'innerModifiers.kt'
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final inner class A$Companion
+}
+
+@kotlin.Metadata
+public abstract class A$D {
+    // source: 'innerModifiers.kt'
+    private final field x: char
+    public method <init>(p0: char): void
+    public final method getX(): char
+    public abstract inner class A$D
+}
+
+@kotlin.Metadata
+public final class A$E {
+    // source: 'innerModifiers.kt'
+    synthetic final field this$0: A
+    private final field x: char
+    public method <init>(p0: A, p1: char): void
+    public final method getX(): char
+    public final inner class A$E
+}
+
+@kotlin.Metadata
+public final class A$F$Companion {
+    // source: 'innerModifiers.kt'
+    synthetic final static field $$INSTANCE: A$F$Companion
+    static method <clinit>(): void
+    private method <init>(): void
+    public final inner class A$F$Companion
+    public inner class A$F
+}
+
+@kotlin.Metadata
+public interface A$F {
+    // source: 'innerModifiers.kt'
+    public final static @org.jetbrains.annotations.NotNull field Companion: A$F$Companion
+    public final static @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field static: java.lang.String
+    static method <clinit>(): void
+    public abstract method getX(): char
+    public final inner class A$F$Companion
+    public inner class A$F
+}
+
+@java.lang.annotation.Retention(value=RUNTIME)
+@kotlin.Metadata
+public annotation class A$G {
+    // source: 'innerModifiers.kt'
+    public abstract method x(): char
+    public inner class A$G
+}
+
+@kotlin.Metadata
+public final enum class A$H {
+    // source: 'innerModifiers.kt'
+    private synthetic final static field $ENTRIES: kotlin.enums.EnumEntries
+    private synthetic final static field $VALUES: A$H[]
+    public final enum static field OK: A$H
+    private synthetic final static method $values(): A$H[]
+    static method <clinit>(): void
+    private method <init>(p0: java.lang.String, p1: int): void
+    public static @org.jetbrains.annotations.NotNull method getEntries(): kotlin.enums.EnumEntries
+    public static method valueOf(p0: java.lang.String): A$H
+    public static method values(): A$H[]
+    public final inner class A$H
+}
+
+@kotlin.Metadata
+public final class A {
+    // source: 'innerModifiers.kt'
+    public final static @org.jetbrains.annotations.NotNull field Companion: A$Companion
+    public final @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field instance: java.lang.String
+    public final static @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field static: java.lang.String
+    static method <clinit>(): void
+    public method <init>(): void
+    public abstract inner class A$D
+    public final inner class A$B
+    public final inner class A$Companion
+    public final inner class A$E
+    public final inner class A$H
+    public inner class A$C
+    public inner class A$F
+    public inner class A$G
+}
+
+@kotlin.Metadata
+synthetic final class Generated_Box_MainKt$main$2 {
+    // source: 'Generated_Box_Main.kt'
+    enclosing method Generated_Box_MainKt.main([Ljava/lang/String;)V
+    public final static field INSTANCE: Generated_Box_MainKt$main$2
+    inner (anonymous) class Generated_Box_MainKt$main$2
+    static method <clinit>(): void
+    method <init>(): void
+    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class Generated_Box_MainKt {
+    // source: 'Generated_Box_Main.kt'
+    inner (anonymous) class Generated_Box_MainKt$main$2
+    public final static @org.jetbrains.annotations.Nullable method main(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public synthetic static method main(p0: java.lang.String[]): void
+}
+
+@kotlin.Metadata
+public final class InnerModifiersKt$box$1 {
+    // source: 'innerModifiers.kt'
+    enclosing method InnerModifiersKt.box()Ljava/lang/String;
+    inner (anonymous) class InnerModifiersKt$box$1
+    method <init>(): void
+    public abstract inner class A$D
+}
+
+@kotlin.Metadata
+public final class InnerModifiersKt$box$2 {
+    // source: 'innerModifiers.kt'
+    enclosing method InnerModifiersKt.box()Ljava/lang/String;
+    inner (anonymous) class InnerModifiersKt$box$2
+    method <init>(): void
+    public method getX(): char
+    public inner class A$F
+}
+
+@kotlin.Metadata
+public final class InnerModifiersKt {
+    // source: 'innerModifiers.kt'
+    inner (anonymous) class InnerModifiersKt$box$1
+    inner (anonymous) class InnerModifiersKt$box$2
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final inner class A$B
+    public final inner class A$E
+    public inner class A$C
+    public inner class A$F
+}

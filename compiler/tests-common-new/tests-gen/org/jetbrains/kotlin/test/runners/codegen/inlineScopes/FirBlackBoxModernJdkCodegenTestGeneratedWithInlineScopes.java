@@ -875,6 +875,12 @@ public class FirBlackBoxModernJdkCodegenTestGeneratedWithInlineScopes extends Ab
       }
 
       @Test
+      @TestMetadata("innerModifiers.kt")
+      public void testInnerModifiers() {
+        runTest("compiler/testData/codegen/boxModernJdk/testsWithJava23/valhallaValueClasses/innerModifiers.kt");
+      }
+
+      @Test
       @TestMetadata("interopWithPreValhalla.kt")
       public void testInteropWithPreValhalla() {
         runTest("compiler/testData/codegen/boxModernJdk/testsWithJava23/valhallaValueClasses/interopWithPreValhalla.kt");
