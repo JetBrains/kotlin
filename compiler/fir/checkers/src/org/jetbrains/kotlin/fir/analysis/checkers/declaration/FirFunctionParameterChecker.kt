@@ -10,20 +10,11 @@ import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
-import org.jetbrains.kotlin.fir.analysis.checkers.leastUpperBound
-import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
-import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasStableParameterNames
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -34,6 +25,7 @@ import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -66,6 +58,7 @@ object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
         }
     }
 
+    @OptIn(SymbolInternals::class)
     private fun checkVarargParameters(function: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         val varargParameters = function.valueParameters.filter { it.isVararg }
         if (varargParameters.size > 1) {
@@ -85,7 +78,8 @@ object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
             // in case it is a complex type that quantifies
             // over many other types.
             if (varargParameterType.leastUpperBound(context.session).fullyExpandedType(context.session).isNothingOrNullableNothing ||
-                (varargParameterType.isValueClass(context.session) && !varargParameterType.isUnsignedTypeOrNullableUnsignedType)
+                (varargParameterType.isValueClass(context.session) && !varargParameterType.isUnsignedTypeOrNullableUnsignedType &&
+                        varargParameterType.toRegularClassSymbol(context.session)?.fir?.isValhallaValueClass != true)
             // Note: comparing with FE1.0, we skip checking if the type is not primitive because primitive types are not inline. That
             // is any primitive values are already allowed by the inline check.
             ) {

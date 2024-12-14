@@ -903,6 +903,12 @@ public class IrBlackBoxModernJdkCodegenTestGenerated extends AbstractIrBlackBoxC
       public void testReservedNames() {
         runTest("compiler/testData/codegen/boxModernJdk/testsWithJava23/valhallaValueClasses/reservedNames.kt");
       }
+
+      @Test
+      @TestMetadata("vararg.kt")
+      public void testVararg() {
+        runTest("compiler/testData/codegen/boxModernJdk/testsWithJava23/valhallaValueClasses/vararg.kt");
+      }
     }
   }
 }
