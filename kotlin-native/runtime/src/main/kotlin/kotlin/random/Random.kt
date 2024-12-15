@@ -7,7 +7,7 @@
 
 package kotlin.random
 
-import kotlin.concurrent.AtomicLong
+import kotlin.concurrent.atomics.AtomicLong
 import kotlin.system.getTimeNanos
 
 /**

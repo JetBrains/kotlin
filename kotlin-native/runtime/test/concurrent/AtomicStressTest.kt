@@ -5,7 +5,7 @@
 
 package test.concurrent
 
-import kotlin.concurrent.*
+import kotlin.concurrent.atomics.*
 import kotlin.native.concurrent.Future
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker

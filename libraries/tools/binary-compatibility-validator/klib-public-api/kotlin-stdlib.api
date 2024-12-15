@@ -1299,56 +1299,56 @@ final class <#A: kotlin/Any?> kotlin.collections/ArrayDeque : kotlin.collections
     final fun toArray(): kotlin/Array<kotlin/Any?> // kotlin.collections/ArrayDeque.toArray|toArray(){}[0]
 }
 
-final class <#A: kotlin/Any?> kotlin.concurrent/AtomicArray { // kotlin.concurrent/AtomicArray|null[0]
-    constructor <init>(kotlin/Array<#A>) // kotlin.concurrent/AtomicArray.<init>|<init>(kotlin.Array<1:0>){}[0]
+final class <#A: kotlin/Any?> kotlin.concurrent.atomics/AtomicArray { // kotlin.concurrent.atomics/AtomicArray|null[0]
+    constructor <init>(kotlin/Array<#A>) // kotlin.concurrent.atomics/AtomicArray.<init>|<init>(kotlin.Array<1:0>){}[0]
 
-    final val size // kotlin.concurrent/AtomicArray.size|{}size[0]
-        final fun <get-size>(): kotlin/Int // kotlin.concurrent/AtomicArray.size.<get-size>|<get-size>(){}[0]
+    final val size // kotlin.concurrent.atomics/AtomicArray.size|{}size[0]
+        final fun <get-size>(): kotlin/Int // kotlin.concurrent.atomics/AtomicArray.size.<get-size>|<get-size>(){}[0]
 
-    final fun compareAndExchangeAt(kotlin/Int, #A, #A): #A // kotlin.concurrent/AtomicArray.compareAndExchangeAt|compareAndExchangeAt(kotlin.Int;1:0;1:0){}[0]
-    final fun compareAndSetAt(kotlin/Int, #A, #A): kotlin/Boolean // kotlin.concurrent/AtomicArray.compareAndSetAt|compareAndSetAt(kotlin.Int;1:0;1:0){}[0]
-    final fun exchangeAt(kotlin/Int, #A): #A // kotlin.concurrent/AtomicArray.exchangeAt|exchangeAt(kotlin.Int;1:0){}[0]
-    final fun loadAt(kotlin/Int): #A // kotlin.concurrent/AtomicArray.loadAt|loadAt(kotlin.Int){}[0]
-    final fun storeAt(kotlin/Int, #A) // kotlin.concurrent/AtomicArray.storeAt|storeAt(kotlin.Int;1:0){}[0]
-    final fun toString(): kotlin/String // kotlin.concurrent/AtomicArray.toString|toString(){}[0]
-
-    // Targets: [native]
-    final val length // kotlin.concurrent/AtomicArray.length|{}length[0]
-        final fun <get-length>(): kotlin/Int // kotlin.concurrent/AtomicArray.length.<get-length>|<get-length>(){}[0]
+    final fun compareAndExchangeAt(kotlin/Int, #A, #A): #A // kotlin.concurrent.atomics/AtomicArray.compareAndExchangeAt|compareAndExchangeAt(kotlin.Int;1:0;1:0){}[0]
+    final fun compareAndSetAt(kotlin/Int, #A, #A): kotlin/Boolean // kotlin.concurrent.atomics/AtomicArray.compareAndSetAt|compareAndSetAt(kotlin.Int;1:0;1:0){}[0]
+    final fun exchangeAt(kotlin/Int, #A): #A // kotlin.concurrent.atomics/AtomicArray.exchangeAt|exchangeAt(kotlin.Int;1:0){}[0]
+    final fun loadAt(kotlin/Int): #A // kotlin.concurrent.atomics/AtomicArray.loadAt|loadAt(kotlin.Int){}[0]
+    final fun storeAt(kotlin/Int, #A) // kotlin.concurrent.atomics/AtomicArray.storeAt|storeAt(kotlin.Int;1:0){}[0]
+    final fun toString(): kotlin/String // kotlin.concurrent.atomics/AtomicArray.toString|toString(){}[0]
 
     // Targets: [native]
-    final fun compareAndExchange(kotlin/Int, #A, #A): #A // kotlin.concurrent/AtomicArray.compareAndExchange|compareAndExchange(kotlin.Int;1:0;1:0){}[0]
+    final val length // kotlin.concurrent.atomics/AtomicArray.length|{}length[0]
+        final fun <get-length>(): kotlin/Int // kotlin.concurrent.atomics/AtomicArray.length.<get-length>|<get-length>(){}[0]
 
     // Targets: [native]
-    final fun compareAndSet(kotlin/Int, #A, #A): kotlin/Boolean // kotlin.concurrent/AtomicArray.compareAndSet|compareAndSet(kotlin.Int;1:0;1:0){}[0]
+    final fun compareAndExchange(kotlin/Int, #A, #A): #A // kotlin.concurrent.atomics/AtomicArray.compareAndExchange|compareAndExchange(kotlin.Int;1:0;1:0){}[0]
 
     // Targets: [native]
-    final fun get(kotlin/Int): #A // kotlin.concurrent/AtomicArray.get|get(kotlin.Int){}[0]
+    final fun compareAndSet(kotlin/Int, #A, #A): kotlin/Boolean // kotlin.concurrent.atomics/AtomicArray.compareAndSet|compareAndSet(kotlin.Int;1:0;1:0){}[0]
 
     // Targets: [native]
-    final fun getAndSet(kotlin/Int, #A): #A // kotlin.concurrent/AtomicArray.getAndSet|getAndSet(kotlin.Int;1:0){}[0]
+    final fun get(kotlin/Int): #A // kotlin.concurrent.atomics/AtomicArray.get|get(kotlin.Int){}[0]
 
     // Targets: [native]
-    final fun set(kotlin/Int, #A) // kotlin.concurrent/AtomicArray.set|set(kotlin.Int;1:0){}[0]
+    final fun getAndSet(kotlin/Int, #A): #A // kotlin.concurrent.atomics/AtomicArray.getAndSet|getAndSet(kotlin.Int;1:0){}[0]
+
+    // Targets: [native]
+    final fun set(kotlin/Int, #A) // kotlin.concurrent.atomics/AtomicArray.set|set(kotlin.Int;1:0){}[0]
 }
 
-final class <#A: kotlin/Any?> kotlin.concurrent/AtomicReference { // kotlin.concurrent/AtomicReference|null[0]
-    constructor <init>(#A) // kotlin.concurrent/AtomicReference.<init>|<init>(1:0){}[0]
+final class <#A: kotlin/Any?> kotlin.concurrent.atomics/AtomicReference { // kotlin.concurrent.atomics/AtomicReference|null[0]
+    constructor <init>(#A) // kotlin.concurrent.atomics/AtomicReference.<init>|<init>(1:0){}[0]
 
-    final fun compareAndExchange(#A, #A): #A // kotlin.concurrent/AtomicReference.compareAndExchange|compareAndExchange(1:0;1:0){}[0]
-    final fun compareAndSet(#A, #A): kotlin/Boolean // kotlin.concurrent/AtomicReference.compareAndSet|compareAndSet(1:0;1:0){}[0]
-    final fun exchange(#A): #A // kotlin.concurrent/AtomicReference.exchange|exchange(1:0){}[0]
-    final fun load(): #A // kotlin.concurrent/AtomicReference.load|load(){}[0]
-    final fun store(#A) // kotlin.concurrent/AtomicReference.store|store(1:0){}[0]
-    final fun toString(): kotlin/String // kotlin.concurrent/AtomicReference.toString|toString(){}[0]
-
-    // Targets: [native]
-    final var value // kotlin.concurrent/AtomicReference.value|{}value[0]
-        final fun <get-value>(): #A // kotlin.concurrent/AtomicReference.value.<get-value>|<get-value>(){}[0]
-        final fun <set-value>(#A) // kotlin.concurrent/AtomicReference.value.<set-value>|<set-value>(1:0){}[0]
+    final fun compareAndExchange(#A, #A): #A // kotlin.concurrent.atomics/AtomicReference.compareAndExchange|compareAndExchange(1:0;1:0){}[0]
+    final fun compareAndSet(#A, #A): kotlin/Boolean // kotlin.concurrent.atomics/AtomicReference.compareAndSet|compareAndSet(1:0;1:0){}[0]
+    final fun exchange(#A): #A // kotlin.concurrent.atomics/AtomicReference.exchange|exchange(1:0){}[0]
+    final fun load(): #A // kotlin.concurrent.atomics/AtomicReference.load|load(){}[0]
+    final fun store(#A) // kotlin.concurrent.atomics/AtomicReference.store|store(1:0){}[0]
+    final fun toString(): kotlin/String // kotlin.concurrent.atomics/AtomicReference.toString|toString(){}[0]
 
     // Targets: [native]
-    final fun getAndSet(#A): #A // kotlin.concurrent/AtomicReference.getAndSet|getAndSet(1:0){}[0]
+    final var value // kotlin.concurrent.atomics/AtomicReference.value|{}value[0]
+        final fun <get-value>(): #A // kotlin.concurrent.atomics/AtomicReference.value.<get-value>|<get-value>(){}[0]
+        final fun <set-value>(#A) // kotlin.concurrent.atomics/AtomicReference.value.<set-value>|<set-value>(1:0){}[0]
+
+    // Targets: [native]
+    final fun getAndSet(#A): #A // kotlin.concurrent.atomics/AtomicReference.getAndSet|getAndSet(1:0){}[0]
 }
 
 final class <#A: kotlin/Any?> kotlin.time/TimedValue { // kotlin.time/TimedValue|null[0]
@@ -1432,201 +1432,201 @@ final class <#A: out kotlin/Any?> kotlin.collections/IndexedValue { // kotlin.co
     final fun toString(): kotlin/String // kotlin.collections/IndexedValue.toString|toString(){}[0]
 }
 
-final class kotlin.concurrent/AtomicBoolean { // kotlin.concurrent/AtomicBoolean|null[0]
-    constructor <init>(kotlin/Boolean) // kotlin.concurrent/AtomicBoolean.<init>|<init>(kotlin.Boolean){}[0]
+final class kotlin.concurrent.atomics/AtomicBoolean { // kotlin.concurrent.atomics/AtomicBoolean|null[0]
+    constructor <init>(kotlin/Boolean) // kotlin.concurrent.atomics/AtomicBoolean.<init>|<init>(kotlin.Boolean){}[0]
 
-    final fun compareAndExchange(kotlin/Boolean, kotlin/Boolean): kotlin/Boolean // kotlin.concurrent/AtomicBoolean.compareAndExchange|compareAndExchange(kotlin.Boolean;kotlin.Boolean){}[0]
-    final fun compareAndSet(kotlin/Boolean, kotlin/Boolean): kotlin/Boolean // kotlin.concurrent/AtomicBoolean.compareAndSet|compareAndSet(kotlin.Boolean;kotlin.Boolean){}[0]
-    final fun exchange(kotlin/Boolean): kotlin/Boolean // kotlin.concurrent/AtomicBoolean.exchange|exchange(kotlin.Boolean){}[0]
-    final fun load(): kotlin/Boolean // kotlin.concurrent/AtomicBoolean.load|load(){}[0]
-    final fun store(kotlin/Boolean) // kotlin.concurrent/AtomicBoolean.store|store(kotlin.Boolean){}[0]
-    final fun toString(): kotlin/String // kotlin.concurrent/AtomicBoolean.toString|toString(){}[0]
+    final fun compareAndExchange(kotlin/Boolean, kotlin/Boolean): kotlin/Boolean // kotlin.concurrent.atomics/AtomicBoolean.compareAndExchange|compareAndExchange(kotlin.Boolean;kotlin.Boolean){}[0]
+    final fun compareAndSet(kotlin/Boolean, kotlin/Boolean): kotlin/Boolean // kotlin.concurrent.atomics/AtomicBoolean.compareAndSet|compareAndSet(kotlin.Boolean;kotlin.Boolean){}[0]
+    final fun exchange(kotlin/Boolean): kotlin/Boolean // kotlin.concurrent.atomics/AtomicBoolean.exchange|exchange(kotlin.Boolean){}[0]
+    final fun load(): kotlin/Boolean // kotlin.concurrent.atomics/AtomicBoolean.load|load(){}[0]
+    final fun store(kotlin/Boolean) // kotlin.concurrent.atomics/AtomicBoolean.store|store(kotlin.Boolean){}[0]
+    final fun toString(): kotlin/String // kotlin.concurrent.atomics/AtomicBoolean.toString|toString(){}[0]
 }
 
-final class kotlin.concurrent/AtomicInt { // kotlin.concurrent/AtomicInt|null[0]
-    constructor <init>(kotlin/Int) // kotlin.concurrent/AtomicInt.<init>|<init>(kotlin.Int){}[0]
+final class kotlin.concurrent.atomics/AtomicInt { // kotlin.concurrent.atomics/AtomicInt|null[0]
+    constructor <init>(kotlin/Int) // kotlin.concurrent.atomics/AtomicInt.<init>|<init>(kotlin.Int){}[0]
 
-    final fun addAndFetch(kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicInt.addAndFetch|addAndFetch(kotlin.Int){}[0]
-    final fun compareAndExchange(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicInt.compareAndExchange|compareAndExchange(kotlin.Int;kotlin.Int){}[0]
-    final fun compareAndSet(kotlin/Int, kotlin/Int): kotlin/Boolean // kotlin.concurrent/AtomicInt.compareAndSet|compareAndSet(kotlin.Int;kotlin.Int){}[0]
-    final fun exchange(kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicInt.exchange|exchange(kotlin.Int){}[0]
-    final fun fetchAndAdd(kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicInt.fetchAndAdd|fetchAndAdd(kotlin.Int){}[0]
-    final fun load(): kotlin/Int // kotlin.concurrent/AtomicInt.load|load(){}[0]
-    final fun store(kotlin/Int) // kotlin.concurrent/AtomicInt.store|store(kotlin.Int){}[0]
-    final fun toString(): kotlin/String // kotlin.concurrent/AtomicInt.toString|toString(){}[0]
-
-    // Targets: [native]
-    final var value // kotlin.concurrent/AtomicInt.value|{}value[0]
-        final fun <get-value>(): kotlin/Int // kotlin.concurrent/AtomicInt.value.<get-value>|<get-value>(){}[0]
-        final fun <set-value>(kotlin/Int) // kotlin.concurrent/AtomicInt.value.<set-value>|<set-value>(kotlin.Int){}[0]
+    final fun addAndFetch(kotlin/Int): kotlin/Int // kotlin.concurrent.atomics/AtomicInt.addAndFetch|addAndFetch(kotlin.Int){}[0]
+    final fun compareAndExchange(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.concurrent.atomics/AtomicInt.compareAndExchange|compareAndExchange(kotlin.Int;kotlin.Int){}[0]
+    final fun compareAndSet(kotlin/Int, kotlin/Int): kotlin/Boolean // kotlin.concurrent.atomics/AtomicInt.compareAndSet|compareAndSet(kotlin.Int;kotlin.Int){}[0]
+    final fun exchange(kotlin/Int): kotlin/Int // kotlin.concurrent.atomics/AtomicInt.exchange|exchange(kotlin.Int){}[0]
+    final fun fetchAndAdd(kotlin/Int): kotlin/Int // kotlin.concurrent.atomics/AtomicInt.fetchAndAdd|fetchAndAdd(kotlin.Int){}[0]
+    final fun load(): kotlin/Int // kotlin.concurrent.atomics/AtomicInt.load|load(){}[0]
+    final fun store(kotlin/Int) // kotlin.concurrent.atomics/AtomicInt.store|store(kotlin.Int){}[0]
+    final fun toString(): kotlin/String // kotlin.concurrent.atomics/AtomicInt.toString|toString(){}[0]
 
     // Targets: [native]
-    final fun addAndGet(kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicInt.addAndGet|addAndGet(kotlin.Int){}[0]
+    final var value // kotlin.concurrent.atomics/AtomicInt.value|{}value[0]
+        final fun <get-value>(): kotlin/Int // kotlin.concurrent.atomics/AtomicInt.value.<get-value>|<get-value>(){}[0]
+        final fun <set-value>(kotlin/Int) // kotlin.concurrent.atomics/AtomicInt.value.<set-value>|<set-value>(kotlin.Int){}[0]
 
     // Targets: [native]
-    final fun decrementAndGet(): kotlin/Int // kotlin.concurrent/AtomicInt.decrementAndGet|decrementAndGet(){}[0]
+    final fun addAndGet(kotlin/Int): kotlin/Int // kotlin.concurrent.atomics/AtomicInt.addAndGet|addAndGet(kotlin.Int){}[0]
 
     // Targets: [native]
-    final fun getAndAdd(kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicInt.getAndAdd|getAndAdd(kotlin.Int){}[0]
+    final fun decrementAndGet(): kotlin/Int // kotlin.concurrent.atomics/AtomicInt.decrementAndGet|decrementAndGet(){}[0]
 
     // Targets: [native]
-    final fun getAndDecrement(): kotlin/Int // kotlin.concurrent/AtomicInt.getAndDecrement|getAndDecrement(){}[0]
+    final fun getAndAdd(kotlin/Int): kotlin/Int // kotlin.concurrent.atomics/AtomicInt.getAndAdd|getAndAdd(kotlin.Int){}[0]
 
     // Targets: [native]
-    final fun getAndIncrement(): kotlin/Int // kotlin.concurrent/AtomicInt.getAndIncrement|getAndIncrement(){}[0]
+    final fun getAndDecrement(): kotlin/Int // kotlin.concurrent.atomics/AtomicInt.getAndDecrement|getAndDecrement(){}[0]
 
     // Targets: [native]
-    final fun getAndSet(kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicInt.getAndSet|getAndSet(kotlin.Int){}[0]
+    final fun getAndIncrement(): kotlin/Int // kotlin.concurrent.atomics/AtomicInt.getAndIncrement|getAndIncrement(){}[0]
 
     // Targets: [native]
-    final fun incrementAndGet(): kotlin/Int // kotlin.concurrent/AtomicInt.incrementAndGet|incrementAndGet(){}[0]
+    final fun getAndSet(kotlin/Int): kotlin/Int // kotlin.concurrent.atomics/AtomicInt.getAndSet|getAndSet(kotlin.Int){}[0]
+
+    // Targets: [native]
+    final fun incrementAndGet(): kotlin/Int // kotlin.concurrent.atomics/AtomicInt.incrementAndGet|incrementAndGet(){}[0]
 }
 
-final class kotlin.concurrent/AtomicIntArray { // kotlin.concurrent/AtomicIntArray|null[0]
-    constructor <init>(kotlin/Int) // kotlin.concurrent/AtomicIntArray.<init>|<init>(kotlin.Int){}[0]
-    constructor <init>(kotlin/IntArray) // kotlin.concurrent/AtomicIntArray.<init>|<init>(kotlin.IntArray){}[0]
+final class kotlin.concurrent.atomics/AtomicIntArray { // kotlin.concurrent.atomics/AtomicIntArray|null[0]
+    constructor <init>(kotlin/Int) // kotlin.concurrent.atomics/AtomicIntArray.<init>|<init>(kotlin.Int){}[0]
+    constructor <init>(kotlin/IntArray) // kotlin.concurrent.atomics/AtomicIntArray.<init>|<init>(kotlin.IntArray){}[0]
 
-    final val size // kotlin.concurrent/AtomicIntArray.size|{}size[0]
-        final fun <get-size>(): kotlin/Int // kotlin.concurrent/AtomicIntArray.size.<get-size>|<get-size>(){}[0]
+    final val size // kotlin.concurrent.atomics/AtomicIntArray.size|{}size[0]
+        final fun <get-size>(): kotlin/Int // kotlin.concurrent.atomics/AtomicIntArray.size.<get-size>|<get-size>(){}[0]
 
-    final fun addAndFetchAt(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicIntArray.addAndFetchAt|addAndFetchAt(kotlin.Int;kotlin.Int){}[0]
-    final fun compareAndExchangeAt(kotlin/Int, kotlin/Int, kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicIntArray.compareAndExchangeAt|compareAndExchangeAt(kotlin.Int;kotlin.Int;kotlin.Int){}[0]
-    final fun compareAndSetAt(kotlin/Int, kotlin/Int, kotlin/Int): kotlin/Boolean // kotlin.concurrent/AtomicIntArray.compareAndSetAt|compareAndSetAt(kotlin.Int;kotlin.Int;kotlin.Int){}[0]
-    final fun exchangeAt(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicIntArray.exchangeAt|exchangeAt(kotlin.Int;kotlin.Int){}[0]
-    final fun fetchAndAddAt(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicIntArray.fetchAndAddAt|fetchAndAddAt(kotlin.Int;kotlin.Int){}[0]
-    final fun loadAt(kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicIntArray.loadAt|loadAt(kotlin.Int){}[0]
-    final fun storeAt(kotlin/Int, kotlin/Int) // kotlin.concurrent/AtomicIntArray.storeAt|storeAt(kotlin.Int;kotlin.Int){}[0]
-    final fun toString(): kotlin/String // kotlin.concurrent/AtomicIntArray.toString|toString(){}[0]
-
-    // Targets: [native]
-    final val length // kotlin.concurrent/AtomicIntArray.length|{}length[0]
-        final fun <get-length>(): kotlin/Int // kotlin.concurrent/AtomicIntArray.length.<get-length>|<get-length>(){}[0]
+    final fun addAndFetchAt(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.concurrent.atomics/AtomicIntArray.addAndFetchAt|addAndFetchAt(kotlin.Int;kotlin.Int){}[0]
+    final fun compareAndExchangeAt(kotlin/Int, kotlin/Int, kotlin/Int): kotlin/Int // kotlin.concurrent.atomics/AtomicIntArray.compareAndExchangeAt|compareAndExchangeAt(kotlin.Int;kotlin.Int;kotlin.Int){}[0]
+    final fun compareAndSetAt(kotlin/Int, kotlin/Int, kotlin/Int): kotlin/Boolean // kotlin.concurrent.atomics/AtomicIntArray.compareAndSetAt|compareAndSetAt(kotlin.Int;kotlin.Int;kotlin.Int){}[0]
+    final fun exchangeAt(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.concurrent.atomics/AtomicIntArray.exchangeAt|exchangeAt(kotlin.Int;kotlin.Int){}[0]
+    final fun fetchAndAddAt(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.concurrent.atomics/AtomicIntArray.fetchAndAddAt|fetchAndAddAt(kotlin.Int;kotlin.Int){}[0]
+    final fun loadAt(kotlin/Int): kotlin/Int // kotlin.concurrent.atomics/AtomicIntArray.loadAt|loadAt(kotlin.Int){}[0]
+    final fun storeAt(kotlin/Int, kotlin/Int) // kotlin.concurrent.atomics/AtomicIntArray.storeAt|storeAt(kotlin.Int;kotlin.Int){}[0]
+    final fun toString(): kotlin/String // kotlin.concurrent.atomics/AtomicIntArray.toString|toString(){}[0]
 
     // Targets: [native]
-    final fun addAndGet(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicIntArray.addAndGet|addAndGet(kotlin.Int;kotlin.Int){}[0]
+    final val length // kotlin.concurrent.atomics/AtomicIntArray.length|{}length[0]
+        final fun <get-length>(): kotlin/Int // kotlin.concurrent.atomics/AtomicIntArray.length.<get-length>|<get-length>(){}[0]
 
     // Targets: [native]
-    final fun compareAndExchange(kotlin/Int, kotlin/Int, kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicIntArray.compareAndExchange|compareAndExchange(kotlin.Int;kotlin.Int;kotlin.Int){}[0]
+    final fun addAndGet(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.concurrent.atomics/AtomicIntArray.addAndGet|addAndGet(kotlin.Int;kotlin.Int){}[0]
 
     // Targets: [native]
-    final fun compareAndSet(kotlin/Int, kotlin/Int, kotlin/Int): kotlin/Boolean // kotlin.concurrent/AtomicIntArray.compareAndSet|compareAndSet(kotlin.Int;kotlin.Int;kotlin.Int){}[0]
+    final fun compareAndExchange(kotlin/Int, kotlin/Int, kotlin/Int): kotlin/Int // kotlin.concurrent.atomics/AtomicIntArray.compareAndExchange|compareAndExchange(kotlin.Int;kotlin.Int;kotlin.Int){}[0]
 
     // Targets: [native]
-    final fun decrementAndGet(kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicIntArray.decrementAndGet|decrementAndGet(kotlin.Int){}[0]
+    final fun compareAndSet(kotlin/Int, kotlin/Int, kotlin/Int): kotlin/Boolean // kotlin.concurrent.atomics/AtomicIntArray.compareAndSet|compareAndSet(kotlin.Int;kotlin.Int;kotlin.Int){}[0]
 
     // Targets: [native]
-    final fun get(kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicIntArray.get|get(kotlin.Int){}[0]
+    final fun decrementAndGet(kotlin/Int): kotlin/Int // kotlin.concurrent.atomics/AtomicIntArray.decrementAndGet|decrementAndGet(kotlin.Int){}[0]
 
     // Targets: [native]
-    final fun getAndAdd(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicIntArray.getAndAdd|getAndAdd(kotlin.Int;kotlin.Int){}[0]
+    final fun get(kotlin/Int): kotlin/Int // kotlin.concurrent.atomics/AtomicIntArray.get|get(kotlin.Int){}[0]
 
     // Targets: [native]
-    final fun getAndDecrement(kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicIntArray.getAndDecrement|getAndDecrement(kotlin.Int){}[0]
+    final fun getAndAdd(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.concurrent.atomics/AtomicIntArray.getAndAdd|getAndAdd(kotlin.Int;kotlin.Int){}[0]
 
     // Targets: [native]
-    final fun getAndIncrement(kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicIntArray.getAndIncrement|getAndIncrement(kotlin.Int){}[0]
+    final fun getAndDecrement(kotlin/Int): kotlin/Int // kotlin.concurrent.atomics/AtomicIntArray.getAndDecrement|getAndDecrement(kotlin.Int){}[0]
 
     // Targets: [native]
-    final fun getAndSet(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicIntArray.getAndSet|getAndSet(kotlin.Int;kotlin.Int){}[0]
+    final fun getAndIncrement(kotlin/Int): kotlin/Int // kotlin.concurrent.atomics/AtomicIntArray.getAndIncrement|getAndIncrement(kotlin.Int){}[0]
 
     // Targets: [native]
-    final fun incrementAndGet(kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicIntArray.incrementAndGet|incrementAndGet(kotlin.Int){}[0]
+    final fun getAndSet(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.concurrent.atomics/AtomicIntArray.getAndSet|getAndSet(kotlin.Int;kotlin.Int){}[0]
 
     // Targets: [native]
-    final fun set(kotlin/Int, kotlin/Int) // kotlin.concurrent/AtomicIntArray.set|set(kotlin.Int;kotlin.Int){}[0]
+    final fun incrementAndGet(kotlin/Int): kotlin/Int // kotlin.concurrent.atomics/AtomicIntArray.incrementAndGet|incrementAndGet(kotlin.Int){}[0]
+
+    // Targets: [native]
+    final fun set(kotlin/Int, kotlin/Int) // kotlin.concurrent.atomics/AtomicIntArray.set|set(kotlin.Int;kotlin.Int){}[0]
 }
 
-final class kotlin.concurrent/AtomicLong { // kotlin.concurrent/AtomicLong|null[0]
-    constructor <init>(kotlin/Long) // kotlin.concurrent/AtomicLong.<init>|<init>(kotlin.Long){}[0]
+final class kotlin.concurrent.atomics/AtomicLong { // kotlin.concurrent.atomics/AtomicLong|null[0]
+    constructor <init>(kotlin/Long) // kotlin.concurrent.atomics/AtomicLong.<init>|<init>(kotlin.Long){}[0]
 
-    final fun addAndFetch(kotlin/Long): kotlin/Long // kotlin.concurrent/AtomicLong.addAndFetch|addAndFetch(kotlin.Long){}[0]
-    final fun compareAndExchange(kotlin/Long, kotlin/Long): kotlin/Long // kotlin.concurrent/AtomicLong.compareAndExchange|compareAndExchange(kotlin.Long;kotlin.Long){}[0]
-    final fun compareAndSet(kotlin/Long, kotlin/Long): kotlin/Boolean // kotlin.concurrent/AtomicLong.compareAndSet|compareAndSet(kotlin.Long;kotlin.Long){}[0]
-    final fun exchange(kotlin/Long): kotlin/Long // kotlin.concurrent/AtomicLong.exchange|exchange(kotlin.Long){}[0]
-    final fun fetchAndAdd(kotlin/Long): kotlin/Long // kotlin.concurrent/AtomicLong.fetchAndAdd|fetchAndAdd(kotlin.Long){}[0]
-    final fun load(): kotlin/Long // kotlin.concurrent/AtomicLong.load|load(){}[0]
-    final fun store(kotlin/Long) // kotlin.concurrent/AtomicLong.store|store(kotlin.Long){}[0]
-    final fun toString(): kotlin/String // kotlin.concurrent/AtomicLong.toString|toString(){}[0]
-
-    // Targets: [native]
-    final var value // kotlin.concurrent/AtomicLong.value|{}value[0]
-        final fun <get-value>(): kotlin/Long // kotlin.concurrent/AtomicLong.value.<get-value>|<get-value>(){}[0]
-        final fun <set-value>(kotlin/Long) // kotlin.concurrent/AtomicLong.value.<set-value>|<set-value>(kotlin.Long){}[0]
+    final fun addAndFetch(kotlin/Long): kotlin/Long // kotlin.concurrent.atomics/AtomicLong.addAndFetch|addAndFetch(kotlin.Long){}[0]
+    final fun compareAndExchange(kotlin/Long, kotlin/Long): kotlin/Long // kotlin.concurrent.atomics/AtomicLong.compareAndExchange|compareAndExchange(kotlin.Long;kotlin.Long){}[0]
+    final fun compareAndSet(kotlin/Long, kotlin/Long): kotlin/Boolean // kotlin.concurrent.atomics/AtomicLong.compareAndSet|compareAndSet(kotlin.Long;kotlin.Long){}[0]
+    final fun exchange(kotlin/Long): kotlin/Long // kotlin.concurrent.atomics/AtomicLong.exchange|exchange(kotlin.Long){}[0]
+    final fun fetchAndAdd(kotlin/Long): kotlin/Long // kotlin.concurrent.atomics/AtomicLong.fetchAndAdd|fetchAndAdd(kotlin.Long){}[0]
+    final fun load(): kotlin/Long // kotlin.concurrent.atomics/AtomicLong.load|load(){}[0]
+    final fun store(kotlin/Long) // kotlin.concurrent.atomics/AtomicLong.store|store(kotlin.Long){}[0]
+    final fun toString(): kotlin/String // kotlin.concurrent.atomics/AtomicLong.toString|toString(){}[0]
 
     // Targets: [native]
-    final fun addAndGet(kotlin/Long): kotlin/Long // kotlin.concurrent/AtomicLong.addAndGet|addAndGet(kotlin.Long){}[0]
+    final var value // kotlin.concurrent.atomics/AtomicLong.value|{}value[0]
+        final fun <get-value>(): kotlin/Long // kotlin.concurrent.atomics/AtomicLong.value.<get-value>|<get-value>(){}[0]
+        final fun <set-value>(kotlin/Long) // kotlin.concurrent.atomics/AtomicLong.value.<set-value>|<set-value>(kotlin.Long){}[0]
 
     // Targets: [native]
-    final fun decrementAndGet(): kotlin/Long // kotlin.concurrent/AtomicLong.decrementAndGet|decrementAndGet(){}[0]
+    final fun addAndGet(kotlin/Long): kotlin/Long // kotlin.concurrent.atomics/AtomicLong.addAndGet|addAndGet(kotlin.Long){}[0]
 
     // Targets: [native]
-    final fun getAndAdd(kotlin/Long): kotlin/Long // kotlin.concurrent/AtomicLong.getAndAdd|getAndAdd(kotlin.Long){}[0]
+    final fun decrementAndGet(): kotlin/Long // kotlin.concurrent.atomics/AtomicLong.decrementAndGet|decrementAndGet(){}[0]
 
     // Targets: [native]
-    final fun getAndDecrement(): kotlin/Long // kotlin.concurrent/AtomicLong.getAndDecrement|getAndDecrement(){}[0]
+    final fun getAndAdd(kotlin/Long): kotlin/Long // kotlin.concurrent.atomics/AtomicLong.getAndAdd|getAndAdd(kotlin.Long){}[0]
 
     // Targets: [native]
-    final fun getAndIncrement(): kotlin/Long // kotlin.concurrent/AtomicLong.getAndIncrement|getAndIncrement(){}[0]
+    final fun getAndDecrement(): kotlin/Long // kotlin.concurrent.atomics/AtomicLong.getAndDecrement|getAndDecrement(){}[0]
 
     // Targets: [native]
-    final fun getAndSet(kotlin/Long): kotlin/Long // kotlin.concurrent/AtomicLong.getAndSet|getAndSet(kotlin.Long){}[0]
+    final fun getAndIncrement(): kotlin/Long // kotlin.concurrent.atomics/AtomicLong.getAndIncrement|getAndIncrement(){}[0]
 
     // Targets: [native]
-    final fun incrementAndGet(): kotlin/Long // kotlin.concurrent/AtomicLong.incrementAndGet|incrementAndGet(){}[0]
+    final fun getAndSet(kotlin/Long): kotlin/Long // kotlin.concurrent.atomics/AtomicLong.getAndSet|getAndSet(kotlin.Long){}[0]
+
+    // Targets: [native]
+    final fun incrementAndGet(): kotlin/Long // kotlin.concurrent.atomics/AtomicLong.incrementAndGet|incrementAndGet(){}[0]
 }
 
-final class kotlin.concurrent/AtomicLongArray { // kotlin.concurrent/AtomicLongArray|null[0]
-    constructor <init>(kotlin/Int) // kotlin.concurrent/AtomicLongArray.<init>|<init>(kotlin.Int){}[0]
-    constructor <init>(kotlin/LongArray) // kotlin.concurrent/AtomicLongArray.<init>|<init>(kotlin.LongArray){}[0]
+final class kotlin.concurrent.atomics/AtomicLongArray { // kotlin.concurrent.atomics/AtomicLongArray|null[0]
+    constructor <init>(kotlin/Int) // kotlin.concurrent.atomics/AtomicLongArray.<init>|<init>(kotlin.Int){}[0]
+    constructor <init>(kotlin/LongArray) // kotlin.concurrent.atomics/AtomicLongArray.<init>|<init>(kotlin.LongArray){}[0]
 
-    final val size // kotlin.concurrent/AtomicLongArray.size|{}size[0]
-        final fun <get-size>(): kotlin/Int // kotlin.concurrent/AtomicLongArray.size.<get-size>|<get-size>(){}[0]
+    final val size // kotlin.concurrent.atomics/AtomicLongArray.size|{}size[0]
+        final fun <get-size>(): kotlin/Int // kotlin.concurrent.atomics/AtomicLongArray.size.<get-size>|<get-size>(){}[0]
 
-    final fun addAndFetchAt(kotlin/Int, kotlin/Long): kotlin/Long // kotlin.concurrent/AtomicLongArray.addAndFetchAt|addAndFetchAt(kotlin.Int;kotlin.Long){}[0]
-    final fun compareAndExchangeAt(kotlin/Int, kotlin/Long, kotlin/Long): kotlin/Long // kotlin.concurrent/AtomicLongArray.compareAndExchangeAt|compareAndExchangeAt(kotlin.Int;kotlin.Long;kotlin.Long){}[0]
-    final fun compareAndSetAt(kotlin/Int, kotlin/Long, kotlin/Long): kotlin/Boolean // kotlin.concurrent/AtomicLongArray.compareAndSetAt|compareAndSetAt(kotlin.Int;kotlin.Long;kotlin.Long){}[0]
-    final fun exchangeAt(kotlin/Int, kotlin/Long): kotlin/Long // kotlin.concurrent/AtomicLongArray.exchangeAt|exchangeAt(kotlin.Int;kotlin.Long){}[0]
-    final fun fetchAndAddAt(kotlin/Int, kotlin/Long): kotlin/Long // kotlin.concurrent/AtomicLongArray.fetchAndAddAt|fetchAndAddAt(kotlin.Int;kotlin.Long){}[0]
-    final fun loadAt(kotlin/Int): kotlin/Long // kotlin.concurrent/AtomicLongArray.loadAt|loadAt(kotlin.Int){}[0]
-    final fun storeAt(kotlin/Int, kotlin/Long) // kotlin.concurrent/AtomicLongArray.storeAt|storeAt(kotlin.Int;kotlin.Long){}[0]
-    final fun toString(): kotlin/String // kotlin.concurrent/AtomicLongArray.toString|toString(){}[0]
-
-    // Targets: [native]
-    final val length // kotlin.concurrent/AtomicLongArray.length|{}length[0]
-        final fun <get-length>(): kotlin/Int // kotlin.concurrent/AtomicLongArray.length.<get-length>|<get-length>(){}[0]
+    final fun addAndFetchAt(kotlin/Int, kotlin/Long): kotlin/Long // kotlin.concurrent.atomics/AtomicLongArray.addAndFetchAt|addAndFetchAt(kotlin.Int;kotlin.Long){}[0]
+    final fun compareAndExchangeAt(kotlin/Int, kotlin/Long, kotlin/Long): kotlin/Long // kotlin.concurrent.atomics/AtomicLongArray.compareAndExchangeAt|compareAndExchangeAt(kotlin.Int;kotlin.Long;kotlin.Long){}[0]
+    final fun compareAndSetAt(kotlin/Int, kotlin/Long, kotlin/Long): kotlin/Boolean // kotlin.concurrent.atomics/AtomicLongArray.compareAndSetAt|compareAndSetAt(kotlin.Int;kotlin.Long;kotlin.Long){}[0]
+    final fun exchangeAt(kotlin/Int, kotlin/Long): kotlin/Long // kotlin.concurrent.atomics/AtomicLongArray.exchangeAt|exchangeAt(kotlin.Int;kotlin.Long){}[0]
+    final fun fetchAndAddAt(kotlin/Int, kotlin/Long): kotlin/Long // kotlin.concurrent.atomics/AtomicLongArray.fetchAndAddAt|fetchAndAddAt(kotlin.Int;kotlin.Long){}[0]
+    final fun loadAt(kotlin/Int): kotlin/Long // kotlin.concurrent.atomics/AtomicLongArray.loadAt|loadAt(kotlin.Int){}[0]
+    final fun storeAt(kotlin/Int, kotlin/Long) // kotlin.concurrent.atomics/AtomicLongArray.storeAt|storeAt(kotlin.Int;kotlin.Long){}[0]
+    final fun toString(): kotlin/String // kotlin.concurrent.atomics/AtomicLongArray.toString|toString(){}[0]
 
     // Targets: [native]
-    final fun addAndGet(kotlin/Int, kotlin/Long): kotlin/Long // kotlin.concurrent/AtomicLongArray.addAndGet|addAndGet(kotlin.Int;kotlin.Long){}[0]
+    final val length // kotlin.concurrent.atomics/AtomicLongArray.length|{}length[0]
+        final fun <get-length>(): kotlin/Int // kotlin.concurrent.atomics/AtomicLongArray.length.<get-length>|<get-length>(){}[0]
 
     // Targets: [native]
-    final fun compareAndExchange(kotlin/Int, kotlin/Long, kotlin/Long): kotlin/Long // kotlin.concurrent/AtomicLongArray.compareAndExchange|compareAndExchange(kotlin.Int;kotlin.Long;kotlin.Long){}[0]
+    final fun addAndGet(kotlin/Int, kotlin/Long): kotlin/Long // kotlin.concurrent.atomics/AtomicLongArray.addAndGet|addAndGet(kotlin.Int;kotlin.Long){}[0]
 
     // Targets: [native]
-    final fun compareAndSet(kotlin/Int, kotlin/Long, kotlin/Long): kotlin/Boolean // kotlin.concurrent/AtomicLongArray.compareAndSet|compareAndSet(kotlin.Int;kotlin.Long;kotlin.Long){}[0]
+    final fun compareAndExchange(kotlin/Int, kotlin/Long, kotlin/Long): kotlin/Long // kotlin.concurrent.atomics/AtomicLongArray.compareAndExchange|compareAndExchange(kotlin.Int;kotlin.Long;kotlin.Long){}[0]
 
     // Targets: [native]
-    final fun decrementAndGet(kotlin/Int): kotlin/Long // kotlin.concurrent/AtomicLongArray.decrementAndGet|decrementAndGet(kotlin.Int){}[0]
+    final fun compareAndSet(kotlin/Int, kotlin/Long, kotlin/Long): kotlin/Boolean // kotlin.concurrent.atomics/AtomicLongArray.compareAndSet|compareAndSet(kotlin.Int;kotlin.Long;kotlin.Long){}[0]
 
     // Targets: [native]
-    final fun get(kotlin/Int): kotlin/Long // kotlin.concurrent/AtomicLongArray.get|get(kotlin.Int){}[0]
+    final fun decrementAndGet(kotlin/Int): kotlin/Long // kotlin.concurrent.atomics/AtomicLongArray.decrementAndGet|decrementAndGet(kotlin.Int){}[0]
 
     // Targets: [native]
-    final fun getAndAdd(kotlin/Int, kotlin/Long): kotlin/Long // kotlin.concurrent/AtomicLongArray.getAndAdd|getAndAdd(kotlin.Int;kotlin.Long){}[0]
+    final fun get(kotlin/Int): kotlin/Long // kotlin.concurrent.atomics/AtomicLongArray.get|get(kotlin.Int){}[0]
 
     // Targets: [native]
-    final fun getAndDecrement(kotlin/Int): kotlin/Long // kotlin.concurrent/AtomicLongArray.getAndDecrement|getAndDecrement(kotlin.Int){}[0]
+    final fun getAndAdd(kotlin/Int, kotlin/Long): kotlin/Long // kotlin.concurrent.atomics/AtomicLongArray.getAndAdd|getAndAdd(kotlin.Int;kotlin.Long){}[0]
 
     // Targets: [native]
-    final fun getAndIncrement(kotlin/Int): kotlin/Long // kotlin.concurrent/AtomicLongArray.getAndIncrement|getAndIncrement(kotlin.Int){}[0]
+    final fun getAndDecrement(kotlin/Int): kotlin/Long // kotlin.concurrent.atomics/AtomicLongArray.getAndDecrement|getAndDecrement(kotlin.Int){}[0]
 
     // Targets: [native]
-    final fun getAndSet(kotlin/Int, kotlin/Long): kotlin/Long // kotlin.concurrent/AtomicLongArray.getAndSet|getAndSet(kotlin.Int;kotlin.Long){}[0]
+    final fun getAndIncrement(kotlin/Int): kotlin/Long // kotlin.concurrent.atomics/AtomicLongArray.getAndIncrement|getAndIncrement(kotlin.Int){}[0]
 
     // Targets: [native]
-    final fun incrementAndGet(kotlin/Int): kotlin/Long // kotlin.concurrent/AtomicLongArray.incrementAndGet|incrementAndGet(kotlin.Int){}[0]
+    final fun getAndSet(kotlin/Int, kotlin/Long): kotlin/Long // kotlin.concurrent.atomics/AtomicLongArray.getAndSet|getAndSet(kotlin.Int;kotlin.Long){}[0]
 
     // Targets: [native]
-    final fun set(kotlin/Int, kotlin/Long) // kotlin.concurrent/AtomicLongArray.set|set(kotlin.Int;kotlin.Long){}[0]
+    final fun incrementAndGet(kotlin/Int): kotlin/Long // kotlin.concurrent.atomics/AtomicLongArray.incrementAndGet|incrementAndGet(kotlin.Int){}[0]
+
+    // Targets: [native]
+    final fun set(kotlin/Int, kotlin/Long) // kotlin.concurrent.atomics/AtomicLongArray.set|set(kotlin.Int;kotlin.Long){}[0]
 }
 
 final class kotlin.ranges/CharRange : kotlin.ranges/CharProgression, kotlin.ranges/ClosedRange<kotlin/Char>, kotlin.ranges/OpenEndRange<kotlin/Char> { // kotlin.ranges/CharRange|null[0]
@@ -4864,26 +4864,26 @@ final fun (kotlin.collections/Iterable<kotlin/UByte>).kotlin.collections/sum(): 
 final fun (kotlin.collections/Iterable<kotlin/UInt>).kotlin.collections/sum(): kotlin/UInt // kotlin.collections/sum|sum@kotlin.collections.Iterable<kotlin.UInt>(){}[0]
 final fun (kotlin.collections/Iterable<kotlin/ULong>).kotlin.collections/sum(): kotlin/ULong // kotlin.collections/sum|sum@kotlin.collections.Iterable<kotlin.ULong>(){}[0]
 final fun (kotlin.collections/Iterable<kotlin/UShort>).kotlin.collections/sum(): kotlin/UInt // kotlin.collections/sum|sum@kotlin.collections.Iterable<kotlin.UShort>(){}[0]
-final fun (kotlin.concurrent/AtomicInt).kotlin.concurrent/decrementAndFetch(): kotlin/Int // kotlin.concurrent/decrementAndFetch|decrementAndFetch@kotlin.concurrent.AtomicInt(){}[0]
-final fun (kotlin.concurrent/AtomicInt).kotlin.concurrent/fetchAndDecrement(): kotlin/Int // kotlin.concurrent/fetchAndDecrement|fetchAndDecrement@kotlin.concurrent.AtomicInt(){}[0]
-final fun (kotlin.concurrent/AtomicInt).kotlin.concurrent/fetchAndIncrement(): kotlin/Int // kotlin.concurrent/fetchAndIncrement|fetchAndIncrement@kotlin.concurrent.AtomicInt(){}[0]
-final fun (kotlin.concurrent/AtomicInt).kotlin.concurrent/incrementAndFetch(): kotlin/Int // kotlin.concurrent/incrementAndFetch|incrementAndFetch@kotlin.concurrent.AtomicInt(){}[0]
-final fun (kotlin.concurrent/AtomicInt).kotlin.concurrent/minusAssign(kotlin/Int) // kotlin.concurrent/minusAssign|minusAssign@kotlin.concurrent.AtomicInt(kotlin.Int){}[0]
-final fun (kotlin.concurrent/AtomicInt).kotlin.concurrent/plusAssign(kotlin/Int) // kotlin.concurrent/plusAssign|plusAssign@kotlin.concurrent.AtomicInt(kotlin.Int){}[0]
-final fun (kotlin.concurrent/AtomicIntArray).kotlin.concurrent/decrementAndFetchAt(kotlin/Int): kotlin/Int // kotlin.concurrent/decrementAndFetchAt|decrementAndFetchAt@kotlin.concurrent.AtomicIntArray(kotlin.Int){}[0]
-final fun (kotlin.concurrent/AtomicIntArray).kotlin.concurrent/fetchAndDecrementAt(kotlin/Int): kotlin/Int // kotlin.concurrent/fetchAndDecrementAt|fetchAndDecrementAt@kotlin.concurrent.AtomicIntArray(kotlin.Int){}[0]
-final fun (kotlin.concurrent/AtomicIntArray).kotlin.concurrent/fetchAndIncrementAt(kotlin/Int): kotlin/Int // kotlin.concurrent/fetchAndIncrementAt|fetchAndIncrementAt@kotlin.concurrent.AtomicIntArray(kotlin.Int){}[0]
-final fun (kotlin.concurrent/AtomicIntArray).kotlin.concurrent/incrementAndFetchAt(kotlin/Int): kotlin/Int // kotlin.concurrent/incrementAndFetchAt|incrementAndFetchAt@kotlin.concurrent.AtomicIntArray(kotlin.Int){}[0]
-final fun (kotlin.concurrent/AtomicLong).kotlin.concurrent/decrementAndFetch(): kotlin/Long // kotlin.concurrent/decrementAndFetch|decrementAndFetch@kotlin.concurrent.AtomicLong(){}[0]
-final fun (kotlin.concurrent/AtomicLong).kotlin.concurrent/fetchAndDecrement(): kotlin/Long // kotlin.concurrent/fetchAndDecrement|fetchAndDecrement@kotlin.concurrent.AtomicLong(){}[0]
-final fun (kotlin.concurrent/AtomicLong).kotlin.concurrent/fetchAndIncrement(): kotlin/Long // kotlin.concurrent/fetchAndIncrement|fetchAndIncrement@kotlin.concurrent.AtomicLong(){}[0]
-final fun (kotlin.concurrent/AtomicLong).kotlin.concurrent/incrementAndFetch(): kotlin/Long // kotlin.concurrent/incrementAndFetch|incrementAndFetch@kotlin.concurrent.AtomicLong(){}[0]
-final fun (kotlin.concurrent/AtomicLong).kotlin.concurrent/minusAssign(kotlin/Long) // kotlin.concurrent/minusAssign|minusAssign@kotlin.concurrent.AtomicLong(kotlin.Long){}[0]
-final fun (kotlin.concurrent/AtomicLong).kotlin.concurrent/plusAssign(kotlin/Long) // kotlin.concurrent/plusAssign|plusAssign@kotlin.concurrent.AtomicLong(kotlin.Long){}[0]
-final fun (kotlin.concurrent/AtomicLongArray).kotlin.concurrent/decrementAndFetchAt(kotlin/Int): kotlin/Long // kotlin.concurrent/decrementAndFetchAt|decrementAndFetchAt@kotlin.concurrent.AtomicLongArray(kotlin.Int){}[0]
-final fun (kotlin.concurrent/AtomicLongArray).kotlin.concurrent/fetchAndDecrementAt(kotlin/Int): kotlin/Long // kotlin.concurrent/fetchAndDecrementAt|fetchAndDecrementAt@kotlin.concurrent.AtomicLongArray(kotlin.Int){}[0]
-final fun (kotlin.concurrent/AtomicLongArray).kotlin.concurrent/fetchAndIncrementAt(kotlin/Int): kotlin/Long // kotlin.concurrent/fetchAndIncrementAt|fetchAndIncrementAt@kotlin.concurrent.AtomicLongArray(kotlin.Int){}[0]
-final fun (kotlin.concurrent/AtomicLongArray).kotlin.concurrent/incrementAndFetchAt(kotlin/Int): kotlin/Long // kotlin.concurrent/incrementAndFetchAt|incrementAndFetchAt@kotlin.concurrent.AtomicLongArray(kotlin.Int){}[0]
+final fun (kotlin.concurrent.atomics/AtomicInt).kotlin.concurrent.atomics/decrementAndFetch(): kotlin/Int // kotlin.concurrent.atomics/decrementAndFetch|decrementAndFetch@kotlin.concurrent.atomics.AtomicInt(){}[0]
+final fun (kotlin.concurrent.atomics/AtomicInt).kotlin.concurrent.atomics/fetchAndDecrement(): kotlin/Int // kotlin.concurrent.atomics/fetchAndDecrement|fetchAndDecrement@kotlin.concurrent.atomics.AtomicInt(){}[0]
+final fun (kotlin.concurrent.atomics/AtomicInt).kotlin.concurrent.atomics/fetchAndIncrement(): kotlin/Int // kotlin.concurrent.atomics/fetchAndIncrement|fetchAndIncrement@kotlin.concurrent.atomics.AtomicInt(){}[0]
+final fun (kotlin.concurrent.atomics/AtomicInt).kotlin.concurrent.atomics/incrementAndFetch(): kotlin/Int // kotlin.concurrent.atomics/incrementAndFetch|incrementAndFetch@kotlin.concurrent.atomics.AtomicInt(){}[0]
+final fun (kotlin.concurrent.atomics/AtomicInt).kotlin.concurrent.atomics/minusAssign(kotlin/Int) // kotlin.concurrent.atomics/minusAssign|minusAssign@kotlin.concurrent.atomics.AtomicInt(kotlin.Int){}[0]
+final fun (kotlin.concurrent.atomics/AtomicInt).kotlin.concurrent.atomics/plusAssign(kotlin/Int) // kotlin.concurrent.atomics/plusAssign|plusAssign@kotlin.concurrent.atomics.AtomicInt(kotlin.Int){}[0]
+final fun (kotlin.concurrent.atomics/AtomicIntArray).kotlin.concurrent.atomics/decrementAndFetchAt(kotlin/Int): kotlin/Int // kotlin.concurrent.atomics/decrementAndFetchAt|decrementAndFetchAt@kotlin.concurrent.atomics.AtomicIntArray(kotlin.Int){}[0]
+final fun (kotlin.concurrent.atomics/AtomicIntArray).kotlin.concurrent.atomics/fetchAndDecrementAt(kotlin/Int): kotlin/Int // kotlin.concurrent.atomics/fetchAndDecrementAt|fetchAndDecrementAt@kotlin.concurrent.atomics.AtomicIntArray(kotlin.Int){}[0]
+final fun (kotlin.concurrent.atomics/AtomicIntArray).kotlin.concurrent.atomics/fetchAndIncrementAt(kotlin/Int): kotlin/Int // kotlin.concurrent.atomics/fetchAndIncrementAt|fetchAndIncrementAt@kotlin.concurrent.atomics.AtomicIntArray(kotlin.Int){}[0]
+final fun (kotlin.concurrent.atomics/AtomicIntArray).kotlin.concurrent.atomics/incrementAndFetchAt(kotlin/Int): kotlin/Int // kotlin.concurrent.atomics/incrementAndFetchAt|incrementAndFetchAt@kotlin.concurrent.atomics.AtomicIntArray(kotlin.Int){}[0]
+final fun (kotlin.concurrent.atomics/AtomicLong).kotlin.concurrent.atomics/decrementAndFetch(): kotlin/Long // kotlin.concurrent.atomics/decrementAndFetch|decrementAndFetch@kotlin.concurrent.atomics.AtomicLong(){}[0]
+final fun (kotlin.concurrent.atomics/AtomicLong).kotlin.concurrent.atomics/fetchAndDecrement(): kotlin/Long // kotlin.concurrent.atomics/fetchAndDecrement|fetchAndDecrement@kotlin.concurrent.atomics.AtomicLong(){}[0]
+final fun (kotlin.concurrent.atomics/AtomicLong).kotlin.concurrent.atomics/fetchAndIncrement(): kotlin/Long // kotlin.concurrent.atomics/fetchAndIncrement|fetchAndIncrement@kotlin.concurrent.atomics.AtomicLong(){}[0]
+final fun (kotlin.concurrent.atomics/AtomicLong).kotlin.concurrent.atomics/incrementAndFetch(): kotlin/Long // kotlin.concurrent.atomics/incrementAndFetch|incrementAndFetch@kotlin.concurrent.atomics.AtomicLong(){}[0]
+final fun (kotlin.concurrent.atomics/AtomicLong).kotlin.concurrent.atomics/minusAssign(kotlin/Long) // kotlin.concurrent.atomics/minusAssign|minusAssign@kotlin.concurrent.atomics.AtomicLong(kotlin.Long){}[0]
+final fun (kotlin.concurrent.atomics/AtomicLong).kotlin.concurrent.atomics/plusAssign(kotlin/Long) // kotlin.concurrent.atomics/plusAssign|plusAssign@kotlin.concurrent.atomics.AtomicLong(kotlin.Long){}[0]
+final fun (kotlin.concurrent.atomics/AtomicLongArray).kotlin.concurrent.atomics/decrementAndFetchAt(kotlin/Int): kotlin/Long // kotlin.concurrent.atomics/decrementAndFetchAt|decrementAndFetchAt@kotlin.concurrent.atomics.AtomicLongArray(kotlin.Int){}[0]
+final fun (kotlin.concurrent.atomics/AtomicLongArray).kotlin.concurrent.atomics/fetchAndDecrementAt(kotlin/Int): kotlin/Long // kotlin.concurrent.atomics/fetchAndDecrementAt|fetchAndDecrementAt@kotlin.concurrent.atomics.AtomicLongArray(kotlin.Int){}[0]
+final fun (kotlin.concurrent.atomics/AtomicLongArray).kotlin.concurrent.atomics/fetchAndIncrementAt(kotlin/Int): kotlin/Long // kotlin.concurrent.atomics/fetchAndIncrementAt|fetchAndIncrementAt@kotlin.concurrent.atomics.AtomicLongArray(kotlin.Int){}[0]
+final fun (kotlin.concurrent.atomics/AtomicLongArray).kotlin.concurrent.atomics/incrementAndFetchAt(kotlin/Int): kotlin/Long // kotlin.concurrent.atomics/incrementAndFetchAt|incrementAndFetchAt@kotlin.concurrent.atomics.AtomicLongArray(kotlin.Int){}[0]
 final fun (kotlin.coroutines/CoroutineContext.Element).kotlin.coroutines/minusPolymorphicKey(kotlin.coroutines/CoroutineContext.Key<*>): kotlin.coroutines/CoroutineContext // kotlin.coroutines/minusPolymorphicKey|minusPolymorphicKey@kotlin.coroutines.CoroutineContext.Element(kotlin.coroutines.CoroutineContext.Key<*>){}[0]
 final fun (kotlin.random/Random).kotlin.random/nextInt(kotlin.ranges/IntRange): kotlin/Int // kotlin.random/nextInt|nextInt@kotlin.random.Random(kotlin.ranges.IntRange){}[0]
 final fun (kotlin.random/Random).kotlin.random/nextLong(kotlin.ranges/LongRange): kotlin/Long // kotlin.random/nextLong|nextLong@kotlin.random.Random(kotlin.ranges.LongRange){}[0]
@@ -8852,7 +8852,7 @@ final inline fun <#A: reified kotlin/Any?, #B: kotlin.collections/MutableCollect
 final inline fun <#A: reified kotlin/Any?> (kotlin.collections/Iterable<*>).kotlin.collections/filterIsInstance(): kotlin.collections/List<#A> // kotlin.collections/filterIsInstance|filterIsInstance@kotlin.collections.Iterable<*>(){0§<kotlin.Any?>}[0]
 final inline fun <#A: reified kotlin/Any?> (kotlin.sequences/Sequence<*>).kotlin.sequences/filterIsInstance(): kotlin.sequences/Sequence<#A> // kotlin.sequences/filterIsInstance|filterIsInstance@kotlin.sequences.Sequence<*>(){0§<kotlin.Any?>}[0]
 final inline fun <#A: reified kotlin/Any?> (kotlin/Array<*>).kotlin.collections/filterIsInstance(): kotlin.collections/List<#A> // kotlin.collections/filterIsInstance|filterIsInstance@kotlin.Array<*>(){0§<kotlin.Any?>}[0]
-final inline fun <#A: reified kotlin/Any?> kotlin.concurrent/AtomicArray(kotlin/Int, kotlin/Function1<kotlin/Int, #A>): kotlin.concurrent/AtomicArray<#A> // kotlin.concurrent/AtomicArray|AtomicArray(kotlin.Int;kotlin.Function1<kotlin.Int,0:0>){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> kotlin.concurrent.atomics/AtomicArray(kotlin/Int, kotlin/Function1<kotlin/Int, #A>): kotlin.concurrent.atomics/AtomicArray<#A> // kotlin.concurrent.atomics/AtomicArray|AtomicArray(kotlin.Int;kotlin.Function1<kotlin.Int,0:0>){0§<kotlin.Any?>}[0]
 final inline fun <#A: reified kotlin/Any?> kotlin.reflect/typeOf(): kotlin.reflect/KType // kotlin.reflect/typeOf|typeOf(){0§<kotlin.Any?>}[0]
 final inline fun <#A: reified kotlin/Enum<#A>> kotlin.enums/enumEntries(): kotlin.enums/EnumEntries<#A> // kotlin.enums/enumEntries|enumEntries(){0§<kotlin.Enum<0:0>>}[0]
 final inline fun <#A: reified kotlin/Enum<#A>> kotlin/enumValueOf(kotlin/String): #A // kotlin/enumValueOf|enumValueOf(kotlin.String){0§<kotlin.Enum<0:0>>}[0]
@@ -8889,8 +8889,8 @@ final inline fun kotlin.comparisons/minOf(kotlin/UByte, kotlin/UByte, kotlin/UBy
 final inline fun kotlin.comparisons/minOf(kotlin/UInt, kotlin/UInt, kotlin/UInt): kotlin/UInt // kotlin.comparisons/minOf|minOf(kotlin.UInt;kotlin.UInt;kotlin.UInt){}[0]
 final inline fun kotlin.comparisons/minOf(kotlin/ULong, kotlin/ULong, kotlin/ULong): kotlin/ULong // kotlin.comparisons/minOf|minOf(kotlin.ULong;kotlin.ULong;kotlin.ULong){}[0]
 final inline fun kotlin.comparisons/minOf(kotlin/UShort, kotlin/UShort, kotlin/UShort): kotlin/UShort // kotlin.comparisons/minOf|minOf(kotlin.UShort;kotlin.UShort;kotlin.UShort){}[0]
-final inline fun kotlin.concurrent/AtomicIntArray(kotlin/Int, kotlin/Function1<kotlin/Int, kotlin/Int>): kotlin.concurrent/AtomicIntArray // kotlin.concurrent/AtomicIntArray|AtomicIntArray(kotlin.Int;kotlin.Function1<kotlin.Int,kotlin.Int>){}[0]
-final inline fun kotlin.concurrent/AtomicLongArray(kotlin/Int, kotlin/Function1<kotlin/Int, kotlin/Long>): kotlin.concurrent/AtomicLongArray // kotlin.concurrent/AtomicLongArray|AtomicLongArray(kotlin.Int;kotlin.Function1<kotlin.Int,kotlin.Long>){}[0]
+final inline fun kotlin.concurrent.atomics/AtomicIntArray(kotlin/Int, kotlin/Function1<kotlin/Int, kotlin/Int>): kotlin.concurrent.atomics/AtomicIntArray // kotlin.concurrent.atomics/AtomicIntArray|AtomicIntArray(kotlin.Int;kotlin.Function1<kotlin.Int,kotlin.Int>){}[0]
+final inline fun kotlin.concurrent.atomics/AtomicLongArray(kotlin/Int, kotlin/Function1<kotlin/Int, kotlin/Long>): kotlin.concurrent.atomics/AtomicLongArray // kotlin.concurrent.atomics/AtomicLongArray|AtomicLongArray(kotlin.Int;kotlin.Function1<kotlin.Int,kotlin.Long>){}[0]
 final inline fun kotlin.contracts/contract(kotlin/Function1<kotlin.contracts/ContractBuilder, kotlin/Unit>) // kotlin.contracts/contract|contract(kotlin.Function1<kotlin.contracts.ContractBuilder,kotlin.Unit>){}[0]
 final inline fun kotlin.coroutines.cancellation/CancellationException(kotlin/String?, kotlin/Throwable?): kotlin.coroutines.cancellation/CancellationException // kotlin.coroutines.cancellation/CancellationException|CancellationException(kotlin.String?;kotlin.Throwable?){}[0]
 final inline fun kotlin.coroutines.cancellation/CancellationException(kotlin/Throwable?): kotlin.coroutines.cancellation/CancellationException // kotlin.coroutines.cancellation/CancellationException|CancellationException(kotlin.Throwable?){}[0]
@@ -10647,6 +10647,35 @@ final class <#A: kotlin/Any?, #B: out kotlin/Any?> kotlin.native.internal/KPrope
 }
 
 // Targets: [native]
+final class <#A: kotlin/Any?> kotlin.concurrent/AtomicArray { // kotlin.concurrent/AtomicArray|null[0]
+    constructor <init>(kotlin/Array<#A>) // kotlin.concurrent/AtomicArray.<init>|<init>(kotlin.Array<1:0>){}[0]
+
+    final val length // kotlin.concurrent/AtomicArray.length|{}length[0]
+        final fun <get-length>(): kotlin/Int // kotlin.concurrent/AtomicArray.length.<get-length>|<get-length>(){}[0]
+
+    final fun compareAndExchange(kotlin/Int, #A, #A): #A // kotlin.concurrent/AtomicArray.compareAndExchange|compareAndExchange(kotlin.Int;1:0;1:0){}[0]
+    final fun compareAndSet(kotlin/Int, #A, #A): kotlin/Boolean // kotlin.concurrent/AtomicArray.compareAndSet|compareAndSet(kotlin.Int;1:0;1:0){}[0]
+    final fun get(kotlin/Int): #A // kotlin.concurrent/AtomicArray.get|get(kotlin.Int){}[0]
+    final fun getAndSet(kotlin/Int, #A): #A // kotlin.concurrent/AtomicArray.getAndSet|getAndSet(kotlin.Int;1:0){}[0]
+    final fun set(kotlin/Int, #A) // kotlin.concurrent/AtomicArray.set|set(kotlin.Int;1:0){}[0]
+    final fun toString(): kotlin/String // kotlin.concurrent/AtomicArray.toString|toString(){}[0]
+}
+
+// Targets: [native]
+final class <#A: kotlin/Any?> kotlin.concurrent/AtomicReference { // kotlin.concurrent/AtomicReference|null[0]
+    constructor <init>(#A) // kotlin.concurrent/AtomicReference.<init>|<init>(1:0){}[0]
+
+    final var value // kotlin.concurrent/AtomicReference.value|{}value[0]
+        final fun <get-value>(): #A // kotlin.concurrent/AtomicReference.value.<get-value>|<get-value>(){}[0]
+        final fun <set-value>(#A) // kotlin.concurrent/AtomicReference.value.<set-value>|<set-value>(1:0){}[0]
+
+    final fun compareAndExchange(#A, #A): #A // kotlin.concurrent/AtomicReference.compareAndExchange|compareAndExchange(1:0;1:0){}[0]
+    final fun compareAndSet(#A, #A): kotlin/Boolean // kotlin.concurrent/AtomicReference.compareAndSet|compareAndSet(1:0;1:0){}[0]
+    final fun getAndSet(#A): #A // kotlin.concurrent/AtomicReference.getAndSet|getAndSet(1:0){}[0]
+    final fun toString(): kotlin/String // kotlin.concurrent/AtomicReference.toString|toString(){}[0]
+}
+
+// Targets: [native]
 final class <#A: kotlin/Any?> kotlin.native.concurrent/AtomicReference { // kotlin.native.concurrent/AtomicReference|null[0]
     constructor <init>(#A) // kotlin.native.concurrent/AtomicReference.<init>|<init>(1:0){}[0]
 
@@ -10906,6 +10935,107 @@ final class <#A: out kotlin/Any?> kotlin.native.internal/KProperty0Impl : kotlin
 }
 
 // Targets: [native]
+final class kotlin.concurrent.atomics/AtomicNativePtr { // kotlin.concurrent.atomics/AtomicNativePtr|null[0]
+    constructor <init>(kotlin.native.internal/NativePtr) // kotlin.concurrent.atomics/AtomicNativePtr.<init>|<init>(kotlin.native.internal.NativePtr){}[0]
+
+    final var value // kotlin.concurrent.atomics/AtomicNativePtr.value|{}value[0]
+        final fun <get-value>(): kotlin.native.internal/NativePtr // kotlin.concurrent.atomics/AtomicNativePtr.value.<get-value>|<get-value>(){}[0]
+        final fun <set-value>(kotlin.native.internal/NativePtr) // kotlin.concurrent.atomics/AtomicNativePtr.value.<set-value>|<set-value>(kotlin.native.internal.NativePtr){}[0]
+
+    final fun compareAndExchange(kotlin.native.internal/NativePtr, kotlin.native.internal/NativePtr): kotlin.native.internal/NativePtr // kotlin.concurrent.atomics/AtomicNativePtr.compareAndExchange|compareAndExchange(kotlin.native.internal.NativePtr;kotlin.native.internal.NativePtr){}[0]
+    final fun compareAndSet(kotlin.native.internal/NativePtr, kotlin.native.internal/NativePtr): kotlin/Boolean // kotlin.concurrent.atomics/AtomicNativePtr.compareAndSet|compareAndSet(kotlin.native.internal.NativePtr;kotlin.native.internal.NativePtr){}[0]
+    final fun exchange(kotlin.native.internal/NativePtr): kotlin.native.internal/NativePtr // kotlin.concurrent.atomics/AtomicNativePtr.exchange|exchange(kotlin.native.internal.NativePtr){}[0]
+    final fun getAndSet(kotlin.native.internal/NativePtr): kotlin.native.internal/NativePtr // kotlin.concurrent.atomics/AtomicNativePtr.getAndSet|getAndSet(kotlin.native.internal.NativePtr){}[0]
+    final fun load(): kotlin.native.internal/NativePtr // kotlin.concurrent.atomics/AtomicNativePtr.load|load(){}[0]
+    final fun store(kotlin.native.internal/NativePtr) // kotlin.concurrent.atomics/AtomicNativePtr.store|store(kotlin.native.internal.NativePtr){}[0]
+    final fun toString(): kotlin/String // kotlin.concurrent.atomics/AtomicNativePtr.toString|toString(){}[0]
+}
+
+// Targets: [native]
+final class kotlin.concurrent/AtomicInt { // kotlin.concurrent/AtomicInt|null[0]
+    constructor <init>(kotlin/Int) // kotlin.concurrent/AtomicInt.<init>|<init>(kotlin.Int){}[0]
+
+    final var value // kotlin.concurrent/AtomicInt.value|{}value[0]
+        final fun <get-value>(): kotlin/Int // kotlin.concurrent/AtomicInt.value.<get-value>|<get-value>(){}[0]
+        final fun <set-value>(kotlin/Int) // kotlin.concurrent/AtomicInt.value.<set-value>|<set-value>(kotlin.Int){}[0]
+
+    final fun addAndGet(kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicInt.addAndGet|addAndGet(kotlin.Int){}[0]
+    final fun compareAndExchange(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicInt.compareAndExchange|compareAndExchange(kotlin.Int;kotlin.Int){}[0]
+    final fun compareAndSet(kotlin/Int, kotlin/Int): kotlin/Boolean // kotlin.concurrent/AtomicInt.compareAndSet|compareAndSet(kotlin.Int;kotlin.Int){}[0]
+    final fun decrementAndGet(): kotlin/Int // kotlin.concurrent/AtomicInt.decrementAndGet|decrementAndGet(){}[0]
+    final fun getAndAdd(kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicInt.getAndAdd|getAndAdd(kotlin.Int){}[0]
+    final fun getAndDecrement(): kotlin/Int // kotlin.concurrent/AtomicInt.getAndDecrement|getAndDecrement(){}[0]
+    final fun getAndIncrement(): kotlin/Int // kotlin.concurrent/AtomicInt.getAndIncrement|getAndIncrement(){}[0]
+    final fun getAndSet(kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicInt.getAndSet|getAndSet(kotlin.Int){}[0]
+    final fun incrementAndGet(): kotlin/Int // kotlin.concurrent/AtomicInt.incrementAndGet|incrementAndGet(){}[0]
+    final fun toString(): kotlin/String // kotlin.concurrent/AtomicInt.toString|toString(){}[0]
+}
+
+// Targets: [native]
+final class kotlin.concurrent/AtomicIntArray { // kotlin.concurrent/AtomicIntArray|null[0]
+    constructor <init>(kotlin/Int) // kotlin.concurrent/AtomicIntArray.<init>|<init>(kotlin.Int){}[0]
+    constructor <init>(kotlin/IntArray) // kotlin.concurrent/AtomicIntArray.<init>|<init>(kotlin.IntArray){}[0]
+
+    final val length // kotlin.concurrent/AtomicIntArray.length|{}length[0]
+        final fun <get-length>(): kotlin/Int // kotlin.concurrent/AtomicIntArray.length.<get-length>|<get-length>(){}[0]
+
+    final fun addAndGet(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicIntArray.addAndGet|addAndGet(kotlin.Int;kotlin.Int){}[0]
+    final fun compareAndExchange(kotlin/Int, kotlin/Int, kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicIntArray.compareAndExchange|compareAndExchange(kotlin.Int;kotlin.Int;kotlin.Int){}[0]
+    final fun compareAndSet(kotlin/Int, kotlin/Int, kotlin/Int): kotlin/Boolean // kotlin.concurrent/AtomicIntArray.compareAndSet|compareAndSet(kotlin.Int;kotlin.Int;kotlin.Int){}[0]
+    final fun decrementAndGet(kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicIntArray.decrementAndGet|decrementAndGet(kotlin.Int){}[0]
+    final fun get(kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicIntArray.get|get(kotlin.Int){}[0]
+    final fun getAndAdd(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicIntArray.getAndAdd|getAndAdd(kotlin.Int;kotlin.Int){}[0]
+    final fun getAndDecrement(kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicIntArray.getAndDecrement|getAndDecrement(kotlin.Int){}[0]
+    final fun getAndIncrement(kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicIntArray.getAndIncrement|getAndIncrement(kotlin.Int){}[0]
+    final fun getAndSet(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicIntArray.getAndSet|getAndSet(kotlin.Int;kotlin.Int){}[0]
+    final fun incrementAndGet(kotlin/Int): kotlin/Int // kotlin.concurrent/AtomicIntArray.incrementAndGet|incrementAndGet(kotlin.Int){}[0]
+    final fun set(kotlin/Int, kotlin/Int) // kotlin.concurrent/AtomicIntArray.set|set(kotlin.Int;kotlin.Int){}[0]
+    final fun toString(): kotlin/String // kotlin.concurrent/AtomicIntArray.toString|toString(){}[0]
+}
+
+// Targets: [native]
+final class kotlin.concurrent/AtomicLong { // kotlin.concurrent/AtomicLong|null[0]
+    constructor <init>(kotlin/Long) // kotlin.concurrent/AtomicLong.<init>|<init>(kotlin.Long){}[0]
+
+    final var value // kotlin.concurrent/AtomicLong.value|{}value[0]
+        final fun <get-value>(): kotlin/Long // kotlin.concurrent/AtomicLong.value.<get-value>|<get-value>(){}[0]
+        final fun <set-value>(kotlin/Long) // kotlin.concurrent/AtomicLong.value.<set-value>|<set-value>(kotlin.Long){}[0]
+
+    final fun addAndGet(kotlin/Long): kotlin/Long // kotlin.concurrent/AtomicLong.addAndGet|addAndGet(kotlin.Long){}[0]
+    final fun compareAndExchange(kotlin/Long, kotlin/Long): kotlin/Long // kotlin.concurrent/AtomicLong.compareAndExchange|compareAndExchange(kotlin.Long;kotlin.Long){}[0]
+    final fun compareAndSet(kotlin/Long, kotlin/Long): kotlin/Boolean // kotlin.concurrent/AtomicLong.compareAndSet|compareAndSet(kotlin.Long;kotlin.Long){}[0]
+    final fun decrementAndGet(): kotlin/Long // kotlin.concurrent/AtomicLong.decrementAndGet|decrementAndGet(){}[0]
+    final fun getAndAdd(kotlin/Long): kotlin/Long // kotlin.concurrent/AtomicLong.getAndAdd|getAndAdd(kotlin.Long){}[0]
+    final fun getAndDecrement(): kotlin/Long // kotlin.concurrent/AtomicLong.getAndDecrement|getAndDecrement(){}[0]
+    final fun getAndIncrement(): kotlin/Long // kotlin.concurrent/AtomicLong.getAndIncrement|getAndIncrement(){}[0]
+    final fun getAndSet(kotlin/Long): kotlin/Long // kotlin.concurrent/AtomicLong.getAndSet|getAndSet(kotlin.Long){}[0]
+    final fun incrementAndGet(): kotlin/Long // kotlin.concurrent/AtomicLong.incrementAndGet|incrementAndGet(){}[0]
+    final fun toString(): kotlin/String // kotlin.concurrent/AtomicLong.toString|toString(){}[0]
+}
+
+// Targets: [native]
+final class kotlin.concurrent/AtomicLongArray { // kotlin.concurrent/AtomicLongArray|null[0]
+    constructor <init>(kotlin/Int) // kotlin.concurrent/AtomicLongArray.<init>|<init>(kotlin.Int){}[0]
+    constructor <init>(kotlin/LongArray) // kotlin.concurrent/AtomicLongArray.<init>|<init>(kotlin.LongArray){}[0]
+
+    final val length // kotlin.concurrent/AtomicLongArray.length|{}length[0]
+        final fun <get-length>(): kotlin/Int // kotlin.concurrent/AtomicLongArray.length.<get-length>|<get-length>(){}[0]
+
+    final fun addAndGet(kotlin/Int, kotlin/Long): kotlin/Long // kotlin.concurrent/AtomicLongArray.addAndGet|addAndGet(kotlin.Int;kotlin.Long){}[0]
+    final fun compareAndExchange(kotlin/Int, kotlin/Long, kotlin/Long): kotlin/Long // kotlin.concurrent/AtomicLongArray.compareAndExchange|compareAndExchange(kotlin.Int;kotlin.Long;kotlin.Long){}[0]
+    final fun compareAndSet(kotlin/Int, kotlin/Long, kotlin/Long): kotlin/Boolean // kotlin.concurrent/AtomicLongArray.compareAndSet|compareAndSet(kotlin.Int;kotlin.Long;kotlin.Long){}[0]
+    final fun decrementAndGet(kotlin/Int): kotlin/Long // kotlin.concurrent/AtomicLongArray.decrementAndGet|decrementAndGet(kotlin.Int){}[0]
+    final fun get(kotlin/Int): kotlin/Long // kotlin.concurrent/AtomicLongArray.get|get(kotlin.Int){}[0]
+    final fun getAndAdd(kotlin/Int, kotlin/Long): kotlin/Long // kotlin.concurrent/AtomicLongArray.getAndAdd|getAndAdd(kotlin.Int;kotlin.Long){}[0]
+    final fun getAndDecrement(kotlin/Int): kotlin/Long // kotlin.concurrent/AtomicLongArray.getAndDecrement|getAndDecrement(kotlin.Int){}[0]
+    final fun getAndIncrement(kotlin/Int): kotlin/Long // kotlin.concurrent/AtomicLongArray.getAndIncrement|getAndIncrement(kotlin.Int){}[0]
+    final fun getAndSet(kotlin/Int, kotlin/Long): kotlin/Long // kotlin.concurrent/AtomicLongArray.getAndSet|getAndSet(kotlin.Int;kotlin.Long){}[0]
+    final fun incrementAndGet(kotlin/Int): kotlin/Long // kotlin.concurrent/AtomicLongArray.incrementAndGet|incrementAndGet(kotlin.Int){}[0]
+    final fun set(kotlin/Int, kotlin/Long) // kotlin.concurrent/AtomicLongArray.set|set(kotlin.Int;kotlin.Long){}[0]
+    final fun toString(): kotlin/String // kotlin.concurrent/AtomicLongArray.toString|toString(){}[0]
+}
+
+// Targets: [native]
 final class kotlin.concurrent/AtomicNativePtr { // kotlin.concurrent/AtomicNativePtr|null[0]
     constructor <init>(kotlin.native.internal/NativePtr) // kotlin.concurrent/AtomicNativePtr.<init>|<init>(kotlin.native.internal.NativePtr){}[0]
 
@@ -10915,10 +11045,7 @@ final class kotlin.concurrent/AtomicNativePtr { // kotlin.concurrent/AtomicNativ
 
     final fun compareAndExchange(kotlin.native.internal/NativePtr, kotlin.native.internal/NativePtr): kotlin.native.internal/NativePtr // kotlin.concurrent/AtomicNativePtr.compareAndExchange|compareAndExchange(kotlin.native.internal.NativePtr;kotlin.native.internal.NativePtr){}[0]
     final fun compareAndSet(kotlin.native.internal/NativePtr, kotlin.native.internal/NativePtr): kotlin/Boolean // kotlin.concurrent/AtomicNativePtr.compareAndSet|compareAndSet(kotlin.native.internal.NativePtr;kotlin.native.internal.NativePtr){}[0]
-    final fun exchange(kotlin.native.internal/NativePtr): kotlin.native.internal/NativePtr // kotlin.concurrent/AtomicNativePtr.exchange|exchange(kotlin.native.internal.NativePtr){}[0]
     final fun getAndSet(kotlin.native.internal/NativePtr): kotlin.native.internal/NativePtr // kotlin.concurrent/AtomicNativePtr.getAndSet|getAndSet(kotlin.native.internal.NativePtr){}[0]
-    final fun load(): kotlin.native.internal/NativePtr // kotlin.concurrent/AtomicNativePtr.load|load(){}[0]
-    final fun store(kotlin.native.internal/NativePtr) // kotlin.concurrent/AtomicNativePtr.store|store(kotlin.native.internal.NativePtr){}[0]
     final fun toString(): kotlin/String // kotlin.concurrent/AtomicNativePtr.toString|toString(){}[0]
 }
 
@@ -13564,6 +13691,9 @@ final inline fun <#A: reified kotlin/Any?> (kotlin.collections/Collection<#A>).k
 final inline fun <#A: reified kotlin/Any?> (kotlin.native.concurrent/DetachedObjectGraph<#A>).kotlin.native.concurrent/attach(): #A // kotlin.native.concurrent/attach|attach@kotlin.native.concurrent.DetachedObjectGraph<0:0>(){0§<kotlin.Any?>}[0]
 
 // Targets: [native]
+final inline fun <#A: reified kotlin/Any?> kotlin.concurrent/AtomicArray(kotlin/Int, kotlin/Function1<kotlin/Int, #A>): kotlin.concurrent/AtomicArray<#A> // kotlin.concurrent/AtomicArray|AtomicArray(kotlin.Int;kotlin.Function1<kotlin.Int,0:0>){0§<kotlin.Any?>}[0]
+
+// Targets: [native]
 final inline fun <#A: reified kotlin/Any?> kotlin.test/assertIs(kotlin/Any?, kotlin/String? = ...): #A // kotlin.test/assertIs|assertIs(kotlin.Any?;kotlin.String?){0§<kotlin.Any?>}[0]
 
 // Targets: [native]
@@ -13649,6 +13779,12 @@ final inline fun <#A: reified kotlinx.cinterop/NativePointed> (kotlinx.cinterop/
 
 // Targets: [native]
 final inline fun <#A: reified kotlinx.cinterop/NativePointed> kotlinx.cinterop/interpretPointed(kotlin.native.internal/NativePtr): #A // kotlinx.cinterop/interpretPointed|interpretPointed(kotlin.native.internal.NativePtr){0§<kotlinx.cinterop.NativePointed>}[0]
+
+// Targets: [native]
+final inline fun kotlin.concurrent/AtomicIntArray(kotlin/Int, kotlin/Function1<kotlin/Int, kotlin/Int>): kotlin.concurrent/AtomicIntArray // kotlin.concurrent/AtomicIntArray|AtomicIntArray(kotlin.Int;kotlin.Function1<kotlin.Int,kotlin.Int>){}[0]
+
+// Targets: [native]
+final inline fun kotlin.concurrent/AtomicLongArray(kotlin/Int, kotlin/Function1<kotlin/Int, kotlin/Long>): kotlin.concurrent/AtomicLongArray // kotlin.concurrent/AtomicLongArray|AtomicLongArray(kotlin.Int;kotlin.Function1<kotlin.Int,kotlin.Long>){}[0]
 
 // Targets: [native]
 final inline fun kotlin.system/measureNanoTime(kotlin/Function0<kotlin/Unit>): kotlin/Long // kotlin.system/measureNanoTime|measureNanoTime(kotlin.Function0<kotlin.Unit>){}[0]
