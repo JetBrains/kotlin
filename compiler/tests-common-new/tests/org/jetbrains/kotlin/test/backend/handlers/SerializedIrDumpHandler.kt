@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
+import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrPossiblyExternalDeclaration
@@ -111,6 +112,28 @@ class SerializedIrDumpHandler(
              */
             printSealedSubclasses = isAfterDeserialization,
 
+            /**
+             * Sometimes the value parameter of a property setter might have different name in lazy IR and in deserialized IR.
+             *
+             * Example:
+             * ```
+             * // Kotlin/JS
+             * external var foo: String = definedExternally
+             * ```
+             * Before serialization (lazy IR):
+             * ```
+             * CALL 'public final fun <set-foo> (value: kotlin.String): kotlin.Unit [external] declared in <root>' type=kotlin.Unit origin=EQ
+             *   value: CONST String type=kotlin.String value="foo"
+             * ```
+             * After deserialization:
+             * ```
+             * CALL 'public final fun <set-foo> (<set-?>: kotlin.String): kotlin.Unit [external] declared in <root>' type=kotlin.Unit origin=EQ
+             *   <set-?>: CONST String type=kotlin.String value="foo"
+             * ```
+             * This difference in names does not influence the behavior of the compiler. However, it is notable in IR dumps.
+             */
+            replaceImplicitSetterParameterNameWith = DEFAULT_VALUE_PARAMETER,
+
             /** Reuse the existing rules for filtering declarations as in IR text tests. */
             isHiddenDeclaration = { IrTextDumpHandler.isHiddenDeclaration(it, info.irPluginContext.irBuiltIns) },
         )
@@ -132,9 +155,9 @@ class SerializedIrDumpHandler(
 
         if (!isAfterDeserialization) {
             assertions.assertFileDoesntExist(dumpFile) { "Dump file already exists: $dumpFile" }
-            dumpFile.writeText(PRE_SERIALIZATION_DUMP_SANITIZER.sanitize(dump))
+            dumpFile.writeText(dump)
         } else {
-            assertions.assertEqualsToFile(dumpFile, POST_DESERIALIZATION_DUMP_SANITIZER.sanitize(dump))
+            assertions.assertEqualsToFile(dumpFile, dump)
         }
     }
 
@@ -144,14 +167,6 @@ class SerializedIrDumpHandler(
 
         private val TestServices.dumpFile: File
             get() = temporaryDirectoryManager.rootDir.resolve("ir_pre_serialization_dump.txt")
-
-        private val PRE_SERIALIZATION_DUMP_SANITIZER = IrDumpSanitizer.composite(
-            RewriteImplicitSetterParameterName,
-        )
-
-        private val POST_DESERIALIZATION_DUMP_SANITIZER = IrDumpSanitizer.composite(
-            RewriteImplicitSetterParameterName,
-        )
     }
 }
 
@@ -263,86 +278,4 @@ private class FlagsFilterImpl(private val isAfterDeserialization: Boolean) : Dum
 
         return applyIf(isReference || declaration.isFakeOverride) { this - "delegated" }
     }
-}
-
-private fun interface IrDumpSanitizer {
-    fun sanitize(testData: String): String
-
-    companion object {
-        fun composite(vararg sanitizers: IrDumpSanitizer) = IrDumpSanitizer { testData ->
-            sanitizers.fold(testData) { acc, sanitizer -> sanitizer.sanitize(acc) }
-        }
-    }
-}
-
-/**
- * Sometimes the value parameter of a property setter might have different name in lazy IR and in deserialized IR.
- *
- * Example:
- * ```
- * // Kotlin/JS
- * external var foo: String = definedExternally
- * ```
- * Before serialization (lazy IR):
- * ```
- * CALL 'public final fun <set-foo> (value: kotlin.String): kotlin.Unit [external] declared in <root>' type=kotlin.Unit origin=EQ
- *   value: CONST String type=kotlin.String value="foo"
- * ```
- * After deserialization:
- * ```
- * CALL 'public final fun <set-foo> (<set-?>: kotlin.String): kotlin.Unit [external] declared in <root>' type=kotlin.Unit origin=EQ
- *   <set-?>: CONST String type=kotlin.String value="foo"
- * ```
- * This difference in names does not influence the behavior of the compiler. However, it is notable in IR dumps.
- */
-private object RewriteImplicitSetterParameterName : IrDumpSanitizer {
-    override fun sanitize(testData: String): String {
-        var lastWasMemberAccessExpressionWithImplicitSetterParameterName = false
-
-        return testData.lineSequence().map { line ->
-            if ("<set-?>" in line)
-                print("")
-
-            val match = IR_MEMBER_ACCESS_WITH_IMPLICIT_SETTER_NAME.matchEntire(line)
-            when {
-                match != null -> {
-                    // rewrite the parameter name
-                    lastWasMemberAccessExpressionWithImplicitSetterParameterName = true
-                    match.transformGroup(groupIndex = 2) { DEFAULT_SETTER_PARAMETER_NAME }
-                }
-                lastWasMemberAccessExpressionWithImplicitSetterParameterName -> {
-                    // rewrite the parameter name
-                    lastWasMemberAccessExpressionWithImplicitSetterParameterName = false
-                    if (line.trimStart().startsWith("$IMPLICIT_SETTER_PARAMETER_NAME:"))
-                        line.replaceFirst(IMPLICIT_SETTER_PARAMETER_NAME, DEFAULT_SETTER_PARAMETER_NAME)
-                    else
-                        line
-                }
-                else -> {
-                    lastWasMemberAccessExpressionWithImplicitSetterParameterName = false
-                    line
-                }
-            }
-        }.joinToString("\n")
-    }
-
-    private const val IMPLICIT_SETTER_PARAMETER_NAME = "<set-?>"
-    private const val DEFAULT_SETTER_PARAMETER_NAME = "value"
-
-    private val IR_MEMBER_ACCESS_PREFIXES = listOf(
-        "CALL",                 // IrCall
-        "FUNCTION_REFERENCE",   // IrFunctionReference
-    ).joinToString("|", prefix = "(", postfix = ")")
-
-    private val IR_MEMBER_ACCESS_WITH_IMPLICIT_SETTER_NAME = Regex(".* $IR_MEMBER_ACCESS_PREFIXES .*\\((<set-\\?>): .*")
-}
-
-private inline fun MatchResult.transformGroup(groupIndex: Int, transformer: (groupValue: String) -> String): String {
-    val group = groups[groupIndex]!!
-    val transformedValue = transformer(group.value)
-
-    val prefix = value.substring(0, group.range.start)
-    val suffix = value.substring(group.range.endInclusive + 1)
-
-    return prefix + transformedValue + suffix
 }
