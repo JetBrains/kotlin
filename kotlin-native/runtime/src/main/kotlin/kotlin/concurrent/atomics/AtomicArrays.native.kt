@@ -181,7 +181,10 @@ public actual class AtomicIntArray {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use compareAndSetAt(index: Int, expectedValue: Int, newValue: Int) instead.", ReplaceWith("this.compareAndSetAt(index, expectedValue, newValue)"))
+    @Deprecated(
+        "Use compareAndSetAt(index: Int, expectedValue: Int, newValue: Int) instead.",
+        ReplaceWith("this.compareAndSetAt(index, expectedValue, newValue)")
+    )
     public fun compareAndSet(index: Int, expectedValue: Int, newValue: Int): Boolean {
         checkBounds(index)
         return array.compareAndSet(index, expectedValue, newValue)
@@ -195,7 +198,10 @@ public actual class AtomicIntArray {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use compareAndExchangeAt(index: Int, expectedValue: Int, newValue: Int) instead.", ReplaceWith("this.compareAndExchangeAt(index, expectedValue, newValue)"))
+    @Deprecated(
+        "Use compareAndExchangeAt(index: Int, expectedValue: Int, newValue: Int) instead.",
+        ReplaceWith("this.compareAndExchangeAt(index, expectedValue, newValue)")
+    )
     public fun compareAndExchange(index: Int, expectedValue: Int, newValue: Int): Int {
         checkBounds(index)
         return array.compareAndExchange(index, expectedValue, newValue)
@@ -469,7 +475,10 @@ public actual class AtomicLongArray {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use compareAndSetAt(index: Int, expectedValue: Long, newValue: Long) instead.", ReplaceWith("this.compareAndSetAt(index, expectedValue, newValue)"))
+    @Deprecated(
+        "Use compareAndSetAt(index: Int, expectedValue: Long, newValue: Long) instead.",
+        ReplaceWith("this.compareAndSetAt(index, expectedValue, newValue)")
+    )
     public fun compareAndSet(index: Int, expectedValue: Long, newValue: Long): Boolean {
         checkBounds(index)
         return array.compareAndSet(index, expectedValue, newValue)
@@ -483,7 +492,10 @@ public actual class AtomicLongArray {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use compareAndExchangeAt(index: Int, expectedValue: Long, newValue: Long) instead.", ReplaceWith("this.compareAndExchangeAt(index, expectedValue, newValue)"))
+    @Deprecated(
+        "Use compareAndExchangeAt(index: Int, expectedValue: Long, newValue: Long) instead.",
+        ReplaceWith("this.compareAndExchangeAt(index, expectedValue, newValue)")
+    )
     public fun compareAndExchange(index: Int, expectedValue: Long, newValue: Long): Long {
         checkBounds(index)
         return array.compareAndExchange(index, expectedValue, newValue)
@@ -728,7 +740,10 @@ public actual class AtomicArray<T> {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use compareAndSetAt(index: Int, expectedValue: T, newValue: T) instead.", ReplaceWith("this.compareAndSetAt(index, expectedValue, newValue)"))
+    @Deprecated(
+        "Use compareAndSetAt(index: Int, expectedValue: T, newValue: T) instead.",
+        ReplaceWith("this.compareAndSetAt(index, expectedValue, newValue)")
+    )
     public fun compareAndSet(index: Int, expectedValue: T, newValue: T): Boolean {
         checkBounds(index)
         return array.compareAndSet(index, expectedValue, newValue)
@@ -742,7 +757,10 @@ public actual class AtomicArray<T> {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use compareAndExchangeAt(index: Int, expectedValue: T, newValue: T) instead.", ReplaceWith("this.compareAndExchangeAt(index, expectedValue, newValue)"))
+    @Deprecated(
+        "Use compareAndExchangeAt(index: Int, expectedValue: T, newValue: T) instead.",
+        ReplaceWith("this.compareAndExchangeAt(index, expectedValue, newValue)")
+    )
     public fun compareAndExchange(index: Int, expectedValue: T, newValue: T): T {
         checkBounds(index)
         return array.compareAndExchange(index, expectedValue, newValue)
