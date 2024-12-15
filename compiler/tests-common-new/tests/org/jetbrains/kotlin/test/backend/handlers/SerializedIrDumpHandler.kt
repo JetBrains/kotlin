@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.IR_EXTERNAL_DECLARATION_STUB
 import org.jetbrains.kotlin.ir.declarations.IrPossiblyExternalDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -59,17 +60,29 @@ class SerializedIrDumpHandler(
         if (module.isSkipped) return
 
         val dumpOptions = DumpIrTreeOptions(
+            /** Rename temporary local variables using a stable naming scheme. */
             normalizeNames = true,
+
+            /** Print declarations always in stable order. */
             stableOrder = true,
-            stableOrderOfOverriddenSymbols = true, // We need to print overridden symbols always in stable order.
-            // External declarations origin differs between frontend-generated and deserialized IR,
-            // which prevents us from running irText tests against deserialized IR,
-            // since it uses the same golden data as when we run them against frontend-generated IR.
-            renderOriginForExternalDeclarations = false,
-            printTypeAbbreviations = false,
-            printExpectDeclarations = false, // Expect declarations do not survive during serialization to KLIB.
+
+            /** Print overridden symbols always in stable order. */
+            stableOrderOfOverriddenSymbols = true,
+
+            /**
+             * [IR_EXTERNAL_DECLARATION_STUB] origin is missing in deserialized IR, but it might be present in
+             * symbol references in frontend-generated IR.
+             */
+            renderOriginForExternalDeclarations = isAfterDeserialization,
+
+            /** Expect declarations do not survive during serialization to KLIB. */
+            printExpectDeclarations = false,
+
+            /** Filter out specific "conflicting" flags. */
             declarationFlagsFilter = FlagsFilterImpl(isAfterDeserialization),
-            printSourceRetentionAnnotations = false, // KT-69965: Don't dump annotations having source retention
+
+            /** Don't dump annotations having source retention such as [UnsafeVariance], [Suppress], [OptIn]. */
+            printSourceRetentionAnnotations = false,
 
             /**
              * Fake overrides generation works slightly different for Fir2LazyIr and normal IR (either built
