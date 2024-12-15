@@ -39,7 +39,11 @@ internal val Project.kotlinSecondaryVariantsDataSharing: KotlinSecondaryVariants
 internal interface KotlinShareableDataAsSecondaryVariant
 
 /**
- * Service to share configuration state between Kotlin Projects as Configuration Secondary Variants
+ * Service to share configuration state between Kotlin Projects as Configuration Secondary Variants.
+ * So this data can be consumed during Task Execution. And is trackable via Task Inputs.
+ *
+ * This is an alternative to BuildServices that are not trackable as Task Inputs.
+ *
  */
 internal class KotlinSecondaryVariantsDataSharing(
     private val project: Project,
@@ -102,6 +106,12 @@ internal class KotlinSecondaryVariantsDataSharing(
 private val kotlinProjectSharedDataAttribute = Attribute.of("org.jetbrains.kotlin.project-shared-data", String::class.java)
 
 /**
+ * Represents a provider that can extract some [T] that was published by a project in the current build as
+ * a secondary variant via [kotlinSecondaryVariantsDataSharing].
+ * And the current (consumer) project has dependency to the producer project.
+ *
+ * Data is meant to be extracted at Task Execution Phase.
+ *
  * This class is Configuration Cache safe. It can be stored in a Task field.
  */
 internal class KotlinProjectSharedDataProvider<T : KotlinShareableDataAsSecondaryVariant>(

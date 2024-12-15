@@ -4,13 +4,19 @@
  */
 package org.jetbrains.kotlin.gradle.mpp
 
+import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.utils.addToStdlib.countOccurrencesOf
+import org.junit.jupiter.params.ParameterizedTest
+import kotlin.io.path.createDirectories
+import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -127,6 +133,79 @@ class MppMetadataResolutionIT : KGPBaseTest() {
                     "Unexpected number of kotlinx-kotlinx-coroutines-core-1.8.1-concurrentMain"
                 )
             }
+        }
+    }
+
+    @GradleTest
+    @GradleTestVersions
+    @ParameterizedTest(name = "{0} isolated projects support: {1} {displayName}")
+    @GradleTestExtraStringArguments("ENABLE", "DISABLE")
+    fun testCustomGroupForMppPublicationInTransitiveDependencies(
+        gradleVersion: GradleVersion,
+        kmpIsolatedProjectsSupport: String,
+    ) {
+        var buildOptions = defaultBuildOptions.copy(
+            kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.valueOf(kmpIsolatedProjectsSupport)
+        )
+
+        fun GradleProject.configureKotlinMultiplatform() {
+            buildScriptInjection {
+                project.group = "default.group"
+
+                kotlinMultiplatform.jvm()
+                kotlinMultiplatform.linuxX64()
+            }
+        }
+
+        project("base-kotlin-multiplatform-library", gradleVersion) {
+            includeOtherProjectAsSubmodule("base-kotlin-multiplatform-library", newSubmoduleName = "lib1") {
+                configureKotlinMultiplatform()
+                buildScriptInjection {
+                    project.plugins.apply("maven-publish")
+                    val publishing = project.extensions.getByName("publishing") as PublishingExtension
+                    publishing.publications.withType(MavenPublication::class.java).configureEach {
+                        if (it.name == "kotlinMultiplatform") {
+                            it.groupId = "custom.group"
+                            it.artifactId = "custom-artifact-id"
+                        }
+                    }
+                }
+
+                kotlinSourcesDir("commonMain")
+                    .also { it.createDirectories() }
+                    .resolve("Lib1.kt")
+                    .writeText("interface Lib1")
+            }
+
+            includeOtherProjectAsSubmodule("base-kotlin-multiplatform-library", newSubmoduleName = "lib2") {
+                configureKotlinMultiplatform()
+                buildScriptInjection {
+                    kotlinMultiplatform.sourceSets.getByName("commonMain").dependencies {
+                        api(project(":lib1"))
+                    }
+                }
+
+                kotlinSourcesDir("commonMain")
+                    .also { it.createDirectories() }
+                    .resolve("Lib2.kt")
+                    .writeText("interface Lib2 : Lib1")
+            }
+
+            includeOtherProjectAsSubmodule("base-kotlin-multiplatform-library", newSubmoduleName = "lib3") {
+                configureKotlinMultiplatform()
+                buildScriptInjection {
+                    kotlinMultiplatform.sourceSets.getByName("commonMain").dependencies {
+                        api(project(":lib2"))
+                    }
+                }
+
+                kotlinSourcesDir("commonMain")
+                    .also { it.createDirectories() }
+                    .resolve("Lib3.kt")
+                    .writeText("class Lib3 : Lib2, Lib1")
+            }
+
+            build(":lib3:metadataCommonMainClasses", buildOptions = buildOptions)
         }
     }
 }
