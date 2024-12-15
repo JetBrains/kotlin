@@ -68,6 +68,8 @@ internal open class ComposableTypeTransformer(
     private val context: IrPluginContext,
     private val typeRemapper: ComposableTypeRemapper,
 ) : IrElementTransformerVoid() {
+    private val externalTransformedDecls = mutableSetOf<IrDeclaration>()
+
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
         declaration.remapOverriddenFunctionTypes()
         return super.visitSimpleFunction(declaration)
@@ -110,7 +112,10 @@ internal open class ComposableTypeTransformer(
             ownerFn.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB &&
             ownerFn.needsComposableRemapping()
         ) {
-            ownerFn.transform(this, null)
+            if (!externalTransformedDecls.contains(ownerFn)) {
+                externalTransformedDecls.add(ownerFn)
+                ownerFn.transform(this, null)
+            }
         }
         return super.visitConstructorCall(expression)
     }
@@ -141,7 +146,10 @@ internal open class ComposableTypeTransformer(
             clsSymbol.owner.isFun &&
             clsSymbol.functions.any { it.owner.needsComposableRemapping() }
         ) {
-            clsSymbol.owner.transform(this, null)
+            if (!externalTransformedDecls.contains(clsSymbol.owner)) {
+                externalTransformedDecls.add(clsSymbol.owner)
+                clsSymbol.owner.transform(this, null)
+            }
         }
 
         return super.visitTypeOperator(expression)
@@ -159,7 +167,10 @@ internal open class ComposableTypeTransformer(
             owner.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB &&
             owner.needsComposableRemapping()
         ) {
-            owner.transform(this, null)
+            if (!externalTransformedDecls.contains(owner)) {
+                externalTransformedDecls.add(owner)
+                owner.transform(this, null)
+            }
         }
         return super.visitDelegatingConstructorCall(expression)
     }
@@ -222,17 +233,22 @@ internal open class ComposableTypeTransformer(
             ownerFn.correspondingPropertySymbol != null
         ) {
             val property = ownerFn.correspondingPropertySymbol!!.owner
-            property.transform(this, null)
+            if (!externalTransformedDecls.contains(property)) {
+                externalTransformedDecls.add(property)
+                property.transform(this, null)
+            }
         }
 
         val isFunInterface = (ownerFn.parent as? IrClass)?.isFun ?: false
         if (
             !isFunInterface &&  // fun interfaces are transformed in [visitTypeOperator]
-            ownerFn.fileOrNull?.module?.descriptor != context.moduleDescriptor && // only transform declarations from non-current module //TODO multiple transformation of single function?
+            ownerFn.fileOrNull?.module?.descriptor != context.moduleDescriptor && // only transform declarations from non-current module
             ownerFn.needsComposableRemapping()
         ) {
-
-            ownerFn.transform(this, null)
+            if (!externalTransformedDecls.contains(ownerFn)) {
+                externalTransformedDecls.add(ownerFn)
+                ownerFn.transform(this, null)
+            }
         }
 
         return super.visitCall(expression)
