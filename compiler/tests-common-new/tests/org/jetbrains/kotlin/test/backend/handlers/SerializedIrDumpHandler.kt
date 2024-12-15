@@ -61,6 +61,13 @@ class SerializedIrDumpHandler(
             printTypeAbbreviations = false,
             printExpectDeclarations = false, // Expect declarations do not survive during serialization to KLIB.
             printSourceRetentionAnnotations = false, // KT-69965: Don't dump annotations having source retention
+
+            /**
+             * Fake overrides generation works slightly different for Fir2LazyIr and normal IR (either built
+             * from the compiled sources or deserialized). Dispatch receivers for the corresponding fake overrides
+             * in those two groups of IR sometimes are not identical (though, always compatible).
+             */
+            printDispatchReceiverTypeInFakeOverrides = false,
             isHiddenDeclaration = { IrTextDumpHandler.isHiddenDeclaration(it, info.irPluginContext.irBuiltIns) },
         )
 
