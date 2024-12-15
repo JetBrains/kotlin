@@ -10,7 +10,7 @@ package kotlin.native.internal
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.internal.getProgressionLastElement
 import kotlin.reflect.KClass
-import kotlin.concurrent.AtomicReference
+import kotlin.concurrent.atomics.AtomicReference
 import kotlinx.cinterop.*
 import kotlinx.cinterop.NativePtr
 import kotlin.native.internal.escapeAnalysis.Escapes

@@ -8,9 +8,8 @@
 package kotlin.coroutines
 
 import kotlin.*
-import kotlin.concurrent.*
+import kotlin.concurrent.atomics.*
 import kotlin.coroutines.intrinsics.CoroutineSingletons.*
-import kotlin.coroutines.intrinsics.*
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 
 @PublishedApi

@@ -5,7 +5,7 @@
 
 package test.concurrent
 
-import kotlin.concurrent.*
+import kotlin.concurrent.atomics.*
 import kotlin.native.internal.NativePtr
 import kotlin.test.*
 

@@ -8,9 +8,9 @@
 
 package test.native.concurrent
 
-import kotlin.concurrent.AtomicInt
+import kotlin.concurrent.atomics.AtomicInt
+import kotlin.concurrent.atomics.incrementAndFetch
 import kotlin.native.concurrent.*
-import kotlin.concurrent.*
 import kotlin.native.concurrent.WorkerBoundReference
 import kotlin.test.*
 

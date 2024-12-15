@@ -6,6 +6,7 @@ module kotlin.stdlib {
     exports kotlin.collections.unsigned;
     exports kotlin.comparisons;
     exports kotlin.concurrent;
+    exports kotlin.concurrent.atomics;
     exports kotlin.concurrent.internal;
     exports kotlin.contracts;
     exports kotlin.coroutines;

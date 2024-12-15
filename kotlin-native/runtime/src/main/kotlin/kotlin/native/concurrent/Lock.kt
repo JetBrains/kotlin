@@ -3,11 +3,14 @@
  * that can be found in the LICENSE file.
  */
 
+@file:OptIn(ExperimentalStdlibApi::class)
+
 package kotlin.native.concurrent
 
 import kotlin.experimental.ExperimentalNativeApi
-import kotlin.concurrent.AtomicInt
-import kotlin.concurrent.*
+import kotlin.concurrent.atomics.AtomicInt
+import kotlin.concurrent.atomics.decrementAndFetch
+import kotlin.concurrent.atomics.incrementAndFetch
 
 @ThreadLocal
 private object CurrentThread {

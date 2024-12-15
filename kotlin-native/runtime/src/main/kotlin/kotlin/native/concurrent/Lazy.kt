@@ -8,7 +8,7 @@
 package kotlin.native.concurrent
 
 import kotlin.experimental.ExperimentalNativeApi
-import kotlin.concurrent.AtomicReference
+import kotlin.concurrent.atomics.AtomicReference
 
 internal object UNINITIALIZED
 

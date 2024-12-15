@@ -6,7 +6,7 @@
 
 package test.concurrent
 
-import kotlin.concurrent.*
+import kotlin.concurrent.atomics.*
 import kotlin.test.*
 
 class AtomicIntArrayTest {
