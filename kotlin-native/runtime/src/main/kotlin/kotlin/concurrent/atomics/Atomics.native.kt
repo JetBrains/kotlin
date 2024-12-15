@@ -21,7 +21,8 @@ import kotlin.reflect.*
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  */
 @Suppress("DEPRECATION")
-@SinceKotlin("1.9")
+@SinceKotlin("2.1")
+@ExperimentalStdlibApi
 public actual class AtomicInt public actual constructor(
         @get:Deprecated("To read the atomic value use load().", ReplaceWith("this.load()"))
         @set:Deprecated("To atomically set the new value use store(newValue: Int).", ReplaceWith("this.store(newValue)"))
@@ -30,22 +31,16 @@ public actual class AtomicInt public actual constructor(
     /**
      * Atomically loads the value from this [AtomicInt].
      */
-    @SinceKotlin("2.1")
-    @ExperimentalStdlibApi
     public actual fun load(): Int = this::value.atomicGetField()
 
     /**
      * Atomically stores the [new value][newValue] into this [AtomicInt].
      */
-    @SinceKotlin("2.1")
-    @ExperimentalStdlibApi
     public actual fun store(newValue: Int): Unit = this::value.atomicSetField(newValue)
 
     /**
      * Atomically stores the [new value][newValue] into this [AtomicInt] and returns the old value.
      */
-    @SinceKotlin("2.1")
-    @ExperimentalStdlibApi
     public actual fun exchange(newValue: Int): Int = this::value.getAndSetField(newValue)
 
     /**
@@ -70,15 +65,11 @@ public actual class AtomicInt public actual constructor(
     /**
      * Atomically adds the [given value][delta] to the current value of this [AtomicInt] and returns the old value.
      */
-    @SinceKotlin("2.1")
-    @ExperimentalStdlibApi
     public actual fun fetchAndAdd(delta: Int): Int = this::value.getAndAddField(delta)
 
     /**
      * Atomically adds the [given value][delta] to the current value of this [AtomicInt] and returns the new value.
      */
-    @SinceKotlin("2.1")
-    @ExperimentalStdlibApi
     public actual fun addAndFetch(delta: Int): Int = this::value.getAndAddField(delta) + delta
 
     /**
@@ -142,7 +133,8 @@ public actual class AtomicInt public actual constructor(
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  */
 @Suppress("DEPRECATION")
-@SinceKotlin("1.9")
+@SinceKotlin("2.1")
+@ExperimentalStdlibApi
 public actual class AtomicLong public actual constructor(
         @get:Deprecated("To read the atomic value use load().", ReplaceWith("this.load()"))
         @set:Deprecated("To atomically set the new value use store(newValue: Long).", ReplaceWith("this.store(newValue)"))
@@ -151,22 +143,16 @@ public actual class AtomicLong public actual constructor(
     /**
      * Atomically loads the value from this [AtomicLong].
      */
-    @SinceKotlin("2.1")
-    @ExperimentalStdlibApi
     public actual fun load(): Long = this::value.atomicGetField()
 
     /**
      * Atomically stores the [new value][newValue] into this [AtomicLong].
      */
-    @SinceKotlin("2.1")
-    @ExperimentalStdlibApi
     public actual fun store(newValue: Long): Unit = this::value.atomicSetField(newValue)
 
     /**
      * Atomically stores the [new value][newValue] into this [AtomicLong] and returns the old value.
      */
-    @SinceKotlin("2.1")
-    @ExperimentalStdlibApi
     public actual fun exchange(newValue: Long): Long = this::value.getAndSetField(newValue)
 
     /**
@@ -191,15 +177,11 @@ public actual class AtomicLong public actual constructor(
     /**
      * Atomically adds the [given value][delta] to the current value of this [AtomicLong] and returns the old value.
      */
-    @SinceKotlin("2.1")
-    @ExperimentalStdlibApi
     public actual fun fetchAndAdd(delta: Long): Long = this::value.getAndAddField(delta)
 
     /**
      * Atomically adds the [given value][delta] to the current value of this [AtomicLong] and returns the new value.
      */
-    @SinceKotlin("2.1")
-    @ExperimentalStdlibApi
     public actual fun addAndFetch(delta: Long): Long = this::value.getAndAddField(delta) + delta
 
     /**
@@ -262,27 +244,23 @@ public actual class AtomicLong public actual constructor(
  *
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  */
+@SinceKotlin("2.1")
+@ExperimentalStdlibApi
 public actual class AtomicBoolean actual constructor(@Volatile private var value: Boolean) {
 
     /**
      * Atomically loads the value from this [AtomicBoolean].
      */
-    @SinceKotlin("2.1")
-    @ExperimentalStdlibApi
     public actual fun load(): Boolean = this::value.atomicGetField()
 
     /**
      * Atomically stores the [new value][newValue] into this [AtomicBoolean].
      */
-    @SinceKotlin("2.1")
-    @ExperimentalStdlibApi
     public actual fun store(newValue: Boolean): Unit = this::value.atomicSetField(newValue)
 
     /**
      * Atomically stores the given [new value][newValue] into this [AtomicBoolean] and returns the old value.
      */
-    @SinceKotlin("2.1")
-    @ExperimentalStdlibApi
     public actual fun exchange(newValue: Boolean): Boolean = this::value.getAndSetField(newValue)
 
     /**
@@ -322,8 +300,9 @@ public actual class AtomicBoolean actual constructor(@Volatile private var value
  *
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  */
-@SinceKotlin("1.9")
-@Suppress("ACTUAL_WITHOUT_EXPECT", "DEPRECATION") // actual visibility mismatch
+@Suppress("DEPRECATION")
+@SinceKotlin("2.1")
+@ExperimentalStdlibApi
 public actual class AtomicReference<T> actual constructor(
         @get:Deprecated("To read the atomic value use load().", ReplaceWith("this.load()"))
         @set:Deprecated("To atomically set the new value use store(newValue: T).", ReplaceWith("this.store(newValue)"))
@@ -333,22 +312,16 @@ public actual class AtomicReference<T> actual constructor(
     /**
      * Atomically loads the value from this [AtomicReference].
      */
-    @SinceKotlin("2.1")
-    @ExperimentalStdlibApi
     public actual fun load(): T = this::value.atomicGetField()
 
     /**
      * Atomically stores the [new value][newValue] into this [AtomicReference].
      */
-    @SinceKotlin("2.1")
-    @ExperimentalStdlibApi
     public actual fun store(newValue: T): Unit = this::value.atomicSetField(newValue)
 
     /**
      * Atomically stores the given [new value][newValue] into this [AtomicReference] and returns the old value.
      */
-    @SinceKotlin("2.1")
-    @ExperimentalStdlibApi
     public actual fun exchange(newValue: T): T = this::value.getAndSetField(newValue)
 
     /**
@@ -386,30 +359,66 @@ public actual class AtomicReference<T> actual constructor(
 }
 
 /**
- * A [kotlinx.cinterop.NativePtr] value that is always updated atomically.
+ * A [kotlinx.cinterop.NativePtr] that may be updated atomically.
+ *
+ * Read operation [load] has the same memory effects as reading a [Volatile] property;
+ * Write operation [store] has the same memory effects as writing a [Volatile] property;
+ * Read-modify-write operations, like [exchange], [compareAndSet], [compareAndExchange],
+ * have the same memory effects as reading and writing a [Volatile] property.
+ *
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  *
  * [kotlinx.cinterop.NativePtr] is a value type, hence it is stored in [AtomicNativePtr] without boxing
  * and [compareAndSet], [compareAndExchange] operations perform comparison by value.
  */
 @Suppress("DEPRECATION")
-@SinceKotlin("1.9")
+@SinceKotlin("2.1")
 @ExperimentalForeignApi
 public class AtomicNativePtr(
         @Deprecated("To read the atomic value use load(). To atomically set the new value use store(newValue: NativePtr).")
         @Volatile public var value: NativePtr
 ) {
 
+    /**
+     * Atomically loads the value from this [AtomicNativePtr].
+     */
     public fun load(): NativePtr = this::value.atomicGetField()
 
-    public fun store(newValue: NativePtr) {
-        this::value.atomicSetField(newValue)
-    }
+    /**
+     * Atomically stores the [new value][newValue] into this [AtomicNativePtr].
+     */
+    public fun store(newValue: NativePtr): Unit = this::value.atomicSetField(newValue)
+
+    /**
+     * Atomically stores the given [new value][newValue] into this [AtomicNativePtr] and returns the old value.
+     */
+    public fun exchange(newValue: NativePtr): NativePtr = this::value.getAndSetField(newValue)
+
+    /**
+     * Atomically stores the given [new value][newValue] into this [AtomicNativePtr] if the current value equals the [expected value][expectedValue],
+     * returns true if the operation was successful and false only if the current value was not equal to the expected value.
+     *
+     * This operation has so-called strong semantics,
+     * meaning that it returns false if and only if current and expected values are not equal.
+     *
+     * Comparison of values is done by value.
+     */
+    public fun compareAndSet(expectedValue: NativePtr, newValue: NativePtr): Boolean =
+            this::value.compareAndSetField(expectedValue, newValue)
+
+    /**
+     * Atomically stores the given [new value][newValue] into this [AtomicNativePtr] if the current value equals the [expected value][expectedValue]
+     * and returns the old value in any case.
+     *
+     * Comparison of values is done by value.
+     */
+    public fun compareAndExchange(expectedValue: NativePtr, newValue: NativePtr): NativePtr =
+            this::value.compareAndExchangeField(expectedValue, newValue)
 
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
      */
-    @Deprecated("Use exchange(newValue: Long) instead.", ReplaceWith("this.exchange(newValue)"))
+    @Deprecated("Use exchange(newValue: NativePtr) instead.", ReplaceWith("this.exchange(newValue)"))
     public fun getAndSet(newValue: NativePtr): NativePtr {
         // Pointer types are allowed for atomicrmw xchg operand since LLVM 15.0,
         // after LLVM version update, it may be implemented via getAndSetField intrinsic.
@@ -422,36 +431,13 @@ public class AtomicNativePtr(
         }
     }
 
-    public fun exchange(newValue: NativePtr): NativePtr = getAndSet(newValue)
-
     /**
-     * Atomically sets the value to the given [new value][newValue] if the current value equals the [expected value][expected],
-     * returns true if the operation was successful and false only if the current value was not equal to the expected value.
+     * Returns the string representation of the underlying [NativePtr].
      *
-     * Provides sequential consistent ordering guarantees and cannot fail spuriously.
-     *
-     * Comparison of values is done by value.
-     */
-    public fun compareAndSet(expected: NativePtr, newValue: NativePtr): Boolean =
-            this::value.compareAndSetField(expected, newValue)
-
-    /**
-     * Atomically sets the value to the given [new value][newValue] if the current value equals the [expected value][expected]
-     * and returns the old value in any case.
-     *
-     * Provides sequential consistent ordering guarantees and cannot fail spuriously.
-     *
-     * Comparison of values is done by value.
-     */
-    public fun compareAndExchange(expected: NativePtr, newValue: NativePtr): NativePtr =
-            this::value.compareAndExchangeField(expected, newValue)
-
-    /**
-     * Returns the string representation of the current [value].
+     * This operation does not provide any atomicity guarantees.
      */
     public override fun toString(): String = value.toString()
 }
-
 
 private fun idString(value: Any) = value.hashCode().toUInt().toString(16)
 
