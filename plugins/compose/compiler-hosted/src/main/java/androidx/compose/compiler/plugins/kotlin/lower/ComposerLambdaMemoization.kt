@@ -741,7 +741,11 @@ class ComposerLambdaMemoization(
                 // Public inline functions can't use singleton instance because changes to the function body
                 // can cause ABI incompatibilities. Note that we still generate singleton instances
                 // to ensure that we don't break existing consumers.
-                wrapFunctionExpression(declarationContext, functionExpression, collector, declarationContext.composable)
+                wrapFunctionExpression(
+                    declarationContext,
+                    functionExpression.deepCopyWithSymbols(
+                        initialParent = declarationContextStack.map { it.declaration as? IrDeclarationParent }.last { it != null }
+                    ), collector, declarationContext.composable)
                     .also {
                         it.associatedComposableSingletonStub = singleton
                     }
@@ -873,8 +877,7 @@ class ComposerLambdaMemoization(
         collector: CaptureCollector,
         useComposableFactory: Boolean
     ): IrCall {
-        val function = expression.function
-        val argumentCount = function.valueParameters.size
+        val argumentCount = expression.function.valueParameters.size
 
         if (argumentCount > MAX_RESTART_ARGUMENT_COUNT && !context.platform.isJvm()) {
             error(
@@ -938,13 +941,16 @@ class ComposerLambdaMemoization(
             if (index >= valueArgumentsCount) {
                 error(
                     "function = ${
-                        function.name.asString()
+                        expression.function.name.asString()
                     }, count = $valueArgumentsCount, index = $index"
                 )
             }
 
             // block parameter
-            putValueArgument(index, expression.deepCopyWithSymbols().markIsTransformedLambda())
+            putValueArgument(
+                index,
+                expression.markIsTransformedLambda()
+            )
         }
 
         return composableLambdaExpression.markHasTransformedLambda()
