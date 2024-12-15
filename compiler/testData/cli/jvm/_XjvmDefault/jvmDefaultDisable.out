@@ -1,7 +1,0 @@
-compiler/testData/cli/jvm/_XjvmDefault/jvmDefault.kt:1:1: error: usage of '@JvmDefaultWithCompatibility' is only allowed with '-Xjvm-default=all' option.
-@JvmDefaultWithCompatibility
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-compiler/testData/cli/jvm/_XjvmDefault/jvmDefault.kt:4:1: error: usage of '@JvmDefaultWithoutCompatibility' is only allowed with '-Xjvm-default' option.
-@JvmDefaultWithoutCompatibility
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-COMPILATION_ERROR

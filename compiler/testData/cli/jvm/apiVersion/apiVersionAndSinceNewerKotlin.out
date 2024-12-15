@@ -1,0 +1,8 @@
+warning: API version 1.7 is deprecated and its support will be removed in a future version of Kotlin
+compiler/testData/cli/jvm/apiVersion/src/apiVersionAndSinceNewerKotlin.kt:1:14: warning: the version is greater than the specified API version 1.7.
+@SinceKotlin("1.8")
+             ^^^^^
+compiler/testData/cli/jvm/apiVersion/src/apiVersionAndSinceNewerKotlin.kt:4:14: warning: the version is greater than the specified API version 1.7.
+@SinceKotlin("1.9")
+             ^^^^^
+OK

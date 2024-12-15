@@ -1,4 +1,0 @@
-compiler/testData/cli/jvm/kmpMissingActual.common.kt:3:1: error: expected Foo has no actual declaration in module <main> for JVM
-expect interface Foo : Base1
-^^^^^^
-COMPILATION_ERROR

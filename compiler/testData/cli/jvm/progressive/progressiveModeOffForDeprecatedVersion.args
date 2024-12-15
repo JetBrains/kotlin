@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/src
+$TEMP_DIR$
+-language-version
+1.7

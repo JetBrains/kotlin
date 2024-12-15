@@ -1,0 +1,7 @@
+compiler/testData/cli/jvm/XexplicitApi/explicitApi.kt:1:1: warning: visibility must be specified in explicit API mode.
+fun foo() = "hello"
+^^^^^^^
+compiler/testData/cli/jvm/XexplicitApi/explicitApi.kt:1:5: warning: return type must be specified in explicit API mode.
+fun foo() = "hello"
+    ^^^
+OK

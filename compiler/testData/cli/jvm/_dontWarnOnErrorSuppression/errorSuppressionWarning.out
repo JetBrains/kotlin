@@ -1,4 +1,0 @@
-compiler/testData/cli/jvm/_dontWarnOnErrorSuppression/errorSuppression.kt:1:11: warning: this code uses error suppression for 'UNSUPPORTED'. While it might compile and work, the compiler behavior is UNSPECIFIED and WILL NOT BE PRESERVED. Please report your use case to the Kotlin issue tracker instead: https://kotl.in/issue
-@Suppress("UNSUPPORTED")
-          ^^^^^^^^^^^^^
-OK

@@ -1,0 +1,4 @@
+compiler/testData/cli/jvm/XcompilerPlugin/multiplePlugins.kt:11:17: error:
+    inner class Inner(val s: String)
+                ^^^^^
+COMPILATION_ERROR

@@ -1,4 +1,0 @@
-compiler/testData/cli/jvm/_jsr305/jsr305Usage.kt:2:11: error: null cannot be a value of a non-null type 'kotlin.String'.
-    a.foo(null)
-          ^^^^
-COMPILATION_ERROR

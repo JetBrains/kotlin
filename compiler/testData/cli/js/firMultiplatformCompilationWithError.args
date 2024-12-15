@@ -1,7 +1,7 @@
-$TESTDATA_DIR$/../jvm/firMultiplatformCompilationWithError/common.kt
-$TESTDATA_DIR$/../jvm/firMultiplatformCompilationWithError/jvm.kt
+$TESTDATA_DIR$/../jvm/XXlanguageMultiPlatformProjects/firMultiplatformCompilationWithError/common.kt
+$TESTDATA_DIR$/../jvm/XXlanguageMultiPlatformProjects/firMultiplatformCompilationWithError/jvm.kt
 -Xcommon-sources
-$TESTDATA_DIR$/../jvm/firMultiplatformCompilationWithError/common.kt
+$TESTDATA_DIR$/../jvm/XXlanguageMultiPlatformProjects/firMultiplatformCompilationWithError/common.kt
 -ir-output-dir
 $TEMP_DIR$
 -ir-output-name

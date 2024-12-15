@@ -1,0 +1,7 @@
+compiler/testData/cli/jvm/XjspecifyAnnotations/jspecifyUsage.kt:2:11: warning: Java type mismatch: inferred type is 'kotlin.Nothing?', but 'kotlin.String' was expected.
+    a.foo(null)
+          ^^^^
+compiler/testData/cli/jvm/XjspecifyAnnotations/jspecifyUsage.kt:3:5: warning: only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'kotlin.String?'.
+    a.bar().hashCode()
+    ^^^^^^^
+OK

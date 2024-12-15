@@ -1,0 +1,2 @@
+error: script argument points to a directory: $TESTDATA_DIR$/src; Specify path to the script file as the first argument
+COMPILATION_ERROR

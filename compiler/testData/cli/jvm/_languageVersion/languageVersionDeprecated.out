@@ -1,5 +1,0 @@
-warning: language version 1.7 is deprecated and its support will be removed in a future version of Kotlin
-compiler/testData/cli/jvm/_languageVersion/src/languageVersion.kt:4:34: error: the feature "generic inline class parameter" is only available since language version 1.8
-value class Holder<T>(val value: T)
-                                 ^
-COMPILATION_ERROR
