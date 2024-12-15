@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 fun IrElement.render(options: DumpIrTreeOptions = DumpIrTreeOptions()) =
     accept(RenderIrElementVisitor(options), null)
@@ -31,6 +32,17 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
 
     private val flagsRenderer = FlagsRenderer(options.declarationFlagsFilter, isReference = false)
     private val variableNameData = VariableNameData(options.normalizeNames)
+    private var hideParameterNames = false
+
+    fun withHiddenParameterNames(block: () -> Unit) {
+        val oldHideParameterNames = hideParameterNames
+        try {
+            hideParameterNames = !options.printParameterNamesInOverriddenSymbols
+            block()
+        } finally {
+            hideParameterNames = oldHideParameterNames
+        }
+    }
 
     fun renderType(type: IrType) = type.renderTypeWithRenderer(this@RenderIrElementVisitor, options)
 
@@ -44,12 +56,13 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
 
     private fun IrSymbol.renderReference() =
         if (isBound)
-            owner.accept(BoundSymbolReferenceRenderer(variableNameData, options), null)
+            owner.accept(BoundSymbolReferenceRenderer(variableNameData, hideParameterNames, options), null)
         else
             "UNBOUND ${javaClass.simpleName}"
 
     private class BoundSymbolReferenceRenderer(
         private val variableNameData: VariableNameData,
+        private val hideParameterNames: Boolean,
         private val options: DumpIrTreeOptions,
     ) : IrElementVisitor<String, Nothing?> {
 
@@ -100,8 +113,10 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
 
         override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?) =
             buildTrimEnd {
-                append(declaration.name.asString())
-                append(": ")
+                runUnless(hideParameterNames) {
+                    append(declaration.name.asString())
+                    append(": ")
+                }
                 append(declaration.type.renderTypeWithRenderer(null, options))
                 append(' ')
                 append(declaration.renderValueParameterFlags(flagsRenderer))
@@ -132,12 +147,16 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
                     val varargElementType = valueParameter.varargElementType
                     if (varargElementType != null) {
                         append("vararg ")
-                        append(valueParameter.name.asString())
-                        append(": ")
+                        runUnless(hideParameterNames) {
+                            append(valueParameter.name.asString())
+                            append(": ")
+                        }
                         append(varargElementType.renderTypeWithRenderer(null, options))
                     } else {
-                        append(valueParameter.name.asString())
-                        append(": ")
+                        runUnless(hideParameterNames) {
+                            append(valueParameter.name.asString())
+                            append(": ")
+                        }
                         append(valueParameter.type.renderTypeWithRenderer(null, options))
                     }
                 }

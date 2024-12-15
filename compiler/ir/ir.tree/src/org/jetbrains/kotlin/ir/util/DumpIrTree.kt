@@ -59,6 +59,7 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
  * @property printSignatures Whether to print signatures for nodes that have public signatures
  * @property printDispatchReceiverTypeInFakeOverrides If the dispatch receiver type should be printed.
  *   Otherwise, it will be substituted with some fixed placeholder value.
+ * @property printParameterNamesInOverriddenSymbols If names of value parameters should be printed in overridden function symbols.
  * @property isHiddenDeclaration The filter that can be used to exclude some declarations from printing.
  */
 data class DumpIrTreeOptions(
@@ -76,6 +77,7 @@ data class DumpIrTreeOptions(
     val printExpectDeclarations: Boolean = true,
     val printSourceRetentionAnnotations: Boolean = true,
     val printDispatchReceiverTypeInFakeOverrides: Boolean = true,
+    val printParameterNamesInOverriddenSymbols: Boolean = true,
     val isHiddenDeclaration: (IrDeclaration) -> Boolean = { false },
 ) {
     /**
@@ -493,10 +495,12 @@ class DumpIrTreeVisitor(
 
     private fun Collection<IrSymbol>.dumpFakeOverrideSymbols() {
         if (isEmpty()) return
-        indented("overridden") {
-            map(elementRenderer::renderSymbolReference)
-                .applyIf(options.stableOrderOfOverriddenSymbols) { sorted() }
-                .forEach { printer.println(it) }
+        elementRenderer.withHiddenParameterNames {
+            indented("overridden") {
+                map(elementRenderer::renderSymbolReference)
+                    .applyIf(options.stableOrderOfOverriddenSymbols) { sorted() }
+                    .forEach { printer.println(it) }
+            }
         }
     }
 
