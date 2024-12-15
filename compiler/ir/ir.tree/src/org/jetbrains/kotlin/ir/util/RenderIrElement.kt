@@ -17,11 +17,13 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrCapturedType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.SpecialNames.IMPLICIT_SET_PARAMETER
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 fun IrElement.render(options: DumpIrTreeOptions = DumpIrTreeOptions()) =
@@ -114,7 +116,7 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
         override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?) =
             buildTrimEnd {
                 runUnless(hideParameterNames) {
-                    append(declaration.name.asString())
+                    append(declaration.renderValueParameterName(options))
                     append(": ")
                 }
                 append(declaration.type.renderTypeWithRenderer(null, options))
@@ -148,13 +150,13 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
                     if (varargElementType != null) {
                         append("vararg ")
                         runUnless(hideParameterNames) {
-                            append(valueParameter.name.asString())
+                            append(valueParameter.renderValueParameterName(options))
                             append(": ")
                         }
                         append(varargElementType.renderTypeWithRenderer(null, options))
                     } else {
                         runUnless(hideParameterNames) {
-                            append(valueParameter.name.asString())
+                            append(valueParameter.renderValueParameterName(options))
                             append(": ")
                         }
                         append(valueParameter.type.renderTypeWithRenderer(null, options))
@@ -297,7 +299,7 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
     private fun IrFunction.renderValueParameterTypes(): String = buildList {
         addIfNotNull(dispatchReceiverParameter?.run { "\$this:${renderValueParameterType(options)}" })
         addIfNotNull(extensionReceiverParameter?.run { "\$receiver:${type.render()}" })
-        valueParameters.mapTo(this) { "${it.name}:${it.type.render()}" }
+        valueParameters.mapTo(this) { "${it.renderValueParameterName(options)}:${it.type.render()}" }
     }.joinToString(separator = ", ", prefix = "(", postfix = ")")
 
     override fun visitConstructor(declaration: IrConstructor, data: Nothing?): String =
@@ -344,7 +346,7 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
     override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?): String =
         declaration.runTrimEnd {
             "VALUE_PARAMETER ${renderOriginIfNonTrivial(options)}" +
-                    "name:$name " +
+                    "name:${renderValueParameterName(options)} " +
                     (if (indexInOldValueParameters >= 0) "index:$indexInOldValueParameters " else "") +
                     "type:${renderValueParameterType(options)} " +
                     (varargElementType?.let { "varargElementType:${it.render()} " } ?: "") +
@@ -600,6 +602,11 @@ private fun IrValueParameter.renderValueParameterType(options: DumpIrTreeOptions
     } else {
         type.render(options)
     }
+}
+
+internal fun IrValueParameter.renderValueParameterName(options: DumpIrTreeOptions): String {
+    val name = runIf(name == IMPLICIT_SET_PARAMETER) { options.replaceImplicitSetterParameterNameWith } ?: name
+    return name.asString()
 }
 
 internal fun DescriptorRenderer.renderDescriptor(descriptor: DeclarationDescriptor): String =
@@ -946,7 +953,7 @@ private fun StringBuilder.renderAsAnnotation(
 
     if (irAnnotation.valueArgumentsCount == 0) return
 
-    val valueParameterNames = irAnnotation.getValueParameterNamesForDebug()
+    val valueParameterNames = irAnnotation.getValueParameterNamesForDebug(options)
 
     appendIterableWith(0 until irAnnotation.valueArgumentsCount, separator = ", ", prefix = "(", postfix = ")") {
         append(valueParameterNames[it])

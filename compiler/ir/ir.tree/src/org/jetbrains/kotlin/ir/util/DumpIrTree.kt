@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames.IMPLICIT_SET_PARAMETER
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -62,6 +64,8 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
  *   Otherwise, it will be substituted with some fixed placeholder value.
  * @property printParameterNamesInOverriddenSymbols If names of value parameters should be printed in overridden function symbols.
  * @property printSealedSubclasses Whether sealed subclasses of a sealed class/interface should be printed.
+ * @property replaceImplicitSetterParameterNameWith If not null, them implicit value parameter name [IMPLICIT_SET_PARAMETER] would be
+ *   replaced by the given value.
  * @property isHiddenDeclaration The filter that can be used to exclude some declarations from printing.
  */
 data class DumpIrTreeOptions(
@@ -81,6 +85,7 @@ data class DumpIrTreeOptions(
     val printDispatchReceiverTypeInFakeOverrides: Boolean = true,
     val printParameterNamesInOverriddenSymbols: Boolean = true,
     val printSealedSubclasses: Boolean = true,
+    val replaceImplicitSetterParameterNameWith: Name? = null,
     val isHiddenDeclaration: (IrDeclaration) -> Boolean = { false },
 ) {
     /**
@@ -303,7 +308,7 @@ class DumpIrTreeVisitor(
             dumpTypeArguments(expression)
             expression.dispatchReceiver?.accept(this, "\$this")
             expression.extensionReceiver?.accept(this, "\$receiver")
-            val valueParameterNames = expression.getValueParameterNamesForDebug()
+            val valueParameterNames = expression.getValueParameterNamesForDebug(options)
             for (index in 0 until expression.valueArgumentsCount) {
                 expression.getValueArgument(index)?.accept(this, valueParameterNames[index])
             }
@@ -319,7 +324,7 @@ class DumpIrTreeVisitor(
     }
 
     private fun dumpConstructorValueArguments(expression: IrConstructorCall) {
-        val valueParameterNames = expression.getValueParameterNamesForDebug()
+        val valueParameterNames = expression.getValueParameterNamesForDebug(options)
         for (index in 0 until expression.valueArgumentsCount) {
             expression.getValueArgument(index)?.accept(this, valueParameterNames[index])
         }
@@ -391,7 +396,7 @@ class DumpIrTreeVisitor(
 
     override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: String) {
         expression.dumpLabeledElementWith(data) {
-            val names = expression.invokeFunction.getValueParameterNamesForDebug(expression.boundValues.size)
+            val names = expression.invokeFunction.getValueParameterNamesForDebug(expression.boundValues.size, options)
             expression.overriddenFunctionSymbol.dumpInternal("overriddenFunctionSymbol")
             expression.boundValues.forEachIndexed { index, value ->
                 value.accept(this, "bound ${names[index]}")
@@ -402,7 +407,7 @@ class DumpIrTreeVisitor(
 
     override fun visitRichPropertyReference(expression: IrRichPropertyReference, data: String) {
         expression.dumpLabeledElementWith(data) {
-            val names = expression.getterFunction.getValueParameterNamesForDebug(expression.boundValues.size)
+            val names = expression.getterFunction.getValueParameterNamesForDebug(expression.boundValues.size, options)
             expression.boundValues.forEachIndexed { index, value ->
                 value.accept(this, "bound ${names[index]}")
             }
@@ -558,12 +563,12 @@ class DumpTreeFromSourceLineVisitor(
     }
 }
 
-internal fun IrMemberAccessExpression<*>.getValueParameterNamesForDebug(): List<String> {
+internal fun IrMemberAccessExpression<*>.getValueParameterNamesForDebug(options: DumpIrTreeOptions): List<String> {
     val expectedCount = valueArgumentsCount
     if (symbol.isBound) {
         val owner = symbol.owner
         if (owner is IrFunction) {
-            return owner.getValueParameterNamesForDebug(expectedCount)
+            return owner.getValueParameterNamesForDebug(expectedCount, options)
         }
     }
     return getPlaceholderParameterNames(expectedCount)
@@ -571,9 +576,10 @@ internal fun IrMemberAccessExpression<*>.getValueParameterNamesForDebug(): List<
 
 private fun IrFunction.getValueParameterNamesForDebug(
     expectedCount: Int,
+    options: DumpIrTreeOptions,
 ): List<String> = (0 until expectedCount).map {
     if (it < valueParameters.size)
-        valueParameters[it].name.asString()
+        valueParameters[it].renderValueParameterName(options)
     else
         "${it + 1}"
 }
