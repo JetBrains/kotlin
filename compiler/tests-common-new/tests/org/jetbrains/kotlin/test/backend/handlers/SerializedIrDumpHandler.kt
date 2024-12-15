@@ -103,6 +103,15 @@ class SerializedIrDumpHandler(
              * ```
              */
             printParameterNamesInOverriddenSymbols = false,
+
+            /**
+             * Sealed subclasses are not deserialized from KLIBs, so we need to wipe them out from dumps.
+             * For details see KT-54028,
+             * and in particular the commit https://github.com/jetbrains/kotlin/commit/3713d95bb1fc0cc434eeed42a0f0adac52af091b
+             */
+            printSealedSubclasses = isAfterDeserialization,
+
+            /** Reuse the existing rules for filtering declarations as in IR text tests. */
             isHiddenDeclaration = { IrTextDumpHandler.isHiddenDeclaration(it, info.irPluginContext.irBuiltIns) },
         )
 
@@ -137,7 +146,6 @@ class SerializedIrDumpHandler(
             get() = temporaryDirectoryManager.rootDir.resolve("ir_pre_serialization_dump.txt")
 
         private val PRE_SERIALIZATION_DUMP_SANITIZER = IrDumpSanitizer.composite(
-            FilterOutSealedSubclasses,
             RewriteImplicitSetterParameterName,
         )
 
@@ -265,33 +273,6 @@ private fun interface IrDumpSanitizer {
             sanitizers.fold(testData) { acc, sanitizer -> sanitizer.sanitize(acc) }
         }
     }
-}
-
-/**
- * Sealed subclasses are not deserialized from KLIBs, so we need to wipe them out from dumps.
- * For details see KT-54028,
- * and in particular the commit https://github.com/jetbrains/kotlin/commit/3713d95bb1fc0cc434eeed42a0f0adac52af091b
- */
-private object FilterOutSealedSubclasses : IrDumpSanitizer {
-    override fun sanitize(testData: String) = buildString {
-        var ongoingSealedSubclassesClauseIndent: String? = null
-        for (line in testData.lines()) {
-            if (ongoingSealedSubclassesClauseIndent == null) {
-                if (line.trim() == SEALED_SUBCLASSES_CLAUSE) {
-                    ongoingSealedSubclassesClauseIndent = line.substringBefore(SEALED_SUBCLASSES_CLAUSE)
-                } else {
-                    appendLine(line)
-                }
-            } else {
-                if (!line.startsWith("$ongoingSealedSubclassesClauseIndent  CLASS")) {
-                    ongoingSealedSubclassesClauseIndent = null
-                    appendLine(line)
-                }
-            }
-        }
-    }
-
-    private const val SEALED_SUBCLASSES_CLAUSE = "sealedSubclasses:"
 }
 
 /**
