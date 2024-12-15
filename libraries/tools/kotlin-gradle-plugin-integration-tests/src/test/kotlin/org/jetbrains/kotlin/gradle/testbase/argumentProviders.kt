@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.api.JavaVersion
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.utils.toSetOrEmpty
-import org.jetbrains.kotlin.tooling.core.withClosureSequence
 import org.junit.jupiter.api.extension.*
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -29,6 +27,30 @@ annotation class GradleTestVersions(
     val minVersion: String = TestVersions.Gradle.MIN_SUPPORTED,
     val maxVersion: String = TestVersions.Gradle.MAX_SUPPORTED,
     val additionalVersions: Array<String> = [],
+)
+
+/**
+ * Adds another dimension of arguments alongside Gradle Version
+ * Example:
+ *
+ * ```
+ * class SomeGradleTest {
+ *   @GradleTest
+ *   @GradleTestExtraStringArguments("a", "b")
+ *   fun testMethod(gradleVersion: GradleVersion, extra: String) {
+ *      // JUnit will invoke testMethod as follows
+ *      // testMethod(GradleVersion.MIN, "a")
+ *      // testMethod(GradleVersion.MIN, "b")
+ *      // testMethod(GradleVersion.MAX, "a")
+ *      // testMethod(GradleVersion.MAX, "b")
+ *   }
+ * }
+ * ```
+ */
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class GradleTestExtraStringArguments(
+    vararg val values: String
 )
 
 /**
@@ -100,10 +122,16 @@ open class GradleArgumentsProvider : ArgumentsProvider {
         val versionFilter = context.getConfigurationParameter("gradle.integration.tests.gradle.version.filter")
             .map { GradleVersion.version(it) }
 
+        val extraArguments = extraArguments(context) ?: emptyArray()
+
         return gradleVersions
             .asSequence()
             .filter { gradleVersion -> versionFilter.map { gradleVersion == it }.orElse(true) }
-            .map { Arguments.of(it) }
+            .flatMap { gradleVersion ->
+                if (extraArguments.isNotEmpty()) {
+                    extraArguments.asSequence().map { extraArgument -> Arguments.of(gradleVersion, extraArgument) }
+                } else sequenceOf(Arguments.of(gradleVersion))
+            }
             .asStream()
     }
 
@@ -125,6 +153,11 @@ open class GradleArgumentsProvider : ArgumentsProvider {
         }
 
         return setOf(minGradleVersion, *additionalGradleVersions.toTypedArray(), maxGradleVersion)
+    }
+
+    protected fun extraArguments(context: ExtensionContext): Array<out String>? {
+        val extraArgumentsAnnotation = findAnnotationOrNull<GradleTestExtraStringArguments>(context)
+        return extraArgumentsAnnotation?.values
     }
 }
 
