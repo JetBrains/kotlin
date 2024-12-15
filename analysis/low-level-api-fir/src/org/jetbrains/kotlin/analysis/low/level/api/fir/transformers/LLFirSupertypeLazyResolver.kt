@@ -310,8 +310,7 @@ private open class LLFirSupertypeComputationSession(
      */
     private val visited: MutableSet<FirClassLikeDeclaration> = hashSetOf()
     private val looped: MutableSet<FirClassLikeDeclaration> = hashSetOf()
-    private val pathSet: MutableSet<FirClassLikeDeclaration> = hashSetOf()
-    private val path: MutableList<FirClassLikeDeclaration> = mutableListOf()
+    private val pathOrderedSet: LinkedHashSet<FirClassLikeDeclaration> = LinkedHashSet()
     // ---------------
 
     /**
@@ -331,14 +330,11 @@ private open class LLFirSupertypeComputationSession(
             session = declaration.llFirSession,
             visited = visited,
             looped = looped,
-            pathSet = pathSet,
-            path = path,
+            pathOrderedSet = pathOrderedSet,
             // LL resolver only works for non-local declarations
             localClassesNavigationInfo = null,
         )
 
-        require(path.isEmpty()) { "Path should be empty" }
-        require(pathSet.isEmpty()) { "Path set should be empty" }
         visited.clear()
         looped.clear()
         return updatedTypesForDeclarationsWithLoop[declaration]

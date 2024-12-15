@@ -661,21 +661,21 @@ open class SupertypeComputationSession {
      * @param declaration declaration to be checked for loops
      * @param visited visited declarations during the current loop search (DFS tree)
      * @param looped declarations inside loop
-     * @param pathSet declaration set on a current path (DFS branch)
-     * @param path declarations on a current path (DFS branch)
+     * @param pathOrderedSet declaration ordered set (in visit order) on a current path (DFS branch).
      * @param localClassesNavigationInfo auxiliary parameter to find local classes parents
+     *
+     * The parameters [visited], [looped], [pathOrderedSet] exist
+     * to avoid repeated memory allocation for each search, see `LLFirSupertypeComputationSession`.
      */
     protected fun breakLoopFor(
         declaration: FirClassLikeDeclaration,
         session: FirSession,
         visited: MutableSet<FirClassLikeDeclaration>, // always empty for LL FIR
         looped: MutableSet<FirClassLikeDeclaration>, // always empty for LL FIR
-        pathSet: MutableSet<FirClassLikeDeclaration>,
-        path: MutableList<FirClassLikeDeclaration>,
+        pathOrderedSet: LinkedHashSet<FirClassLikeDeclaration>,
         localClassesNavigationInfo: LocalClassesNavigationInfo?,
     ) {
-        require(path.isEmpty()) { "Path should be empty" }
-        require(pathSet.isEmpty()) { "Path set should be empty" }
+        require(pathOrderedSet.isEmpty()) { "Path ordered set should be empty before starting" }
 
         /**
          * Local function that operates as a DFS node during loop search.
@@ -706,16 +706,16 @@ open class SupertypeComputationSession {
             }
 
             if (classLikeDeclaration in visited) {
-                if (classLikeDeclaration in pathSet) {
+                if (classLikeDeclaration in pathOrderedSet) {
                     looped.add(classLikeDeclaration)
-                    looped.addAll(path.takeLastWhile { element -> element != classLikeDeclaration })
+                    looped.addAll(pathOrderedSet.reversed().takeWhile { element -> element != classLikeDeclaration })
                 }
 
                 return
             }
 
-            path.add(classLikeDeclaration)
-            pathSet.add(classLikeDeclaration)
+            val declarationIsAdded = pathOrderedSet.add(classLikeDeclaration)
+            require(declarationIsAdded) { "The considered declaration should be unique" }
             visited.add(classLikeDeclaration)
 
             val classId = classLikeDeclaration.classId
@@ -736,8 +736,7 @@ open class SupertypeComputationSession {
             // This is an optimization that prevents collecting
             // loops we don't want to report anyway.
             if (wereTypeArgumentsInvolved && isSubtypingCurrentlyInvolved) {
-                path.removeAt(path.size - 1)
-                pathSet.remove(classLikeDeclaration)
+                pathOrderedSet.remove(classLikeDeclaration)
                 // This declaration can be visited once more, for example, to find loops beginning with it
                 visited.remove(classLikeDeclaration)
                 return
@@ -800,19 +799,17 @@ open class SupertypeComputationSession {
                 reportLoopErrorRefs(classLikeDeclaration, resultSupertypeRefs)
             }
 
-            path.removeAt(path.size - 1)
-            pathSet.remove(classLikeDeclaration)
+            pathOrderedSet.remove(classLikeDeclaration)
         }
 
         checkIsInLoop(declaration, wasSubtypingInvolved = false, wereTypeArgumentsInvolved = false)
-        require(path.isEmpty()) { "Path should be empty" }
+        require(pathOrderedSet.isEmpty()) { "Path ordered set should be empty after finishing" }
     }
 
     fun breakLoops(session: FirSession, localClassesNavigationInfo: LocalClassesNavigationInfo?) {
         val visitedClassLikeDecls = mutableSetOf<FirClassLikeDeclaration>()
         val loopedClassLikeDecls = mutableSetOf<FirClassLikeDeclaration>()
-        val path = mutableListOf<FirClassLikeDeclaration>()
-        val pathSet = mutableSetOf<FirClassLikeDeclaration>()
+        val pathOrderedSet = LinkedHashSet<FirClassLikeDeclaration>()
 
         for (classifier in newClassifiersForBreakingLoops) {
             breakLoopFor(
@@ -820,8 +817,7 @@ open class SupertypeComputationSession {
                 session = session,
                 visited = visitedClassLikeDecls,
                 looped = loopedClassLikeDecls,
-                pathSet = pathSet,
-                path = path,
+                pathOrderedSet = pathOrderedSet,
                 localClassesNavigationInfo = localClassesNavigationInfo,
             )
         }
