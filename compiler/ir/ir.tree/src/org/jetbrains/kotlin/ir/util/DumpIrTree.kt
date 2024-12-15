@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 fun IrElement.dump(options: DumpIrTreeOptions = DumpIrTreeOptions()): String =
     try {
@@ -60,6 +61,7 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
  * @property printDispatchReceiverTypeInFakeOverrides If the dispatch receiver type should be printed.
  *   Otherwise, it will be substituted with some fixed placeholder value.
  * @property printParameterNamesInOverriddenSymbols If names of value parameters should be printed in overridden function symbols.
+ * @property printSealedSubclasses Whether sealed subclasses of a sealed class/interface should be printed.
  * @property isHiddenDeclaration The filter that can be used to exclude some declarations from printing.
  */
 data class DumpIrTreeOptions(
@@ -78,6 +80,7 @@ data class DumpIrTreeOptions(
     val printSourceRetentionAnnotations: Boolean = true,
     val printDispatchReceiverTypeInFakeOverrides: Boolean = true,
     val printParameterNamesInOverriddenSymbols: Boolean = true,
+    val printSealedSubclasses: Boolean = true,
     val isHiddenDeclaration: (IrDeclaration) -> Boolean = { false },
 ) {
     /**
@@ -187,7 +190,9 @@ class DumpIrTreeVisitor(
         if (declaration.isExpect && !options.printExpectDeclarations) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
-            declaration.sealedSubclasses.dumpItems("sealedSubclasses") { it.dump() }
+            runIf(options.printSealedSubclasses) {
+                declaration.sealedSubclasses.dumpItems("sealedSubclasses") { it.dump() }
+            }
             declaration.thisReceiver?.accept(this, "\$this")
             declaration.typeParameters.dumpElements()
             declaration.declarations.ordered().dumpElements()
