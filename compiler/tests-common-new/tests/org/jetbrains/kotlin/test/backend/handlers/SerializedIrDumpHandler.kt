@@ -76,6 +76,33 @@ class SerializedIrDumpHandler(
              * in those two groups of IR sometimes are not identical (though, always compatible).
              */
             printDispatchReceiverTypeInFakeOverrides = false,
+
+            /**
+             * Names of value parameters are not a part of ABI (except for the single existing case in Kotlin/Native,
+             * which should be covered with a separate bunch of tests).
+             *
+             * Also, names of value parameters sometimes mismatch between the frontend-generated IR and the deserialized IR.
+             * Example:
+             * ```
+             * abstract class A<T> {
+             *     context(T) abstract fun foo(): Int?
+             * }
+             *
+             * class B : A<String>() {
+             *     // frontend-generated IR:
+             *     // FUN name:foo visibility:public modality:OPEN <> ($this:<root>.B, $context_receiver_0:kotlin.String) returnType:kotlin.Int?
+             *     //   overridden:
+             *     //     public abstract fun foo (<unused var>: T of <root>.A): kotlin.Int? declared in <root>.A
+             *     //
+             *     // deserialized IR:
+             *     // FUN name:foo visibility:public modality:OPEN <> ($this:<root>.B, $context_receiver_0:kotlin.String) returnType:kotlin.Int?
+             *     //   overridden:
+             *     //     public abstract fun foo ($context_receiver_0: T of <root>.A): kotlin.Int? declared in <root>.A
+             *     context(String) override fun foo(): Int? = 1
+             * }
+             * ```
+             */
+            printParameterNamesInOverriddenSymbols = false,
             isHiddenDeclaration = { IrTextDumpHandler.isHiddenDeclaration(it, info.irPluginContext.irBuiltIns) },
         )
 
