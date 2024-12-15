@@ -52,8 +52,8 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
  * @property verboseErrorTypes Whether to dump the value of [IrErrorType.kotlinType] for [IrErrorType] nodes
  * @property printFacadeClassInFqNames Whether printed fully-qualified names of top-level declarations should include the name of
  *   the file facade class (see [IrDeclarationOrigin.FILE_CLASS]) TODO: use [isHiddenDeclaration] instead.
- * @property printFlagsInDeclarationReferences If `false`, flags like `fake_override`, `inline` etc. are not printed in rendered
- *   declaration references.
+ * @property declarationFlagsFilter The filter that allows filtering declaration flags like `fake_override`, `inline` etc. both
+ *   in declarations and in declaration references. See [FlagsFilter] for more details.
  * @property renderOriginForExternalDeclarations If `true`, we only print a declaration's origin if it is not
  * [IrDeclarationOrigin.DEFINED]. If `false`, we don't print the [IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB] origin as well.
  * @property printSignatures Whether to print signatures for nodes that have public signatures
@@ -67,7 +67,7 @@ data class DumpIrTreeOptions(
     val stableOrderOfOverriddenSymbols: Boolean = false,
     val verboseErrorTypes: Boolean = true,
     val printFacadeClassInFqNames: Boolean = true,
-    val printFlagsInDeclarationReferences: Boolean = true,
+    val declarationFlagsFilter: FlagsFilter = FlagsFilter.KEEP_ALL_FLAGS,
     val renderOriginForExternalDeclarations: Boolean = true,
     val printSignatures: Boolean = false,
     val printTypeAbbreviations: Boolean = true,
@@ -77,7 +77,25 @@ data class DumpIrTreeOptions(
     val printSourceRetentionAnnotations: Boolean = true,
     val printDispatchReceiverTypeInFakeOverrides: Boolean = true,
     val isHiddenDeclaration: (IrDeclaration) -> Boolean = { false },
-)
+) {
+    /**
+     * A customizable filter to exclude some (or all) flags for declarations or declaration references.
+     */
+    fun interface FlagsFilter {
+        /**
+         * @param declaration The declaration for which flags are going to be rendered.
+         * @param isReference Whether the flags are rendered for a declaration reference (`true`) or
+         *   the declaration itself (`false`).
+         * @param flags The flags to filter before rendering.
+         */
+        fun filterFlags(declaration: IrDeclaration, isReference: Boolean, flags: List<String>): List<String>
+
+        companion object {
+            val KEEP_ALL_FLAGS = FlagsFilter { _, _, flags -> flags }
+            val NO_FLAGS_FOR_REFERENCES = FlagsFilter { _, isReference, flags -> flags.takeUnless { isReference }.orEmpty() }
+        }
+    }
+}
 
 private fun IrFile.shouldSkipDump(): Boolean {
     val entry = fileEntry as? NaiveSourceBasedFileEntryImpl ?: return false

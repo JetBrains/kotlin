@@ -53,7 +53,7 @@ class SerializedIrDumpHandler(
             normalizeNames = true,
             stableOrder = true,
             stableOrderOfOverriddenSymbols = true, // We need to print overridden symbols always in stable order.
-            printFlagsInDeclarationReferences = true,
+            declarationFlagsFilter = DumpIrTreeOptions.FlagsFilter.KEEP_ALL_FLAGS,
             // External declarations origin differs between frontend-generated and deserialized IR,
             // which prevents us from running irText tests against deserialized IR,
             // since it uses the same golden data as when we run them against frontend-generated IR.

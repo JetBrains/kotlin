@@ -29,6 +29,7 @@ fun IrElement.render(options: DumpIrTreeOptions = DumpIrTreeOptions()) =
 open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTreeOptions()) :
     IrElementVisitor<String, Nothing?> {
 
+    private val flagsRenderer = FlagsRenderer(options.declarationFlagsFilter, isReference = false)
     private val variableNameData = VariableNameData(options.normalizeNames)
 
     fun renderType(type: IrType) = type.renderTypeWithRenderer(this@RenderIrElementVisitor, options)
@@ -52,6 +53,8 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
         private val options: DumpIrTreeOptions,
     ) : IrElementVisitor<String, Nothing?> {
 
+        private val flagsRenderer = FlagsRenderer(options.declarationFlagsFilter, isReference = true)
+
         override fun visitElement(element: IrElement, data: Nothing?) = buildTrimEnd {
             append('{')
             append(element.javaClass.simpleName)
@@ -69,13 +72,13 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
             renderTypeParameter(declaration, null, options)
 
         override fun visitClass(declaration: IrClass, data: Nothing?) =
-            renderClassWithRenderer(declaration, null, options)
+            renderClassWithRenderer(declaration, null, flagsRenderer, options)
 
         override fun visitEnumEntry(declaration: IrEnumEntry, data: Nothing?) =
             renderEnumEntry(declaration, options)
 
         override fun visitField(declaration: IrField, data: Nothing?) = buildTrimEnd {
-            append(renderField(declaration, null, options))
+            append(renderField(declaration, null, flagsRenderer, options))
             if (declaration.origin != IrDeclarationOrigin.PROPERTY_BACKING_FIELD) {
                 append(" ")
                 renderDeclaredIn(declaration)
@@ -90,10 +93,7 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
                 append(": ")
                 append(declaration.type.renderTypeWithRenderer(null, options))
                 append(' ')
-
-                if (options.printFlagsInDeclarationReferences) {
-                    append(declaration.renderVariableFlags())
-                }
+                append(declaration.renderVariableFlags(flagsRenderer))
 
                 renderDeclaredIn(declaration)
             }
@@ -104,11 +104,7 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
                 append(": ")
                 append(declaration.type.renderTypeWithRenderer(null, options))
                 append(' ')
-
-                if (options.printFlagsInDeclarationReferences) {
-                    append(declaration.renderValueParameterFlags())
-                }
-
+                append(declaration.renderValueParameterFlags(flagsRenderer))
                 renderDeclaredIn(declaration)
             }
 
@@ -152,11 +148,9 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
                 }
                 append(' ')
 
-                if (options.printFlagsInDeclarationReferences) {
-                    when (declaration) {
-                        is IrSimpleFunction -> append(declaration.renderSimpleFunctionFlags())
-                        is IrConstructor -> append(declaration.renderConstructorFlags())
-                    }
+                when (declaration) {
+                    is IrSimpleFunction -> append(declaration.renderSimpleFunctionFlags(flagsRenderer))
+                    is IrConstructor -> append(declaration.renderConstructorFlags(flagsRenderer))
                 }
 
                 renderDeclaredIn(declaration)
@@ -190,9 +184,7 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
                 }
                 append(' ')
 
-                if (options.printFlagsInDeclarationReferences) {
-                    append(declaration.renderPropertyFlags())
-                }
+                append(declaration.renderPropertyFlags(flagsRenderer))
 
                 renderDeclaredIn(declaration)
             }
@@ -280,7 +272,7 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
                     renderTypeParameters() + " " +
                     renderValueParameterTypes() + " " +
                     "returnType:${renderReturnType(this@RenderIrElementVisitor, options)} " +
-                    renderSimpleFunctionFlags()
+                    renderSimpleFunctionFlags(flagsRenderer)
         }
 
     private fun IrFunction.renderValueParameterTypes(): String = buildList {
@@ -297,7 +289,7 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
                     renderTypeParameters() + " " +
                     renderValueParameterTypes() + " " +
                     "returnType:${renderReturnType(this@RenderIrElementVisitor, options)} " +
-                    renderConstructorFlags()
+                    renderConstructorFlags(flagsRenderer)
         }
 
     override fun visitProperty(declaration: IrProperty, data: Nothing?): String =
@@ -306,18 +298,19 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
                     "name:$name " +
                     renderSignatureIfEnabled(options.printSignatures) +
                     "visibility:$visibility modality:$modality " +
-                    renderPropertyFlags()
+                    renderPropertyFlags(flagsRenderer)
         }
 
     override fun visitField(declaration: IrField, data: Nothing?): String =
-        renderField(declaration, this, options)
+        renderField(declaration, this, flagsRenderer, options)
 
     override fun visitClass(declaration: IrClass, data: Nothing?): String =
-        renderClassWithRenderer(declaration, this, options)
+        renderClassWithRenderer(declaration, this, flagsRenderer, options)
 
     override fun visitVariable(declaration: IrVariable, data: Nothing?): String =
         declaration.runTrimEnd {
-            "VAR ${renderOriginIfNonTrivial(options)}name:${normalizedName(variableNameData)} type:${type.render()} ${renderVariableFlags()}"
+            "VAR ${renderOriginIfNonTrivial(options)}name:${normalizedName(variableNameData)} type:${type.render()} " +
+                    renderVariableFlags(flagsRenderer)
         }
 
     override fun visitEnumEntry(declaration: IrEnumEntry, data: Nothing?): String =
@@ -336,7 +329,7 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
                     (if (indexInOldValueParameters >= 0) "index:$indexInOldValueParameters " else "") +
                     "type:${renderValueParameterType(options)} " +
                     (varargElementType?.let { "varargElementType:${it.render()} " } ?: "") +
-                    renderValueParameterFlags()
+                    renderValueParameterFlags(flagsRenderer)
         }
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String =
@@ -351,7 +344,7 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
                     "name:$name " +
                     renderSignatureIfEnabled(options.printSignatures) +
                     "visibility:$visibility expandedType:${expandedType.render()}" +
-                    renderTypeAliasFlags()
+                    renderTypeAliasFlags(flagsRenderer)
         }
 
     override fun visitExpressionBody(body: IrExpressionBody, data: Nothing?): String =
@@ -480,7 +473,7 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
 
     override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: Nothing?): String =
         "RICH_FUNCTION_REFERENCE type=${expression.type.render()} origin=${expression.origin} " +
-                renderFlagsList(
+                renderFlagsListWithoutFiltering(
                     "unit_conversion".takeIf { expression.hasUnitConversion },
                     "suspend_conversion".takeIf { expression.hasSuspendConversion },
                     "vararg_conversion".takeIf { expression.hasVarargConversion },
@@ -706,7 +699,18 @@ private inline fun buildTrimEnd(fn: StringBuilder.() -> Unit): String =
 private inline fun <T> T.runTrimEnd(fn: T.() -> String): String =
     run(fn).trimEnd()
 
-private fun renderFlagsList(vararg flags: String?) =
+private class FlagsRenderer(
+    private val flagsFilter: DumpIrTreeOptions.FlagsFilter,
+    private val isReference: Boolean
+) {
+    fun renderFlagsList(declaration: IrDeclaration, vararg flags: String?): String {
+        val flagsList = flagsFilter.filterFlags(declaration, isReference, flags.filterNotNull())
+        if (flagsList.isEmpty()) return ""
+        return flagsList.joinToString(prefix = "[", postfix = "] ", separator = ",")
+    }
+}
+
+private fun renderFlagsListWithoutFiltering(vararg flags: String?) =
     flags.filterNotNull().run {
         if (isNotEmpty())
             joinToString(prefix = "[", postfix = "] ", separator = ",")
@@ -714,8 +718,9 @@ private fun renderFlagsList(vararg flags: String?) =
             ""
     }
 
-private fun IrClass.renderClassFlags() =
-    renderFlagsList(
+private fun IrClass.renderClassFlags(renderer: FlagsRenderer) =
+    renderer.renderFlagsList(
+        declaration = this,
         "companion".takeIf { isCompanion },
         "inner".takeIf { isInner },
         "data".takeIf { isData },
@@ -725,15 +730,17 @@ private fun IrClass.renderClassFlags() =
         "fun".takeIf { isFun }
     )
 
-private fun IrField.renderFieldFlags() =
-    renderFlagsList(
+private fun IrField.renderFieldFlags(renderer: FlagsRenderer) =
+    renderer.renderFlagsList(
+        declaration = this,
         "final".takeIf { isFinal },
         "external".takeIf { isExternal },
         "static".takeIf { isStatic },
     )
 
-private fun IrSimpleFunction.renderSimpleFunctionFlags(): String =
-    renderFlagsList(
+private fun IrSimpleFunction.renderSimpleFunctionFlags(renderer: FlagsRenderer): String =
+    renderer.renderFlagsList(
+        declaration = this,
         "tailrec".takeIf { isTailrec },
         "inline".takeIf { isInline },
         "external".takeIf { isExternal },
@@ -744,16 +751,18 @@ private fun IrSimpleFunction.renderSimpleFunctionFlags(): String =
         "infix".takeIf { isInfix }
     )
 
-private fun IrConstructor.renderConstructorFlags() =
-    renderFlagsList(
+private fun IrConstructor.renderConstructorFlags(renderer: FlagsRenderer) =
+    renderer.renderFlagsList(
+        declaration = this,
         "inline".takeIf { isInline },
         "external".takeIf { isExternal },
         "primary".takeIf { isPrimary },
         "expect".takeIf { isExpect }
     )
 
-private fun IrProperty.renderPropertyFlags() =
-    renderFlagsList(
+private fun IrProperty.renderPropertyFlags(renderer: FlagsRenderer) =
+    renderer.renderFlagsList(
+        declaration = this,
         "external".takeIf { isExternal },
         "const".takeIf { isConst },
         "lateinit".takeIf { isLateinit },
@@ -763,23 +772,26 @@ private fun IrProperty.renderPropertyFlags() =
         if (isVar) "var" else "val"
     )
 
-private fun IrVariable.renderVariableFlags(): String =
-    renderFlagsList(
+private fun IrVariable.renderVariableFlags(renderer: FlagsRenderer): String =
+    renderer.renderFlagsList(
+        declaration = this,
         "const".takeIf { isConst },
         "lateinit".takeIf { isLateinit },
         if (isVar) "var" else "val"
     )
 
-private fun IrValueParameter.renderValueParameterFlags(): String =
-    renderFlagsList(
+private fun IrValueParameter.renderValueParameterFlags(renderer: FlagsRenderer): String =
+    renderer.renderFlagsList(
+        declaration = this,
         "vararg".takeIf { varargElementType != null },
         "crossinline".takeIf { isCrossinline },
         "noinline".takeIf { isNoinline },
         "assignable".takeIf { isAssignable }
     )
 
-private fun IrTypeAlias.renderTypeAliasFlags(): String =
-    renderFlagsList(
+private fun IrTypeAlias.renderTypeAliasFlags(renderer: FlagsRenderer): String =
+    renderer.renderFlagsList(
+        declaration = this,
         "actual".takeIf { isActual }
     )
 
@@ -957,15 +969,19 @@ private fun StringBuilder.renderIrConstAsAnnotationArgument(const: IrConst) {
     append(quotes)
 }
 
-private fun renderClassWithRenderer(declaration: IrClass, renderer: RenderIrElementVisitor?, options: DumpIrTreeOptions) =
-    declaration.runTrimEnd {
-        "CLASS ${renderOriginIfNonTrivial(options)}" +
-                "$kind name:$name " +
-                renderSignatureIfEnabled(options.printSignatures) +
-                "modality:$modality visibility:$visibility " +
-                renderClassFlags() +
-                "superTypes:[${superTypes.joinToString(separator = "; ") { it.renderTypeWithRenderer(renderer, options) }}]"
-    }
+private fun renderClassWithRenderer(
+    declaration: IrClass,
+    renderer: RenderIrElementVisitor?,
+    flagsRenderer: FlagsRenderer,
+    options: DumpIrTreeOptions,
+) = declaration.runTrimEnd {
+    "CLASS ${renderOriginIfNonTrivial(options)}" +
+            "$kind name:$name " +
+            renderSignatureIfEnabled(options.printSignatures) +
+            "modality:$modality visibility:$visibility " +
+            renderClassFlags(flagsRenderer) +
+            "superTypes:[${superTypes.joinToString(separator = "; ") { it.renderTypeWithRenderer(renderer, options) }}]"
+}
 
 private fun renderEnumEntry(declaration: IrEnumEntry, options: DumpIrTreeOptions) = declaration.runTrimEnd {
     "ENUM_ENTRY " +
@@ -974,13 +990,18 @@ private fun renderEnumEntry(declaration: IrEnumEntry, options: DumpIrTreeOptions
             renderSignatureIfEnabled(options.printSignatures)
 }
 
-private fun renderField(declaration: IrField, renderer: RenderIrElementVisitor?, options: DumpIrTreeOptions) = declaration.runTrimEnd {
+private fun renderField(
+    declaration: IrField,
+    renderer: RenderIrElementVisitor?,
+    flagsRenderer: FlagsRenderer,
+    options: DumpIrTreeOptions
+) = declaration.runTrimEnd {
     "FIELD ${renderOriginIfNonTrivial(options)}name:$name ${renderSignatureIfEnabled(options.printSignatures)}type:${
         type.renderTypeWithRenderer(
             renderer,
             options
         )
-    } visibility:$visibility ${renderFieldFlags()}"
+    } visibility:$visibility ${renderFieldFlags(flagsRenderer)}"
 }
 
 private fun renderTypeParameter(declaration: IrTypeParameter, renderer: RenderIrElementVisitor?, options: DumpIrTreeOptions) =
