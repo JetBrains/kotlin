@@ -5,6 +5,7 @@
 
 // https://youtrack.jetbrains.com/issue/KT-59279/Psi2Ir-FIR2IR-Signature-clash-leads-to-wrong-method-resolve
 // IGNORE_BACKEND_K2: NATIVE, JS_IR
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR NATIVE
 
 // MODULE: lib
 // FILE: lib.kt
