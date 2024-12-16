@@ -642,6 +642,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/internalArgCommonChecks/internalArgPassValue.args");
     }
 
+    @TestMetadata("internalArgTestOnlyFeature.args")
+    public void testInternalArgTestOnlyFeature() {
+      runTest("compiler/testData/cli/jvm/internalArgCommonChecks/internalArgTestOnlyFeature.args");
+    }
+
     @TestMetadata("internalArgUnrecognizedFeature.args")
     public void testInternalArgUnrecognizedFeature() {
       runTest("compiler/testData/cli/jvm/internalArgCommonChecks/internalArgUnrecognizedFeature.args");

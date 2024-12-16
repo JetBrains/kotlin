@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.LanguageFeature
 
 /**
@@ -51,8 +52,8 @@ class LanguageSettingsParser : AbstractInternalArgumentParser<ManualLanguageFeat
 
     // Expected tail form: ':(+|-)<language feature name>'
     override fun parseTail(tail: String, wholeArgument: String, errors: ArgumentParseErrors): ManualLanguageFeatureSetting? {
-        fun reportAndReturnNull(message: String): Nothing? {
-            errors.internalArgumentsParsingProblems += message
+        fun reportAndReturnNull(message: String, severity: CompilerMessageSeverity = CompilerMessageSeverity.STRONG_WARNING): Nothing? {
+            errors.internalArgumentsParsingProblems += severity to message
             return null
         }
 
@@ -72,6 +73,13 @@ class LanguageSettingsParser : AbstractInternalArgumentParser<ManualLanguageFeat
 
         val languageFeature = LanguageFeature.fromString(languageFeatureName)
             ?: return reportAndReturnNull("Unknown language feature '$languageFeatureName' in passed internal argument '$wholeArgument'")
+
+        if (languageFeature.kind.testOnly) {
+            reportAndReturnNull(
+                "Language feature '$languageFeatureName' is test-only and cannot be enabled from command line",
+                severity = CompilerMessageSeverity.ERROR
+            )
+        }
 
         return ManualLanguageFeatureSetting(languageFeature, languageFeatureState, wholeArgument)
     }
