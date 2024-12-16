@@ -324,6 +324,7 @@ class ConstraintInjector(
         private var baseUpperType = position.initialConstraint.b
 
         private var isIncorporatingConstraintFromDeclaredUpperBound = false
+        private var currentDerivedFromSet: Set<TypeVariableMarker> = emptySet()
 
         fun extractAllConstraints() = possibleNewConstraints.also { possibleNewConstraints = null }
         fun extractForkPointsData() = forkPointsData.also { forkPointsData = null }
@@ -491,14 +492,8 @@ class ConstraintInjector(
             addNewIncorporatedConstraint(
                 typeVariable,
                 type,
-                ConstraintContext(kind, emptySet(), isNullabilityConstraint = isFromNullabilityConstraint)
+                ConstraintContext(kind, currentDerivedFromSet, isNullabilityConstraint = isFromNullabilityConstraint)
             )
-        }
-
-        private fun addNewIncorporatedConstraintFromDeclaredUpperBound(runIsSubtypeOf: Runnable) {
-            isIncorporatingConstraintFromDeclaredUpperBound = true
-            runIsSubtypeOf.run()
-            isIncorporatingConstraintFromDeclaredUpperBound = false
         }
 
         // from ConstraintIncorporator.Context
@@ -506,6 +501,7 @@ class ConstraintInjector(
             lowerType: KotlinTypeMarker,
             upperType: KotlinTypeMarker,
             shouldTryUseDifferentFlexibilityForUpperType: Boolean,
+            newDerivedFrom: Set<TypeVariableMarker>,
             isFromNullabilityConstraint: Boolean,
             isFromDeclaredUpperBound: Boolean
         ) {
@@ -516,10 +512,31 @@ class ConstraintInjector(
                 if (lowerType === upperType) return
             }
             if (c.isAllowedType(lowerType) && c.isAllowedType(upperType)) {
-                fun runIsSubtypeOf() =
+                withNewConfigurationForIncorporationConstraints(
+                    newDerivedFrom,
+                    isFromDeclaredUpperBound
+                ) {
                     runIsSubtypeOf(lowerType, upperType, shouldTryUseDifferentFlexibilityForUpperType, isFromNullabilityConstraint)
+                }
+            }
+        }
 
-                if (isFromDeclaredUpperBound) addNewIncorporatedConstraintFromDeclaredUpperBound(::runIsSubtypeOf) else runIsSubtypeOf()
+        private inline fun withNewConfigurationForIncorporationConstraints(
+            newDerivedFromSet: Set<TypeVariableMarker>,
+            isFromDeclaredUpperBound: Boolean,
+            b: () -> Unit,
+        ) {
+            // No immediate recursive incorporation should happen, so `currentDerivedFromSet` would be reset at "finally"
+            check(currentDerivedFromSet.isEmpty())
+
+            try {
+                currentDerivedFromSet = newDerivedFromSet
+                isIncorporatingConstraintFromDeclaredUpperBound = isFromDeclaredUpperBound
+                b()
+            } finally {
+                // NB: `emptySet()` returns a singleton, so no excessive memory here
+                currentDerivedFromSet = emptySet()
+                isIncorporatingConstraintFromDeclaredUpperBound = false
             }
         }
 

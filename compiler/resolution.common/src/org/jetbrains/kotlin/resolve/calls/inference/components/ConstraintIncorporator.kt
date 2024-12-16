@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
@@ -19,6 +21,7 @@ class ConstraintIncorporator(
     val typeApproximator: AbstractTypeApproximator,
     val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
     val utilContext: ConstraintSystemUtilContext,
+    private val languageVersionSettings: LanguageVersionSettings,
 ) {
 
     interface Context : TypeSystemInferenceExtensionContext {
@@ -40,6 +43,8 @@ class ConstraintIncorporator(
             // B
             upperType: KotlinTypeMarker,
             shouldTryUseDifferentFlexibilityForUpperType: Boolean,
+            // Union of `derivedFrom` for `A <:(=) \alpha` and `\alpha <:(=) B`
+            newDerivedFrom: Set<TypeVariableMarker>,
             isFromNullabilityConstraint: Boolean = false,
             isFromDeclaredUpperBound: Boolean = false,
         )
@@ -80,6 +85,7 @@ class ConstraintIncorporator(
                         it.type,
                         constraint.type,
                         shouldBeTypeVariableFlexible,
+                        constraint.computeNewDerivedFrom(it),
                         it.isNullabilityConstraint
                     )
                 }
@@ -97,12 +103,22 @@ class ConstraintIncorporator(
                         constraint.type,
                         it.type,
                         shouldBeTypeVariableFlexible,
+                        constraint.computeNewDerivedFrom(it),
                         isFromDeclaredUpperBound = isFromDeclaredUpperBound
                     )
                 }
             }
         }
     }
+
+    // NB: The result is reflexive
+    private fun Constraint.computeNewDerivedFrom(other: Constraint): Set<TypeVariableMarker> =
+        when {
+            !languageVersionSettings.supportsFeature(LanguageFeature.StricterConstraintIncorporationRecursionDetector) -> emptySet()
+            derivedFrom.isEmpty() -> other.derivedFrom
+            other.derivedFrom.isEmpty() -> derivedFrom
+            else -> derivedFrom + other.derivedFrom
+        }
 
     private inline fun Context.forEachConstraint(typeVariable: TypeVariableMarker, action: (Constraint) -> Unit) {
         // We use an indexed loop because the collection might be modified during the iteration.
