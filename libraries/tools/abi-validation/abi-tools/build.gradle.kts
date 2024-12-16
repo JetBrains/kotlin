@@ -7,6 +7,10 @@ kotlin {
     explicitApi()
 }
 
+publish()
+
+standardPublicJars()
+
 sourceSets.named("test") {
     java.srcDir("src/test/kotlin")
 }
