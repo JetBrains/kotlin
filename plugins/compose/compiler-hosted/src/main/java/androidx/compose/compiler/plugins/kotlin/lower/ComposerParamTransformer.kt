@@ -94,12 +94,14 @@ class ComposerParamTransformer(
     }
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {
-        if (declaration.getter.isComposableDelegatedAccessor()) {
-            declaration.getter.annotations += createComposableAnnotation()
+        val getter = declaration.getter
+        if (getter.isComposableDelegatedAccessor() && !getter.hasComposableAnnotation()) {
+            getter.annotations += createComposableAnnotation()
         }
 
-        if (declaration.setter?.isComposableDelegatedAccessor() == true) {
-            declaration.setter!!.annotations += createComposableAnnotation()
+        val setter = declaration.setter
+        if (setter?.isComposableDelegatedAccessor() == true && setter.hasComposableAnnotation()) {
+            setter.annotations += createComposableAnnotation()
         }
 
         return super.visitLocalDelegatedProperty(declaration)
