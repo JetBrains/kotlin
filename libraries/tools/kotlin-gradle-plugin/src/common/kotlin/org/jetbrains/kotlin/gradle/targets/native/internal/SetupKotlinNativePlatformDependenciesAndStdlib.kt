@@ -51,12 +51,11 @@ private suspend fun AbstractKotlinNativeCompilation.configureStdlibAndPlatformDe
     val nativeBundleBuildService = KotlinNativeBundleBuildService.registerIfAbsent(project)
 //    val kotlinNativeProvider = KotlinNativeFromToolchainProvider(project, commonizerTarget.konanTargets, nativeBundleBuildService)
 
-    val nativeDependency = nativeBundleBuildService.map { kotlinNativeBundleBuildService ->
-        kotlinNativeBundleBuildService.getNativeDistributionDependencies(
+    val nativeDependency = nativeBundleBuildService.orNull?.getNativeDistributionDependencies(
             project,
             commonizerTarget
         )
-    }
+
 
     val updatedCompileDependencyFiles = project.files().from(
         stdlib,
