@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 import org.jetbrains.kotlin.backend.common.lower.isMovedReceiver as isMovedReceiverImpl
 
@@ -120,8 +121,7 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
                         // apparently do have dispatch receivers (though *probably* not type arguments, but copy
                         // those as well just in case):
                         passTypeArgumentsFrom(newIrFunction, offset = newIrFunction.parentAsClass.typeParameters.size)
-                        dispatchReceiver = newIrFunction.dispatchReceiverParameter?.let { irGet(it) }
-                        params.forEachIndexed { i, variable -> putValueArgument(i, irGet(variable)) }
+                        arguments.assignFrom((listOfNotNull(newIrFunction.dispatchReceiverParameter) + params).map { irGet(it) })
                     }
                     is IrSimpleFunction -> +irReturn(dispatchToImplementation(originalDeclaration, newIrFunction, params))
                 }
