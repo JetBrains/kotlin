@@ -134,9 +134,10 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
         project.setupKotlinNativePlatformLibraries(konanTargets)
     }
 
-    internal fun getNativeDistributionDependencies(project: Project,
-                                                   commonizerTarget: CommonizerTarget)
-    = project.getNativeDistributionDependencies(commonizerTarget)
+    internal fun getNativeDistributionDependencies(
+        project: Project,
+        commonizerTarget: CommonizerTarget,
+    ) = project.getNativeDistributionDependencies(commonizerTarget)
 
 
     private fun processToolchain(
