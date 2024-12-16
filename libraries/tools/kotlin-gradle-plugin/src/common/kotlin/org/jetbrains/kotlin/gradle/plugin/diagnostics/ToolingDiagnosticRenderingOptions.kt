@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.gradle.api.Project
 import org.gradle.api.logging.configuration.ShowStacktrace
+import org.jetbrains.kotlin.gradle.internal.isInIdeaEnvironment
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.Serializable
 
 internal class ToolingDiagnosticRenderingOptions(
@@ -37,7 +39,7 @@ internal class ToolingDiagnosticRenderingOptions(
                     suppressedWarningIds = suppressedGradlePluginWarnings,
                     suppressedErrorIds = suppressedGradlePluginErrors,
                     showStacktrace = showStacktrace,
-                    showSeverityEmoji = !project.isInIdeaSync.get()
+                    showSeverityEmoji = !project.isInIdeaEnvironment.get() && !HostManager.hostIsMingw
                 )
             }
         }
