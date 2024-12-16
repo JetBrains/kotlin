@@ -250,12 +250,7 @@ abstract class AbstractComposeLowering(
 
     fun IrCall.isComposableLambdaInvoke(): Boolean {
         if (!isInvoke()) return false
-        // [ComposerParamTransformer] replaces composable function types of the form
-        // `@Composable Function1<T1, T2>` with ordinary functions with extra parameters, e.g.,
-        // `Function3<T1, Composer, Int, T2>`. After this lowering runs we have to check the
-        // `attributeOwnerId` to recover the original type.
-        val receiver = dispatchReceiver?.let { it.attributeOwnerId as? IrExpression ?: it }
-        return receiver?.type?.let {
+        return dispatchReceiver?.type?.let {
             it.hasComposableAnnotation() || it.isSyntheticComposableFunction()
         } ?: false
     }
