@@ -6,17 +6,15 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.test.framework.symbols.SymbolByFqName
+import org.jetbrains.kotlin.analysis.test.framework.targets.getTestTargetSymbols
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractSymbolByFqNameTest : AbstractSymbolTest() {
-    override fun KaSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
-        val symbolData = SymbolByFqName.getSymbolDataFromFile(testDataPath)
-        return SymbolsData(with(symbolData) { toSymbols(ktFile) })
-    }
+    override fun KaSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData =
+        SymbolsData(getTestTargetSymbols(testDataPath, ktFile))
 
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)

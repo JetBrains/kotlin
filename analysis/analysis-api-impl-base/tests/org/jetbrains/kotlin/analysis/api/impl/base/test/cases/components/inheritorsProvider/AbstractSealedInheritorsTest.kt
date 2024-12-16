@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclaratio
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
-import org.jetbrains.kotlin.analysis.test.framework.symbols.getSingleTestTargetSymbolOfType
+import org.jetbrains.kotlin.analysis.test.framework.targets.getSingleTestTargetSymbolOfType
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -24,7 +24,7 @@ abstract class AbstractSealedInheritorsTest : AbstractAnalysisApiBasedTest() {
      */
     protected fun doTestByKtFile(ktFile: KtFile, testServices: TestServices) {
         analyseForTest(ktFile) {
-            val classSymbol = getSingleTestTargetSymbolOfType<KaNamedClassSymbol>(ktFile, testDataPath)
+            val classSymbol = getSingleTestTargetSymbolOfType<KaNamedClassSymbol>(testDataPath, ktFile)
 
             val actualText = classSymbol.sealedClassInheritors.joinToString("\n\n") { inheritor ->
                 "${inheritor.classId!!}\n${inheritor.render(KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES)}"

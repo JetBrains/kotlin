@@ -46,5 +46,6 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.optIn.addAll(
         "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
         "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",
+        "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
     )
 }

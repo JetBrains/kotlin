@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
-import org.jetbrains.kotlin.analysis.test.framework.symbols.SymbolByFqName
+import org.jetbrains.kotlin.analysis.test.framework.targets.getSingleTestTargetSymbolOfType
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
@@ -67,12 +67,8 @@ abstract class AbstractLazyAnnotationsResolveTest : AbstractFirLazyDeclarationRe
 
                     psiElement is KtFile -> psiElement.symbol
                     psiElement is KtDeclaration -> psiElement.symbol
-                    else -> {
-                        val symbolData = SymbolByFqName.getSymbolDataFromFile(testDataPath)
-                        with(symbolData) {
-                            toSymbols(mainFile).single()
-                        } as KaAnnotatedSymbol
-                    }
+
+                    else -> getSingleTestTargetSymbolOfType<KaAnnotatedSymbol>(testDataPath, mainFile)
                 }
 
                 val query = testServices.moduleStructure.allDirectives.singleValue(Directives.QUERY)

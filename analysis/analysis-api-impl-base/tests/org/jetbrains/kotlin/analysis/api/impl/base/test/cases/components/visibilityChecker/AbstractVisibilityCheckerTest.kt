@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
-import org.jetbrains.kotlin.analysis.test.framework.symbols.getSingleTestTargetSymbolOfType
+import org.jetbrains.kotlin.analysis.test.framework.targets.getSingleTestTargetSymbolOfType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -29,12 +29,12 @@ private const val USE_SITE_ELEMENT_NAME = "usesite"
  * Checks whether a declaration is visible from a specific use-site file and element.
  *
  * The declaration symbol is found via a symbol name at the bottom of the test file, such as `// class: Declaration` (see
- * [SymbolByFqName][org.jetbrains.kotlin.analysis.test.framework.symbols.SymbolByFqName]).
+ * [getSingleTestTargetSymbolOfType]).
  */
 abstract class AbstractVisibilityCheckerTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actualText = analyseForTest(mainFile) {
-            val declarationSymbol = getSingleTestTargetSymbolOfType<KaDeclarationSymbol>(mainFile, testDataPath)
+            val declarationSymbol = getSingleTestTargetSymbolOfType<KaDeclarationSymbol>(testDataPath, mainFile)
 
             val useSiteElement = testServices.expressionMarkerProvider.getElementOfTypeAtCaretOrNull<KtExpression>(mainFile)
                 ?: findFirstUseSiteElement(mainFile)

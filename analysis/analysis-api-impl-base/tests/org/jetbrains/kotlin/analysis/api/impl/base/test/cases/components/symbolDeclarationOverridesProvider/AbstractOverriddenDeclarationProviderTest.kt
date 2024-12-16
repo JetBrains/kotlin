@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
-import org.jetbrains.kotlin.analysis.test.framework.symbols.getSingleTestTargetSymbolOfType
+import org.jetbrains.kotlin.analysis.test.framework.targets.getSingleTestTargetSymbolOfType
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -52,7 +52,7 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
         if (declaration != null) {
             return declaration.symbol as KaCallableSymbol
         }
-        return getSingleTestTargetSymbolOfType<KaCallableSymbol>(mainFile, testDataPath)
+        return getSingleTestTargetSymbolOfType<KaCallableSymbol>(testDataPath, mainFile)
     }
 
     private fun KaSession.renderSignature(symbol: KaCallableSymbol): String = buildString {
