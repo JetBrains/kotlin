@@ -2,7 +2,7 @@
 -Xnullability-annotations=@org.jspecify.nullness\:strict
 -Xnullability-annotations=@org.checkerframework.checker.nullness.compatqual\:warn
 $TESTDATA_DIR$/severalAnnotations.kt
-$TESTDATA_DIR$/jspecify
+$TESTDATA_DIR$/XjspecifyAnnotation/jspecify
 $TESTDATA_DIR$/compatqual
 $FOREIGN_ANNOTATIONS_DIR$
 $JSR_305_DECLARATIONS$

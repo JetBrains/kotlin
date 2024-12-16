@@ -7,7 +7,7 @@ This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
-compiler/testData/cli/jvm/languageVersion.kt:4:34: error: the feature "generic inline class parameter" is disabled
+compiler/testData/cli/jvm/internalArgCommonChecks/languageVersion.kt:4:34: error: the feature "generic inline class parameter" is disabled
 value class Holder<T>(val value: T)
                                  ^
 COMPILATION_ERROR

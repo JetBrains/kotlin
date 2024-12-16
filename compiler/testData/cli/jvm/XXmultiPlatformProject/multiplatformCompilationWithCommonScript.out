@@ -8,5 +8,5 @@ as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
 error: script files in common source roots are not supported. Misplaced files:
-    compiler/testData/cli/jvm/scripts/s1.kts
+    compiler/testData/cli/jvm/XXmultiPlatformProject/scripts/s1.kts
 COMPILATION_ERROR

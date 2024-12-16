@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/internalArgEnableLanguageFeature.kt:9:1: error: class 'Impl' overrides 'var' property 'var a: String' defined in '/Interface' with inherited 'val' property 'val a: String' defined in '/Open'.
+compiler/testData/cli/jvm/internalArgCommonChecks/internalArgEnableLanguageFeature.kt:9:1: error: class 'Impl' overrides 'var' property 'var a: String' defined in '/Interface' with inherited 'val' property 'val a: String' defined in '/Open'.
 class Impl : Open(), Interface
 ^^^^^^^^^^
 COMPILATION_ERROR

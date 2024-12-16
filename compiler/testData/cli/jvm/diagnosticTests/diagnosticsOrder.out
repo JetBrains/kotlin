@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/diagnosticsOrder1.kt:1:5: error: conflicting declarations:
+compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder1.kt:1:5: error: conflicting declarations:
 val x: Int
 val x: Int
 val x: Int
@@ -7,7 +7,7 @@ val x: Int
 val x: Int
 val x = 5
     ^
-compiler/testData/cli/jvm/diagnosticsOrder1.kt:2:5: error: conflicting declarations:
+compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder1.kt:2:5: error: conflicting declarations:
 val x: Int
 val x: Int
 val x: Int
@@ -16,7 +16,7 @@ val x: Int
 val x: Int
 val x = 5
     ^
-compiler/testData/cli/jvm/diagnosticsOrder1.kt:3:5: error: conflicting declarations:
+compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder1.kt:3:5: error: conflicting declarations:
 val x: Int
 val x: Int
 val x: Int
@@ -25,7 +25,7 @@ val x: Int
 val x: Int
 val x = 5
     ^
-compiler/testData/cli/jvm/diagnosticsOrder1.kt:4:5: error: conflicting declarations:
+compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder1.kt:4:5: error: conflicting declarations:
 val x: Int
 val x: Int
 val x: Int
@@ -34,7 +34,7 @@ val x: Int
 val x: Int
 val x = 5
     ^
-compiler/testData/cli/jvm/diagnosticsOrder1.kt:5:5: error: conflicting declarations:
+compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder1.kt:5:5: error: conflicting declarations:
 val x: Int
 val x: Int
 val x: Int
@@ -43,7 +43,7 @@ val x: Int
 val x: Int
 val x = 5
     ^
-compiler/testData/cli/jvm/diagnosticsOrder1.kt:6:5: error: conflicting declarations:
+compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder1.kt:6:5: error: conflicting declarations:
 val x: Int
 val x: Int
 val x: Int
@@ -52,7 +52,7 @@ val x: Int
 val x: Int
 val x = 5
     ^
-compiler/testData/cli/jvm/diagnosticsOrder1.kt:7:5: error: conflicting declarations:
+compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder1.kt:7:5: error: conflicting declarations:
 val x: Int
 val x: Int
 val x: Int
@@ -61,11 +61,11 @@ val x: Int
 val x: Int
 val x = 5
     ^
-compiler/testData/cli/jvm/diagnosticsOrder2.kt:1:5: error: conflicting declarations:
+compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder2.kt:1:5: error: conflicting declarations:
 val y: Int
 val y = 5
     ^
-compiler/testData/cli/jvm/diagnosticsOrder2.kt:2:5: error: conflicting declarations:
+compiler/testData/cli/jvm/diagnosticTests/diagnosticsOrder2.kt:2:5: error: conflicting declarations:
 val y: Int
 val y = 5
     ^
