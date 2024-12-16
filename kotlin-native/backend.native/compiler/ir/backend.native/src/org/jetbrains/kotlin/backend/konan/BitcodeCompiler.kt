@@ -63,6 +63,9 @@ internal class BitcodeCompiler(
                         else -> configurables.clangNooptFlags
                     })
                     addNonEmpty(configurables.currentRelocationMode(context).translateToClangCc1Flag())
+                    if (optimize) {
+                        add("-flto=thin")
+                    }
                 }
         val bitcodePath = bitcodeFile.absoluteFile.normalize().path
         val objectPath = objectFile.absoluteFile.normalize().path
