@@ -866,7 +866,7 @@ open class LocalDeclarationsLowering(
             context.mapping.capturedConstructors[oldDeclaration]?.let { newDeclaration ->
                 transformedDeclarations[oldDeclaration] = newDeclaration
                 constructorContext.transformedDeclaration = newDeclaration
-                newDeclaration.valueParameters.zip(capturedValues).forEach { (it, capturedValue) ->
+                newDeclaration.parameters.zip(capturedValues).forEach { (it, capturedValue) ->
                     newParameterToCaptured[it] = capturedValue
                 }
                 oldDeclaration.valueParameters.zip(newDeclaration.valueParameters).forEach { (v, it) ->
