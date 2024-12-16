@@ -533,7 +533,9 @@ open class MaskedDefaultArgumentFunctionFactory(context: CommonBackendContext, c
         copyReturnTypeFrom(original)
         copyValueParametersFrom(original)
 
-        for (i in 0 until (original.valueParameters.size + 31) / 32) {
+        val originalValueParametersCount =
+            original.parameters.count { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
+        for (i in 0 until (originalValueParametersCount + 31) / 32) {
             addValueParameter(
                 "mask$i".synthesizedString,
                 context.irBuiltIns.intType,
