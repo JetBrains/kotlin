@@ -15,7 +15,6 @@ enum class LanguageFeature(
     val sinceVersion: LanguageVersion?,
     val sinceApiVersion: ApiVersion = ApiVersion.KOTLIN_1_0,
     val hintUrl: String? = null,
-    internal val isEnabledWithWarning: Boolean = false,
     val kind: Kind = OTHER // NB: default value OTHER doesn't force pre-releaseness (see KDoc)
 ) {
     // Note: names of these entries are also used in diagnostic tests and in user-visible messages (see presentableText below)
@@ -46,7 +45,6 @@ enum class LanguageFeature(
     Coroutines(
         KOTLIN_1_1, ApiVersion.KOTLIN_1_1,
         "https://kotlinlang.org/docs/diagnostics/experimental-coroutines",
-        isEnabledWithWarning = true
     ),
 
     // 1.2
@@ -99,7 +97,7 @@ enum class LanguageFeature(
     NewCapturedReceiverFieldNamingConvention(KOTLIN_1_3, kind = BUG_FIX),
     ExtendedMainConvention(KOTLIN_1_3),
     ExperimentalBuilderInference(KOTLIN_1_3),
-    InlineClasses(KOTLIN_1_3, isEnabledWithWarning = true, kind = UNSTABLE_FEATURE),
+    InlineClasses(KOTLIN_1_3, kind = UNSTABLE_FEATURE),
 
     // 1.4
 
@@ -456,12 +454,6 @@ enum class LanguageFeature(
     NestedTypeAliases(sinceVersion = null, kind = OTHER) // KT-45285
     ;
 
-    init {
-        if (sinceVersion == null && isEnabledWithWarning) {
-            error("$this: '${::isEnabledWithWarning.name}' has no effect if the feature is disabled by default")
-        }
-    }
-
     val presentableName: String
         // E.g. "DestructuringLambdaParameters" -> ["Destructuring", "Lambda", "Parameters"] -> "destructuring lambda parameters"
         get() = name.split("(?<!^)(?=[A-Z])".toRegex()).joinToString(separator = " ", transform = String::lowercase)
@@ -667,7 +659,7 @@ class LanguageVersionSettingsImpl @JvmOverloads constructor(
 
         val since = feature.sinceVersion
         if (since != null && languageVersion >= since && apiVersion >= feature.sinceApiVersion) {
-            return if (feature.isEnabledWithWarning) LanguageFeature.State.ENABLED_WITH_WARNING else LanguageFeature.State.ENABLED
+            return LanguageFeature.State.ENABLED
         }
 
         return LanguageFeature.State.DISABLED
