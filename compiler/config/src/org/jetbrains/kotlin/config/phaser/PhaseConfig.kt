@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.config.phaser
  * Phase configuration does not know anything about actual compiler pipeline upfront.
  */
 class PhaseConfig(
-    private var disabled: PhaseSet = PhaseSet.Enum(emptySet()),
+    private val disabled: PhaseSet = PhaseSet.Enum(emptySet()),
     val verbose: PhaseSet = PhaseSet.Enum(emptySet()),
     val toDumpStateBefore: PhaseSet = PhaseSet.Enum(emptySet()),
     val toDumpStateAfter: PhaseSet = PhaseSet.Enum(emptySet()),
@@ -27,10 +27,6 @@ class PhaseConfig(
 
     fun isVerbose(phase: AnyNamedPhase): Boolean =
         phase in verbose
-
-    fun disable(phase: AnyNamedPhase) {
-        disabled += PhaseSet.Enum(setOf(phase.name))
-    }
 
     fun shouldDumpStateBefore(phase: AnyNamedPhase): Boolean =
         phase in toDumpStateBefore
