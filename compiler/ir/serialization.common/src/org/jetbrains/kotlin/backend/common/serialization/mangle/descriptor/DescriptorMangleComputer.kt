@@ -54,13 +54,13 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
     override fun DeclarationDescriptor.asTypeParameterContainer(): DeclarationDescriptor =
         this
 
-    override fun getContextReceiverTypes(function: FunctionDescriptor): List<KotlinType> =
+    override fun getContextParameterTypes(function: FunctionDescriptor): List<KotlinType> =
         function.contextReceiverParameters.map { it.type }
 
     override fun getExtensionReceiverParameterType(function: FunctionDescriptor): KotlinType? =
         function.extensionReceiverParameter?.type
 
-    override fun getValueParameters(function: FunctionDescriptor): List<ValueParameterDescriptor> =
+    override fun getRegularParameters(function: FunctionDescriptor): List<ValueParameterDescriptor> =
         function.valueParameters
 
     override fun getReturnType(function: FunctionDescriptor): KotlinType? =

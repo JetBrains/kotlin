@@ -68,7 +68,7 @@ open class IrMangleComputer(
         realParent.acceptVoid(Visitor())
     }
 
-    override fun getContextReceiverTypes(function: IrFunction): List<IrType> =
+    override fun getContextParameterTypes(function: IrFunction): List<IrType> =
         function
             .valueParameters
             .asSequence()
@@ -83,7 +83,7 @@ open class IrMangleComputer(
             ?.takeUnless { it.isHidden }
             ?.type
 
-    override fun getValueParameters(function: IrFunction): List<IrValueParameter> =
+    override fun getRegularParameters(function: IrFunction): List<IrValueParameter> =
         function
             .valueParameters
             .asSequence()
