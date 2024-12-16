@@ -173,12 +173,14 @@ private class CompilationPeerCollectingVisitor : FirDefaultVisitorVoid() {
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
         simpleFunction.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
-        val oldIsInlineFunctionContext = isInlineFunctionContext
-        try {
-            isInlineFunctionContext = simpleFunction.isInline
+        withInlineFunctionContext(simpleFunction) {
             super.visitFunction(simpleFunction)
-        } finally {
-            isInlineFunctionContext = oldIsInlineFunctionContext
+        }
+    }
+
+    override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
+        withInlineFunctionContext(propertyAccessor) {
+            super.visitPropertyAccessor(propertyAccessor)
         }
     }
 
@@ -222,6 +224,16 @@ private class CompilationPeerCollectingVisitor : FirDefaultVisitorVoid() {
                 }
                 else -> {}
             }
+        }
+    }
+
+    private inline fun withInlineFunctionContext(function: FirFunction, block: () -> Unit) {
+        val oldIsInlineFunctionContext = isInlineFunctionContext
+        try {
+            isInlineFunctionContext = function.isInline
+            block()
+        } finally {
+            isInlineFunctionContext = oldIsInlineFunctionContext
         }
     }
 }
