@@ -277,9 +277,14 @@ fun main() {
                     virtualFileById[fileId]!!
                 }
 
-                val stubIndex: StubIndex = index.stubIndex(stubIndexExtensions, virtualFileFactory) { virtualFile ->
-                    virtualFile.getUserData(FileIdKey)!!
-                }
+                val stubIndex: StubIndex = index.stubIndex(
+                    stubIndexExtensions = stubIndexExtensions, 
+                    virtualFileFactory = virtualFileFactory,
+                    documentIdMapper = { virtualFile ->
+                        virtualFile.getUserData(FileIdKey)!!
+                    },
+                    psiFileFactory = { psiManager.findFile(it)!! }
+                ) 
 
                 (applicationEnvironment.application.getService(StubTreeLoader::class.java) as StubTreeLoaderImpl).stubIndex = stubIndex
 

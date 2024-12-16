@@ -3,18 +3,23 @@ package org.jetbrains.kotlin.analysis.api.dumdum.index
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.ObjectStubTree
+import com.intellij.psi.stubs.PsiFileStubImpl
 import com.intellij.psi.stubs.StubIndexKey
-import com.intellij.psi.stubs.StubTree
 import com.intellij.util.Processor
-import com.intellij.util.containers.HashingStrategy
 import com.intellij.util.indexing.ID
+
+fun interface PsiFileFactory {
+    fun psiFile(virtualFile: VirtualFile): PsiFile
+}
 
 fun Index.stubIndex(
     stubIndexExtensions: StubIndexExtensions,
     virtualFileFactory: VirtualFileFactory,
     documentIdMapper: FilePathExtractor,
+    psiFileFactory: PsiFileFactory,
 ): StubIndex = let { index ->
     object : StubIndex {
         override fun stub(virtualFile: VirtualFile): ObjectStubTree<*>? =
@@ -37,7 +42,7 @@ fun Index.stubIndex(
                     )
                 )
                 .map(virtualFileFactory::virtualFile)
-                .filter { scope.contains(it) }
+                .filter(scope::contains)
                 .iterator()
 
         override fun <Key, Psi : PsiElement> processElements(
@@ -55,13 +60,23 @@ fun Index.stubIndex(
                         key = key
                     )
                 )
-                .filter { scope.contains(virtualFileFactory.virtualFile(it)) }
-                .mapNotNull { index.value(it, stubIndexExtensions.stubValueType) }
-                .flatMap { stubValue ->
-                    stubValue.index[indexKey]?.get(key as Any)?.map { stubId ->
-                        @Suppress("UNCHECKED_CAST")
-                        stubValue.stub.plainList[stubId].psi as Psi
-                    }?.asSequence() ?: emptySequence()
+                .flatMap { fileId ->
+                    virtualFileFactory.virtualFile(fileId)
+                        .takeIf { scope.contains(it) }
+                        ?.let { virtualFile ->
+                            index.value(fileId, stubIndexExtensions.stubValueType)?.let { stubValue ->
+                                run { // psiFile stub is special and does not compute it's psi element, need to set it manually
+                                    val psiFileStub = stubValue.stub.root as PsiFileStubImpl<PsiFile>
+                                    if (psiFileStub.psi == null) {
+                                        psiFileStub.psi = psiFileFactory.psiFile(virtualFile)
+                                    }
+                                }
+                                stubValue.index[indexKey]?.get(key as Any?)?.map { stubId ->
+                                    @Suppress("UNCHECKED_CAST")
+                                    stubValue.stub.plainList[stubId].psi as Psi
+                                }
+                            }
+                        }.orEmpty()
                 }
                 .all(processor::process)
     }

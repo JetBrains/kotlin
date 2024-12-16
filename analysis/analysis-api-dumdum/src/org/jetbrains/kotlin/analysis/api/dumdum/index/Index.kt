@@ -16,7 +16,7 @@ data class IndexKey<K>(
     val key: K,
 )
 
-fun <K> IndexKey<K>.serialize(): ByteArray = 
+fun <K> IndexKey<K>.serialize(): ByteArray =
     keyType.serializer.serialize(key)
 
 interface Serializer<T> {
