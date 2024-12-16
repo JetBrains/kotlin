@@ -2,7 +2,7 @@
  * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-@file:OptIn(ExperimentalForeignApi::class, ExperimentalStdlibApi::class)
+@file:OptIn(ExperimentalForeignApi::class)
 
 @file:Suppress("DEPRECATION", "DEPRECATION_ERROR") // Char.toInt()
 package kotlin.native.internal
@@ -160,7 +160,7 @@ internal object UnhandledExceptionHookHolder {
 @ExportForCppRuntime
 @OptIn(ExperimentalNativeApi::class)
 internal fun OnUnhandledException(throwable: Throwable) {
-    val handler = UnhandledExceptionHookHolder.hook.load()
+    val handler = UnhandledExceptionHookHolder.hook.value
     if (handler == null) {
         ReportUnhandledException(throwable);
         return
@@ -175,7 +175,7 @@ internal fun OnUnhandledException(throwable: Throwable) {
 @ExportForCppRuntime("Kotlin_runUnhandledExceptionHook")
 @OptIn(ExperimentalNativeApi::class)
 internal fun runUnhandledExceptionHook(throwable: Throwable) {
-    val handler = UnhandledExceptionHookHolder.hook.load() ?: throw throwable
+    val handler = UnhandledExceptionHookHolder.hook.value ?: throw throwable
     handler(throwable)
 }
 

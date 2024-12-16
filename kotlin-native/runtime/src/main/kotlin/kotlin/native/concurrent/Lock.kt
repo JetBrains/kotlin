@@ -7,7 +7,6 @@ package kotlin.native.concurrent
 
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.concurrent.AtomicInt
-import kotlin.concurrent.*
 
 @ThreadLocal
 private object CurrentThread {
@@ -20,7 +19,6 @@ internal class Lock {
     private val reenterCount_ = AtomicInt(0)
 
     // TODO: make it properly reschedule instead of spinning.
-    @OptIn(ExperimentalStdlibApi::class)
     fun lock() {
         val lockData = CurrentThread.id.hashCode()
         loop@ do {
@@ -28,22 +26,21 @@ internal class Lock {
             when (old) {
                 lockData -> {
                     // Was locked by us already.
-                    reenterCount_.incrementAndFetch()
+                    reenterCount_.incrementAndGet()
                     break@loop
                 }
                 0 -> {
                     // We just got the lock.
-                    assert(reenterCount_.load() == 0)
+                    assert(reenterCount_.value == 0)
                     break@loop
                 }
             }
         } while (true)
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     fun unlock() {
-        if (reenterCount_.load() > 0) {
-            reenterCount_.decrementAndFetch()
+        if (reenterCount_.value > 0) {
+            reenterCount_.decrementAndGet()
         } else {
             val lockData = CurrentThread.id.hashCode()
             val old = locker_.compareAndExchange(lockData, 0)

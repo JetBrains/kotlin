@@ -2,9 +2,6 @@
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-
-@file:OptIn(ExperimentalStdlibApi::class)
-
 package kotlin.native
 
 import kotlin.experimental.ExperimentalNativeApi
@@ -51,7 +48,7 @@ public typealias ReportUnhandledExceptionHook = Function1<Throwable, Unit>
  */
 @ExperimentalNativeApi
 public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook?): ReportUnhandledExceptionHook? {
-    return UnhandledExceptionHookHolder.hook.exchange(hook)
+    return UnhandledExceptionHookHolder.hook.getAndSet(hook)
 }
 
 /**
@@ -60,7 +57,7 @@ public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook?): Repor
 @ExperimentalNativeApi
 @SinceKotlin("1.6")
 public fun getUnhandledExceptionHook(): ReportUnhandledExceptionHook? {
-    return UnhandledExceptionHookHolder.hook.load()
+    return UnhandledExceptionHookHolder.hook.value
 }
 
 /**
