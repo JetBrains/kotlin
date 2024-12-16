@@ -33,8 +33,11 @@ class ConstraintIncorporator(
 
         fun getConstraintsForVariable(typeVariable: TypeVariableMarker): List<Constraint>
 
-        fun addNewIncorporatedConstraint(
+        // A <:(=) \alpha <:(=) B => A <: B
+        fun processNewInitialConstraintFromIncorporation(
+            // A
             lowerType: KotlinTypeMarker,
+            // B
             upperType: KotlinTypeMarker,
             shouldTryUseDifferentFlexibilityForUpperType: Boolean,
             isFromNullabilityConstraint: Boolean = false,
@@ -73,7 +76,12 @@ class ConstraintIncorporator(
         if (constraint.kind != ConstraintKind.LOWER) {
             forEachConstraint(typeVariable) {
                 if (it.kind != ConstraintKind.UPPER) {
-                    addNewIncorporatedConstraint(it.type, constraint.type, shouldBeTypeVariableFlexible, it.isNullabilityConstraint)
+                    processNewInitialConstraintFromIncorporation(
+                        it.type,
+                        constraint.type,
+                        shouldBeTypeVariableFlexible,
+                        it.isNullabilityConstraint
+                    )
                 }
             }
         }
@@ -85,7 +93,7 @@ class ConstraintIncorporator(
                     val isFromDeclaredUpperBound =
                         it.position.from is DeclaredUpperBoundConstraintPosition<*> && !it.type.typeConstructor().isTypeVariable()
 
-                    addNewIncorporatedConstraint(
+                    processNewInitialConstraintFromIncorporation(
                         constraint.type,
                         it.type,
                         shouldBeTypeVariableFlexible,

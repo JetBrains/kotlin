@@ -502,7 +502,7 @@ class ConstraintInjector(
         }
 
         // from ConstraintIncorporator.Context
-        override fun addNewIncorporatedConstraint(
+        override fun processNewInitialConstraintFromIncorporation(
             lowerType: KotlinTypeMarker,
             upperType: KotlinTypeMarker,
             shouldTryUseDifferentFlexibilityForUpperType: Boolean,
