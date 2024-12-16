@@ -19,6 +19,7 @@ fun indexFile(
     fileId: FileId,
     file: PsiFile,
     fileBasedIndexExtensions: FileBasedIndexExtensions,
+    stubSerializerTable: StubSerializersTable,
     stubIndexExtensions: StubIndexExtensions,
 ): List<IndexUpdate<*>> =
     fileBasedIndexesUpdates(
@@ -26,20 +27,22 @@ fun indexFile(
         fileContent = FileContentImpl.createByFile(file.virtualFile, file.project),
         fileBasedIndexExtensions = fileBasedIndexExtensions
     ) +
-            (file.fileElementType as? IStubFileElementType<*>)?.let { stubFileElementType ->
-                val stubElement = stubFileElementType.builder.buildStubTree(file)
-                listOf(
-                    stubIndexesUpdate(
-                        stubIndexExtensions = stubIndexExtensions,
-                        fileId = fileId,
-                        tree = StubTree(stubElement as PsiFileStub<*>)
-                    )
+        (file.fileElementType as? IStubFileElementType<*>)?.let { stubFileElementType ->
+            val stubElement = stubFileElementType.builder.buildStubTree(file)
+            listOf(
+                stubIndexesUpdate(
+                    stubIndexExtensions = stubIndexExtensions,
+                    fileId = fileId,
+                    tree = StubTree(stubElement as PsiFileStub<*>),
+                    stubSerializerTable = stubSerializerTable,
                 )
-            }.orEmpty()
+            )
+        }.orEmpty()
 
 private fun stubIndexesUpdate(
     fileId: FileId,
     tree: StubTree,
+    stubSerializerTable: StubSerializersTable,
     stubIndexExtensions: StubIndexExtensions,
 ): IndexUpdate<*> {
     val map = tree.indexStubTree { indexKey ->
@@ -47,8 +50,8 @@ private fun stubIndexesUpdate(
     }
     return IndexUpdate(
         fileId = fileId,
-        valueType = stubIndexExtensions.stubValueType,
-        value = StubValue(tree, map),
+        valueType = stubIndexExtensions.indexedSerializedStubTreeType,
+        value = IndexedSerializedStubTree(tree.serialize(stubSerializerTable), map),
         keys = map.flatMap { (stubIndexKey, stubIndex) ->
             @Suppress("UNCHECKED_CAST")
             val keyType = stubIndexExtensions.keyTypesMap.keyType(stubIndexKey) as KeyType<Any>
@@ -80,5 +83,5 @@ private fun fileBasedIndexesUpdates(
         )
     }
 
-fun<T> IndexUpdate<T>.serializeValue(): ByteArray = 
+fun <T> IndexUpdate<T>.serializeValue(): ByteArray =
     valueType.serializer.serialize(value)

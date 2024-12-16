@@ -259,8 +259,10 @@ fun main() {
                         KotlinTypeAliasShortNameIndex.Helper,
                         KotlinExactPackagesIndex.Helper,
                     ),
-                    stubSerializersTable = stubSerializersTable()
                 )
+
+                val stubSerializersTable = stubSerializersTable()
+
 
                 val index = inMemoryIndex(
                     psiFileById.flatMap { (fileId, psiFile) ->
@@ -269,6 +271,7 @@ fun main() {
                             file = psiFile,
                             fileBasedIndexExtensions = fileBasedIndexExtensions,
                             stubIndexExtensions = stubIndexExtensions,
+                            stubSerializerTable = stubSerializersTable,
                         )
                     }
                 )
@@ -278,13 +281,14 @@ fun main() {
                 }
 
                 val stubIndex: StubIndex = index.stubIndex(
-                    stubIndexExtensions = stubIndexExtensions, 
+                    stubIndexExtensions = stubIndexExtensions,
                     virtualFileFactory = virtualFileFactory,
                     documentIdMapper = { virtualFile ->
                         virtualFile.getUserData(FileIdKey)!!
                     },
-                    psiFileFactory = { psiManager.findFile(it)!! }
-                ) 
+                    psiFileFactory = { psiManager.findFile(it)!! },
+                    stubSerializersTable = stubSerializersTable,
+                )
 
                 (applicationEnvironment.application.getService(StubTreeLoader::class.java) as StubTreeLoaderImpl).stubIndex = stubIndex
 

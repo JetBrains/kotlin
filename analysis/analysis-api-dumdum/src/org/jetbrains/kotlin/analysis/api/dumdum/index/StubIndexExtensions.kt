@@ -4,12 +4,11 @@ import com.intellij.util.io.KeyDescriptor
 
 data class StubIndexExtensions(
     val keyTypesMap: KeyTypesMap,
-    val stubValueType: ValueType<StubValue>,
+    val indexedSerializedStubTreeType: ValueType<IndexedSerializedStubTree>,
 )
 
 fun stubIndexExtensions(
     stubIndexExtensions: List<StubIndexExtension<*, *>>,
-    stubSerializersTable: StubSerializersTable,
 ): StubIndexExtensions {
     val keyTypesMap = keyTypesMap(
         stubIndexExtensions.map { extension ->
@@ -19,11 +18,10 @@ fun stubIndexExtensions(
     )
     return StubIndexExtensions(
         keyTypesMap = keyTypesMap,
-        stubValueType = ValueType(
+        indexedSerializedStubTreeType = ValueType(
             id = "stub",
-            serializer = StubValue.serializer(
+            serializer = IndexedSerializedStubTree.serializer(
                 keyTypesMap = keyTypesMap,
-                stubSerializersTable = stubSerializersTable
             )
         ),
     )

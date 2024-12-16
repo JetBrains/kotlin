@@ -6,7 +6,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.ObjectStubTree
-import com.intellij.psi.stubs.PsiFileStubImpl
 import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.util.Processor
 import com.intellij.util.indexing.ID
@@ -20,13 +19,14 @@ fun Index.stubIndex(
     virtualFileFactory: VirtualFileFactory,
     documentIdMapper: FilePathExtractor,
     psiFileFactory: PsiFileFactory,
+    stubSerializersTable: StubSerializersTable,
 ): StubIndex = let { index ->
     object : StubIndex {
         override fun stub(virtualFile: VirtualFile): ObjectStubTree<*>? =
             index.value(
                 fileId = documentIdMapper.filePath(virtualFile),
-                valueType = stubIndexExtensions.stubValueType
-            )?.stub
+                valueType = stubIndexExtensions.indexedSerializedStubTreeType
+            )?.stub?.deserialize(psiFileFactory.psiFile(virtualFile), stubSerializersTable)
 
         override fun <K> getContainingFilesIterator(
             indexId: ID<K, *>,
@@ -64,16 +64,13 @@ fun Index.stubIndex(
                     virtualFileFactory.virtualFile(fileId)
                         .takeIf { scope.contains(it) }
                         ?.let { virtualFile ->
-                            index.value(fileId, stubIndexExtensions.stubValueType)?.let { stubValue ->
-                                run { // psiFile stub is special and does not compute it's psi element, need to set it manually
-                                    val psiFileStub = stubValue.stub.root as PsiFileStubImpl<PsiFile>
-                                    if (psiFileStub.psi == null) {
-                                        psiFileStub.psi = psiFileFactory.psiFile(virtualFile)
-                                    }
-                                }
+                            index.value(fileId, stubIndexExtensions.indexedSerializedStubTreeType)?.let { stubValue ->
                                 stubValue.index[indexKey]?.get(key as Any?)?.map { stubId ->
                                     @Suppress("UNCHECKED_CAST")
-                                    stubValue.stub.plainList[stubId].psi as Psi
+                                    stubValue.stub
+                                        .deserialize(psiFileFactory.psiFile(virtualFile), stubSerializersTable)
+                                        .plainList[stubId]
+                                        .psi as Psi
                                 }
                             }
                         }.orEmpty()
