@@ -38,9 +38,10 @@ internal object DefaultKotlinLogger : KotlinLogger {
         throwable?.printStackTrace()
     }
 
-    override fun warn(msg: String) {
+    override fun warn(msg: String, throwable: Throwable?) {
         if (!LogLevel.WARN.isEnabled) return
         System.err.println("w: $msg")
+        throwable?.printStackTrace()
     }
 
     override fun info(msg: String) {
