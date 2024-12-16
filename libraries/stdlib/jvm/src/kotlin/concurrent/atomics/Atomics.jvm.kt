@@ -5,8 +5,7 @@
 
 @file:JvmMultifileClass
 @file:JvmName("AtomicsKt")
-
-@file:OptIn(ExperimentalStdlibApi::class)
+@file:OptIn(ExperimentalAtomicApi::class)
 
 package kotlin.concurrent.atomics
 
@@ -15,6 +14,7 @@ package kotlin.concurrent.atomics
  */
 @SinceKotlin("2.1")
 @Suppress("UNCHECKED_CAST")
+@ExperimentalAtomicApi
 public fun AtomicInt.asJavaAtomic(): java.util.concurrent.atomic.AtomicInteger = this as java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -22,6 +22,7 @@ public fun AtomicInt.asJavaAtomic(): java.util.concurrent.atomic.AtomicInteger =
  */
 @SinceKotlin("2.1")
 @Suppress("UNCHECKED_CAST")
+@ExperimentalAtomicApi
 public fun java.util.concurrent.atomic.AtomicInteger.asKotlinAtomic(): AtomicInt = this as AtomicInt
 
 /**
@@ -29,6 +30,7 @@ public fun java.util.concurrent.atomic.AtomicInteger.asKotlinAtomic(): AtomicInt
  */
 @SinceKotlin("2.1")
 @Suppress("UNCHECKED_CAST")
+@ExperimentalAtomicApi
 public fun AtomicLong.asJavaAtomic(): java.util.concurrent.atomic.AtomicLong = this as java.util.concurrent.atomic.AtomicLong
 
 /**
@@ -36,6 +38,7 @@ public fun AtomicLong.asJavaAtomic(): java.util.concurrent.atomic.AtomicLong = t
  */
 @SinceKotlin("2.1")
 @Suppress("UNCHECKED_CAST")
+@ExperimentalAtomicApi
 public fun java.util.concurrent.atomic.AtomicLong.asKotlinAtomic(): AtomicLong = this as AtomicLong
 
 /**
@@ -43,6 +46,7 @@ public fun java.util.concurrent.atomic.AtomicLong.asKotlinAtomic(): AtomicLong =
  */
 @SinceKotlin("2.1")
 @Suppress("UNCHECKED_CAST")
+@ExperimentalAtomicApi
 public fun <T> AtomicBoolean.asJavaAtomic(): java.util.concurrent.atomic.AtomicBoolean = this as java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -50,6 +54,7 @@ public fun <T> AtomicBoolean.asJavaAtomic(): java.util.concurrent.atomic.AtomicB
  */
 @SinceKotlin("2.1")
 @Suppress("UNCHECKED_CAST")
+@ExperimentalAtomicApi
 public fun <T> java.util.concurrent.atomic.AtomicBoolean.asKotlinAtomic(): AtomicBoolean = this as AtomicBoolean
 
 /**
@@ -57,6 +62,7 @@ public fun <T> java.util.concurrent.atomic.AtomicBoolean.asKotlinAtomic(): Atomi
  */
 @SinceKotlin("2.1")
 @Suppress("UNCHECKED_CAST")
+@ExperimentalAtomicApi
 public fun <T> AtomicReference<T>.asJavaAtomic(): java.util.concurrent.atomic.AtomicReference<T> = this as java.util.concurrent.atomic.AtomicReference<T>
 
 /**
@@ -64,4 +70,5 @@ public fun <T> AtomicReference<T>.asJavaAtomic(): java.util.concurrent.atomic.At
  */
 @SinceKotlin("2.1")
 @Suppress("UNCHECKED_CAST")
+@ExperimentalAtomicApi
 public fun <T> java.util.concurrent.atomic.AtomicReference<T>.asKotlinAtomic(): AtomicReference<T> = this as AtomicReference<T>

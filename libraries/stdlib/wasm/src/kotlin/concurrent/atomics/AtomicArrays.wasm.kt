@@ -12,7 +12,7 @@ package kotlin.concurrent.atomics
  * the implementation is trivial and has no atomic synchronizations.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public actual class AtomicIntArray {
     private val array: IntArray
 
@@ -143,7 +143,7 @@ public actual class AtomicIntArray {
  * the implementation is trivial and has no atomic synchronizations.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public actual class AtomicLongArray {
     private val array: LongArray
 
@@ -274,7 +274,7 @@ public actual class AtomicLongArray {
  * the implementation is trivial and has no atomic synchronizations.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public actual class AtomicArray<T> {
     private val array: Array<T>
 

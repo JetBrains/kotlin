@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NEWER_VERSION_IN_SINCE_KOTLIN", "API_NOT_AVAILABLE")
+
 package kotlin.concurrent.atomics
 
 /**
@@ -12,7 +14,7 @@ package kotlin.concurrent.atomics
  * the implementation is trivial and has no atomic synchronizations.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public actual class AtomicIntArray {
     private val array: IntArray
 
@@ -143,7 +145,7 @@ public actual class AtomicIntArray {
  * the implementation is trivial and has no atomic synchronizations.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public actual class AtomicLongArray {
     private val array: LongArray
 
@@ -274,7 +276,7 @@ public actual class AtomicLongArray {
  * the implementation is trivial and has no atomic synchronizations.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public actual class AtomicArray<T> {
     private val array: Array<T>
 

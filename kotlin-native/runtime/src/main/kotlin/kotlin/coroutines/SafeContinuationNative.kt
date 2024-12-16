@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-@file:OptIn(ExperimentalStdlibApi::class)
+@file:OptIn(ExperimentalAtomicApi::class)
 
 package kotlin.coroutines
 

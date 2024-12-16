@@ -26,7 +26,7 @@ import kotlin.internal.ActualizeByJvmBuiltinProvider
  * For JS and Wasm [AtomicIntArray] is implemented trivially and is not thread-safe since these platforms do not support multi-threading.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 @ActualizeByJvmBuiltinProvider
 public expect class AtomicIntArray {
     /**
@@ -122,7 +122,7 @@ public expect class AtomicIntArray {
  * @throws RuntimeException if the specified [size] is negative.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public inline fun AtomicIntArray(size: Int, init: (Int) -> Int): AtomicIntArray =
     AtomicIntArray(IntArray(size) { init(it) })
 
@@ -132,7 +132,7 @@ public inline fun AtomicIntArray(size: Int, init: (Int) -> Int): AtomicIntArray 
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public fun AtomicIntArray.fetchAndIncrementAt(index: Int): Int = this.fetchAndAddAt(index, 1)
 
 /**
@@ -141,7 +141,7 @@ public fun AtomicIntArray.fetchAndIncrementAt(index: Int): Int = this.fetchAndAd
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public fun AtomicIntArray.incrementAndFetchAt(index: Int): Int = this.addAndFetchAt(index, 1)
 
 /**
@@ -150,7 +150,7 @@ public fun AtomicIntArray.incrementAndFetchAt(index: Int): Int = this.addAndFetc
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public fun AtomicIntArray.decrementAndFetchAt(index: Int): Int = this.addAndFetchAt(index, -1)
 
 /**
@@ -159,7 +159,7 @@ public fun AtomicIntArray.decrementAndFetchAt(index: Int): Int = this.addAndFetc
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public fun AtomicIntArray.fetchAndDecrementAt(index: Int): Int = this.fetchAndAddAt(index, -1)
 
 /**
@@ -176,7 +176,7 @@ public fun AtomicIntArray.fetchAndDecrementAt(index: Int): Int = this.fetchAndAd
  * For JS and Wasm [AtomicLongArray] is implemented trivially and is not thread-safe since these platforms do not support multi-threading.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 @ActualizeByJvmBuiltinProvider
 public expect class AtomicLongArray {
     /**
@@ -272,7 +272,7 @@ public expect class AtomicLongArray {
  * @throws RuntimeException if the specified [size] is negative.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public inline fun AtomicLongArray(size: Int, init: (Int) -> Long): AtomicLongArray =
     AtomicLongArray(LongArray(size) { init(it) })
 
@@ -282,7 +282,7 @@ public inline fun AtomicLongArray(size: Int, init: (Int) -> Long): AtomicLongArr
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public fun AtomicLongArray.fetchAndIncrementAt(index: Int): Long = this.fetchAndAddAt(index, 1)
 
 /**
@@ -291,7 +291,7 @@ public fun AtomicLongArray.fetchAndIncrementAt(index: Int): Long = this.fetchAnd
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public fun AtomicLongArray.incrementAndFetchAt(index: Int): Long = this.addAndFetchAt(index, 1)
 
 /**
@@ -300,7 +300,7 @@ public fun AtomicLongArray.incrementAndFetchAt(index: Int): Long = this.addAndFe
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public fun AtomicLongArray.decrementAndFetchAt(index: Int): Long = this.addAndFetchAt(index, -1)
 
 /**
@@ -309,7 +309,7 @@ public fun AtomicLongArray.decrementAndFetchAt(index: Int): Long = this.addAndFe
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public fun AtomicLongArray.fetchAndDecrementAt(index: Int): Long = this.fetchAndAddAt(index, -1)
 
 /**
@@ -326,7 +326,7 @@ public fun AtomicLongArray.fetchAndDecrementAt(index: Int): Long = this.fetchAnd
  * For JS and Wasm [AtomicArray] is implemented trivially and is not thread-safe since these platforms do not support multi-threading.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 @ActualizeByJvmBuiltinProvider
 public expect class AtomicArray<T> {
 
@@ -403,7 +403,7 @@ public expect class AtomicArray<T> {
  * @throws RuntimeException if the specified [size] is negative.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 @Suppress("UNCHECKED_CAST")
 public inline fun <reified T> AtomicArray(size: Int, init: (Int) -> T): AtomicArray<T> =
     AtomicArray(Array(size) { init(it) })

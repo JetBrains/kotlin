@@ -22,7 +22,7 @@ import kotlin.reflect.KMutableProperty0
  */
 @Suppress("DEPRECATION")
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public actual class AtomicInt public actual constructor(
     @get:Deprecated("To read the atomic value use load().", ReplaceWith("this.load()"))
     @set:Deprecated("To atomically set the new value use store(newValue: Int).", ReplaceWith("this.store(newValue)"))
@@ -136,7 +136,7 @@ public actual class AtomicInt public actual constructor(
  */
 @Suppress("DEPRECATION")
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public actual class AtomicLong public actual constructor(
     @get:Deprecated("To read the atomic value use load().", ReplaceWith("this.load()"))
     @set:Deprecated("To atomically set the new value use store(newValue: Long).", ReplaceWith("this.store(newValue)"))
@@ -249,7 +249,7 @@ public actual class AtomicLong public actual constructor(
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public actual class AtomicBoolean actual constructor(@Volatile private var value: Boolean) {
 
     /**
@@ -308,7 +308,7 @@ public actual class AtomicBoolean actual constructor(@Volatile private var value
  */
 @Suppress("DEPRECATION")
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public actual class AtomicReference<T> actual constructor(
     @get:Deprecated("To read the atomic value use load().", ReplaceWith("this.load()"))
     @set:Deprecated("To atomically set the new value use store(newValue: T).", ReplaceWith("this.store(newValue)"))

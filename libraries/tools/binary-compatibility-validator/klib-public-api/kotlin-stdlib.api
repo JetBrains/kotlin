@@ -29,6 +29,10 @@ open annotation class kotlin.annotation/Target : kotlin/Annotation { // kotlin.a
         final fun <get-allowedTargets>(): kotlin/Array<out kotlin.annotation/AnnotationTarget> // kotlin.annotation/Target.allowedTargets.<get-allowedTargets>|<get-allowedTargets>(){}[0]
 }
 
+open annotation class kotlin.concurrent.atomics/ExperimentalAtomicApi : kotlin/Annotation { // kotlin.concurrent.atomics/ExperimentalAtomicApi|null[0]
+    constructor <init>() // kotlin.concurrent.atomics/ExperimentalAtomicApi.<init>|<init>(){}[0]
+}
+
 open annotation class kotlin.contracts/ExperimentalContracts : kotlin/Annotation { // kotlin.contracts/ExperimentalContracts|null[0]
     constructor <init>() // kotlin.contracts/ExperimentalContracts.<init>|<init>(){}[0]
 }

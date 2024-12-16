@@ -18,7 +18,7 @@ import kotlin.concurrent.*
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public actual class AtomicIntArray {
     private val array: IntArray
 
@@ -312,7 +312,7 @@ public actual class AtomicIntArray {
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public actual class AtomicLongArray {
     private val array: LongArray
 
@@ -606,7 +606,7 @@ public actual class AtomicLongArray {
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public actual class AtomicArray<T> {
     private val array: Array<T>
 

@@ -11,7 +11,7 @@ package kotlin.concurrent.atomics
  * Instances of [AtomicIntArray] are represented by [java.util.concurrent.atomic.AtomicIntegerArray] and provide the the same atomicity guarantees.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public actual class AtomicIntArray {
     /**
      * Creates a new [AtomicIntArray] of the given [size], with all elements initialized to zero.
@@ -119,7 +119,7 @@ public actual class AtomicIntArray {
  * Instances of [AtomicLongArray] are represented by [java.util.concurrent.atomic.AtomicLongArray] and provide the the same atomicity guarantees.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public actual class AtomicLongArray {
     /**
      * Creates a new [AtomicLongArray] of the given [size], with all elements initialized to zero.
@@ -227,7 +227,7 @@ public actual class AtomicLongArray {
  * Instances of [AtomicArray] are represented by [java.util.concurrent.atomic.AtomicReferenceArray] and provide the the same atomicity guarantees.
  */
 @SinceKotlin("2.1")
-@ExperimentalStdlibApi
+@ExperimentalAtomicApi
 public actual class AtomicArray<T> {
     /**
      * Creates a new [AtomicArray]<T> filled with elements of the given [array].

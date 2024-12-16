@@ -2976,6 +2976,9 @@ public final class kotlin/concurrent/atomics/AtomicsKt {
 	public static final fun plusAssign (Ljava/util/concurrent/atomic/AtomicLong;J)V
 }
 
+public abstract interface annotation class kotlin/concurrent/atomics/ExperimentalAtomicApi : java/lang/annotation/Annotation {
+}
+
 public final class kotlin/concurrent/internal/AtomicIntrinsicsKt {
 	public static final fun compareAndExchange (Ljava/util/concurrent/atomic/AtomicBoolean;ZZ)Z
 	public static final fun compareAndExchange (Ljava/util/concurrent/atomic/AtomicInteger;II)I
