@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.KSERIALIZER_NAME_FQ
 
 
 interface IrBuilderWithPluginContext {
@@ -86,8 +87,7 @@ interface IrBuilderWithPluginContext {
         visibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE,
         initializerBuilder: IrBlockBodyBuilder.() -> Unit
     ): IrProperty {
-        val lazyIrType =
-            compilerContext.lazyClass.defaultType.substitute(mapOf(compilerContext.lazyClass.typeParameters[0].symbol to targetIrType))
+        val lazyIrType = lazyType(targetIrType)
 
         val field = containingClass.factory.buildField {
             startOffset = containingClass.startOffset
@@ -100,15 +100,7 @@ interface IrBuilderWithPluginContext {
         }.also { it.parent = containingClass }
 
         containingClass.addAnonymousInit {
-            val enumElement = IrGetEnumValueImpl(
-                startOffset,
-                endOffset,
-                compilerContext.lazyModeClass.defaultType,
-                compilerContext.lazyModePublicationEnumEntry.symbol
-            )
-            val lambdaExpression = containingClass.createLambdaExpression(targetIrType, initializerBuilder)
-            val invokeLazyExpr =
-                irInvoke(null, compilerContext.lazyFunctionSymbol, listOf(targetIrType), listOf(enumElement, lambdaExpression), lazyIrType)
+            val invokeLazyExpr = createLazyDelegate(targetIrType, containingClass, initializerBuilder)
             +irSetField(irGet(containingClass.thisReceiver!!), field, invokeLazyExpr)
         }
 
@@ -437,6 +429,33 @@ interface IrBuilderWithPluginContext {
 
     fun IrBuilderWithScope.copyAnnotationsFrom(annotations: List<IrConstructorCall>): List<IrExpression> =
         annotations.filter { it.symbol.owner.parentAsClass.isSerialInfoAnnotation }.map { it.deepCopyWithoutPatchingParents() }
+
+    fun kSerializerType(serializableType: IrType): IrSimpleType {
+        val kSerializerClass = compilerContext.kSerializerClass
+            ?: error("Serializer class '$KSERIALIZER_NAME_FQ' not found. Check that the kotlinx.serialization runtime is connected correctly")
+        return kSerializerClass.typeWith(serializableType)
+    }
+
+    fun lazyType(returnType: IrType): IrType {
+        return compilerContext.lazyClass.defaultType.substitute(mapOf(compilerContext.lazyClass.typeParameters[0].symbol to returnType))
+    }
+
+    fun IrBuilderWithScope.createLazyDelegate(
+        returnType: IrType,
+        containingClass: IrClass,
+        initializerBuilder: IrBlockBodyBuilder.() -> Unit,
+    ): IrExpression {
+        val lazyIrType = lazyType(returnType)
+
+        val enumElement = IrGetEnumValueImpl(
+            startOffset,
+            endOffset,
+            compilerContext.lazyModeClass.defaultType,
+            compilerContext.lazyModePublicationEnumEntry.symbol
+        )
+        val lambdaExpression = containingClass.createLambdaExpression(returnType, initializerBuilder)
+        return irInvoke(null, compilerContext.lazyFunctionSymbol, listOf(returnType), listOf(enumElement, lambdaExpression), lazyIrType)
+    }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun IrBuilderWithScope.wrapperClassReference(classType: IrType): IrClassReference {
