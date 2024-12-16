@@ -21700,12 +21700,6 @@ public class FirJsIrDeserializationCodegenBoxTestGenerated extends AbstractFirJs
       }
 
       @Test
-      @TestMetadata("lateinitInlineClasses.kt")
-      public void testLateinitInlineClasses() {
-        runTest("compiler/testData/codegen/box/inlineClasses/lateinitInlineClasses.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-      }
-
-      @Test
       @TestMetadata("mangledDefaultParameterFunction.kt")
       public void testMangledDefaultParameterFunction() {
         runTest("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunction.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());

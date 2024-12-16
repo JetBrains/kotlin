@@ -13467,12 +13467,6 @@ public class TieredFrontendJvmLightTreeTestGenerated extends AbstractTieredFront
       }
 
       @Test
-      @TestMetadata("lateinitInlineClassesOn.kt")
-      public void testLateinitInlineClassesOn() {
-        runTest("compiler/testData/diagnostics/tests/inlineClasses/lateinitInlineClassesOn.kt");
-      }
-
-      @Test
       @TestMetadata("propertiesWithBackingFieldsInsideInlineClass.kt")
       public void testPropertiesWithBackingFieldsInsideInlineClass() {
         runTest("compiler/testData/diagnostics/tests/inlineClasses/propertiesWithBackingFieldsInsideInlineClass.kt");

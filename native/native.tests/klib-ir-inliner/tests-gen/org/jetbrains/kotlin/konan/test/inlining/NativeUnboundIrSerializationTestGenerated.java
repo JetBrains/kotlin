@@ -20568,7 +20568,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         register("compiler/testData/codegen/box/inlineClasses/kt57973.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         register("compiler/testData/codegen/box/inlineClasses/kt70461.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         register("compiler/testData/codegen/box/inlineClasses/kt71649.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/lateinitInlineClasses.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         register("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunction.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         register("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunctionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         register("compiler/testData/codegen/box/inlineClasses/mangledSuperCalls.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -22459,13 +22458,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       public void testKt71649() {
         // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
         runTest("compiler/testData/codegen/box/inlineClasses/kt71649.kt");
-      }
-
-      @Test
-      @TestMetadata("lateinitInlineClasses.kt")
-      public void testLateinitInlineClasses() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/lateinitInlineClasses.kt");
       }
 
       @Test
