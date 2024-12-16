@@ -1,0 +1,18 @@
+public final class CodeFragment {
+    // source: 'fragment.kt'
+    public method <init>(): void
+    public final static method run(): java.lang.String
+}
+
+public final class ContextKt {
+    // source: 'context.kt'
+    public final static method baz(): void
+    public final static method main(): void
+    public synthetic static method main(p0: java.lang.String[]): void
+}
+
+public final class DepKt {
+    // source: 'dep.kt'
+    public final static method bar(): void
+    public final static method foo(): java.lang.String
+}

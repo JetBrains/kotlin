@@ -284,6 +284,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
     }
 
     @Test
+    @TestMetadata("inlineChain.kt")
+    public void testInlineChain() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/inlineChain.kt");
+    }
+
+    @Test
     @TestMetadata("inlineFunctionUsage.kt")
     public void testInlineFunctionUsage() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/inlineFunctionUsage.kt");
