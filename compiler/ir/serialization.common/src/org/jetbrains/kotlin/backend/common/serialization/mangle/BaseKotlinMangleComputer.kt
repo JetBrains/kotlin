@@ -109,11 +109,11 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
         builder.appendName(name)
     }
 
-    protected abstract fun getContextReceiverTypes(function: FunctionDeclaration): List<Type>
+    protected abstract fun getContextParameterTypes(function: FunctionDeclaration): List<Type>
 
     protected abstract fun getExtensionReceiverParameterType(function: FunctionDeclaration): Type?
 
-    protected abstract fun getValueParameters(function: FunctionDeclaration): List<ValueParameter>
+    protected abstract fun getRegularParameters(function: FunctionDeclaration): List<ValueParameter>
 
     protected abstract fun getReturnType(function: FunctionDeclaration): Type?
 
@@ -169,7 +169,7 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
 
         platformSpecificFunctionMarks().forEach { builder.appendSignature(it) }
 
-        getContextReceiverTypes(this).forEach {
+        getContextParameterTypes(this).forEach {
             builder.appendSignature(MangleConstant.CONTEXT_RECEIVER_PREFIX)
             mangleType(builder, it, session)
         }
@@ -179,7 +179,7 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
             mangleType(builder, it, session)
         }
 
-        getValueParameters(this).collectForMangler(builder, MangleConstant.VALUE_PARAMETERS) {
+        getRegularParameters(this).collectForMangler(builder, MangleConstant.VALUE_PARAMETERS) {
             appendSignature(
                 makePlatformSpecificFunctionNameMangleComputer(this@mangleSignature)
                     .computePlatformSpecificValueParameterPrefix(it)
