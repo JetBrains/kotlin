@@ -136,8 +136,20 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
 
     internal fun getNativeDistributionDependencies(
         project: Project,
+//        task: Task,
         commonizerTarget: CommonizerTarget,
-    ) = project.getNativeDistributionDependencies(commonizerTarget)
+    ) = project.getNativeDistributionDependencies(commonizerTarget)//exclude dependecies
+//    tasks.withType<KotlinNativeLink>().configureEach { task ->
+//        @Suppress("DEPRECATION")
+//        val konanTarget = task.compilation.konanTarget
+//        task.excludeOriginalPlatformLibraries = task.project.getOriginalPlatformLibrariesFor(konanTarget)
+//    }
+//    tasks.withType<KotlinNativeCompile>().configureEach { task ->
+//        // metadata compilations should have commonized platform libraries in the classpath i.e. they are not "original"
+//        if (task.isMetadataCompilation) return@configureEach
+//        val konanTarget = task.konanTarget
+//        task.excludeOriginalPlatformLibraries = task.project.getOriginalPlatformLibrariesFor(konanTarget)
+//    }
 
 
     private fun processToolchain(
