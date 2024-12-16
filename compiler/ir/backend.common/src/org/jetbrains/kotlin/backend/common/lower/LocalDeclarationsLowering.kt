@@ -542,7 +542,7 @@ open class LocalDeclarationsLowering(
                 val oldFunction = expression.symbol.owner
                 val newFunction = oldFunction.transformed
                 if (newFunction != null) {
-                    require(newFunction.valueParameters.size == oldFunction.valueParameters.size) {
+                    require(newFunction.parameters.size == oldFunction.parameters.size) {
                         "Capturing variables is not supported for raw function references"
                     }
                     expression.symbol = newFunction.symbol
