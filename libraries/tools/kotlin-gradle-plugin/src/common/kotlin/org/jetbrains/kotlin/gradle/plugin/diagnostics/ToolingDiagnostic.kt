@@ -27,14 +27,15 @@ data class ToolingDiagnostic(
     val throwable: Throwable? = null,
 ) {
     /**
-     * This class represents an identifier used within the context of ToolingDiagnostic.
+     * Represents an identifier associated with a [ToolingDiagnostic].
      *
-     * @property id A unique identifier for the diagnostic.
-     * @property displayName A user-friendly name for the diagnostic.
+     * @property id A unique string identifier for the diagnostic.
+     * @property displayName A user-friendly name associated with the diagnostic.
+     * @property group The diagnostic group to which this identifier belongs.
      */
-    data class ID(val id: String, val displayName: String) {
+    data class ID(val id: String, val displayName: String, val group: DiagnosticGroup) {
         override fun toString(): String {
-            return "$id | $displayName"
+            return "$group | $id | $displayName"
         }
     }
 
@@ -87,6 +88,7 @@ data class ToolingDiagnostic(
 
     val id: String get() = identifier.id
     val name: String get() = identifier.displayName
+    val group: DiagnosticGroup get() = identifier.group
 
     override fun toString() = buildString {
         append("[$id | $severity]")
