@@ -1,0 +1,8 @@
+warning: argument -Xexplicit-api is passed multiple times. Only the last value will be used: strict
+compiler/testData/cli/jvm/extraArgCommonChecks/simple.kt:1:1: error: visibility must be specified in explicit API mode.
+fun foo() = "hello"
+^^^^^^^
+compiler/testData/cli/jvm/extraArgCommonChecks/simple.kt:1:5: error: return type must be specified in explicit API mode.
+fun foo() = "hello"
+    ^^^
+COMPILATION_ERROR

@@ -1,1 +1,1 @@
-class SimpleKt
+fun foo() = "hello"
