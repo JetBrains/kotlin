@@ -65,14 +65,6 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
                 val params = mutableListOf<IrValueDeclaration>()
                 val variables = mutableMapOf<IrValueSymbol, IrValueSymbol>()
 
-                originalDeclaration.dispatchReceiverParameter?.let {
-                    variables[it.symbol] = newIrFunction.dispatchReceiverParameter?.symbol!!
-                }
-
-                originalDeclaration.extensionReceiverParameter?.let {
-                    variables[it.symbol] = newIrFunction.extensionReceiverParameter?.symbol!!
-                }
-
                 // In order to deal with forward references in default value lambdas,
                 // accesses to the parameter before it has been determined if there is
                 // a default value or not is redirected to the actual parameter of the
@@ -83,8 +75,8 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
                 //
                 // works correctly so that `f() { "OK" }` returns "OK" and
                 // `f()` throws a NullPointerException.
-                originalDeclaration.valueParameters.forEach {
-                    variables[it.symbol] = newIrFunction.valueParameters[it.indexInOldValueParameters].symbol
+                originalDeclaration.parameters.forEachIndexed { index, parameter ->
+                    variables[parameter.symbol] = newIrFunction.parameters[index].symbol
                 }
 
                 generateSuperCallHandlerCheckIfNeeded(originalDeclaration, newIrFunction)
