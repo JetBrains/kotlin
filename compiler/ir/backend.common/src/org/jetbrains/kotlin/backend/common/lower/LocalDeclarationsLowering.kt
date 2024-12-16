@@ -382,7 +382,7 @@ open class LocalDeclarationsLowering(
                 return constructorContext.transformedDeclaration.apply {
                     this.body = declaration.body!!
 
-                    declaration.valueParameters.filter { it.defaultValue != null }.forEach { argument ->
+                    declaration.parameters.filter { it.defaultValue != null }.forEach { argument ->
                         oldParameterToNew[argument]!!.defaultValue = argument.defaultValue
                     }
                     acceptChildren(SetDeclarationsParentVisitor, this)
