@@ -32,7 +32,7 @@ Helper functions for creating [Comparator][kotlin.Comparator] instances.
 
 # Package kotlin.concurrent
 
-Low-level building blocks and utility functions for concurrent programming.
+Utility functions for concurrent programming.
 
 # Package kotlin.contracts
 

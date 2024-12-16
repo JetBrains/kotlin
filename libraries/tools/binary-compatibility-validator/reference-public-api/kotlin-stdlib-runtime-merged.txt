@@ -2925,48 +2925,6 @@ public final class kotlin/comparisons/UComparisonsKt {
 	public static final fun minOf-t1qELG4 (S[S)S
 }
 
-public final class kotlin/concurrent/AtomicArraysKt {
-	public static final fun AtomicIntArray (ILkotlin/jvm/functions/Function1;)Ljava/util/concurrent/atomic/AtomicIntegerArray;
-	public static final fun AtomicLongArray (ILkotlin/jvm/functions/Function1;)Ljava/util/concurrent/atomic/AtomicLongArray;
-	public static final fun asJavaAtomicArray (Ljava/util/concurrent/atomic/AtomicIntegerArray;)Ljava/util/concurrent/atomic/AtomicIntegerArray;
-	public static final fun asJavaAtomicArray (Ljava/util/concurrent/atomic/AtomicLongArray;)Ljava/util/concurrent/atomic/AtomicLongArray;
-	public static final fun asJavaAtomicArray (Ljava/util/concurrent/atomic/AtomicReferenceArray;)Ljava/util/concurrent/atomic/AtomicReferenceArray;
-	public static final fun asKotlinAtomicArray (Ljava/util/concurrent/atomic/AtomicIntegerArray;)Ljava/util/concurrent/atomic/AtomicIntegerArray;
-	public static final fun asKotlinAtomicArray (Ljava/util/concurrent/atomic/AtomicLongArray;)Ljava/util/concurrent/atomic/AtomicLongArray;
-	public static final fun asKotlinAtomicArray (Ljava/util/concurrent/atomic/AtomicReferenceArray;)Ljava/util/concurrent/atomic/AtomicReferenceArray;
-	public static final fun decrementAndFetchAt (Ljava/util/concurrent/atomic/AtomicIntegerArray;I)I
-	public static final fun decrementAndFetchAt (Ljava/util/concurrent/atomic/AtomicLongArray;I)J
-	public static final fun fetchAndDecrementAt (Ljava/util/concurrent/atomic/AtomicIntegerArray;I)I
-	public static final fun fetchAndDecrementAt (Ljava/util/concurrent/atomic/AtomicLongArray;I)J
-	public static final fun fetchAndIncrementAt (Ljava/util/concurrent/atomic/AtomicIntegerArray;I)I
-	public static final fun fetchAndIncrementAt (Ljava/util/concurrent/atomic/AtomicLongArray;I)J
-	public static final fun incrementAndFetchAt (Ljava/util/concurrent/atomic/AtomicIntegerArray;I)I
-	public static final fun incrementAndFetchAt (Ljava/util/concurrent/atomic/AtomicLongArray;I)J
-}
-
-public final class kotlin/concurrent/AtomicsKt {
-	public static final fun asJavaAtomic (Ljava/util/concurrent/atomic/AtomicBoolean;)Ljava/util/concurrent/atomic/AtomicBoolean;
-	public static final fun asJavaAtomic (Ljava/util/concurrent/atomic/AtomicInteger;)Ljava/util/concurrent/atomic/AtomicInteger;
-	public static final fun asJavaAtomic (Ljava/util/concurrent/atomic/AtomicLong;)Ljava/util/concurrent/atomic/AtomicLong;
-	public static final fun asJavaAtomic (Ljava/util/concurrent/atomic/AtomicReference;)Ljava/util/concurrent/atomic/AtomicReference;
-	public static final fun asKotlinAtomic (Ljava/util/concurrent/atomic/AtomicBoolean;)Ljava/util/concurrent/atomic/AtomicBoolean;
-	public static final fun asKotlinAtomic (Ljava/util/concurrent/atomic/AtomicInteger;)Ljava/util/concurrent/atomic/AtomicInteger;
-	public static final fun asKotlinAtomic (Ljava/util/concurrent/atomic/AtomicLong;)Ljava/util/concurrent/atomic/AtomicLong;
-	public static final fun asKotlinAtomic (Ljava/util/concurrent/atomic/AtomicReference;)Ljava/util/concurrent/atomic/AtomicReference;
-	public static final fun decrementAndFetch (Ljava/util/concurrent/atomic/AtomicInteger;)I
-	public static final fun decrementAndFetch (Ljava/util/concurrent/atomic/AtomicLong;)J
-	public static final fun fetchAndDecrement (Ljava/util/concurrent/atomic/AtomicInteger;)I
-	public static final fun fetchAndDecrement (Ljava/util/concurrent/atomic/AtomicLong;)J
-	public static final fun fetchAndIncrement (Ljava/util/concurrent/atomic/AtomicInteger;)I
-	public static final fun fetchAndIncrement (Ljava/util/concurrent/atomic/AtomicLong;)J
-	public static final fun incrementAndFetch (Ljava/util/concurrent/atomic/AtomicInteger;)I
-	public static final fun incrementAndFetch (Ljava/util/concurrent/atomic/AtomicLong;)J
-	public static final fun minusAssign (Ljava/util/concurrent/atomic/AtomicInteger;I)V
-	public static final fun minusAssign (Ljava/util/concurrent/atomic/AtomicLong;J)V
-	public static final fun plusAssign (Ljava/util/concurrent/atomic/AtomicInteger;I)V
-	public static final fun plusAssign (Ljava/util/concurrent/atomic/AtomicLong;J)V
-}
-
 public final class kotlin/concurrent/ThreadsKt {
 	public static final fun thread (ZZLjava/lang/ClassLoader;Ljava/lang/String;ILkotlin/jvm/functions/Function0;)Ljava/lang/Thread;
 	public static synthetic fun thread$default (ZZLjava/lang/ClassLoader;Ljava/lang/String;ILkotlin/jvm/functions/Function0;ILjava/lang/Object;)Ljava/lang/Thread;
