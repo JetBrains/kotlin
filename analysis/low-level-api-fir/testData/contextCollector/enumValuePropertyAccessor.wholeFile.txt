@@ -1,0 +1,1185 @@
+--- KtFile ---
+<File name: enumValuePropertyAccessor.kt, Physical: true>
+<ELEMENT>enum class Direction {
+    NORTH {
+        override val code: Int
+            get() = 1
+    },
+
+    EAST {
+        override val code: Int
+            get() = 2
+    },
+
+    SOUTH {
+        override val code: Int
+            get() = 3
+    },
+
+    WEST {
+        override val code: Int
+            get() = 4
+    };
+
+    abstract val code: Int
+}
+</ELEMENT> [(0,342)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtPackageDirective ---
+<File name: enumValuePropertyAccessor.kt, Physical: true>
+<ELEMENT></ELEMENT> [(0,0)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtClass ---
+<File name: enumValuePropertyAccessor.kt, Physical: true>
+<ELEMENT>enum class Direction {
+    NORTH {
+        override val code: Int
+            get() = 1
+    },
+
+    EAST {
+        override val code: Int
+            get() = 2
+    },
+
+    SOUTH {
+        override val code: Int
+            get() = 3
+    },
+
+    WEST {
+        override val code: Int
+            get() = 4
+    };
+
+    abstract val code: Int
+}</ELEMENT> [(0,341)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtEnumEntry ---
+<File name: enumValuePropertyAccessor.kt, Physical: true>
+<ELEMENT>NORTH {
+        override val code: Int
+            get() = 1
+    },</ELEMENT> [(27,94)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: kotlin.Enum.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
+    Element 8
+        Scope: FirNameAwareOnlyCallablesScope
+            Functions
+                FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|Direction|
+                FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<Direction>|
+            Properties:
+                FirEnumEntrySymbol public final static enum entry EAST: R|Direction|
+                FirEnumEntrySymbol public final static enum entry NORTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry SOUTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry WEST: R|Direction|
+                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+                    public get(): R|kotlin/enums/EnumEntries<Direction>|
+    Element 9
+        Implicit receiver:
+            FirRegularClassSymbol public final enum class Direction : R|kotlin/Enum<Direction>|
+                Type: Direction
+
+--- KtProperty ---
+<File name: enumValuePropertyAccessor.kt, Physical: true>
+NORTH {
+        <ELEMENT>override val code: Int
+            get() = 1</ELEMENT>
+    }, [(43,87)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: kotlin.Enum.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
+    Element 8
+        Scope: FirNameAwareOnlyCallablesScope
+            Functions
+                FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|Direction|
+                FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<Direction>|
+            Properties:
+                FirEnumEntrySymbol public final static enum entry EAST: R|Direction|
+                FirEnumEntrySymbol public final static enum entry NORTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry SOUTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry WEST: R|Direction|
+                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+                    public get(): R|kotlin/enums/EnumEntries<Direction>|
+    Element 9
+        Implicit receiver:
+            FirAnonymousObjectSymbol object : R|Direction|
+                Type: <anonymous>
+
+--- KtTypeReference ---
+<File name: enumValuePropertyAccessor.kt, Physical: true>
+NORTH {
+        override val code: <ELEMENT>Int</ELEMENT>
+            get() = 1
+    }, [(62,65)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: kotlin.Enum.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
+    Element 8
+        Scope: FirNameAwareOnlyCallablesScope
+            Functions
+                FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|Direction|
+                FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<Direction>|
+            Properties:
+                FirEnumEntrySymbol public final static enum entry EAST: R|Direction|
+                FirEnumEntrySymbol public final static enum entry NORTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry SOUTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry WEST: R|Direction|
+                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+                    public get(): R|kotlin/enums/EnumEntries<Direction>|
+    Element 9
+        Implicit receiver:
+            FirAnonymousObjectSymbol object : R|Direction|
+                Type: <anonymous>
+
+--- KtPropertyAccessor ---
+<File name: enumValuePropertyAccessor.kt, Physical: true>
+<ELEMENT>get() = 1</ELEMENT> [(78,87)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: kotlin.Enum.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
+    Element 8
+        Scope: FirNameAwareOnlyCallablesScope
+            Functions
+                FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|Direction|
+                FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<Direction>|
+            Properties:
+                FirEnumEntrySymbol public final static enum entry EAST: R|Direction|
+                FirEnumEntrySymbol public final static enum entry NORTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry SOUTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry WEST: R|Direction|
+                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+                    public get(): R|kotlin/enums/EnumEntries<Direction>|
+    Element 9
+        Implicit receiver:
+            FirAnonymousObjectSymbol object : R|Direction|
+                Type: <anonymous>
+
+--- KtConstantExpression ---
+<File name: enumValuePropertyAccessor.kt, Physical: true>
+get() = <ELEMENT>1</ELEMENT> [(86,87)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: kotlin.Enum.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
+    Element 8
+        Scope: FirNameAwareOnlyCallablesScope
+            Functions
+                FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|Direction|
+                FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<Direction>|
+            Properties:
+                FirEnumEntrySymbol public final static enum entry EAST: R|Direction|
+                FirEnumEntrySymbol public final static enum entry NORTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry SOUTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry WEST: R|Direction|
+                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+                    public get(): R|kotlin/enums/EnumEntries<Direction>|
+    Element 9
+        Implicit receiver:
+            FirAnonymousObjectSymbol object : R|Direction|
+                Type: <anonymous>
+    Element 10
+        Scope: FirLocalScope
+            Properties:
+                FirBackingFieldSymbol private final backing field field: R|kotlin/Int|
+
+--- KtEnumEntry ---
+<File name: enumValuePropertyAccessor.kt, Physical: true>
+<ELEMENT>EAST {
+        override val code: Int
+            get() = 2
+    },</ELEMENT> [(100,166)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: kotlin.Enum.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
+    Element 8
+        Scope: FirNameAwareOnlyCallablesScope
+            Functions
+                FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|Direction|
+                FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<Direction>|
+            Properties:
+                FirEnumEntrySymbol public final static enum entry EAST: R|Direction|
+                FirEnumEntrySymbol public final static enum entry NORTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry SOUTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry WEST: R|Direction|
+                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+                    public get(): R|kotlin/enums/EnumEntries<Direction>|
+    Element 9
+        Implicit receiver:
+            FirRegularClassSymbol public final enum class Direction : R|kotlin/Enum<Direction>|
+                Type: Direction
+
+--- KtProperty ---
+<File name: enumValuePropertyAccessor.kt, Physical: true>
+EAST {
+        <ELEMENT>override val code: Int
+            get() = 2</ELEMENT>
+    }, [(115,159)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: kotlin.Enum.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
+    Element 8
+        Scope: FirNameAwareOnlyCallablesScope
+            Functions
+                FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|Direction|
+                FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<Direction>|
+            Properties:
+                FirEnumEntrySymbol public final static enum entry EAST: R|Direction|
+                FirEnumEntrySymbol public final static enum entry NORTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry SOUTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry WEST: R|Direction|
+                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+                    public get(): R|kotlin/enums/EnumEntries<Direction>|
+    Element 9
+        Implicit receiver:
+            FirAnonymousObjectSymbol object : R|Direction|
+                Type: <anonymous>
+
+--- KtTypeReference ---
+<File name: enumValuePropertyAccessor.kt, Physical: true>
+EAST {
+        override val code: <ELEMENT>Int</ELEMENT>
+            get() = 2
+    }, [(134,137)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: kotlin.Enum.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
+    Element 8
+        Scope: FirNameAwareOnlyCallablesScope
+            Functions
+                FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|Direction|
+                FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<Direction>|
+            Properties:
+                FirEnumEntrySymbol public final static enum entry EAST: R|Direction|
+                FirEnumEntrySymbol public final static enum entry NORTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry SOUTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry WEST: R|Direction|
+                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+                    public get(): R|kotlin/enums/EnumEntries<Direction>|
+    Element 9
+        Implicit receiver:
+            FirAnonymousObjectSymbol object : R|Direction|
+                Type: <anonymous>
+
+--- KtPropertyAccessor ---
+<File name: enumValuePropertyAccessor.kt, Physical: true>
+<ELEMENT>get() = 2</ELEMENT> [(150,159)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: kotlin.Enum.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
+    Element 8
+        Scope: FirNameAwareOnlyCallablesScope
+            Functions
+                FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|Direction|
+                FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<Direction>|
+            Properties:
+                FirEnumEntrySymbol public final static enum entry EAST: R|Direction|
+                FirEnumEntrySymbol public final static enum entry NORTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry SOUTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry WEST: R|Direction|
+                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+                    public get(): R|kotlin/enums/EnumEntries<Direction>|
+    Element 9
+        Implicit receiver:
+            FirAnonymousObjectSymbol object : R|Direction|
+                Type: <anonymous>
+
+--- KtConstantExpression ---
+<File name: enumValuePropertyAccessor.kt, Physical: true>
+get() = <ELEMENT>2</ELEMENT> [(158,159)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: kotlin.Enum.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
+    Element 8
+        Scope: FirNameAwareOnlyCallablesScope
+            Functions
+                FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|Direction|
+                FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<Direction>|
+            Properties:
+                FirEnumEntrySymbol public final static enum entry EAST: R|Direction|
+                FirEnumEntrySymbol public final static enum entry NORTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry SOUTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry WEST: R|Direction|
+                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+                    public get(): R|kotlin/enums/EnumEntries<Direction>|
+    Element 9
+        Implicit receiver:
+            FirAnonymousObjectSymbol object : R|Direction|
+                Type: <anonymous>
+    Element 10
+        Scope: FirLocalScope
+            Properties:
+                FirBackingFieldSymbol private final backing field field: R|kotlin/Int|
+
+--- KtEnumEntry ---
+<File name: enumValuePropertyAccessor.kt, Physical: true>
+<ELEMENT>SOUTH {
+        override val code: Int
+            get() = 3
+    },</ELEMENT> [(172,239)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: kotlin.Enum.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
+    Element 8
+        Scope: FirNameAwareOnlyCallablesScope
+            Functions
+                FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|Direction|
+                FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<Direction>|
+            Properties:
+                FirEnumEntrySymbol public final static enum entry EAST: R|Direction|
+                FirEnumEntrySymbol public final static enum entry NORTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry SOUTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry WEST: R|Direction|
+                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+                    public get(): R|kotlin/enums/EnumEntries<Direction>|
+    Element 9
+        Implicit receiver:
+            FirRegularClassSymbol public final enum class Direction : R|kotlin/Enum<Direction>|
+                Type: Direction
+
+--- KtProperty ---
+<File name: enumValuePropertyAccessor.kt, Physical: true>
+SOUTH {
+        <ELEMENT>override val code: Int
+            get() = 3</ELEMENT>
+    }, [(188,232)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: kotlin.Enum.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
+    Element 8
+        Scope: FirNameAwareOnlyCallablesScope
+            Functions
+                FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|Direction|
+                FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<Direction>|
+            Properties:
+                FirEnumEntrySymbol public final static enum entry EAST: R|Direction|
+                FirEnumEntrySymbol public final static enum entry NORTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry SOUTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry WEST: R|Direction|
+                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+                    public get(): R|kotlin/enums/EnumEntries<Direction>|
+    Element 9
+        Implicit receiver:
+            FirAnonymousObjectSymbol object : R|Direction|
+                Type: <anonymous>
+
+--- KtTypeReference ---
+<File name: enumValuePropertyAccessor.kt, Physical: true>
+SOUTH {
+        override val code: <ELEMENT>Int</ELEMENT>
+            get() = 3
+    }, [(207,210)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: kotlin.Enum.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
+    Element 8
+        Scope: FirNameAwareOnlyCallablesScope
+            Functions
+                FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|Direction|
+                FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<Direction>|
+            Properties:
+                FirEnumEntrySymbol public final static enum entry EAST: R|Direction|
+                FirEnumEntrySymbol public final static enum entry NORTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry SOUTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry WEST: R|Direction|
+                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+                    public get(): R|kotlin/enums/EnumEntries<Direction>|
+    Element 9
+        Implicit receiver:
+            FirAnonymousObjectSymbol object : R|Direction|
+                Type: <anonymous>
+
+--- KtPropertyAccessor ---
+<File name: enumValuePropertyAccessor.kt, Physical: true>
+<ELEMENT>get() = 3</ELEMENT> [(223,232)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: kotlin.Enum.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
+    Element 8
+        Scope: FirNameAwareOnlyCallablesScope
+            Functions
+                FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|Direction|
+                FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<Direction>|
+            Properties:
+                FirEnumEntrySymbol public final static enum entry EAST: R|Direction|
+                FirEnumEntrySymbol public final static enum entry NORTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry SOUTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry WEST: R|Direction|
+                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+                    public get(): R|kotlin/enums/EnumEntries<Direction>|
+    Element 9
+        Implicit receiver:
+            FirAnonymousObjectSymbol object : R|Direction|
+                Type: <anonymous>
+
+--- KtConstantExpression ---
+<File name: enumValuePropertyAccessor.kt, Physical: true>
+get() = <ELEMENT>3</ELEMENT> [(231,232)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: kotlin.Enum.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
+    Element 8
+        Scope: FirNameAwareOnlyCallablesScope
+            Functions
+                FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|Direction|
+                FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<Direction>|
+            Properties:
+                FirEnumEntrySymbol public final static enum entry EAST: R|Direction|
+                FirEnumEntrySymbol public final static enum entry NORTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry SOUTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry WEST: R|Direction|
+                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+                    public get(): R|kotlin/enums/EnumEntries<Direction>|
+    Element 9
+        Implicit receiver:
+            FirAnonymousObjectSymbol object : R|Direction|
+                Type: <anonymous>
+    Element 10
+        Scope: FirLocalScope
+            Properties:
+                FirBackingFieldSymbol private final backing field field: R|kotlin/Int|
+
+--- KtEnumEntry ---
+<File name: enumValuePropertyAccessor.kt, Physical: true>
+<ELEMENT>WEST {
+        override val code: Int
+            get() = 4
+    };</ELEMENT> [(245,311)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: kotlin.Enum.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
+    Element 8
+        Scope: FirNameAwareOnlyCallablesScope
+            Functions
+                FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|Direction|
+                FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<Direction>|
+            Properties:
+                FirEnumEntrySymbol public final static enum entry EAST: R|Direction|
+                FirEnumEntrySymbol public final static enum entry NORTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry SOUTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry WEST: R|Direction|
+                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+                    public get(): R|kotlin/enums/EnumEntries<Direction>|
+    Element 9
+        Implicit receiver:
+            FirRegularClassSymbol public final enum class Direction : R|kotlin/Enum<Direction>|
+                Type: Direction
+
+--- KtProperty ---
+<File name: enumValuePropertyAccessor.kt, Physical: true>
+WEST {
+        <ELEMENT>override val code: Int
+            get() = 4</ELEMENT>
+    }; [(260,304)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: kotlin.Enum.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
+    Element 8
+        Scope: FirNameAwareOnlyCallablesScope
+            Functions
+                FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|Direction|
+                FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<Direction>|
+            Properties:
+                FirEnumEntrySymbol public final static enum entry EAST: R|Direction|
+                FirEnumEntrySymbol public final static enum entry NORTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry SOUTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry WEST: R|Direction|
+                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+                    public get(): R|kotlin/enums/EnumEntries<Direction>|
+    Element 9
+        Implicit receiver:
+            FirAnonymousObjectSymbol object : R|Direction|
+                Type: <anonymous>
+
+--- KtTypeReference ---
+<File name: enumValuePropertyAccessor.kt, Physical: true>
+WEST {
+        override val code: <ELEMENT>Int</ELEMENT>
+            get() = 4
+    }; [(279,282)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: kotlin.Enum.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
+    Element 8
+        Scope: FirNameAwareOnlyCallablesScope
+            Functions
+                FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|Direction|
+                FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<Direction>|
+            Properties:
+                FirEnumEntrySymbol public final static enum entry EAST: R|Direction|
+                FirEnumEntrySymbol public final static enum entry NORTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry SOUTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry WEST: R|Direction|
+                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+                    public get(): R|kotlin/enums/EnumEntries<Direction>|
+    Element 9
+        Implicit receiver:
+            FirAnonymousObjectSymbol object : R|Direction|
+                Type: <anonymous>
+
+--- KtPropertyAccessor ---
+<File name: enumValuePropertyAccessor.kt, Physical: true>
+<ELEMENT>get() = 4</ELEMENT> [(295,304)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: kotlin.Enum.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
+    Element 8
+        Scope: FirNameAwareOnlyCallablesScope
+            Functions
+                FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|Direction|
+                FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<Direction>|
+            Properties:
+                FirEnumEntrySymbol public final static enum entry EAST: R|Direction|
+                FirEnumEntrySymbol public final static enum entry NORTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry SOUTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry WEST: R|Direction|
+                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+                    public get(): R|kotlin/enums/EnumEntries<Direction>|
+    Element 9
+        Implicit receiver:
+            FirAnonymousObjectSymbol object : R|Direction|
+                Type: <anonymous>
+
+--- KtConstantExpression ---
+<File name: enumValuePropertyAccessor.kt, Physical: true>
+get() = <ELEMENT>4</ELEMENT> [(303,304)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: kotlin.Enum.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
+    Element 8
+        Scope: FirNameAwareOnlyCallablesScope
+            Functions
+                FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|Direction|
+                FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<Direction>|
+            Properties:
+                FirEnumEntrySymbol public final static enum entry EAST: R|Direction|
+                FirEnumEntrySymbol public final static enum entry NORTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry SOUTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry WEST: R|Direction|
+                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+                    public get(): R|kotlin/enums/EnumEntries<Direction>|
+    Element 9
+        Implicit receiver:
+            FirAnonymousObjectSymbol object : R|Direction|
+                Type: <anonymous>
+    Element 10
+        Scope: FirLocalScope
+            Properties:
+                FirBackingFieldSymbol private final backing field field: R|kotlin/Int|
+
+--- KtProperty ---
+<File name: enumValuePropertyAccessor.kt, Physical: true>
+enum class Direction {
+    NORTH {
+        override val code: Int
+            get() = 1
+    },
+
+    EAST {
+        override val code: Int
+            get() = 2
+    },
+
+    SOUTH {
+        override val code: Int
+            get() = 3
+    },
+
+    WEST {
+        override val code: Int
+            get() = 4
+    };
+
+    <ELEMENT>abstract val code: Int</ELEMENT>
+} [(317,339)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: kotlin.Enum.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
+    Element 8
+        Scope: FirNameAwareOnlyCallablesScope
+            Functions
+                FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|Direction|
+                FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<Direction>|
+            Properties:
+                FirEnumEntrySymbol public final static enum entry EAST: R|Direction|
+                FirEnumEntrySymbol public final static enum entry NORTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry SOUTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry WEST: R|Direction|
+                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+                    public get(): R|kotlin/enums/EnumEntries<Direction>|
+    Element 9
+        Implicit receiver:
+            FirRegularClassSymbol public final enum class Direction : R|kotlin/Enum<Direction>|
+                Type: Direction
+
+--- KtTypeReference ---
+<File name: enumValuePropertyAccessor.kt, Physical: true>
+enum class Direction {
+    NORTH {
+        override val code: Int
+            get() = 1
+    },
+
+    EAST {
+        override val code: Int
+            get() = 2
+    },
+
+    SOUTH {
+        override val code: Int
+            get() = 3
+    },
+
+    WEST {
+        override val code: Int
+            get() = 4
+    };
+
+    abstract val code: <ELEMENT>Int</ELEMENT>
+} [(336,339)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: kotlin.Enum.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
+    Element 8
+        Scope: FirNameAwareOnlyCallablesScope
+            Functions
+                FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|Direction|
+                FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<Direction>|
+            Properties:
+                FirEnumEntrySymbol public final static enum entry EAST: R|Direction|
+                FirEnumEntrySymbol public final static enum entry NORTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry SOUTH: R|Direction|
+                FirEnumEntrySymbol public final static enum entry WEST: R|Direction|
+                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+                    public get(): R|kotlin/enums/EnumEntries<Direction>|
+    Element 9
+        Implicit receiver:
+            FirRegularClassSymbol public final enum class Direction : R|kotlin/Enum<Direction>|
+                Type: Direction
+    Element 10
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] enumValuePropertyAccessor.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] enum class Direction : R|kotlin/Enum<Direction>| {
+        private [ResolvedTo(BODY_RESOLVE)] constructor(): R|Direction| {
+            super<R|kotlin/Enum<Direction>|>()
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] enum entry NORTH: R|Direction| = object : R|Direction| {
+            private [ResolvedTo(BODY_RESOLVE)] constructor(): R|<anonymous>| {
+                super<R|Direction|>()
+            }
+
+            public open override [ResolvedTo(BODY_RESOLVE)] val code: R|kotlin/Int|
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                    ^ Int(1)
+                }
+
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] enum entry EAST: R|Direction| = object : R|Direction| {
+            private [ResolvedTo(BODY_RESOLVE)] constructor(): R|<anonymous>| {
+                super<R|Direction|>()
+            }
+
+            public open override [ResolvedTo(BODY_RESOLVE)] val code: R|kotlin/Int|
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                    ^ Int(2)
+                }
+
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] enum entry SOUTH: R|Direction| = object : R|Direction| {
+            private [ResolvedTo(BODY_RESOLVE)] constructor(): R|<anonymous>| {
+                super<R|Direction|>()
+            }
+
+            public open override [ResolvedTo(BODY_RESOLVE)] val code: R|kotlin/Int|
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                    ^ Int(3)
+                }
+
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] enum entry WEST: R|Direction| = object : R|Direction| {
+            private [ResolvedTo(BODY_RESOLVE)] constructor(): R|<anonymous>| {
+                super<R|Direction|>()
+            }
+
+            public open override [ResolvedTo(BODY_RESOLVE)] val code: R|kotlin/Int|
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                    ^ Int(4)
+                }
+
+        }
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val code: R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final static [ResolvedTo(BODY_RESOLVE)] fun values(): R|kotlin/Array<Direction>| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|Direction| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] val entries: R|kotlin/enums/EnumEntries<Direction>|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Direction>|
+
+    }

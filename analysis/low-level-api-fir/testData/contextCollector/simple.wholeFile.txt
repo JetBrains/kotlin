@@ -1,0 +1,727 @@
+--- KtFile ---
+<File name: simple.kt, Physical: true>
+<ELEMENT>package foo
+
+class Foo {
+    val a: Int
+
+    fun foo(p: String) {
+        val x = 1.0f
+        print(x)
+    }
+}
+
+class Unrelated {
+    val unrelatedMember: Boolean
+        get() = true
+}
+
+fun unrelatedFunction(): Int {
+    return "foo".length
+}
+</ELEMENT> [(0,245)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtPackageDirective ---
+<File name: simple.kt, Physical: true>
+<ELEMENT>package foo</ELEMENT> [(0,11)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtClass ---
+<File name: simple.kt, Physical: true>
+<ELEMENT>class Foo {
+    val a: Int
+
+    fun foo(p: String) {
+        val x = 1.0f
+        print(x)
+    }
+}</ELEMENT> [(13,111)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtProperty ---
+<File name: simple.kt, Physical: true>
+class Foo {
+    <ELEMENT>val a: Int</ELEMENT>
+
+    fun foo(p: String) {
+        val x = 1.0f
+        print(x)
+    }
+} [(29,39)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: foo.Foo
+
+--- KtTypeReference ---
+<File name: simple.kt, Physical: true>
+class Foo {
+    val a: <ELEMENT>Int</ELEMENT>
+
+    fun foo(p: String) {
+        val x = 1.0f
+        print(x)
+    }
+} [(36,39)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: foo.Foo
+    Element 7
+        Scope: FirLocalScope
+
+--- KtNamedFunction ---
+<File name: simple.kt, Physical: true>
+<ELEMENT>fun foo(p: String) {
+        val x = 1.0f
+        print(x)
+    }</ELEMENT> [(45,109)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: foo.Foo
+
+--- KtParameter ---
+<File name: simple.kt, Physical: true>
+fun foo(<ELEMENT>p: String</ELEMENT>) {
+        val x = 1.0f
+        print(x)
+    } [(53,62)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: foo.Foo
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol p: R|kotlin/String|
+
+--- KtTypeReference ---
+<File name: simple.kt, Physical: true>
+fun foo(p: <ELEMENT>String</ELEMENT>) {
+        val x = 1.0f
+        print(x)
+    } [(56,62)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: foo.Foo
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol p: R|kotlin/String|
+
+--- KtBlockExpression ---
+<File name: simple.kt, Physical: true>
+fun foo(p: String) <ELEMENT>{
+        val x = 1.0f
+        print(x)
+    }</ELEMENT> [(64,109)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: foo.Foo
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol p: R|kotlin/String|
+
+--- KtProperty ---
+<File name: simple.kt, Physical: true>
+fun foo(p: String) {
+        <ELEMENT>val x = 1.0f</ELEMENT>
+        print(x)
+    } [(74,86)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: foo.Foo
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol p: R|kotlin/String|
+    Element 8
+        Scope: FirLocalScope
+
+--- KtConstantExpression ---
+<File name: simple.kt, Physical: true>
+fun foo(p: String) {
+        val x = <ELEMENT>1.0f</ELEMENT>
+        print(x)
+    } [(82,86)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: foo.Foo
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol p: R|kotlin/String|
+    Element 8
+        Scope: FirLocalScope
+
+--- KtCallExpression ---
+<File name: simple.kt, Physical: true>
+fun foo(p: String) {
+        val x = 1.0f
+        <ELEMENT>print(x)</ELEMENT>
+    } [(95,103)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: foo.Foo
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol p: R|kotlin/String|
+    Element 8
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval x: R|kotlin/Float|
+
+--- KtNameReferenceExpression ---
+<File name: simple.kt, Physical: true>
+fun foo(p: String) {
+        val x = 1.0f
+        <ELEMENT>print</ELEMENT>(x)
+    } [(95,100)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: foo.Foo
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol p: R|kotlin/String|
+    Element 8
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval x: R|kotlin/Float|
+
+--- KtValueArgumentList ---
+<File name: simple.kt, Physical: true>
+fun foo(p: String) {
+        val x = 1.0f
+        print<ELEMENT>(x)</ELEMENT>
+    } [(100,103)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: foo.Foo
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol p: R|kotlin/String|
+    Element 8
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval x: R|kotlin/Float|
+
+--- KtNameReferenceExpression ---
+<File name: simple.kt, Physical: true>
+fun foo(p: String) {
+        val x = 1.0f
+        print(<ELEMENT>x</ELEMENT>)
+    } [(101,102)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: foo.Foo
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol p: R|kotlin/String|
+    Element 8
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval x: R|kotlin/Float|
+
+--- KtClass ---
+<File name: simple.kt, Physical: true>
+<ELEMENT>class Unrelated {
+    val unrelatedMember: Boolean
+        get() = true
+}</ELEMENT> [(113,186)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtProperty ---
+<File name: simple.kt, Physical: true>
+class Unrelated {
+    <ELEMENT>val unrelatedMember: Boolean
+        get() = true</ELEMENT>
+} [(135,184)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Unrelated : R|kotlin/Any|
+                Type: foo.Unrelated
+
+--- KtTypeReference ---
+<File name: simple.kt, Physical: true>
+class Unrelated {
+    val unrelatedMember: <ELEMENT>Boolean</ELEMENT>
+        get() = true
+} [(156,163)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Unrelated : R|kotlin/Any|
+                Type: foo.Unrelated
+    Element 7
+        Scope: FirLocalScope
+
+--- KtPropertyAccessor ---
+<File name: simple.kt, Physical: true>
+<ELEMENT>get() = true</ELEMENT> [(172,184)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Unrelated : R|kotlin/Any|
+                Type: foo.Unrelated
+
+--- KtConstantExpression ---
+<File name: simple.kt, Physical: true>
+get() = <ELEMENT>true</ELEMENT> [(180,184)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Unrelated : R|kotlin/Any|
+                Type: foo.Unrelated
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirBackingFieldSymbol private final backing field field: R|kotlin/Boolean|
+
+--- KtNamedFunction ---
+<File name: simple.kt, Physical: true>
+<ELEMENT>fun unrelatedFunction(): Int {
+    return "foo".length
+}</ELEMENT> [(188,244)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtTypeReference ---
+<File name: simple.kt, Physical: true>
+fun unrelatedFunction(): <ELEMENT>Int</ELEMENT> {
+    return "foo".length
+} [(213,216)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtBlockExpression ---
+<File name: simple.kt, Physical: true>
+fun unrelatedFunction(): Int <ELEMENT>{
+    return "foo".length
+}</ELEMENT> [(217,244)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+
+--- KtReturnExpression ---
+<File name: simple.kt, Physical: true>
+fun unrelatedFunction(): Int {
+    <ELEMENT>return "foo".length</ELEMENT>
+} [(223,242)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+
+--- KtDotQualifiedExpression ---
+<File name: simple.kt, Physical: true>
+fun unrelatedFunction(): Int {
+    return <ELEMENT>"foo".length</ELEMENT>
+} [(230,242)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+
+--- KtStringTemplateExpression ---
+<File name: simple.kt, Physical: true>
+fun unrelatedFunction(): Int {
+    return <ELEMENT>"foo"</ELEMENT>.length
+} [(230,235)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: simple.kt, Physical: true>
+fun unrelatedFunction(): Int {
+    return "foo".<ELEMENT>length</ELEMENT>
+} [(236,242)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] simple.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|foo/Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val a: R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] p: R|kotlin/String|): R|kotlin/Unit| {
+            [ResolvedTo(BODY_RESOLVE)] lval x: R|kotlin/Float| = Float(1.0)
+            <Unresolved name: print>#(R|<local>/x|)
+        }
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Unrelated : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|foo/Unrelated| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val unrelatedMember: R|kotlin/Boolean|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Boolean| {
+                ^ Boolean(true)
+            }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun unrelatedFunction(): R|kotlin/Int| {
+        ^unrelatedFunction String(foo).R|kotlin/String.length|
+    }

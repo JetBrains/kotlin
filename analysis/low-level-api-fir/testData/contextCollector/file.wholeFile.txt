@@ -1,0 +1,648 @@
+--- KtFile ---
+<File name: file.kt, Physical: true>
+<ELEMENT>package test
+
+import java.util.List
+
+fun test() = List::class
+
+fun other(): Int {
+    return "foo".length
+}
+
+class Foo {
+    fun foo() {
+        require(other() == 3)
+    }
+}
+</ELEMENT> [(0,175)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:List
+                Qualified name: java.util.List
+                Is all under: false
+
+--- KtPackageDirective ---
+<File name: file.kt, Physical: true>
+<ELEMENT>package test</ELEMENT> [(0,12)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:List
+                Qualified name: java.util.List
+                Is all under: false
+
+--- KtImportDirective ---
+<File name: file.kt, Physical: true>
+<ELEMENT>import java.util.List</ELEMENT> [(14,35)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:List
+                Qualified name: java.util.List
+                Is all under: false
+
+--- KtNamedFunction ---
+<File name: file.kt, Physical: true>
+<ELEMENT>fun test() = List::class</ELEMENT> [(37,61)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:List
+                Qualified name: java.util.List
+                Is all under: false
+
+--- KtClassLiteralExpression ---
+<File name: file.kt, Physical: true>
+fun test() = <ELEMENT>List::class</ELEMENT> [(50,61)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:List
+                Qualified name: java.util.List
+                Is all under: false
+    Element 6
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: file.kt, Physical: true>
+fun test() = <ELEMENT>List</ELEMENT>::class [(50,54)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:List
+                Qualified name: java.util.List
+                Is all under: false
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+
+--- KtNamedFunction ---
+<File name: file.kt, Physical: true>
+<ELEMENT>fun other(): Int {
+    return "foo".length
+}</ELEMENT> [(63,107)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:List
+                Qualified name: java.util.List
+                Is all under: false
+
+--- KtTypeReference ---
+<File name: file.kt, Physical: true>
+fun other(): <ELEMENT>Int</ELEMENT> {
+    return "foo".length
+} [(76,79)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:List
+                Qualified name: java.util.List
+                Is all under: false
+
+--- KtBlockExpression ---
+<File name: file.kt, Physical: true>
+fun other(): Int <ELEMENT>{
+    return "foo".length
+}</ELEMENT> [(80,107)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:List
+                Qualified name: java.util.List
+                Is all under: false
+    Element 6
+        Scope: FirLocalScope
+
+--- KtReturnExpression ---
+<File name: file.kt, Physical: true>
+fun other(): Int {
+    <ELEMENT>return "foo".length</ELEMENT>
+} [(86,105)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:List
+                Qualified name: java.util.List
+                Is all under: false
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+
+--- KtDotQualifiedExpression ---
+<File name: file.kt, Physical: true>
+fun other(): Int {
+    return <ELEMENT>"foo".length</ELEMENT>
+} [(93,105)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:List
+                Qualified name: java.util.List
+                Is all under: false
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+
+--- KtStringTemplateExpression ---
+<File name: file.kt, Physical: true>
+fun other(): Int {
+    return <ELEMENT>"foo"</ELEMENT>.length
+} [(93,98)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:List
+                Qualified name: java.util.List
+                Is all under: false
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: file.kt, Physical: true>
+fun other(): Int {
+    return "foo".<ELEMENT>length</ELEMENT>
+} [(99,105)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:List
+                Qualified name: java.util.List
+                Is all under: false
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+
+--- KtClass ---
+<File name: file.kt, Physical: true>
+<ELEMENT>class Foo {
+    fun foo() {
+        require(other() == 3)
+    }
+}</ELEMENT> [(109,174)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:List
+                Qualified name: java.util.List
+                Is all under: false
+
+--- KtNamedFunction ---
+<File name: file.kt, Physical: true>
+<ELEMENT>fun foo() {
+        require(other() == 3)
+    }</ELEMENT> [(125,172)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:List
+                Qualified name: java.util.List
+                Is all under: false
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: test.Foo
+
+--- KtBlockExpression ---
+<File name: file.kt, Physical: true>
+fun foo() <ELEMENT>{
+        require(other() == 3)
+    }</ELEMENT> [(135,172)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:List
+                Qualified name: java.util.List
+                Is all under: false
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: test.Foo
+    Element 7
+        Scope: FirLocalScope
+
+--- KtCallExpression ---
+<File name: file.kt, Physical: true>
+fun foo() {
+        <ELEMENT>require(other() == 3)</ELEMENT>
+    } [(145,166)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:List
+                Qualified name: java.util.List
+                Is all under: false
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: test.Foo
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: file.kt, Physical: true>
+fun foo() {
+        <ELEMENT>require</ELEMENT>(other() == 3)
+    } [(145,152)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:List
+                Qualified name: java.util.List
+                Is all under: false
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: test.Foo
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+
+--- KtValueArgumentList ---
+<File name: file.kt, Physical: true>
+fun foo() {
+        require<ELEMENT>(other() == 3)</ELEMENT>
+    } [(152,166)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:List
+                Qualified name: java.util.List
+                Is all under: false
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: test.Foo
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+
+--- KtBinaryExpression ---
+<File name: file.kt, Physical: true>
+fun foo() {
+        require(<ELEMENT>other() == 3</ELEMENT>)
+    } [(153,165)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:List
+                Qualified name: java.util.List
+                Is all under: false
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: test.Foo
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+
+--- KtCallExpression ---
+<File name: file.kt, Physical: true>
+fun foo() {
+        require(<ELEMENT>other()</ELEMENT> == 3)
+    } [(153,160)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:List
+                Qualified name: java.util.List
+                Is all under: false
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: test.Foo
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: file.kt, Physical: true>
+fun foo() {
+        require(<ELEMENT>other</ELEMENT>() == 3)
+    } [(153,158)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:List
+                Qualified name: java.util.List
+                Is all under: false
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: test.Foo
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+
+--- KtValueArgumentList ---
+<File name: file.kt, Physical: true>
+fun foo() {
+        require(other<ELEMENT>()</ELEMENT> == 3)
+    } [(158,160)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:List
+                Qualified name: java.util.List
+                Is all under: false
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: test.Foo
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+
+--- KtConstantExpression ---
+<File name: file.kt, Physical: true>
+fun foo() {
+        require(other() == <ELEMENT>3</ELEMENT>)
+    } [(164,165)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:List
+                Qualified name: java.util.List
+                Is all under: false
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: test.Foo
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] file.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/reflect/KClass<java/util/List<*>>| {
+        ^test <getClass>(Q|java/util/List|)
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun other(): R|kotlin/Int| {
+        ^other String(foo).R|kotlin/String.length|
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|test/Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+            <Unresolved name: require>#(==(R|test/other|(), Int(3)))
+        }
+
+    }

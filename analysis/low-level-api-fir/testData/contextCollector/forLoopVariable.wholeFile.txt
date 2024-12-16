@@ -1,0 +1,257 @@
+--- KtFile ---
+<File name: forLoopVariable.kt, Physical: true>
+<ELEMENT>package test
+
+fun usage(list: List<Int>) {
+    for (loopVar in list) {}
+}
+</ELEMENT> [(0,74)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtPackageDirective ---
+<File name: forLoopVariable.kt, Physical: true>
+<ELEMENT>package test</ELEMENT> [(0,12)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtNamedFunction ---
+<File name: forLoopVariable.kt, Physical: true>
+<ELEMENT>fun usage(list: List<Int>) {
+    for (loopVar in list) {}
+}</ELEMENT> [(14,73)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtParameter ---
+<File name: forLoopVariable.kt, Physical: true>
+fun usage(<ELEMENT>list: List<Int></ELEMENT>) {
+    for (loopVar in list) {}
+} [(24,39)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol list: R|kotlin/collections/List<kotlin/Int>|
+
+--- KtTypeReference ---
+<File name: forLoopVariable.kt, Physical: true>
+fun usage(list: <ELEMENT>List<Int></ELEMENT>) {
+    for (loopVar in list) {}
+} [(30,39)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol list: R|kotlin/collections/List<kotlin/Int>|
+
+--- KtBlockExpression ---
+<File name: forLoopVariable.kt, Physical: true>
+fun usage(list: List<Int>) <ELEMENT>{
+    for (loopVar in list) {}
+}</ELEMENT> [(41,73)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol list: R|kotlin/collections/List<kotlin/Int>|
+
+--- KtForExpression ---
+<File name: forLoopVariable.kt, Physical: true>
+fun usage(list: List<Int>) {
+    <ELEMENT>for (loopVar in list) {}</ELEMENT>
+} [(47,71)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol list: R|kotlin/collections/List<kotlin/Int>|
+    Element 7
+        Scope: FirLocalScope
+
+--- KtParameter ---
+<File name: forLoopVariable.kt, Physical: true>
+fun usage(list: List<Int>) {
+    for (<ELEMENT>loopVar</ELEMENT> in list) {}
+} [(52,59)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol list: R|kotlin/collections/List<kotlin/Int>|
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval <iterator>: R|kotlin/collections/Iterator<kotlin/Int>|
+    Element 9
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: forLoopVariable.kt, Physical: true>
+fun usage(list: List<Int>) {
+    for (loopVar in <ELEMENT>list</ELEMENT>) {}
+} [(63,67)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol list: R|kotlin/collections/List<kotlin/Int>|
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+
+--- KtBlockExpression ---
+<File name: forLoopVariable.kt, Physical: true>
+fun usage(list: List<Int>) {
+    for (loopVar in list) <ELEMENT>{}</ELEMENT>
+} [(69,71)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol list: R|kotlin/collections/List<kotlin/Int>|
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval <iterator>: R|kotlin/collections/Iterator<kotlin/Int>|
+    Element 9
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval loopVar: R|kotlin/Int|
+
+FILE: [ResolvedTo(IMPORTS)] forLoopVariable.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage([ResolvedTo(BODY_RESOLVE)] list: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/Unit| {
+         {
+            [ResolvedTo(BODY_RESOLVE)] lval <iterator>: R|kotlin/collections/Iterator<kotlin/Int>| = R|<local>/list|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<kotlin/Int>|>|()
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
+                [ResolvedTo(BODY_RESOLVE)] lval loopVar: R|kotlin/Int| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/Int|>|()
+                 {
+                }
+
+            }
+
+        }
+
+    }

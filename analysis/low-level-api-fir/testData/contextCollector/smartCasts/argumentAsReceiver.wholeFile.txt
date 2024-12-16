@@ -1,0 +1,839 @@
+--- KtFile ---
+<File name: argumentAsReceiver.kt, Physical: true>
+<ELEMENT>interface Foo {}
+interface Bar {}
+
+fun test(obj: Any) {
+    if (obj is Foo) {
+        if (obj is Bar) {
+            obj.consume(obj)
+        }
+    }
+}
+
+fun Bar.consume(obj: Foo) {}
+</ELEMENT> [(0,181)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtPackageDirective ---
+<File name: argumentAsReceiver.kt, Physical: true>
+<ELEMENT></ELEMENT> [(0,0)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtClass ---
+<File name: argumentAsReceiver.kt, Physical: true>
+<ELEMENT>interface Foo {}</ELEMENT> [(0,16)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtClass ---
+<File name: argumentAsReceiver.kt, Physical: true>
+<ELEMENT>interface Bar {}</ELEMENT> [(17,33)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtNamedFunction ---
+<File name: argumentAsReceiver.kt, Physical: true>
+<ELEMENT>fun test(obj: Any) {
+    if (obj is Foo) {
+        if (obj is Bar) {
+            obj.consume(obj)
+        }
+    }
+}</ELEMENT> [(35,150)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtParameter ---
+<File name: argumentAsReceiver.kt, Physical: true>
+fun test(<ELEMENT>obj: Any</ELEMENT>) {
+    if (obj is Foo) {
+        if (obj is Bar) {
+            obj.consume(obj)
+        }
+    }
+} [(44,52)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|kotlin/Any|
+
+--- KtTypeReference ---
+<File name: argumentAsReceiver.kt, Physical: true>
+fun test(obj: <ELEMENT>Any</ELEMENT>) {
+    if (obj is Foo) {
+        if (obj is Bar) {
+            obj.consume(obj)
+        }
+    }
+} [(49,52)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|kotlin/Any|
+
+--- KtBlockExpression ---
+<File name: argumentAsReceiver.kt, Physical: true>
+fun test(obj: Any) <ELEMENT>{
+    if (obj is Foo) {
+        if (obj is Bar) {
+            obj.consume(obj)
+        }
+    }
+}</ELEMENT> [(54,150)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|kotlin/Any|
+
+--- KtIfExpression ---
+<File name: argumentAsReceiver.kt, Physical: true>
+fun test(obj: Any) {
+    <ELEMENT>if (obj is Foo) {
+        if (obj is Bar) {
+            obj.consume(obj)
+        }
+    }</ELEMENT>
+} [(60,148)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+
+--- KtIsExpression ---
+<File name: argumentAsReceiver.kt, Physical: true>
+fun test(obj: Any) {
+    if (<ELEMENT>obj is Foo</ELEMENT>) {
+        if (obj is Bar) {
+            obj.consume(obj)
+        }
+    }
+} [(64,74)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: argumentAsReceiver.kt, Physical: true>
+fun test(obj: Any) {
+    if (<ELEMENT>obj</ELEMENT> is Foo) {
+        if (obj is Bar) {
+            obj.consume(obj)
+        }
+    }
+} [(64,67)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+
+--- KtTypeReference ---
+<File name: argumentAsReceiver.kt, Physical: true>
+fun test(obj: Any) {
+    if (obj is <ELEMENT>Foo</ELEMENT>) {
+        if (obj is Bar) {
+            obj.consume(obj)
+        }
+    }
+} [(71,74)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+
+--- KtBlockExpression ---
+<File name: argumentAsReceiver.kt, Physical: true>
+fun test(obj: Any) {
+    if (obj is Foo) <ELEMENT>{
+        if (obj is Bar) {
+            obj.consume(obj)
+        }
+    }</ELEMENT>
+} [(76,148)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol obj: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtIfExpression ---
+<File name: argumentAsReceiver.kt, Physical: true>
+fun test(obj: Any) {
+    if (obj is Foo) {
+        <ELEMENT>if (obj is Bar) {
+            obj.consume(obj)
+        }</ELEMENT>
+    }
+} [(86,142)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol obj: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtIsExpression ---
+<File name: argumentAsReceiver.kt, Physical: true>
+fun test(obj: Any) {
+    if (obj is Foo) {
+        if (<ELEMENT>obj is Bar</ELEMENT>) {
+            obj.consume(obj)
+        }
+    }
+} [(90,100)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol obj: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtNameReferenceExpression ---
+<File name: argumentAsReceiver.kt, Physical: true>
+fun test(obj: Any) {
+    if (obj is Foo) {
+        if (<ELEMENT>obj</ELEMENT> is Bar) {
+            obj.consume(obj)
+        }
+    }
+} [(90,93)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol obj: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtTypeReference ---
+<File name: argumentAsReceiver.kt, Physical: true>
+fun test(obj: Any) {
+    if (obj is Foo) {
+        if (obj is <ELEMENT>Bar</ELEMENT>) {
+            obj.consume(obj)
+        }
+    }
+} [(97,100)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol obj: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtBlockExpression ---
+<File name: argumentAsReceiver.kt, Physical: true>
+fun test(obj: Any) {
+    if (obj is Foo) {
+        if (obj is Bar) <ELEMENT>{
+            obj.consume(obj)
+        }</ELEMENT>
+    }
+} [(102,142)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol obj: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+        Bar
+
+--- KtDotQualifiedExpression ---
+<File name: argumentAsReceiver.kt, Physical: true>
+fun test(obj: Any) {
+    if (obj is Foo) {
+        if (obj is Bar) {
+            <ELEMENT>obj.consume(obj)</ELEMENT>
+        }
+    }
+} [(116,132)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol obj: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+        Bar
+
+--- KtNameReferenceExpression ---
+<File name: argumentAsReceiver.kt, Physical: true>
+fun test(obj: Any) {
+    if (obj is Foo) {
+        if (obj is Bar) {
+            <ELEMENT>obj</ELEMENT>.consume(obj)
+        }
+    }
+} [(116,119)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol obj: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+        Bar
+
+--- KtNameReferenceExpression ---
+<File name: argumentAsReceiver.kt, Physical: true>
+fun test(obj: Any) {
+    if (obj is Foo) {
+        if (obj is Bar) {
+            obj.<ELEMENT>consume</ELEMENT>(obj)
+        }
+    }
+} [(120,127)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol obj: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+        Bar
+
+--- KtValueArgumentList ---
+<File name: argumentAsReceiver.kt, Physical: true>
+fun test(obj: Any) {
+    if (obj is Foo) {
+        if (obj is Bar) {
+            obj.consume<ELEMENT>(obj)</ELEMENT>
+        }
+    }
+} [(127,132)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol obj: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+        Bar
+
+--- KtNameReferenceExpression ---
+<File name: argumentAsReceiver.kt, Physical: true>
+fun test(obj: Any) {
+    if (obj is Foo) {
+        if (obj is Bar) {
+            obj.consume(<ELEMENT>obj</ELEMENT>)
+        }
+    }
+} [(128,131)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol obj: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+        Bar
+
+--- KtNamedFunction ---
+<File name: argumentAsReceiver.kt, Physical: true>
+<ELEMENT>fun Bar.consume(obj: Foo) {}</ELEMENT> [(152,180)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtTypeReference ---
+<File name: argumentAsReceiver.kt, Physical: true>
+fun <ELEMENT>Bar</ELEMENT>.consume(obj: Foo) {} [(156,159)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtParameter ---
+<File name: argumentAsReceiver.kt, Physical: true>
+fun Bar.consume(<ELEMENT>obj: Foo</ELEMENT>) {} [(168,176)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|Foo|
+    Element 7
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|Bar|
+                Type: Bar
+
+--- KtTypeReference ---
+<File name: argumentAsReceiver.kt, Physical: true>
+fun Bar.consume(obj: <ELEMENT>Foo</ELEMENT>) {} [(173,176)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|Foo|
+    Element 7
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|Bar|
+                Type: Bar
+
+--- KtBlockExpression ---
+<File name: argumentAsReceiver.kt, Physical: true>
+fun Bar.consume(obj: Foo) <ELEMENT>{}</ELEMENT> [(178,180)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|Foo|
+    Element 7
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|Bar|
+                Type: Bar
+
+FILE: [ResolvedTo(IMPORTS)] argumentAsReceiver.kt
+    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+    }
+    public abstract [ResolvedTo(STATUS)] interface Bar : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] obj: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/obj| is R|Foo|) ->  {
+                when () {
+                    (R|<local>/obj| is R|Bar|) ->  {
+                        R|<local>/obj|.R|/consume|(R|<local>/obj|)
+                    }
+                }
+
+            }
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|Bar|.consume([ResolvedTo(BODY_RESOLVE)] obj: R|Foo|): R|kotlin/Unit| {
+    }

@@ -1,0 +1,218 @@
+--- KtFile ---
+<File name: declaredInClass_fromSuperType.kt, Physical: true>
+<ELEMENT>package test
+
+open class Base<T>
+
+class Outer<MyParam> : Base<MyParam>()
+</ELEMENT> [(0,73)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtPackageDirective ---
+<File name: declaredInClass_fromSuperType.kt, Physical: true>
+<ELEMENT>package test</ELEMENT> [(0,12)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtClass ---
+<File name: declaredInClass_fromSuperType.kt, Physical: true>
+<ELEMENT>open class Base<T></ELEMENT> [(14,32)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtTypeParameter ---
+<File name: declaredInClass_fromSuperType.kt, Physical: true>
+open class Base<<ELEMENT>T</ELEMENT>> [(30,31)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol T
+
+--- KtClass ---
+<File name: declaredInClass_fromSuperType.kt, Physical: true>
+<ELEMENT>class Outer<MyParam> : Base<MyParam>()</ELEMENT> [(34,72)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtTypeParameter ---
+<File name: declaredInClass_fromSuperType.kt, Physical: true>
+class Outer<<ELEMENT>MyParam</ELEMENT>> : Base<MyParam>() [(46,53)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol MyParam
+
+--- KtSuperTypeCallEntry ---
+<File name: declaredInClass_fromSuperType.kt, Physical: true>
+class Outer<MyParam> : <ELEMENT>Base<MyParam>()</ELEMENT> [(57,72)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol MyParam
+    Element 7
+        Scope: FirLocalScope
+
+--- KtConstructorCalleeExpression ---
+<File name: declaredInClass_fromSuperType.kt, Physical: true>
+class Outer<MyParam> : <ELEMENT>Base<MyParam></ELEMENT>() [(57,70)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol MyParam
+    Element 7
+        Scope: FirLocalScope
+
+--- KtTypeReference ---
+<File name: declaredInClass_fromSuperType.kt, Physical: true>
+class Outer<MyParam> : <ELEMENT>Base<MyParam></ELEMENT>() [(57,70)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol MyParam
+
+--- KtValueArgumentList ---
+<File name: declaredInClass_fromSuperType.kt, Physical: true>
+class Outer<MyParam> : Base<MyParam><ELEMENT>()</ELEMENT> [(70,72)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol MyParam
+    Element 7
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] declaredInClass_fromSuperType.kt
+    public open [ResolvedTo(ANNOTATION_ARGUMENTS)] class Base<[ResolvedTo(ANNOTATION_ARGUMENTS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] T>(): R|test/Base<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Outer<[ResolvedTo(ANNOTATION_ARGUMENTS)] MyParam> : R|test/Base<MyParam>| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] MyParam>(): R|test/Outer<MyParam>| {
+            super<R|test/Base<MyParam>|>()
+        }
+
+    }

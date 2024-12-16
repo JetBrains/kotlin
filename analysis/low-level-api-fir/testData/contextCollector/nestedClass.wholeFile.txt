@@ -1,0 +1,197 @@
+--- KtFile ---
+<File name: nestedClass.kt, Physical: true>
+<ELEMENT>class Foo<A> {
+    class Bar<B>
+    class Baz
+}
+</ELEMENT> [(0,48)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtPackageDirective ---
+<File name: nestedClass.kt, Physical: true>
+<ELEMENT></ELEMENT> [(0,0)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtClass ---
+<File name: nestedClass.kt, Physical: true>
+<ELEMENT>class Foo<A> {
+    class Bar<B>
+    class Baz
+}</ELEMENT> [(0,47)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtTypeParameter ---
+<File name: nestedClass.kt, Physical: true>
+class Foo<<ELEMENT>A</ELEMENT>> {
+    class Bar<B>
+    class Baz
+} [(10,11)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol A
+
+--- KtClass ---
+<File name: nestedClass.kt, Physical: true>
+<ELEMENT>class Bar<B></ELEMENT> [(19,31)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final class Bar<B> : R|kotlin/Any|
+                FirRegularClassSymbol public final class Baz : R|kotlin/Any|
+    Element 7
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol A
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo<A> : R|kotlin/Any|
+                Type: Foo<A>
+
+--- KtTypeParameter ---
+<File name: nestedClass.kt, Physical: true>
+class Bar<<ELEMENT>B</ELEMENT>> [(29,30)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final class Bar<B> : R|kotlin/Any|
+                FirRegularClassSymbol public final class Baz : R|kotlin/Any|
+    Element 7
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol A
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo<A> : R|kotlin/Any|
+                Type: Foo<A>
+    Element 9
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol B
+
+--- KtClass ---
+<File name: nestedClass.kt, Physical: true>
+<ELEMENT>class Baz</ELEMENT> [(36,45)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final class Bar<B> : R|kotlin/Any|
+                FirRegularClassSymbol public final class Baz : R|kotlin/Any|
+    Element 7
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol A
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo<A> : R|kotlin/Any|
+                Type: Foo<A>
+
+FILE: [ResolvedTo(IMPORTS)] nestedClass.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo<[ResolvedTo(ANNOTATION_ARGUMENTS)] A> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] A>(): R|Foo<A>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Bar<[ResolvedTo(ANNOTATION_ARGUMENTS)] B> : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] B>(): R|Foo.Bar<B>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Baz : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor(): R|Foo.Baz| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }

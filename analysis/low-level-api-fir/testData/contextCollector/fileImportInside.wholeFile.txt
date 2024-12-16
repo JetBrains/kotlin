@@ -1,0 +1,115 @@
+--- KtFile ---
+<File name: fileImportInside.kt, Physical: true>
+<ELEMENT>package foo
+
+import foo.Anno
+
+@Target(FILE)
+annotation class Anno
+</ELEMENT> [(0,66)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Anno
+                Qualified name: foo.Anno
+                Is all under: false
+
+--- KtPackageDirective ---
+<File name: fileImportInside.kt, Physical: true>
+<ELEMENT>package foo</ELEMENT> [(0,11)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Anno
+                Qualified name: foo.Anno
+                Is all under: false
+
+--- KtImportDirective ---
+<File name: fileImportInside.kt, Physical: true>
+<ELEMENT>import foo.Anno</ELEMENT> [(13,28)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Anno
+                Qualified name: foo.Anno
+                Is all under: false
+
+--- KtClass ---
+<File name: fileImportInside.kt, Physical: true>
+<ELEMENT>@Target(FILE)
+annotation class Anno</ELEMENT> [(30,65)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Anno
+                Qualified name: foo.Anno
+                Is all under: false
+
+--- KtAnnotationEntry ---
+<File name: fileImportInside.kt, Physical: true>
+<ELEMENT>@Target(FILE)</ELEMENT>
+annotation class Anno [(30,43)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Anno
+                Qualified name: foo.Anno
+                Is all under: false
+
+FILE: [ResolvedTo(IMPORTS)] fileImportInside.kt
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(<Unresolved name: FILE>#)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|foo/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

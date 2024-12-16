@@ -1,0 +1,708 @@
+--- KtFile ---
+<File name: innerClasses.kt, Physical: true>
+<ELEMENT>package test
+
+class Foo<F> {
+    inner class Bar<B> {
+        fun test(f: F, b: B) {
+            consume(f)
+        }
+    }
+}
+
+fun consume(obj: Any) {}
+</ELEMENT> [(0,152)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtPackageDirective ---
+<File name: innerClasses.kt, Physical: true>
+<ELEMENT>package test</ELEMENT> [(0,12)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtClass ---
+<File name: innerClasses.kt, Physical: true>
+<ELEMENT>class Foo<F> {
+    inner class Bar<B> {
+        fun test(f: F, b: B) {
+            consume(f)
+        }
+    }
+}</ELEMENT> [(14,125)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtTypeParameter ---
+<File name: innerClasses.kt, Physical: true>
+class Foo<<ELEMENT>F</ELEMENT>> {
+    inner class Bar<B> {
+        fun test(f: F, b: B) {
+            consume(f)
+        }
+    }
+} [(24,25)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol F
+
+--- KtClass ---
+<File name: innerClasses.kt, Physical: true>
+<ELEMENT>inner class Bar<B> {
+        fun test(f: F, b: B) {
+            consume(f)
+        }
+    }</ELEMENT> [(33,123)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final inner class Bar<B, Outer(F)> : R|kotlin/Any|
+    Element 7
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol F
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo<F> : R|kotlin/Any|
+                Type: test.Foo<F>
+
+--- KtTypeParameter ---
+<File name: innerClasses.kt, Physical: true>
+inner class Bar<<ELEMENT>B</ELEMENT>> {
+        fun test(f: F, b: B) {
+            consume(f)
+        }
+    } [(49,50)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final inner class Bar<B, Outer(F)> : R|kotlin/Any|
+    Element 7
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol F
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo<F> : R|kotlin/Any|
+                Type: test.Foo<F>
+    Element 9
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol B
+
+--- KtNamedFunction ---
+<File name: innerClasses.kt, Physical: true>
+<ELEMENT>fun test(f: F, b: B) {
+            consume(f)
+        }</ELEMENT> [(62,117)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final inner class Bar<B, Outer(F)> : R|kotlin/Any|
+    Element 7
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol F
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo<F> : R|kotlin/Any|
+                Type: test.Foo<F>
+    Element 9
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol B
+    Element 10
+        Implicit receiver:
+            FirRegularClassSymbol public final inner class Bar<B, Outer(F)> : R|kotlin/Any|
+                Type: test.Foo.Bar<B, F>
+
+--- KtParameter ---
+<File name: innerClasses.kt, Physical: true>
+fun test(<ELEMENT>f: F</ELEMENT>, b: B) {
+            consume(f)
+        } [(71,75)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final inner class Bar<B, Outer(F)> : R|kotlin/Any|
+    Element 7
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol F
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo<F> : R|kotlin/Any|
+                Type: test.Foo<F>
+    Element 9
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol B
+    Element 10
+        Implicit receiver:
+            FirRegularClassSymbol public final inner class Bar<B, Outer(F)> : R|kotlin/Any|
+                Type: test.Foo.Bar<B, F>
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol b: R|B|
+                FirValueParameterSymbol f: R|F|
+
+--- KtTypeReference ---
+<File name: innerClasses.kt, Physical: true>
+fun test(f: <ELEMENT>F</ELEMENT>, b: B) {
+            consume(f)
+        } [(74,75)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final inner class Bar<B, Outer(F)> : R|kotlin/Any|
+    Element 7
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol F
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo<F> : R|kotlin/Any|
+                Type: test.Foo<F>
+    Element 9
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol B
+    Element 10
+        Implicit receiver:
+            FirRegularClassSymbol public final inner class Bar<B, Outer(F)> : R|kotlin/Any|
+                Type: test.Foo.Bar<B, F>
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol b: R|B|
+                FirValueParameterSymbol f: R|F|
+
+--- KtParameter ---
+<File name: innerClasses.kt, Physical: true>
+fun test(f: F, <ELEMENT>b: B</ELEMENT>) {
+            consume(f)
+        } [(77,81)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final inner class Bar<B, Outer(F)> : R|kotlin/Any|
+    Element 7
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol F
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo<F> : R|kotlin/Any|
+                Type: test.Foo<F>
+    Element 9
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol B
+    Element 10
+        Implicit receiver:
+            FirRegularClassSymbol public final inner class Bar<B, Outer(F)> : R|kotlin/Any|
+                Type: test.Foo.Bar<B, F>
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol b: R|B|
+                FirValueParameterSymbol f: R|F|
+
+--- KtTypeReference ---
+<File name: innerClasses.kt, Physical: true>
+fun test(f: F, b: <ELEMENT>B</ELEMENT>) {
+            consume(f)
+        } [(80,81)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final inner class Bar<B, Outer(F)> : R|kotlin/Any|
+    Element 7
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol F
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo<F> : R|kotlin/Any|
+                Type: test.Foo<F>
+    Element 9
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol B
+    Element 10
+        Implicit receiver:
+            FirRegularClassSymbol public final inner class Bar<B, Outer(F)> : R|kotlin/Any|
+                Type: test.Foo.Bar<B, F>
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol b: R|B|
+                FirValueParameterSymbol f: R|F|
+
+--- KtBlockExpression ---
+<File name: innerClasses.kt, Physical: true>
+fun test(f: F, b: B) <ELEMENT>{
+            consume(f)
+        }</ELEMENT> [(83,117)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final inner class Bar<B, Outer(F)> : R|kotlin/Any|
+    Element 7
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol F
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo<F> : R|kotlin/Any|
+                Type: test.Foo<F>
+    Element 9
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol B
+    Element 10
+        Implicit receiver:
+            FirRegularClassSymbol public final inner class Bar<B, Outer(F)> : R|kotlin/Any|
+                Type: test.Foo.Bar<B, F>
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol b: R|B|
+                FirValueParameterSymbol f: R|F|
+
+--- KtCallExpression ---
+<File name: innerClasses.kt, Physical: true>
+fun test(f: F, b: B) {
+            <ELEMENT>consume(f)</ELEMENT>
+        } [(97,107)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final inner class Bar<B, Outer(F)> : R|kotlin/Any|
+    Element 7
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol F
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo<F> : R|kotlin/Any|
+                Type: test.Foo<F>
+    Element 9
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol B
+    Element 10
+        Implicit receiver:
+            FirRegularClassSymbol public final inner class Bar<B, Outer(F)> : R|kotlin/Any|
+                Type: test.Foo.Bar<B, F>
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol b: R|B|
+                FirValueParameterSymbol f: R|F|
+    Element 12
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: innerClasses.kt, Physical: true>
+fun test(f: F, b: B) {
+            <ELEMENT>consume</ELEMENT>(f)
+        } [(97,104)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final inner class Bar<B, Outer(F)> : R|kotlin/Any|
+    Element 7
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol F
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo<F> : R|kotlin/Any|
+                Type: test.Foo<F>
+    Element 9
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol B
+    Element 10
+        Implicit receiver:
+            FirRegularClassSymbol public final inner class Bar<B, Outer(F)> : R|kotlin/Any|
+                Type: test.Foo.Bar<B, F>
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol b: R|B|
+                FirValueParameterSymbol f: R|F|
+    Element 12
+        Scope: FirLocalScope
+
+--- KtValueArgumentList ---
+<File name: innerClasses.kt, Physical: true>
+fun test(f: F, b: B) {
+            consume<ELEMENT>(f)</ELEMENT>
+        } [(104,107)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final inner class Bar<B, Outer(F)> : R|kotlin/Any|
+    Element 7
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol F
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo<F> : R|kotlin/Any|
+                Type: test.Foo<F>
+    Element 9
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol B
+    Element 10
+        Implicit receiver:
+            FirRegularClassSymbol public final inner class Bar<B, Outer(F)> : R|kotlin/Any|
+                Type: test.Foo.Bar<B, F>
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol b: R|B|
+                FirValueParameterSymbol f: R|F|
+    Element 12
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: innerClasses.kt, Physical: true>
+fun test(f: F, b: B) {
+            consume(<ELEMENT>f</ELEMENT>)
+        } [(105,106)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final inner class Bar<B, Outer(F)> : R|kotlin/Any|
+    Element 7
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol F
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo<F> : R|kotlin/Any|
+                Type: test.Foo<F>
+    Element 9
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol B
+    Element 10
+        Implicit receiver:
+            FirRegularClassSymbol public final inner class Bar<B, Outer(F)> : R|kotlin/Any|
+                Type: test.Foo.Bar<B, F>
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol b: R|B|
+                FirValueParameterSymbol f: R|F|
+    Element 12
+        Scope: FirLocalScope
+
+--- KtNamedFunction ---
+<File name: innerClasses.kt, Physical: true>
+<ELEMENT>fun consume(obj: Any) {}</ELEMENT> [(127,151)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtParameter ---
+<File name: innerClasses.kt, Physical: true>
+fun consume(<ELEMENT>obj: Any</ELEMENT>) {} [(139,147)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|kotlin/Any|
+
+--- KtTypeReference ---
+<File name: innerClasses.kt, Physical: true>
+fun consume(obj: <ELEMENT>Any</ELEMENT>) {} [(144,147)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|kotlin/Any|
+
+--- KtBlockExpression ---
+<File name: innerClasses.kt, Physical: true>
+fun consume(obj: Any) <ELEMENT>{}</ELEMENT> [(149,151)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|kotlin/Any|
+
+FILE: [ResolvedTo(IMPORTS)] innerClasses.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo<[ResolvedTo(ANNOTATION_ARGUMENTS)] F> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] F>(): R|test/Foo<F>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner [ResolvedTo(ANNOTATION_ARGUMENTS)] class Bar<[ResolvedTo(ANNOTATION_ARGUMENTS)] B, [ResolvedTo(ANNOTATION_ARGUMENTS)] Outer(F)> : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] test/Foo<F>.constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] B>(): R|test/Foo.Bar<B, F>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] f: R|F|, [ResolvedTo(BODY_RESOLVE)] b: R|B|): R|kotlin/Unit| {
+                R|test/consume<Inapplicable(UNSAFE_CALL): test/consume>#|(R|<local>/f|)
+            }
+
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun consume([ResolvedTo(BODY_RESOLVE)] obj: R|kotlin/Any|): R|kotlin/Unit| {
+    }

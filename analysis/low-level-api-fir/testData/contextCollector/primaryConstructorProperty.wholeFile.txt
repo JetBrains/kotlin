@@ -1,0 +1,614 @@
+--- KtFile ---
+<File name: primaryConstructorProperty.kt, Physical: true>
+<ELEMENT>class Foo(
+    val a: String = "foo",
+    val b: Int = a.length,
+    val c: Long = (a.length - 1).toLong()
+)
+</ELEMENT> [(0,109)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtPackageDirective ---
+<File name: primaryConstructorProperty.kt, Physical: true>
+<ELEMENT></ELEMENT> [(0,0)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtClass ---
+<File name: primaryConstructorProperty.kt, Physical: true>
+<ELEMENT>class Foo(
+    val a: String = "foo",
+    val b: Int = a.length,
+    val c: Long = (a.length - 1).toLong()
+)</ELEMENT> [(0,108)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtPrimaryConstructor ---
+<File name: primaryConstructorProperty.kt, Physical: true>
+<ELEMENT>(
+    val a: String = "foo",
+    val b: Int = a.length,
+    val c: Long = (a.length - 1).toLong()
+)</ELEMENT> [(9,108)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: Foo
+
+--- KtParameter ---
+<File name: primaryConstructorProperty.kt, Physical: true>
+(
+    <ELEMENT>val a: String = "foo"</ELEMENT>,
+    val b: Int = a.length,
+    val c: Long = (a.length - 1).toLong()
+) [(15,36)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/String| = String(foo)
+                FirValueParameterSymbol b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|
+                FirValueParameterSymbol c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()
+
+--- KtTypeReference ---
+<File name: primaryConstructorProperty.kt, Physical: true>
+(
+    val a: <ELEMENT>String</ELEMENT> = "foo",
+    val b: Int = a.length,
+    val c: Long = (a.length - 1).toLong()
+) [(22,28)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/String| = String(foo)
+                FirValueParameterSymbol b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|
+                FirValueParameterSymbol c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()
+
+--- KtStringTemplateExpression ---
+<File name: primaryConstructorProperty.kt, Physical: true>
+(
+    val a: String = <ELEMENT>"foo"</ELEMENT>,
+    val b: Int = a.length,
+    val c: Long = (a.length - 1).toLong()
+) [(31,36)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/String| = String(foo)
+                FirValueParameterSymbol b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|
+                FirValueParameterSymbol c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()
+
+--- KtParameter ---
+<File name: primaryConstructorProperty.kt, Physical: true>
+(
+    val a: String = "foo",
+    <ELEMENT>val b: Int = a.length</ELEMENT>,
+    val c: Long = (a.length - 1).toLong()
+) [(42,63)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/String| = String(foo)
+                FirValueParameterSymbol b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|
+                FirValueParameterSymbol c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()
+
+--- KtTypeReference ---
+<File name: primaryConstructorProperty.kt, Physical: true>
+(
+    val a: String = "foo",
+    val b: <ELEMENT>Int</ELEMENT> = a.length,
+    val c: Long = (a.length - 1).toLong()
+) [(49,52)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/String| = String(foo)
+                FirValueParameterSymbol b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|
+                FirValueParameterSymbol c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()
+
+--- KtDotQualifiedExpression ---
+<File name: primaryConstructorProperty.kt, Physical: true>
+(
+    val a: String = "foo",
+    val b: Int = <ELEMENT>a.length</ELEMENT>,
+    val c: Long = (a.length - 1).toLong()
+) [(55,63)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/String| = String(foo)
+                FirValueParameterSymbol b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|
+                FirValueParameterSymbol c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()
+
+--- KtNameReferenceExpression ---
+<File name: primaryConstructorProperty.kt, Physical: true>
+(
+    val a: String = "foo",
+    val b: Int = <ELEMENT>a</ELEMENT>.length,
+    val c: Long = (a.length - 1).toLong()
+) [(55,56)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/String| = String(foo)
+                FirValueParameterSymbol b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|
+                FirValueParameterSymbol c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()
+
+--- KtNameReferenceExpression ---
+<File name: primaryConstructorProperty.kt, Physical: true>
+(
+    val a: String = "foo",
+    val b: Int = a.<ELEMENT>length</ELEMENT>,
+    val c: Long = (a.length - 1).toLong()
+) [(57,63)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/String| = String(foo)
+                FirValueParameterSymbol b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|
+                FirValueParameterSymbol c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()
+
+--- KtParameter ---
+<File name: primaryConstructorProperty.kt, Physical: true>
+(
+    val a: String = "foo",
+    val b: Int = a.length,
+    <ELEMENT>val c: Long = (a.length - 1).toLong()</ELEMENT>
+) [(69,106)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/String| = String(foo)
+                FirValueParameterSymbol b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|
+                FirValueParameterSymbol c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()
+
+--- KtTypeReference ---
+<File name: primaryConstructorProperty.kt, Physical: true>
+(
+    val a: String = "foo",
+    val b: Int = a.length,
+    val c: <ELEMENT>Long</ELEMENT> = (a.length - 1).toLong()
+) [(76,80)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/String| = String(foo)
+                FirValueParameterSymbol b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|
+                FirValueParameterSymbol c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()
+
+--- KtDotQualifiedExpression ---
+<File name: primaryConstructorProperty.kt, Physical: true>
+(
+    val a: String = "foo",
+    val b: Int = a.length,
+    val c: Long = <ELEMENT>(a.length - 1).toLong()</ELEMENT>
+) [(83,106)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/String| = String(foo)
+                FirValueParameterSymbol b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|
+                FirValueParameterSymbol c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()
+
+--- KtBinaryExpression ---
+<File name: primaryConstructorProperty.kt, Physical: true>
+(
+    val a: String = "foo",
+    val b: Int = a.length,
+    val c: Long = (<ELEMENT>a.length - 1</ELEMENT>).toLong()
+) [(84,96)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/String| = String(foo)
+                FirValueParameterSymbol b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|
+                FirValueParameterSymbol c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()
+
+--- KtDotQualifiedExpression ---
+<File name: primaryConstructorProperty.kt, Physical: true>
+(
+    val a: String = "foo",
+    val b: Int = a.length,
+    val c: Long = (<ELEMENT>a.length</ELEMENT> - 1).toLong()
+) [(84,92)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/String| = String(foo)
+                FirValueParameterSymbol b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|
+                FirValueParameterSymbol c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()
+
+--- KtNameReferenceExpression ---
+<File name: primaryConstructorProperty.kt, Physical: true>
+(
+    val a: String = "foo",
+    val b: Int = a.length,
+    val c: Long = (<ELEMENT>a</ELEMENT>.length - 1).toLong()
+) [(84,85)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/String| = String(foo)
+                FirValueParameterSymbol b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|
+                FirValueParameterSymbol c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()
+
+--- KtNameReferenceExpression ---
+<File name: primaryConstructorProperty.kt, Physical: true>
+(
+    val a: String = "foo",
+    val b: Int = a.length,
+    val c: Long = (a.<ELEMENT>length</ELEMENT> - 1).toLong()
+) [(86,92)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/String| = String(foo)
+                FirValueParameterSymbol b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|
+                FirValueParameterSymbol c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()
+
+--- KtOperationReferenceExpression ---
+<File name: primaryConstructorProperty.kt, Physical: true>
+(
+    val a: String = "foo",
+    val b: Int = a.length,
+    val c: Long = (a.length <ELEMENT>-</ELEMENT> 1).toLong()
+) [(93,94)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/String| = String(foo)
+                FirValueParameterSymbol b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|
+                FirValueParameterSymbol c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()
+
+--- KtConstantExpression ---
+<File name: primaryConstructorProperty.kt, Physical: true>
+(
+    val a: String = "foo",
+    val b: Int = a.length,
+    val c: Long = (a.length - <ELEMENT>1</ELEMENT>).toLong()
+) [(95,96)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/String| = String(foo)
+                FirValueParameterSymbol b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|
+                FirValueParameterSymbol c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()
+
+--- KtNameReferenceExpression ---
+<File name: primaryConstructorProperty.kt, Physical: true>
+(
+    val a: String = "foo",
+    val b: Int = a.length,
+    val c: Long = (a.length - 1).<ELEMENT>toLong</ELEMENT>()
+) [(98,104)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/String| = String(foo)
+                FirValueParameterSymbol b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|
+                FirValueParameterSymbol c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()
+
+--- KtValueArgumentList ---
+<File name: primaryConstructorProperty.kt, Physical: true>
+(
+    val a: String = "foo",
+    val b: Int = a.length,
+    val c: Long = (a.length - 1).toLong<ELEMENT>()</ELEMENT>
+) [(104,106)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/String| = String(foo)
+                FirValueParameterSymbol b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|
+                FirValueParameterSymbol c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()
+
+FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/String| = String(foo), [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|, [ResolvedTo(BODY_RESOLVE)] c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val a: R|kotlin/String| = R|<local>/a|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val b: R|kotlin/Int| = R|<local>/b|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val c: R|kotlin/Long| = R|<local>/c|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Long|
+
+    }

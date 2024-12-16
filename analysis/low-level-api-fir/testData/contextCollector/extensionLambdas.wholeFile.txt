@@ -1,0 +1,1309 @@
+--- KtFile ---
+<File name: extensionLambdas.kt, Physical: true>
+<ELEMENT>fun test() {
+    block("foo") foo@{
+        block(42) num@{
+            consume(this@foo.length + this@num)
+        }
+    }
+}
+
+fun <T> block(reciever: T, block: T.() -> Unit) {
+    receiver.block()
+}
+
+fun consume(num: Int) {}
+</ELEMENT> [(0,226)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtPackageDirective ---
+<File name: extensionLambdas.kt, Physical: true>
+<ELEMENT></ELEMENT> [(0,0)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtNamedFunction ---
+<File name: extensionLambdas.kt, Physical: true>
+<ELEMENT>fun test() {
+    block("foo") foo@{
+        block(42) num@{
+            consume(this@foo.length + this@num)
+        }
+    }
+}</ELEMENT> [(0,125)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtBlockExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+fun test() <ELEMENT>{
+    block("foo") foo@{
+        block(42) num@{
+            consume(this@foo.length + this@num)
+        }
+    }
+}</ELEMENT> [(11,125)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+
+--- KtCallExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+fun test() {
+    <ELEMENT>block("foo") foo@{
+        block(42) num@{
+            consume(this@foo.length + this@num)
+        }
+    }</ELEMENT>
+} [(17,123)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+fun test() {
+    <ELEMENT>block</ELEMENT>("foo") foo@{
+        block(42) num@{
+            consume(this@foo.length + this@num)
+        }
+    }
+} [(17,22)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+
+--- KtValueArgumentList ---
+<File name: extensionLambdas.kt, Physical: true>
+fun test() {
+    block<ELEMENT>("foo")</ELEMENT> foo@{
+        block(42) num@{
+            consume(this@foo.length + this@num)
+        }
+    }
+} [(22,29)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+
+--- KtStringTemplateExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+fun test() {
+    block(<ELEMENT>"foo"</ELEMENT>) foo@{
+        block(42) num@{
+            consume(this@foo.length + this@num)
+        }
+    }
+} [(23,28)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+
+--- KtLabelReferenceExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+fun test() {
+    block("foo") <ELEMENT>foo@</ELEMENT>{
+        block(42) num@{
+            consume(this@foo.length + this@num)
+        }
+    }
+} [(30,34)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/String|
+                Type: kotlin.String
+
+--- KtLambdaExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+fun test() {
+    block("foo") foo@<ELEMENT>{
+        block(42) num@{
+            consume(this@foo.length + this@num)
+        }
+    }</ELEMENT>
+} [(34,123)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+
+--- KtFunctionLiteral ---
+<File name: extensionLambdas.kt, Physical: true>
+<ELEMENT>{
+        block(42) num@{
+            consume(this@foo.length + this@num)
+        }
+    }</ELEMENT> [(34,123)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+
+--- KtBlockExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+{
+        <ELEMENT>block(42) num@{
+            consume(this@foo.length + this@num)
+        }</ELEMENT>
+    } [(44,117)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/String|
+                Type: kotlin.String
+
+--- KtCallExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+{
+        <ELEMENT>block(42) num@{
+            consume(this@foo.length + this@num)
+        }</ELEMENT>
+    } [(44,117)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/String|
+                Type: kotlin.String
+    Element 10
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+{
+        <ELEMENT>block</ELEMENT>(42) num@{
+            consume(this@foo.length + this@num)
+        }
+    } [(44,49)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/String|
+                Type: kotlin.String
+    Element 10
+        Scope: FirLocalScope
+
+--- KtValueArgumentList ---
+<File name: extensionLambdas.kt, Physical: true>
+{
+        block<ELEMENT>(42)</ELEMENT> num@{
+            consume(this@foo.length + this@num)
+        }
+    } [(49,53)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/String|
+                Type: kotlin.String
+    Element 10
+        Scope: FirLocalScope
+
+--- KtConstantExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+{
+        block(<ELEMENT>42</ELEMENT>) num@{
+            consume(this@foo.length + this@num)
+        }
+    } [(50,52)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/String|
+                Type: kotlin.String
+    Element 10
+        Scope: FirLocalScope
+
+--- KtLabelReferenceExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+{
+        block(42) <ELEMENT>num@</ELEMENT>{
+            consume(this@foo.length + this@num)
+        }
+    } [(54,58)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/String|
+                Type: kotlin.String
+    Element 10
+        Scope: FirLocalScope
+    Element 11
+        Scope: FirLocalScope
+    Element 12
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Int|
+                Type: kotlin.Int
+
+--- KtLambdaExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+{
+        block(42) num@<ELEMENT>{
+            consume(this@foo.length + this@num)
+        }</ELEMENT>
+    } [(58,117)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/String|
+                Type: kotlin.String
+    Element 10
+        Scope: FirLocalScope
+
+--- KtFunctionLiteral ---
+<File name: extensionLambdas.kt, Physical: true>
+<ELEMENT>{
+            consume(this@foo.length + this@num)
+        }</ELEMENT> [(58,117)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/String|
+                Type: kotlin.String
+    Element 10
+        Scope: FirLocalScope
+
+--- KtBlockExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+{
+            <ELEMENT>consume(this@foo.length + this@num)</ELEMENT>
+        } [(72,107)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/String|
+                Type: kotlin.String
+    Element 10
+        Scope: FirLocalScope
+    Element 11
+        Scope: FirLocalScope
+    Element 12
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Int|
+                Type: kotlin.Int
+
+--- KtCallExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+{
+            <ELEMENT>consume(this@foo.length + this@num)</ELEMENT>
+        } [(72,107)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/String|
+                Type: kotlin.String
+    Element 10
+        Scope: FirLocalScope
+    Element 11
+        Scope: FirLocalScope
+    Element 12
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Int|
+                Type: kotlin.Int
+    Element 13
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+{
+            <ELEMENT>consume</ELEMENT>(this@foo.length + this@num)
+        } [(72,79)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/String|
+                Type: kotlin.String
+    Element 10
+        Scope: FirLocalScope
+    Element 11
+        Scope: FirLocalScope
+    Element 12
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Int|
+                Type: kotlin.Int
+    Element 13
+        Scope: FirLocalScope
+
+--- KtValueArgumentList ---
+<File name: extensionLambdas.kt, Physical: true>
+{
+            consume<ELEMENT>(this@foo.length + this@num)</ELEMENT>
+        } [(79,107)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/String|
+                Type: kotlin.String
+    Element 10
+        Scope: FirLocalScope
+    Element 11
+        Scope: FirLocalScope
+    Element 12
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Int|
+                Type: kotlin.Int
+    Element 13
+        Scope: FirLocalScope
+
+--- KtBinaryExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+{
+            consume(<ELEMENT>this@foo.length + this@num</ELEMENT>)
+        } [(80,106)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/String|
+                Type: kotlin.String
+    Element 10
+        Scope: FirLocalScope
+    Element 11
+        Scope: FirLocalScope
+    Element 12
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Int|
+                Type: kotlin.Int
+    Element 13
+        Scope: FirLocalScope
+
+--- KtDotQualifiedExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+{
+            consume(<ELEMENT>this@foo.length</ELEMENT> + this@num)
+        } [(80,95)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/String|
+                Type: kotlin.String
+    Element 10
+        Scope: FirLocalScope
+    Element 11
+        Scope: FirLocalScope
+    Element 12
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Int|
+                Type: kotlin.Int
+    Element 13
+        Scope: FirLocalScope
+
+--- KtThisExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+{
+            consume(<ELEMENT>this@foo</ELEMENT>.length + this@num)
+        } [(80,88)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/String|
+                Type: kotlin.String
+    Element 10
+        Scope: FirLocalScope
+    Element 11
+        Scope: FirLocalScope
+    Element 12
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Int|
+                Type: kotlin.Int
+    Element 13
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+{
+            consume(this@foo.<ELEMENT>length</ELEMENT> + this@num)
+        } [(89,95)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/String|
+                Type: kotlin.String
+    Element 10
+        Scope: FirLocalScope
+    Element 11
+        Scope: FirLocalScope
+    Element 12
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Int|
+                Type: kotlin.Int
+    Element 13
+        Scope: FirLocalScope
+
+--- KtOperationReferenceExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+{
+            consume(this@foo.length <ELEMENT>+</ELEMENT> this@num)
+        } [(96,97)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/String|
+                Type: kotlin.String
+    Element 10
+        Scope: FirLocalScope
+    Element 11
+        Scope: FirLocalScope
+    Element 12
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Int|
+                Type: kotlin.Int
+    Element 13
+        Scope: FirLocalScope
+
+--- KtThisExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+{
+            consume(this@foo.length + <ELEMENT>this@num</ELEMENT>)
+        } [(98,106)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/String|
+                Type: kotlin.String
+    Element 10
+        Scope: FirLocalScope
+    Element 11
+        Scope: FirLocalScope
+    Element 12
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Int|
+                Type: kotlin.Int
+    Element 13
+        Scope: FirLocalScope
+
+--- KtNamedFunction ---
+<File name: extensionLambdas.kt, Physical: true>
+<ELEMENT>fun <T> block(reciever: T, block: T.() -> Unit) {
+    receiver.block()
+}</ELEMENT> [(127,199)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtTypeParameter ---
+<File name: extensionLambdas.kt, Physical: true>
+fun <<ELEMENT>T</ELEMENT>> block(reciever: T, block: T.() -> Unit) {
+    receiver.block()
+} [(132,133)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol T
+
+--- KtParameter ---
+<File name: extensionLambdas.kt, Physical: true>
+fun <T> block(<ELEMENT>reciever: T</ELEMENT>, block: T.() -> Unit) {
+    receiver.block()
+} [(141,152)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol T
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol block: R|T.() -> kotlin/Unit|
+                FirValueParameterSymbol reciever: R|T|
+
+--- KtTypeReference ---
+<File name: extensionLambdas.kt, Physical: true>
+fun <T> block(reciever: <ELEMENT>T</ELEMENT>, block: T.() -> Unit) {
+    receiver.block()
+} [(151,152)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol T
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol block: R|T.() -> kotlin/Unit|
+                FirValueParameterSymbol reciever: R|T|
+
+--- KtParameter ---
+<File name: extensionLambdas.kt, Physical: true>
+fun <T> block(reciever: T, <ELEMENT>block: T.() -> Unit</ELEMENT>) {
+    receiver.block()
+} [(154,173)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol T
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol block: R|T.() -> kotlin/Unit|
+                FirValueParameterSymbol reciever: R|T|
+
+--- KtTypeReference ---
+<File name: extensionLambdas.kt, Physical: true>
+fun <T> block(reciever: T, block: <ELEMENT>T.() -> Unit</ELEMENT>) {
+    receiver.block()
+} [(161,173)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol T
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol block: R|T.() -> kotlin/Unit|
+                FirValueParameterSymbol reciever: R|T|
+
+--- KtBlockExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+fun <T> block(reciever: T, block: T.() -> Unit) <ELEMENT>{
+    receiver.block()
+}</ELEMENT> [(175,199)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol T
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol block: R|T.() -> kotlin/Unit|
+                FirValueParameterSymbol reciever: R|T|
+
+--- KtDotQualifiedExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+fun <T> block(reciever: T, block: T.() -> Unit) {
+    <ELEMENT>receiver.block()</ELEMENT>
+} [(181,197)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol T
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol block: R|T.() -> kotlin/Unit|
+                FirValueParameterSymbol reciever: R|T|
+    Element 8
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+fun <T> block(reciever: T, block: T.() -> Unit) {
+    <ELEMENT>receiver</ELEMENT>.block()
+} [(181,189)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol T
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol block: R|T.() -> kotlin/Unit|
+                FirValueParameterSymbol reciever: R|T|
+    Element 8
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+fun <T> block(reciever: T, block: T.() -> Unit) {
+    receiver.<ELEMENT>block</ELEMENT>()
+} [(190,195)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol T
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol block: R|T.() -> kotlin/Unit|
+                FirValueParameterSymbol reciever: R|T|
+    Element 8
+        Scope: FirLocalScope
+
+--- KtNamedFunction ---
+<File name: extensionLambdas.kt, Physical: true>
+<ELEMENT>fun consume(num: Int) {}</ELEMENT> [(201,225)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtParameter ---
+<File name: extensionLambdas.kt, Physical: true>
+fun consume(<ELEMENT>num: Int</ELEMENT>) {} [(213,221)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol num: R|kotlin/Int|
+
+--- KtTypeReference ---
+<File name: extensionLambdas.kt, Physical: true>
+fun consume(num: <ELEMENT>Int</ELEMENT>) {} [(218,221)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol num: R|kotlin/Int|
+
+--- KtBlockExpression ---
+<File name: extensionLambdas.kt, Physical: true>
+fun consume(num: Int) <ELEMENT>{}</ELEMENT> [(223,225)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol num: R|kotlin/Int|
+
+FILE: [ResolvedTo(IMPORTS)] extensionLambdas.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        R|/block|<R|kotlin/String|>(String(foo), <L> = [ResolvedTo(BODY_RESOLVE)] foo@fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|/block|<R|kotlin/Int|>(Int(42), <L> = [ResolvedTo(BODY_RESOLVE)] num@fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/Int|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                R|/consume|(this@R|special/anonymous|.R|kotlin/String.length|.R|kotlin/Int.plus|(this@R|special/anonymous|))
+            }
+            )
+        }
+        )
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> block([ResolvedTo(BODY_RESOLVE)] reciever: R|T|, [ResolvedTo(BODY_RESOLVE)] block: R|T.() -> kotlin/Unit|): R|kotlin/Unit| {
+        R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(<Unresolved name: receiver>#)
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun consume([ResolvedTo(BODY_RESOLVE)] num: R|kotlin/Int|): R|kotlin/Unit| {
+    }

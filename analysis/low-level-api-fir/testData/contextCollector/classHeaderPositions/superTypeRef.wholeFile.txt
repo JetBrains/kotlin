@@ -1,0 +1,271 @@
+--- KtFile ---
+<File name: superTypeRef.kt, Physical: true>
+<ELEMENT>package test
+
+open class Base {
+    class Nested
+}
+
+class Child : Base {
+    constructor(): super() {}
+}
+</ELEMENT> [(0,105)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtPackageDirective ---
+<File name: superTypeRef.kt, Physical: true>
+<ELEMENT>package test</ELEMENT> [(0,12)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtClass ---
+<File name: superTypeRef.kt, Physical: true>
+<ELEMENT>open class Base {
+    class Nested
+}</ELEMENT> [(14,50)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtClass ---
+<File name: superTypeRef.kt, Physical: true>
+<ELEMENT>class Nested</ELEMENT> [(36,48)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final class Nested : R|kotlin/Any|
+    Element 7
+        Implicit receiver:
+            FirRegularClassSymbol public open class Base : R|kotlin/Any|
+                Type: test.Base
+
+--- KtClass ---
+<File name: superTypeRef.kt, Physical: true>
+<ELEMENT>class Child : Base {
+    constructor(): super() {}
+}</ELEMENT> [(52,104)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtTypeReference ---
+<File name: superTypeRef.kt, Physical: true>
+class Child : <ELEMENT>Base</ELEMENT> {
+    constructor(): super() {}
+} [(66,70)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtSecondaryConstructor ---
+<File name: superTypeRef.kt, Physical: true>
+<ELEMENT>constructor(): super() {}</ELEMENT> [(77,102)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final class Nested : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public open class Base : R|kotlin/Any|
+    Element 7
+        Implicit receiver:
+            FirRegularClassSymbol public final class Child : R|test/Base|
+                Type: test.Child
+
+--- KtConstructorDelegationCall ---
+<File name: superTypeRef.kt, Physical: true>
+constructor(): <ELEMENT>super()</ELEMENT> {} [(92,99)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final class Nested : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public open class Base : R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+
+--- KtConstructorDelegationReferenceExpression ---
+<File name: superTypeRef.kt, Physical: true>
+constructor(): <ELEMENT>super</ELEMENT>() {} [(92,97)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final class Nested : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public open class Base : R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+
+--- KtValueArgumentList ---
+<File name: superTypeRef.kt, Physical: true>
+constructor(): super<ELEMENT>()</ELEMENT> {} [(97,99)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final class Nested : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public open class Base : R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+
+--- KtBlockExpression ---
+<File name: superTypeRef.kt, Physical: true>
+constructor(): super() <ELEMENT>{}</ELEMENT> [(100,102)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final class Nested : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public open class Base : R|kotlin/Any|
+    Element 7
+        Implicit receiver:
+            FirRegularClassSymbol public final class Child : R|test/Base|
+                Type: test.Child
+    Element 8
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] superTypeRef.kt
+    public open [ResolvedTo(ANNOTATION_ARGUMENTS)] class Base : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|test/Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Nested : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor(): R|test/Base.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Child : R|test/Base| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|test/Child| {
+            super<R|test/Base|>()
+        }
+
+    }

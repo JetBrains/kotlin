@@ -1,0 +1,762 @@
+--- KtFile ---
+<File name: receiverInjection.kt, Physical: true>
+<ELEMENT>// WITH_FIR_TEST_COMPILER_PLUGIN
+
+interface Algebra<T> {
+    operator fun T.plus(other: T): T
+}
+
+interface A
+interface B
+
+fun <T> injectAlgebra() {}
+
+fun test_1(a1: A, a2: A) {
+    injectAlgebra<A>()
+
+    a1 + a2
+}
+</ELEMENT> [(0,215)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtPackageDirective ---
+<File name: receiverInjection.kt, Physical: true>
+<ELEMENT></ELEMENT> [(0,0)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtClass ---
+<File name: receiverInjection.kt, Physical: true>
+<ELEMENT>interface Algebra<T> {
+    operator fun T.plus(other: T): T
+}</ELEMENT> [(34,95)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtTypeParameter ---
+<File name: receiverInjection.kt, Physical: true>
+interface Algebra<<ELEMENT>T</ELEMENT>> {
+    operator fun T.plus(other: T): T
+} [(52,53)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol T
+
+--- KtNamedFunction ---
+<File name: receiverInjection.kt, Physical: true>
+<ELEMENT>operator fun T.plus(other: T): T</ELEMENT> [(61,93)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol T
+    Element 7
+        Implicit receiver:
+            FirRegularClassSymbol public abstract interface Algebra<T> : R|kotlin/Any|
+                Type: Algebra<T>
+
+--- KtTypeReference ---
+<File name: receiverInjection.kt, Physical: true>
+operator fun <ELEMENT>T</ELEMENT>.plus(other: T): T [(74,75)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol T
+    Element 7
+        Implicit receiver:
+            FirRegularClassSymbol public abstract interface Algebra<T> : R|kotlin/Any|
+                Type: Algebra<T>
+
+--- KtParameter ---
+<File name: receiverInjection.kt, Physical: true>
+operator fun T.plus(<ELEMENT>other: T</ELEMENT>): T [(81,89)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol T
+    Element 7
+        Implicit receiver:
+            FirRegularClassSymbol public abstract interface Algebra<T> : R|kotlin/Any|
+                Type: Algebra<T>
+    Element 8
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol other: R|T|
+    Element 9
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|T|
+                Type: T
+
+--- KtTypeReference ---
+<File name: receiverInjection.kt, Physical: true>
+operator fun T.plus(other: <ELEMENT>T</ELEMENT>): T [(88,89)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol T
+    Element 7
+        Implicit receiver:
+            FirRegularClassSymbol public abstract interface Algebra<T> : R|kotlin/Any|
+                Type: Algebra<T>
+    Element 8
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol other: R|T|
+    Element 9
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|T|
+                Type: T
+
+--- KtTypeReference ---
+<File name: receiverInjection.kt, Physical: true>
+operator fun T.plus(other: T): <ELEMENT>T</ELEMENT> [(92,93)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol T
+    Element 7
+        Implicit receiver:
+            FirRegularClassSymbol public abstract interface Algebra<T> : R|kotlin/Any|
+                Type: Algebra<T>
+
+--- KtClass ---
+<File name: receiverInjection.kt, Physical: true>
+<ELEMENT>interface A</ELEMENT> [(97,108)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtClass ---
+<File name: receiverInjection.kt, Physical: true>
+<ELEMENT>interface B</ELEMENT> [(109,120)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtNamedFunction ---
+<File name: receiverInjection.kt, Physical: true>
+<ELEMENT>fun <T> injectAlgebra() {}</ELEMENT> [(122,148)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtTypeParameter ---
+<File name: receiverInjection.kt, Physical: true>
+fun <<ELEMENT>T</ELEMENT>> injectAlgebra() {} [(127,128)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol T
+
+--- KtBlockExpression ---
+<File name: receiverInjection.kt, Physical: true>
+fun <T> injectAlgebra() <ELEMENT>{}</ELEMENT> [(146,148)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol T
+    Element 7
+        Scope: FirLocalScope
+
+--- KtNamedFunction ---
+<File name: receiverInjection.kt, Physical: true>
+<ELEMENT>fun test_1(a1: A, a2: A) {
+    injectAlgebra<A>()
+
+    a1 + a2
+}</ELEMENT> [(150,214)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtParameter ---
+<File name: receiverInjection.kt, Physical: true>
+fun test_1(<ELEMENT>a1: A</ELEMENT>, a2: A) {
+    injectAlgebra<A>()
+
+    a1 + a2
+} [(161,166)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a1: R|A|
+                FirValueParameterSymbol a2: R|A|
+
+--- KtTypeReference ---
+<File name: receiverInjection.kt, Physical: true>
+fun test_1(a1: <ELEMENT>A</ELEMENT>, a2: A) {
+    injectAlgebra<A>()
+
+    a1 + a2
+} [(165,166)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a1: R|A|
+                FirValueParameterSymbol a2: R|A|
+
+--- KtParameter ---
+<File name: receiverInjection.kt, Physical: true>
+fun test_1(a1: A, <ELEMENT>a2: A</ELEMENT>) {
+    injectAlgebra<A>()
+
+    a1 + a2
+} [(168,173)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a1: R|A|
+                FirValueParameterSymbol a2: R|A|
+
+--- KtTypeReference ---
+<File name: receiverInjection.kt, Physical: true>
+fun test_1(a1: A, a2: <ELEMENT>A</ELEMENT>) {
+    injectAlgebra<A>()
+
+    a1 + a2
+} [(172,173)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a1: R|A|
+                FirValueParameterSymbol a2: R|A|
+
+--- KtBlockExpression ---
+<File name: receiverInjection.kt, Physical: true>
+fun test_1(a1: A, a2: A) <ELEMENT>{
+    injectAlgebra<A>()
+
+    a1 + a2
+}</ELEMENT> [(175,214)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a1: R|A|
+                FirValueParameterSymbol a2: R|A|
+
+--- KtCallExpression ---
+<File name: receiverInjection.kt, Physical: true>
+fun test_1(a1: A, a2: A) {
+    <ELEMENT>injectAlgebra<A>()</ELEMENT>
+
+    a1 + a2
+} [(181,199)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a1: R|A|
+                FirValueParameterSymbol a2: R|A|
+    Element 7
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: receiverInjection.kt, Physical: true>
+fun test_1(a1: A, a2: A) {
+    <ELEMENT>injectAlgebra</ELEMENT><A>()
+
+    a1 + a2
+} [(181,194)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a1: R|A|
+                FirValueParameterSymbol a2: R|A|
+    Element 7
+        Scope: FirLocalScope
+
+--- KtTypeProjection ---
+<File name: receiverInjection.kt, Physical: true>
+fun test_1(a1: A, a2: A) {
+    injectAlgebra<<ELEMENT>A</ELEMENT>>()
+
+    a1 + a2
+} [(195,196)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a1: R|A|
+                FirValueParameterSymbol a2: R|A|
+    Element 7
+        Scope: FirLocalScope
+
+--- KtTypeReference ---
+<File name: receiverInjection.kt, Physical: true>
+fun test_1(a1: A, a2: A) {
+    injectAlgebra<<ELEMENT>A</ELEMENT>>()
+
+    a1 + a2
+} [(195,196)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a1: R|A|
+                FirValueParameterSymbol a2: R|A|
+    Element 7
+        Scope: FirLocalScope
+
+--- KtValueArgumentList ---
+<File name: receiverInjection.kt, Physical: true>
+fun test_1(a1: A, a2: A) {
+    injectAlgebra<A><ELEMENT>()</ELEMENT>
+
+    a1 + a2
+} [(197,199)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a1: R|A|
+                FirValueParameterSymbol a2: R|A|
+    Element 7
+        Scope: FirLocalScope
+
+--- KtBinaryExpression ---
+<File name: receiverInjection.kt, Physical: true>
+fun test_1(a1: A, a2: A) {
+    injectAlgebra<A>()
+
+    <ELEMENT>a1 + a2</ELEMENT>
+} [(205,212)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a1: R|A|
+                FirValueParameterSymbol a2: R|A|
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|Algebra<A>|
+                Type: Algebra<A>
+
+--- KtNameReferenceExpression ---
+<File name: receiverInjection.kt, Physical: true>
+fun test_1(a1: A, a2: A) {
+    injectAlgebra<A>()
+
+    <ELEMENT>a1</ELEMENT> + a2
+} [(205,207)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a1: R|A|
+                FirValueParameterSymbol a2: R|A|
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|Algebra<A>|
+                Type: Algebra<A>
+
+--- KtOperationReferenceExpression ---
+<File name: receiverInjection.kt, Physical: true>
+fun test_1(a1: A, a2: A) {
+    injectAlgebra<A>()
+
+    a1 <ELEMENT>+</ELEMENT> a2
+} [(208,209)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a1: R|A|
+                FirValueParameterSymbol a2: R|A|
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|Algebra<A>|
+                Type: Algebra<A>
+
+--- KtNameReferenceExpression ---
+<File name: receiverInjection.kt, Physical: true>
+fun test_1(a1: A, a2: A) {
+    injectAlgebra<A>()
+
+    a1 + <ELEMENT>a2</ELEMENT>
+} [(210,212)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a1: R|A|
+                FirValueParameterSymbol a2: R|A|
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|Algebra<A>|
+                Type: Algebra<A>
+
+FILE: [ResolvedTo(IMPORTS)] receiverInjection.kt
+    public abstract [ResolvedTo(STATUS)] interface Algebra<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract operator [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|T|.plus([ResolvedTo(BODY_RESOLVE)] other: R|T|): R|T|
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {
+    }
+    public abstract [ResolvedTo(STATUS)] interface B : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> injectAlgebra(): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun test_1([ResolvedTo(BODY_RESOLVE)] a1: R|A|, [ResolvedTo(BODY_RESOLVE)] a2: R|A|): R|kotlin/Unit| {
+        R|/injectAlgebra|<R|A|>()
+        (this@R|/test_1|, R|<local>/a1|).R|SubstitutionOverride</Algebra.plus: R|A|>|(R|<local>/a2|)
+    }

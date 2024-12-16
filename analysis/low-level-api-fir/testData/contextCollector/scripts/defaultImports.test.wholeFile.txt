@@ -1,0 +1,890 @@
+--- KtFile ---
+<File name: defaultImports.test.kts, Physical: true>
+<ELEMENT>// FULL_JDK
+// WITH_STDLIB
+// SCRIPT_DEFAULT_IMPORTS: kotlin.streams.asSequence
+
+import java.util.stream.Stream
+
+Stream.of("foo").asSequence().apply {
+    contains("bar")
+}
+</ELEMENT> [(0,173)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:asSequence
+                Qualified name: kotlin.streams.asSequence
+                Is all under: false
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Stream
+                Qualified name: java.util.stream.Stream
+                Is all under: false
+
+--- KtPackageDirective ---
+<File name: defaultImports.test.kts, Physical: true>
+<ELEMENT></ELEMENT> [(0,0)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:asSequence
+                Qualified name: kotlin.streams.asSequence
+                Is all under: false
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Stream
+                Qualified name: java.util.stream.Stream
+                Is all under: false
+
+--- KtImportDirective ---
+<File name: defaultImports.test.kts, Physical: true>
+<ELEMENT>import java.util.stream.Stream</ELEMENT> [(81,111)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:asSequence
+                Qualified name: kotlin.streams.asSequence
+                Is all under: false
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Stream
+                Qualified name: java.util.stream.Stream
+                Is all under: false
+
+--- KtScript ---
+<File name: defaultImports.test.kts, Physical: true>
+<ELEMENT>
+
+Stream.of("foo").asSequence().apply {
+    contains("bar")
+}
+</ELEMENT> [(111,173)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:asSequence
+                Qualified name: kotlin.streams.asSequence
+                Is all under: false
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Stream
+                Qualified name: java.util.stream.Stream
+                Is all under: false
+
+--- KtScriptInitializer ---
+<File name: defaultImports.test.kts, Physical: true>
+<ELEMENT>Stream.of("foo").asSequence().apply {
+    contains("bar")
+}</ELEMENT> [(113,172)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:asSequence
+                Qualified name: kotlin.streams.asSequence
+                Is all under: false
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Stream
+                Qualified name: java.util.stream.Stream
+                Is all under: false
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/sequences/Sequence<kotlin/String!>|
+                    public get(): R|kotlin/sequences/Sequence<kotlin/String!>|
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+                Type: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+
+--- KtDotQualifiedExpression ---
+<File name: defaultImports.test.kts, Physical: true>
+<ELEMENT>Stream.of("foo").asSequence().apply {
+    contains("bar")
+}</ELEMENT> [(113,172)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:asSequence
+                Qualified name: kotlin.streams.asSequence
+                Is all under: false
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Stream
+                Qualified name: java.util.stream.Stream
+                Is all under: false
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/sequences/Sequence<kotlin/String!>|
+                    public get(): R|kotlin/sequences/Sequence<kotlin/String!>|
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+                Type: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+
+--- KtDotQualifiedExpression ---
+<File name: defaultImports.test.kts, Physical: true>
+<ELEMENT>Stream.of("foo").asSequence()</ELEMENT>.apply {
+    contains("bar")
+} [(113,142)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:asSequence
+                Qualified name: kotlin.streams.asSequence
+                Is all under: false
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Stream
+                Qualified name: java.util.stream.Stream
+                Is all under: false
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/sequences/Sequence<kotlin/String!>|
+                    public get(): R|kotlin/sequences/Sequence<kotlin/String!>|
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+                Type: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+
+--- KtDotQualifiedExpression ---
+<File name: defaultImports.test.kts, Physical: true>
+<ELEMENT>Stream.of("foo")</ELEMENT>.asSequence().apply {
+    contains("bar")
+} [(113,129)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:asSequence
+                Qualified name: kotlin.streams.asSequence
+                Is all under: false
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Stream
+                Qualified name: java.util.stream.Stream
+                Is all under: false
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/sequences/Sequence<kotlin/String!>|
+                    public get(): R|kotlin/sequences/Sequence<kotlin/String!>|
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+                Type: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+
+--- KtNameReferenceExpression ---
+<File name: defaultImports.test.kts, Physical: true>
+<ELEMENT>Stream</ELEMENT>.of("foo").asSequence().apply {
+    contains("bar")
+} [(113,119)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:asSequence
+                Qualified name: kotlin.streams.asSequence
+                Is all under: false
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Stream
+                Qualified name: java.util.stream.Stream
+                Is all under: false
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/sequences/Sequence<kotlin/String!>|
+                    public get(): R|kotlin/sequences/Sequence<kotlin/String!>|
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+                Type: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+
+--- KtNameReferenceExpression ---
+<File name: defaultImports.test.kts, Physical: true>
+Stream.<ELEMENT>of</ELEMENT>("foo").asSequence().apply {
+    contains("bar")
+} [(120,122)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:asSequence
+                Qualified name: kotlin.streams.asSequence
+                Is all under: false
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Stream
+                Qualified name: java.util.stream.Stream
+                Is all under: false
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/sequences/Sequence<kotlin/String!>|
+                    public get(): R|kotlin/sequences/Sequence<kotlin/String!>|
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+                Type: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+
+--- KtValueArgumentList ---
+<File name: defaultImports.test.kts, Physical: true>
+Stream.of<ELEMENT>("foo")</ELEMENT>.asSequence().apply {
+    contains("bar")
+} [(122,129)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:asSequence
+                Qualified name: kotlin.streams.asSequence
+                Is all under: false
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Stream
+                Qualified name: java.util.stream.Stream
+                Is all under: false
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/sequences/Sequence<kotlin/String!>|
+                    public get(): R|kotlin/sequences/Sequence<kotlin/String!>|
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+                Type: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+
+--- KtStringTemplateExpression ---
+<File name: defaultImports.test.kts, Physical: true>
+Stream.of(<ELEMENT>"foo"</ELEMENT>).asSequence().apply {
+    contains("bar")
+} [(123,128)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:asSequence
+                Qualified name: kotlin.streams.asSequence
+                Is all under: false
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Stream
+                Qualified name: java.util.stream.Stream
+                Is all under: false
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/sequences/Sequence<kotlin/String!>|
+                    public get(): R|kotlin/sequences/Sequence<kotlin/String!>|
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+                Type: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+
+--- KtNameReferenceExpression ---
+<File name: defaultImports.test.kts, Physical: true>
+Stream.of("foo").<ELEMENT>asSequence</ELEMENT>().apply {
+    contains("bar")
+} [(130,140)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:asSequence
+                Qualified name: kotlin.streams.asSequence
+                Is all under: false
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Stream
+                Qualified name: java.util.stream.Stream
+                Is all under: false
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/sequences/Sequence<kotlin/String!>|
+                    public get(): R|kotlin/sequences/Sequence<kotlin/String!>|
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+                Type: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+
+--- KtValueArgumentList ---
+<File name: defaultImports.test.kts, Physical: true>
+Stream.of("foo").asSequence<ELEMENT>()</ELEMENT>.apply {
+    contains("bar")
+} [(140,142)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:asSequence
+                Qualified name: kotlin.streams.asSequence
+                Is all under: false
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Stream
+                Qualified name: java.util.stream.Stream
+                Is all under: false
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/sequences/Sequence<kotlin/String!>|
+                    public get(): R|kotlin/sequences/Sequence<kotlin/String!>|
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+                Type: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+
+--- KtNameReferenceExpression ---
+<File name: defaultImports.test.kts, Physical: true>
+Stream.of("foo").asSequence().<ELEMENT>apply</ELEMENT> {
+    contains("bar")
+} [(143,148)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:asSequence
+                Qualified name: kotlin.streams.asSequence
+                Is all under: false
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Stream
+                Qualified name: java.util.stream.Stream
+                Is all under: false
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/sequences/Sequence<kotlin/String!>|
+                    public get(): R|kotlin/sequences/Sequence<kotlin/String!>|
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+                Type: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+
+--- KtLambdaExpression ---
+<File name: defaultImports.test.kts, Physical: true>
+Stream.of("foo").asSequence().apply <ELEMENT>{
+    contains("bar")
+}</ELEMENT> [(149,172)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:asSequence
+                Qualified name: kotlin.streams.asSequence
+                Is all under: false
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Stream
+                Qualified name: java.util.stream.Stream
+                Is all under: false
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/sequences/Sequence<kotlin/String!>|
+                    public get(): R|kotlin/sequences/Sequence<kotlin/String!>|
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+                Type: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+
+--- KtFunctionLiteral ---
+<File name: defaultImports.test.kts, Physical: true>
+<ELEMENT>{
+    contains("bar")
+}</ELEMENT> [(149,172)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:asSequence
+                Qualified name: kotlin.streams.asSequence
+                Is all under: false
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Stream
+                Qualified name: java.util.stream.Stream
+                Is all under: false
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/sequences/Sequence<kotlin/String!>|
+                    public get(): R|kotlin/sequences/Sequence<kotlin/String!>|
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+                Type: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+
+--- KtBlockExpression ---
+<File name: defaultImports.test.kts, Physical: true>
+{
+    <ELEMENT>contains("bar")</ELEMENT>
+} [(155,170)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:asSequence
+                Qualified name: kotlin.streams.asSequence
+                Is all under: false
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Stream
+                Qualified name: java.util.stream.Stream
+                Is all under: false
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/sequences/Sequence<kotlin/String!>|
+                    public get(): R|kotlin/sequences/Sequence<kotlin/String!>|
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+                Type: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+    Element 11
+        Scope: FirLocalScope
+    Element 12
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/sequences/Sequence<kotlin/String!>|
+                Type: kotlin.sequences.Sequence<kotlin.String!>
+
+--- KtCallExpression ---
+<File name: defaultImports.test.kts, Physical: true>
+{
+    <ELEMENT>contains("bar")</ELEMENT>
+} [(155,170)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:asSequence
+                Qualified name: kotlin.streams.asSequence
+                Is all under: false
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Stream
+                Qualified name: java.util.stream.Stream
+                Is all under: false
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/sequences/Sequence<kotlin/String!>|
+                    public get(): R|kotlin/sequences/Sequence<kotlin/String!>|
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+                Type: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+    Element 11
+        Scope: FirLocalScope
+    Element 12
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/sequences/Sequence<kotlin/String!>|
+                Type: kotlin.sequences.Sequence<kotlin.String!>
+    Element 13
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: defaultImports.test.kts, Physical: true>
+{
+    <ELEMENT>contains</ELEMENT>("bar")
+} [(155,163)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:asSequence
+                Qualified name: kotlin.streams.asSequence
+                Is all under: false
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Stream
+                Qualified name: java.util.stream.Stream
+                Is all under: false
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/sequences/Sequence<kotlin/String!>|
+                    public get(): R|kotlin/sequences/Sequence<kotlin/String!>|
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+                Type: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+    Element 11
+        Scope: FirLocalScope
+    Element 12
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/sequences/Sequence<kotlin/String!>|
+                Type: kotlin.sequences.Sequence<kotlin.String!>
+    Element 13
+        Scope: FirLocalScope
+
+--- KtValueArgumentList ---
+<File name: defaultImports.test.kts, Physical: true>
+{
+    contains<ELEMENT>("bar")</ELEMENT>
+} [(163,170)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:asSequence
+                Qualified name: kotlin.streams.asSequence
+                Is all under: false
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Stream
+                Qualified name: java.util.stream.Stream
+                Is all under: false
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/sequences/Sequence<kotlin/String!>|
+                    public get(): R|kotlin/sequences/Sequence<kotlin/String!>|
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+                Type: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+    Element 11
+        Scope: FirLocalScope
+    Element 12
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/sequences/Sequence<kotlin/String!>|
+                Type: kotlin.sequences.Sequence<kotlin.String!>
+    Element 13
+        Scope: FirLocalScope
+
+--- KtStringTemplateExpression ---
+<File name: defaultImports.test.kts, Physical: true>
+{
+    contains(<ELEMENT>"bar"</ELEMENT>)
+} [(164,169)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:asSequence
+                Qualified name: kotlin.streams.asSequence
+                Is all under: false
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Stream
+                Qualified name: java.util.stream.Stream
+                Is all under: false
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/sequences/Sequence<kotlin/String!>|
+                    public get(): R|kotlin/sequences/Sequence<kotlin/String!>|
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+                Type: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+    Element 11
+        Scope: FirLocalScope
+    Element 12
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/sequences/Sequence<kotlin/String!>|
+                Type: kotlin.sequences.Sequence<kotlin.String!>
+    Element 13
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] defaultImports.test.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-defaultImports.test.kts>
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<out kotlin/String>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/sequences/Sequence<kotlin/String!>| = Q|java/util/stream/Stream|.R|java/util/stream/Stream.of|<R|kotlin/String!|>(String(foo)).R|kotlin/streams/asSequence|<R|kotlin/String!|>().R|kotlin/apply|<R|kotlin/sequences/Sequence<kotlin/String!>|>(<L> = [ResolvedTo(BODY_RESOLVE)] apply@fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/sequences/Sequence<kotlin/String!>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            this@R|special/anonymous|.R|kotlin/sequences/contains|<R|kotlin/String!|>(String(bar))
+        }
+        )
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/sequences/Sequence<kotlin/String!>|

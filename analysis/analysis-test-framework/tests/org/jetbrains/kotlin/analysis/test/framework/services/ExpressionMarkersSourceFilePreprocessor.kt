@@ -322,7 +322,7 @@ class ExpressionMarkerProvider : TestService {
      * Returns the bottommost element of the type [T] enclosed in a selection tag with the given [qualifier],
      * or `null` if there is no selection tag with the given [qualifier].
      */
-    private fun <T : PsiElement> getBottommostSelectedElementOfTypeOrNull(file: KtFile, type: KClass<T>, qualifier: String = ""): T? {
+    fun <T : PsiElement> getBottommostSelectedElementOfTypeOrNull(file: KtFile, type: KClass<T>, qualifier: String = ""): T? {
         val element = getTopmostSelectedElements(file, qualifier).singleOrNull() ?: return null
 
         val result = generateSequence(element) { it.children.singleOrNull() }

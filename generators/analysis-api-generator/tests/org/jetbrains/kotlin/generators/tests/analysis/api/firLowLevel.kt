@@ -311,6 +311,14 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model("contextCollector", pattern = TestGeneratorUtil.KTS)
         }
 
+        testClass<AbstractWholeSourceFileContextCollectorTest> {
+            model("contextCollector", pattern = TestGeneratorUtil.KT)
+        }
+
+        testClass<AbstractWholeScriptFileContextCollectorTest> {
+            model("contextCollector", pattern = TestGeneratorUtil.KTS)
+        }
+
         testClass<AbstractResolveExtensionDisposalAfterModificationEventTest> {
             model("resolveExtensionDisposal")
         }

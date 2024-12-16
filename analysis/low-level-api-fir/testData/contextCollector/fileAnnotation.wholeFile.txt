@@ -1,0 +1,102 @@
+--- KtFile ---
+<File name: fileAnnotation.kt, Physical: true>
+<ELEMENT>@file:Anno
+
+@Target(FILE)
+annotation class Anno
+</ELEMENT> [(0,48)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtAnnotationEntry ---
+<File name: fileAnnotation.kt, Physical: true>
+<ELEMENT>@file:Anno</ELEMENT>
+
+@Target(FILE)
+annotation class Anno [(0,10)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtPackageDirective ---
+<File name: fileAnnotation.kt, Physical: true>
+<ELEMENT></ELEMENT> [(10,10)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtClass ---
+<File name: fileAnnotation.kt, Physical: true>
+<ELEMENT>@Target(FILE)
+annotation class Anno</ELEMENT> [(12,47)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtAnnotationEntry ---
+<File name: fileAnnotation.kt, Physical: true>
+<ELEMENT>@Target(FILE)</ELEMENT>
+annotation class Anno [(12,25)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+FILE: [ResolvedTo(IMPORTS)] fileAnnotation.kt
+    @FILE:Anno[Unresolved]()
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(<Unresolved name: FILE>#)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

@@ -1,0 +1,906 @@
+--- KtFile ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+<ELEMENT>// WITH_FIR_TEST_COMPILER_PLUGIN
+
+import kotlin.reflect.KClass
+
+interface DataFrame<out T>
+
+annotation class Refine
+
+@Refine
+fun <T, R> DataFrame<T>.add(columnName: String, expression: () -> R): DataFrame<Any?>? = TODO()
+
+fun test_1(df: DataFrame<*>?) {
+    val df1_toStringSafe = df?.add("column") { 1 }?.toString()
+
+    df1_toStringSafe
+}
+</ELEMENT> [(0,341)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+
+--- KtPackageDirective ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+<ELEMENT></ELEMENT> [(0,0)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+
+--- KtImportDirective ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+<ELEMENT>import kotlin.reflect.KClass</ELEMENT> [(34,62)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+
+--- KtClass ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+<ELEMENT>interface DataFrame<out T></ELEMENT> [(64,90)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+
+--- KtTypeParameter ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+interface DataFrame<<ELEMENT>out T</ELEMENT>> [(84,89)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol out T
+
+--- KtClass ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+<ELEMENT>annotation class Refine</ELEMENT> [(92,115)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+
+--- KtNamedFunction ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+<ELEMENT>@Refine
+fun <T, R> DataFrame<T>.add(columnName: String, expression: () -> R): DataFrame<Any?>? = TODO()</ELEMENT> [(117,220)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+
+--- KtAnnotationEntry ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+<ELEMENT>@Refine</ELEMENT>
+fun <T, R> DataFrame<T>.add(columnName: String, expression: () -> R): DataFrame<Any?>? = TODO() [(117,124)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+
+--- KtTypeParameter ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+@Refine
+fun <<ELEMENT>T</ELEMENT>, R> DataFrame<T>.add(columnName: String, expression: () -> R): DataFrame<Any?>? = TODO() [(130,131)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol R
+                FirTypeParameterSymbol T
+
+--- KtTypeParameter ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+@Refine
+fun <T, <ELEMENT>R</ELEMENT>> DataFrame<T>.add(columnName: String, expression: () -> R): DataFrame<Any?>? = TODO() [(133,134)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol R
+                FirTypeParameterSymbol T
+
+--- KtTypeReference ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+@Refine
+fun <T, R> <ELEMENT>DataFrame<T></ELEMENT>.add(columnName: String, expression: () -> R): DataFrame<Any?>? = TODO() [(136,148)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol R
+                FirTypeParameterSymbol T
+
+--- KtParameter ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+@Refine
+fun <T, R> DataFrame<T>.add(<ELEMENT>columnName: String</ELEMENT>, expression: () -> R): DataFrame<Any?>? = TODO() [(153,171)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol R
+                FirTypeParameterSymbol T
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol columnName: R|kotlin/String|
+                FirValueParameterSymbol expression: R|() -> R|
+    Element 8
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|DataFrame<T>|
+                Type: DataFrame<T>
+
+--- KtTypeReference ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+@Refine
+fun <T, R> DataFrame<T>.add(columnName: <ELEMENT>String</ELEMENT>, expression: () -> R): DataFrame<Any?>? = TODO() [(165,171)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol R
+                FirTypeParameterSymbol T
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol columnName: R|kotlin/String|
+                FirValueParameterSymbol expression: R|() -> R|
+    Element 8
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|DataFrame<T>|
+                Type: DataFrame<T>
+
+--- KtParameter ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+@Refine
+fun <T, R> DataFrame<T>.add(columnName: String, <ELEMENT>expression: () -> R</ELEMENT>): DataFrame<Any?>? = TODO() [(173,192)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol R
+                FirTypeParameterSymbol T
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol columnName: R|kotlin/String|
+                FirValueParameterSymbol expression: R|() -> R|
+    Element 8
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|DataFrame<T>|
+                Type: DataFrame<T>
+
+--- KtTypeReference ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+@Refine
+fun <T, R> DataFrame<T>.add(columnName: String, expression: <ELEMENT>() -> R</ELEMENT>): DataFrame<Any?>? = TODO() [(185,192)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol R
+                FirTypeParameterSymbol T
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol columnName: R|kotlin/String|
+                FirValueParameterSymbol expression: R|() -> R|
+    Element 8
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|DataFrame<T>|
+                Type: DataFrame<T>
+
+--- KtTypeReference ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+@Refine
+fun <T, R> DataFrame<T>.add(columnName: String, expression: () -> R): <ELEMENT>DataFrame<Any?>?</ELEMENT> = TODO() [(195,211)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol R
+                FirTypeParameterSymbol T
+
+--- KtCallExpression ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+@Refine
+fun <T, R> DataFrame<T>.add(columnName: String, expression: () -> R): DataFrame<Any?>? = <ELEMENT>TODO()</ELEMENT> [(214,220)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol R
+                FirTypeParameterSymbol T
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol columnName: R|kotlin/String|
+                FirValueParameterSymbol expression: R|() -> R|
+    Element 8
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|DataFrame<T>|
+                Type: DataFrame<T>
+
+--- KtNameReferenceExpression ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+@Refine
+fun <T, R> DataFrame<T>.add(columnName: String, expression: () -> R): DataFrame<Any?>? = <ELEMENT>TODO</ELEMENT>() [(214,218)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol R
+                FirTypeParameterSymbol T
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol columnName: R|kotlin/String|
+                FirValueParameterSymbol expression: R|() -> R|
+    Element 8
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|DataFrame<T>|
+                Type: DataFrame<T>
+    Element 9
+        Scope: FirLocalScope
+
+--- KtValueArgumentList ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+@Refine
+fun <T, R> DataFrame<T>.add(columnName: String, expression: () -> R): DataFrame<Any?>? = TODO<ELEMENT>()</ELEMENT> [(218,220)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol R
+                FirTypeParameterSymbol T
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol columnName: R|kotlin/String|
+                FirValueParameterSymbol expression: R|() -> R|
+    Element 8
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|DataFrame<T>|
+                Type: DataFrame<T>
+    Element 9
+        Scope: FirLocalScope
+
+--- KtNamedFunction ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+<ELEMENT>fun test_1(df: DataFrame<*>?) {
+    val df1_toStringSafe = df?.add("column") { 1 }?.toString()
+
+    df1_toStringSafe
+}</ELEMENT> [(222,340)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+
+--- KtParameter ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+fun test_1(<ELEMENT>df: DataFrame<*>?</ELEMENT>) {
+    val df1_toStringSafe = df?.add("column") { 1 }?.toString()
+
+    df1_toStringSafe
+} [(233,250)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol df: R|DataFrame<*>?|
+
+--- KtTypeReference ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+fun test_1(df: <ELEMENT>DataFrame<*>?</ELEMENT>) {
+    val df1_toStringSafe = df?.add("column") { 1 }?.toString()
+
+    df1_toStringSafe
+} [(237,250)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol df: R|DataFrame<*>?|
+
+--- KtBlockExpression ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+fun test_1(df: DataFrame<*>?) <ELEMENT>{
+    val df1_toStringSafe = df?.add("column") { 1 }?.toString()
+
+    df1_toStringSafe
+}</ELEMENT> [(252,340)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol df: R|DataFrame<*>?|
+
+--- KtProperty ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+fun test_1(df: DataFrame<*>?) {
+    <ELEMENT>val df1_toStringSafe = df?.add("column") { 1 }?.toString()</ELEMENT>
+
+    df1_toStringSafe
+} [(258,316)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol df: R|DataFrame<*>?|
+    Element 7
+        Scope: FirLocalScope
+
+--- KtSafeQualifiedExpression ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+fun test_1(df: DataFrame<*>?) {
+    val df1_toStringSafe = <ELEMENT>df?.add("column") { 1 }?.toString()</ELEMENT>
+
+    df1_toStringSafe
+} [(281,316)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol df: R|DataFrame<*>?|
+    Element 7
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol df: R|DataFrame<*>?|
+    Types:
+        kotlin.Any
+
+--- KtSafeQualifiedExpression ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+fun test_1(df: DataFrame<*>?) {
+    val df1_toStringSafe = <ELEMENT>df?.add("column") { 1 }</ELEMENT>?.toString()
+
+    df1_toStringSafe
+} [(281,304)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol df: R|DataFrame<*>?|
+    Element 7
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+fun test_1(df: DataFrame<*>?) {
+    val df1_toStringSafe = <ELEMENT>df</ELEMENT>?.add("column") { 1 }?.toString()
+
+    df1_toStringSafe
+} [(281,283)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol df: R|DataFrame<*>?|
+    Element 7
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+fun test_1(df: DataFrame<*>?) {
+    val df1_toStringSafe = df?.add("column") { 1 }?.<ELEMENT>toString</ELEMENT>()
+
+    df1_toStringSafe
+} [(306,314)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol df: R|DataFrame<*>?|
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|<local>/Scope1|
+                Type: <local>.Scope1
+Smart Casts:
+    FirValueParameterSymbol df: R|DataFrame<*>?|
+    Types:
+        kotlin.Any
+
+--- KtValueArgumentList ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+fun test_1(df: DataFrame<*>?) {
+    val df1_toStringSafe = df?.add("column") { 1 }?.toString<ELEMENT>()</ELEMENT>
+
+    df1_toStringSafe
+} [(314,316)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol df: R|DataFrame<*>?|
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|<local>/Scope1|
+                Type: <local>.Scope1
+Smart Casts:
+    FirValueParameterSymbol df: R|DataFrame<*>?|
+    Types:
+        kotlin.Any
+
+--- KtNameReferenceExpression ---
+<File name: callShapeBasedInjector_extraSafeCall.kt, Physical: true>
+fun test_1(df: DataFrame<*>?) {
+    val df1_toStringSafe = df?.add("column") { 1 }?.toString()
+
+    <ELEMENT>df1_toStringSafe</ELEMENT>
+} [(322,338)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:KClass
+                Qualified name: kotlin.reflect.KClass
+                Is all under: false
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol df: R|DataFrame<*>?|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval df1_toStringSafe: R|kotlin/String?|
+    Element 8
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|<local>/Scope1|
+                Type: <local>.Scope1
+
+FILE: [ResolvedTo(IMPORTS)] callShapeBasedInjector_extraSafeCall.kt
+    public abstract [ResolvedTo(STATUS)] interface DataFrame<[ResolvedTo(STATUS)] out T> : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class Refine : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|Refine| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|Refine|[Types]() public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T, [ResolvedTo(BODY_RESOLVE)] R> [ResolvedTo(BODY_RESOLVE)] R|DataFrame<T>|.add([ResolvedTo(BODY_RESOLVE)] columnName: R|kotlin/String|, [ResolvedTo(BODY_RESOLVE)] expression: R|() -> R|): R|DataFrame<kotlin/Any?>?| {
+        ^add R|kotlin/TODO|()
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun test_1([ResolvedTo(BODY_RESOLVE)] df: R|DataFrame<*>?|): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval df1_toStringSafe: R|kotlin/String?| = R|<local>/df|?.{ $subj$.R|kotlin/let|<R|DataFrame<*>|, R|DataFrame<<local>/DataFrameType>|>(<L> = [ResolvedTo(BODY_RESOLVE)] fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|DataFrame<*>|): R|DataFrame<<local>/DataFrameType>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract [ResolvedTo(BODY_RESOLVE)] class Schema1 : R|kotlin/Any| {
+            }
+
+            local abstract [ResolvedTo(BODY_RESOLVE)] class Scope1 : R|kotlin/Any| {
+            }
+
+            local abstract [ResolvedTo(BODY_RESOLVE)] class DataFrameType : R|<local>/Schema1| {
+            }
+
+        }
+        ) }?.{ $subj$.R|kotlin/Any.toString|() }
+        R|<local>/df1_toStringSafe|
+    }

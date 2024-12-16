@@ -1,0 +1,450 @@
+--- KtFile ---
+<File name: propertyDelegateInitializer.kt, Physical: true>
+<ELEMENT>package test
+
+interface MyInterface {
+    operator fun getValue(thisRef: Any, property: Any): MyInterface
+}
+
+class Foo(constructorParam: MyInterface) {
+    val regularProperty: MyInterface
+
+    val property: MyInterface by constructorParam
+}
+</ELEMENT> [(0,242)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtPackageDirective ---
+<File name: propertyDelegateInitializer.kt, Physical: true>
+<ELEMENT>package test</ELEMENT> [(0,12)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtClass ---
+<File name: propertyDelegateInitializer.kt, Physical: true>
+<ELEMENT>interface MyInterface {
+    operator fun getValue(thisRef: Any, property: Any): MyInterface
+}</ELEMENT> [(14,107)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtNamedFunction ---
+<File name: propertyDelegateInitializer.kt, Physical: true>
+<ELEMENT>operator fun getValue(thisRef: Any, property: Any): MyInterface</ELEMENT> [(42,105)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public abstract interface MyInterface : R|kotlin/Any|
+                Type: test.MyInterface
+
+--- KtParameter ---
+<File name: propertyDelegateInitializer.kt, Physical: true>
+operator fun getValue(<ELEMENT>thisRef: Any</ELEMENT>, property: Any): MyInterface [(64,76)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public abstract interface MyInterface : R|kotlin/Any|
+                Type: test.MyInterface
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol property: R|kotlin/Any|
+                FirValueParameterSymbol thisRef: R|kotlin/Any|
+
+--- KtTypeReference ---
+<File name: propertyDelegateInitializer.kt, Physical: true>
+operator fun getValue(thisRef: <ELEMENT>Any</ELEMENT>, property: Any): MyInterface [(73,76)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public abstract interface MyInterface : R|kotlin/Any|
+                Type: test.MyInterface
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol property: R|kotlin/Any|
+                FirValueParameterSymbol thisRef: R|kotlin/Any|
+
+--- KtParameter ---
+<File name: propertyDelegateInitializer.kt, Physical: true>
+operator fun getValue(thisRef: Any, <ELEMENT>property: Any</ELEMENT>): MyInterface [(78,91)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public abstract interface MyInterface : R|kotlin/Any|
+                Type: test.MyInterface
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol property: R|kotlin/Any|
+                FirValueParameterSymbol thisRef: R|kotlin/Any|
+
+--- KtTypeReference ---
+<File name: propertyDelegateInitializer.kt, Physical: true>
+operator fun getValue(thisRef: Any, property: <ELEMENT>Any</ELEMENT>): MyInterface [(88,91)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public abstract interface MyInterface : R|kotlin/Any|
+                Type: test.MyInterface
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol property: R|kotlin/Any|
+                FirValueParameterSymbol thisRef: R|kotlin/Any|
+
+--- KtTypeReference ---
+<File name: propertyDelegateInitializer.kt, Physical: true>
+operator fun getValue(thisRef: Any, property: Any): <ELEMENT>MyInterface</ELEMENT> [(94,105)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public abstract interface MyInterface : R|kotlin/Any|
+                Type: test.MyInterface
+
+--- KtClass ---
+<File name: propertyDelegateInitializer.kt, Physical: true>
+<ELEMENT>class Foo(constructorParam: MyInterface) {
+    val regularProperty: MyInterface
+
+    val property: MyInterface by constructorParam
+}</ELEMENT> [(109,241)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtPrimaryConstructor ---
+<File name: propertyDelegateInitializer.kt, Physical: true>
+<ELEMENT>(constructorParam: MyInterface)</ELEMENT> [(118,149)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: test.Foo
+
+--- KtParameter ---
+<File name: propertyDelegateInitializer.kt, Physical: true>
+(<ELEMENT>constructorParam: MyInterface</ELEMENT>) [(119,148)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol constructorParam: R|test/MyInterface|
+
+--- KtTypeReference ---
+<File name: propertyDelegateInitializer.kt, Physical: true>
+(constructorParam: <ELEMENT>MyInterface</ELEMENT>) [(137,148)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol constructorParam: R|test/MyInterface|
+
+--- KtProperty ---
+<File name: propertyDelegateInitializer.kt, Physical: true>
+class Foo(constructorParam: MyInterface) {
+    <ELEMENT>val regularProperty: MyInterface</ELEMENT>
+
+    val property: MyInterface by constructorParam
+} [(156,188)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: test.Foo
+
+--- KtTypeReference ---
+<File name: propertyDelegateInitializer.kt, Physical: true>
+class Foo(constructorParam: MyInterface) {
+    val regularProperty: <ELEMENT>MyInterface</ELEMENT>
+
+    val property: MyInterface by constructorParam
+} [(177,188)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: test.Foo
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol constructorParam: R|test/MyInterface|
+
+--- KtProperty ---
+<File name: propertyDelegateInitializer.kt, Physical: true>
+class Foo(constructorParam: MyInterface) {
+    val regularProperty: MyInterface
+
+    <ELEMENT>val property: MyInterface by constructorParam</ELEMENT>
+} [(194,239)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: test.Foo
+
+--- KtTypeReference ---
+<File name: propertyDelegateInitializer.kt, Physical: true>
+class Foo(constructorParam: MyInterface) {
+    val regularProperty: MyInterface
+
+    val property: <ELEMENT>MyInterface</ELEMENT> by constructorParam
+} [(208,219)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: test.Foo
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol constructorParam: R|test/MyInterface|
+
+--- KtNameReferenceExpression ---
+<File name: propertyDelegateInitializer.kt, Physical: true>
+class Foo(constructorParam: MyInterface) {
+    val regularProperty: MyInterface
+
+    val property: MyInterface by <ELEMENT>constructorParam</ELEMENT>
+} [(223,239)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: test.Foo
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol constructorParam: R|test/MyInterface|
+
+FILE: [ResolvedTo(IMPORTS)] propertyDelegateInitializer.kt
+    public abstract [ResolvedTo(STATUS)] interface MyInterface : R|kotlin/Any| {
+        public abstract operator [ResolvedTo(BODY_RESOLVE)] fun getValue([ResolvedTo(BODY_RESOLVE)] thisRef: R|kotlin/Any|, [ResolvedTo(BODY_RESOLVE)] property: R|kotlin/Any|): R|test/MyInterface|
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] constructorParam: R|test/MyInterface|): R|test/Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val regularProperty: R|test/MyInterface|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|test/MyInterface|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val property: R|test/MyInterface|by R|<local>/constructorParam|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|test/MyInterface| {
+                ^ this@R|test/Foo|.D|test/Foo.property|.R|test/MyInterface.getValue|(this@R|test/Foo|, ::R|test/Foo.property|)
+            }
+
+    }

@@ -1,0 +1,1161 @@
+--- KtFile ---
+<File name: onLabel.kt, Physical: true>
+<ELEMENT>fun test(a: Any) {
+    if (a !is Foo) {
+        return
+    }
+
+    var result: Int = 0
+
+    loop@ while (true) {
+        if (!a.process()) {
+            break@loop
+        }
+    }
+}
+
+interface Foo {
+    fun process(): Boolean
+}
+</ELEMENT> [(0,227)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtPackageDirective ---
+<File name: onLabel.kt, Physical: true>
+<ELEMENT></ELEMENT> [(0,0)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtNamedFunction ---
+<File name: onLabel.kt, Physical: true>
+<ELEMENT>fun test(a: Any) {
+    if (a !is Foo) {
+        return
+    }
+
+    var result: Int = 0
+
+    loop@ while (true) {
+        if (!a.process()) {
+            break@loop
+        }
+    }
+}</ELEMENT> [(0,180)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtParameter ---
+<File name: onLabel.kt, Physical: true>
+fun test(<ELEMENT>a: Any</ELEMENT>) {
+    if (a !is Foo) {
+        return
+    }
+
+    var result: Int = 0
+
+    loop@ while (true) {
+        if (!a.process()) {
+            break@loop
+        }
+    }
+} [(9,15)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+
+--- KtTypeReference ---
+<File name: onLabel.kt, Physical: true>
+fun test(a: <ELEMENT>Any</ELEMENT>) {
+    if (a !is Foo) {
+        return
+    }
+
+    var result: Int = 0
+
+    loop@ while (true) {
+        if (!a.process()) {
+            break@loop
+        }
+    }
+} [(12,15)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+
+--- KtBlockExpression ---
+<File name: onLabel.kt, Physical: true>
+fun test(a: Any) <ELEMENT>{
+    if (a !is Foo) {
+        return
+    }
+
+    var result: Int = 0
+
+    loop@ while (true) {
+        if (!a.process()) {
+            break@loop
+        }
+    }
+}</ELEMENT> [(17,180)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+
+--- KtIfExpression ---
+<File name: onLabel.kt, Physical: true>
+fun test(a: Any) {
+    <ELEMENT>if (a !is Foo) {
+        return
+    }</ELEMENT>
+
+    var result: Int = 0
+
+    loop@ while (true) {
+        if (!a.process()) {
+            break@loop
+        }
+    }
+} [(23,60)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+
+--- KtIsExpression ---
+<File name: onLabel.kt, Physical: true>
+fun test(a: Any) {
+    if (<ELEMENT>a !is Foo</ELEMENT>) {
+        return
+    }
+
+    var result: Int = 0
+
+    loop@ while (true) {
+        if (!a.process()) {
+            break@loop
+        }
+    }
+} [(27,36)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: onLabel.kt, Physical: true>
+fun test(a: Any) {
+    if (<ELEMENT>a</ELEMENT> !is Foo) {
+        return
+    }
+
+    var result: Int = 0
+
+    loop@ while (true) {
+        if (!a.process()) {
+            break@loop
+        }
+    }
+} [(27,28)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+
+--- KtTypeReference ---
+<File name: onLabel.kt, Physical: true>
+fun test(a: Any) {
+    if (a !is <ELEMENT>Foo</ELEMENT>) {
+        return
+    }
+
+    var result: Int = 0
+
+    loop@ while (true) {
+        if (!a.process()) {
+            break@loop
+        }
+    }
+} [(33,36)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+
+--- KtBlockExpression ---
+<File name: onLabel.kt, Physical: true>
+fun test(a: Any) {
+    if (a !is Foo) <ELEMENT>{
+        return
+    }</ELEMENT>
+
+    var result: Int = 0
+
+    loop@ while (true) {
+        if (!a.process()) {
+            break@loop
+        }
+    }
+} [(38,60)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+
+--- KtReturnExpression ---
+<File name: onLabel.kt, Physical: true>
+fun test(a: Any) {
+    if (a !is Foo) {
+        <ELEMENT>return</ELEMENT>
+    }
+
+    var result: Int = 0
+
+    loop@ while (true) {
+        if (!a.process()) {
+            break@loop
+        }
+    }
+} [(48,54)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Scope: FirLocalScope
+
+--- KtProperty ---
+<File name: onLabel.kt, Physical: true>
+fun test(a: Any) {
+    if (a !is Foo) {
+        return
+    }
+
+    <ELEMENT>var result: Int = 0</ELEMENT>
+
+    loop@ while (true) {
+        if (!a.process()) {
+            break@loop
+        }
+    }
+} [(66,85)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol a: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtTypeReference ---
+<File name: onLabel.kt, Physical: true>
+fun test(a: Any) {
+    if (a !is Foo) {
+        return
+    }
+
+    var result: <ELEMENT>Int</ELEMENT> = 0
+
+    loop@ while (true) {
+        if (!a.process()) {
+            break@loop
+        }
+    }
+} [(78,81)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol a: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtConstantExpression ---
+<File name: onLabel.kt, Physical: true>
+fun test(a: Any) {
+    if (a !is Foo) {
+        return
+    }
+
+    var result: Int = <ELEMENT>0</ELEMENT>
+
+    loop@ while (true) {
+        if (!a.process()) {
+            break@loop
+        }
+    }
+} [(84,85)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol a: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtLabelReferenceExpression ---
+<File name: onLabel.kt, Physical: true>
+fun test(a: Any) {
+    if (a !is Foo) {
+        return
+    }
+
+    var result: Int = 0
+
+    <ELEMENT>loop@</ELEMENT> while (true) {
+        if (!a.process()) {
+            break@loop
+        }
+    }
+} [(91,96)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar result: R|kotlin/Int|
+Smart Casts:
+    FirValueParameterSymbol a: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtWhileExpression ---
+<File name: onLabel.kt, Physical: true>
+fun test(a: Any) {
+    if (a !is Foo) {
+        return
+    }
+
+    var result: Int = 0
+
+    loop@ <ELEMENT>while (true) {
+        if (!a.process()) {
+            break@loop
+        }
+    }</ELEMENT>
+} [(97,178)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar result: R|kotlin/Int|
+Smart Casts:
+    FirValueParameterSymbol a: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtConstantExpression ---
+<File name: onLabel.kt, Physical: true>
+fun test(a: Any) {
+    if (a !is Foo) {
+        return
+    }
+
+    var result: Int = 0
+
+    loop@ while (<ELEMENT>true</ELEMENT>) {
+        if (!a.process()) {
+            break@loop
+        }
+    }
+} [(104,108)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar result: R|kotlin/Int|
+Smart Casts:
+    FirValueParameterSymbol a: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtBlockExpression ---
+<File name: onLabel.kt, Physical: true>
+fun test(a: Any) {
+    if (a !is Foo) {
+        return
+    }
+
+    var result: Int = 0
+
+    loop@ while (true) <ELEMENT>{
+        if (!a.process()) {
+            break@loop
+        }
+    }</ELEMENT>
+} [(110,178)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar result: R|kotlin/Int|
+Smart Casts:
+    FirValueParameterSymbol a: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtIfExpression ---
+<File name: onLabel.kt, Physical: true>
+fun test(a: Any) {
+    if (a !is Foo) {
+        return
+    }
+
+    var result: Int = 0
+
+    loop@ while (true) {
+        <ELEMENT>if (!a.process()) {
+            break@loop
+        }</ELEMENT>
+    }
+} [(120,172)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar result: R|kotlin/Int|
+    Element 8
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol a: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtPrefixExpression ---
+<File name: onLabel.kt, Physical: true>
+fun test(a: Any) {
+    if (a !is Foo) {
+        return
+    }
+
+    var result: Int = 0
+
+    loop@ while (true) {
+        if (<ELEMENT>!a.process()</ELEMENT>) {
+            break@loop
+        }
+    }
+} [(124,136)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar result: R|kotlin/Int|
+    Element 8
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol a: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtOperationReferenceExpression ---
+<File name: onLabel.kt, Physical: true>
+fun test(a: Any) {
+    if (a !is Foo) {
+        return
+    }
+
+    var result: Int = 0
+
+    loop@ while (true) {
+        if (<ELEMENT>!</ELEMENT>a.process()) {
+            break@loop
+        }
+    }
+} [(124,125)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar result: R|kotlin/Int|
+    Element 8
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol a: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtDotQualifiedExpression ---
+<File name: onLabel.kt, Physical: true>
+fun test(a: Any) {
+    if (a !is Foo) {
+        return
+    }
+
+    var result: Int = 0
+
+    loop@ while (true) {
+        if (!<ELEMENT>a.process()</ELEMENT>) {
+            break@loop
+        }
+    }
+} [(125,136)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar result: R|kotlin/Int|
+    Element 8
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol a: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtNameReferenceExpression ---
+<File name: onLabel.kt, Physical: true>
+fun test(a: Any) {
+    if (a !is Foo) {
+        return
+    }
+
+    var result: Int = 0
+
+    loop@ while (true) {
+        if (!<ELEMENT>a</ELEMENT>.process()) {
+            break@loop
+        }
+    }
+} [(125,126)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar result: R|kotlin/Int|
+    Element 8
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol a: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtNameReferenceExpression ---
+<File name: onLabel.kt, Physical: true>
+fun test(a: Any) {
+    if (a !is Foo) {
+        return
+    }
+
+    var result: Int = 0
+
+    loop@ while (true) {
+        if (!a.<ELEMENT>process</ELEMENT>()) {
+            break@loop
+        }
+    }
+} [(127,134)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar result: R|kotlin/Int|
+    Element 8
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol a: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtValueArgumentList ---
+<File name: onLabel.kt, Physical: true>
+fun test(a: Any) {
+    if (a !is Foo) {
+        return
+    }
+
+    var result: Int = 0
+
+    loop@ while (true) {
+        if (!a.process<ELEMENT>()</ELEMENT>) {
+            break@loop
+        }
+    }
+} [(134,136)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar result: R|kotlin/Int|
+    Element 8
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol a: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtBlockExpression ---
+<File name: onLabel.kt, Physical: true>
+fun test(a: Any) {
+    if (a !is Foo) {
+        return
+    }
+
+    var result: Int = 0
+
+    loop@ while (true) {
+        if (!a.process()) <ELEMENT>{
+            break@loop
+        }</ELEMENT>
+    }
+} [(138,172)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar result: R|kotlin/Int|
+    Element 8
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol a: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtBreakExpression ---
+<File name: onLabel.kt, Physical: true>
+fun test(a: Any) {
+    if (a !is Foo) {
+        return
+    }
+
+    var result: Int = 0
+
+    loop@ while (true) {
+        if (!a.process()) {
+            <ELEMENT>break@loop</ELEMENT>
+        }
+    }
+} [(152,162)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar result: R|kotlin/Int|
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol a: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtClass ---
+<File name: onLabel.kt, Physical: true>
+<ELEMENT>interface Foo {
+    fun process(): Boolean
+}</ELEMENT> [(182,226)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtNamedFunction ---
+<File name: onLabel.kt, Physical: true>
+<ELEMENT>fun process(): Boolean</ELEMENT> [(202,224)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public abstract interface Foo : R|kotlin/Any|
+                Type: Foo
+
+--- KtTypeReference ---
+<File name: onLabel.kt, Physical: true>
+fun process(): <ELEMENT>Boolean</ELEMENT> [(217,224)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public abstract interface Foo : R|kotlin/Any|
+                Type: Foo
+
+FILE: [ResolvedTo(IMPORTS)] onLabel.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/a| !is R|Foo|) ->  {
+                ^test Unit
+            }
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] lvar result: R|kotlin/Int| = Int(0)
+        loop@while(Boolean(true)) {
+            when () {
+                R|<local>/a|.R|/Foo.process|().R|kotlin/Boolean.not|() ->  {
+                    break@@@[Boolean(true)]
+                }
+            }
+
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] fun process(): R|kotlin/Boolean|
+
+    }

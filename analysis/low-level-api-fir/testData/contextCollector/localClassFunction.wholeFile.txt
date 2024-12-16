@@ -1,0 +1,476 @@
+--- KtFile ---
+<File name: localClassFunction.kt, Physical: true>
+<ELEMENT>fun test() {
+    class Local {
+        fun foo(): String {
+            return "foo"
+        }
+    }
+
+    Local().foo()
+}
+</ELEMENT> [(0,121)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtPackageDirective ---
+<File name: localClassFunction.kt, Physical: true>
+<ELEMENT></ELEMENT> [(0,0)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtNamedFunction ---
+<File name: localClassFunction.kt, Physical: true>
+<ELEMENT>fun test() {
+    class Local {
+        fun foo(): String {
+            return "foo"
+        }
+    }
+
+    Local().foo()
+}</ELEMENT> [(0,120)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtBlockExpression ---
+<File name: localClassFunction.kt, Physical: true>
+fun test() <ELEMENT>{
+    class Local {
+        fun foo(): String {
+            return "foo"
+        }
+    }
+
+    Local().foo()
+}</ELEMENT> [(11,120)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+
+--- KtClass ---
+<File name: localClassFunction.kt, Physical: true>
+<ELEMENT>class Local {
+        fun foo(): String {
+            return "foo"
+        }
+    }</ELEMENT> [(17,99)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+
+--- KtNamedFunction ---
+<File name: localClassFunction.kt, Physical: true>
+<ELEMENT>fun foo(): String {
+            return "foo"
+        }</ELEMENT> [(39,93)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol local final class Local : R|kotlin/Any|
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol local final class Local : R|kotlin/Any|
+                Type: <local>.Local
+
+--- KtTypeReference ---
+<File name: localClassFunction.kt, Physical: true>
+fun foo(): <ELEMENT>String</ELEMENT> {
+            return "foo"
+        } [(50,56)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol local final class Local : R|kotlin/Any|
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol local final class Local : R|kotlin/Any|
+                Type: <local>.Local
+
+--- KtBlockExpression ---
+<File name: localClassFunction.kt, Physical: true>
+fun foo(): String <ELEMENT>{
+            return "foo"
+        }</ELEMENT> [(57,93)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol local final class Local : R|kotlin/Any|
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol local final class Local : R|kotlin/Any|
+                Type: <local>.Local
+    Element 9
+        Scope: FirLocalScope
+
+--- KtReturnExpression ---
+<File name: localClassFunction.kt, Physical: true>
+fun foo(): String {
+            <ELEMENT>return "foo"</ELEMENT>
+        } [(71,83)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol local final class Local : R|kotlin/Any|
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol local final class Local : R|kotlin/Any|
+                Type: <local>.Local
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Scope: FirLocalScope
+
+--- KtStringTemplateExpression ---
+<File name: localClassFunction.kt, Physical: true>
+fun foo(): String {
+            return <ELEMENT>"foo"</ELEMENT>
+        } [(78,83)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol local final class Local : R|kotlin/Any|
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol local final class Local : R|kotlin/Any|
+                Type: <local>.Local
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Scope: FirLocalScope
+
+--- KtDotQualifiedExpression ---
+<File name: localClassFunction.kt, Physical: true>
+fun test() {
+    class Local {
+        fun foo(): String {
+            return "foo"
+        }
+    }
+
+    <ELEMENT>Local().foo()</ELEMENT>
+} [(105,118)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol local final class Local : R|kotlin/Any|
+
+--- KtCallExpression ---
+<File name: localClassFunction.kt, Physical: true>
+fun test() {
+    class Local {
+        fun foo(): String {
+            return "foo"
+        }
+    }
+
+    <ELEMENT>Local()</ELEMENT>.foo()
+} [(105,112)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol local final class Local : R|kotlin/Any|
+
+--- KtNameReferenceExpression ---
+<File name: localClassFunction.kt, Physical: true>
+fun test() {
+    class Local {
+        fun foo(): String {
+            return "foo"
+        }
+    }
+
+    <ELEMENT>Local</ELEMENT>().foo()
+} [(105,110)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol local final class Local : R|kotlin/Any|
+
+--- KtValueArgumentList ---
+<File name: localClassFunction.kt, Physical: true>
+fun test() {
+    class Local {
+        fun foo(): String {
+            return "foo"
+        }
+    }
+
+    Local<ELEMENT>()</ELEMENT>.foo()
+} [(110,112)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol local final class Local : R|kotlin/Any|
+
+--- KtNameReferenceExpression ---
+<File name: localClassFunction.kt, Physical: true>
+fun test() {
+    class Local {
+        fun foo(): String {
+            return "foo"
+        }
+    }
+
+    Local().<ELEMENT>foo</ELEMENT>()
+} [(113,116)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol local final class Local : R|kotlin/Any|
+
+--- KtValueArgumentList ---
+<File name: localClassFunction.kt, Physical: true>
+fun test() {
+    class Local {
+        fun foo(): String {
+            return "foo"
+        }
+    }
+
+    Local().foo<ELEMENT>()</ELEMENT>
+} [(116,118)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol local final class Local : R|kotlin/Any|
+
+FILE: [ResolvedTo(IMPORTS)] localClassFunction.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        local final [ResolvedTo(BODY_RESOLVE)] class Local : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor(): R|<local>/Local| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/String| {
+                ^foo String(foo)
+            }
+
+        }
+
+        R|<local>/Local.Local|().R|<local>/foo|()
+    }

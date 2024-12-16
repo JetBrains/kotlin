@@ -1,0 +1,516 @@
+--- KtFile ---
+<File name: extensionReceiver.kt, Physical: true>
+<ELEMENT>interface Foo {}
+
+fun Any.test() {
+    if (this is Foo) {
+        consume(this)
+    }
+}
+
+fun consume(obj: Foo) {}
+</ELEMENT> [(0,114)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtPackageDirective ---
+<File name: extensionReceiver.kt, Physical: true>
+<ELEMENT></ELEMENT> [(0,0)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtClass ---
+<File name: extensionReceiver.kt, Physical: true>
+<ELEMENT>interface Foo {}</ELEMENT> [(0,16)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtNamedFunction ---
+<File name: extensionReceiver.kt, Physical: true>
+<ELEMENT>fun Any.test() {
+    if (this is Foo) {
+        consume(this)
+    }
+}</ELEMENT> [(18,87)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtTypeReference ---
+<File name: extensionReceiver.kt, Physical: true>
+fun <ELEMENT>Any</ELEMENT>.test() {
+    if (this is Foo) {
+        consume(this)
+    }
+} [(22,25)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtBlockExpression ---
+<File name: extensionReceiver.kt, Physical: true>
+fun Any.test() <ELEMENT>{
+    if (this is Foo) {
+        consume(this)
+    }
+}</ELEMENT> [(33,87)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Any|
+                Type: kotlin.Any
+
+--- KtIfExpression ---
+<File name: extensionReceiver.kt, Physical: true>
+fun Any.test() {
+    <ELEMENT>if (this is Foo) {
+        consume(this)
+    }</ELEMENT>
+} [(39,85)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Any|
+                Type: kotlin.Any
+    Element 8
+        Scope: FirLocalScope
+
+--- KtIsExpression ---
+<File name: extensionReceiver.kt, Physical: true>
+fun Any.test() {
+    if (<ELEMENT>this is Foo</ELEMENT>) {
+        consume(this)
+    }
+} [(43,54)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Any|
+                Type: kotlin.Any
+    Element 8
+        Scope: FirLocalScope
+
+--- KtThisExpression ---
+<File name: extensionReceiver.kt, Physical: true>
+fun Any.test() {
+    if (<ELEMENT>this</ELEMENT> is Foo) {
+        consume(this)
+    }
+} [(43,47)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Any|
+                Type: kotlin.Any
+    Element 8
+        Scope: FirLocalScope
+
+--- KtTypeReference ---
+<File name: extensionReceiver.kt, Physical: true>
+fun Any.test() {
+    if (this is <ELEMENT>Foo</ELEMENT>) {
+        consume(this)
+    }
+} [(51,54)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Any|
+                Type: kotlin.Any
+    Element 8
+        Scope: FirLocalScope
+
+--- KtBlockExpression ---
+<File name: extensionReceiver.kt, Physical: true>
+fun Any.test() {
+    if (this is Foo) <ELEMENT>{
+        consume(this)
+    }</ELEMENT>
+} [(56,85)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Any|
+                Type: Foo
+    Element 8
+        Scope: FirLocalScope
+Smart Casts:
+    FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtCallExpression ---
+<File name: extensionReceiver.kt, Physical: true>
+fun Any.test() {
+    if (this is Foo) {
+        <ELEMENT>consume(this)</ELEMENT>
+    }
+} [(66,79)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Any|
+                Type: Foo
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Scope: FirLocalScope
+Smart Casts:
+    FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtNameReferenceExpression ---
+<File name: extensionReceiver.kt, Physical: true>
+fun Any.test() {
+    if (this is Foo) {
+        <ELEMENT>consume</ELEMENT>(this)
+    }
+} [(66,73)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Any|
+                Type: Foo
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Scope: FirLocalScope
+Smart Casts:
+    FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtValueArgumentList ---
+<File name: extensionReceiver.kt, Physical: true>
+fun Any.test() {
+    if (this is Foo) {
+        consume<ELEMENT>(this)</ELEMENT>
+    }
+} [(73,79)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Any|
+                Type: Foo
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Scope: FirLocalScope
+Smart Casts:
+    FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtThisExpression ---
+<File name: extensionReceiver.kt, Physical: true>
+fun Any.test() {
+    if (this is Foo) {
+        consume(<ELEMENT>this</ELEMENT>)
+    }
+} [(74,78)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Implicit receiver:
+            FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Any|
+                Type: Foo
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Scope: FirLocalScope
+Smart Casts:
+    FirReceiverParameterSymbol <explicit receiver parameter>: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+--- KtNamedFunction ---
+<File name: extensionReceiver.kt, Physical: true>
+<ELEMENT>fun consume(obj: Foo) {}</ELEMENT> [(89,113)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtParameter ---
+<File name: extensionReceiver.kt, Physical: true>
+fun consume(<ELEMENT>obj: Foo</ELEMENT>) {} [(101,109)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|Foo|
+
+--- KtTypeReference ---
+<File name: extensionReceiver.kt, Physical: true>
+fun consume(obj: <ELEMENT>Foo</ELEMENT>) {} [(106,109)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|Foo|
+
+--- KtBlockExpression ---
+<File name: extensionReceiver.kt, Physical: true>
+fun consume(obj: Foo) <ELEMENT>{}</ELEMENT> [(111,113)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol obj: R|Foo|
+
+FILE: [ResolvedTo(IMPORTS)] extensionReceiver.kt
+    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/Any|.test(): R|kotlin/Unit| {
+        when () {
+            (this@R|/test| is R|Foo|) ->  {
+                R|/consume|(this@R|/test|)
+            }
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun consume([ResolvedTo(BODY_RESOLVE)] obj: R|Foo|): R|kotlin/Unit| {
+    }

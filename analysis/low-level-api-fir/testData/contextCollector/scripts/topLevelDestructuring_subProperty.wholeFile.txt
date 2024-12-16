@@ -1,0 +1,673 @@
+--- KtFile ---
+<File name: topLevelDestructuring_subProperty.kts, Physical: true>
+<ELEMENT>data class TwoValues(val first: Int, val second: Int)
+
+val (one, two) = TwoValues(1, 2)
+</ELEMENT> [(0,88)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtPackageDirective ---
+<File name: topLevelDestructuring_subProperty.kts, Physical: true>
+<ELEMENT></ELEMENT> [(0,0)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtScript ---
+<File name: topLevelDestructuring_subProperty.kts, Physical: true>
+<ELEMENT>data class TwoValues(val first: Int, val second: Int)
+
+val (one, two) = TwoValues(1, 2)
+</ELEMENT> [(0,88)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtClass ---
+<File name: topLevelDestructuring_subProperty.kts, Physical: true>
+<ELEMENT>data class TwoValues(val first: Int, val second: Int)</ELEMENT> [(0,53)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+            Properties:
+                FirPropertySymbol public final val one: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+                FirPropertySymbol public final val two: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+--- KtPrimaryConstructor ---
+<File name: topLevelDestructuring_subProperty.kts, Physical: true>
+<ELEMENT>(val first: Int, val second: Int)</ELEMENT> [(20,53)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+            Properties:
+                FirPropertySymbol public final val one: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+                FirPropertySymbol public final val two: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Implicit receiver:
+            FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+                Type: TwoValues
+
+--- KtParameter ---
+<File name: topLevelDestructuring_subProperty.kts, Physical: true>
+(<ELEMENT>val first: Int</ELEMENT>, val second: Int) [(21,35)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+            Properties:
+                FirPropertySymbol public final val one: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+                FirPropertySymbol public final val two: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol first: R|kotlin/Int|
+                FirValueParameterSymbol second: R|kotlin/Int|
+
+--- KtTypeReference ---
+<File name: topLevelDestructuring_subProperty.kts, Physical: true>
+(val first: <ELEMENT>Int</ELEMENT>, val second: Int) [(32,35)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+            Properties:
+                FirPropertySymbol public final val one: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+                FirPropertySymbol public final val two: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol first: R|kotlin/Int|
+                FirValueParameterSymbol second: R|kotlin/Int|
+
+--- KtParameter ---
+<File name: topLevelDestructuring_subProperty.kts, Physical: true>
+(val first: Int, <ELEMENT>val second: Int</ELEMENT>) [(37,52)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+            Properties:
+                FirPropertySymbol public final val one: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+                FirPropertySymbol public final val two: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol first: R|kotlin/Int|
+                FirValueParameterSymbol second: R|kotlin/Int|
+
+--- KtTypeReference ---
+<File name: topLevelDestructuring_subProperty.kts, Physical: true>
+(val first: Int, val second: <ELEMENT>Int</ELEMENT>) [(49,52)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+            Properties:
+                FirPropertySymbol public final val one: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+                FirPropertySymbol public final val two: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol first: R|kotlin/Int|
+                FirValueParameterSymbol second: R|kotlin/Int|
+
+--- KtDestructuringDeclaration ---
+<File name: topLevelDestructuring_subProperty.kts, Physical: true>
+data class TwoValues(val first: Int, val second: Int)
+
+<ELEMENT>val (one, two) = TwoValues(1, 2)</ELEMENT> [(55,87)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+            Properties:
+                FirPropertySymbol public final val one: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+                FirPropertySymbol public final val two: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+--- KtDestructuringDeclarationEntry ---
+<File name: topLevelDestructuring_subProperty.kts, Physical: true>
+data class TwoValues(val first: Int, val second: Int)
+
+val (<ELEMENT>one</ELEMENT>, two) = TwoValues(1, 2) [(60,63)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+            Properties:
+                FirPropertySymbol public final val one: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+                FirPropertySymbol public final val two: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+            Properties:
+                FirPropertySymbol lval <destruct>: R|TwoValues|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+--- KtDestructuringDeclarationEntry ---
+<File name: topLevelDestructuring_subProperty.kts, Physical: true>
+data class TwoValues(val first: Int, val second: Int)
+
+val (one, <ELEMENT>two</ELEMENT>) = TwoValues(1, 2) [(65,68)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+            Properties:
+                FirPropertySymbol public final val one: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+                FirPropertySymbol public final val two: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+            Properties:
+                FirPropertySymbol lval <destruct>: R|TwoValues|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+--- KtCallExpression ---
+<File name: topLevelDestructuring_subProperty.kts, Physical: true>
+data class TwoValues(val first: Int, val second: Int)
+
+val (one, two) = <ELEMENT>TwoValues(1, 2)</ELEMENT> [(72,87)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+            Properties:
+                FirPropertySymbol public final val one: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+                FirPropertySymbol public final val two: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+--- KtNameReferenceExpression ---
+<File name: topLevelDestructuring_subProperty.kts, Physical: true>
+data class TwoValues(val first: Int, val second: Int)
+
+val (one, two) = <ELEMENT>TwoValues</ELEMENT>(1, 2) [(72,81)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+            Properties:
+                FirPropertySymbol public final val one: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+                FirPropertySymbol public final val two: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+--- KtValueArgumentList ---
+<File name: topLevelDestructuring_subProperty.kts, Physical: true>
+data class TwoValues(val first: Int, val second: Int)
+
+val (one, two) = TwoValues<ELEMENT>(1, 2)</ELEMENT> [(81,87)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+            Properties:
+                FirPropertySymbol public final val one: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+                FirPropertySymbol public final val two: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+--- KtConstantExpression ---
+<File name: topLevelDestructuring_subProperty.kts, Physical: true>
+data class TwoValues(val first: Int, val second: Int)
+
+val (one, two) = TwoValues(<ELEMENT>1</ELEMENT>, 2) [(82,83)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+            Properties:
+                FirPropertySymbol public final val one: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+                FirPropertySymbol public final val two: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+--- KtConstantExpression ---
+<File name: topLevelDestructuring_subProperty.kts, Physical: true>
+data class TwoValues(val first: Int, val second: Int)
+
+val (one, two) = TwoValues(1, <ELEMENT>2</ELEMENT>) [(85,86)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+            Properties:
+                FirPropertySymbol public final val one: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+                FirPropertySymbol public final val two: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+FILE: [ResolvedTo(IMPORTS)] topLevelDestructuring_subProperty.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-topLevelDestructuring_subProperty.kts>
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class TwoValues : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] first: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] second: R|kotlin/Int|): R|TwoValues| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] val first: R|kotlin/Int| = R|<local>/first|
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] val second: R|kotlin/Int| = R|<local>/second|
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(BODY_RESOLVE)] fun component2(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] first: R|kotlin/Int| = this@R|/TwoValues|.R|/TwoValues.first|, [ResolvedTo(BODY_RESOLVE)] second: R|kotlin/Int| = this@R|/TwoValues|.R|/TwoValues.second|): R|TwoValues|
+
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] lval <destruct>: R|TwoValues| = R|/TwoValues.TwoValues|(Int(1), Int(2))
+        public final [ResolvedTo(BODY_RESOLVE)] val one: R|kotlin/Int| = R|<local>/<destruct>|.R|/TwoValues.component1|()
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val two: R|kotlin/Int| = R|<local>/<destruct>|.R|/TwoValues.component2|()
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

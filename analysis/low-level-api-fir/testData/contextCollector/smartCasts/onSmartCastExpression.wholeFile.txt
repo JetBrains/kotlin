@@ -1,0 +1,939 @@
+--- KtFile ---
+<File name: onSmartCastExpression.kt, Physical: true>
+<ELEMENT>open class Base {
+    open fun foo(): Int = 1
+}
+
+class Derived: Base() {
+    override fun foo(): Int = 2
+    fun boo(): Int = 3
+}
+
+fun main() {
+    val x = Base()
+    "".toString()
+    if (x !is Derived) return
+    "".toString()
+}
+</ELEMENT> [(0,231)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtPackageDirective ---
+<File name: onSmartCastExpression.kt, Physical: true>
+<ELEMENT></ELEMENT> [(0,0)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtClass ---
+<File name: onSmartCastExpression.kt, Physical: true>
+<ELEMENT>open class Base {
+    open fun foo(): Int = 1
+}</ELEMENT> [(0,47)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtNamedFunction ---
+<File name: onSmartCastExpression.kt, Physical: true>
+<ELEMENT>open fun foo(): Int = 1</ELEMENT> [(22,45)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public open class Base : R|kotlin/Any|
+                Type: Base
+
+--- KtTypeReference ---
+<File name: onSmartCastExpression.kt, Physical: true>
+open fun foo(): <ELEMENT>Int</ELEMENT> = 1 [(38,41)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public open class Base : R|kotlin/Any|
+                Type: Base
+
+--- KtConstantExpression ---
+<File name: onSmartCastExpression.kt, Physical: true>
+open fun foo(): Int = <ELEMENT>1</ELEMENT> [(44,45)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public open class Base : R|kotlin/Any|
+                Type: Base
+    Element 7
+        Scope: FirLocalScope
+
+--- KtClass ---
+<File name: onSmartCastExpression.kt, Physical: true>
+<ELEMENT>class Derived: Base() {
+    override fun foo(): Int = 2
+    fun boo(): Int = 3
+}</ELEMENT> [(49,129)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtSuperTypeCallEntry ---
+<File name: onSmartCastExpression.kt, Physical: true>
+class Derived: <ELEMENT>Base()</ELEMENT> {
+    override fun foo(): Int = 2
+    fun boo(): Int = 3
+} [(64,70)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+
+--- KtConstructorCalleeExpression ---
+<File name: onSmartCastExpression.kt, Physical: true>
+class Derived: <ELEMENT>Base</ELEMENT>() {
+    override fun foo(): Int = 2
+    fun boo(): Int = 3
+} [(64,68)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+
+--- KtTypeReference ---
+<File name: onSmartCastExpression.kt, Physical: true>
+class Derived: <ELEMENT>Base</ELEMENT>() {
+    override fun foo(): Int = 2
+    fun boo(): Int = 3
+} [(64,68)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtValueArgumentList ---
+<File name: onSmartCastExpression.kt, Physical: true>
+class Derived: Base<ELEMENT>()</ELEMENT> {
+    override fun foo(): Int = 2
+    fun boo(): Int = 3
+} [(68,70)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+
+--- KtNamedFunction ---
+<File name: onSmartCastExpression.kt, Physical: true>
+<ELEMENT>override fun foo(): Int = 2</ELEMENT> [(77,104)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Derived : R|Base|
+                Type: Derived
+
+--- KtTypeReference ---
+<File name: onSmartCastExpression.kt, Physical: true>
+override fun foo(): <ELEMENT>Int</ELEMENT> = 2 [(97,100)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Derived : R|Base|
+                Type: Derived
+
+--- KtConstantExpression ---
+<File name: onSmartCastExpression.kt, Physical: true>
+override fun foo(): Int = <ELEMENT>2</ELEMENT> [(103,104)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Derived : R|Base|
+                Type: Derived
+    Element 7
+        Scope: FirLocalScope
+
+--- KtNamedFunction ---
+<File name: onSmartCastExpression.kt, Physical: true>
+<ELEMENT>fun boo(): Int = 3</ELEMENT> [(109,127)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Derived : R|Base|
+                Type: Derived
+
+--- KtTypeReference ---
+<File name: onSmartCastExpression.kt, Physical: true>
+fun boo(): <ELEMENT>Int</ELEMENT> = 3 [(120,123)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Derived : R|Base|
+                Type: Derived
+
+--- KtConstantExpression ---
+<File name: onSmartCastExpression.kt, Physical: true>
+fun boo(): Int = <ELEMENT>3</ELEMENT> [(126,127)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Derived : R|Base|
+                Type: Derived
+    Element 7
+        Scope: FirLocalScope
+
+--- KtNamedFunction ---
+<File name: onSmartCastExpression.kt, Physical: true>
+<ELEMENT>fun main() {
+    val x = Base()
+    "".toString()
+    if (x !is Derived) return
+    "".toString()
+}</ELEMENT> [(131,230)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtBlockExpression ---
+<File name: onSmartCastExpression.kt, Physical: true>
+fun main() <ELEMENT>{
+    val x = Base()
+    "".toString()
+    if (x !is Derived) return
+    "".toString()
+}</ELEMENT> [(142,230)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+
+--- KtProperty ---
+<File name: onSmartCastExpression.kt, Physical: true>
+fun main() {
+    <ELEMENT>val x = Base()</ELEMENT>
+    "".toString()
+    if (x !is Derived) return
+    "".toString()
+} [(148,162)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+
+--- KtCallExpression ---
+<File name: onSmartCastExpression.kt, Physical: true>
+fun main() {
+    val x = <ELEMENT>Base()</ELEMENT>
+    "".toString()
+    if (x !is Derived) return
+    "".toString()
+} [(156,162)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: onSmartCastExpression.kt, Physical: true>
+fun main() {
+    val x = <ELEMENT>Base</ELEMENT>()
+    "".toString()
+    if (x !is Derived) return
+    "".toString()
+} [(156,160)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+
+--- KtValueArgumentList ---
+<File name: onSmartCastExpression.kt, Physical: true>
+fun main() {
+    val x = Base<ELEMENT>()</ELEMENT>
+    "".toString()
+    if (x !is Derived) return
+    "".toString()
+} [(160,162)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+
+--- KtDotQualifiedExpression ---
+<File name: onSmartCastExpression.kt, Physical: true>
+fun main() {
+    val x = Base()
+    <ELEMENT>"".toString()</ELEMENT>
+    if (x !is Derived) return
+    "".toString()
+} [(167,180)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval x: R|Base|
+
+--- KtStringTemplateExpression ---
+<File name: onSmartCastExpression.kt, Physical: true>
+fun main() {
+    val x = Base()
+    <ELEMENT>""</ELEMENT>.toString()
+    if (x !is Derived) return
+    "".toString()
+} [(167,169)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval x: R|Base|
+
+--- KtNameReferenceExpression ---
+<File name: onSmartCastExpression.kt, Physical: true>
+fun main() {
+    val x = Base()
+    "".<ELEMENT>toString</ELEMENT>()
+    if (x !is Derived) return
+    "".toString()
+} [(170,178)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval x: R|Base|
+
+--- KtValueArgumentList ---
+<File name: onSmartCastExpression.kt, Physical: true>
+fun main() {
+    val x = Base()
+    "".toString<ELEMENT>()</ELEMENT>
+    if (x !is Derived) return
+    "".toString()
+} [(178,180)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval x: R|Base|
+
+--- KtIfExpression ---
+<File name: onSmartCastExpression.kt, Physical: true>
+fun main() {
+    val x = Base()
+    "".toString()
+    <ELEMENT>if (x !is Derived) return</ELEMENT>
+    "".toString()
+} [(185,210)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval x: R|Base|
+
+--- KtIsExpression ---
+<File name: onSmartCastExpression.kt, Physical: true>
+fun main() {
+    val x = Base()
+    "".toString()
+    if (<ELEMENT>x !is Derived</ELEMENT>) return
+    "".toString()
+} [(189,202)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval x: R|Base|
+
+--- KtNameReferenceExpression ---
+<File name: onSmartCastExpression.kt, Physical: true>
+fun main() {
+    val x = Base()
+    "".toString()
+    if (<ELEMENT>x</ELEMENT> !is Derived) return
+    "".toString()
+} [(189,190)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval x: R|Base|
+
+--- KtTypeReference ---
+<File name: onSmartCastExpression.kt, Physical: true>
+fun main() {
+    val x = Base()
+    "".toString()
+    if (x !is <ELEMENT>Derived</ELEMENT>) return
+    "".toString()
+} [(195,202)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval x: R|Base|
+
+--- KtReturnExpression ---
+<File name: onSmartCastExpression.kt, Physical: true>
+fun main() {
+    val x = Base()
+    "".toString()
+    if (x !is Derived) <ELEMENT>return</ELEMENT>
+    "".toString()
+} [(204,210)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval x: R|Base|
+
+--- KtDotQualifiedExpression ---
+<File name: onSmartCastExpression.kt, Physical: true>
+fun main() {
+    val x = Base()
+    "".toString()
+    if (x !is Derived) return
+    <ELEMENT>"".toString()</ELEMENT>
+} [(215,228)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval x: R|Base|
+Smart Casts:
+    FirPropertySymbol lval x: R|Base|
+    Types:
+        Derived
+        kotlin.Any
+
+--- KtStringTemplateExpression ---
+<File name: onSmartCastExpression.kt, Physical: true>
+fun main() {
+    val x = Base()
+    "".toString()
+    if (x !is Derived) return
+    <ELEMENT>""</ELEMENT>.toString()
+} [(215,217)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval x: R|Base|
+Smart Casts:
+    FirPropertySymbol lval x: R|Base|
+    Types:
+        Derived
+        kotlin.Any
+
+--- KtNameReferenceExpression ---
+<File name: onSmartCastExpression.kt, Physical: true>
+fun main() {
+    val x = Base()
+    "".toString()
+    if (x !is Derived) return
+    "".<ELEMENT>toString</ELEMENT>()
+} [(218,226)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval x: R|Base|
+Smart Casts:
+    FirPropertySymbol lval x: R|Base|
+    Types:
+        Derived
+        kotlin.Any
+
+--- KtValueArgumentList ---
+<File name: onSmartCastExpression.kt, Physical: true>
+fun main() {
+    val x = Base()
+    "".toString()
+    if (x !is Derived) return
+    "".toString<ELEMENT>()</ELEMENT>
+} [(226,228)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval x: R|Base|
+Smart Casts:
+    FirPropertySymbol lval x: R|Base|
+    Types:
+        Derived
+        kotlin.Any
+
+FILE: [ResolvedTo(IMPORTS)] onSmartCastExpression.kt
+    public open [ResolvedTo(ANNOTATION_ARGUMENTS)] class Base : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
+            ^foo Int(1)
+        }
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Derived : R|Base| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|Derived| {
+            super<R|Base|>()
+        }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
+            ^foo Int(2)
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun boo(): R|kotlin/Int| {
+            ^boo Int(3)
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun main(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval x: R|Base| = R|/Base.Base|()
+        String().R|kotlin/String.toString|()
+        when () {
+            (R|<local>/x| !is R|Derived|) ->  {
+                ^main Unit
+            }
+        }
+
+        String().R|kotlin/String.toString|()
+    }

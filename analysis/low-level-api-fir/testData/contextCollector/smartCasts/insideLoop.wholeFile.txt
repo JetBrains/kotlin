@@ -1,0 +1,883 @@
+--- KtFile ---
+<File name: insideLoop.kt, Physical: true>
+<ELEMENT>interface Node {
+    val parent: Node?
+}
+
+fun test(initial: Node) {
+    var current = initial
+
+    while (current != null) {
+        consume(current)
+        current = current.parent
+    }
+}
+
+fun consume(node: Node) {}
+</ELEMENT> [(0,224)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtPackageDirective ---
+<File name: insideLoop.kt, Physical: true>
+<ELEMENT></ELEMENT> [(0,0)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtClass ---
+<File name: insideLoop.kt, Physical: true>
+<ELEMENT>interface Node {
+    val parent: Node?
+}</ELEMENT> [(0,40)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtProperty ---
+<File name: insideLoop.kt, Physical: true>
+interface Node {
+    <ELEMENT>val parent: Node?</ELEMENT>
+} [(21,38)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public abstract interface Node : R|kotlin/Any|
+                Type: Node
+
+--- KtTypeReference ---
+<File name: insideLoop.kt, Physical: true>
+interface Node {
+    val parent: <ELEMENT>Node?</ELEMENT>
+} [(33,38)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public abstract interface Node : R|kotlin/Any|
+                Type: Node
+
+--- KtNamedFunction ---
+<File name: insideLoop.kt, Physical: true>
+<ELEMENT>fun test(initial: Node) {
+    var current = initial
+
+    while (current != null) {
+        consume(current)
+        current = current.parent
+    }
+}</ELEMENT> [(42,195)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtParameter ---
+<File name: insideLoop.kt, Physical: true>
+fun test(<ELEMENT>initial: Node</ELEMENT>) {
+    var current = initial
+
+    while (current != null) {
+        consume(current)
+        current = current.parent
+    }
+} [(51,64)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol initial: R|Node|
+
+--- KtTypeReference ---
+<File name: insideLoop.kt, Physical: true>
+fun test(initial: <ELEMENT>Node</ELEMENT>) {
+    var current = initial
+
+    while (current != null) {
+        consume(current)
+        current = current.parent
+    }
+} [(60,64)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol initial: R|Node|
+
+--- KtBlockExpression ---
+<File name: insideLoop.kt, Physical: true>
+fun test(initial: Node) <ELEMENT>{
+    var current = initial
+
+    while (current != null) {
+        consume(current)
+        current = current.parent
+    }
+}</ELEMENT> [(66,195)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol initial: R|Node|
+
+--- KtProperty ---
+<File name: insideLoop.kt, Physical: true>
+fun test(initial: Node) {
+    <ELEMENT>var current = initial</ELEMENT>
+
+    while (current != null) {
+        consume(current)
+        current = current.parent
+    }
+} [(73,94)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol initial: R|Node|
+    Element 7
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: insideLoop.kt, Physical: true>
+fun test(initial: Node) {
+    var current = <ELEMENT>initial</ELEMENT>
+
+    while (current != null) {
+        consume(current)
+        current = current.parent
+    }
+} [(87,94)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol initial: R|Node|
+    Element 7
+        Scope: FirLocalScope
+
+--- KtWhileExpression ---
+<File name: insideLoop.kt, Physical: true>
+fun test(initial: Node) {
+    var current = initial
+
+    <ELEMENT>while (current != null) {
+        consume(current)
+        current = current.parent
+    }</ELEMENT>
+} [(104,193)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol initial: R|Node|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar current: R|Node|
+
+--- KtBinaryExpression ---
+<File name: insideLoop.kt, Physical: true>
+fun test(initial: Node) {
+    var current = initial
+
+    while (<ELEMENT>current != null</ELEMENT>) {
+        consume(current)
+        current = current.parent
+    }
+} [(111,126)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol initial: R|Node|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar current: R|Node|
+
+--- KtNameReferenceExpression ---
+<File name: insideLoop.kt, Physical: true>
+fun test(initial: Node) {
+    var current = initial
+
+    while (<ELEMENT>current</ELEMENT> != null) {
+        consume(current)
+        current = current.parent
+    }
+} [(111,118)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol initial: R|Node|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar current: R|Node|
+
+--- KtConstantExpression ---
+<File name: insideLoop.kt, Physical: true>
+fun test(initial: Node) {
+    var current = initial
+
+    while (current != <ELEMENT>null</ELEMENT>) {
+        consume(current)
+        current = current.parent
+    }
+} [(122,126)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol initial: R|Node|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar current: R|Node|
+
+--- KtBlockExpression ---
+<File name: insideLoop.kt, Physical: true>
+fun test(initial: Node) {
+    var current = initial
+
+    while (current != null) <ELEMENT>{
+        consume(current)
+        current = current.parent
+    }</ELEMENT>
+} [(128,193)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol initial: R|Node|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar current: R|Node|
+Smart Casts:
+    FirPropertySymbol lvar current: R|Node|
+    Types:
+        kotlin.Any
+
+--- KtCallExpression ---
+<File name: insideLoop.kt, Physical: true>
+fun test(initial: Node) {
+    var current = initial
+
+    while (current != null) {
+        <ELEMENT>consume(current)</ELEMENT>
+        current = current.parent
+    }
+} [(138,154)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol initial: R|Node|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar current: R|Node|
+    Element 8
+        Scope: FirLocalScope
+Smart Casts:
+    FirPropertySymbol lvar current: R|Node|
+    Types:
+        kotlin.Any
+
+--- KtNameReferenceExpression ---
+<File name: insideLoop.kt, Physical: true>
+fun test(initial: Node) {
+    var current = initial
+
+    while (current != null) {
+        <ELEMENT>consume</ELEMENT>(current)
+        current = current.parent
+    }
+} [(138,145)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol initial: R|Node|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar current: R|Node|
+    Element 8
+        Scope: FirLocalScope
+Smart Casts:
+    FirPropertySymbol lvar current: R|Node|
+    Types:
+        kotlin.Any
+
+--- KtValueArgumentList ---
+<File name: insideLoop.kt, Physical: true>
+fun test(initial: Node) {
+    var current = initial
+
+    while (current != null) {
+        consume<ELEMENT>(current)</ELEMENT>
+        current = current.parent
+    }
+} [(145,154)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol initial: R|Node|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar current: R|Node|
+    Element 8
+        Scope: FirLocalScope
+Smart Casts:
+    FirPropertySymbol lvar current: R|Node|
+    Types:
+        kotlin.Any
+
+--- KtNameReferenceExpression ---
+<File name: insideLoop.kt, Physical: true>
+fun test(initial: Node) {
+    var current = initial
+
+    while (current != null) {
+        consume(<ELEMENT>current</ELEMENT>)
+        current = current.parent
+    }
+} [(146,153)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol initial: R|Node|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar current: R|Node|
+    Element 8
+        Scope: FirLocalScope
+Smart Casts:
+    FirPropertySymbol lvar current: R|Node|
+    Types:
+        kotlin.Any
+
+--- KtBinaryExpression ---
+<File name: insideLoop.kt, Physical: true>
+fun test(initial: Node) {
+    var current = initial
+
+    while (current != null) {
+        consume(current)
+        <ELEMENT>current = current.parent</ELEMENT>
+    }
+} [(163,187)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol initial: R|Node|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar current: R|Node|
+    Element 8
+        Scope: FirLocalScope
+Smart Casts:
+    FirPropertySymbol lvar current: R|Node|
+    Types:
+        kotlin.Any
+
+--- KtNameReferenceExpression ---
+<File name: insideLoop.kt, Physical: true>
+fun test(initial: Node) {
+    var current = initial
+
+    while (current != null) {
+        consume(current)
+        <ELEMENT>current</ELEMENT> = current.parent
+    }
+} [(163,170)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol initial: R|Node|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar current: R|Node|
+    Element 8
+        Scope: FirLocalScope
+Smart Casts:
+    FirPropertySymbol lvar current: R|Node|
+    Types:
+        kotlin.Any
+
+--- KtDotQualifiedExpression ---
+<File name: insideLoop.kt, Physical: true>
+fun test(initial: Node) {
+    var current = initial
+
+    while (current != null) {
+        consume(current)
+        current = <ELEMENT>current.parent</ELEMENT>
+    }
+} [(173,187)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol initial: R|Node|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar current: R|Node|
+    Element 8
+        Scope: FirLocalScope
+Smart Casts:
+    FirPropertySymbol lvar current: R|Node|
+    Types:
+        kotlin.Any
+
+--- KtNameReferenceExpression ---
+<File name: insideLoop.kt, Physical: true>
+fun test(initial: Node) {
+    var current = initial
+
+    while (current != null) {
+        consume(current)
+        current = <ELEMENT>current</ELEMENT>.parent
+    }
+} [(173,180)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol initial: R|Node|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar current: R|Node|
+    Element 8
+        Scope: FirLocalScope
+Smart Casts:
+    FirPropertySymbol lvar current: R|Node|
+    Types:
+        kotlin.Any
+
+--- KtNameReferenceExpression ---
+<File name: insideLoop.kt, Physical: true>
+fun test(initial: Node) {
+    var current = initial
+
+    while (current != null) {
+        consume(current)
+        current = current.<ELEMENT>parent</ELEMENT>
+    }
+} [(181,187)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol initial: R|Node|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar current: R|Node|
+    Element 8
+        Scope: FirLocalScope
+Smart Casts:
+    FirPropertySymbol lvar current: R|Node|
+    Types:
+        kotlin.Any
+
+--- KtNamedFunction ---
+<File name: insideLoop.kt, Physical: true>
+<ELEMENT>fun consume(node: Node) {}</ELEMENT> [(197,223)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtParameter ---
+<File name: insideLoop.kt, Physical: true>
+fun consume(<ELEMENT>node: Node</ELEMENT>) {} [(209,219)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol node: R|Node|
+
+--- KtTypeReference ---
+<File name: insideLoop.kt, Physical: true>
+fun consume(node: <ELEMENT>Node</ELEMENT>) {} [(215,219)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol node: R|Node|
+
+--- KtBlockExpression ---
+<File name: insideLoop.kt, Physical: true>
+fun consume(node: Node) <ELEMENT>{}</ELEMENT> [(221,223)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol node: R|Node|
+
+FILE: [ResolvedTo(IMPORTS)] insideLoop.kt
+    public abstract [ResolvedTo(STATUS)] interface Node : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] val parent: R|Node?|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|Node?|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] initial: R|Node|): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lvar current: R|Node| = R|<local>/initial|
+        while(!=(R|<local>/current|, Null(null))) {
+            R|/consume|(R|<local>/current|)
+            R|<local>/current| = R|<local>/current|.R|/Node.parent|
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun consume([ResolvedTo(BODY_RESOLVE)] node: R|Node|): R|kotlin/Unit| {
+    }

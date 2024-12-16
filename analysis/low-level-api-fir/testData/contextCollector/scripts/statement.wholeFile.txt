@@ -1,0 +1,2010 @@
+--- KtFile ---
+<File name: statement.kts, Physical: true>
+<ELEMENT>class ScriptClass {
+    val memberProperty = 4
+}
+
+fun scriptFunction() = 42
+fun unusedScriptFunction(p: String) = 22
+
+scriptFunction()
+
+fun foo(i: Int, action: (Int) -> Unit) {
+    action(i)
+}
+
+foo(scriptFunction()) {
+    scriptFunction()
+}
+</ELEMENT> [(0,241)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtPackageDirective ---
+<File name: statement.kts, Physical: true>
+<ELEMENT></ELEMENT> [(0,0)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtScript ---
+<File name: statement.kts, Physical: true>
+<ELEMENT>class ScriptClass {
+    val memberProperty = 4
+}
+
+fun scriptFunction() = 42
+fun unusedScriptFunction(p: String) = 22
+
+scriptFunction()
+
+fun foo(i: Int, action: (Int) -> Unit) {
+    action(i)
+}
+
+foo(scriptFunction()) {
+    scriptFunction()
+}
+</ELEMENT> [(0,241)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtClass ---
+<File name: statement.kts, Physical: true>
+<ELEMENT>class ScriptClass {
+    val memberProperty = 4
+}</ELEMENT> [(0,48)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+--- KtProperty ---
+<File name: statement.kts, Physical: true>
+class ScriptClass {
+    <ELEMENT>val memberProperty = 4</ELEMENT>
+} [(24,46)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Implicit receiver:
+            FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+                Type: ScriptClass
+
+--- KtConstantExpression ---
+<File name: statement.kts, Physical: true>
+class ScriptClass {
+    val memberProperty = <ELEMENT>4</ELEMENT>
+} [(45,46)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Implicit receiver:
+            FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+                Type: ScriptClass
+    Element 12
+        Scope: FirLocalScope
+
+--- KtNamedFunction ---
+<File name: statement.kts, Physical: true>
+<ELEMENT>fun scriptFunction() = 42</ELEMENT> [(50,75)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+--- KtConstantExpression ---
+<File name: statement.kts, Physical: true>
+fun scriptFunction() = <ELEMENT>42</ELEMENT> [(73,75)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Scope: FirLocalScope
+
+--- KtNamedFunction ---
+<File name: statement.kts, Physical: true>
+<ELEMENT>fun unusedScriptFunction(p: String) = 22</ELEMENT> [(76,116)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+--- KtParameter ---
+<File name: statement.kts, Physical: true>
+fun unusedScriptFunction(<ELEMENT>p: String</ELEMENT>) = 22 [(101,110)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol p: R|kotlin/String|
+
+--- KtTypeReference ---
+<File name: statement.kts, Physical: true>
+fun unusedScriptFunction(p: <ELEMENT>String</ELEMENT>) = 22 [(104,110)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol p: R|kotlin/String|
+
+--- KtConstantExpression ---
+<File name: statement.kts, Physical: true>
+fun unusedScriptFunction(p: String) = <ELEMENT>22</ELEMENT> [(114,116)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol p: R|kotlin/String|
+
+--- KtScriptInitializer ---
+<File name: statement.kts, Physical: true>
+class ScriptClass {
+    val memberProperty = 4
+}
+
+fun scriptFunction() = 42
+fun unusedScriptFunction(p: String) = 22
+
+<ELEMENT>scriptFunction()</ELEMENT>
+
+fun foo(i: Int, action: (Int) -> Unit) {
+    action(i)
+}
+
+foo(scriptFunction()) {
+    scriptFunction()
+} [(118,134)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+--- KtCallExpression ---
+<File name: statement.kts, Physical: true>
+class ScriptClass {
+    val memberProperty = 4
+}
+
+fun scriptFunction() = 42
+fun unusedScriptFunction(p: String) = 22
+
+<ELEMENT>scriptFunction()</ELEMENT>
+
+fun foo(i: Int, action: (Int) -> Unit) {
+    action(i)
+}
+
+foo(scriptFunction()) {
+    scriptFunction()
+} [(118,134)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: statement.kts, Physical: true>
+class ScriptClass {
+    val memberProperty = 4
+}
+
+fun scriptFunction() = 42
+fun unusedScriptFunction(p: String) = 22
+
+<ELEMENT>scriptFunction</ELEMENT>()
+
+fun foo(i: Int, action: (Int) -> Unit) {
+    action(i)
+}
+
+foo(scriptFunction()) {
+    scriptFunction()
+} [(118,132)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Scope: FirLocalScope
+    Element 12
+        Scope: FirLocalScope
+
+--- KtValueArgumentList ---
+<File name: statement.kts, Physical: true>
+class ScriptClass {
+    val memberProperty = 4
+}
+
+fun scriptFunction() = 42
+fun unusedScriptFunction(p: String) = 22
+
+scriptFunction<ELEMENT>()</ELEMENT>
+
+fun foo(i: Int, action: (Int) -> Unit) {
+    action(i)
+}
+
+foo(scriptFunction()) {
+    scriptFunction()
+} [(132,134)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Scope: FirLocalScope
+    Element 12
+        Scope: FirLocalScope
+
+--- KtNamedFunction ---
+<File name: statement.kts, Physical: true>
+<ELEMENT>fun foo(i: Int, action: (Int) -> Unit) {
+    action(i)
+}</ELEMENT> [(136,192)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+--- KtParameter ---
+<File name: statement.kts, Physical: true>
+fun foo(<ELEMENT>i: Int</ELEMENT>, action: (Int) -> Unit) {
+    action(i)
+} [(144,150)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol action: R|(kotlin/Int) -> kotlin/Unit|
+                FirValueParameterSymbol i: R|kotlin/Int|
+
+--- KtTypeReference ---
+<File name: statement.kts, Physical: true>
+fun foo(i: <ELEMENT>Int</ELEMENT>, action: (Int) -> Unit) {
+    action(i)
+} [(147,150)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol action: R|(kotlin/Int) -> kotlin/Unit|
+                FirValueParameterSymbol i: R|kotlin/Int|
+
+--- KtParameter ---
+<File name: statement.kts, Physical: true>
+fun foo(i: Int, <ELEMENT>action: (Int) -> Unit</ELEMENT>) {
+    action(i)
+} [(152,173)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol action: R|(kotlin/Int) -> kotlin/Unit|
+                FirValueParameterSymbol i: R|kotlin/Int|
+
+--- KtTypeReference ---
+<File name: statement.kts, Physical: true>
+fun foo(i: Int, action: <ELEMENT>(Int) -> Unit</ELEMENT>) {
+    action(i)
+} [(160,173)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol action: R|(kotlin/Int) -> kotlin/Unit|
+                FirValueParameterSymbol i: R|kotlin/Int|
+
+--- KtBlockExpression ---
+<File name: statement.kts, Physical: true>
+fun foo(i: Int, action: (Int) -> Unit) <ELEMENT>{
+    action(i)
+}</ELEMENT> [(175,192)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol action: R|(kotlin/Int) -> kotlin/Unit|
+                FirValueParameterSymbol i: R|kotlin/Int|
+
+--- KtCallExpression ---
+<File name: statement.kts, Physical: true>
+fun foo(i: Int, action: (Int) -> Unit) {
+    <ELEMENT>action(i)</ELEMENT>
+} [(181,190)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol action: R|(kotlin/Int) -> kotlin/Unit|
+                FirValueParameterSymbol i: R|kotlin/Int|
+    Element 12
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: statement.kts, Physical: true>
+fun foo(i: Int, action: (Int) -> Unit) {
+    <ELEMENT>action</ELEMENT>(i)
+} [(181,187)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol action: R|(kotlin/Int) -> kotlin/Unit|
+                FirValueParameterSymbol i: R|kotlin/Int|
+    Element 12
+        Scope: FirLocalScope
+
+--- KtValueArgumentList ---
+<File name: statement.kts, Physical: true>
+fun foo(i: Int, action: (Int) -> Unit) {
+    action<ELEMENT>(i)</ELEMENT>
+} [(187,190)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol action: R|(kotlin/Int) -> kotlin/Unit|
+                FirValueParameterSymbol i: R|kotlin/Int|
+    Element 12
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: statement.kts, Physical: true>
+fun foo(i: Int, action: (Int) -> Unit) {
+    action(<ELEMENT>i</ELEMENT>)
+} [(188,189)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol action: R|(kotlin/Int) -> kotlin/Unit|
+                FirValueParameterSymbol i: R|kotlin/Int|
+    Element 12
+        Scope: FirLocalScope
+
+--- KtScriptInitializer ---
+<File name: statement.kts, Physical: true>
+class ScriptClass {
+    val memberProperty = 4
+}
+
+fun scriptFunction() = 42
+fun unusedScriptFunction(p: String) = 22
+
+scriptFunction()
+
+fun foo(i: Int, action: (Int) -> Unit) {
+    action(i)
+}
+
+<ELEMENT>foo(scriptFunction()) {
+    scriptFunction()
+}</ELEMENT> [(194,240)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+--- KtCallExpression ---
+<File name: statement.kts, Physical: true>
+class ScriptClass {
+    val memberProperty = 4
+}
+
+fun scriptFunction() = 42
+fun unusedScriptFunction(p: String) = 22
+
+scriptFunction()
+
+fun foo(i: Int, action: (Int) -> Unit) {
+    action(i)
+}
+
+<ELEMENT>foo(scriptFunction()) {
+    scriptFunction()
+}</ELEMENT> [(194,240)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+--- KtNameReferenceExpression ---
+<File name: statement.kts, Physical: true>
+class ScriptClass {
+    val memberProperty = 4
+}
+
+fun scriptFunction() = 42
+fun unusedScriptFunction(p: String) = 22
+
+scriptFunction()
+
+fun foo(i: Int, action: (Int) -> Unit) {
+    action(i)
+}
+
+<ELEMENT>foo</ELEMENT>(scriptFunction()) {
+    scriptFunction()
+} [(194,197)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+--- KtValueArgumentList ---
+<File name: statement.kts, Physical: true>
+class ScriptClass {
+    val memberProperty = 4
+}
+
+fun scriptFunction() = 42
+fun unusedScriptFunction(p: String) = 22
+
+scriptFunction()
+
+fun foo(i: Int, action: (Int) -> Unit) {
+    action(i)
+}
+
+foo<ELEMENT>(scriptFunction())</ELEMENT> {
+    scriptFunction()
+} [(197,215)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+--- KtCallExpression ---
+<File name: statement.kts, Physical: true>
+class ScriptClass {
+    val memberProperty = 4
+}
+
+fun scriptFunction() = 42
+fun unusedScriptFunction(p: String) = 22
+
+scriptFunction()
+
+fun foo(i: Int, action: (Int) -> Unit) {
+    action(i)
+}
+
+foo(<ELEMENT>scriptFunction()</ELEMENT>) {
+    scriptFunction()
+} [(198,214)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+--- KtNameReferenceExpression ---
+<File name: statement.kts, Physical: true>
+class ScriptClass {
+    val memberProperty = 4
+}
+
+fun scriptFunction() = 42
+fun unusedScriptFunction(p: String) = 22
+
+scriptFunction()
+
+fun foo(i: Int, action: (Int) -> Unit) {
+    action(i)
+}
+
+foo(<ELEMENT>scriptFunction</ELEMENT>()) {
+    scriptFunction()
+} [(198,212)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+--- KtValueArgumentList ---
+<File name: statement.kts, Physical: true>
+class ScriptClass {
+    val memberProperty = 4
+}
+
+fun scriptFunction() = 42
+fun unusedScriptFunction(p: String) = 22
+
+scriptFunction()
+
+fun foo(i: Int, action: (Int) -> Unit) {
+    action(i)
+}
+
+foo(scriptFunction<ELEMENT>()</ELEMENT>) {
+    scriptFunction()
+} [(212,214)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+--- KtLambdaExpression ---
+<File name: statement.kts, Physical: true>
+class ScriptClass {
+    val memberProperty = 4
+}
+
+fun scriptFunction() = 42
+fun unusedScriptFunction(p: String) = 22
+
+scriptFunction()
+
+fun foo(i: Int, action: (Int) -> Unit) {
+    action(i)
+}
+
+foo(scriptFunction()) <ELEMENT>{
+    scriptFunction()
+}</ELEMENT> [(216,240)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+--- KtFunctionLiteral ---
+<File name: statement.kts, Physical: true>
+<ELEMENT>{
+    scriptFunction()
+}</ELEMENT> [(216,240)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+--- KtBlockExpression ---
+<File name: statement.kts, Physical: true>
+{
+    <ELEMENT>scriptFunction()</ELEMENT>
+} [(222,238)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol it: R|kotlin/Int|
+
+--- KtCallExpression ---
+<File name: statement.kts, Physical: true>
+{
+    <ELEMENT>scriptFunction()</ELEMENT>
+} [(222,238)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol it: R|kotlin/Int|
+    Element 12
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: statement.kts, Physical: true>
+{
+    <ELEMENT>scriptFunction</ELEMENT>()
+} [(222,236)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol it: R|kotlin/Int|
+    Element 12
+        Scope: FirLocalScope
+
+--- KtValueArgumentList ---
+<File name: statement.kts, Physical: true>
+{
+    scriptFunction<ELEMENT>()</ELEMENT>
+} [(236,238)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public final fun unusedScriptFunction(p: R|kotlin/String|): R|kotlin/Int|
+    Element 10
+        Implicit receiver:
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol it: R|kotlin/Int|
+    Element 12
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] statement.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-statement.kts>
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class ScriptClass : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor(): R|ScriptClass| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] val memberProperty: R|kotlin/Int| = Int(4)
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun scriptFunction(): R|kotlin/Int| {
+            ^scriptFunction Int(42)
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun unusedScriptFunction([ResolvedTo(BODY_RESOLVE)] p: R|kotlin/String|): R|kotlin/Int| {
+            ^unusedScriptFunction Int(22)
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] init {
+            R|/scriptFunction|()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit| {
+            R|<local>/action|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/i|)
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Unit| = R|/foo|(R|/scriptFunction|(), <L> = [ResolvedTo(BODY_RESOLVE)] foo@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
+            R|/scriptFunction|()
+        }
+        )
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Unit|

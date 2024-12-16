@@ -1,0 +1,567 @@
+--- KtFile ---
+<File name: contextReceivers.kt, Physical: true>
+<ELEMENT>interface Foo {
+    fun foo(): Int
+}
+
+interface Bar {
+    fun bar(): Int
+}
+
+context(Foo, Bar)
+fun test() {
+    foo() + bar()
+}
+</ELEMENT> [(0,127)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtPackageDirective ---
+<File name: contextReceivers.kt, Physical: true>
+<ELEMENT></ELEMENT> [(0,0)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtClass ---
+<File name: contextReceivers.kt, Physical: true>
+<ELEMENT>interface Foo {
+    fun foo(): Int
+}</ELEMENT> [(0,36)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtNamedFunction ---
+<File name: contextReceivers.kt, Physical: true>
+<ELEMENT>fun foo(): Int</ELEMENT> [(20,34)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public abstract interface Foo : R|kotlin/Any|
+                Type: Foo
+
+--- KtTypeReference ---
+<File name: contextReceivers.kt, Physical: true>
+fun foo(): <ELEMENT>Int</ELEMENT> [(31,34)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public abstract interface Foo : R|kotlin/Any|
+                Type: Foo
+
+--- KtClass ---
+<File name: contextReceivers.kt, Physical: true>
+<ELEMENT>interface Bar {
+    fun bar(): Int
+}</ELEMENT> [(38,74)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtNamedFunction ---
+<File name: contextReceivers.kt, Physical: true>
+<ELEMENT>fun bar(): Int</ELEMENT> [(58,72)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public abstract interface Bar : R|kotlin/Any|
+                Type: Bar
+
+--- KtTypeReference ---
+<File name: contextReceivers.kt, Physical: true>
+fun bar(): <ELEMENT>Int</ELEMENT> [(69,72)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public abstract interface Bar : R|kotlin/Any|
+                Type: Bar
+
+--- KtNamedFunction ---
+<File name: contextReceivers.kt, Physical: true>
+<ELEMENT>context(Foo, Bar)
+fun test() {
+    foo() + bar()
+}</ELEMENT> [(76,126)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtContextReceiver ---
+<File name: contextReceivers.kt, Physical: true>
+context(<ELEMENT>Foo</ELEMENT>, Bar)
+fun test() {
+    foo() + bar()
+} [(84,87)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtTypeReference ---
+<File name: contextReceivers.kt, Physical: true>
+context(<ELEMENT>Foo</ELEMENT>, Bar)
+fun test() {
+    foo() + bar()
+} [(84,87)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtContextReceiver ---
+<File name: contextReceivers.kt, Physical: true>
+context(Foo, <ELEMENT>Bar</ELEMENT>)
+fun test() {
+    foo() + bar()
+} [(89,92)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtTypeReference ---
+<File name: contextReceivers.kt, Physical: true>
+context(Foo, <ELEMENT>Bar</ELEMENT>)
+fun test() {
+    foo() + bar()
+} [(89,92)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+--- KtBlockExpression ---
+<File name: contextReceivers.kt, Physical: true>
+context(Foo, Bar)
+fun test() <ELEMENT>{
+    foo() + bar()
+}</ELEMENT> [(105,126)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Context receivers:
+            FirValueParameterSymbol R|Foo|
+                Type: Foo
+                Label: Foo
+            FirValueParameterSymbol R|Bar|
+                Type: Bar
+                Label: Bar
+
+--- KtBinaryExpression ---
+<File name: contextReceivers.kt, Physical: true>
+context(Foo, Bar)
+fun test() {
+    <ELEMENT>foo() + bar()</ELEMENT>
+} [(111,124)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Context receivers:
+            FirValueParameterSymbol R|Foo|
+                Type: Foo
+                Label: Foo
+            FirValueParameterSymbol R|Bar|
+                Type: Bar
+                Label: Bar
+    Element 8
+        Scope: FirLocalScope
+
+--- KtCallExpression ---
+<File name: contextReceivers.kt, Physical: true>
+context(Foo, Bar)
+fun test() {
+    <ELEMENT>foo()</ELEMENT> + bar()
+} [(111,116)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Context receivers:
+            FirValueParameterSymbol R|Foo|
+                Type: Foo
+                Label: Foo
+            FirValueParameterSymbol R|Bar|
+                Type: Bar
+                Label: Bar
+    Element 8
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: contextReceivers.kt, Physical: true>
+context(Foo, Bar)
+fun test() {
+    <ELEMENT>foo</ELEMENT>() + bar()
+} [(111,114)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Context receivers:
+            FirValueParameterSymbol R|Foo|
+                Type: Foo
+                Label: Foo
+            FirValueParameterSymbol R|Bar|
+                Type: Bar
+                Label: Bar
+    Element 8
+        Scope: FirLocalScope
+
+--- KtValueArgumentList ---
+<File name: contextReceivers.kt, Physical: true>
+context(Foo, Bar)
+fun test() {
+    foo<ELEMENT>()</ELEMENT> + bar()
+} [(114,116)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Context receivers:
+            FirValueParameterSymbol R|Foo|
+                Type: Foo
+                Label: Foo
+            FirValueParameterSymbol R|Bar|
+                Type: Bar
+                Label: Bar
+    Element 8
+        Scope: FirLocalScope
+
+--- KtOperationReferenceExpression ---
+<File name: contextReceivers.kt, Physical: true>
+context(Foo, Bar)
+fun test() {
+    foo() <ELEMENT>+</ELEMENT> bar()
+} [(117,118)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Context receivers:
+            FirValueParameterSymbol R|Foo|
+                Type: Foo
+                Label: Foo
+            FirValueParameterSymbol R|Bar|
+                Type: Bar
+                Label: Bar
+    Element 8
+        Scope: FirLocalScope
+
+--- KtCallExpression ---
+<File name: contextReceivers.kt, Physical: true>
+context(Foo, Bar)
+fun test() {
+    foo() + <ELEMENT>bar()</ELEMENT>
+} [(119,124)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Context receivers:
+            FirValueParameterSymbol R|Foo|
+                Type: Foo
+                Label: Foo
+            FirValueParameterSymbol R|Bar|
+                Type: Bar
+                Label: Bar
+    Element 8
+        Scope: FirLocalScope
+
+--- KtNameReferenceExpression ---
+<File name: contextReceivers.kt, Physical: true>
+context(Foo, Bar)
+fun test() {
+    foo() + <ELEMENT>bar</ELEMENT>()
+} [(119,122)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Context receivers:
+            FirValueParameterSymbol R|Foo|
+                Type: Foo
+                Label: Foo
+            FirValueParameterSymbol R|Bar|
+                Type: Bar
+                Label: Bar
+    Element 8
+        Scope: FirLocalScope
+
+--- KtValueArgumentList ---
+<File name: contextReceivers.kt, Physical: true>
+context(Foo, Bar)
+fun test() {
+    foo() + bar<ELEMENT>()</ELEMENT>
+} [(122,124)]:
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Context receivers:
+            FirValueParameterSymbol R|Foo|
+                Type: Foo
+                Label: Foo
+            FirValueParameterSymbol R|Bar|
+                Type: Bar
+                Label: Bar
+    Element 8
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] contextReceivers.kt
+    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Int|
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Bar : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] fun bar(): R|kotlin/Int|
+
+    }
+    context([ResolvedTo(BODY_RESOLVE)] R|Foo|, [ResolvedTo(BODY_RESOLVE)] R|Bar|)
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        this@R|context of /test|.R|/Foo.foo|().R|kotlin/Int.plus|(this@R|context of /test|.R|/Bar.bar|())
+    }
