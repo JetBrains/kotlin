@@ -59,6 +59,7 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
     override fun compile(
         tmpDir: Path,
         module: TestModule,
+        libraryName: String,
         dependencyBinaryRoots: Collection<Path>,
         testServices: TestServices,
     ): Path {
@@ -67,7 +68,7 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
                 || (allowedLibraryPlatforms.isNotEmpty() && module.targetPlatform !in allowedLibraryPlatforms)
 
         val library = try {
-            val outputPath = libraryOutputPath(tmpDir, module.name)
+            val outputPath = libraryOutputPath(tmpDir, libraryName)
             doCompile(
                 tmpDir,
                 buildCompilerOptions(module, testServices),
@@ -261,8 +262,14 @@ object MetadataKlibDirTestModuleCompiler : CliTestModuleCompiler() {
  * can be registered directly. Once new test compilers are introduced, they should be added to [DispatchingTestModuleCompiler].
  */
 object DispatchingTestModuleCompiler : TestModuleCompiler() {
-    override fun compile(tmpDir: Path, module: TestModule, dependencyBinaryRoots: Collection<Path>, testServices: TestServices): Path {
-        return getCompiler(module).compile(tmpDir, module, dependencyBinaryRoots, testServices)
+    override fun compile(
+        tmpDir: Path,
+        module: TestModule,
+        libraryName: String,
+        dependencyBinaryRoots: Collection<Path>,
+        testServices: TestServices
+    ): Path {
+        return getCompiler(module).compile(tmpDir, module, libraryName, dependencyBinaryRoots, testServices)
     }
 
     override fun compileSources(files: List<TestFile>, module: TestModule, testServices: TestServices): Path {
