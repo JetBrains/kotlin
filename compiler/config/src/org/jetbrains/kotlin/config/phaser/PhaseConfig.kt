@@ -8,18 +8,6 @@ package org.jetbrains.kotlin.config.phaser
 /**
  * Control which parts of compilation pipeline are enabled and how compiler should validate their invariants.
  * Phase configuration does not know anything about actual compiler pipeline upfront.
- *
- * @property disabled specify a set of phases that must not be executed.
- * @property verbose specify a set of phases that must print additional information during phase execution.
- * @property toDumpStateBefore specify a set of phases for which the state must be dumped right before phase execution.
- * @property toDumpStateAfter specify a set of phases for which the state must be dumped right after phase execution.
- * @property toValidateStateBefore specify a set of phases for which the compiler must validate state right before phase execution.
- * @property toValidateStateAfter specify a set of phases for which the compiler must validate state right after phase execution.
- * @property dumpToDirectory returns a path to a directory that should store phase dump. `null` if directory is not set.
- * @property dumpOnlyFqName returns a fully-qualified name that should be used to filter phase dump. `null` if dump should not be filtered.
- * @property needProfiling returns true if compiler should measure how long takes each phase.
- * @property checkConditions returns true if compiler should check pre- and post-conditions of compiler phases.
- * @property checkStickyConditions returns true if compiler should check post-conditions that are applicable to subsequent (thus "sticky") phases.
  */
 class PhaseConfig(
     private var disabled: PhaseSet = PhaseSet.Enum(emptySet()),
@@ -34,46 +22,25 @@ class PhaseConfig(
     val checkConditions: Boolean = false,
     val checkStickyConditions: Boolean = false
 ) {
-    /**
-     * Check if the given [phase] should be executed during compilation.
-     */
     fun isEnabled(phase: AnyNamedPhase): Boolean =
         phase !in disabled
 
-    /**
-     * Check if the compiler should print additional information during [phase] execution.
-     */
     fun isVerbose(phase: AnyNamedPhase): Boolean =
         phase in verbose
 
-    /**
-     * Prevent compiler from executing the given [phase].
-     */
     fun disable(phase: AnyNamedPhase) {
         disabled += PhaseSet.Enum(setOf(phase.name))
     }
 
-    /**
-     * Check if compiler should dump its state right before the execution of the given [phase].
-     */
     fun shouldDumpStateBefore(phase: AnyNamedPhase): Boolean =
         phase in toDumpStateBefore
 
-    /**
-     * Check if compiler should dump its state right after the execution of the given [phase].
-     */
     fun shouldDumpStateAfter(phase: AnyNamedPhase): Boolean =
         phase in toDumpStateAfter
 
-    /**
-     * Check if compiler should validate its state right before the execution of the given [phase].
-     */
     fun shouldValidateStateBefore(phase: AnyNamedPhase): Boolean =
         phase in toValidateStateBefore
 
-    /**
-     * Check if compiler should validate its state right after the execution of the given [phase].
-     */
     fun shouldValidateStateAfter(phase: AnyNamedPhase): Boolean =
         phase in toValidateStateAfter
 }
