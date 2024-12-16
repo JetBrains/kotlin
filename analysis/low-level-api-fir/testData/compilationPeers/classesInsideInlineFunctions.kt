@@ -7,8 +7,10 @@ inline fun base() {
 }
 
 inline fun another() {
-    class Another {}
-    Another()
+    val obj = object {
+        fun foo() {}
+    }
+    obj.foo()
 }
 
 // FILE: lib.kt

@@ -24,6 +24,18 @@ public class CompilationPeerAnalysisTestGenerated extends AbstractCompilationPee
   }
 
   @Test
+  @TestMetadata("classesInsideInlineFunctions.kt")
+  public void testClassesInsideInlineFunctions() {
+    runTest("analysis/low-level-api-fir/testData/compilationPeers/classesInsideInlineFunctions.kt");
+  }
+
+  @Test
+  @TestMetadata("classesInsideInlineProperties.kt")
+  public void testClassesInsideInlineProperties() {
+    runTest("analysis/low-level-api-fir/testData/compilationPeers/classesInsideInlineProperties.kt");
+  }
+
+  @Test
   @TestMetadata("functionCall.kt")
   public void testFunctionCall() {
     runTest("analysis/low-level-api-fir/testData/compilationPeers/functionCall.kt");
@@ -33,12 +45,6 @@ public class CompilationPeerAnalysisTestGenerated extends AbstractCompilationPee
   @TestMetadata("functionCallDeep.kt")
   public void testFunctionCallDeep() {
     runTest("analysis/low-level-api-fir/testData/compilationPeers/functionCallDeep.kt");
-  }
-
-  @Test
-  @TestMetadata("inlinedClasses.kt")
-  public void testInlinedClasses() {
-    runTest("analysis/low-level-api-fir/testData/compilationPeers/inlinedClasses.kt");
   }
 
   @Test
