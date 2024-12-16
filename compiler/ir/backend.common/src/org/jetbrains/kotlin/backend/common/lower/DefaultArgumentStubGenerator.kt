@@ -91,7 +91,7 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
                         if (!valueParameter.isMovedReceiver()) {
                             ++sourceParameterIndex
                         }
-                        val parameter = newIrFunction.valueParameters[valueParameter.indexInOldValueParameters]
+                        val parameter = newIrFunction.parameters[valueParameter.indexInParameters]
                         val remapped = valueParameter.defaultValue?.let { defaultValue ->
                             val mask =
                                 irGet(newIrFunction.valueParameters[originalDeclaration.valueParameters.size + valueParameter.indexInOldValueParameters / 32])
