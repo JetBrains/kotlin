@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaTypeParameterOwnerSymbol
 import org.jetbrains.kotlin.analysis.test.framework.targets.TestSymbolTarget.*
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 
 internal class KaSymbolTestSymbolTargetResolver(private val session: KaSession) : TestSymbolTargetResolver<KaSymbol>() {
@@ -52,22 +51,6 @@ internal class KaSymbolTestSymbolTargetResolver(private val session: KaSession) 
         }
 
         symbols
-    }
-
-    private fun KaSession.findMatchingCallableSymbols(callableId: CallableId, classSymbol: KaClassSymbol): List<KaCallableSymbol> {
-        val declaredSymbols = classSymbol.combinedDeclaredMemberScope
-            .callables(callableId.callableName)
-            .toList()
-
-        if (declaredSymbols.isNotEmpty()) {
-            return declaredSymbols
-        }
-
-        // Fake overrides are absent in the declared member scope.
-        return classSymbol.combinedMemberScope
-            .callables(callableId.callableName)
-            .filter { it.containingDeclaration == classSymbol }
-            .toList()
     }
 
     override fun resolveEnumEntryInitializerTarget(target: EnumEntryInitializerTarget): List<KaSymbol> = with(session) {
