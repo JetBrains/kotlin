@@ -353,6 +353,9 @@ include ":kotlin-imports-dumper-compiler-plugin",
 
 include ":libraries:tools:abi-comparator"
 
+include ":libraries:tools:abi-validation:abi-tools",
+        ":libraries:tools:abi-validation:abi-tools-api"
+
 include ":kotlin-atomicfu-compiler-plugin",
         ":kotlin-atomicfu-compiler-plugin-embeddable",
         ":kotlinx-atomicfu-runtime",

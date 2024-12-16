@@ -1,23 +1,23 @@
 /*
- * Copyright 2016-2024 JetBrains s.r.o.
- * Use of this source code is governed by the Apache 2.0 License that can be found in the LICENSE.txt file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package kotlinx.validation.api.klib
+package org.jetbrains.kotlin.abi.tools.api.v2
 
 import java.io.Serializable
 
 
 /**
- * Target name consisting of two parts: a [configurableName] that could be configured by a user, and an [targetName]
+ * Target name consisting of two parts: a [configurableName] that could be configured by a user, and a [targetName]
  * that names a target platform and could not be configured by a user.
  *
- * When serialized, the target represented as a tuple `<targetName>.<canonicalName>`, like `ios.iosArm64`.
+ * When serialized, the target is represented as a tuple `<targetName>.<configurableName>`, like `iosArm64.ios`.
  * If both names are the same (they are by default, unless a user decides to use a custom name), the serialized
  * from is shortened to a single term. For example, `macosArm64.macosArm64` and `macosArm64` are a long and a short
  * serialized forms of the same target.
  */
-public class KlibTarget internal constructor(
+public class KlibTarget(
     /**
      * An actual name of a target that remains unaffected by a custom name settings in a build script.
      */
@@ -36,6 +36,7 @@ public class KlibTarget internal constructor(
             "Target name can't contain the '.' character: $targetName"
         }
     }
+
     public companion object {
         /**
          * Parses a [KlibTarget] from a [value] string in a long (`<targetName>.<configurableName>`)
@@ -57,8 +58,20 @@ public class KlibTarget internal constructor(
             return KlibTarget(parts[0], parts[1])
         }
 
-        @JvmStatic
-        private val serialVersionUID: Long = 1
+        /**
+         * Get KLib target by Konan target name.
+         */
+        public fun fromKonanTargetName(konanName: String): KlibTarget {
+            val targetName = konanTargetNameMapping[konanName] ?: throw IllegalArgumentException("Konan name '$konanName' not found")
+            return KlibTarget(targetName, targetName)
+        }
+    }
+
+    /**
+     * Create copy of this target with new configurable name from [newConfigurableName] parameter.
+     */
+    public fun configureName(newConfigurableName: String): KlibTarget {
+        return KlibTarget(targetName, newConfigurableName)
     }
 
 
@@ -82,4 +95,33 @@ public class KlibTarget internal constructor(
     }
 }
 
-internal fun KlibTarget(name: String) = KlibTarget(name, name)
+public fun KlibTarget(name: String): KlibTarget = KlibTarget(name, name)
+
+internal val konanTargetNameMapping = mapOf(
+    "android_x64" to "androidNativeX64",
+    "android_x86" to "androidNativeX86",
+    "android_arm32" to "androidNativeArm32",
+    "android_arm64" to "androidNativeArm64",
+    "ios_arm64" to "iosArm64",
+    "ios_x64" to "iosX64",
+    "ios_simulator_arm64" to "iosSimulatorArm64",
+    "watchos_arm32" to "watchosArm32",
+    "watchos_arm64" to "watchosArm64",
+    "watchos_x64" to "watchosX64",
+    "watchos_simulator_arm64" to "watchosSimulatorArm64",
+    "watchos_device_arm64" to "watchosDeviceArm64",
+    "tvos_arm64" to "tvosArm64",
+    "tvos_x64" to "tvosX64",
+    "tvos_simulator_arm64" to "tvosSimulatorArm64",
+    "linux_x64" to "linuxX64",
+    "mingw_x64" to "mingwX64",
+    "macos_x64" to "macosX64",
+    "macos_arm64" to "macosArm64",
+    "linux_arm64" to "linuxArm64",
+    "ios_arm32" to "iosArm32",
+    "watchos_x86" to "watchosX86",
+    "linux_arm32_hfp" to "linuxArm32Hfp",
+    "mingw_x86" to "mingwX86",
+    "wasm-wasi" to "wasmWasi",
+    "wasm-js" to "wasmJs"
+)
