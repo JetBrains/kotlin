@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
@@ -455,25 +456,15 @@ open class LocalDeclarationsLowering(
                 }
             }
 
-            inline fun <T : IrMemberAccessExpression<*>> T.mapValueParameters(
-                newTarget: IrFunction,
-                transform: (IrValueParameter) -> IrExpression?
-            ): T =
-                apply {
-                    for (p in newTarget.valueParameters) {
-                        putValueArgument(p.indexInOldValueParameters, transform(p))
-                    }
-                }
-
             private fun <T : IrMemberAccessExpression<*>> T.fillArguments2(
                 oldExpression: IrMemberAccessExpression<*>,
                 newTarget: IrFunction
             ): T {
-                mapValueParameters(newTarget) { newValueParameterDeclaration ->
+                val transformedNewTargetParameters = newTarget.parameters.map { newValueParameterDeclaration ->
                     val oldParameter = newParameterToOld[newValueParameterDeclaration]
 
                     if (oldParameter != null) {
-                        oldExpression.getValueArgument(oldParameter.indexInOldValueParameters)
+                        oldExpression.arguments[oldParameter.indexInParameters]
                     } else {
                         // The callee expects captured value as argument.
                         val capturedValueSymbol =
@@ -490,9 +481,7 @@ open class LocalDeclarationsLowering(
                     }
 
                 }
-
-                dispatchReceiver = oldExpression.dispatchReceiver
-                extensionReceiver = oldExpression.extensionReceiver
+                arguments.assignFrom(transformedNewTargetParameters)
 
                 return this
             }
