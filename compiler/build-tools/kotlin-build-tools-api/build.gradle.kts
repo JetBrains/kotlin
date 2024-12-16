@@ -27,6 +27,12 @@ publish()
 
 standardPublicJars()
 
+tasks.compileKotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xjvm-default=all")
+    }
+}
+
 tasks.named<KotlinCompile>("compileTestKotlin") {
     compilerOptions {
         optIn.add("org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi")

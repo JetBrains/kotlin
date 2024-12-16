@@ -2842,7 +2842,7 @@ public final class org/jetbrains/kotlin/gradle/report/GradleLoggerAdapter : org/
 	public fun info (Ljava/lang/String;)V
 	public fun isDebugEnabled ()Z
 	public fun lifecycle (Ljava/lang/String;)V
-	public fun warn (Ljava/lang/String;)V
+	public fun warn (Ljava/lang/String;Ljava/lang/Throwable;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/report/ReportDataUtilKt {

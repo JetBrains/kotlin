@@ -44,18 +44,25 @@ internal fun Throwable.hasOOMCause(): Boolean = when (cause) {
 }
 
 /**
- * Wraps an exception occurred during compiler execution.
+ * Wraps an exception occurred during communication with Kotlin daemon.
+ * Covers the case when compiler invocation failed before returning any [ExitCode].
+ */
+internal fun wrapCompilationExceptionIfNeeded(executionStrategy: KotlinCompilerExecutionStrategy, e: Throwable): Throwable =
+    if (e is OutOfMemoryError || e.hasOOMCause()) {
+        OOMErrorException(executionStrategy)
+    } else if (e is RemoteException) {
+        DaemonCrashedException(e)
+    } else {
+        e
+    }
+
+/**
+ * Wraps an exception occurred during communication with Kotlin daemon.
  * Covers the case when compiler invocation failed before returning any [ExitCode].
  * Always throws some kind of exception.
  */
 internal fun wrapAndRethrowCompilationException(executionStrategy: KotlinCompilerExecutionStrategy, e: Throwable): Nothing {
-    if (e is OutOfMemoryError || e.hasOOMCause()) {
-        throw OOMErrorException(executionStrategy)
-    } else if (e is RemoteException) {
-        throw DaemonCrashedException(e)
-    } else {
-        throw e
-    }
+    throw wrapCompilationExceptionIfNeeded(executionStrategy, e)
 }
 
 /** Exception thrown when [ExitCode] != [ExitCode.OK]. */

@@ -21,8 +21,8 @@ class GradleLoggerAdapter(private val log: Logger) : KotlinLogger {
         log.debug(msg)
     }
 
-    override fun warn(msg: String) {
-        log.warn(msg)
+    override fun warn(msg: String, throwable: Throwable?) {
+        log.warn(msg, throwable)
     }
 
     override fun error(msg: String, throwable: Throwable?) {

@@ -45,8 +45,8 @@ class TestKotlinLogger : KotlinLogger {
         saveLogEntry(LogLevel.LIFECYCLE, msg)
     }
 
-    override fun warn(msg: String) {
-        saveLogEntry(LogLevel.WARN, msg)
+    override fun warn(msg: String, throwable: Throwable?) {
+        saveLogEntry(LogLevel.WARN, msg, throwable)
     }
 
     private fun saveLogEntry(logLevel: LogLevel, msg: String, throwable: Throwable? = null) {
