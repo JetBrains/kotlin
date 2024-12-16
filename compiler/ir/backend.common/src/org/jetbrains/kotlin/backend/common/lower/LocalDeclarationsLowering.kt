@@ -887,12 +887,9 @@ open class LocalDeclarationsLowering(
             newDeclaration.parent = localClassContext.declaration
             newDeclaration.copyTypeParametersFrom(oldDeclaration)
 
-            oldDeclaration.dispatchReceiverParameter?.run {
-                throw AssertionError("Local class constructor can't have dispatch receiver: ${ir2string(oldDeclaration)}")
-            }
-            oldDeclaration.extensionReceiverParameter?.run {
-                throw AssertionError("Local class constructor can't have extension receiver: ${ir2string(oldDeclaration)}")
-            }
+            oldDeclaration.parameters
+                .firstOrNull { it.kind == IrParameterKind.DispatchReceiver || it.kind == IrParameterKind.ExtensionReceiver }
+                ?.run { throw AssertionError("Local class constructor can't have $kind: ${ir2string(oldDeclaration)}") }
 
             newDeclaration.valueParameters = newDeclaration.valueParameters memoryOptimizedPlus createTransformedValueParameters(
                 capturedValues, localClassContext, oldDeclaration, newDeclaration
