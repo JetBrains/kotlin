@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.references
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -19,10 +17,9 @@ import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtImportAlias
 
 internal class KaFirArrayAccessReference(
-    expression: KtArrayAccessExpression
+    expression: KtArrayAccessExpression,
 ) : KtArrayAccessReference(expression), KaFirReference {
-    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> = withValidityAssertion {
-        check(this is KaFirSession)
+    override fun KaFirSession.computeSymbols(): Collection<KaSymbol> {
         val fir = element.getOrBuildFir(firResolveSession) ?: return emptyList()
         return when (fir) {
             is FirFunctionCall -> fir.getCandidateSymbols().map { it.fir.buildSymbol(firSymbolBuilder) }
