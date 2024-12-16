@@ -85,27 +85,30 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
                     OperatorNameConventions.AND, context.irBuiltIns.intType, context.irBuiltIns.intType
                 )
                 var sourceParameterIndex = -1
-                for (valueParameter in originalDeclaration.valueParameters) {
-                    if (!valueParameter.isMovedReceiver()) {
-                        ++sourceParameterIndex
+                originalDeclaration.parameters
+                    .filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
+                    .forEach { valueParameter ->
+                        if (!valueParameter.isMovedReceiver()) {
+                            ++sourceParameterIndex
+                        }
+                        val parameter = newIrFunction.valueParameters[valueParameter.indexInOldValueParameters]
+                        val remapped = valueParameter.defaultValue?.let { defaultValue ->
+                            val mask =
+                                irGet(newIrFunction.valueParameters[originalDeclaration.valueParameters.size + valueParameter.indexInOldValueParameters / 32])
+                            val bit = irInt(1 shl (sourceParameterIndex % 32))
+                            val defaultFlag =
+                                irCallOp(intAnd, context.irBuiltIns.intType, mask, bit)
+
+                            val expression = defaultValue.expression
+                                .prepareToBeUsedIn(newIrFunction)
+                                .transform(ValueRemapper(variables), null)
+
+                            selectArgumentOrDefault(defaultFlag, parameter, expression)
+                        } ?: parameter
+
+                        params.add(remapped)
+                        variables[valueParameter.symbol] = remapped.symbol
                     }
-                    val parameter = newIrFunction.valueParameters[valueParameter.indexInOldValueParameters]
-                    val remapped = valueParameter.defaultValue?.let { defaultValue ->
-                        val mask = irGet(newIrFunction.valueParameters[originalDeclaration.valueParameters.size + valueParameter.indexInOldValueParameters / 32])
-                        val bit = irInt(1 shl (sourceParameterIndex % 32))
-                        val defaultFlag =
-                            irCallOp(intAnd, context.irBuiltIns.intType, mask, bit)
-
-                        val expression = defaultValue.expression
-                            .prepareToBeUsedIn(newIrFunction)
-                            .transform(ValueRemapper(variables), null)
-
-                        selectArgumentOrDefault(defaultFlag, parameter, expression)
-                    } ?: parameter
-
-                    params.add(remapped)
-                    variables[valueParameter.symbol] = remapped.symbol
-                }
 
                 when (originalDeclaration) {
                     is IrConstructor -> +irDelegatingConstructorCall(originalDeclaration).apply {
