@@ -3,14 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.impl.base.test
+package org.jetbrains.kotlin.analysis.test.framework.symbols
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolByFqName.getSymbolDataFromFile
-import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolData.SymbolDataWithOwner.TypeParameterData
-import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolData.SymbolDataWithOwner.ValueParameterData
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.test.framework.symbols.SymbolByFqName.getSymbolDataFromFile
+import org.jetbrains.kotlin.analysis.test.framework.symbols.SymbolData.SymbolDataWithOwner.TypeParameterData
+import org.jetbrains.kotlin.analysis.test.framework.symbols.SymbolData.SymbolDataWithOwner.ValueParameterData
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
