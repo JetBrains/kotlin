@@ -107,7 +107,7 @@ fun compileToLoweredIr(
         allModules,
         context,
         context.irFactory.stageController as WholeWorldStageController,
-        isIncremental = false,
+        isIncremental = true,
     )
 
     performanceManager?.notifyIRLoweringFinished()
@@ -345,6 +345,7 @@ $jsCodeBodyIndented
         intrinsics: {
             ${if (useJsTag) "js_error_tag: WebAssembly.JSTag" else ""}
         },
+        stdlib: imports,
 $imports
     };
     
@@ -454,11 +455,12 @@ fun generateEsmExportsWrapper(
     return """
 $importsImportedSection
 import { instantiate } from ${asyncWrapperFileName.toJsStringLiteral()};
+import { stdlib } from '/Users/Igor.Yakovlev/Projects/kotlin/master/wasm/wasm.tests/build/out/codegen/firBox/casts/parallelHierarchy/dev/index.uninstantiated.mjs';
 ${if (useCustomFormatters) "import \"./custom-formatters.js\"" else ""}
 
-const exports = (await instantiate({
-$imports
-})).exports;
+const stdlibExports = (await stdlib({}, true)).exports;
+
+const exports = (await instantiate(stdlibExports, true)).exports;
 ${generateExports(exports)}
 """
 }

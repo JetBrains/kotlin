@@ -630,7 +630,8 @@ class WasmIrToBinary(
     fun appendHeapType(type: WasmHeapType) {
         val code: Int = when (type) {
             is WasmHeapType.Simple -> type.code.toInt()
-            is WasmHeapType.Type -> type.type.owner.id!!
+            is WasmHeapType.Type ->
+                type.type.owner.id!!
         }
         b.writeVarInt32(code)
     }

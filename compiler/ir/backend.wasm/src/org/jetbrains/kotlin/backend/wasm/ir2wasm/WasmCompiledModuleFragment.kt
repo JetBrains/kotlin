@@ -188,12 +188,8 @@ class WasmCompiledModuleFragment(
 
         createAndExportServiceFunctions(definedFunctions, exports)
 
-        val throwableDeclaration = tryFindBuiltInType { it.throwable }
-            ?: compilationException("kotlin.Throwable is not found in fragments", null)
-
-        val tags = getTags(throwableDeclaration)
+        val tags = getTags()
         val (importedTags, definedTags) = tags.partition { it.importPair != null }
-        val importsInOrder = importedFunctions + importedTags
 
         val additionalTypes = mutableListOf<WasmTypeDeclaration>()
         additionalTypes.add(parameterlessNoReturnFunctionType)
@@ -202,6 +198,9 @@ class WasmCompiledModuleFragment(
         val syntheticTypes = mutableListOf<WasmTypeDeclaration>()
         createAndBindSpecialITableTypes(syntheticTypes)
         val globals = getGlobals(syntheticTypes)
+        val (importedGlobals, definedGlobals) = globals.partition { it.importPair != null }
+
+        val importsInOrder = importedFunctions + importedTags + importedGlobals + memory
 
         val recursiveTypeGroups = getTypes(syntheticTypes, canonicalFunctionTypes, additionalTypes)
 
@@ -209,17 +208,19 @@ class WasmCompiledModuleFragment(
             recGroups = recursiveTypeGroups,
             importsInOrder = importsInOrder,
             importedFunctions = importedFunctions,
+            importedMemories = listOf(memory),
             definedFunctions = definedFunctions,
+            importedTags = importedTags.filterNot { it.importPair?.moduleName == "intrinsics" },
             tables = emptyList(),
-            memories = listOf(memory),
-            globals = globals,
+            memories = listOf(),
+            globals = definedGlobals,
+            importedGlobals = importedGlobals,
             exports = exports,
             startFunction = null,  // Module is initialized via export call
             elements = emptyList(),
             data = data,
             dataCount = true,
-            tags = definedTags,
-            importedTags = importedTags,
+            tags = definedTags
         ).apply { calculateIds() }
     }
 
@@ -329,8 +330,8 @@ class WasmCompiledModuleFragment(
         return syntheticTypes
     }
 
-    private fun getTags(throwableDeclaration: WasmTypeDeclaration): List<WasmTag> {
-        val tagFuncType = WasmRefNullType(WasmHeapType.Type(WasmSymbol(throwableDeclaration)))
+    private fun getTags(): List<WasmTag> {
+        val tagFuncType = getThrowableRefType()
 
         val throwableTagFuncType = WasmFunctionType(
             parameterTypes = listOf(tagFuncType),
@@ -345,7 +346,9 @@ class WasmCompiledModuleFragment(
             runIf(!generateTrapsInsteadOfExceptions && itsPossibleToCatchJsErrorSeparately) {
                 WasmTag(jsExceptionTagFuncType, WasmImportDescriptor("intrinsics", WasmSymbol("js_error_tag")))
             },
-            runIf(!generateTrapsInsteadOfExceptions) { WasmTag(throwableTagFuncType) }
+            runIf(!generateTrapsInsteadOfExceptions) {
+                WasmTag(throwableTagFuncType, WasmImportDescriptor("stdlib", WasmSymbol("tag_throwable")))
+            }
         )
         val throwableTagIndex = tags.indexOfFirst { it.type === throwableTagFuncType }
         wasmCompiledFileFragments.forEach {
@@ -365,30 +368,62 @@ class WasmCompiledModuleFragment(
         additionalTypes: List<WasmTypeDeclaration>,
     ): List<RecursiveTypeGroup> {
         val gcTypes = wasmCompiledFileFragments.flatMap { it.gcTypes.elements }
+        val vTableGcTypes = wasmCompiledFileFragments.flatMap { it.vTableGcTypes.elements }
 
         val recGroupTypes = sequence {
             yieldAll(additionalRecGroupTypes)
             yieldAll(gcTypes)
-            yieldAll(wasmCompiledFileFragments.asSequence().flatMap { it.vTableGcTypes.elements })
+            yieldAll(vTableGcTypes)
             yieldAll(canonicalFunctionTypes.values)
         }
 
         val recursiveGroups = createRecursiveTypeGroups(recGroupTypes)
 
-        val mixInIndexesForGroups = mutableMapOf<Hash128Bits, Int>()
         val groupsWithMixIns = mutableListOf<RecursiveTypeGroup>()
 
-        recursiveGroups.mapTo(groupsWithMixIns) { group ->
-            if (group.any { it in gcTypes } && group.singleOrNull() !is WasmArrayDeclaration) {
-                addMixInGroup(group, mixInIndexesForGroups)
-            } else {
-                group
+        recursiveGroups.forEach { group ->
+            if (group.singleOrNull() is WasmArrayDeclaration) {
+                groupsWithMixIns.add(group)
+                return@forEach
             }
+
+            val needMixIn = group.any { it in gcTypes }
+            val needStableSort = needMixIn || group.any { it in vTableGcTypes }
+
+            canonicalSort(group, needStableSort)
+
+            if (needMixIn) {
+                val firstIdSignature = group.firstOrNull { it is WasmStructDeclaration }?.let { firstStruct ->
+                    wasmCompiledFileFragments.firstNotNullOfOrNull {
+                        it.gcTypes.wasmToIr[firstStruct] ?: it.vTableGcTypes.wasmToIr[firstStruct]
+                    }
+                }
+                if (firstIdSignature != null) {
+                    val mixIn = WasmStructDeclaration("mixin_type", encodeIndex(firstIdSignature.toString().hashCode().toUInt()), null, true)
+                    group.add(mixIn)
+                }
+            }
+            groupsWithMixIns.add(group)
         }
 
-        additionalTypes.forEach { groupsWithMixIns.add(listOf(it)) }
-
+        additionalTypes.forEach { groupsWithMixIns.add(mutableListOf(it)) }
         return groupsWithMixIns
+    }
+
+    private fun getThrowableRefType(): WasmType {
+        val throwableDeclaration = wasmCompiledFileFragments.firstNotNullOfOrNull { fragment ->
+            fragment.gcTypes.defined.values.find { it.name == "kotlin.Throwable" }
+        }
+        check(throwableDeclaration != null)
+        return WasmRefNullType(WasmHeapType.Type(WasmSymbol(throwableDeclaration)))
+    }
+
+    private fun getUnitGetInstance(): WasmFunction {
+        val unitGetInstanceDeclaration = wasmCompiledFileFragments.firstNotNullOfOrNull { fragment ->
+            fragment.functions.defined.values.find { it.name == "kotlin.Unit_getInstance" }
+        }
+        check(unitGetInstanceDeclaration != null)
+        return unitGetInstanceDeclaration
     }
 
     private fun getGlobals(additionalTypes: MutableList<WasmTypeDeclaration>) = mutableListOf<WasmGlobal>().apply {
@@ -412,12 +447,9 @@ class WasmCompiledModuleFragment(
     }
 
     private fun createAndExportMasterInitFunction(fieldInitializerFunction: WasmFunction): WasmFunction.Defined {
-        val unitGetInstance = tryFindBuiltInFunction { it.unitGetInstance }
-            ?: compilationException("kotlin.Unit_getInstance is not file in fragments", null)
-
         val masterInitFunction = WasmFunction.Defined("_initialize", WasmSymbol(parameterlessNoReturnFunctionType))
         with(WasmExpressionBuilder(masterInitFunction.instructions)) {
-            buildCall(WasmSymbol(unitGetInstance), serviceCodeLocation)
+            buildCall(WasmSymbol(getUnitGetInstance()), serviceCodeLocation)
             buildCall(WasmSymbol(fieldInitializerFunction), serviceCodeLocation)
             wasmCompiledFileFragments.forEach { fragment ->
                 fragment.mainFunctionWrappers.forEach { signature ->
@@ -511,10 +543,10 @@ class WasmCompiledModuleFragment(
                     }
                 }
             }
-            stringPoolInitializer?.let {
-                expression.add(0, WasmInstrWithoutLocation(WasmOp.GLOBAL_SET, listOf(WasmImmediate.GlobalIdx(it.second))))
-                expression.addAll(0, it.first.instructions)
-            } ?: compilationException("stringPool initializer not found!", type = null)
+//            stringPoolInitializer?.let {
+//                expression.add(0, WasmInstrWithoutLocation(WasmOp.GLOBAL_SET, listOf(WasmImmediate.GlobalIdx(it.second))))
+//                expression.addAll(0, it.first.instructions)
+//            } ?: compilationException("stringPool initializer not found!", type = null)
         }
         return fieldInitializerFunction
     }
