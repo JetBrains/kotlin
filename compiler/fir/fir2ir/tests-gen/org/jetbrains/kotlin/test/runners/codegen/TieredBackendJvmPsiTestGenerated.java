@@ -18874,6 +18874,12 @@ public class TieredBackendJvmPsiTestGenerated extends AbstractTieredBackendJvmPs
     @TestDataPath("$PROJECT_ROOT")
     public class Typealias {
       @Test
+      @TestMetadata("callableReferenceWithTypeAliasToObjectLHSOriginal.kt")
+      public void testCallableReferenceWithTypeAliasToObjectLHSOriginal() {
+        runTest("compiler/testData/diagnostics/tests/typealias/callableReferenceWithTypeAliasToObjectLHSOriginal.kt");
+      }
+
+      @Test
       @TestMetadata("classReference.kt")
       public void testClassReference() {
         runTest("compiler/testData/diagnostics/tests/typealias/classReference.kt");

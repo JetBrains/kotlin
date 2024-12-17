@@ -84,10 +84,10 @@ class FirDoubleColonExpressionResolver(private val session: FirSession) {
         }
 
         if (resultForType != null) {
-            if (resultForExpr != null && resultForType.type == resultForExpr.type) {
+            if (resultForExpr != null && resultForType.type.equalTypes(resultForExpr.type, session)) {
                 // If we skipped an object expression result before and the type result is the same, this means that
-                // there were no other classifier except that object that could win. We prefer to treat the LHS as an expression here,
-                // to have a bound callable reference / class literal
+                // there was no other classifier except that object that could win.
+                // We prefer to treat the LHS as an expression here, to have a bound callable reference / class literal
                 return resultForExpr
             }
             return resultForType
