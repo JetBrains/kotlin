@@ -521,4 +521,10 @@ public class FirWasmInvalidationTestGenerated extends AbstractFirWasmInvalidatio
   public void testVariance() {
     runTest("js/js.translator/testData/incremental/invalidation/variance/");
   }
+
+  @Test
+  @TestMetadata("wasmJsInterop")
+  public void testWasmJsInterop() {
+    runTest("js/js.translator/testData/incremental/invalidation/wasmJsInterop/");
+  }
 }
