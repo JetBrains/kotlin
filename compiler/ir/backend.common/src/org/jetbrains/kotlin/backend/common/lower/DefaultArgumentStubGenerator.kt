@@ -225,7 +225,7 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
             }
         }
         return if (needSpecialDispatch(irFunction)) {
-            val handlerDeclaration = newIrFunction.valueParameters.last()
+            val handlerDeclaration = newIrFunction.parameters.last()
             // if $handler != null $handler(a, b, c) else foo(a, b, c)
             irIfThenElse(
                 irFunction.returnType,
