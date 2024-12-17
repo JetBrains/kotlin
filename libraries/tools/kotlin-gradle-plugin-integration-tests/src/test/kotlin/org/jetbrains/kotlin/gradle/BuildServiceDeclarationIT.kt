@@ -59,7 +59,7 @@ class BuildServiceDeclarationIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.suppressDeprecationWarningsOn(
                 "We currently have other warnings when `STABLE_CONFIGURATION_CACHE` is enabled unrelated to build services declaration, " +
                         "so we check for this kind of warnings in the build output (see KT-55563 and KT-55740)"
-            ) { true }
+            ) { gradleVersion < GradleVersion.version("8.0") }
         ) {
             enableStableConfigurationCachePreview()
             build("build") {
