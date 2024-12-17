@@ -411,7 +411,9 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
         val endOffset = expression.endOffset
         val declaration = expression.symbol.owner
 
-        val realArgumentsNumber = declaration.valueParameters.filterNot { it.isMovedReceiver() }.size
+        val realArgumentsNumber = declaration.parameters.count {
+            (it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context) && !it.isMovedReceiver()
+        }
         val maskValues = IntArray((realArgumentsNumber + 31) / 32)
 
         assert(stubFunction.parameters.size - declaration.parameters.size - maskValues.size in listOf(0, 1)) {
