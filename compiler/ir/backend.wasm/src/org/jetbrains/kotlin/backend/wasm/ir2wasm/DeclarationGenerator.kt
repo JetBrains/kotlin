@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -115,12 +116,24 @@ class DeclarationGenerator(
             }
         }
         if (importedName != null) {
+            val function = WasmFunction.Imported(watName, functionTypeSymbol, importedName)
             // Imported functions don't have bodies. Declaring the signature:
             wasmFileCodegenContext.defineFunction(
                 declaration.symbol,
-                WasmFunction.Imported(watName, functionTypeSymbol, importedName)
+                function
             )
             // TODO: Support re-export of imported functions.
+
+            if (!declaration.isEffectivelyPrivate()) {
+                val signature = (backendContext.irFactory as IdSignatureRetriever).declarationSignature(declaration)
+                wasmFileCodegenContext.addExport(
+                    WasmExport.Function(
+                        field = function,
+                        name = "func_$signature"
+                    )
+                )
+            }
+
             return
         }
 
@@ -182,6 +195,16 @@ class DeclarationGenerator(
                 )
             )
         }
+
+        if (!declaration.isEffectivelyPrivate()) {
+            val signature = (backendContext.irFactory as IdSignatureRetriever).declarationSignature(declaration)
+            wasmFileCodegenContext.addExport(
+                WasmExport.Function(
+                    field = function,
+                    name = "func_$signature"
+                )
+            )
+        }
     }
 
     private fun createVirtualTableStruct(
@@ -238,10 +261,22 @@ class DeclarationGenerator(
             }
             buildStructNew(vTableTypeReference, location)
         }
+
+        val global = WasmGlobal(vtableName, vTableRefGcType, false, initVTableGlobal)
         wasmFileCodegenContext.defineGlobalVTable(
             irClass = symbol,
-            wasmGlobal = WasmGlobal(vtableName, vTableRefGcType, false, initVTableGlobal)
+            wasmGlobal = global
         )
+
+        if (!klass.isEffectivelyPrivate()) {
+            val signature = (backendContext.irFactory as IdSignatureRetriever).declarationSignature(klass)
+            wasmFileCodegenContext.addExport(
+                WasmExport.Global(
+                    name = "vtable_$signature",
+                    field = global
+                )
+            )
+        }
     }
 
     private fun getSamMethod(supportedIFaces: Set<IrClass>): Pair<IrClass, IrFunction>? {
@@ -333,6 +368,16 @@ class DeclarationGenerator(
             init = initITableGlobal
         )
         wasmFileCodegenContext.defineGlobalClassITable(klass.symbol, wasmClassIFaceGlobal)
+
+        if (!klass.isEffectivelyPrivate()) {
+            val signature = (backendContext.irFactory as IdSignatureRetriever).declarationSignature(klass)
+            wasmFileCodegenContext.addExport(
+                WasmExport.Global(
+                    name = "itable_$signature",
+                    field = wasmClassIFaceGlobal
+                )
+            )
+        }
     }
 
     override fun visitClass(declaration: IrClass) {

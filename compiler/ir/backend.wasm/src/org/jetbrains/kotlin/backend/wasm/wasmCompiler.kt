@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.JsCodeSnippet
 import org.jetbrains.kotlin.backend.wasm.lower.JsInteropFunctionsLowering
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
+import org.jetbrains.kotlin.backend.wasm.serialization.WasmSerializer
 import org.jetbrains.kotlin.backend.wasm.utils.SourceMapGenerator
 import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
+import org.jetbrains.kotlin.konan.file.use
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.serialization.js.ModuleKind
@@ -46,7 +48,8 @@ class WasmCompilerResult(
     val jsWrapper: String,
     val wasm: ByteArray,
     val debugInformation: DebugInformation?,
-    val dts: String?
+    val dts: String?,
+    val typeAndMemoryInfo: TypeAndMemoryInfo? = null
 )
 
 class DebugInformation(
@@ -106,7 +109,7 @@ fun compileToLoweredIr(
         allModules,
         context,
         context.irFactory.stageController as WholeWorldStageController,
-        isIncremental = false
+        isIncremental = true
     )
 
     performanceManager?.notifyIRLoweringFinished()
@@ -146,7 +149,8 @@ fun compileWasm(
     emitNameSection: Boolean = false,
     generateWat: Boolean = false,
     generateSourceMaps: Boolean = false,
-    useDebuggerCustomFormatters: Boolean = false
+    useDebuggerCustomFormatters: Boolean = false,
+    typeAndMemoryInfo: TypeAndMemoryInfo? = null,
 ): WasmCompilerResult {
     val useJsTag = configuration.getBoolean(WasmConfigurationKeys.WASM_USE_JS_TAG)
     val isWasmJsTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET) != WasmTarget.WASI
@@ -158,7 +162,8 @@ fun compileWasm(
         isWasmJsTarget && useJsTag,
     )
 
-    val linkedModule = wasmCompiledModuleFragment.linkWasmCompiledFragments()
+    val typeAndMemoryInfo = typeAndMemoryInfo ?: TypeAndMemoryInfo()
+    val linkedModule = wasmCompiledModuleFragment.linkWasmCompiledFragments(typeAndMemoryInfo)
 
     val sourceMapGeneratorForBinary = runIf(generateSourceMaps) {
         SourceMapGenerator("$baseFileName.wasm", configuration)
@@ -229,7 +234,8 @@ fun compileWasm(
             sourceMapGeneratorForBinary?.generate(),
             sourceMapGeneratorForText?.generate(),
         ),
-        dts = typeScriptFragment?.raw
+        dts = typeScriptFragment?.raw,
+        typeAndMemoryInfo = typeAndMemoryInfo,
     )
 }
 
@@ -297,7 +303,7 @@ fun generateAsyncJsWrapper(
     //language=js
     val pathJsStringLiteral = wasmFilePath.toJsStringLiteral()
     return """
-export async function instantiate(imports={}, runInitializer=true) {
+export async function stdlib(imports={}, runInitializer=true) {
     const cachedJsObjects = new WeakMap();
     // ref must be non-null
     function getCachedJsObject(ref, ifNotCached) {
@@ -339,6 +345,7 @@ $jsCodeBodyIndented
         intrinsics: {
             ${if (useJsTag) "js_error_tag: WebAssembly.JSTag" else ""}
         },
+        stdlib: imports,
 $imports
     };
     
@@ -490,6 +497,14 @@ fun writeCompilationResult(
 
     if (result.dts != null) {
         File(dir, "$fileNameBase.d.ts").writeText(result.dts)
+    }
+
+    if (result.typeAndMemoryInfo != null) {
+        val typeInfoFile = File(dir, "$fileNameBase.typeinfo.bin")
+        typeInfoFile.outputStream().use {
+            org.jetbrains.kotlin.backend.wasm.serialization.WasmSerializer(it).serialize(result.typeAndMemoryInfo)
+            it.flush()
+        }
     }
 }
 

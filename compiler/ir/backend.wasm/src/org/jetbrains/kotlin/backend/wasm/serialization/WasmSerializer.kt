@@ -120,10 +120,20 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private val out = ByteWriter.OutputStream(outputStream)
 
+    fun serialize(typeAndMemoryInfo: TypeAndMemoryInfo) {
+        serializeMap(typeAndMemoryInfo.typeIds, ::serializeIdSignature, ::serializeInt)
+        serializeInt(typeAndMemoryInfo.lastInterfaceId)
+        serializeInt(typeAndMemoryInfo.scratchAddress)
+        completeSerialize()
+    }
+
     fun serialize(compiledFileFragment: WasmCompiledFileFragment) {
         // Step 1: process non-deferred serializations (put into bodyBuffer temporarily)
         serializeCompiledFileFragment(compiledFileFragment)
+        completeSerialize()
+    }
 
+    private fun completeSerialize() {
         // Step 2: output the reference table first, in the form: size content
         // Step 2.1: output each element in the form: sizeInBytes data
 
@@ -643,7 +653,7 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeMap(jsFuns, ::serializeIdSignature, ::serializeJsCodeSnippet)
             serializeMap(jsModuleImports, ::serializeIdSignature, ::serializeString)
             serializeList(exports, ::serializeWasmExport)
-            serializeNullable(scratchMemAddr) { serializeWasmSymbolReadOnly(it, ::serializeInt) }
+            serializeNullable(scratchMemAddr) { serializeWasmSymbolReadOnly(it, ::serializeWasmGlobal) }
             serializeNullable(stringPoolSize) { serializeWasmSymbolReadOnly(it, ::serializeInt) }
             serializeNullable(throwableTagIndex) { serializeWasmSymbolReadOnly(it, ::serializeInt) }
             serializeNullable(jsExceptionTagIndex) { serializeWasmSymbolReadOnly(it, ::serializeInt) }

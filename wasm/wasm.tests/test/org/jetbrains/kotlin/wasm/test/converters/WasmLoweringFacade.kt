@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
 import org.jetbrains.kotlin.backend.wasm.compileWasm
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.TypeAndMemoryInfo
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
+import org.jetbrains.kotlin.backend.wasm.serialization.WasmSerializer
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
+import org.jetbrains.kotlin.konan.file.use
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.test.DebugMode
@@ -97,6 +100,8 @@ class WasmLoweringFacade(
             (moduleInfo.symbolTable.irFactory as IrFactoryImplForWasmIC).declarationSignature(it.owner)
         }
 
+        val typeAndMemoryInfo = TypeAndMemoryInfo()
+
         val compilerResult = compileWasm(
             wasmCompiledFileFragments = wasmCompiledFileFragments,
             specialITableTypes = specialITableTypes,
@@ -107,39 +112,50 @@ class WasmLoweringFacade(
             emitNameSection = true,
             generateWat = generateWat,
             generateSourceMaps = generateSourceMaps,
+            typeAndMemoryInfo = typeAndMemoryInfo,
         )
 
-        val dceDumpNameCache = DceDumpNameCache()
-        eliminateDeadDeclarations(allModules, backendContext, dceDumpNameCache)
-
-        dumpDeclarationIrSizesIfNeed(System.getProperty("kotlin.wasm.dump.declaration.ir.size.to.file"), allModules, dceDumpNameCache)
-
-        val wasmModuleMetadataCacheDce = WasmModuleMetadataCache(backendContext)
-        val codeGeneratorDce = WasmModuleFragmentGenerator(
-            backendContext,
-            wasmModuleMetadataCacheDce,
-            moduleInfo.symbolTable.irFactory as IrFactoryImplForWasmIC,
-            allowIncompleteImplementations = true,
+        val file = File(
+            "/Users/Igor.Yakovlev/Projects/kotlin/master/wasm/wasm.tests/build/out/codegen/firBox/casts/parallelHierarchy/dev",
+            "$baseFileName.typeinfo.bin"
         )
-        val wasmCompiledFileFragmentsDce = allModules.map { codeGeneratorDce.generateModuleAsSingleFileFragment(it) }
+        file.outputStream().use {
+            WasmSerializer(it).serialize(typeAndMemoryInfo)
+            it.flush()
+        }
 
-        val compilerResultWithDCE = compileWasm(
-            wasmCompiledFileFragments = wasmCompiledFileFragmentsDce,
-            specialITableTypes = specialITableTypes,
-            moduleName = allModules.last().descriptor.name.asString(),
-            configuration = configuration,
-            typeScriptFragment = typeScriptFragment,
-            baseFileName = baseFileName,
-            emitNameSection = true,
-            generateWat = generateWat,
-            generateSourceMaps = generateSourceMaps,
-        )
+
+//        val dceDumpNameCache = DceDumpNameCache()
+//        eliminateDeadDeclarations(allModules, backendContext, dceDumpNameCache)
+
+//        dumpDeclarationIrSizesIfNeed(System.getProperty("kotlin.wasm.dump.declaration.ir.size.to.file"), allModules, dceDumpNameCache)
+
+//        val wasmModuleMetadataCacheDce = WasmModuleMetadataCache(backendContext)
+//        val codeGeneratorDce = WasmModuleFragmentGenerator(
+//            backendContext,
+//            wasmModuleMetadataCacheDce,
+//            moduleInfo.symbolTable.irFactory as IrFactoryImplForWasmIC,
+//            allowIncompleteImplementations = true,
+//        )
+//        val wasmCompiledFileFragmentsDce = allModules.map { codeGeneratorDce.generateModuleAsSingleFileFragment(it) }
+//
+//        val compilerResultWithDCE = compileWasm(
+//            wasmCompiledFileFragments = wasmCompiledFileFragmentsDce,
+//            specialITableTypes = specialITableTypes,
+//            moduleName = allModules.last().descriptor.name.asString(),
+//            configuration = configuration,
+//            typeScriptFragment = typeScriptFragment,
+//            baseFileName = baseFileName,
+//            emitNameSection = true,
+//            generateWat = generateWat,
+//            generateSourceMaps = generateSourceMaps,
+//        )
 
         return BinaryArtifacts.Wasm(
             compilerResult,
-            compilerResultWithDCE,
+            compilerResult,
             runIf(WasmEnvironmentConfigurationDirectives.RUN_THIRD_PARTY_OPTIMIZER in testServices.moduleStructure.allDirectives) {
-                compilerResultWithDCE.runThirdPartyOptimizer()
+                compilerResult.runThirdPartyOptimizer()
             }
         )
     }

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.backend.wasm.getWasmPhases
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.ic.WasmModuleArtifact
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.TypeAndMemoryInfo
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
@@ -140,7 +141,7 @@ internal class K2WasmCompilerImpl(
         )
 
         configuration.phaseConfig = createPhaseConfig(arguments).also {
-            if (arguments.listPhases) it.list(getWasmPhases(configuration, isIncremental = false))
+            if (arguments.listPhases) it.list(getWasmPhases(configuration, isIncremental = true))
         }
 
         val (allModules, backendContext, typeScriptFragment) = compileToLoweredIr(
