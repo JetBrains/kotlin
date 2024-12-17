@@ -2,14 +2,6 @@ KtNamedFunction 'callable' in 'library-b1.jar!/library/A1Kt.class':
   public final fun callable(): R|library/R1|
 
 
-KtNamedFunction 'callable' in 'library-b1.jar!/library/A1Kt.class':
-  public final fun callable(): R|library/R1|
-
-
-KtNamedFunction 'callable' in 'library-b2.jar!/library/A2Kt.class':
-  public final fun callable(): R|library/R2|
-
-
 KtNamedFunction 'callable' in 'library-b2.jar!/library/A2Kt.class':
   public final fun callable(): R|library/R2|
 
@@ -17,16 +9,6 @@ KtNamedFunction 'callable' in 'library-b2.jar!/library/A2Kt.class':
 KtProperty 'callable' in 'library-b3.jar!/library/A3Kt.class':
   public final val callable: R|library/R3|
       public get(): R|library/R3|
-
-
-KtProperty 'callable' in 'library-b3.jar!/library/A3Kt.class':
-  public final val callable: R|library/R3|
-      public get(): R|library/R3|
-
-
-KtProperty 'callable' in 'library-b4.jar!/library/A4Kt.class':
-  public final val callable: R|library/R4|
-      public get(): R|library/R4|
 
 
 KtProperty 'callable' in 'library-b4.jar!/library/A4Kt.class':
