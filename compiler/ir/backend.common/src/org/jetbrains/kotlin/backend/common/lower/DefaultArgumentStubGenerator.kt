@@ -204,18 +204,24 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
     ): IrExpression {
         val dispatchCall = irCall(irFunction, origin = getOriginForCallToImplementation()).apply {
             passTypeArgumentsFrom(newIrFunction)
-            dispatchReceiver = newIrFunction.dispatchReceiverParameter?.let { irGet(it) }
-            extensionReceiver = newIrFunction.extensionReceiverParameter?.let { irGet(it) }
-
-            for ((i, variable) in params.withIndex()) {
-                val paramType = irFunction.valueParameters[i].type
-                // The JVM backend doesn't introduce new variables, and hence may have incompatible types here.
-                val value = if (!paramType.isNullable() && variable.type.isNullable()) {
-                    irImplicitCast(irGet(variable), paramType)
+            val irFunctionValueParameters =
+                irFunction.parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
+            var nonValueParameters = 0
+            symbol.owner.parameters.forEachIndexed { index, parameter ->
+                if (parameter.kind == IrParameterKind.DispatchReceiver || parameter.kind == IrParameterKind.ExtensionReceiver) {
+                    arguments[index] = newIrFunction.parameters.single { it.kind == parameter.kind }.let { irGet(it) }
+                    nonValueParameters++
                 } else {
-                    irGet(variable)
+                    val variable = params[index - nonValueParameters]
+                    val paramType = irFunctionValueParameters[index - nonValueParameters].type
+                    // The JVM backend doesn't introduce new variables, and hence may have incompatible types here.
+                    val value = if (!paramType.isNullable() && variable.type.isNullable()) {
+                        irImplicitCast(irGet(variable), paramType)
+                    } else {
+                        irGet(variable)
+                    }
+                    arguments[index] = value
                 }
-                putValueArgument(i, value)
             }
         }
         return if (needSpecialDispatch(irFunction)) {
