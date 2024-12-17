@@ -69,7 +69,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
             // TODO try to create backing field if it is missing
             irFunction.body == null && irFunction.isAccessorOfPropertyWithBackingField() -> {
                 val backingField = irFunction.property!!.backingField!!
-                val getField = backingField.createGetField(irFunction.dispatchReceiverParameter!!)
+                val getField = backingField.createGetField(irFunction.dispatchReceiverParameter)
                 callStack.pushCompoundInstruction(getField)
             }
             irFunction.body == null -> irFunction.trySubstituteFunctionBody() ?: calculateBuiltIns(irFunction, args)
