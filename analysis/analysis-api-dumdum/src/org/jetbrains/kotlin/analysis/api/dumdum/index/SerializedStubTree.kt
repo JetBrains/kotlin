@@ -19,7 +19,7 @@ data class SerializedStubTree(val bytes: ByteArray) {
         }
     }
 
-    fun deserialize(psiFile: PsiFile, stubSerializersTable: StubSerializersTable): StubTree {
+    fun materialize(psiFile: PsiFile, stubSerializersTable: StubSerializersTable): StubTree {
         val stubSerializer = ShareableStubTreeSerializer(stubSerializersTable)
         val bais = UnsyncByteArrayInputStream(bytes)
         val stub = bais.use {

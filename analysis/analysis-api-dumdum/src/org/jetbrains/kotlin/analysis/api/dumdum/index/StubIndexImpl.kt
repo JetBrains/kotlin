@@ -26,7 +26,7 @@ fun Index.stubIndex(
             index.value(
                 fileId = documentIdMapper.filePath(virtualFile),
                 valueType = stubIndexExtensions.indexedSerializedStubTreeType
-            )?.stub?.deserialize(psiFileFactory.psiFile(virtualFile), stubSerializersTable)
+            )?.stub?.materialize(psiFileFactory.psiFile(virtualFile), stubSerializersTable)
 
         override fun <K> getContainingFilesIterator(
             indexId: ID<K, *>,
@@ -68,7 +68,7 @@ fun Index.stubIndex(
                                 stubValue.index[indexKey]?.get(key as Any?)?.map { stubId ->
                                     @Suppress("UNCHECKED_CAST")
                                     stubValue.stub
-                                        .deserialize(psiFileFactory.psiFile(virtualFile), stubSerializersTable)
+                                        .materialize(psiFileFactory.psiFile(virtualFile), stubSerializersTable)
                                         .plainList[stubId]
                                         .psi as Psi
                                 }
