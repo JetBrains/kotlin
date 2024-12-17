@@ -64,7 +64,7 @@ internal class BitcodeCompiler(
                     })
                     addNonEmpty(configurables.currentRelocationMode(context).translateToClangCc1Flag())
                     if (optimize) {
-                        add("-flto=thin")
+                        addAll(listOf("-emit-llvm-bc", "-flto=thin", "-flto-unit"))
                     }
                 }
         val bitcodePath = bitcodeFile.absoluteFile.normalize().path
