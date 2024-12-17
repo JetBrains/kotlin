@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
@@ -28,11 +27,14 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.wasm.config.wasmTarget
+import org.jetbrains.kotlin.wasm.ir.WasmImportDescriptor
+import org.jetbrains.kotlin.wasm.ir.WasmSymbol
 
 class WasmBackendContext(
     val module: ModuleDescriptor,
@@ -43,6 +45,21 @@ class WasmBackendContext(
     override val configuration: CompilerConfiguration,
 ) : JsCommonBackendContext {
     val phaseConfig = configuration.phaseConfig ?: PhaseConfig()
+
+    var emitFunctionsAsUsual = true
+    val importDeclarations = mutableSetOf<IdSignature>()
+
+    fun importIfNeededOrFalse(declaration: IrDeclaration, prefix: String, body: (WasmImportDescriptor) -> Unit): Boolean {
+        if (emitFunctionsAsUsual) return false
+
+        val signature = (irFactory as IdSignatureRetriever).declarationSignature(declaration)
+        val stdlibFunName = importDeclarations.contains(signature)
+            .ifTrue { signature.toString() }
+            ?: return true
+
+        body(WasmImportDescriptor("stdlib", WasmSymbol(prefix + stdlibFunName)))
+        return true
+    }
 
     override val typeSystem: IrTypeSystemContext = IrTypeSystemContextImpl(irBuiltIns)
     override var inVerbosePhase: Boolean = false

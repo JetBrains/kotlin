@@ -18,6 +18,9 @@ public class WasmConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> WASM_GENERATE_WAT =
             CompilerConfigurationKey.create("generate wat file");
 
+    public static final CompilerConfigurationKey<String> WASM_TYPEINFO_FILE =
+            CompilerConfigurationKey.create("typeinfo file");
+
     public static final CompilerConfigurationKey<WasmTarget> WASM_TARGET =
             CompilerConfigurationKey.create("wasm target");
 

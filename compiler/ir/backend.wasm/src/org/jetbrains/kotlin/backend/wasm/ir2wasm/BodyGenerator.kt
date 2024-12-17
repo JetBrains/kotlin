@@ -45,11 +45,10 @@ class BodyGenerator(
     private val irBuiltIns: IrBuiltIns = backendContext.irBuiltIns
 
     private val unitGetInstance by lazy { backendContext.findUnitGetInstanceFunction() }
-    private val unitInstanceField by lazy { backendContext.findUnitInstanceField() }
 
     fun WasmExpressionBuilder.buildGetUnit() {
-        buildGetGlobal(
-            wasmFileCodegenContext.referenceGlobalField(unitInstanceField.symbol),
+        buildCall(
+            wasmFileCodegenContext.referenceFunction(backendContext.findUnitGetInstanceFunction().symbol),
             SourceLocation.NoLocation("GET_UNIT")
         )
     }
@@ -459,7 +458,12 @@ class BodyGenerator(
                 generateInstanceFieldAccess(field, location)
             }
         } else {
-            body.buildGetGlobal(wasmFileCodegenContext.referenceGlobalField(field.symbol), location)
+            if (field == backendContext.findUnitInstanceField()) {
+                body.buildGetUnit()
+            } else {
+                body.buildGetGlobal(wasmFileCodegenContext.referenceGlobalField(field.symbol), location)
+            }
+
             body.commentPreviousInstr { "type: ${field.type.render()}" }
         }
     }
@@ -503,7 +507,11 @@ class BodyGenerator(
             body.commentPreviousInstr { "name: ${field.name}, type: ${field.type.render()}" }
         } else {
             generateExpression(expression.value)
-            body.buildSetGlobal(wasmFileCodegenContext.referenceGlobalField(expression.symbol), location)
+            if (expression.symbol.owner == backendContext.findUnitInstanceField()) {
+                body.buildGetUnit()
+            } else {
+                body.buildSetGlobal(wasmFileCodegenContext.referenceGlobalField(expression.symbol), location)
+            }
             body.commentPreviousInstr { "type: ${field.type.render()}" }
         }
 
@@ -1008,7 +1016,7 @@ class BodyGenerator(
             }
 
             wasmSymbols.unsafeGetScratchRawMemory -> {
-                body.buildConstI32Symbol(wasmFileCodegenContext.scratchMemAddr, location)
+                body.buildGetGlobal(wasmFileCodegenContext.scratchMemAddr, location)
             }
 
             wasmSymbols.returnArgumentIfItIsKotlinAny -> {

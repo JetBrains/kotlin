@@ -38,6 +38,13 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
             field = value
         }
 
+    @Argument(value = "-Xwasm-typeinfo-file", description = "Typeinfo file.")
+    var wasmTypeInfoFile: String? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @Argument(value = "-Xwasm-kclass-fqn", description = "Enable support for 'KClass.qualifiedName'.")
     var wasmKClassFqn = false
         set(value) {

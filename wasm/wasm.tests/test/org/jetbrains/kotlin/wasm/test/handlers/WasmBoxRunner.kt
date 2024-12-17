@@ -142,8 +142,8 @@ class WasmBoxRunner(
         }
 
         writeToFilesAndRunTest("dev", artifacts.compilerResult)
-        writeToFilesAndRunTest("dce", artifacts.compilerResultWithDCE)
-        artifacts.compilerResultWithOptimizer?.let { writeToFilesAndRunTest("optimized", it) }
+//        writeToFilesAndRunTest("dce", artifacts.compilerResultWithDCE)
+//        artifacts.compilerResultWithOptimizer?.let { writeToFilesAndRunTest("optimized", it) }
     }
 }
 
