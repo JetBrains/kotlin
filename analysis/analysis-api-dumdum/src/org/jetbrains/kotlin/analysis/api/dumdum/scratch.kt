@@ -1,15 +1,14 @@
 package org.jetbrains.kotlin.analysis.api.dumdum
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.descendantsOfType
-import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.dumdum.filesystem.FileReader
+import org.jetbrains.kotlin.analysis.api.dumdum.filesystem.WobblerVirtualFile
 import org.jetbrains.kotlin.analysis.api.dumdum.index.FileId
 import org.jetbrains.kotlin.analysis.api.dumdum.index.VirtualFileFactory
 import org.jetbrains.kotlin.analysis.api.dumdum.index.inMemoryIndex
@@ -60,22 +59,15 @@ fun test1() {
                     
                     """.trimIndent()
         )
+
+        val fileReader = FileReader { files[it]!!.toByteArray() }
+
         val index = withProject {
-            val virtualFileById = files.mapValues { (fileId, content) ->
-                LightVirtualFile(
-                    fileId.id.split('/').last(),
-                    KotlinFileType.INSTANCE,
-                    content
-                ).also {
-                    it.putUserData(FileIdKey, fileId)
-                }
-            }
-
             val psiManager = PsiManager.getInstance(project)
-            val psiFileById = virtualFileById.mapValues { (_, virtualFile) -> psiManager.findFile(virtualFile)!! }
-
             inMemoryIndex(
-                psiFileById.flatMap { (fileId, psiFile) ->
+                files.flatMap { (fileId, str) ->
+                    val vFile = WobblerVirtualFile(fileReader, fileId, KotlinFileType.INSTANCE)
+                    val psiFile = psiManager.findFile(vFile)!!
                     indexFile(
                         fileId = fileId,
                         file = psiFile,
@@ -88,38 +80,33 @@ fun test1() {
         }
 
         withProject {
-            val virtualFileById = files.mapValues { (fileId, content) ->
-                LightVirtualFile(
-                    fileId.id.split('/').last(),
-                    KotlinFileType.INSTANCE,
-                    content
-                ).also {
-                    it.putUserData(FileIdKey, fileId)
-                }
-            }
             val psiManager = PsiManager.getInstance(project)
-            val psiFileById = virtualFileById.mapValues { (_, virtualFile) -> psiManager.findFile(virtualFile)!! }
+            val virtualFiles = files.keys.map { fileId ->
+                WobblerVirtualFile(fileReader, fileId, KotlinFileType.INSTANCE)
+            }.toSet()
+
+            val psiFiles = virtualFiles.mapNotNull(psiManager::findFile)
 
             val singleModule = KaSourceModuleImpl(
                 directRegularDependencies = emptyList(),
                 directDependsOnDependencies = emptyList(),
                 directFriendDependencies = emptyList(),
-                contentScope = GlobalSearchScope.filesScope(project, virtualFileById.values),
+                contentScope = GlobalSearchScope.filesScope(project, virtualFiles),
                 targetPlatform = JvmPlatforms.defaultJvmPlatform,
                 project = project,
                 name = "dumdum",
                 languageVersionSettings = LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST),
-                psiRoots = psiFileById.values.toList()
+                psiRoots = psiFiles
             )
 
             val virtualFileFactory = VirtualFileFactory { fileId ->
-                virtualFileById[fileId]!!
+                WobblerVirtualFile(fileReader, fileId, KotlinFileType.INSTANCE)
             }
 
             withAnalyzer(index, singleModule, virtualFileFactory) {
-                for (psiFile in psiFileById) {
-                    analyze(psiFile.value as KtFile) {
-                        psiFile.value.descendantsOfType<KtCallElement>().forEach { call ->
+                for (psiFile in psiFiles) {
+                    analyze(psiFile as KtFile) {
+                        psiFile.descendantsOfType<KtCallElement>().forEach { call ->
                             val callInfo = (call.resolveToCall() as KaSuccessCallInfo).call as KaCallableMemberCall<*, *>
                             println(callInfo.partiallyAppliedSymbol.signature.callableId)
                         }
@@ -150,11 +137,3 @@ internal data class KaSourceModuleImpl(
     @KaExperimentalApi
     override val stableModuleName: String? get() = name
 }
-
-
-private inline fun <T> Disposable.use(block: (Disposable) -> T): T =
-    try {
-        block(this)
-    } finally {
-        Disposer.dispose(this)
-    }

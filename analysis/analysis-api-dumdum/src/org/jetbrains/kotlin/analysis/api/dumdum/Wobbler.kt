@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.dumdum.filebasedindex.names.*
+import org.jetbrains.kotlin.analysis.api.dumdum.filesystem.WobblerVirtualFile
 import org.jetbrains.kotlin.analysis.api.dumdum.index.*
 import org.jetbrains.kotlin.analysis.api.dumdum.stubindex.*
 import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin
@@ -105,9 +106,6 @@ interface Wobbler {
     val stubIndexExtensions: StubIndexExtensions
     val stubSerializersTable: StubSerializersTable
 }
-
-
-val FileIdKey = Key<FileId>("dumdum.fileId")
 
 @OptIn(KaImplementationDetail::class)
 fun <T> withWobbler(f: Wobbler.() -> T): T {
@@ -259,7 +257,7 @@ fun <T> withWobbler(f: Wobbler.() -> T): T {
                                 stubIndexExtensions = stubIndexExtensions,
                                 virtualFileFactory = virtualFileFactory,
                                 documentIdMapper = { virtualFile ->
-                                    virtualFile.getUserData(FileIdKey)!!
+                                    (virtualFile as WobblerVirtualFile).fileId
                                 },
                                 psiFileFactory = { psiManager.findFile(it)!! },
                                 stubSerializersTable = stubSerializersTable,
