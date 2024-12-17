@@ -138,7 +138,7 @@ class ConstraintIncorporator(
         val freshTypeConstructor = typeVariable.freshTypeConstructor()
         for (storageForOtherVariable in getVariablesWithConstraintsContainingGivenTypeVariable(freshTypeConstructor)) {
             for (otherConstraint in storageForOtherVariable.getConstraintsContainedSpecifiedTypeVariable(freshTypeConstructor)) {
-                generateNewConstraint(
+                generateNewConstraintForInsideOtherConstraintIncorporationKind(
                     typeVariable,
                     constraint,
                     storageForOtherVariable.typeVariable,
@@ -150,7 +150,7 @@ class ConstraintIncorporator(
 
 
     // \alpha <: Number, \beta <: Inv<\alpha> => \beta <: Inv<out Number>
-    private fun Context.generateNewConstraint(
+    private fun Context.generateNewConstraintForInsideOtherConstraintIncorporationKind(
         // \alpha
         causeOfIncorporationVariable: TypeVariableMarker,
         // \alpha <: Number
@@ -214,7 +214,7 @@ class ConstraintIncorporator(
             }
         }
 
-        approximateIfNeededAndAddNewConstraint(
+        approximateIfNeededAndAddNewConstraintForInsideOtherConstraintIncorporationKind(
             causeOfIncorporationVariable,
             causeOfIncorporationConstraint,
             otherVariable,
@@ -225,7 +225,7 @@ class ConstraintIncorporator(
     }
 
     // \alpha <: Number, \beta <: Inv<\alpha> => \beta <: Inv<out Number>
-    private fun Context.approximateIfNeededAndAddNewConstraint(
+    private fun Context.approximateIfNeededAndAddNewConstraintForInsideOtherConstraintIncorporationKind(
         // \alpha
         causeOfIncorporationVariable: TypeVariableMarker,
         // \alpha <: Number
@@ -244,7 +244,7 @@ class ConstraintIncorporator(
         }
 
         if (otherConstraint.kind != ConstraintKind.LOWER) {
-            addNewConstraint(
+            addNewConstraintForInsideOtherConstraintsIncorporationKind(
                 causeOfIncorporationVariable,
                 causeOfIncorporationConstraint,
                 targetVariable,
@@ -254,7 +254,7 @@ class ConstraintIncorporator(
             )
         }
         if (otherConstraint.kind != ConstraintKind.UPPER) {
-            addNewConstraint(
+            addNewConstraintForInsideOtherConstraintsIncorporationKind(
                 causeOfIncorporationVariable,
                 causeOfIncorporationConstraint,
                 targetVariable,
@@ -266,7 +266,7 @@ class ConstraintIncorporator(
     }
 
     // \alpha <: Number, \beta <: Inv<\alpha> => \beta <: Inv<out Number>
-    private fun Context.addNewConstraint(
+    private fun Context.addNewConstraintForInsideOtherConstraintsIncorporationKind(
         // \alpha
         causeOfIncorporationVariable: TypeVariableMarker,
         // \alpha <: Number
