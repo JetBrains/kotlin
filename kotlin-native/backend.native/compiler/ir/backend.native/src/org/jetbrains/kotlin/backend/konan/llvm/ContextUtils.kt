@@ -195,6 +195,9 @@ internal interface ContextUtils : RuntimeAware {
                 runtime.addedLLVMExternalFunctions.getOrPut(this) {
                     val symbolName = if (KonanBinaryInterface.isExported(this)) {
                         this.computeSymbolName()
+                    } else if (context.shouldOptimize() && parentClassOrNull?.isAnonymousObject == true) {
+                        val containerName = "${context.irLinker.getExternalDeclarationFileName(this)}:${generationState.getLocalClassName(parentClassOrNull!!)}"
+                        this.computePrivateSymbolName(containerName)
                     } else {
                         val containerName = parentClassOrNull?.fqNameForIrSerialization?.asString()
                                 ?: context.irLinker.getExternalDeclarationFileName(this)
@@ -221,6 +224,9 @@ internal interface ContextUtils : RuntimeAware {
             return if (isExternal(this)) {
                 val typeInfoSymbolName = if (KonanBinaryInterface.isExported(this)) {
                     this.computeTypeInfoSymbolName()
+                } else if (context.shouldOptimize() && isAnonymousObject == true) {
+                    val containerName = "${context.irLinker.getExternalDeclarationFileName(this)}:${generationState.getLocalClassName(this)}"
+                    this.computePrivateTypeInfoSymbolName(containerName)
                 } else {
                     this.computePrivateTypeInfoSymbolName(context.irLinker.getExternalDeclarationFileName(this))
                 }
@@ -267,7 +273,10 @@ internal interface ContextUtils : RuntimeAware {
             return if (isExternal(this)) {
                 check(storageKind == FieldStorageKind.GLOBAL)
                 runtime.addedLLVMExternalStaticFields.getOrPut(this) {
-                    val containerName = parentClassOrNull?.fqNameForIrSerialization?.asString()
+                    val containerName = if (context.shouldOptimize() && parentClassOrNull?.isAnonymousObject == true) {
+                        val containerName = "${context.irLinker.getExternalDeclarationFileName(this)}:${generationState.getLocalClassName(this.parentClassOrNull!!)}"
+                        this.computePrivateStaticFieldName(containerName)
+                    } else parentClassOrNull?.fqNameForIrSerialization?.asString()
                             ?: context.irLinker.getExternalDeclarationFileName(this)
                     val symbolName = computePrivateStaticFieldName(containerName)
 
