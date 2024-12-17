@@ -423,11 +423,17 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
 
         var sourceParameterIndex = -1
         return buildMap {
-            val valueParametersPrefix: List<IrValueParameter> = if (isStatic(declaration)) {
+            val stubFunctionReceiverParameters =
                 stubFunction.parameters.filter { it.kind == IrParameterKind.DispatchReceiver || it.kind == IrParameterKind.ExtensionReceiver }
+            val valueParametersPrefix: List<IrValueParameter> = if (isStatic(declaration)) {
+                stubFunctionReceiverParameters
             } else {
-                stubFunction.dispatchReceiverParameter?.let { put(it, expression.dispatchReceiver) }
-                stubFunction.extensionReceiverParameter?.let { put(it, expression.extensionReceiver) }
+                stubFunctionReceiverParameters.forEach {
+                    put(
+                        it,
+                        expression.arguments.zip(expression.symbol.owner.parameters).single { (_, param) -> param.kind == it.kind }.first
+                    )
+                }
                 listOf()
             }
             for ((i, parameter) in (valueParametersPrefix + stubFunction.valueParameters).withIndex()) {
