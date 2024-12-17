@@ -425,6 +425,8 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
         return buildMap {
             val stubFunctionReceiverParameters =
                 stubFunction.parameters.filter { it.kind == IrParameterKind.DispatchReceiver || it.kind == IrParameterKind.ExtensionReceiver }
+            val stubFunctionValueParameters =
+                stubFunction.parameters - stubFunctionReceiverParameters
             val valueParametersPrefix: List<IrValueParameter> = if (isStatic(declaration)) {
                 stubFunctionReceiverParameters
             } else {
@@ -436,8 +438,8 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
                 }
                 listOf()
             }
-            for ((i, parameter) in (valueParametersPrefix + stubFunction.valueParameters).withIndex()) {
-                if (!parameter.isMovedReceiver() && parameter != stubFunction.dispatchReceiverParameter && parameter != stubFunction.extensionReceiverParameter) {
+            for ((i, parameter) in (valueParametersPrefix + stubFunctionValueParameters).withIndex()) {
+                if (!parameter.isMovedReceiver() && parameter !in stubFunctionReceiverParameters) {
                     ++sourceParameterIndex
                 }
                 val newArgument = when {
