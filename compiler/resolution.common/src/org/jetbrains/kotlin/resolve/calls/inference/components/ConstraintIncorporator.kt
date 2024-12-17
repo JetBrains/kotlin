@@ -164,14 +164,33 @@ class ConstraintIncorporator(
             causeOfIncorporationVariable, causeOfIncorporationConstraint, otherConstraint
         )
 
-        approximateIfNeededAndAddNewConstraintForInsideOtherConstraintIncorporationKind(
-            causeOfIncorporationVariable,
-            causeOfIncorporationConstraint,
-            otherVariable,
-            otherConstraint,
-            type,
-            needApproximation
-        )
+        fun prepareType(toSuper: Boolean): KotlinTypeMarker =
+            when {
+                needApproximation -> approximateCapturedTypes(type, toSuper)
+                else -> type
+            }
+
+        if (otherConstraint.kind != ConstraintKind.LOWER) {
+            addNewConstraintForInsideOtherConstraintsIncorporationKind(
+                causeOfIncorporationVariable,
+                causeOfIncorporationConstraint,
+                otherVariable,
+                otherConstraint,
+                prepareType(true),
+                isSubtype = false
+            )
+        }
+
+        if (otherConstraint.kind != ConstraintKind.UPPER) {
+            addNewConstraintForInsideOtherConstraintsIncorporationKind(
+                causeOfIncorporationVariable,
+                causeOfIncorporationConstraint,
+                otherVariable,
+                otherConstraint,
+                prepareType(false),
+                isSubtype = true
+            )
+        }
     }
 
     /**
@@ -246,46 +265,6 @@ class ConstraintIncorporator(
         }
 
         return otherConstraint.type.substitute(this, causeOfIncorporationVariable, alphaReplacement) to needsApproximation
-    }
-
-    // \alpha <: Number, \beta <: Inv<\alpha> => \beta <: Inv<out Number>
-    private fun Context.approximateIfNeededAndAddNewConstraintForInsideOtherConstraintIncorporationKind(
-        // \alpha
-        causeOfIncorporationVariable: TypeVariableMarker,
-        // \alpha <: Number
-        causeOfIncorporationConstraint: Constraint,
-        // \beta
-        targetVariable: TypeVariableMarker,
-        // \beta <: Inv<\alpha>
-        otherConstraint: Constraint,
-        // Inv<Captured(out Number)>
-        type: KotlinTypeMarker,
-        needApproximation: Boolean = true,
-    ) {
-        val prepareType = { toSuper: Boolean ->
-            if (needApproximation) approximateCapturedTypes(type, toSuper) else type
-        }
-
-        if (otherConstraint.kind != ConstraintKind.LOWER) {
-            addNewConstraintForInsideOtherConstraintsIncorporationKind(
-                causeOfIncorporationVariable,
-                causeOfIncorporationConstraint,
-                targetVariable,
-                otherConstraint,
-                prepareType(true),
-                isSubtype = false
-            )
-        }
-        if (otherConstraint.kind != ConstraintKind.UPPER) {
-            addNewConstraintForInsideOtherConstraintsIncorporationKind(
-                causeOfIncorporationVariable,
-                causeOfIncorporationConstraint,
-                targetVariable,
-                otherConstraint,
-                prepareType(false),
-                isSubtype = true
-            )
-        }
     }
 
     // \alpha <: Number, \beta <: Inv<\alpha> => \beta <: Inv<out Number>
