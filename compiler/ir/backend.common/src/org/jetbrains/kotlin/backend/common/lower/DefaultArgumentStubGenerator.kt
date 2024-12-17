@@ -438,7 +438,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
                 }
                 listOf()
             }
-            for ((i, parameter) in (valueParametersPrefix + stubFunctionValueParameters).withIndex()) {
+            for (parameter in (valueParametersPrefix + stubFunctionValueParameters)) {
                 if (!parameter.isMovedReceiver() && parameter !in stubFunctionReceiverParameters) {
                     ++sourceParameterIndex
                 }
@@ -455,7 +455,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
                         maskValues[sourceParameterIndex - realArgumentsNumber]
                     )
                     else -> {
-                        val valueArgument = expression.getValueArgument(i)
+                        val valueArgument = expression.arguments[parameter.indexInParameters]
                         if (valueArgument == null) {
                             maskValues[sourceParameterIndex / 32] =
                                 maskValues[sourceParameterIndex / 32] or (1 shl (sourceParameterIndex % 32))
