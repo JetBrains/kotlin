@@ -314,7 +314,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
                         else -> log { "call::params@$${paramIndex++}/${parameter.name}: ${ir2string(argument)}" }
                     }
                     if (argument != null) {
-                        putArgument(parameter, argument)
+                        arguments[parameter.indexInParameters] = argument
                     }
                 }
             }
