@@ -11,9 +11,13 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.PsiManager
+import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.LocalTimeCounter
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.KtFileWithExpressions
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -606,6 +610,16 @@ class KtPsiFactory private constructor(
     fun createBlockCodeFragment(@NonNls text: String, context: PsiElement?): KtBlockCodeFragment {
         return KtBlockCodeFragment(project, "fragment.kt", text, null, context)
     }
+
+    fun createFileWithExpressions(fileName: String, @NonNls text: String): KtFileWithExpressions {
+        val psiManager = PsiManager.getInstance(project) as PsiManagerEx
+        val viewProvider = psiManager.fileManager.createFileViewProvider(
+            LightVirtualFile(fileName, KotlinFileType.INSTANCE, text),
+            /* eventSystemEnabled = */true
+        )
+        return KtFileWithExpressions(viewProvider)
+    }
+
 
     fun createIf(condition: KtExpression, thenExpr: KtExpression, elseExpr: KtExpression? = null): KtIfExpression {
         return (if (elseExpr != null)

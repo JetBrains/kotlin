@@ -28,6 +28,8 @@ public interface KtNodeTypes {
     IElementType CLASS     = KtStubElementTypes.CLASS;
     IElementType FUN       = KtStubElementTypes.FUNCTION;
     IElementType PROPERTY  = KtStubElementTypes.PROPERTY;
+    IElementType FILE_EXPRESSION_HOLDER = new KtNodeType("FILE_EXPRESSION_HOLDER", KtFileExpressionHolder.class);
+
     IElementType DESTRUCTURING_DECLARATION = new KtNodeType("DESTRUCTURING_DECLARATION", KtDestructuringDeclaration.class);
     IElementType DESTRUCTURING_DECLARATION_ENTRY = new KtNodeType("DESTRUCTURING_DECLARATION_ENTRY", KtDestructuringDeclarationEntry.class);
 
@@ -168,4 +170,6 @@ public interface KtNodeTypes {
     IFileElementType TYPE_CODE_FRAGMENT = KtStubElementTypes.TYPE_CODE_FRAGMENT;
     IFileElementType EXPRESSION_CODE_FRAGMENT = KtStubElementTypes.EXPRESSION_CODE_FRAGMENT;
     IFileElementType BLOCK_CODE_FRAGMENT = KtStubElementTypes.BLOCK_CODE_FRAGMENT;
+
+    IFileElementType FILE_WITH_EXPRESSIONS = KtStubElementTypes.FILE_WITH_EXPRESSIONS;
 }

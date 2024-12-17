@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi.stubs.elements;
 
 import com.intellij.psi.tree.TokenSet;
+import org.jetbrains.kotlin.KtFileExpressionHolder;
 import org.jetbrains.kotlin.psi.*;
 
 public interface KtStubElementTypes {
@@ -93,6 +94,7 @@ public interface KtStubElementTypes {
     KtTypeCodeFragmentType TYPE_CODE_FRAGMENT = new KtTypeCodeFragmentType();
     KtExpressionCodeFragmentType EXPRESSION_CODE_FRAGMENT = new KtExpressionCodeFragmentType();
     KtBlockCodeFragmentType BLOCK_CODE_FRAGMENT = new KtBlockCodeFragmentType();
+    KtFileWithExpressionsType FILE_WITH_EXPRESSIONS = new KtFileWithExpressionsType();
 
     KtTypeProjectionElementType TYPE_PROJECTION = new KtTypeProjectionElementType("TYPE_PROJECTION");
 

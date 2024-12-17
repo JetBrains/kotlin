@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.KtFileExpressionHolder;
 
 public class KtVisitor<R, D> extends PsiElementVisitor {
     public R visitKtElement(@NotNull KtElement element, D data) {
@@ -362,6 +363,10 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
 
     public R visitScriptInitializer(@NotNull KtScriptInitializer initializer, D data) {
         return visitAnonymousInitializer(initializer, data);
+    }
+
+    public R visitKtFileExpressionHolder(@NotNull KtFileExpressionHolder holder, D data) {
+        return visitDeclaration(holder, data);
     }
 
     public R visitClassInitializer(@NotNull KtClassInitializer initializer, D data) {

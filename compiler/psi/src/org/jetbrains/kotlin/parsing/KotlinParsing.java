@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 
 import static org.jetbrains.kotlin.KtNodeTypes.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
+import static org.jetbrains.kotlin.parsing.KotlinExpressionParsing.EXPRESSION_FIRST;
 import static org.jetbrains.kotlin.parsing.KotlinParsing.AnnotationParsingMode.*;
 import static org.jetbrains.kotlin.parsing.KotlinWhitespaceAndCommentsBindersKt.PRECEDING_ALL_BINDER;
 import static org.jetbrains.kotlin.parsing.KotlinWhitespaceAndCommentsBindersKt.TRAILING_ALL_BINDER;
@@ -182,6 +183,19 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         checkUnclosedBlockComment();
         fileMarker.done(KT_FILE);
+    }
+
+    void parseFileWithExpressions() {
+        PsiBuilder.Marker fileMarker = mark();
+
+        parsePreamble();
+
+        while (!eof()) {
+            parseTopLevelDeclaration();
+        }
+
+        checkUnclosedBlockComment();
+        fileMarker.done(FILE_WITH_EXPRESSIONS);
     }
 
     private void checkUnclosedBlockComment() {
@@ -485,7 +499,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : object
      *   ;
      */
-    private void parseTopLevelDeclaration() {
+    private void parseTopLevelDeclaration(boolean allowExpressions) {
         if (at(SEMICOLON)) {
             advance(); // SEMICOLON
             return;
@@ -501,24 +515,36 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         IElementType declType = parseCommonDeclaration(detector, NameParsingMode.REQUIRED, DeclarationParsingMode.MEMBER_OR_TOPLEVEL);
 
-        if (declType == null && at(LBRACE)) {
-            error("Expecting a top level declaration");
-            parseBlock();
-            declType = FUN;
-        }
+        if (declType == null && allowExpressions && atSet(EXPRESSION_FIRST)) {
+            parseExpressionHolder();
+        } else {
+            if (declType == null && at(LBRACE)) {
+                error("Expecting a top level declaration");
+                parseBlock();
+                declType = FUN;
+            }
 
-        if (declType == null && at(IMPORT_KEYWORD)) {
-            error("imports are only allowed in the beginning of file");
-            parseImportDirectives();
-            decl.drop();
+            if (declType == null && at(IMPORT_KEYWORD)) {
+                error("imports are only allowed in the beginning of file");
+                parseImportDirectives();
+                decl.drop();
+            }
+            else if (declType == null) {
+                errorAndAdvance("Expecting a top level declaration");
+                decl.drop();
+            }
+            else {
+                closeDeclarationWithCommentBinders(decl, declType, true);
+            }
         }
-        else if (declType == null) {
-            errorAndAdvance("Expecting a top level declaration");
-            decl.drop();
-        }
-        else {
-            closeDeclarationWithCommentBinders(decl, declType, true);
-        }
+    }
+
+    private void parseExpressionHolder() {
+        PsiBuilder.Marker holder = mark();
+        PsiBuilder.Marker block = mark();
+        myExpressionParsing.parseExpression();
+        block.done(BLOCK);
+        holder.done(FILE_EXPRESSION_HOLDER);
     }
 
     public IElementType parseCommonDeclaration(
@@ -2347,7 +2373,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             recoverOnParenthesizedWordForPlatformTypes(0, "Mutable", true);
 
             if (expect(IDENTIFIER, "Expecting type name",
-                       TokenSet.orSet(KotlinExpressionParsing.EXPRESSION_FIRST, KotlinExpressionParsing.EXPRESSION_FOLLOW, DECLARATION_FIRST))) {
+                       TokenSet.orSet(EXPRESSION_FIRST, KotlinExpressionParsing.EXPRESSION_FOLLOW, DECLARATION_FIRST))) {
                 reference.done(REFERENCE_EXPRESSION);
             }
             else {
