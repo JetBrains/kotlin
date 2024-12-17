@@ -32,6 +32,7 @@ class UklibConsumptionIT : KGPBaseTest() {
     fun `uklib consumption smoke - in kotlin compilations of a symmetric consumer and producer projects - with all metadata compilations`(
         version: GradleVersion,
     ) {
+        // FIXME: Add androidTarget
         val symmetricTargets: KotlinMultiplatformExtension.() -> Unit = {
             linuxArm64()
             iosArm64()
