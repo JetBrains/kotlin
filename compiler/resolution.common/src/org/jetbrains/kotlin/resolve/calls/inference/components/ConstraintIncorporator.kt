@@ -176,17 +176,18 @@ class ConstraintIncorporator(
                  *      incorporatedConstraint = Approx(CapturedType(out Number)) <: TypeVariable(A) => Nothing <: TypeVariable(A)
                  * TODO: implement this for generics and captured types
                  */
-                if (otherConstraint.kind == ConstraintKind.LOWER && !isBaseGenericType && !isBaseOrOtherCapturedType) {
-                    nothingType() to false
-                } else if (otherConstraint.kind == ConstraintKind.UPPER && !isBaseGenericType && !isBaseOrOtherCapturedType) {
-                    causeOfIncorporationConstraint.type to false
-                } else {
-                    createCapturedType(
-                        createTypeArgument(causeOfIncorporationConstraint.type, TypeVariance.OUT),
-                        listOf(causeOfIncorporationConstraint.type),
-                        null,
-                        CaptureStatus.FOR_INCORPORATION
-                    ) to true
+                when {
+                    otherConstraint.kind == ConstraintKind.LOWER && !isBaseGenericType && !isBaseOrOtherCapturedType ->
+                        nothingType() to false
+                    otherConstraint.kind == ConstraintKind.UPPER && !isBaseGenericType && !isBaseOrOtherCapturedType ->
+                        causeOfIncorporationConstraint.type to false
+                    else ->
+                        createCapturedType(
+                            createTypeArgument(causeOfIncorporationConstraint.type, TypeVariance.OUT),
+                            listOf(causeOfIncorporationConstraint.type),
+                            null,
+                            CaptureStatus.FOR_INCORPORATION
+                        ) to true
                 }
             }
             ConstraintKind.LOWER -> {
@@ -199,17 +200,18 @@ class ConstraintIncorporator(
                  *      incorporatedConstraint = TypeVariable(A) <: Approx(CapturedType(in Number)) => TypeVariable(A) <: Any?
                  * TODO: implement this for generics and captured types
                  */
-                if (otherConstraint.kind == ConstraintKind.UPPER && !isBaseGenericType && !isBaseOrOtherCapturedType) {
-                    nullableAnyType() to false
-                } else if (otherConstraint.kind == ConstraintKind.LOWER && !isBaseGenericType && !isBaseOrOtherCapturedType) {
-                    causeOfIncorporationConstraint.type to false
-                } else {
-                    createCapturedType(
-                        createTypeArgument(causeOfIncorporationConstraint.type, TypeVariance.IN),
-                        emptyList(),
-                        causeOfIncorporationConstraint.type,
-                        CaptureStatus.FOR_INCORPORATION
-                    ) to true
+                when {
+                    otherConstraint.kind == ConstraintKind.UPPER && !isBaseGenericType && !isBaseOrOtherCapturedType ->
+                        nullableAnyType() to false
+                    otherConstraint.kind == ConstraintKind.LOWER && !isBaseGenericType && !isBaseOrOtherCapturedType ->
+                        causeOfIncorporationConstraint.type to false
+                    else ->
+                        createCapturedType(
+                            createTypeArgument(causeOfIncorporationConstraint.type, TypeVariance.IN),
+                            emptyList(),
+                            causeOfIncorporationConstraint.type,
+                            CaptureStatus.FOR_INCORPORATION
+                        ) to true
                 }
             }
         }
