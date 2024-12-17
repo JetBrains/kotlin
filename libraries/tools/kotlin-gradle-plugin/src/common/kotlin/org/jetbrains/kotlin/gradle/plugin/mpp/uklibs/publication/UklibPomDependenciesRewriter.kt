@@ -22,6 +22,10 @@ internal class UklibPomDependenciesRewriter {
         val artifact: String,
     )
 
+    /**
+     * FIXME: We actually need to make sure that dependencies recorded in the POM get bumped to the highest version resolved by any platform
+     * or metadata compilation
+     */
     fun rewriteDependencies(
         pomXml: XmlProvider,
         scopeMapping: Map<DependencyGA, KotlinUsageContext.MavenScope?>,
