@@ -226,11 +226,6 @@ private val jsInteropFunctionsLowering = makeIrModulePhase(
     name = "JsInteropFunctionsLowering",
 )
 
-private val jsInteropFunctionCallsLowering = makeIrModulePhase(
-    ::JsInteropFunctionCallsLowering,
-    name = "JsInteropFunctionCallsLowering",
-)
-
 private val enumWhenPhase = makeIrModulePhase(
     ::EnumWhenLowering,
     name = "EnumWhenLowering",
@@ -663,7 +658,6 @@ fun getWasmLowerings(
     complexExternalDeclarationsUsagesLowering,
 
     jsInteropFunctionsLowering,
-    jsInteropFunctionCallsLowering,
 
     enumUsageLoweringPhase,
     enumEntryRemovalLoweringPhase,

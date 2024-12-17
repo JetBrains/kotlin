@@ -233,9 +233,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
     private fun getExternalKClassCtorArgument(type: IrType, builder: DeclarationIrBuilder): IrExpression {
         val klass = type.classOrNull?.owner ?: error("Invalid type")
         check(klass.kind != ClassKind.INTERFACE) { "External interface must not be a class literal" }
-        val classGetClassFunction = context.mapping.wasmGetJsClass[klass]!!
-        val wrappedGetClassIfAny = context.mapping.wasmJsInteropFunctionToWrapper[classGetClassFunction] ?: classGetClassFunction
-        return builder.irCall(wrappedGetClassIfAny)
+        return builder.irCall(context.mapping.wasmGetJsClass[klass]!!)
     }
 
     override fun lower(irFile: IrFile) {
