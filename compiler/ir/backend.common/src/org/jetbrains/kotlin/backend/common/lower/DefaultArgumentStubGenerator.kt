@@ -306,11 +306,12 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
                 }
                 val parameter2arguments = argumentsForCall(expression, stubFunction)
 
+                var paramIndex = 0
                 for ((parameter, argument) in parameter2arguments) {
-                    when (parameter) {
-                        stubFunction.dispatchReceiverParameter -> log { "call::dispatch@: ${ir2string(argument)}" }
-                        stubFunction.extensionReceiverParameter -> log { "call::extension@: ${ir2string(argument)}" }
-                        else -> log { "call::params@$${parameter.indexInOldValueParameters}/${parameter.name}: ${ir2string(argument)}" }
+                    when (parameter.kind) {
+                        IrParameterKind.DispatchReceiver -> log { "call::dispatch@: ${ir2string(argument)}" }
+                        IrParameterKind.ExtensionReceiver -> log { "call::extension@: ${ir2string(argument)}" }
+                        else -> log { "call::params@$${paramIndex++}/${parameter.name}: ${ir2string(argument)}" }
                     }
                     if (argument != null) {
                         putArgument(parameter, argument)
