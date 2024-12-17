@@ -621,6 +621,13 @@ interface LanguageOrApiVersion : DescriptionAware {
         }
 }
 
+// This is a public API used in IDEA kotlin plugin code, in particular in
+// community/plugins/kotlin/base/compiler-configuration-ui/src/org/jetbrains/kotlin/idea/base/compilerPreferences/configuration/KotlinCompilerConfigurableTab.java
+@Suppress("unused")
+@Deprecated(
+    message = "This function is no more actual after 2.0 release, consider replacing with isStable",
+    replaceWith = ReplaceWith("isStable")
+)
 fun LanguageVersion.isStableOrReadyForPreview(): Boolean =
     isStable || this == KOTLIN_1_9 || this == KOTLIN_2_0
 
