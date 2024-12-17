@@ -146,12 +146,12 @@ fun deserializeDependencies(
 ): Map<IrModuleFragment, KotlinLibrary> {
     return sortedDependencies.associateBy { klib ->
         val descriptor = mapping(klib)
-        when {
-            mainModuleLib == null -> irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
-            filesToLoad != null && klib == mainModuleLib -> irLinker.deserializeDirtyFiles(descriptor, klib, filesToLoad)
-            filesToLoad != null && klib != mainModuleLib -> irLinker.deserializeHeadersWithInlineBodies(descriptor, klib)
-            klib == mainModuleLib -> irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.ALL })
-            else -> irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
+        //STDLIB
+        if (klib == mainModuleLib) {
+            //deserializeOnlyHeaderModule??
+            irLinker.deserializeHeadersWithInlineBodies(descriptor, klib)
+        } else {
+            irLinker.deserializeFullModule(descriptor, klib)
         }
     }
 }

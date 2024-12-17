@@ -107,7 +107,7 @@ fun compileToLoweredIr(
         allModules,
         context,
         context.irFactory.stageController as WholeWorldStageController,
-        isIncremental = false,
+        isIncremental = true,
     )
 
     performanceManager?.notifyIRLoweringFinished()
@@ -303,7 +303,7 @@ fun generateAsyncJsWrapper(
     //language=js
     val pathJsStringLiteral = wasmFilePath.toJsStringLiteral()
     return """
-export async function instantiate(imports={}, runInitializer=true) {
+export async function stdlib(imports={}, runInitializer=true) {
     const cachedJsObjects = new WeakMap();
     // ref must be non-null
     function getCachedJsObject(ref, ifNotCached) {
@@ -345,6 +345,7 @@ $jsCodeBodyIndented
         intrinsics: {
             ${if (useJsTag) "js_error_tag: WebAssembly.JSTag" else ""}
         },
+        stdlib: imports,
 $imports
     };
     
