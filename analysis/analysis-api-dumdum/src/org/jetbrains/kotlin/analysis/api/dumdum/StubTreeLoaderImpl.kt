@@ -6,19 +6,17 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.stubs.CoreStubTreeLoader
 import com.intellij.psi.stubs.ObjectStubTree
 import com.intellij.psi.stubs.StubTreeLoader
-import org.jetbrains.kotlin.analysis.api.dumdum.index.StubIndex
 
 class StubTreeLoaderImpl : StubTreeLoader() {
-    lateinit var stubIndex: StubIndex
 
     override fun readOrBuild(project: Project, vFile: VirtualFile, psiFile: PsiFile?): ObjectStubTree<*>? =
-        stubIndex.stub(vFile)
+        project.getService(StubIndexProjectService::class.java).stubIndex.stub(vFile)
 
     override fun build(project: Project?, vFile: VirtualFile, psiFile: PsiFile?): ObjectStubTree<*>? =
-        stubIndex.stub(vFile)
+        throw UnsupportedOperationException("why do you need this?")
 
     override fun readFromVFile(project: Project, vFile: VirtualFile): ObjectStubTree<*>? =
-        stubIndex.stub(vFile)
+        project.getService(StubIndexProjectService::class.java).stubIndex.stub(vFile)
 
     override fun rebuildStubTree(virtualFile: VirtualFile?) {
         TODO("Not yet implemented")

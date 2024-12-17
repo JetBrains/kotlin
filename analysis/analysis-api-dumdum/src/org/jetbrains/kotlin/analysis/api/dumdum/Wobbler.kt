@@ -107,6 +107,8 @@ interface Wobbler {
     val stubSerializersTable: StubSerializersTable
 }
 
+class StubIndexProjectService(val stubIndex: StubIndex)
+
 @OptIn(KaImplementationDetail::class)
 fun <T> withWobbler(f: Wobbler.() -> T): T {
     if (System.getProperty("java.awt.headless") == null) {
@@ -263,9 +265,6 @@ fun <T> withWobbler(f: Wobbler.() -> T): T {
                                 stubSerializersTable = stubSerializersTable,
                             )
 
-                            (applicationEnvironment.application.getService(StubTreeLoader::class.java) as StubTreeLoaderImpl).stubIndex =
-                                stubIndex
-
                             val fileBasedIndex: FileBasedIndex = index.fileBased(
                                 virtualFileFactory = virtualFileFactory,
                                 fileBasedIndexExtensions = fileBasedIndexExtensions
@@ -318,6 +317,11 @@ fun <T> withWobbler(f: Wobbler.() -> T): T {
                                     registerExtension(JavaElementFinder(project), applicationDisposable)
                                     registerExtension(PsiElementFinderImpl(project), applicationDisposable)
                                 }
+
+                                registerService(
+                                    StubIndexProjectService::class.java,
+                                    StubIndexProjectService(stubIndex)
+                                )
 
 
                                 registerService(
