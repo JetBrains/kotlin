@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragmentPlatformAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.diagnostics.UklibFragmentsChecker
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.diagnostics.UklibFromKGPSourceSetsDependenciesChecker
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibFragmentPlatformAttribute
 import java.io.File
 
@@ -38,11 +39,9 @@ internal data class KGPUklibFragment(
 )
 
 internal suspend fun KotlinMultiplatformExtension.validateKgpModelIsUklibCompliantAndCreateKgpFragments(): List<KGPUklibFragment> {
-    val metadataTarget = awaitMetadataTarget()
-    val allTargets = awaitTargets()
     // Guarantee that we can safely access any compilations
     KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
-    val publishedMetadataCompilations = metadataTarget.publishedMetadataCompilations()
+    val uklibPublishedPlatformCompilations = uklibPublishedPlatformCompilations()
 
     val fragments = mutableListOf<KGPUklibFragment>()
     val unsupportedTargets = linkedSetOf<String>()
@@ -55,19 +54,16 @@ internal suspend fun KotlinMultiplatformExtension.validateKgpModelIsUklibComplia
         when (target) {
             is KotlinJsIrTarget -> {
                 val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-                publishedPlatformCompilations.add(mainCompilation)
                 val file = mainCompilation.compileTaskProvider.flatMap { it.klibOutput }
                 fragments.add(kgpUklibFragment(mainCompilation, mainCompilation.compileTaskProvider, file))
             }
             is KotlinNativeTarget -> {
                 val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-                publishedPlatformCompilations.add(mainCompilation)
                 val file = mainCompilation.compileTaskProvider.flatMap { it.klibOutput }
                 fragments.add(kgpUklibFragment(mainCompilation, mainCompilation.compileTaskProvider, file))
             }
             is KotlinJvmTarget -> {
                 val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-                publishedPlatformCompilations.add(mainCompilation)
                 @Suppress("UNCHECKED_CAST")
                 val jarTask = (target.project.tasks.named(target.artifactsTaskName) as TaskProvider<Jar>)
                 val jarArtifact = jarTask.flatMap { it.archiveFile.map { it.asFile } }
@@ -91,6 +87,7 @@ internal suspend fun KotlinMultiplatformExtension.validateKgpModelIsUklibComplia
         return emptyList()
     }
 
+    val publishedMetadataCompilations = awaitMetadataTarget().publishedMetadataCompilations()
     publishedMetadataCompilations.forEach { metadataCompilation ->
         val artifact = metadataCompilation.project.provider {
             metadataCompilation.metadataPublishedArtifacts.singleFile
@@ -121,8 +118,8 @@ internal suspend fun KotlinMultiplatformExtension.validateKgpModelIsUklibComplia
         )
     }
 
-    val allPublishedCompilations = publishedMetadataCompilations + publishedPlatformCompilations
-    if (allPublishedCompilations.isEmpty() || (publishedMetadataCompilations.isEmpty() && publishedPlatformCompilations.size == 1 && fragments.size == 1)) {
+    val allPublishedCompilations = publishedMetadataCompilations + uklibPublishedPlatformCompilations
+    if (allPublishedCompilations.isEmpty() || (publishedMetadataCompilations.isEmpty() && uklibPublishedPlatformCompilations.size == 1 && fragments.size == 1)) {
         /**
          * Do not validate anything. Uklib will contain a single platform slice and fragment structure validations don't make sense
          *
@@ -130,9 +127,40 @@ internal suspend fun KotlinMultiplatformExtension.validateKgpModelIsUklibComplia
          */
     } else {
         project.ensureSourceSetStructureIsUklibCompliant(allPublishedCompilations)
+        project.ensureDependenciesAreDeclaredConsistentlyAcrossAllSourceSets(
+            uklibPublishedPlatformCompilations = uklibPublishedPlatformCompilations,
+            publishedMetadataCompilations = publishedMetadataCompilations,
+        )
     }
 
     return fragments
+}
+
+internal suspend fun KotlinMultiplatformExtension.uklibPublishedPlatformCompilations(): List<KotlinCompilation<*>> {
+    val allTargets = awaitTargets()
+    KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
+    return allTargets.filterNot {
+        it is KotlinMetadataTarget || it.uklibFragmentPlatformAttribute is UklibFragmentPlatformAttribute.PublishAndConsumeInMetadataCompilations
+    }.map { target ->
+        target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+    }
+}
+
+private fun Project.ensureDependenciesAreDeclaredConsistentlyAcrossAllSourceSets(
+    uklibPublishedPlatformCompilations: List<KotlinCompilation<*>>,
+    publishedMetadataCompilations: List<KotlinCompilation<*>>,
+) {
+    val violations = UklibFromKGPSourceSetsDependenciesChecker.findInconsistentDependencyDeclarations(
+        uklibPublishedPlatformCompilations = uklibPublishedPlatformCompilations,
+        publishedMetadataCompilations = publishedMetadataCompilations,
+    )
+    if (violations.isNotEmpty()) {
+        project.reportDiagnostic(
+            KotlinToolingDiagnostics.UklibInconsistentDependencyDeclarationViolation(
+                violations.toList()
+            )
+        )
+    }
 }
 
 private fun kgpUklibFragment(
