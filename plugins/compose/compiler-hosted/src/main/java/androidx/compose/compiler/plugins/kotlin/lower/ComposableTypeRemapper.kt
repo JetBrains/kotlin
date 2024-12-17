@@ -18,17 +18,16 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
-import androidx.compose.compiler.plugins.kotlin.FeatureFlags
-import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
+import androidx.compose.compiler.plugins.kotlin.*
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
-import androidx.compose.compiler.plugins.kotlin.hasComposableAnnotation
-import androidx.compose.compiler.plugins.kotlin.isComposableAnnotation
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -342,6 +341,8 @@ open class ComposableTypeRemapper(
         isSyntheticComposableFunction() ||
                 (isFunction() && hasComposableAnnotation())
 
+    private val composableSymbol = context.referenceClass(ComposeClassIds.Composable)!!
+
     override fun remapType(type: IrType): IrType {
         if (type !is IrSimpleType) return type
         if (!type.isComposableFunction()) {
@@ -372,11 +373,22 @@ open class ComposableTypeRemapper(
         val newArgSize = oldIrArguments.size - 1 + extraArgs.size
         val functionCls = context.function(newArgSize)
 
+        val annotations: List<IrConstructorCall> =
+            if (type.isComposableFunction() && !type.annotations.any { it.isComposableAnnotation() }) {
+                val annot: IrConstructorCall = IrConstructorCallImpl.fromSymbolOwner(
+                    composableSymbol.owner.defaultType,
+                    composableSymbol.constructors.single(),
+                )
+                type.annotations + annot
+            } else {
+                type.annotations
+            }
+
         return IrSimpleTypeImpl(
             functionCls,
             type.nullability,
             newIrArguments.map { remapTypeArgument(it) },
-            type.annotations,
+            annotations,
             null
         )
     }
