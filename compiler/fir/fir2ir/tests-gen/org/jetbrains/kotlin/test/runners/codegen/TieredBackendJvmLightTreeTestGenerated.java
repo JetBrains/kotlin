@@ -8097,6 +8097,17 @@ public class TieredBackendJvmLightTreeTestGenerated extends AbstractTieredBacken
       }
 
       @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/inference/incorporation")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Incorporation {
+        @Test
+        @TestMetadata("allowBigIncorporatedConstraints.kt")
+        public void testAllowBigIncorporatedConstraints() {
+          runTest("compiler/testData/diagnostics/tests/inference/incorporation/allowBigIncorporatedConstraints.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/inference/nestedCalls")
       @TestDataPath("$PROJECT_ROOT")
       public class NestedCalls {

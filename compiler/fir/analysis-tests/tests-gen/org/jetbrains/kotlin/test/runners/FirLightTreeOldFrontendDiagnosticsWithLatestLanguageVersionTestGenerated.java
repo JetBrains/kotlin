@@ -19241,6 +19241,22 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/inference/incorporation")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Incorporation {
+        @Test
+        public void testAllFilesPresentInIncorporation() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/incorporation"), Pattern.compile("^(.+)\\.(kt)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
+        }
+
+        @Test
+        @TestMetadata("allowBigIncorporatedConstraints.kt")
+        public void testAllowBigIncorporatedConstraints() {
+          runTest("compiler/testData/diagnostics/tests/inference/incorporation/allowBigIncorporatedConstraints.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/inference/nestedCalls")
       @TestDataPath("$PROJECT_ROOT")
       public class NestedCalls {
