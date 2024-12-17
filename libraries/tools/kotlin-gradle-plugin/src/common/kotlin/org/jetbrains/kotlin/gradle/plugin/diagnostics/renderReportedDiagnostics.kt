@@ -48,24 +48,22 @@ private fun ToolingDiagnostic.render(
     renderingOptions: ToolingDiagnosticRenderingOptions,
     showStacktrace: Boolean = renderingOptions.showStacktrace,
 ): String = buildString {
+    val styledDiagnostic = styled()
     with(renderingOptions) {
         if (!useParsableFormat && showSeverityEmoji) {
-            when (severity) {
-                WARNING -> appendLine("""⚠️ ${identifier.displayName}""")
-                ERROR, FATAL -> appendLine("""❌ ${identifier.displayName}""")
-            }
+            appendLine(styledDiagnostic.name)
         }
 
         // Main message
         if (useParsableFormat) {
             appendLine(this@render)
         } else {
-            appendLine(message)
-            solutions.filter { it.isNotBlank() }.forEach {
+            appendLine(styledDiagnostic.message)
+            styledDiagnostic.solution?.let {
                 appendLine(it)
             }
-            documentation?.let {
-                appendLine(it.additionalUrlContext)
+            styledDiagnostic.documentation?.let {
+                appendLine(it)
             }
         }
 
