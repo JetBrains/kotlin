@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.AbstractResolveToFirSymbolTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.*
@@ -295,6 +296,10 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
 
         testClass<AbstractResolveExtensionDisposalAfterModificationEventTest> {
             model("resolveExtensionDisposal")
+        }
+
+        testClass<AbstractResolveToFirSymbolTest> {
+            model("resolveToFirSymbol")
         }
 
         testClass<AbstractFirClassByPsiClassProviderTest> {
