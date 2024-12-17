@@ -30,7 +30,7 @@ public interface AbiToolsV3 {
     public fun extractKlibAbi(klibFile: File, target: DumpTarget, filters: AbiFilters): AbiDump
 
     /**
-     * Get an ABI for JVM class-files or specified [target].
+     * Get an ABI for JVM class-files for specified [target].
      *
      * To control which declarations are passed to the dump, [filters] could be used. By default, no filters will be applied.
      */
