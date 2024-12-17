@@ -65,6 +65,7 @@ private fun ToolingDiagnostic.render(
     renderingOptions: ToolingDiagnosticRenderingOptions,
     showStacktrace: Boolean = renderingOptions.showStacktrace,
 ): String = buildString {
+    val styledDiagnostic = styled()
     with(renderingOptions) {
         if (useParsableFormat) {
             appendLine(this@render)
@@ -80,8 +81,8 @@ private fun ToolingDiagnostic.render(
             solutions.filter { it.isNotBlank() }.forEach {
                 appendLine(it)
             }
-            documentation?.let {
-                appendLine(it.additionalUrlContext)
+            styledDiagnostic.documentation?.let {
+                appendLine(it)
             }
         }
 
