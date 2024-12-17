@@ -424,7 +424,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
         var sourceParameterIndex = -1
         return buildMap {
             val valueParametersPrefix: List<IrValueParameter> = if (isStatic(declaration)) {
-                listOfNotNull(stubFunction.dispatchReceiverParameter, stubFunction.extensionReceiverParameter)
+                stubFunction.parameters.filter { it.kind == IrParameterKind.DispatchReceiver || it.kind == IrParameterKind.ExtensionReceiver }
             } else {
                 stubFunction.dispatchReceiverParameter?.let { put(it, expression.dispatchReceiver) }
                 stubFunction.extensionReceiverParameter?.let { put(it, expression.extensionReceiver) }
