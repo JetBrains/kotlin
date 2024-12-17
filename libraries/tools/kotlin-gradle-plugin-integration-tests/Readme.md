@@ -184,23 +184,128 @@ pluginManagement {
 
 ## <a name="injections"></a> build.gradle.kts injections from main test code
 
-It is possible to inject code from IT test directly into the build files of the test project.
-To do that use `buildScriptInjection` DSL function as follows:
+It is possible to inject code from IT test directly into the build files of the test project. 
+
+See [BuildScriptInjectionIT.kt](src/test/kotlin/org/jetbrains/kotlin/gradle/BuildScriptInjectionIT.kt) for examples of how to write a test 
+with injections including:
+* Generating a multiplatform project with sources from scratch
+* Building a multi-project setup
+* Publishing a project in a Maven repository and consuming it in another project as a dependency
+* Catching execution and configuration time exceptions
+
+With [implicit debugging](#autodebug) you can break transparently in the test, the injection and in KGP.
+
+To inject a test use `buildScriptInjection` DSL function as follows:
 
 ```kotlin
-nativeProject("native-fat-framework/smoke", gradleVersion) {
-    buildScriptInjection {
-        // This code will be executed inside build.gradle.kts during project evaluation
-        val macos = kotlinMultiplatform.macosX64()
-        macos.binaries.framework("DEBUG")
-        val fat = project.tasks.getByName("fat") as FatFrameworkTask
-        fat.from(macos.binaries.getFramework("DEBUG"))
+@GradleTest
+fun test(version: GradleVersion) {
+    // Any project can be injected; "buildScriptInjectionGroovy" can be used as a bare template with KGP in build script classpath
+    project("buildScriptInjectionGroovy", version) {
+        buildScriptInjection {
+            // This code will be executed inside build.gradle(.kts) during project evaluation
+            project.applyMultiplatform {
+                linuxArm64()
+                sourceSets.commonMain.get().compileSource("class Common")
+            }
+        }
+        build("assemble") {
+            assertTasksExecuted(":compileKotlinLinuxArm64")
+        }
     }
-    buildAndFail("assemble") {}
 }
 ```
 
-It is possible to inject the same code to both groovy and kts buildscript files. 
+Injections can capture `java.io.Serializable` variables from the test:
 
-Invocation of `buildGradleKtsInjection` adds to the build script classpath classes from test. And injects in build script this line:
-`org.jetbrains.kotlin.gradle.testbase.invokeBuildScriptInjection(project, "<FQN to class produced from lambda>")`
+```kotlin
+data class PassMe(val foo: String) : java.io.Serializable
+
+project("buildScriptInjectionGroovy", version) {
+    // Instantiate Serializable types as variables in test
+    val loveInjectionsTask = "loveInjections"
+    val passMe = PassMe("Injections 🥰")
+    buildScriptInjection {
+        project.tasks.register(loveInjectionsTask) {
+            it.doLast {
+                // Use them during configuration or at execution
+                println(passMe)
+            }
+        }
+    }
+    build(loveInjectionsTask) {
+        assertOutputContains(passMe.foo)
+    }
+}
+```
+
+Injections can also return `Serializable` value from the build script back to the test using `buildScriptReturn` injections:
+
+```kotlin
+project("buildScriptInjectionGroovy", version) {
+    buildScriptInjection {
+        project.applyMultiplatform {
+            linuxArm64()
+            linuxX64()
+            sourceSets.commonMain.get().compileSource("class Common")
+        }
+    }
+
+    // Use assertions on this path or capture it in another injection!
+    val commonMainMetadataKlibPath: File = buildScriptReturn {
+        kotlinMultiplatform.metadata().compilations.getByName("commonMain").output.classesDirs.singleFile
+    }.buildAndReturn()
+}
+```
+
+Use injections to capture execution and configuration time failures:
+
+```kotlin
+data class A(val name: String = "A") : Exception()
+val a1 = A("1")
+
+project("buildScriptInjectionGroovy", version) {
+    buildScriptInjection {
+        project.tasks.register("throwA") {
+            it.doLast { throw a1 }
+        }
+    }
+    assertEquals(
+        CaughtBuildFailure.Expected(setOf(a1)),
+        catchBuildFailures<A>().buildAndReturn(
+            "throwA",
+        )
+    )
+}
+```
+
+Settings build scripts are also be injectable:
+
+```kotlin
+project("buildScriptInjectionGroovy", version) {
+    settingsBuildScriptInjection {
+        settings.dependencyResolutionManagement {
+            // ...
+        }
+    }
+}
+```
+
+Injections also have access to KGP's internal APIs (IDE currently colors this code red due to KTIJ-31881, but it will compile):
+
+```kotlin
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
+
+project("buildScriptInjectionGroovy", version) {
+    buildScriptInjection {
+        project.applyMultiplatform {
+            linuxArm64()
+        }
+    }
+
+    buildScriptReturn {
+        // Any internal KGP APIs are accessible in the injections
+        kotlinMultiplatform.linuxArm64().compilations.getByName("main").internal as InternalKotlinCompilation
+    }
+}
+```
