@@ -160,9 +160,38 @@ class ConstraintIncorporator(
         // \beta <: Inv<\alpha>
         otherConstraint: Constraint,
     ) {
+        val (type, needApproximation) = computeConstraintTypeForInsideOtherConstraintIncorporationKind(
+            causeOfIncorporationVariable, causeOfIncorporationConstraint, otherConstraint
+        )
+
+        approximateIfNeededAndAddNewConstraintForInsideOtherConstraintIncorporationKind(
+            causeOfIncorporationVariable,
+            causeOfIncorporationConstraint,
+            otherVariable,
+            otherConstraint,
+            type,
+            needApproximation
+        )
+    }
+
+    /**
+     * \alpha <: Number, \beta <: Inv<\alpha> => \beta <: Inv<out Number>
+     *  The second boolean component defines if further approximation is required.
+     *
+     *  @return `Pair(Inv<Captured(out Number)>, true)`
+     */
+    private fun Context.computeConstraintTypeForInsideOtherConstraintIncorporationKind(
+        // \alpha
+        causeOfIncorporationVariable: TypeVariableMarker,
+        // \alpha <: Number
+        causeOfIncorporationConstraint: Constraint,
+        // \beta <: Inv<\alpha>
+        otherConstraint: Constraint,
+    ): Pair<KotlinTypeMarker, Boolean> {
         val isBaseGenericType = otherConstraint.type.argumentsCount() != 0
         val isBaseOrOtherCapturedType = otherConstraint.type.isCapturedType() || causeOfIncorporationConstraint.type.isCapturedType()
-        val (type, needApproximation) = when (causeOfIncorporationConstraint.kind) {
+
+        val (alphaReplacement, needsApproximation) = when (causeOfIncorporationConstraint.kind) {
             ConstraintKind.EQUALITY -> {
                 causeOfIncorporationConstraint.type to false
             }
@@ -216,14 +245,7 @@ class ConstraintIncorporator(
             }
         }
 
-        approximateIfNeededAndAddNewConstraintForInsideOtherConstraintIncorporationKind(
-            causeOfIncorporationVariable,
-            causeOfIncorporationConstraint,
-            otherVariable,
-            otherConstraint,
-            type,
-            needApproximation
-        )
+        return otherConstraint.type.substitute(this, causeOfIncorporationVariable, alphaReplacement) to needsApproximation
     }
 
     // \alpha <: Number, \beta <: Inv<\alpha> => \beta <: Inv<out Number>
@@ -236,13 +258,12 @@ class ConstraintIncorporator(
         targetVariable: TypeVariableMarker,
         // \beta <: Inv<\alpha>
         otherConstraint: Constraint,
-        // Captured(out Number)
+        // Inv<Captured(out Number)>
         type: KotlinTypeMarker,
         needApproximation: Boolean = true,
     ) {
-        val typeWithSubstitution = otherConstraint.type.substitute(this, causeOfIncorporationVariable, type)
         val prepareType = { toSuper: Boolean ->
-            if (needApproximation) approximateCapturedTypes(typeWithSubstitution, toSuper) else typeWithSubstitution
+            if (needApproximation) approximateCapturedTypes(type, toSuper) else type
         }
 
         if (otherConstraint.kind != ConstraintKind.LOWER) {
