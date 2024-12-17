@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
 import org.jetbrains.kotlin.gradle.utils.forAllTargets
 
-private const val KOTLIN_DOM_API_MODULE_NAME = "kotlin-dom-api-compat"
+internal const val KOTLIN_DOM_API_MODULE_NAME = "kotlin-dom-api-compat"
 
 private val Dependency.isKotlinDomApiDependency: Boolean
     get() = group == KOTLIN_MODULE_GROUP && (name == KOTLIN_DOM_API_MODULE_NAME)

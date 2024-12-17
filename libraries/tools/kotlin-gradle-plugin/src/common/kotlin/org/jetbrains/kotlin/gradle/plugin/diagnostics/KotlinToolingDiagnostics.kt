@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.Dependency
+import org.gradle.internal.extensions.stdlib.capitalized
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.PRESETS_DEPRECATION_MESSAGE_SUFFIX
@@ -23,6 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.diagnostics.UklibFromKGPSourceSetsDependenciesChecker
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
 import org.jetbrains.kotlin.gradle.utils.prettyName
@@ -69,6 +73,36 @@ object KotlinToolingDiagnostics {
     object UklibSourceSetStructureUnderRefinementViolation : ToolingDiagnosticFactory(ERROR) {
         operator fun invoke(sourceSet: KotlinSourceSet, shouldRefine: List<KotlinSourceSet>, actuallyRefines: List<KotlinSourceSet>) = build(
             "Source set '${sourceSet}' should refine source sets ${shouldRefine}, but only refines source sets $actuallyRefines",
+        )
+    }
+
+    internal object UklibInconsistentDependencyDeclarationViolation : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(violations: List<UklibFromKGPSourceSetsDependenciesChecker.DependencyDeclarationViolation>) = build(
+            buildString {
+                append(
+                    """
+                    Uklibs only support consistent dependency declarations. Please declare all dependencies in the root source set:
+                     
+                        kotlin {
+                            sourceSets.commonMain {
+                                dependencies {
+                                    ...
+                                }
+                            }
+                        }
+                    
+                    The following configurations declare unique dependencies:
+                    """.trimIndent()
+                )
+
+                violations.forEach { violation ->
+                    appendLine()
+                    appendLine(violation.configuration)
+                    violation.uniqueDependencies.map { it.toString() }.sorted().forEach {
+                        appendLine("  $it")
+                    }
+                }
+            },
         )
     }
 
