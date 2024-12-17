@@ -173,23 +173,39 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 }
                 val subfragments = splitFragment(fragment)
 
-                val moduleCompilationOutputs = subfragments.map {
-                    backendEngine.useContext(it.generationState(generationState)) { generationStateEngine ->
-                        val bitcodeFile = tempFiles.create(generationStateEngine.context.llvmModuleName, "${it.name}.bc").javaFile()
-                        val objectFile = tempFiles.create(File(outputFiles.nativeBinaryFile).name, "${it.name}.o").javaFile()
-                        val cExportFiles = if (config.produceCInterface) {
-                            CExportFiles(
-                                    cppAdapter = tempFiles.create("api", ".cpp").javaFile(),
-                                    bitcodeAdapter = tempFiles.create("api", ".bc").javaFile(),
-                                    header = outputFiles.cAdapterHeader.javaFile(),
-                                    def = if (config.target.family == Family.MINGW) outputFiles.cAdapterDef.javaFile() else null,
-                            )
-                        } else null
-                        // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
-                        generationStateEngine.compileModule(it.module, it.files, backendContext.irBuiltIns, bitcodeFile, objectFile, cExportFiles)
-                        ModuleCompilationOutput(listOf(objectFile), generationStateEngine.context.dependenciesTracker.collectResult())
+                val threadsCount = context.config.threadsCount
+                val executor = Executors.newFixedThreadPool(threadsCount)
+                val thrownFromThread = AtomicReference<Throwable?>(null)
+                val tasks = subfragments.map {
+                    Callable {
+                        try {
+                            backendEngine.useContext(it.generationState(generationState)) { generationStateEngine ->
+                                val bitcodeFile = tempFiles.create(generationStateEngine.context.llvmModuleName, "${it.name}.bc").javaFile()
+                                val objectFile = tempFiles.create(File(outputFiles.nativeBinaryFile).name, "${it.name}.o").javaFile()
+                                val cExportFiles = if (config.produceCInterface) {
+                                    CExportFiles(
+                                            cppAdapter = tempFiles.create("api", ".cpp").javaFile(),
+                                            bitcodeAdapter = tempFiles.create("api", ".bc").javaFile(),
+                                            header = outputFiles.cAdapterHeader.javaFile(),
+                                            def = if (config.target.family == Family.MINGW) outputFiles.cAdapterDef.javaFile() else null,
+                                    )
+                                } else null
+                                // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
+                                generationStateEngine.compileModule(it.module, it.files, backendContext.irBuiltIns, bitcodeFile, objectFile, cExportFiles)
+                                ModuleCompilationOutput(listOf(objectFile), generationStateEngine.context.dependenciesTracker.collectResult())
+                            }
+                        } catch (t: Throwable) {
+                            thrownFromThread.set(t)
+                            null
+                        }
                     }
                 }
+                val futures = executor.invokeAll(tasks.toList())
+                executor.shutdown()
+                executor.awaitTermination(1, TimeUnit.DAYS)
+                thrownFromThread.get()?.let { throw it }
+
+                val moduleCompilationOutputs = futures.map { it.get()!! }
 
                 val dependencies = DependenciesTrackingResult.merge(moduleCompilationOutputs.map { it.dependenciesTrackingResult }, context.config)
                 val objectFiles = buildList {
