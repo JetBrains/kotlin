@@ -31,8 +31,12 @@ public class PrettyPrinter(public val indentSize: Int = 2) : Appendable {
             if (index > 0) {
                 builder.append('\n')
             }
-            appendIndentIfNeeded()
-            builder.append(line)
+
+            // Skip indents if the line is empty.
+            if (line.isNotEmpty()) {
+                appendIndentIfNeeded()
+                builder.append(line)
+            }
         }
     }
 
