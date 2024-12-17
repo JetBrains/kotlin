@@ -503,6 +503,11 @@ private fun commonBuildSetup(
         joinToString(separator = " ")
     }
 
+    val daemonLogsDir = kgpTestInfraWorkingDirectory.resolve("kotlin-daemon-logs")
+    if (!Files.isDirectory(daemonLogsDir)) {
+        Files.createDirectories(daemonLogsDir)
+    }
+
     return buildOptions.toArguments(gradleVersion) + buildArguments + listOfNotNull(
         // Required toolchains should be pre-installed via repo. Tests should not download any JDKs
         "-Porg.gradle.java.installations.auto-download=false",
@@ -527,6 +532,7 @@ private fun commonBuildSetup(
         if (buildOptions.customKotlinDaemonRunFilesDirectory != null) {
             "-D${CompilerSystemProperties.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS.property}=${buildOptions.customKotlinDaemonRunFilesDirectory.absolutePath}"
         } else null,
+        "-D${CompilerSystemProperties.COMPILE_DAEMON_LOG_PATH_PROPERTY.property}=${daemonLogsDir.absolutePathString()}",
     )
 }
 
