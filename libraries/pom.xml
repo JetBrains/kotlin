@@ -95,10 +95,6 @@
 
         <module>tools/kotlin-bom</module>
         <module>tools/kotlin-dist-for-jps-meta</module>
-
-        <module>tools/kotlin-maven-plugin-test</module>
-
-        <module>examples/kotlin-java-example</module>
     </modules>
 
     <dependencies>
@@ -424,6 +420,18 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>exclude-test-modules</id>
+            <activation>
+                <property>
+                    <name>!excludeTestModules</name>
+                </property>
+            </activation>
+            <modules>
+                <module>tools/kotlin-maven-plugin-test</module>
+                <module>examples/kotlin-java-example</module>
+            </modules>
         </profile>
     </profiles>
 </project>
