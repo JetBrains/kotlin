@@ -9,6 +9,7 @@ import com.intellij.mock.MockApplication
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
@@ -72,6 +73,37 @@ fun String.indented(indent: Int): String {
 
 fun KtDeclaration.getNameWithPositionString(): String {
     return (presentation?.presentableText ?: name ?: this::class.simpleName) + "@" + position()
+}
+
+/**
+ * Renders a description of where the [KtElement] is located, which may be used in test results.
+ *
+ * In contrast to [position], [renderLocationDescription] includes the file name from which the [KtElement] originates and supports compiled
+ * files.
+ *
+ * #### Examples
+ *
+ * ```
+ * 'main.kt' (127,165)              // An element in a file 'main.kt' with the position (127, 165).
+ * 'library1.jar!/library/A.class'  // An element in a class file 'A.class' in the JAR `library1.jar`.
+ * ```
+ */
+fun KtElement.renderLocationDescription(): String = buildString {
+    val ktFile = containingKtFile
+
+    val virtualFile = ktFile.virtualFile
+    val fileSystem = virtualFile.fileSystem
+    val fileDescription = if (fileSystem is CoreJarFileSystem) {
+        virtualFile.path.split("/").dropWhile { !it.endsWith(".jar!") }.joinToString("/").takeIf { it.isNotEmpty() }
+            ?: error("Expected a JAR file path for a virtual file in a JAR file system: ${virtualFile.path}")
+    } else {
+        virtualFile.name
+    }
+    append("'$fileDescription'")
+
+    if (!ktFile.isCompiled) {
+        append(" ${position()}")
+    }
 }
 
 fun findReferencesAtCaret(mainKtFile: KtFile, caretPosition: Int): List<KtReference> =
