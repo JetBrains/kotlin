@@ -392,7 +392,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
 
     private fun prepareToTheAnalysis(testConfiguration: TestConfiguration) {
         val moduleStructure = testServices.moduleStructure
-        val dependencyProvider = ArtifactsProviderImpl(testServices, moduleStructure.modules)
+        val dependencyProvider = ArtifactsProvider(testServices, moduleStructure.modules)
         testServices.registerDependencyProvider(dependencyProvider)
 
         testConfiguration.preAnalysisHandlers.forEach { preprocessor -> preprocessor.preprocessModuleStructure(moduleStructure) }

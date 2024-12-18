@@ -66,7 +66,7 @@ abstract class CommonRecompileModuleJsBackendFacade<R : ResultingArtifact.Fronte
         val incrementalRunner = TestRunner(incrementalConfiguration)
         val incrementalDependencyProvider = testServices.artifactsProvider.copy().also {
             it.unregisterAllArtifacts(module)
-        } as ArtifactsProviderImpl
+        }
 
         val incrementalServices = incrementalConfiguration.testServices
         incrementalServices.registerDependencyProvider(incrementalDependencyProvider)

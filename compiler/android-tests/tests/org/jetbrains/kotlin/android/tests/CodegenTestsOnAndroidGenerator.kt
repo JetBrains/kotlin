@@ -341,7 +341,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     val module = moduleStructure.modules.singleOrNull() ?: continue
                     if (module.files.any { it.isJavaFile || it.isKtsFile }) continue
                     if (module.files.isEmpty()) continue
-                    services.registerDependencyProvider(ArtifactsProviderImpl(services, moduleStructure.modules))
+                    services.registerDependencyProvider(ArtifactsProvider(services, moduleStructure.modules))
 
                     val keyConfiguration = CompilerConfiguration()
                     val configuratorForFlags = JvmEnvironmentConfigurator(services)
