@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
@@ -60,6 +61,7 @@ import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.psi2ir.generators.fragments.EvaluatorFragmentInfo
 import org.jetbrains.kotlin.psi2ir.generators.fragments.FragmentContext
 import org.jetbrains.kotlin.psi2ir.preprocessing.SourceDeclarationsPreprocessor
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
 import org.jetbrains.kotlin.serialization.StringTableImpl
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
@@ -119,6 +121,20 @@ open class JvmIrCodegenFactory(
         val allBuiltins: List<IrFile>,
         val notifyCodegenStart: () -> Unit,
     ) : CodegenFactory.CodegenInput
+
+    fun convertAndGenerate(files: Collection<KtFile>, state: GenerationState, bindingContext: BindingContext) {
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+
+        val psi2irInput = CodegenFactory.IrConversionInput.Companion.fromGenerationStateAndFiles(state, files, bindingContext)
+        val backendInput = convertToIr(psi2irInput)
+
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+
+        generateModule(state, backendInput)
+
+        CodegenFactory.Companion.doCheckCancelled(state)
+        state.factory.done()
+    }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun convertToIr(input: CodegenFactory.IrConversionInput): JvmIrBackendInput {

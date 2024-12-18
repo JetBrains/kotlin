@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -247,12 +246,7 @@ abstract class AbstractKapt3Extension(
         val generationState = GenerationState(project, module, configuration, builderFactory, targetId = targetId)
 
         val (classFilesCompilationTime) = measureTimeMillis {
-            KotlinCodegenFacade.compileCorrectFiles(
-                files,
-                generationState,
-                bindingContext,
-                JvmIrCodegenFactory(configuration)
-            )
+            JvmIrCodegenFactory(configuration).convertAndGenerate(files, generationState, bindingContext)
         }
 
         val compiledClasses = builderFactory.compiledClasses

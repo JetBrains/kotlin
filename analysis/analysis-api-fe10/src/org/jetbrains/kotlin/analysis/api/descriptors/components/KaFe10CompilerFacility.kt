@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.backend.jvm.FacadeClassSourceShimForFragmentCompilation
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -123,7 +122,7 @@ internal class KaFe10CompilerFacility(
             generateDeclaredClassFilter = generateClassFilter,
         )
 
-        KotlinCodegenFacade.compileCorrectFiles(filesToCompile, state, bindingContext, codegenFactory)
+        codegenFactory.convertAndGenerate(filesToCompile, state, bindingContext)
         val outputFiles = state.factory.asList().map(::KaBaseCompiledFileForOutputFile)
         return KaCompilationResult.Success(outputFiles, capturedValues = emptyList())
     }

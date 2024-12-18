@@ -169,15 +169,10 @@ object GenerationUtils {
         classBuilderFactory: ClassBuilderFactory,
         analysisResult: AnalysisResult,
     ): GenerationState {
-        val generationState = GenerationState(project, analysisResult.moduleDescriptor, configuration, classBuilderFactory)
+        val state = GenerationState(project, analysisResult.moduleDescriptor, configuration, classBuilderFactory)
         if (analysisResult.shouldGenerateCode) {
-            KotlinCodegenFacade.compileCorrectFiles(
-                files,
-                generationState,
-                analysisResult.bindingContext,
-                JvmIrCodegenFactory(configuration),
-            )
+            JvmIrCodegenFactory(configuration).convertAndGenerate(files, state, analysisResult.bindingContext)
         }
-        return generationState
+        return state
     }
 }
