@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.origin
 import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.name.CallableId
@@ -34,16 +33,6 @@ public fun copyFirFunctionWithResolvePhase(
     origin = key.origin
     resolvePhase = firResolvePhase
 
-    // Match `origin` and `resolvePhase` of receiver parameter to the function.
-    receiverParameter = original.receiverParameter?.let { receiverParameter ->
-        buildReceiverParameterCopy(receiverParameter) {
-            symbol = FirReceiverParameterSymbol()
-            containingDeclarationSymbol = this@buildSimpleFunctionCopy.symbol
-            origin = key.origin
-            resolvePhase = firResolvePhase
-        }
-    }
-
     /**
      * Clears all elements and copies the elements of [originalParameters] to fill the given parameter list.
      * It matches `origin` and `resolvePhase` of  each copied element to the function.
@@ -53,15 +42,12 @@ public fun copyFirFunctionWithResolvePhase(
         originalParameters.mapTo(this) { parameter ->
             buildValueParameterCopy(parameter) {
                 symbol = FirValueParameterSymbol(name)
-                containingDeclarationSymbol = this@buildSimpleFunctionCopy.symbol
+                containingFunctionSymbol = this@buildSimpleFunctionCopy.symbol
                 origin = key.origin
                 resolvePhase = firResolvePhase
             }
         }
     }
-
-    // Match `origin` and `resolvePhase` of context receivers to the function.
-    contextParameters.copyFrom(original.contextParameters)
 
     // Match `origin` and `resolvePhase` of value parameters to the function.
     valueParameters.copyFrom(original.valueParameters)
