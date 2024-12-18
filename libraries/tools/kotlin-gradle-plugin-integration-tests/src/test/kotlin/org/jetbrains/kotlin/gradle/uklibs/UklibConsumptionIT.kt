@@ -28,12 +28,13 @@ import kotlin.test.assertEquals
 @DisplayName("Smoke test uklib consumption")
 class UklibConsumptionIT : KGPBaseTest() {
 
-    @GradleTest
+    @GradleAndroidTest
     fun `uklib consumption smoke - in kotlin compilations of a symmetric consumer and producer projects - with all metadata compilations`(
-        version: GradleVersion,
+        gradleVersion: GradleVersion,
+        androidVersion: String,
     ) {
-        // FIXME: Add androidTarget
         val symmetricTargets: KotlinMultiplatformExtension.() -> Unit = {
+            androidTarget().publishAllLibraryVariants()
             linuxArm64()
             iosArm64()
             iosX64()
@@ -43,7 +44,15 @@ class UklibConsumptionIT : KGPBaseTest() {
             wasmJs()
             wasmWasi()
         }
-        val publisher = publishUklib(version) {
+        val publisher = publishUklib(gradleVersion, androidVersion) {
+            project.plugins.apply("com.android.library")
+            with(project.extensions.getByType(LibraryExtension::class.java)) {
+                compileSdk = 23
+                namespace = "kotlin.producer"
+            }
+
+            jvmToolchain(8)
+
             symmetricTargets()
             sourceSets.all {
                 it.compileSource(
@@ -123,23 +132,51 @@ class UklibConsumptionIT : KGPBaseTest() {
                 "Producer_macosMain",
                 "Producer_macosArm64Main",
             ),
+            "android" to listOf(
+                "Producer_commonMain",
+                "Producer_androidMain",
+            ),
         ).flatMap {
             listOf(
                 it.key + "Main" to it.value,
                 it.key + "Test" to it.value,
             )
-        }.toMap()
+        }.toMap().toMutableMap()
+
+        listOf(
+            "androidDebug",
+            "androidRelease",
+            "androidInstrumentedTest",
+            "androidInstrumentedTestDebug",
+            "androidInstrumentedTestRelease",
+            "androidUnitTest",
+            "androidUnitTestDebug",
+            "androidUnitTestRelease",
+        ).forEach {
+            producerConsumerVisibility[it] = producerConsumerVisibility["androidMain"]!!
+        }
 
         project(
-            "buildScriptInjectionGroovy",
-            version,
+            "buildScriptInjectionGroovyWithAGP",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                androidVersion = androidVersion,
+            ),
         ) {
             addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(publisher)
             buildScriptInjection {
                 project.enableCrossCompilation()
                 project.setUklibResolutionStrategy()
+                project.plugins.apply("com.android.library")
+                with(project.extensions.getByType(LibraryExtension::class.java)) {
+                    compileSdk = 23
+                    namespace = "kotlin.consumer"
+                }
+
                 project.applyMultiplatform {
                     symmetricTargets()
+
+                    jvmToolchain(8)
 
                     sourceSets.all {
                         val producerTypes = producerConsumerVisibility[it.name] ?: error("Missing producer declaration for ${it.name}")
@@ -152,7 +189,11 @@ class UklibConsumptionIT : KGPBaseTest() {
                     }
 
                     sourceSets.commonMain.dependencies {
-                        implementation("${publisher.group}:${publisher.name}:${publisher.version}")
+                        implementation(publisher.coordinate)
+                    }
+                    sourceSets.androidMain.dependencies {
+                        // FIXME: Why is AGP publication not renamed?
+                        implementation("${publisher.group}:buildScriptInjectionGroovyWithAGP-android:${publisher.version}")
                     }
                 }
             }
@@ -219,11 +260,13 @@ class UklibConsumptionIT : KGPBaseTest() {
 
     private fun publishUklib(
         gradleVersion: GradleVersion,
+        androidVersion: String? = null,
         publisherConfiguration: KotlinMultiplatformExtension.() -> Unit,
     ): PublishedProject {
         return project(
-            "buildScriptInjectionGroovy",
+            if (androidVersion != null) "buildScriptInjectionGroovyWithAGP" else "buildScriptInjectionGroovy",
             gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
         ) {
             buildScriptInjection {
                 project.enableUklibPublication()
