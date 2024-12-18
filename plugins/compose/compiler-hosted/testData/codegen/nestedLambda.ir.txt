@@ -412,7 +412,7 @@ MODULE_FRAGMENT
                       BLOCK type=kotlin.Unit origin=null
                         CALL 'public final fun sourceInformationMarkerStart (composer: androidx.compose.runtime.Composer, key: kotlin.Int, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
                           composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
-                          key: CONST Int type=kotlin.Int value=735804214
+                          key: CONST Int type=kotlin.Int value=581963223
                           sourceInformation: CONST String type=kotlin.String value="C42@983L28,43@1020L66:main.kt#1wrmn"
                         COMPOSITE type=kotlin.Unit origin=null
                           VAR name:dominantColorState type:home.DominantColorState [val]
