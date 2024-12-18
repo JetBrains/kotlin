@@ -110,7 +110,7 @@ class ClassicNativeKlibSerializerFacade(testServices: TestServices) : AbstractNa
     ): SerializerOutput<KotlinLibrary> {
         testServices.assertions.assertTrue(inputArtifact.metadataSerializer == null) { "unexpected single-file metadata serializer" }
 
-        val frontendOutput = testServices.dependencyProvider.getArtifact(module, FrontendKinds.ClassicFrontend)
+        val frontendOutput = testServices.artifactsProvider.getArtifact(module, FrontendKinds.ClassicFrontend)
 
         val serializedMetadata = KlibMetadataMonolithicSerializer(
             configuration.languageVersionSettings,

@@ -8,22 +8,22 @@ package org.jetbrains.kotlin.test.services
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.model.*
 
-abstract class DependencyProvider : TestService {
+abstract class ArtifactsProvider : TestService {
     abstract fun getTestModule(name: String): TestModule
 
     abstract fun <A : ResultingArtifact<A>> getArtifact(module: TestModule, kind: TestArtifactKind<A>): A
     abstract fun <A : ResultingArtifact<A>> getArtifactSafe(module: TestModule, kind: TestArtifactKind<A>): A?
 
     abstract fun unregisterAllArtifacts(module: TestModule)
-    abstract fun copy(): DependencyProvider
+    abstract fun copy(): ArtifactsProvider
 }
 
-val TestServices.dependencyProvider: DependencyProvider by TestServices.testServiceAccessor()
+val TestServices.artifactsProvider: ArtifactsProvider by TestServices.testServiceAccessor()
 
-class DependencyProviderImpl(
+class ArtifactsProviderImpl(
     private val testServices: TestServices,
     private val testModules: List<TestModule>
-) : DependencyProvider() {
+) : ArtifactsProvider() {
     private val assertions: Assertions
         get() = testServices.assertions
 
@@ -60,8 +60,8 @@ class DependencyProviderImpl(
         artifactsByModule.remove(module)
     }
 
-    override fun copy(): DependencyProvider {
-        return DependencyProviderImpl(testServices, testModules).also {
+    override fun copy(): ArtifactsProvider {
+        return ArtifactsProviderImpl(testServices, testModules).also {
             artifactsByModule.putAll(artifactsByModule.mapValues { (_, map) -> map.toMutableMap() })
         }
     }

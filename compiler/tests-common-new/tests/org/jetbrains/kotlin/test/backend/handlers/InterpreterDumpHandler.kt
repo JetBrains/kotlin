@@ -73,7 +73,7 @@ interface IrInterpreterDumpHandler : EvaluatorHandler {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val evaluatedConstTracker = configuration.get(CommonConfigurationKeys.EVALUATED_CONST_TRACKER)
             ?: error("Couldn't find `EVALUATED_CONST_TRACKER` for IR interpreter dump handler")
-        val irModule = testServices.dependencyProvider.getArtifact(module, BackendKinds.IrBackend).irModuleFragment
+        val irModule = testServices.artifactsProvider.getArtifact(module, BackendKinds.IrBackend).irModuleFragment
 
         return buildMap {
             for ((irFile, testFile) in matchIrFileWithTestFile(irModule, module)) {
@@ -206,7 +206,7 @@ interface FirEvaluatorDumpHandler : EvaluatorHandler {
 
 interface FirAndIrDumpHandler: FirEvaluatorDumpHandler, IrInterpreterDumpHandler {
     fun processModule(module: TestModule) {
-        val firArtifact = testServices.dependencyProvider.getArtifactSafe(module, FrontendKinds.FIR)
+        val firArtifact = testServices.artifactsProvider.getArtifactSafe(module, FrontendKinds.FIR)
         val irMetaInfo = processIrModule(module)
         val firMetaInfo = firArtifact?.let { processFirModule(module, it) } ?: irMetaInfo
 

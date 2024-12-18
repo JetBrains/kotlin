@@ -347,9 +347,9 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
     }
 
     private fun extractNames(module: TestModule, packageFqName: FqName): Collection<Name> {
-        testServices.dependencyProvider.getArtifactSafe(module, FrontendKinds.ClassicFrontend)
+        testServices.artifactsProvider.getArtifactSafe(module, FrontendKinds.ClassicFrontend)
             ?.let { return extractNames(it, packageFqName) }
-        testServices.dependencyProvider.getArtifactSafe(module, FrontendKinds.FIR)
+        testServices.artifactsProvider.getArtifactSafe(module, FrontendKinds.FIR)
             ?.let { return extractNames(it, packageFqName) }
         error("Frontend artifact for module $module not found")
     }

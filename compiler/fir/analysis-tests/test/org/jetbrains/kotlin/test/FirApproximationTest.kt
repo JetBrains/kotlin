@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.test.builders.testRunner
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCompilerLazyDeclarationResolverWithPhaseChecking
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
-import org.jetbrains.kotlin.test.services.dependencyProvider
+import org.jetbrains.kotlin.test.services.artifactsProvider
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -48,7 +48,7 @@ class FirApproximationTest : AbstractFirPsiDiagnosticTest() {
 
     private fun runWithSession(f: (FirSession) -> Unit) {
         testRunner(emptyFilePath, configuration).runTest(emptyFilePath) { configuration ->
-            val artifact = configuration.testServices.dependencyProvider
+            val artifact = configuration.testServices.artifactsProvider
                 .let { it.getArtifactSafe(it.getTestModule("main"), FrontendKinds.FIR) }!!
             val session = artifact.partsForDependsOnModules.first().session
 

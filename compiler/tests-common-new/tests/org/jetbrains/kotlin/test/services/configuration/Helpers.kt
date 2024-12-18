@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.dependencyProvider
+import org.jetbrains.kotlin.test.services.artifactsProvider
 import org.jetbrains.kotlin.test.services.libraryProvider
 import java.io.File
 
@@ -27,7 +27,7 @@ fun getKlibDependencies(module: TestModule, testServices: TestServices, kind: De
         dependencies
             // See: `dependencyKind =` in AbstractJsBlackBoxCodegenTestBase.kt
             .filter { it.kind != DependencyKind.Source }
-            .map { testServices.dependencyProvider.getTestModule(it.moduleName) }.forEach {
+            .map { testServices.artifactsProvider.getTestModule(it.moduleName) }.forEach {
                 if (it !in visited) {
                     visited += it
                     getRecursive(it, relation)
@@ -35,7 +35,7 @@ fun getKlibDependencies(module: TestModule, testServices: TestServices, kind: De
             }
     }
     getRecursive(module, kind)
-    return visited.map { testServices.dependencyProvider.getArtifact(it, ArtifactKinds.KLib).outputFile }
+    return visited.map { testServices.artifactsProvider.getArtifact(it, ArtifactKinds.KLib).outputFile }
 }
 
 fun getDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<ModuleDescriptor> {

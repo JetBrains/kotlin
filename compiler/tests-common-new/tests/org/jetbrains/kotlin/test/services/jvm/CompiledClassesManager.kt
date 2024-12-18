@@ -27,14 +27,14 @@ class CompiledClassesManager(val testServices: TestServices) : TestService {
             @Suppress("NAME_SHADOWING")
             val classFileFactory = classFileFactory ?: if (module.binaryKind == ArtifactKinds.JvmFromK1AndK2) {
                 require(specifiedFrontendKind == FrontendKinds.FIR || specifiedFrontendKind == FrontendKinds.ClassicFrontend)
-                val k1AndK2Artifact = testServices.dependencyProvider.getArtifact(module, ArtifactKinds.JvmFromK1AndK2)
+                val k1AndK2Artifact = testServices.artifactsProvider.getArtifact(module, ArtifactKinds.JvmFromK1AndK2)
                 if (specifiedFrontendKind == FrontendKinds.FIR) {
                     k1AndK2Artifact.fromK2.classFileFactory
                 } else {
                     k1AndK2Artifact.fromK1.classFileFactory
                 }
             } else {
-                testServices.dependencyProvider.getArtifact(module, ArtifactKinds.Jvm).classFileFactory
+                testServices.artifactsProvider.getArtifact(module, ArtifactKinds.Jvm).classFileFactory
             }
             val outputFileCollection = SimpleOutputFileCollection(classFileFactory.currentOutput)
             val messageCollector = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)

@@ -75,7 +75,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         globalMetadataInfoHandler.parseExistingMetadataInfosFromAllSources()
 
         val modules = moduleStructure.modules
-        val dependencyProvider = DependencyProviderImpl(services, modules)
+        val dependencyProvider = ArtifactsProviderImpl(services, modules)
         services.registerDependencyProvider(dependencyProvider)
 
         testConfiguration.preAnalysisHandlers.forEach { preprocessor ->
@@ -130,7 +130,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
      */
     fun processModule(
         module: TestModule,
-        dependencyProvider: DependencyProviderImpl
+        dependencyProvider: ArtifactsProviderImpl
     ): Boolean {
         var inputArtifact = testConfiguration.startingArtifactFactory.invoke(module)
 
