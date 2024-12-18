@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.toLogger
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER
-import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.JvmBackendClassResolverForModuleWithDependencies
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
@@ -413,8 +412,6 @@ object KotlinToJVMBytecodeCompiler {
         performanceManager?.notifyIRGenerationStarted()
         codegenFactory.invokeCodegen(codegenInput)
 
-        CodegenFactory.doCheckCancelled(state)
-        state.factory.done()
         if (reportGenerationFinished) {
             performanceManager?.notifyIRGenerationFinished()
             performanceManager?.notifyGenerationFinished()

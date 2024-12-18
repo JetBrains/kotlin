@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
 import org.jetbrains.kotlin.backend.jvm.serialization.DisabledIdSignatureDescriptor
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
-import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.addCompiledPartsAndSort
 import org.jetbrains.kotlin.codegen.loadCompiledModule
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -68,14 +67,14 @@ import org.jetbrains.kotlin.resolve.CleanableBindingContext
 import org.jetbrains.kotlin.serialization.StringTableImpl
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 
-open class JvmIrCodegenFactory(
+class JvmIrCodegenFactory(
     configuration: CompilerConfiguration,
     private val externalMangler: JvmDescriptorMangler? = null,
     private val externalSymbolTable: SymbolTable? = null,
     private val jvmGeneratorExtensions: JvmGeneratorExtensionsImpl = JvmGeneratorExtensionsImpl(configuration),
     private val evaluatorFragmentInfoForPsi2Ir: EvaluatorFragmentInfo? = null,
     private val ideCodegenSettings: IdeCodegenSettings = IdeCodegenSettings(),
-) : CodegenFactory {
+) {
     /**
      * @param shouldStubAndNotLinkUnboundSymbols
      * must be `true` only if current compilation is done in the context of the "Evaluate Expression"
@@ -127,8 +126,6 @@ open class JvmIrCodegenFactory(
         val backendInput = convertToIr(state, files, bindingContext)
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
         generateModule(state, backendInput)
-        CodegenFactory.Companion.doCheckCancelled(state)
-        state.factory.done()
     }
 
     fun convertToIr(state: GenerationState, files: Collection<KtFile>, bindingContext: BindingContext): BackendInput = with(state) {
@@ -386,6 +383,9 @@ open class JvmIrCodegenFactory(
             require(state.config.useFir) { "Stdlib is expected to be compiled by K2" }
             serializeBuiltinsMetadata(allBuiltins, context)
         }
+
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+        state.factory.done()
     }
 
     private fun generateFile(generateMultifileFacades: Boolean) = fun(context: JvmBackendContext, file: IrFile): IrFile {

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.*
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
-import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -252,8 +251,6 @@ private fun doCompile(
     val backendInput = codegenFactory.convertToIr(generationState, sourceFiles, analysisResult.bindingContext)
 
     codegenFactory.generateModule(generationState, backendInput)
-    CodegenFactory.doCheckCancelled(generationState)
-    generationState.factory.done()
 
     FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
         diagnosticsReporter,

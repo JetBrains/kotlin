@@ -255,7 +255,6 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             frontendResult.firResult.pluginContext,
         )
         JvmIrCodegenFactory(configuration).generateModule(generationState, backendInput)
-        generationState.factory.done()
         return generationState
     }
 }

@@ -44,7 +44,6 @@ class JvmIrBackendFacade(testServices: TestServices) : IrBackendFacade<BinaryArt
             }
             throw e
         }
-        state.factory.done()
 
         // Currently there's a ton of diagnostic tests with incorrect Java code:
         // strictly speaking, compiling it with javac is not required for testing

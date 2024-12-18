@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecific
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -363,9 +362,6 @@ internal class KaFirCompilerFacility(
             fir2IrResult.pluginContext,
         )
         codegenFactory.generateModule(generationState, backendInput)
-
-        CodegenFactory.doCheckCancelled(generationState)
-        generationState.factory.done()
 
         val outputFiles = generationState.factory.asList().map(::KaBaseCompiledFileForOutputFile)
         val capturedValues = buildList {

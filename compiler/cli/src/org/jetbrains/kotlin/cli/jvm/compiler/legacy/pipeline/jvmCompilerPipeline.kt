@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
@@ -174,8 +173,6 @@ fun generateCodeFromIr(
     performanceManager?.notifyIRGenerationStarted()
 
     codegenFactory.invokeCodegen(codegenInput)
-    CodegenFactory.doCheckCancelled(generationState)
-    generationState.factory.done()
 
     performanceManager?.notifyIRGenerationFinished()
     performanceManager?.notifyGenerationFinished()

@@ -114,7 +114,6 @@ class K1CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
     ): GenerationState = try {
         frontend(platformFiles, commonFiles).apply {
             codegenFactory.generateModule(state, backendInput)
-            state.factory.done()
         }.state
     } catch (e: Exception) {
         throw TestsCompilerError(e)

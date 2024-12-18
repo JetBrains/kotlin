@@ -135,8 +135,6 @@ object GenerationUtils {
             fir2IrExtensions, FirJvmBackendExtension(components, actualizedExpectDeclarations = null), pluginContext,
         )
         JvmIrCodegenFactory(configuration).generateModule(generationState, backendInput)
-
-        generationState.factory.done()
         return generationState
     }
 
