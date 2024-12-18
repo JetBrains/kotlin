@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.powerassert.earliestStartOffset
+import org.jetbrains.kotlin.powerassert.getExplicitReceiver
 
 data class SourceFile(
     val irFile: IrFile,
@@ -44,17 +44,15 @@ data class SourceFile(
         var range = element.startOffset..element.endOffset
         when (element) {
             is IrCall -> {
-                val receiverArgument = element.symbol.owner.parameters
-                    .lastOrNull { it.kind == IrParameterKind.DispatchReceiver || it.kind == IrParameterKind.ExtensionReceiver }
-                    ?.let { element.arguments[it] }
-                if (receiverArgument != null) {
+                val explicitReceiver = element.getExplicitReceiver()
+                if (explicitReceiver != null) {
                     // When a function is called *not* with infix notation, the startOffset will not include the receiver.
                     // Force the range to include the receiver, so it is visible.
                     range = element.earliestStartOffset..element.endOffset
 
                     // The offsets of the receiver will *not* include surrounding parentheses,
                     // so these need to be checked for manually.
-                    val substring = getText(range.first - 1, receiverArgument.endOffset + 1)
+                    val substring = getText(range.first - 1, explicitReceiver.endOffset + 1)
                     if (substring.startsWith('(') && substring.endsWith(')')) {
                         range = (range.first - 1)..range.last
                     }

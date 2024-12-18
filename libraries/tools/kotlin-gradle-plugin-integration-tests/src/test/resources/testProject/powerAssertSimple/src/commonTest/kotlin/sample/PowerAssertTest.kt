@@ -40,11 +40,10 @@ class PowerAssertTest {
             expected = """
                 
                 assertTrue(Person.UNKNOWN.size == 1)
-                           |      |       |    |
-                           |      |       |    false
-                           |      |       2
-                           |      [Person(firstName=John, lastName=Doe), Person(firstName=Jane, lastName=Doe)]
-                           Person.Companion
+                                  |       |    |
+                                  |       |    false
+                                  |       2
+                                  [Person(firstName=John, lastName=Doe), Person(firstName=Jane, lastName=Doe)]
                 
             """.trimIndent()
         )
@@ -58,11 +57,10 @@ class PowerAssertTest {
             expected = """
                 
                 require(Person.UNKNOWN.size == 1)
-                        |      |       |    |
-                        |      |       |    false
-                        |      |       2
-                        |      [Person(firstName=John, lastName=Doe), Person(firstName=Jane, lastName=Doe)]
-                        Person.Companion
+                               |       |    |
+                               |       |    false
+                               |       2
+                               [Person(firstName=John, lastName=Doe), Person(firstName=Jane, lastName=Doe)]
                 
             """.trimIndent()
         )

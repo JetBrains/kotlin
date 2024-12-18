@@ -35,11 +35,10 @@ class PowerAssertSimpleTest {
             """
                 unknown persons: [Person(firstName=John, lastName=Doe), Person(firstName=Jane, lastName=Doe)]
                 assert(Person.UNKNOWN.size == 1) { "unknown persons: ${"$"}{Person.UNKNOWN}" }
-                       |      |       |    |
-                       |      |       |    false
-                       |      |       2
-                       |      [Person(firstName=John, lastName=Doe), Person(firstName=Jane, lastName=Doe)]
-                       Person.Companion
+                              |       |    |
+                              |       |    false
+                              |       2
+                              [Person(firstName=John, lastName=Doe), Person(firstName=Jane, lastName=Doe)]
                 
             """.trimIndent(),
             error.message,

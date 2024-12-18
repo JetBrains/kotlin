@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -74,3 +74,24 @@ val IrElement.earliestStartOffset: Int
         )
         return offset
     }
+
+/**
+ * An implicit argument may only be either `this` class dispatch receiver ([IrGetField])
+ * or `this` extension function receiver ([IrGetValue]). As such, these are the only two
+ * IR elements that need to be checked for [IrStatementOrigin.IMPLICIT_ARGUMENT].
+ */
+internal fun IrExpression.isImplicitArgument(): Boolean = when (this) {
+    is IrGetValue -> origin == IrStatementOrigin.IMPLICIT_ARGUMENT
+    is IrGetField -> origin == IrStatementOrigin.IMPLICIT_ARGUMENT
+    else -> false
+}
+
+internal fun IrCall.getExplicitReceiver(): IrExpression? {
+    for (parameter in symbol.owner.parameters) {
+        if (parameter.kind == IrParameterKind.DispatchReceiver || parameter.kind == IrParameterKind.ExtensionReceiver) {
+            val argument = arguments[parameter] ?: continue
+            if (!argument.isImplicitArgument()) return argument
+        }
+    }
+    return null
+}

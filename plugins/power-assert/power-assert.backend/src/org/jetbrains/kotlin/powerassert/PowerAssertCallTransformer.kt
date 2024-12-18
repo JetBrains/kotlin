@@ -93,11 +93,11 @@ class PowerAssertCallTransformer(
             messageArgument = expression.arguments.last()
             roots = expression.arguments
                 .subList(fromIndex = 0, toIndex = expression.arguments.lastIndex) // Exclude message argument.
-                .map { buildTree(it, expression) }
+                .map { buildTree(it) }
         } else {
             messageArgument = null
             roots = expression.arguments
-                .map { buildTree(it, expression) }
+                .map { buildTree(it) }
         }
 
         // If all roots are null, there are no transformable parameters
@@ -116,9 +116,9 @@ class PowerAssertCallTransformer(
         )
     }
 
-    private fun buildTree(expression: IrExpression?, call: IrCall): Node? {
+    private fun buildTree(expression: IrExpression?): Node? {
         if (expression == null) return null
-        return buildTree(configuration.constTracker, sourceFile, expression, call)
+        return buildTree(configuration.constTracker, sourceFile, expression)
     }
 
     private fun DeclarationIrBuilder.diagram(
