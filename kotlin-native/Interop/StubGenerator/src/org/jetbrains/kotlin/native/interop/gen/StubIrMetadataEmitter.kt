@@ -408,7 +408,6 @@ private class MappingExtensions(
             is AnnotationStub.CCall.Symbol -> mapOfNotNull(
                     ("id" to symbolName).asOptionalAnnotationArgument()
             )
-            is AnnotationStub.CCall.CppClassConstructor -> emptyMap()
             is AnnotationStub.CStruct -> mapOfNotNull(
                     ("spelling" to struct).asOptionalAnnotationArgument()
             )
@@ -442,8 +441,6 @@ private class MappingExtensions(
                     ("size" to KmAnnotationArgument.LongValue(size)),
                     ("align" to KmAnnotationArgument.IntValue(align))
             )
-            is AnnotationStub.CStruct.CPlusPlusClass -> emptyMap()
-            is AnnotationStub.CStruct.ManagedType -> emptyMap()
             is AnnotationStub.ExperimentalForeignApi -> emptyMap()
         }
         return KmAnnotation(classifier.fqNameSerialized, args)

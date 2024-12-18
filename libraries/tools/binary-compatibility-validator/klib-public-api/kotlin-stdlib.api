@@ -11931,10 +11931,6 @@ final val kotlinx.cinterop/ptr // kotlinx.cinterop/ptr|@0:0{0§<kotlinx.cinterop
     final fun <#A1: kotlinx.cinterop/CPointed> (#A1).<get-ptr>(): kotlinx.cinterop/CPointer<#A1> // kotlinx.cinterop/ptr.<get-ptr>|<get-ptr>@0:0(){0§<kotlinx.cinterop.CPointed>}[0]
 
 // Targets: [native]
-final val kotlinx.cinterop/ptr // kotlinx.cinterop/ptr|@kotlinx.cinterop.ManagedType<0:0>{0§<kotlinx.cinterop.CStructVar>}ptr[0]
-    final fun <#A1: kotlinx.cinterop/CStructVar> (kotlinx.cinterop/ManagedType<#A1>).<get-ptr>(): kotlinx.cinterop/CPointer<#A1> // kotlinx.cinterop/ptr.<get-ptr>|<get-ptr>@kotlinx.cinterop.ManagedType<0:0>(){0§<kotlinx.cinterop.CStructVar>}[0]
-
-// Targets: [native]
 final val kotlinx.cinterop/rawPtr // kotlinx.cinterop/rawPtr|@kotlinx.cinterop.NativePointed?{}rawPtr[0]
     final fun (kotlinx.cinterop/NativePointed?).<get-rawPtr>(): kotlin.native.internal/NativePtr // kotlinx.cinterop/rawPtr.<get-rawPtr>|<get-rawPtr>@kotlinx.cinterop.NativePointed?(){}[0]
 

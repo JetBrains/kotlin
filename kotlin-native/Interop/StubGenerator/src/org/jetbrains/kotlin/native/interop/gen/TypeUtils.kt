@@ -56,8 +56,6 @@ fun Type.getStringRepresentation(plugin: Plugin = DefaultPlugin): String = when 
         is ObjCBlockPointer -> "id"
     }
 
-    is ManagedType -> with(plugin) { this@getStringRepresentation.stringRepresentation }
-
     else -> throw NotImplementedError()
 }
 

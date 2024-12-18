@@ -489,16 +489,10 @@ class StubIrTextEmitter(
             "@CCall.WCString"
         is AnnotationStub.CCall.Symbol ->
             "@CCall(${annotationStub.symbolName.quoteAsKotlinLiteral()})"
-        AnnotationStub.CCall.CppClassConstructor ->
-            "@CCall.CppClassConstructor"
         is AnnotationStub.CStruct ->
             "@CStruct(${annotationStub.struct.quoteAsKotlinLiteral()})"
         is AnnotationStub.CNaturalStruct ->
             "@CNaturalStruct(${annotationStub.members.joinToString { it.name.quoteAsKotlinLiteral() }})"
-        is AnnotationStub.CStruct.CPlusPlusClass ->
-            "@CStruct.CPlusPlusClass"
-        is AnnotationStub.CStruct.ManagedType ->
-            "@CStruct.ManagedType"
         is AnnotationStub.CLength ->
             "@CLength(${annotationStub.length})"
         is AnnotationStub.Deprecated ->

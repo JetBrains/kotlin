@@ -266,9 +266,6 @@ open class StubsBuildingContextImpl(
             return Classifier.topLevel(pkg, baseName)
         }
 
-        override fun getKotlinClassForManaged(structDecl: StructDecl): Classifier =
-                error("ManagedType requires a plugin")
-
         override fun isMappedToStrict(enumDef: EnumDef): Boolean = isStrictEnum(enumDef)
 
         override fun getKotlinNameForValue(enumDef: EnumDef): String = enumDef.kotlinName

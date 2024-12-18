@@ -27,14 +27,6 @@ public annotation class CStruct(val spelling: String) {
 
     @Retention(AnnotationRetention.BINARY)
     public annotation class VarType(val size: Long, val align: Int)
-
-    @Target(AnnotationTarget.CLASS)
-    @Retention(AnnotationRetention.BINARY)
-    public annotation class CPlusPlusClass
-
-    @Target(AnnotationTarget.CLASS)
-    @Retention(AnnotationRetention.BINARY)
-    public annotation class ManagedType
 }
 
 @Target(

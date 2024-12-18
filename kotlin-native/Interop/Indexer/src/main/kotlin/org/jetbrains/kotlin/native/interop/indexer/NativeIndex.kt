@@ -319,47 +319,14 @@ abstract class ObjCCategory(val name: String, val clazz: ObjCClass) : ObjCContai
  */
 data class Parameter(val name: String?, val type: Type, val nsConsumed: Boolean)
 
-
-enum class CxxMethodKind {
-    None, // not supported yet?
-    Constructor,
-    Destructor,
-    StaticMethod,
-    InstanceMethod  // virtual or non-virtual instance member method (non-static)
-                    // do we need operators here?
-                    // do we need to distinguish virtual and non-virtual? Static? Final?
-}
-
-/**
- * C++ class method, constructor or destructor details
- */
-class CxxMethodInfo(val receiverType: PointerType, val kind: CxxMethodKind = CxxMethodKind.InstanceMethod)
-
-fun CxxMethodInfo.isConst() : Boolean = receiverType.pointeeIsConst
-
-
 /**
  * C function declaration.
  */
-class FunctionDecl(val name: String, val parameters: List<Parameter>, val returnType: Type, val binaryName: String,
-                   val isDefined: Boolean, val isVararg: Boolean,
-                   val parentName: String? = null, val cxxMethod: CxxMethodInfo? = null) {
+class FunctionDecl(val name: String, val parameters: List<Parameter>, val returnType: Type,
+                   val isVararg: Boolean,
+                   val parentName: String? = null) {
 
     val fullName: String = parentName?.let { "$parentName::$name" } ?: name
-
-    // C++ virtual or non-virtual instance member, i.e. has "this" receiver
-    val isCxxInstanceMethod: Boolean get() = this.cxxMethod?.kind == CxxMethodKind.InstanceMethod
-
-    /**
-     * C++ class or instance member function, i.e. any function in the scope of class/struct: method, static, ctor, dtor, cast operator, etc
-     */
-    val isCxxMethod: Boolean get() = this.cxxMethod != null && this.cxxMethod.kind != CxxMethodKind.None
-
-    val isCxxConstructor: Boolean get() = this.cxxMethod?.kind == CxxMethodKind.Constructor
-    val isCxxDestructor: Boolean get() = this.cxxMethod?.kind == CxxMethodKind.Destructor
-    val cxxReceiverType: PointerType? get() = cxxMethod?.receiverType
-    val cxxReceiverClass: StructDecl?
-        get() = cxxMethod?. let { (this.cxxMethod.receiverType.pointeeType as RecordType).decl }
 }
 
 /**
@@ -410,8 +377,6 @@ data class VectorType(val elementType: Type, val elementCount: Int, val spelling
 object VoidType : Type
 
 data class RecordType(val decl: StructDecl) : Type
-
-data class ManagedType(val decl: StructDecl) : Type
 
 data class EnumType(val def: EnumDef) : Type
 
