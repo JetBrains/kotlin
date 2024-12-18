@@ -120,6 +120,12 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private val out = ByteWriter.OutputStream(outputStream)
 
+    fun serialize(typeAndMemoryInfo: TypeAndMemoryInfo) {
+        serializeMap(typeAndMemoryInfo.typeIds, ::serializeIdSignature, ::serializeInt)
+        serializeInt(typeAndMemoryInfo.lastInterfaceId)
+        serializeInt(typeAndMemoryInfo.scratchAddress)
+    }
+
     fun serialize(compiledFileFragment: WasmCompiledFileFragment) {
         // Step 1: process non-deferred serializations (put into bodyBuffer temporarily)
         serializeCompiledFileFragment(compiledFileFragment)
