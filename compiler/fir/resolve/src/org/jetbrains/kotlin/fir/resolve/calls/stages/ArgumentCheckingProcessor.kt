@@ -137,7 +137,7 @@ internal object ArgumentCheckingProcessor {
                 if (ofFunction != null) {
                     val s = candidate.substitutor.substituteOrSelf(ofFunction.resolvedReturnType)
                     resolvePlainExpressionArgument(atom.expression, argumentType = s)
-                } else { // if ofFunction is null, then the type is hardcoded
+                } else { // if ofFunction is null, then the type is hardcoded List/Set/MutableList/etc.
                     resolvePlainExpressionArgument(atom.expression, argumentType = expectedType)
                 }
                 val collectionLiteralElementContext =
@@ -224,7 +224,7 @@ internal object ArgumentCheckingProcessor {
                 argumentType = argumentTypeForApplicabilityCheck,
             )?.let {
                 argumentTypeForApplicabilityCheck = it
-                candidate.substitutor.substituteOrSelf(argumentTypeForApplicabilityCheck)
+                candidate.substitutor.substituteOrSelf(argumentTypeForApplicabilityCheck) // todo drop unused expression?
                 candidate.usesFunctionConversion = true
             }
         }
