@@ -141,7 +141,7 @@ class ModuleStructureExtractorImpl(
             }
             return DFS.topologicalOrder(modules) { module ->
                 module.allDependencies.map {
-                    val moduleName = it.moduleName
+                    val moduleName = it.dependencyModule.name
                     moduleByName[moduleName] ?: error("Module \"$moduleName\" not found while observing dependencies of \"${module.name}\"")
                 }
             }.asReversed()
@@ -153,7 +153,7 @@ class ModuleStructureExtractorImpl(
                 val moduleName = module.name
                 visited.add(moduleName)
                 for (dependency in module.allDependencies) {
-                    val dependencyName = dependency.moduleName
+                    val dependencyName = dependency.dependencyModule.name
                     if (dependencyName == moduleName) {
                         error("Module $moduleName has dependency to itself")
                     }
@@ -188,35 +188,34 @@ class ModuleStructureExtractorImpl(
                     )
                     currentModuleName = moduleName
                     val kind = defaultsProvider.defaultDependencyKind
-                    dependencies.mapTo(dependenciesOfCurrentModule) { name ->
-                        DependencyDescription(name, kind, DependencyRelation.RegularDependency)
+
+                    fun String.toDependencyDescription(relation: DependencyRelation): DependencyDescription {
+                        val dependantModule = modules.find { it.name == this } ?: error("Module $this not found")
+                        val specificKind = when (relation) {
+                            DependencyRelation.DependsOnDependency -> DependencyKind.Source
+                            else -> kind
+                        }
+                        return DependencyDescription(dependantModule, specificKind, relation)
                     }
-                    friends.mapTo(dependenciesOfCurrentModule) { name ->
-                        DependencyDescription(name, kind, DependencyRelation.FriendDependency)
-                    }
-                    dependsOn.mapTo(dependenciesOfCurrentModule) { name ->
-                        DependencyDescription(name, DependencyKind.Source, DependencyRelation.DependsOnDependency)
-                    }
+
+                    dependencies.mapTo(dependenciesOfCurrentModule) { it.toDependencyDescription(DependencyRelation.RegularDependency) }
+                    friends.mapTo(dependenciesOfCurrentModule) { it.toDependencyDescription(DependencyRelation.FriendDependency) }
+                    dependsOn.mapTo(dependenciesOfCurrentModule) { it.toDependencyDescription(DependencyRelation.DependsOnDependency) }
                 }
                 ModuleStructureDirectives.SNIPPET -> {
                     fun snippetName() = "snippet_${"%03d".format(currentSnippetNumber)}"
-
-                    val previousModuleName = currentModuleName ?: snippetName().also {
-                        currentModuleName = it
-                        currentFileName = "$it.kts"
-                    }
                     if (linesOfCurrentFile.all { it.isBlank() }) {
                         finishGlobalDirectives()
                     } else {
                         finishModule(lineNumber)
 
                         dependenciesOfCurrentModule.add(
-                            DependencyDescription(previousModuleName, DependencyKind.Source, DependencyRelation.FriendDependency)
+                            DependencyDescription(modules.last(), DependencyKind.Source, DependencyRelation.FriendDependency)
                         )
                         currentSnippetNumber++
-                        currentModuleName = snippetName()
-                        currentFileName = "$currentModuleName.kts"
                     }
+                    currentModuleName = snippetName()
+                    currentFileName = "$currentModuleName.kts"
                 }
                 ModuleStructureDirectives.FILE -> {
                     if (currentFileName != null) {

@@ -33,7 +33,7 @@ object PlatformModuleProvider : ModuleStructureTransformer() {
         val module = moduleStructure.modules.singleOrNull() ?: return moduleStructure
         // `defaultsProvider.defaultDependencyKind` may be `Binary`.
         // See `compiler/testData/diagnostics/tests/multiplatform/topLevelProperty/differentKindsOfProperties.kt`
-        val dependency = DependencyDescription(module.name, DependencyKind.Source, DependencyRelation.DependsOnDependency)
+        val dependency = DependencyDescription(module, DependencyKind.Source, DependencyRelation.DependsOnDependency)
         val platformModule = module.copy(
             name = "${module.name}-platform",
             targetPlatform = defaultsProvider.defaultPlatform,

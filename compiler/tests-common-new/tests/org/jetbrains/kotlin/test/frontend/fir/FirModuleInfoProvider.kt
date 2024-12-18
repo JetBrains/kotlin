@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.artifactsProvider
 
 class FirModuleInfoProvider(private val testServices: TestServices) : TestService {
     val firSessionProvider = FirProjectSessionProvider()
@@ -43,13 +42,13 @@ class FirModuleInfoProvider(private val testServices: TestServices) : TestServic
         fun getFriendTestModules(module: TestModule): List<TestModule> =
             module.friendDependencies
                 .filter { it.kind == DependencyKind.Source }
-                .map { testServices.artifactsProvider.getTestModule(it.moduleName) }
+                .map { it.dependencyModule }
 
         val allModules = LinkedHashSet<TestModule>()
         var newModules = getFriendTestModules(module)
         while (newModules.isNotEmpty()) {
             allModules += newModules
-            newModules = newModules.flatMap { getFriendTestModules(testServices.artifactsProvider.getTestModule(it.name)) }
+            newModules = newModules.flatMap { getFriendTestModules(it) }
         }
         return allModules.map { getCorrespondingModuleData(it) }
     }
@@ -60,7 +59,7 @@ class FirModuleInfoProvider(private val testServices: TestServices) : TestServic
 
     private fun getDependentModulesImpl(dependencies: List<DependencyDescription>): List<FirModuleData> {
         return dependencies.filter { it.kind == DependencyKind.Source }.map {
-            getCorrespondingModuleData(testServices.artifactsProvider.getTestModule(it.moduleName))
+            getCorrespondingModuleData(it.dependencyModule)
         }
     }
 }

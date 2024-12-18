@@ -63,16 +63,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 import java.nio.file.Paths
-import kotlin.collections.filterIsInstance
-import kotlin.collections.orEmpty
 import org.jetbrains.kotlin.konan.file.File as KFile
 
 open class FirFrontendFacade(
     testServices: TestServices,
     private val additionalSessionConfiguration: SessionConfiguration?
 ) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
-    private val testModulesByName by lazy { testServices.moduleStructure.testModulesByName }
-
     // Separate constructor is needed for creating callable references to it
     constructor(testServices: TestServices) : this(testServices, additionalSessionConfiguration = null)
 
@@ -85,7 +81,7 @@ open class FirFrontendFacade(
         get() = listOf(FirDiagnosticsDirectives)
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return shouldRunFirFrontendFacade(module, testServices.moduleStructure, testModulesByName)
+        return shouldRunFirFrontendFacade(module, testServices.moduleStructure)
     }
 
     private fun registerExtraComponents(session: FirSession) {
@@ -125,7 +121,7 @@ open class FirFrontendFacade(
 
     protected fun sortDependsOnTopologically(module: TestModule): List<TestModule> {
         return topologicalSort(listOf(module), reverseOrder = true) { item ->
-            item.dependsOnDependencies.map { testServices.artifactsProvider.getTestModule(it.moduleName) }
+            item.dependsOnDependencies.map { it.dependencyModule }
         }
     }
 
@@ -469,7 +465,6 @@ open class FirFrontendFacade(
 fun shouldRunFirFrontendFacade(
     module: TestModule,
     moduleStructure: TestModuleStructure,
-    testModulesByName: Map<String, TestModule>,
 ): Boolean {
     val shouldRunAnalysis = module.frontendKind == FrontendKinds.FIR
 
@@ -478,7 +473,7 @@ fun shouldRunFirFrontendFacade(
     }
 
     return if (module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
-        moduleStructure.modules.none { testModule -> testModule.dependsOnDependencies.any { testModulesByName[it.moduleName] == module } }
+        moduleStructure.modules.none { testModule -> testModule.dependsOnDependencies.any { it.dependencyModule == module } }
     } else {
         true
     }

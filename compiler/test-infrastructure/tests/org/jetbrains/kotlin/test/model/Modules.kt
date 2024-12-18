@@ -80,7 +80,7 @@ enum class DependencyKind {
 }
 
 data class DependencyDescription(
-    val moduleName: String,
+    val dependencyModule: TestModule,
     val kind: DependencyKind,
     val relation: DependencyRelation
 )

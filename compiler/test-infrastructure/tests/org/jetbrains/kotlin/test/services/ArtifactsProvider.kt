@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.test.services
 
-import org.jetbrains.kotlin.test.Assertions
-import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.model.ResultingArtifact
+import org.jetbrains.kotlin.test.model.TestArtifactKind
+import org.jetbrains.kotlin.test.model.TestModule
 
 /**
  * This service stores artifacts produced by all test facades for each module
@@ -15,16 +16,7 @@ class ArtifactsProvider(
     private val testServices: TestServices,
     private val testModules: List<TestModule>
 ) : TestService {
-    private val assertions: Assertions
-        get() = testServices.assertions
-
-    private val testModulesByName = testModules.associateBy { it.name }
-
     private val artifactsByModule: MutableMap<TestModule, MutableMap<TestArtifactKind<*>, ResultingArtifact<*>>> = mutableMapOf()
-
-    fun getTestModule(name: String): TestModule {
-        return testModulesByName[name] ?: assertions.fail { "Module $name is not defined" }
-    }
 
     fun <OutputArtifact : ResultingArtifact<OutputArtifact>> getArtifactSafe(
         module: TestModule,

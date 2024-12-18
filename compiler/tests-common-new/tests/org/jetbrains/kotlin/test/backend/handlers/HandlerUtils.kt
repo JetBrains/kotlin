@@ -55,8 +55,7 @@ fun BinaryArtifactHandler<*>.reportKtDiagnostics(module: TestModule, ktDiagnosti
                 }
             }
         }
-        for ((moduleName, _, _) in module.dependsOnDependencies) {
-            val dependantModule = testServices.artifactsProvider.getTestModule(moduleName)
+        for ((dependantModule, _, _) in module.dependsOnDependencies) {
             processModule(dependantModule)
         }
     }

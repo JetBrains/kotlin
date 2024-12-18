@@ -12,12 +12,12 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.TestModuleStructureFactory.addLibraryDependencies
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
-import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -83,7 +83,7 @@ object TestModuleStructureFactory {
             val analysisContextModule = analysisContextModuleName?.let(existingModules::getValue)
 
             val dependencyBinaryRoots = testModule.regularDependencies.flatMap { dependency ->
-                val libraryModule = existingModules.getValue(dependency.moduleName).ktModule as? KaLibraryModule
+                val libraryModule = existingModules.getValue(dependency.dependencyModule.name).ktModule as? KaLibraryModule
                 libraryModule?.binaryRoots.orEmpty()
             }
 
@@ -134,7 +134,7 @@ object TestModuleStructureFactory {
         ktModule: KtModuleWithModifiableDependencies,
     ) {
         testModule.allDependencies.forEach { dependency ->
-            val dependencyKtModule = modulesByName.getValue(dependency.moduleName).ktModule
+            val dependencyKtModule = modulesByName.getValue(dependency.dependencyModule.name).ktModule
             when (dependency.relation) {
                 DependencyRelation.RegularDependency -> ktModule.directRegularDependencies.add(dependencyKtModule)
                 DependencyRelation.FriendDependency -> ktModule.directFriendDependencies.add(dependencyKtModule)
