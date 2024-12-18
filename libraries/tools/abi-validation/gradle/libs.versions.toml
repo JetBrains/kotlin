@@ -6,7 +6,7 @@ javaDiffUtils = "4.12"
 junit = "5.9.2"
 kotest = "5.5.5"
 kotlinx-bcv = "0.13.1"
-ow2Asm = "9.6"
+ow2Asm = "9.7.1"
 dokka = "1.9.20"
 
 gradlePluginPublishPlugin = "1.1.0"
