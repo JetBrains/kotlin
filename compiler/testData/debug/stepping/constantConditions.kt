@@ -30,7 +30,7 @@ fun test(): Long {
 // test.kt:7 box
 
 // EXPECTATIONS WASM
-// test.kt:6 $box
-// test.kt:11 $test
+// test.kt:6 $box (4)
+// test.kt:11 $test (8)
 // test.kt:12 $test (15, 8)
-// test.kt:7 $box
+// test.kt:7 $box (1)

@@ -28,8 +28,9 @@ inline fun lookAtMe(f: () -> Int) {
 // test.kt:9 box
 
 // EXPECTATIONS WASM
-// test.kt:6 $box
-// test.kt:12 $box
-// test.kt:13 $box (4, 8, 4)
+// test.kt:6 $box (4)
+// test.kt:12 $box (12)
+// test.kt:13 $box (4, 8)
 // test.kt:7 $box (8, 10)
-// test.kt:9 $box
+// test.kt:13 $box (4)
+// test.kt:9 $box (1)

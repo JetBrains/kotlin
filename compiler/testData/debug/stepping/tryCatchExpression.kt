@@ -156,29 +156,45 @@ fun box() {
 // test.kt:49 box
 
 // EXPECTATIONS WASM
-// test.kt:42 $box
-// test.kt:6 $foo (8, 8, 8, 8)
-// test.kt:29 $mightThrow (8, 8, 8, 8, 22, 22, 16)
-// test.kt:30 $mightThrow (1, 1, 1)
-// test.kt:12 $foo (8, 8, 8)
-// test.kt:33 $mightThrow2 (8, 8, 8, 22, 22, 16)
-// test.kt:34 $mightThrow2 (1, 1)
-// test.kt:11 $foo (4, 4)
-// test.kt:18 $foo (8, 8)
-// test.kt:37 $mightThrow3 (8, 8, 22, 22, 16)
+// test.kt:42 $box (4)
+// test.kt:6 $foo (8)
+// test.kt:29 $mightThrow (8)
+// test.kt:30 $mightThrow (1)
+// test.kt:12 $foo (8)
+// test.kt:33 $mightThrow2 (8)
+// test.kt:34 $mightThrow2 (1)
+// test.kt:11 $foo (4)
+// test.kt:18 $foo (8)
+// test.kt:37 $mightThrow3 (8)
 // test.kt:38 $mightThrow3 (11, 4)
-// test.kt:17 $foo
-// test.kt:22 $foo
+// test.kt:17 $foo (4)
+// test.kt:22 $foo (1)
 // test.kt:43 $box (13, 4)
-// test.kt:44 $box
-// test.kt:19 $foo
-// test.kt:20 $foo
+// test.kt:44 $box (4)
+// test.kt:6 $foo (8)
+// test.kt:29 $mightThrow (8)
+// test.kt:30 $mightThrow (1)
+// test.kt:12 $foo (8)
+// test.kt:33 $mightThrow2 (8)
+// test.kt:34 $mightThrow2 (1)
+// test.kt:11 $foo (4)
+// test.kt:18 $foo (8)
+// test.kt:37 $mightThrow3 (8, 22, 16)
+// test.kt:19 $foo (13)
+// test.kt:20 $foo (8)
 // test.kt:45 $box (13, 4)
-// test.kt:46 $box
-// test.kt:13 $foo
-// test.kt:14 $foo
+// test.kt:46 $box (4)
+// test.kt:6 $foo (8)
+// test.kt:29 $mightThrow (8)
+// test.kt:30 $mightThrow (1)
+// test.kt:12 $foo (8)
+// test.kt:33 $mightThrow2 (8, 22, 16)
+// test.kt:13 $foo (13)
+// test.kt:14 $foo (8)
 // test.kt:47 $box (13, 4)
-// test.kt:48 $box
-// test.kt:7 $foo
-// test.kt:8 $foo
-// test.kt:49 $box
+// test.kt:48 $box (4)
+// test.kt:6 $foo (8)
+// test.kt:29 $mightThrow (8, 22, 16)
+// test.kt:7 $foo (13)
+// test.kt:8 $foo (8)
+// test.kt:49 $box (1)
