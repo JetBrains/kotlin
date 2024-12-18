@@ -38,6 +38,7 @@ class SourceMapGenerator(
 
         val sourceMapBuilder =
             SourceMap3Builder(null, { error("This should not be called for Kotlin/Wasm") }, sourceMapsInfo.sourceMapPrefix)
+                .apply { addIgnoredSource(SourceLocation.IgnoredLocation.file) }
 
         val pathResolver = SourceFilePathResolver.create(
             sourceMapsInfo.sourceRoots,
@@ -46,12 +47,18 @@ class SourceMapGenerator(
             sourceMapsInfo.includeUnavailableSourcesIntoSourceMap
         )
 
-        var prev: SourceLocation.Location? = null
+        var prev: SourceLocation? = null
         var prevGeneratedLine = 0
+        var offsetExpectedNextLocation = -1
 
         for (mapping in sourceLocationMappings) {
             val generatedLocation = mapping.generatedLocation
-            val sourceLocation = mapping.sourceLocation.takeIf { it != prev || prevGeneratedLine != generatedLocation.line } ?: continue
+            val sourceLocation = mapping.sourceLocation.takeIf { it != prev || prevGeneratedLine != generatedLocation.line }
+
+            if (sourceLocation == null) {
+                offsetExpectedNextLocation = -1
+                continue
+            }
 
             require(generatedLocation.line >= prevGeneratedLine) { "The order of the mapping is wrong" }
 
@@ -63,23 +70,35 @@ class SourceMapGenerator(
             }
 
             when (sourceLocation) {
-                // TODO: add the ignored location into "ignoreList" in future
-                is SourceLocation.NoLocation, is SourceLocation.IgnoredLocation -> sourceMapBuilder.addEmptyMapping(generatedLocation.column)
-                is SourceLocation.Location -> {
+                SourceLocation.NoLocation -> continue
+                SourceLocation.NextLocation -> {
+                    if (offsetExpectedNextLocation == -1) offsetExpectedNextLocation = generatedLocation.column
+                }
+                is SourceLocation.WithFileAndLineNumberInformation -> {
                     // TODO resulting path goes too deep since temporary directory we compiled first is deeper than final destination.
-                    val relativePath = pathResolver
-                        .getPathRelativeToSourceRootsIfExists(sourceLocation.module, File(sourceLocation.file))
-                        ?.replace(Regex("^\\.\\./"), "") ?: continue
+                    val relativePath = if (sourceLocation is SourceLocation.DefinedLocation) {
+                        pathResolver
+                            .getPathRelativeToSourceRootsIfExists(sourceLocation.module, File(sourceLocation.file))
+                            ?.replace(Regex("^\\.\\./"), "") ?: continue
+                    } else sourceLocation.file
+
+                    if (offsetExpectedNextLocation != -1) {
+                        sourceMapBuilder.addMapping(
+                            relativePath,
+                            sourceLocation.line,
+                            sourceLocation.column,
+                            offsetExpectedNextLocation
+                        )
+                        offsetExpectedNextLocation = -1
+                    }
 
                     sourceMapBuilder.addMapping(
                         relativePath,
-                        null,
-                        { null },
                         sourceLocation.line,
                         sourceLocation.column,
-                        null,
                         generatedLocation.column
                     )
+
                     prev = sourceLocation
                 }
             }

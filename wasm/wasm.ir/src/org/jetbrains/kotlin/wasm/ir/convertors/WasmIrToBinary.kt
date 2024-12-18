@@ -473,10 +473,10 @@ class WasmIrToBinary(
         b.writeVarUInt32(t.type.id!!)
     }
 
-    private fun appendExpr(expr: Iterable<WasmInstr>) {
+    private fun appendExpr(expr: Iterable<WasmInstr>, endLocation: SourceLocation = SourceLocation.NoLocation("End of instruction list")) {
         val expressionWithEndOp = sequence {
             yieldAll(expr)
-            yield(WasmInstrWithLocation(WasmOp.END, SourceLocation.NoLocation("End of instruction list")))
+            yield(WasmInstrWithLocation(WasmOp.END, endLocation))
         }
 
         if (optimizeInstructionFlow) {
@@ -561,7 +561,21 @@ class WasmIrToBinary(
     }
 
     private fun appendCode(function: WasmFunction.Defined) {
+        val shouldWriteLocationBeforeFunctionHeader = function.endLocation is SourceLocation.IgnoredLocation
+
+        if (shouldWriteLocationBeforeFunctionHeader) {
+            debugInformationGenerator?.addSourceLocation(
+                SourceLocationMappingToBinary(SourceLocation.IgnoredLocation, offsets + Box(b.written))
+            )
+        }
+
         withVarUInt32PayloadSizePrepended {
+            if (!shouldWriteLocationBeforeFunctionHeader) {
+                debugInformationGenerator?.addSourceLocation(
+                    SourceLocationMappingToBinary(SourceLocation.NextLocation, offsets + Box(b.written))
+                )
+            }
+
             b.writeVarUInt32(function.locals.count { !it.isParameter })
             function.locals.forEach { local ->
                 if (!local.isParameter) {
@@ -570,7 +584,7 @@ class WasmIrToBinary(
                 }
             }
 
-            appendExpr(function.instructions)
+            appendExpr(function.instructions, function.endLocation)
         }
     }
 
@@ -751,8 +765,8 @@ private class SourceLocationMappingToBinary(
     // we can't calculate absolute offsets inside those blocks until we generate whole block and generate size.
     private val offsets: List<Box>,
 ) : SourceLocationMapping() {
-    override val generatedLocation: SourceLocation.Location by lazy {
-        SourceLocation.Location(
+    override val generatedLocation: SourceLocation.DefinedLocation by lazy {
+        SourceLocation.DefinedLocation(
             module = "",
             file = "",
             line = 0,

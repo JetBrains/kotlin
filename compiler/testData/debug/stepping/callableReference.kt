@@ -42,5 +42,8 @@ fun f(block: () -> Unit) {
 // test.kt:5 $box (6, 4)
 // test.kt:11 $f (4)
 // test.kt:6 $box$lambda.invoke (8, 12, 8, 16)
+// test.kt:7 $box$lambda.invoke (5)
+// test.kt:11 $f (4)
 // test.kt:12 $f (1)
+// test.kt:5 $box (4)
 // test.kt:8 $box (1)

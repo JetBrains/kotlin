@@ -41,7 +41,13 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
             let messageId = 0;
             const locations = [];
             function addLocation(frame) {
-                locations.push({ functionName: frame.functionName, line: frame.location.lineNumber, column: frame.location.columnNumber })
+                locations.push({
+                  functionName: frame.functionName,
+                  line: frame.location.lineNumber,
+                  column: frame.location.columnNumber,
+                  functionStartLine: frame.functionLocation?.lineNumber,
+                  functionStartColumn: frame.functionLocation?.columnNumber
+                })
             }
             function sendMessage(message) { send(JSON.stringify(Object.assign(message, { id: messageId++ }))) } 
             function enableDebugger() { sendMessage({ method: 'Debugger.enable' }) }
@@ -87,12 +93,13 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
         """.trimIndent()
 
         fun writeToFilesAndRunTest(mode: String, res: WasmCompilerResult) {
+            val compiledFileBase = "index"
             val sourceMap = res.parsedSourceMaps
 
             val dir = File(outputDirBase, mode)
             dir.mkdirs()
 
-            writeCompilationResult(res, dir, "index", true)
+            writeCompilationResult(res, dir, compiledFileBase, true)
             File(dir, "test.mjs").writeText(testFileContent)
 
             val (jsFilePaths) = collectedJsArtifacts.saveJsArtifacts(dir)
@@ -143,17 +150,27 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
                     toolArgs = listOf("--enable-inspector", "--allow-natives-syntax")
                 )
                 val debuggerSteps = FrameParser(result).parse().mapNotNull { frame ->
-                    val pausedLocation = sourceMap
-                        .findSegmentForTheGeneratedLocation(frame.pausedLocation.line, frame.pausedLocation.column)
+                    val functionLocation = sourceMap
+                        .findSegmentForTheGeneratedLocation(
+                            frame.currentFunctionStartLocation.line,
+                            frame.currentFunctionStartLocation.column
+                        )
                         ?.takeIf { it.sourceLineNumber >= 0 }
 
-                    pausedLocation?.sourceFileName?.let { sourceFileName ->
-                        ProcessedStep(
-                            sourceFileName,
-                            frame.functionName,
-                            Location(pausedLocation.sourceLineNumber, pausedLocation.sourceColumnNumber)
+                    if (functionLocation?.isIgnored == true) return@mapNotNull null
+
+                    val pausedLocation = sourceMap
+                        .findSegmentForTheGeneratedLocation(frame.pausedLocation.line, frame.pausedLocation.column)
+                        ?: return@mapNotNull null
+
+                    ProcessedStep(
+                        pausedLocation.sourceFileName ?: "$compiledFileBase.wasm",
+                        frame.functionName,
+                        Location(
+                            pausedLocation.sourceLineNumber.takeIf { it >= 0 } ?: frame.pausedLocation.line,
+                            pausedLocation.sourceColumnNumber.takeIf { it >= 0 } ?: frame.pausedLocation.column
                         )
-                    }
+                    )
                 }
 
                 val groupedByLinesSteppingTestLoggedData = buildList<SteppingTestLoggedData> {
@@ -212,13 +229,14 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
         }
 
     private data class Location(val line: Int, val column: Int)
-    private class Frame(val functionName: String, val pausedLocation: Location)
+    private class Frame(val functionName: String, val pausedLocation: Location, val currentFunctionStartLocation: Location)
     private data class ProcessedStep(val fileName: String, val functionName: String, val location: Location) {
         fun isOnTheSameLineAs(previous: ProcessedStep) =
             previous.fileName == fileName &&
                     previous.functionName == functionName &&
                     previous.location.line == location.line
     }
+
     private class FrameParser(private val input: String) {
         fun parse(): List<Frame> =
             (parseJson(input) as JsonArray).elements
@@ -226,7 +244,11 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
                     val frameObject = it as JsonObject
                     Frame(
                         frameObject.properties["functionName"].asString(),
-                        Location(frameObject.properties["line"].asInt(), frameObject.properties["column"].asInt())
+                        Location(frameObject.properties["line"].asInt(), frameObject.properties["column"].asInt()),
+                        Location(
+                            frameObject.properties["functionStartLine"].asInt(),
+                            frameObject.properties["functionStartColumn"].asInt()
+                        ),
                     )
                 }
 

@@ -7,5 +7,5 @@ package org.jetbrains.kotlin.wasm.ir.source.location
 
 class SourceLocationMappingToText(
     override val sourceLocation: SourceLocation,
-    override val generatedLocation: SourceLocation.Location
+    override val generatedLocation: SourceLocation.DefinedLocation
 ) : SourceLocationMapping()

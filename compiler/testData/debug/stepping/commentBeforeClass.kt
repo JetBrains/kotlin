@@ -24,4 +24,5 @@ class A {
 // EXPECTATIONS WASM
 // test.kt:5 $box (4)
 // test.kt:11 $A.<init> (1)
+// test.kt:5 $box (4)
 // test.kt:6 $box (1)

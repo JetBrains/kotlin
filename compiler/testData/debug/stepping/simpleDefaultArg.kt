@@ -24,4 +24,5 @@ fun box(): String {
 // test.kt:9 $box (11)
 // test.kt:4 $ifoo$default (0, 22, 0)
 // test.kt:5 $ifoo (11, 4)
+// test.kt:4 $ifoo$default (0)
 // test.kt:9 $box (4)

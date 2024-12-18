@@ -133,14 +133,9 @@ fun box() {
 // EXPECTATIONS WASM
 // test.kt:34 $box (4)
 // test.kt:6 $foo (8)
-// test.kt:26 $mightThrow (8)
+// test.kt:26 $mightThrow (8, 16)
 // test.kt:27 $mightThrow (1)
-
-// EXPECTATIONS FIR WASM
-// test.kt:5 $foo (4)
-// test.kt:10 $foo (8)
-
-// EXPECTATIONS ClassicFrontend WASM
+// test.kt:6 $foo (8)
 // test.kt:5 $foo (4)
 // test.kt:10 $foo (8)
 
@@ -149,8 +144,9 @@ fun box() {
 
 // EXPECTATIONS WASM
 // test.kt:14 $foo (8)
-// test.kt:30 $mightThrow2 (8)
+// test.kt:30 $mightThrow2 (8, 16)
 // test.kt:31 $mightThrow2 (1)
+// test.kt:14 $foo (8)
 // test.kt:13 $foo (12)
 // test.kt:18 $foo (8)
 // test.kt:13 $foo (12, 4)
@@ -158,17 +154,22 @@ fun box() {
 // test.kt:35 $box (13, 4)
 // test.kt:36 $box (4)
 // test.kt:6 $foo (8)
-// test.kt:26 $mightThrow (8)
+// test.kt:26 $mightThrow (8, 16)
 // test.kt:27 $mightThrow (1)
+// test.kt:6 $foo (8)
 // test.kt:5 $foo (4)
 // test.kt:10 $foo (8)
 
+// EXPECTATIONS ClassicFrontend WASM
+// test.kt:14 $foo (8)
+
 // EXPECTATIONS FIR WASM
 // test.kt:5 $foo (4)
+// test.kt:14 $foo (8)
 
 // EXPECTATIONS WASM
-// test.kt:14 $foo (8)
 // test.kt:30 $mightThrow2 (8, 22, 16)
+// test.kt:13 $foo (12)
 // test.kt:15 $foo (13)
 // test.kt:16 $foo (8)
 // test.kt:13 $foo (12)
@@ -179,21 +180,27 @@ fun box() {
 // test.kt:38 $box (4)
 // test.kt:6 $foo (8)
 // test.kt:26 $mightThrow (8, 22, 16)
+// test.kt:5 $foo (4)
 // test.kt:7 $foo (13)
 // test.kt:8 $foo (8)
 // test.kt:5 $foo (4)
 // test.kt:10 $foo (8)
 
+// EXPECTATIONS ClassicFrontend WASM
+// test.kt:14 $foo (8)
+
 // EXPECTATIONS FIR WASM
 // test.kt:5 $foo (4)
+// test.kt:14 $foo (8)
 
 // EXPECTATIONS WASM
-// test.kt:14 $foo (8)
 // test.kt:30 $mightThrow2 (8, 22, 16)
+// test.kt:13 $foo (12)
 // test.kt:15 $foo (13)
 // test.kt:16 $foo (8)
 // test.kt:13 $foo (12)
 // test.kt:18 $foo (8)
 // test.kt:13 $foo (12, 4)
 // test.kt:20 $foo (1)
+// test.kt:38 $box (4)
 // test.kt:39 $box (1)
