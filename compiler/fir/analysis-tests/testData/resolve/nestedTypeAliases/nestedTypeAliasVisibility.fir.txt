@@ -82,17 +82,17 @@ FILE: nestedTypeAliasVisibility.kt
             R|/Class.Class|()
             R|/Class.Class|()
             this@R|/OuterClassInheritor|.R|/OuterClass.InnerPrivateClass.InnerPrivateClass<HIDDEN: OuterClass.PrivateTAPrivateInner is invisible>#|()
-            this@R|/OuterClassInheritor|.R|/OuterClass.InnerPrivateClass.InnerPrivateClass<HIDDEN: /OuterClass.InnerPrivateClass.InnerPrivateClass is invisible>#|()
-            this@R|/OuterClassInheritor|.R|/OuterClass.InnerPrivateClass.InnerPrivateClass<HIDDEN: /OuterClass.InnerPrivateClass.InnerPrivateClass is invisible>#|()
+            this@R|/OuterClassInheritor|.R|/OuterClass.InnerPrivateClass.InnerPrivateClass<HIDDEN: OuterClass.InnerPrivateClass is invisible>#|()
+            this@R|/OuterClassInheritor|.R|/OuterClass.InnerPrivateClass.InnerPrivateClass<HIDDEN: OuterClass.InnerPrivateClass is invisible>#|()
         }
 
     }
     public final fun testPublic(): R|kotlin/Unit| {
         lval outerClass: R|OuterClass| = R|/OuterClass.OuterClass|()
-        R|<local>/outerClass|.R|/OuterClass.InnerClass.InnerClass<HIDDEN: OuterClass.PrivateTAInner is invisible>#|()
-        R|<local>/outerClass|.R|/OuterClass.InnerClass.InnerClass<HIDDEN: OuterClass.ProtectedTAInner is invisible>#|()
-        R|<local>/outerClass|.R|/OuterClass.InnerClass.InnerClass|()
-        R|<local>/outerClass|.R|/OuterClass.InnerPrivateClass.InnerPrivateClass<HIDDEN: OuterClass.PrivateTAPrivateInner is invisible>#|()
+        R|<local>/outerClass|.<Unresolved name: PrivateTAInner>#()
+        R|<local>/outerClass|.<Unresolved name: ProtectedTAInner>#()
+        R|<local>/outerClass|.<Unresolved name: PublicTAInner>#()
+        R|<local>/outerClass|.<Unresolved name: PrivateTAPrivateInner>#()
         Q|OuterClass|.R|/Class.Class<HIDDEN: OuterClass.PrivateTA is invisible>#|()
         Q|OuterClass|.R|/Class.Class<HIDDEN: OuterClass.ProtectedTA is invisible>#|()
         Q|OuterClass|.R|/Class.Class|()

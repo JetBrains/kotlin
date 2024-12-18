@@ -60,11 +60,11 @@ class OuterClassInheritor : OuterClass() {
 
 fun testPublic() {
     val outerClass = OuterClass()
-    outerClass.<!INVISIBLE_REFERENCE!>PrivateTAInner<!>() // ERROR (invisible)
-    outerClass.<!INVISIBLE_REFERENCE!>ProtectedTAInner<!>() // ERROR (invisible)
-    outerClass.PublicTAInner() // OK
+    outerClass.<!UNRESOLVED_REFERENCE!>PrivateTAInner<!>() // ERROR (UNRESOLVED_REFERENCE)
+    outerClass.<!UNRESOLVED_REFERENCE!>ProtectedTAInner<!>() // ERROR (UNRESOLVED_REFERENCE)
+    outerClass.<!UNRESOLVED_REFERENCE!>PublicTAInner<!>() // ERROR (UNRESOLVED_REFERENCE)
 
-    outerClass.<!INVISIBLE_REFERENCE!>PrivateTAPrivateInner<!>() // ERROR (invisible, single error)
+    outerClass.<!UNRESOLVED_REFERENCE!>PrivateTAPrivateInner<!>() // ERROR (UNRESOLVED_REFERENCE)
 
     OuterClass.<!INVISIBLE_REFERENCE!>PrivateTA<!>() // ERROR (invisible)
     OuterClass.<!INVISIBLE_REFERENCE!>ProtectedTA<!>() // ERROR (invisible)

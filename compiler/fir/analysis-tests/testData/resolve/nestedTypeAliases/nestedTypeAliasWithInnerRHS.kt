@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-73422
 
 open class Outer {
@@ -19,7 +19,7 @@ class OuterSuccessor : Outer() {
 }
 
 fun bar() {
-    Outer().NestedTA()
-    OuterSuccessor().NestedTA()
+    Outer().<!UNRESOLVED_REFERENCE!>NestedTA<!>()
+    OuterSuccessor().<!UNRESOLVED_REFERENCE!>NestedTA<!>()
     Outer().OuterTA()
 }
