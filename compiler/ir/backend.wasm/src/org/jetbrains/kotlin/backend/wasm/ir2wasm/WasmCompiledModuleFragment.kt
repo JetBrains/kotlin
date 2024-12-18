@@ -165,7 +165,11 @@ class WasmCompiledModuleFragment(
 
         val tags = getTags()
         val (importedTags, definedTags) = tags.partition { it.importPair != null }
-        val importsInOrder = importedFunctions + importedTags
+
+        val globals = getGlobals()
+        val (importedGlobals, definedGlobals) = globals.partition { it.importPair != null }
+
+        val importsInOrder = importedFunctions + importedTags + importedGlobals
 
         val wasmAnyArrayType = WasmArrayDeclaration(
             name = "itable",
@@ -210,7 +214,8 @@ class WasmCompiledModuleFragment(
             definedFunctions = definedFunctions,
             tables = emptyList(),
             memories = listOf(memory),
-            globals = getGlobals(),
+            globals = definedGlobals,
+            importedGlobals = importedGlobals,
             exports = exports,
             startFunction = null,  // Module is initialized via export call
             elements = emptyList(),
@@ -489,8 +494,14 @@ class WasmCompiledModuleFragment(
             }
         }
 
+//        wasmCompiledFileFragments.forEach { fragment ->
+//            bind(fragment.classIds.unbound, typeIds)
+//        }
+
         wasmCompiledFileFragments.forEach { fragment ->
-            bind(fragment.classIds.unbound, typeIds)
+            fragment.classIds.unbound.forEach {
+                it.value.bind(0)
+            }
         }
 
         var interfaceId = 0

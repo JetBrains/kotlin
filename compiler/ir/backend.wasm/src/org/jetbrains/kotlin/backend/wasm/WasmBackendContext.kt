@@ -30,9 +30,11 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.wasm.config.wasmTarget
+import org.jetbrains.kotlin.wasm.ir.WasmImportDescriptor
+import org.jetbrains.kotlin.wasm.ir.WasmSymbol
 
 class WasmBackendContext(
     val module: ModuleDescriptor,
@@ -45,7 +47,19 @@ class WasmBackendContext(
     val phaseConfig = configuration.phaseConfig ?: PhaseConfig()
 
     var emitFunctionsAsUsual = true
-    val importFunctions = mutableSetOf<IdSignature>()
+    val importDeclarations = mutableSetOf<IdSignature>()
+
+    fun importIfNeededOrFalse(declaration: IrDeclaration, prefix: String, body: (WasmImportDescriptor) -> Unit): Boolean {
+        if (emitFunctionsAsUsual) return false
+
+        val signature = (irFactory as IdSignatureRetriever).declarationSignature(declaration)
+        val stdlibFunName = importDeclarations.contains(signature)
+            .ifTrue { signature.toString() }
+            ?: return true
+
+        body(WasmImportDescriptor("stdlib", WasmSymbol(prefix + stdlibFunName)))
+        return true
+    }
 
     override val typeSystem: IrTypeSystemContext = IrTypeSystemContextImpl(irBuiltIns)
     override var inVerbosePhase: Boolean = false

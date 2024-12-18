@@ -3,18 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-
-/*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
-
 @file:Suppress("UNUSED_PARAMETER")  // File contains many intrinsics
 
 package kotlin
 
 import kotlin.wasm.internal.*
 
+@Suppress("INVISIBLE_REFERENCE")
 internal fun stringLiteral(poolId: Int, startAddress: Int, length: Int): String {
 //    val cached = stringPool[poolId]
 //    if (cached !== null) {

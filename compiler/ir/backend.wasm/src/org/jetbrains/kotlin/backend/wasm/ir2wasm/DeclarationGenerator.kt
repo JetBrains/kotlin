@@ -87,16 +87,6 @@ class DeclarationGenerator(
             )
         wasmFileCodegenContext.defineFunctionType(declaration.symbol, wasmFunctionType)
 
-        val signature = (backendContext.irFactory as IdSignatureRetriever).declarationSignature(declaration)
-        val stdlibFunName: String?
-        if (!backendContext.emitFunctionsAsUsual && declaration != backendContext.wasmSymbols.stringGetLiteral.owner) {
-            stdlibFunName = backendContext.importFunctions.contains(signature)
-                .ifTrue { signature.toString() }
-                ?: return
-        } else {
-            stdlibFunName = null
-        }
-
         if (declaration is IrSimpleFunction && declaration.modality == Modality.ABSTRACT) {
             return
         }
@@ -106,6 +96,14 @@ class DeclarationGenerator(
         }
 
         val functionTypeSymbol = wasmFileCodegenContext.referenceFunctionType(declaration.symbol)
+
+        val isImportedFromStd = backendContext.importIfNeededOrFalse(declaration, "func_") { descriptor ->
+            wasmFileCodegenContext.defineFunction(
+                declaration.symbol,
+                WasmFunction.Imported(watName, functionTypeSymbol, descriptor)
+            )
+        }
+        if (isImportedFromStd) return
 
         val wasmImportModule = declaration.getWasmImportDescriptor()
         val jsCode = declaration.getJsFunAnnotation()
@@ -121,9 +119,6 @@ class DeclarationGenerator(
                 val jsFunName = WasmSymbol(declaration.fqNameWhenAvailable.toString())
                 wasmFileCodegenContext.addJsFun(declaration.symbol, jsFunName, jsCode)
                 WasmImportDescriptor("js_code", jsFunName)
-            }
-            stdlibFunName != null -> {
-                WasmImportDescriptor("stdlib", WasmSymbol(stdlibFunName))
             }
             else -> {
                 null
@@ -239,25 +234,20 @@ class DeclarationGenerator(
         val vTableTypeReference = wasmFileCodegenContext.referenceVTableGcType(symbol)
         val vTableRefGcType = WasmRefType(WasmHeapType.Type(vTableTypeReference))
 
-        if (!backendContext.emitFunctionsAsUsual) {
-            val signature = (backendContext.irFactory as IdSignatureRetriever).declarationSignature(klass)
-            val vtableGlobalName = backendContext.importFunctions.contains(signature)
-                .ifTrue { signature.toString() }
-                ?: return
-
+        val isImportedFromStd = backendContext.importIfNeededOrFalse(klass, "vtable_") { descriptor ->
             val global = WasmGlobal(
                 name = vtableName,
                 type = vTableRefGcType,
                 isMutable = false,
                 init = emptyList(),
-                importPair = WasmImportDescriptor("stdlib", WasmSymbol(vtableGlobalName))
+                importPair = descriptor
             )
             wasmFileCodegenContext.defineGlobalVTable(
                 irClass = symbol,
                 wasmGlobal = global
             )
-            return
         }
+        if (isImportedFromStd) return
 
         val initVTableGlobal = buildWasmExpression {
             val location = SourceLocation.NoLocation("Create instance of vtable struct")
@@ -300,7 +290,20 @@ class DeclarationGenerator(
         if (klass.isAbstractOrSealed) return
         if (!klass.hasInterfaceSuperClass()) return
 
-        if (!backendContext.emitFunctionsAsUsual) return
+        val isImportedFromStd = backendContext.importIfNeededOrFalse(klass, "itable_") { descriptor ->
+            val global = WasmGlobal(
+                name = "<classITable>",
+                type = WasmRefType(WasmHeapType.Type(wasmFileCodegenContext.wasmAnyArrayType)),
+                isMutable = false,
+                init = emptyList(),
+                importPair = descriptor
+            )
+            wasmFileCodegenContext.defineGlobalClassITable(
+                irClass = klass.symbol,
+                wasmGlobal = global
+            )
+        }
+        if (isImportedFromStd) return
 
         fun addInterfaceMethods(builder: WasmExpressionBuilder, iFace: IrClass, onlyFunction: IrFunction?) = with(builder) {
             for (method in wasmModuleMetadataCache.getInterfaceMetadata(iFace.symbol).methods) {

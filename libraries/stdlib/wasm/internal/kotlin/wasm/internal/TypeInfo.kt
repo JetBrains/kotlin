@@ -45,10 +45,11 @@ internal fun getPackageName(typeInfoPtr: Int) = getString(
 )
 
 private fun getString(typeInfoPtr: Int, lengthOffset: Int, idOffset: Int, ptrOffset: Int): String {
-    val length = wasm_i32_load(typeInfoPtr + lengthOffset)
-    val id = wasm_i32_load(typeInfoPtr + idOffset)
-    val ptr = wasm_i32_load(typeInfoPtr + ptrOffset)
-    return stringLiteral(id, ptr, length)
+//    val length = wasm_i32_load(typeInfoPtr + lengthOffset)
+//    val id = wasm_i32_load(typeInfoPtr + idOffset)
+//    val ptr = wasm_i32_load(typeInfoPtr + ptrOffset)
+//    return stringLiteral(id, ptr, length)
+    TODO()
 }
 
 internal fun getSuperTypeId(typeInfoPtr: Int): Int =
