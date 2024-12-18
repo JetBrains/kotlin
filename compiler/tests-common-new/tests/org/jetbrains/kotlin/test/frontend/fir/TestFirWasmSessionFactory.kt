@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.getKlibDependencies
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 import java.io.File
@@ -99,7 +100,7 @@ fun getWasmDependencies(
     target: WasmTarget,
 ): Triple<List<String>, List<File>, List<File>> {
     val runtimeKlibsPaths = WasmEnvironmentConfigurator.getRuntimePathsForModule(target)
-    val transitiveLibraries = WasmEnvironmentConfigurator.getKlibDependencies(module, testServices, DependencyRelation.RegularDependency)
-    val friendLibraries = WasmEnvironmentConfigurator.getKlibDependencies(module, testServices, DependencyRelation.FriendDependency)
+    val transitiveLibraries = getKlibDependencies(module, testServices, DependencyRelation.RegularDependency)
+    val friendLibraries = getKlibDependencies(module, testServices, DependencyRelation.FriendDependency)
     return Triple(runtimeKlibsPaths, transitiveLibraries, friendLibraries)
 }
