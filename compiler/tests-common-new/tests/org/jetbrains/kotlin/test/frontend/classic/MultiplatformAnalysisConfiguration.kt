@@ -65,7 +65,7 @@ internal class MultiplatformSeparateAnalysisConfiguration(
     override fun getDependencyDescriptors(module: TestModule): List<ModuleDescriptor> {
         return getDescriptors(
             module.allDependencies - module.dependsOnDependencies.toSet(),
-            artifactsProvider, moduleDescriptorProvider
+            moduleDescriptorProvider
         )
     }
 
@@ -75,7 +75,7 @@ internal class MultiplatformSeparateAnalysisConfiguration(
 
     override fun getFriendDescriptors(module: TestModule): List<ModuleDescriptor> {
         return getDescriptors(
-            module.friendDependencies, artifactsProvider, moduleDescriptorProvider
+            module.friendDependencies, moduleDescriptorProvider
         )
     }
 
@@ -84,7 +84,7 @@ internal class MultiplatformSeparateAnalysisConfiguration(
         fun addDependsOnSources(dependencies: List<DependencyDescription>) {
             if (dependencies.isEmpty()) return
             for (dependency in dependencies) {
-                val dependencyModule = artifactsProvider.getTestModule(dependency.moduleName)
+                val dependencyModule = dependency.dependencyModule
                 val artifact = if (module.frontendKind == FrontendKinds.ClassicAndFIR) {
                     artifactsProvider.getArtifact(dependencyModule, FrontendKinds.ClassicAndFIR).k1Artifact
                 } else {
@@ -127,18 +127,18 @@ internal class MultiplatformCompositeAnalysisConfiguration(
     override fun getDependencyDescriptors(module: TestModule): List<ModuleDescriptor> {
         // Transitive dependsOn descriptors should also be returned as dependencies
         val allDependsOnDependencies = module.dependsOnDependencies.closure(preserveOrder = true) { dependsOnDependency ->
-            artifactsProvider.getTestModule(dependsOnDependency.moduleName).dependsOnDependencies
+            dependsOnDependency.dependencyModule.dependsOnDependencies
         }
         val allDependencies = (module.allDependencies + allDependsOnDependencies).distinct()
-        return getDescriptors(allDependencies, artifactsProvider, moduleDescriptorProvider)
+        return getDescriptors(allDependencies, moduleDescriptorProvider)
     }
 
     override fun getDependsOnDescriptors(module: TestModule): List<ModuleDescriptor> {
-        return getDescriptors(module.dependsOnDependencies, artifactsProvider, moduleDescriptorProvider)
+        return getDescriptors(module.dependsOnDependencies, moduleDescriptorProvider)
     }
 
     override fun getFriendDescriptors(module: TestModule): List<ModuleDescriptor> {
-        return getDescriptors(module.friendDependencies, artifactsProvider, moduleDescriptorProvider)
+        return getDescriptors(module.friendDependencies, moduleDescriptorProvider)
     }
 }
 
@@ -178,10 +178,9 @@ private object CompositeAnalysisModuleStructureOracle : ModuleStructureOracle {
 
 private fun getDescriptors(
     dependencies: Iterable<DependencyDescription>,
-    artifactsProvider: ArtifactsProvider,
     moduleDescriptorProvider: ModuleDescriptorProvider
 ): List<ModuleDescriptor> {
     return dependencies.filter { it.kind == DependencyKind.Source }
-        .map { dependencyDescription -> artifactsProvider.getTestModule(dependencyDescription.moduleName) }
+        .map { dependencyDescription -> dependencyDescription.dependencyModule }
         .map { dependencyModule -> moduleDescriptorProvider.getModuleDescriptor(dependencyModule) }
 }

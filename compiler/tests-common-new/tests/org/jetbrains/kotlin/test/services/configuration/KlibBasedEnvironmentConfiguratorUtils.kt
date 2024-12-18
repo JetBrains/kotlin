@@ -72,7 +72,7 @@ interface KlibBasedEnvironmentConfiguratorUtils {
             }
             dependencies
                 .filter { it.kind != DependencyKind.Source }
-                .map { testServices.artifactsProvider.getTestModule(it.moduleName) }.forEach {
+                .map { it.dependencyModule }.forEach {
                     if (it !in visited) {
                         visited += it
                         getRecursive(it, relation)
