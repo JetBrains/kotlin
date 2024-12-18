@@ -396,6 +396,8 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         withTag { tag ->
             when (tag) {
                 LocationTags.NO_LOCATION -> SourceLocation.NoLocation
+                LocationTags.IGNORED_LOCATION -> SourceLocation.IgnoredLocation
+                LocationTags.NEXT_LOCATION -> SourceLocation.NextLocation
                 else -> {
                     val module = deserializeString()
                     val file = deserializeString()
@@ -403,8 +405,6 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                     val column = deserializeInt()
                     when (tag) {
                         LocationTags.LOCATION -> SourceLocation.DefinedLocation(module, file, line, column)
-                        LocationTags.IGNORED_LOCATION -> SourceLocation.IgnoredLocation
-                        LocationTags.NEXT_LOCATION -> SourceLocation.NextLocation
                         else -> tagError(tag)
                     }
                 }
