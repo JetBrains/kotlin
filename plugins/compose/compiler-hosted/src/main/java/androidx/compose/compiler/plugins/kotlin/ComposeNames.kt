@@ -14,7 +14,6 @@ object ComposeNames {
     val JOINKEY = Name.identifier("joinKey")
     val STARTRESTARTGROUP = Name.identifier("startRestartGroup")
     val ENDRESTARTGROUP = Name.identifier("endRestartGroup")
-    val STARTREPLACEGROUP = Name.identifier("startReplaceGroup")
     val UPDATE_SCOPE = Name.identifier("updateScope")
     val SOURCEINFORMATION = "sourceInformation"
     val SOURCEINFORMATIONMARKERSTART = "sourceInformationMarkerStart"
