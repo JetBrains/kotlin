@@ -84,6 +84,12 @@ public class FirLldbTestGenerated extends AbstractNativeBlackBoxTest {
   }
 
   @Test
+  @TestMetadata("inlineLambdaRepresentation.kt")
+  public void testInlineLambdaRepresentation() {
+    runTest("native/native.tests/testData/lldb/inlineLambdaRepresentation.kt");
+  }
+
+  @Test
   @TestMetadata("inlineOnlyFunction.kt")
   public void testInlineOnlyFunction() {
     runTest("native/native.tests/testData/lldb/inlineOnlyFunction.kt");
