@@ -73,3 +73,5 @@ nativeInteropPlugin {
         }
     })
 }
+
+projectTest(jUnitMode = JUnitMode.JUnit5) // `projectTest()` is not available in kotlin-native/build-tools project

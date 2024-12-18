@@ -863,6 +863,10 @@ tasks {
             dependsOn(":kotlin-native:Interop:StubGenerator:check")
             dependsOn(":kotlin-native:backend.native:check")
             dependsOn(":kotlin-native:tools:kdumputil:check")
+            dependsOn(":kotlin-native:common:env:check")
+            dependsOn(":kotlin-native:common:files:check")
+            dependsOn(":kotlin-native:libclangInterop:check")
+            dependsOn(":kotlin-native:llvmInterop:check")
         }
     }
 
