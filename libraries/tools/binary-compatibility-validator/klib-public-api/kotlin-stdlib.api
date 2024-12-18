@@ -9936,10 +9936,6 @@ open annotation class kotlinx.cinterop.internal/CCall : kotlin/Annotation { // k
         constructor <init>() // kotlinx.cinterop.internal/CCall.ConsumesReceiver.<init>|<init>(){}[0]
     }
 
-    open annotation class CppClassConstructor : kotlin/Annotation { // kotlinx.cinterop.internal/CCall.CppClassConstructor|null[0]
-        constructor <init>() // kotlinx.cinterop.internal/CCall.CppClassConstructor.<init>|<init>(){}[0]
-    }
-
     open annotation class ReturnsRetained : kotlin/Annotation { // kotlinx.cinterop.internal/CCall.ReturnsRetained|null[0]
         constructor <init>() // kotlinx.cinterop.internal/CCall.ReturnsRetained.<init>|<init>(){}[0]
     }
@@ -9986,14 +9982,6 @@ open annotation class kotlinx.cinterop.internal/CStruct : kotlin/Annotation { //
             final fun <get-offset>(): kotlin/Long // kotlinx.cinterop.internal/CStruct.BitField.offset.<get-offset>|<get-offset>(){}[0]
         final val size // kotlinx.cinterop.internal/CStruct.BitField.size|{}size[0]
             final fun <get-size>(): kotlin/Int // kotlinx.cinterop.internal/CStruct.BitField.size.<get-size>|<get-size>(){}[0]
-    }
-
-    open annotation class CPlusPlusClass : kotlin/Annotation { // kotlinx.cinterop.internal/CStruct.CPlusPlusClass|null[0]
-        constructor <init>() // kotlinx.cinterop.internal/CStruct.CPlusPlusClass.<init>|<init>(){}[0]
-    }
-
-    open annotation class ManagedType : kotlin/Annotation { // kotlinx.cinterop.internal/CStruct.ManagedType|null[0]
-        constructor <init>() // kotlinx.cinterop.internal/CStruct.ManagedType.<init>|<init>(){}[0]
     }
 
     open annotation class MemberAt : kotlin/Annotation { // kotlinx.cinterop.internal/CStruct.MemberAt|null[0]
@@ -10309,9 +10297,6 @@ abstract interface kotlinx.cinterop/CEnum { // kotlinx.cinterop/CEnum|null[0]
 }
 
 // Targets: [native]
-abstract interface kotlinx.cinterop/CPlusPlusClass // kotlinx.cinterop/CPlusPlusClass|null[0]
-
-// Targets: [native]
 abstract interface kotlinx.cinterop/NativeFreeablePlacement : kotlinx.cinterop/NativePlacement { // kotlinx.cinterop/NativeFreeablePlacement|null[0]
     abstract fun free(kotlin.native.internal/NativePtr) // kotlinx.cinterop/NativeFreeablePlacement.free|free(kotlin.native.internal.NativePtr){}[0]
 }
@@ -10330,9 +10315,6 @@ abstract interface kotlinx.cinterop/ObjCObject // kotlinx.cinterop/ObjCObject|nu
 
 // Targets: [native]
 abstract interface kotlinx.cinterop/ObjCProtocol : kotlinx.cinterop/ObjCObject // kotlinx.cinterop/ObjCProtocol|null[0]
-
-// Targets: [native]
-abstract interface kotlinx.cinterop/SkiaRefCnt // kotlinx.cinterop/SkiaRefCnt|null[0]
 
 // Targets: [native]
 sealed interface kotlin.native.ref/Cleaner // kotlin.native.ref/Cleaner|null[0]
@@ -10440,14 +10422,6 @@ abstract class <#A: kotlinx.cinterop/CPointed> kotlinx.cinterop/CValuesRef { // 
     constructor <init>() // kotlinx.cinterop/CValuesRef.<init>|<init>(){}[0]
 
     abstract fun getPointer(kotlinx.cinterop/AutofreeScope): kotlinx.cinterop/CPointer<#A> // kotlinx.cinterop/CValuesRef.getPointer|getPointer(kotlinx.cinterop.AutofreeScope){}[0]
-}
-
-// Targets: [native]
-abstract class <#A: kotlinx.cinterop/CStructVar> kotlinx.cinterop/ManagedType { // kotlinx.cinterop/ManagedType|null[0]
-    constructor <init>(#A) // kotlinx.cinterop/ManagedType.<init>|<init>(1:0){}[0]
-
-    final val cpp // kotlinx.cinterop/ManagedType.cpp|{}cpp[0]
-        final fun <get-cpp>(): #A // kotlinx.cinterop/ManagedType.cpp.<get-cpp>|<get-cpp>(){}[0]
 }
 
 // Targets: [native]

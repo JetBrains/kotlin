@@ -7,12 +7,10 @@ package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
-import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.lower.TestProcessor
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -207,21 +205,11 @@ internal class KonanSymbols(
 
     val cStuctVar = interopClass(InteropFqNames.cStructVarName)
     val cStructVarConstructorSymbol = symbolFinder.findPrimaryConstructor(cStuctVar)!!
-    val managedTypeConstructor = symbolFinder.findPrimaryConstructor(interopClass(InteropFqNames.managedTypeName))!!
     val structVarPrimaryConstructor = symbolFinder.findPrimaryConstructor(symbolFinder.findNestedClass(cStuctVar, Name.identifier(InteropFqNames.TypeName))!!)!!
 
     val interopGetPtr = symbolFinder.findTopLevelPropertyGetter(InteropFqNames.packageName, "ptr") {
         symbolFinder.isTypeParameterUpperBoundClass(it, 0, interopCPointed)
     }
-
-    val interopManagedType = interopClass(InteropFqNames.managedTypeName)
-
-    val interopManagedGetPtr = symbolFinder.findTopLevelPropertyGetter(InteropFqNames.packageName, "ptr") {
-        symbolFinder.isTypeParameterUpperBoundClass(it, 0, cStuctVar) && symbolFinder.isExtensionReceiverClass(it, interopManagedType)
-    }
-
-    val interopCPlusPlusClass = interopClass(InteropFqNames.cPlusPlusClassName)
-    val interopSkiaRefCnt = interopClass(InteropFqNames.skiaRefCntName)
 
     val readBits = interopFunction("readBits")
     val writeBits = interopFunction("writeBits")

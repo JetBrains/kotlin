@@ -337,9 +337,9 @@ private class BackendChecker(
             )
         }
 
-        if (callee.returnType.isNativePointed(symbols) &&
-                !callee.hasCCallAnnotation("CppClassConstructor"))
+        if (callee.returnType.isNativePointed(symbols)) {
             reportError(expression, "Native interop types constructors must not be called directly")
+        }
     }
 
     override fun visitField(declaration: IrField) {

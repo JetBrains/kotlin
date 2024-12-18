@@ -43,15 +43,11 @@ internal class CStructVarCompanionGenerator(
 
     fun generate(structDescriptor: ClassDescriptor): IrClass =
             createClass(structDescriptor.companionObjectDescriptor!!) { companionIrClass ->
-                if (structDescriptor.annotations.hasAnnotation(RuntimeNames.managedType)) {
-                    companionIrClass.addMember(createCompanionConstructor(companionIrClass.descriptor, 0L, 0))
-                } else {
-                    val annotation = companionIrClass.descriptor.annotations
-                            .findAnnotation(varTypeAnnotationFqName)!!
-                    val size = annotation.getArgumentValueOrNull<Long>("size")!!
-                    val align = annotation.getArgumentValueOrNull<Int>("align")!!
-                    companionIrClass.addMember(createCompanionConstructor(companionIrClass.descriptor, size, align))
-                }
+                val annotation = companionIrClass.descriptor.annotations
+                        .findAnnotation(varTypeAnnotationFqName)!!
+                val size = annotation.getArgumentValueOrNull<Long>("size")!!
+                val align = annotation.getArgumentValueOrNull<Int>("align")!!
+                companionIrClass.addMember(createCompanionConstructor(companionIrClass.descriptor, size, align))
                 companionIrClass.descriptor.unsubstitutedMemberScope
                         .getContributedDescriptors()
                         .filterIsInstance<CallableMemberDescriptor>()
@@ -67,31 +63,17 @@ internal class CStructVarCompanionGenerator(
             }
 
     private fun createCompanionConstructor(companionObjectDescriptor: ClassDescriptor, size: Long, align: Int): IrConstructor {
-        if (companionObjectDescriptor.containingDeclaration.annotations.hasAnnotation(RuntimeNames.managedType)) {
-            return createConstructor(companionObjectDescriptor.unsubstitutedPrimaryConstructor!!).also { irConstructor ->
-                postLinkageSteps.add {
-                    irConstructor.body = irBuiltIns.createIrBuilder(irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
-                        +IrDelegatingConstructorCallImpl.fromSymbolOwner(
-                                startOffset, endOffset, context.irBuiltIns.unitType,
-                                irBuiltIns.anyClass.owner.primaryConstructor!!.symbol
-                        )
-                        +irInstanceInitializer(symbolTable.descriptorExtension.referenceClass(companionObjectDescriptor))
+        return createConstructor(companionObjectDescriptor.unsubstitutedPrimaryConstructor!!).also { irConstructor ->
+            postLinkageSteps.add {
+                irConstructor.body = irBuiltIns.createIrBuilder(irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+                    +IrDelegatingConstructorCallImpl.fromSymbolOwner(
+                            startOffset, endOffset, context.irBuiltIns.unitType,
+                            symbols.structVarPrimaryConstructor
+                    ).also {
+                        it.putValueArgument(0, irLong(size))
+                        it.putValueArgument(1, irInt(align))
                     }
-                }
-            }
-        } else {
-            return createConstructor(companionObjectDescriptor.unsubstitutedPrimaryConstructor!!).also { irConstructor ->
-                postLinkageSteps.add {
-                    irConstructor.body = irBuiltIns.createIrBuilder(irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
-                        +IrDelegatingConstructorCallImpl.fromSymbolOwner(
-                                startOffset, endOffset, context.irBuiltIns.unitType,
-                                symbols.structVarPrimaryConstructor
-                        ).also {
-                            it.putValueArgument(0, irLong(size))
-                            it.putValueArgument(1, irInt(align))
-                        }
-                        +irInstanceInitializer(symbolTable.descriptorExtension.referenceClass(companionObjectDescriptor))
-                    }
+                    +irInstanceInitializer(symbolTable.descriptorExtension.referenceClass(companionObjectDescriptor))
                 }
             }
         }

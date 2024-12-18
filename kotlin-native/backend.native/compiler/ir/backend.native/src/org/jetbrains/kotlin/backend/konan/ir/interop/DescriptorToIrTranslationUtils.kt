@@ -187,5 +187,5 @@ internal fun IrSymbol.findCStructDescriptor(): ClassDescriptor? =
 
 internal fun DeclarationDescriptor.findCStructDescriptor(): ClassDescriptor? =
         parentsWithSelf.filterIsInstance<ClassDescriptor>().firstOrNull {
-            it.inheritsFromCStructVar() || it.annotations.hasAnnotation(RuntimeNames.managedType)
+            it.inheritsFromCStructVar()
         }

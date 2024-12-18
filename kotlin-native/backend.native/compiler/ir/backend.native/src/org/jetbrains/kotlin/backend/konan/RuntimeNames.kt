@@ -13,9 +13,6 @@ object RuntimeNames {
     val cStructMemberAt = FqName("kotlinx.cinterop.internal.CStruct.MemberAt")
     val cStructArrayMemberAt = FqName("kotlinx.cinterop.internal.CStruct.ArrayMemberAt")
     val cStructBitField = FqName("kotlinx.cinterop.internal.CStruct.BitField")
-    val cppClass = FqName("kotlinx.cinterop.internal.CStruct.CPlusPlusClass")
-    val managedType = FqName("kotlinx.cinterop.internal.CStruct.ManagedType")
-    val skiaRefCnt = FqName("kotlinx.cinterop.SkiaRefCnt") // TODO: move me to the plugin?
     val objCMethodImp = FqName("kotlinx.cinterop.ObjCMethodImp")
     val independent = FqName("kotlin.native.internal.Independent")
     val filterExceptions = FqName("kotlin.native.internal.FilterExceptions")

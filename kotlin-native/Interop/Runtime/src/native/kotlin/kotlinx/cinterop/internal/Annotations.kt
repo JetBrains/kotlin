@@ -64,10 +64,6 @@ public annotation class CCall(val id: String) {
     @Target(AnnotationTarget.VALUE_PARAMETER)
     @Retention(AnnotationRetention.BINARY)
     public annotation class Consumed
-
-    @Target(AnnotationTarget.CONSTRUCTOR)
-    @Retention(AnnotationRetention.BINARY)
-    public annotation class CppClassConstructor
 }
 
 /**
