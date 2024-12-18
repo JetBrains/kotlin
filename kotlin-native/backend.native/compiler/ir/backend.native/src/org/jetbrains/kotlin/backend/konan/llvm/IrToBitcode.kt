@@ -1936,9 +1936,6 @@ internal class CodeGeneratorVisitor(
     private inner class InlinedBlockScope(val inlinedBlock: IrInlinedFunctionBlock) : FileScope(file = null, inlinedBlock.fileEntry) {
 
         private val inlineFunctionScope: DIScopeOpaqueRef? by lazy {
-            if (!context.shouldContainLocationDebugInfo() || inlinedBlock.startOffset == UNDEFINED_OFFSET)
-                return@lazy null
-
             val owner = inlinedBlock.inlineFunctionSymbol!!.owner
             require(owner is IrSimpleFunction) { "Inline constructors should've been lowered: ${owner.render()}" }
             owner.scope(fileEntry().line(inlinedBlock.inlinedFunctionStartOffset))
@@ -1951,7 +1948,9 @@ internal class CodeGeneratorVisitor(
             return LocationInfo(diScope, line, column, inlinedAt)
         }
 
-        override fun scope() = inlineFunctionScope
+        override fun scope(): DIScopeOpaqueRef? {
+            return inlineFunctionScope.takeIf { context.shouldContainLocationDebugInfo() && inlinedBlock.startOffset != UNDEFINED_OFFSET }
+        }
 
         override fun wrapException(e: Exception): NativeCodeGeneratorException {
             return NativeCodeGeneratorException.wrap(e, inlinedBlock.inlineFunctionSymbol?.owner)
