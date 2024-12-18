@@ -4086,6 +4086,12 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
       }
 
       @Test
+      @TestMetadata("innerInsideNestedSealed.kt")
+      public void testInnerInsideNestedSealed() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/innerInsideNestedSealed.kt");
+      }
+
+      @Test
       @TestMetadata("innerTypeFromSuperClassInBody.kt")
       public void testInnerTypeFromSuperClassInBody() {
         runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/innerTypeFromSuperClassInBody.kt");

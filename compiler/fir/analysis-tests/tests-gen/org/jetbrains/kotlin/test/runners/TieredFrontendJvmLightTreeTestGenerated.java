@@ -29429,6 +29429,12 @@ public class TieredFrontendJvmLightTreeTestGenerated extends AbstractTieredFront
       }
 
       @Test
+      @TestMetadata("innerInsideNestedSealed.kt")
+      public void testInnerInsideNestedSealed() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/innerInsideNestedSealed.kt");
+      }
+
+      @Test
       @TestMetadata("innerTypes.kt")
       public void testInnerTypes() {
         runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/innerTypes.kt");
