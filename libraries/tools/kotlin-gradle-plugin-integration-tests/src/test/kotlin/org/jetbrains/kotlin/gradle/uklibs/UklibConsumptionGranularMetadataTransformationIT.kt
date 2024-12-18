@@ -266,7 +266,7 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
                     }
                 }
             }
-        }.publish(publisherConfiguration)
+        }.publish(publisherConfiguration = publisherConfiguration)
     }
 
 }

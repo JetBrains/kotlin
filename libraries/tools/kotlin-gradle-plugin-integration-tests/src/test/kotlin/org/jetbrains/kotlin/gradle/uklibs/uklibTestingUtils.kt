@@ -82,11 +82,7 @@ fun Project.applyMavenPublish(
 fun TestProject.publishReturn(
     publisherConfiguration: PublisherConfiguration,
 ): ReturnFromBuildScriptAfterExecution<PublishedProject> {
-    buildScriptInjection {
-        project.applyMavenPublish(publisherConfiguration)
-    }
-
-    return buildScriptReturn {
+    val publishReturn = buildScriptReturn {
         PublishedProject(
             project.layout.projectDirectory.dir(publisherConfiguration.repoPath).asFile,
             publisherConfiguration.group,
@@ -94,6 +90,14 @@ fun TestProject.publishReturn(
             publisherConfiguration.version,
         )
     }
+    val injectionLoadProperty = publishReturn.injectionLoadProperty
+    buildScriptInjection {
+        // Only setup this publication when publishing from this return
+        if (project.hasProperty(injectionLoadProperty)) {
+            project.applyMavenPublish(publisherConfiguration)
+        }
+    }
+    return publishReturn
 }
 
 fun TestProject.publishJavaReturn(
@@ -119,10 +123,11 @@ fun TestProject.publishJavaReturn(
 }
 
 fun TestProject.publish(
-    publisherConfiguration: PublisherConfiguration,
+    vararg buildArguments: String = emptyArray(),
+    publisherConfiguration: PublisherConfiguration = PublisherConfiguration(),
     deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
 ): PublishedProject = publishReturn(publisherConfiguration).buildAndReturn(
-    "publishAllPublicationsToMavenRepository",
+    "publishAllPublicationsToMavenRepository", *buildArguments,
     deriveBuildOptions = deriveBuildOptions,
 )
 

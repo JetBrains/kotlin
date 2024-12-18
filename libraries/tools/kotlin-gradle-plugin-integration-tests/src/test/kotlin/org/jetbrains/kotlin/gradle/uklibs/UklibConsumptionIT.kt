@@ -274,7 +274,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                     publisherConfiguration()
                 }
             }
-        }.publish(PublisherConfiguration())
+        }.publish()
     }
 
     @GradleTest
@@ -290,7 +290,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                     sourceSets.commonMain.get().addIdentifierClass()
                 }
             }
-        }.publish(PublisherConfiguration(name = "dependency"))
+        }.publish(publisherConfiguration = PublisherConfiguration(name = "dependency"))
 
         project("buildScriptInjectionGroovy", version) {
             addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(publisher)
@@ -311,7 +311,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                 kotlinMultiplatform.jvm().compilations.getByName("main").compileTaskProvider.name
             }.buildAndReturn()
             val jvmTransformationException = catchBuildFailures<UnzippedUklibToPlatformCompilationTransform.PlatformCompilationTransformException>().buildAndReturn(
-                evaluationTask = jvmMainCompilationTask,
+                jvmMainCompilationTask,
             ).unwrap().single()
             assertEquals(
                 "jvm",
@@ -328,7 +328,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                 ).get().name
             }.buildAndReturn()
             val commonMainTransformationException = catchBuildFailures<GranularMetadataTransformation.UklibIsMissingRequiredAttributesException>().buildAndReturn(
-                evaluationTask = commonMainTransformationTask,
+                commonMainTransformationTask,
             ).unwrap().single()
             assertEquals(
                 listOf("jvm", "linux_arm64", "linux_x64"),
@@ -354,7 +354,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                     sourceSets.commonMain.get().addIdentifierClass()
                 }
             }
-        }.publish(PublisherConfiguration(name = "dependency"))
+        }.publish(publisherConfiguration = PublisherConfiguration(name = "dependency"))
 
         project("buildScriptInjectionGroovy", version) {
             addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(publisher)
@@ -390,7 +390,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                     sourceSets.commonMain.get().addIdentifierClass()
                 }
             }
-        }.publish(PublisherConfiguration(name = "transitive"))
+        }.publish(publisherConfiguration = PublisherConfiguration(name = "transitive"))
 
         val direct = project("buildScriptInjectionGroovy", version) {
             addPublishedProjectToRepositories(transitive)
@@ -476,7 +476,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                     sourceSets.jvmMain.get().addIdentifierClass()
                 }
             }
-        }.publish(PublisherConfiguration())
+        }.publish()
 
         project("buildScriptInjectionGroovy", version) {
             addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(publisher)
@@ -494,7 +494,7 @@ class UklibConsumptionIT : KGPBaseTest() {
             }
 
             val commonMainTransformationException = catchBuildFailures<GranularMetadataTransformation.UklibIsMissingRequiredAttributesException>().buildAndReturn(
-                evaluationTask = "assemble",
+                "assemble",
             ).unwrap().single()
             assertEquals(
                 setOf("jvm", "linux_arm64", "linux_x64"),
@@ -520,7 +520,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                     sourceSets.commonMain.get().compileSource("class Jvm")
                 }
             }
-        }.publish(PublisherConfiguration(name = "transitive"))
+        }.publish(publisherConfiguration = PublisherConfiguration(name = "transitive"))
 
         project("buildScriptInjectionGroovyWithAGP", version) {
             addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(direct)

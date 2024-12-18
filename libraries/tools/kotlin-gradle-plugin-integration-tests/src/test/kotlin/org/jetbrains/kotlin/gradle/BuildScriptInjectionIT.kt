@@ -212,7 +212,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                     }
                 }
             }
-        }.publish(PublisherConfiguration())
+        }.publish()
 
         project(
             targetProject,
