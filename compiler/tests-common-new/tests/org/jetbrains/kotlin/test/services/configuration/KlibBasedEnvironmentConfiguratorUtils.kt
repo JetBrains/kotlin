@@ -72,7 +72,7 @@ interface KlibBasedEnvironmentConfiguratorUtils {
             }
             dependencies
                 .filter { it.kind != DependencyKind.Source }
-                .map { testServices.dependencyProvider.getTestModule(it.moduleName) }.forEach {
+                .map { testServices.artifactsProvider.getTestModule(it.moduleName) }.forEach {
                     if (it !in visited) {
                         visited += it
                         getRecursive(it, relation)
@@ -80,7 +80,7 @@ interface KlibBasedEnvironmentConfiguratorUtils {
                 }
         }
         getRecursive(module, kind)
-        return visited.map { testServices.dependencyProvider.getArtifact(it, ArtifactKinds.KLib).outputFile }
+        return visited.map { testServices.artifactsProvider.getArtifact(it, ArtifactKinds.KLib).outputFile }
     }
 
     companion object {

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.dependencyProvider
+import org.jetbrains.kotlin.test.services.artifactsProvider
 import org.jetbrains.kotlin.test.services.service
 import java.io.File
 
@@ -22,7 +22,7 @@ class AnalysisApiJvmEnvironmentConfigurator(testServices: TestServices) : JvmEnv
         )
 
     override fun convertDependencyToFileList(dependency: DependencyDescription): List<File> {
-        val friendModule = testServices.dependencyProvider.getTestModule(dependency.moduleName)
+        val friendModule = testServices.artifactsProvider.getTestModule(dependency.moduleName)
         testServices.compiledLibraryProvider.getCompiledLibrary(friendModule.name)?.roots?.let {
             return it.map { it.toFile() }
         }

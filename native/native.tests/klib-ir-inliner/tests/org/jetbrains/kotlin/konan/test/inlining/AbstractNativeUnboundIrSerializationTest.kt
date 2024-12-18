@@ -144,7 +144,7 @@ private class UnboundIrSerializationHandler(testServices: TestServices) : KlibAr
         if (KlibBasedCompilerTestDirectives.SKIP_UNBOUND_IR_SERIALIZATION in module.directives)
             return
 
-        val ir = testServices.dependencyProvider.getArtifact(module, BackendKinds.IrBackend)
+        val ir = testServices.artifactsProvider.getArtifact(module, BackendKinds.IrBackend)
 
         val functionsUnderTest = collectInlineFunctions(ir.irModuleFragment)
         if (functionsUnderTest.isEmpty()) return

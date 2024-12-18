@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.test
 import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.test.model.AnalysisHandler
-import org.jetbrains.kotlin.test.model.DeserializerFacade
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
@@ -75,8 +74,8 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         globalMetadataInfoHandler.parseExistingMetadataInfosFromAllSources()
 
         val modules = moduleStructure.modules
-        val dependencyProvider = DependencyProviderImpl(services, modules)
-        services.registerDependencyProvider(dependencyProvider)
+        val artifactsProvider = ArtifactsProviderImpl(services, modules)
+        services.registerArtifactsProvider(artifactsProvider)
 
         testConfiguration.preAnalysisHandlers.forEach { preprocessor ->
             preprocessor.preprocessModuleStructure(moduleStructure)
@@ -89,7 +88,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         }
 
         for (module in modules) {
-            val shouldProcessNextModules = processModule(module, dependencyProvider)
+            val shouldProcessNextModules = processModule(module, artifactsProvider)
             if (!shouldProcessNextModules) break
         }
 
@@ -130,7 +129,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
      */
     fun processModule(
         module: TestModule,
-        dependencyProvider: DependencyProviderImpl
+        artifactsProvider: ArtifactsProviderImpl
     ): Boolean {
         var inputArtifact = testConfiguration.startingArtifactFactory.invoke(module)
 
@@ -141,7 +140,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
             when (val result = step.hackyProcessModule(module, inputArtifact, thereWereCriticalExceptionsOnPreviousSteps)) {
                 is TestStep.StepResult.Artifact<*> -> {
                     require(step is TestStep.FacadeStep<*, *>)
-                    dependencyProvider.registerArtifact(module, result.outputArtifact)
+                    artifactsProvider.registerArtifact(module, result.outputArtifact)
                     inputArtifact = result.outputArtifact
                 }
                 is TestStep.StepResult.ErrorFromFacade -> {

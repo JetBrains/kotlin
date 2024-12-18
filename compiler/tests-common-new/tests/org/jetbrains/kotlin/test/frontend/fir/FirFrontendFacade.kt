@@ -125,7 +125,7 @@ open class FirFrontendFacade(
 
     protected fun sortDependsOnTopologically(module: TestModule): List<TestModule> {
         return topologicalSort(listOf(module), reverseOrder = true) { item ->
-            item.dependsOnDependencies.map { testServices.dependencyProvider.getTestModule(it.moduleName) }
+            item.dependsOnDependencies.map { testServices.artifactsProvider.getTestModule(it.moduleName) }
         }
     }
 

@@ -64,21 +64,21 @@ abstract class CommonRecompileModuleJsBackendFacade<R : ResultingArtifact.Fronte
             moduleStructure.originalTestDataFiles
         )
         val incrementalRunner = TestRunner(incrementalConfiguration)
-        val incrementalDependencyProvider = testServices.dependencyProvider.copy().also {
+        val incrementalArtifactsProvider = testServices.artifactsProvider.copy().also {
             it.unregisterAllArtifacts(module)
-        } as DependencyProviderImpl
+        } as ArtifactsProviderImpl
 
         val incrementalServices = incrementalConfiguration.testServices
-        incrementalServices.registerDependencyProvider(incrementalDependencyProvider)
+        incrementalServices.registerArtifactsProvider(incrementalArtifactsProvider)
         incrementalServices.register(TestModuleStructure::class, incrementalModuleStructure)
         incrementalServices.register(TemporaryDirectoryManager::class, testServices.temporaryDirectoryManager)
 
         incrementalServices.register(module)
 
         val incrementalArtifact = try {
-            incrementalRunner.processModule(incrementalModule, incrementalDependencyProvider)
+            incrementalRunner.processModule(incrementalModule, incrementalArtifactsProvider)
             incrementalRunner.reportFailures(incrementalServices)
-            incrementalDependencyProvider.getArtifact(incrementalModule, ArtifactKinds.Js)
+            incrementalArtifactsProvider.getArtifact(incrementalModule, ArtifactKinds.Js)
         } finally {
             Disposer.dispose(incrementalConfiguration.rootDisposable)
         }

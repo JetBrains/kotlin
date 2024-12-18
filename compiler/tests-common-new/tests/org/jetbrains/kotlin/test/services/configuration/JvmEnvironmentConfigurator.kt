@@ -318,7 +318,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         configurationKind: ConfigurationKind,
         module: TestModule
     ) {
-        val moduleDependencies = module.allDependencies.map { testServices.dependencyProvider.getTestModule(it.moduleName) }
+        val moduleDependencies = module.allDependencies.map { testServices.artifactsProvider.getTestModule(it.moduleName) }
         val javaModuleInfoFilesFromModuleDependencies = moduleDependencies.mapNotNull { moduleDependency ->
             moduleDependency.javaFiles.singleOrNull { javaFile -> javaFile.name == MODULE_INFO_FILE }
         }
@@ -373,7 +373,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
     private fun List<DependencyDescription>.toFileList(): List<File> = this.flatMap(::convertDependencyToFileList)
 
     protected open fun convertDependencyToFileList(dependency: DependencyDescription): List<File> {
-        val friendModule = testServices.dependencyProvider.getTestModule(dependency.moduleName)
+        val friendModule = testServices.artifactsProvider.getTestModule(dependency.moduleName)
         return listOf(testServices.compiledClassesManager.compileKotlinToDiskAndGetOutputDir(friendModule, classFileFactory = null))
     }
 }

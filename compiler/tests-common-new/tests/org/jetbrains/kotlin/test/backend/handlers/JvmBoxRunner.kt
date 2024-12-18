@@ -353,7 +353,7 @@ private fun computeTestRuntimeClasspath(testServices: TestServices, rootModule: 
 
         for (dependency in module.allDependencies) {
             if (dependency.kind == DependencyKind.Binary) {
-                computeClasspath(testServices.dependencyProvider.getTestModule(dependency.moduleName), false)
+                computeClasspath(testServices.artifactsProvider.getTestModule(dependency.moduleName), false)
             }
         }
     }
