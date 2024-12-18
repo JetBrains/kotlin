@@ -52,10 +52,6 @@ abstract class EnvironmentConfigurator(protected val testServices: TestServices)
 
     open fun DirectiveToConfigurationKeyExtractor.provideConfigurationKeys() {}
 
-    fun TestModule.allTransitiveDependencies(): Set<DependencyDescription> {
-        return regularDependencies.toSet() + regularDependencies.flatMap { it.dependencyModule.allTransitiveDependencies() }
-    }
-
     override fun provideAdditionalAnalysisFlags(
         directives: RegisteredDirectives,
         languageVersion: LanguageVersion

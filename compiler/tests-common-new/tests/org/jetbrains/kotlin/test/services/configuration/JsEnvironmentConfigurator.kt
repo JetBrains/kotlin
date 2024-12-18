@@ -161,7 +161,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         configuration.put(CommonConfigurationKeys.DISABLE_INLINE, noInline)
 
         val dependencies = module.regularDependencies.map { getJsModuleArtifactPath(testServices, it.dependencyModule.name) + ".meta.js" }
-        val allDependencies = module.allTransitiveDependencies().map { getJsModuleArtifactPath(testServices, it.dependencyModule.name) + ".meta.js" }
+        val allDependencies = module.transitiveRegularDependencies().map { getJsModuleArtifactPath(testServices, it.name) + ".meta.js" }
         val friends = module.friendDependencies.map { getJsModuleArtifactPath(testServices, it.dependencyModule.name) + ".meta.js" }
 
         val libraries = when (module.targetBackend) {

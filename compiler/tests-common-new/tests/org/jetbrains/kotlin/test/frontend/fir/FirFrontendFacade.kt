@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.container.topologicalSort
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerExperimentalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
@@ -81,7 +80,7 @@ open class FirFrontendFacade(
         get() = listOf(FirDiagnosticsDirectives)
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return shouldRunFirFrontendFacade(module, testServices.moduleStructure)
+        return shouldRunFirFrontendFacade(module, testServices)
     }
 
     private fun registerExtraComponents(session: FirSession) {
@@ -120,9 +119,7 @@ open class FirFrontendFacade(
     }
 
     protected fun sortDependsOnTopologically(module: TestModule): List<TestModule> {
-        return topologicalSort(listOf(module), reverseOrder = true) { item ->
-            item.dependsOnDependencies.map { it.dependencyModule }
-        }
+        return module.transitiveDependsOnDependencies(includeSelf = true, reverseOrder = true)
     }
 
     private fun initializeModuleData(modules: List<TestModule>): Pair<Map<TestModule, FirModuleData>, ModuleDataProvider> {
@@ -459,22 +456,23 @@ open class FirFrontendFacade(
                 }
             }
         }
-    }
-}
 
-fun shouldRunFirFrontendFacade(
-    module: TestModule,
-    moduleStructure: TestModuleStructure,
-): Boolean {
-    val shouldRunAnalysis = module.frontendKind == FrontendKinds.FIR
+        private fun shouldRunFirFrontendFacade(
+            module: TestModule,
+            testServices: TestServices,
+        ): Boolean {
+            val shouldRunAnalysis = module.frontendKind == FrontendKinds.FIR
 
-    if (!shouldRunAnalysis) {
-        return false
-    }
+            if (!shouldRunAnalysis) {
+                return false
+            }
 
-    return if (module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
-        moduleStructure.modules.none { testModule -> testModule.dependsOnDependencies.any { it.dependencyModule == module } }
-    } else {
-        true
+            return if (module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
+                module.isLeafModuleInMppGraph(testServices)
+            } else {
+                true
+            }
+        }
+
     }
 }

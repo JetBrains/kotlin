@@ -9,9 +9,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
-import org.jetbrains.kotlin.test.model.ArtifactKinds
-import org.jetbrains.kotlin.test.model.DependencyKind
-import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
@@ -60,27 +57,6 @@ interface KlibBasedEnvironmentConfiguratorUtils {
             val descriptor = allRecursiveLibraries[m] ?: error("No descriptor found for library ${m.libraryName}")
             descriptor.allDependencyModules.filter { it != descriptor }.map { m2l.getValue(it) }
         }
-    }
-
-    fun getKlibDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<File> {
-        val visited = mutableSetOf<TestModule>()
-        fun getRecursive(module: TestModule, relation: DependencyRelation) {
-            val dependencies = if (relation == DependencyRelation.FriendDependency) {
-                module.friendDependencies
-            } else {
-                module.regularDependencies
-            }
-            dependencies
-                .filter { it.kind != DependencyKind.Source }
-                .map { it.dependencyModule }.forEach {
-                    if (it !in visited) {
-                        visited += it
-                        getRecursive(it, relation)
-                    }
-                }
-        }
-        getRecursive(module, kind)
-        return visited.map { testServices.artifactsProvider.getArtifact(it, ArtifactKinds.KLib).outputFile }
     }
 
     companion object {

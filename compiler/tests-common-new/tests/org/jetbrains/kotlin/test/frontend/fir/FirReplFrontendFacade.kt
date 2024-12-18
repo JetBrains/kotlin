@@ -76,8 +76,7 @@ open class FirReplFrontendFacade(
         if (!super.shouldRunAnalysis(module)) return false
 
         return if (module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
-            testServices.moduleStructure
-                .modules.none { testModule -> testModule.dependsOnDependencies.any { it.dependencyModule == module } }
+            module.isLeafModuleInMppGraph(testServices)
         } else {
             true
         }
