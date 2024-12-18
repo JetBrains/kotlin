@@ -70,6 +70,9 @@ class A {
 // EXPECTATIONS WASM
 // test.kt:5 $box (4)
 // test.kt:8 $A.<init> (0)
+// test.kt:21 $Companion.<init> (32)
+// test.kt:28 $Companion.<init> (5)
+// test.kt:8 $A.<init> (0)
 // test.kt:29 $A.<init> (1)
 // test.kt:5 $box (8)
 // test.kt:11 $A.test (8)
@@ -80,6 +83,8 @@ class A {
 // test.kt:23 $Companion.<get-prop> (23, 16)
 // test.kt:12 $A.test (8)
 // test.kt:13 $A.test (15, 8)
+// test.kt:26 $Companion.<set-prop> (16, 24, 16)
+// test.kt:27 $Companion.<set-prop> (13)
 // test.kt:14 $A.test (5)
 // test.kt:5 $box (8)
 // test.kt:6 $box (1)

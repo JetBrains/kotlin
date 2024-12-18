@@ -107,7 +107,8 @@ fun compileToLoweredIr(
         allModules,
         context,
         context.irFactory.stageController as WholeWorldStageController,
-        isIncremental = false
+        isIncremental = false,
+        isDebugFriendlyBuild = context.isDebugFriendlyBuild
     )
 
     performanceManager?.notifyIRLoweringFinished()
@@ -119,13 +120,14 @@ fun lowerPreservingTags(
     modules: Iterable<IrModuleFragment>,
     context: WasmBackendContext,
     controller: WholeWorldStageController,
-    isIncremental: Boolean
+    isIncremental: Boolean,
+    isDebugFriendlyBuild: Boolean
 ) {
     // Lower all the things
     controller.currentStage = 0
 
     val phaserState = PhaserState<IrModuleFragment>()
-    val wasmLowerings = getWasmLowerings(context.configuration, isIncremental)
+    val wasmLowerings = getWasmLowerings(context.configuration, isIncremental, isDebugFriendlyBuild)
 
     wasmLowerings.forEachIndexed { i, lowering ->
         controller.currentStage = i + 1

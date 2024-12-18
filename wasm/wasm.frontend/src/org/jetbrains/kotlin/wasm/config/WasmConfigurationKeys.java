@@ -38,4 +38,7 @@ public class WasmConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> WASM_GENERATE_DWARF =
             CompilerConfigurationKey.create("generate DWARF debug information");
+
+    public static final CompilerConfigurationKey<Boolean> WASM_FORCE_DEBUG_FRIENDLY_BUILD =
+            CompilerConfigurationKey.create("skip optimizations that can break debugging.");
 }
