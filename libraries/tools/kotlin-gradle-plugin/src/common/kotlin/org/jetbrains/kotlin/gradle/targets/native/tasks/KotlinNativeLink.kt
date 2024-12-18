@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.compilerRunner.isKonanIncrementalCompilationEnabled
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
-import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -206,9 +205,10 @@ constructor(
     @get:Internal
     val apiFiles: ConfigurableFileCollection = objectFactory.fileCollection()
 
+    @Suppress("DEPRECATION")
+    private val externalDependenciesBuilder = ExternalDependenciesBuilder(project, compilation)
     private val externalDependenciesArgs by lazy {
-        @Suppress("DEPRECATION")
-        ExternalDependenciesBuilder(project, compilation).buildCompilerArgs()
+        externalDependenciesBuilder.buildCompilerArgs()
     }
 
     private val cacheBuilderSettings
@@ -227,18 +227,22 @@ constructor(
         )
 
     private class CacheSettings(
-        val orchestration: NativeCacheOrchestration, val kind: NativeCacheKind,
-        val icEnabled: Boolean, val threads: Int,
-        val gradleUserHomeDir: File, val gradleBuildDir: File,
+        val orchestration: NativeCacheOrchestration,
+        val kind: NativeCacheKind,
+        val icEnabled: Boolean,
+        val threads: Int,
+        val gradleUserHomeDir: File,
+        val gradleBuildDir: File,
     )
 
-    private val cacheSettings by lazy {
-        CacheSettings(
-            project.getKonanCacheOrchestration(), project.getKonanCacheKind(konanTarget).get(),
-            project.isKonanIncrementalCompilationEnabled(), project.getKonanParallelThreads(),
-            project.gradle.gradleUserHomeDir, project.layout.buildDirectory.get().asFile
-        )
-    }
+    private val cacheSettings = CacheSettings(
+        project.getKonanCacheOrchestration(),
+        project.getKonanCacheKind(konanTarget).get(),
+        project.isKonanIncrementalCompilationEnabled(),
+        project.getKonanParallelThreads(),
+        project.gradle.gradleUserHomeDir,
+        project.layout.buildDirectory.get().asFile
+    )
 
     override fun createCompilerArguments(context: CreateCompilerArgumentsContext) = context.create<K2NativeCompilerArguments> {
         val compilerPlugins = listOfNotNull(
