@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication
 
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 
 internal suspend fun Project.locateOrRegisterArchiveUklibTask(): TaskProvider<ArchiveUklibTask> {
@@ -38,3 +40,15 @@ internal suspend fun Project.locateOrRegisterArchiveUklibTask(): TaskProvider<Ar
     return archiveUklib
 }
 
+internal suspend fun Project.locateOrStubJvmJarTask(): TaskProvider<Jar> {
+    val jvmTarget = project.multiplatformExtension.awaitTargets().singleOrNull {
+        it is KotlinJvmTarget
+    }
+    return if (jvmTarget != null) {
+        @Suppress("UNCHECKED_CAST")
+        project.tasks.named(jvmTarget.artifactsTaskName) as TaskProvider<Jar>
+    } else {
+        val stubTaskName = "stubJvmJar"
+        tasks.locateTask<Jar>(stubTaskName) ?: project.tasks.register(stubTaskName, Jar::class.java)
+    }
+}

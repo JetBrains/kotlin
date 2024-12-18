@@ -50,6 +50,8 @@ data class PublishedProject(
     val rootComponent: File get() = repository.resolve(group).resolve(name).resolve(version)
     val pom: File get() = rootComponent.resolve("${name}-${version}.pom")
     val uklib: File get() = rootComponent.resolve("${name}-${version}.uklib")
+    val jar: File get() = rootComponent.resolve("${name}-${version}.jar")
+    val psmJar: File get() = rootComponent.resolve("${name}-${version}-psm.jar")
 }
 
 fun Project.applyMavenPublish(

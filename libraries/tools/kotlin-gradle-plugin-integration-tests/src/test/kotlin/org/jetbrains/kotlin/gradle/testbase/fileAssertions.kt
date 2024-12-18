@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.zip.ZipFile
@@ -44,6 +45,8 @@ fun assertFileExists(
         "File '${file}' exists, but it is not a regular file!"
     }
 }
+
+fun assertFileExists(file: File) = assertFileExists(file.toPath())
 
 /**
  * Asserts file under [pathToFile] relative to the test project exists and is a regular file.
