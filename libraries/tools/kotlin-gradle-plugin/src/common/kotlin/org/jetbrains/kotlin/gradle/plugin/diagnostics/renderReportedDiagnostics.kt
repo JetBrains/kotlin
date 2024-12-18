@@ -48,7 +48,7 @@ private fun ToolingDiagnostic.render(
     renderingOptions: ToolingDiagnosticRenderingOptions,
     showStacktrace: Boolean = renderingOptions.showStacktrace,
 ): String = buildString {
-    val styledDiagnostic = styled()
+    val styledDiagnostic = styled(renderingOptions.coloredOutput)
     with(renderingOptions) {
         if (!useParsableFormat && showSeverityEmoji) {
             appendLine(styledDiagnostic.name)

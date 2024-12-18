@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.TerminalColorSupport.TerminalStyle.bold
 import org.jetbrains.kotlin.konan.target.HostManager
 
 object TerminalColorSupport {
@@ -66,13 +67,13 @@ object TerminalColorSupport {
         private const val ORANGE = "\u001B[38;5;214m"
 
         // Convenience extension functions for styling
-        fun String.bold() = if (supportsColor()) "$BOLD$this$RESET" else ""
-        fun String.italic() = if (supportsColor()) "$ITALIC$this$RESET" else ""
-        fun String.yellow() = if (supportsColor()) "$YELLOW$this$RESET" else ""
-        fun String.green() = if (supportsColor()) "$GREEN$this$RESET" else ""
-        fun String.red() = if (supportsColor()) "$RED$this$RESET" else ""
-        fun String.blue() = if (supportsColor()) "$BLUE$this$RESET" else ""
-        fun String.lightBlue() = if (supportsColor()) "$LIGHT_BLUE$this$RESET" else ""
-        fun String.orange() = if (supportsColor()) "$ORANGE$this$RESET" else ""
+        fun String.bold(apply: Boolean = true) = if (supportsColor() && apply) "$BOLD$this$RESET" else this
+        fun String.italic(apply: Boolean = true) = if (supportsColor() && apply) "$ITALIC$this$RESET" else this
+        fun String.yellow(apply: Boolean = true) = if (supportsColor() && apply) "$YELLOW$this$RESET" else this
+        fun String.green(apply: Boolean = true) = if (supportsColor() && apply) "$GREEN$this$RESET" else this
+        fun String.red(apply: Boolean = true) = if (supportsColor() && apply) "$RED$this$RESET" else this
+        fun String.blue(apply: Boolean = true) = if (supportsColor() && apply) "$BLUE$this$RESET" else this
+        fun String.lightBlue(apply: Boolean = true) = if (supportsColor() && apply) "$LIGHT_BLUE$this$RESET" else this
+        fun String.orange(apply: Boolean = true) = if (supportsColor() && apply) "$ORANGE$this$RESET" else this
     }
 }

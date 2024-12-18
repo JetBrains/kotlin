@@ -88,7 +88,7 @@ data class ToolingDiagnostic(
     val id: String get() = identifier.id
 
     override fun toString() = buildString {
-        append("[$id | $severity]")
+        append("[$identifier | $severity]")
 
         val subLines = solutions + listOfNotNull(documentation?.additionalUrlContext)
 

@@ -17,6 +17,7 @@ internal class ToolingDiagnosticRenderingOptions(
     val suppressedErrorIds: List<String>,
     val showStacktrace: Boolean,
     val showSeverityEmoji: Boolean,
+    val coloredOutput: Boolean
 ) : Serializable {
     companion object {
         fun forProject(project: Project): ToolingDiagnosticRenderingOptions {
@@ -37,7 +38,8 @@ internal class ToolingDiagnosticRenderingOptions(
                     suppressedWarningIds = suppressedGradlePluginWarnings,
                     suppressedErrorIds = suppressedGradlePluginErrors,
                     showStacktrace = showStacktrace,
-                    showSeverityEmoji = !project.isInIdeaSync.get()
+                    showSeverityEmoji = !project.isInIdeaSync.get(),
+                    coloredOutput = internalDiagnosticsColoredOutput
                 )
             }
         }
