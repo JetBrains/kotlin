@@ -42,7 +42,16 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         private val OPCODE_TO_WASM_OP by lazy { enumValues<WasmOp>().associateBy { it.opcode } }
     }
 
-    fun deserialize(): WasmCompiledFileFragment {
+    fun deserializeTypeAndMemoryInfo(): TypeAndMemoryInfo {
+        prepareDeserialize()
+        return TypeAndMemoryInfo(
+            typeIds = deserializeMap(::deserializeIdSignature, ::deserializeInt),
+            lastInterfaceId = deserializeInt(),
+            scratchAddress = deserializeInt()
+        )
+    }
+
+    private fun prepareDeserialize() {
         // Step 1: load the size of the reference table
         val referenceTableSize = deserializeInt()
 
@@ -52,7 +61,10 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
             val bytes = b.readBytes(slotSize)
             referenceTable.add(Symbol(bytes))
         }
+    }
 
+    fun deserialize(): WasmCompiledFileFragment {
+        prepareDeserialize()
         // Step 3: read the rest of the input
         return deserializeCompiledFileFragment()
     }

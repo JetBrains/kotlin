@@ -21,6 +21,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
+class TypeAndMemoryInfo(
+    val typeIds: MutableMap<IdSignature, Int> = mutableMapOf<IdSignature, Int>(),
+    var lastInterfaceId: Int = 0,
+    var scratchAddress: Int = 0
+)
+
 class WasmCompiledFileFragment(
     val fragmentTag: String?,
     val functions: ReferencableAndDefinable<IdSignature, WasmFunction> = ReferencableAndDefinable(),
@@ -138,19 +144,19 @@ class WasmCompiledModuleFragment(
         definedFunctions.add(startUnitTestsFunction)
     }
 
-    fun linkWasmCompiledFragments(): WasmModule {
+    fun linkWasmCompiledFragments(typeAndMemoryInfo: TypeAndMemoryInfo): WasmModule {
         // TODO: Implement optimal ir linkage KT-71040
         bindUnboundSymbols()
         val canonicalFunctionTypes = bindUnboundFunctionTypes()
 
-        val (typeIds, scratchAddress) = bindTypeIds()
-        bindScratchMemAddr(scratchAddress)
-        createTryGetAssociatedObjectFunction(typeIds)
+        bindTypeIds(typeAndMemoryInfo)
+        bindScratchMemAddr(typeAndMemoryInfo.scratchAddress)
+        createTryGetAssociatedObjectFunction(typeAndMemoryInfo.typeIds)
 
         val data = mutableListOf<WasmData>()
         bindStringPoolSymbols(data)
         bindConstantArrayDataSegmentIds(data)
-        addCompileTimePerClassData(data, typeIds)
+        addCompileTimePerClassData(data, typeAndMemoryInfo.typeIds)
 
         val (definedFunctions, importedFunctions) = partitionDefinedAndImportedFunctions()
 
@@ -159,7 +165,7 @@ class WasmCompiledModuleFragment(
         // TODO: Remove after bootstrap
         exports.removeAll { it.name == "startUnitTests" }
 
-        val memory = createAndExportMemory(scratchAddress, exports)
+        val memory = createAndExportMemory(typeAndMemoryInfo.scratchAddress, exports)
 
         createAndExportServiceFunctions(definedFunctions, exports)
 
@@ -483,37 +489,26 @@ class WasmCompiledModuleFragment(
         return canonicalFunctionTypes
     }
 
-    private fun bindTypeIds(): Pair<Map<IdSignature, Int>, Int> {
-        val typeIds = mutableMapOf<IdSignature, Int>()
-        var currentDataSectionAddress = 0
-
+    private fun bindTypeIds(typeAndMemoryInfo: TypeAndMemoryInfo) {
         wasmCompiledFileFragments.forEach { fragment ->
             fragment.typeInfo.forEach { (referenceKey, dataElement) ->
-                typeIds[referenceKey] = currentDataSectionAddress
-                currentDataSectionAddress += dataElement.sizeInBytes
+                typeAndMemoryInfo.typeIds[referenceKey] = typeAndMemoryInfo.scratchAddress
+                typeAndMemoryInfo.scratchAddress += dataElement.sizeInBytes
             }
         }
-
-//        wasmCompiledFileFragments.forEach { fragment ->
-//            bind(fragment.classIds.unbound, typeIds)
-//        }
 
         wasmCompiledFileFragments.forEach { fragment ->
-            fragment.classIds.unbound.forEach {
-                it.value.bind(0)
-            }
+            bind(fragment.classIds.unbound, typeAndMemoryInfo.typeIds)
         }
 
-        var interfaceId = 0
         wasmCompiledFileFragments.forEach { fragment ->
             fragment.interfaceIds.unbound.forEach { (signature, symbol) ->
-                val id = typeIds.getOrPut(signature) { interfaceId-- }
+                val id = typeAndMemoryInfo.typeIds.getOrPut(signature) { typeAndMemoryInfo.lastInterfaceId-- }
                 symbol.bind(id)
             }
         }
 
-        currentDataSectionAddress = alignUp(currentDataSectionAddress, INT_SIZE_BYTES)
-        return typeIds to currentDataSectionAddress
+        typeAndMemoryInfo.scratchAddress = alignUp(typeAndMemoryInfo.scratchAddress, INT_SIZE_BYTES)
     }
 
     private fun bindScratchMemAddr(scratchAddress: Int) {
