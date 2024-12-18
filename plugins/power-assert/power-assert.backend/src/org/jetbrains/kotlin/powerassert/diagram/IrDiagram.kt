@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.powerassert.getExplicitReceiver
 import org.jetbrains.kotlin.powerassert.irString
 
 fun IrBuilderWithScope.irDiagramString(
@@ -277,18 +278,19 @@ private fun IrCall.binaryOperatorLhs(): IrExpression? = when (origin) {
 }
 
 /**
- * The left-hand side expression of an infix operator/function.
- * For single-value operators returns `null`, for all other infix operators/functions, returns the receiver or the first value argument.
+ * The left-hand side expression of an infix operator/function:
+ * * For single-value operators returns `null`,
+ * * For all others, returns the explicit receiver or the first regular argument.
  */
 private fun IrCall.simpleBinaryOperatorLhs(): IrExpression? {
     val parameters = symbol.owner.parameters
     val singleReceiver =
         1 == parameters.count { it.kind == IrParameterKind.DispatchReceiver || it.kind == IrParameterKind.ExtensionReceiver }
-    return if (singleReceiver && parameters.none { it.kind == IrParameterKind.Regular }) {
-        null
-    } else {
-        return parameters.firstOrNull { it.kind != IrParameterKind.Context }
-            ?.takeIf { it.kind != IrParameterKind.Regular || symbol.owner.origin == IrBuiltIns.BUILTIN_OPERATOR }
-            ?.let { arguments[it] }
+    if (singleReceiver && parameters.none { it.kind == IrParameterKind.Regular }) {
+        return null
     }
+
+    getExplicitReceiver()?.let { return it }
+    if (symbol.owner.origin != IrBuiltIns.BUILTIN_OPERATOR) return null
+    return parameters.firstOrNull { it.kind == IrParameterKind.Regular }?.let { arguments[it] }
 }

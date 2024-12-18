@@ -27,18 +27,13 @@ data object Asserter {
 }
 
 fun box(): String {
-  return listOf<Pair<String, Function0<String>>>(elements = ["test1: ".to<String, Function0<String>>(that = local fun <anonymous>(): String {
-    return test1()
+  return runAll(tests = ["test1".to<String, Function0<Unit>>(that = local fun <anonymous>() {
+    test1()
   }
-), "test2: ".to<String, Function0<String>>(that = local fun <anonymous>(): String {
-    return test2()
+), "test2".to<String, Function0<Unit>>(that = local fun <anonymous>() {
+    test2()
   }
-)]).joinToString<Pair<String, Function0<String>>>(separator = "", transform = local fun <anonymous>(<destruct>: Pair<String, Function0<String>>): CharSequence {
-    val name: String = <destruct>.component1()
-    val test: Function0<String> = <destruct>.component2()
-    return name.plus(other = test.invoke())
-  }
-)
+)])
 }
 
 fun context1Assert(<unused var>: Asserter, condition: Boolean, msg: Any? = null) {
@@ -53,30 +48,24 @@ fun context2Assert(<unused var>: Asserter, <unused var>: Asserter, condition: Bo
   }
 }
 
-fun test1(): String {
-  return expectThrowableMessage(block = local fun <anonymous>() {
-    with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
-      { // BLOCK
-        val tmp_1: Int = "test".<get-length>()
-        val tmp_2: Boolean = EQEQ(arg0 = tmp_1, arg1 = 5)
-        context1Assert(<unused var> = $this$with, condition = tmp_2, msg = "\ncontext1Assert(\"test\".length == 5)" + "\n                      |      |" + "\n                      |      " + tmp_2 + "\n                      " + tmp_1 + "\n")
-      }
+fun test1() {
+  with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
+    { // BLOCK
+      val tmp_1: Int = "test".<get-length>()
+      val tmp_2: Boolean = EQEQ(arg0 = tmp_1, arg1 = 5)
+      context1Assert(<unused var> = $this$with, condition = tmp_2, msg = "\ncontext1Assert(\"test\".length == 5)" + "\n                      |      |" + "\n                      |      " + tmp_2 + "\n                      " + tmp_1 + "\n")
     }
-)
   }
 )
 }
 
-fun test2(): String {
-  return expectThrowableMessage(block = local fun <anonymous>() {
-    with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
-      { // BLOCK
-        val tmp_3: Int = "test".<get-length>()
-        val tmp_4: Boolean = EQEQ(arg0 = tmp_3, arg1 = 5)
-        context2Assert(<unused var> = $this$with, <unused var> = $this$with, condition = tmp_4, msg = "\ncontext2Assert(\"test\".length == 5)" + "\n                      |      |" + "\n                      |      " + tmp_4 + "\n                      " + tmp_3 + "\n")
-      }
+fun test2() {
+  with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
+    { // BLOCK
+      val tmp_3: Int = "test".<get-length>()
+      val tmp_4: Boolean = EQEQ(arg0 = tmp_3, arg1 = 5)
+      context2Assert(<unused var> = $this$with, <unused var> = $this$with, condition = tmp_4, msg = "\ncontext2Assert(\"test\".length == 5)" + "\n                      |      |" + "\n                      |      " + tmp_4 + "\n                      " + tmp_3 + "\n")
     }
-)
   }
 )
 }

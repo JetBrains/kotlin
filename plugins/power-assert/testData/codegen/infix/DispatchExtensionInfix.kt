@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K1: ANY
 // FUNCTION: Asserter.mustEqual
 // ISSUE: KT-73897
 

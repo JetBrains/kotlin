@@ -4,12 +4,10 @@
 // FUNCTION: context2Assert
 // DUMP_KT_IR
 
-fun box(): String {
-    return listOf(
-        "test1: " to { test1() },
-        "test2: " to { test2() },
-    ).joinToString("") { (name, test) -> name + test() }
-}
+fun box(): String = runAll(
+    "test1" to { test1() },
+    "test2" to { test2() },
+)
 
 data object Asserter
 
@@ -23,13 +21,13 @@ fun context2Assert(condition: Boolean, msg: Any? = null) {
     if (!condition) throw AssertionError(msg.toString())
 }
 
-fun test1() = expectThrowableMessage {
+fun test1() {
     with(Asserter) {
         context1Assert("test".length == 5)
     }
 }
 
-fun test2() = expectThrowableMessage {
+fun test2() {
     with(Asserter) {
         context2Assert("test".length == 5)
     }
