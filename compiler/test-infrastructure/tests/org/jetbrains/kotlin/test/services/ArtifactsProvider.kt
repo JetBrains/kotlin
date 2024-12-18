@@ -8,22 +8,13 @@ package org.jetbrains.kotlin.test.services
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.model.*
 
-abstract class ArtifactsProvider : TestService {
-    abstract fun getTestModule(name: String): TestModule
-
-    abstract fun <A : ResultingArtifact<A>> getArtifact(module: TestModule, kind: TestArtifactKind<A>): A
-    abstract fun <A : ResultingArtifact<A>> getArtifactSafe(module: TestModule, kind: TestArtifactKind<A>): A?
-
-    abstract fun unregisterAllArtifacts(module: TestModule)
-    abstract fun copy(): ArtifactsProvider
-}
-
-val TestServices.artifactsProvider: ArtifactsProvider by TestServices.testServiceAccessor()
-
-class ArtifactsProviderImpl(
+/**
+ * This service stores artifacts produced by all test facades for each module
+ */
+class ArtifactsProvider(
     private val testServices: TestServices,
     private val testModules: List<TestModule>
-) : ArtifactsProvider() {
+) : TestService {
     private val assertions: Assertions
         get() = testServices.assertions
 
@@ -31,11 +22,11 @@ class ArtifactsProviderImpl(
 
     private val artifactsByModule: MutableMap<TestModule, MutableMap<TestArtifactKind<*>, ResultingArtifact<*>>> = mutableMapOf()
 
-    override fun getTestModule(name: String): TestModule {
+    fun getTestModule(name: String): TestModule {
         return testModulesByName[name] ?: assertions.fail { "Module $name is not defined" }
     }
 
-    override fun <OutputArtifact : ResultingArtifact<OutputArtifact>> getArtifactSafe(
+    fun <OutputArtifact : ResultingArtifact<OutputArtifact>> getArtifactSafe(
         module: TestModule,
         kind: TestArtifactKind<OutputArtifact>,
     ): OutputArtifact? {
@@ -43,7 +34,7 @@ class ArtifactsProviderImpl(
         return artifactsByModule.getMap(module)[kind] as OutputArtifact?
     }
 
-    override fun <A : ResultingArtifact<A>> getArtifact(module: TestModule, kind: TestArtifactKind<A>): A {
+    fun <A : ResultingArtifact<A>> getArtifact(module: TestModule, kind: TestArtifactKind<A>): A {
         return getArtifactSafe(module, kind) ?: error("Artifact with kind $kind is not registered for module ${module.name}")
     }
 
@@ -56,12 +47,12 @@ class ArtifactsProviderImpl(
         artifactsByModule.getMap(module)[artifact.kind] = artifact
     }
 
-    override fun unregisterAllArtifacts(module: TestModule) {
+    fun unregisterAllArtifacts(module: TestModule) {
         artifactsByModule.remove(module)
     }
 
-    override fun copy(): ArtifactsProvider {
-        return ArtifactsProviderImpl(testServices, testModules).also {
+    fun copy(): ArtifactsProvider {
+        return ArtifactsProvider(testServices, testModules).also {
             artifactsByModule.putAll(artifactsByModule.mapValues { (_, map) -> map.toMutableMap() })
         }
     }
@@ -70,3 +61,5 @@ class ArtifactsProviderImpl(
         return getOrPut(key) { mutableMapOf() }
     }
 }
+
+val TestServices.artifactsProvider: ArtifactsProvider by TestServices.testServiceAccessor()
