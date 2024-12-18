@@ -266,8 +266,9 @@ object KotlinToJVMBytecodeCompiler {
     ): Pair<JvmIrCodegenFactory, JvmIrCodegenFactory.BackendInput> {
         val configuration = environment.configuration
         val codegenFactory = JvmIrCodegenFactory(configuration)
-
-        val input = CodegenFactory.IrConversionInput(
+        val performanceManager = environment.configuration[CLIConfigurationKeys.PERF_MANAGER]
+        performanceManager?.notifyIRTranslationStarted()
+        val backendInput = codegenFactory.convertToIr(
             environment.project,
             environment.getSourceFiles(),
             configuration,
@@ -278,12 +279,7 @@ object KotlinToJVMBytecodeCompiler {
             ignoreErrors = false,
             skipBodies = false,
         )
-
-        val performanceManager = environment.configuration[CLIConfigurationKeys.PERF_MANAGER]
-        performanceManager?.notifyIRTranslationStarted()
-        val backendInput = codegenFactory.convertToIr(input)
         performanceManager?.notifyIRTranslationFinished()
-
         return Pair(codegenFactory, backendInput)
     }
 

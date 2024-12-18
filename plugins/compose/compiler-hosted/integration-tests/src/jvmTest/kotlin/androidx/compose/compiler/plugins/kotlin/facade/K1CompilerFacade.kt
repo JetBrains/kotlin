@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -101,10 +100,7 @@ class K1CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             ClassBuilderFactories.TEST,
         )
 
-        val psi2irInput = CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(
-            state, analysisResult.files, analysisResult.bindingContext,
-        )
-        val backendInput = codegenFactory.convertToIr(psi2irInput)
+        val backendInput = codegenFactory.convertToIr(state, analysisResult.files, analysisResult.bindingContext)
 
         return K1FrontendResult(state, backendInput, codegenFactory)
     }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.invokeToplevel
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
@@ -124,28 +126,40 @@ open class JvmIrCodegenFactory(
 
     fun convertAndGenerate(files: Collection<KtFile>, state: GenerationState, bindingContext: BindingContext) {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-
-        val psi2irInput = CodegenFactory.IrConversionInput.Companion.fromGenerationStateAndFiles(state, files, bindingContext)
-        val backendInput = convertToIr(psi2irInput)
-
+        val backendInput = convertToIr(state, files, bindingContext)
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-
         generateModule(state, backendInput)
-
         CodegenFactory.Companion.doCheckCancelled(state)
         state.factory.done()
     }
 
+    fun convertToIr(state: GenerationState, files: Collection<KtFile>, bindingContext: BindingContext): BackendInput = with(state) {
+        convertToIr(
+            project, files, configuration, module, diagnosticReporter, bindingContext, config.languageVersionSettings, ignoreErrors,
+            skipBodies = !classBuilderMode.generateBodies
+        )
+    }
+
     @OptIn(ObsoleteDescriptorBasedAPI::class)
-    fun convertToIr(input: CodegenFactory.IrConversionInput): BackendInput {
+    fun convertToIr(
+        project: Project,
+        files: Collection<KtFile>,
+        configuration: CompilerConfiguration,
+        module: ModuleDescriptor,
+        diagnosticReporter: DiagnosticReporter,
+        bindingContext: BindingContext,
+        languageVersionSettings: LanguageVersionSettings,
+        ignoreErrors: Boolean,
+        skipBodies: Boolean,
+    ): BackendInput {
         val enableIdSignatures =
-            input.configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES) ||
-                    input.configuration[JVMConfigurationKeys.SERIALIZE_IR, JvmSerializeIrMode.NONE] != JvmSerializeIrMode.NONE ||
-                    input.configuration[JVMConfigurationKeys.KLIB_PATHS, emptyList()].isNotEmpty()
+            configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES) ||
+                    configuration[JVMConfigurationKeys.SERIALIZE_IR, JvmSerializeIrMode.NONE] != JvmSerializeIrMode.NONE ||
+                    configuration[JVMConfigurationKeys.KLIB_PATHS, emptyList()].isNotEmpty()
         val (mangler, symbolTable) =
             if (externalSymbolTable != null) externalMangler!! to externalSymbolTable
             else {
-                val mangler = JvmDescriptorMangler(MainFunctionDetector(input.bindingContext, input.languageVersionSettings))
+                val mangler = JvmDescriptorMangler(MainFunctionDetector(bindingContext, languageVersionSettings))
                 val signaturer =
                     if (enableIdSignatures) JvmIdSignatureDescriptor(mangler)
                     else DisabledIdSignatureDescriptor
@@ -155,19 +169,15 @@ open class JvmIrCodegenFactory(
                 }
                 mangler to symbolTable
             }
-        val messageCollector = input.configuration.messageCollector
+        val messageCollector = configuration.messageCollector
         val psi2ir = Psi2IrTranslator(
-            input.languageVersionSettings,
-            Psi2IrConfiguration(
-                input.ignoreErrors,
-                partialLinkageEnabled = false,
-                input.skipBodies
-            ),
+            languageVersionSettings,
+            Psi2IrConfiguration(ignoreErrors, partialLinkageEnabled = false, skipBodies),
             messageCollector::checkNoUnboundSymbols
         )
         val psi2irContext = psi2ir.createGeneratorContext(
-            input.module,
-            input.bindingContext,
+            module,
+            bindingContext,
             symbolTable,
             jvmGeneratorExtensions,
             fragmentContext = if (evaluatorFragmentInfoForPsi2Ir != null) FragmentContext() else null,
@@ -180,7 +190,7 @@ open class JvmIrCodegenFactory(
             (psi2irContext.irBuiltIns as? IrBuiltInsOverDescriptors)?.let { symbolTable.bindSymbolFinder(it.symbolFinder) }
         }
 
-        val pluginExtensions = IrGenerationExtension.getInstances(input.project)
+        val pluginExtensions = IrGenerationExtension.getInstances(project)
 
         val stubGenerator =
             DeclarationStubGeneratorImpl(
@@ -198,7 +208,7 @@ open class JvmIrCodegenFactory(
             enableIdSignatures,
         )
 
-        SourceDeclarationsPreprocessor(psi2irContext).run(input.files)
+        SourceDeclarationsPreprocessor(psi2irContext).run(files)
 
         // The plugin context contains unbound symbols right after construction and has to be
         // instantiated before we resolve unbound symbols and invoke any postprocessing steps.
@@ -211,7 +221,7 @@ open class JvmIrCodegenFactory(
             psi2irContext.irBuiltIns,
             irLinker,
             messageCollector,
-            input.diagnosticReporter
+            diagnosticReporter
         ).takeIf { !ideCodegenSettings.doNotLoadDependencyModuleHeaders }
         if (pluginExtensions.isNotEmpty() && pluginContext != null) {
             for (extension in pluginExtensions) {
@@ -248,10 +258,10 @@ open class JvmIrCodegenFactory(
         }
 
         if (ideCodegenSettings.shouldReferenceUndiscoveredExpectSymbols) {
-            symbolTable.referenceUndiscoveredExpectSymbols(input.files, input.bindingContext)
+            symbolTable.referenceUndiscoveredExpectSymbols(files, bindingContext)
         }
 
-        val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, input.files, irProviders, evaluatorFragmentInfoForPsi2Ir)
+        val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, irProviders, evaluatorFragmentInfoForPsi2Ir)
 
         irLinker.postProcess(inOrAfterLinkageStep = true)
         irLinker.clear()
@@ -265,10 +275,11 @@ open class JvmIrCodegenFactory(
             irModuleFragment.stubOrphanedExpectSymbols(stubGenerator)
         }
 
-        if (!input.configuration.getBoolean(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT)) {
-            val originalBindingContext = input.bindingContext as? CleanableBindingContext
-                ?: error("BindingContext should be cleanable in JVM IR to avoid leaking memory: ${input.bindingContext}")
-            originalBindingContext.clear()
+        if (!configuration.getBoolean(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT)) {
+            if (bindingContext !is CleanableBindingContext) {
+                error("BindingContext should be cleanable in JVM IR to avoid leaking memory: $bindingContext")
+            }
+            bindingContext.clear()
         }
         return BackendInput(
             irModuleFragment,

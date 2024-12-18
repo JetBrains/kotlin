@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForJSIR
 import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForWasm
 import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
@@ -65,15 +64,13 @@ class ClassicFrontend2IrConverter(
             ignoreErrors = CodegenTestDirectives.IGNORE_ERRORS in module.directives,
         )
 
-        val conversionResult = codegenFactory.convertToIr(
-            CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(state, psiFiles.values, analysisResult.bindingContext)
-        )
+        val backendInput = codegenFactory.convertToIr(state, psiFiles.values, analysisResult.bindingContext)
         return IrBackendInput.JvmIrBackendInput(
             state,
             codegenFactory,
-            conversionResult,
+            backendInput,
             sourceFiles = emptyList(),
-            descriptorMangler = conversionResult.symbolTable.signaturer!!.mangler,
+            descriptorMangler = backendInput.symbolTable.signaturer!!.mangler,
             irMangler = JvmIrMangler,
         )
     }

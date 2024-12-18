@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorBasedReporter
 import org.jetbrains.kotlin.cli.common.repl.LineId
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
@@ -150,10 +149,8 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     compilationState.environment.configuration,
                     compilationState.mangler, compilationState.symbolTable, generatorExtensions
                 )
-                val irBackendInput =codegenFactory.convertToIr(
-                    CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(
-                        generationState, sourceFiles, compilationState.analyzerEngine.trace.bindingContext
-                    )
+                val irBackendInput = codegenFactory.convertToIr(
+                    generationState, sourceFiles, compilationState.analyzerEngine.trace.bindingContext
                 )
 
                 if (codegenDiagnosticsCollector.hasErrors) {

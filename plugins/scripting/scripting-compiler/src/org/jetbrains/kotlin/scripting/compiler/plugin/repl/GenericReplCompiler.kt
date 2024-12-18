@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
-import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
@@ -115,9 +114,7 @@ open class GenericReplCompiler(
             )
 
             val irBackendInput = codegenFactory.convertToIr(
-                CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(
-                    generationState, listOf(psiFile), compilerState.analyzerEngine.trace.bindingContext,
-                )
+                generationState, listOf(psiFile), compilerState.analyzerEngine.trace.bindingContext,
             )
 
             codegenFactory.generateModule(generationState, irBackendInput)
