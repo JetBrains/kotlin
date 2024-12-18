@@ -1979,7 +1979,7 @@ class ComposableFunctionBodyTransformer(
     private fun IrElement.sourceKey(): Int {
         var hash = functionSourceKey(currentFunctionScope.function)
         hash = 31 * hash + (startOffset - currentFunctionScope.function.startOffset)
-        hash = 31 * hash + (endOffset - currentFunctionScope.function.endOffset)
+        hash = 31 * hash + (endOffset - currentFunctionScope.function.startOffset)
 
 
         when (this) {
