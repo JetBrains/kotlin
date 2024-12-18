@@ -58,17 +58,9 @@ public final class IrInlinedFunctionBlock extends
             inlineFunctionSymbol_ = input.readInt64();
             break;
           }
-          case 18: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000002) == 0x00000002)) {
-              subBuilder = fileEntry_.toBuilder();
-            }
-            fileEntry_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(fileEntry_);
-              fileEntry_ = subBuilder.buildPartial();
-            }
+          case 16: {
             bitField0_ |= 0x00000002;
+            fileEntry_ = input.readInt32();
             break;
           }
           case 26: {
@@ -134,17 +126,17 @@ public final class IrInlinedFunctionBlock extends
   }
 
   public static final int FILE_ENTRY_FIELD_NUMBER = 2;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry fileEntry_;
+  private int fileEntry_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+   * <code>required int32 file_entry = 2;</code>
    */
   public boolean hasFileEntry() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+   * <code>required int32 file_entry = 2;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry getFileEntry() {
+  public int getFileEntry() {
     return fileEntry_;
   }
 
@@ -165,7 +157,7 @@ public final class IrInlinedFunctionBlock extends
 
   private void initFields() {
     inlineFunctionSymbol_ = 0L;
-    fileEntry_ = org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance();
+    fileEntry_ = 0;
     base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock.getDefaultInstance();
   }
   private byte memoizedIsInitialized = -1;
@@ -179,10 +171,6 @@ public final class IrInlinedFunctionBlock extends
       return false;
     }
     if (!hasBase()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!getFileEntry().isInitialized()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -201,7 +189,7 @@ public final class IrInlinedFunctionBlock extends
       output.writeInt64(1, inlineFunctionSymbol_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeMessage(2, fileEntry_);
+      output.writeInt32(2, fileEntry_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       output.writeMessage(3, base_);
@@ -221,7 +209,7 @@ public final class IrInlinedFunctionBlock extends
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(2, fileEntry_);
+        .computeInt32Size(2, fileEntry_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -323,7 +311,7 @@ public final class IrInlinedFunctionBlock extends
       super.clear();
       inlineFunctionSymbol_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000001);
-      fileEntry_ = org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance();
+      fileEntry_ = 0;
       bitField0_ = (bitField0_ & ~0x00000002);
       base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000004);
@@ -372,7 +360,7 @@ public final class IrInlinedFunctionBlock extends
         setInlineFunctionSymbol(other.getInlineFunctionSymbol());
       }
       if (other.hasFileEntry()) {
-        mergeFileEntry(other.getFileEntry());
+        setFileEntry(other.getFileEntry());
       }
       if (other.hasBase()) {
         mergeBase(other.getBase());
@@ -388,10 +376,6 @@ public final class IrInlinedFunctionBlock extends
         return false;
       }
       if (!hasBase()) {
-        
-        return false;
-      }
-      if (!getFileEntry().isInitialized()) {
         
         return false;
       }
@@ -453,63 +437,35 @@ public final class IrInlinedFunctionBlock extends
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry fileEntry_ = org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance();
+    private int fileEntry_ ;
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+     * <code>required int32 file_entry = 2;</code>
      */
     public boolean hasFileEntry() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+     * <code>required int32 file_entry = 2;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry getFileEntry() {
+    public int getFileEntry() {
       return fileEntry_;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+     * <code>required int32 file_entry = 2;</code>
      */
-    public Builder setFileEntry(org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+    public Builder setFileEntry(int value) {
+      bitField0_ |= 0x00000002;
       fileEntry_ = value;
-
-      bitField0_ |= 0x00000002;
+      
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
-     */
-    public Builder setFileEntry(
-        org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.Builder builderForValue) {
-      fileEntry_ = builderForValue.build();
-
-      bitField0_ |= 0x00000002;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
-     */
-    public Builder mergeFileEntry(org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry value) {
-      if (((bitField0_ & 0x00000002) == 0x00000002) &&
-          fileEntry_ != org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance()) {
-        fileEntry_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.newBuilder(fileEntry_).mergeFrom(value).buildPartial();
-      } else {
-        fileEntry_ = value;
-      }
-
-      bitField0_ |= 0x00000002;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+     * <code>required int32 file_entry = 2;</code>
      */
     public Builder clearFileEntry() {
-      fileEntry_ = org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance();
-
       bitField0_ = (bitField0_ & ~0x00000002);
+      fileEntry_ = 0;
+      
       return this;
     }
 

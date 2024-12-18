@@ -17,13 +17,13 @@ public interface IrInlinedFunctionBlockOrBuilder extends
   long getInlineFunctionSymbol();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+   * <code>required int32 file_entry = 2;</code>
    */
   boolean hasFileEntry();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+   * <code>required int32 file_entry = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry getFileEntry();
+  int getFileEntry();
 
   /**
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock base = 3;</code>

@@ -21,13 +21,13 @@ public interface IrFileOrBuilder extends
   int getDeclarationId(int index);
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+   * <code>required int32 file_entry = 2;</code>
    */
   boolean hasFileEntry();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+   * <code>required int32 file_entry = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry getFileEntry();
+  int getFileEntry();
 
   /**
    * <code>repeated int32 fq_name = 3 [packed = true];</code>

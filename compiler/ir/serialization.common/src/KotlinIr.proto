@@ -16,7 +16,7 @@ message FileEntry {
 
 message IrFile {
   repeated int32 declaration_id = 1 [packed=true];
-  required FileEntry file_entry = 2;
+  required int32 file_entry = 2;
   repeated int32 fq_name = 3 [packed=true];
   repeated IrConstructorCall annotation = 4;
   repeated int64 explicitly_exported_to_compiler = 5 [packed=true];
@@ -151,7 +151,7 @@ message IrReturnableBlock {
 
 message IrInlinedFunctionBlock {
   optional int64 inline_function_symbol = 1;
-  required FileEntry file_entry = 2;
+  required int32 file_entry = 2;
   required IrBlock base = 3;
 }
 
