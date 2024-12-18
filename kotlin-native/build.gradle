@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.cpp.GitClangFormatPlugin
 import org.jetbrains.kotlin.CompareDistributionSignatures
 import org.jetbrains.kotlin.nativeDistribution.NativeDistributionKt
 import org.jetbrains.kotlin.xcode.XcodeOverridePlugin
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.jetbrains.kotlin.UtilsKt
 import plugins.KotlinBuildPublishingPluginKt
@@ -73,7 +72,6 @@ def cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
 def nativeDistribution = NativeDistributionKt.getNativeDistribution(project)
 
 configurations {
-    distPack
     commonSources
 
     runtimeBitcode {
@@ -90,6 +88,11 @@ configurations {
         attributes {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, CppUsage.API))
         }
+    }
+
+    compilerJar {
+        canBeConsumed = false
+        canBeResolved = true
     }
 
     embeddableJar {
@@ -114,13 +117,12 @@ configurations {
 apply plugin: CompilationDatabasePlugin
 
 dependencies {
-    distPack project(':kotlin-native:Interop:Skia')
-    distPack project(path: ':kotlin-native:utilities:cli-runner', configuration: 'runtimeElements')
     commonSources project(path: ':kotlin-stdlib', configuration: 'metadataSourcesElements')
     commonSources project(path: ':kotlin-test', configuration: 'metadataSourcesElements')
     compilationDatabase project(":kotlin-native:runtime")
     runtimeBitcode project(":kotlin-native:runtime")
     objcExportApi project(":kotlin-native:runtime")
+    compilerJar project(path: ':kotlin-native:prepare:kotlin-native-compiler', configuration: 'shadowJar')
     embeddableJar project(path: ':kotlin-native:prepare:kotlin-native-compiler-embeddable', configuration: 'runtimeElements')
     nativeLibs project(':kotlin-native:common:env')
     nativeLibs project(':kotlin-native:common:files')
@@ -190,18 +192,6 @@ tasks.register("distSources") {
     dependsOn(distNativeSources)
 }
 
-def shadowJar = tasks.register("shadowJar", ShadowJar) {
-    mergeServiceFiles()
-    destinationDirectory.set(layout.buildDirectory)
-    archiveBaseName.set("kotlin-native")
-    archiveVersion.set("")
-    archiveClassifier.set("")
-    // Exclude trove4j because of license agreement.
-    exclude "*trove4j*"
-    exclude("META-INF/versions/9/module-info.class")
-    configurations = [project.configurations.distPack]
-}
-
 tasks.register("distCompiler") {
     // Workaround: make distCompiler no-op if we are using custom dist:
     // the dist is already in place and has the compiler, so we don't have to
@@ -262,10 +252,17 @@ tasks.register("distNativeLibs", Sync) {
 }
 
 tasks.register("distCompilerJars", Sync) {
-    from(shadowJar.map { it.archiveFile })
     from(configurations.trove4j_jar) {
         include "trove4j*.jar"
         rename "trove4j(.*).jar", "trove4j.jar"
+        filePermissions {
+            unix("0644")
+        }
+    }
+    from(configurations.compilerJar) {
+        rename {
+            "kotlin-native.jar"
+        }
         filePermissions {
             unix("0644")
         }
