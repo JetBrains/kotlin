@@ -1,0 +1,68 @@
+FILE: baseOverride.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public open class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        context(a: R|A|)
+        public open fun foo(): R|kotlin/Unit| {
+        }
+
+        context(a: R|A|)
+        public open val b: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String(1)
+            }
+
+    }
+    public final class Derived : R|Base| {
+        public constructor(): R|Derived| {
+            super<R|Base|>()
+        }
+
+    }
+    public final class DerivedWithoutContext : R|Base| {
+        public constructor(): R|DerivedWithoutContext| {
+            super<R|Base|>()
+        }
+
+        public open override fun foo(): R|kotlin/Unit| {
+        }
+
+        public open override val b: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String(2)
+            }
+
+    }
+    public final class DerivedWithContext : R|Base| {
+        public constructor(): R|DerivedWithContext| {
+            super<R|Base|>()
+        }
+
+        context(a: R|A|)
+        public open override fun foo(): R|kotlin/Unit| {
+        }
+
+        context(a: R|A|)
+        public open override val b: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String(2)
+            }
+
+    }
+    public final fun usage(): R|kotlin/Unit| {
+        R|kotlin/with|<R|A|, R|kotlin/String|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/Derived.Derived|().R|/Base.foo|()
+            R|/Derived.Derived|().R|/Base.b|
+            R|/DerivedWithContext.DerivedWithContext|().R|/DerivedWithContext.foo|()
+            ^ R|/DerivedWithContext.DerivedWithContext|().R|/DerivedWithContext.b|
+        }
+        )
+    }

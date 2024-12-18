@@ -1,0 +1,141 @@
+FILE: withContextInType.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(a: R|kotlin/String|): R|kotlin/String| {
+            ^foo R|<local>/a|
+        }
+
+    }
+    context(ctx: R|T|)
+    public final fun <T> implicit(): R|T| {
+        ^implicit R|<local>/ctx|
+    }
+    public open class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open fun foo(x: R|@ContextFunctionTypeParams (A) -> kotlin/Unit|): R|kotlin/Unit| {
+        }
+
+        public open fun bar(): R|@ContextFunctionTypeParams (A) -> kotlin/Unit| {
+            ^bar fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                ^ Unit
+            }
+
+        }
+
+        public open val x: R|@ContextFunctionTypeParams (A) -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^ Unit
+        }
+
+            public get(): R|@ContextFunctionTypeParams (A) -> kotlin/Unit|
+
+    }
+    public final class Derived : R|Base| {
+        public constructor(): R|Derived| {
+            super<R|Base|>()
+        }
+
+    }
+    public final class DerivedOverrideWithValue : R|Base| {
+        public constructor(): R|DerivedOverrideWithValue| {
+            super<R|Base|>()
+        }
+
+        public open override fun foo(x: R|(A) -> kotlin/Unit|): R|kotlin/Unit| {
+        }
+
+        public open override val x: R|(A) -> kotlin/Unit|
+            public get(): R|(A) -> kotlin/Unit| {
+                ^ fun <anonymous>(it: R|A|): R|kotlin/Unit| <inline=Unknown>  {
+                    ^ Unit
+                }
+
+            }
+
+        public open override fun bar(): R|(A) -> kotlin/Unit| {
+            ^bar fun <anonymous>(it: R|A|): R|kotlin/Unit| <inline=Unknown>  {
+                ^ Unit
+            }
+
+        }
+
+    }
+    public final class DerivedOverrideWithExtension : R|Base| {
+        public constructor(): R|DerivedOverrideWithExtension| {
+            super<R|Base|>()
+        }
+
+        public open override fun foo(x: R|A.() -> kotlin/Unit|): R|kotlin/Unit| {
+        }
+
+        public open override val x: R|A.() -> kotlin/Unit|
+            public get(): R|A.() -> kotlin/Unit| {
+                ^ fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                    ^ Unit
+                }
+
+            }
+
+        public open override fun bar(): R|A.() -> kotlin/Unit| {
+            ^bar fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                ^ Unit
+            }
+
+        }
+
+    }
+    public final class DerivedOverrideWithContext : R|Base| {
+        public constructor(): R|DerivedOverrideWithContext| {
+            super<R|Base|>()
+        }
+
+        public open override fun foo(x: R|@ContextFunctionTypeParams (A) -> kotlin/Unit|): R|kotlin/Unit| {
+        }
+
+        public open override val x: R|@ContextFunctionTypeParams (A) -> kotlin/Unit|
+            public get(): R|@ContextFunctionTypeParams (A) -> kotlin/Unit| {
+                ^ fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                    ^ Unit
+                }
+
+            }
+
+        public open override fun bar(): R|@ContextFunctionTypeParams (A) -> kotlin/Unit| {
+            ^bar fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                ^ Unit
+            }
+
+        }
+
+    }
+    public final fun usage(): R|kotlin/Unit| {
+        R|/Derived.Derived|().R|/Base.foo|(<L> = foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|/implicit|<R|A|>().R|/A.foo|(String())
+        }
+        )
+        R|/Derived.Derived|().R|/Base.bar|().R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|/A.A|())
+        R|/Derived.Derived|().R|/Base.x|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|/A.A|())
+        R|/DerivedOverrideWithValue.DerivedOverrideWithValue|().R|/DerivedOverrideWithValue.foo|(<L> = foo@fun <anonymous>(y: R|A|): R|kotlin/Unit| <inline=NoInline>  {
+            R|<local>/y|.R|/A.foo|(String())
+        }
+        )
+        R|/DerivedOverrideWithValue.DerivedOverrideWithValue|().R|/DerivedOverrideWithValue.bar|().R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|/A.A|())
+        R|/DerivedOverrideWithValue.DerivedOverrideWithValue|().R|/DerivedOverrideWithValue.x|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|/A.A|())
+        R|/DerivedOverrideWithExtension.DerivedOverrideWithExtension|().R|/DerivedOverrideWithExtension.foo|(<L> = foo@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|/implicit|<R|A|>().R|/A.foo|(String())
+        }
+        )
+        R|/DerivedOverrideWithExtension.DerivedOverrideWithExtension|().R|/DerivedOverrideWithExtension.bar|().R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|/A.A|())
+        R|/DerivedOverrideWithExtension.DerivedOverrideWithExtension|().R|/DerivedOverrideWithExtension.x|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|/A.A|())
+        R|/DerivedOverrideWithContext.DerivedOverrideWithContext|().R|/DerivedOverrideWithContext.foo|(<L> = foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|/implicit|<R|A|>().R|/A.foo|(String())
+        }
+        )
+        R|/DerivedOverrideWithContext.DerivedOverrideWithContext|().R|/DerivedOverrideWithContext.bar|().R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|/A.A|())
+        R|/DerivedOverrideWithContext.DerivedOverrideWithContext|().R|/DerivedOverrideWithContext.x|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|/A.A|())
+    }

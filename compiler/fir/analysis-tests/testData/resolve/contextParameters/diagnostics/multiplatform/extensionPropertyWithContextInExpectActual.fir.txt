@@ -1,0 +1,46 @@
+Module: m1-common
+FILE: common.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context(a: R|A|)
+    public final expect val expectContextActualExtension: R|kotlin/String|
+        public get(): R|kotlin/String|
+    public final expect val R|A|.expectExtensionActualContext: R|kotlin/String|
+        public get(): R|kotlin/String|
+FILE: jvm.kt
+    public final actual val R|A|.expectContextActualExtension: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String()
+        }
+    context(a: R|A|)
+    public final actual val expectExtensionActualContext: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String()
+        }
+Module: m2-jvm
+FILE: common.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context(a: R|A|)
+    public final expect val expectContextActualExtension: R|kotlin/String|
+        public get(): R|kotlin/String|
+    public final expect val R|A|.expectExtensionActualContext: R|kotlin/String|
+        public get(): R|kotlin/String|
+FILE: jvm.kt
+    public final actual val R|A|.expectContextActualExtension: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String()
+        }
+    context(a: R|A|)
+    public final actual val expectExtensionActualContext: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String()
+        }

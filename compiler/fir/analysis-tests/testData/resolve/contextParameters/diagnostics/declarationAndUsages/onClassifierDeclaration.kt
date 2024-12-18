@@ -55,3 +55,6 @@ class Test11 {
 }
 
 val test12 = <!UNRESOLVED_REFERENCE!>context<!>(<!UNRESOLVED_REFERENCE!>c<!><!SYNTAX!>: A<!>)<!SYNTAX!><!> object<!SYNTAX!><!> { }
+
+<!UNSUPPORTED!>context(c: A)<!>
+typealias Test13 = String

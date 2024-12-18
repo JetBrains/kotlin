@@ -134,6 +134,17 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
         public void testUnsupportedContextParameters() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/unsupportedContextParameters.kt");
         }
+
+        @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages")
+        @TestDataPath("$PROJECT_ROOT")
+        public class DeclarationAndUsages {
+          @Test
+          @TestMetadata("onClassifierDeclaration.kt")
+          public void testOnClassifierDeclaration() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/onClassifierDeclaration.kt");
+          }
+        }
       }
     }
 

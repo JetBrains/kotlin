@@ -1,0 +1,103 @@
+FILE: orderAndTypeOfContextsInOverride.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public open class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        context(a: R|A|, b: R|B|)
+        public open fun foo(): R|kotlin/Unit| {
+        }
+
+        context(a: R|A|, b: R|B|)
+        public open val b: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String(2)
+            }
+
+    }
+    public final class Test1 : R|Base| {
+        public constructor(): R|Test1| {
+            super<R|Base|>()
+        }
+
+        context(b: R|B|, a: R|A|)
+        public open override fun foo(): R|kotlin/Unit| {
+        }
+
+        context(b: R|B|, a: R|A|)
+        public open override val b: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String(2)
+            }
+
+    }
+    public final class Test2 : R|Base| {
+        public constructor(): R|Test2| {
+            super<R|Base|>()
+        }
+
+        context(a: R|A|)
+        public open override fun foo(): R|kotlin/Unit| {
+        }
+
+        context(a: R|A|)
+        public open override val b: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String(2)
+            }
+
+    }
+    public final class Test3 : R|Base| {
+        public constructor(): R|Test3| {
+            super<R|Base|>()
+        }
+
+        context(a: R|A|)
+        public open override fun foo(b: R|B|): R|kotlin/Unit| {
+        }
+
+    }
+    public final class Test4 : R|Base| {
+        public constructor(): R|Test4| {
+            super<R|Base|>()
+        }
+
+        context(a: R|A|)
+        public open override fun R|B|.foo(): R|kotlin/Unit| {
+        }
+
+        context(a: R|A|)
+        public open override val R|B|.b: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String(2)
+            }
+
+    }
+    public final class Test5 : R|Base| {
+        public constructor(): R|Test5| {
+            super<R|Base|>()
+        }
+
+        context(a: R|A|, b: R|kotlin/String|)
+        public open override fun foo(): R|kotlin/Unit| {
+        }
+
+        context(a: R|A|, b: R|kotlin/String|)
+        public open override val b: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String(2)
+            }
+
+    }

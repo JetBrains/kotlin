@@ -1,0 +1,23 @@
+FILE: contextOrderWithAnnotation.kt
+    public final annotation class Ann : R|kotlin/Annotation| {
+        public constructor(): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context(a: R|kotlin/String|)
+    @R|Ann|() public final fun foo(): R|kotlin/String| {
+        ^foo R|<local>/a|
+    }
+    public final fun bar(): R|kotlin/Unit| {
+    }
+    context(a: R|kotlin/String|)
+    @R|Ann|() public final val qux: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String()
+        }
+    public final val buz: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String()
+        }
+    @R|Ann|() <DANGLING MODIFIER: Top level declaration expected>@R|Ann|() <DANGLING MODIFIER: Top level declaration expected>

@@ -141,3 +141,4 @@ FILE: onClassifierDeclaration.kt
         }
 
     }
+    public final typealias Test13 = R|kotlin/String|

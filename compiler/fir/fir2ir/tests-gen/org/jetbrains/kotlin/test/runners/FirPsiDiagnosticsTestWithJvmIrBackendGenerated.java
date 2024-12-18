@@ -91,6 +91,28 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
   }
 
   @Nested
+  @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/contextParameters")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ContextParameters {
+    @Test
+    public void testAllFilesPresentInContextParameters() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/contextParameters"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+    }
+
+    @Test
+    @TestMetadata("extensionAndContextParameters.kt")
+    public void testExtensionAndContextParameters() {
+      runTest("compiler/testData/diagnostics/testsWithJvmBackend/contextParameters/extensionAndContextParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("valueAndContextParameter.kt")
+    public void testValueAndContextParameter() {
+      runTest("compiler/testData/diagnostics/testsWithJvmBackend/contextParameters/valueAndContextParameter.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/contextReceivers")
   @TestDataPath("$PROJECT_ROOT")
   public class ContextReceivers {

@@ -1,0 +1,29 @@
+FILE: theSameContextAndDispatchReceiver.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        context(a: R|A|)
+        public final fun funMember(): R|kotlin/Unit| {
+        }
+
+        context(a: R|A|)
+        public final val propertyMember: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String()
+            }
+
+        public final fun usageInsideClass(): R|kotlin/Unit| {
+            this@R|/A|.R|/A.funMember|()
+            this@R|/A|.R|/A.propertyMember|
+        }
+
+    }
+    public final fun usageOutsideClass(): R|kotlin/Unit| {
+        R|kotlin/with|<R|A|, R|kotlin/String|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+            this@R|special/anonymous|.R|/A.funMember|()
+            ^ this@R|special/anonymous|.R|/A.propertyMember|
+        }
+        )
+    }

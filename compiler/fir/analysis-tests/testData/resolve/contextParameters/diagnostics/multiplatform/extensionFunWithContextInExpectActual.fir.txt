@@ -1,0 +1,50 @@
+Module: m1-common
+FILE: common.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context(a: R|A|)
+    public final expect fun expectContextActualExtension(): R|kotlin/Unit|
+    context(a: R|A|)
+    public final expect fun expectContextActualValueParam(): R|kotlin/Unit|
+    public final expect fun expectValueParamActualContext(a: R|A|): R|kotlin/Unit|
+    public final expect fun R|A|.expectExtensionActualContext(): R|kotlin/Unit|
+FILE: jvm.kt
+    public final actual fun R|A|.expectContextActualExtension(): R|kotlin/Unit| {
+    }
+    public final actual fun expectContextActualValueParam(a: R|A|): R|kotlin/Unit| {
+    }
+    context(a: R|A|)
+    public final actual fun expectValueParamActualContext(): R|kotlin/Unit| {
+    }
+    context(a: R|A|)
+    public final actual fun expectExtensionActualContext(): R|kotlin/Unit| {
+    }
+Module: m2-jvm
+FILE: common.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context(a: R|A|)
+    public final expect fun expectContextActualExtension(): R|kotlin/Unit|
+    context(a: R|A|)
+    public final expect fun expectContextActualValueParam(): R|kotlin/Unit|
+    public final expect fun expectValueParamActualContext(a: R|A|): R|kotlin/Unit|
+    public final expect fun R|A|.expectExtensionActualContext(): R|kotlin/Unit|
+FILE: jvm.kt
+    public final actual fun R|A|.expectContextActualExtension(): R|kotlin/Unit| {
+    }
+    public final actual fun expectContextActualValueParam(a: R|A|): R|kotlin/Unit| {
+    }
+    context(a: R|A|)
+    public final actual fun expectValueParamActualContext(): R|kotlin/Unit| {
+    }
+    context(a: R|A|)
+    public final actual fun expectExtensionActualContext(): R|kotlin/Unit| {
+    }

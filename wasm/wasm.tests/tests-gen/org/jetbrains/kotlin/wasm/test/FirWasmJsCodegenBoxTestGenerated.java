@@ -6828,6 +6828,18 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     }
 
     @Test
+    @TestMetadata("classMemberAndTopLevelExtensionWithContext.kt")
+    public void testClassMemberAndTopLevelExtensionWithContext() {
+      runTest("compiler/testData/codegen/box/contextParameters/classMemberAndTopLevelExtensionWithContext.kt");
+    }
+
+    @Test
+    @TestMetadata("classMemberAndTopLevelWithContext.kt")
+    public void testClassMemberAndTopLevelWithContext() {
+      runTest("compiler/testData/codegen/box/contextParameters/classMemberAndTopLevelWithContext.kt");
+    }
+
+    @Test
     @TestMetadata("contextParameterToDefaultArgument.kt")
     public void testContextParameterToDefaultArgument() {
       runTest("compiler/testData/codegen/box/contextParameters/contextParameterToDefaultArgument.kt");
@@ -6867,6 +6879,24 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     @TestMetadata("sameNameWithPropertyName.kt")
     public void testSameNameWithPropertyName() {
       runTest("compiler/testData/codegen/box/contextParameters/sameNameWithPropertyName.kt");
+    }
+
+    @Test
+    @TestMetadata("withExtensionReceiverAndThis.kt")
+    public void testWithExtensionReceiverAndThis() {
+      runTest("compiler/testData/codegen/box/contextParameters/withExtensionReceiverAndThis.kt");
+    }
+
+    @Test
+    @TestMetadata("withExtensionReceiverInSupertype.kt")
+    public void testWithExtensionReceiverInSupertype() {
+      runTest("compiler/testData/codegen/box/contextParameters/withExtensionReceiverInSupertype.kt");
+    }
+
+    @Test
+    @TestMetadata("withExtensionReceiverInType.kt")
+    public void testWithExtensionReceiverInType() {
+      runTest("compiler/testData/codegen/box/contextParameters/withExtensionReceiverInType.kt");
     }
   }
 
@@ -28627,6 +28657,24 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         @TestMetadata("anyMethodInExpect.kt")
         public void testAnyMethodInExpect() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/basic/anyMethodInExpect.kt");
+        }
+
+        @Test
+        @TestMetadata("contextInFakeOverride.kt")
+        public void testContextInFakeOverride() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/contextInFakeOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("contextOnExpect.kt")
+        public void testContextOnExpect() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/contextOnExpect.kt");
+        }
+
+        @Test
+        @TestMetadata("contextOnExpectActual.kt")
+        public void testContextOnExpectActual() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/basic/contextOnExpectActual.kt");
         }
 
         @Test

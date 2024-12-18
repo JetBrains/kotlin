@@ -50954,9 +50954,33 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         @TestDataPath("$PROJECT_ROOT")
         public class DeclarationAndUsages {
           @Test
+          @TestMetadata("annotationOnTypeWithContext.kt")
+          public void testAnnotationOnTypeWithContext() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/annotationOnTypeWithContext.kt");
+          }
+
+          @Test
+          @TestMetadata("annotationTargetInContext.kt")
+          public void testAnnotationTargetInContext() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/annotationTargetInContext.kt");
+          }
+
+          @Test
+          @TestMetadata("classMembersWithContext.kt")
+          public void testClassMembersWithContext() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/classMembersWithContext.kt");
+          }
+
+          @Test
           @TestMetadata("contextOnGetterSetter.kt")
           public void testContextOnGetterSetter() {
             runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/contextOnGetterSetter.kt");
+          }
+
+          @Test
+          @TestMetadata("contextOrderWithAnnotation.kt")
+          public void testContextOrderWithAnnotation() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/contextOrderWithAnnotation.kt");
           }
 
           @Test
@@ -50969,6 +50993,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
           @TestMetadata("contextParameterToDefaultArgument.kt")
           public void testContextParameterToDefaultArgument() {
             runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/contextParameterToDefaultArgument.kt");
+          }
+
+          @Test
+          @TestMetadata("contextWithAnnotation.kt")
+          public void testContextWithAnnotation() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/contextWithAnnotation.kt");
           }
 
           @Test
@@ -51011,6 +51041,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
           @TestMetadata("inlineForTypeWithContext.kt")
           public void testInlineForTypeWithContext() {
             runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/inlineForTypeWithContext.kt");
+          }
+
+          @Test
+          @TestMetadata("memberUsageFromContextScope.kt")
+          public void testMemberUsageFromContextScope() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/memberUsageFromContextScope.kt");
           }
 
           @Test
@@ -51074,6 +51110,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
           }
 
           @Test
+          @TestMetadata("theSameContextAndDispatchReceiver.kt")
+          public void testTheSameContextAndDispatchReceiver() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/theSameContextAndDispatchReceiver.kt");
+          }
+
+          @Test
           @TestMetadata("usageWithoutContext.kt")
           public void testUsageWithoutContext() {
             runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/usageWithoutContext.kt");
@@ -51101,6 +51143,135 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
           @TestMetadata("visibilityOfContextTypeOnProperty.kt")
           public void testVisibilityOfContextTypeOnProperty() {
             runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/visibilityOfContextTypeOnProperty.kt");
+          }
+
+          @Test
+          @TestMetadata("withNestedContext.kt")
+          public void testWithNestedContext() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/withNestedContext.kt");
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/multiplatform")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Multiplatform {
+          @Test
+          @TestMetadata("contextInFunctionAsAType.kt")
+          public void testContextInFunctionAsAType() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/multiplatform/contextInFunctionAsAType.kt");
+          }
+
+          @Test
+          @TestMetadata("contextInPropertyAsAType.kt")
+          public void testContextInPropertyAsAType() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/multiplatform/contextInPropertyAsAType.kt");
+          }
+
+          @Test
+          @TestMetadata("extensionFunWithContextInExpectActual.kt")
+          public void testExtensionFunWithContextInExpectActual() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/multiplatform/extensionFunWithContextInExpectActual.kt");
+          }
+
+          @Test
+          @TestMetadata("extensionPropertyWithContextInExpectActual.kt")
+          public void testExtensionPropertyWithContextInExpectActual() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/multiplatform/extensionPropertyWithContextInExpectActual.kt");
+          }
+
+          @Test
+          @TestMetadata("funWithContextInExpectActual.kt")
+          public void testFunWithContextInExpectActual() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/multiplatform/funWithContextInExpectActual.kt");
+          }
+
+          @Test
+          @TestMetadata("memberWithAContext.kt")
+          public void testMemberWithAContext() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/multiplatform/memberWithAContext.kt");
+          }
+
+          @Test
+          @TestMetadata("propertyWithContextInExpectActual.kt")
+          public void testPropertyWithContextInExpectActual() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/multiplatform/propertyWithContextInExpectActual.kt");
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/operators")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Operators {
+          @Test
+          @TestMetadata("baseOperatorsWithContext.kt")
+          public void testBaseOperatorsWithContext() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/operators/baseOperatorsWithContext.kt");
+          }
+
+          @Test
+          @TestMetadata("infixOperator.kt")
+          public void testInfixOperator() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/operators/infixOperator.kt");
+          }
+
+          @Test
+          @TestMetadata("infixOperatorOnTypeWithContext.kt")
+          public void testInfixOperatorOnTypeWithContext() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/operators/infixOperatorOnTypeWithContext.kt");
+          }
+
+          @Test
+          @TestMetadata("invokeOnTypeWithContext.kt")
+          public void testInvokeOnTypeWithContext() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/operators/invokeOnTypeWithContext.kt");
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/overrides")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Overrides {
+          @Test
+          @TestMetadata("baseOverride.kt")
+          public void testBaseOverride() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/overrides/baseOverride.kt");
+          }
+
+          @Test
+          @TestMetadata("intersectionOverride.kt")
+          public void testIntersectionOverride() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/overrides/intersectionOverride.kt");
+          }
+
+          @Test
+          @TestMetadata("intersectionWithTypeParameter.kt")
+          public void testIntersectionWithTypeParameter() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/overrides/intersectionWithTypeParameter.kt");
+          }
+
+          @Test
+          @TestMetadata("nameCanBeChangedInOverride.kt")
+          public void testNameCanBeChangedInOverride() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/overrides/nameCanBeChangedInOverride.kt");
+          }
+
+          @Test
+          @TestMetadata("orderAndTypeOfContextsInOverride.kt")
+          public void testOrderAndTypeOfContextsInOverride() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/overrides/orderAndTypeOfContextsInOverride.kt");
+          }
+
+          @Test
+          @TestMetadata("substitutionOverride.kt")
+          public void testSubstitutionOverride() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/overrides/substitutionOverride.kt");
+          }
+
+          @Test
+          @TestMetadata("withContextInType.kt")
+          public void testWithContextInType() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/overrides/withContextInType.kt");
           }
         }
       }

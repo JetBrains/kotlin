@@ -1,0 +1,31 @@
+FILE: annotationTargetInContext.kt
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|)) public final annotation class AnnotationWithValueTarget : R|kotlin/Annotation| {
+        public constructor(): R|AnnotationWithValueTarget| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|)) public final annotation class AnnotationWithTypeTarget : R|kotlin/Annotation| {
+        public constructor(): R|AnnotationWithTypeTarget| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context(@R|AnnotationWithValueTarget|() a: R|@R|AnnotationWithTypeTarget|()  kotlin/String|)
+    public final fun foo(): R|kotlin/String| {
+        ^foo R|<local>/a|
+    }
+    context(@R|AnnotationWithValueTarget|() a: R|@R|AnnotationWithTypeTarget|()  kotlin/String|)
+    public final val bar: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ R|<local>/a|
+        }
+    context(@R|AnnotationWithTypeTarget|() a: R|@R|AnnotationWithValueTarget|()  kotlin/String|)
+    public final fun baz(): R|kotlin/String| {
+        ^baz R|<local>/a|
+    }
+    context(@R|AnnotationWithTypeTarget|() a: R|@R|AnnotationWithValueTarget|()  kotlin/String|)
+    public final val qux: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ R|<local>/a|
+        }

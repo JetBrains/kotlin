@@ -1,0 +1,137 @@
+FILE: baseOperatorsWithContext.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context(a: R|A|)
+    public final operator fun R|A|.unaryPlus(): R|kotlin/Unit| {
+    }
+    context(a: R|A|)
+    public final operator fun R|A|.plus(b: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    context(a: R|A|)
+    public final operator fun R|A|.get(b: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    context(a: R|A|)
+    public final operator fun R|A|.set(b: R|kotlin/Int|, x: R|A|): R|kotlin/Unit| {
+    }
+    context(a: R|A|)
+    public final operator fun R|A|.invoke(): R|kotlin/Unit| {
+    }
+    context(a: R|A|)
+    public final operator fun R|A|.plusAssign(b: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    context(a: R|A|)
+    public final operator fun R|A|.inc(): R|A| {
+        ^inc this@R|/inc|
+    }
+    public final class SimpleOperators : R|kotlin/Any| {
+        public constructor(): R|SimpleOperators| {
+            super<R|kotlin/Any|>()
+        }
+
+        context(a: R|A|)
+        public final operator fun unaryPlus(): R|kotlin/Unit| {
+        }
+
+        context(a: R|A|)
+        public final operator fun plus(b: R|kotlin/Int|): R|kotlin/Unit| {
+        }
+
+        context(a: R|A|)
+        public final operator fun get(b: R|kotlin/Int|): R|kotlin/Unit| {
+        }
+
+        context(a: R|A|)
+        public final operator fun set(b: R|kotlin/Int|, x: R|A|): R|kotlin/Unit| {
+        }
+
+        context(a: R|A|)
+        public final operator fun invoke(): R|kotlin/Unit| {
+        }
+
+        context(a: R|A|)
+        public final operator fun plusAssign(b: R|kotlin/Int|): R|kotlin/Unit| {
+        }
+
+        context(a: R|A|)
+        public final operator fun inc(): R|SimpleOperators| {
+            ^inc this@R|/SimpleOperators|
+        }
+
+    }
+    public final fun usage(): R|kotlin/Unit| {
+        lvar a: R|A| = R|/A.A|()
+        lvar b: R|SimpleOperators| = R|/SimpleOperators.SimpleOperators|()
+        R|kotlin/with|<R|A|, R|SimpleOperators|>(R|/A.A|(), <L> = with@fun R|A|.<anonymous>(): R|SimpleOperators| <inline=Inline, kind=EXACTLY_ONCE>  {
+            lvar thisProp: R|A| = this@R|special/anonymous|
+            R|<local>/thisProp|.R|/unaryPlus|()
+            R|<local>/a|.R|/unaryPlus|()
+            R|<local>/thisProp|.R|/plus|(Int(1))
+            R|<local>/a|.R|/plus|(Int(1))
+            R|<local>/thisProp|.R|/get|(Int(1))
+            R|<local>/a|.R|/get|(Int(1))
+            R|<local>/thisProp|.R|/set|(Int(1), R|/A.A|())
+            Unit
+            R|<local>/a|.R|/set|(Int(1), R|/A.A|())
+            Unit
+            R|<local>/thisProp|.R|/invoke|()
+            R|<local>/a|.R|/invoke|()
+            R|<local>/thisProp|.R|/plusAssign|(Int(1))
+            R|<local>/a|.R|/plusAssign|(Int(1))
+             {
+                lval <unary>: R|A| = R|<local>/thisProp|
+                R|<local>/thisProp| = R|<local>/<unary>|.R|/inc|()
+                R|<local>/<unary>|
+            }
+
+            R|<local>/a| =  {
+                lval <unary>: R|A| = R|<local>/a|
+                R|<local>/a| = R|<local>/<unary>|.R|/inc|()
+                R|<local>/<unary>|
+            }
+
+            R|<local>/b|.R|/SimpleOperators.plus|(Int(1))
+            R|<local>/b|.R|/SimpleOperators.unaryPlus|()
+            R|<local>/b|.R|/SimpleOperators.get|(Int(1))
+            R|<local>/b|.R|/SimpleOperators.set|(Int(1), R|/A.A|())
+            Unit
+            R|<local>/b|.R|/SimpleOperators.invoke|()
+            R|<local>/b|.R|/SimpleOperators.plusAssign|(Int(1))
+            ^  {
+                lval <unary>: R|SimpleOperators| = R|<local>/b|
+                R|<local>/b| = R|<local>/<unary>|.R|/SimpleOperators.inc|()
+                R|<local>/<unary>|
+            }
+
+        }
+        )
+        R|<local>/a|.R|/unaryPlus<Inapplicable(INAPPLICABLE): /unaryPlus>#|()
+        R|<local>/a|.R|/plus<Inapplicable(INAPPLICABLE): /plus>#|(Int(1))
+        R|<local>/a|.R|/get<Inapplicable(INAPPLICABLE): /get>#|(Int(1))
+        R|<local>/a|.R|/set<Inapplicable(INAPPLICABLE): /set>#|(Int(1), R|/A.A|())
+        Unit
+        R|<local>/a|.R|/invoke<Inapplicable(INAPPLICABLE): /invoke>#|()
+        R|<local>/a|.R|/plusAssign<Inapplicable(INAPPLICABLE): /plusAssign>#|(Int(1))
+         {
+            lval <unary>: R|A| = R|<local>/a|
+            R|<local>/a| = R|<local>/<unary>|.R|/inc<Inapplicable(INAPPLICABLE): /inc>#|()
+            R|<local>/<unary>|
+        }
+
+        R|<local>/b|.R|/SimpleOperators.plus<Inapplicable(INAPPLICABLE): /SimpleOperators.plus>#|(Int(1))
+        R|<local>/b|.R|/SimpleOperators.unaryPlus<Inapplicable(INAPPLICABLE): /SimpleOperators.unaryPlus>#|()
+        R|<local>/b|.R|/SimpleOperators.get<Inapplicable(INAPPLICABLE): /SimpleOperators.get>#|(Int(1))
+        R|<local>/b|.R|/SimpleOperators.set<Inapplicable(INAPPLICABLE): /SimpleOperators.set>#|(Int(1), R|/A.A|())
+        Unit
+        R|<local>/b|.R|/SimpleOperators.invoke<Inapplicable(INAPPLICABLE): /SimpleOperators.invoke>#|()
+        R|<local>/b|.R|/SimpleOperators.plusAssign<Inapplicable(INAPPLICABLE): /SimpleOperators.plusAssign>#|(Int(1))
+         {
+            lval <unary>: R|SimpleOperators| = R|<local>/b|
+            R|<local>/b| = R|<local>/<unary>|.R|/SimpleOperators.inc<Inapplicable(INAPPLICABLE): /SimpleOperators.inc>#|()
+            R|<local>/<unary>|
+        }
+
+    }

@@ -1,0 +1,29 @@
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] contextParameter.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    context([ResolvedTo(BODY_RESOLVE)] parameter: R|@R|Anno|(position = String(1).R|kotlin/String.plus|(String(2)))  kotlin/String|)
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] contextParameter.kt
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    context([ResolvedTo(BODY_RESOLVE)] parameter: R|@R|Anno|(position = String(1).R|kotlin/String.plus|(String(2)))  kotlin/String|)
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+    }

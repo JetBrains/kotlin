@@ -342,6 +342,12 @@ public class SourceLazyDeclarationResolveForTypeAnnotationsTestGenerated extends
     }
 
     @Test
+    @TestMetadata("contextParameter.kt")
+    public void testContextParameter() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/contextParameter.kt");
+    }
+
+    @Test
     @TestMetadata("contextReceiver.kt")
     public void testContextReceiver() {
       runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/function/contextReceiver.kt");
@@ -581,6 +587,12 @@ public class SourceLazyDeclarationResolveForTypeAnnotationsTestGenerated extends
     @TestMetadata("constructorParameter.kt")
     public void testConstructorParameter() {
       runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/constructorParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParameter.kt")
+    public void testContextParameter() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolveTypeAnnotations/property/contextParameter.kt");
     }
 
     @Test

@@ -1,0 +1,39 @@
+FILE: nameCanBeChangedInOverride.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public open class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        context(a: R|A|)
+        public open fun foo(): R|kotlin/Unit| {
+        }
+
+        context(a: R|A|)
+        public open val b: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String()
+            }
+
+    }
+    public final class Derived : R|Base| {
+        public constructor(): R|Derived| {
+            super<R|Base|>()
+        }
+
+        context(x: R|A|)
+        public open override fun foo(): R|kotlin/Unit| {
+        }
+
+        context(x: R|A|)
+        public open override val b: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String(2)
+            }
+
+    }
