@@ -19,6 +19,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.internal.exceptions.MultiCauseException
 import org.gradle.internal.extensions.core.serviceOf
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import java.io.File
 import java.io.ObjectInputStream
@@ -262,6 +263,7 @@ class GradleProjectBuildScriptInjectionContext(
 ) {
     val java get() = project.extensions.getByName("java") as JavaPluginExtension
     val kotlinMultiplatform get() = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
+    val kotlinJvm get() = project.extensions.getByName("kotlin") as KotlinJvmProjectExtension
     val androidLibrary get() = project.extensions.getByName("android") as LibraryExtension
     val publishing get() = project.extensions.getByName("publishing") as PublishingExtension
     val dependencies get() = project.dependencies

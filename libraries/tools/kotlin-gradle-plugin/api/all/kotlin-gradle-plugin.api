@@ -234,9 +234,12 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinJvmProjectExtension 
 	public fun compilerOptions (Lorg/gradle/api/Action;)V
 	public synthetic fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions;
 	public fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmCompilerOptions;
+	public fun getPublishing ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPublishing;
 	public synthetic fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
 	public fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinWithJavaTarget;
 	public synthetic fun getTargetFuture$kotlin_gradle_plugin_common ()Lorg/jetbrains/kotlin/gradle/utils/Future;
+	public fun publishing (Lkotlin/jvm/functions/Function1;)V
+	public fun publishing (Lorg/gradle/api/Action;)V
 	public fun target (Lkotlin/jvm/functions/Function1;)V
 }
 
@@ -2115,7 +2118,7 @@ public class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinSharedNativeCompilatio
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinSoftwareComponent : org/gradle/api/component/ComponentWithVariants, org/gradle/api/internal/component/SoftwareComponentInternal {
-	public fun <init> (Lorg/gradle/api/Project;Ljava/lang/String;Ljava/lang/Iterable;)V
+	public fun <init> (Lorg/gradle/api/Project;Ljava/lang/String;Ljava/lang/Iterable;Lorg/gradle/api/internal/component/SoftwareComponentInternal;)V
 	protected final fun getKotlinTargets ()Ljava/lang/Iterable;
 	public fun getName ()Ljava/lang/String;
 	public final fun getPublicationDelegate ()Lorg/gradle/api/publish/maven/MavenPublication;
@@ -2124,7 +2127,6 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinSoftwareCompo
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinSoftwareComponentWithCoordinatesAndPublication : org/jetbrains/kotlin/gradle/plugin/mpp/KotlinSoftwareComponent, org/gradle/api/component/ComponentWithCoordinates {
-	public fun <init> (Lorg/gradle/api/Project;Ljava/lang/String;Ljava/lang/Iterable;)V
 	public fun getCoordinates ()Lorg/gradle/api/artifacts/ModuleVersionIdentifier;
 }
 

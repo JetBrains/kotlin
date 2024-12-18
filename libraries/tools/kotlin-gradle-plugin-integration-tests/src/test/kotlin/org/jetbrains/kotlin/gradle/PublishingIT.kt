@@ -5,14 +5,23 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.Category
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinPublishingDsl
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.addDefaultSettingsToSettingsGradle
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
+import java.io.File
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
+import kotlin.io.path.createDirectories
 import kotlin.io.path.readLines
 import kotlin.io.path.readText
+import kotlin.io.path.writeText
 import kotlin.test.assertTrue
 import kotlin.test.assertEquals
 
@@ -140,6 +149,132 @@ class PublishingIT : KGPBaseTest() {
 
                 assertEqualsToFile(expectedPomFile, actualPomContent)
             }
+        }
+    }
+
+    @GradleTest
+    fun testAdhocSoftwareComponentInKotlinJvm(gradleVersion: GradleVersion) = testAdhocSoftwareComponent(
+        gradleVersion = gradleVersion,
+        projectDir = "base-kotlin-jvm-library",
+        configureProducerProject = {
+            // this code is needed to avoid empty artifacts publication that causes runtime error
+            kotlinSourcesDir("main")
+                .also { it.createDirectories() }
+                .resolve("Lib.kt")
+                .writeText("class Foo")
+
+            buildScriptInjection {
+                val javaComponent = project.components.getByName("java")
+                publishing.publications.create("kotlin", MavenPublication::class.java).from(javaComponent)
+            }
+        },
+        configureConsumerProject = {}
+    )
+
+    @GradleTest
+    fun testAdhocSoftwareComponentInKotlinMultiplatform(gradleVersion: GradleVersion) = testAdhocSoftwareComponent(
+        gradleVersion = gradleVersion,
+        projectDir = "base-kotlin-multiplatform-library",
+        configureProducerProject = {
+            buildScriptInjection {
+                kotlinMultiplatform.jvm()
+                kotlinMultiplatform.linuxX64()
+            }
+
+            // this code is needed to avoid empty artifacts publication that causes runtime error
+            kotlinSourcesDir("commonMain")
+                .also { it.createDirectories() }
+                .resolve("Lib.kt")
+                .writeText("class Foo")
+        },
+        configureConsumerProject = {
+            buildScriptInjection {
+                kotlinMultiplatform.jvm()
+                kotlinMultiplatform.linuxX64()
+            }
+        }
+    )
+
+    private fun testAdhocSoftwareComponent(
+        gradleVersion: GradleVersion,
+        projectDir: String,
+        configureProducerProject: TestProject.() -> Unit,
+        configureConsumerProject: TestProject.() -> Unit,
+    ) {
+        val localRepo = defaultLocalRepo(gradleVersion).absolutePathString()
+        fun GradleProjectBuildScriptInjectionContext.publishingDsl() = project.extensions.getByName("kotlin") as KotlinPublishingDsl
+
+        project(projectDir, gradleVersion = gradleVersion) {
+            settingsGradleKts.appendText("\nrootProject.name = \"kotlin-lib\"")
+
+            buildScriptInjection {
+                applyMavenPublishPlugin(File(localRepo))
+
+                project.group = "group"
+                project.version = "1.0"
+
+                val customArtifact = project.layout.buildDirectory.asFile.get()
+                    .also { it.mkdirs() }
+                    .resolve("customArtifact.txt")
+                    .also { it.writeText("customArtifactContent") }
+
+                val customAttribute = Attribute.of("myCustomAttribute", String::class.java)
+                val myConfiguration = project.configurations.create("myConsumableConfiguration") {
+                    it.isCanBeConsumed = true
+                    it.isCanBeResolved = false
+
+                    it.attributes.attribute(
+                        Category.CATEGORY_ATTRIBUTE,
+                        project.objects.named(Category::class.java, Category.DOCUMENTATION)
+                    )
+                    it.attributes.attribute(
+                        customAttribute,
+                        "customValue"
+                    )
+                }
+                project.artifacts.add(myConfiguration.name, customArtifact)
+
+                @OptIn(ExperimentalKotlinGradlePluginApi::class)
+                publishingDsl().publishing.adhocSoftwareComponent.addVariantsFromConfiguration(myConfiguration) {}
+            }
+
+            configureProducerProject()
+
+            build("publish") {}
+        }
+
+        val consumer = project(projectDir, gradleVersion = gradleVersion) {
+            buildScriptInjection {
+                project.repositories.maven {
+                    it.setUrl(localRepo)
+                }
+
+                val customAttribute = Attribute.of("myCustomAttribute", String::class.java)
+                val myResolvableConfiguration = project.configurations.create("myResolvableConfiguration") {
+                    it.isCanBeConsumed = false
+                    it.isCanBeResolved = true
+
+                    it.attributes.attribute(
+                        Category.CATEGORY_ATTRIBUTE,
+                        project.objects.named(Category::class.java, Category.DOCUMENTATION)
+                    )
+                    it.attributes.attribute(
+                        customAttribute,
+                        "customValue"
+                    )
+                }
+                project.dependencies.add(myResolvableConfiguration.name, "group:kotlin-lib:1.0")
+            }
+
+            configureConsumerProject()
+        }
+
+        consumer.build("dependencies") {
+            assertOutputDoesNotContain("FAILED")
+        }
+
+        consumer.build("dependencyInsight", "--dependency", "group:kotlin-lib:1.0", "--configuration", "myResolvableConfiguration") {
+            assertOutputContains("Variant myConsumableConfiguration")
         }
     }
 }

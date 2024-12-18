@@ -25,18 +25,24 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.android.internal.internal
 import org.jetbrains.kotlin.gradle.utils.KotlinCommonCompilerOptionsDefault
+import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
 
 @Suppress("DEPRECATION")
 @KotlinGradlePluginPublicDsl
 abstract class KotlinMultiplatformExtension
-@InternalKotlinGradlePluginApi constructor(project: Project) :
+@Inject
+@InternalKotlinGradlePluginApi
+constructor(
+    project: Project,
+) :
     KotlinProjectExtension(project),
     KotlinTargetContainerWithPresetFunctions,
     KotlinTargetContainerWithJsPresetFunctions,
     KotlinTargetContainerWithWasmPresetFunctions,
     KotlinTargetContainerWithNativeShortcuts,
     KotlinHierarchyDsl,
+    KotlinPublishingDsl,
     HasConfigurableKotlinCompilerOptions<KotlinCommonCompilerOptions>,
     KotlinMultiplatformSourceSetConventions by KotlinMultiplatformSourceSetConventionsImpl {
     @Deprecated(
@@ -242,8 +248,15 @@ abstract class KotlinMultiplatformExtension
     }
 
     internal val rootSoftwareComponent: KotlinSoftwareComponent by lazy {
-        KotlinSoftwareComponentWithCoordinatesAndPublication(project, "kotlin", targets)
+        KotlinSoftwareComponentWithCoordinatesAndPublication(
+            project,
+            "kotlin",
+            targets,
+            publishing.adhocSoftwareComponent
+        )
     }
+
+    override val publishing: KotlinPublishing = project.objects.newInstance<KotlinMultiplatformPublishing>()
 
     override val compilerOptions: KotlinCommonCompilerOptions =
         project.objects.KotlinCommonCompilerOptionsDefault(project)

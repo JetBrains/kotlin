@@ -1,4 +1,4 @@
-public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtension : org/jetbrains/kotlin/gradle/dsl/KotlinProjectExtension, org/jetbrains/kotlin/gradle/dsl/HasConfigurableKotlinCompilerOptions, org/jetbrains/kotlin/gradle/dsl/KotlinHierarchyDsl, org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformSourceSetConventions, org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions, org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithNativeShortcuts, org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions, org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions {
+public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtension : org/jetbrains/kotlin/gradle/dsl/KotlinProjectExtension, org/jetbrains/kotlin/gradle/dsl/HasConfigurableKotlinCompilerOptions, org/jetbrains/kotlin/gradle/dsl/KotlinHierarchyDsl, org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformSourceSetConventions, org/jetbrains/kotlin/gradle/dsl/KotlinPublishingDsl, org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions, org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithNativeShortcuts, org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions, org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions {
 	public fun android ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
 	public fun android (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
 	public fun android (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
@@ -93,6 +93,7 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtensi
 	public fun getNativeMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getNativeTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getPresets ()Lorg/gradle/api/NamedDomainObjectCollection;
+	public fun getPublishing ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPublishing;
 	public final fun getTargetHierarchy ()Lorg/jetbrains/kotlin/gradle/dsl/DeprecatedKotlinTargetHierarchyDsl;
 	public final fun getTargets ()Lorg/gradle/api/NamedDomainObjectCollection;
 	public final fun getTestableTargets ()Lorg/gradle/api/NamedDomainObjectCollection;
@@ -211,6 +212,8 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtensi
 	public fun mingwX86 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public fun mingwX86 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public fun mingwX86 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun publishing (Lkotlin/jvm/functions/Function1;)V
+	public fun publishing (Lorg/gradle/api/Action;)V
 	public final fun targetFromPreset (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
 	public final fun targetFromPreset (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
 	public final fun targetFromPreset (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;

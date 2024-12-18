@@ -412,13 +412,15 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJvmCompile
 	public abstract fun getNoJdk ()Lorg/gradle/api/provider/Property;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJvmExtension : org/jetbrains/kotlin/gradle/dsl/HasConfigurableKotlinCompilerOptions, org/jetbrains/kotlin/gradle/dsl/KotlinBaseExtension {
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJvmExtension : org/jetbrains/kotlin/gradle/dsl/HasConfigurableKotlinCompilerOptions, org/jetbrains/kotlin/gradle/dsl/KotlinBaseExtension, org/jetbrains/kotlin/gradle/dsl/KotlinPublishingDsl {
 	public abstract fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
 }
 
 public final class org/jetbrains/kotlin/gradle/dsl/KotlinJvmExtension$DefaultImpls {
 	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmExtension;Lkotlin/jvm/functions/Function1;)V
 	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmExtension;Lorg/gradle/api/Action;)V
+	public static fun publishing (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmExtension;Lkotlin/jvm/functions/Function1;)V
+	public static fun publishing (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmExtension;Lorg/gradle/api/Action;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJvmOptions : org/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions {
@@ -652,6 +654,17 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeXCFr
 	public abstract fun setEmbedBitcode (Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;)V
 	public abstract fun setTargets (Ljava/util/Set;)V
 	public abstract fun targets ([Lorg/jetbrains/kotlin/konan/target/KonanTarget;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinPublishingDsl {
+	public abstract fun getPublishing ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPublishing;
+	public abstract fun publishing (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun publishing (Lorg/gradle/api/Action;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/KotlinPublishingDsl$DefaultImpls {
+	public static fun publishing (Lorg/jetbrains/kotlin/gradle/dsl/KotlinPublishingDsl;Lkotlin/jvm/functions/Function1;)V
+	public static fun publishing (Lorg/jetbrains/kotlin/gradle/dsl/KotlinPublishingDsl;Lorg/gradle/api/Action;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTargetHierarchyDsl {
@@ -1218,6 +1231,17 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinPlatformType$Disambi
 	public fun <init> ()V
 	public synthetic fun execute (Ljava/lang/Object;)V
 	public fun execute (Lorg/gradle/api/attributes/MultipleCandidatesDetails;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinPublishing {
+	public abstract fun adhocSoftwareComponent (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun adhocSoftwareComponent (Lorg/gradle/api/Action;)V
+	public abstract fun getAdhocSoftwareComponent ()Lorg/gradle/api/component/AdhocComponentWithVariants;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/KotlinPublishing$DefaultImpls {
+	public static fun adhocSoftwareComponent (Lorg/jetbrains/kotlin/gradle/plugin/KotlinPublishing;Lkotlin/jvm/functions/Function1;)V
+	public static fun adhocSoftwareComponent (Lorg/jetbrains/kotlin/gradle/plugin/KotlinPublishing;Lorg/gradle/api/Action;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinSourceSet : org/gradle/api/Named, org/jetbrains/kotlin/gradle/plugin/HasKotlinDependencies, org/jetbrains/kotlin/gradle/plugin/HasProject, org/jetbrains/kotlin/tooling/core/HasMutableExtras {

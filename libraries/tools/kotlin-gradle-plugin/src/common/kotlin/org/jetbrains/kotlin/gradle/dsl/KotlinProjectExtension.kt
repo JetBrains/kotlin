@@ -9,6 +9,7 @@ import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.Property
 import org.gradle.jvm.toolchain.JavaLanguageVersion
@@ -194,6 +195,13 @@ abstract class KotlinJvmProjectExtension @Inject constructor(
     override fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
         configure(compilerOptions)
     }
+
+    override val publishing: KotlinPublishing = KotlinJvmPublishingDsl(project)
+}
+
+private class KotlinJvmPublishingDsl(private val project: Project) : KotlinPublishing {
+    override val adhocSoftwareComponent: AdhocComponentWithVariants
+        get() = project.components.getByName("java") as AdhocComponentWithVariants
 }
 
 abstract class KotlinJsProjectExtension(project: Project) :

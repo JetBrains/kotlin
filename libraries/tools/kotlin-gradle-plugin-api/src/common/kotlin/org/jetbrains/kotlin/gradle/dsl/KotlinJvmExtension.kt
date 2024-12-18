@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
  *
  * @since 2.1.0
  */
-interface KotlinJvmExtension : KotlinBaseExtension,
+interface KotlinJvmExtension : KotlinBaseExtension, KotlinPublishingDsl,
     HasConfigurableKotlinCompilerOptions<KotlinJvmCompilerOptions> {
 
     /**
