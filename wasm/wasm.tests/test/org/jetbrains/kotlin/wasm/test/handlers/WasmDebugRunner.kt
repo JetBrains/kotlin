@@ -76,7 +76,11 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
             enableDebugger();
             setBreakpoint(box);
             try {
-                box();
+                if (box.length) {
+                  box(jsModule.makeEmptyContinuation());
+                } else {
+                  box();
+                }
             } catch(e) { console.error(e) }
             disableDebugger();
             print(JSON.stringify(locations))
@@ -105,7 +109,13 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
                                 let test = document.getElementById("test")
                                 try {
                                     const jsModule = await import('./index.mjs');
-                                    try { jsModule.box(); } catch(e) { alert(e) }
+                                    try { 
+                                      if (jsModule.box.length) {
+                                        box(jsModule.makeEmptyContinuation());
+                                      } else {
+                                        jsModule.box();
+                                      }
+                                    } catch(e) { alert(e) }
                                     
                                     test.style.backgroundColor = "#0f0";
                                     test.textContent = "OK"

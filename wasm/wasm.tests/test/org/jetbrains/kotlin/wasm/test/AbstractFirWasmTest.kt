@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.wasm.test.converters.WasmBackendFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasiBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDebugRunner
+import org.jetbrains.kotlin.wasm.test.providers.WasmJsSteppingTestAdditionalSourceProvider
 
 abstract class AbstractFirWasmTest(
     targetPlatform: TargetPlatform,
@@ -130,6 +131,7 @@ open class AbstractFirWasmJsSteppingTest : AbstractFirWasmJsTest(
 
     override fun TestConfigurationBuilder.configuration() {
         commonConfigurationForWasmBlackBoxCodegenTest()
+        useAdditionalSourceProviders(::WasmJsSteppingTestAdditionalSourceProvider)
         defaultDirectives {
             +WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP
             +WasmEnvironmentConfigurationDirectives.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES
