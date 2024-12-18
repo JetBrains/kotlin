@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.attributes.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibFragmentPlatformAttribute
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
+import org.jetbrains.kotlin.gradle.utils.setAttribute
 
 internal val UklibConsumptionSetupAction = KotlinProjectSetupAction {
     when (project.kotlinPropertiesProvider.uklibResolutionStrategy) {
@@ -56,12 +56,14 @@ private fun Project.allowPlatformCompilationsToResolvePlatformCompilationArtifac
         }
 
         dependencies.registerTransform(UnzippedUklibToPlatformCompilationTransform::class.java) {
-            it.from
-                .attribute(uklibStateAttribute, uklibStateUnzipped)
-                .attribute(uklibTargetAttributeAttribute, uklibTargetAttributeUnknown)
-            it.to
-                .attribute(uklibStateAttribute, uklibStateUnzipped)
-                .attribute(uklibTargetAttributeAttribute, destinationAttribute.safeToConsume())
+            with(it.from) {
+                setAttribute(uklibStateAttribute, uklibStateUnzipped)
+                setAttribute(uklibTargetAttributeAttribute, uklibTargetAttributeUnknown)
+            }
+            with(it.to) {
+                setAttribute(uklibStateAttribute, uklibStateUnzipped)
+                setAttribute(uklibTargetAttributeAttribute, destinationAttribute.safeToConsume())
+            }
 
             it.parameters.targetFragmentAttribute.set(destinationAttribute.safeToConsume())
             it.parameters.fakeTransform.set(kotlinPropertiesProvider.fakeUkibTransforms)
@@ -73,9 +75,9 @@ private fun Project.allowPlatformCompilationsToResolvePlatformCompilationArtifac
                 it.internal.configurations.compileDependencyConfiguration,
                 it.internal.configurations.runtimeDependencyConfiguration,
             ).forEach {
-                it.attributes {
-                    it.attribute(uklibStateAttribute, uklibStateUnzipped)
-                    it.attribute(uklibTargetAttributeAttribute, destinationAttribute.safeToConsume())
+                with(it.attributes) {
+                    setAttribute(uklibStateAttribute, uklibStateUnzipped)
+                    setAttribute(uklibTargetAttributeAttribute, destinationAttribute.safeToConsume())
                 }
             }
         }
@@ -84,15 +86,15 @@ private fun Project.allowPlatformCompilationsToResolvePlatformCompilationArtifac
 
 private fun Project.registerZippedUklibArtifact() {
     with(dependencies.artifactTypes.create(Uklib.UKLIB_EXTENSION).attributes) {
-        attribute(uklibStateAttribute, uklibStateZipped)
-        attribute(uklibTargetAttributeAttribute, uklibTargetAttributeUnknown)
+        setAttribute(uklibStateAttribute, uklibStateZipped)
+        setAttribute(uklibTargetAttributeAttribute, uklibTargetAttributeUnknown)
     }
 }
 
 private fun Project.allowUklibsToUnzip() {
     dependencies.registerTransform(UnzipUklibTransform::class.java) {
-        it.from.attribute(uklibStateAttribute, uklibStateZipped)
-        it.to.attribute(uklibStateAttribute, uklibStateUnzipped)
+        it.from.setAttribute(uklibStateAttribute, uklibStateZipped)
+        it.to.setAttribute(uklibStateAttribute, uklibStateUnzipped)
         it.parameters.performUnzip.set(!kotlinPropertiesProvider.fakeUkibTransforms)
     }
 }
@@ -101,20 +103,20 @@ private fun Project.allowMetadataConfigurationsToResolveUnzippedUklib(
     sourceSets: NamedDomainObjectContainer<KotlinSourceSet>,
 ) {
     sourceSets.configureEach {
-        with(it.internal.resolvableMetadataConfiguration) {
-            attributes {
-                it.attribute(uklibStateAttribute, uklibStateUnzipped)
-                it.attribute(uklibTargetAttributeAttribute, KotlinPlatformType.common.name)
-            }
+        with(it.internal.resolvableMetadataConfiguration.attributes) {
+            setAttribute(uklibStateAttribute, uklibStateUnzipped)
+            setAttribute(uklibTargetAttributeAttribute, KotlinPlatformType.common.name)
         }
     }
     dependencies.registerTransform(UnzippedUklibToMetadataCompilationTransform::class.java) {
-        it.from
-            .attribute(uklibStateAttribute, uklibStateUnzipped)
-            .attribute(uklibTargetAttributeAttribute, uklibTargetAttributeUnknown)
-        it.to
-            .attribute(uklibStateAttribute, uklibStateUnzipped)
-            .attribute(uklibTargetAttributeAttribute, KotlinPlatformType.common.name)
+        with(it.from) {
+            setAttribute(uklibStateAttribute, uklibStateUnzipped)
+            setAttribute(uklibTargetAttributeAttribute, uklibTargetAttributeUnknown)
+        }
+        with(it.to) {
+            setAttribute(uklibStateAttribute, uklibStateUnzipped)
+            setAttribute(uklibTargetAttributeAttribute, KotlinPlatformType.common.name)
+        }
     }
 }
 
