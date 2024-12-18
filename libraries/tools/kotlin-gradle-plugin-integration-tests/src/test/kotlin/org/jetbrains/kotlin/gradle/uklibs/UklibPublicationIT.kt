@@ -422,6 +422,55 @@ class UklibPublicationIT : KGPBaseTest() {
         )
     }
 
+    @GradleTest
+    fun `uklib publication layout - with jvm target`(
+        gradleVersion: GradleVersion,
+    ) {
+        val producer = publishUklib(
+            gradleVersion = gradleVersion,
+        ) {
+            jvm()
+            sourceSets.commonMain.get().compileSource("class Common")
+        }.publishedProject
+
+        val unpackedJar = producer.repository.resolve("jarContents").toPath()
+        unzip(
+            producer.jar.toPath(),
+            unpackedJar,
+            ""
+        )
+
+        assertFileExists(unpackedJar.resolve("Common.class"))
+        // Make sure we don't collide with psm jar
+        assertFileExists(producer.psmJar)
+    }
+
+    @GradleTest
+    fun `uklib publication layout - without jvm target`(
+        gradleVersion: GradleVersion,
+    ) {
+        val producer = publishUklib(
+            gradleVersion = gradleVersion,
+        ) {
+            iosArm64()
+            sourceSets.commonMain.get().compileSource("class Common")
+        }.publishedProject
+
+        assertFileExists(producer.jar)
+
+        val unpackedJar = producer.repository.resolve("jarContents").toPath()
+        unzip(
+            producer.jar.toPath(),
+            unpackedJar,
+            ""
+        )
+
+        assertEquals(
+            "META-INF",
+            unpackedJar.listDirectoryEntries().single().name,
+        )
+    }
+
     @kotlinx.serialization.Serializable
     data class Fragment(
         val identifier: String,

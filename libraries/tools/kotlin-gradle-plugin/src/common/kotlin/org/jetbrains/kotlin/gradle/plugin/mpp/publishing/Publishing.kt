@@ -12,9 +12,11 @@ import org.gradle.api.publish.PublicationContainer
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
+import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.UklibPomDependenciesRewriter
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.locateOrRegisterArchiveUklibTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.locateOrStubJvmJarTask
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -22,6 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetComponentWithPublication
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.utils.*
 
@@ -87,7 +90,7 @@ private fun MavenPublication.configureRootComponentForUklibPublication(
         UklibPomDependenciesRewriter().rewriteDependencies(it, scopeRewritingMapping.get())
     }
     project.launch {
-        // FIXME: We also need to put jvm jar here and maybe stub it when the jvm target is not registered
+        artifact(project.locateOrStubJvmJarTask())
         artifact(project.locateOrRegisterArchiveUklibTask()) { artifact ->
             artifact.extension = Uklib.UKLIB_EXTENSION
         }
