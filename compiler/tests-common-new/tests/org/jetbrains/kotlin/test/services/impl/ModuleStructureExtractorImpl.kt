@@ -218,28 +218,6 @@ class ModuleStructureExtractorImpl(
                         currentFileName = "$currentModuleName.kts"
                     }
                 }
-                ModuleStructureDirectives.DEPENDENCY,
-                ModuleStructureDirectives.DEPENDS_ON -> {
-                    val name = values.first() as String
-                    val kind = values.getOrNull(1)?.let { valueOfOrNull(it as String) } ?: defaultsProvider.defaultDependencyKind
-                    val relation = when (directive) {
-                        ModuleStructureDirectives.DEPENDENCY -> DependencyRelation.RegularDependency
-                        ModuleStructureDirectives.DEPENDS_ON -> DependencyRelation.DependsOnDependency
-                        else -> error("Should not be here")
-                    }
-                    dependenciesOfCurrentModule.add(DependencyDescription(name, kind, relation))
-                }
-                ModuleStructureDirectives.TARGET_FRONTEND -> {
-                    val name = values.singleOrNull() as? String? ?: assertions.fail {
-                        "Target frontend specified incorrectly\nUsage: ${directive.description}"
-                    }
-                    currentModuleFrontendKind = FrontendKinds.fromString(name) ?: assertions.fail {
-                        "Unknown frontend: $name"
-                    }
-                }
-                ModuleStructureDirectives.TARGET_BACKEND_KIND -> {
-                    currentModuleTargetBackend = values.single() as TargetBackend
-                }
                 ModuleStructureDirectives.FILE -> {
                     if (currentFileName != null) {
                         finishFile(lineNumber)
