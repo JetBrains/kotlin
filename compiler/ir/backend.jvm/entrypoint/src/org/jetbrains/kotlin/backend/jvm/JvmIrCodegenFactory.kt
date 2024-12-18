@@ -103,7 +103,7 @@ open class JvmIrCodegenFactory(
         }
     }
 
-    data class JvmIrBackendInput(
+    data class BackendInput(
         val irModuleFragment: IrModuleFragment,
         val irBuiltIns: IrBuiltIns,
         val symbolTable: SymbolTable,
@@ -112,15 +112,15 @@ open class JvmIrCodegenFactory(
         val backendExtension: JvmBackendExtension,
         val pluginContext: IrPluginContext?,
         val notifyCodegenStart: () -> Unit,
-    ) : CodegenFactory.BackendInput
+    )
 
-    private data class JvmIrCodegenInput(
-        override val state: GenerationState,
+    data class CodegenInput(
+        val state: GenerationState,
         val context: JvmBackendContext,
         val module: IrModuleFragment,
         val allBuiltins: List<IrFile>,
         val notifyCodegenStart: () -> Unit,
-    ) : CodegenFactory.CodegenInput
+    )
 
     fun convertAndGenerate(files: Collection<KtFile>, state: GenerationState, bindingContext: BindingContext) {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
@@ -137,7 +137,7 @@ open class JvmIrCodegenFactory(
     }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
-    override fun convertToIr(input: CodegenFactory.IrConversionInput): JvmIrBackendInput {
+    fun convertToIr(input: CodegenFactory.IrConversionInput): BackendInput {
         val enableIdSignatures =
             input.configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES) ||
                     input.configuration[JVMConfigurationKeys.SERIALIZE_IR, JvmSerializeIrMode.NONE] != JvmSerializeIrMode.NONE ||
@@ -270,7 +270,7 @@ open class JvmIrCodegenFactory(
                 ?: error("BindingContext should be cleanable in JVM IR to avoid leaking memory: ${input.bindingContext}")
             originalBindingContext.clear()
         }
-        return JvmIrBackendInput(
+        return BackendInput(
             irModuleFragment,
             psi2irContext.irBuiltIns,
             symbolTable,
@@ -291,12 +291,10 @@ open class JvmIrCodegenFactory(
         return result.toList()
     }
 
-    override fun getModuleChunkBackendInput(
-        wholeBackendInput: CodegenFactory.BackendInput,
-        sourceFiles: Collection<KtFile>,
-    ): JvmIrBackendInput {
-        wholeBackendInput as JvmIrBackendInput
-
+    // Extracts a part of the BackendInput which corresponds only to the specified source files.
+    // This is needed to support cyclic module dependencies, which are allowed in JPS, where frontend and psi2ir is run on sources of all
+    // modules combined, and then backend is run on each individual module.
+    fun getModuleChunkBackendInput(wholeBackendInput: BackendInput, sourceFiles: Collection<KtFile>): BackendInput {
         val moduleChunk = sourceFiles.toSet()
         val wholeModule = wholeBackendInput.irModuleFragment
         val moduleCopy = IrModuleFragmentImpl(wholeModule.descriptor)
@@ -306,9 +304,14 @@ open class JvmIrCodegenFactory(
         return wholeBackendInput.copy(moduleCopy)
     }
 
-    override fun invokeLowerings(state: GenerationState, input: CodegenFactory.BackendInput): CodegenFactory.CodegenInput {
+    fun generateModule(state: GenerationState, input: BackendInput) {
+        val result = invokeLowerings(state, input)
+        invokeCodegen(result)
+    }
+
+    fun invokeLowerings(state: GenerationState, input: BackendInput): CodegenInput {
         val (irModuleFragment, irBuiltIns, symbolTable, irProviders, extensions, backendExtension, irPluginContext, notifyCodegenStart) =
-            input as JvmIrBackendInput
+            input
         val irSerializer = if (
             state.configuration.get(JVMConfigurationKeys.SERIALIZE_IR, JvmSerializeIrMode.NONE) != JvmSerializeIrMode.NONE
         )
@@ -340,11 +343,11 @@ open class JvmIrCodegenFactory(
 
         jvmLoweringPhases.invokeToplevel(state.configuration.phaseConfig ?: PhaseConfig(), context, irModuleFragment)
 
-        return JvmIrCodegenInput(state, context, irModuleFragment, allBuiltins, notifyCodegenStart)
+        return CodegenInput(state, context, irModuleFragment, allBuiltins, notifyCodegenStart)
     }
 
-    override fun invokeCodegen(input: CodegenFactory.CodegenInput) {
-        val (state, context, module, allBuiltins, notifyCodegenStart) = input as JvmIrCodegenInput
+    fun invokeCodegen(input: CodegenInput) {
+        val (state, context, module, allBuiltins, notifyCodegenStart) = input
 
         fun hasErrors() = (state.diagnosticReporter as? BaseDiagnosticsCollector)?.hasErrors == true
 
@@ -371,7 +374,7 @@ open class JvmIrCodegenFactory(
         //       and clear `JvmBackendContext.classCodegens`
         state.afterIndependentPart()
 
-        generateModuleMetadata(input)
+        generateModuleMetadata(input.context)
         if (state.config.languageVersionSettings.getFlag(JvmAnalysisFlags.outputBuiltinsMetadata)) {
             require(state.config.useFir) { "Stdlib is expected to be compiled by K2" }
             serializeBuiltinsMetadata(allBuiltins, context)
@@ -403,8 +406,7 @@ open class JvmIrCodegenFactory(
         }
     }
 
-    private fun generateModuleMetadata(result: CodegenFactory.CodegenInput) {
-        val backendContext = (result as JvmIrCodegenInput).context
+    private fun generateModuleMetadata(backendContext: JvmBackendContext) {
         val builder = JvmModuleProtoBuf.Module.newBuilder()
         val stringTable = StringTableImpl()
 
@@ -457,7 +459,7 @@ open class JvmIrCodegenFactory(
     ) {
         generateModule(
             state,
-            JvmIrBackendInput(
+            BackendInput(
                 irModuleFragment,
                 irPluginContext.irBuiltIns,
                 symbolTable,

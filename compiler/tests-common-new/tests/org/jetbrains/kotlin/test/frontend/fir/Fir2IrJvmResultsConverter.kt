@@ -90,7 +90,7 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
         // TODO: handle fir from light tree
         val sourceFiles = inputArtifact.mainFirFiles.mapNotNull { it.value.sourceFile }
 
-        val backendInput = JvmIrCodegenFactory.JvmIrBackendInput(
+        val backendInput = JvmIrCodegenFactory.BackendInput(
             fir2IrResult.irModuleFragment,
             fir2IrResult.irBuiltIns,
             fir2IrResult.symbolTable,

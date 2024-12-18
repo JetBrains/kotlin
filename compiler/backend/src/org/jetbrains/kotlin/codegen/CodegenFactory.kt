@@ -27,22 +27,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 
 interface CodegenFactory {
-    fun convertToIr(input: IrConversionInput): BackendInput
-
-    // Extracts a part of the BackendInput which corresponds only to the specified source files.
-    // This is needed to support cyclic module dependencies, which are allowed in JPS, where frontend and psi2ir is run on sources of all
-    // modules combined, and then backend is run on each individual module.
-    fun getModuleChunkBackendInput(wholeBackendInput: BackendInput, sourceFiles: Collection<KtFile>): BackendInput
-
-    fun invokeLowerings(state: GenerationState, input: BackendInput): CodegenInput
-
-    fun invokeCodegen(input: CodegenInput)
-
-    fun generateModule(state: GenerationState, input: BackendInput) {
-        val result = invokeLowerings(state, input)
-        invokeCodegen(result)
-    }
-
     class IrConversionInput(
         val project: Project,
         val files: Collection<KtFile>,
@@ -66,14 +50,6 @@ interface CodegenFactory {
                     )
                 }
         }
-    }
-
-    // These opaque interfaces are needed to transfer the result of psi2ir to lowerings to codegen.
-    // Hopefully this can be refactored/simplified once the old JVM backend code is removed.
-    interface BackendInput
-
-    interface CodegenInput {
-        val state: GenerationState
     }
 
     companion object {

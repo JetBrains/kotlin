@@ -10,10 +10,14 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.buildFile
 import org.jetbrains.kotlin.cli.common.moduleChunk
-import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.toBackendInput
-import org.jetbrains.kotlin.cli.pipeline.*
-import org.jetbrains.kotlin.codegen.CodegenFactory
+import org.jetbrains.kotlin.cli.jvm.compiler.createConfigurationForModule
+import org.jetbrains.kotlin.cli.jvm.compiler.getSourceFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.writeOutputsIfNeeded
+import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
+import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
+import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.useLightTree
@@ -49,7 +53,7 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBin
 
         val chunk = configuration.moduleChunk!!.modules
         val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
-        val codegenInputs = ArrayList<CodegenFactory.CodegenInput>(chunk.size)
+        val codegenInputs = ArrayList<JvmIrCodegenFactory.CodegenInput>(chunk.size)
 
         val buildFile = configuration.buildFile
         for (module in chunk) {

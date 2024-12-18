@@ -45,7 +45,7 @@ class K1AnalysisResult(
 
 private class K1FrontendResult(
     val state: GenerationState,
-    val backendInput: JvmIrCodegenFactory.JvmIrBackendInput,
+    val backendInput: JvmIrCodegenFactory.BackendInput,
     val codegenFactory: JvmIrCodegenFactory,
 )
 
