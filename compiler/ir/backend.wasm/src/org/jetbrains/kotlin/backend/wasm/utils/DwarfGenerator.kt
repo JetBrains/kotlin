@@ -31,7 +31,7 @@ class DwarfGenerator : DebugInformationGenerator {
         val sourceLocation = location.sourceLocation as? SourceLocation.Location ?: return
         val function = Subprogram(dwarf.strings.add(name), sourceLocation.fileId, location)
 
-        sourceLocationMappings.add(SourceLocationMappingWithPositionInFunction(location, isFunctionStart = true))
+        sourceLocationMappings.add(SourceLocationMappingWithPositionInFunction(location, PositionInFunction.START))
 
         subprogramStack.push(function)
         dwarf.mainCompileUnit.children.add(function)
@@ -40,7 +40,7 @@ class DwarfGenerator : DebugInformationGenerator {
     override fun endFunction(location: SourceLocationMapping) {
         if (location.sourceLocation !is SourceLocation.Location) return
         val function = subprogramStack.pop()
-        sourceLocationMappings.add(SourceLocationMappingWithPositionInFunction(location, isFunctionEnd = true))
+        sourceLocationMappings.add(SourceLocationMappingWithPositionInFunction(location, PositionInFunction.END))
         function.endGeneratedLocation = location
     }
 
@@ -48,8 +48,8 @@ class DwarfGenerator : DebugInformationGenerator {
         var prev: SourceLocation.Location? = null
 
         for ((index, sourceLocationMapping) in sourceLocationMappings.withIndex()) {
-            val (mapping, isFunctionStart, isFunctionEnd) = sourceLocationMapping
-            val sourceLocation = mapping.sourceLocation.takeIf { it != prev || isFunctionEnd } as? SourceLocation.Location ?: continue
+            val (mapping, position) = sourceLocationMapping
+            val sourceLocation = mapping.sourceLocation.takeIf { it != prev || position == PositionInFunction.END } as? SourceLocation.Location ?: continue
             val previousSourceLocationMapping = sourceLocationMappings.getOrNull(index - 1)?.sourceLocationMapping
 
             if (previousSourceLocationMapping != null && previousSourceLocationMapping.sourceLocation !is SourceLocation.Location) {
@@ -64,10 +64,10 @@ class DwarfGenerator : DebugInformationGenerator {
                 sourceLocation.column,
             )
 
-            when {
-                isFunctionStart -> dwarf.lines.startFunction(row)
-                isFunctionEnd -> dwarf.lines.endFunction(row)
-                else -> dwarf.lines.add(row)
+            when (position) {
+                PositionInFunction.START -> dwarf.lines.startFunction(row)
+                PositionInFunction.END -> dwarf.lines.endFunction(row)
+                PositionInFunction.BODY -> dwarf.lines.add(row)
             }
 
             prev = sourceLocation
@@ -97,7 +97,12 @@ class DwarfGenerator : DebugInformationGenerator {
 
     private data class SourceLocationMappingWithPositionInFunction(
         val sourceLocationMapping: SourceLocationMapping,
-        val isFunctionStart: Boolean = false,
-        val isFunctionEnd: Boolean = false
+        val positionInFunction: PositionInFunction = PositionInFunction.BODY,
     )
+
+    private enum class PositionInFunction {
+        START,
+        BODY,
+        END
+    }
 }

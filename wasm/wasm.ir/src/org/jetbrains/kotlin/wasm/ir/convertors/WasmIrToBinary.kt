@@ -277,7 +277,7 @@ class WasmIrToBinary(
     }
 
     private fun getCurrentSourceLocationMapping(sourceLocation: SourceLocation): SourceLocationMappingToBinary =
-        SourceLocationMappingToBinary(sourceLocation, offsets + Box(b.written))
+        SourceLocationMappingToBinary(sourceLocation, offsets + Box(b.written), ::codeSectionOffset)
 
     private fun appendImmediate(x: WasmImmediate) {
         when (x) {
@@ -640,11 +640,12 @@ class WasmIrToBinary(
     }
 
 
-    private inner class SourceLocationMappingToBinary(
+    private class SourceLocationMappingToBinary(
         override val sourceLocation: SourceLocation,
         // Offsets in generating binary, initialized lazily. Since blocks has as a prefix variable length number encoding its size
         // we can't calculate absolute offsets inside those blocks until we generate whole block and generate size.
         private val offsets: List<Box>,
+        private val codeSectionOffsetProvider: () -> Int
     ) : SourceLocationMapping() {
         override val generatedLocation: SourceLocation.Location by lazy {
             SourceLocation.Location(
@@ -659,7 +660,7 @@ class WasmIrToBinary(
         }
 
         override val generatedLocationRelativeToCodeSection: SourceLocation.Location by lazy {
-            generatedLocation.copy(column = generatedLocation.column - codeSectionOffset)
+            generatedLocation.copy(column = generatedLocation.column - codeSectionOffsetProvider())
         }
     }
 }
