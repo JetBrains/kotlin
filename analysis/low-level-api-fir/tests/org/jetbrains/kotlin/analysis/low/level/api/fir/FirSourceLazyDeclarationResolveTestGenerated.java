@@ -1252,6 +1252,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     public void testDeprecatedDanglingAnnotationWithNestedDeclarations() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/deprecatedDanglingAnnotationWithNestedDeclarations.kt");
     }
+
+    @Test
+    @TestMetadata("parameterNoType.kt")
+    public void testParameterNoType() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/parameterNoType.kt");
+    }
   }
 
   @Nested
