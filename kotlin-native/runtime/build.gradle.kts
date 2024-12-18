@@ -592,18 +592,11 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
             "-Xmanifest-native-targets=${platformManager.targetValues.joinToString(separator = ",") { it.visibleName }}",
     ))
 
-    // TODO(KT-72747): Make it compatible with CC
-    notCompatibleWithConfigurationCache("""
-        Could not load the value of field `values` of `org.gradle.api.internal.collections.SortedSetElementSource` bean
-        found in field `store` of `org.gradle.api.internal.FactoryNamedDomainObjectContainer` bean
-        found in field `sourceSets` of task `:kotlin-native:runtime:stdlibBuildTask` of type `org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCompileTask`.
-    """.trimIndent())
-
     val common by sourceSets.creating {
         srcDir(project(":kotlin-stdlib").file("common/src/kotlin"))
         srcDir(project(":kotlin-stdlib").file("common/src/generated"))
         srcDir(project(":kotlin-stdlib").file("unsigned/src"))
-        srcDir(project(":kotlin-stdlib").file("src"))
+        srcDir(project(":kotlin-stdlib").files("src").builtBy(":prepare:build.version:writeStdlibVersion"))
         srcDir(project(":kotlin-test").files("annotations-common/src/main/kotlin"))
         srcDir(project(":kotlin-test").files("common/src/main/kotlin"))
     }
@@ -618,8 +611,6 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
         srcDir(project(":kotlin-native:Interop:JsRuntime").file("src/main/kotlin"))
         srcDir(project.file("src/main/kotlin"))
     }
-
-    dependsOn(":prepare:build.version:writeStdlibVersion")
 }
 
 val nativeStdlib by tasks.registering(Sync::class) {
