@@ -299,8 +299,8 @@ open class FunctionInlining(
             val inlinedBlock = IrInlinedFunctionBlockImpl(
                 startOffset = callSite.startOffset,
                 endOffset = callSite.endOffset,
-                declarationStartOffset = inlineFunctionToStore.startOffset,
-                declarationEndOffset = inlineFunctionToStore.endOffset,
+                inlinedFunctionStartOffset = inlineFunctionToStore.startOffset,
+                inlinedFunctionEndOffset = inlineFunctionToStore.endOffset,
                 type = returnType,
                 inlineFunctionSymbol = inlineFunctionToStore.symbol,
                 fileEntry = inlineFunctionToStore.fileEntry,
