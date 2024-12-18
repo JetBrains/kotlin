@@ -71,7 +71,7 @@ FILE fqName:<root> fileName:/test.kt
         CALL 'public open fun output (x: @[EnhancedNullability] T of <root>.JavaClass1): kotlin.Unit declared in <root>.JavaClass1.B' type=kotlin.Unit origin=null
           $this: GET_VAR 'b: <root>.JavaClass1.B<TT of <root>.Test_1> declared in <root>.Test_1.test' type=<root>.JavaClass1.B<TT of <root>.Test_1> origin=null
           x: CALL 'public final fun <get-x> (): TT of <root>.Test_1 declared in <root>.Test_1' type=TT of <root>.Test_1 origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Test_1<TT of <root>.Test_1> declared in <root>.Test_1.test' type=<root>.Test_1<TT of <root>.Test_1> origin=null
+            $this: GET_VAR '<this>: <root>.Test_1<TT of <root>.Test_1> declared in <root>.Test_1.test' type=<root>.Test_1<TT of <root>.Test_1> origin=IMPLICIT_ARGUMENT
   CLASS CLASS name:Test_2 modality:FINAL visibility:public superTypes:[<root>.JavaClass2<TT of <root>.Test_2, <root>.Inv<TT of <root>.Test_2>>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test_2<TT of <root>.Test_2>
     TYPE_PARAMETER name:TT index:0 variance: superTypes:[kotlin.Any?] reified:false

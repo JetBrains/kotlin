@@ -10,4 +10,4 @@ MODULE_FRAGMENT
         EXPRESSION_BODY
           BLOCK type=kotlin.String origin=null
             CALL 'public final fun <get-boo> (): kotlin.String declared in <root>.ContextKt' type=kotlin.String origin=GET_PROPERTY
-              $receiver: GET_VAR 'p0: <root>.Aaa declared in <root>.CodeFragment.run' type=<root>.Aaa origin=null
+              $receiver: GET_VAR 'p0: <root>.Aaa declared in <root>.CodeFragment.run' type=<root>.Aaa origin=IMPLICIT_ARGUMENT

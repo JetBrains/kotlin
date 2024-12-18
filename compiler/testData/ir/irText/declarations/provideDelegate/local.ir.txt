@@ -37,7 +37,7 @@ FILE fqName:<root> fileName:/local.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun getValue (thisRef: kotlin.Any?, property: kotlin.Any?): kotlin.String declared in <root>.Delegate'
           CALL 'public final fun <get-value> (): kotlin.String declared in <root>.Delegate' type=kotlin.String origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Delegate declared in <root>.Delegate.getValue' type=<root>.Delegate origin=null
+            $this: GET_VAR '<this>: <root>.Delegate declared in <root>.Delegate.getValue' type=<root>.Delegate origin=IMPLICIT_ARGUMENT
   CLASS CLASS name:DelegateProvider modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DelegateProvider
     PROPERTY name:value visibility:public modality:FINAL [val]
@@ -77,7 +77,7 @@ FILE fqName:<root> fileName:/local.kt
         RETURN type=kotlin.Nothing from='public final fun provideDelegate (thisRef: kotlin.Any?, property: kotlin.Any?): <root>.Delegate declared in <root>.DelegateProvider'
           CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) declared in <root>.Delegate' type=<root>.Delegate origin=null
             value: CALL 'public final fun <get-value> (): kotlin.String declared in <root>.DelegateProvider' type=kotlin.String origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.DelegateProvider declared in <root>.DelegateProvider.provideDelegate' type=<root>.DelegateProvider origin=null
+              $this: GET_VAR '<this>: <root>.DelegateProvider declared in <root>.DelegateProvider.provideDelegate' type=<root>.DelegateProvider origin=IMPLICIT_ARGUMENT
   FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       LOCAL_DELEGATED_PROPERTY name:testMember type:kotlin.String flags:val

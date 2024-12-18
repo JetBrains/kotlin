@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/passingLambdaToContextualParam.kt
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> ($context_receiver_0: <root>.C): kotlin.String declared in <root>.box'
                   CALL 'public final fun <get-result> (): kotlin.String declared in <root>.C' type=kotlin.String origin=GET_PROPERTY
-                    $this: GET_VAR '$context_receiver_0: <root>.C declared in <root>.box.<anonymous>' type=<root>.C origin=null
+                    $this: GET_VAR '$context_receiver_0: <root>.C declared in <root>.box.<anonymous>' type=<root>.C origin=IMPLICIT_ARGUMENT
   FUN name:contextual visibility:public modality:FINAL <> (f:kotlin.Function1<<root>.C, kotlin.String>) returnType:kotlin.String
     VALUE_PARAMETER name:f index:0 type:kotlin.Function1<<root>.C, kotlin.String>
     BLOCK_BODY

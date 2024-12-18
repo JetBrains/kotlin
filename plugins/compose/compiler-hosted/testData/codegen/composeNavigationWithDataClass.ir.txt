@@ -223,7 +223,7 @@ MODULE_FRAGMENT
                                   $receiver: VALUE_PARAMETER name:$this$NavHost type:androidx.navigation.NavGraphBuilder
                                   BLOCK_BODY
                                     CALL 'public final fun composable (route: kotlin.String, content: @[ExtensionFunctionType] kotlin.Function4<androidx.compose.animation.AnimatedContentScope, androidx.navigation.NavBackStackEntry, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>): kotlin.Unit declared in androidx.navigation.compose' type=kotlin.Unit origin=null
-                                      $receiver: GET_VAR '$this$NavHost: androidx.navigation.NavGraphBuilder declared in home.ReplyNavHost.<anonymous>.<anonymous>' type=androidx.navigation.NavGraphBuilder origin=null
+                                      $receiver: GET_VAR '$this$NavHost: androidx.navigation.NavGraphBuilder declared in home.ReplyNavHost.<anonymous>.<anonymous>' type=androidx.navigation.NavGraphBuilder origin=IMPLICIT_ARGUMENT
                                       route: GET_VAR 'inbox: kotlin.String declared in home.ReplyNavHost' type=kotlin.String origin=null
                                       content: CALL 'public final fun composableLambdaInstance (key: kotlin.Int, tracked: kotlin.Boolean, block: kotlin.Any): androidx.compose.runtime.internal.ComposableLambda declared in androidx.compose.runtime.internal' type=androidx.compose.runtime.internal.ComposableLambda origin=null
                                         key: CONST Int type=kotlin.Int value=1233631192

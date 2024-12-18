@@ -55,7 +55,7 @@ FILE fqName:foo fileName:/delegationEvaluationOrder1.kt
           STRING_CONCATENATION type=kotlin.String
             CONST String type=kotlin.String value="Base: "
             CALL 'public final fun <get-s> (): kotlin.String declared in foo.BaseImpl' type=kotlin.String origin=GET_PROPERTY
-              $this: GET_VAR '<this>: foo.BaseImpl declared in foo.BaseImpl.foo' type=foo.BaseImpl origin=null
+              $this: GET_VAR '<this>: foo.BaseImpl declared in foo.BaseImpl.foo' type=foo.BaseImpl origin=IMPLICIT_ARGUMENT
             CONST String type=kotlin.String value=":"
             GET_VAR 'x: kotlin.String declared in foo.BaseImpl.foo' type=kotlin.String origin=null
   CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[foo.DerivedBase; foo.Base]

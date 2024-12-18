@@ -35,6 +35,6 @@ MODULE_FRAGMENT
         $this: VALUE_PARAMETER name:<this> type:<root>.Child
         BLOCK_BODY
           CALL 'protected/*protected and package*/ open fun onCreate (): kotlin.Unit declared in p2.Parent' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:Parent modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit origin=null
-            $this: GET_VAR '<this>: <root>.Child declared in <root>.Child.onCreate' type=<root>.Child origin=null
+            $this: GET_VAR '<this>: <root>.Child declared in <root>.Child.onCreate' type=<root>.Child origin=IMPLICIT_ARGUMENT
           CALL 'private final fun bar (): kotlin.Unit declared in <root>.Child' type=kotlin.Unit origin=null
-            $this: GET_VAR '<this>: <root>.Child declared in <root>.Child.onCreate' type=<root>.Child origin=null
+            $this: GET_VAR '<this>: <root>.Child declared in <root>.Child.onCreate' type=<root>.Child origin=IMPLICIT_ARGUMENT

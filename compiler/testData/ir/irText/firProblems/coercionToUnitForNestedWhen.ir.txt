@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/coercionToUnitForNestedWhen.kt
     BLOCK_BODY
       VAR name:ch type:kotlin.Char? [var]
         CALL 'private final fun nextChar (): kotlin.Char? declared in <root>' type=kotlin.Char? origin=null
-          $receiver: GET_VAR '<this>: java.io.Reader declared in <root>.consumeRestOfQuotedSequence' type=java.io.Reader origin=null
+          $receiver: GET_VAR '<this>: java.io.Reader declared in <root>.consumeRestOfQuotedSequence' type=java.io.Reader origin=IMPLICIT_ARGUMENT
       WHILE label=null origin=WHILE_LOOP
         condition: WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/coercionToUnitForNestedWhen.kt
                 BLOCK type=@[FlexibleNullability] java.lang.StringBuilder? origin=SAFE_CALL
                   VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Char? [val]
                     CALL 'private final fun nextChar (): kotlin.Char? declared in <root>' type=kotlin.Char? origin=null
-                      $receiver: GET_VAR '<this>: java.io.Reader declared in <root>.consumeRestOfQuotedSequence' type=java.io.Reader origin=null
+                      $receiver: GET_VAR '<this>: java.io.Reader declared in <root>.consumeRestOfQuotedSequence' type=java.io.Reader origin=IMPLICIT_ARGUMENT
                   WHEN type=@[FlexibleNullability] java.lang.StringBuilder? origin=null
                     BRANCH
                       if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
@@ -60,7 +60,7 @@ FILE fqName:<root> fileName:/coercionToUnitForNestedWhen.kt
                   p0: GET_VAR 'var ch: kotlin.Char? declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Char? origin=null
           SET_VAR 'var ch: kotlin.Char? declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Unit origin=EQ
             CALL 'private final fun nextChar (): kotlin.Char? declared in <root>' type=kotlin.Char? origin=null
-              $receiver: GET_VAR '<this>: java.io.Reader declared in <root>.consumeRestOfQuotedSequence' type=java.io.Reader origin=null
+              $receiver: GET_VAR '<this>: java.io.Reader declared in <root>.consumeRestOfQuotedSequence' type=java.io.Reader origin=IMPLICIT_ARGUMENT
   FUN name:nextChar visibility:private modality:FINAL <> ($receiver:java.io.Reader) returnType:kotlin.Char?
     $receiver: VALUE_PARAMETER name:<this> type:java.io.Reader
     BLOCK_BODY
@@ -70,7 +70,7 @@ FILE fqName:<root> fileName:/coercionToUnitForNestedWhen.kt
             CALL 'public final fun takeUnless <T> (predicate: kotlin.Function1<T of kotlin.takeUnless, kotlin.Boolean>): T of kotlin.takeUnless? declared in kotlin' type=kotlin.Int? origin=null
               <T>: kotlin.Int
               $receiver: CALL 'public open fun read (): kotlin.Int declared in java.io.Reader' type=kotlin.Int origin=null
-                $this: GET_VAR '<this>: java.io.Reader declared in <root>.nextChar' type=java.io.Reader origin=null
+                $this: GET_VAR '<this>: java.io.Reader declared in <root>.nextChar' type=java.io.Reader origin=IMPLICIT_ARGUMENT
               predicate: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Boolean> origin=LAMBDA
                 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Boolean
                   VALUE_PARAMETER name:it index:0 type:kotlin.Int

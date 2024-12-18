@@ -38,16 +38,16 @@ FILE fqName:<root> fileName:/kt44855.kt
           TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
             TYPE_OP type=<root>.Child origin=CAST typeOperand=<root>.Child
               CALL 'public final fun <get-x> (): <root>.Parent? declared in <root>.Child' type=<root>.Parent? origin=GET_PROPERTY
-                $this: GET_VAR '<this>: <root>.Child declared in <root>.Child' type=<root>.Child origin=null
+                $this: GET_VAR '<this>: <root>.Child declared in <root>.Child' type=<root>.Child origin=IMPLICIT_ARGUMENT
           VAR name:q type:@[FlexibleNullability] kotlin.String? [val]
             GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:qqq type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/ declared in <root>.Parent' type=@[FlexibleNullability] kotlin.String? superQualifierSymbol=<root>.Parent origin=null
               receiver: TYPE_OP type=<root>.Child origin=IMPLICIT_CAST typeOperand=<root>.Child
                 CALL 'public final fun <get-x> (): <root>.Parent? declared in <root>.Child' type=<root>.Parent? origin=GET_PROPERTY
-                  $this: GET_VAR '<this>: <root>.Child declared in <root>.Child' type=<root>.Child origin=null
+                  $this: GET_VAR '<this>: <root>.Child declared in <root>.Child' type=<root>.Child origin=IMPLICIT_ARGUMENT
           SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:qqq type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/ declared in <root>.Parent' type=kotlin.Unit superQualifierSymbol=<root>.Parent origin=EQ
             receiver: TYPE_OP type=<root>.Child origin=IMPLICIT_CAST typeOperand=<root>.Child
               CALL 'public final fun <get-x> (): <root>.Parent? declared in <root>.Child' type=<root>.Parent? origin=GET_PROPERTY
-                $this: GET_VAR '<this>: <root>.Child declared in <root>.Child' type=<root>.Child origin=null
+                $this: GET_VAR '<this>: <root>.Child declared in <root>.Child' type=<root>.Child origin=IMPLICIT_ARGUMENT
             value: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
               $this: TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
                 GET_VAR 'val q: @[FlexibleNullability] kotlin.String? declared in <root>.Child.QQQ.z' type=@[FlexibleNullability] kotlin.String? origin=null

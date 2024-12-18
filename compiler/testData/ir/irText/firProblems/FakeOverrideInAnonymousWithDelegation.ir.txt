@@ -49,7 +49,7 @@ FILE fqName:<root> fileName:/FakeOverrideInAnonymousWithDelegation.kt
               FIELD DELEGATE name:$$delegate_0 type:<root>.Wrapper.dummy.<no name provided> visibility:private [final]
                 EXPRESSION_BODY
                   CALL 'private final fun <get-dummy> (): <root>.Wrapper.dummy.<no name provided> declared in <root>.Wrapper' type=<root>.Wrapper.dummy.<no name provided> origin=GET_PROPERTY
-                    $this: GET_VAR '<this>: <root>.Wrapper declared in <root>.Wrapper' type=<root>.Wrapper origin=null
+                    $this: GET_VAR '<this>: <root>.Wrapper declared in <root>.Wrapper' type=<root>.Wrapper origin=IMPLICIT_ARGUMENT
               CONSTRUCTOR visibility:public <> () returnType:<root>.Wrapper.bar.<no name provided> [primary]
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'

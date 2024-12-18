@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 class RootBus: MessageBusImpl()
 
 open class MessageBusImpl {

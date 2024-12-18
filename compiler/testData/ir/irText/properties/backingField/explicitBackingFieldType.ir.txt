@@ -37,11 +37,11 @@ FILE fqName:<root> fileName:/explicitBackingFieldType.kt
                 if: CALL 'public final fun greater (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GT
                   arg0: CALL 'public abstract fun toInt (): kotlin.Int declared in kotlin.Number' type=kotlin.Int origin=null
                     $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:invertedTypes type:kotlin.Number visibility:private' type=kotlin.Number origin=null
-                      receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-invertedTypes>' type=<root>.A origin=null
+                      receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-invertedTypes>' type=<root>.A origin=IMPLICIT_ARGUMENT
                   arg1: CONST Int type=kotlin.Int value=10
                 then: CALL 'public abstract fun toInt (): kotlin.Int declared in kotlin.Number' type=kotlin.Int origin=null
                   $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:invertedTypes type:kotlin.Number visibility:private' type=kotlin.Number origin=null
-                    receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-invertedTypes>' type=<root>.A origin=null
+                    receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-invertedTypes>' type=<root>.A origin=IMPLICIT_ARGUMENT
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Int type=kotlin.Int value=10
@@ -63,7 +63,7 @@ FILE fqName:<root> fileName:/explicitBackingFieldType.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-p> (): kotlin.Int declared in <root>.A'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-p>' type=<root>.A origin=null
+              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-p>' type=<root>.A origin=IMPLICIT_ARGUMENT
     CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'

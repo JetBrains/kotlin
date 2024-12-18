@@ -11,7 +11,7 @@ FILE fqName:<root> fileName:/localClassUsedBeforeDeclaration.kt
                   FIELD PROPERTY_BACKING_FIELD name:a type:<root>.box.<no name provided>.A visibility:private [final]
                     EXPRESSION_BODY
                       CONSTRUCTOR_CALL 'public constructor <init> (ok: kotlin.String) declared in <root>.box.<no name provided>.A' type=<root>.box.<no name provided>.A origin=null
-                        $outer: GET_VAR '<this>: <root>.box.<no name provided> declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=null
+                        $outer: GET_VAR '<this>: <root>.box.<no name provided> declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=IMPLICIT_ARGUMENT
                         ok: CONST String type=kotlin.String value="OK"
                   FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:FINAL <> ($this:<root>.box.<no name provided>) returnType:<root>.box.<no name provided>.A
                     correspondingProperty: PROPERTY name:a visibility:public modality:FINAL [val]

@@ -119,7 +119,7 @@ FILE fqName:<root> fileName:/enumEntryReferenceFromEnumEntryClass.kt
               $this: GET_VAR '<this>: <root>.MyEnum.Z declared in <root>.MyEnum.Z.bar' type=<root>.MyEnum.Z origin=null
               <set-?>: CONST Int type=kotlin.Int value=1
             CALL 'public final fun foo (): kotlin.Unit declared in <root>.MyEnum.Z' type=kotlin.Unit origin=null
-              $this: GET_VAR '<this>: <root>.MyEnum.Z declared in <root>.MyEnum.Z.bar' type=<root>.MyEnum.Z origin=null
+              $this: GET_VAR '<this>: <root>.MyEnum.Z declared in <root>.MyEnum.Z.bar' type=<root>.MyEnum.Z origin=IMPLICIT_ARGUMENT
         FUN name:foo visibility:public modality:FINAL <> ($this:<root>.MyEnum.Z) returnType:kotlin.Unit
           $this: VALUE_PARAMETER name:<this> type:<root>.MyEnum.Z
           BLOCK_BODY

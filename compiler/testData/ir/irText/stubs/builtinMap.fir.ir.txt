@@ -28,7 +28,7 @@ FILE fqName:<root> fileName:/builtinMap.kt
                   BLOCK_BODY
                     TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                       CALL 'public open fun put (p0: @[EnhancedNullability] K of java.util.LinkedHashMap, p1: @[EnhancedNullability] V of java.util.LinkedHashMap): @[EnhancedNullability] V of java.util.LinkedHashMap? declared in java.util.LinkedHashMap' type=@[EnhancedNullability] V1 of <root>.plus? origin=null
-                        $this: GET_VAR '$this$apply: java.util.LinkedHashMap<@[FlexibleNullability] K1 of <root>.plus?, @[FlexibleNullability] V1 of <root>.plus?> declared in <root>.plus.<anonymous>' type=java.util.LinkedHashMap<@[FlexibleNullability] K1 of <root>.plus?, @[FlexibleNullability] V1 of <root>.plus?> origin=null
+                        $this: GET_VAR '$this$apply: java.util.LinkedHashMap<@[FlexibleNullability] K1 of <root>.plus?, @[FlexibleNullability] V1 of <root>.plus?> declared in <root>.plus.<anonymous>' type=java.util.LinkedHashMap<@[FlexibleNullability] K1 of <root>.plus?, @[FlexibleNullability] V1 of <root>.plus?> origin=IMPLICIT_ARGUMENT
                         p0: CALL 'public final fun <get-first> (): A of kotlin.Pair declared in kotlin.Pair' type=K1 of <root>.plus origin=GET_PROPERTY
                           $this: GET_VAR 'pair: kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> declared in <root>.plus' type=kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> origin=null
                         p1: CALL 'public final fun <get-second> (): B of kotlin.Pair declared in kotlin.Pair' type=V1 of <root>.plus origin=GET_PROPERTY

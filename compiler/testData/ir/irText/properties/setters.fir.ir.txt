@@ -44,7 +44,7 @@ FILE fqName:<root> fileName:/setters.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-foo> (): kotlin.Int declared in <root>.Bar'
             CALL 'public open fun <get-foo> (): kotlin.Int declared in <root>.Foo' superQualifier='CLASS CLASS name:Foo modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Bar declared in <root>.Bar.<get-foo>' type=<root>.Bar origin=null
+              $this: GET_VAR '<this>: <root>.Bar declared in <root>.Bar.<get-foo>' type=<root>.Bar origin=IMPLICIT_ARGUMENT
       FUN name:<set-foo> visibility:public modality:OPEN <> ($this:<root>.Bar, _:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:foo visibility:public modality:OPEN [var]
         overridden:

@@ -73,6 +73,7 @@ interface IrStatementOrigin {
         val PERCEQ by IrStatementOriginImpl
 
         val ARGUMENTS_REORDERING_FOR_CALL by IrStatementOriginImpl
+        val IMPLICIT_ARGUMENT by IrStatementOriginImpl
         val DESTRUCTURING_DECLARATION by IrStatementOriginImpl
 
         /**

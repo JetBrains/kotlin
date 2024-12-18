@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/javaInnerClass.kt
       FIELD PROPERTY_BACKING_FIELD name:test type:<root>.J.JInner visibility:private [final]
         EXPRESSION_BODY
           CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.J.JInner' type=<root>.J.JInner origin=null
-            $outer: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1' type=<root>.Test1 origin=null
+            $outer: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1' type=<root>.Test1 origin=IMPLICIT_ARGUMENT
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:<root>.J.JInner
         correspondingProperty: PROPERTY name:test visibility:public modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.Test1

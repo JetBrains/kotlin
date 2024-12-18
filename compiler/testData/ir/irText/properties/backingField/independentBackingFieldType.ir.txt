@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/independentBackingFieldType.kt
             CALL 'public open fun toInt (): kotlin.Int declared in kotlin.Double' type=kotlin.Int origin=null
               $this: CALL 'public final fun plus (other: kotlin.Int): kotlin.Double declared in kotlin.Double' type=kotlin.Double origin=PLUS
                 $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:it type:kotlin.Double visibility:private' type=kotlin.Double origin=null
-                  receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-it>' type=<root>.A origin=null
+                  receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-it>' type=<root>.A origin=IMPLICIT_ARGUMENT
                 other: CONST Int type=kotlin.Int value=10
       FUN name:<set-it> visibility:public modality:FINAL <> ($this:<root>.A, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:it visibility:public modality:FINAL [var]
@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/independentBackingFieldType.kt
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:it type:kotlin.Double visibility:private' type=kotlin.Unit origin=EQ
-            receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<set-it>' type=<root>.A origin=null
+            receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<set-it>' type=<root>.A origin=IMPLICIT_ARGUMENT
             value: CALL 'public open fun toDouble (): kotlin.Double declared in kotlin.Int' type=kotlin.Double origin=null
               $this: CALL 'public final fun minus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MINUS
                 $this: GET_VAR 'value: kotlin.Int declared in <root>.A.<set-it>' type=kotlin.Int origin=null

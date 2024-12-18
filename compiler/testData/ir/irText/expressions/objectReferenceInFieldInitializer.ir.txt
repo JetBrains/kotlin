@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/objectReferenceInFieldInitializer.kt
           STRING_CONCATENATION type=kotlin.String
             CONST String type=kotlin.String value="1234"
             CALL 'private final fun <get-a> (): kotlin.String declared in <root>.A' type=kotlin.String origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
+              $this: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=IMPLICIT_ARGUMENT
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> visibility:private modality:FINAL <> ($this:<root>.A) returnType:kotlin.String
         correspondingProperty: PROPERTY name:b visibility:private modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.A

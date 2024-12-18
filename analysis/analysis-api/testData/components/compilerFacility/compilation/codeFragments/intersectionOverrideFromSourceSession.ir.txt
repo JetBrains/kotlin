@@ -10,4 +10,4 @@ MODULE_FRAGMENT
         EXPRESSION_BODY
           BLOCK type=@[FlexibleNullability] kotlin.String? origin=null
             CALL 'public open fun getParent (): @[FlexibleNullability] kotlin.String? [fake_override] declared in <root>.KotlinImpl' type=@[FlexibleNullability] kotlin.String? origin=GET_PROPERTY
-              $this: GET_VAR 'p0: <root>.KotlinImpl declared in <root>.CodeFragment.run' type=<root>.KotlinImpl origin=null
+              $this: GET_VAR 'p0: <root>.KotlinImpl declared in <root>.CodeFragment.run' type=<root>.KotlinImpl origin=IMPLICIT_ARGUMENT

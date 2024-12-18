@@ -115,7 +115,7 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo <Y> (y: Y of <root>.Derived1.foo): T of <root>.Derived1 declared in <root>.Derived1'
           CALL 'public final fun <get-x> (): T of <root>.Derived1 declared in <root>.Derived1' type=T of <root>.Derived1 origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Derived1<T of <root>.Derived1> declared in <root>.Derived1.foo' type=<root>.Derived1<T of <root>.Derived1> origin=null
+            $this: GET_VAR '<this>: <root>.Derived1<T of <root>.Derived1> declared in <root>.Derived1.foo' type=<root>.Derived1<T of <root>.Derived1> origin=IMPLICIT_ARGUMENT
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
       overridden:
         public final x: T of <root>.Base declared in <root>.Base
@@ -137,7 +137,7 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-exn> <Z> (): T of <root>.Derived1 declared in <root>.Derived1'
             CALL 'public final fun <get-x> (): T of <root>.Derived1 declared in <root>.Derived1' type=T of <root>.Derived1 origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Derived1<T of <root>.Derived1> declared in <root>.Derived1.<get-exn>' type=<root>.Derived1<T of <root>.Derived1> origin=null
+              $this: GET_VAR '<this>: <root>.Derived1<T of <root>.Derived1> declared in <root>.Derived1.<get-exn>' type=<root>.Derived1<T of <root>.Derived1> origin=IMPLICIT_ARGUMENT
       FUN name:<set-exn> visibility:public modality:OPEN <Z> ($this:<root>.Derived1<T of <root>.Derived1>, $receiver:Z of <root>.Derived1.<set-exn>, value:T of <root>.Derived1) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:exn visibility:public modality:OPEN [var]
         overridden:

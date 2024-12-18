@@ -102,25 +102,25 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar (): java.util.ArrayList<kotlin.Int> declared in <root>.A'
           CALL 'public open fun <get-a> (): java.util.ArrayList<kotlin.Int> declared in <root>.A' type=java.util.ArrayList<kotlin.Int> origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.A declared in <root>.A.bar' type=<root>.A origin=null
+            $this: GET_VAR '<this>: <root>.A declared in <root>.A.bar' type=<root>.A origin=IMPLICIT_ARGUMENT
     FUN name:bar2 visibility:public modality:OPEN <> ($this:<root>.A) returnType:java.util.HashSet<kotlin.Any?>
       $this: VALUE_PARAMETER name:<this> type:<root>.A
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar2 (): java.util.HashSet<kotlin.Any?> declared in <root>.A'
           CALL 'public open fun <get-b> (): java.util.HashSet<kotlin.Any?> declared in <root>.A' type=java.util.HashSet<kotlin.Any?> origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.A declared in <root>.A.bar2' type=<root>.A origin=null
+            $this: GET_VAR '<this>: <root>.A declared in <root>.A.bar2' type=<root>.A origin=IMPLICIT_ARGUMENT
     FUN name:bar3 visibility:public modality:OPEN <> ($this:<root>.A) returnType:kotlin.IntArray
       $this: VALUE_PARAMETER name:<this> type:<root>.A
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar3 (): kotlin.IntArray declared in <root>.A'
           CALL 'public open fun <get-c> (): kotlin.IntArray declared in <root>.A' type=kotlin.IntArray origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.A declared in <root>.A.bar3' type=<root>.A origin=null
+            $this: GET_VAR '<this>: <root>.A declared in <root>.A.bar3' type=<root>.A origin=IMPLICIT_ARGUMENT
     FUN name:bar4 visibility:public modality:OPEN <> ($this:<root>.A) returnType:kotlin.Array<out kotlin.String>
       $this: VALUE_PARAMETER name:<this> type:<root>.A
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar4 (): kotlin.Array<out kotlin.String> declared in <root>.A'
           CALL 'public open fun <get-d> (): kotlin.Array<out kotlin.String> declared in <root>.A' type=kotlin.Array<out kotlin.String> origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.A declared in <root>.A.bar4' type=<root>.A origin=null
+            $this: GET_VAR '<this>: <root>.A declared in <root>.A.bar4' type=<root>.A origin=IMPLICIT_ARGUMENT
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.A, a:java.util.ArrayList<kotlin.Int>) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.A
       VALUE_PARAMETER name:a index:0 type:java.util.ArrayList<kotlin.Int>

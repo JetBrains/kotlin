@@ -207,7 +207,7 @@ FILE fqName:<root> fileName:/compareTo.kt
                       <class: B>: kotlin.String
                       first: CONST String type=kotlin.String value="OK"
                       second: CONST String type=kotlin.String value="fail"
-                    $context_receiver_0: GET_VAR '$this$with: java.util.Comparator<kotlin.String> declared in <root>.box.<anonymous>' type=java.util.Comparator<kotlin.String> origin=null
+                    $context_receiver_0: GET_VAR '$this$with: java.util.Comparator<kotlin.String> declared in <root>.box.<anonymous>' type=java.util.Comparator<kotlin.String> origin=IMPLICIT_ARGUMENT
   FUN name:compareTo visibility:public modality:FINAL <T> ($receiver:T of <root>.compareTo, $context_receiver_0:java.util.Comparator<T of <root>.compareTo>, other:T of <root>.compareTo) returnType:kotlin.Int [operator,infix]
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     contextReceiverParametersCount: 1
@@ -217,7 +217,7 @@ FILE fqName:<root> fileName:/compareTo.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun compareTo <T> ($context_receiver_0: java.util.Comparator<T of <root>.compareTo>, other: T of <root>.compareTo): kotlin.Int declared in <root>'
         CALL 'public abstract fun compare (p0: @[FlexibleNullability] T of java.util.Comparator?, p1: @[FlexibleNullability] T of java.util.Comparator?): kotlin.Int declared in java.util.Comparator' type=kotlin.Int origin=null
-          $this: GET_VAR '$context_receiver_0: java.util.Comparator<T of <root>.compareTo> declared in <root>.compareTo' type=java.util.Comparator<T of <root>.compareTo> origin=null
+          $this: GET_VAR '$context_receiver_0: java.util.Comparator<T of <root>.compareTo> declared in <root>.compareTo' type=java.util.Comparator<T of <root>.compareTo> origin=IMPLICIT_ARGUMENT
           p0: GET_VAR '<this>: T of <root>.compareTo declared in <root>.compareTo' type=T of <root>.compareTo origin=null
           p1: GET_VAR 'other: T of <root>.compareTo declared in <root>.compareTo' type=T of <root>.compareTo origin=null
   PROPERTY name:min visibility:public modality:FINAL [val]
@@ -235,14 +235,14 @@ FILE fqName:<root> fileName:/compareTo.kt
                 arg0: CALL 'public final fun compareTo <T> ($context_receiver_0: java.util.Comparator<T of <root>.compareTo>, other: T of <root>.compareTo): kotlin.Int declared in <root>' type=kotlin.Int origin=LT
                   <T>: T of <root>.<get-min>
                   $receiver: CALL 'public final fun <get-first> (): A of <root>.Pair declared in <root>.Pair' type=T of <root>.<get-min> origin=GET_PROPERTY
-                    $this: GET_VAR '<this>: <root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> declared in <root>.<get-min>' type=<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> origin=null
-                  $context_receiver_0: GET_VAR '$context_receiver_0: java.util.Comparator<T of <root>.<get-min>> declared in <root>.<get-min>' type=java.util.Comparator<T of <root>.<get-min>> origin=null
+                    $this: GET_VAR '<this>: <root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> declared in <root>.<get-min>' type=<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> origin=IMPLICIT_ARGUMENT
+                  $context_receiver_0: GET_VAR '$context_receiver_0: java.util.Comparator<T of <root>.<get-min>> declared in <root>.<get-min>' type=java.util.Comparator<T of <root>.<get-min>> origin=IMPLICIT_ARGUMENT
                   other: CALL 'public final fun <get-second> (): B of <root>.Pair declared in <root>.Pair' type=T of <root>.<get-min> origin=GET_PROPERTY
-                    $this: GET_VAR '<this>: <root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> declared in <root>.<get-min>' type=<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> origin=null
+                    $this: GET_VAR '<this>: <root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> declared in <root>.<get-min>' type=<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> origin=IMPLICIT_ARGUMENT
                 arg1: CONST Int type=kotlin.Int value=0
               then: CALL 'public final fun <get-first> (): A of <root>.Pair declared in <root>.Pair' type=T of <root>.<get-min> origin=GET_PROPERTY
-                $this: GET_VAR '<this>: <root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> declared in <root>.<get-min>' type=<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> origin=null
+                $this: GET_VAR '<this>: <root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> declared in <root>.<get-min>' type=<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> origin=IMPLICIT_ARGUMENT
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CALL 'public final fun <get-second> (): B of <root>.Pair declared in <root>.Pair' type=T of <root>.<get-min> origin=GET_PROPERTY
-                $this: GET_VAR '<this>: <root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> declared in <root>.<get-min>' type=<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> origin=null
+                $this: GET_VAR '<this>: <root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> declared in <root>.<get-min>' type=<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> origin=IMPLICIT_ARGUMENT

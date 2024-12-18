@@ -92,7 +92,7 @@ FILE fqName:<root> fileName:/classMembers.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun bar (): kotlin.Unit declared in <root>.C.NestedInterface'
             CALL 'public abstract fun foo (): kotlin.Unit declared in <root>.C.NestedInterface' type=kotlin.Unit origin=null
-              $this: GET_VAR '<this>: <root>.C.NestedInterface declared in <root>.C.NestedInterface.bar' type=<root>.C.NestedInterface origin=null
+              $this: GET_VAR '<this>: <root>.C.NestedInterface declared in <root>.C.NestedInterface.bar' type=<root>.C.NestedInterface origin=IMPLICIT_ARGUMENT
       FUN name:foo visibility:public modality:ABSTRACT <> ($this:<root>.C.NestedInterface) returnType:kotlin.Unit
         $this: VALUE_PARAMETER name:<this> type:<root>.C.NestedInterface
     CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
@@ -167,7 +167,7 @@ FILE fqName:<root> fileName:/classMembers.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-propertyWithGetAndSet> (): kotlin.Int declared in <root>.C'
             CALL 'public final fun <get-z> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.C declared in <root>.C.<get-propertyWithGetAndSet>' type=<root>.C origin=null
+              $this: GET_VAR '<this>: <root>.C declared in <root>.C.<get-propertyWithGetAndSet>' type=<root>.C origin=IMPLICIT_ARGUMENT
       FUN name:<set-propertyWithGetAndSet> visibility:public modality:FINAL <> ($this:<root>.C, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:propertyWithGetAndSet visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.C

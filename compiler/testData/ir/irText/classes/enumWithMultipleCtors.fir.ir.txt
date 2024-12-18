@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
             RETURN type=kotlin.Nothing from='public open fun f (): kotlin.String declared in <root>.A.Y'
               CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
                 $this: CALL 'public open fun f (): kotlin.String declared in <root>.A' superQualifier='CLASS ENUM_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.A>]' type=kotlin.String origin=null
-                  $this: GET_VAR '<this>: <root>.A.Y declared in <root>.A.Y.f' type=<root>.A.Y origin=null
+                  $this: GET_VAR '<this>: <root>.A.Y declared in <root>.A.Y.f' type=<root>.A.Y origin=IMPLICIT_ARGUMENT
                 other: CONST String type=kotlin.String value="#Y"
         PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
           annotations:
@@ -139,10 +139,10 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
           <E>: <root>.A
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.A>]' type=kotlin.Unit
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop1 type:kotlin.String visibility:private [final]' type=kotlin.Unit origin=null
-          receiver: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
+          receiver: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=IMPLICIT_ARGUMENT
           value: CONST String type=kotlin.String value="default"
         CALL 'public final fun <set-prop3> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=EQ
-          $this: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
+          $this: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=IMPLICIT_ARGUMENT
           <set-?>: CONST String type=kotlin.String value="empty"
     CONSTRUCTOR visibility:private <> (arg:kotlin.String) returnType:<root>.A
       VALUE_PARAMETER name:arg index:0 type:kotlin.String
@@ -151,7 +151,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
           <E>: <root>.A
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.A>]' type=kotlin.Unit
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop1 type:kotlin.String visibility:private [final]' type=kotlin.Unit origin=null
-          receiver: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
+          receiver: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=IMPLICIT_ARGUMENT
           value: GET_VAR 'arg: kotlin.String declared in <root>.A.<init>' type=kotlin.String origin=null
     CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:<root>.A
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
@@ -160,7 +160,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
           arg: CALL 'public open fun toString (): kotlin.String declared in kotlin.Int' type=kotlin.String origin=null
             $this: GET_VAR 'x: kotlin.Int declared in <root>.A.<init>' type=kotlin.Int origin=null
         CALL 'public final fun <set-prop3> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=EQ
-          $this: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
+          $this: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=IMPLICIT_ARGUMENT
           <set-?>: CONST String type=kotlin.String value="int"
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.A
       VALUE_PARAMETER name:value index:0 type:kotlin.String
@@ -191,13 +191,13 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
         RETURN type=kotlin.Nothing from='public open fun f (): kotlin.String declared in <root>.A'
           STRING_CONCATENATION type=kotlin.String
             CALL 'public final fun <get-prop1> (): kotlin.String declared in <root>.A' type=kotlin.String origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.A declared in <root>.A.f' type=<root>.A origin=null
+              $this: GET_VAR '<this>: <root>.A declared in <root>.A.f' type=<root>.A origin=IMPLICIT_ARGUMENT
             CONST String type=kotlin.String value="#"
             CALL 'public final fun <get-prop2> (): kotlin.String declared in <root>.A' type=kotlin.String origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.A declared in <root>.A.f' type=<root>.A origin=null
+              $this: GET_VAR '<this>: <root>.A declared in <root>.A.f' type=<root>.A origin=IMPLICIT_ARGUMENT
             CONST String type=kotlin.String value="#"
             CALL 'public final fun <get-prop3> (): kotlin.String declared in <root>.A' type=kotlin.String origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.A declared in <root>.A.f' type=<root>.A origin=null
+              $this: GET_VAR '<this>: <root>.A declared in <root>.A.f' type=<root>.A origin=IMPLICIT_ARGUMENT
     PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
       FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.A>
         correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]

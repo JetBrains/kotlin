@@ -120,7 +120,7 @@ FILE fqName:<root> fileName:/delegatedPropertyAccessorsWithAnnotations.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun getValue (thisRef: kotlin.Any?, kProp: kotlin.Any?): kotlin.Int declared in <root>.Cell'
           CALL 'public final fun <get-value> (): kotlin.Int declared in <root>.Cell' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Cell declared in <root>.Cell.getValue' type=<root>.Cell origin=null
+            $this: GET_VAR '<this>: <root>.Cell declared in <root>.Cell.getValue' type=<root>.Cell origin=IMPLICIT_ARGUMENT
     FUN name:setValue visibility:public modality:FINAL <> ($this:<root>.Cell, thisRef:kotlin.Any?, kProp:kotlin.Any?, newValue:kotlin.Int) returnType:kotlin.Unit [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Cell
       VALUE_PARAMETER name:thisRef index:0 type:kotlin.Any?

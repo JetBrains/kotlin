@@ -54,12 +54,12 @@ FILE fqName:<root> fileName:/DeepCopyIrTree.kt
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: <root>.IrTypeParameter): <root>.IrTypeParameter declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom'
                     CALL 'private final fun copyTypeParameter (declaration: <root>.IrTypeParameter): <root>.IrTypeParameter declared in <root>.DeepCopyIrTreeWithSymbols' type=<root>.IrTypeParameter origin=null
-                      $this: GET_VAR '<this>: <root>.DeepCopyIrTreeWithSymbols declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom' type=<root>.DeepCopyIrTreeWithSymbols origin=null
+                      $this: GET_VAR '<this>: <root>.DeepCopyIrTreeWithSymbols declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom' type=<root>.DeepCopyIrTreeWithSymbols origin=IMPLICIT_ARGUMENT
                       declaration: GET_VAR 'it: <root>.IrTypeParameter declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>' type=<root>.IrTypeParameter origin=null
         CALL 'public final fun withinScope <T> (irTypeParametersContainer: <root>.IrTypeParametersContainer, fn: kotlin.Function0<T of <root>.withinScope>): T of <root>.withinScope declared in <root>' type=kotlin.Unit origin=null
           <T>: kotlin.Unit
           $receiver: CALL 'private final fun <get-typeRemapper> (): <root>.TypeRemapper declared in <root>.DeepCopyIrTreeWithSymbols' type=<root>.TypeRemapper origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.DeepCopyIrTreeWithSymbols declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom' type=<root>.DeepCopyIrTreeWithSymbols origin=null
+            $this: GET_VAR '<this>: <root>.DeepCopyIrTreeWithSymbols declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom' type=<root>.DeepCopyIrTreeWithSymbols origin=IMPLICIT_ARGUMENT
           irTypeParametersContainer: GET_VAR '<this>: <root>.IrTypeParametersContainer declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom' type=<root>.IrTypeParametersContainer origin=null
           fn: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
@@ -104,7 +104,7 @@ FILE fqName:<root> fileName:/DeepCopyIrTree.kt
                                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: <root>.IrType): <root>.IrType declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>'
                                     CALL 'public abstract fun remapType (type: <root>.IrType): <root>.IrType declared in <root>.TypeRemapper' type=<root>.IrType origin=null
                                       $this: CALL 'private final fun <get-typeRemapper> (): <root>.TypeRemapper declared in <root>.DeepCopyIrTreeWithSymbols' type=<root>.TypeRemapper origin=GET_PROPERTY
-                                        $this: GET_VAR '<this>: <root>.DeepCopyIrTreeWithSymbols declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom' type=<root>.DeepCopyIrTreeWithSymbols origin=null
+                                        $this: GET_VAR '<this>: <root>.DeepCopyIrTreeWithSymbols declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom' type=<root>.DeepCopyIrTreeWithSymbols origin=IMPLICIT_ARGUMENT
                                       type: GET_VAR 'it: <root>.IrType declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom.<anonymous>.<anonymous>' type=<root>.IrType origin=null
   CLASS INTERFACE name:IrDeclaration modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IrDeclaration
@@ -226,12 +226,12 @@ FILE fqName:<root> fileName:/DeepCopyIrTree.kt
     VALUE_PARAMETER name:fn index:1 type:kotlin.Function0<T of <root>.withinScope>
     BLOCK_BODY
       CALL 'public abstract fun enterScope (irTypeParametersContainer: <root>.IrTypeParametersContainer): kotlin.Unit declared in <root>.TypeRemapper' type=kotlin.Unit origin=null
-        $this: GET_VAR '<this>: <root>.TypeRemapper declared in <root>.withinScope' type=<root>.TypeRemapper origin=null
+        $this: GET_VAR '<this>: <root>.TypeRemapper declared in <root>.withinScope' type=<root>.TypeRemapper origin=IMPLICIT_ARGUMENT
         irTypeParametersContainer: GET_VAR 'irTypeParametersContainer: <root>.IrTypeParametersContainer declared in <root>.withinScope' type=<root>.IrTypeParametersContainer origin=null
       VAR name:result type:T of <root>.withinScope [val]
         CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=T of <root>.withinScope origin=INVOKE
           $this: GET_VAR 'fn: kotlin.Function0<T of <root>.withinScope> declared in <root>.withinScope' type=kotlin.Function0<T of <root>.withinScope> origin=VARIABLE_AS_FUNCTION
       CALL 'public abstract fun leaveScope (): kotlin.Unit declared in <root>.TypeRemapper' type=kotlin.Unit origin=null
-        $this: GET_VAR '<this>: <root>.TypeRemapper declared in <root>.withinScope' type=<root>.TypeRemapper origin=null
+        $this: GET_VAR '<this>: <root>.TypeRemapper declared in <root>.withinScope' type=<root>.TypeRemapper origin=IMPLICIT_ARGUMENT
       RETURN type=kotlin.Nothing from='public final fun withinScope <T> (irTypeParametersContainer: <root>.IrTypeParametersContainer, fn: kotlin.Function0<T of <root>.withinScope>): T of <root>.withinScope declared in <root>'
         GET_VAR 'val result: T of <root>.withinScope declared in <root>.withinScope' type=T of <root>.withinScope origin=null

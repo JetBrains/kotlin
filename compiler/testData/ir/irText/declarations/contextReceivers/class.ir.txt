@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/class.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun bar (): kotlin.Int declared in <root>.Inner'
           CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.Outer' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.Outer visibility:private [final] declared in <root>.Inner' type=<root>.Outer origin=null
+            $this: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.Outer visibility:private [final] declared in <root>.Inner' type=<root>.Outer origin=IMPLICIT_ARGUMENT
               receiver: GET_VAR '<this>: <root>.Inner declared in <root>.Inner.bar' type=<root>.Inner origin=null
   CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer
@@ -75,5 +75,5 @@ FILE fqName:<root> fileName:/class.kt
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): <root>.Inner declared in <root>.f'
                   CONSTRUCTOR_CALL 'public constructor <init> ($context_receiver_0: <root>.Outer, arg: kotlin.Any) declared in <root>.Inner' type=<root>.Inner origin=null
-                    $context_receiver_0: GET_VAR '$this$with: <root>.Outer declared in <root>.f.<anonymous>' type=<root>.Outer origin=null
+                    $context_receiver_0: GET_VAR '$this$with: <root>.Outer declared in <root>.f.<anonymous>' type=<root>.Outer origin=IMPLICIT_ARGUMENT
                     arg: CONST Int type=kotlin.Int value=3

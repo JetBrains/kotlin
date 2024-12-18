@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/inlineClassSyntheticMethods.kt
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.C'
           TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
             CALL 'public final fun <get-t> (): T of <root>.C declared in <root>.C' type=T of <root>.C origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.C<T of <root>.C> declared in <root>.C.hashCode' type=<root>.C<T of <root>.C> origin=null
+              $this: GET_VAR '<this>: <root>.C<T of <root>.C> declared in <root>.C.hashCode' type=<root>.C<T of <root>.C> origin=IMPLICIT_ARGUMENT
   CLASS CLASS name:IC modality:FINAL visibility:public [value] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IC<TT of <root>.IC>
     TYPE_PARAMETER name:TT index:0 variance: superTypes:[kotlin.Any?] reified:false
@@ -109,7 +109,7 @@ FILE fqName:<root> fileName:/inlineClassSyntheticMethods.kt
         RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Int declared in <root>.IC'
           CALL 'public open fun hashCode (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
             $this: CALL 'public final fun <get-c> (): <root>.C<TT of <root>.IC> declared in <root>.IC' type=<root>.C<TT of <root>.IC> origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.IC<TT of <root>.IC> declared in <root>.IC.foo' type=<root>.IC<TT of <root>.IC> origin=null
+              $this: GET_VAR '<this>: <root>.IC<TT of <root>.IC> declared in <root>.IC.foo' type=<root>.IC<TT of <root>.IC> origin=IMPLICIT_ARGUMENT
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       VAR name:ic type:<root>.IC<kotlin.Int> [val]

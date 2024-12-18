@@ -116,9 +116,9 @@ FILE fqName:<root> fileName:/genericLocalClassConstructorReference.kt
           <T2>: FT of <root>.fn
           <R>: <root>.fn.FLocal<FT of <root>.fn, FT of <root>.fn>
           t1: CALL 'public final fun <get-rt> (): T of <root>.Rec declared in <root>.Rec' type=FT of <root>.fn origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Rec<FT of <root>.fn> declared in <root>.fn' type=<root>.Rec<FT of <root>.fn> origin=null
+            $this: GET_VAR '<this>: <root>.Rec<FT of <root>.fn> declared in <root>.fn' type=<root>.Rec<FT of <root>.fn> origin=IMPLICIT_ARGUMENT
           t2: CALL 'public final fun <get-rt> (): T of <root>.Rec declared in <root>.Rec' type=FT of <root>.fn origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.Rec<FT of <root>.fn> declared in <root>.fn' type=<root>.Rec<FT of <root>.fn> origin=null
+            $this: GET_VAR '<this>: <root>.Rec<FT of <root>.fn> declared in <root>.fn' type=<root>.Rec<FT of <root>.fn> origin=IMPLICIT_ARGUMENT
           bb: FUNCTION_REFERENCE 'public constructor <init> (lt: LT of <root>.fn.FLocal, pt: FT of <root>.fn) declared in <root>.fn.FLocal' type=kotlin.reflect.KFunction2<FT of <root>.fn, FT of <root>.fn, <root>.fn.FLocal<FT of <root>.fn, FT of <root>.fn>> origin=null reflectionTarget=<same>
             <LT>: FT of <root>.fn
   FUN name:foo2 visibility:public modality:FINAL <T1, T2, R> (t1:T1 of <root>.foo2, t2:T2 of <root>.foo2, bb:kotlin.Function2<T1 of <root>.foo2, T2 of <root>.foo2, R of <root>.foo2>) returnType:R of <root>.foo2
@@ -189,8 +189,8 @@ FILE fqName:<root> fileName:/genericLocalClassConstructorReference.kt
             <T2>: PT of <root>.<get-p>
             <R>: <root>.<get-p>.PLocal<PT of <root>.<get-p>, PT of <root>.<get-p>>
             t1: CALL 'public final fun <get-rt> (): T of <root>.Rec declared in <root>.Rec' type=PT of <root>.<get-p> origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Rec<PT of <root>.<get-p>> declared in <root>.<get-p>' type=<root>.Rec<PT of <root>.<get-p>> origin=null
+              $this: GET_VAR '<this>: <root>.Rec<PT of <root>.<get-p>> declared in <root>.<get-p>' type=<root>.Rec<PT of <root>.<get-p>> origin=IMPLICIT_ARGUMENT
             t2: CALL 'public final fun <get-rt> (): T of <root>.Rec declared in <root>.Rec' type=PT of <root>.<get-p> origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Rec<PT of <root>.<get-p>> declared in <root>.<get-p>' type=<root>.Rec<PT of <root>.<get-p>> origin=null
+              $this: GET_VAR '<this>: <root>.Rec<PT of <root>.<get-p>> declared in <root>.<get-p>' type=<root>.Rec<PT of <root>.<get-p>> origin=IMPLICIT_ARGUMENT
             bb: FUNCTION_REFERENCE 'public constructor <init> (lt: LT of <root>.<get-p>.PLocal, pt: PT of <root>.<get-p>) declared in <root>.<get-p>.PLocal' type=kotlin.reflect.KFunction2<PT of <root>.<get-p>, PT of <root>.<get-p>, <root>.<get-p>.PLocal<PT of <root>.<get-p>, PT of <root>.<get-p>>> origin=null reflectionTarget=<same>
               <LT>: PT of <root>.<get-p>

@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/posptonedPCLACallInsideStringInterpolation.kt
                     <E>: <root>.Controller<kotlin.String>
                     e: GET_VAR '$this$generate: <root>.Controller<kotlin.String> declared in <root>.foo.<anonymous>' type=<root>.Controller<kotlin.String> origin=null
               CALL 'public final fun yield (k: K of <root>.Controller): kotlin.Unit declared in <root>.Controller' type=kotlin.Unit origin=null
-                $this: GET_VAR '$this$generate: <root>.Controller<kotlin.String> declared in <root>.foo.<anonymous>' type=<root>.Controller<kotlin.String> origin=null
+                $this: GET_VAR '$this$generate: <root>.Controller<kotlin.String> declared in <root>.foo.<anonymous>' type=<root>.Controller<kotlin.String> origin=IMPLICIT_ARGUMENT
                 k: CONST String type=kotlin.String value=""
   FUN name:generate visibility:public modality:FINAL <T> (lambda:@[ExtensionFunctionType] kotlin.Function1<<root>.Controller<T of <root>.generate>, kotlin.Unit>) returnType:kotlin.Unit
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false

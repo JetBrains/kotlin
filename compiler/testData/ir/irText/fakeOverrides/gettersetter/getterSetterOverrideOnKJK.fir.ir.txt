@@ -167,7 +167,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Int visibility:private' type=kotlin.Unit origin=EQ
-            receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<set-b>' type=<root>.B origin=null
+            receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<set-b>' type=<root>.B origin=IMPLICIT_ARGUMENT
             value: CONST Int type=kotlin.Int value=20
     PROPERTY name:d visibility:public modality:OPEN [var]
       overridden:
@@ -192,7 +192,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Int visibility:private' type=kotlin.Unit origin=EQ
-            receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<set-d>' type=<root>.B origin=null
+            receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<set-d>' type=<root>.B origin=IMPLICIT_ARGUMENT
             value: CONST Int type=kotlin.Int value=23
     PROPERTY name:j visibility:public modality:OPEN [var]
       overridden:
@@ -239,7 +239,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:k type:kotlin.Int visibility:private' type=kotlin.Unit origin=EQ
-            receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<set-k>' type=<root>.B origin=null
+            receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<set-k>' type=<root>.B origin=IMPLICIT_ARGUMENT
             value: CONST Int type=kotlin.Int value=27
     PROPERTY name:l visibility:public modality:OPEN [var]
       overridden:
@@ -264,7 +264,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:value index:0 type:kotlin.Boolean
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:l type:kotlin.Boolean visibility:private' type=kotlin.Unit origin=EQ
-            receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<set-l>' type=<root>.B origin=null
+            receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<set-l>' type=<root>.B origin=IMPLICIT_ARGUMENT
             value: CONST Boolean type=kotlin.Boolean value=false
     CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
       BLOCK_BODY
@@ -549,7 +549,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Int visibility:private' type=kotlin.Unit origin=EQ
-            receiver: GET_VAR '<this>: <root>.D declared in <root>.D.<set-b>' type=<root>.D origin=null
+            receiver: GET_VAR '<this>: <root>.D declared in <root>.D.<set-b>' type=<root>.D origin=IMPLICIT_ARGUMENT
             value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
               $this: GET_VAR 'value: kotlin.Int declared in <root>.D.<set-b>' type=kotlin.Int origin=null
               other: CONST Int type=kotlin.Int value=1
@@ -576,7 +576,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Int visibility:private' type=kotlin.Unit origin=EQ
-            receiver: GET_VAR '<this>: <root>.D declared in <root>.D.<set-d>' type=<root>.D origin=null
+            receiver: GET_VAR '<this>: <root>.D declared in <root>.D.<set-d>' type=<root>.D origin=IMPLICIT_ARGUMENT
             value: CONST Int type=kotlin.Int value=46
     CONSTRUCTOR visibility:public <> () returnType:<root>.D [primary]
       BLOCK_BODY
@@ -779,7 +779,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Int visibility:private' type=kotlin.Unit origin=EQ
-            receiver: GET_VAR '<this>: <root>.KotlinClass declared in <root>.KotlinClass.<set-d>' type=<root>.KotlinClass origin=null
+            receiver: GET_VAR '<this>: <root>.KotlinClass declared in <root>.KotlinClass.<set-d>' type=<root>.KotlinClass origin=IMPLICIT_ARGUMENT
             value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
               $this: GET_VAR 'value: kotlin.Int declared in <root>.KotlinClass.<set-d>' type=kotlin.Int origin=null
               other: CONST Int type=kotlin.Int value=1
@@ -799,7 +799,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:e type:kotlin.Int visibility:private' type=kotlin.Unit origin=EQ
-            receiver: GET_VAR '<this>: <root>.KotlinClass declared in <root>.KotlinClass.<set-e>' type=<root>.KotlinClass origin=null
+            receiver: GET_VAR '<this>: <root>.KotlinClass declared in <root>.KotlinClass.<set-e>' type=<root>.KotlinClass origin=IMPLICIT_ARGUMENT
             value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
               $this: GET_VAR 'value: kotlin.Int declared in <root>.KotlinClass.<set-e>' type=kotlin.Int origin=null
               other: CONST Int type=kotlin.Int value=1
@@ -819,7 +819,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:f type:kotlin.Int visibility:private' type=kotlin.Unit origin=EQ
-            receiver: GET_VAR '<this>: <root>.KotlinClass declared in <root>.KotlinClass.<set-f>' type=<root>.KotlinClass origin=null
+            receiver: GET_VAR '<this>: <root>.KotlinClass declared in <root>.KotlinClass.<set-f>' type=<root>.KotlinClass origin=IMPLICIT_ARGUMENT
             value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
               $this: GET_VAR 'value: kotlin.Int declared in <root>.KotlinClass.<set-f>' type=kotlin.Int origin=null
               other: CONST Int type=kotlin.Int value=1
@@ -839,7 +839,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:g type:kotlin.Int visibility:private' type=kotlin.Unit origin=EQ
-            receiver: GET_VAR '<this>: <root>.KotlinClass declared in <root>.KotlinClass.<set-g>' type=<root>.KotlinClass origin=null
+            receiver: GET_VAR '<this>: <root>.KotlinClass declared in <root>.KotlinClass.<set-g>' type=<root>.KotlinClass origin=IMPLICIT_ARGUMENT
             value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
               $this: GET_VAR 'value: kotlin.Int declared in <root>.KotlinClass.<set-g>' type=kotlin.Int origin=null
               other: CONST Int type=kotlin.Int value=1
@@ -859,7 +859,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:h type:kotlin.Int visibility:private' type=kotlin.Unit origin=EQ
-            receiver: GET_VAR '<this>: <root>.KotlinClass declared in <root>.KotlinClass.<set-h>' type=<root>.KotlinClass origin=null
+            receiver: GET_VAR '<this>: <root>.KotlinClass declared in <root>.KotlinClass.<set-h>' type=<root>.KotlinClass origin=IMPLICIT_ARGUMENT
             value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
               $this: GET_VAR 'value: kotlin.Int declared in <root>.KotlinClass.<set-h>' type=kotlin.Int origin=null
               other: CONST Int type=kotlin.Int value=1
@@ -879,7 +879,7 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:private' type=kotlin.Unit origin=EQ
-            receiver: GET_VAR '<this>: <root>.KotlinClass declared in <root>.KotlinClass.<set-i>' type=<root>.KotlinClass origin=null
+            receiver: GET_VAR '<this>: <root>.KotlinClass declared in <root>.KotlinClass.<set-i>' type=<root>.KotlinClass origin=IMPLICIT_ARGUMENT
             value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
               $this: GET_VAR 'value: kotlin.Int declared in <root>.KotlinClass.<set-i>' type=kotlin.Int origin=null
               other: CONST Int type=kotlin.Int value=1

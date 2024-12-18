@@ -298,7 +298,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar (): kotlin.collections.List<kotlin.Any?> declared in <root>.F'
           CALL 'public open fun bar (): kotlin.collections.List<*> declared in <root>.Java1' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:Java1 modality:OPEN visibility:public superTypes:[<root>.KotlinClass]' type=kotlin.collections.List<*> origin=null
-            $this: GET_VAR '<this>: <root>.F declared in <root>.F.bar' type=<root>.F origin=null
+            $this: GET_VAR '<this>: <root>.F declared in <root>.F.bar' type=<root>.F origin=IMPLICIT_ARGUMENT
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,var]
       overridden:
         public open a: kotlin.collections.List<*> declared in <root>.Java1

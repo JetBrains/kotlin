@@ -124,7 +124,7 @@ FILE fqName:<root> fileName:/unaryOperators.kt
                     SET_VAR 'var result: <root>.Result declared in <root>.box' type=kotlin.Unit origin=POSTFIX_INCR
                       CALL 'public final fun inc ($context_receiver_0: kotlin.Int): <root>.Result declared in <root>' type=<root>.Result origin=POSTFIX_INCR
                         $receiver: GET_VAR 'val tmp_1: <root>.Result declared in <root>.box.<anonymous>' type=<root>.Result origin=null
-                        $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                        $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=IMPLICIT_ARGUMENT
                     GET_VAR 'val tmp_1: <root>.Result declared in <root>.box.<anonymous>' type=<root>.Result origin=null
                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                   BLOCK type=<root>.Result origin=POSTFIX_INCR
@@ -133,16 +133,16 @@ FILE fqName:<root> fileName:/unaryOperators.kt
                     SET_VAR 'var result: <root>.Result declared in <root>.box' type=kotlin.Unit origin=POSTFIX_INCR
                       CALL 'public final fun inc ($context_receiver_0: kotlin.Int): <root>.Result declared in <root>' type=<root>.Result origin=POSTFIX_INCR
                         $receiver: GET_VAR 'val tmp_2: <root>.Result declared in <root>.box.<anonymous>' type=<root>.Result origin=null
-                        $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                        $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=IMPLICIT_ARGUMENT
                     GET_VAR 'val tmp_2: <root>.Result declared in <root>.box.<anonymous>' type=<root>.Result origin=null
                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                   CALL 'public final fun unaryMinus ($context_receiver_0: kotlin.Int): <root>.Result declared in <root>' type=<root>.Result origin=UMINUS
                     $receiver: GET_VAR 'var result: <root>.Result declared in <root>.box' type=<root>.Result origin=null
-                    $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                    $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=IMPLICIT_ARGUMENT
                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                   CALL 'public final fun unaryPlus ($context_receiver_0: kotlin.Int): <root>.Result declared in <root>' type=<root>.Result origin=UPLUS
                     $receiver: GET_VAR 'var result: <root>.Result declared in <root>.box' type=<root>.Result origin=null
-                    $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                    $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=IMPLICIT_ARGUMENT
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): <root>.Result declared in <root>.box'
                   BLOCK type=<root>.Result origin=POSTFIX_DECR
                     VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:<root>.Result [val]
@@ -150,7 +150,7 @@ FILE fqName:<root> fileName:/unaryOperators.kt
                     SET_VAR 'var result: <root>.Result declared in <root>.box' type=kotlin.Unit origin=POSTFIX_DECR
                       CALL 'public final fun dec ($context_receiver_0: kotlin.Int): <root>.Result declared in <root>' type=<root>.Result origin=POSTFIX_DECR
                         $receiver: GET_VAR 'val tmp_3: <root>.Result declared in <root>.box.<anonymous>' type=<root>.Result origin=null
-                        $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                        $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=IMPLICIT_ARGUMENT
                     GET_VAR 'val tmp_3: <root>.Result declared in <root>.box.<anonymous>' type=<root>.Result origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         WHEN type=kotlin.String origin=IF
@@ -185,7 +185,7 @@ FILE fqName:<root> fileName:/unaryOperators.kt
         CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) declared in <root>.Result' type=<root>.Result origin=null
           i: CALL 'public final fun minus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MINUS
             $this: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Result declared in <root>.dec' type=<root>.Result origin=null
+              $this: GET_VAR '<this>: <root>.Result declared in <root>.dec' type=<root>.Result origin=IMPLICIT_ARGUMENT
             other: CONST Int type=kotlin.Int value=1
   FUN name:inc visibility:public modality:FINAL <> ($receiver:<root>.Result, $context_receiver_0:kotlin.Int) returnType:<root>.Result [operator]
     contextReceiverParametersCount: 1
@@ -201,7 +201,7 @@ FILE fqName:<root> fileName:/unaryOperators.kt
         CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) declared in <root>.Result' type=<root>.Result origin=null
           i: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
             $this: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Result declared in <root>.inc' type=<root>.Result origin=null
+              $this: GET_VAR '<this>: <root>.Result declared in <root>.inc' type=<root>.Result origin=IMPLICIT_ARGUMENT
             other: CONST Int type=kotlin.Int value=1
   FUN name:unaryMinus visibility:public modality:FINAL <> ($receiver:<root>.Result, $context_receiver_0:kotlin.Int) returnType:<root>.Result [operator]
     contextReceiverParametersCount: 1
@@ -217,7 +217,7 @@ FILE fqName:<root> fileName:/unaryOperators.kt
         CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) declared in <root>.Result' type=<root>.Result origin=null
           i: CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=UMINUS
             $this: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Result declared in <root>.unaryMinus' type=<root>.Result origin=null
+              $this: GET_VAR '<this>: <root>.Result declared in <root>.unaryMinus' type=<root>.Result origin=IMPLICIT_ARGUMENT
   FUN name:unaryPlus visibility:public modality:FINAL <> ($receiver:<root>.Result, $context_receiver_0:kotlin.Int) returnType:<root>.Result [operator]
     contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Result
@@ -234,12 +234,12 @@ FILE fqName:<root> fileName:/unaryOperators.kt
             BRANCH
               if: CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
                 arg0: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
-                  $this: GET_VAR '<this>: <root>.Result declared in <root>.unaryPlus' type=<root>.Result origin=null
+                  $this: GET_VAR '<this>: <root>.Result declared in <root>.unaryPlus' type=<root>.Result origin=IMPLICIT_ARGUMENT
                 arg1: CONST Int type=kotlin.Int value=0
               then: CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=UMINUS
                 $this: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
-                  $this: GET_VAR '<this>: <root>.Result declared in <root>.unaryPlus' type=<root>.Result origin=null
+                  $this: GET_VAR '<this>: <root>.Result declared in <root>.unaryPlus' type=<root>.Result origin=IMPLICIT_ARGUMENT
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
-                $this: GET_VAR '<this>: <root>.Result declared in <root>.unaryPlus' type=<root>.Result origin=null
+                $this: GET_VAR '<this>: <root>.Result declared in <root>.unaryPlus' type=<root>.Result origin=IMPLICIT_ARGUMENT

@@ -69,7 +69,7 @@ FILE fqName:<root> fileName:/genericPropertyReferenceType.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-y> <T> (): T of <root>.<get-y> declared in <root>'
           CALL 'public final fun <get-x> (): T of <root>.C declared in <root>.C' type=T of <root>.<get-y> origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.C<T of <root>.<get-y>> declared in <root>.<get-y>' type=<root>.C<T of <root>.<get-y>> origin=null
+            $this: GET_VAR '<this>: <root>.C<T of <root>.<get-y>> declared in <root>.<get-y>' type=<root>.C<T of <root>.<get-y>> origin=IMPLICIT_ARGUMENT
     FUN name:<set-y> visibility:public modality:FINAL <T> ($receiver:<root>.C<T of <root>.<set-y>>, v:T of <root>.<set-y>) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [var]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false

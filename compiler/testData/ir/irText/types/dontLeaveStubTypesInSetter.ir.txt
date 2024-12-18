@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/dontLeaveStubTypesInSetter.kt
               BLOCK_BODY
                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                   CALL 'public abstract fun add (element: E of kotlin.collections.MutableList): kotlin.Boolean declared in kotlin.collections.MutableList' type=kotlin.Boolean origin=null
-                    $this: GET_VAR '$this$buildList: kotlin.collections.MutableList<kotlin.String> declared in <root>.runMe.<anonymous>' type=kotlin.collections.MutableList<kotlin.String> origin=null
+                    $this: GET_VAR '$this$buildList: kotlin.collections.MutableList<kotlin.String> declared in <root>.runMe.<anonymous>' type=kotlin.collections.MutableList<kotlin.String> origin=IMPLICIT_ARGUMENT
                     element: CONST String type=kotlin.String value=""
                 VAR name:foo type:<root>.Foo<kotlin.String> [val]
                   CALL 'public final fun foo <K> (x: kotlin.collections.MutableList<K of <root>.foo>): <root>.Foo<K of <root>.foo> declared in <root>' type=<root>.Foo<kotlin.String> origin=null

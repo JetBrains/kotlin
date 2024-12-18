@@ -177,7 +177,7 @@ MODULE_FRAGMENT
       VALUE_PARAMETER name:onTogglePodcastFollowed index:2 type:kotlin.Function1<kotlin.String, kotlin.Unit>
       BLOCK_BODY
         CALL 'public open fun item (key: kotlin.Any?, contentType: kotlin.Any?, content: @[ExtensionFunctionType] kotlin.Function3<androidx.compose.foundation.lazy.LazyItemScope, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>): kotlin.Unit declared in androidx.compose.foundation.lazy.LazyListScope' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: androidx.compose.foundation.lazy.LazyListScope declared in home.podcastCategory' type=androidx.compose.foundation.lazy.LazyListScope origin=null
+          $this: GET_VAR '<this>: androidx.compose.foundation.lazy.LazyListScope declared in home.podcastCategory' type=androidx.compose.foundation.lazy.LazyListScope origin=IMPLICIT_ARGUMENT
           content: CALL 'public final fun composableLambdaInstance (key: kotlin.Int, tracked: kotlin.Boolean, block: kotlin.Any): androidx.compose.runtime.internal.ComposableLambda declared in androidx.compose.runtime.internal' type=androidx.compose.runtime.internal.ComposableLambda origin=null
             key: CONST Int type=kotlin.Int value=-1614294205
             tracked: CONST Boolean type=kotlin.Boolean value=true
@@ -231,7 +231,7 @@ MODULE_FRAGMENT
                         $this: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.podcastCategory.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
         CALL 'public final fun items <T> (items: kotlin.collections.List<T of androidx.compose.foundation.lazy.items>, key: kotlin.Function1<@[ParameterName(name = "item")] T of androidx.compose.foundation.lazy.items, kotlin.Any>?, contentType: kotlin.Function1<@[ParameterName(name = "item")] T of androidx.compose.foundation.lazy.items, kotlin.Any?>, itemContent: @[ExtensionFunctionType] kotlin.Function4<androidx.compose.foundation.lazy.LazyItemScope, @[ParameterName(name = "item")] T of androidx.compose.foundation.lazy.items, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>): kotlin.Unit [inline] declared in androidx.compose.foundation.lazy' type=kotlin.Unit origin=null
           <T>: com.example.jetcaster.data.EpisodeToPodcast
-          $receiver: GET_VAR '<this>: androidx.compose.foundation.lazy.LazyListScope declared in home.podcastCategory' type=androidx.compose.foundation.lazy.LazyListScope origin=null
+          $receiver: GET_VAR '<this>: androidx.compose.foundation.lazy.LazyListScope declared in home.podcastCategory' type=androidx.compose.foundation.lazy.LazyListScope origin=IMPLICIT_ARGUMENT
           items: GET_VAR 'episodes: kotlin.collections.List<com.example.jetcaster.data.EpisodeToPodcast> declared in home.podcastCategory' type=kotlin.collections.List<com.example.jetcaster.data.EpisodeToPodcast> origin=null
           key: FUN_EXPR type=kotlin.Function1<com.example.jetcaster.data.EpisodeToPodcast, kotlin.Any> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:com.example.jetcaster.data.EpisodeToPodcast) returnType:kotlin.Any
@@ -265,7 +265,7 @@ MODULE_FRAGMENT
                         $this: GET_VAR 'item: com.example.jetcaster.data.EpisodeToPodcast declared in home.podcastCategory.<anonymous>' type=com.example.jetcaster.data.EpisodeToPodcast origin=null
                       onClick: GET_VAR 'navigateToPlayer: kotlin.Function1<kotlin.String, kotlin.Unit> declared in home.podcastCategory' type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=null
                       modifier: CALL 'public abstract fun fillParentMaxWidth (fraction: kotlin.Float): androidx.compose.ui.Modifier declared in androidx.compose.foundation.lazy.LazyItemScope' type=androidx.compose.ui.Modifier origin=null
-                        $this: GET_VAR '$this$items: androidx.compose.foundation.lazy.LazyItemScope declared in home.podcastCategory.<anonymous>' type=androidx.compose.foundation.lazy.LazyItemScope origin=null
+                        $this: GET_VAR '$this$items: androidx.compose.foundation.lazy.LazyItemScope declared in home.podcastCategory.<anonymous>' type=androidx.compose.foundation.lazy.LazyItemScope origin=IMPLICIT_ARGUMENT
                         $receiver: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[androidx.compose.ui.Modifier]' type=androidx.compose.ui.Modifier.Companion
                       $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.podcastCategory.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
                       $changed: CONST Int type=kotlin.Int value=0

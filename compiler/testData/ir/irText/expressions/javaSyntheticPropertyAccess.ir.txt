@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/javaSyntheticPropertyAccess.kt
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun getFoo (): kotlin.Int declared in <root>.J' type=kotlin.Int origin=GET_PROPERTY
-          $this: GET_VAR 'j: <root>.J declared in <root>.test' type=<root>.J origin=null
+          $this: GET_VAR 'j: <root>.J declared in <root>.test' type=<root>.J origin=IMPLICIT_ARGUMENT
       CALL 'public open fun setFoo (x: kotlin.Int): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'j: <root>.J declared in <root>.test' type=<root>.J origin=null
         x: CONST Int type=kotlin.Int value=1

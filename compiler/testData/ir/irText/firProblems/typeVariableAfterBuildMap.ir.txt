@@ -51,7 +51,7 @@ FILE fqName:<root> fileName:/typeVariableAfterBuildMap.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-externalDisplayName> (): kotlin.String declared in <root>.Visibility'
             CALL 'public open fun <get-internalDisplayName> (): kotlin.String declared in <root>.Visibility' type=kotlin.String origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Visibility declared in <root>.Visibility.<get-externalDisplayName>' type=<root>.Visibility origin=null
+              $this: GET_VAR '<this>: <root>.Visibility declared in <root>.Visibility.<get-externalDisplayName>' type=<root>.Visibility origin=IMPLICIT_ARGUMENT
     PROPERTY name:internalDisplayName visibility:public modality:OPEN [val]
       FUN name:<get-internalDisplayName> visibility:public modality:OPEN <> ($this:<root>.Visibility) returnType:kotlin.String
         correspondingProperty: PROPERTY name:internalDisplayName visibility:public modality:OPEN [val]
@@ -59,7 +59,7 @@ FILE fqName:<root> fileName:/typeVariableAfterBuildMap.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-internalDisplayName> (): kotlin.String declared in <root>.Visibility'
             CALL 'public final fun <get-name> (): kotlin.String declared in <root>.Visibility' type=kotlin.String origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Visibility declared in <root>.Visibility.<get-internalDisplayName>' type=<root>.Visibility origin=null
+              $this: GET_VAR '<this>: <root>.Visibility declared in <root>.Visibility.<get-internalDisplayName>' type=<root>.Visibility origin=IMPLICIT_ARGUMENT
   CLASS OBJECT name:Visibilities modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Visibilities
     PROPERTY name:ORDERED_VISIBILITIES visibility:private modality:FINAL [val]
@@ -74,27 +74,27 @@ FILE fqName:<root> fileName:/typeVariableAfterBuildMap.kt
                 BLOCK_BODY
                   TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                     CALL 'public abstract fun put (key: K of kotlin.collections.MutableMap, value: V of kotlin.collections.MutableMap): V of kotlin.collections.MutableMap? declared in kotlin.collections.MutableMap' type=kotlin.Int? origin=null
-                      $this: GET_VAR '$this$buildMap: kotlin.collections.MutableMap<<root>.Visibility, kotlin.Int> declared in <root>.Visibilities.ORDERED_VISIBILITIES.<anonymous>' type=kotlin.collections.MutableMap<<root>.Visibility, kotlin.Int> origin=null
+                      $this: GET_VAR '$this$buildMap: kotlin.collections.MutableMap<<root>.Visibility, kotlin.Int> declared in <root>.Visibilities.ORDERED_VISIBILITIES.<anonymous>' type=kotlin.collections.MutableMap<<root>.Visibility, kotlin.Int> origin=IMPLICIT_ARGUMENT
                       key: GET_OBJECT 'CLASS OBJECT name:PrivateToThis modality:FINAL visibility:public superTypes:[<root>.Visibility]' type=<root>.Visibilities.PrivateToThis
                       value: CONST Int type=kotlin.Int value=0
                   TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                     CALL 'public abstract fun put (key: K of kotlin.collections.MutableMap, value: V of kotlin.collections.MutableMap): V of kotlin.collections.MutableMap? declared in kotlin.collections.MutableMap' type=kotlin.Int? origin=null
-                      $this: GET_VAR '$this$buildMap: kotlin.collections.MutableMap<<root>.Visibility, kotlin.Int> declared in <root>.Visibilities.ORDERED_VISIBILITIES.<anonymous>' type=kotlin.collections.MutableMap<<root>.Visibility, kotlin.Int> origin=null
+                      $this: GET_VAR '$this$buildMap: kotlin.collections.MutableMap<<root>.Visibility, kotlin.Int> declared in <root>.Visibilities.ORDERED_VISIBILITIES.<anonymous>' type=kotlin.collections.MutableMap<<root>.Visibility, kotlin.Int> origin=IMPLICIT_ARGUMENT
                       key: GET_OBJECT 'CLASS OBJECT name:Private modality:FINAL visibility:public superTypes:[<root>.Visibility]' type=<root>.Visibilities.Private
                       value: CONST Int type=kotlin.Int value=0
                   TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                     CALL 'public abstract fun put (key: K of kotlin.collections.MutableMap, value: V of kotlin.collections.MutableMap): V of kotlin.collections.MutableMap? declared in kotlin.collections.MutableMap' type=kotlin.Int? origin=null
-                      $this: GET_VAR '$this$buildMap: kotlin.collections.MutableMap<<root>.Visibility, kotlin.Int> declared in <root>.Visibilities.ORDERED_VISIBILITIES.<anonymous>' type=kotlin.collections.MutableMap<<root>.Visibility, kotlin.Int> origin=null
+                      $this: GET_VAR '$this$buildMap: kotlin.collections.MutableMap<<root>.Visibility, kotlin.Int> declared in <root>.Visibilities.ORDERED_VISIBILITIES.<anonymous>' type=kotlin.collections.MutableMap<<root>.Visibility, kotlin.Int> origin=IMPLICIT_ARGUMENT
                       key: GET_OBJECT 'CLASS OBJECT name:Internal modality:FINAL visibility:public superTypes:[<root>.Visibility]' type=<root>.Visibilities.Internal
                       value: CONST Int type=kotlin.Int value=1
                   TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                     CALL 'public abstract fun put (key: K of kotlin.collections.MutableMap, value: V of kotlin.collections.MutableMap): V of kotlin.collections.MutableMap? declared in kotlin.collections.MutableMap' type=kotlin.Int? origin=null
-                      $this: GET_VAR '$this$buildMap: kotlin.collections.MutableMap<<root>.Visibility, kotlin.Int> declared in <root>.Visibilities.ORDERED_VISIBILITIES.<anonymous>' type=kotlin.collections.MutableMap<<root>.Visibility, kotlin.Int> origin=null
+                      $this: GET_VAR '$this$buildMap: kotlin.collections.MutableMap<<root>.Visibility, kotlin.Int> declared in <root>.Visibilities.ORDERED_VISIBILITIES.<anonymous>' type=kotlin.collections.MutableMap<<root>.Visibility, kotlin.Int> origin=IMPLICIT_ARGUMENT
                       key: GET_OBJECT 'CLASS OBJECT name:Protected modality:FINAL visibility:public superTypes:[<root>.Visibility]' type=<root>.Visibilities.Protected
                       value: CONST Int type=kotlin.Int value=1
                   TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                     CALL 'public abstract fun put (key: K of kotlin.collections.MutableMap, value: V of kotlin.collections.MutableMap): V of kotlin.collections.MutableMap? declared in kotlin.collections.MutableMap' type=kotlin.Int? origin=null
-                      $this: GET_VAR '$this$buildMap: kotlin.collections.MutableMap<<root>.Visibility, kotlin.Int> declared in <root>.Visibilities.ORDERED_VISIBILITIES.<anonymous>' type=kotlin.collections.MutableMap<<root>.Visibility, kotlin.Int> origin=null
+                      $this: GET_VAR '$this$buildMap: kotlin.collections.MutableMap<<root>.Visibility, kotlin.Int> declared in <root>.Visibilities.ORDERED_VISIBILITIES.<anonymous>' type=kotlin.collections.MutableMap<<root>.Visibility, kotlin.Int> origin=IMPLICIT_ARGUMENT
                       key: GET_OBJECT 'CLASS OBJECT name:Public modality:FINAL visibility:public superTypes:[<root>.Visibility]' type=<root>.Visibilities.Public
                       value: CONST Int type=kotlin.Int value=2
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ORDERED_VISIBILITIES> visibility:private modality:FINAL <> ($this:<root>.Visibilities) returnType:kotlin.collections.Map<<root>.Visibility, kotlin.Int>

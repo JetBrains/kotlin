@@ -42,4 +42,4 @@ FILE fqName:<root> fileName:/overloadPriority.kt
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.test'
                   CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
                     $this: CALL 'public final fun f ($context_receiver_0: <root>.Context): kotlin.String declared in <root>' type=kotlin.String origin=null
-                      $context_receiver_0: GET_VAR '$this$with: <root>.Context declared in <root>.test.<anonymous>' type=<root>.Context origin=null
+                      $context_receiver_0: GET_VAR '$this$with: <root>.Context declared in <root>.test.<anonymous>' type=<root>.Context origin=IMPLICIT_ARGUMENT

@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/Fir2IrClassifierStorage.kt
         EXPRESSION_BODY
           CALL 'public final fun <get-name> (): kotlin.String declared in <root>.FirSession' type=kotlin.String origin=GET_PROPERTY
             $this: CALL 'public open fun <get-session> (): <root>.FirSession declared in <root>.Fir2IrClassifierStorage' type=<root>.FirSession origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Fir2IrClassifierStorage declared in <root>.Fir2IrClassifierStorage' type=<root>.Fir2IrClassifierStorage origin=null
+              $this: GET_VAR '<this>: <root>.Fir2IrClassifierStorage declared in <root>.Fir2IrClassifierStorage' type=<root>.Fir2IrClassifierStorage origin=IMPLICIT_ARGUMENT
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-name> visibility:private modality:FINAL <> ($this:<root>.Fir2IrClassifierStorage) returnType:kotlin.String
         correspondingProperty: PROPERTY name:name visibility:private modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.Fir2IrClassifierStorage

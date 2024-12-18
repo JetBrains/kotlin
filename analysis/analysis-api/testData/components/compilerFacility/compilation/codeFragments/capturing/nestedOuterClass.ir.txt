@@ -16,7 +16,7 @@ MODULE_FRAGMENT
                   foo: GET_VAR 'p0: <root>.Foo declared in <root>.CodeFragment.run' type=<root>.Foo origin=null
                 other: CALL 'public final fun callString (string: kotlin.String): kotlin.Int declared in <root>.ContextKt' type=kotlin.Int origin=null
                   string: CALL 'private final fun <get-a> (): kotlin.String declared in <root>.Foo' type=kotlin.String origin=GET_PROPERTY
-                    $this: GET_VAR 'p0: <root>.Foo declared in <root>.CodeFragment.run' type=<root>.Foo origin=null
+                    $this: GET_VAR 'p0: <root>.Foo declared in <root>.CodeFragment.run' type=<root>.Foo origin=IMPLICIT_ARGUMENT
               other: CALL 'public final fun callString (string: kotlin.String): kotlin.Int declared in <root>.ContextKt' type=kotlin.Int origin=null
                 string: CALL 'private final fun <get-b> (): kotlin.String declared in <root>.Foo.Bar' type=kotlin.String origin=GET_PROPERTY
-                  $this: GET_VAR 'p1: <root>.Foo.Bar declared in <root>.CodeFragment.run' type=<root>.Foo.Bar origin=null
+                  $this: GET_VAR 'p1: <root>.Foo.Bar declared in <root>.CodeFragment.run' type=<root>.Foo.Bar origin=IMPLICIT_ARGUMENT

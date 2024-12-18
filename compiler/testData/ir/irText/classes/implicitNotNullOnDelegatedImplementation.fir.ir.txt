@@ -49,7 +49,7 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
         RETURN type=kotlin.Nothing from='public open fun foo (): kotlin.String declared in <root>.K2'
           TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
             CALL 'public open fun foo (): @[EnhancedNullability] kotlin.String declared in <root>.JFoo' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:JFoo modality:OPEN visibility:public superTypes:[kotlin.Any; <root>.IFoo]' type=@[EnhancedNullability] kotlin.String origin=null
-              $this: GET_VAR '<this>: <root>.K2 declared in <root>.K2.foo' type=<root>.K2 origin=null
+              $this: GET_VAR '<this>: <root>.K2 declared in <root>.K2.foo' type=<root>.K2 origin=IMPLICIT_ARGUMENT
   CLASS CLASS name:K3 modality:FINAL visibility:public superTypes:[<root>.JUnrelatedFoo; <root>.IFoo]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.K3
     CONSTRUCTOR visibility:public <> () returnType:<root>.K3 [primary]
@@ -107,7 +107,7 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): @[FlexibleNullability] kotlin.String? declared in <root>.K4'
           CALL 'public open fun foo (): @[FlexibleNullability] kotlin.String? declared in <root>.JUnrelatedFoo' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:JUnrelatedFoo modality:OPEN visibility:public superTypes:[kotlin.Any]' type=@[FlexibleNullability] kotlin.String? origin=null
-            $this: GET_VAR '<this>: <root>.K4 declared in <root>.K4.foo' type=<root>.K4 origin=null
+            $this: GET_VAR '<this>: <root>.K4 declared in <root>.K4.foo' type=<root>.K4 origin=IMPLICIT_ARGUMENT
   CLASS CLASS name:TestJFoo modality:FINAL visibility:public superTypes:[<root>.IFoo]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestJFoo
     FIELD DELEGATE name:$$delegate_0 type:<root>.JFoo visibility:private [final]

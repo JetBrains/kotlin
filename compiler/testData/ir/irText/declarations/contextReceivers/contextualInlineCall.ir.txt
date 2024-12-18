@@ -71,26 +71,26 @@ FILE fqName:<root> fileName:/contextualInlineCall.kt
                   CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
                     $this: GET_VAR 'var result: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=PLUSEQ
                     other: CALL 'public final fun testInline ($context_receiver_0: <root>.Context): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-                      $context_receiver_0: GET_VAR '$this$with: <root>.Context declared in <root>.box.<anonymous>' type=<root>.Context origin=null
+                      $context_receiver_0: GET_VAR '$this$with: <root>.Context declared in <root>.box.<anonymous>' type=<root>.Context origin=IMPLICIT_ARGUMENT
                 SET_VAR 'var result: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Unit origin=PLUSEQ
                   CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
                     $this: GET_VAR 'var result: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=PLUSEQ
                     other: CALL 'public final fun testInlineWithArg ($context_receiver_0: <root>.Context, i: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-                      $context_receiver_0: GET_VAR '$this$with: <root>.Context declared in <root>.box.<anonymous>' type=<root>.Context origin=null
+                      $context_receiver_0: GET_VAR '$this$with: <root>.Context declared in <root>.box.<anonymous>' type=<root>.Context origin=IMPLICIT_ARGUMENT
                       i: CONST Int type=kotlin.Int value=1
                 SET_VAR 'var result: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Unit origin=PLUSEQ
                   CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
                     $this: GET_VAR 'var result: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=PLUSEQ
                     other: CALL 'public final fun testInlineWithExtensionAndArg ($context_receiver_0: <root>.Context, i: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
                       $receiver: CONST Int type=kotlin.Int value=1
-                      $context_receiver_0: GET_VAR '$this$with: <root>.Context declared in <root>.box.<anonymous>' type=<root>.Context origin=null
+                      $context_receiver_0: GET_VAR '$this$with: <root>.Context declared in <root>.box.<anonymous>' type=<root>.Context origin=IMPLICIT_ARGUMENT
                       i: CONST Int type=kotlin.Int value=1
                 SET_VAR 'var result: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Unit origin=PLUSEQ
                   CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
                     $this: GET_VAR 'var result: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=PLUSEQ
                     other: CALL 'public final fun testInlineWithExtensionAndMultipleArgs ($context_receiver_0: <root>.Context, i1: kotlin.Int, i2: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
                       $receiver: CONST Int type=kotlin.Int value=1
-                      $context_receiver_0: GET_VAR '$this$with: <root>.Context declared in <root>.box.<anonymous>' type=<root>.Context origin=null
+                      $context_receiver_0: GET_VAR '$this$with: <root>.Context declared in <root>.box.<anonymous>' type=<root>.Context origin=IMPLICIT_ARGUMENT
                       i1: CONST Int type=kotlin.Int value=1
                       i2: CONST Int type=kotlin.Int value=2
                 CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.Unit origin=null
@@ -107,8 +107,8 @@ FILE fqName:<root> fileName:/contextualInlineCall.kt
                             $this: GET_VAR 'var result: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=PLUSEQ
                             other: CALL 'public final fun testInlineWithExtensionAndMultipleContextsAndArgs ($context_receiver_0: <root>.Context, $context_receiver_1: <root>.A, i1: kotlin.Int, i2: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
                               $receiver: CONST Int type=kotlin.Int value=1
-                              $context_receiver_0: GET_VAR '$this$with: <root>.Context declared in <root>.box.<anonymous>' type=<root>.Context origin=null
-                              $context_receiver_1: GET_VAR '$this$with: <root>.A declared in <root>.box.<anonymous>.<anonymous>' type=<root>.A origin=null
+                              $context_receiver_0: GET_VAR '$this$with: <root>.Context declared in <root>.box.<anonymous>' type=<root>.Context origin=IMPLICIT_ARGUMENT
+                              $context_receiver_1: GET_VAR '$this$with: <root>.A declared in <root>.box.<anonymous>.<anonymous>' type=<root>.A origin=IMPLICIT_ARGUMENT
                               i1: CONST Int type=kotlin.Int value=1
                               i2: CONST Int type=kotlin.Int value=2
                         SET_VAR 'var result: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Unit origin=PLUSEQ
@@ -116,8 +116,8 @@ FILE fqName:<root> fileName:/contextualInlineCall.kt
                             $this: GET_VAR 'var result: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=PLUSEQ
                             other: CALL 'public final fun testInlineWithExtensionAndMultipleContextsAndArgs ($context_receiver_0: <root>.Context, $context_receiver_1: <root>.A, i1: kotlin.Int, i2: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
                               $receiver: CONST Int type=kotlin.Int value=1
-                              $context_receiver_0: GET_VAR '$this$with: <root>.Context declared in <root>.box.<anonymous>' type=<root>.Context origin=null
-                              $context_receiver_1: GET_VAR '$this$with: <root>.A declared in <root>.box.<anonymous>.<anonymous>' type=<root>.A origin=null
+                              $context_receiver_0: GET_VAR '$this$with: <root>.Context declared in <root>.box.<anonymous>' type=<root>.Context origin=IMPLICIT_ARGUMENT
+                              $context_receiver_1: GET_VAR '$this$with: <root>.A declared in <root>.box.<anonymous>.<anonymous>' type=<root>.A origin=IMPLICIT_ARGUMENT
                 RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
                   WHEN type=kotlin.String origin=IF
                     BRANCH
@@ -134,7 +134,7 @@ FILE fqName:<root> fileName:/contextualInlineCall.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testInline ($context_receiver_0: <root>.Context): kotlin.Int declared in <root>'
         CALL 'public final fun c (): kotlin.Int declared in <root>.Context' type=kotlin.Int origin=null
-          $this: GET_VAR '$context_receiver_0: <root>.Context declared in <root>.testInline' type=<root>.Context origin=null
+          $this: GET_VAR '$context_receiver_0: <root>.Context declared in <root>.testInline' type=<root>.Context origin=IMPLICIT_ARGUMENT
   FUN name:testInlineWithArg visibility:public modality:FINAL <> ($context_receiver_0:<root>.Context, i:kotlin.Int) returnType:kotlin.Int [inline]
     contextReceiverParametersCount: 1
     VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.Context
@@ -144,7 +144,7 @@ FILE fqName:<root> fileName:/contextualInlineCall.kt
         CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
           $this: GET_VAR 'i: kotlin.Int declared in <root>.testInlineWithArg' type=kotlin.Int origin=null
           other: CALL 'public final fun c (): kotlin.Int declared in <root>.Context' type=kotlin.Int origin=null
-            $this: GET_VAR '$context_receiver_0: <root>.Context declared in <root>.testInlineWithArg' type=<root>.Context origin=null
+            $this: GET_VAR '$context_receiver_0: <root>.Context declared in <root>.testInlineWithArg' type=<root>.Context origin=IMPLICIT_ARGUMENT
   FUN name:testInlineWithExtensionAndArg visibility:public modality:FINAL <> ($receiver:kotlin.Int, $context_receiver_0:<root>.Context, i:kotlin.Int) returnType:kotlin.Int [inline]
     contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
@@ -157,7 +157,7 @@ FILE fqName:<root> fileName:/contextualInlineCall.kt
             $this: GET_VAR '<this>: kotlin.Int declared in <root>.testInlineWithExtensionAndArg' type=kotlin.Int origin=null
             other: GET_VAR 'i: kotlin.Int declared in <root>.testInlineWithExtensionAndArg' type=kotlin.Int origin=null
           other: CALL 'public final fun c (): kotlin.Int declared in <root>.Context' type=kotlin.Int origin=null
-            $this: GET_VAR '$context_receiver_0: <root>.Context declared in <root>.testInlineWithExtensionAndArg' type=<root>.Context origin=null
+            $this: GET_VAR '$context_receiver_0: <root>.Context declared in <root>.testInlineWithExtensionAndArg' type=<root>.Context origin=IMPLICIT_ARGUMENT
   FUN name:testInlineWithExtensionAndMultipleArgs visibility:public modality:FINAL <> ($receiver:kotlin.Int, $context_receiver_0:<root>.Context, i1:kotlin.Int, i2:kotlin.Int) returnType:kotlin.Int [inline]
     contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
@@ -173,7 +173,7 @@ FILE fqName:<root> fileName:/contextualInlineCall.kt
               other: GET_VAR 'i1: kotlin.Int declared in <root>.testInlineWithExtensionAndMultipleArgs' type=kotlin.Int origin=null
             other: GET_VAR 'i2: kotlin.Int declared in <root>.testInlineWithExtensionAndMultipleArgs' type=kotlin.Int origin=null
           other: CALL 'public final fun c (): kotlin.Int declared in <root>.Context' type=kotlin.Int origin=null
-            $this: GET_VAR '$context_receiver_0: <root>.Context declared in <root>.testInlineWithExtensionAndMultipleArgs' type=<root>.Context origin=null
+            $this: GET_VAR '$context_receiver_0: <root>.Context declared in <root>.testInlineWithExtensionAndMultipleArgs' type=<root>.Context origin=IMPLICIT_ARGUMENT
   FUN name:testInlineWithExtensionAndMultipleContextsAndArgs visibility:public modality:FINAL <> ($receiver:kotlin.Int, $context_receiver_0:<root>.Context, $context_receiver_1:<root>.A, i1:kotlin.Int, i2:kotlin.Int) returnType:kotlin.Int [inline]
     contextReceiverParametersCount: 2
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
@@ -195,7 +195,7 @@ FILE fqName:<root> fileName:/contextualInlineCall.kt
                 other: GET_VAR 'i1: kotlin.Int declared in <root>.testInlineWithExtensionAndMultipleContextsAndArgs' type=kotlin.Int origin=null
               other: GET_VAR 'i2: kotlin.Int declared in <root>.testInlineWithExtensionAndMultipleContextsAndArgs' type=kotlin.Int origin=null
             other: CALL 'public final fun c (): kotlin.Int declared in <root>.Context' type=kotlin.Int origin=null
-              $this: GET_VAR '$context_receiver_0: <root>.Context declared in <root>.testInlineWithExtensionAndMultipleContextsAndArgs' type=<root>.Context origin=null
+              $this: GET_VAR '$context_receiver_0: <root>.Context declared in <root>.testInlineWithExtensionAndMultipleContextsAndArgs' type=<root>.Context origin=IMPLICIT_ARGUMENT
           other: WHEN type=kotlin.Int origin=IF
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ

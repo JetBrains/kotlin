@@ -60,7 +60,7 @@ FILE fqName:<root> fileName:/starProjectionLambdaNullReturn.kt
     $receiver: VALUE_PARAMETER name:<this> type:<root>.I<*>
     BLOCK_BODY
       CALL 'public abstract fun foo (func: kotlin.Function0<T of <root>.I?>): kotlin.Unit declared in <root>.I' type=kotlin.Unit origin=null
-        $this: GET_VAR '<this>: <root>.I<*> declared in <root>.foo' type=<root>.I<*> origin=null
+        $this: GET_VAR '<this>: <root>.I<*> declared in <root>.foo' type=<root>.I<*> origin=IMPLICIT_ARGUMENT
         func: FUN_EXPR type=kotlin.Function0<kotlin.Nothing?> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing?
             BLOCK_BODY

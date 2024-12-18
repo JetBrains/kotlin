@@ -132,10 +132,10 @@ FILE fqName:<root> fileName:/kt49203.kt
       VALUE_PARAMETER name:data index:0 type:kotlin.String
       BLOCK_BODY
         CALL 'public final fun <set-value> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.X' type=kotlin.Unit origin=PLUSEQ
-          $this: GET_VAR '<this>: <root>.X declared in <root>.X.plusAssign' type=<root>.X origin=null
+          $this: GET_VAR '<this>: <root>.X declared in <root>.X.plusAssign' type=<root>.X origin=IMPLICIT_ARGUMENT
           <set-?>: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUSEQ
             $this: CALL 'public final fun <get-value> (): kotlin.String declared in <root>.X' type=kotlin.String origin=PLUSEQ
-              $this: GET_VAR '<this>: <root>.X declared in <root>.X.plusAssign' type=<root>.X origin=null
+              $this: GET_VAR '<this>: <root>.X declared in <root>.X.plusAssign' type=<root>.X origin=IMPLICIT_ARGUMENT
             other: GET_VAR 'data: kotlin.String declared in <root>.X.plusAssign' type=kotlin.String origin=null
   FUN name:test visibility:public modality:FINAL <> (b:<root>.B) returnType:kotlin.Unit
     VALUE_PARAMETER name:b index:0 type:<root>.B

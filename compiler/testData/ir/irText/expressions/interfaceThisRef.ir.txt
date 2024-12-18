@@ -18,6 +18,6 @@ FILE fqName:<root> fileName:/interfaceThisRef.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.IFoo
       BLOCK_BODY
         CALL 'public abstract fun foo (): kotlin.Unit declared in <root>.IFoo' type=kotlin.Unit origin=null
-          $this: GET_VAR '<this>: <root>.IFoo declared in <root>.IFoo.bar' type=<root>.IFoo origin=null
+          $this: GET_VAR '<this>: <root>.IFoo declared in <root>.IFoo.bar' type=<root>.IFoo origin=IMPLICIT_ARGUMENT
     FUN name:foo visibility:public modality:ABSTRACT <> ($this:<root>.IFoo) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.IFoo

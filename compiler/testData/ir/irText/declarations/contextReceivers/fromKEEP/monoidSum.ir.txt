@@ -155,7 +155,7 @@ FILE fqName:<root> fileName:/monoidSum.kt
                         CONST Int type=kotlin.Int value=1
                         CONST Int type=kotlin.Int value=2
                         CONST Int type=kotlin.Int value=3
-                    $context_receiver_0: GET_VAR '$this$with: <root>.IntMonoid declared in <root>.box.<anonymous>' type=<root>.IntMonoid origin=null
+                    $context_receiver_0: GET_VAR '$this$with: <root>.IntMonoid declared in <root>.box.<anonymous>' type=<root>.IntMonoid origin=IMPLICIT_ARGUMENT
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=kotlin.String origin=null
           <T>: <root>.StringMonoid
@@ -173,7 +173,7 @@ FILE fqName:<root> fileName:/monoidSum.kt
                       elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
                         CONST String type=kotlin.String value="O"
                         CONST String type=kotlin.String value="K"
-                    $context_receiver_0: GET_VAR '$this$with: <root>.StringMonoid declared in <root>.box.<anonymous>' type=<root>.StringMonoid origin=null
+                    $context_receiver_0: GET_VAR '$this$with: <root>.StringMonoid declared in <root>.box.<anonymous>' type=<root>.StringMonoid origin=IMPLICIT_ARGUMENT
   FUN name:sum visibility:public modality:FINAL <T> ($receiver:kotlin.collections.List<T of <root>.sum>, $context_receiver_0:<root>.Monoid<T of <root>.sum>) returnType:T of <root>.sum
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     contextReceiverParametersCount: 1
@@ -184,9 +184,9 @@ FILE fqName:<root> fileName:/monoidSum.kt
         CALL 'public final fun fold <T, R> (initial: R of kotlin.collections.fold, operation: kotlin.Function2<@[ParameterName(name = "acc")] R of kotlin.collections.fold, T of kotlin.collections.fold, R of kotlin.collections.fold>): R of kotlin.collections.fold declared in kotlin.collections' type=T of <root>.sum origin=null
           <T>: T of <root>.sum
           <R>: T of <root>.sum
-          $receiver: GET_VAR '<this>: kotlin.collections.List<T of <root>.sum> declared in <root>.sum' type=kotlin.collections.List<T of <root>.sum> origin=null
+          $receiver: GET_VAR '<this>: kotlin.collections.List<T of <root>.sum> declared in <root>.sum' type=kotlin.collections.List<T of <root>.sum> origin=IMPLICIT_ARGUMENT
           initial: CALL 'public abstract fun <get-unit> (): T of <root>.Monoid declared in <root>.Monoid' type=T of <root>.sum origin=GET_PROPERTY
-            $this: GET_VAR '$context_receiver_0: <root>.Monoid<T of <root>.sum> declared in <root>.sum' type=<root>.Monoid<T of <root>.sum> origin=null
+            $this: GET_VAR '$context_receiver_0: <root>.Monoid<T of <root>.sum> declared in <root>.sum' type=<root>.Monoid<T of <root>.sum> origin=IMPLICIT_ARGUMENT
           operation: FUN_EXPR type=kotlin.Function2<@[ParameterName(name = "acc")] T of <root>.sum, T of <root>.sum, T of <root>.sum> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (acc:T of <root>.sum, e:T of <root>.sum) returnType:T of <root>.sum
               VALUE_PARAMETER name:acc index:0 type:T of <root>.sum
@@ -194,6 +194,6 @@ FILE fqName:<root> fileName:/monoidSum.kt
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (acc: T of <root>.sum, e: T of <root>.sum): T of <root>.sum declared in <root>.sum'
                   CALL 'public abstract fun combine (other: T of <root>.Monoid): T of <root>.Monoid declared in <root>.Monoid' type=T of <root>.sum origin=null
-                    $this: GET_VAR '$context_receiver_0: <root>.Monoid<T of <root>.sum> declared in <root>.sum' type=<root>.Monoid<T of <root>.sum> origin=null
+                    $this: GET_VAR '$context_receiver_0: <root>.Monoid<T of <root>.sum> declared in <root>.sum' type=<root>.Monoid<T of <root>.sum> origin=IMPLICIT_ARGUMENT
                     $receiver: GET_VAR 'acc: T of <root>.sum declared in <root>.sum.<anonymous>' type=T of <root>.sum origin=null
                     other: GET_VAR 'e: T of <root>.sum declared in <root>.sum.<anonymous>' type=T of <root>.sum origin=null

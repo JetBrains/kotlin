@@ -142,7 +142,7 @@
         @55:12..17 VALUE_PARAMETER name:value index:0 type:kotlin.Int
         @55:19..57:9 BLOCK_BODY
           @56:12..25 SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test11 type:kotlin.Int visibility:private' type=kotlin.Unit origin=EQ
-            @56:12..25 GET_VAR '<this>: test.Test declared in test.Test.<set-test11>' type=test.Test origin=null
+            @56:12..25 GET_VAR '<this>: test.Test declared in test.Test.<set-test11>' type=test.Test origin=IMPLICIT_ARGUMENT
             @56:20..25 GET_VAR 'value: kotlin.Int declared in test.Test.<set-test11>' type=kotlin.Int origin=null
     @60:4..66:9 PROPERTY name:test12 visibility:public modality:FINAL [var]
       @60:4..66:9 FIELD PROPERTY_BACKING_FIELD name:test12 type:kotlin.Int visibility:private
@@ -159,7 +159,7 @@
         @64:12..17 VALUE_PARAMETER name:value index:0 type:kotlin.Int
         @64:19..66:9 BLOCK_BODY
           @65:12..25 SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test12 type:kotlin.Int visibility:private' type=kotlin.Unit origin=EQ
-            @65:12..25 GET_VAR '<this>: test.Test declared in test.Test.<set-test12>' type=test.Test origin=null
+            @65:12..25 GET_VAR '<this>: test.Test declared in test.Test.<set-test12>' type=test.Test origin=IMPLICIT_ARGUMENT
             @65:20..25 GET_VAR 'value: kotlin.Int declared in test.Test.<set-test12>' type=kotlin.Int origin=null
     @69:4..75:9 PROPERTY name:test13 visibility:public modality:FINAL [var]
       @69:4..75:9 FIELD PROPERTY_BACKING_FIELD name:test13 type:kotlin.Int visibility:private
@@ -180,7 +180,7 @@
         @73:12..17 VALUE_PARAMETER name:value index:0 type:kotlin.Int
         @73:19..75:9 BLOCK_BODY
           @74:12..25 SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test13 type:kotlin.Int visibility:private' type=kotlin.Unit origin=EQ
-            @74:12..25 GET_VAR '<this>: test.Test declared in test.Test.<set-test13>' type=test.Test origin=null
+            @74:12..25 GET_VAR '<this>: test.Test declared in test.Test.<set-test13>' type=test.Test origin=IMPLICIT_ARGUMENT
             @74:20..25 GET_VAR 'value: kotlin.Int declared in test.Test.<set-test13>' type=kotlin.Int origin=null
     @2:0..77:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       @2:0..77:1 VALUE_PARAMETER name:<this> type:kotlin.Any

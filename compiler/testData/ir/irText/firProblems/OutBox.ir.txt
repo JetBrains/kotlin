@@ -38,7 +38,7 @@ FILE fqName:<root> fileName:/Box.kt
         BLOCK_BODY
           VAR name:foo type:<root>.Foo [var]
             CALL 'public final fun <get-foo> (): T of <root>.Box declared in <root>.Box' type=T of <root>.Box origin=GET_PROPERTY
-              $this: GET_VAR '<this>: <root>.Box<T of <root>.Box> declared in <root>.Box.<get-str>' type=<root>.Box<T of <root>.Box> origin=null
+              $this: GET_VAR '<this>: <root>.Box<T of <root>.Box> declared in <root>.Box.<get-str>' type=<root>.Box<T of <root>.Box> origin=IMPLICIT_ARGUMENT
           WHEN type=kotlin.Unit origin=IF
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.Foo.Buz

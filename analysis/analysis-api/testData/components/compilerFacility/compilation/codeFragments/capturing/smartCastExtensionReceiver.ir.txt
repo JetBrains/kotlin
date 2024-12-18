@@ -13,8 +13,8 @@ MODULE_FRAGMENT
             CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
               $this: CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
                 $this: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
-                  GET_VAR 'p0: kotlin.Any? declared in <root>.CodeFragment.run' type=kotlin.Any? origin=null
+                  GET_VAR 'p0: kotlin.Any? declared in <root>.CodeFragment.run' type=kotlin.Any? origin=IMPLICIT_ARGUMENT
               other: CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
                 $this: CALL 'public final fun <get-foo> (): kotlin.String declared in <root>.Foo' type=kotlin.String origin=GET_PROPERTY
                   $this: TYPE_OP type=<root>.Foo origin=IMPLICIT_CAST typeOperand=<root>.Foo
-                    GET_VAR 'p1: kotlin.Any? declared in <root>.CodeFragment.run' type=kotlin.Any? origin=null
+                    GET_VAR 'p1: kotlin.Any? declared in <root>.CodeFragment.run' type=kotlin.Any? origin=IMPLICIT_ARGUMENT

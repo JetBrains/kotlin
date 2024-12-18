@@ -1,5 +1,3 @@
-// FIR_IDENTICAL
-
 class Outer {
     open inner class Inner(val x: Int)
 }

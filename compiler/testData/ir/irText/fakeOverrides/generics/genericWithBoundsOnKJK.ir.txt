@@ -456,7 +456,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar (): T of <root>.KotlinClass? declared in <root>.KotlinClass'
           CALL 'public open fun <get-a> (): T of <root>.KotlinClass? declared in <root>.KotlinClass' type=T of <root>.KotlinClass? origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.KotlinClass<T of <root>.KotlinClass> declared in <root>.KotlinClass.bar' type=<root>.KotlinClass<T of <root>.KotlinClass> origin=null
+            $this: GET_VAR '<this>: <root>.KotlinClass<T of <root>.KotlinClass> declared in <root>.KotlinClass.bar' type=<root>.KotlinClass<T of <root>.KotlinClass> origin=IMPLICIT_ARGUMENT
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.KotlinClass<T of <root>.KotlinClass>, t:T of <root>.KotlinClass) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.KotlinClass<T of <root>.KotlinClass>
       VALUE_PARAMETER name:t index:0 type:T of <root>.KotlinClass
@@ -497,7 +497,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar (): T of <root>.KotlinClass2? declared in <root>.KotlinClass2'
           CALL 'public open fun <get-a> (): T of <root>.KotlinClass2? declared in <root>.KotlinClass2' type=T of <root>.KotlinClass2? origin=GET_PROPERTY
-            $this: GET_VAR '<this>: <root>.KotlinClass2<T of <root>.KotlinClass2> declared in <root>.KotlinClass2.bar' type=<root>.KotlinClass2<T of <root>.KotlinClass2> origin=null
+            $this: GET_VAR '<this>: <root>.KotlinClass2<T of <root>.KotlinClass2> declared in <root>.KotlinClass2.bar' type=<root>.KotlinClass2<T of <root>.KotlinClass2> origin=IMPLICIT_ARGUMENT
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.KotlinClass2<T of <root>.KotlinClass2>, t:T of <root>.KotlinClass2) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.KotlinClass2<T of <root>.KotlinClass2>
       VALUE_PARAMETER name:t index:0 type:T of <root>.KotlinClass2

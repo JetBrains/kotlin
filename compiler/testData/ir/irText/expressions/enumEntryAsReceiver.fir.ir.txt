@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
                   BLOCK_BODY
                     RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.X.B.value'
                       CALL 'public final fun <get-value2> (): kotlin.String declared in <root>.X.B' type=kotlin.String origin=GET_PROPERTY
-                        $this: GET_VAR '<this>: <root>.X.B declared in <root>.X.B' type=<root>.X.B origin=null
+                        $this: GET_VAR '<this>: <root>.X.B declared in <root>.X.B' type=<root>.X.B origin=IMPLICIT_ARGUMENT
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:OPEN <> ($this:<root>.X.B) returnType:kotlin.Function0<kotlin.String>
             correspondingProperty: PROPERTY name:value visibility:public modality:OPEN [val]
             overridden:
