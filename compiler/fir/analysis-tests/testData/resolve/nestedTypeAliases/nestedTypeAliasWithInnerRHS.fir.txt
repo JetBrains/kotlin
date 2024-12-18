@@ -30,7 +30,7 @@ FILE: nestedTypeAliasWithInnerRHS.kt
 
     }
     public final fun bar(): R|kotlin/Unit| {
-        R|/Outer.Outer|().R|/Outer.Inner.Inner|()
-        R|/OuterSuccessor.OuterSuccessor|().R|/Outer.Inner.Inner|()
+        R|/Outer.Outer|().<Unresolved name: NestedTA>#()
+        R|/OuterSuccessor.OuterSuccessor|().<Unresolved name: NestedTA>#()
         R|/Outer.Outer|().R|/Outer.Inner.Inner|()
     }
