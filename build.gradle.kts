@@ -100,8 +100,9 @@ if (!project.hasProperty("versions.kotlin-native")) {
     // BEWARE! Bumping this version doesn't take an immediate effect on TeamCity: KTI-1107
     extra["versions.kotlin-native"] = if (kotlinBuildProperties.isKotlinNativeEnabled) {
         kotlinBuildProperties.defaultSnapshotVersion
+        "2.1.10-RC"
     } else {
-        "2.1.0" //"2.0.20-dev-4770"
+        "2.1.10-RC" //"2.0.20-dev-4770"
     }
 }
 
