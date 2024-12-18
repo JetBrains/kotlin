@@ -130,9 +130,9 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
                     """.trimIndent()
                 )
                 // To have access to the content of original files from a browser's DevTools
-                testServices.moduleStructure.modules.last().files.forEach {
-                    if (it.originalFile === originalFile) File(dir, it.name).writeText(it.originalContent)
-                }
+                testServices.moduleStructure.modules
+                    .flatMap { it.files }
+                    .forEach { File(dir, it.name).writeText(it.originalContent) }
             }
 
             val exception = try {
