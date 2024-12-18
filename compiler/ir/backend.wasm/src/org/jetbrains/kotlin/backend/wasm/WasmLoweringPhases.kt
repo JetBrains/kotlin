@@ -595,7 +595,8 @@ val constEvaluationPhase = makeIrModulePhase(
 
 fun getWasmLowerings(
     configuration: CompilerConfiguration,
-    isIncremental: Boolean
+    isIncremental: Boolean,
+    isDebugFriendlyBuild: Boolean
 ): List<SimpleNamedCompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFragment>> = listOfNotNull(
     // BEGIN: Common Native/JS/Wasm prefix.
     validateIrBeforeLowering,
@@ -655,7 +656,7 @@ fun getWasmLowerings(
     primaryConstructorLoweringPhase,
     delegateToPrimaryConstructorLoweringPhase,
 
-    wasmStringSwitchOptimizerLowering,
+    wasmStringSwitchOptimizerLowering.takeIf { !isDebugFriendlyBuild },
 
     associatedObjectsLowering,
 
@@ -688,7 +689,7 @@ fun getWasmLowerings(
     // This doesn't work with IC as of now for accessors within inline functions because
     //  there is no special case for Wasm in the computation of inline function transitive
     //  hashes the same way it's being done with the calculation of symbol hashes.
-    propertyAccessorInlinerLoweringPhase.takeIf { !isIncremental },
+    propertyAccessorInlinerLoweringPhase.takeIf { !isIncremental && !isDebugFriendlyBuild },
 
     stringConcatenationLowering,
 
@@ -719,7 +720,7 @@ fun getWasmLowerings(
     autoboxingTransformerPhase,
 
     objectUsageLoweringPhase,
-    purifyObjectInstanceGettersLoweringPhase.takeIf { !isIncremental },
+    purifyObjectInstanceGettersLoweringPhase.takeIf { !isIncremental && !isDebugFriendlyBuild },
 
     explicitlyCastExternalTypesPhase,
     typeOperatorLoweringPhase,
@@ -732,7 +733,7 @@ fun getWasmLowerings(
     staticMembersLoweringPhase,
 
     // This is applied for non-IC mode, which is a better optimization than inlineUnitInstanceGettersLowering
-    inlineObjectsWithPureInitializationLoweringPhase.takeIf { !isIncremental },
+    inlineObjectsWithPureInitializationLoweringPhase.takeIf { !isIncremental && !isDebugFriendlyBuild },
 
     whenBranchOptimiserLoweringPhase,
     validateIrAfterLowering,
@@ -740,10 +741,11 @@ fun getWasmLowerings(
 
 fun getWasmPhases(
     configuration: CompilerConfiguration,
-    isIncremental: Boolean
+    isIncremental: Boolean,
+    isDebugFriendlyBuild: Boolean
 ): SameTypeNamedCompilerPhase<WasmBackendContext, IrModuleFragment> = SameTypeNamedCompilerPhase(
     name = "IrModuleLowering",
-    lower = getWasmLowerings(configuration, isIncremental).toCompilerPhase(),
+    lower = getWasmLowerings(configuration, isIncremental, isDebugFriendlyBuild).toCompilerPhase(),
     actions = DEFAULT_IR_ACTIONS,
     nlevels = 1
 )

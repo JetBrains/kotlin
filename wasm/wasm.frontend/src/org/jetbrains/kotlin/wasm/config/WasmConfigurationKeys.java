@@ -29,4 +29,7 @@ public class WasmConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> WASM_USE_JS_TAG =
             CompilerConfigurationKey.create("use WebAssembly.JSTag to catch JS thrown values");
+
+    public static final CompilerConfigurationKey<Boolean> WASM_FORCE_DEBUG_FRIENDLY_BUILD =
+            CompilerConfigurationKey.create("skip optimizations that can break debugging.");
 }

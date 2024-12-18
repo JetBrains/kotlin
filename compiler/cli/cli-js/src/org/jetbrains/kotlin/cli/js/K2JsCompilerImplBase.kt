@@ -46,6 +46,7 @@ internal abstract class K2JsCompilerImplBase(
     protected fun initializeCommonConfiguration(libraries: List<String>) {
         configuration.put(JSConfigurationKeys.LIBRARIES, libraries)
         configuration.put(JSConfigurationKeys.TRANSITIVE_LIBRARIES, libraries)
+        configuration.put(JSConfigurationKeys.GENERATE_DTS, arguments.generateDts)
 
         val commonSourcesArray = arguments.commonSources
         val commonSources = commonSourcesArray?.toSet() ?: emptySet()

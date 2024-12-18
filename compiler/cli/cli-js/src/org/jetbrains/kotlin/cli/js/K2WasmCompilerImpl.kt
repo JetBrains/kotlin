@@ -59,11 +59,14 @@ internal class K2WasmCompilerImpl(
     override fun tryInitializeCompiler(libraries: List<String>, rootDisposable: Disposable): KotlinCoreEnvironment? {
         initializeCommonConfiguration(libraries)
 
+
+
         configuration.put(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, arguments.wasmEnableArrayRangeChecks)
         configuration.put(WasmConfigurationKeys.WASM_ENABLE_ASSERTS, arguments.wasmEnableAsserts)
         configuration.put(WasmConfigurationKeys.WASM_GENERATE_WAT, arguments.wasmGenerateWat)
         configuration.put(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS, arguments.wasmUseTrapsInsteadOfExceptions)
         configuration.put(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL, arguments.wasmUseNewExceptionProposal)
+        configuration.put(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_BUILD, arguments.forceDebugFriendlyBuild)
         configuration.put(WasmConfigurationKeys.WASM_USE_JS_TAG, arguments.wasmUseJsTag ?: arguments.wasmUseNewExceptionProposal)
         configuration.putIfNotNull(WasmConfigurationKeys.WASM_TARGET, arguments.wasmTarget?.let(WasmTarget::fromName))
 
@@ -137,7 +140,13 @@ internal class K2WasmCompilerImpl(
         )
 
         configuration.phaseConfig = createPhaseConfig(arguments).also {
-            if (arguments.listPhases) it.list(getWasmPhases(configuration, isIncremental = false))
+            if (arguments.listPhases) it.list(
+                getWasmPhases(
+                    configuration,
+                    isIncremental = false,
+                    isDebugFriendlyBuild = arguments.forceDebugFriendlyBuild
+                )
+            )
         }
 
         val (allModules, backendContext, typeScriptFragment) = compileToLoweredIr(

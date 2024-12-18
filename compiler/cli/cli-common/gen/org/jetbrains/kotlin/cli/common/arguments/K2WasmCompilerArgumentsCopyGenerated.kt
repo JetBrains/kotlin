@@ -11,6 +11,7 @@ fun copyK2WasmCompilerArguments(from: K2WasmCompilerArguments, to: K2WasmCompile
     copyCommonKlibBasedCompilerArguments(from, to)
 
     to.debuggerCustomFormatters = from.debuggerCustomFormatters
+    to.forceDebugFriendlyBuild = from.forceDebugFriendlyBuild
     to.icCacheReadonly = from.icCacheReadonly
     to.includeUnavailableSourcesIntoSourceMap = from.includeUnavailableSourcesIntoSourceMap
     to.irDceDumpDeclarationIrSizesToFile = from.irDceDumpDeclarationIrSizesToFile

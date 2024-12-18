@@ -134,6 +134,7 @@ open class AbstractFirWasmJsSteppingTest : AbstractFirWasmJsTest(
         useAdditionalSourceProviders(::WasmJsSteppingTestAdditionalSourceProvider)
         defaultDirectives {
             +WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP
+            +WasmEnvironmentConfigurationDirectives.FORCE_DEBUG_FRIENDLY_BUILD
             +WasmEnvironmentConfigurationDirectives.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES
         }
     }
