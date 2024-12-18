@@ -24,8 +24,8 @@ import kotlin.reflect.KMutableProperty0
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
 public actual class AtomicInt public actual constructor(
-    @get:Deprecated("To read the atomic value use load().", ReplaceWith("this.load()"))
-    @set:Deprecated("To atomically set the new value use store(newValue: Int).", ReplaceWith("this.store(newValue)"))
+    @get:Deprecated("To read the atomic value use load().", ReplaceWith("this.load()"), DeprecationLevel.ERROR)
+    @set:Deprecated("To atomically set the new value use store(newValue: Int).", ReplaceWith("this.store(newValue)"), DeprecationLevel.ERROR)
     @Volatile public var value: Int
 ) {
     /**
@@ -77,43 +77,43 @@ public actual class AtomicInt public actual constructor(
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
      */
-    @Deprecated("Use exchange(newValue: Int) instead.", ReplaceWith("this.exchange(newValue)"))
+    @Deprecated("Use exchange(newValue: Int) instead.", ReplaceWith("this.exchange(newValue)"), DeprecationLevel.ERROR)
     public fun getAndSet(newValue: Int): Int = this::value.getAndSetField(newValue)
 
     /**
      * Atomically adds the [given value][delta] to the current value and returns the old value.
      */
-    @Deprecated("Use fetchAndAdd(newValue: Int) instead.", ReplaceWith("this.fetchAndAdd(newValue)"))
+    @Deprecated("Use fetchAndAdd(newValue: Int) instead.", ReplaceWith("this.fetchAndAdd(newValue)"), DeprecationLevel.ERROR)
     public fun getAndAdd(delta: Int): Int = this::value.getAndAddField(delta)
 
     /**
      * Atomically adds the [given value][delta] to the current value and returns the new value.
      */
-    @Deprecated("Use addAndFetch(newValue: Int) instead.", ReplaceWith("this.addAndFetch(newValue)"))
+    @Deprecated("Use addAndFetch(newValue: Int) instead.", ReplaceWith("this.addAndFetch(newValue)"), DeprecationLevel.ERROR)
     public fun addAndGet(delta: Int): Int = this::value.getAndAddField(delta) + delta
 
     /**
      * Atomically increments the current value by one and returns the old value.
      */
-    @Deprecated("Use fetchAndIncrement() instead.", ReplaceWith("this.fetchAndIncrement()"))
+    @Deprecated("Use fetchAndIncrement() instead.", ReplaceWith("this.fetchAndIncrement()"), DeprecationLevel.ERROR)
     public fun getAndIncrement(): Int = this::value.getAndAddField(1)
 
     /**
      * Atomically increments the current value by one and returns the new value.
      */
-    @Deprecated("Use incrementAndFetch() instead.", ReplaceWith("this.incrementAndFetch()"))
+    @Deprecated("Use incrementAndFetch() instead.", ReplaceWith("this.incrementAndFetch()"), DeprecationLevel.ERROR)
     public fun incrementAndGet(): Int = this::value.getAndAddField(1) + 1
 
     /**
      * Atomically decrements the current value by one and returns the new value.
      */
-    @Deprecated("Use decrementAndFetch() instead.", ReplaceWith("this.decrementAndFetch()"))
+    @Deprecated("Use decrementAndFetch() instead.", ReplaceWith("this.decrementAndFetch()"), DeprecationLevel.ERROR)
     public fun decrementAndGet(): Int = this::value.getAndAddField(-1) - 1
 
     /**
      * Atomically decrements the current value by one and returns the old value.
      */
-    @Deprecated("Use fetchAndDecrement() instead.", ReplaceWith("this.fetchAndDecrement()"))
+    @Deprecated("Use fetchAndDecrement() instead.", ReplaceWith("this.fetchAndDecrement()"), DeprecationLevel.ERROR)
     public fun getAndDecrement(): Int = this::value.getAndAddField(-1)
 
     /**
@@ -121,6 +121,7 @@ public actual class AtomicInt public actual constructor(
      *
      * This operation does not provide any atomicity guarantees.
      */
+    @Suppress("DEPRECATION_ERROR")
     public actual override fun toString(): String = value.toString()
 }
 
@@ -138,8 +139,8 @@ public actual class AtomicInt public actual constructor(
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
 public actual class AtomicLong public actual constructor(
-    @get:Deprecated("To read the atomic value use load().", ReplaceWith("this.load()"))
-    @set:Deprecated("To atomically set the new value use store(newValue: Long).", ReplaceWith("this.store(newValue)"))
+    @get:Deprecated("To read the atomic value use load().", ReplaceWith("this.load()"), DeprecationLevel.ERROR)
+    @set:Deprecated("To atomically set the new value use store(newValue: Long).", ReplaceWith("this.store(newValue)"), DeprecationLevel.ERROR)
     @Volatile public var value: Long
 ) {
     /**
@@ -191,43 +192,43 @@ public actual class AtomicLong public actual constructor(
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
      */
-    @Deprecated("Use exchange(newValue: Long) instead.", ReplaceWith("this.exchange(newValue)"))
+    @Deprecated("Use exchange(newValue: Long) instead.", ReplaceWith("this.exchange(newValue)"), DeprecationLevel.ERROR)
     public fun getAndSet(newValue: Long): Long = this::value.getAndSetField(newValue)
 
     /**
      * Atomically adds the [given value][delta] to the current value and returns the old value.
      */
-    @Deprecated("Use fetchAndAdd(newValue: Long) instead.", ReplaceWith("this.fetchAndAdd(newValue)"))
+    @Deprecated("Use fetchAndAdd(newValue: Long) instead.", ReplaceWith("this.fetchAndAdd(newValue)"), DeprecationLevel.ERROR)
     public fun getAndAdd(delta: Long): Long = this::value.getAndAddField(delta)
 
     /**
      * Atomically adds the [given value][delta] to the current value and returns the new value.
      */
-    @Deprecated("Use addAndFetch(newValue: Long) instead.", ReplaceWith("this.addAndFetch(newValue)"))
+    @Deprecated("Use addAndFetch(newValue: Long) instead.", ReplaceWith("this.addAndFetch(newValue)"), DeprecationLevel.ERROR)
     public fun addAndGet(delta: Long): Long = this::value.getAndAddField(delta) + delta
 
     /**
      * Atomically increments the current value by one and returns the old value.
      */
-    @Deprecated("Use fetchAndIncrement() instead.", ReplaceWith("this.fetchAndIncrement()"))
+    @Deprecated("Use fetchAndIncrement() instead.", ReplaceWith("this.fetchAndIncrement()"), DeprecationLevel.ERROR)
     public fun getAndIncrement(): Long = this::value.getAndAddField(1L)
 
     /**
      * Atomically increments the current value by one and returns the new value.
      */
-    @Deprecated("Use incrementAndFetch() instead.", ReplaceWith("this.incrementAndFetch()"))
+    @Deprecated("Use incrementAndFetch() instead.", ReplaceWith("this.incrementAndFetch()"), DeprecationLevel.ERROR)
     public fun incrementAndGet(): Long = this::value.getAndAddField(1L) + 1L
 
     /**
      * Atomically decrements the current value by one and returns the new value.
      */
-    @Deprecated("Use decrementAndFetch() instead.", ReplaceWith("this.decrementAndFetch()"))
+    @Deprecated("Use decrementAndFetch() instead.", ReplaceWith("this.decrementAndFetch()"), DeprecationLevel.ERROR)
     public fun decrementAndGet(): Long = this::value.getAndAddField(-1L) - 1L
 
     /**
      * Atomically decrements the current value by one and returns the old value.
      */
-    @Deprecated("Use fetchAndDecrement() instead.", ReplaceWith("this.fetchAndDecrement()"))
+    @Deprecated("Use fetchAndDecrement() instead.", ReplaceWith("this.fetchAndDecrement()"), DeprecationLevel.ERROR)
     public fun getAndDecrement(): Long = this::value.getAndAddField(-1L)
 
     /**
@@ -235,6 +236,7 @@ public actual class AtomicLong public actual constructor(
      *
      * This operation does not provide any atomicity guarantees.
      */
+    @Suppress("DEPRECATION_ERROR")
     public actual override fun toString(): String = value.toString()
 }
 
@@ -310,8 +312,8 @@ public actual class AtomicBoolean actual constructor(@Volatile private var value
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
 public actual class AtomicReference<T> actual constructor(
-    @get:Deprecated("To read the atomic value use load().", ReplaceWith("this.load()"))
-    @set:Deprecated("To atomically set the new value use store(newValue: T).", ReplaceWith("this.store(newValue)"))
+    @get:Deprecated("To read the atomic value use load().", ReplaceWith("this.load()"), DeprecationLevel.ERROR)
+    @set:Deprecated("To atomically set the new value use store(newValue: T).", ReplaceWith("this.store(newValue)"), DeprecationLevel.ERROR)
     @Volatile public var value: T
 ) {
 
@@ -352,7 +354,7 @@ public actual class AtomicReference<T> actual constructor(
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
      */
-    @Deprecated("Use exchange(newValue: T) instead.", ReplaceWith("this.exchange(newValue)"))
+    @Deprecated("Use exchange(newValue: T) instead.", ReplaceWith("this.exchange(newValue)"), DeprecationLevel.ERROR)
     public fun getAndSet(newValue: T): T = this::value.getAndSetField(newValue)
 
     /**
@@ -360,6 +362,7 @@ public actual class AtomicReference<T> actual constructor(
      *
      * This operation does not provide any atomicity guarantees.
      */
+    @Suppress("DEPRECATION_ERROR")
     public actual override fun toString(): String =
             "${debugString(this)} -> ${debugString(value)}"
 }
@@ -382,8 +385,8 @@ public actual class AtomicReference<T> actual constructor(
 @ExperimentalAtomicApi
 @ExperimentalForeignApi
 public class AtomicNativePtr(
-    @get:Deprecated("To read the atomic value use load().", ReplaceWith("this.load()"))
-    @set:Deprecated("To atomically set the new value use store(newValue: T).", ReplaceWith("this.store(newValue)"))
+    @get:Deprecated("To read the atomic value use load().", ReplaceWith("this.load()"), DeprecationLevel.ERROR)
+    @set:Deprecated("To atomically set the new value use store(newValue: T).", ReplaceWith("this.store(newValue)"), DeprecationLevel.ERROR)
     @Volatile public var value: NativePtr
 ) {
 
@@ -426,7 +429,8 @@ public class AtomicNativePtr(
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
      */
-    @Deprecated("Use exchange(newValue: NativePtr) instead.", ReplaceWith("this.exchange(newValue)"))
+    @Deprecated("Use exchange(newValue: NativePtr) instead.", ReplaceWith("this.exchange(newValue)"), DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
     public fun getAndSet(newValue: NativePtr): NativePtr {
         // Pointer types are allowed for atomicrmw xchg operand since LLVM 15.0,
         // after LLVM version update, it may be implemented via getAndSetField intrinsic.
@@ -444,6 +448,7 @@ public class AtomicNativePtr(
      *
      * This operation does not provide any atomicity guarantees.
      */
+    @Suppress("DEPRECATION_ERROR")
     public override fun toString(): String = value.toString()
 }
 

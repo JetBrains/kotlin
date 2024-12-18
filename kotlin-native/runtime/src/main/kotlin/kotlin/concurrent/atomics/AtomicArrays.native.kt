@@ -127,7 +127,7 @@ public actual class AtomicIntArray {
     /**
      * Returns the number of elements in the array.
      */
-    @Deprecated("Use size instead.", ReplaceWith("this.size"))
+    @Deprecated("Use size instead.", ReplaceWith("this.size"), DeprecationLevel.ERROR)
     public val length: Int get() = array.size
 
     /**
@@ -137,7 +137,7 @@ public actual class AtomicIntArray {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use loadAt(index: Int) instead.", ReplaceWith("this.loadAt(index)"))
+    @Deprecated("Use loadAt(index: Int) instead.", ReplaceWith("this.loadAt(index)"), DeprecationLevel.ERROR)
     public operator fun get(index: Int): Int {
         checkBounds(index)
         return array.atomicGet(index)
@@ -150,7 +150,7 @@ public actual class AtomicIntArray {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use storeAt(index: Int, newValue: Int) instead.", ReplaceWith("this.storeAt(index, newValue)"))
+    @Deprecated("Use storeAt(index: Int, newValue: Int) instead.", ReplaceWith("this.storeAt(index, newValue)"), DeprecationLevel.ERROR)
     public operator fun set(index: Int, newValue: Int): Unit {
         checkBounds(index)
         array.atomicSet(index, newValue)
@@ -164,7 +164,7 @@ public actual class AtomicIntArray {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use exchangeAt(index: Int, newValue: Int) instead.", ReplaceWith("this.exchangeAt(index, newValue)"))
+    @Deprecated("Use exchangeAt(index: Int, newValue: Int) instead.", ReplaceWith("this.exchangeAt(index, newValue)"), DeprecationLevel.ERROR)
     public fun getAndSet(index: Int, newValue: Int): Int {
         checkBounds(index)
         return array.getAndSet(index, newValue)
@@ -181,7 +181,8 @@ public actual class AtomicIntArray {
      */
     @Deprecated(
         "Use compareAndSetAt(index: Int, expectedValue: Int, newValue: Int) instead.",
-        ReplaceWith("this.compareAndSetAt(index, expectedValue, newValue)")
+        ReplaceWith("this.compareAndSetAt(index, expectedValue, newValue)"),
+        DeprecationLevel.ERROR
     )
     public fun compareAndSet(index: Int, expectedValue: Int, newValue: Int): Boolean {
         checkBounds(index)
@@ -198,7 +199,8 @@ public actual class AtomicIntArray {
      */
     @Deprecated(
         "Use compareAndExchangeAt(index: Int, expectedValue: Int, newValue: Int) instead.",
-        ReplaceWith("this.compareAndExchangeAt(index, expectedValue, newValue)")
+        ReplaceWith("this.compareAndExchangeAt(index, expectedValue, newValue)"),
+        DeprecationLevel.ERROR
     )
     public fun compareAndExchange(index: Int, expectedValue: Int, newValue: Int): Int {
         checkBounds(index)
@@ -212,7 +214,7 @@ public actual class AtomicIntArray {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use fetchAndAddAt(index: Int, delta: Int) instead.", ReplaceWith("this.fetchAndAddAt(index, delta)"))
+    @Deprecated("Use fetchAndAddAt(index: Int, delta: Int) instead.", ReplaceWith("this.fetchAndAddAt(index, delta)"), DeprecationLevel.ERROR)
     public fun getAndAdd(index: Int, delta: Int): Int {
         checkBounds(index)
         return array.getAndAdd(index, delta)
@@ -225,7 +227,7 @@ public actual class AtomicIntArray {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use addAndFetchAt(index: Int, delta: Int) instead.", ReplaceWith("this.addAndFetchAt(index, delta)"))
+    @Deprecated("Use addAndFetchAt(index: Int, delta: Int) instead.", ReplaceWith("this.addAndFetchAt(index, delta)"), DeprecationLevel.ERROR)
     public fun addAndGet(index: Int, delta: Int): Int {
         checkBounds(index)
         return array.getAndAdd(index, delta) + delta
@@ -238,7 +240,7 @@ public actual class AtomicIntArray {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use fetchAndIncrementAt(index: Int) instead.", ReplaceWith("this.fetchAndIncrementAt(index)"))
+    @Deprecated("Use fetchAndIncrementAt(index: Int) instead.", ReplaceWith("this.fetchAndIncrementAt(index)"), DeprecationLevel.ERROR)
     public fun getAndIncrement(index: Int): Int {
         checkBounds(index)
         return array.getAndAdd(index, 1)
@@ -251,7 +253,7 @@ public actual class AtomicIntArray {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use incrementAndFetchAt(index: Int) instead.", ReplaceWith("this.incrementAndFetchAt(index)"))
+    @Deprecated("Use incrementAndFetchAt(index: Int) instead.", ReplaceWith("this.incrementAndFetchAt(index)"), DeprecationLevel.ERROR)
     public fun incrementAndGet(index: Int): Int {
         checkBounds(index)
         return array.getAndAdd(index, 1) + 1
@@ -264,7 +266,7 @@ public actual class AtomicIntArray {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use fetchAndDecrementAt(index: Int) instead.", ReplaceWith("this.fetchAndDecrementAt(index)"))
+    @Deprecated("Use fetchAndDecrementAt(index: Int) instead.", ReplaceWith("this.fetchAndDecrementAt(index)"), DeprecationLevel.ERROR)
     public fun getAndDecrement(index: Int): Int {
         checkBounds(index)
         return array.getAndAdd(index, -1)
@@ -277,7 +279,7 @@ public actual class AtomicIntArray {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use decrementAndFetchAt(index: Int) instead.", ReplaceWith("this.decrementAndFetchAt(index)"))
+    @Deprecated("Use decrementAndFetchAt(index: Int) instead.", ReplaceWith("this.decrementAndFetchAt(index)"), DeprecationLevel.ERROR)
     public fun decrementAndGet(index: Int): Int {
         checkBounds(index)
         return array.getAndAdd(index, -1) - 1
@@ -421,7 +423,7 @@ public actual class AtomicLongArray {
     /**
      * Returns the number of elements in the array.
      */
-    @Deprecated("Use size instead.", ReplaceWith("this.size"))
+    @Deprecated("Use size instead.", ReplaceWith("this.size"), DeprecationLevel.ERROR)
     public val length: Int get() = array.size
 
     /**
@@ -431,7 +433,7 @@ public actual class AtomicLongArray {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use loadAt(index: Int) instead.", ReplaceWith("this.loadAt(index)"))
+    @Deprecated("Use loadAt(index: Int) instead.", ReplaceWith("this.loadAt(index)"), DeprecationLevel.ERROR)
     public operator fun get(index: Int): Long {
         checkBounds(index)
         return array.atomicGet(index)
@@ -444,7 +446,7 @@ public actual class AtomicLongArray {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use storeAt(index: Int, newValue: Long) instead.", ReplaceWith("this.storeAt(index, newValue)"))
+    @Deprecated("Use storeAt(index: Int, newValue: Long) instead.", ReplaceWith("this.storeAt(index, newValue)"), DeprecationLevel.ERROR)
     public operator fun set(index: Int, newValue: Long): Unit {
         checkBounds(index)
         array.atomicSet(index, newValue)
@@ -458,7 +460,7 @@ public actual class AtomicLongArray {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use exchangeAt(index: Int, newValue: Long) instead.", ReplaceWith("this.exchangeAt(index, newValue)"))
+    @Deprecated("Use exchangeAt(index: Int, newValue: Long) instead.", ReplaceWith("this.exchangeAt(index, newValue)"), DeprecationLevel.ERROR)
     public fun getAndSet(index: Int, newValue: Long): Long {
         checkBounds(index)
         return array.getAndSet(index, newValue)
@@ -475,7 +477,8 @@ public actual class AtomicLongArray {
      */
     @Deprecated(
         "Use compareAndSetAt(index: Int, expectedValue: Long, newValue: Long) instead.",
-        ReplaceWith("this.compareAndSetAt(index, expectedValue, newValue)")
+        ReplaceWith("this.compareAndSetAt(index, expectedValue, newValue)"),
+        DeprecationLevel.ERROR
     )
     public fun compareAndSet(index: Int, expectedValue: Long, newValue: Long): Boolean {
         checkBounds(index)
@@ -492,7 +495,8 @@ public actual class AtomicLongArray {
      */
     @Deprecated(
         "Use compareAndExchangeAt(index: Int, expectedValue: Long, newValue: Long) instead.",
-        ReplaceWith("this.compareAndExchangeAt(index, expectedValue, newValue)")
+        ReplaceWith("this.compareAndExchangeAt(index, expectedValue, newValue)"),
+        DeprecationLevel.ERROR
     )
     public fun compareAndExchange(index: Int, expectedValue: Long, newValue: Long): Long {
         checkBounds(index)
@@ -506,7 +510,7 @@ public actual class AtomicLongArray {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use fetchAndAddAt(index: Int, delta: Long) instead.", ReplaceWith("this.fetchAndAddAt(index, delta)"))
+    @Deprecated("Use fetchAndAddAt(index: Int, delta: Long) instead.", ReplaceWith("this.fetchAndAddAt(index, delta)"), DeprecationLevel.ERROR)
     public fun getAndAdd(index: Int, delta: Long): Long {
         checkBounds(index)
         return array.getAndAdd(index, delta)
@@ -519,7 +523,7 @@ public actual class AtomicLongArray {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use addAndFetchAt(index: Int, delta: Long) instead.", ReplaceWith("this.addAndFetchAt(index, delta)"))
+    @Deprecated("Use addAndFetchAt(index: Int, delta: Long) instead.", ReplaceWith("this.addAndFetchAt(index, delta)"), DeprecationLevel.ERROR)
     public fun addAndGet(index: Int, delta: Long): Long {
         checkBounds(index)
         return array.getAndAdd(index, delta) + delta
@@ -532,7 +536,7 @@ public actual class AtomicLongArray {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use fetchAndIncrementAt(index: Int) instead.", ReplaceWith("this.fetchAndIncrementAt(index)"))
+    @Deprecated("Use fetchAndIncrementAt(index: Int) instead.", ReplaceWith("this.fetchAndIncrementAt(index)"), DeprecationLevel.ERROR)
     public fun getAndIncrement(index: Int): Long {
         checkBounds(index)
         return array.getAndAdd(index, 1L)
@@ -545,7 +549,7 @@ public actual class AtomicLongArray {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use incrementAndFetchAt(index: Int) instead.", ReplaceWith("this.incrementAndFetchAt(index)"))
+    @Deprecated("Use incrementAndFetchAt(index: Int) instead.", ReplaceWith("this.incrementAndFetchAt(index)"), DeprecationLevel.ERROR)
     public fun incrementAndGet(index: Int): Long {
         checkBounds(index)
         return array.getAndAdd(index, 1L) + 1L
@@ -558,7 +562,7 @@ public actual class AtomicLongArray {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use fetchAndDecrementAt(index: Int) instead.", ReplaceWith("this.fetchAndDecrementAt(index)"))
+    @Deprecated("Use fetchAndDecrementAt(index: Int) instead.", ReplaceWith("this.fetchAndDecrementAt(index)"), DeprecationLevel.ERROR)
     public fun getAndDecrement(index: Int): Long {
         checkBounds(index)
         return array.getAndAdd(index, -1L)
@@ -571,7 +575,7 @@ public actual class AtomicLongArray {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use decrementAndFetchAt(index: Int) instead.", ReplaceWith("this.decrementAndFetchAt(index)"))
+    @Deprecated("Use decrementAndFetchAt(index: Int) instead.", ReplaceWith("this.decrementAndFetchAt(index)"), DeprecationLevel.ERROR)
     public fun decrementAndGet(index: Int): Long {
         checkBounds(index)
         return array.getAndAdd(index, -1L) - 1L
@@ -686,7 +690,7 @@ public actual class AtomicArray<T> {
     /**
      * Returns the number of elements in the array.
      */
-    @Deprecated("Use size instead.", ReplaceWith("this.size"))
+    @Deprecated("Use size instead.", ReplaceWith("this.size"), DeprecationLevel.ERROR)
     public val length: Int get() = array.size
 
     /**
@@ -696,7 +700,7 @@ public actual class AtomicArray<T> {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use loadAt(index: Int) instead.", ReplaceWith("this.loadAt(index)"))
+    @Deprecated("Use loadAt(index: Int) instead.", ReplaceWith("this.loadAt(index)"), DeprecationLevel.ERROR)
     public operator fun get(index: Int): T {
         checkBounds(index)
         return array.atomicGet(index)
@@ -709,7 +713,7 @@ public actual class AtomicArray<T> {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use storeAt(index: Int, newValue: T) instead.", ReplaceWith("this.storeAt(index, newValue)"))
+    @Deprecated("Use storeAt(index: Int, newValue: T) instead.", ReplaceWith("this.storeAt(index, newValue)"), DeprecationLevel.ERROR)
     public operator fun set(index: Int, newValue: T): Unit {
         checkBounds(index)
         array.atomicSet(index, newValue)
@@ -723,7 +727,7 @@ public actual class AtomicArray<T> {
      *
      * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
      */
-    @Deprecated("Use exchangeAt(index: Int, newValue: T) instead.", ReplaceWith("this.exchangeAt(index, newValue)"))
+    @Deprecated("Use exchangeAt(index: Int, newValue: T) instead.", ReplaceWith("this.exchangeAt(index, newValue)"), DeprecationLevel.ERROR)
     public fun getAndSet(index: Int, newValue: T): T {
         checkBounds(index)
         return array.getAndSet(index, newValue)
@@ -740,7 +744,8 @@ public actual class AtomicArray<T> {
      */
     @Deprecated(
         "Use compareAndSetAt(index: Int, expectedValue: T, newValue: T) instead.",
-        ReplaceWith("this.compareAndSetAt(index, expectedValue, newValue)")
+        ReplaceWith("this.compareAndSetAt(index, expectedValue, newValue)"),
+        DeprecationLevel.ERROR
     )
     public fun compareAndSet(index: Int, expectedValue: T, newValue: T): Boolean {
         checkBounds(index)
@@ -757,7 +762,8 @@ public actual class AtomicArray<T> {
      */
     @Deprecated(
         "Use compareAndExchangeAt(index: Int, expectedValue: T, newValue: T) instead.",
-        ReplaceWith("this.compareAndExchangeAt(index, expectedValue, newValue)")
+        ReplaceWith("this.compareAndExchangeAt(index, expectedValue, newValue)"),
+        DeprecationLevel.ERROR
     )
     public fun compareAndExchange(index: Int, expectedValue: T, newValue: T): T {
         checkBounds(index)
