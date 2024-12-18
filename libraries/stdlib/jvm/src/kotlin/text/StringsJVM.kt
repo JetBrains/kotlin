@@ -539,6 +539,16 @@ public inline fun String(stringBuilder: java.lang.StringBuilder): String =
 /**
  * Returns the character (Unicode code point) at the specified index.
  *
+ * If the [Char] value specified at the given index is in the high-surrogate range, the following index is
+ * less than the length of this [String], and the [Char] value at the following index is in the low-surrogate range,
+ * then the supplementary code point corresponding to this surrogate pair is returned. Otherwise, the [Char] value at
+ * the given index is returned.
+ *
+ * @param  index the index to the [Char] values
+ *
+ * @throws IndexOutOfBoundsException if the [index] argument is negative.
+ * @throws IndexOutOfBoundsException if the [index] argument is less than the length of this string.
+ *
  * @sample samples.text.Strings.codePointAt
  */
 @kotlin.internal.InlineOnly
@@ -546,6 +556,17 @@ public inline fun String.codePointAt(index: Int): Int = (this as java.lang.Strin
 
 /**
  * Returns the character (Unicode code point) before the specified index.
+ * The index refers to [Char] values (Unicode code units) and ranges from 1 to [CharSequence.length].
+ *
+ * If the [Char] value at [index] - 1 is in the low-surrogate range, [index] - 2 is not negative, and the [Char] value
+ * at [index] - 2 is in the high-surrogate range, then the supplementary code point value of the surrogate pair is returned.
+ *
+ * If the [Char] value at [index - 1] is an unpaired low-surrogate or a high-surrogate, the surrogate value is returned.
+ *
+ * @param  index the index following the code point that should be returned
+ *
+ * @throws IndexOutOfBoundsException if the [index] argument is less than 1.
+ * @throws IndexOutOfBoundsException if the [index] argument is greater than the length of this string.
  *
  * @sample samples.text.Strings.codePointBefore
  */
@@ -554,6 +575,20 @@ public inline fun String.codePointBefore(index: Int): Int = (this as java.lang.S
 
 /**
  * Returns the number of Unicode code points in the specified text range of this String.
+ *
+ */
+/**
+ * Returns the number of Unicode code points in the specified text range of this String.
+ * The text range begins at the specified [beginIndex] and extends to the [Char] at index [endIndex] - 1.
+ * Thus the length (in [Char]s) of the text range is [endIndex]-[beginIndex].
+ * Unpaired surrogates within the text range count as one code point each.
+ *
+ * @param beginIndex the index to the first [Char] of the text range.
+ * @param endIndex the index after the last [Char] of the text range.
+ *
+ * @throws IndexOutOfBoundsException if the [beginIndex] is negative
+ * @throws IndexOutOfBoundsException if the [endIndex] is larger than the length of this [String]
+ * @throws IndexOutOfBoundsException if the [beginIndex] is larger than [endIndex].
  *
  * @sample samples.text.Strings.codePointCount
  */

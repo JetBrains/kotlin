@@ -626,18 +626,29 @@ class Strings {
         assertPrints(str.codePointAt(1).toString(), "98")
         assertPrints(str.codePointAt(2).toString(), "99")
         assertFails { str.codePointAt(3) }
+        assertFails { str.codePointAt(-1) }
+        assertFails { str.codePointAt(str.length) }
 
         val broccoli = "🥦"
-        assertPrints(broccoli.codePointCount(0, broccoli.length /* = 2 */), "1")
+        assertPrints(broccoli.codePointAt(0), "129382")
+        assertPrints(broccoli.codePointAt(1), "56678")
     }
 
     @Sample
     fun codePointBefore() {
         val str = "abc"
-        assertFails { str.codePointBefore(0) }
         assertPrints(str.codePointBefore(1).toString(), "97")
         assertPrints(str.codePointBefore(2).toString(), "98")
         assertPrints(str.codePointBefore(3).toString(), "99")
+        assertPrints(str.codePointBefore(str.length).toString(), "99")
+        assertFails { str.codePointBefore(0) }
+        assertFails { str.codePointBefore(-1) }
+        assertFails { str.codePointBefore(str.length + 1) }
+
+        val broccoli = "🥦"
+        assertPrints(broccoli.codePointBefore(1), "55358")
+        assertPrints(broccoli.codePointBefore(2), "129382")
+        assertFails { broccoli.codePointBefore(3) }
     }
 
     @Sample
@@ -647,6 +658,12 @@ class Strings {
         assertPrints(str.codePointCount(1, 3).toString(), "2")
         assertPrints(str.codePointCount(2, 2).toString(), "0")
         assertFails { str.codePointCount(3, 2) }
+        assertFails { str.codePointCount(-1, 2) }
+        assertFails { str.codePointCount(0, str.length+1) }
+
+        val broccoli = "🥦"
+        assertPrints(broccoli.codePointCount(0, broccoli.length /* = 2 */), "1")
+        assertPrints(broccoli.codePointCount(0, broccoli.length - 1 /* = 1 */), "1")
     }
 
     @Sample
