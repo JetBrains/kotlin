@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.gradle.api.Project
+import org.gradle.api.logging.configuration.ConsoleOutput
 import org.gradle.api.logging.configuration.ShowStacktrace
 import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.internal.isInIdeaEnvironment
@@ -20,6 +21,7 @@ internal class ToolingDiagnosticRenderingOptions(
     val suppressedErrorIds: List<String>,
     val showStacktrace: Boolean,
     val showSeverityEmoji: Boolean,
+    val coloredOutput: Boolean,
     val ignoreWarningMode: Boolean,
     val warningMode: WarningMode
 ) : Serializable {
@@ -43,6 +45,7 @@ internal class ToolingDiagnosticRenderingOptions(
                     suppressedErrorIds = suppressedGradlePluginErrors,
                     showStacktrace = showStacktrace,
                     showSeverityEmoji = !project.isInIdeaEnvironment.get() && !HostManager.hostIsMingw,
+                    coloredOutput = internalDiagnosticsColoredOutput && project.gradle.startParameter.consoleOutput != ConsoleOutput.Plain,
                     ignoreWarningMode = internalDiagnosticsIgnoreWarningMode ?: false,
                     warningMode = project.gradle.startParameter.warningMode
                 )
