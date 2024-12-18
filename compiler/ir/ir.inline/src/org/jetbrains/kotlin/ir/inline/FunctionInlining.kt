@@ -151,7 +151,6 @@ open class FunctionInlining(
     val context: LoweringContext,
     private val inlineFunctionResolver: InlineFunctionResolver,
     private val insertAdditionalImplicitCasts: Boolean = true,
-    private val insertMissingReturn: Boolean = false,
     private val regenerateInlinedAnonymousObjects: Boolean = false,
     private val produceOuterThisFields: Boolean = true,
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
@@ -220,7 +219,6 @@ open class FunctionInlining(
             context,
             inlineFunctionResolver,
             insertAdditionalImplicitCasts,
-            insertMissingReturn,
             produceOuterThisFields
         )
         return inliner.inline().markAsRegenerated()
@@ -251,7 +249,6 @@ open class FunctionInlining(
         val context: LoweringContext,
         private val inlineFunctionResolver: InlineFunctionResolver,
         private val insertAdditionalImplicitCasts: Boolean,
-        private val insertMissingReturn: Boolean,
         private val produceOuterThisFields: Boolean
     ) {
         private val elementsWithLocationToPatch = hashSetOf<IrGetValue>()
@@ -315,10 +312,10 @@ open class FunctionInlining(
                 this.inlinedElement = originalInlinedElement
 
                 // Insert a return statement for the function that is supposed to return Unit
-                if (insertMissingReturn && inlineFunctionToStore.returnType.isUnit()) {
+                if (inlineFunctionToStore.returnType.isUnit()) {
                     val potentialReturn = this.statements.lastOrNull() as? IrReturn
                     if (potentialReturn == null) {
-                        irBuilder.at(this.endOffset, this.endOffset).run {
+                        irBuilder.at(inlineFunctionToStore.endOffset, inlineFunctionToStore.endOffset).run {
                             this@apply.statements += irReturn(irGetObject(context.irBuiltIns.unitClass))
                         }
                     }

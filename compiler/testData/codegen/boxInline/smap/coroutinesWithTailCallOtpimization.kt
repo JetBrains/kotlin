@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // NO_CHECK_LAMBDA_INLINING
-// IGNORE_INLINER: IR
 
 // FILE: inline.kt
 
