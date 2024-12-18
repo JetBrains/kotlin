@@ -34,4 +34,5 @@ fun box() {
 // test.kt:8 $<no name provided>.<init> (11)
 // test.kt:9 $<no name provided>.<init> (1)
 // test.kt:9 $makeFace (1)
+// test.kt:12 $box (4)
 // test.kt:13 $box (1)

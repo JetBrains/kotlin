@@ -55,4 +55,5 @@ fun nop() {}
 // test.kt:8 $box (8)
 // test.kt:18 $box (4)
 // test.kt:21 $nop (12)
+// test.kt:18 $box (4)
 // test.kt:10 $box (1)

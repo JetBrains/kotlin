@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val context: C) : BodyLoweringPass {
     companion object {
         val DECLARATION_ORIGIN_COROUTINE_IMPL = IrDeclarationOriginImpl("COROUTINE_IMPL")
+        val DECLARATION_ORIGIN_COROUTINE_IMPL_INVOKE by IrDeclarationOriginImpl
     }
 
     protected abstract val stateMachineMethodName: Name
@@ -236,7 +237,7 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
             val smFunction = context.irFactory.buildFun {
                 startOffset = function.startOffset
                 endOffset = function.endOffset
-                origin = DECLARATION_ORIGIN_COROUTINE_IMPL
+                origin = DECLARATION_ORIGIN_COROUTINE_IMPL_INVOKE
                 name = stateMachineFunction.name
                 visibility = stateMachineFunction.visibility
                 modality = Modality.FINAL

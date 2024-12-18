@@ -69,6 +69,13 @@ object SourceMapParser {
             }
         }
 
+        val ignoreList = (jsonObject.properties["ignoreList"] ?: jsonObject.properties["x_google_ignoreList"])?.let {
+            val ignoreList = it as? JsonArray ?: return SourceMapError("'ignoreList' property is not of array type")
+            ignoreList.elements.mapTo(hashSetOf()) {
+                (it as? JsonNumber ?: return SourceMapError("'ignoreList' array must contain numbers")).value.toInt()
+            }
+        } ?: emptySet()
+
         val sourcesContent: List<String?> = jsonObject.properties["sourcesContent"].let {
             if (it != null) {
                 val sourcesContentProperty = it as? JsonArray ?:
@@ -136,9 +143,16 @@ object SourceMapParser {
                 if (sourceIndex !in sources.indices) {
                     return stream.createError("Source index $sourceIndex is out of bounds ${sources.indices}")
                 }
-                currentGroup.segments += SourceMapSegment(jsColumn, sourceRoot + sources[sourceIndex], sourceLine, sourceColumn, name)
+                currentGroup.segments += SourceMapSegment(
+                    jsColumn,
+                    sourceRoot + sources[sourceIndex],
+                    sourceLine,
+                    sourceColumn,
+                    name,
+                    ignoreList.contains(sourceIndex)
+                )
             } else {
-                currentGroup.segments += SourceMapSegment(jsColumn, null, -1, -1, null)
+                currentGroup.segments += SourceMapSegment(jsColumn, null, -1, -1, null, false)
             }
 
             when {
