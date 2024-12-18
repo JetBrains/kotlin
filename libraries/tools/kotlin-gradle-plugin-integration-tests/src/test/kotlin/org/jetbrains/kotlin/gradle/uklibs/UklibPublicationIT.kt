@@ -75,16 +75,7 @@ class UklibPublicationIT : KGPBaseTest() {
             Fragment(identifier = "wasmWasiMain", targets = listOf("wasm_wasi")),
         )
 
-        assertEquals(
-            Umanifest(expectedFragments),
-            publisher.umanifest,
-        )
-        assertEquals(
-            expectedFragments.map { it.identifier }.toSet(),
-            publisher.uklibContents.listDirectoryEntries().map {
-                it.name
-            }.filterNot { it == Uklib.UMANIFEST_FILE_NAME }.toSet(),
-        )
+        assertPublishedFragments(expectedFragments, publisher)
     }
 
     @GradleTest
@@ -102,15 +93,9 @@ class UklibPublicationIT : KGPBaseTest() {
             Fragment(identifier = "iosArm64Main", targets = listOf("ios_arm64")),
         )
 
-        assertEquals(
-            Umanifest(expectedFragments),
-            publisher.umanifest,
-        )
-        assertEquals(
-            expectedFragments.map { it.identifier }.toSet(),
-            publisher.uklibContents.listDirectoryEntries().map {
-                it.name
-            }.filterNot { it == Uklib.UMANIFEST_FILE_NAME }.toSet(),
+        assertPublishedFragments(
+            expectedFragments,
+            publisher,
         )
     }
 
@@ -130,7 +115,7 @@ class UklibPublicationIT : KGPBaseTest() {
                     sourceSets.commonMain.get().compileSource("class Common")
                 }
             }
-        }.publish(PublisherConfiguration())
+        }.publish()
 
         val publishedUklib = readProducedUklib(publishedProject)
 
@@ -140,9 +125,59 @@ class UklibPublicationIT : KGPBaseTest() {
             Fragment(identifier = "commonMain", targets = listOf("ios_arm64", "ios_x64")),
         )
 
-        assertEquals(
-            Umanifest(expectedFragments),
-            publishedUklib.umanifest,
+        assertPublishedFragments(
+            expectedFragments,
+            publishedUklib,
+        )
+    }
+
+    @GradleTest
+    fun `uklib contents - multiple targets with stale metadata compilation`(
+        gradleVersion: GradleVersion,
+    ) {
+        val compileAppleMain = "compileAppleMain"
+        val project = project(
+            "buildScriptInjectionGroovy",
+            gradleVersion,
+        ) {
+            buildScriptInjection {
+                project.enableUklibPublication()
+                project.applyMultiplatform {
+                    iosArm64()
+                    iosX64()
+
+                    if (project.hasProperty(compileAppleMain)) {
+                        sourceSets.appleMain.get().compileSource("class Apple")
+                    } else {
+                        sourceSets.commonMain.get().compileSource("class Common")
+                    }
+                }
+            }
+        }
+
+        val publicationWithApple = project.publish(
+            "-P${compileAppleMain}",
+            publisherConfiguration = PublisherConfiguration(repoPath = "withApple"),
+        )
+        assertPublishedFragments(
+            setOf(
+                Fragment(identifier = "iosArm64Main", targets = listOf("ios_arm64")),
+                Fragment(identifier = "iosX64Main", targets = listOf("ios_x64")),
+                Fragment(identifier = "appleMain", targets = listOf("ios_arm64", "ios_x64")),
+            ),
+            readProducedUklib(publicationWithApple)
+        )
+
+        val incrementalPublicationWithoutApple = project.publish(
+            publisherConfiguration = PublisherConfiguration(repoPath = "withoutApple"),
+        )
+        assertPublishedFragments(
+            setOf(
+                Fragment(identifier = "iosArm64Main", targets = listOf("ios_arm64")),
+                Fragment(identifier = "iosX64Main", targets = listOf("ios_x64")),
+                Fragment(identifier = "commonMain", targets = listOf("ios_arm64", "ios_x64")),
+            ),
+            readProducedUklib(incrementalPublicationWithoutApple)
         )
     }
 
@@ -230,6 +265,16 @@ class UklibPublicationIT : KGPBaseTest() {
             Fragment(identifier = "iosArm64Main", targets = listOf("ios_arm64")),
         )
 
+        assertPublishedFragments(
+            expectedFragments,
+            publisher,
+        )
+    }
+
+    private fun assertPublishedFragments(
+        expectedFragments: Set<Fragment>,
+        publisher: ProducedUklib,
+    ) {
         assertEquals(
             Umanifest(expectedFragments),
             publisher.umanifest,
@@ -512,7 +557,7 @@ class UklibPublicationIT : KGPBaseTest() {
                 }
             }
         }.publish(
-            publisherConfig,
+            publisherConfiguration = publisherConfig,
             deriveBuildOptions = { defaultBuildOptions.copy(androidVersion = agpVersion) }
         )
 

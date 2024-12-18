@@ -278,7 +278,7 @@ class ReturnFromBuildScriptAfterExecution<T>(
      * out for configuration entities.
      */
     fun buildAndReturn(
-        evaluationTask: String = defaultEvaluationTask,
+        vararg buildArguments: String = arrayOf(defaultEvaluationTask),
         executingProject: TestProject = returnContainingGradleProject,
         configurationCache: BuildOptions.ConfigurationCacheValue = BuildOptions.ConfigurationCacheValue.DISABLED,
         deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
@@ -286,7 +286,7 @@ class ReturnFromBuildScriptAfterExecution<T>(
     ): T {
         executingProject.buildAction(
             arrayOf(
-                evaluationTask,
+                *buildArguments,
                 "-P${injectionLoadProperty}=true",
             ),
             executingProject.deriveBuildOptions().copy(
