@@ -379,6 +379,7 @@ public actual class AtomicReference<T> actual constructor(
  */
 @Suppress("DEPRECATION")
 @SinceKotlin("2.1")
+@ExperimentalAtomicApi
 @ExperimentalForeignApi
 public class AtomicNativePtr(
     @get:Deprecated("To read the atomic value use load().", ReplaceWith("this.load()"))

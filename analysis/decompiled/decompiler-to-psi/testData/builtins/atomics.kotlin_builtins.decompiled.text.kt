@@ -3,7 +3,7 @@
 
 package kotlin.concurrent.atomics
 
-@kotlin.SinceKotlin @kotlin.ExperimentalStdlibApi public final class AtomicArray<T> {
+@kotlin.SinceKotlin public final class AtomicArray<T> {
     public constructor(array: kotlin.Array<T>) { /* compiled code */ }
 
     public final val size: kotlin.Int /* compiled code */
@@ -21,7 +21,7 @@ package kotlin.concurrent.atomics
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 
-@kotlin.SinceKotlin @kotlin.ExperimentalStdlibApi public final class AtomicBoolean public constructor(value: kotlin.Boolean) {
+@kotlin.SinceKotlin public final class AtomicBoolean public constructor(value: kotlin.Boolean) {
     public final fun load(): kotlin.Boolean { /* compiled code */ }
 
     public final fun store(newValue: kotlin.Boolean): kotlin.Unit { /* compiled code */ }
@@ -35,7 +35,7 @@ package kotlin.concurrent.atomics
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 
-@kotlin.SinceKotlin @kotlin.ExperimentalStdlibApi public final class AtomicInt public constructor(value: kotlin.Int) {
+@kotlin.SinceKotlin public final class AtomicInt public constructor(value: kotlin.Int) {
     public final fun load(): kotlin.Int { /* compiled code */ }
 
     public final fun store(newValue: kotlin.Int): kotlin.Unit { /* compiled code */ }
@@ -53,7 +53,7 @@ package kotlin.concurrent.atomics
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 
-@kotlin.SinceKotlin @kotlin.ExperimentalStdlibApi public final class AtomicIntArray {
+@kotlin.SinceKotlin public final class AtomicIntArray {
     public constructor(size: kotlin.Int) { /* compiled code */ }
 
     public constructor(array: kotlin.IntArray) { /* compiled code */ }
@@ -78,7 +78,7 @@ package kotlin.concurrent.atomics
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 
-@kotlin.SinceKotlin @kotlin.ExperimentalStdlibApi public final class AtomicLong public constructor(value: kotlin.Long) {
+@kotlin.SinceKotlin public final class AtomicLong public constructor(value: kotlin.Long) {
     public final fun load(): kotlin.Long { /* compiled code */ }
 
     public final fun store(newValue: kotlin.Long): kotlin.Unit { /* compiled code */ }
@@ -96,7 +96,7 @@ package kotlin.concurrent.atomics
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 
-@kotlin.SinceKotlin @kotlin.ExperimentalStdlibApi public final class AtomicLongArray {
+@kotlin.SinceKotlin public final class AtomicLongArray {
     public constructor(size: kotlin.Int) { /* compiled code */ }
 
     public constructor(array: kotlin.LongArray) { /* compiled code */ }
@@ -121,7 +121,7 @@ package kotlin.concurrent.atomics
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 
-@kotlin.SinceKotlin @kotlin.ExperimentalStdlibApi public final class AtomicReference<T> public constructor(value: T) {
+@kotlin.SinceKotlin public final class AtomicReference<T> public constructor(value: T) {
     public final fun load(): T { /* compiled code */ }
 
     public final fun store(newValue: T): kotlin.Unit { /* compiled code */ }
@@ -134,3 +134,4 @@ package kotlin.concurrent.atomics
 
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
+
