@@ -104,7 +104,7 @@ public interface KlibDump {
     public fun remove(targets: Iterable<KlibTarget>)
 
     /**
-     * Change target identifier for single KLIB dump.
+     * Change target identifier in this dump if it contains only single target.
      *
      * @throws IllegalStateException if dump contains multiple targets
      */
@@ -116,14 +116,14 @@ public interface KlibDump {
     public fun copy(): KlibDump
 
     /**
-     * Serializes the dump and writes it to [to].
+     * Serializes the dump and prints it to [to].
      *
      * @return the target [to] where the dump was written.
      */
     public fun <A : Appendable> print(to: A): A
 
     /**
-     * Serializes the dump and writes it to [file].
+     * Serializes the dump and prints it to [file].
      *
      * @return the target [file].
      */

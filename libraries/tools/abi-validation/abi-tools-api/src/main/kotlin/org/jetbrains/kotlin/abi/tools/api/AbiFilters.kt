@@ -61,7 +61,7 @@ public class AbiFilters(
     public val excludedClasses: Set<String>,
 
     /**
-     * Exclude include by annotations placed on it.
+     * Include by annotations placed on it.
      *
      * Any declaration that is not marked with one of the these annotations and does not match the [includedClasses] is excluded from the dump.
      *
@@ -69,8 +69,10 @@ public class AbiFilters(
      *
      * For exclusion filter it means that a class will be excluded from a dump, for inclusion filter it will keep a class or a member in a dump.
      *
-     * Only qualified annotation names can be used.
-     * No wildcards are allowed.
+     * It is allowed to use name templates, for this purpose wildcards `**`, `*` and `?` are added.
+     * - `**` - zero or any amount of characters
+     * - `*` - zero or any amount of characters excluding dot. Using to specify simple class name.
+     * - `?` - any single character.
      *
      * The annotation should not have [Retention] equal to [AnnotationRetention.SOURCE], otherwise, filtering by it will not work.
      */
@@ -83,8 +85,10 @@ public class AbiFilters(
      *
      * For exclusion filter it is means that class will be excluded from dump, for inclusion filter it will keep class or member in dump.
      *
-     * Only qualified names of annotations can be used.
-     * No wildcards are allowed.
+     * It is allowed to use name templates, for this purpose wildcards `**`, `*` and `?` are added.
+     * - `**` - zero or any amount of characters
+     * - `*` - zero or any amount of characters excluding dot. Using to specify simple class name.
+     * - `?` - any single character.
      *
      * The annotation should not have [Retention] equal to [AnnotationRetention.SOURCE], otherwise, filtering by it will not work.
      */
