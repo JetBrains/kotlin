@@ -13,8 +13,6 @@ abstract class TestModuleStructure : TestService {
     abstract val modules: List<TestModule>
     abstract val allDirectives: RegisteredDirectives
     abstract val originalTestDataFiles: List<File>
-
-    val testModulesByName by lazy { modules.associateBy { it.name } }
 }
 
 val TestServices.moduleStructure: TestModuleStructure by TestServices.testServiceAccessor()

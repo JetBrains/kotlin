@@ -70,11 +70,10 @@ abstract class JvmCliFacade(private val testServices: TestServices) : AbstractTe
     private data class ModuleDependencies(val dependencies: List<File>, val friends: List<File>)
 
     private fun TestModule.computeDependencies(): ModuleDependencies {
-        val dependencies = allDependencies.map { (dependencyName, kind, relation) ->
-            check(kind == Binary) { "Only binary dependencies are possible here: $name -> $dependencyName" }
+        val dependencies = allDependencies.map { (dependency, kind, relation) ->
+            check(kind == Binary) { "Only binary dependencies are possible here: $name -> ${dependency.name}" }
             // TODO (KT-69158): add support for KMP in this facade.
-            check(relation != DependsOnDependency) { "Only normal/friend relation is possible here: $name -> $dependencyName" }
-            val dependency = testServices.artifactsProvider.getTestModule(dependencyName)
+            check(relation != DependsOnDependency) { "Only normal/friend relation is possible here: $name -> ${dependency.name}" }
             relation to testServices.artifactsProvider.getArtifact(dependency, CliArtifact.Kind).outputDir
         }
         return ModuleDependencies(

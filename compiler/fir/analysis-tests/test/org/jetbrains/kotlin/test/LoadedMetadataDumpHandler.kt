@@ -168,7 +168,7 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         val emptyModule = TestModule(
             name = "dump-${module.name}", module.targetPlatform, module.targetBackend, FrontendKinds.FIR,
             BackendKinds.IrBackend, module.binaryKind, files = emptyList(),
-            allDependencies = listOf(DependencyDescription(module.name, dependencyKind, DependencyRelation.RegularDependency)),
+            allDependencies = listOf(DependencyDescription(module, dependencyKind, DependencyRelation.RegularDependency)),
             RegisteredDirectives.Empty, languageVersionSettings
         )
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(emptyModule)

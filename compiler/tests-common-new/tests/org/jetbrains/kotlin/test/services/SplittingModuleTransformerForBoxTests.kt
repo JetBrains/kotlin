@@ -57,7 +57,7 @@ class SplittingModuleTransformerForBoxTests : ModuleStructureTransformer() {
             module.backendKind,
             module.binaryKind,
             files = listOf(secondModuleFile) + additionalFiles,
-            allDependencies = listOf(DependencyDescription("lib", DependencyKind.Binary, DependencyRelation.FriendDependency)),
+            allDependencies = listOf(DependencyDescription(firstModule, DependencyKind.Binary, DependencyRelation.FriendDependency)),
             RegisteredDirectivesBuilder(module.directives).apply {
                 -CodegenTestDirectives.IGNORE_FIR_DIAGNOSTICS
             }.build(),
