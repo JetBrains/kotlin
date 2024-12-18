@@ -136,6 +136,7 @@ class UklibConsumptionIT : KGPBaseTest() {
         ) {
             addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(publisher)
             buildScriptInjection {
+                project.enableCrossCompilation()
                 project.setUklibResolutionStrategy()
                 project.applyMultiplatform {
                     symmetricTargets()
