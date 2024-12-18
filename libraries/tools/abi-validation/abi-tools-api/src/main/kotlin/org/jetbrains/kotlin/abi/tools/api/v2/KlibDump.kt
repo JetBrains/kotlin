@@ -16,29 +16,29 @@ import java.io.File
  *
  * **Creating a textual dump from a klib**
  * ```kotlin
- * val dump = abiTools.legacy.parseKlib(File("/path/to/library.klib"))
- * dump.printToFile(File("/path/to/dump.klib.api"))
+ * val dump = abiTools.v2.extractKlibAbi(File("/path/to/library.klib"), KlibTarget("linuxX64"))
+ * dump.print(File("/path/to/dump.klib.api"))
  * ```
  *
  * **Loading a dump**
  * ```kotlin
- * val dump = abiTools.legacy.parseKlibDump(File("/path/to/dump.klib.api"))
+ * val dump = abiTools.v2.loadKlibDump(File("/path/to/dump.klib.api"))
  * ```
  *
  * **Merging multiple dumps into a new merged dump**
  * ```kotlin
- * val klibs = listOf(File("/path/to/library-linuxX64.klib"), File("/path/to/library-linuxArm64.klib"), ...)
- * val mergedDump = abiTools.legacy.emptyKlibDump()
- * klibs.forEach { mergedDump.merge(abiTools.legacy.parseKlib(it)) }
- * mergedDump.printToFile(File("/path/to/merged.klib.api"))
+ * val klibs = listOf(File("/path/to/library-linuxX64.klib") to KlibTarget("linuxX64"), File("/path/to/library-linuxArm64.klib") to KlibTarget("linuxArm64"), ...)
+ * val mergedDump = abiTools.v2.createKlibDump()
+ * klibs.forEach { mergedDump.merge(abiTools.v2.parseKlib(it.first, it.second)) }
+ * mergedDump.print(File("/path/to/merged.klib.api"))
  * ```
  *
  * **Updating an existing merged dump**
  * ```kotlin
- * val mergedDump = abiTools.legacy.parseKlibDump(File("/path/to/merged.klib.api"))
- * val newTargetDump = abiTools.legacy.parseKlib(File("/path/to/library-linuxX64.klib"))
+ * val mergedDump = abiTools.v2.loadKlibDump(File("/path/to/merged.klib.api"))
+ * val newTargetDump = abiTools.v2.extractKlibAbi(File("/path/to/library-linuxX64.klib"), KlibTarget("linuxX64"))
  * mergedDump.replace(newTargetDump)
- * mergedDump.printToFile(File("/path/to/merged.klib.api"))
+ * mergedDump.print(File("/path/to/merged.klib.api"))
  * ```
  *
  * @since 2.1.20
