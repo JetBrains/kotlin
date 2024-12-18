@@ -314,7 +314,7 @@ open class FunctionInlining(
                 @OptIn(JvmIrInlineExperimental::class)
                 this.inlinedElement = originalInlinedElement
 
-                // Insert a return statement for the function that supposes to return Unit
+                // Insert a return statement for the function that is supposed to return Unit
                 if (insertMissingReturn && inlineFunctionToStore.returnType.isUnit()) {
                     val potentialReturn = this.statements.lastOrNull() as? IrReturn
                     if (potentialReturn == null) {
