@@ -382,12 +382,14 @@ internal class KaFirCompilerFacility(
     }
 
     private fun getIrGenerationExtensions(modules: List<KaModule>): List<IrGenerationExtension> = buildList {
-        modules.forEach { module ->
-            val sourceModule = module as? KaSourceModule ?: return@forEach
-            KotlinCompilerPluginsProvider.getInstance(project)?.getRegisteredExtensions(sourceModule, IrGenerationExtension)
-                ?.let { addAll(it) }
-        }
         addAll(IrGenerationExtension.getInstances(project))
+        val pluginsProvider = KotlinCompilerPluginsProvider.getInstance(project) ?: return@buildList
+        modules.forEach { module ->
+            val moduleToLookRegisteredPluginsIn = if (module is KaDanglingFileModule) module.contextModule else module
+            if (moduleToLookRegisteredPluginsIn is KaSourceModule) {
+                addAll(pluginsProvider.getRegisteredExtensions(moduleToLookRegisteredPluginsIn, IrGenerationExtension))
+            }
+        }
     }
 
     private fun computeTargetModules(module: KaModule): List<KaModule> {
