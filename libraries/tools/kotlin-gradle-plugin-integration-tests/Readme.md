@@ -258,7 +258,7 @@ project("buildScriptInjectionGroovy", version) {
 }
 ```
 
-Use injections to capture execution time failures:
+Use injections to capture execution and configuration time failures:
 
 ```kotlin
 data class A(val name: String = "A") : Exception()
@@ -287,6 +287,25 @@ project("buildScriptInjectionGroovy", version) {
         settings.dependencyResolutionManagement {
             // ...
         }
+    }
+}
+```
+
+Injections also have access to KGP's internal APIs (IDE currently colors this code red, but it will compile):
+
+```kotlin
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
+
+project("buildScriptInjectionGroovy", version) {
+    buildScriptInjection {
+        project.applyMultiplatform {
+            linuxArm64()
+        }
+    }
+
+    buildScriptReturn {
+        // Any internal KGP APIs are accessible in the injections
+        kotlinMultiplatform.linuxArm64().compilations.getByName("main").internal as InternalKotlinCompilation
     }
 }
 ```
