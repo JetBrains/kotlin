@@ -777,7 +777,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 if (!skipDefaultParameter && defaultValue != null) {
                     this.defaultValue = when {
                         forcedDefaultValueConversion && defaultValue !is FirExpressionStub ->
-                            defaultValue.asCompileTimeIrInitializer(c)
+                            defaultValue.asCompileTimeIrInitializerForAnnotationParameter(c)
                         useStubForDefaultValueStub || defaultValue !is FirExpressionStub ->
                             factory.createExpressionBody(
                                 IrErrorExpressionImpl(

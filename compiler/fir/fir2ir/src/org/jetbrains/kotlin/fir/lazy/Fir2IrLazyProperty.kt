@@ -125,7 +125,7 @@ class Fir2IrLazyProperty(
                         declarationStorage.getIrConstructorSymbol(firPrimaryConstructor).owner.putParametersInScope(firPrimaryConstructor.fir)
                     }
                     fir.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-                    irInitializer = initializer?.asCompileTimeIrInitializer(c, fir.returnTypeRef.coneType)
+                    irInitializer = initializer?.asCompileTimeIrInitializerForAnnotationParameter(c, fir.returnTypeRef.coneType)
                 }
                 irInitializer
             }
