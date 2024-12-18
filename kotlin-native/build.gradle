@@ -200,9 +200,6 @@ def shadowJar = tasks.register("shadowJar", ShadowJar) {
     exclude "*trove4j*"
     exclude("META-INF/versions/9/module-info.class")
     configurations = [project.configurations.distPack]
-    outputs.upToDateWhen {
-        archiveFile.getOrNull()?.asFile?.exists() ?: false
-    }
 }
 
 tasks.register("distCompiler") {
