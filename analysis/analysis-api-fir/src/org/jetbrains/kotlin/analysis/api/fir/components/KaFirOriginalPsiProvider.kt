@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.components.KaOriginalPsiProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalKtFile
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.psi.KtFile
 @Suppress("OVERRIDE_DEPRECATION")
 internal class KaFirOriginalPsiProvider(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaSessionComponent<KaFirSession>(), KaOriginalPsiProvider, KaFirSessionComponent {
+) : KaBaseSessionComponent<KaFirSession>(), KaOriginalPsiProvider, KaFirSessionComponent {
     override fun KtFile.recordOriginalKtFile(file: KtFile) = withValidityAssertion {
         originalKtFile = file
     }

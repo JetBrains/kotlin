@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.psiUtil.contains
 class KaBaseAnalysisScopeProviderImpl(
     override val analysisSessionProvider: () -> KaSession,
     private val useSiteScope: KaGlobalSearchScope,
-) : KaSessionComponent<KaSession>(), KaAnalysisScopeProvider {
+) : KaBaseSessionComponent<KaSession>(), KaAnalysisScopeProvider {
     override val analysisScope: GlobalSearchScope
         get() = withValidityAssertion { useSiteScope }
 

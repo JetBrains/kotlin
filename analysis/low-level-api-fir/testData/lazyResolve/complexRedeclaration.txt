@@ -736,15 +736,15 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
-    public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        protected [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+    public sealed [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(STATUS)] class B : R|A| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
-            LAZY_super<R|A|>
+    public final? [ResolvedTo(SUPER_TYPES)] class B : R|A| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<A>
         }
 
     }
@@ -828,15 +828,15 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
-    public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        protected [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+    public sealed [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(STATUS)] class B : R|A| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
-            LAZY_super<R|A|>
+    public final? [ResolvedTo(SUPER_TYPES)] class B : R|A| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<A>
         }
 
     }
@@ -920,15 +920,15 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
-    public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        protected [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+    public sealed [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(STATUS)] class B : R|A| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
-            LAZY_super<R|A|>
+    public final? [ResolvedTo(SUPER_TYPES)] class B : R|A| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<A>
         }
 
     }
@@ -1012,15 +1012,15 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
-    public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        protected [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+    public sealed [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(STATUS)] class B : R|A| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
-            LAZY_super<R|A|>
+    public final? [ResolvedTo(SUPER_TYPES)] class B : R|A| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<A>
         }
 
     }
@@ -1104,15 +1104,15 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
-    public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        protected [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+    public sealed [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(STATUS)] class B : R|A| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
-            LAZY_super<R|A|>
+    public final? [ResolvedTo(SUPER_TYPES)] class B : R|A| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<A>
         }
 
     }

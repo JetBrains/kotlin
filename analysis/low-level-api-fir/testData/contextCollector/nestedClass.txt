@@ -27,7 +27,7 @@ Tower Data Context:
 
 FILE: [ResolvedTo(IMPORTS)] nestedClass.kt
     public final [ResolvedTo(STATUS)] class Foo<[ResolvedTo(STATUS)] A> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] constructor<[ResolvedTo(STATUS)] A>(): R|Foo<A>| {
+        public? [ResolvedTo(RAW_FIR)] constructor<[ResolvedTo(STATUS)] A>(): R|Foo<A>| {
             LAZY_super<R|kotlin/Any|>
         }
 

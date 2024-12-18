@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.analysis.api.components.KaExtensionApplicabilityResu
 import org.jetbrains.kotlin.analysis.api.components.KaExtensionApplicabilityResult.*
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.utils.createSubstitutorFromTypeArguments
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
@@ -41,27 +43,26 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KaFirCompletionCandidateChecker(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaSessionComponent<KaFirSession>(), KaCompletionCandidateChecker, KaFirSessionComponent {
+) : KaBaseSessionComponent<KaFirSession>(), KaCompletionCandidateChecker, KaFirSessionComponent {
     override fun createExtensionCandidateChecker(
         originalFile: KtFile,
         nameExpression: KtSimpleNameExpression,
         explicitReceiver: KtExpression?
-    ): KaCompletionExtensionCandidateChecker = analysisSession.withValidityAssertion {
-        return KaLazyCompletionExtensionCandidateChecker {
-            // Double validity check is needed, as the checker may be requested some time later
-            analysisSession.withValidityAssertion {
-                KaFirCompletionExtensionCandidateChecker(analysisSession, nameExpression, explicitReceiver, originalFile)
-            }
+    ): KaCompletionExtensionCandidateChecker = withValidityAssertion {
+        KaLazyCompletionExtensionCandidateChecker(analysisSession.token) {
+            KaFirCompletionExtensionCandidateChecker(analysisSession, nameExpression, explicitReceiver, originalFile)
         }
     }
 }
 
 private class KaFirCompletionExtensionCandidateChecker(
-    override val analysisSession: KaFirSession,
+    private val analysisSession: KaFirSession,
     private val nameExpression: KtSimpleNameExpression,
     explicitReceiver: KtExpression?,
     originalFile: KtFile,
-) : KaCompletionExtensionCandidateChecker, KaFirSessionComponent {
+) : KaCompletionExtensionCandidateChecker {
+    private val firResolveSession = analysisSession.firResolveSession
+
     private val implicitReceivers: List<ImplicitReceiverValue<*>>
     private val firCallSiteSession: FirSession
     private val firOriginalFile: FirFile
@@ -77,46 +78,46 @@ private class KaFirCompletionExtensionCandidateChecker(
         firExplicitReceiver = explicitReceiver?.let(::findReceiverFirExpression)
     }
 
-    override fun computeApplicability(candidate: KaCallableSymbol): KaExtensionApplicabilityResult {
+    override val token: KaLifetimeToken
+        get() = analysisSession.token
+
+    override fun computeApplicability(candidate: KaCallableSymbol): KaExtensionApplicabilityResult = withValidityAssertion {
         if (candidate is KaReceiverParameterSymbol) {
-            return NonApplicable(analysisSession.token)
+            return NonApplicable(token)
         }
 
         require(candidate is KaFirSymbol<*>)
 
-        analysisSession.withValidityAssertion {
-            val firSymbol = candidate.firSymbol as FirCallableSymbol<*>
-            firSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
+        val firSymbol = candidate.firSymbol as FirCallableSymbol<*>
+        firSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
 
-            val resolver = SingleCandidateResolver(firCallSiteSession, firOriginalFile)
-            val token = analysisSession.token
+        val resolver = SingleCandidateResolver(firCallSiteSession, firOriginalFile)
 
-            fun processReceiver(implicitReceiverValue: ImplicitReceiverValue<*>?): KaExtensionApplicabilityResult? {
-                val resolutionParameters = ResolutionParameters(
-                    singleCandidateResolutionMode = SingleCandidateResolutionMode.CHECK_EXTENSION_FOR_COMPLETION,
-                    callableSymbol = firSymbol,
-                    implicitReceiver = implicitReceiverValue,
-                    explicitReceiver = firExplicitReceiver,
-                    allowUnsafeCall = true,
-                    allowUnstableSmartCast = true,
-                )
+        fun processReceiver(implicitReceiverValue: ImplicitReceiverValue<*>?): KaExtensionApplicabilityResult? {
+            val resolutionParameters = ResolutionParameters(
+                singleCandidateResolutionMode = SingleCandidateResolutionMode.CHECK_EXTENSION_FOR_COMPLETION,
+                callableSymbol = firSymbol,
+                implicitReceiver = implicitReceiverValue,
+                explicitReceiver = firExplicitReceiver,
+                allowUnsafeCall = true,
+                allowUnstableSmartCast = true,
+            )
 
-                val firResolvedCall = resolver.resolveSingleCandidate(resolutionParameters) ?: return null
-                val substitutor = firResolvedCall.createSubstitutorFromTypeArguments() ?: return null
+            val firResolvedCall = resolver.resolveSingleCandidate(resolutionParameters) ?: return null
+            val substitutor = firResolvedCall.createSubstitutorFromTypeArguments(analysisSession) ?: return null
 
-                val receiverCastRequired = firResolvedCall.calleeReference is FirErrorReferenceWithCandidate
+            val receiverCastRequired = firResolvedCall.calleeReference is FirErrorReferenceWithCandidate
 
-                if (firSymbol is FirVariableSymbol<*> && firSymbol.resolvedReturnType.receiverType(firCallSiteSession) != null) {
-                    return ApplicableAsFunctionalVariableCall(substitutor, receiverCastRequired, token)
-                }
-
-                return ApplicableAsExtensionCallable(substitutor, receiverCastRequired, token)
+            if (firSymbol is FirVariableSymbol<*> && firSymbol.resolvedReturnType.receiverType(firCallSiteSession) != null) {
+                return ApplicableAsFunctionalVariableCall(substitutor, receiverCastRequired, token)
             }
 
-            return implicitReceivers.firstNotNullOfOrNull(::processReceiver)
-                ?: processReceiver(null)
-                ?: NonApplicable(token)
+            return ApplicableAsExtensionCallable(substitutor, receiverCastRequired, token)
         }
+
+        return implicitReceivers.firstNotNullOfOrNull(::processReceiver)
+            ?: processReceiver(null)
+            ?: NonApplicable(token)
     }
 
     private fun computeImplicitReceivers(firFakeFile: FirFile): List<ImplicitReceiverValue<*>> {
@@ -167,11 +168,11 @@ private class KaFirCompletionExtensionCandidateChecker(
 }
 
 private class KaLazyCompletionExtensionCandidateChecker(
-    delegateFactory: () -> KaCompletionExtensionCandidateChecker
+    override val token: KaLifetimeToken,
+    delegateFactory: () -> KaCompletionExtensionCandidateChecker,
 ) : KaCompletionExtensionCandidateChecker {
     private val delegate: KaCompletionExtensionCandidateChecker by lazy(delegateFactory)
 
-    override fun computeApplicability(candidate: KaCallableSymbol): KaExtensionApplicabilityResult {
-        return delegate.computeApplicability(candidate)
-    }
+    override fun computeApplicability(candidate: KaCallableSymbol): KaExtensionApplicabilityResult =
+        withValidityAssertion { delegate.computeApplicability(candidate) }
 }

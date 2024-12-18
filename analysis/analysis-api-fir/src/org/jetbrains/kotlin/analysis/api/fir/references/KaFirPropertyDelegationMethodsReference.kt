@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.references
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
 import org.jetbrains.kotlin.analysis.api.fir.getCalleeSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -24,10 +22,9 @@ import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 
 internal class KaFirPropertyDelegationMethodsReference(
-    element: KtPropertyDelegate
+    element: KtPropertyDelegate,
 ) : KtPropertyDelegationMethodsReference(element), KaFirReference {
-    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> = withValidityAssertion {
-        check(this is KaFirSession)
+    override fun KaFirSession.computeSymbols(): Collection<KaSymbol> {
         val property = (expression.parent as? KtElement)?.getOrBuildFirSafe<FirProperty>(firResolveSession) ?: return emptyList()
         if (property.delegate == null) return emptyList()
 

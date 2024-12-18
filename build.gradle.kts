@@ -2,6 +2,7 @@ import org.gradle.crypto.checksum.Checksum
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import plugins.KotlinBuildPublishingPlugin
 
 buildscript {
     // a workaround for kotlin compiler classpath in kotlin project: sometimes gradle substitutes
@@ -1080,6 +1081,22 @@ tasks {
         )
         doFirst {
             environment("JDK_1_8", getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8).get())
+        }
+    }
+
+    register<Exec>("installJps") {
+        val installTask = this
+        allprojects {
+            plugins.withType<MavenPublishPlugin> {
+                installTask.dependsOn(tasks.named("publishToMavenLocal"))
+            }
+        }
+        group = "publishing"
+        workingDir = rootProject.projectDir.resolve("libraries")
+        commandLine = getMvnwCmd() + listOf("clean", "install", "-DskipTests", "-DexcludeTestModules=true")
+        val jdk8Home = getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
+        doFirst {
+            environment("JDK_1_8", jdk8Home.get())
         }
     }
 }

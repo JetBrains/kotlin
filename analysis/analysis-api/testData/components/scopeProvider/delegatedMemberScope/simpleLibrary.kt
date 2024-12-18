@@ -11,6 +11,9 @@ interface A {
     val Int.doo: String
 }
 
-class I(private val p: A) : A by p
+class I(private val p: A) : A by p {
+    fun regularFunction(): String = "string"
+    val regularProperty: Int = 5
+}
 
 // class: I

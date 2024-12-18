@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 
 internal class KaFe10ImportOptimizer(
     override val analysisSessionProvider: () -> KaFe10Session
-) : KaSessionComponent<KaFe10Session>(), KaImportOptimizer, KaFe10SessionComponent {
+) : KaBaseSessionComponent<KaFe10Session>(), KaImportOptimizer, KaFe10SessionComponent {
     override fun analyzeImportsToOptimize(file: KtFile): KaImportOptimizerResult = withValidityAssertion {
         error("FE10 implementation of KtImportOptimizer should not be called from anywhere")
     }

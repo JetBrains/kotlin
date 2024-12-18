@@ -32,6 +32,8 @@ class FirClassDeclaredMemberScopeImpl(
     private val klass: FirClass,
     private val existingNamesForLazyNestedClassifierScope: List<Name>?,
 ) : FirClassDeclaredMemberScope(klass.classId) {
+    // Note: this kind of scope contains both static and non-static classifiers
+    // Some discussion about it can be found in KT-62023
     private val nestedClassifierScope: FirContainingNamesAwareScope? = if (existingNamesForLazyNestedClassifierScope != null) {
         lazyNestedClassifierScope(useSiteSession, klass.symbol.classId, existingNamesForLazyNestedClassifierScope)
     } else {

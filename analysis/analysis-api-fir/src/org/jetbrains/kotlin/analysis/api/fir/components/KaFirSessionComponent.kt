@@ -7,30 +7,25 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.analysis.api.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.components.KaSubtypingErrorTypePolicy
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.diagnostics.KT_DIAGNOSTIC_CONVERTER
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
-import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
-import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
-import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
+import org.jetbrains.kotlin.analysis.api.fir.utils.toKtSubstitutor
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.createConeSubstitutorFromTypeArguments
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.convertVariance
 
-internal interface KaFirSessionComponent {
+internal interface KaFirSessionComponent : KaSessionComponent {
     val analysisSession: KaFirSession
 
     val project: Project get() = analysisSession.project
@@ -75,18 +70,5 @@ internal interface KaFirSessionComponent {
         )
     }
 
-    fun FirQualifiedAccessExpression.createSubstitutorFromTypeArguments(discardErrorTypes: Boolean = false): KaSubstitutor? {
-        return createConeSubstitutorFromTypeArguments(rootModuleSession, discardErrorTypes)?.toKtSubstitutor()
-    }
-
-    fun FirQualifiedAccessExpression.createSubstitutorFromTypeArguments(
-        callableSymbol: FirCallableSymbol<*>,
-        discardErrorTypes: Boolean = false
-    ): KaSubstitutor {
-        return createConeSubstitutorFromTypeArguments(callableSymbol, rootModuleSession, discardErrorTypes).toKtSubstitutor()
-    }
-
-    fun ConeSubstitutor.toKtSubstitutor(): KaSubstitutor {
-        return analysisSession.firSymbolBuilder.typeBuilder.buildSubstitutor(this)
-    }
+    fun ConeSubstitutor.toKtSubstitutor(): KaSubstitutor = toKtSubstitutor(analysisSession)
 }

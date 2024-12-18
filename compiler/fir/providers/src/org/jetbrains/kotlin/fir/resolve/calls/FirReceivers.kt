@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirThisOwnerSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -93,23 +96,33 @@ sealed class ImplicitReceiverValue<S>(
     val useSiteSession: FirSession,
     protected val scopeSession: ScopeSession,
     mutable: Boolean,
-    inaccessibleReceiver: Boolean = false,
+    private val inaccessibleReceiver: Boolean = false,
 ) : ImplicitValue(type, mutable), ReceiverValue
         where S : FirThisOwnerSymbol<*>, S : FirBasedSymbol<*> {
 
     abstract val isContextReceiver: Boolean
 
-    var implicitScope: FirTypeScope? =
-        type.scope(
+    val implicitScope: FirTypeScope?
+        get() = lazyImplicitScope.value
+
+    /**
+     * This scope is lazy to avoid redundant computation in the case where this scope is unused.
+     * This is especially the case for lazy resolution.
+     *
+     * KT-73900 is an example where computation during the class initialization leads to a visible performance
+     * difference.
+     * In particular, it is triggered by [createSnapshot].
+     */
+    private var lazyImplicitScope: Lazy<FirTypeScope?> = lazy(LazyThreadSafetyMode.PUBLICATION) {
+        originalType.scope(
             useSiteSession,
             scopeSession,
             CallableCopyTypeCalculator.DoNothing,
-            requiredMembersPhase = FirResolvePhase.STATUS
+            requiredMembersPhase = FirResolvePhase.STATUS,
         )
-        private set
+    }
 
-    override val originalExpression: FirExpression =
-        receiverExpression(boundSymbol, type, inaccessibleReceiver)
+    override fun computeOriginalExpression(): FirExpression = receiverExpression(boundSymbol, originalType, inaccessibleReceiver)
 
     override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? = implicitScope
 
@@ -119,12 +132,14 @@ sealed class ImplicitReceiverValue<S>(
     @ImplicitValueInternals
     override fun updateTypeFromSmartcast(type: ConeKotlinType) {
         super.updateTypeFromSmartcast(type)
-        implicitScope = type.scope(
-            useSiteSession = useSiteSession,
-            scopeSession = scopeSession,
-            callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
-            requiredMembersPhase = FirResolvePhase.STATUS,
-        )
+        lazyImplicitScope = lazy(LazyThreadSafetyMode.PUBLICATION) {
+            type.scope(
+                useSiteSession = useSiteSession,
+                scopeSession = scopeSession,
+                callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
+                requiredMembersPhase = FirResolvePhase.STATUS,
+            )
+        }
     }
 
     abstract override fun createSnapshot(keepMutable: Boolean): ImplicitReceiverValue<S>

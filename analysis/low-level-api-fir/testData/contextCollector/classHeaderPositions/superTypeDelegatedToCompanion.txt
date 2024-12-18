@@ -33,7 +33,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeDelegatedToCompanion.kt
         private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|test/MyInterface| = Q|test/MyClass.Companion|
 
         public final companion [ResolvedTo(STATUS)] object Companion : R|test/MyInterface| {
-            private [ResolvedTo(STATUS)] constructor(): R|test/MyClass.Companion| {
+            private [ResolvedTo(RAW_FIR)] constructor(): R|test/MyClass.Companion| {
                 LAZY_super<<implicit>>
             }
 

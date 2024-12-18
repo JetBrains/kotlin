@@ -596,7 +596,6 @@ private sealed class Bridge(
 
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
                 return "$valueExpression as NSObject? ?? ${renderNil()}"
-                //return "($valueExpression).map { it in it as NSObject } ?? ${renderNil()}"
             }
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String = valueExpression
@@ -652,7 +651,7 @@ private sealed class Bridge(
         swiftType: SirNominalType,
         cType: CType
     ) : AsObjCBridged(swiftType, cType) {
-        protected abstract inner class InSwiftSources : InSwiftSourcesConversion {
+        abstract inner class InSwiftSources : InSwiftSourcesConversion {
             override fun renderNil(): String = super@AsNSCollection.inSwiftSources.renderNil()
 
             abstract override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String
@@ -779,30 +778,36 @@ private sealed class Bridge(
         override val inKotlinSources: ValueConversion
             get() = object : ValueConversion {
                 override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
-                    return "TODO(\"not yet implemented - KT-72993\")"
+                    return "interpretObjCPointer<Function0<kotlin.Unit>>($valueExpression)"
                 }
 
                 override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
                     return """{
-                    |   val newClosure: () -> Long = {
-                    |       val res = _result()
-                    |       kotlin.native.internal.ref.createRetainedExternalRCRef(res).toLong()
-                    |   }
-                    |   newClosure.objcPtr()
+                    |    val newClosure: () -> Long = {
+                    |        val res = _result()
+                    |        kotlin.native.internal.ref.createRetainedExternalRCRef(res).toLong()
+                    |    }
+                    |    newClosure.objcPtr()
                     |}()""".replaceIndentByMargin("    ")
                 }
             }
 
         override val inSwiftSources: InSwiftSourcesConversion = object : InSwiftSourcesConversion {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
-                return "fatalError(\"not yet implemented - KT-72993\")"
+                return """{
+                |    let originalBlock = $valueExpression
+                |    return {
+                |        originalBlock()
+                |        return 0
+                |    }
+                |}()""".trimMargin()
             }
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
                 return """{
-                |    let nativeBlock = ${valueExpression}
+                |    let nativeBlock = $valueExpression
                 |    return { nativeBlock!() }
-                |}()""".replaceIndentByMargin("    ")
+                |}()""".trimMargin()
             }
 
             override fun renderNil(): String = error("we do not support wrapping closures into optionals yet - PUT TICKET HERE")

@@ -104,6 +104,7 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
 
     @DisplayName("On Kotlin daemon OOM helpful message is displayed")
     @GradleTest
+    @Disabled("KTI-2127 Flaky test displaySpecialMessageOnOOM")
     fun displaySpecialMessageOnOOM(gradleVersion: GradleVersion) {
         project(
             "kotlinProject",

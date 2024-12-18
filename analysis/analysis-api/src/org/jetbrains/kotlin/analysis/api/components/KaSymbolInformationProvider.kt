@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 
 @KaExperimentalApi
-public interface KaSymbolInformationProvider {
+public interface KaSymbolInformationProvider : KaSessionComponent {
     /**
      * The deprecation status of the given symbol, or `null` if the declaration is not deprecated.
      */
@@ -23,37 +23,46 @@ public interface KaSymbolInformationProvider {
     public val KaSymbol.deprecationStatus: DeprecationInfo?
 
     /**
-     * Whether a named function meets all the requirements to become an `operator fun` with the same name
+     * Whether the function symbol meets all the requirements to be declared as an [operator function](https://kotlinlang.org/docs/operator-overloading.html).
      *
-     *```kotlin
-     *  class A
+     * In Kotlin, the set of functions which can be declared as an operator is predefined. [canBeOperator] not only checks the name of a
+     * potential operator function, but also its signature, depending on the operator.
      *
-     *  fun A.plus(that: A): A = A() // canBeOperator = true, as it meets all requirements for `plus`
+     * [canBeOperator] does not determine whether the function symbol *is* declared as an operator. For this purpose, use
+     * [KaNamedFunctionSymbol.isOperator] instead.
      *
-     *  operator fun A.contains(that: A): Boolean = true // canBeOperator = true, as it's already an operator
+     * #### Example
      *
-     *  fun A.something(that: A): A = A() // canBeOperator = false, as there is no operator with such name
+     * ```kotlin
+     * class A
      *
-     *  fun A.minus(): A = A() // canBeOperator = false, as `minus` is a binary operator and should have one parameter
-     *```
+     * fun A.plus(that: A): A = A() // canBeOperator = true, as it meets all requirements for `plus`.
+     *
+     * operator fun A.contains(that: A): Boolean = true // canBeOperator = true, as it's already an operator.
+     *
+     * fun A.something(that: A): A = A() // canBeOperator = false, as there is no operator with such a name.
+     *
+     * fun A.minus(): A = A() // canBeOperator = false, as `minus` is a binary operator and should have one parameter.
+     * ```
      */
     @KaExperimentalApi
     public val KaNamedFunctionSymbol.canBeOperator: Boolean
 
     /**
-     * The deprecation status of the given symbol related to the [annotationUseSiteTarget], or `null` if the declaration is not deprecated.
+     * The deprecation status of the given symbol for the given [annotation use-site target](https://kotlinlang.org/docs/annotations.html#annotation-use-site-targets),
+     * or `null` if the declaration is not deprecated.
      */
     @KaExperimentalApi
     public fun KaSymbol.deprecationStatus(annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo?
 
     /**
-     * Deprecation status of the given property getter, or `null` if the getter is not deprecated.
+     * The deprecation status of the given property getter, or `null` if the getter is not deprecated.
      */
     @KaExperimentalApi
     public val KaPropertySymbol.getterDeprecationStatus: DeprecationInfo?
 
     /**
-     * Deprecation status of the given property setter, or `null` if the setter is not deprecated or the property does not have a setter.
+     * The deprecation status of the given property setter, or `null` if the setter is not deprecated or doesn't exist.
      */
     @KaExperimentalApi
     public val KaPropertySymbol.setterDeprecationStatus: DeprecationInfo?

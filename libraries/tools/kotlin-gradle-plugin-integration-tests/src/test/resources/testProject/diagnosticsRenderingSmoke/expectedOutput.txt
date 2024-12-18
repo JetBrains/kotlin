@@ -3,10 +3,12 @@
 > Configure project :subprojectA
 e: [PreHMPPFlagsError | ERROR] The following properties are obsolete and no longer supported:
 kotlin.mpp.enableCompatibilityMetadataVariant, kotlin.mpp.hierarchicalStructureSupport
+Please remove the deprecated properties from the project.
 Read the details here: https://kotlinlang.org/docs/multiplatform-compatibility-guide.html#deprecate-hmpp-properties
 #diagnostic-end
 
 e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
+Please remove the `dependsOn` configuration from the commonMain source set
 #diagnostic-end
 
 w: [KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] The Default Kotlin Hierarchy Template was not applied to 'project ':subprojectA'':
@@ -16,13 +18,14 @@ Explicit .dependsOn() edges were configured for the following source sets:
 Consider removing dependsOn-calls or disabling the default template by adding
     'kotlin.mpp.applyDefaultHierarchyTemplate=false'
 to your gradle.properties
-
+Please remove the dependsOn-calls or disable the default template.
 Learn more about hierarchy templates: https://kotl.in/hierarchy-template
 #diagnostic-end
 
 
 > Configure project :subprojectB
 e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
+Please remove the `dependsOn` configuration from the commonMain source set
 #diagnostic-end
 
 w: [KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] The Default Kotlin Hierarchy Template was not applied to 'project ':subprojectB'':
@@ -32,7 +35,7 @@ Explicit .dependsOn() edges were configured for the following source sets:
 Consider removing dependsOn-calls or disabling the default template by adding
     'kotlin.mpp.applyDefaultHierarchyTemplate=false'
 to your gradle.properties
-
+Please remove the dependsOn-calls or disable the default template.
 Learn more about hierarchy templates: https://kotl.in/hierarchy-template
 #diagnostic-end
 

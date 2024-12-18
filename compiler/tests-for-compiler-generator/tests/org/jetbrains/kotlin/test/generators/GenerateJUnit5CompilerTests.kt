@@ -50,6 +50,15 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 )
             }
 
+            testClass<AbstractClassicDiagnosticsTestWithConverter> {
+                model(
+                    "diagnostics/testsWithConverter",
+                    pattern = "^(.+)\\.kts?$",
+                    targetBackend = TargetBackend.JVM_IR,
+                    excludedPattern = excludedCustomTestdataPattern
+                )
+            }
+
             testClass<AbstractDiagnosticsWithMultiplatformCompositeAnalysisTest> {
                 model(
                     "diagnostics/testsWithMultiplatformCompositeAnalysis",
@@ -370,6 +379,14 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
 
             testClass<AbstractFirLightTreeWithInterpreterDiagnosticsTest> {
                 model("diagnostics/irInterpreter")
+            }
+
+            testClass<AbstractFirPsiDiagnosticsTestWithConverter> {
+                model(
+                    "diagnostics/testsWithConverter",
+                    pattern = "^(.+)\\.kts?$",
+                    excludedPattern = excludedCustomTestdataPattern
+                )
             }
 
             testClass<AbstractFirPsiDiagnosticsTestWithJvmIrBackend> {

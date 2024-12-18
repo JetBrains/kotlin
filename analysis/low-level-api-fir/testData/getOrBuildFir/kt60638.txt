@@ -15,8 +15,8 @@ FILE: [ResolvedTo(IMPORTS)] kt60638.kt
         }
 
     }
-    public final [ResolvedTo(STATUS)] class MyClass : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|usage/MyClass| {
+    public final? [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|usage/MyClass| {
             LAZY_super<R|kotlin/Any|>
         }
 

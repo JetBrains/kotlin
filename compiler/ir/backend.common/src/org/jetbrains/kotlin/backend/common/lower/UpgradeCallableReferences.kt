@@ -274,7 +274,8 @@ open class UpgradeCallableReferences(
             val referenceType = this@buildWrapperFunction.type as IrSimpleType
             val referenceTypeArgs = referenceType.arguments.map { it.typeOrNull ?: context.irBuiltIns.anyNType }
             val unboundArgTypes = if (isPropertySetter) referenceTypeArgs else referenceTypeArgs.dropLast(1)
-            val returnType = if (isPropertySetter) context.irBuiltIns.unitType else referenceTypeArgs.last()
+            // normally, it can't be empty. This is a workaround for plugin bugs , possibly already serialized in klibs
+            val returnType = if (isPropertySetter) context.irBuiltIns.unitType else referenceTypeArgs.lastOrNull() ?: context.irBuiltIns.anyNType
             val func = context.irFactory.buildFun {
                 setSourceRange(this@buildWrapperFunction)
                 origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA

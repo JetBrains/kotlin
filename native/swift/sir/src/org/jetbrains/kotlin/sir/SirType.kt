@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.sir
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 
 sealed interface SirType {
+    val attributes: List<SirAttribute>
+
     companion object {
         val any get() = SirExistentialType()
         val never get() = SirNominalType(SirSwiftModule.never)
@@ -18,12 +20,14 @@ sealed interface SirType {
 class SirFunctionalType(
     val parameterTypes: List<SirType>,
     val returnType: SirType,
+    override val attributes: List<SirAttribute> = emptyList(),
 ) : SirType
 
 open class SirNominalType(
     val typeDeclaration: SirNamedDeclaration,
     val typeArguments: List<SirType> = emptyList(),
     val parent: SirNominalType? = null,
+    override val attributes: List<SirAttribute> = emptyList(),
 ) : SirType {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -46,7 +50,7 @@ open class SirNominalType(
     }
 }
 
-class SirOptionalType(type: SirType): SirNominalType(
+class SirOptionalType(type: SirType) : SirNominalType(
     typeDeclaration = SirSwiftModule.optional,
     typeArguments = listOf(type)
 ) {
@@ -71,6 +75,7 @@ class SirDictionaryType(keyType: SirType, valueType: SirType): SirNominalType(
 class SirExistentialType(
     // TODO: Protocols. For now, only `any Any` is supported
 ) : SirType {
+    override val attributes: List<SirAttribute> = emptyList()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -88,11 +93,15 @@ class SirExistentialType(
  * it might be an incomplete declaration in IDE or declaration from a not imported library.
  *
  */
-class SirErrorType(val reason: String) : SirType
+class SirErrorType(val reason: String) : SirType {
+    override val attributes: List<SirAttribute> = emptyList()
+}
 
 /**
  * A synthetic type for not yet supported Kotlin types.
  */
-data object SirUnsupportedType : SirType
+data object SirUnsupportedType : SirType {
+    override val attributes: List<SirAttribute> = emptyList()
+}
 
 fun SirType.optional(): SirNominalType = SirOptionalType(this)

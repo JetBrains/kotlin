@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.*
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
-import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
+import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -40,12 +40,19 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
+import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.TargetId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
+import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.ScriptResultFieldData
+import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.scriptResultFieldDataAttr
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.scriptDefinitionProviderService
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
@@ -243,8 +250,29 @@ private fun doCompile(
         messageCollector
     )
 
-    val generationState =
-        generate(analysisResult, sourceFiles, context.environment.configuration, messageCollector)
+    val diagnosticsReporter = DiagnosticReporterFactory.createReporter(messageCollector)
+    val generationState = GenerationState(
+        sourceFiles.first().project,
+        analysisResult.moduleDescriptor,
+        context.environment.configuration,
+        diagnosticReporter = diagnosticsReporter,
+    )
+
+    val codegenFactory = JvmIrCodegenFactory(context.environment.configuration)
+
+    val psi2irInput =
+        CodegenFactory.IrConversionInput.Companion.fromGenerationStateAndFiles(generationState, sourceFiles, analysisResult.bindingContext)
+    val backendInput = codegenFactory.convertToIr(psi2irInput)
+
+    codegenFactory.generateModule(generationState, backendInput)
+    CodegenFactory.doCheckCancelled(generationState)
+    generationState.factory.done()
+
+    FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
+        diagnosticsReporter,
+        messageCollector,
+        context.environment.configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+    )
 
     if (messageCollector.hasErrors()) return failure(
         messageCollector
@@ -255,7 +283,8 @@ private fun doCompile(
         script,
         sourceFiles.first(),
         sourceDependencies,
-        getScriptConfiguration
+        getScriptConfiguration,
+        extractResultFields(backendInput.irModuleFragment)
     ).onSuccess { compiledScript ->
         ResultWithDiagnostics.Success(compiledScript, messageCollector.diagnostics)
     }
@@ -281,30 +310,6 @@ private fun analyze(sourceFiles: Collection<KtFile>, environment: KotlinCoreEnvi
         )
     }
     return analyzerWithCompilerReport.analysisResult
-}
-
-private fun generate(
-    analysisResult: AnalysisResult, sourceFiles: List<KtFile>, configuration: CompilerConfiguration, messageCollector: MessageCollector,
-): GenerationState {
-    val diagnosticsReporter = DiagnosticReporterFactory.createReporter(messageCollector)
-    val state = GenerationState(
-        sourceFiles.first().project,
-        analysisResult.moduleDescriptor,
-        configuration,
-        diagnosticReporter = diagnosticsReporter,
-    )
-    KotlinCodegenFacade.compileCorrectFiles(
-        sourceFiles,
-        state,
-        analysisResult.bindingContext,
-        JvmIrCodegenFactory(configuration),
-    )
-    FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
-        diagnosticsReporter,
-        messageCollector,
-        configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
-    )
-    return state
 }
 
 @OptIn(LegacyK2CliPipeline::class)
@@ -379,7 +384,8 @@ private fun doCompileWithK2(
         else {
             val rawFirDeps = rawFir.associateWith { firFile ->
                 ((firFile.sourceFile as? KtPsiSourceFile)?.psiFile as? KtFile)?.let { ktFile ->
-                    val scriptCompilationConfiguration = scriptDefinitionProviderService.configurationProvider?.getScriptConfiguration(ktFile)?.configuration
+                    val scriptCompilationConfiguration =
+                        scriptDefinitionProviderService.configurationProvider?.getScriptConfiguration(ktFile)?.configuration
                     scriptCompilationConfiguration?.get(ScriptCompilationConfiguration.resolvedImportScripts)?.mapNotNull { depSource ->
                         (depSource as? VirtualFileScriptSource)?.virtualFile?.let { depVFile ->
                             rawFir.find { ((it.sourceFile as? KtPsiSourceFile)?.psiFile as? KtFile)?.virtualFile == depVFile }
@@ -434,10 +440,24 @@ private fun doCompileWithK2(
         script,
         sourceFiles.first(),
         sourceDependencies,
-        getScriptConfiguration
+        getScriptConfiguration,
+        extractResultFields(irInput.irModuleFragment)
     ).onSuccess { compiledScript ->
         ResultWithDiagnostics.Success(compiledScript, messageCollector.diagnostics)
     }
+}
+
+@OptIn(UnsafeDuringIrConstructionAPI::class)
+internal fun extractResultFields(irModule: IrModuleFragment): MutableMap<FqName, ScriptResultFieldData> {
+    val resultFields = mutableMapOf<FqName, ScriptResultFieldData>()
+    irModule.files.forEach { file ->
+        file.declarations.forEach { declaration ->
+            (declaration as? IrClass)?.scriptResultFieldDataAttr?.let {
+                resultFields[declaration.kotlinFqName] = it
+            }
+        }
+    }
+    return resultFields
 }
 
 @LegacyK2CliPipeline

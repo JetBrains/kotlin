@@ -1,0 +1,7 @@
+compiler/testData/cli/jvm/Xjsr305/jsr305Migration.kt:2:19: warning: Java type mismatch: inferred type is 'kotlin.Nothing?', but 'kotlin.String' was expected.
+    annotated.foo(null)
+                  ^^^^
+compiler/testData/cli/jvm/Xjsr305/jsr305Migration.kt:4:5: warning: only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'kotlin.String?'.
+    annotated.nullable().length
+    ^^^^^^^^^^^^^^^^^^^^
+OK

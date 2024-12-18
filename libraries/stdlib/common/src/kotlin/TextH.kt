@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -509,8 +509,14 @@ public expect val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>
 public expect fun String?.toBoolean(): Boolean
 
 /**
- * Parses the string as a signed [Byte] number and returns the result.
- * @throws NumberFormatException if the string is not a valid representation of a number.
+ * Parses the string to a [Byte] number.
+ *
+ * The string must consist of an optional leading `+` or `-` sign and decimal digits (`0-9`),
+ * and fit the valid [Byte] value range (within `Byte.MIN_VALUE..Byte.MAX_VALUE`),
+ * otherwise a [NumberFormatException] will be thrown.
+ *
+ * @throws NumberFormatException if the string is not a valid representation of a [Byte].
+ * @sample samples.text.Numbers.toByte
  */
 public expect fun String.toByte(): Byte
 
@@ -521,10 +527,15 @@ public expect fun String.toByte(): Byte
  */
 public expect fun String.toByte(radix: Int): Byte
 
-
 /**
- * Parses the string as a [Short] number and returns the result.
- * @throws NumberFormatException if the string is not a valid representation of a number.
+ * Parses the string to a [Short] number.
+ *
+ * The string must consist of an optional leading `+` or `-` sign and decimal digits (`0-9`),
+ * and fit the valid [Short] value range (within `Short.MIN_VALUE..Short.MAX_VALUE`),
+ * otherwise a [NumberFormatException] will be thrown.
+ *
+ * @throws NumberFormatException if the string is not a valid representation of a [Short].
+ * @sample samples.text.Numbers.toShort
  */
 public expect fun String.toShort(): Short
 
@@ -536,8 +547,14 @@ public expect fun String.toShort(): Short
 public expect fun String.toShort(radix: Int): Short
 
 /**
- * Parses the string as an [Int] number and returns the result.
- * @throws NumberFormatException if the string is not a valid representation of a number.
+ * Parses the string to an [Int] number.
+ *
+ * The string must consist of an optional leading `+` or `-` sign and decimal digits (`0-9`),
+ * and fit the valid [Int] value range (within `Int.MIN_VALUE..Int.MAX_VALUE`),
+ * otherwise a [NumberFormatException] will be thrown.
+ *
+ * @throws NumberFormatException if the string is not a valid representation of an [Int].
+ * @sample samples.text.Numbers.toInt
  */
 public expect fun String.toInt(): Int
 
@@ -549,8 +566,14 @@ public expect fun String.toInt(): Int
 public expect fun String.toInt(radix: Int): Int
 
 /**
- * Parses the string as a [Long] number and returns the result.
- * @throws NumberFormatException if the string is not a valid representation of a number.
+ * Parses the string to a [Long] number.
+ *
+ * The string must consist of an optional leading `+` or `-` sign and decimal digits (`0-9`),
+ * and fit the valid [Long] value range (within `Long.MIN_VALUE..Long.MAX_VALUE`),
+ * otherwise a [NumberFormatException] will be thrown.
+ *
+ * @throws NumberFormatException if the string is not a valid representation of a [Long].
+ * @sample samples.text.Numbers.toLong
  */
 public expect fun String.toLong(): Long
 

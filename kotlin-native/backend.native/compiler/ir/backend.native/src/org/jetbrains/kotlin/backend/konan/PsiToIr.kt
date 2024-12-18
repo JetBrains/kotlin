@@ -214,7 +214,7 @@ internal fun PsiToIrContext.psiToIr(
                 generatorContext.typeTranslator,
                 generatorContext.irBuiltIns,
                 linker = irDeserializer,
-                diagnosticReporter = messageCollector
+                messageCollector = messageCollector
         )
         pluginExtensions.forEach { extension ->
             extension.generate(module, pluginContext)

@@ -1477,11 +1477,5 @@ class FirElementSerializer private constructor(
     }
 }
 
-internal fun scriptClassId(script: FirScript): ClassId {
-    val name = script.name.let {
-        if (it.isSpecial) {
-            NameUtils.getScriptNameForFile(it.asStringStripSpecialMarkers().removePrefix("script-"))
-        } else it
-    }
-    return ClassId(script.symbol.fqName.parentOrNull() ?: FqName.ROOT, name)
-}
+internal fun scriptClassId(script: FirScript): ClassId =
+    ClassId(script.symbol.fqName.parentOrNull() ?: FqName.ROOT, NameUtils.getScriptTargetClassName(script.name))

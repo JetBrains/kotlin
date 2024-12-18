@@ -65,8 +65,14 @@ public actual inline fun Long.toString(radix: Int): String = longToString(this, 
 public actual inline fun String?.toBoolean(): Boolean = this.equals("true", ignoreCase = true)
 
 /**
- * Parses the string as a signed [Byte] number and returns the result.
- * @throws NumberFormatException if the string is not a valid representation of a number.
+ * Parses the string to a [Byte] number.
+ *
+ * The string must consist of an optional leading `+` or `-` sign and decimal digits (`0-9`),
+ * and fit the valid [Byte] value range (within `Byte.MIN_VALUE..Byte.MAX_VALUE`),
+ * otherwise a [NumberFormatException] will be thrown.
+ *
+ * @throws NumberFormatException if the string is not a valid representation of a [Byte].
+ * @sample samples.text.Numbers.toByte
  */
 @kotlin.internal.InlineOnly
 public actual inline fun String.toByte(): Byte = toByteOrNull() ?: throw NumberFormatException()
@@ -81,8 +87,14 @@ public actual inline fun String.toByte(): Byte = toByteOrNull() ?: throw NumberF
 public actual inline fun String.toByte(radix: Int): Byte = toByteOrNull(radix) ?: throw NumberFormatException()
 
 /**
- * Parses the string as a [Short] number and returns the result.
- * @throws NumberFormatException if the string is not a valid representation of a number.
+ * Parses the string to a [Short] number.
+ *
+ * The string must consist of an optional leading `+` or `-` sign and decimal digits (`0-9`),
+ * and fit the valid [Short] value range (within `Short.MIN_VALUE..Short.MAX_VALUE`),
+ * otherwise a [NumberFormatException] will be thrown.
+ *
+ * @throws NumberFormatException if the string is not a valid representation of a [Short].
+ * @sample samples.text.Numbers.toShort
  */
 @kotlin.internal.InlineOnly
 public actual inline fun String.toShort(): Short = toShortOrNull() ?: throw NumberFormatException()
@@ -97,8 +109,14 @@ public actual inline fun String.toShort(): Short = toShortOrNull() ?: throw Numb
 public actual inline fun String.toShort(radix: Int): Short = toShortOrNull(radix) ?: throw NumberFormatException()
 
 /**
- * Parses the string as an [Int] number and returns the result.
- * @throws NumberFormatException if the string is not a valid representation of a number.
+ * Parses the string to an [Int] number.
+ *
+ * The string must consist of an optional leading `+` or `-` sign and decimal digits (`0-9`),
+ * and fit the valid [Int] value range (within `Int.MIN_VALUE..Int.MAX_VALUE`),
+ * otherwise a [NumberFormatException] will be thrown.
+ *
+ * @throws NumberFormatException if the string is not a valid representation of an [Int].
+ * @sample samples.text.Numbers.toInt
  */
 @kotlin.internal.InlineOnly
 public actual inline fun String.toInt(): Int = toIntOrNull() ?: throw NumberFormatException()
@@ -113,8 +131,14 @@ public actual inline fun String.toInt(): Int = toIntOrNull() ?: throw NumberForm
 public actual inline fun String.toInt(radix: Int): Int = toIntOrNull(radix) ?: throw NumberFormatException()
 
 /**
- * Parses the string as a [Long] number and returns the result.
- * @throws NumberFormatException if the string is not a valid representation of a number.
+ * Parses the string to a [Long] number.
+ *
+ * The string must consist of an optional leading `+` or `-` sign and decimal digits (`0-9`),
+ * and fit the valid [Long] value range (within `Long.MIN_VALUE..Long.MAX_VALUE`),
+ * otherwise a [NumberFormatException] will be thrown.
+ *
+ * @throws NumberFormatException if the string is not a valid representation of a [Long].
+ * @sample samples.text.Numbers.toLong
  */
 @kotlin.internal.InlineOnly
 public actual inline fun String.toLong(): Long = toLongOrNull() ?: throw NumberFormatException()

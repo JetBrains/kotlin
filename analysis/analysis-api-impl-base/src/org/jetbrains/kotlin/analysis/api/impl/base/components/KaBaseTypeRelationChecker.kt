@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.ClassId
 
 @KaImplementationDetail
-abstract class KaBaseTypeRelationChecker<T : KaSession> : KaSessionComponent<T>(), KaTypeRelationChecker {
+abstract class KaBaseTypeRelationChecker<T : KaSession> : KaBaseSessionComponent<T>(), KaTypeRelationChecker {
     override fun KaType.isSubtypeOf(classId: ClassId, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean {
         if (this is KaErrorType) return errorTypePolicy == KaSubtypingErrorTypePolicy.LENIENT
 

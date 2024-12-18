@@ -1,0 +1,4 @@
+-d
+$TEMP_DIR$
+-Xcompiler-plugin=
+$TESTDATA_DIR$/multiplePlugins.kt

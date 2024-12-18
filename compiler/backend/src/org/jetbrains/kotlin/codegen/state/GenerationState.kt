@@ -96,14 +96,6 @@ class GenerationState(
         ClassFileFactoryFinalizerExtension.getInstances(project),
     )
 
-    val scriptSpecific = ForScript()
-
-    // TODO: review usages and consider replace mutability with explicit passing of input and output
-    class ForScript {
-        var resultFieldName: String? = null
-        var resultType: KotlinType? = null
-    }
-
     val globalSerializationBindings = JvmSerializationBindings()
     lateinit var mapInlineClass: (ClassDescriptor) -> Type
 

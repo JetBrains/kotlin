@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.decompiler.stub.files
 import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.indexing.FileContentImpl
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinClsStubBuilder
 import java.nio.file.Paths
 
@@ -26,8 +27,9 @@ abstract class AbstractPsiStubElementTypeConsistencyTest : AbstractDecompiledCla
 
     private fun doTest(testData: TestData, useStringTable: Boolean) {
         val classFile = getClassFileToDecompile(testData, useStringTable)
-        val fileStub = KotlinClsStubBuilder().buildFileStub(FileContentImpl.createByFile(classFile))
-            ?: error("Couldn't build a file stub for the file: $classFile")
+        val fileStub = ClsClassFinder.allowMultifileClassPart {
+            KotlinClsStubBuilder().buildFileStub(FileContentImpl.createByFile(classFile))
+        } ?: error("Couldn't build a file stub for the file: $classFile")
 
         checkPsiElementTypeConsistency(fileStub)
     }

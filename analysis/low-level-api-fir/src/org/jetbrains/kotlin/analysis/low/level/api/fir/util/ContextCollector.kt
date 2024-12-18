@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ClassExitNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.MergePostponedLambdaExitsNode
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.smartCastedType
@@ -47,7 +48,6 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import java.util.ArrayList
 
 object ContextCollector {
     enum class ContextKind {
@@ -329,27 +329,53 @@ private class ContextCollectorVisitor(
         return null
     }
 
+    private val nodesCache = HashMap<FirControlFlowGraphOwner, Map<FirElement, CFGNode<*>>>()
+
+    /**
+     * Returns the first occurrence of an [element] inside the [flow]
+     *
+     * @param container a [FirControlFlowGraphOwner] where [element] should be searched
+     * @param element an [FirElement] to search
+     * @param flow an [ControlFlowGraph] from [container]
+     */
+    private fun findNode(container: FirControlFlowGraphOwner, element: FirElement, flow: ControlFlowGraph): CFGNode<*>? {
+        val map = nodesCache.getOrPut(container) { buildDeclarationNodesMapping(flow) }
+        return map[element]
+    }
+
+    /**
+     * @see findNode
+     */
+    private fun buildDeclarationNodesMapping(
+        flow: ControlFlowGraph,
+    ): Map<FirElement, CFGNode<*>> = HashMap<FirElement, CFGNode<*>>().apply {
+        for (node in flow.nodes) {
+            if (isAcceptedControlFlowNode(node)) {
+                val fir = node.fir
+                // We are interested only in the first one
+                putIfAbsent(fir, node)
+            }
+        }
+    }.ifEmpty(::emptyMap)
+
     private fun getControlFlowNode(fir: FirElement, kind: ContextKind): CFGNode<*>? {
         for (container in context.containers.asReversed()) {
             val cfgOwner = container as? FirControlFlowGraphOwner ?: continue
             val cfgReference = cfgOwner.controlFlowGraphReference ?: continue
             val cfg = cfgReference.controlFlowGraph ?: continue
 
-            val nodes = cfg.nodes
-
-            val node = nodes.firstOrNull { isAcceptedControlFlowNode(it) && it.fir === fir }
-            if (node != null) {
-                return when (kind) {
+            val node = findNode(container, fir, cfg)
+            when {
+                node != null -> return when (kind) {
                     ContextKind.SELF -> {
                         // For the 'SELF' mode, we need to find the state *before* the 'FirElement'
-                        node.previousNodes.singleOrNull()?.takeIf { it in nodes } ?: node
+                        node.previousNodes.singleOrNull()?.takeIf { it in cfg.nodes } ?: node
                     }
                     ContextKind.BODY -> {
                         node
                     }
                 }
-            } else if (!cfg.isSubGraph) {
-                return null
+                !cfg.isSubGraph -> return null
             }
         }
 

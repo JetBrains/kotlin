@@ -380,7 +380,7 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
         typeTranslator,
         irBuiltIns,
         linker = irLinker,
-        messageCollector
+        messageCollector = messageCollector,
     )
     for (extension in IrGenerationExtension.getInstances(project)) {
         psi2Ir.addPostprocessingStep { module ->

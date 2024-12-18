@@ -5,7 +5,7 @@ Explicit .dependsOn() edges were configured for the following source sets:
 Consider removing dependsOn-calls or disabling the default template by adding
     'kotlin.mpp.applyDefaultHierarchyTemplate=false'
 to your gradle.properties
-
+Please remove the dependsOn-calls or disable the default template.
 Learn more about hierarchy templates: https://kotl.in/hierarchy-template
 ----
 [MultipleSourceSetRootsInCompilation | WARNING] Kotlin Source Set 'jsExtraMain' is included to 'main' compilation of 'js' target,
@@ -18,7 +18,7 @@ Please remove 'jsExtraMain' and include its sources to the compilation's default
 Or provide explicit dependency if the solution above is not applicable
 
     kotlin.sourceSets["jsExtraMain"].dependsOn(commonMain)
-
+Please remove 'jsExtraMain' and include its sources to the compilation's default source set.
 See https://kotl.in/connecting-source-sets for more details.
 ----
 [MultipleSourceSetRootsInCompilation | WARNING] Kotlin Source Set 'jsExtraTest' is included to 'test' compilation of 'js' target,
@@ -31,7 +31,7 @@ Please remove 'jsExtraTest' and include its sources to the compilation's default
 Or provide explicit dependency if the solution above is not applicable
 
     kotlin.sourceSets["jsExtraTest"].dependsOn(commonTest)
-
+Please remove 'jsExtraTest' and include its sources to the compilation's default source set.
 See https://kotl.in/connecting-source-sets for more details.
 ----
 [MultipleSourceSetRootsInCompilation | WARNING] Kotlin Source Set 'jvmExtraMain' is included to 'main' compilation of 'jvm' target,
@@ -44,7 +44,7 @@ Please remove 'jvmExtraMain' and include its sources to the compilation's defaul
 Or provide explicit dependency if the solution above is not applicable
 
     kotlin.sourceSets["jvmExtraMain"].dependsOn(commonMain)
-
+Please remove 'jvmExtraMain' and include its sources to the compilation's default source set.
 See https://kotl.in/connecting-source-sets for more details.
 ----
 [MultipleSourceSetRootsInCompilation | WARNING] Kotlin Source Set 'jvmExtraTest' is included to 'test' compilation of 'jvm' target,
@@ -57,7 +57,7 @@ Please remove 'jvmExtraTest' and include its sources to the compilation's defaul
 Or provide explicit dependency if the solution above is not applicable
 
     kotlin.sourceSets["jvmExtraTest"].dependsOn(commonTest)
-
+Please remove 'jvmExtraTest' and include its sources to the compilation's default source set.
 See https://kotl.in/connecting-source-sets for more details.
 ----
 [MultipleSourceSetRootsInCompilation | WARNING] Kotlin Source Set 'linuxX64ExtraMain' is included to 'main' compilation of 'linuxX64' target,
@@ -70,7 +70,7 @@ Please remove 'linuxX64ExtraMain' and include its sources to the compilation's d
 Or provide explicit dependency if the solution above is not applicable
 
     kotlin.sourceSets["linuxX64ExtraMain"].dependsOn(commonMain)
-
+Please remove 'linuxX64ExtraMain' and include its sources to the compilation's default source set.
 See https://kotl.in/connecting-source-sets for more details.
 ----
 [MultipleSourceSetRootsInCompilation | WARNING] Kotlin Source Set 'linuxX64ExtraTest' is included to 'test' compilation of 'linuxX64' target,
@@ -83,5 +83,5 @@ Please remove 'linuxX64ExtraTest' and include its sources to the compilation's d
 Or provide explicit dependency if the solution above is not applicable
 
     kotlin.sourceSets["linuxX64ExtraTest"].dependsOn(commonTest)
-
+Please remove 'linuxX64ExtraTest' and include its sources to the compilation's default source set.
 See https://kotl.in/connecting-source-sets for more details.

@@ -30,6 +30,17 @@ internal inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.translateP
     return withSessions {
         this@translateParameters.ktSymbol.valueParameters.map { parameter ->
             val sirType = createParameterType(ktSymbol, parameter)
+                .let {
+                    if (it is SirFunctionalType) {
+                        return@let SirFunctionalType(
+                            parameterTypes = it.parameterTypes,
+                            returnType = it.returnType,
+                            attributes = it.attributes + listOf(SirAttribute.Escaping)
+                        )
+                    } else {
+                        it
+                    }
+                }
             SirParameter(argumentName = parameter.name.asString(), type = sirType, origin = KotlinParameterOrigin.ValueParameter(parameter))
         }
     }
@@ -39,7 +50,11 @@ internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateE
     return withSessions {
         this@translateExtensionParameter.ktSymbol.receiverParameter?.let { receiver ->
             val sirType = createParameterType(ktSymbol, receiver)
-            SirParameter(argumentName = receiver.name.asStringStripSpecialMarkers(), type = sirType, origin = KotlinParameterOrigin.ReceiverParameter(receiver))
+            SirParameter(
+                argumentName = receiver.name.asStringStripSpecialMarkers(),
+                type = sirType,
+                origin = KotlinParameterOrigin.ReceiverParameter(receiver)
+            )
         }
     }
 }

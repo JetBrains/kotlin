@@ -395,6 +395,8 @@ class ComposeIT : KGPBaseTest() {
 
     companion object {
         private const val APPLY_COMPOSE_SUGGESTION =
-            "The Compose compiler plugin is now a part of Kotlin, please apply the 'org.jetbrains.kotlin.plugin.compose' Gradle plugin to enable it."
+            "The Compose compiler plugin is now a part of Kotlin.\n" +
+                    "Please apply the 'org.jetbrains.kotlin.plugin.compose' Gradle plugin to enable the Compose compiler plugin.\n" +
+                    "Learn more about this at https://kotl.in/compose-plugin"
     }
 }

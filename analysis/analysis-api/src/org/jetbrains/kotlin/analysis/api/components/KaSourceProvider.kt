@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
 
 @KaNonPublicApi
-public interface KaSourceProvider {
+public interface KaSourceProvider : KaSessionComponent {
     /**
-     * Source file name for the given [KtDeclaration] located in a Kotlin library (klib),
-     * or `null if the declaration is not located in a klib, or when the source file name is not available.
+     * The source file name for the given [KtDeclaration] located in a Kotlin library (klib), or `null if the declaration is not located in
+     * a klib, or when the source file name is not available.
      */
     @KaNonPublicApi
     public val KaDeclarationSymbol.klibSourceFileName: String?

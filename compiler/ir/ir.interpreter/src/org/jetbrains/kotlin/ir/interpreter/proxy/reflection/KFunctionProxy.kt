@@ -19,13 +19,15 @@ import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.isSuspend
+import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import org.jetbrains.kotlin.ir.util.statements
 import kotlin.reflect.*
 
-internal class KFunctionProxy(
-    override val state: KFunctionState, override val callInterceptor: CallInterceptor
-) : ReflectionProxy, KFunction<Any?>, FunctionWithAllInvokes {
-    override val arity: Int = state.getArity() ?: BuiltInFunctionArity.BIG_ARITY
+internal abstract class KFunctionProxy<R>(
+    final override val state: KFunctionState,
+    final override val callInterceptor: CallInterceptor,
+) : ReflectionProxy, KFunction<R> {
+    val arity: Int = state.getArity() ?: BuiltInFunctionArity.BIG_ARITY
 
     override val isInline: Boolean
         get() = state.irFunction.isInline
@@ -48,20 +50,17 @@ internal class KFunctionProxy(
     override val typeParameters: List<KTypeParameter>
         get() = state.getTypeParameters(callInterceptor)
 
-    override fun call(vararg args: Any?): Any? {
+    override fun call(vararg args: Any?): R {
         // TODO check arity
-        var index = 0
-        val dispatchReceiver = state.irFunction.dispatchReceiverParameter?.let { environment.convertToState(args[index++], it.type) }
-        val extensionReceiver = state.irFunction.extensionReceiverParameter?.let { environment.convertToState(args[index++], it.type) }
-        // TODO context receivers
-        val argsVariables = state.irFunction.valueParameters.map { parameter ->
-            environment.convertToState(args[index++], parameter.type)
+        val invokeFunction = state.invokeSymbol.owner
+        val valueArguments = listOf(state) + invokeFunction.nonDispatchParameters.mapIndexed { argIndex, parameter ->
+            environment.convertToState(args[argIndex], parameter.type)
         }
-        val valueArguments = listOfNotNull(dispatchReceiver, extensionReceiver) + argsVariables
-        return callInterceptor.interceptProxy(state.irFunction, valueArguments)
+        @Suppress("UNCHECKED_CAST")
+        return callInterceptor.interceptProxy(invokeFunction, valueArguments) as R
     }
 
-    override fun callBy(args: Map<KParameter, Any?>): Any? {
+    override fun callBy(args: Map<KParameter, Any?>): R {
         TODO("Not yet implemented")
     }
 
@@ -78,7 +77,7 @@ internal class KFunctionProxy(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is KFunctionProxy) return false
+        if (other !is KFunctionProxy<*>) return false
         if (arity != other.arity || isSuspend != other.isSuspend) return false
         // SAM wrappers for Java do not implement equals
         if (this.state.funInterface?.classOrNull?.owner?.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return this.state === other.state
@@ -139,3 +138,6 @@ internal class KFunctionProxy(
     }
 }
 
+internal class KRegularFunctionProxy(
+    state: KFunctionState, callInterceptor: CallInterceptor,
+) : KFunctionProxy<Any?>(state, callInterceptor), FunctionWithAllInvokes {}

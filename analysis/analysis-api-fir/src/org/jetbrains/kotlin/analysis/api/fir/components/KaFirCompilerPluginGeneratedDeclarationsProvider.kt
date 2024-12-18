@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaCompilerPluginGeneratedDec
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseCompilerPluginGeneratedDeclarations
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseEmptyScope
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -30,7 +30,7 @@ import kotlin.collections.orEmpty
 
 internal class KaFirCompilerPluginGeneratedDeclarationsProvider(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaSessionComponent<KaFirSession>(), KaCompilerPluginGeneratedDeclarationsProvider {
+) : KaBaseSessionComponent<KaFirSession>(), KaCompilerPluginGeneratedDeclarationsProvider {
     override val KaModule.compilerPluginGeneratedDeclarations: KaCompilerPluginGeneratedDeclarations
         get() = withValidityAssertion {
             val firSessionForModule = analysisSession.firResolveSession.sessionProvider.getSession(this)

@@ -51,13 +51,23 @@ private fun ToolingDiagnostic.render(
     with(renderingOptions) {
         if (!useParsableFormat && showSeverityEmoji) {
             when (severity) {
-                WARNING -> append("""⚠️ """)
-                ERROR, FATAL -> append("""❌ """)
+                WARNING -> appendLine("""⚠️ ${identifier.displayName}""")
+                ERROR, FATAL -> appendLine("""❌ ${identifier.displayName}""")
             }
         }
 
         // Main message
-        if (useParsableFormat) appendLine(this@render) else append(message)
+        if (useParsableFormat) {
+            appendLine(this@render)
+        } else {
+            appendLine(message)
+            solutions.filter { it.isNotBlank() }.forEach {
+                appendLine(it)
+            }
+            documentation?.let {
+                appendLine(it.additionalUrlContext)
+            }
+        }
 
         // Additional stacktrace, if requested
         if (showStacktrace) renderStacktrace(this@render.throwable, useParsableFormat)

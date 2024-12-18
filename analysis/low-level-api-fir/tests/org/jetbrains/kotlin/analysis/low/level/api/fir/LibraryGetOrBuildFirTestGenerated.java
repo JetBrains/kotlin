@@ -79,6 +79,150 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Test
+  @TestMetadata("multifileFacadeFunction.kt")
+  public void testMultifileFacadeFunction() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileFacadeFunctionInherit.kt")
+  public void testMultifileFacadeFunctionInherit() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeFunctionInherit.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileFacadeFunctionPart.kt")
+  public void testMultifileFacadeFunctionPart() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeFunctionPart.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileFacadeFunctionPartInherit.kt")
+  public void testMultifileFacadeFunctionPartInherit() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeFunctionPartInherit.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileFacadeInternalFunction.kt")
+  public void testMultifileFacadeInternalFunction() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeInternalFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileFacadeInternalFunctionInherit.kt")
+  public void testMultifileFacadeInternalFunctionInherit() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeInternalFunctionInherit.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileFacadeInternalFunctionPart.kt")
+  public void testMultifileFacadeInternalFunctionPart() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeInternalFunctionPart.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileFacadeInternalFunctionPartInherit.kt")
+  public void testMultifileFacadeInternalFunctionPartInherit() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeInternalFunctionPartInherit.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileFacadeInternalVariable.kt")
+  public void testMultifileFacadeInternalVariable() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeInternalVariable.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileFacadeInternalVariableInherit.kt")
+  public void testMultifileFacadeInternalVariableInherit() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeInternalVariableInherit.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileFacadeInternalVariablePart.kt")
+  public void testMultifileFacadeInternalVariablePart() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeInternalVariablePart.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileFacadeInternalVariablePartInherit.kt")
+  public void testMultifileFacadeInternalVariablePartInherit() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeInternalVariablePartInherit.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileFacadePrivateFunction.kt")
+  public void testMultifileFacadePrivateFunction() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadePrivateFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileFacadePrivateFunctionInherit.kt")
+  public void testMultifileFacadePrivateFunctionInherit() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadePrivateFunctionInherit.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileFacadePrivateFunctionPart.kt")
+  public void testMultifileFacadePrivateFunctionPart() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadePrivateFunctionPart.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileFacadePrivateFunctionPartInherit.kt")
+  public void testMultifileFacadePrivateFunctionPartInherit() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadePrivateFunctionPartInherit.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileFacadePrivateVariable.kt")
+  public void testMultifileFacadePrivateVariable() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadePrivateVariable.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileFacadePrivateVariableInherit.kt")
+  public void testMultifileFacadePrivateVariableInherit() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadePrivateVariableInherit.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileFacadePrivateVariablePart.kt")
+  public void testMultifileFacadePrivateVariablePart() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadePrivateVariablePart.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileFacadePrivateVariablePartInherit.kt")
+  public void testMultifileFacadePrivateVariablePartInherit() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadePrivateVariablePartInherit.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileFacadeVariable.kt")
+  public void testMultifileFacadeVariable() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeVariable.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileFacadeVariableInherit.kt")
+  public void testMultifileFacadeVariableInherit() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeVariableInherit.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileFacadeVariablePart.kt")
+  public void testMultifileFacadeVariablePart() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeVariablePart.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileFacadeVariablePartInherit.kt")
+  public void testMultifileFacadeVariablePartInherit() {
+    runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/multifileFacadeVariablePartInherit.kt");
+  }
+
+  @Test
   @TestMetadata("nestedValueClass.kt")
   public void testNestedValueClass() {
     runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/nestedValueClass.kt");

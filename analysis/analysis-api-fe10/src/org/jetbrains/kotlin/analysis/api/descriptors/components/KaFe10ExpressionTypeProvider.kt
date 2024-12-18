@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.Analysis
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 internal class KaFe10ExpressionTypeProvider(
     override val analysisSessionProvider: () -> KaFe10Session
-) : KaSessionComponent<KaFe10Session>(), KaExpressionTypeProvider, KaFe10SessionComponent {
+) : KaBaseSessionComponent<KaFe10Session>(), KaExpressionTypeProvider, KaFe10SessionComponent {
     private companion object {
         val NON_EXPRESSION_CONTAINERS = arrayOf(
             KtImportDirective::class.java,

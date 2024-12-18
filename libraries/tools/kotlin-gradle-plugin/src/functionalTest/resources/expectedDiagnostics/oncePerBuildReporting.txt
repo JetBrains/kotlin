@@ -2,29 +2,43 @@ PROJECT: <root>
 [TEST_DIAGNOSTIC | WARNING] This is a test diagnostic
 
 It has multiple lines of text
+Solution 1
+Solution 2
 ----
 [TEST_DIAGNOSTIC_ONE_PER_PROJECT | WARNING] This is a test diagnostics that should be reported once per project
 
 It has multiple lines of text
+Solution 1
+Solution 2
 ----
 [TEST_DIAGNOSTIC_ONE_PER_BUILD | WARNING] This is a test diagnostics that should be reported once per build
 
 It has multiple lines of text
+Solution 1
+Solution 2
 
 PROJECT: subproject-a
 [TEST_DIAGNOSTIC | WARNING] This is a test diagnostic
 
 It has multiple lines of text
+Solution 1
+Solution 2
 ----
 [TEST_DIAGNOSTIC_ONE_PER_PROJECT | WARNING] This is a test diagnostics that should be reported once per project
 
 It has multiple lines of text
+Solution 1
+Solution 2
 
 PROJECT: subproject-b
 [TEST_DIAGNOSTIC | WARNING] This is a test diagnostic
 
 It has multiple lines of text
+Solution 1
+Solution 2
 ----
 [TEST_DIAGNOSTIC_ONE_PER_PROJECT | WARNING] This is a test diagnostics that should be reported once per project
 
 It has multiple lines of text
+Solution 1
+Solution 2

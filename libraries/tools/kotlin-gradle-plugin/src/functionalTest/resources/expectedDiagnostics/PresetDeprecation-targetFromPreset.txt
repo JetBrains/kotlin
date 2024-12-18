@@ -1,1 +1,3 @@
-[TargetFromPreset | ERROR] The targetFromPreset() API is deprecated and will be removed in 2.2.0 releases. Learn how to configure targets at: https://kotl.in/target-configuration
+[TargetFromPreset | ERROR] The fromPreset() API is deprecated and will be removed in 2.2.0 releases.
+Migrate to built-in target DSL - for example, use 'jvm()' instead of 'fromPreset(Jvm)'
+Learn how to configure targets at: https://kotl.in/target-configuration

@@ -5,7 +5,7 @@ Explicit .dependsOn() edges were configured for the following source sets:
 Consider removing dependsOn-calls or disabling the default template by adding
     'kotlin.mpp.applyDefaultHierarchyTemplate=false'
 to your gradle.properties
-
+Please remove the dependsOn-calls or disable the default template.
 Learn more about hierarchy templates: https://kotl.in/hierarchy-template
 ----
 [MultipleSourceSetRootsInCompilation | WARNING] Kotlin Source Sets: 'commonIntegrationTest', 'jvmIntegrationTest2'
@@ -17,4 +17,5 @@ Please remove these kotlin source sets and include their source directories to t
     kotlin.sourceSets["jvmIntegrationTest"].kotlin.srcDir() // <-- pass sources directories here
 
 Or, if the solution above is not applicable, specify `dependsOn` edges between these source sets so that there are no multiple roots.
+Please remove these kotlin source sets and include their source directories to the compilation's default source set.
 See https://kotl.in/connecting-source-sets for more details.

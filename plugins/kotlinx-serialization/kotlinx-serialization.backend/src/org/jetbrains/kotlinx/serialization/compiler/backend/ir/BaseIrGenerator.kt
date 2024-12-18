@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.get
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.KSERIALIZER_NAME_FQ
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.contextSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.enumSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.objectSerializerId
@@ -413,13 +412,12 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         // if all child serializers are null (non-cacheable) we don't need to create a property
         cacheableSerializers.firstOrNull { it != null } ?: return null
 
-        val kSerializerClass = compilerContext.kSerializerClass
-            ?: error("Serializer class '$KSERIALIZER_NAME_FQ' not found. Check that the kotlinx.serialization runtime is connected correctly")
-        val kSerializerType = kSerializerClass.typeWith(compilerContext.irBuiltIns.anyType)
-        val arrayType = compilerContext.irBuiltIns.arrayClass.typeWith(kSerializerType)
+        val kSerializerType = kSerializerType(compilerContext.irBuiltIns.anyType)
+        val elementType = lazyType(kSerializerType)
+        val arrayType = compilerContext.irBuiltIns.arrayClass.typeWith(elementType)
 
         val property = addValPropertyWithJvmFieldInitializer(arrayType, SerialEntityNames.CACHED_CHILD_SERIALIZERS_PROPERTY_NAME) {
-            createArrayOfExpression(kSerializerType, cacheableSerializers.map { it ?: irNull() })
+            createArrayOfExpression(elementType, cacheableSerializers.map { it ?: irNull() })
         }
 
         if (declarations.removeIf { declaration -> declaration === property }) {
@@ -444,12 +442,19 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
     ): (Int) -> IrExpression? {
         cacheProperty ?: return { null }
 
+        val kSerializerType = this@BaseIrGenerator.kSerializerType(compilerContext.irBuiltIns.anyType)
+
         val variable =
             irTemporary(irInvoke(irGetObject(containingClassProducer()), cacheProperty.getter!!.symbol), "cached")
 
         return { index: Int ->
             if (cacheableSerializers[index]) {
-                irInvoke(irGet(variable), compilerContext.arrayValueGetter.symbol, irInt(index))
+                val lazyDelegate = irInvoke(irGet(variable), compilerContext.arrayValueGetter.symbol, irInt(index))
+                irInvoke(
+                    lazyDelegate,
+                    compilerContext.lazyValueGetter,
+                    typeHint = kSerializerType
+                )
             } else {
                 null
             }
@@ -461,36 +466,20 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         serializableProperties: List<IrSerializableProperty>
     ): List<IrExpression?> {
         return DeclarationIrBuilder(compilerContext, symbol).run {
-            val hasKeepGeneratedSerializerAnnotation = serializableClass.hasKeepGeneratedSerializerAnnotation
-            serializableProperties.map { cacheableChildSerializerInstance(serializableClass, it, hasKeepGeneratedSerializerAnnotation) }
+            serializableProperties.map { cacheableChildSerializerInstance(serializableClass, it) }
         }
     }
 
     private fun IrBuilderWithScope.cacheableChildSerializerInstance(
         serializableClass: IrClass,
-        property: IrSerializableProperty,
-        hasKeepGeneratedSerializerAnnotation: Boolean
+        property: IrSerializableProperty
     ): IrExpression? {
-        // to avoid a cyclical dependency between the serializer cache and the cache of child serializers,
-        // the class  should not cache its serializer as a child
-        if (serializableClass.symbol == property.type.classifier) {
-            return null
-        }
-        // to avoid a cyclical dependency between the serializer cache and the cache of parametrized child serializers,
-        // the class should not cache its serializer as a Generic parameter of a child
-        if (property.type.checkTypeArgumentsHasSelf(serializableClass.symbol)) {
-            return null
-        }
-
         val serializer = getIrSerialTypeInfo(property, compilerContext).serializer ?: return null
         if (serializer.owner.kind == ClassKind.OBJECT) return null
 
-        // disable caching for sealed serializer because of initialization loop, see https://github.com/Kotlin/kotlinx.serialization/issues/2759
-        if (hasKeepGeneratedSerializerAnnotation && serializer.owner.classId == sealedSerializerId) {
-            return null
-        }
+        val kSerializerType = kSerializerType(property.type)
 
-        val serializerInstance = serializerInstance(
+        val expr = serializerInstance(
             serializer,
             compilerContext,
             property.type,
@@ -499,7 +488,13 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
             null
         )
 
-        return serializerInstance
+        return if (expr != null) {
+            createLazyDelegate(kSerializerType, serializableClass) {
+                +requireNotNull(expr)
+            }
+        } else {
+            null
+        }
     }
 
     private fun IrSimpleType.checkTypeArgumentsHasSelf(itselfClass: IrClassSymbol): Boolean {

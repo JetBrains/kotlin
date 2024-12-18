@@ -1,3 +1,5 @@
 [TEST_DIAGNOSTIC | ERROR] This is a test diagnostic
 
 It has multiple lines of text
+Solution 1
+Solution 2

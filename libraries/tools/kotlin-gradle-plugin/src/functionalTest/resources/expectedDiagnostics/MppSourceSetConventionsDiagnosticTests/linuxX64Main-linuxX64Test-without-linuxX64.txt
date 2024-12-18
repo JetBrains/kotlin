@@ -5,19 +5,21 @@ You can add a source set to a target's compilation by connecting it with the com
 See https://kotl.in/connecting-source-sets
 ----
 [PlatformSourceSetConventionUsedWithoutCorrespondingTarget | WARNING] Accessed 'source set linuxX64Main' without the registering the linuxX64 target:
-  kotlin {
-      linuxX64() /* <- register the 'linuxX64' target */
+kotlin {
+    linuxX64() /* <- register the 'linuxX64' target */
 
-      sourceSets.linuxX64Main.dependencies {
+    sourceSets.linuxX64Main.dependencies {
 
-      }
-  }
+    }
+}
+Please register the linuxX64 target.
 ----
 [PlatformSourceSetConventionUsedWithoutCorrespondingTarget | WARNING] Accessed 'source set linuxX64Test' without the registering the linuxX64 target:
-  kotlin {
-      linuxX64() /* <- register the 'linuxX64' target */
+kotlin {
+    linuxX64() /* <- register the 'linuxX64' target */
 
-      sourceSets.linuxX64Test.dependencies {
+    sourceSets.linuxX64Test.dependencies {
 
-      }
-  }
+    }
+}
+Please register the linuxX64 target.

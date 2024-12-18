@@ -120,8 +120,8 @@ FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -135,8 +135,8 @@ FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -150,8 +150,8 @@ FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -165,8 +165,8 @@ FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -180,8 +180,8 @@ FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 

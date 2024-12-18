@@ -18,12 +18,12 @@ Tower Data Context:
 
 FILE: [ResolvedTo(IMPORTS)] classFunction.kt
     public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] constructor(): R|Foo| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] n: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] n: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] obj: R|kotlin/Any?|): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] obj: Any?): R|kotlin/Unit| { LAZY_BLOCK }
 
     }

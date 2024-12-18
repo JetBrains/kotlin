@@ -351,12 +351,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val nativeParallelThreads: Int?
         get() = this.property(PropertyNames.KOTLIN_NATIVE_PARALLEL_THREADS).orNull?.toInt()
 
-    /**
-     * Ignore overflow in [org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler]
-     */
-    val ignoreTcsmOverflow: Boolean
-        get() = booleanProperty(IGNORE_TCSM_OVERFLOW) ?: false
-
     val errorJsGenerateExternals: Boolean?
         get() = booleanProperty("kotlin.js.generate.externals")
 
@@ -606,6 +600,11 @@ internal class PropertiesProvider private constructor(private val project: Proje
     internal val enableAndroidExtensionPlugin: Provider<Boolean> =
         booleanProvider(PropertyNames.KOTLIN_ENABLE_ANDROID_EXTENSIONS_PLUGIN)
             .orElse(false)
+
+    /**
+     * Ignore overflow in [org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler]
+     */
+    val ignoreTcsmOverflow: Provider<Boolean> = booleanProvider(IGNORE_TCSM_OVERFLOW).orElse(false)
 
     /**
      * Retrieves a comma-separated list of browsers to use when running karma tests for [target]

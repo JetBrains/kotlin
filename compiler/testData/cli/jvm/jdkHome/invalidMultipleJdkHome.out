@@ -1,0 +1,2 @@
+error: JDK home directory does not exist: $JDK_1_8, $JDK_1_8
+COMPILATION_ERROR

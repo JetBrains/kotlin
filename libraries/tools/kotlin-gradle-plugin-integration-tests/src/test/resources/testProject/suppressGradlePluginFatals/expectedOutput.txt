@@ -1,6 +1,8 @@
 > Configure project :
 [CircularDependsOnEdges | FATAL] Circular dependsOn hierarchy found in the Kotlin source sets: intermediate -> jvmMain -> intermediate
+Please remove the circular dependsOn hierarchy from the Kotlin source sets.
 #diagnostic-end
 
 org.gradle.api.InvalidUserCodeException: [CircularDependsOnEdges | FATAL] Circular dependsOn hierarchy found in the Kotlin source sets: intermediate -> jvmMain -> intermediate
+Please remove the circular dependsOn hierarchy from the Kotlin source sets.
 #diagnostic-end

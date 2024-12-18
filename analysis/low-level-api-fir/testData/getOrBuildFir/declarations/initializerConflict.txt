@@ -11,13 +11,13 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] initializerConflict.kt
     package one.two
 
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|one/two/A| {
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|one/two/A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(SUPER_TYPES)] typealias Foo = R|one/two/A|
+    public final [ResolvedTo(RAW_FIR)] typealias Foo = A
     public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|one/two/Foo| {
             LAZY_super<R|kotlin/Any|>

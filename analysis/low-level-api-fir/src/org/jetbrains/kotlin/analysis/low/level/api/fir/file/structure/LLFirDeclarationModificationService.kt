@@ -107,7 +107,8 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
         val iterator = queue.iterator()
         while (iterator.hasNext()) {
             val element = iterator.next()
-            if (!element.blockOwner.isValid) {
+            val owner = element.blockOwner
+            if (!owner.isValid || (owner.containingFile as? KtCodeFragment)?.context?.isValid == false) {
                 iterator.remove()
                 continue
             }

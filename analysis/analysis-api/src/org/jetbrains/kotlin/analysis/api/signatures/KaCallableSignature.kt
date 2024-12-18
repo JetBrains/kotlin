@@ -14,39 +14,45 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.CallableId
 
 /**
- * A signature for a callable symbol. Comparing to a [KaCallableSymbol], a signature can carry use-site type information. For example
- * ```
+ * A use-site signature for a [callable symbol][KaCallableSymbol]. Compared to the symbol, the signature carries additional use-site type
+ * information.
+ *
+ * The equality of [KaCallableSignature] is derived from its content.
+ *
+ * #### Example
+ *
+ * ```kotlin
  * fun test(l: List<String>) {
- *   l.get(1) // The symbol `get` has type `(Int) -> T` where is the type parameter declared in `List`.
- *            // On the other hand, a `KaCallableSignature` carries instantiated type information `(Int) -> String`.
+ *   l.get(1)
  * }
  * ```
  *
- * Equality of [KaCallableSignature] is derived from its content.
+ * The [callable symbol][KaCallableSymbol] for `get` has the type `(Int) -> T` where `T` is the type parameter declared in `List`. On the
+ * other hand, a [KaCallableSignature] for `l.get` carries the instantiated type information `(Int) -> String`.
  */
 public sealed interface KaCallableSignature<out S : KaCallableSymbol> : KaLifetimeOwner {
     /**
-     * The original symbol for this signature.
+     * The underlying symbol which the signature carries use-site information about.
      */
     public val symbol: S
 
     /**
-     * The use-site-substituted return type.
+     * The use-site-substituted [return type][KaCallableSymbol.returnType].
      */
     public val returnType: KaType
 
     /**
-     * The use-site-substituted extension receiver type.
+     * The use-site-substituted [extension receiver type][KaCallableSymbol.receiverParameter].
      */
     public val receiverType: KaType?
 
     /**
-     * A [CallableId] of a substituted symbol
+     * The [CallableId] of the signature, corresponding to the symbol's callable ID.
      */
     public val callableId: CallableId? get() = withValidityAssertion { symbol.callableId }
 
     /**
-     * Applies a [substitutor] to the given signature and return a new signature with substituted types.
+     * Applies the given [substitutor] to the signature, returning a new signature with substituted types.
      *
      * @see KaSubstitutor.substitute
      */

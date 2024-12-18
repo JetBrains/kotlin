@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.interpreter
 
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
@@ -45,9 +46,8 @@ class IrInterpreterEnvironment(
     private data class CacheFunctionSignature(
         val symbol: IrFunctionSymbol,
 
-        // must create different invoke function for function expression with and without receivers
-        val hasDispatchReceiver: Boolean,
-        val hasExtensionReceiver: Boolean,
+        // must create different invoke function for function expression for which different parameters are bound
+        val boundParameters: Set<IrValueParameter>,
 
         // must create different default functions for constructor call and delegating call;
         // their symbols are the same but calls are different, so default function must return different calls
@@ -66,21 +66,19 @@ class IrInterpreterEnvironment(
 
     internal fun getCachedFunction(
         symbol: IrFunctionSymbol,
-        hasDispatchReceiver: Boolean = false,
-        hasExtensionReceiver: Boolean = false,
+        boundParameters: Set<IrValueParameter> = emptySet(),
         fromDelegatingCall: Boolean = false
     ): IrFunctionSymbol? {
-        return functionCache[CacheFunctionSignature(symbol, hasDispatchReceiver, hasExtensionReceiver, fromDelegatingCall)]
+        return functionCache[CacheFunctionSignature(symbol, boundParameters, fromDelegatingCall)]
     }
 
     internal fun setCachedFunction(
         symbol: IrFunctionSymbol,
-        hasDispatchReceiver: Boolean = false,
-        hasExtensionReceiver: Boolean = false,
+        boundParameters: Set<IrValueParameter> = emptySet(),
         fromDelegatingCall: Boolean = false,
         newFunction: IrFunctionSymbol
     ): IrFunctionSymbol {
-        functionCache[CacheFunctionSignature(symbol, hasDispatchReceiver, hasExtensionReceiver, fromDelegatingCall)] = newFunction
+        functionCache[CacheFunctionSignature(symbol, boundParameters, fromDelegatingCall)] = newFunction
         return newFunction
     }
 

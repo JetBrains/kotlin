@@ -90,7 +90,7 @@ class WasmDeserializerFacade(
             typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor),
             irBuiltIns = moduleInfo.bultins,
             linker = moduleInfo.deserializer,
-            diagnosticReporter = configuration.messageCollector,
+            messageCollector = configuration.messageCollector,
         )
         return IrBackendInput.WasmDeserializedFromKlibBackendInput(
             moduleInfo,

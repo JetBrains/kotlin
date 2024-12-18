@@ -15,23 +15,21 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.types.Variance
 
 /**
- * Provides services for rendering Symbols and Types into the Kotlin strings
+ * Provides services for rendering [declaration symbols][KaDeclarationSymbol] and [types][KaType] to strings.
  */
 @KaExperimentalApi
-public interface KaRenderer {
+public interface KaRenderer : KaSessionComponent {
     /**
-     * Renders the given [KaDeclarationSymbol] to a string.
-     * The particular rendering strategy is defined by the [renderer].
+     * Renders the given [KaDeclarationSymbol] to a string. The particular rendering strategy is defined by the [renderer].
      */
     @KaExperimentalApi
     public fun KaDeclarationSymbol.render(renderer: KaDeclarationRenderer = KaDeclarationRendererForSource.WITH_QUALIFIED_NAMES): String
 
     /**
-     * Renders the given [KaType] into a string.
-     * The particular rendering strategy is defined by the [renderer].
+     * Renders the given [KaType] into a string. The particular rendering strategy is defined by the [renderer].
      *
-     * Note: For non-invariant [position], the type is approximated.
-     * Specifically, a denotable subtype is used for [Variance.IN_VARIANCE], and a denotable supertype is used for [Variance.OUT_VARIANCE].
+     * If [position] is not invariant, the rendered type is approximated. Specifically, a denotable subtype is used for
+     * [Variance.IN_VARIANCE], and a denotable supertype is used for [Variance.OUT_VARIANCE].
      */
     @KaExperimentalApi
     public fun KaType.render(renderer: KaTypeRenderer = KaTypeRendererForSource.WITH_QUALIFIED_NAMES, position: Variance): String

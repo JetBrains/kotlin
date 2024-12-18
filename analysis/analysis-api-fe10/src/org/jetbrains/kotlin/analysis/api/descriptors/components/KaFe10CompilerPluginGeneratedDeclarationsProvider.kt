@@ -9,14 +9,14 @@ import org.jetbrains.kotlin.analysis.api.components.KaCompilerPluginGeneratedDec
 import org.jetbrains.kotlin.analysis.api.components.KaCompilerPluginGeneratedDeclarationsProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseCompilerPluginGeneratedDeclarations
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseEmptyScope
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 internal class KaFe10CompilerPluginGeneratedDeclarationsProvider(
     override val analysisSessionProvider: () -> KaFe10Session,
-) : KaSessionComponent<KaFe10Session>(), KaCompilerPluginGeneratedDeclarationsProvider {
+) : KaBaseSessionComponent<KaFe10Session>(), KaCompilerPluginGeneratedDeclarationsProvider {
     override val KaModule.compilerPluginGeneratedDeclarations: KaCompilerPluginGeneratedDeclarations
         get() = withValidityAssertion { KaBaseCompilerPluginGeneratedDeclarations(KaBaseEmptyScope(token)) }
 }

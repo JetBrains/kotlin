@@ -459,18 +459,20 @@ class KotlinStandaloneDeclarationProviderFactory(
 
     private fun buildStubByVirtualFile(file: VirtualFile, binaryClassCache: ClsKotlinBinaryClassCache): KotlinFileStubImpl? {
         val fileContent = FileContentImpl.createByFile(file)
-        val fileType = file.fileType
-        val stubBuilder = when {
-            binaryClassCache.isKotlinJvmCompiledFile(file, fileContent.content) && fileType == JavaClassFileType.INSTANCE -> {
+        val fileType = fileContent.fileType
+        val stubBuilder = when (fileType) {
+            JavaClassFileType.INSTANCE if binaryClassCache.isKotlinJvmCompiledFile(file, fileContent.content) -> {
                 KotlinClsStubBuilder()
             }
-            fileType == KotlinBuiltInFileType
-                    && file.extension != BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION -> {
+
+            KotlinBuiltInFileType if file.extension != BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION -> {
                 builtInDecompiler.stubBuilder
             }
-            fileType == KlibMetaFileType -> K2KotlinNativeMetadataDecompiler().stubBuilder
+
+            KlibMetaFileType -> K2KotlinNativeMetadataDecompiler().stubBuilder
             else -> return null
         }
+
         return stubBuilder.buildFileStub(fileContent) as? KotlinFileStubImpl
     }
 

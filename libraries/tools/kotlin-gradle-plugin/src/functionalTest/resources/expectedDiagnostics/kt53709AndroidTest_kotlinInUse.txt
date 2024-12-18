@@ -3,5 +3,5 @@ Use src/androidInstrumentedTest/kotlin instead.
 
 To suppress this warning: put the following in your gradle.properties:
 kotlin.mpp.androidSourceSetLayoutV2AndroidStyleDirs.nowarn=true
-
+Please migrate to the new source directory: src/androidInstrumentedTest/kotlin
 Learn more: https://kotl.in/android-source-set-layout-v2

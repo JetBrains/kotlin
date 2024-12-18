@@ -5,46 +5,52 @@
 
 package org.jetbrains.kotlin.analysis.api.types
 
+/**
+ * [KaTypeMappingMode] determines how a Kotlin type is mapped to a Java type when calling [KaType.asPsiType][org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent.asPsiType].
+ */
 public enum class KaTypeMappingMode {
     /**
-     * kotlin.Int is mapped to I
+     * Kotlin primitives are mapped to Java primitives in non-generic usages. For example, `kotlin.Int` is mapped to `int`.
      */
     DEFAULT,
 
     /**
-     * kotlin.Int is mapped to I
-     * Type aliases are mapped to their expanded form
+     * Similar to [DEFAULT], but type aliases are additionally mapped to their expanded form.
      */
     DEFAULT_UAST,
 
     /**
-     * kotlin.Int is mapped to Ljava/lang/Integer;
+     * Kotlin primitives are mapped to Java boxed types in non-generic usages. For example, `kotlin.Int` is mapped to `java.lang.Integer`.
      */
     GENERIC_ARGUMENT,
 
     /**
-     * kotlin.Int is mapped to Ljava/lang/Integer;
-     * No projections allowed in immediate arguments
+     * Kotlin primitives are mapped to Java boxed types in non-generic usages. For example, `kotlin.Int` is mapped to `java.lang.Integer`.
+     *
+     * Additionally, the mode avoids converting declaration-site variance of type parameters to Java use-site wildcard types. For example,
+     * a type parameter `out T` given a use-site `List<T>` would *not* be converted to `List<? extends T>`.
      */
     SUPER_TYPE,
 
     /**
-     * Similar to [SUPER_TYPE], except for that Kotlin collections remain as-is.
+     * Similar to [SUPER_TYPE], except that Kotlin collections are not converted to their Java equivalents.
      */
     SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS,
 
     /**
-     * When method return type should be boxed (e.g., kotlin.Int to Ljava/lang/Integer;)
+     * Kotlin primitives in method return types are mapped to Java boxed types. For example, `kotlin.Int` is mapped to `java.lang.Integer`.
+     *
+     * This type mapping mode should *only* be used when converting return types.
      */
     RETURN_TYPE_BOXED,
 
     /**
-     * Optimal mode to convert the return type of declarations if it's part of signature.
+     * The optimal mode to convert a declaration's return type if it's part of the signature.
      */
     RETURN_TYPE,
 
     /**
-     * Optimal mode to convert the type of value parameter if it's part of signature.
+     * The optimal mode to convert a value parameter's type if it's part of the signature.
      */
     VALUE_PARAMETER,
 }

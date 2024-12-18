@@ -251,14 +251,4 @@ class FirKotlinKaptIntegrationTest(private val testInfo: TestInfo) {
         diagnostics.assertContainsDiagnostic("warning: a warning from processor", CompilerMessageSeverity.STRONG_WARNING)
         diagnostics.assertContainsDiagnostic("Note: a note from processor", CompilerMessageSeverity.INFO)
     }
-
-    @Test
-    fun testKt54245() = test(
-        "Simple", "test.MyAnnotation",
-        additionalPluginExtension = object : IrGenerationExtension {
-            override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
-                fail("IR generation extensions should not be run in kapt mode.")
-            }
-        }
-    ) { _, _, _, _ -> }
 }

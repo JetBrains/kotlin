@@ -7,16 +7,16 @@ package org.jetbrains.kotlin.analysis.api.fir.references
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSyntheticJavaPropertySymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KDocReference
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.psi.KtImportAlias
 
 internal class KaFirKDocReference(element: KDocName) : KDocReference(element), KaFirReference {
-    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> = withValidityAssertion {
+    override fun KaFirSession.computeSymbols(): Collection<KaSymbol> {
         val fullFqName = generateSequence(element) { it.parent as? KDocName }.last().getQualifiedNameAsFqName()
         val selectedFqName = element.getQualifiedNameAsFqName()
         return KDocReferenceResolver.resolveKdocFqName(useSiteSession, selectedFqName, fullFqName, element)

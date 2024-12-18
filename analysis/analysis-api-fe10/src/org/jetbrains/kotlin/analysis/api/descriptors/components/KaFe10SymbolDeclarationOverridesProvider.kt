@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKaSymbolDeclarationOverridesProvider
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSymbolDeclarationOverridesProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 
 internal class KaFe10SymbolDeclarationOverridesProvider(
     override val analysisSessionProvider: () -> KaFe10Session
-) : AbstractKaSymbolDeclarationOverridesProvider<KaFe10Session>(), KaFe10SessionComponent {
+) : KaBaseSymbolDeclarationOverridesProvider<KaFe10Session>(), KaFe10SessionComponent {
     fun <T : KaSymbol> getAllOverriddenSymbols(callableSymbol: T): Sequence<KaCallableSymbol> {
         if (callableSymbol is KaValueParameterSymbol) {
             return getAllOverriddenSymbolsForParameter(callableSymbol)

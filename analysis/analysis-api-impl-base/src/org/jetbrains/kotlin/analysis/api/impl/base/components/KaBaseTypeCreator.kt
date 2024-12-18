@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 
 @KaImplementationDetail
-abstract class KaBaseTypeCreator<T : KaSession> : KaSessionComponent<T>(), KaTypeCreator {
+abstract class KaBaseTypeCreator<T : KaSession> : KaBaseSessionComponent<T>(), KaTypeCreator {
     override fun buildStarTypeProjection(): KaStarTypeProjection = KaBaseStarTypeProjection(token)
 }
 

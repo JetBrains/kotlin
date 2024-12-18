@@ -27,15 +27,15 @@ Tower Data Context:
                 Label: ContextReceiver
 
 FILE: [ResolvedTo(IMPORTS)] wholeDeclaration_class.kt
-    public final [ResolvedTo(STATUS)] class ContextReceiver : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] constructor(): R|test/ContextReceiver| {
+    public final? [ResolvedTo(RAW_FIR)] class ContextReceiver : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|test/ContextReceiver| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     context([ResolvedTo(STATUS)] R|test/ContextReceiver|)
     public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] param: R|kotlin/String|): R|test/MyClass<T>| {
+        public? [ResolvedTo(RAW_FIR)] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(RAW_FIR)] param: String): R|test/MyClass<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
