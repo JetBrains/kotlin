@@ -174,8 +174,8 @@ class IrBodyDeserializer(
                 start, end,
                 type,
                 inlineFunctionSymbol,
-                proto.declarationStartOffset,
-                proto.declarationEndOffset,
+                proto.inlinedFunctionStartOffset,
+                proto.inlinedFunctionEndOffset,
                 fileEntry,
                 origin,
                 statements

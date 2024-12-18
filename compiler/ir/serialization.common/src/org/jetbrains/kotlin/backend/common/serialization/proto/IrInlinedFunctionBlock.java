@@ -86,12 +86,12 @@ public final class IrInlinedFunctionBlock extends
           }
           case 32: {
             bitField0_ |= 0x00000008;
-            declarationStartOffset_ = input.readInt32();
+            inlinedFunctionStartOffset_ = input.readInt32();
             break;
           }
           case 40: {
             bitField0_ |= 0x00000010;
-            declarationEndOffset_ = input.readInt32();
+            inlinedFunctionEndOffset_ = input.readInt32();
             break;
           }
         }
@@ -173,42 +173,42 @@ public final class IrInlinedFunctionBlock extends
     return base_;
   }
 
-  public static final int DECLARATIONSTARTOFFSET_FIELD_NUMBER = 4;
-  private int declarationStartOffset_;
+  public static final int INLINED_FUNCTION_START_OFFSET_FIELD_NUMBER = 4;
+  private int inlinedFunctionStartOffset_;
   /**
-   * <code>required int32 declarationStartOffset = 4;</code>
+   * <code>required int32 inlined_function_start_offset = 4;</code>
    */
-  public boolean hasDeclarationStartOffset() {
+  public boolean hasInlinedFunctionStartOffset() {
     return ((bitField0_ & 0x00000008) == 0x00000008);
   }
   /**
-   * <code>required int32 declarationStartOffset = 4;</code>
+   * <code>required int32 inlined_function_start_offset = 4;</code>
    */
-  public int getDeclarationStartOffset() {
-    return declarationStartOffset_;
+  public int getInlinedFunctionStartOffset() {
+    return inlinedFunctionStartOffset_;
   }
 
-  public static final int DECLARATIONENDOFFSET_FIELD_NUMBER = 5;
-  private int declarationEndOffset_;
+  public static final int INLINED_FUNCTION_END_OFFSET_FIELD_NUMBER = 5;
+  private int inlinedFunctionEndOffset_;
   /**
-   * <code>required int32 declarationEndOffset = 5;</code>
+   * <code>required int32 inlined_function_end_offset = 5;</code>
    */
-  public boolean hasDeclarationEndOffset() {
+  public boolean hasInlinedFunctionEndOffset() {
     return ((bitField0_ & 0x00000010) == 0x00000010);
   }
   /**
-   * <code>required int32 declarationEndOffset = 5;</code>
+   * <code>required int32 inlined_function_end_offset = 5;</code>
    */
-  public int getDeclarationEndOffset() {
-    return declarationEndOffset_;
+  public int getInlinedFunctionEndOffset() {
+    return inlinedFunctionEndOffset_;
   }
 
   private void initFields() {
     inlineFunctionSymbol_ = 0L;
     fileEntry_ = org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance();
     base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock.getDefaultInstance();
-    declarationStartOffset_ = 0;
-    declarationEndOffset_ = 0;
+    inlinedFunctionStartOffset_ = 0;
+    inlinedFunctionEndOffset_ = 0;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -224,11 +224,11 @@ public final class IrInlinedFunctionBlock extends
       memoizedIsInitialized = 0;
       return false;
     }
-    if (!hasDeclarationStartOffset()) {
+    if (!hasInlinedFunctionStartOffset()) {
       memoizedIsInitialized = 0;
       return false;
     }
-    if (!hasDeclarationEndOffset()) {
+    if (!hasInlinedFunctionEndOffset()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -257,10 +257,10 @@ public final class IrInlinedFunctionBlock extends
       output.writeMessage(3, base_);
     }
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
-      output.writeInt32(4, declarationStartOffset_);
+      output.writeInt32(4, inlinedFunctionStartOffset_);
     }
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
-      output.writeInt32(5, declarationEndOffset_);
+      output.writeInt32(5, inlinedFunctionEndOffset_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -285,11 +285,11 @@ public final class IrInlinedFunctionBlock extends
     }
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(4, declarationStartOffset_);
+        .computeInt32Size(4, inlinedFunctionStartOffset_);
     }
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(5, declarationEndOffset_);
+        .computeInt32Size(5, inlinedFunctionEndOffset_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -391,9 +391,9 @@ public final class IrInlinedFunctionBlock extends
       bitField0_ = (bitField0_ & ~0x00000002);
       base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000004);
-      declarationStartOffset_ = 0;
+      inlinedFunctionStartOffset_ = 0;
       bitField0_ = (bitField0_ & ~0x00000008);
-      declarationEndOffset_ = 0;
+      inlinedFunctionEndOffset_ = 0;
       bitField0_ = (bitField0_ & ~0x00000010);
       return this;
     }
@@ -433,11 +433,11 @@ public final class IrInlinedFunctionBlock extends
       if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
         to_bitField0_ |= 0x00000008;
       }
-      result.declarationStartOffset_ = declarationStartOffset_;
+      result.inlinedFunctionStartOffset_ = inlinedFunctionStartOffset_;
       if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
         to_bitField0_ |= 0x00000010;
       }
-      result.declarationEndOffset_ = declarationEndOffset_;
+      result.inlinedFunctionEndOffset_ = inlinedFunctionEndOffset_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -453,11 +453,11 @@ public final class IrInlinedFunctionBlock extends
       if (other.hasBase()) {
         mergeBase(other.getBase());
       }
-      if (other.hasDeclarationStartOffset()) {
-        setDeclarationStartOffset(other.getDeclarationStartOffset());
+      if (other.hasInlinedFunctionStartOffset()) {
+        setInlinedFunctionStartOffset(other.getInlinedFunctionStartOffset());
       }
-      if (other.hasDeclarationEndOffset()) {
-        setDeclarationEndOffset(other.getDeclarationEndOffset());
+      if (other.hasInlinedFunctionEndOffset()) {
+        setInlinedFunctionEndOffset(other.getInlinedFunctionEndOffset());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -473,11 +473,11 @@ public final class IrInlinedFunctionBlock extends
         
         return false;
       }
-      if (!hasDeclarationStartOffset()) {
+      if (!hasInlinedFunctionStartOffset()) {
         
         return false;
       }
-      if (!hasDeclarationEndOffset()) {
+      if (!hasInlinedFunctionEndOffset()) {
         
         return false;
       }
@@ -663,66 +663,66 @@ public final class IrInlinedFunctionBlock extends
       return this;
     }
 
-    private int declarationStartOffset_ ;
+    private int inlinedFunctionStartOffset_ ;
     /**
-     * <code>required int32 declarationStartOffset = 4;</code>
+     * <code>required int32 inlined_function_start_offset = 4;</code>
      */
-    public boolean hasDeclarationStartOffset() {
+    public boolean hasInlinedFunctionStartOffset() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
-     * <code>required int32 declarationStartOffset = 4;</code>
+     * <code>required int32 inlined_function_start_offset = 4;</code>
      */
-    public int getDeclarationStartOffset() {
-      return declarationStartOffset_;
+    public int getInlinedFunctionStartOffset() {
+      return inlinedFunctionStartOffset_;
     }
     /**
-     * <code>required int32 declarationStartOffset = 4;</code>
+     * <code>required int32 inlined_function_start_offset = 4;</code>
      */
-    public Builder setDeclarationStartOffset(int value) {
+    public Builder setInlinedFunctionStartOffset(int value) {
       bitField0_ |= 0x00000008;
-      declarationStartOffset_ = value;
+      inlinedFunctionStartOffset_ = value;
       
       return this;
     }
     /**
-     * <code>required int32 declarationStartOffset = 4;</code>
+     * <code>required int32 inlined_function_start_offset = 4;</code>
      */
-    public Builder clearDeclarationStartOffset() {
+    public Builder clearInlinedFunctionStartOffset() {
       bitField0_ = (bitField0_ & ~0x00000008);
-      declarationStartOffset_ = 0;
+      inlinedFunctionStartOffset_ = 0;
       
       return this;
     }
 
-    private int declarationEndOffset_ ;
+    private int inlinedFunctionEndOffset_ ;
     /**
-     * <code>required int32 declarationEndOffset = 5;</code>
+     * <code>required int32 inlined_function_end_offset = 5;</code>
      */
-    public boolean hasDeclarationEndOffset() {
+    public boolean hasInlinedFunctionEndOffset() {
       return ((bitField0_ & 0x00000010) == 0x00000010);
     }
     /**
-     * <code>required int32 declarationEndOffset = 5;</code>
+     * <code>required int32 inlined_function_end_offset = 5;</code>
      */
-    public int getDeclarationEndOffset() {
-      return declarationEndOffset_;
+    public int getInlinedFunctionEndOffset() {
+      return inlinedFunctionEndOffset_;
     }
     /**
-     * <code>required int32 declarationEndOffset = 5;</code>
+     * <code>required int32 inlined_function_end_offset = 5;</code>
      */
-    public Builder setDeclarationEndOffset(int value) {
+    public Builder setInlinedFunctionEndOffset(int value) {
       bitField0_ |= 0x00000010;
-      declarationEndOffset_ = value;
+      inlinedFunctionEndOffset_ = value;
       
       return this;
     }
     /**
-     * <code>required int32 declarationEndOffset = 5;</code>
+     * <code>required int32 inlined_function_end_offset = 5;</code>
      */
-    public Builder clearDeclarationEndOffset() {
+    public Builder clearInlinedFunctionEndOffset() {
       bitField0_ = (bitField0_ & ~0x00000010);
-      declarationEndOffset_ = 0;
+      inlinedFunctionEndOffset_ = 0;
       
       return this;
     }
