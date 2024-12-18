@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateErr
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -273,19 +272,17 @@ class FirSyntheticCallGenerator(
             // If the callable reference cannot be resolved with the expected type, let's try to resolve it with any type and report
             // something like INITIALIZER_TYPE_MISMATCH or NONE_APPLICABLE instead of UNRESOLVED_REFERENCE.
 
-            check(callableReferenceAccess.calleeReference is FirSimpleNamedReference && !callableReferenceAccess.isResolved) {
-                "Expected FirCallableReferenceAccess to be unresolved."
+            if (callableReferenceAccess.calleeReference is FirSimpleNamedReference && !callableReferenceAccess.isResolved) {
+                reference =
+                    generateCalleeReferenceWithCandidate(
+                        callableReferenceAccess,
+                        argumentList,
+                        context.session.builtinTypes.anyType.coneType,
+                        context,
+                        resolutionMode,
+                    )
+                initialCallWasUnresolved = true
             }
-
-            reference =
-                generateCalleeReferenceWithCandidate(
-                    callableReferenceAccess,
-                    argumentList,
-                    context.session.builtinTypes.anyType.coneType,
-                    context,
-                    resolutionMode,
-                )
-            initialCallWasUnresolved = true
         }
 
         val fakeCall = buildFunctionCall {

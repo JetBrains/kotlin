@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.copyAsImplicitInvokeCall
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
@@ -17,9 +16,9 @@ import org.jetbrains.kotlin.fir.declarations.utils.isReferredViaField
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedReifiedParameterReference
-import org.jetbrains.kotlin.fir.getPrimaryConstructorSymbol
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildBackingFieldReference
+import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -489,7 +488,7 @@ class FirCallResolver(
                     },
                     calleeReference.source
                 )
-                resolvedCallableReferenceAtom.initializeResultingReference(errorReference)
+                resolvedCallableReferenceAtom.initializeResultingReference2(errorReference)
                 return@runCallableReferenceResolution applicability to false
             }
             reducedCandidates.size > 1 -> {
@@ -499,7 +498,7 @@ class FirCallResolver(
                         ConeAmbiguityError(info.name, applicability, reducedCandidates),
                         calleeReference.source
                     )
-                    resolvedCallableReferenceAtom.initializeResultingReference(errorReference)
+                    resolvedCallableReferenceAtom.initializeResultingReference2(errorReference)
                     return@runCallableReferenceResolution applicability to false
                 }
                 resolvedCallableReferenceAtom.state = ConeResolvedCallableReferenceAtom.State.POSTPONED_BECAUSE_OF_AMBIGUITY
@@ -523,10 +522,37 @@ class FirCallResolver(
             applicability,
             createResolvedReferenceWithoutCandidateForLocalVariables = false
         )
-        resolvedCallableReferenceAtom.initializeResultingReference(reference)
+        resolvedCallableReferenceAtom.initializeResultingReference2(reference)
         resolvedCallableReferenceAtom.resultingTypeForCallableReference = chosenCandidate.resultingTypeForCallableReference
 
         return@runCallableReferenceResolution applicability to true
+    }
+
+    private fun ConeResolvedCallableReferenceAtom.initializeResultingReference2(reference1: FirNamedReference) {
+        initializeResultingReference(reference1)
+        val callableReferenceAccess = expression
+        analyzed = true
+
+        this@FirCallResolver.components.context.dropCallableReferenceContext(callableReferenceAccess)
+
+        val namedReference = resultingReference ?: buildErrorNamedReference {
+            source = callableReferenceAccess.source
+            diagnostic = ConeUnresolvedReferenceError(callableReferenceAccess.calleeReference.name)
+        }
+
+        callableReferenceAccess.apply {
+            replaceCalleeReference(namedReference)
+            val typeForCallableReference = this@initializeResultingReference2.resultingTypeForCallableReference
+            val resolvedType = when {
+                typeForCallableReference != null -> typeForCallableReference
+                namedReference is FirErrorReferenceWithCandidate -> ConeErrorType(namedReference.diagnostic)
+                else -> ConeErrorType(ConeUnresolvedReferenceError(callableReferenceAccess.calleeReference.name))
+            }
+            replaceConeTypeOrNull(resolvedType)
+            session.lookupTracker?.recordTypeResolveAsLookup(
+                resolvedType, source, this@FirCallResolver.components.file.source
+            )
+        }
     }
 
     fun callInfoForDelegatingConstructorCall(

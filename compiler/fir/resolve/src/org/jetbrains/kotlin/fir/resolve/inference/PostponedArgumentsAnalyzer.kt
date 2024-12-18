@@ -8,14 +8,13 @@ package org.jetbrains.kotlin.fir.resolve.inference
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.lookupTracker
-import org.jetbrains.kotlin.fir.recordTypeResolveAsLookup
-import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSinkImpl
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.addSubsystemFromAtom
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.lastStatement
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.isImplicitUnitForEmptyLambda
 import org.jetbrains.kotlin.fir.resolve.shouldReturnUnit
@@ -104,30 +103,6 @@ class PostponedArgumentsAnalyzer(
                 // at org.jetbrains.kotlin.resolve.calls.components.CallableReferenceArgumentResolver.processCallableReferenceArgument
                 return
             }
-        }
-
-        val callableReferenceAccess = atom.expression
-        atom.analyzed = true
-
-        resolutionContext.bodyResolveContext.dropCallableReferenceContext(callableReferenceAccess)
-
-        val namedReference = atom.resultingReference ?: buildErrorNamedReference {
-            source = callableReferenceAccess.source
-            diagnostic = ConeUnresolvedReferenceError(callableReferenceAccess.calleeReference.name)
-        }
-
-        callableReferenceAccess.apply {
-            replaceCalleeReference(namedReference)
-            val typeForCallableReference = atom.resultingTypeForCallableReference
-            val resolvedType = when {
-                typeForCallableReference != null -> typeForCallableReference
-                namedReference is FirErrorReferenceWithCandidate -> ConeErrorType(namedReference.diagnostic)
-                else -> ConeErrorType(ConeUnresolvedReferenceError(callableReferenceAccess.calleeReference.name))
-            }
-            replaceConeTypeOrNull(resolvedType)
-            resolutionContext.session.lookupTracker?.recordTypeResolveAsLookup(
-                resolvedType, source, resolutionContext.bodyResolveComponents.file.source
-            )
         }
     }
 
