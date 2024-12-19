@@ -502,7 +502,7 @@ open class IrFileSerializer(
     private fun serializeInlinedFunctionBlock(inlinedFunctionBlock: IrInlinedFunctionBlock): ProtoInlinedFunctionBlock {
         val proto = ProtoInlinedFunctionBlock.newBuilder()
         inlinedFunctionBlock.inlinedFunctionSymbol?.let { proto.setInlinedFunctionSymbol(serializeIrSymbol(it)) }
-        proto.fileEntry = serializeFileEntry(inlinedFunctionBlock.inlinedFunctionFileEntry)
+        proto.inlinedFunctionFileEntry = serializeFileEntry(inlinedFunctionBlock.inlinedFunctionFileEntry)
         proto.base = serializeBlock(inlinedFunctionBlock)
         return proto.build()
     }
