@@ -1,22 +1,33 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.targets.js.binaryen
 
+import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.EnvSpec
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnv
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlatform
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenSetupTask
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import org.jetbrains.kotlin.gradle.utils.getFile
 
 /**
  * Specification for executing Binaryen, an optimization tool for wasm files.
  */
+@Deprecated(
+    "Use 'org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec' instead",
+    ReplaceWith(
+        "BinaryenEnvSpec",
+        "org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec"
+    )
+)
 @ExperimentalWasmDsl
 abstract class BinaryenEnvSpec : EnvSpec<BinaryenEnv>() {
 
@@ -63,8 +74,11 @@ abstract class BinaryenEnvSpec : EnvSpec<BinaryenEnv>() {
         }
     }
 
+    val Project.binaryenSetupTaskProvider: TaskProvider<out BinaryenSetupTask>
+        get() = project.tasks.withType(BinaryenSetupTask::class.java).named(BinaryenSetupTask.NAME)
+
     companion object {
-        const val EXTENSION_NAME: String = "kotlinBinaryenSpec"
+        const val EXTENSION_NAME: String = BinaryenEnvSpec.EXTENSION_NAME
     }
 }
 
