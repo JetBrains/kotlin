@@ -11,7 +11,6 @@ import org.gradle.api.tasks.TaskCollection
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
@@ -65,8 +64,7 @@ class KotlinProjectNpmResolver(
     private fun addTargetListeners(target: KotlinJsIrTarget) {
         check(resolution == null) { resolver.alreadyResolvedMessage("add target $target") }
 
-        if (target.platformType == KotlinPlatformType.js ||
-            target.platformType == KotlinPlatformType.wasm && target.wasmTargetType != KotlinWasmTargetType.WASI
+        if (target.platformType == resolver.platform && target.wasmTargetType != KotlinWasmTargetType.WASI
         ) {
             target.compilations.all { compilation ->
                 if (compilation is KotlinJsIrCompilation) {
