@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.io.File
 import org.jetbrains.kotlin.konan.file.File as KFile
+import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrClass as ProtoClass
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase as ProtoDeclarationBase
@@ -134,7 +135,10 @@ private class LibraryDeserializer(
             val packageFQN = fileReader.deserializeFqName(proto.fqNameList)
             packageName = AbiCompoundName(packageFQN)
 
-            val fileName = if (proto.hasFileEntry() && proto.fileEntry.hasName()) proto.fileEntry.name else "<unknown>"
+            val fileName = if (proto.hasFileEntry()) {
+                val fileEntry = ProtoFileEntry.parseFrom(library.fileEntry(proto.fileEntry, fileIndex))
+                if (fileEntry.hasName()) fileEntry.name else "<unknown>"
+            } else "<unknown>"
 
             val fileSignature = FileSignature(
                 id = Any(), // Just an unique object.

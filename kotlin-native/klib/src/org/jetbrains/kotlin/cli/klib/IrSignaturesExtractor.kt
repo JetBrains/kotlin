@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.library.impl.IrArrayMemoryReader
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
+import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase as ProtoDeclarationBase
@@ -41,7 +42,10 @@ internal class IrSignaturesExtractor(private val library: KotlinLibrary) {
 
         private val signatureDeserializer: IdSignatureDeserializer = run {
             val packageFQN = fileReader.deserializeFqName(fileProto.fqNameList)
-            val fileName = if (fileProto.hasFileEntry() && fileProto.fileEntry.hasName()) fileProto.fileEntry.name else "<unknown>"
+            val fileName = if (fileProto.hasFileEntry()) {
+                val fileEntry = ProtoFileEntry.parseFrom(library.fileEntry(fileProto.fileEntry, fileIndex))
+                if (fileEntry.hasName()) fileEntry.name else "<unknown>"
+            } else "<unknown>"
 
             val fileSignature = IdSignature.FileSignature(
                     id = Any(), // Just an unique object.

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 
 class FileWithFqName(val filePath: String, val fqName: String)
@@ -28,7 +29,7 @@ fun KotlinLibrary.getFilesWithFqNames(): List<FileWithFqName> {
     }
     return fileProtos.mapIndexed { index, proto ->
         val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(this, index))
-        FileWithFqName(proto.fileEntry.name, fileReader.deserializeFqName(proto.fqNameList))
+        FileWithFqName(fileReader.fileEntry(proto.fileEntry).name, fileReader.deserializeFqName(proto.fqNameList))
     }
 }
 
@@ -36,7 +37,7 @@ fun KotlinLibrary.getFileFqNames(filePaths: List<String>): List<String> {
     val fileProtos = Array<ProtoFile>(fileCount()) {
         ProtoFile.parseFrom(file(it).codedInputStream, ExtensionRegistryLite.newInstance())
     }
-    val filePathToIndex = fileProtos.withIndex().associate { it.value.fileEntry.name to it.index }
+    val filePathToIndex = fileProtos.withIndex().associate { ProtoFileEntry.parseFrom(fileEntry(it.value.fileEntry, it.index)).name to it.index }
     return filePaths.map { filePath ->
         val index = filePathToIndex[filePath] ?: error("No file with path $filePath is found in klib $libraryName")
         val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(this, index))

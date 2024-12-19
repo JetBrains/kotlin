@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression as ProtoExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
-import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement as ProtoStatement
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
+import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
 
 class IrFileDeserializer(
     val file: IrFile,
@@ -191,6 +191,7 @@ abstract class IrLibraryFile {
     abstract fun expressionBody(index: Int): ProtoExpression
     abstract fun statementBody(index: Int): ProtoStatement
     abstract fun debugInfo(index: Int): String?
+    abstract fun fileEntry(index: Int): ProtoFileEntry
 }
 
 abstract class IrLibraryBytesSource {
@@ -200,6 +201,7 @@ abstract class IrLibraryBytesSource {
     abstract fun string(index: Int): ByteArray
     abstract fun body(index: Int): ByteArray
     abstract fun debugInfo(index: Int): ByteArray?
+    abstract fun fileEntry(index: Int): ByteArray
 }
 
 class IrLibraryFileFromBytes(private val bytesSource: IrLibraryBytesSource) : IrLibraryFile() {
@@ -222,6 +224,8 @@ class IrLibraryFileFromBytes(private val bytesSource: IrLibraryBytesSource) : Ir
 
     override fun debugInfo(index: Int): String? = bytesSource.debugInfo(index)?.let { WobblyTF8.decode(it) }
 
+    override fun fileEntry(index: Int): ProtoFileEntry = ProtoFileEntry.parseFrom(bytesSource.fileEntry(index), extensionRegistryLite)
+
     companion object {
         val extensionRegistryLite: ExtensionRegistryLite = ExtensionRegistryLite.newInstance()
     }
@@ -234,13 +238,14 @@ class IrKlibBytesSource(private val klib: IrLibrary, private val fileIndex: Int)
     override fun string(index: Int): ByteArray = klib.string(index, fileIndex)
     override fun body(index: Int): ByteArray = klib.body(index, fileIndex)
     override fun debugInfo(index: Int): ByteArray? = klib.debugInfo(index, fileIndex)
+    override fun fileEntry(index: Int): ByteArray = klib.fileEntry(index, fileIndex)
 }
 
 fun IrLibraryFile.deserializeFqName(fqn: List<Int>): String =
     fqn.joinToString(".", transform = ::string)
 
 fun IrLibraryFile.createFile(module: IrModuleFragment, fileProto: ProtoFile): IrFile {
-    val fileEntry = deserializeFileEntry(fileProto.fileEntry)
+    val fileEntry = deserializeFileEntry(fileEntry(fileProto.fileEntry))
     val fqName = FqName(deserializeFqName(fileProto.fqNameList))
     val packageFragmentDescriptor = EmptyPackageFragmentDescriptor(module.descriptor, fqName)
     val symbol = IrFileSymbolImpl(packageFragmentDescriptor)

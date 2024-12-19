@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
+import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
 import org.jetbrains.kotlin.backend.konan.driver.DynamicCompilerDriver
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -87,7 +88,7 @@ class KonanDriver(
                     val lib = createKonanLibrary(File(libPath), "default", null, true)
                     (0 until lib.fileCount()).map { fileIndex ->
                         val proto = IrFile.parseFrom(lib.file(fileIndex).codedInputStream, ExtensionRegistryLite.newInstance())
-                        proto.fileEntry.name
+                        ProtoFileEntry.parseFrom(lib.fileEntry(proto.fileEntry, fileIndex)).name
                     }
                 }
                 else -> null

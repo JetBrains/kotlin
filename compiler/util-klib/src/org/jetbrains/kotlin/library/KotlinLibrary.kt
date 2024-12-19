@@ -89,6 +89,7 @@ interface IrLibrary {
     fun string(index: Int, fileIndex: Int): ByteArray
     fun body(index: Int, fileIndex: Int): ByteArray
     fun debugInfo(index: Int, fileIndex: Int): ByteArray?
+    fun fileEntry(index: Int, fileIndex: Int): ByteArray
     fun file(index: Int): ByteArray
     fun fileCount(): Int
 
@@ -97,6 +98,7 @@ interface IrLibrary {
     fun strings(fileIndex: Int): ByteArray
     fun declarations(fileIndex: Int): ByteArray
     fun bodies(fileIndex: Int): ByteArray
+    fun fileEntries(fileIndex: Int): ByteArray
 }
 
 val BaseKotlinLibrary.isNativeStdlib: Boolean

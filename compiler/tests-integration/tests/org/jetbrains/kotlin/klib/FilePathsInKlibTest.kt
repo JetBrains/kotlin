@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.klib
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.backend.common.CommonKLibResolver
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
+import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.incremental.md5
@@ -44,7 +45,7 @@ class FilePathsInKlibTest : KtUsefulTestCase() {
         for (i in 0 until fileSize) {
             val fileStream = lib.file(i).codedInputStream
             val fileProto = IrFile.parseFrom(fileStream, extReg)
-            val fileName = fileProto.fileEntry.name
+            val fileName = ProtoFileEntry.parseFrom(lib.fileEntry(fileProto.fileEntry, i)).name//fileProto.fileEntry.name
 
             result.add(fileName)
         }

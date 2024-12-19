@@ -153,6 +153,9 @@ open class IrFileSerializer(
     private val protoStringMap = hashMapOf<String, Int>()
     protected val protoStringArray = arrayListOf<String>()
 
+    private val protoIrFileEntryMap = hashMapOf<ProtoFileEntry, Int>()
+    protected val protoIrFileEntryArray = arrayListOf<ProtoFileEntry>()
+
     // The same signature could be used multiple times in a file
     // so use this index to store signature only once.
     private val protoIdSignatureMap = mutableMapOf<IdSignature, Int>()
@@ -1359,7 +1362,15 @@ open class IrFileSerializer(
 
 // ---------- Top level ------------------------------------------------------
 
-    private fun serializeFileEntry(entry: IrFileEntry, includeLineStartOffsets: Boolean = true): ProtoFileEntry =
+    private fun serializeFileEntry(entry: IrFileEntry, includeLineStartOffsets: Boolean = true): Int {
+        val proto = buildFileEntry(entry, includeLineStartOffsets)
+        return protoIrFileEntryMap.getOrPut(proto) {
+            protoIrFileEntryArray.add(proto)
+            protoIrFileEntryArray.size - 1
+        }
+    }
+
+    private fun buildFileEntry(entry: IrFileEntry, includeLineStartOffsets: Boolean = true): ProtoFileEntry =
         ProtoFileEntry.newBuilder()
             .setName(entry.matchAndNormalizeFilePath())
             .applyIf(includeLineStartOffsets) { addAllLineStartOffset(entry.lineStartOffsetsForSerialization) }
@@ -1495,6 +1506,7 @@ open class IrFileSerializer(
             declarations = IrMemoryDeclarationWriter(topLevelDeclarations).writeIntoMemory(),
             debugInfo = IrMemoryStringWriter(protoDebugInfoArray).writeIntoMemory(),
             backendSpecificMetadata = backendSpecificMetadata(file)?.toByteArray(),
+            fileEntries = IrMemoryArrayWriter(protoIrFileEntryArray.map { it.toByteArray() }).writeIntoMemory(),
         )
     }
 

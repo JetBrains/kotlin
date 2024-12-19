@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
@@ -149,7 +150,7 @@ class NonLinkingIrInlineFunctionDeserializer(
 
         private val dummyFileSymbol = IrFileSymbolImpl().apply {
             IrFileImpl(
-                fileEntry = NaiveSourceBasedFileEntryImpl(fileProto.fileEntry.name),
+                fileEntry = NaiveSourceBasedFileEntryImpl(ProtoFileEntry.parseFrom(library.fileEntry(fileProto.fileEntry, fileIndex)).name),
                 symbol = this,
                 packageFqName = FqName(irInterner.string(fileReader.deserializeFqName(fileProto.fqNameList)))
             )

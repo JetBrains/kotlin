@@ -168,7 +168,7 @@ class IrBodyDeserializer(
         val inlineFunctionSymbol = runIf(proto.hasInlineFunctionSymbol()) {
             deserializeTypedSymbol<IrFunctionSymbol>(proto.inlineFunctionSymbol, FUNCTION_SYMBOL)
         }
-        val fileEntry = deserializeFileEntry(proto.fileEntry)
+        val fileEntry = deserializeFileEntry(libraryFile.fileEntry(proto.fileEntry))
         return withDeserializedBlock(proto.base) { origin, statements ->
             IrInlinedFunctionBlockImpl(start, end, type, inlineFunctionSymbol, fileEntry, origin, statements)
         }
