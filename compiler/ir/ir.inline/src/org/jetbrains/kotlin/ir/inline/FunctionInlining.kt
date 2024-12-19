@@ -304,7 +304,7 @@ open class FunctionInlining(
                 inlinedFunctionEndOffset = inlineFunctionToStore.endOffset,
                 type = returnType,
                 inlinedFunctionSymbol = inlineFunctionToStore.symbol.takeIf { originalInlinedElement is IrFunction },
-                fileEntry = inlineFunctionToStore.fileEntry,
+                inlinedFunctionFileEntry = inlineFunctionToStore.fileEntry,
                 origin = null,
                 statements = copiedParameters + newStatementsFromDefault + newStatements
             ).apply {

@@ -961,7 +961,7 @@ class BodyGenerator(
         body.commentGroupStart { "Inlined call of `$name`" }
         body.buildNop(inlinedBlock.getSourceLocation())
 
-        functionContext.stepIntoInlinedFunction(inlinedBlock.inlinedFunctionSymbol, inlinedBlock.fileEntry)
+        functionContext.stepIntoInlinedFunction(inlinedBlock.inlinedFunctionSymbol, inlinedBlock.inlinedFunctionFileEntry)
         super.visitInlinedFunctionBlock(inlinedBlock)
         functionContext.stepOutLastInlinedFunction()
     }

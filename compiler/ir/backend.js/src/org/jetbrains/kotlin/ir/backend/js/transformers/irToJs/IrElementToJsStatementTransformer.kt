@@ -40,7 +40,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     override fun visitReturnableBlock(expression: IrReturnableBlock, context: JsGenerationContext): JsStatement {
         val inlinedBlock = expression.statements.singleOrNull() as? IrInlinedFunctionBlock
         val newContext = if (inlinedBlock != null) {
-            context.newInlineFunction(inlinedBlock.fileEntry, inlinedBlock.inlinedFunctionSymbol?.owner)
+            context.newInlineFunction(inlinedBlock.inlinedFunctionFileEntry, inlinedBlock.inlinedFunctionSymbol?.owner)
         } else {
             context
         }
