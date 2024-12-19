@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.tryVisitFoldingStringConcatenation
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -70,6 +71,27 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
             cache(constraintSubject, typeParameter, data)
         }
         super.visitTypeParameter(typeParameter, data)
+    }
+
+    override fun visitStringConcatenationCall(
+        stringConcatenationCall: FirStringConcatenationCall,
+        data: MutableMap<KtElement, FirElement>,
+    ) {
+        if (stringConcatenationCall.isFoldedStrings) {
+            val foldingStringConcatenationDescendants =
+                (stringConcatenationCall.psi as KtBinaryExpression).tryVisitFoldingStringConcatenation(true)!!
+            for (descendant in foldingStringConcatenationDescendants) {
+                if (descendant !is KtStringTemplateExpression) {
+                    // Associate different string plus operators and parentheses with the same FIR node
+                    // because there are no other intermediate FIR nodes
+                    cache(descendant, stringConcatenationCall, data)
+                }
+            }
+
+            // Associate arguments in the default pass because the pass above doesn't associate them since they hold real FIR nodes
+        }
+
+        super.visitStringConcatenationCall(stringConcatenationCall, data)
     }
 
     override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: MutableMap<KtElement, FirElement>) {

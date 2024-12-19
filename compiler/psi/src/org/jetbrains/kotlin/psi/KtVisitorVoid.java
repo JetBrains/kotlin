@@ -17,6 +17,11 @@
 package org.jetbrains.kotlin.psi;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+
+import static org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt.tryVisitFoldingStringConcatenation;
 
 public class KtVisitorVoid extends KtVisitor<Void, Void> {
     // methods with void return
@@ -206,7 +211,16 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
     }
 
     public void visitBinaryExpression(@NotNull KtBinaryExpression expression) {
-        super.visitBinaryExpression(expression, null);
+        @Nullable List<KtExpression> foldingStringConcatenationStack = tryVisitFoldingStringConcatenation(expression, true);
+        if (foldingStringConcatenationStack != null) {
+            for (KtExpression childExpression : foldingStringConcatenationStack) {
+                if (!(childExpression instanceof KtBinaryExpression)) {
+                    visitExpression(childExpression);
+                }
+            }
+        } else {
+            super.visitBinaryExpression(expression, null);
+        }
     }
 
     public void visitReturnExpression(@NotNull KtReturnExpression expression) {

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
+import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.FirThreadSafeCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.declarationCanBeLazilyResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
@@ -15,14 +16,21 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.parentsWithSelfCodeF
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.requireTypeIntersectionWith
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.toKtPsiSourceElement
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.ThreadSafe
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -121,7 +129,32 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
 
         val structureElement = fileStructure.getStructureElementFor(element, nonLocalContainer)
         val mappings = structureElement.mappings
-        return mappings.getFir(psi)
+
+        return adjustFirForFoldingStringConcatenation(mappings.getFir(psi), element)
+    }
+
+    private val stringPlusSymbol by lazy {
+        val session = moduleComponents.session
+        val stringClassSymbol = session.builtinTypes.stringType.toRegularClassSymbol(session)!!
+        stringClassSymbol.declarationSymbols.single { it is FirFunctionSymbol && it.callableId.callableName == OperatorNameConventions.PLUS }
+    }
+
+    private val foldingStringConcatenationPlusOperatorCache = FirThreadSafeCache<KtElement, FirResolvedNamedReference, Nothing?>(
+        createValue = { ktElement, _ ->
+            buildResolvedNamedReference {
+                source = ktElement.toKtPsiSourceElement()
+                name = OperatorNameConventions.PLUS
+                resolvedSymbol = stringPlusSymbol
+            }
+        }
+    )
+
+    private fun adjustFirForFoldingStringConcatenation(fir: FirElement?, element: KtElement): FirElement? {
+        return if (fir is FirStringConcatenationCall && fir.isFoldedStrings && element is KtOperationReferenceExpression) {
+            foldingStringConcatenationPlusOperatorCache.getValue(element, null)
+        } else {
+            fir
+        }
     }
 
     private inline fun <T : KtElement, E : PsiElement> getFirForNonBodyElement(
