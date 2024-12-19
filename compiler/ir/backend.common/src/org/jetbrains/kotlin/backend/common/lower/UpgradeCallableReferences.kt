@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -60,7 +60,7 @@ open class UpgradeCallableReferences(
         val samType: IrType
     )
 
-    private inner class UpgradeTransformer : IrElementTransformer<IrDeclarationParent> {
+    private inner class UpgradeTransformer : IrTransformer<IrDeclarationParent>() {
         private fun IrClass?.isRestrictedSuspension(): Boolean {
             if (this == null) return false
             return hasAnnotation(StandardClassIds.Annotations.RestrictsSuspension) ||
