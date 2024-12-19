@@ -496,12 +496,6 @@ class ConstraintInjector(
             )
         }
 
-        private fun addNewIncorporatedConstraintFromDeclaredUpperBound(runIsSubtypeOf: Runnable) {
-            isIncorporatingConstraintFromDeclaredUpperBound = true
-            runIsSubtypeOf.run()
-            isIncorporatingConstraintFromDeclaredUpperBound = false
-        }
-
         // from ConstraintIncorporator.Context
         override fun processNewInitialConstraintFromIncorporation(
             lowerType: KotlinTypeMarker,
