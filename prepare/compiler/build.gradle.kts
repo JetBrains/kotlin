@@ -242,7 +242,6 @@ dependencies {
 
     fatJarContentsStripMetadata(commonDependency("oro:oro")) { isTransitive = false }
     fatJarContentsStripMetadata(intellijJDom()) { isTransitive = false }
-    fatJarContentsStripMetadata(commonDependency("org.jetbrains.intellij.deps:log4j")) { isTransitive = false }
     fatJarContentsStripVersions(commonDependency("one.util:streamex")) { isTransitive = false }
 }
 

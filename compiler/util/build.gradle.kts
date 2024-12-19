@@ -12,7 +12,6 @@ dependencies {
     api(project(":core:util.runtime"))
 
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:log4j"))
     compileOnly(libs.intellij.asm)
     compileOnly(jpsModel()) { isTransitive = false }
     compileOnly(jpsModelImpl()) { isTransitive = false }

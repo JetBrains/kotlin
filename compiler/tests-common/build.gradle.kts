@@ -76,7 +76,6 @@ dependencies {
 
     testImplementation(libs.guava)
     testImplementation(libs.intellij.asm)
-    testImplementation(commonDependency("org.jetbrains.intellij.deps:log4j"))
     testImplementation(intellijJDom())
 
     testApi(platform(libs.junit.bom))
