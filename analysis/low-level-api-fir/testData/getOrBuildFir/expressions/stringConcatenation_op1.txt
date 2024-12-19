@@ -8,5 +8,5 @@ R|kotlin/String.plus|
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] stringConcatenation_op1.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun check(): R|kotlin/Unit| {
-        [ResolvedTo(BODY_RESOLVE)] lval value: R|kotlin/String| = String(1).R|kotlin/String.plus|(String(2)).R|kotlin/String.plus|(String(3))
+        [ResolvedTo(BODY_RESOLVE)] lval value: R|kotlin/String| = <strcat>(String(1), String(2), String(3))
     }

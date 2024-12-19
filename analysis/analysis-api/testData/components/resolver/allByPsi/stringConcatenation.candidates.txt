@@ -53,39 +53,6 @@ KtBinaryExpression(30,45): '"1" + "2" + "3"'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "3" -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = "1" + "2"
-          isSafeNavigation = false
-          type = kotlin.String
-        signature = KaFunctionSignature:
-          receiverType = kotlin.String?
-          returnType = kotlin.String
-          symbol = kotlin/plus(<extension receiver>: kotlin.String?, other: kotlin.Any?): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              callableId = null
-          ]
-          callableId = kotlin/plus
-      typeArgumentsMapping = {}
-    isInBestCandidates = false
-
 KtBinaryExpression(30,39): '"1" + "2"'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
@@ -119,39 +86,6 @@ KtBinaryExpression(30,39): '"1" + "2"'
           callableId = kotlin/String.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "2" -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = "1"
-          isSafeNavigation = false
-          type = kotlin.String
-        signature = KaFunctionSignature:
-          receiverType = kotlin.String?
-          returnType = kotlin.String
-          symbol = kotlin/plus(<extension receiver>: kotlin.String?, other: kotlin.Any?): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              callableId = null
-          ]
-          callableId = kotlin/plus
-      typeArgumentsMapping = {}
-    isInBestCandidates = false
 
 KtStringTemplateExpression(30,33): '"1"'
   NO_CANDIDATES
@@ -193,39 +127,6 @@ KtOperationReferenceExpression(34,35): '+'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "2" -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = "1"
-          isSafeNavigation = false
-          type = kotlin.String
-        signature = KaFunctionSignature:
-          receiverType = kotlin.String?
-          returnType = kotlin.String
-          symbol = kotlin/plus(<extension receiver>: kotlin.String?, other: kotlin.Any?): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              callableId = null
-          ]
-          callableId = kotlin/plus
-      typeArgumentsMapping = {}
-    isInBestCandidates = false
-
 KtStringTemplateExpression(36,39): '"2"'
   NO_CANDIDATES
 
@@ -265,39 +166,6 @@ KtOperationReferenceExpression(40,41): '+'
           callableId = kotlin/String.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {
-        "3" -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = "1" + "2"
-          isSafeNavigation = false
-          type = kotlin.String
-        signature = KaFunctionSignature:
-          receiverType = kotlin.String?
-          returnType = kotlin.String
-          symbol = kotlin/plus(<extension receiver>: kotlin.String?, other: kotlin.Any?): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              callableId = null
-          ]
-          callableId = kotlin/plus
-      typeArgumentsMapping = {}
-    isInBestCandidates = false
 
 KtStringTemplateExpression(42,45): '"3"'
   NO_CANDIDATES

@@ -323,8 +323,12 @@ class LightTreeRawFirExpressionBuilder(
         }
 
         return buildStringConcatenationCall {
-            argumentList = buildArgumentList { arguments += output.asReversed().map { getAsFirExpression<FirExpression>(it) } }
-            source = binaryExpression.toFirSourceElement()
+            val stringConcatenationSource = binaryExpression.toFirSourceElement()
+            argumentList = buildArgumentList {
+                arguments += output.asReversed().map { getAsFirExpression<FirExpression>(it) }
+                source = stringConcatenationSource
+            }
+            source = stringConcatenationSource
             interpolationPrefix = ""
             isFoldedStrings = true
         }

@@ -223,10 +223,16 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                     element.acceptChildren(this)
                 }
             })
-            ktFile.accept(object : KtTreeVisitor<Nothing?>() {
-                override fun visitKtElement(element: KtElement, data: Nothing?): Void? {
+            ktFile.accept(object : KtVisitorVoid() {
+                override fun visitKtElement(element: KtElement) {
+                    super.visitKtElement(element)
                     psiSetDirect += element
-                    return super.visitKtElement(element, data)
+                    element.acceptChildren(this)
+                }
+
+                override fun visitKtFile(file: KtFile) {
+                    super.visitKtFile(file)
+                    file.acceptChildren(this)
                 }
             })
             psiSetDirect -= psiSetViaFir
