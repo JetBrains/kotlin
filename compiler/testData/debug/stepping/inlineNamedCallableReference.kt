@@ -33,4 +33,5 @@ fun g() {}
 // test.kt:9 $box (4)
 // test.kt:5 $box (6)
 // test.kt:12 $g (10)
+// test.kt:10 $box (1)
 // test.kt:6 $box (1)

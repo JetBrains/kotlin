@@ -74,4 +74,5 @@ fun box() {
 // test.kt:27 $<no name provided>.bar (9)
 // test.kt:12 $<no name provided>.bar (9)
 // test.kt:17 $<no name provided>.<init> (5)
+// test.kt:18 $box (1)
 // test.kt:29 $box (1)
