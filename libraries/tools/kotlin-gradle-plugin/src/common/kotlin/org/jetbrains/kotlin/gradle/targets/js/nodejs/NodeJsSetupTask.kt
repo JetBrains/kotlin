@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 import org.gradle.api.tasks.Internal
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSetupTask
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import java.nio.file.Files
@@ -12,8 +13,8 @@ import javax.inject.Inject
 
 @DisableCachingByDefault
 abstract class NodeJsSetupTask @Inject constructor(
-    settings: NodeJsEnvSpec
-) : AbstractSetupTask<NodeJsEnv, NodeJsEnvSpec>(settings) {
+    settings: BaseNodeJsEnvSpec
+) : AbstractSetupTask<NodeJsEnv, BaseNodeJsEnvSpec>(settings) {
 
     @get:Internal
     override val artifactPattern: String

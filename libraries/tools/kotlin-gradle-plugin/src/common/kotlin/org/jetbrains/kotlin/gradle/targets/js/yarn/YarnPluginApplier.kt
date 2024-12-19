@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.ExtensionContainer
-import org.jetbrains.kotlin.gradle.targets.js.HasPlatformDisambiguate
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguate
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.AbstractNodeJsEnvSpec
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.AbstractNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
@@ -51,8 +51,8 @@ internal class YarnPluginApplier(
     private val yarnEnvSpecKlass: KClass<out BaseYarnRootEnvSpec>,
     private val yarnEnvSpecName: String,
     private val nodeJsRootApply: (project: Project) -> Unit,
-    private val nodeJsRootExtension: (project: Project) -> AbstractNodeJsRootExtension,
-    private val nodeJsEnvSpec: (project: Project) -> AbstractNodeJsEnvSpec,
+    private val nodeJsRootExtension: (project: Project) -> BaseNodeJsRootExtension,
+    private val nodeJsEnvSpec: (project: Project) -> BaseNodeJsEnvSpec,
     private val lockFileDirectory: (projectDirectory: File) -> File,
 ) {
 
