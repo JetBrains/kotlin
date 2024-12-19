@@ -121,7 +121,9 @@ open class NativeInteropPlugin : Plugin<Project> {
             headersDirs.systemFrom(nativeInteropPlugin.systemIncludeDirs)
         }
 
-        val prebuiltRoot = target.provider { target.layout.projectDirectory.dir("gen/main") }
+        val hostName = PlatformInfo.hostName
+
+        val prebuiltRoot = target.provider { target.layout.projectDirectory.dir("gen/main-$hostName") }
         val generatedRoot = genTask.map { it.outputDirectory.get() }
 
         val bindingsRoot = nativeInteropPlugin.usePrebuiltSources.flatMap {
@@ -171,7 +173,7 @@ open class NativeInteropPlugin : Plugin<Project> {
                 this.usePrebuiltSources.set(usePrebuiltSources)
                 this.generatedRoot.set(generatedRoot)
                 this.bindingsRoot.set(bindingsRoot)
-                this.hostName.set(PlatformInfo.hostName)
+                this.hostName.set(hostName)
                 this.projectName.set(target.path)
                 this.regenerateTaskName.set(updatePrebuilt.name)
             })
