@@ -176,9 +176,9 @@ class IfNullExpressionsFusionLowering(val context: CommonBackendContext) : FileL
         val branch0 = whenExpr.branches[0]
         val condition0 = branch0.condition as? IrCall ?: return null
         if (condition0.symbol != context.irBuiltIns.eqeqSymbol) return null
-        val arg0 = condition0.getValueArgument(0) as? IrGetValue ?: return null
+        val arg0 = condition0.arguments[0] as? IrGetValue ?: return null
         if (arg0.symbol != subjectVar.symbol) return null
-        val arg1 = condition0.getValueArgument(1) as? IrConst ?: return null
+        val arg1 = condition0.arguments[1] as? IrConst ?: return null
         if (arg1.value != null) return null
 
         val elseResult = whenExpr.branches[1].getElseBranchResultOrNull() ?: return null
