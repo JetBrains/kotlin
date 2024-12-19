@@ -30,7 +30,7 @@ fun testWrong4(x: List<Any>) = x is <!NO_TYPE_ARGUMENTS_ON_RHS!>ReadableList<!>
 
 fun <T> testLocal(x: Any) {
     class C
-    typealias CA = C
+    <!UNSUPPORTED!>typealias CA = C<!>
     if (x is <!CANNOT_CHECK_FOR_ERASED!>C<!>) {}
     if (x is <!UNRESOLVED_REFERENCE!>CA<!>) {}
 }

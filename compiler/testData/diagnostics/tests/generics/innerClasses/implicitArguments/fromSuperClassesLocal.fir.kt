@@ -10,7 +10,7 @@ private fun <E> foobar() = {
             fun a() = A<E, X, Y, Z>()
         }
 
-        <!WRONG_MODIFIER_TARGET!>inner<!> typealias LocalAlias<W> = A<E, X, Y, W>
+        <!UNSUPPORTED!><!WRONG_MODIFIER_TARGET!>inner<!> typealias LocalAlias<W> = A<E, X, Y, W><!>
     }
 
     class Derived : LocalOuter<Double, Short>() {
@@ -27,7 +27,7 @@ private fun noParameters() = {
             fun a() = A<Any, X, Y, Z>()
         }
 
-        <!WRONG_MODIFIER_TARGET!>inner<!> typealias LocalAlias2<W> = A<Any, X, Y, W>
+        <!UNSUPPORTED!><!WRONG_MODIFIER_TARGET!>inner<!> typealias LocalAlias2<W> = A<Any, X, Y, W><!>
     }
 
     class Derived2 : LocalOuter2<Double, Short>() {

@@ -10,11 +10,11 @@ class C {
     class D {
         <!TOPLEVEL_TYPEALIASES_ONLY!>typealias Nested = Any<!>
         fun foo() {
-            <!TOPLEVEL_TYPEALIASES_ONLY!>typealias LocalInMember = Any<!>
+            <!TOPLEVEL_TYPEALIASES_ONLY, UNSUPPORTED!>typealias LocalInMember = Any<!>
         }
     }
 }
 
 fun foo() {
-    <!TOPLEVEL_TYPEALIASES_ONLY!>typealias Local = Any<!>
+    <!TOPLEVEL_TYPEALIASES_ONLY, UNSUPPORTED!>typealias Local = Any<!>
 }

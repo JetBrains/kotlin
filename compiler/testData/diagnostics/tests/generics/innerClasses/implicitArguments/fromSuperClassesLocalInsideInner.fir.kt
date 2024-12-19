@@ -12,7 +12,7 @@ class Outer<T> {
                     fun a() = A<T, F, E, X, Y, Z>()
                 }
 
-                <!WRONG_MODIFIER_TARGET!>inner<!> typealias LocalAlias<W> = A<T, F, E, X, Y, W>
+                <!UNSUPPORTED!><!WRONG_MODIFIER_TARGET!>inner<!> typealias LocalAlias<W> = A<T, F, E, X, Y, W><!>
             }
 
             class Derived : LocalOuter<Double, Short>() {
@@ -29,7 +29,7 @@ class Outer<T> {
                     fun a() = A<T, F, Any, X, Y, Z>()
                 }
 
-                <!WRONG_MODIFIER_TARGET!>inner<!> typealias LocalAlias2<W> = A<T, F, Any, X, Y, W>
+                <!UNSUPPORTED!><!WRONG_MODIFIER_TARGET!>inner<!> typealias LocalAlias2<W> = A<T, F, Any, X, Y, W><!>
             }
 
             class Derived2 : LocalOuter2<Double, Short>() {

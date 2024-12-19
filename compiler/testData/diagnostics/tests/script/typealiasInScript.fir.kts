@@ -6,5 +6,5 @@ class C {
 }
 
 fun foo() {
-    <!TOPLEVEL_TYPEALIASES_ONLY!>typealias Local = String<!>
+    <!TOPLEVEL_TYPEALIASES_ONLY, UNSUPPORTED!>typealias Local = String<!>
 }
