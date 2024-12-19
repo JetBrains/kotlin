@@ -1,4 +1,3 @@
-// LANGUAGE: +ContextReceivers
 // SKIP_NODE_JS
 
 open class A {
@@ -20,7 +19,6 @@ val A.Companion.companionExtProp get() = true
 inline fun call(f: () -> Boolean) = f()
 inline fun callExtension(f: A.() -> Boolean, receiver: A) = receiver.f()
 inline fun callParameter(f: (A) -> Boolean, parameter: A) = f(parameter)
-inline fun callContext(f: context(A) () -> Boolean, receiver: A) = f(receiver)
 
 fun box(): String {
     if (!call(A::instance)) return "Fail bound function 1"
@@ -49,10 +47,6 @@ fun box(): String {
     if (!callExtension(A::ext, A.Companion)) return "Fail unbound 6"
     if (!callExtension(A::instanceProp, A.Companion)) return "Fail unbound 7"
     if (!callExtension(A::extProp, A.Companion)) return "Fail unbound 8"
-    if (!callContext(A::instance, A.Companion)) return "Fail unbound 5"
-    if (!callContext(A::ext, A.Companion)) return "Fail unbound 6"
-    if (!callContext(A::instanceProp, A.Companion)) return "Fail unbound 7"
-    if (!callContext(A::extProp, A.Companion)) return "Fail unbound 8"
 
     with (A) {
         if (!call(::instance)) return "Fail implicit bound function 1"

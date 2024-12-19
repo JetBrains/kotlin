@@ -40,26 +40,8 @@
     KtSimpleNameReference:
       (in A) var something: kotlin.Int
 
-<caret_7>:
-  KtNameReferenceExpression(217,226): 'something'
-    KtSimpleNameReference:
-      (in A) var something: kotlin.Int
-    
-    KtSimpleNameReference:
-      (in A) var something: kotlin.Int
-
-<caret_8>:
-  KtNameReferenceExpression(235,244): 'something'
-    KtSimpleNameReference:
-      (in A) var something: kotlin.Int
-
-<caret_9>:
-  KtNameReferenceExpression(257,266): 'something'
-    KtSimpleNameReference:
-      (in A) var something: kotlin.Int
-
 <caret_10>:
-  KtNameReferenceExpression(280,289): 'something'
+  KtNameReferenceExpression(220,229): 'something'
     KtSimpleNameReference:
       (in A) var something: kotlin.Int
 

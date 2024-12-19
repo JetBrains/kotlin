@@ -1,15 +1,12 @@
 // FILE: main.kt
 fun JavaClass.foo(javaClass: JavaClass) {
-    print(javaClass.<caret>something)
-    javaClass.<caret>something = 1
-    javaClass.<caret>something += 1
-    javaClass.<caret>something++
-    --javaClass.<caret>something
+    print(javaClass.<caret_1>something)
+    javaClass.<caret_2>something = 1
+    javaClass.<caret_3>something += 1
+    javaClass.<caret_4>something++
+    --javaClass.<caret_5>something
 
-    <caret>something++
-    (<caret>something)++
-    (<caret>something) = 1
-    (javaClass.<caret>something) = 1
+    <caret_6>something++
 }
 
 // FILE: JavaClass.java

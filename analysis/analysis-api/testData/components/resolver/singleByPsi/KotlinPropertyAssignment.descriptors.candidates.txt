@@ -1,7 +1,7 @@
 <caret_1>:
-  KtNameReferenceExpression(107,116): 'something'
-    KaSuccessCallInfo:
-      call = KaSimpleVariableAccessCall:
+  KtNameReferenceExpression(71,80): 'something'
+    KaApplicableCallCandidateInfo:
+      candidate = KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
             expression = a
@@ -16,11 +16,12 @@
             callableId = /A.something
         simpleAccess = Read
         typeArgumentsMapping = {}
+      isInBestCandidates = true
 
 <caret_2>:
-  KtNameReferenceExpression(124,133): 'something'
-    KaSuccessCallInfo:
-      call = KaSimpleVariableAccessCall:
+  KtNameReferenceExpression(88,97): 'something'
+    KaApplicableCallCandidateInfo:
+      candidate = KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
             expression = a
@@ -36,11 +37,12 @@
         simpleAccess = Write:
           value = 1
         typeArgumentsMapping = {}
+      isInBestCandidates = true
 
 <caret_3>:
-  KtNameReferenceExpression(144,153): 'something'
-    KaSuccessCallInfo:
-      call = KaSimpleVariableAccessCall:
+  KtNameReferenceExpression(108,117): 'something'
+    KaApplicableCallCandidateInfo:
+      candidate = KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
             expression = a
@@ -55,11 +57,12 @@
             callableId = /A.something
         simpleAccess = Read
         typeArgumentsMapping = {}
+      isInBestCandidates = true
 
 <caret_4>:
-  KtNameReferenceExpression(165,174): 'something'
-    KaSuccessCallInfo:
-      call = KaSimpleVariableAccessCall:
+  KtNameReferenceExpression(129,138): 'something'
+    KaApplicableCallCandidateInfo:
+      candidate = KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
             expression = a
@@ -74,11 +77,12 @@
             callableId = /A.something
         simpleAccess = Read
         typeArgumentsMapping = {}
+      isInBestCandidates = true
 
 <caret_5>:
-  KtNameReferenceExpression(185,194): 'something'
-    KaSuccessCallInfo:
-      call = KaSimpleVariableAccessCall:
+  KtNameReferenceExpression(149,158): 'something'
+    KaApplicableCallCandidateInfo:
+      candidate = KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
             expression = a
@@ -93,11 +97,12 @@
             callableId = /A.something
         simpleAccess = Read
         typeArgumentsMapping = {}
+      isInBestCandidates = true
 
 <caret_6>:
-  KtNameReferenceExpression(200,209): 'something'
-    KaSuccessCallInfo:
-      call = KaSimpleVariableAccessCall:
+  KtNameReferenceExpression(164,173): 'something'
+    KaApplicableCallCandidateInfo:
+      candidate = KaSimpleVariableAccessCall:
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaImplicitReceiverValue:
             symbol = KaReceiverParameterSymbol:
@@ -130,22 +135,4 @@
             callableId = /A.something
         simpleAccess = Read
         typeArgumentsMapping = {}
-
-<caret_10>:
-  KtNameReferenceExpression(220,229): 'something'
-    KaSuccessCallInfo:
-      call = KaSimpleVariableAccessCall:
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = a
-            isSafeNavigation = true
-            type = A
-          extensionReceiver = null
-          signature = KaVariableSignature:
-            name = something
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = var something: kotlin.Int
-            callableId = /A.something
-        simpleAccess = Read
-        typeArgumentsMapping = {}
+      isInBestCandidates = true

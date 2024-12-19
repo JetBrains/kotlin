@@ -1,5 +1,5 @@
-// LANGUAGE: +ContextReceivers
-// IGNORE_BACKEND_K1: JVM, JVM_IR, JS_IR, JS_IR_ES6, WASM
+// LANGUAGE: +ContextParameters
+// IGNORE_BACKEND_K1: ANY
 // IGNORE_LIGHT_ANALYSIS
 // ISSUE: KT-52002
 
@@ -8,14 +8,14 @@ class Scope(val name: String)
 interface Interface {
     fun foo(): String
 
-    context(Scope)
+    context(_: Scope)
     fun foo(): String
 }
 
 class ClassBoth : Interface {
     override fun foo() = "O"
 
-    context(Scope)
+    context(_: Scope)
     override fun foo() = "K"
 }
 

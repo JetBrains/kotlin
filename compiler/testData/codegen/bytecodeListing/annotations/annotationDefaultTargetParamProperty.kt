@@ -1,6 +1,7 @@
 // IGNORE_BACKEND_K1: JVM_IR
 // ISSUE: KT-73255 (not supported in K1)
 // LANGUAGE: +PropertyParamAnnotationDefaultTargetMode
+// LANGUAGE: -ForbidFieldAnnotationsOnAnnotationParameters
 
 @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FIELD)
 annotation class SomeField

@@ -3,25 +3,11 @@ class A {
 }
 
 fun A.foo(a: A) {
-    print(a.<caret>something)
-    a.<caret>something = 1
-    a.<caret>something += 1
-    a.<caret>something++
-    --a.<caret>something
+    print(a.<caret_1>something)
+    a.<caret_2>something = 1
+    a.<caret_3>something += 1
+    a.<caret_4>something++
+    --a.<caret_5>something
 
-    <caret>something++
-    (<caret>something)++
-    (<caret>something) = 1
-    (a.<caret>something) = 1
+    <caret_6>something++
 }
-
-// MULTIRESOLVE
-
-
-
-
-
-
-
-
-

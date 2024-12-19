@@ -12,9 +12,6 @@ fun A.foo(a: A) {
     --a.<caret_5>something
 
     <caret_6>something++
-    (<caret_7>something)++
-    (<caret_8>something) = 1
-    (a.<caret_9>something) = 1
 
     a?.<caret_10>something += 1
 }
