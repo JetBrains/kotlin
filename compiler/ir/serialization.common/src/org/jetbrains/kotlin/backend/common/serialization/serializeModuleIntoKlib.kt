@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.SerializedIrModule
@@ -118,7 +118,7 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
         shouldCheckSignaturesOnUniqueness: Boolean,
     ) -> IrModuleSerializer<*>,
     metadataSerializer: KlibSingleFileMetadataSerializer<SourceFile>,
-    platformKlibCheckers: List<(IrDiagnosticReporter) -> IrElementVisitor<*, Nothing?>> = emptyList(),
+    platformKlibCheckers: List<(IrDiagnosticReporter) -> IrVisitor<*, Nothing?>> = emptyList(),
     processCompiledFileData: ((File, KotlinFileSerializedData) -> Unit)? = null,
     processKlibHeader: (ByteArray) -> Unit = {},
 ): SerializerOutput<Dependency> {
@@ -215,7 +215,7 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
 
 private fun IrModuleFragment.runIrLevelCheckers(
     diagnosticReporter: IrDiagnosticReporter,
-    vararg checkers: (IrDiagnosticReporter) -> IrElementVisitor<*, Nothing?>,
+    vararg checkers: (IrDiagnosticReporter) -> IrVisitor<*, Nothing?>,
 ) {
     for (checker in checkers) {
         accept(checker(diagnosticReporter), null)

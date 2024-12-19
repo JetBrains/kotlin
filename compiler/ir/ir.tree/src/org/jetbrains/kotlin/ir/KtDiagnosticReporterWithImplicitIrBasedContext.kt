@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.hasEqualFqName
 import org.jetbrains.kotlin.ir.util.sourceElement
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.name.FqName
 import java.util.*
 
@@ -86,7 +86,7 @@ internal class IrBasedSuppressCache : AbstractKotlinSuppressCache<IrElement>() {
             visitor.annotatedAncestors
         }
 
-    private inner class AnnotatedTreeVisitor : IrElementVisitor<Unit, Stack<IrElement>> {
+    private inner class AnnotatedTreeVisitor : IrVisitor<Unit, Stack<IrElement>>() {
 
         val annotatedAncestors = mutableMapOf<IrElement, IrElement>()
 
