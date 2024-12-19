@@ -53,7 +53,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
 
     @Test
     public void testAllFilesPresentInResolve() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
     @Test
@@ -818,7 +818,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Annotations {
       @Test
       public void testAllFilesPresentInAnnotations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/annotations"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/annotations"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -852,7 +852,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Arguments {
       @Test
       public void testAllFilesPresentInArguments() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/arguments"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/arguments"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1090,7 +1090,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Arrays {
       @Test
       public void testAllFilesPresentInArrays() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/arrays"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/arrays"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1112,7 +1112,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Builtins {
       @Test
       public void testAllFilesPresentInBuiltins() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/builtins"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/builtins"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1128,7 +1128,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class CallResolution {
       @Test
       public void testAllFilesPresentInCallResolution() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/callResolution"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/callResolution"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1288,7 +1288,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Cfa {
       @Test
       public void testAllFilesPresentInCfa() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/cfa"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/cfa"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1328,7 +1328,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Cfg {
       @Test
       public void testAllFilesPresentInCfg() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/cfg"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/cfg"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1542,7 +1542,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Checkers {
       @Test
       public void testAllFilesPresentInCheckers() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/checkers"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/checkers"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1636,7 +1636,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class ClasspathSubstitution {
       @Test
       public void testAllFilesPresentInClasspathSubstitution() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/classpathSubstitution"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/classpathSubstitution"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1688,7 +1688,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class ConstVal {
       @Test
       public void testAllFilesPresentInConstVal() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/constVal"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/constVal"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1722,7 +1722,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Constructors {
       @Test
       public void testAllFilesPresentInConstructors() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/constructors"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/constructors"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1744,7 +1744,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class ContextParameters {
       @Test
       public void testAllFilesPresentInContextParameters() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1771,7 +1771,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class Diagnostics {
         @Test
         public void testAllFilesPresentInDiagnostics() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -1798,7 +1798,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
         public class DeclarationAndUsages {
           @Test
           public void testAllFilesPresentInDeclarationAndUsages() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
           }
 
           @Test
@@ -1960,7 +1960,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Contracts {
       @Test
       public void testAllFilesPresentInContracts() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2012,7 +2012,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Delegates {
       @Test
       public void testAllFilesPresentInDelegates() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/delegates"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/delegates"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2088,7 +2088,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
 
       @Test
       public void testAllFilesPresentInDiagnostics() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2451,7 +2451,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class FunctionAsExpression {
         @Test
         public void testAllFilesPresentInFunctionAsExpression() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/diagnostics/functionAsExpression"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/diagnostics/functionAsExpression"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -2468,7 +2468,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Exhaustiveness {
       @Test
       public void testAllFilesPresentInExhaustiveness() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/exhaustiveness"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/exhaustiveness"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Nested
@@ -2477,7 +2477,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class Negative {
         @Test
         public void testAllFilesPresentInNegative() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -2517,7 +2517,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class Positive {
         @Test
         public void testAllFilesPresentInPositive() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -2618,7 +2618,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
 
       @Test
       public void testAllFilesPresentInExpresssions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3005,7 +3005,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class Inference {
         @Test
         public void testAllFilesPresentInInference() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions/inference"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions/inference"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -3033,7 +3033,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class Invoke {
         @Test
         public void testAllFilesPresentInInvoke() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -3139,7 +3139,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class Operators {
         @Test
         public void testAllFilesPresentInOperators() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions/operators"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/expresssions/operators"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -3180,7 +3180,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class ExtraCheckers {
       @Test
       public void testAllFilesPresentInExtraCheckers() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3273,7 +3273,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class CanBeReplacedWithOperatorAssignment {
         @Test
         public void testAllFilesPresentInCanBeReplacedWithOperatorAssignment() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -3397,7 +3397,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class EmptyRangeChecker {
         @Test
         public void testAllFilesPresentInEmptyRangeChecker() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/emptyRangeChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/emptyRangeChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -3419,7 +3419,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class RedundantCallOfConversionMethod {
         @Test
         public void testAllFilesPresentInRedundantCallOfConversionMethod() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -3549,7 +3549,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class Unused {
         @Test
         public void testAllFilesPresentInUnused() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -3661,7 +3661,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class UselessCallOnNotNullChecker {
         @Test
         public void testAllFilesPresentInUselessCallOnNotNullChecker() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/UselessCallOnNotNullChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/UselessCallOnNotNullChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -3744,7 +3744,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class FromBuilder {
       @Test
       public void testAllFilesPresentInFromBuilder() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/fromBuilder"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/fromBuilder"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3784,7 +3784,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Inference {
       @Test
       public void testAllFilesPresentInInference() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4009,7 +4009,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class Incorporation {
         @Test
         public void testAllFilesPresentInIncorporation() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference/incorporation"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference/incorporation"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -4031,7 +4031,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class Pcla {
         @Test
         public void testAllFilesPresentInPcla() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference/pcla"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference/pcla"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -4054,7 +4054,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class InlineClasses {
       @Test
       public void testAllFilesPresentInInlineClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inlineClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inlineClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4088,7 +4088,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class InnerClasses {
       @Test
       public void testAllFilesPresentInInnerClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/innerClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/innerClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4128,7 +4128,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class LocalClasses {
       @Test
       public void testAllFilesPresentInLocalClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/localClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/localClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4180,7 +4180,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Multifile {
       @Test
       public void testAllFilesPresentInMultifile() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/multifile"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/multifile"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4256,7 +4256,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class NestedTypeAliases {
       @Test
       public void testAllFilesPresentInNestedTypeAliases() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4284,7 +4284,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Overrides {
       @Test
       public void testAllFilesPresentInOverrides() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/overrides"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/overrides"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4348,7 +4348,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Problems {
       @Test
       public void testAllFilesPresentInProblems() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4550,7 +4550,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Properties {
       @Test
       public void testAllFilesPresentInProperties() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/properties"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/properties"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4614,7 +4614,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class PropertyVsField {
       @Test
       public void testAllFilesPresentInPropertyVsField() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/propertyVsField"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/propertyVsField"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4648,7 +4648,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class References {
       @Test
       public void testAllFilesPresentInReferences() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/references"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/references"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4730,7 +4730,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class SamConstructors {
       @Test
       public void testAllFilesPresentInSamConstructors() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/samConstructors"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/samConstructors"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4782,7 +4782,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class SamConversions {
       @Test
       public void testAllFilesPresentInSamConversions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/samConversions"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/samConversions"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4858,7 +4858,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Scopes {
       @Test
       public void testAllFilesPresentInScopes() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/scopes"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/scopes"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4964,7 +4964,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Scripts {
       @Test
       public void testAllFilesPresentInScripts() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/scripts"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/scripts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
     }
 
@@ -4980,7 +4980,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
 
       @Test
       public void testAllFilesPresentInSmartcasts() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -5157,7 +5157,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class Booleans {
         @Test
         public void testAllFilesPresentInBooleans() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/booleans"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/booleans"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5191,7 +5191,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class BoundSmartcasts {
         @Test
         public void testAllFilesPresentInBoundSmartcasts() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/boundSmartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/boundSmartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5237,7 +5237,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class ControlStructures {
         @Test
         public void testAllFilesPresentInControlStructures() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/controlStructures"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/controlStructures"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5295,7 +5295,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class Lambdas {
         @Test
         public void testAllFilesPresentInLambdas() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/lambdas"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/lambdas"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5323,7 +5323,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class Loops {
         @Test
         public void testAllFilesPresentInLoops() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/loops"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/loops"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5351,7 +5351,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class Problems {
         @Test
         public void testAllFilesPresentInProblems() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5379,7 +5379,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class Receivers {
         @Test
         public void testAllFilesPresentInReceivers() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/receivers"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/receivers"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5419,7 +5419,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class SafeCalls {
         @Test
         public void testAllFilesPresentInSafeCalls() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5465,7 +5465,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class Stability {
         @Test
         public void testAllFilesPresentInStability() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/stability"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/stability"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5481,7 +5481,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class Variables {
         @Test
         public void testAllFilesPresentInVariables() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/variables"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/variables"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5510,7 +5510,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Stdlib {
       @Test
       public void testAllFilesPresentInStdlib() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/stdlib"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/stdlib"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Nested
@@ -5519,7 +5519,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class J_k {
         @Test
         public void testAllFilesPresentInJ_k() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/stdlib/j+k"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/stdlib/j+k"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5542,7 +5542,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Suppress {
       @Test
       public void testAllFilesPresentInSuppress() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/suppress"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/suppress"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -5588,7 +5588,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class TypeParameters {
       @Test
       public void testAllFilesPresentInTypeParameters() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/typeParameters"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/typeParameters"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -5616,7 +5616,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Types {
       @Test
       public void testAllFilesPresentInTypes() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/types"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/types"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -5662,7 +5662,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class UnqualifiedEnum {
       @Test
       public void testAllFilesPresentInUnqualifiedEnum() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -5720,7 +5720,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Vfir {
       @Test
       public void testAllFilesPresentInVfir() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/vfir"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/vfir"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Nested
@@ -5729,7 +5729,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class Expressions {
         @Test
         public void testAllFilesPresentInExpressions() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/vfir/expressions"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/vfir/expressions"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5746,7 +5746,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Visibility {
       @Test
       public void testAllFilesPresentInVisibility() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/visibility"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/visibility"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -5840,7 +5840,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class WithAllowedKotlinPackage {
       @Test
       public void testAllFilesPresentInWithAllowedKotlinPackage() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/withAllowedKotlinPackage"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/withAllowedKotlinPackage"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -5863,7 +5863,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
 
     @Test
     public void testAllFilesPresentInResolveWithStdlib() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
     @Test
@@ -6268,7 +6268,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Annotations {
       @Test
       public void testAllFilesPresentInAnnotations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -6302,7 +6302,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class CallableReferences {
       @Test
       public void testAllFilesPresentInCallableReferences() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -6455,7 +6455,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class FromBasicDiagnosticTests {
         @Test
         public void testAllFilesPresentInFromBasicDiagnosticTests() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/fromBasicDiagnosticTests"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/fromBasicDiagnosticTests"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -6544,7 +6544,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Contracts {
       @Test
       public void testAllFilesPresentInContracts() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Nested
@@ -6553,7 +6553,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class FromLibrary {
         @Test
         public void testAllFilesPresentInFromLibrary() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromLibrary"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromLibrary"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -6587,7 +6587,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class FromSource {
         @Test
         public void testAllFilesPresentInFromSource() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Nested
@@ -6596,7 +6596,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
         public class Bad {
           @Test
           public void testAllFilesPresentInBad() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
           }
 
           @Test
@@ -6611,7 +6611,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
           public class CallsInPlace {
             @Test
             public void testAllFilesPresentInCallsInPlace() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
             @Test
@@ -6663,7 +6663,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
           public class ReturnsImplies {
             @Test
             public void testAllFilesPresentInReturnsImplies() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
             @Test
@@ -6692,7 +6692,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
         public class Good {
           @Test
           public void testAllFilesPresentInGood() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
           }
 
           @Nested
@@ -6701,7 +6701,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
           public class CallsInPlace {
             @Test
             public void testAllFilesPresentInCallsInPlace() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
             @Test
@@ -6777,7 +6777,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
           public class ReturnsImplies {
             @Test
             public void testAllFilesPresentInReturnsImplies() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
             @Test
@@ -6853,7 +6853,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
           public class VariousContracts {
             @Test
             public void testAllFilesPresentInVariousContracts() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
             @Nested
@@ -6862,7 +6862,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
             public class NewSyntax {
               @Test
               public void testAllFilesPresentInNewSyntax() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts/newSyntax"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts/newSyntax"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
               }
 
               @Test
@@ -6882,7 +6882,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Delegates {
       @Test
       public void testAllFilesPresentInDelegates() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/delegates"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -6964,7 +6964,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Diagnostics {
       @Test
       public void testAllFilesPresentInDiagnostics() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -6979,7 +6979,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class FunctionReturnTypeMismatchChecker {
         @Test
         public void testAllFilesPresentInFunctionReturnTypeMismatchChecker() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/functionReturnTypeMismatchChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/functionReturnTypeMismatchChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -6995,7 +6995,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class InitializerTypeMismatchChecker {
         @Test
         public void testAllFilesPresentInInitializerTypeMismatchChecker() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/initializerTypeMismatchChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/initializerTypeMismatchChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -7012,7 +7012,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Inference {
       @Test
       public void testAllFilesPresentInInference() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -7075,7 +7075,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class Problems {
         @Test
         public void testAllFilesPresentInProblems() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -7110,7 +7110,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Initialization {
       @Test
       public void testAllFilesPresentInInitialization() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/initialization"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/initialization"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -7132,7 +7132,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
 
       @Test
       public void testAllFilesPresentInIntellij() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -7232,7 +7232,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class J_k {
       @Test
       public void testAllFilesPresentInJ_k() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -7554,7 +7554,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class MultiModule {
       @Test
       public void testAllFilesPresentInMultiModule() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/multiModule"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/multiModule"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -7600,7 +7600,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
 
       @Test
       public void testAllFilesPresentInProblems() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -7808,7 +7808,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Properties {
       @Test
       public void testAllFilesPresentInProperties() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -7823,7 +7823,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       public class BackingField {
         @Test
         public void testAllFilesPresentInBackingField() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -7918,7 +7918,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Reinitializations {
       @Test
       public void testAllFilesPresentInReinitializations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/reinitializations"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/reinitializations"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -7934,7 +7934,7 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     public class Smartcasts {
       @Test
       public void testAllFilesPresentInSmartcasts() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/smartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "lightTree");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/smartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test

@@ -312,7 +312,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             }
 
             testClass<AbstractFirPsiBlackBoxCodegenTest> {
-                model("codegen/box", excludeDirs = k1BoxTestDir, excludeDirsRecursively = listOf("lightTree"))
+                model("codegen/box", excludeDirs = k1BoxTestDir)
             }
 
             testClass<AbstractFirLightTreeBlackBoxCodegenTest>("FirLightTreeBlackBoxModernJdkCodegenTestGenerated") {
@@ -440,20 +440,15 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                     true -> TestGeneratorUtil.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
                     false -> TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME
                 }
-                val excludeLightTreeForPsi =
-                    if (baseTestClassName == AbstractFirPsiDiagnosticTest::class.java.name) listOf("lightTree") else emptyList()
-
                 model(
                     "resolve",
                     pattern = pattern,
-                    excludeDirsRecursively = excludeLightTreeForPsi,
                     skipSpecificFile = skipSpecificFileForFirDiagnosticTest(onlyTypealiases),
                     skipTestAllFilesCheck = onlyTypealiases
                 )
                 model(
                     "resolveWithStdlib",
                     pattern = pattern,
-                    excludeDirsRecursively = excludeLightTreeForPsi,
                     skipSpecificFile = skipSpecificFileForFirDiagnosticTest(onlyTypealiases),
                     skipTestAllFilesCheck = onlyTypealiases
                 )
@@ -463,7 +458,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model(
                     "resolveFreezesIDE",
                     pattern = """^(.+)\.(nkt)$""",
-                    excludeDirsRecursively = excludeLightTreeForPsi,
                     skipSpecificFile = skipSpecificFileForFirDiagnosticTest(onlyTypealiases),
                     skipTestAllFilesCheck = onlyTypealiases
                 )
@@ -531,11 +525,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             )
 
             testClass<AbstractTieredBackendJvmPsiTest>(
-                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(
-                    TestTierLabel.BACKEND,
-                    allowKts = true,
-                    excludeDirsRecursively = listOf("lightTree")
-                ),
+                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.BACKEND, allowKts = true),
             )
         }
     }
