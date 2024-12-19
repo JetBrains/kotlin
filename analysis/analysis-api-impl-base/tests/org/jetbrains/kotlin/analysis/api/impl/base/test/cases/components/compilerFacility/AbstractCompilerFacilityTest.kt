@@ -196,9 +196,11 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
     }
 
     private fun dumpClassFiles(outputFiles: List<KaCompiledFile>): String {
-        val classReaders =
-            outputFiles.filter { it.path.endsWith(".class", ignoreCase = true) }.also { check(it.isNotEmpty()) }.sortedBy { it.path }
-                .map { ClassReader(it.content) }
+        val classReaders = outputFiles.filter { it.path.endsWith(".class", ignoreCase = true) }
+            .also { check(it.isNotEmpty()) }
+            .sortedBy { it.path }
+            .map { ClassReader(it.content) }
+
         return dumpClassFromClassReaders(classReaders)
     }
 
