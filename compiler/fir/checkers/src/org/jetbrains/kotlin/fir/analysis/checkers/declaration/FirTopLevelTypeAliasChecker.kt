@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkTypeRefForUnderscore
+import org.jetbrains.kotlin.fir.analysis.checkers.isMalformedExpandedType
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -25,6 +26,30 @@ object FirTopLevelTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) 
             reporter.reportOn(declaration.source, FirErrors.TOPLEVEL_TYPEALIASES_ONLY, context)
         }
 
+        val expandedTypeRef = declaration.expandedTypeRef
+        val fullyExpandedType = expandedTypeRef.coneType.fullyExpandedType(context.session)
+
+        declaration.checkTypealiasShouldExpandToClass(fullyExpandedType, expandedTypeRef, context, reporter)
+
+        checkTypeRefForUnderscore(expandedTypeRef, context, reporter)
+
+        val allowNullableNothing = context.languageVersionSettings.supportsFeature(LanguageFeature.NullableNothingInReifiedPosition)
+        if (fullyExpandedType.isMalformedExpandedType(context, allowNullableNothing)) {
+            reporter.reportOn(
+                declaration.expandedTypeRef.source,
+                FirErrors.TYPEALIAS_EXPANDS_TO_ARRAY_OF_NOTHINGS,
+                fullyExpandedType,
+                context
+            )
+        }
+    }
+
+    private fun FirTypeAlias.checkTypealiasShouldExpandToClass(
+        fullyExpandedType: ConeKotlinType,
+        expandedTypeRef: FirTypeRef,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+    ) {
         fun containsTypeParameter(type: ConeKotlinType): Boolean {
             val unwrapped = type.unwrapToSimpleTypeUsingLowerBound()
 
@@ -44,17 +69,13 @@ object FirTopLevelTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) 
             return false
         }
 
-        val expandedTypeRef = declaration.expandedTypeRef
-        val fullyExpandedType = expandedTypeRef.coneType.fullyExpandedType(context.session)
-
         if (containsTypeParameter(fullyExpandedType) || fullyExpandedType is ConeDynamicType) {
             reporter.reportOn(
-                declaration.expandedTypeRef.source,
+                this.expandedTypeRef.source,
                 FirErrors.TYPEALIAS_SHOULD_EXPAND_TO_CLASS,
                 expandedTypeRef.coneType,
                 context
             )
         }
-        checkTypeRefForUnderscore(expandedTypeRef, context, reporter)
     }
 }
