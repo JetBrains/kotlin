@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
  *     fun f() {}
  */
 @PhaseDescription(name = "RepeatedAnnotation")
-internal class RepeatedAnnotationLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementVisitorVoid {
+internal class RepeatedAnnotationLowering(private val context: JvmBackendContext) : IrVisitorVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(this)
     }

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 
@@ -38,7 +38,7 @@ private class NoArgIrTransformer(
     private val context: IrPluginContext,
     private val annotations: List<String>,
     private val invokeInitializers: Boolean,
-) : AnnotationBasedExtension, IrElementVisitorVoid {
+) : IrVisitorVoid(), AnnotationBasedExtension {
     override fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner?): List<String> = annotations
 
     override fun visitElement(element: IrElement) {

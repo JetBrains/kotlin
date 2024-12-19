@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
-internal class AnnotationGenerator(context: GeneratorContext) : IrElementVisitorVoid {
+internal class AnnotationGenerator(context: GeneratorContext) : IrVisitorVoid() {
     private val typeTranslator = context.typeTranslator
     private val constantValueGenerator = context.constantValueGenerator
 

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -248,7 +248,7 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
                 // Validate that no composers are captured by nested lambdas
                 var currentComposer: IrValueParameter? = null
                 element.accept(
-                    object : IrElementVisitorVoid {
+                    object : IrVisitorVoid() {
                         override fun visitSimpleFunction(declaration: IrSimpleFunction) {
                             val composer = declaration.valueParameters.firstOrNull {
                                 it.name == ComposeNames.COMPOSER_PARAMETER
@@ -398,7 +398,7 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
         validator = {
             val expectedArity = listOf(2, 3, 4, 15)
             var i = 0 // to iterate over `hashCode` calls
-            it.acceptChildrenVoid(object : IrElementVisitorVoid {
+            it.acceptChildrenVoid(object : IrVisitorVoid() {
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
                 }
@@ -439,7 +439,7 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
             }
         """.trimIndent(),
             validator = {
-                it.acceptChildrenVoid(object : IrElementVisitorVoid {
+                it.acceptChildrenVoid(object : IrVisitorVoid() {
                     override fun visitElement(element: IrElement) {
                         element.acceptChildrenVoid(this)
                     }
@@ -491,7 +491,7 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
             }
         """.trimIndent(),
             validator = {
-                it.acceptChildrenVoid(object : IrElementVisitorVoid {
+                it.acceptChildrenVoid(object : IrVisitorVoid() {
                     override fun visitElement(element: IrElement) {
                         element.acceptChildrenVoid(this)
                     }

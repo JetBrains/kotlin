@@ -11,14 +11,14 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.SpecialNames
 
 class ManglerChecker(
     vararg _manglers: KotlinMangler<IrDeclaration>,
     private val needsChecking: (IrDeclarationBase) -> Boolean = hasDescriptor
-) : IrElementVisitorVoid {
+) : IrVisitorVoid() {
 
     companion object {
         val hasDescriptor: (IrDeclarationBase) -> Boolean = { it.symbol.hasDescriptor }
