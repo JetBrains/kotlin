@@ -29934,17 +29934,6 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       }
 
       @Nested
-      @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/lightTree")
-      @TestDataPath("$PROJECT_ROOT")
-      @Tag("es6")
-      public class LightTree {
-        @Test
-        public void testAllFilesPresentInLightTree() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/lightTree"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
-        }
-      }
-
-      @Nested
       @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/migratedOldTests")
       @TestDataPath("$PROJECT_ROOT")
       @Tag("es6")

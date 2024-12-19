@@ -27467,6 +27467,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
+        @TestMetadata("annotationArgRendering.kt")
+        public void testAnnotationArgRendering() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/annotationArgRendering.kt");
+        }
+
+        @Test
         @TestMetadata("annotationArgumentsConstExpressions.kt")
         public void testAnnotationArgumentsConstExpressions() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/annotationArgumentsConstExpressions.kt");
@@ -27710,17 +27716,6 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         @TestMetadata("withOtherIncomatibilities.kt")
         public void testWithOtherIncomatibilities() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/withOtherIncomatibilities.kt");
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/lightTree")
-        @TestDataPath("$PROJECT_ROOT")
-        public class LightTree {
-          @Test
-          @TestMetadata("annotationArgRendering.kt")
-          public void testAnnotationArgRendering() {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/lightTree/annotationArgRendering.kt");
-          }
         }
       }
 
@@ -50162,6 +50157,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
     }
 
     @Test
+    @TestMetadata("nestedAnnotationConstExprArguments.kt")
+    public void testNestedAnnotationConstExprArguments() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/nestedAnnotationConstExprArguments.kt");
+    }
+
+    @Test
     @TestMetadata("nestedClass.kt")
     public void testNestedClass() {
       runTest("compiler/fir/analysis-tests/testData/resolve/nestedClass.kt");
@@ -53005,6 +53006,18 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       @TestDataPath("$PROJECT_ROOT")
       public class Operators {
         @Test
+        @TestMetadata("binaryOpFolding.kt")
+        public void testBinaryOpFolding() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/binaryOpFolding.kt");
+        }
+
+        @Test
+        @TestMetadata("binaryOpStackOverflow.kt")
+        public void testBinaryOpStackOverflow() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/binaryOpStackOverflow.kt");
+        }
+
+        @Test
         @TestMetadata("plus.kt")
         public void testPlus() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/plus.kt");
@@ -53020,23 +53033,6 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         @TestMetadata("plusAssign.kt")
         public void testPlusAssign() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/plusAssign.kt");
-        }
-
-        @Nested
-        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/lightTree")
-        @TestDataPath("$PROJECT_ROOT")
-        public class LightTree {
-          @Test
-          @TestMetadata("binaryOpFolding.kt")
-          public void testBinaryOpFolding() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/lightTree/binaryOpFolding.kt");
-          }
-
-          @Test
-          @TestMetadata("binaryOpStackOverflow.kt")
-          public void testBinaryOpStackOverflow() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/lightTree/binaryOpStackOverflow.kt");
-          }
         }
       }
     }
@@ -53926,17 +53922,6 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/simple.kt");
-      }
-    }
-
-    @Nested
-    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/lightTree")
-    @TestDataPath("$PROJECT_ROOT")
-    public class LightTree {
-      @Test
-      @TestMetadata("nestedAnnotationConstExprArguments.kt")
-      public void testNestedAnnotationConstExprArguments() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/lightTree/nestedAnnotationConstExprArguments.kt");
       }
     }
 
@@ -55912,6 +55897,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
     }
 
     @Test
+    @TestMetadata("topLevelResolve.kt")
+    public void testTopLevelResolve() {
+      runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/topLevelResolve.kt");
+    }
+
+    @Test
     @TestMetadata("typeAliasDeserialization.kt")
     public void testTypeAliasDeserialization() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/typeAliasDeserialization.kt");
@@ -57162,17 +57153,6 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         public void testOverrideWithRawType() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/commonAtomicTypes/overrideWithRawType.kt");
         }
-      }
-    }
-
-    @Nested
-    @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/lightTree")
-    @TestDataPath("$PROJECT_ROOT")
-    public class LightTree {
-      @Test
-      @TestMetadata("topLevelResolve.kt")
-      public void testTopLevelResolve() {
-        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/lightTree/topLevelResolve.kt");
       }
     }
 
