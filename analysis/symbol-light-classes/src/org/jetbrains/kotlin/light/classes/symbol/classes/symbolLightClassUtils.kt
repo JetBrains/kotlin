@@ -138,7 +138,7 @@ internal fun KaSession.createConstructors(
 
         result.add(
             SymbolLightConstructor(
-                ktAnalysisSession = this@KaSession,
+                ktAnalysisSession = this@createConstructors,
                 constructorSymbol = constructor,
                 containingClass = lightClass,
                 methodIndex = METHOD_INDEX_BASE
@@ -147,7 +147,7 @@ internal fun KaSession.createConstructors(
 
         createJvmOverloadsIfNeeded(constructor, result) { methodIndex, argumentSkipMask ->
             SymbolLightConstructor(
-                ktAnalysisSession = this@KaSession,
+                ktAnalysisSession = this@createConstructors,
                 constructorSymbol = constructor,
                 containingClass = lightClass,
                 methodIndex = methodIndex,
@@ -268,11 +268,11 @@ internal fun KaSession.createMethods(
 
     // Regular members
     regularMembers.forEach {
-        this@KaSession.handleDeclaration(it)
+        this@createMethods.handleDeclaration(it)
     }
     // Then, properties from the primary constructor parameters
     ctorProperties.forEach {
-        this@KaSession.handleDeclaration(it)
+        this@createMethods.handleDeclaration(it)
     }
 }
 
@@ -321,7 +321,7 @@ internal fun KaSession.createPropertyAccessors(
             )
         }
         val method = SymbolLightAnnotationsMethod(
-            ktAnalysisSession = this@KaSession,
+            ktAnalysisSession = this@createPropertyAccessors,
             containingPropertySymbol = declaration,
             lightMemberOrigin = lightMemberOrigin,
             containingClass = lightClass
@@ -406,7 +406,7 @@ internal fun KaSession.createPropertyAccessors(
         }
 
         return SymbolLightAccessorMethod(
-            ktAnalysisSession = this@KaSession,
+            ktAnalysisSession = this@createPropertyAccessors,
             propertyAccessorSymbol = accessor,
             containingPropertySymbol = declaration,
             lightMemberOrigin = lightMemberOrigin,
@@ -454,7 +454,7 @@ internal fun KaSession.createField(
     val fieldName = nameGenerator.generateUniqueFieldName(declaration.name.asString())
 
     return SymbolLightFieldForProperty(
-        ktAnalysisSession = this@KaSession,
+        ktAnalysisSession = this@createField,
         propertySymbol = declaration,
         fieldName = fieldName,
         containingClass = lightClass,

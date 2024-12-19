@@ -19,7 +19,7 @@ kotlin {
         explicitApi()
 
         /* Required to use Analysis Api */
-        freeCompilerArgs.add("-Xcontext-receivers")
+        freeCompilerArgs.add("-Xcontext-parameters")
     }
 }
 

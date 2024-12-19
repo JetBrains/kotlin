@@ -82,62 +82,58 @@ internal fun readKlibDeclarationAddresses(library: KotlinLibrary): Set<KlibDecla
 
 }
 
-context(PackageFragmentReadingContext)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+context(context: PackageFragmentReadingContext)
 internal fun ProtoBuf.PackageFragment.readKlibClassAddresses(): Set<KlibClassAddress> {
     return class_List.mapNotNull { classProto ->
-        val classId = ClassId.fromString(nameResolver.getQualifiedClassName(classProto.fqName))
+        val classId = ClassId.fromString(context.nameResolver.getQualifiedClassName(classProto.fqName))
         if (classId.isNestedClass) return@mapNotNull null
         KlibClassAddress(
-            libraryPath = libraryPath,
-            packageFqName = packageFqName,
+            libraryPath = context.libraryPath,
+            packageFqName = context.packageFqName,
             sourceFileName = classProto.getExtensionOrNull(KlibMetadataProtoBuf.classFile)?.let { fileNameId ->
-                nameResolver.strings.getString(fileNameId)
+                context.nameResolver.strings.getString(fileNameId)
             },
             classId = classId
         )
     }.toSet()
 }
 
-context(PackageFragmentReadingContext)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+context(context: PackageFragmentReadingContext)
 internal fun ProtoBuf.PackageFragment.readKlibTypeAliasAddresses(): Set<KlibTypeAliasAddress> {
     return this.`package`.typeAliasList.map { typeAliasProto ->
-        val name = Name.identifier(nameResolver.getString(typeAliasProto.name))
+        val name = Name.identifier(context.nameResolver.getString(typeAliasProto.name))
         KlibTypeAliasAddress(
-            libraryPath = libraryPath,
-            packageFqName = packageFqName,
-            classId = ClassId(packageFqName, name)
+            libraryPath = context.libraryPath,
+            packageFqName = context.packageFqName,
+            classId = ClassId(context.packageFqName, name)
         )
     }.toSet()
 }
 
-context(PackageFragmentReadingContext)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+context(context: PackageFragmentReadingContext)
 internal fun ProtoBuf.PackageFragment.readKlibPropertyAddresses(): Set<KlibPropertyAddress> {
     return `package`.propertyList.map { propertyProto ->
         KlibPropertyAddress(
-            libraryPath = libraryPath,
+            libraryPath = context.libraryPath,
             sourceFileName = propertyProto.getExtensionOrNull(KlibMetadataProtoBuf.propertyFile)?.let { fileNameId ->
-                nameResolver.strings.getString(fileNameId)
+                context.nameResolver.strings.getString(fileNameId)
             },
-            packageFqName = packageFqName,
-            callableName = Name.identifier(nameResolver.getString(propertyProto.name))
+            packageFqName = context.packageFqName,
+            callableName = Name.identifier(context.nameResolver.getString(propertyProto.name))
         )
     }.toSet()
 }
 
-context(PackageFragmentReadingContext)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+context(context: PackageFragmentReadingContext)
 internal fun ProtoBuf.PackageFragment.readKlibFunctionAddresses(): Set<KlibFunctionAddress> {
     return `package`.functionList.map { functionProto ->
         KlibFunctionAddress(
-            libraryPath = libraryPath,
+            libraryPath = context.libraryPath,
             sourceFileName = functionProto.getExtensionOrNull(KlibMetadataProtoBuf.functionFile)?.let { fileNameId ->
-                nameResolver.getString(fileNameId)
+                context.nameResolver.getString(fileNameId)
             },
-            packageFqName = packageFqName,
-            callableName = Name.identifier(nameResolver.getString(functionProto.name))
+            packageFqName = context.packageFqName,
+            callableName = Name.identifier(context.nameResolver.getString(functionProto.name))
         )
     }.toSet()
 }
