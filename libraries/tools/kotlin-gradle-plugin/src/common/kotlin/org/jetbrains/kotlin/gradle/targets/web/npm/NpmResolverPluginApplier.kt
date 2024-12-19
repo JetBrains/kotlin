@@ -9,11 +9,11 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.implementing
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.AbstractNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 
 internal class NpmResolverPluginApplier(
-    private val nodeJsRootApply: (Project) -> AbstractNodeJsRootExtension,
+    private val nodeJsRootApply: (Project) -> BaseNodeJsRootExtension,
     private val singleNodeJsApply: (Project) -> Unit,
 ) {
     fun apply(project: Project) {
