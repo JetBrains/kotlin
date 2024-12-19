@@ -26,15 +26,16 @@ import org.jetbrains.kotlin.gradle.plugin.sources.compilationDependencyConfigura
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
+import org.jetbrains.kotlin.gradle.targets.js.targetVariant
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.createResolvable
 import java.io.Serializable
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNpmResolutionManager as wasmKotlinNpmResolutionManager
 
 /**
  * See [KotlinNpmResolutionManager] for details about resolution process.
@@ -63,8 +64,11 @@ class KotlinCompilationNpmResolver(
         KotlinPackageJsonTask.create(compilation)
 
     val publicPackageJsonTaskHolder: TaskProvider<PublicPackageJsonTask> = run {
-        val npmResolutionManager = project.kotlinNpmResolutionManager
-        val nodeJsTaskProviders = project.rootProject.kotlinNodeJsRootExtension
+        val npmResolutionManager = compilation.targetVariant(
+            { project.kotlinNpmResolutionManager },
+            { project.wasmKotlinNpmResolutionManager },
+        )
+
         project.registerTask<PublicPackageJsonTask>(
             npmProject.publicPackageJsonTaskName
         ) {
@@ -85,7 +89,12 @@ class KotlinCompilationNpmResolver(
                 it.attribute(publicPackageJsonAttribute)
             }
 
-            nodeJsTaskProviders.packageJsonUmbrellaTaskProvider.configure {
+            val nodeJsRoot = compilation.targetVariant(
+                { project.rootProject.kotlinNodeJsRootExtension },
+                { project.rootProject.wasmKotlinNodeJsRootExtension },
+            )
+
+            nodeJsRoot.packageJsonUmbrellaTaskProvider.configure {
                 it.dependsOn(packageJsonTask)
             }
 

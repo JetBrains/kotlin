@@ -5,42 +5,28 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
-import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.implementing
-import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
+import org.jetbrains.kotlin.gradle.targets.web.npm.CommonNpmResolverPlugin
+import org.jetbrains.kotlin.gradle.targets.web.npm.NpmResolverPluginApplier
 
-class NpmResolverPlugin : Plugin<Project> {
+/**
+ * A plugin for configuring and resolving NPM dependencies in a Gradle project.
+ *
+ * This plugin integrates Node.js and NPM dependency management into the Gradle build process.
+ * It ensures configuration of the required Node.js environment and applies project-specific
+ * Node.js configurations necessary for resolving and using NPM dependencies.
+ *
+ * This plugin is suitable for projects using NPM dependencies, and its application ensures consistency
+ * and correctness in dealing with those dependencies.
+ */
+class NpmResolverPlugin : CommonNpmResolverPlugin {
     override fun apply(project: Project) {
-        val nodeJsRoot = NodeJsRootPlugin.apply(project.rootProject)
-        NodeJsPlugin.apply(project)
-        project.rootProject.kotlinNodeJsRootExtension.resolver.addProject(project)
-        val kotlinNodeJsTaskProvidersExtension = project.rootProject.kotlinNodeJsRootExtension
-        project.whenEvaluated {
-            project.tasks.implementing(RequiresNpmDependencies::class)
-                .configureEach { task ->
-                    if (task.enabled) {
-                        task as RequiresNpmDependencies
-                        // KotlinJsTest delegates npm dependencies to testFramework,
-                        // which can be defined after this configure action
-                        if (task !is KotlinJsTest) {
-                            nodeJsRoot.taskRequirements.addTaskRequirements(task)
-
-                            if (task.requiredNpmDependencies.isNotEmpty()) {
-                                task.dependsOn(
-                                    kotlinNodeJsTaskProvidersExtension.npmInstallTaskProvider,
-                                )
-
-                                task.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
-                            }
-                        }
-                    }
-                }
-        }
+        NpmResolverPluginApplier(
+            { NodeJsRootPlugin.apply(project.rootProject) },
+            { NodeJsPlugin.apply(project) },
+        ).apply(project)
     }
 
     companion object {

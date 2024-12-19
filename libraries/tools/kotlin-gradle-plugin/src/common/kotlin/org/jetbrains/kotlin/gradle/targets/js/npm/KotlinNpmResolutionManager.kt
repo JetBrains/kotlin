@@ -161,10 +161,12 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
 
         private fun registerIfAbsentImpl(
             project: Project,
-            resolution: Provider<KotlinRootNpmResolution>?,
-            gradleNodeModulesProvider: Provider<GradleNodeModulesCache>?,
-            packagesDir: Provider<Directory>
+            resolution: Provider<KotlinRootNpmResolution>,
+            gradleNodeModulesProvider: Provider<GradleNodeModulesCache>,
+            packagesDir: Provider<Directory>,
+            nameDisambiguate: (String) -> String,
         ): Provider<KotlinNpmResolutionManager> {
+            val serviceName = nameDisambiguate(serviceName)
             project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
                 @Suppress("UNCHECKED_CAST")
                 return it.service as Provider<KotlinNpmResolutionManager>
@@ -188,16 +190,15 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
 
         fun registerIfAbsent(
             project: Project,
-            resolution: Provider<KotlinRootNpmResolution>?,
-            gradleNodeModulesProvider: Provider<GradleNodeModulesCache>?,
-            packagesDir: Provider<Directory>
-        ) = registerIfAbsentImpl(project, resolution, gradleNodeModulesProvider, packagesDir).also { serviceProvider ->
+            resolution: Provider<KotlinRootNpmResolution>,
+            gradleNodeModulesProvider: Provider<GradleNodeModulesCache>,
+            packagesDir: Provider<Directory>,
+            nameDisambiguate: (String) -> String,
+        ) = registerIfAbsentImpl(project, resolution, gradleNodeModulesProvider, packagesDir, nameDisambiguate).also { serviceProvider ->
             SingleActionPerProject.run(project, UsesKotlinNpmResolutionManager::class.java.name) {
                 project.tasks.withType<UsesKotlinNpmResolutionManager>().configureEach { task ->
                     task.usesService(serviceProvider)
-                    if (gradleNodeModulesProvider != null) {
-                        task.usesService(gradleNodeModulesProvider)
-                    }
+                    task.usesService(gradleNodeModulesProvider)
                 }
             }
         }

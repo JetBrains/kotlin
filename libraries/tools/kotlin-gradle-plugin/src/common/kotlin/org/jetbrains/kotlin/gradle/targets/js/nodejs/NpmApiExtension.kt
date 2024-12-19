@@ -10,6 +10,13 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution
 
+/**
+ * Represents an extension interface for managing and configuring an NPM-based project in a Kotlin/Gradle context.
+ * Provides functionality to interact with the NPM package manager and handle its environment setup.
+ *
+ * @param Env The type of package manager environment implementation. Must extend [PackageManagerEnvironment].
+ * @param NpmApi The type of NPM API execution implementation. Must extend [NpmApiExecution] with the given environment.
+ */
 interface NpmApiExtension<out Env : PackageManagerEnvironment, out NpmApi : NpmApiExecution<Env>> {
     val packageManager: NpmApi
 
