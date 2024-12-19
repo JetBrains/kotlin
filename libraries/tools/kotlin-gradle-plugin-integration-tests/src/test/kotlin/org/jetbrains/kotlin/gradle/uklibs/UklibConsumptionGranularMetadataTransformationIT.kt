@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.locateOrRegisterMetadataDependencyTransformationTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import java.io.File
 import kotlin.io.path.pathString
 import kotlin.test.assertEquals
 
@@ -127,19 +128,6 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
                 }
             }
 
-            val iosMainTransformationTask = buildScriptReturn {
-                project.locateOrRegisterMetadataDependencyTransformationTask(
-                    kotlinMultiplatform.sourceSets.getByName("consumerIosMain")
-                ).name
-            }.buildAndReturn()
-
-            val outputClasspath = buildScriptReturn {
-                val transformationTask = project.locateOrRegisterMetadataDependencyTransformationTask(
-                    kotlinMultiplatform.sourceSets.getByName("consumerIosMain")
-                ).get()
-                transformationTask.allTransformedLibraries().get()
-            }.buildAndReturn(iosMainTransformationTask)
-
             assertEquals(
                 listOf(
                     listOf("consumerIosMain", "uklib-foo-direct-1.0-directProducerIosMain-"),
@@ -149,11 +137,116 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
                     listOf("consumerCommonMain", "uklib-foo-direct-1.0-directProducerCommonMain-"),
                     listOf("consumerCommonMain", "uklib-foo-transitive-1.0-transitiveProducerCommonMain-"),
                 ),
-                outputClasspath.map {
-                    it.toPath().toList().takeLast(2).map { it.pathString }
-                },
+                metadataTransformationOutputClasspath("consumerIosMain").relativeTransformationPathComponents(),
             )
         }
+    }
+
+    /**
+     * Consuming metadata compilations must see the fragments ordered by their attributes compatibility. In GMT this order depends on the
+     * order of MetadataDependencyResolution.ChooseVisibleSourceSets.visibleSourceSetNamesExcludingDependsOn
+     *
+     * In this test we construct a uklib with many intermediate fragments and check that the output of the transformation is properly
+     * ordered
+     */
+    @GradleTest
+    fun `uklib consumption in GMT - output classpath of GMT is ordered according to the compatibility of Uklib fragments`(
+        version: GradleVersion
+    ) {
+        val publishedProject = project("buildScriptInjectionGroovy", version) {
+            buildScriptInjection {
+                project.enableUklibPublication()
+                project.applyMultiplatform {
+                    applyHierarchyTemplate {
+                        group("one") {
+                            withIosArm64()
+                            group("two") {
+                                withIosX64()
+                                group("three") {
+                                    withLinuxArm64()
+                                    group("four") {
+                                        withLinuxX64()
+                                        group("five") {
+                                            withMacosArm64()
+                                            group("six") {
+                                                withMacosX64()
+                                                group("seven") {
+                                                    withJvm()
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    iosArm64()
+                    iosX64()
+                    linuxArm64()
+                    linuxX64()
+                    macosArm64()
+                    macosX64()
+                    jvm()
+
+                    sourceSets.all {
+                        it.addIdentifierClass()
+                    }
+                }
+            }
+        }.publish()
+
+        project("buildScriptInjectionGroovy", version) {
+            addPublishedProjectToRepositoriesAndIgnoreGradleMetadata(publishedProject)
+            buildScriptInjection {
+                project.computeUklibChecksum(false)
+                project.enableCrossCompilation()
+                project.setUklibResolutionStrategy()
+                project.applyMultiplatform {
+                    jvm()
+                    macosX64()
+
+                    sourceSets.commonMain.get().addIdentifierClass()
+                    sourceSets.commonMain.get().dependencies {
+                        implementation(publishedProject.coordinate)
+                    }
+                }
+            }
+
+            assertEquals(
+                listOf(
+                    listOf("commonMain", "uklib-foo-producer-1.0-sixMain-"),
+                    listOf("commonMain", "uklib-foo-producer-1.0-fiveMain-"),
+                    listOf("commonMain", "uklib-foo-producer-1.0-fourMain-"),
+                    listOf("commonMain", "uklib-foo-producer-1.0-threeMain-"),
+                    listOf("commonMain", "uklib-foo-producer-1.0-twoMain-"),
+                    listOf("commonMain", "uklib-foo-producer-1.0-oneMain-"),
+                ),
+                metadataTransformationOutputClasspath("commonMain")
+                    .filterNot { "kotlin-stdlib" in it.name }
+                    .relativeTransformationPathComponents(),
+            )
+        }
+    }
+
+    // Take full paths of the classpath formed by the GMT and extract last 2 path components for assertions
+    private fun List<File>.relativeTransformationPathComponents(): List<List<String>> = map { it.lastPathComponents(2) }
+    private fun File.lastPathComponents(number: Int): List<String> = toPath().toList().takeLast(number).map { it.pathString }
+
+    private fun TestProject.metadataTransformationOutputClasspath(
+        sourceSetName: String,
+    ): List<File> {
+        val iosMainTransformationTask = buildScriptReturn {
+            project.locateOrRegisterMetadataDependencyTransformationTask(
+                kotlinMultiplatform.sourceSets.getByName(sourceSetName)
+            ).name
+        }.buildAndReturn()
+        val outputClasspath = buildScriptReturn {
+            val transformationTask = project.locateOrRegisterMetadataDependencyTransformationTask(
+                kotlinMultiplatform.sourceSets.getByName(sourceSetName)
+            ).get()
+            transformationTask.allTransformedLibraries().get()
+        }.buildAndReturn(iosMainTransformationTask)
+        return outputClasspath
     }
 
     private fun publishUklib(
@@ -163,7 +256,6 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
         multiplatformConfiguration: KotlinMultiplatformExtension.() -> Unit,
     ): PublishedProject {
         return project("buildScriptInjectionGroovy", gradleVersion) {
-            // FIXME: addPublishedProjectToRepositoriesAndIgnoreGradleMetadata?
             addPublishedRepository?.let { addPublishedProjectToRepositories(it) }
             buildScriptInjection {
                 project.enableUklibPublication()

@@ -217,7 +217,7 @@ class UklibConsumptionIT : KGPBaseTest() {
 
             // Make sure that we are actually resolving uklib from metadataSources configuration
             assertEquals(
-                resolvedProducerIosArm64Variant["uklibTargetAttribute"],
+                resolvedProducerIosArm64Variant["org.jetbrains.kotlin.uklibView"],
                 "ios_arm64",
             )
 

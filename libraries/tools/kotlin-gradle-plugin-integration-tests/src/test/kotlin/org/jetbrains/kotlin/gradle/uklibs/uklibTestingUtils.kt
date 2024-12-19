@@ -241,7 +241,7 @@ fun Project.enableCrossCompilation(enable: Boolean = true) {
 
 internal fun Project.setUklibResolutionStrategy(strategy: UklibResolutionStrategy = UklibResolutionStrategy.ResolveUklibsInMavenComponents) {
     propertiesExtension.set(
-        PropertiesProvider.PropertyNames.KOTLIN_MPP_UKLIB_RESOLUTION_STRATEGY,
+        PropertiesProvider.PropertyNames.KOTLIN_KMP_UKLIB_RESOLUTION_STRATEGY,
         strategy.propertyName,
     )
 }
