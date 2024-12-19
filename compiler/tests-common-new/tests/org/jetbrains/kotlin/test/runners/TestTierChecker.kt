@@ -99,7 +99,7 @@ open class PartialTestTierChecker(testServices: TestServices) : AfterAnalysisChe
         val applicableTiers = testServices.moduleStructure.applicableTestTiers
         val applicableTierLabels = applicableTiers.map { it.label }
         val disableText = testServices.moduleStructure.allDirectives[DISABLE_NEXT_TIER_SUGGESTION]
-        val declaredTier = testServices.moduleStructure.allDirectives[RUN_PIPELINE_TILL].firstOrNull()?.let(TestTierLabel::valueOf)
+        val declaredTier = testServices.moduleStructure.allDirectives[RUN_PIPELINE_TILL].firstOrNull()
 
         if (!isDirectiveSetInTest) {
             setTierIfNeeded(applicableTierLabels.first())
@@ -210,7 +210,7 @@ class TestTierChecker(
 
         val applicableTiers = testServices.moduleStructure.applicableTestTiers
         val applicableTierLabels = applicableTiers.map { it.label }
-        val declaredTier = testServices.moduleStructure.allDirectives[RUN_PIPELINE_TILL].firstOrNull()?.let(TestTierLabel::valueOf)
+        val declaredTier = testServices.moduleStructure.allDirectives[RUN_PIPELINE_TILL].firstOrNull()
 
         if (successfulTierMarkers.any { it.tier.label != lastTierCurrentPipelineExecutes }) {
             return "Markers of tiers other than $lastTierCurrentPipelineExecutes should not be thrown when using a $lastTierCurrentPipelineExecutes runner. The test runner probably contains some redundant early-tier handlers"
