@@ -22,7 +22,7 @@ class SourceMap3Builder(
     private val sources = createOpenHashMap<SourceKey>()
     private val orderedSources = mutableListOf<String>()
     private val orderedSourceContentSuppliers = mutableListOf<Supplier<Reader?>>()
-    private val ignoredSources = hashSetOf<Int>()
+    private val ignoredSources = linkedSetOf<Int>()
 
     private val names = createOpenHashMap<String>()
     private val orderedNames = mutableListOf<String>()
