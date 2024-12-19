@@ -29285,12 +29285,6 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
       @TestDataPath("$PROJECT_ROOT")
       public class Operators {
         @Test
-        @TestMetadata("binaryOpIntStackOverflow.kt")
-        public void testBinaryOpIntStackOverflow() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/binaryOpIntStackOverflow.kt");
-        }
-
-        @Test
         @TestMetadata("plusAndPlusAssign.kt")
         public void testPlusAndPlusAssign() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/plusAndPlusAssign.kt");
