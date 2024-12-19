@@ -10,14 +10,14 @@ import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 @InternalKotlinGradlePluginApi // used in integration tests
 abstract class ToolingDiagnosticFactory(
     private val predefinedSeverity: ToolingDiagnostic.Severity? = null,
-    private val predefinedGroup: ToolingDiagnosticGroup? = null,
+    private val predefinedGroup: DiagnosticGroup? = null,
     customId: String? = null,
 ) {
     open val id: String = customId ?: this::class.simpleName!!
 
     protected fun build(
         severity: ToolingDiagnostic.Severity? = null,
-        group: ToolingDiagnosticGroup? = null,
+        group: DiagnosticGroup? = null,
         throwable: Throwable? = null,
         builder: ToolingDiagnosticBuilder.() -> Unit,
     ) = ToolingDiagnosticBuilderImp().apply(builder).let { diagnosticBuilder ->

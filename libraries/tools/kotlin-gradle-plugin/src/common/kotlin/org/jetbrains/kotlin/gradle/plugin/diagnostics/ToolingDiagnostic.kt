@@ -33,7 +33,7 @@ data class ToolingDiagnostic(
      * @property displayName A user-friendly name associated with the diagnostic.
      * @property group The diagnostic group to which this identifier belongs.
      */
-    data class ID(val id: String, val displayName: String, val group: ToolingDiagnosticGroup) {
+    data class ID(val id: String, val displayName: String, val group: DiagnosticGroup) {
         override fun toString(): String {
             return "$id | $displayName | $group"
         }
@@ -87,7 +87,7 @@ data class ToolingDiagnostic(
     }
 
     val id: String get() = identifier.id
-    val group: ToolingDiagnosticGroup get() = identifier.group
+    val group: DiagnosticGroup get() = identifier.group
 
     override fun toString() = buildString {
         append("[$id | $severity]")
@@ -112,112 +112,4 @@ private fun StringBuilder.appendSubLines(subLines: List<String>) {
             appendLine(line)
         }
     }
-}
-
-/**
- * Represents a hierarchical grouping of tooling diagnostics.
- * Designed to handle diagnostic information in tooling systems.
- *
- * @property groupId The group associated with this diagnostic group.
- * @property parent The parent diagnostic group, if applicable.
- */
-sealed class ToolingDiagnosticGroup(val groupId: Group, val parent: ToolingDiagnosticGroup? = null) {
-    /**
-     * Represents a categorized group within ToolingDiagnosticGroup.
-     * Each group serves as an identifier for diagnostic purposes.
-     */
-    enum class Group {
-        KOTLIN,
-        KGP,
-        COCOAPODS,
-        COMPOSE
-    }
-
-    /**
-     * Represents the unique identifier for the tooling diagnostic group.
-     * This is typically derived from the name of the associated group ID.
-     */
-    open val identifier: String get() = groupId.name
-
-    /**
-     * Represents the display name of this tooling diagnostic group.
-     *
-     * The display name is derived from the name of the associated groupId.
-     * It is used to provide a user-friendly, human-readable representation
-     * for a tooling diagnostic group.
-     */
-    open val displayName: String get() = groupId.name
-
-    /**
-     * Represents a diagnostic group specifically for Kotlin-related diagnostics.
-     *
-     * Inherits from the base `ToolingDiagnosticGroup` with the group identifier set to `KOTLIN`.
-     * This object serves as a predefined grouping of tooling diagnostics for the Kotlin language.
-     */
-    object KotlinDiagnosticGroup : ToolingDiagnosticGroup(Group.KOTLIN) {
-        override val displayName: String = "Kotlin"
-    }
-
-    /**
-     * Represents a diagnostic group specific to Kotlin Gradle Plugin (KGP) diagnostics.
-     *
-     * This data class is a specialized subclass of `ToolingDiagnosticGroup`, designed to handle
-     * diagnostic information relevant to the Kotlin Gradle Plugin. It categorizes diagnostics
-     * into specific categories defined in the `Category` enum.
-     *
-     * @property category The specific category of diagnostics within the KGP diagnostic group.
-     */
-    data class KGPDiagnosticGroup(val category: Category? = null) : ToolingDiagnosticGroup(Group.KGP, KotlinDiagnosticGroup) {
-
-        /**
-         * Defines categories used to classify diagnostics within the Kotlin Gradle Plugin (KGP).
-         *
-         * These categories help group and identify diagnostics based on their nature or purpose:
-         * - DEPRECATION: Indicates features or configurations that are deprecated.
-         * - MISCONFIGURATION: Represents issues caused by incorrect setup or configuration.
-         * - EXPERIMENTAL: Refers to features or functionalities that are experimental.
-         */
-        enum class Category {
-            DEPRECATION,
-            MISCONFIGURATION,
-            EXPERIMENTAL
-        }
-
-        override val identifier: String
-            get() = category?.let {
-                "${super.identifier}_${it.name}"
-            } ?: super.identifier
-
-        override val displayName: String = when (category) {
-            Category.DEPRECATION -> "Kotlin Gradle Plugin Deprecation"
-            Category.MISCONFIGURATION -> "Kotlin Gradle Plugin Misconfiguration"
-            Category.EXPERIMENTAL -> "Kotlin Gradle Plugin Experimental Feature"
-            else -> "Kotlin Gradle Plugin"
-        }
-    }
-
-    /**
-     * Represents a diagnostic group specifically for CocoaPods-related tooling in Kotlin projects.
-     *
-     * This object extends `ToolingDiagnosticGroup` and associates diagnostics with the CocoaPods group.
-     * It inherits diagnostic behaviors and functionality from the base `KGPDiagnosticGroup`, which is
-     * tailored for Kotlin Gradle Plugin (KGP) diagnostics. The `Group.COCOAPODS` enumeration value serves
-     * as the identifier for this diagnostic group.
-     */
-    object CocoaPodsDiagnosticGroup : ToolingDiagnosticGroup(Group.COCOAPODS, KGPDiagnosticGroup()) {
-        override val displayName: String = "CocoaPods PlugIn"
-    }
-
-    /**
-     * Represents a specialized diagnostic group for the Compose plugin.
-     *
-     * This object is a subclass of `ToolingDiagnosticGroup`, specifically categorized under
-     * the `Group.COMPOSE` umbrella. It encapsulates diagnostic data and acts as a named
-     * grouping entity for diagnostics related to Compose plugin tooling.
-     */
-    object ComposeDiagnosticGroup : ToolingDiagnosticGroup(Group.COMPOSE, KGPDiagnosticGroup()) {
-        override val displayName: String = "Compose PlugIn"
-    }
-
-    override fun toString() = "$identifier | $displayName | parent: [$parent]"
 }
