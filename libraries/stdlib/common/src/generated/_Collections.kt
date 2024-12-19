@@ -1676,6 +1676,8 @@ public inline fun <T, K> Iterable<T>.distinctBy(selector: (T) -> K): List<T> {
  * The returned set preserves the element iteration order of the original collection.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
+ * 
+ * @sample samples.collections.Collections.BinaryOperations.intersectOfGeneric
  */
 public infix fun <T> Iterable<T>.intersect(other: Iterable<T>): Set<T> {
     val set = this.toMutableSet()
