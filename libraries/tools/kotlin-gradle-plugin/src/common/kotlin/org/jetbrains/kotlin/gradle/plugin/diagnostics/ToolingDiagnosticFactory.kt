@@ -50,7 +50,7 @@ interface ToolingDiagnosticBuilder {
     fun documentation(url: String, urlBuilder: (String) -> String = { "See $url for more details." })
 }
 
-internal class ToolingDiagnosticBuilderImp : ToolingDiagnosticBuilder {
+private class ToolingDiagnosticBuilderImp : ToolingDiagnosticBuilder {
 
     val name: String get() = _name ?: error("Name is not provided")
     val message: String get() = _message ?: error("Message is not provided")

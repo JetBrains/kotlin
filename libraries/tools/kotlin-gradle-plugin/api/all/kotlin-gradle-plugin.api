@@ -1051,14 +1051,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/cocoapods/KotlinCocoapodsP
 	public static final fun withPodspec (Lorg/jetbrains/kotlin/gradle/dsl/KotlinNativeArtifactConfig;Lkotlin/jvm/functions/Function1;)V
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/DiagnosticIcon : java/lang/Enum {
-	public static final field ERROR Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/DiagnosticIcon;
-	public static final field WARNING Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/DiagnosticIcon;
-	public final fun getIcon ()Ljava/lang/String;
-	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/DiagnosticIcon;
-	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/DiagnosticIcon;
-}
-
 public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$AgpRequirementNotMetForAndroidSourceSetLayoutV2 : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$AgpRequirementNotMetForAndroidSourceSetLayoutV2;
 	public final fun invoke (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
@@ -1500,46 +1492,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingD
 public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$XcodeVersionTooHighWarning : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$XcodeVersionTooHighWarning;
 	public final fun invoke (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/plugin/diagnostics/StyledToolingDiagnostic {
-	public abstract fun getDocumentation ()Ljava/lang/String;
-	public abstract fun getMessage ()Ljava/lang/String;
-	public abstract fun getName ()Ljava/lang/String;
-	public abstract fun getSolution ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/TerminalColorSupport {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/TerminalColorSupport;
-}
-
-public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/TerminalColorSupport$TerminalStyle {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/TerminalColorSupport$TerminalStyle;
-	public final fun blue (Ljava/lang/String;Z)Ljava/lang/String;
-	public static synthetic fun blue$default (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/TerminalColorSupport$TerminalStyle;Ljava/lang/String;ZILjava/lang/Object;)Ljava/lang/String;
-	public final fun bold (Ljava/lang/String;Z)Ljava/lang/String;
-	public static synthetic fun bold$default (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/TerminalColorSupport$TerminalStyle;Ljava/lang/String;ZILjava/lang/Object;)Ljava/lang/String;
-	public final fun green (Ljava/lang/String;Z)Ljava/lang/String;
-	public static synthetic fun green$default (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/TerminalColorSupport$TerminalStyle;Ljava/lang/String;ZILjava/lang/Object;)Ljava/lang/String;
-	public final fun italic (Ljava/lang/String;Z)Ljava/lang/String;
-	public static synthetic fun italic$default (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/TerminalColorSupport$TerminalStyle;Ljava/lang/String;ZILjava/lang/Object;)Ljava/lang/String;
-	public final fun lightBlue (Ljava/lang/String;Z)Ljava/lang/String;
-	public static synthetic fun lightBlue$default (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/TerminalColorSupport$TerminalStyle;Ljava/lang/String;ZILjava/lang/Object;)Ljava/lang/String;
-	public final fun orange (Ljava/lang/String;Z)Ljava/lang/String;
-	public static synthetic fun orange$default (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/TerminalColorSupport$TerminalStyle;Ljava/lang/String;ZILjava/lang/Object;)Ljava/lang/String;
-	public final fun red (Ljava/lang/String;Z)Ljava/lang/String;
-	public static synthetic fun red$default (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/TerminalColorSupport$TerminalStyle;Ljava/lang/String;ZILjava/lang/Object;)Ljava/lang/String;
-	public final fun yellow (Ljava/lang/String;Z)Ljava/lang/String;
-	public static synthetic fun yellow$default (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/TerminalColorSupport$TerminalStyle;Ljava/lang/String;ZILjava/lang/Object;)Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/TerminalColorSupport$TerminalType : java/lang/Enum {
-	public static final field UNIX_LIKE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/TerminalColorSupport$TerminalType;
-	public static final field UNKNOWN Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/TerminalColorSupport$TerminalType;
-	public static final field WINDOWS_CMD Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/TerminalColorSupport$TerminalType;
-	public static final field WINDOWS_POWERSHELL Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/TerminalColorSupport$TerminalType;
-	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/TerminalColorSupport$TerminalType;
-	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/TerminalColorSupport$TerminalType;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic$Documentation {

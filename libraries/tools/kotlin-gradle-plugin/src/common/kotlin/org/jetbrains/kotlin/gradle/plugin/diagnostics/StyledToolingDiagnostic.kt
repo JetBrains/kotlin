@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity
  *
  * @property icon The visual representation of the diagnostic icon, such as a warning or error symbol.
  */
-enum class DiagnosticIcon(val icon: String) {
+internal enum class DiagnosticIcon(val icon: String) {
     WARNING("⚠️"),
     ERROR("❌"),
 }
@@ -36,7 +36,7 @@ enum class DiagnosticIcon(val icon: String) {
  * @property solution An optional proposed solution or recommended steps to resolve the issue.
  * @property documentation Optional documentation reference offering additional context or resources.
  */
-interface StyledToolingDiagnostic {
+internal interface StyledToolingDiagnostic {
     val name: String
     val message: String
     val solution: String?

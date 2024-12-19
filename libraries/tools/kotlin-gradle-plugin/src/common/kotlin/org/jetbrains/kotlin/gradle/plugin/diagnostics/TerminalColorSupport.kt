@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.jetbrains.kotlin.konan.target.HostManager
 
-object TerminalColorSupport {
+internal object TerminalColorSupport {
     /**
      * Enum representing various types of terminal environments.
      *
@@ -19,7 +19,7 @@ object TerminalColorSupport {
      * - `UNIX_LIKE`: Represents Unix-like terminal environments including Linux, macOS, and other Unix-based systems.
      * - `UNKNOWN`: Represents an unrecognized or unsupported terminal environment.
      */
-    enum class TerminalType {
+    private enum class TerminalType {
         WINDOWS_CMD,
         WINDOWS_POWERSHELL,
         UNIX_LIKE,
@@ -54,7 +54,7 @@ object TerminalColorSupport {
      * The object is designed to simplify the process of formatting text for terminal output.
      * Reset codes are automatically appended after applying styles to ensure proper formatting.
      */
-    object TerminalStyle {
+    internal object TerminalStyle {
         // Style definitions
         sealed class Style(private val code: String) {
             operator fun invoke(text: String, apply: Boolean = true): String =
