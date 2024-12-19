@@ -36,12 +36,12 @@ internal fun deserializeUklibFromDirectory(directory: File): Uklib {
         val fragmentIdentifier = fragment.property<String>(FRAGMENT_IDENTIFIER)
         UklibFragment(
             identifier = fragmentIdentifier,
-            attributes = fragment.property<List<String>>(ATTRIBUTES).toHashSet(),
+            attributes = fragment.property<List<String>>(ATTRIBUTES).toSet(),
             file = {
                 directory.resolve(fragmentIdentifier)
             }
         )
-    }.toHashSet()
+    }.toSet()
 
     return Uklib(
         module = UklibModule(

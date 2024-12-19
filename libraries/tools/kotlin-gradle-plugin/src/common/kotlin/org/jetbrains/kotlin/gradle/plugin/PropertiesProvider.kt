@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_RESOURCES_RESOLUTION_STRATEGY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_FAKE_UKLIB_TRANSFORMS
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_UKLIB_RESOLUTION_STRATEGY
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_UKLIB_RESOLUTION_STRATEGY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE
@@ -199,13 +199,15 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty(KOTLIN_MPP_PUBLISH_UKLIB) ?: false
 
     val uklibResolutionStrategy: UklibResolutionStrategy
-        get() = this.get(KOTLIN_MPP_UKLIB_RESOLUTION_STRATEGY)?.let {
+        get() = this.get(KOTLIN_KMP_UKLIB_RESOLUTION_STRATEGY)?.let {
             UklibResolutionStrategy.fromProperty(it)
         } ?: UklibResolutionStrategy.IgnoreUklibs
 
+    // This property makes transforms noop and is used in functionalTest resolution tests
     val fakeUkibTransforms: Boolean
         get() = booleanProperty(KOTLIN_MPP_FAKE_UKLIB_TRANSFORMS) ?: false
 
+    // This property disables -${checksum} output path suffix in the GMT transformed output klib to make them testable
     val computeUklibChecksum: Boolean
         get() = booleanProperty(KOTLIN_MPP_COMPUTE_UKLIB_CHECKSUM) ?: true
 
@@ -650,7 +652,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_JS_STDLIB_DOM_API_INCLUDED = property("kotlin.js.stdlib.dom.api.included")
         val KOTLIN_JS_YARN = property("kotlin.js.yarn")
         val KOTLIN_MPP_PUBLISH_UKLIB = property("kotlin.mpp.publishUklib")
-        val KOTLIN_MPP_UKLIB_RESOLUTION_STRATEGY = property("kotlin.mpp.uklibResolutionStrategy")
         val KOTLIN_MPP_FAKE_UKLIB_TRANSFORMS = property("kotlin.internal.mpp.fakeUklibTransforms")
         val KOTLIN_MPP_COMPUTE_UKLIB_CHECKSUM = property("kotlin.internal.mpp.computeUklibChecksum")
         val KOTLIN_MPP_ENABLE_GRANULAR_SOURCE_SETS_METADATA = property("kotlin.mpp.enableGranularSourceSetsMetadata")
@@ -704,6 +705,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_SWIFT_EXPORT_ENABLED = property("kotlin.experimental.swift-export.enabled")
         val KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION = property("kotlin.native.enableKlibsCrossCompilation")
         val KOTLIN_ARCHIVES_TASK_OUTPUT_AS_FRIEND_ENABLED = property("kotlin.build.archivesTaskOutputAsFriendModule")
+        val KOTLIN_KMP_UKLIB_RESOLUTION_STRATEGY = property("kotlin.kmp.uklibResolutionStrategy")
         val KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT = property("kotlin.kmp.isolated-projects.support")
 
         /**

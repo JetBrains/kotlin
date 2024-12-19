@@ -139,7 +139,7 @@ fun Project.enableCrossCompilation(enabled: Boolean = true) {
 }
 
 internal fun Project.setUklibResolutionStrategy(strategy: UklibResolutionStrategy) {
-    propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_UKLIB_RESOLUTION_STRATEGY, strategy.propertyName)
+    propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_KMP_UKLIB_RESOLUTION_STRATEGY, strategy.propertyName)
 }
 
 fun Project.fakeUklibTransforms() {

@@ -6,17 +6,23 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragment
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibModule
 import java.util.Comparator
 
 internal object EmptyConsumingFragmentAttributes : IllegalStateException("Can't form compilation classpath without attributes") {
     private fun readResolve(): Any = EmptyConsumingFragmentAttributes
 }
 
-internal fun Iterable<UklibFragment>.formCompilationClasspathInConsumingModuleFragment(
-    consumingFragmentAttributes: Set<String>
+// FIXME: Make attributes type safe instead of Set<String> an invert this function
+internal fun UklibModule.resolveCompilationClasspathForConsumer(
+    attributes: Set<String>,
+) = fragments.findAllConsumableFor(attributes)
+
+internal fun Iterable<UklibFragment>.findAllConsumableFor(
+    attributes: Set<String>
 ): List<UklibFragment> {
-    if (consumingFragmentAttributes.isEmpty()) throw EmptyConsumingFragmentAttributes
-    return visibleByConsumingModuleFragmentWith(consumingFragmentAttributes).orderedForCompilationClasspath()
+    if (attributes.isEmpty()) throw EmptyConsumingFragmentAttributes
+    return visibleByConsumingModuleFragmentWith(attributes).orderedForCompilationClasspath()
 }
 
 private fun <E> Set<E>.isSubsetOf(another: Set<E>): Boolean = another.containsAll(this)

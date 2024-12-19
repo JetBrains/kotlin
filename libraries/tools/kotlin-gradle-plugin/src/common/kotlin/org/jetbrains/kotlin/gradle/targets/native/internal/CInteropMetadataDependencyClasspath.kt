@@ -65,6 +65,7 @@ private fun Project.createCInteropMetadataDependencyClasspathFromAssociatedCompi
  */
 internal val ChooseVisibleSourceSets.visibleSourceSetProvidingCInterops: String?
     get() {
+        // PSM will be null in case of a uklib dependency and uklibs don't support cinterops for now
         if (projectStructureMetadata == null) return null
 
         val dependsOnSourceSets = allVisibleSourceSetNames

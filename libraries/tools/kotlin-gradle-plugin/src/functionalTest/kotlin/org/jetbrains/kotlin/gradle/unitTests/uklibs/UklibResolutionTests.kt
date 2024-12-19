@@ -321,6 +321,11 @@ class UklibResolutionTests {
         // FIXME: Similar to above but for JS
     }
 
+    //    @Test
+    fun `resolve uklib - metadata resolvable configurations`() {
+        // FIXME: Similar to above but for JS
+    }
+
     private fun consumer(
         strategy: UklibResolutionStrategy,
         configure: KotlinMultiplatformExtension.() -> Unit,
@@ -345,38 +350,38 @@ class UklibResolutionTests {
 
     private val uklibTransformationIosArm64Attributes = mapOf(
         "artifactType" to "uklib",
-        "uklibTargetAttribute" to "ios_arm64",
-        "uklibState" to "unzipped",
+        "org.jetbrains.kotlin.uklibView" to "ios_arm64",
+        "org.jetbrains.kotlin.uklibState" to "decompressed",
     )
 
     private val uklibTransformationJvmAttributes = mapOf(
         "artifactType" to "uklib",
-        "uklibTargetAttribute" to "jvm",
-        "uklibState" to "unzipped",
+        "org.jetbrains.kotlin.uklibView" to "jvm",
+        "org.jetbrains.kotlin.uklibState" to "decompressed",
     )
 
     private val uklibTransformationMetadataAttributes = mapOf(
         "artifactType" to "uklib",
-        "uklibTargetAttribute" to "common",
-        "uklibState" to "unzipped",
+        "org.jetbrains.kotlin.uklibView" to "whole_uklib",
+        "org.jetbrains.kotlin.uklibState" to "decompressed",
     )
 
     private val uklibTransformationJsAttributes = mapOf(
         "artifactType" to "uklib",
-        "uklibTargetAttribute" to "js_ir",
-        "uklibState" to "unzipped",
+        "org.jetbrains.kotlin.uklibView" to "js_ir",
+        "org.jetbrains.kotlin.uklibState" to "decompressed",
     )
 
     private val uklibTransformationWasmJsAttributes = mapOf(
         "artifactType" to "uklib",
-        "uklibTargetAttribute" to "wasm_js",
-        "uklibState" to "unzipped",
+        "org.jetbrains.kotlin.uklibView" to "wasm_js",
+        "org.jetbrains.kotlin.uklibState" to "decompressed",
     )
 
     private val uklibTransformationWasmWasiAttributes = mapOf(
         "artifactType" to "uklib",
-        "uklibTargetAttribute" to "wasm_wasi",
-        "uklibState" to "unzipped",
+        "org.jetbrains.kotlin.uklibView" to "wasm_wasi",
+        "org.jetbrains.kotlin.uklibState" to "decompressed",
     )
 
     private val uklibVariantAttributes = mapOf(

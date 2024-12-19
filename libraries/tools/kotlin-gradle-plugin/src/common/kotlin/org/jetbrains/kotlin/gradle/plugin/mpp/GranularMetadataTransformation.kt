@@ -18,8 +18,8 @@ import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.metadataFragmentAttributes
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.deserializeUklibFromDirectory
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.containsUnzippedUklibAttributes
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.formCompilationClasspathInConsumingModuleFragment
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.isFromUklib
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.resolveCompilationClasspathForConsumer
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -81,7 +81,6 @@ internal sealed class MetadataDependencyResolution(
         val visibleTransitiveDependencies: Set<ResolvedDependencyResult>,
         internal val metadataProvider: MetadataProvider,
     ) : MetadataDependencyResolution(dependency) {
-
         internal sealed class MetadataProvider {
             class ArtifactMetadataProvider(private val compositeMetadataArtifact: CompositeMetadataArtifact) :
                 MetadataProvider(), CompositeMetadataArtifact by compositeMetadataArtifact
@@ -257,7 +256,7 @@ internal class GranularMetadataTransformation(
                 moduleId,
                 sourceSetsVisibleInParents
             )
-        } else if (artifact.variant.attributes.containsUnzippedUklibAttributes) {
+        } else if (artifact.isFromUklib) {
             return processUklibDependency(
                 artifact,
                 dependency,
@@ -278,7 +277,7 @@ internal class GranularMetadataTransformation(
     )
 
     private fun processUklibDependency(
-        compositeMetadataArtifact: ResolvedArtifactResult,
+        upackedUklibDirectory: ResolvedArtifactResult,
         dependency: ResolvedDependencyResult,
         sourceSetsVisibleInParents: Set<String>,
         uklibFragmentAttributes: Set<String>,
@@ -288,14 +287,14 @@ internal class GranularMetadataTransformation(
         )
 
         // FIXME: Validate uklib we are consuming is valid?
-        val uklibDependency = deserializeUklibFromDirectory(compositeMetadataArtifact.file)
+        val uklibDependency = deserializeUklibFromDirectory(upackedUklibDirectory.file)
 
-        val allVisibleFragments = uklibDependency.module.fragments.formCompilationClasspathInConsumingModuleFragment(
-            consumingFragmentAttributes = uklibFragmentAttributes,
+        val allVisibleFragments = uklibDependency.module.resolveCompilationClasspathForConsumer(
+            attributes = uklibFragmentAttributes,
         )
         if (allVisibleFragments.isEmpty()) {
             throw UklibIsMissingRequiredAttributesException(
-                unzippedUklib = compositeMetadataArtifact.file,
+                unzippedUklib = upackedUklibDirectory.file,
                 targetFragmentAttribute = uklibFragmentAttributes.sorted(),
                 availablePlatformFragments = uklibDependency.module.fragments.map { it.identifier }.sorted(),
             )
@@ -311,11 +310,11 @@ internal class GranularMetadataTransformation(
             projectStructureMetadata = null,
             allVisibleSourceSetNames = allVisibleFragments.map {
                 it.identifier
-            }.toHashSet(),
+            }.toSet(),
             visibleSourceSetNamesExcludingDependsOn = fragmentsVisibleByThisSourceSet.map {
                 it.identifier
-            }.toHashSet(),
-            visibleTransitiveDependencies = dependency.selected.dependencies.filterIsInstance<ResolvedDependencyResult>().toHashSet(),
+            }.toSet(),
+            visibleTransitiveDependencies = dependency.selected.dependencies.filterIsInstance<ResolvedDependencyResult>().toSet(),
             metadataProvider = ArtifactMetadataProvider(
                 UklibCompositeMetadataArtifact(
                     UklibCompositeMetadataArtifact.ModuleId(
@@ -323,8 +322,7 @@ internal class GranularMetadataTransformation(
                         moduleVersion?.name ?: "unspecified",
                         moduleVersion?.version ?: "unspecified",
                     ),
-                    // FIXME: Should this be fragmentsVisibleByThisSourceSet?
-                    allVisibleFragments,
+                    uklibDependency.module.fragments.toList(),
                     params.computeUklibChecksum,
                 )
             )

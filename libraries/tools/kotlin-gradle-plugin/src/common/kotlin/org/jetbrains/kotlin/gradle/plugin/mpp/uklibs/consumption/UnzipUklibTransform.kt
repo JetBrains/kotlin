@@ -28,7 +28,7 @@ internal abstract class UnzipUklibTransform @Inject constructor(
 ) : TransformAction<UnzipUklibTransform.Parameters> {
     interface Parameters : TransformParameters {
         @get:Input
-        val performUnzip: Property<Boolean>
+        val fakeUklibUnzip: Property<Boolean>
     }
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -41,11 +41,10 @@ internal abstract class UnzipUklibTransform @Inject constructor(
         // Due to kotlin-api/runtime Usages being compatible with java Usages, we might see a jar in this transform
         if (input.extension == Uklib.UKLIB_EXTENSION) {
             val outputDir = outputs.dir("unzipped_uklib_${input.name}")
-            if (parameters.performUnzip.get()) {
-                fileOperations.copy {
-                    it.from(archiveOperations.zipTree(inputArtifact.get().asFile))
-                    it.into(outputDir)
-                }
+            if (parameters.fakeUklibUnzip.get()) return
+            fileOperations.copy {
+                it.from(archiveOperations.zipTree(inputArtifact.get().asFile))
+                it.into(outputDir)
             }
         }
     }
