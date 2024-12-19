@@ -47,8 +47,12 @@ dependencies {
     testRuntimeOnly(libs.intellij.fastutil)
     testRuntimeOnly(commonDependency("one.util:streamex"))
 
-    testRuntimeOnly(jpsModel())
-    testRuntimeOnly(jpsModelImpl())
+    testRuntimeOnly(jpsModel()) {
+        exclude(group = "com.github.ben-manes.caffeine", module = "caffeine")
+    }
+    testRuntimeOnly(jpsModelImpl()) {
+        exclude(group = "com.github.ben-manes.caffeine", module = "caffeine")
+    }
 }
 
 optInToObsoleteDescriptorBasedAPI()

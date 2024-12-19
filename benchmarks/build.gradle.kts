@@ -22,7 +22,9 @@ dependencies {
     api(projectTests(":compiler:tests-common"))
     api(project(":compiler:cli"))
     api(intellijCore())
-    api(jpsModel())
+    api(jpsModel()) {
+        exclude(group = "com.github.ben-manes.caffeine", module = "caffeine")
+    }
     api("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:$benchmarks_version")
 }
 

@@ -652,10 +652,13 @@ allprojects {
         maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies") {
             content {
                 includeGroupByRegex("org\\.jetbrains\\.intellij\\.deps(\\..+)?")
-                includeVersion("org.jetbrains.jps", "jps-javac-extension", "7")
-                includeVersion("com.google.protobuf", "protobuf-parent", "3.24.4-jb.2")
-                includeVersion("com.google.protobuf", "protobuf-java", "3.24.4-jb.2")
                 includeVersion("com.google.protobuf", "protobuf-bom", "3.24.4-jb.2")
+                includeVersion("com.google.protobuf", "protobuf-java", "3.24.4-jb.2")
+                includeVersion("com.google.protobuf", "protobuf-parent", "3.24.4-jb.2")
+                includeVersion("com.intellij.platform", "kotlinx-coroutines-bom", "1.8.0-intellij-11")
+                includeVersion("com.intellij.platform", "kotlinx-coroutines-core-jvm", "1.8.0-intellij-11")
+                includeVersion("com.intellij.platform", "kotlinx-coroutines-debug", "1.8.0-intellij-11")
+                includeVersion("org.jetbrains.jps", "jps-javac-extension", "10")
             }
         }
 
