@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.symbols.isPublicApi
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
@@ -245,7 +245,7 @@ abstract class KotlinIrLinker(
     private fun fixCallableReferences() {
         deserializersForModules.values.forEach {
             it.moduleFragment.acceptChildrenVoid(
-                object : IrElementVisitorVoid {
+                object : IrVisitorVoid() {
                     override fun visitElement(element: IrElement) {
                         element.acceptChildrenVoid(this)
                     }

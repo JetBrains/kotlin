@@ -13,14 +13,14 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.test.Assertions
 
 class IrVerifier(
     private val assertions: Assertions,
     private val isFir: Boolean,
-) : IrElementVisitorVoid {
+) : IrVisitorVoid() {
     private val errors = ArrayList<String>()
 
     private val symbolForDeclaration = HashMap<IrElement, IrSymbol>()
@@ -39,7 +39,7 @@ class IrVerifier(
         }
     }
 
-    private val elementsAreUniqueChecker = object : IrElementVisitorVoid {
+    private val elementsAreUniqueChecker = object : IrVisitorVoid() {
         private val elements = HashSet<IrElement>()
 
         override fun visitElement(element: IrElement) {

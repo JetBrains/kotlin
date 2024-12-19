@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.objcinterop.isObjCClassMethod
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
@@ -152,7 +152,7 @@ internal class GlobalHierarchyAnalysis(val context: Context, val irModule: IrMod
         val root = context.irBuiltIns.anyClass.owner
         val immediateInheritors = mutableMapOf<IrClass, MutableList<IrClass>>()
         val allClasses = mutableListOf<IrClass>()
-        irModule.acceptVoid(object: IrElementVisitorVoid {
+        irModule.acceptVoid(object: IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
@@ -224,7 +224,7 @@ internal class GlobalHierarchyAnalysis(val context: Context, val irModule: IrMod
                 val interfaceIndices = mutableMapOf<IrClass, Int>()
                 val interfaces = mutableListOf<IrClass>()
                 val forbidden = mutableListOf<MutableList<Int>>()
-                irModuleFragment.acceptVoid(object : IrElementVisitorVoid {
+                irModuleFragment.acceptVoid(object : IrVisitorVoid() {
                     override fun visitElement(element: IrElement) {
                         element.acceptChildrenVoid(this)
                     }

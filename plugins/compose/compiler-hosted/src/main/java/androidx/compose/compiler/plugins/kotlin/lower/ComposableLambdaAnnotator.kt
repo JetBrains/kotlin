@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 /**
@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
  * The K2 frontend instead uses a different type for composable lambdas. This pass adds
  * the annotation, since the backend expects it.
  */
-class ComposableLambdaAnnotator(context: IrPluginContext) : IrElementVisitorVoid {
+class ComposableLambdaAnnotator(context: IrPluginContext) : IrVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }

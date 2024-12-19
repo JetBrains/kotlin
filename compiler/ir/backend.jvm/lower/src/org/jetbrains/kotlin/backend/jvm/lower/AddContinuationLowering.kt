@@ -370,7 +370,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
 
             private fun IrSimpleFunction.isCapturingCrossinline(): Boolean {
                 var capturesCrossinline = false
-                (this.originalBeforeInline ?: this).acceptVoid(object : IrElementVisitorVoid {
+                (this.originalBeforeInline ?: this).acceptVoid(object : IrVisitorVoid() {
                     override fun visitElement(element: IrElement) {
                         element.acceptChildrenVoid(this)
                     }

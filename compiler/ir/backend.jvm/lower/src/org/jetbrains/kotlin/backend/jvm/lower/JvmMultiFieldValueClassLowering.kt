@@ -1120,7 +1120,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
                         standaloneExpressions.add(statement.value)
                         resultVariables.removeLast()
                         block.statements.removeLast()
-                        statement.value.acceptVoid(object : IrElementVisitorVoid {
+                        statement.value.acceptVoid(object : IrVisitorVoid() {
                             override fun visitElement(element: IrElement) {
                                 element.acceptChildrenVoid(this)
                             }
@@ -1416,7 +1416,7 @@ private fun findNearestBlocksForVariables(variables: Set<IrVariable>, body: Bloc
     val variableUsages = mutableMapOf<BlockOrBody, MutableSet<IrVariable>>()
     val childrenBlocks = mutableMapOf<BlockOrBody, MutableList<BlockOrBody>>()
 
-    body.element.acceptVoid(object : IrElementVisitorVoid {
+    body.element.acceptVoid(object : IrVisitorVoid() {
         private val stack = mutableListOf<BlockOrBody>()
         override fun visitElement(element: IrElement) {
             element.acceptChildren(this, null)
@@ -1469,7 +1469,7 @@ private fun findNearestBlocksForVariables(variables: Set<IrVariable>, body: Bloc
 
 private fun IrStatement.containsUsagesOf(variablesSet: Set<IrVariable>): Boolean {
     var used = false
-    acceptVoid(object : IrElementVisitorVoid {
+    acceptVoid(object : IrVisitorVoid() {
         override fun visitElement(element: IrElement) {
             if (!used) {
                 element.acceptChildrenVoid(this)
@@ -1586,7 +1586,7 @@ private fun BlockOrBody.makeBodyWithAddedVariables(context: JvmBackendContext, v
 }
 
 private fun BlockOrBody.extractVariablesSettersToOuterPossibleBlock(variables: Set<IrVariable>) {
-    element.acceptVoid(object : IrElementVisitorVoid {
+    element.acceptVoid(object : IrVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }

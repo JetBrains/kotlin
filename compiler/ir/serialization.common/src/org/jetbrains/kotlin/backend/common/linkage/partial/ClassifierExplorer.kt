@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.Module as PLModule
@@ -274,7 +274,7 @@ internal class ClassifierExplorer(
     }
 }
 
-private class IrElementExplorer(private val visitType: (IrType) -> Unit) : IrElementVisitorVoid {
+private class IrElementExplorer(private val visitType: (IrType) -> Unit) : IrVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }

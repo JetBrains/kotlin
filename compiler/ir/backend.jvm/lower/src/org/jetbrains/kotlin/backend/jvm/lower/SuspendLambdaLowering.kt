@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
-import kotlin.collections.set
 
 private fun IrFunction.capturesCrossinline(): Boolean {
     val parents = parents.toSet()
@@ -163,7 +162,7 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
 
             // marking the parameters referenced in the function
             function.acceptChildrenVoid(
-                object : IrElementVisitorVoid {
+                object : IrVisitorVoid() {
                     override fun visitElement(element: IrElement) = element.acceptChildrenVoid(this)
 
                     override fun visitGetValue(expression: IrGetValue) {

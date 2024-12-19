@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
@@ -454,7 +454,7 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
         val stateMachineFunction: IrFunction
     )
 
-    protected open class VariablesScopeTracker : IrElementVisitorVoid {
+    protected open class VariablesScopeTracker : IrVisitorVoid() {
 
         protected val scopeStack = mutableListOf<MutableSet<IrVariable>>(mutableSetOf())
 
@@ -519,7 +519,7 @@ fun getSuspendFunctionKind(
         return SuspendFunctionKind.NEEDS_STATE_MACHINE            // Suspend lambdas always need coroutine implementation.
 
     var numberOfSuspendCalls = 0
-    body.acceptVoid(object : IrElementVisitorVoid {
+    body.acceptVoid(object : IrVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }

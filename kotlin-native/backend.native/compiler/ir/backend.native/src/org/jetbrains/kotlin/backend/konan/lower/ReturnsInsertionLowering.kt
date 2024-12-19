@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isNullableNothing
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.innerInlinedBlockOrThis
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
@@ -28,7 +28,7 @@ internal class ReturnsInsertionLowering(val context: Context) : FileLoweringPass
     private val symbols = context.ir.symbols
 
     override fun lower(irFile: IrFile) {
-        irFile.acceptVoid(object : IrElementVisitorVoid {
+        irFile.acceptVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

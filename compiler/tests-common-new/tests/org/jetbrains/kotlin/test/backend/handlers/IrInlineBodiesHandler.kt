@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.lazy.AbstractIrLazyFunction
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.util.deserializedIr
 import org.jetbrains.kotlin.ir.util.resolveFakeOverrideOrFail
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -36,7 +36,7 @@ class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(test
         assertions.assertTrue(declaredInlineFunctions.isNotEmpty())
     }
 
-    inner class InlineFunctionsCollector : IrElementVisitorVoid {
+    inner class InlineFunctionsCollector : IrVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
@@ -47,7 +47,7 @@ class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(test
         }
     }
 
-    inner class InlineCallBodiesCheck(val firEnabled: Boolean) : IrElementVisitorVoid {
+    inner class InlineCallBodiesCheck(val firEnabled: Boolean) : IrVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
