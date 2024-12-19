@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfTypeSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findStringPlusSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
@@ -240,11 +241,44 @@ internal class KaFirResolver(
         )
     }
 
+    private val stringPlusSymbol by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        findStringPlusSymbol(analysisSession.firSession)
+    }
+
     private fun FirElement.toKtCallInfo(
         psi: KtElement,
         resolveCalleeExpressionOfFunctionCall: Boolean,
         resolveFragmentOfCall: Boolean,
     ): KaCallInfo? {
+        // FIR does not have an intermediate symbol of String.plus() function call in case of folded string literals.
+        //
+        // Example:
+        // Expression `"a" + "b" + "c"` is represented by one FirStringConcatenationCall containing `"a"`, `"b"`, and `"c"` as arguments.
+        //
+        // We have to patch `FirElement.toKtCallInfo` to return String.plus() call info for contained binary expressions.
+        if (this is FirStringConcatenationCall && this.isFoldedStrings && psi is KtBinaryExpression) {
+            val leftArg = psi.left ?: return null
+            val rightArg = psi.right ?: return null
+            val signature = stringPlusSymbol?.toKaSignature() ?: return null
+            return KaBaseSuccessCallInfo(
+                KaBaseSimpleFunctionCall(
+                    KaBasePartiallyAppliedSymbol(
+                        signature,
+                        KaBaseExplicitReceiverValue(
+                            leftArg,
+                            analysisSession.builtinTypes.string,
+                            false
+                        ),
+                        null,
+                        emptyList(),
+                    ),
+                    mapOf(rightArg to signature.valueParameters.first()),
+                    emptyMap(),
+                    false
+                )
+            )
+        }
+
         if (this is FirResolvedQualifier) {
             val callExpression = (psi as? KtExpression)?.getPossiblyQualifiedCallExpression()
             if (callExpression != null) {

@@ -33,10 +33,12 @@ import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.PLUS
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.util.getChildren
 import java.util.*
+import kotlin.collections.ArrayDeque
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -45,33 +47,64 @@ import kotlin.contracts.contract
 // ----------- Walking children/siblings/parents -------------------------------------------------------------------------------------------
 
 /**
- * Emulates recursion using a stack to prevent StackOverflow exception on big concatenation expressions like
- * `val x = "a0" + "a1" + ... + "a9999"`
+ * Emulates recursion using a stack to prevent StackOverflow exception on big string concatenation expressions like
+ * `val x = "a0" + "a1" + ... + "a9999"` (it's relatively common in machine-generated code)
 
- * Traversing order is different from using default [KtVisitorVoid]!
- * However, it is the same at least for regular left-associative expression.
+ * This method traverses the provided @param[KtBinaryExpression], tries to extract all string template nodes and returns
+ * the list of nested expressions in direct order if the input `KtBinaryExpression` matches the string literals concatenation pattern.
+ * Otherwise, it returns `null`.
+ * The method handles nested expressions by pushing nodes onto an input stack and processing them iteratively.
+ *
  * For instance, the "a" + "b" + "c" is represented as
  *
  * ```
- *          '+'
- *      '+'     'c'
- *  'a'     'b'
+ *          '+'(0)
+ *      '+'(1)     'c'
+ *  'a'        'b'
  * ```
  *
- * And it's traversed as: 'a', '+', 'b', '+', 'c'
+ *
+ * The method returns `'a', 'b', 'c'` if @param[collectAllDescendants] is `false` (default)
+ * But returns `'a', 'b', '+'(1), 'c', '+'(0)` otherwise. This is used when full-fidelity tree structure is needed (see usages).
  */
-fun KtVisitorVoid.visitBinaryExpressionUsingStack(expression: KtBinaryExpression) {
-    val stack = kotlin.collections.ArrayDeque<PsiElement>().also { it.add(expression) }
-    while (stack.isNotEmpty()) {
-        val element = stack.removeLast()
-        if (element is KtBinaryExpression) {
-            for (i in element.children.size - 1 downTo 0) {
-                stack.addLast(element.children[i])
+fun KtBinaryExpression.tryVisitFoldingStringConcatenation(collectAllDescendants: Boolean = false): List<KtExpression>? {
+    // Optimization: don't allocate anything if the root expression doesn't match the string concatenation folding pattern
+    if (operationToken != PLUS) return null
+
+    val input = mutableListOf<KtExpression?>().also { it.add(this) }
+    val output = ArrayDeque<KtExpression>()
+
+    while (input.isNotEmpty()) {
+        var node = input.removeLast()
+        when (node) {
+            is KtBinaryExpression -> {
+                if (node.operationToken != PLUS) {
+                    return null
+                }
+
+                if (collectAllDescendants) {
+                    output.addFirst(node)
+                }
+                input.add(node.left)
+                input.add(node.right)
             }
-        } else {
-            element.accept(this)
+            is KtParenthesizedExpression -> {
+                if (collectAllDescendants) {
+                    output.addFirst(node)
+                }
+                input.add(node.expression)
+            }
+            else -> {
+                if (node !is KtStringTemplateExpression) {
+                    return null
+                }
+
+                output.addFirst(node)
+            }
         }
     }
+
+    return output
 }
 
 val PsiElement.allChildren: PsiChildRange

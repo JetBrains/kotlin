@@ -1,4 +1,4 @@
-@R|Anno|(position = String(1).R|kotlin/String.plus|(String(2)))  kotlin/String
+@R|Anno|(position = <strcat>(String(1), String(2)))  kotlin/String
   context -> FirValueParameterSymbol <local>/parameter from FirNamedFunctionSymbol /foo
   anchor -> [FirValueParameterSymbol <local>/parameter from FirNamedFunctionSymbol /foo]
 
@@ -12,5 +12,5 @@ FILE: [ResolvedTo(IMPORTS)] contextParameter.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    context([ResolvedTo(ANNOTATION_ARGUMENTS)] parameter: R|@R|Anno|(position = String(1).R|kotlin/String.plus|(String(2)))  kotlin/String|)
+    context([ResolvedTo(ANNOTATION_ARGUMENTS)] parameter: R|@R|Anno|(position = <strcat>(String(1), String(2)))  kotlin/String|)
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }

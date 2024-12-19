@@ -28,10 +28,12 @@ KtBinaryExpression(30,45): '"1" + "2" + "3"'
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = "1" + "2"
           isSafeNavigation = false
@@ -47,8 +49,10 @@ KtBinaryExpression(30,45): '"1" + "2" + "3"'
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/String.plus
       typeArgumentsMapping = {}
 
@@ -61,10 +65,12 @@ KtBinaryExpression(30,39): '"1" + "2"'
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = "1"
           isSafeNavigation = false
@@ -80,8 +86,10 @@ KtBinaryExpression(30,39): '"1" + "2"'
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/String.plus
       typeArgumentsMapping = {}
 
@@ -100,10 +108,12 @@ KtOperationReferenceExpression(34,35): '+'
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = "1"
           isSafeNavigation = false
@@ -119,8 +129,10 @@ KtOperationReferenceExpression(34,35): '+'
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/String.plus
       typeArgumentsMapping = {}
 
@@ -139,10 +151,12 @@ KtOperationReferenceExpression(40,41): '+'
           receiverType = null
           returnType = kotlin.Any?
           symbol = other: kotlin.Any?
+          contextParameters = []
           callableId = null)
       }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
         dispatchReceiver = KaExplicitReceiverValue:
           expression = "1" + "2"
           isSafeNavigation = false
@@ -158,8 +172,10 @@ KtOperationReferenceExpression(40,41): '+'
               receiverType = null
               returnType = kotlin.Any?
               symbol = other: kotlin.Any?
+              contextParameters = []
               callableId = null
           ]
+          contextParameters = []
           callableId = kotlin/String.plus
       typeArgumentsMapping = {}
 

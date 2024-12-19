@@ -1,12 +1,12 @@
 KT element: KtBinaryExpression
-FIR element: FirFunctionCallImpl
+FIR element: FirStringConcatenationCallImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-String(1).R|kotlin/String.plus|(String(2))
+<strcat>(String(1), String(2), String(3))
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] stringConcatenation_lhs2.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun check(): R|kotlin/Unit| {
-        [ResolvedTo(BODY_RESOLVE)] lval value: R|kotlin/String| = String(1).R|kotlin/String.plus|(String(2)).R|kotlin/String.plus|(String(3))
+        [ResolvedTo(BODY_RESOLVE)] lval value: R|kotlin/String| = <strcat>(String(1), String(2), String(3))
     }
