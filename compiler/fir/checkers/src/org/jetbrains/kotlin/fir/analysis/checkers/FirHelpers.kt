@@ -967,3 +967,21 @@ fun FirAnonymousFunction.getReturnedExpressions(): List<FirExpression> {
 
     return exitNode.previousNodes.mapNotNull(::extractReturnedExpression).distinct()
 }
+
+fun ConeKotlinType.isMalformedExpandedType(context: CheckerContext, allowNullableNothing: Boolean): Boolean {
+    val expandedType = fullyExpandedType(context.session)
+    if (expandedType.classId == StandardClassIds.Array) {
+        val singleArgumentType = expandedType.typeArguments.singleOrNull()?.type?.fullyExpandedType(context.session)
+        if (singleArgumentType != null &&
+            (singleArgumentType.isNothing || (singleArgumentType.isNullableNothing && !allowNullableNothing))
+        ) {
+            return true
+        }
+    }
+    return expandedType.containsMalformedArgument(context, allowNullableNothing)
+}
+
+private fun ConeKotlinType.containsMalformedArgument(context: CheckerContext, allowNullableNothing: Boolean) =
+    typeArguments.any {
+        it.type?.fullyExpandedType(context.session)?.isMalformedExpandedType(context, allowNullableNothing) == true
+    }
