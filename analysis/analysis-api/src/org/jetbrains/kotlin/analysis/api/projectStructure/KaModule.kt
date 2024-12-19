@@ -42,6 +42,7 @@ import java.nio.file.Path
  * an isolated function or property body), the resulting cache invalidation occurs on the level of a module and its dependents. While
  * modification handling overall is an Analysis API *platform* topic, it is important to establish this basic fact.
  */
+@SubclassOptInRequired(KaPlatformInterface::class)
 public interface KaModule {
     /**
      * The module's regular dependencies. Regular dependencies allow the current module to use symbols from the dependency module.
@@ -118,6 +119,7 @@ public interface KaModule {
  * actually different [KaSourceModule]s. To allow a test source module to use the declarations from the production source module, the test
  * source module generally defines a [friend dependency][directFriendDependencies] on the production source module.
  */
+@SubclassOptInRequired(KaPlatformInterface::class)
 public interface KaSourceModule : KaModule {
     /**
      * The name of the module.
@@ -147,6 +149,7 @@ public interface KaSourceModule : KaModule {
 /**
  * A module which represents a binary library, such as a JAR or KLIB.
  */
+@SubclassOptInRequired(KaPlatformInterface::class)
 public interface KaLibraryModule : KaModule {
     /**
      * The name of the library.
@@ -200,6 +203,7 @@ public interface KaLibraryModule : KaModule {
  * For example, when viewing a library file in an IDE, the library sources are usually preferred over the library's binary files (if
  * available). The [KaLibrarySourceModule] represents exactly such sources.
  */
+@SubclassOptInRequired(KaPlatformInterface::class)
 public interface KaLibrarySourceModule : KaModule {
     /**
      * The name of the library sources.
@@ -239,6 +243,7 @@ public interface KaBuiltinsModule : KaModule {
  * A module for a Kotlin script file.
  */
 @KaExperimentalApi
+@SubclassOptInRequired(KaPlatformInterface::class)
 public interface KaScriptModule : KaModule {
     /**
      * The [KtFile] which contains the Kotlin script.
