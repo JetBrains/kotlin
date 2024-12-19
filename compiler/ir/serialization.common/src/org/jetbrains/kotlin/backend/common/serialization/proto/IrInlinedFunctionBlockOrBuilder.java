@@ -8,13 +8,13 @@ public interface IrInlinedFunctionBlockOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>optional int64 inline_function_symbol = 1;</code>
+   * <code>optional int64 inlined_function_symbol = 1;</code>
    */
-  boolean hasInlineFunctionSymbol();
+  boolean hasInlinedFunctionSymbol();
   /**
-   * <code>optional int64 inline_function_symbol = 1;</code>
+   * <code>optional int64 inlined_function_symbol = 1;</code>
    */
-  long getInlineFunctionSymbol();
+  long getInlinedFunctionSymbol();
 
   /**
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
