@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
@@ -43,14 +44,17 @@ import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import java.util.*
 
+@KaImplementationDetail
 class CodeFragmentCapturedSymbol(
     val value: CodeFragmentCapturedValue,
     val symbol: FirBasedSymbol<*>,
     val typeRef: FirTypeRef,
 )
 
+@KaImplementationDetail
 data class CodeFragmentCapturedId(val symbol: FirBasedSymbol<*>)
 
+@KaImplementationDetail
 object CodeFragmentCapturedValueAnalyzer {
     fun analyze(resolveSession: LLFirResolveSession, codeFragment: FirCodeFragment): CodeFragmentCapturedValueData {
         val selfSymbols = CodeFragmentDeclarationCollector().apply { codeFragment.accept(this) }.symbols.toSet()
@@ -60,6 +64,7 @@ object CodeFragmentCapturedValueAnalyzer {
     }
 }
 
+@KaImplementationDetail
 class CodeFragmentCapturedValueData(val symbols: List<CodeFragmentCapturedSymbol>, val files: List<KtFile>)
 
 private class CodeFragmentDeclarationCollector : FirDefaultVisitorVoid() {

@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compile
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinForeignValueProviderService
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -31,15 +33,18 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.org.objectweb.asm.Type
 
+@LLFirInternals
 val FirSession.codeFragmentScopeProvider: CodeFragmentScopeProvider by FirSession.sessionComponentAccessor()
 
 private object ForeignValueMarkerDataKey : FirDeclarationDataKey()
 
 private var FirProperty.foreignValueMarker: Boolean? by FirDeclarationDataRegistry.data(ForeignValueMarkerDataKey)
 
+@KaImplementationDetail
 val FirPropertySymbol.isForeignValue: Boolean
     get() = fir.foreignValueMarker == true
 
+@KaImplementationDetail
 class CodeFragmentScopeProvider(private val session: FirSession) : FirSessionComponent {
     private val foreignValueProvider = KotlinForeignValueProviderService.getInstance()
 

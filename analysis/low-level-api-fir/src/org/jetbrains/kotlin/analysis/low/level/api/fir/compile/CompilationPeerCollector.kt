@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.compile
 
 import com.intellij.openapi.progress.ProgressManager
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingKtFileIfAny
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
  *
  * Note that compiled declarations are not analyzed, as the backend can inline them natively.
  */
+@KaImplementationDetail
 class CompilationPeerCollector private constructor() {
     companion object {
         fun process(file: FirFile): CompilationPeerData {
@@ -113,6 +115,7 @@ class CompilationPeerCollector private constructor() {
     }
 }
 
+@KaImplementationDetail
 class CompilationPeerData(
     /**
      * The original file and all files that contain inline functions/properties called from that file or any other files from the list.
