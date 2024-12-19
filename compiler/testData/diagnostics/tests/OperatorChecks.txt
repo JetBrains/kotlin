@@ -96,6 +96,20 @@ public final class DelegatesWithErrors {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+public interface DispatchReceiverType {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public abstract operator fun DispatchReceiverType.ExtensionReceiverType.dec(): DispatchReceiverType
+    public abstract operator fun DispatchReceiverType.ExtensionReceiverType.inc(): DispatchReceiverType.ExtensionReceiverType
+
+    public interface ExtensionReceiverType {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
 public interface Example {
     public abstract operator fun compareTo(/*0*/ other: Example): kotlin.Int
     public abstract operator fun component1(): kotlin.Int
