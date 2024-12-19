@@ -473,7 +473,7 @@ open class DeepCopyIrTreeWithSymbols(
             type = inlinedBlock.type.remapType(),
             origin = inlinedBlock.origin,
             inlinedFunctionSymbol = inlinedBlock.inlinedFunctionSymbol?.let(symbolRemapper::getReferencedFunction),
-            fileEntry = inlinedBlock.fileEntry,
+            inlinedFunctionFileEntry = inlinedBlock.inlinedFunctionFileEntry,
         ).apply {
             inlinedBlock.statements.mapTo(statements) { it.transform() }
             processAttributes(inlinedBlock)

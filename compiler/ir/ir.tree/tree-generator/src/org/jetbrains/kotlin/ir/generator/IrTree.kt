@@ -759,7 +759,7 @@ object IrTree : AbstractTreeBuilder() {
         visitorParameterName = "inlinedBlock"
 
         +field("inlinedFunctionSymbol", functionSymbol, isChild = false, nullable = true)
-        +field("fileEntry", type(Packages.tree, "IrFileEntry"), isChild = false)
+        +field("inlinedFunctionFileEntry", type(Packages.tree, "IrFileEntry"), isChild = false)
     }
     val syntheticBody: Element by element(Expression) {
         visitorParameterName = "body"
