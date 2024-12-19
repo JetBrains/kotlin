@@ -18,9 +18,12 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
+import org.jetbrains.kotlin.gradle.targets.js.targetVariant
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import java.io.Serializable
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin.Companion.kotlinNodeJsEnvSpec as wasmKotlinNodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
 val KotlinJsIrCompilation.npmProject: NpmProject
     get() = NpmProject(this)
@@ -44,12 +47,18 @@ open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Seria
 
     @delegate:Transient
     val nodeJsRoot by lazy {
-        project.rootProject.kotlinNodeJsRootExtension
+        compilation.targetVariant(
+            { project.rootProject.kotlinNodeJsRootExtension },
+            { project.rootProject.wasmKotlinNodeJsRootExtension },
+        )
     }
 
     @delegate:Transient
     val nodeJs by lazy {
-        project.kotlinNodeJsEnvSpec
+        compilation.targetVariant(
+            { project.kotlinNodeJsEnvSpec },
+            { project.wasmKotlinNodeJsEnvSpec },
+        )
     }
 
     val dir: Provider<Directory> = nodeJsRoot.projectPackagesDirectory.zip(name) { directory, name ->
@@ -99,7 +108,7 @@ open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Seria
         exec: ExecSpec,
         tool: String,
         nodeArgs: List<String> = listOf(),
-        args: List<String>
+        args: List<String>,
     ) {
         exec.workingDir(dir)
         exec.executable(nodeExecutable)
