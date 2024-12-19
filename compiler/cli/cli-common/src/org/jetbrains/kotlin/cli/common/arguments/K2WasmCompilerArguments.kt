@@ -125,6 +125,13 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
             field = value
         }
 
+    @Argument(value = "-Xwasm-generate-dwarf", description = "Generate DWARF debug information.")
+    var generateDwarf = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @Argument(
         value = "-Xir-dce-dump-reachability-info-to-file",
         valueDescription = "<path>",

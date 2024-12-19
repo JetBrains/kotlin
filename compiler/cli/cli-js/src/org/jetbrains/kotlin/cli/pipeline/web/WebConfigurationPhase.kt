@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.io.File
 import java.io.IOException
 
@@ -129,6 +130,10 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
                 WARNING,
                 "The '-Xtyped-arrays' command line option does nothing and will be removed in a future release"
             )
+        }
+
+        if (arguments.generateDwarf) {
+            configuration.put(WasmConfigurationKeys.WASM_GENERATE_DWARF, true)
         }
 
         if (arguments.debuggerCustomFormatters) {

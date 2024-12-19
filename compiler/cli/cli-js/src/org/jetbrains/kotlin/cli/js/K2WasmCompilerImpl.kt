@@ -63,6 +63,7 @@ internal class K2WasmCompilerImpl(
             arguments.preserveIcOrder,
             arguments.wasmDebug,
             arguments.wasmGenerateWat,
+            arguments.generateDwarf
         )
 
         performanceManager?.notifyIRTranslationFinished()
@@ -89,6 +90,7 @@ internal class K2WasmCompilerImpl(
             dce = arguments.irDce,
             dceDumpDeclarationIrSizesToFile = arguments.irDceDumpDeclarationIrSizesToFile,
             wasmDebug = arguments.wasmDebug,
+            generateDwarf = arguments.generateDwarf
         )
 
         performanceManager?.notifyIRTranslationFinished()
