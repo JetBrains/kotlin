@@ -151,7 +151,7 @@ message IrReturnableBlock {
 
 message IrInlinedFunctionBlock {
   optional int64 inlined_function_symbol = 1;
-  required FileEntry file_entry = 2;
+  required FileEntry inlined_function_file_entry = 2;
   required IrBlock base = 3;
   required int32 inlined_function_start_offset = 4;
   required int32 inlined_function_end_offset = 5;
