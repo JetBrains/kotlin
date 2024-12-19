@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 
-object FirTopLevelTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
+object FirAnyTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirTypeAlias, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!context.isTopLevel && !context.languageVersionSettings.supportsFeature(LanguageFeature.NestedTypeAliases)) {
             reporter.reportOn(declaration.source, FirErrors.TOPLEVEL_TYPEALIASES_ONLY, context)
