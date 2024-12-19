@@ -93,7 +93,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         }
 
         for (handler in allRanHandlers) {
-            val wrapperFactory: (Throwable) -> WrappedException = { WrappedException.FromHandler(it, handler) }
+            val wrapperFactory: (Throwable) -> WrappedException = { WrappedException.FromHandler(it, failedModule = null, handler) }
             withAssertionCatching(wrapperFactory) {
                 val thereWasAnException = allFailedExceptions.isNotEmpty()
                 if (handler.shouldRun(thereWasAnException)) {
