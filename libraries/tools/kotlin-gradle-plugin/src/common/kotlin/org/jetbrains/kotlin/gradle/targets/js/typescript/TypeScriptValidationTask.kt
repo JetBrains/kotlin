@@ -12,10 +12,10 @@ import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
+import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidationStrategy
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import javax.inject.Inject
@@ -26,19 +26,16 @@ abstract class TypeScriptValidationTask
 constructor(
     @Internal
     @Transient
-    override val compilation: KotlinJsIrCompilation
+    final override val compilation: KotlinJsIrCompilation,
 ) : DefaultTask(), RequiresNpmDependencies {
     private val npmProject = compilation.npmProject
 
     @get:Internal
-    @Transient
-    protected val nodeJs = project.rootProject.kotlinNodeJsRootExtension
-
-    private val versions = nodeJs.versions
+    internal abstract val versions: Property<NpmVersions>
 
     @get:Internal
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
-        get() = setOf(versions.typescript)
+        get() = setOf(versions.get().typescript)
 
     @get:SkipWhenEmpty
     @get:NormalizeLineEndings

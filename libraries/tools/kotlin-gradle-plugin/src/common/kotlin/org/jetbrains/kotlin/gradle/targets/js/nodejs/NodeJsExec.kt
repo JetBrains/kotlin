@@ -6,32 +6,35 @@
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
+import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.targets.js.targetVariant
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import javax.inject.Inject
 
 @DisableCachingByDefault
-open class NodeJsExec
+abstract class NodeJsExec
 @Inject
 constructor(
     @Internal
     @Transient
     final override val compilation: KotlinJsIrCompilation,
 ) : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), RequiresNpmDependencies {
-    @Transient
+
     @get:Internal
-    lateinit var nodeJsRoot: NodeJsRootExtension
+    internal abstract val versions: Property<NpmVersions>
 
     @Internal
     val npmProject = compilation.npmProject
@@ -57,13 +60,13 @@ constructor(
     val inputFileProperty: RegularFileProperty = project.newFileProperty()
 
     @get:Internal
-    override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> by lazy {
-        mutableSetOf<RequiredKotlinJsDependency>().also {
+    override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
+        get() =
             if (sourceMapStackTraces) {
-                it.add(nodeJsRoot.versions.sourceMapSupport)
+                setOf(versions.get().sourceMapSupport)
+            } else {
+                emptySet()
             }
-        }
-    }
 
     override fun exec() {
         val newArgs = mutableListOf<String>()
@@ -96,25 +99,32 @@ constructor(
         ): TaskProvider<NodeJsExec> {
             val target = compilation.target
             val project = target.project
-            val nodeJsRoot = NodeJsRootPlugin.apply(project.rootProject)
-            val nodeJs = NodeJsPlugin.apply(project)
-            val nodeJsTaskProviders = project.rootProject.kotlinNodeJsRootExtension
+            val nodeJsRoot = compilation.targetVariant(
+                { NodeJsRootPlugin.apply(project.rootProject) },
+                { WasmNodeJsRootPlugin.apply(project.rootProject) },
+            )
+            val nodeJsEnvSpec = compilation.targetVariant(
+                { NodeJsPlugin.apply(project) },
+                { WasmNodeJsPlugin.apply(project) },
+            )
+
             val npmProject = compilation.npmProject
 
             return project.registerTask(
                 name,
                 listOf(compilation)
             ) {
-                it.nodeJsRoot = nodeJsRoot
-                it.executable = nodeJs.executable.get()
-                if ((compilation.target as? KotlinJsIrTarget)?.wasmTargetType != KotlinWasmTargetType.WASI) {
+                it.versions.value(nodeJsRoot.versions)
+                    .disallowChanges()
+                it.executable = nodeJsEnvSpec.executable.get()
+                if (compilation.target.wasmTargetType != KotlinWasmTargetType.WASI) {
                     it.workingDir(npmProject.dir)
                     it.dependsOn(
-                        nodeJsTaskProviders.npmInstallTaskProvider,
+                        nodeJsRoot.npmInstallTaskProvider,
                     )
                     it.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
                 }
-                with(nodeJs) {
+                with(nodeJsEnvSpec) {
                     it.dependsOn(project.nodeJsSetupTaskProvider)
                 }
                 it.dependsOn(compilation.compileTaskProvider)

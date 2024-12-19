@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinBrowserJsIr.Companion.WEBPACK_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.DISTRIBUTION_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.RUN_TASK_NAME
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.targets.js.targetVariant
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
@@ -30,12 +30,16 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
 class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTargetConfigurator<KotlinWebpack, KotlinWebpack> {
 
     private val project = subTarget.project
 
-    private val nodeJs = project.rootProject.kotlinNodeJsRootExtension
+    private val nodeJsRoot = subTarget.target.targetVariant(
+        { project.rootProject.kotlinNodeJsRootExtension },
+        { project.rootProject.wasmKotlinNodeJsRootExtension },
+    )
 
     private val webpackTaskConfigurations = project.objects.domainObjectSet<Action<KotlinWebpack>>()
     private val runTaskConfigurations = project.objects.domainObjectSet<Action<KotlinWebpack>>()
@@ -87,7 +91,6 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                         ).also { it.finalizeValueOnRead() },
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
                         configurationActions = webpackTaskConfigurations,
-                        nodeJs = nodeJs,
                         defaultArchivesName = archivesName,
                     )
                 }
@@ -183,7 +186,6 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                         ).also { it.finalizeValueOnRead() },
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
                         configurationActions = runTaskConfigurations,
-                        nodeJs = nodeJs,
                         defaultArchivesName = archivesName,
                     )
                 }
@@ -200,19 +202,24 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
         inputFilesDirectory: Provider<Directory>,
         entryModuleName: Provider<String>,
         configurationActions: DomainObjectSet<Action<KotlinWebpack>>,
-        nodeJs: NodeJsRootExtension,
         defaultArchivesName: Property<String>,
     ) {
         val target = binary.target
 
         dependsOn(
-            nodeJs.npmInstallTaskProvider,
             target.project.tasks.named(compilation.processResourcesTaskName)
         )
 
-        dependsOn(nodeJs.packageManagerExtension.map { it.postInstallTasks })
+        dependsOn(nodeJsRoot.npmInstallTaskProvider)
+
+        dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
 
         configureOptimization(mode)
+
+        this.versions.value(nodeJsRoot.versions)
+            .disallowChanges()
+        this.rootPackageDir.value(nodeJsRoot.rootPackageDirectory)
+            .disallowChanges()
 
         this.inputFilesDirectory.set(inputFilesDirectory)
 
