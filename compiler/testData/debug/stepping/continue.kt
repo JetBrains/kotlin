@@ -69,7 +69,7 @@ fun box() {
 // test.kt:5 $<init properties test.kt> (22, 28, 34, 39, 22, 14)
 // test.kt:8 $box (14)
 // test.kt:5 $<get-strings> (0)
-// test.kt:8 $box (4, 14, 4, 14, 9, 14)
+// test.kt:8 $box (14, 4, 14, 4, 14, 9, 14)
 // test.kt:9 $box (12, 17, 12)
 // test.kt:10 $box (12)
 // test.kt:8 $box (4, 14, 4, 14, 9, 14)

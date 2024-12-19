@@ -54,6 +54,7 @@ fun fail() : String {
 // test.kt:19 $fail (11, 4)
 // test.kt:7 $box (4)
 // test.kt:4 $execute (38, 45, 38, 46)
+// test.kt:7 $box (4)
 // test.kt:10 $box (4)
 // test.kt:19 $fail (11, 4)
 // test.kt:11 $box (12)
