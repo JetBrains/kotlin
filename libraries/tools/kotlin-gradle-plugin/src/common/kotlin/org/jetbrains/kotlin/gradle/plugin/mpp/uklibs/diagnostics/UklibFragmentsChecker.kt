@@ -69,7 +69,7 @@ internal object UklibFragmentsChecker {
     fun findViolationsInSourceSetGraph(
         refinementEdges: Map<FragmentToCheck, Set<String>>,
     ): Set<Violation> {
-        val violations = hashSetOf<Violation>()
+        val violations = linkedSetOf<Violation>()
         if (refinementEdges.isEmpty()) {
             violations.add(Violation.EmptyRefinementGraph)
             return violations
@@ -90,7 +90,7 @@ internal object UklibFragmentsChecker {
         // Attributes must not be empty
         val fragmentsWithEmptyAttributes = refinementEdges.keys.filter {
             it.attributes.isEmpty()
-        }.toHashSet()
+        }.toSet()
         if (fragmentsWithEmptyAttributes.isNotEmpty()) {
             violations.addAll(
                 fragmentsWithEmptyAttributes.map {
@@ -184,7 +184,7 @@ internal object UklibFragmentsChecker {
          *
          * Left to right is explicitly checked here. Right to left is checked by multiple-same targets and incompatible refinement violations
          */
-        val orphanedIntermediateFragments = fragments.filter { it.attributes.size > 1 }.toHashSet().subtract(
+        val orphanedIntermediateFragments = fragments.filter { it.attributes.size > 1 }.toSet().subtract(
             refinementEdges.values.flatten().map {
                 fragmentByIdentifier[it]!!
             }.toSet()
@@ -201,7 +201,7 @@ internal object UklibFragmentsChecker {
     private fun findFragmentsWithDuplicateAttributes(fragments: Set<FragmentToCheck>): Map<Set<String>, MutableSet<FragmentToCheck>> {
         val attributeSets: MutableMap<Set<String>, MutableSet<FragmentToCheck>> = mutableMapOf()
         fragments.forEach {
-            attributeSets.getOrPut(it.attributes, { hashSetOf() }).add(it)
+            attributeSets.getOrPut(it.attributes, { linkedSetOf() }).add(it)
         }
         val duplicateAttributesFragments = attributeSets.filter { it.value.size > 1 }
         return duplicateAttributesFragments
@@ -277,7 +277,7 @@ internal object UklibFragmentsChecker {
             return null
         }
         fragments.forEach {
-            val cycle = dfs(it, hashSetOf())
+            val cycle = dfs(it, linkedSetOf())
             if (cycle != null) return Violation.FirstEncounteredCycle(cycle)
         }
         return null
@@ -287,7 +287,7 @@ internal object UklibFragmentsChecker {
         refinementEdges: Map<FragmentToCheck, Set<String>>,
         fragmentByIdentifier: Map<String, FragmentToCheck>,
     ): List<Violation> {
-        val missingFragments = hashSetOf<String>()
+        val missingFragments = linkedSetOf<String>()
         refinementEdges.values.forEach {
             it.forEach {
                 // Check all vertices are provided

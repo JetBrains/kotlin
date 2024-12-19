@@ -77,7 +77,7 @@ internal abstract class ArchiveUklibTask : DefaultTask() {
             }.toMap()
         )
 
-        val duplicateAttributes = hashSetOf<UklibFragmentsChecker.Violation.DuplicateAttributesFragments>()
+        val duplicateAttributes = linkedSetOf<UklibFragmentsChecker.Violation.DuplicateAttributesFragments>()
         violations.forEach {
             when (it) {
                 is UklibFragmentsChecker.Violation.DuplicateAttributesFragments -> duplicateAttributes.add(it)

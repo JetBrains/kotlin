@@ -45,9 +45,9 @@ internal suspend fun KotlinMultiplatformExtension.validateKgpModelIsUklibComplia
     val publishedMetadataCompilations = metadataTarget.publishedMetadataCompilations()
 
     val fragments = mutableListOf<KGPUklibFragment>()
-    val unsupportedTargets = hashSetOf<String>()
-    val publishedPlatformCompilations = mutableListOf<KotlinCompilation<*>>()
-    allTargets.filterNot { it == metadataTarget }.forEach { target ->
+    val unsupportedTargets = linkedSetOf<String>()
+    uklibPublishedPlatformCompilations.forEach { compilation ->
+        val target = compilation.target
         /**
          * FIXME: Tie this implementation to the publication implementations that exists in KotlinTargets to make the dependency
          * between the artifact that is published in Uklib and in the old publication model visible
@@ -164,7 +164,7 @@ private fun Project.ensureSourceSetStructureIsUklibCompliant(publishedCompilatio
     }.toSet().map {
         UklibFragmentsChecker.FragmentToCheck(
             it.name,
-            it.metadataFragmentAttributes.map { it.safeToPublish() }.toHashSet(),
+            it.metadataFragmentAttributes.map { it.safeToPublish() }.toSet(),
         ) to it.dependsOn.map {
             it.name
         }.toSet()
