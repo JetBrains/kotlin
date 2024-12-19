@@ -9,8 +9,8 @@ import org.gradle.api.file.Directory
 import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Provider
 import org.gradle.internal.service.ServiceRegistry
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.AbstractNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.PackageManagerEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
 import java.io.File
@@ -50,7 +50,7 @@ data class NodeJsEnvironment(
     val packageManager: NpmApiExecution<PackageManagerEnvironment>,
 ) : Serializable
 
-internal fun asNodeJsEnvironment(nodeJsRoot: NodeJsRootExtension, nodeJsEnv: NodeJsEnv) = NodeJsEnvironment(
+internal fun asNodeJsEnvironment(nodeJsRoot: AbstractNodeJsRootExtension, nodeJsEnv: NodeJsEnv) = NodeJsEnvironment(
     nodeJsRoot.rootPackageDirectory,
     nodeJsEnv.executable,
     nodeJsRoot.packageManagerExtension.get().packageManager
