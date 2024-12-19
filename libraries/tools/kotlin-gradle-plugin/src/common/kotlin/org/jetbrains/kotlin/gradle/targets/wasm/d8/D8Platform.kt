@@ -1,4 +1,9 @@
-package org.jetbrains.kotlin.gradle.targets.js.d8
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.gradle.targets.wasm.d8
 
 /**
  * Provides platform and architecture names that is used to download D8.
@@ -38,7 +43,7 @@ internal object D8Platform {
         }
 
     val platform: String
-        get() = when (val architecture = D8Platform.architecture) {
+        get() = when (val architecture = architecture) {
             ARM64 -> "$name-$ARM64"
             X64 -> name + X64
             X86 -> name + X86

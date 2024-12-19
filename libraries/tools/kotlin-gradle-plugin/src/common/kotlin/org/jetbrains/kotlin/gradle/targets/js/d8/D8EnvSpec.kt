@@ -1,18 +1,19 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.targets.js.d8
 
 import org.gradle.api.Project
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.EnvSpec
-import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenEnv
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Env
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Platform
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8SetupTask
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import org.jetbrains.kotlin.gradle.utils.getFile
 
@@ -20,6 +21,10 @@ import org.jetbrains.kotlin.gradle.utils.getFile
  * Spec for D8 - this target is available only for Wasm
  */
 @ExperimentalWasmDsl
+@Deprecated(
+    "Use 'org.jetbrains.kotlin.gradle.targets.wasm.d8.D8EnvSpec' instead",
+    ReplaceWith("D8EnvSpec", "org.jetbrains.kotlin.gradle.targets.wasm.d8.D8EnvSpec")
+)
 abstract class D8EnvSpec : EnvSpec<D8Env>() {
 
     // Latest version number could be found here https://storage.googleapis.com/chromium-v8/official/canary/v8-linux64-rel-latest.json
@@ -37,14 +42,14 @@ abstract class D8EnvSpec : EnvSpec<D8Env>() {
         fi;
     done;
     */
-    abstract override val version: org.gradle.api.provider.Property<String>
+    abstract override val version: Property<String>
 
     /**
      * Specify the edition of the D8.
      *
      * Valid options for bundled version are `rel` (release variant) and `dbg` (debug variant).
      */
-    abstract val edition: org.gradle.api.provider.Property<String>
+    abstract val edition: Property<String>
 
     final override val env: Provider<D8Env> = produceEnv()
 
@@ -54,7 +59,7 @@ abstract class D8EnvSpec : EnvSpec<D8Env>() {
         return edition.map { editionValue ->
             val requiredVersion = "${D8Platform.platform}-$editionValue-${version.get()}"
             val requiredVersionName = "v8-$requiredVersion"
-            val cleanableStore = CleanableStore[installationDirectory.getFile().absolutePath]
+            val cleanableStore = CleanableStore.Companion[installationDirectory.getFile().absolutePath]
             val targetPath = cleanableStore[requiredVersionName].use()
             val isWindows = D8Platform.name == D8Platform.WIN
 
@@ -87,6 +92,6 @@ abstract class D8EnvSpec : EnvSpec<D8Env>() {
         get() = project.tasks.withType(D8SetupTask::class.java).named(D8SetupTask.NAME)
 
     companion object {
-        const val EXTENSION_NAME: String = "kotlinD8Spec"
+        const val EXTENSION_NAME: String = org.jetbrains.kotlin.gradle.targets.wasm.d8.D8EnvSpec.EXTENSION_NAME
     }
 }
