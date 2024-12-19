@@ -36926,6 +36926,1060 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
       }
 
       @Nested
+      @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Generation {
+        @Test
+        public void testAllFilesPresentInGeneration() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all")
+        @TestDataPath("$PROJECT_ROOT")
+        public class My_all_all {
+          @Test
+          public void testAllFilesPresentInMy_all_all() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all"), Pattern.compile("^(.+)\\.kt$"), null, true);
+          }
+
+          @Test
+          @TestMetadata("jDefkkk.kt")
+          public void testJDefkkk() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/jDefkkk.kt");
+          }
+
+          @Test
+          @TestMetadata("kDefkkk.kt")
+          public void testKDefkkk() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kDefkkk.kt");
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/jkkkk")
+          @TestDataPath("$PROJECT_ROOT")
+          public class Jkkkk {
+            @Test
+            public void testAllFilesPresentInJkkkk() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/jkkkk"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("jAbskAbskkk.kt")
+            public void testJAbskAbskkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/jkkkk/jAbskAbskkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jAbskDefkkk.kt")
+            public void testJAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/jkkkk/jAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jAbskkkk.kt")
+            public void testJAbskkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/jkkkk/jAbskkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jDefkAbskkk.kt")
+            public void testJDefkAbskkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/jkkkk/jDefkAbskkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jDefkDefkkk.kt")
+            public void testJDefkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/jkkkk/jDefkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jDefkkkk.kt")
+            public void testJDefkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/jkkkk/jDefkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jkAbskkk.kt")
+            public void testJkAbskkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/jkkkk/jkAbskkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jkDefkkk.kt")
+            public void testJkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/jkkkk/jkDefkkk.kt");
+            }
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kjkkkk")
+          @TestDataPath("$PROJECT_ROOT")
+          public class Kjkkkk {
+            @Test
+            public void testAllFilesPresentInKjkkkk() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kjkkkk"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("kAbsjAbskDefkkk.kt")
+            public void testKAbsjAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kjkkkk/kAbsjAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kAbsjDefkDefkkk.kt")
+            public void testKAbsjDefkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kjkkkk/kAbsjDefkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kAbsjDefkkkk.kt")
+            public void testKAbsjDefkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kjkkkk/kAbsjDefkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kAbsjkDefkkk.kt")
+            public void testKAbsjkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kjkkkk/kAbsjkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjAbskDefkkk.kt")
+            public void testKDefjAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kjkkkk/kDefjAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjAbskkkk.kt")
+            public void testKDefjAbskkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kjkkkk/kDefjAbskkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjDefkDefkkk.kt")
+            public void testKDefjDefkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kjkkkk/kDefjDefkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjDefkkkk.kt")
+            public void testKDefjDefkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kjkkkk/kDefjDefkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjkDefkkk.kt")
+            public void testKDefjkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kjkkkk/kDefjkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjkkkk.kt")
+            public void testKDefjkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kjkkkk/kDefjkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kjAbskDefkkk.kt")
+            public void testKjAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kjkkkk/kjAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kjDefkDefkkk.kt")
+            public void testKjDefkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kjkkkk/kjDefkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kjDefkkkk.kt")
+            public void testKjDefkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kjkkkk/kjDefkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kjkDefkkk.kt")
+            public void testKjkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kjkkkk/kjkDefkkk.kt");
+            }
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all")
+        @TestDataPath("$PROJECT_ROOT")
+        public class My_allcomp_all {
+          @Test
+          public void testAllFilesPresentInMy_allcomp_all() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all"), Pattern.compile("^(.+)\\.kt$"), null, true);
+          }
+
+          @Test
+          @TestMetadata("jDefkkk.kt")
+          public void testJDefkkk() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/jDefkkk.kt");
+          }
+
+          @Test
+          @TestMetadata("kDefkkk.kt")
+          public void testKDefkkk() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kDefkkk.kt");
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/jkkkk")
+          @TestDataPath("$PROJECT_ROOT")
+          public class Jkkkk {
+            @Test
+            public void testAllFilesPresentInJkkkk() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/jkkkk"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("jAbskAbskkk.kt")
+            public void testJAbskAbskkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/jkkkk/jAbskAbskkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jAbskDefkkk.kt")
+            public void testJAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/jkkkk/jAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jAbskkkk.kt")
+            public void testJAbskkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/jkkkk/jAbskkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jDefkAbskkk.kt")
+            public void testJDefkAbskkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/jkkkk/jDefkAbskkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jDefkDefkkk.kt")
+            public void testJDefkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/jkkkk/jDefkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jDefkkkk.kt")
+            public void testJDefkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/jkkkk/jDefkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jkAbskkk.kt")
+            public void testJkAbskkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/jkkkk/jkAbskkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jkDefkkk.kt")
+            public void testJkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/jkkkk/jkDefkkk.kt");
+            }
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kjkkkk")
+          @TestDataPath("$PROJECT_ROOT")
+          public class Kjkkkk {
+            @Test
+            public void testAllFilesPresentInKjkkkk() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kjkkkk"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("kAbsjAbskDefkkk.kt")
+            public void testKAbsjAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kjkkkk/kAbsjAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kAbsjDefkDefkkk.kt")
+            public void testKAbsjDefkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kjkkkk/kAbsjDefkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kAbsjDefkkkk.kt")
+            public void testKAbsjDefkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kjkkkk/kAbsjDefkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kAbsjkDefkkk.kt")
+            public void testKAbsjkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kjkkkk/kAbsjkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjAbskDefkkk.kt")
+            public void testKDefjAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kjkkkk/kDefjAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjAbskkkk.kt")
+            public void testKDefjAbskkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kjkkkk/kDefjAbskkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjDefkDefkkk.kt")
+            public void testKDefjDefkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kjkkkk/kDefjDefkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjDefkkkk.kt")
+            public void testKDefjDefkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kjkkkk/kDefjDefkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjkDefkkk.kt")
+            public void testKDefjkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kjkkkk/kDefjkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjkkkk.kt")
+            public void testKDefjkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kjkkkk/kDefjkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kjAbskDefkkk.kt")
+            public void testKjAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kjkkkk/kjAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kjDefkDefkkk.kt")
+            public void testKjDefkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kjkkkk/kjDefkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kjDefkkkk.kt")
+            public void testKjDefkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kjkkkk/kjDefkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kjkDefkkk.kt")
+            public void testKjkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kjkkkk/kjkDefkkk.kt");
+            }
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp")
+        @TestDataPath("$PROJECT_ROOT")
+        public class My_allcomp_allcomp {
+          @Test
+          public void testAllFilesPresentInMy_allcomp_allcomp() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp"), Pattern.compile("^(.+)\\.kt$"), null, true);
+          }
+
+          @Test
+          @TestMetadata("jDefkkk.kt")
+          public void testJDefkkk() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/jDefkkk.kt");
+          }
+
+          @Test
+          @TestMetadata("kDefkkk.kt")
+          public void testKDefkkk() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kDefkkk.kt");
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/jkkkk")
+          @TestDataPath("$PROJECT_ROOT")
+          public class Jkkkk {
+            @Test
+            public void testAllFilesPresentInJkkkk() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/jkkkk"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("jAbskAbskkk.kt")
+            public void testJAbskAbskkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/jkkkk/jAbskAbskkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jAbskDefkkk.kt")
+            public void testJAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/jkkkk/jAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jAbskkkk.kt")
+            public void testJAbskkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/jkkkk/jAbskkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jDefkAbskkk.kt")
+            public void testJDefkAbskkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/jkkkk/jDefkAbskkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jDefkDefkkk.kt")
+            public void testJDefkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/jkkkk/jDefkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jDefkkkk.kt")
+            public void testJDefkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/jkkkk/jDefkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jkAbskkk.kt")
+            public void testJkAbskkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/jkkkk/jkAbskkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jkDefkkk.kt")
+            public void testJkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/jkkkk/jkDefkkk.kt");
+            }
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kjkkkk")
+          @TestDataPath("$PROJECT_ROOT")
+          public class Kjkkkk {
+            @Test
+            public void testAllFilesPresentInKjkkkk() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kjkkkk"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("kAbsjAbskDefkkk.kt")
+            public void testKAbsjAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kjkkkk/kAbsjAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kAbsjDefkDefkkk.kt")
+            public void testKAbsjDefkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kjkkkk/kAbsjDefkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kAbsjDefkkkk.kt")
+            public void testKAbsjDefkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kjkkkk/kAbsjDefkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kAbsjkDefkkk.kt")
+            public void testKAbsjkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kjkkkk/kAbsjkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjAbskDefkkk.kt")
+            public void testKDefjAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kjkkkk/kDefjAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjAbskkkk.kt")
+            public void testKDefjAbskkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kjkkkk/kDefjAbskkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjDefkDefkkk.kt")
+            public void testKDefjDefkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kjkkkk/kDefjDefkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjDefkkkk.kt")
+            public void testKDefjDefkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kjkkkk/kDefjDefkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjkDefkkk.kt")
+            public void testKDefjkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kjkkkk/kDefjkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjkkkk.kt")
+            public void testKDefjkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kjkkkk/kDefjkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kjAbskDefkkk.kt")
+            public void testKjAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kjkkkk/kjAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kjDefkDefkkk.kt")
+            public void testKjDefkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kjkkkk/kjDefkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kjDefkkkk.kt")
+            public void testKjDefkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kjkkkk/kjDefkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kjkDefkkk.kt")
+            public void testKjkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kjkkkk/kjkDefkkk.kt");
+            }
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all")
+        @TestDataPath("$PROJECT_ROOT")
+        public class My_dis_all {
+          @Test
+          public void testAllFilesPresentInMy_dis_all() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all"), Pattern.compile("^(.+)\\.kt$"), null, true);
+          }
+
+          @Test
+          @TestMetadata("jDefkkk.kt")
+          public void testJDefkkk() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/jDefkkk.kt");
+          }
+
+          @Test
+          @TestMetadata("kDefkkk.kt")
+          public void testKDefkkk() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kDefkkk.kt");
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/jkkkk")
+          @TestDataPath("$PROJECT_ROOT")
+          public class Jkkkk {
+            @Test
+            public void testAllFilesPresentInJkkkk() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/jkkkk"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("jAbskAbskkk.kt")
+            public void testJAbskAbskkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/jkkkk/jAbskAbskkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jAbskDefkkk.kt")
+            public void testJAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/jkkkk/jAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jAbskkkk.kt")
+            public void testJAbskkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/jkkkk/jAbskkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jDefkAbskkk.kt")
+            public void testJDefkAbskkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/jkkkk/jDefkAbskkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jDefkDefkkk.kt")
+            public void testJDefkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/jkkkk/jDefkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jDefkkkk.kt")
+            public void testJDefkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/jkkkk/jDefkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jkAbskkk.kt")
+            public void testJkAbskkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/jkkkk/jkAbskkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jkDefkkk.kt")
+            public void testJkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/jkkkk/jkDefkkk.kt");
+            }
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kjkkkk")
+          @TestDataPath("$PROJECT_ROOT")
+          public class Kjkkkk {
+            @Test
+            public void testAllFilesPresentInKjkkkk() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kjkkkk"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("kAbsjAbskDefkkk.kt")
+            public void testKAbsjAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kjkkkk/kAbsjAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kAbsjDefkDefkkk.kt")
+            public void testKAbsjDefkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kjkkkk/kAbsjDefkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kAbsjDefkkkk.kt")
+            public void testKAbsjDefkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kjkkkk/kAbsjDefkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kAbsjkDefkkk.kt")
+            public void testKAbsjkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kjkkkk/kAbsjkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjAbskDefkkk.kt")
+            public void testKDefjAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kjkkkk/kDefjAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjAbskkkk.kt")
+            public void testKDefjAbskkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kjkkkk/kDefjAbskkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjDefkDefkkk.kt")
+            public void testKDefjDefkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kjkkkk/kDefjDefkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjDefkkkk.kt")
+            public void testKDefjDefkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kjkkkk/kDefjDefkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjkDefkkk.kt")
+            public void testKDefjkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kjkkkk/kDefjkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjkkkk.kt")
+            public void testKDefjkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kjkkkk/kDefjkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kjAbskDefkkk.kt")
+            public void testKjAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kjkkkk/kjAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kjDefkDefkkk.kt")
+            public void testKjDefkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kjkkkk/kjDefkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kjDefkkkk.kt")
+            public void testKjDefkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kjkkkk/kjDefkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kjkDefkkk.kt")
+            public void testKjkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kjkkkk/kjkDefkkk.kt");
+            }
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm")
+        @TestDataPath("$PROJECT_ROOT")
+        public class My_dis_allcopm {
+          @Test
+          public void testAllFilesPresentInMy_dis_allcopm() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm"), Pattern.compile("^(.+)\\.kt$"), null, true);
+          }
+
+          @Test
+          @TestMetadata("jDefkkk.kt")
+          public void testJDefkkk() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/jDefkkk.kt");
+          }
+
+          @Test
+          @TestMetadata("kDefkkk.kt")
+          public void testKDefkkk() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kDefkkk.kt");
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/jkkkk")
+          @TestDataPath("$PROJECT_ROOT")
+          public class Jkkkk {
+            @Test
+            public void testAllFilesPresentInJkkkk() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/jkkkk"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("jAbskAbskkk.kt")
+            public void testJAbskAbskkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/jkkkk/jAbskAbskkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jAbskDefkkk.kt")
+            public void testJAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/jkkkk/jAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jAbskkkk.kt")
+            public void testJAbskkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/jkkkk/jAbskkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jDefkAbskkk.kt")
+            public void testJDefkAbskkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/jkkkk/jDefkAbskkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jDefkDefkkk.kt")
+            public void testJDefkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/jkkkk/jDefkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jDefkkkk.kt")
+            public void testJDefkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/jkkkk/jDefkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jkAbskkk.kt")
+            public void testJkAbskkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/jkkkk/jkAbskkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jkDefkkk.kt")
+            public void testJkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/jkkkk/jkDefkkk.kt");
+            }
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kjkkkk")
+          @TestDataPath("$PROJECT_ROOT")
+          public class Kjkkkk {
+            @Test
+            public void testAllFilesPresentInKjkkkk() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kjkkkk"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("kAbsjAbskDefkkk.kt")
+            public void testKAbsjAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kjkkkk/kAbsjAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kAbsjDefkDefkkk.kt")
+            public void testKAbsjDefkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kjkkkk/kAbsjDefkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kAbsjDefkkkk.kt")
+            public void testKAbsjDefkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kjkkkk/kAbsjDefkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kAbsjkDefkkk.kt")
+            public void testKAbsjkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kjkkkk/kAbsjkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjAbskDefkkk.kt")
+            public void testKDefjAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kjkkkk/kDefjAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjAbskkkk.kt")
+            public void testKDefjAbskkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kjkkkk/kDefjAbskkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjDefkDefkkk.kt")
+            public void testKDefjDefkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kjkkkk/kDefjDefkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjDefkkkk.kt")
+            public void testKDefjDefkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kjkkkk/kDefjDefkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjkDefkkk.kt")
+            public void testKDefjkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kjkkkk/kDefjkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjkkkk.kt")
+            public void testKDefjkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kjkkkk/kDefjkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kjAbskDefkkk.kt")
+            public void testKjAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kjkkkk/kjAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kjDefkDefkkk.kt")
+            public void testKjDefkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kjkkkk/kjDefkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kjDefkkkk.kt")
+            public void testKjDefkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kjkkkk/kjDefkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kjkDefkkk.kt")
+            public void testKjkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kjkkkk/kjkDefkkk.kt");
+            }
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis")
+        @TestDataPath("$PROJECT_ROOT")
+        public class My_dis_dis {
+          @Test
+          public void testAllFilesPresentInMy_dis_dis() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis"), Pattern.compile("^(.+)\\.kt$"), null, true);
+          }
+
+          @Test
+          @TestMetadata("jDefkkk.kt")
+          public void testJDefkkk() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/jDefkkk.kt");
+          }
+
+          @Test
+          @TestMetadata("kDefkkk.kt")
+          public void testKDefkkk() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kDefkkk.kt");
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/jkkkk")
+          @TestDataPath("$PROJECT_ROOT")
+          public class Jkkkk {
+            @Test
+            public void testAllFilesPresentInJkkkk() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/jkkkk"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("jAbskAbskkk.kt")
+            public void testJAbskAbskkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/jkkkk/jAbskAbskkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jAbskDefkkk.kt")
+            public void testJAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/jkkkk/jAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jAbskkkk.kt")
+            public void testJAbskkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/jkkkk/jAbskkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jDefkAbskkk.kt")
+            public void testJDefkAbskkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/jkkkk/jDefkAbskkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jDefkDefkkk.kt")
+            public void testJDefkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/jkkkk/jDefkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jDefkkkk.kt")
+            public void testJDefkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/jkkkk/jDefkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jkAbskkk.kt")
+            public void testJkAbskkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/jkkkk/jkAbskkk.kt");
+            }
+
+            @Test
+            @TestMetadata("jkDefkkk.kt")
+            public void testJkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/jkkkk/jkDefkkk.kt");
+            }
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kjkkkk")
+          @TestDataPath("$PROJECT_ROOT")
+          public class Kjkkkk {
+            @Test
+            public void testAllFilesPresentInKjkkkk() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kjkkkk"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("kAbsjAbskDefkkk.kt")
+            public void testKAbsjAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kjkkkk/kAbsjAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kAbsjDefkDefkkk.kt")
+            public void testKAbsjDefkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kjkkkk/kAbsjDefkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kAbsjDefkkkk.kt")
+            public void testKAbsjDefkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kjkkkk/kAbsjDefkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kAbsjkDefkkk.kt")
+            public void testKAbsjkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kjkkkk/kAbsjkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjAbskDefkkk.kt")
+            public void testKDefjAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kjkkkk/kDefjAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjAbskkkk.kt")
+            public void testKDefjAbskkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kjkkkk/kDefjAbskkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjDefkDefkkk.kt")
+            public void testKDefjDefkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kjkkkk/kDefjDefkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjDefkkkk.kt")
+            public void testKDefjDefkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kjkkkk/kDefjDefkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjkDefkkk.kt")
+            public void testKDefjkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kjkkkk/kDefjkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjkkkk.kt")
+            public void testKDefjkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kjkkkk/kDefjkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kjAbskDefkkk.kt")
+            public void testKjAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kjkkkk/kjAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kjDefkDefkkk.kt")
+            public void testKjDefkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kjkkkk/kjDefkDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kjDefkkkk.kt")
+            public void testKjDefkkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kjkkkk/kjDefkkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kjkDefkkk.kt")
+            public void testKjkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kjkkkk/kjkDefkkk.kt");
+            }
+          }
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls")
       @TestDataPath("$PROJECT_ROOT")
       public class NoDefaultImpls {
