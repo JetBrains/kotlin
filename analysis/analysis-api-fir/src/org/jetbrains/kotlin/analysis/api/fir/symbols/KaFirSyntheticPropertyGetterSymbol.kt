@@ -75,7 +75,7 @@ internal class KaFirSyntheticPropertyGetterSymbol(
         get() = withValidityAssertion { firSymbol.delegateFunctionSymbol.callableId }
 
     override fun createPointer(): KaSymbolPointer<KaPropertyGetterSymbol> = withValidityAssertion {
-        KaBasePropertyGetterSymbolPointer(propertySymbolPointer = analysisSession.createOwnerPointer(this))
+        KaBasePropertyGetterSymbolPointer(propertySymbolPointer = analysisSession.createOwnerPointer(this), originalSymbol = this)
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)

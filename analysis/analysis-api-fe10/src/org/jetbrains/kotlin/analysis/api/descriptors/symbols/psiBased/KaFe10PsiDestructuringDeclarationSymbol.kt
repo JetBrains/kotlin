@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaDestructuringDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -47,7 +47,7 @@ internal class KaFe10PsiDestructuringDeclarationSymbol(
         }
 
     override fun createPointer(): KaSymbolPointer<KaDestructuringDeclarationSymbol> {
-        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaDestructuringDeclarationSymbol>(this)?.let { return it }
+        KaBasePsiSymbolPointer.createForSymbolFromSource<KaDestructuringDeclarationSymbol>(this)?.let { return it }
         throw KaCannotCreateSymbolPointerForLocalLibraryDeclarationException(SpecialNames.DESTRUCT.asString())
     }
 

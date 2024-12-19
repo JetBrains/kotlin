@@ -85,7 +85,7 @@ internal class KaFirEnumEntrySymbol private constructor(
 
     override fun createPointer(): KaSymbolPointer<KaEnumEntrySymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource<KaEnumEntrySymbol>()
-            ?: KaFirEnumEntrySymbolPointer(analysisSession.createOwnerPointer(this), name)
+            ?: KaFirEnumEntrySymbolPointer(analysisSession.createOwnerPointer(this), name, this)
     }
 
     override fun equals(other: Any?): Boolean = psiOrSymbolEquals(other)

@@ -83,7 +83,7 @@ internal class KaFirReceiverParameterSymbol private constructor(
         get() = withValidityAssertion { FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS.visibility }
 
     override fun createPointer(): KaSymbolPointer<KaReceiverParameterSymbol> = withValidityAssertion {
-        KaBaseReceiverParameterSymbolPointer(owningKaSymbol.createPointer())
+        KaBaseReceiverParameterSymbolPointer(owningKaSymbol.createPointer(), this)
     }
 
     override val annotations: KaAnnotationList

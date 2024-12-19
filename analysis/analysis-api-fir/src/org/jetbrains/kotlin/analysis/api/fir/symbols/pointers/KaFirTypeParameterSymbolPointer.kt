@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
@@ -19,9 +20,10 @@ internal class KaFirTypeParameterSymbolPointer(
     private val ownerPointer: KaSymbolPointer<KaDeclarationSymbol>,
     private val name: Name,
     private val index: Int,
-) : KaSymbolPointer<KaTypeParameterSymbol>() {
+    originalSymbol: KaTypeParameterSymbol?,
+) : KaBaseCachedSymbolPointer<KaTypeParameterSymbol>(originalSymbol) {
     @KaImplementationDetail
-    override fun restoreSymbol(analysisSession: KaSession): KaTypeParameterSymbol? {
+    override fun restoreIfNotCached(analysisSession: KaSession): KaTypeParameterSymbol? {
         require(analysisSession is KaFirSession)
         val ownerSymbol = with(analysisSession) {
             ownerPointer.restoreSymbol()

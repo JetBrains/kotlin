@@ -69,13 +69,18 @@ internal sealed class KaFirNamedClassSymbolBase<P : PsiElement> : KaNamedClassSy
                     ) {
                         withSymbolAttachment("symbol", analysisSession, this@KaFirNamedClassSymbolBase)
                     }
-                    KaFirNestedInLocalClassFromCompilerPluginSymbolPointer(container.createPointer(), name, firOrigin.key)
+                    KaFirNestedInLocalClassFromCompilerPluginSymbolPointer(
+                        container.createPointer(),
+                        name,
+                        firOrigin.key,
+                        this
+                    )
                 } else {
-                    KaFirClassLikeSymbolPointer(classId, KaNamedClassSymbol::class)
+                    KaFirClassLikeSymbolPointer(classId, KaNamedClassSymbol::class, this)
                 }
             }
             KaSymbolLocation.TOP_LEVEL ->
-                KaFirClassLikeSymbolPointer(classId!!, KaNamedClassSymbol::class)
+                KaFirClassLikeSymbolPointer(classId!!, KaNamedClassSymbol::class, this)
 
             else -> throw KaUnsupportedSymbolLocation(this::class, symbolKind)
         }

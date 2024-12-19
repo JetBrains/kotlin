@@ -124,28 +124,30 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
 
     override fun createPointer(): KaSymbolPointer<KaKotlinPropertySymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource<KaVariableSymbol>()?.let {
-            return KaFirPsiBasedPropertySymbolPointer(it)
+            return KaFirPsiBasedPropertySymbolPointer(it, this)
         }
 
         when (val kind = location) {
             KaSymbolLocation.TOP_LEVEL -> {
                 if (firSymbol.fir.origin is FirDeclarationOrigin.ScriptCustomization.ResultProperty) {
-                    KaFirResultPropertySymbolPointer(analysisSession.createOwnerPointer(this))
+                    KaFirResultPropertySymbolPointer(analysisSession.createOwnerPointer(this), this)
                 } else {
                     KaFirTopLevelPropertySymbolPointer(
                         firSymbol.callableId,
                         FirCallableSignature.createSignature(firSymbol),
+                        this
                     )
                 }
             }
 
             KaSymbolLocation.CLASS -> when (origin) {
-                KaSymbolOrigin.JS_DYNAMIC -> KaFirDynamicPropertySymbolPointer(name)
+                KaSymbolOrigin.JS_DYNAMIC -> KaFirDynamicPropertySymbolPointer(name, this)
                 else -> KaFirMemberPropertySymbolPointer(
                     ownerPointer = analysisSession.createOwnerPointer(this),
                     name = name,
                     signature = FirCallableSignature.createSignature(firSymbol),
                     isStatic = firSymbol.isStatic,
+                    originalSymbol = this
                 )
             }
 

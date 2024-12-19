@@ -36,7 +36,7 @@ internal class KaFirPackageSymbol(
         get() = withValidityAssertion { KaSymbolOrigin.SOURCE } // TODO
 
     override fun createPointer(): KaSymbolPointer<KaPackageSymbol> = withValidityAssertion {
-        KaFirPackageSymbolPointer(fqName)
+        KaFirPackageSymbolPointer(fqName, this)
     }
 
     override fun equals(other: Any?): Boolean = this === other || other is KaFirPackageSymbol && other.fqName == fqName

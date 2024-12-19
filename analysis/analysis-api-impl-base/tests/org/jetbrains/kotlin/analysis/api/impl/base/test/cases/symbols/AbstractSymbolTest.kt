@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSymbolProvider
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer.Companion.isCacheable
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K2
@@ -21,7 +23,6 @@ import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaClass
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaExpandedTypeRenderingMode
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaFunctionalTypeRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -180,7 +181,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
     }
 
     private fun KaSymbol.createPointerForTest(disablePsiBasedLogic: Boolean): KaSymbolPointer<*> =
-        KaPsiBasedSymbolPointer.withDisabledPsiBasedPointers(disable = disablePsiBasedLogic) { createPointer() }
+        KaBasePsiSymbolPointer.withDisabledPsiBasedPointers(disable = disablePsiBasedLogic) { createPointer() }
 
     private fun assertSymbolPointer(pointer: KaSymbolPointer<*>, testServices: TestServices) {
         testServices.assertions.assertTrue(value = pointer.pointsToTheSameSymbolAs(pointer)) {
@@ -305,6 +306,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         }
 
         if (!failed) {
+            compareCachedSymbols(restoredPointers, testServices, ktFile, disablePsiBasedLogic, analyzeContext)
             compareRestoredSymbols(restoredPointers, testServices, ktFile, disablePsiBasedLogic, analyzeContext)
         }
 
@@ -316,6 +318,30 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         )
 
         fail("Redundant // ${directiveToIgnore.name} directive")
+    }
+
+    private fun compareCachedSymbols(
+        pointers: List<KaSymbolPointer<*>>,
+        testServices: TestServices,
+        ktFile: KtFile,
+        disablePsiBasedLogic: Boolean,
+        analyzeContext: KtElement?,
+    ) {
+        if (pointers.isEmpty()) return
+
+        analyseForTest(analyzeContext ?: ktFile) {
+            pointers.forEach { pointer ->
+                val firstRestore =
+                    restoreSymbol(pointer, disablePsiBasedLogic) ?: error("Unexpectedly non-restored symbol pointer: ${it::class}")
+                val secondRestore =
+                    restoreSymbol(pointer, disablePsiBasedLogic) ?: error("Unexpectedly non-restored symbol pointer: ${it::class}")
+                if (firstRestore.isCacheable) {
+                    testServices.assertions.assertTrue(firstRestore === secondRestore) {
+                        "${pointer::class} does not support symbol caching"
+                    }
+                }
+            }
+        }
     }
 
     private fun compareRestoredSymbols(

@@ -43,6 +43,7 @@ internal sealed class KaFirTypeParameterSymbolBase<P : PsiElement> : KaTypeParam
             ownerPointer = analysisSession.createOwnerPointer(this),
             name = name,
             index = typeParameters.indexOf(firSymbol),
+            originalSymbol = this
         )
     }
 

@@ -21,7 +21,8 @@ internal class KaFirMemberPropertySymbolPointer(
     private val name: Name,
     private val signature: FirCallableSignature,
     isStatic: Boolean,
-) : KaFirMemberSymbolPointer<KaKotlinPropertySymbol>(ownerPointer, isStatic) {
+    originalSymbol: KaKotlinPropertySymbol?,
+) : KaFirMemberSymbolPointer<KaKotlinPropertySymbol>(ownerPointer, isStatic, originalSymbol) {
     override fun KaFirSession.chooseCandidateAndCreateSymbol(
         candidates: FirScope,
         firSession: FirSession

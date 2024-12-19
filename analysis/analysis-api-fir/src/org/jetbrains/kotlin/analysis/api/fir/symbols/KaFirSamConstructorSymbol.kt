@@ -72,7 +72,7 @@ internal class KaFirSamConstructorSymbol(
 
     override fun createPointer(): KaSymbolPointer<KaSamConstructorSymbol> = withValidityAssertion {
         val callableId = firSymbol.callableId
-        return KaFirSamConstructorSymbolPointer(ClassId(callableId.packageName, callableId.callableName))
+        return KaFirSamConstructorSymbolPointer(ClassId(callableId.packageName, callableId.callableName), this)
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)

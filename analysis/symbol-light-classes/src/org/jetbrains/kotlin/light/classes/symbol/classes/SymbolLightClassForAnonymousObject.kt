@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiSymbolPointerCreator
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
@@ -20,12 +21,13 @@ import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike<KaAnonymousObjectSymbol>, PsiAnonymousClass {
+    @OptIn(KaImplementationDetail::class)
     constructor(
         anonymousObjectDeclaration: KtClassOrObject,
         ktModule: KaModule,
     ) : this(
         classOrObjectDeclaration = anonymousObjectDeclaration,
-        classSymbolPointer = anonymousObjectDeclaration.symbolPointerOfType(),
+        classSymbolPointer = KaPsiSymbolPointerCreator.symbolPointerOfType(anonymousObjectDeclaration),
         ktModule = ktModule,
         manager = anonymousObjectDeclaration.manager,
     )

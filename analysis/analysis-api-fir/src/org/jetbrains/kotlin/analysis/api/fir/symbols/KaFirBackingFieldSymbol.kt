@@ -56,7 +56,7 @@ internal class KaFirBackingFieldSymbol private constructor(
         get() = withValidityAssertion { owningKaProperty.isVal }
 
     override fun createPointer(): KaSymbolPointer<KaBackingFieldSymbol> = withValidityAssertion {
-        KaFirBackingFieldSymbolPointer(owningKaProperty.createPointer())
+        KaFirBackingFieldSymbolPointer(owningKaProperty.createPointer(), this)
     }
 
     override fun equals(other: Any?): Boolean = this === other ||

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -27,10 +28,11 @@ internal class KaFirNestedInLocalClassFromCompilerPluginSymbolPointer(
     private val containingClassPointer: KaSymbolPointer<KaNamedClassSymbol>,
     private val name: Name,
     private val compilerPluginOrigin: GeneratedDeclarationKey,
-) : KaSymbolPointer<KaNamedClassSymbol>() {
+    originalSymbol: KaNamedClassSymbol?,
+) : KaBaseCachedSymbolPointer<KaNamedClassSymbol>(originalSymbol) {
 
     @KaImplementationDetail
-    override fun restoreSymbol(analysisSession: KaSession): KaNamedClassSymbol? {
+    override fun restoreIfNotCached(analysisSession: KaSession): KaNamedClassSymbol? {
         require(analysisSession is KaFirSession)
         val containingKaSymbol = containingClassPointer.restoreSymbol(analysisSession) ?: return null
         val containingFir = containingKaSymbol.firSymbol.fir as? FirRegularClass ?: return null

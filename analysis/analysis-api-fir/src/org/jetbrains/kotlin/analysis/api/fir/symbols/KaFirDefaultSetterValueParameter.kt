@@ -77,7 +77,7 @@ internal class KaFirDefaultSetterValueParameter(
         }
 
     override fun createPointer(): KaSymbolPointer<KaValueParameterSymbol> = withValidityAssertion {
-        KaBaseValueParameterFromDefaultSetterSymbolPointer(owningKaSetter.owningKaProperty.createPointer())
+        KaBaseValueParameterFromDefaultSetterSymbolPointer(owningKaSetter.owningKaProperty.createPointer(), this)
     }
 
     override val origin: KaSymbolOrigin

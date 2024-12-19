@@ -131,7 +131,7 @@ internal class KaFirDefaultPropertyGetterSymbol(
         get() = withValidityAssertion { owningKaProperty.origin }
 
     override fun createPointer(): KaSymbolPointer<KaPropertyGetterSymbol> = withValidityAssertion {
-        KaBasePropertyGetterSymbolPointer(owningKaProperty.createPointer())
+        KaBasePropertyGetterSymbolPointer(owningKaProperty.createPointer(), this)
     }
 
     override fun equals(other: Any?): Boolean = this === other ||

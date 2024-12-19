@@ -18,9 +18,8 @@ import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnota
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiSymbolPointerCreator
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -214,14 +213,18 @@ internal inline fun <R> KaFirPsiSymbol<*, *>.ifSource(action: () -> R): R? {
 }
 
 /**
- * Potentially, we may use [KaFirKtBasedSymbol.backingPsi] to create [KaPsiBasedSymbolPointer] for library elements as well,
+ * Potentially, we may use [KaFirKtBasedSymbol.backingPsi] to create [org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer] for library elements as well,
  * but it triggers AST tree calculation.
  *
  * Another potential issue: the library PSI may represent both [KaSymbolOrigin.SOURCE] and as [KaSymbolOrigin.LIBRARY],
  * so it is not so simple to distinguish between them to restore the correct symbol.
  */
 internal inline fun <reified S : KaSymbol> KaFirKtBasedSymbol<*, *>.psiBasedSymbolPointerOfTypeIfSource(): KaSymbolPointer<S>? {
-    return ifSource { backingPsi?.symbolPointerOfType<S>() }
+    return ifSource {
+        backingPsi?.let {
+            KaPsiSymbolPointerCreator.symbolPointerOfType(it, this as S)
+        }
+    }
 }
 
 internal inline fun <reified S : FirBasedSymbol<*>> lazyFirSymbol(
