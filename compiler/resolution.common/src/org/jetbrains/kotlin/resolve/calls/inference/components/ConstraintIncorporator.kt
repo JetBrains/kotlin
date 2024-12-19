@@ -216,14 +216,14 @@ class ConstraintIncorporator(
             }
             ConstraintKind.UPPER -> {
                 /*
-                     * Creating a captured type isn't needed due to its future approximation to `Nothing` or itself
-                     * Example:
-                     *      targetVariable = TypeVariable(A)
-                     *      baseConstraint = LOWER(TypeVariable(B))
-                     *      otherConstraint = UPPER(Number)
-                     *      incorporatedConstraint = Approx(CapturedType(out Number)) <: TypeVariable(A) => Nothing <: TypeVariable(A)
-                     * TODO: implement this for generics and captured types
-                     */
+                 * Creating a captured type isn't needed due to its future approximation to `Nothing` or itself
+                 * Example:
+                 *      targetVariable = TypeVariable(A)
+                 *      baseConstraint = LOWER(TypeVariable(B))
+                 *      otherConstraint = UPPER(Number)
+                 *      incorporatedConstraint = Approx(CapturedType(out Number)) <: TypeVariable(A) => Nothing <: TypeVariable(A)
+                 * TODO: implement this for generics and captured types
+                 */
                 when {
                     otherConstraint.kind == ConstraintKind.LOWER && !isBaseGenericType && !isBaseOrOtherCapturedType ->
                         nothingType() to false
@@ -240,14 +240,14 @@ class ConstraintIncorporator(
             }
             ConstraintKind.LOWER -> {
                 /*
-                     * Creating a captured type isn't needed due to its future approximation to `Any?` or itself
-                     * Example:
-                     *      targetVariable = TypeVariable(A)
-                     *      baseConstraint = UPPER(TypeVariable(B))
-                     *      otherConstraint = LOWER(Number)
-                     *      incorporatedConstraint = TypeVariable(A) <: Approx(CapturedType(in Number)) => TypeVariable(A) <: Any?
-                     * TODO: implement this for generics and captured types
-                     */
+                 * Creating a captured type isn't needed due to its future approximation to `Any?` or itself
+                 * Example:
+                 *      targetVariable = TypeVariable(A)
+                 *      baseConstraint = UPPER(TypeVariable(B))
+                 *      otherConstraint = LOWER(Number)
+                 *      incorporatedConstraint = TypeVariable(A) <: Approx(CapturedType(in Number)) => TypeVariable(A) <: Any?
+                 * TODO: implement this for generics and captured types
+                 */
                 when {
                     otherConstraint.kind == ConstraintKind.UPPER && !isBaseGenericType && !isBaseOrOtherCapturedType ->
                         nullableAnyType() to false
