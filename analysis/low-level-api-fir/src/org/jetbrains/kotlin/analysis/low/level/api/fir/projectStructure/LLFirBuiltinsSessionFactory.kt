@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunc
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.resolve.transformers.FirDummyCompilerLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.fir.session.registerCommonComponents
-import org.jetbrains.kotlin.fir.session.registerCommonComponentsAfterExtensionsAreConfigured
-import org.jetbrains.kotlin.fir.session.registerJavaComponents
-import org.jetbrains.kotlin.fir.session.registerModuleData
+import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.has
@@ -79,6 +76,7 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
 
         return session.apply {
             val languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
+            registerDefaultComponents()
             registerIdeComponents(project, languageVersionSettings)
             register(FirLazyDeclarationResolver::class, FirDummyCompilerLazyDeclarationResolver)
             registerCommonComponents(languageVersionSettings)

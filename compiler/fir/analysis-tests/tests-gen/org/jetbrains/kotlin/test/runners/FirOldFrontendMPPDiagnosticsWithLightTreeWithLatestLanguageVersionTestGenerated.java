@@ -440,6 +440,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionT
   }
 
   @Test
+  @TestMetadata("kt72704.kt")
+  public void testKt72704() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/kt72704.kt");
+  }
+
+  @Test
   @TestMetadata("missingActual.kt")
   public void testMissingActual() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/missingActual.kt");
