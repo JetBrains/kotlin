@@ -29,7 +29,7 @@ class MockExternalAnnotationsManager : ExternalAnnotationsManager() {
 
     override fun findExternalAnnotationsFiles(listOwner: PsiModifierListOwner): List<PsiFile>? = null
     override fun findExternalAnnotation(listOwner: PsiModifierListOwner, annotationFQN: String): PsiAnnotation? = null
-    override fun findExternalAnnotations(listOwner: PsiModifierListOwner): Array<out PsiAnnotation>? = null
+    override fun findExternalAnnotations(listOwner: PsiModifierListOwner): Array<out PsiAnnotation> = emptyArray()
 
     override fun annotateExternally(
         listOwner: PsiModifierListOwner,

@@ -332,8 +332,8 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         val roots = context.projectDescriptor.buildRootIndex.getTargetRoots(jpsModuleBuildTarget, context)
         val result = mutableListOf<JvmSourceRoot>()
         for (root in roots) {
-            val file = root.rootFile
-            val filePath = file.toPath()
+            val filePath = root.rootFile
+            val file = filePath.toFile()
             val prefix = root.packagePrefix
             if (Files.exists(filePath) && (Files.isDirectory(filePath) || file.extension == "java")) {
                 result.add(JvmSourceRoot(file, prefix.ifEmpty { null }))
