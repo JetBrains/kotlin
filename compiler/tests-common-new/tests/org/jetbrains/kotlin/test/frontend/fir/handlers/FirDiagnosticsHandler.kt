@@ -677,7 +677,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
             val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
             result += platformPart.session.runCheckers(
-                platformPart.firAnalyzerFacade.scopeSession,
+                platformPart.scopeSession,
                 allFiles,
                 DiagnosticReporterFactory.createPendingReporter(messageCollector),
                 mppCheckerKind = MppCheckerKind.Platform
@@ -685,7 +685,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
 
             for (part in info.partsForDependsOnModules) {
                 result += part.session.runCheckers(
-                    part.firAnalyzerFacade.scopeSession,
+                    part.scopeSession,
                     part.firFiles.values,
                     DiagnosticReporterFactory.createPendingReporter(messageCollector),
                     mppCheckerKind = MppCheckerKind.Common
@@ -695,7 +695,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
             for (part in info.partsForDependsOnModules.dropLast(1)) {
                 part.session.turnOnMetadataCompilationAnalysisFlag {
                     result += part.session.runCheckers(
-                        part.firAnalyzerFacade.scopeSession,
+                        part.scopeSession,
                         part.firFiles.values,
                         DiagnosticReporterFactory.createPendingReporter(messageCollector),
                         mppCheckerKind = MppCheckerKind.Platform
@@ -708,7 +708,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                 val diagnostics = result[file]
                 if (diagnostics.none { it.diagnostic.severity == Severity.ERROR } && !hasSyntaxDiagnostics(file)) {
                     platformPart.session.collectLostDiagnosticsOnFile(
-                        platformPart.firAnalyzerFacade.scopeSession,
+                        platformPart.scopeSession,
                         file,
                         DiagnosticReporterFactory.createPendingReporter(messageCollector)
                     ).forEach { lostDiagnostics.put(file, DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.PLATFORM)) }

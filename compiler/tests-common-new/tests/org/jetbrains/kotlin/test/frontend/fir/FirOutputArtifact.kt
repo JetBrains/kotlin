@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelineArtifact
 import org.jetbrains.kotlin.fir.AbstractFirAnalyzerFacade
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.model.TestFile
@@ -17,11 +19,15 @@ import org.jetbrains.kotlin.test.model.TestModule
 data class FirOutputPartForDependsOnModule(
     val module: TestModule,
     val session: FirSession,
-    val firAnalyzerFacade: AbstractFirAnalyzerFacade,
-    val firFiles: Map<TestFile, FirFile>
+    val scopeSession: ScopeSession,
+    val firAnalyzerFacade: AbstractFirAnalyzerFacade?,
+    val firFiles: Map<TestFile, FirFile>,
 )
 
-abstract class FirOutputArtifact(val partsForDependsOnModules: List<FirOutputPartForDependsOnModule>) : ResultingArtifact.FrontendOutput<FirOutputArtifact>() {
+abstract class FirOutputArtifact(
+    val partsForDependsOnModules: List<FirOutputPartForDependsOnModule>,
+    val phasedOutput: JvmFrontendPipelineArtifact?
+) : ResultingArtifact.FrontendOutput<FirOutputArtifact>() {
     val allFirFiles: Map<TestFile, FirFile> = partsForDependsOnModules.fold(emptyMap()) { acc, part -> acc + part.firFiles }
 
     override val kind: FrontendKinds.FIR
@@ -30,4 +36,7 @@ abstract class FirOutputArtifact(val partsForDependsOnModules: List<FirOutputPar
     val mainFirFiles: Map<TestFile, FirFile> by lazy { allFirFiles.filterKeys { !it.isAdditional } }
 }
 
-class FirOutputArtifactImpl(parts: List<FirOutputPartForDependsOnModule>) : FirOutputArtifact(parts)
+class FirOutputArtifactImpl(
+    parts: List<FirOutputPartForDependsOnModule>,
+    phasedOutput: JvmFrontendPipelineArtifact? = null,
+) : FirOutputArtifact(parts, phasedOutput)

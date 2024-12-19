@@ -50,7 +50,7 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
             val printer = SmartPrinter(dumper.builderForModule(currentModule), indent = "  ")
             for (fqNameWithNames in fqNamesWithNames) {
                 val (fqName, names) = extractFqNameAndMemberNames(fqNameWithNames)
-                printer.processClass(fqName, names, part.session, part.firAnalyzerFacade.scopeSession, currentModule)
+                printer.processClass(fqName, names, part.session, part.scopeSession, currentModule)
             }
         }
     }
