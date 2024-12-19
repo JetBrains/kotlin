@@ -26,7 +26,7 @@ abstract class IrInlinedFunctionBlock : IrBlock() {
      */
     abstract var inlinedFunctionEndOffset: Int
 
-    abstract var inlineFunctionSymbol: IrFunctionSymbol?
+    abstract var inlinedFunctionSymbol: IrFunctionSymbol?
 
     abstract var fileEntry: IrFileEntry
 
