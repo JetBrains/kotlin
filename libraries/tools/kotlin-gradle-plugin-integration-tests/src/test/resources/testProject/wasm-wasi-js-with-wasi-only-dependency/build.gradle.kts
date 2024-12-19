@@ -11,10 +11,12 @@ rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJ
     }
 }
 
-rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.d8.D8Plugin> {
-    // Test that we can set the version and it is a String.
-    // But use the default version since update this place every time anyway.
-    rootProject.the<org.jetbrains.kotlin.gradle.targets.js.d8.D8RootExtension>().version = (version as String)
+allprojects {
+    plugins.withType<org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Plugin> {
+        // Test that we can set the version and it is a String.
+        // But use the default version since update this place every time anyway.
+        the<org.jetbrains.kotlin.gradle.targets.wasm.d8.D8RootExtension>().version = (version as String)
+    }
 }
 
 allprojects {
