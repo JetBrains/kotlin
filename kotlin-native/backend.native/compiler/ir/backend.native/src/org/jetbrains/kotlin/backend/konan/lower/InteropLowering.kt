@@ -722,7 +722,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
     }
 
     override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrExpression {
-        if (inlinedBlock.inlineFunctionSymbol?.owner?.isAutoreleasepool() == true) {
+        if (inlinedBlock.inlinedFunctionSymbol?.owner?.isAutoreleasepool() == true) {
             // Prohibit calling suspend functions from `autoreleasepool {}` block.
             // See https://youtrack.jetbrains.com/issue/KT-50786 for more details.
             // Note: we can't easily check this in frontend, because we need to prohibit indirect cases like

@@ -54,7 +54,7 @@ abstract class UsefulDeclarationProcessor(
 
         override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: IrDeclaration) {
             super.visitInlinedFunctionBlock(inlinedBlock, data)
-            inlinedBlock.inlineFunctionSymbol?.owner?.addToUsefulPolyfilledDeclarations()
+            inlinedBlock.inlinedFunctionSymbol?.owner?.addToUsefulPolyfilledDeclarations()
         }
 
         override fun visitFieldAccess(expression: IrFieldAccessExpression, data: IrDeclaration) {
