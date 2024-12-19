@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.util.ir2string
 import org.jetbrains.kotlin.ir.util.isLocal
+import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
@@ -188,7 +189,7 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
 
             this.declarations.firstOrNull { it is IrConstructor && it.isPrimary }?.let {
                 val constructor = it as IrConstructor
-                constructor.valueParameters.forEach { v -> closureBuilder.declareVariable(v) }
+                constructor.nonDispatchParameters.forEach { v -> closureBuilder.declareVariable(v) }
             }
 
             closureBuilder
@@ -200,9 +201,7 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
 
             collectPotentiallyCapturedTypeParameters(closureBuilder)
 
-            this.valueParameters.forEach { closureBuilder.declareVariable(it) }
-            closureBuilder.declareVariable(this.dispatchReceiverParameter)
-            closureBuilder.declareVariable(this.extensionReceiverParameter)
+            this.parameters.forEach { closureBuilder.declareVariable(it) }
             closureBuilder.seeType(this.returnType)
 
             if (this is IrConstructor) {
