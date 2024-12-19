@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 
 import org.gradle.api.Project
-import org.gradle.api.file.Directory
-import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
@@ -20,12 +18,12 @@ import java.io.File
 import java.io.Serializable
 
 class KotlinRootNpmResolver internal constructor(
-    val rootProjectName: String,
-    val rootProjectVersion: String,
-    val tasksRequirements: TasksRequirements,
-    val versions: NpmVersions,
-    val projectPackagesDir: Provider<Directory>,
-    val rootProjectDir: File,
+    private val rootProjectName: String,
+    private val rootProjectVersion: String,
+    internal val tasksRequirements: TasksRequirements,
+    internal val versions: NpmVersions,
+    internal val rootProjectDir: File,
+    internal val platform: KotlinPlatformType,
 ) : Serializable {
 
     internal var resolution: KotlinRootNpmResolution? = null
