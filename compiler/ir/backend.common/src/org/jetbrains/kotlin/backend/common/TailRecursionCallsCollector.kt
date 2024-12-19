@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isClassWithFqName
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.usesDefaultArguments
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 data class TailCalls(val ir: Set<IrCall>, val fromManyFunctions: Boolean)
 
@@ -49,7 +49,7 @@ fun collectTailRecursionCalls(irFunction: IrFunction, followFunctionReference: (
     val isUnitReturn = irFunction.returnType.isUnit()
     val result = mutableSetOf<IrCall>()
     var someCallsAreInOtherFunctions = false
-    val visitor = object : IrElementVisitor<Unit, VisitorState> {
+    val visitor = object : IrVisitor<Unit, VisitorState>() {
         override fun visitElement(element: IrElement, data: VisitorState) {
             element.acceptChildren(this, VisitorState(isTailExpression = false, data.inOtherFunction))
         }

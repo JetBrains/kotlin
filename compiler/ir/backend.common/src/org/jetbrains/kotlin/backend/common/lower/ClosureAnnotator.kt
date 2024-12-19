@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.util.ir2string
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 data class Closure(val capturedValues: List<IrValueSymbol>, val capturedTypeParameters: List<IrTypeParameter>)
 
@@ -247,7 +247,7 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
             else -> null
         }
 
-    private inner class ClosureCollectorVisitor : IrElementVisitor<Unit, ClosureBuilder?> {
+    private inner class ClosureCollectorVisitor : IrVisitor<Unit, ClosureBuilder?>() {
 
         override fun visitElement(element: IrElement, data: ClosureBuilder?) {
             element.acceptChildren(this, data)

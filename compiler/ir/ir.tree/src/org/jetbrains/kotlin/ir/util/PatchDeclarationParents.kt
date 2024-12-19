@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 /**
  * For each [IrDeclaration] in the IR subtree with the root in `this`, sets its [IrDeclaration.parent]
@@ -23,7 +23,7 @@ fun <T : IrElement> T.patchDeclarationParents(initialParent: IrDeclarationParent
 }
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-abstract class DeclarationParentsVisitor : IrElementVisitor<Unit, IrDeclarationParent?> {
+abstract class DeclarationParentsVisitor : IrVisitor<Unit, IrDeclarationParent?>() {
     override fun visitElement(element: IrElement, actualParent: IrDeclarationParent?) {
         element.acceptChildren(this, actualParent)
     }

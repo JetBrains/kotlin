@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isStringClassType
 import org.jetbrains.kotlin.ir.util.*
 
-class IrInterpreterCommonChecker : IrInterpreterChecker {
+class IrInterpreterCommonChecker : IrInterpreterChecker() {
     private val visitedStack = mutableListOf<IrElement>()
 
     private inline fun IrElement.asVisited(crossinline block: () -> Boolean): Boolean {

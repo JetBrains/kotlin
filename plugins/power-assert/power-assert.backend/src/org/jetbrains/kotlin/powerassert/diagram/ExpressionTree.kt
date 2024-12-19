@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.declarations.nameWithPackage
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 abstract class Node {
     private val _children = mutableListOf<Node>()
@@ -94,7 +94,7 @@ fun buildTree(
 
     val tree = RootNode()
     expression.accept(
-        object : IrElementVisitor<Unit, Node> {
+        object : IrVisitor<Unit, Node>() {
             private var currentCall = surroundingCall
 
             private fun IrExpression.isImplicitReceiverOf(irCall: IrCall): Boolean {

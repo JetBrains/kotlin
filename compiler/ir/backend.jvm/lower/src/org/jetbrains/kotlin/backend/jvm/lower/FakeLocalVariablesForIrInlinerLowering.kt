@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -109,7 +109,7 @@ internal class FakeLocalVariablesForIrInlinerLowering(
     }
 }
 
-private class LocalVariablesProcessor : IrElementVisitor<Unit, LocalVariablesProcessor.Data> {
+private class LocalVariablesProcessor : IrVisitor<Unit, LocalVariablesProcessor.Data>() {
     data class Data(val processingOriginalDeclarations: Boolean)
 
     private val inlinedStack = mutableListOf<IrInlinedFunctionBlock>()
