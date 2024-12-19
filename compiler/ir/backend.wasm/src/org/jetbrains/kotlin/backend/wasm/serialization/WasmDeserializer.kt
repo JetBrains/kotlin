@@ -43,6 +43,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     }
 
     fun deserializeTypeAndMemoryInfo(): TypeAndMemoryInfo {
+        prepareDeserialize()
         return TypeAndMemoryInfo(
             typeIds = deserializeMap(::deserializeIdSignature, ::deserializeInt),
             lastInterfaceId = deserializeInt(),
@@ -50,7 +51,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         )
     }
 
-    fun deserialize(): WasmCompiledFileFragment {
+    private fun prepareDeserialize() {
         // Step 1: load the size of the reference table
         val referenceTableSize = deserializeInt()
 
@@ -60,7 +61,10 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
             val bytes = b.readBytes(slotSize)
             referenceTable.add(Symbol(bytes))
         }
+    }
 
+    fun deserialize(): WasmCompiledFileFragment {
+        prepareDeserialize()
         // Step 3: read the rest of the input
         return deserializeCompiledFileFragment()
     }

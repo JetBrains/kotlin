@@ -124,12 +124,16 @@ class WasmSerializer(outputStream: OutputStream) {
         serializeMap(typeAndMemoryInfo.typeIds, ::serializeIdSignature, ::serializeInt)
         serializeInt(typeAndMemoryInfo.lastInterfaceId)
         serializeInt(typeAndMemoryInfo.scratchAddress)
+        completeSerialize()
     }
 
     fun serialize(compiledFileFragment: WasmCompiledFileFragment) {
         // Step 1: process non-deferred serializations (put into bodyBuffer temporarily)
         serializeCompiledFileFragment(compiledFileFragment)
+        completeSerialize()
+    }
 
+    private fun completeSerialize() {
         // Step 2: output the reference table first, in the form: size content
         // Step 2.1: output each element in the form: sizeInBytes data
 

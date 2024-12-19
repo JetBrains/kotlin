@@ -485,15 +485,12 @@ class WasmCompiledModuleFragment(
     }
 
     private fun bindTypeIds(typeAndMemoryInfo: TypeAndMemoryInfo) {
-        var currentDataSectionAddress = 0
-
         wasmCompiledFileFragments.forEach { fragment ->
             fragment.typeInfo.forEach { (referenceKey, dataElement) ->
-                typeAndMemoryInfo.typeIds[referenceKey] = currentDataSectionAddress
-                currentDataSectionAddress += dataElement.sizeInBytes
+                typeAndMemoryInfo.typeIds[referenceKey] = typeAndMemoryInfo.scratchAddress
+                typeAndMemoryInfo.scratchAddress += dataElement.sizeInBytes
             }
         }
-
 
         wasmCompiledFileFragments.forEach { fragment ->
             bind(fragment.classIds.unbound, typeAndMemoryInfo.typeIds)
@@ -506,9 +503,7 @@ class WasmCompiledModuleFragment(
             }
         }
 
-        currentDataSectionAddress = alignUp(currentDataSectionAddress, INT_SIZE_BYTES)
-
-        typeAndMemoryInfo.scratchAddress = currentDataSectionAddress
+        typeAndMemoryInfo.scratchAddress = alignUp(typeAndMemoryInfo.scratchAddress, INT_SIZE_BYTES)
     }
 
     private fun bindScratchMemAddr(scratchAddress: Int) {
