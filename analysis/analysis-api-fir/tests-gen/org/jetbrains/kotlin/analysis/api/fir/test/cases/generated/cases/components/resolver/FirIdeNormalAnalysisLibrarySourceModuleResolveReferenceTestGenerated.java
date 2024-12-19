@@ -2642,6 +2642,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveReferenceTestGenerate
     }
 
     @Test
+    @TestMetadata("stringConcatenation.kt")
+    public void testStringConcatenation() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/stringConcatenation.kt");
+    }
+
+    @Test
     @TestMetadata("unaryMinus.kt")
     public void testUnaryMinus() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/expressions/unaryMinus.kt");

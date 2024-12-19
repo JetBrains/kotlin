@@ -23,7 +23,7 @@ KaAnonymousFunctionSymbol:
             psi: KtAnnotationEntry
         ]
         typeArguments: []
-        type: @R|Anno|(position = String(1).R|kotlin/String.plus|(String(2)))  kotlin/String
+        type: @R|Anno|(position = <strcat>(String(1), String(2)))  kotlin/String
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(anonymousFunctionWithContextParameters.kt)
       getContainingJvmClassName: null
@@ -70,7 +70,7 @@ KaAnonymousFunctionSymbol:
             psi: KtAnnotationEntry
         ]
         typeArguments: []
-        type: @R|Anno|(position = String(1).R|kotlin/String.plus|(String(2)))  kotlin/String
+        type: @R|Anno|(position = <strcat>(String(1), String(2)))  kotlin/String
     KaContextReceiver:
       label: parameter2
       type: KaUsualClassType:

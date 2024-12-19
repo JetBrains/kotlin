@@ -18,6 +18,11 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+
+import static org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt.tryVisitFoldingStringConcatenation;
 
 public class KtVisitor<R, D> extends PsiElementVisitor {
     public R visitKtElement(@NotNull KtElement element, D data) {
@@ -228,8 +233,24 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitExpression(expression, data);
     }
 
+    /**
+     * Visits the input expression using a stack if it's a string literals concatenation expression (to prevent potential stack overflow exception),
+     * otherwise visits the expression using regular recursive calls.
+
+     * If you need to handle nested binary and parenthesized expressions inside string literals concatenation,
+     * you have to override this method and write the necessary logic there.
+     */
     public R visitBinaryExpression(@NotNull KtBinaryExpression expression, D data) {
-        return visitExpression(expression, data);
+        @Nullable List<KtExpression> foldingStringConcatenationStack = tryVisitFoldingStringConcatenation(expression, false);
+        if (foldingStringConcatenationStack != null) {
+            for (KtExpression childExpression : foldingStringConcatenationStack) {
+                childExpression.accept(this, data);
+            }
+
+            return null;
+        } else {
+            return visitExpression(expression, data);
+        }
     }
 
     public R visitReturnExpression(@NotNull KtReturnExpression expression, D data) {
