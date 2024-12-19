@@ -101,7 +101,6 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
                 fir2IrResult.irActualizedResult?.actualizedExpectDeclarations?.extractFirDeclarations(),
             ),
             fir2IrResult.pluginContext,
-            notifyCodegenStart = {},
         )
 
         val project = testServices.compilerConfigurationProvider.getProject(module)

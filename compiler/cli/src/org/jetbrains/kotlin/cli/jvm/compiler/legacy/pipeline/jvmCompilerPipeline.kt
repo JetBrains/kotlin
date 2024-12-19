@@ -154,9 +154,9 @@ fun generateCodeFromIr(
     val performanceManager = input.configuration[CLIConfigurationKeys.PERF_MANAGER]
     performanceManager?.notifyGenerationStarted()
     performanceManager?.notifyIRLoweringStarted()
-    JvmIrCodegenFactory(input.configuration).generateModuleInFrontendIRMode(
-        generationState,
+    val backendInput = JvmIrCodegenFactory.BackendInput(
         input.irModuleFragment,
+        input.pluginContext.irBuiltIns,
         input.symbolTable,
         input.components.irProviders,
         input.extensions,
@@ -164,15 +164,20 @@ fun generateCodeFromIr(
             input.components,
             input.irActualizedResult?.actualizedExpectDeclarations?.extractFirDeclarations()
         ),
-        input.pluginContext
-    ) {
-        performanceManager?.notifyIRLoweringFinished()
-        performanceManager?.notifyIRGenerationStarted()
-    }
+        input.pluginContext,
+    )
+
+    val codegenFactory = JvmIrCodegenFactory(input.configuration)
+    val codegenInput = codegenFactory.invokeLowerings(generationState, backendInput)
+
+    performanceManager?.notifyIRLoweringFinished()
+    performanceManager?.notifyIRGenerationStarted()
+
+    codegenFactory.invokeCodegen(codegenInput)
     CodegenFactory.doCheckCancelled(generationState)
     generationState.factory.done()
-    performanceManager?.notifyIRGenerationFinished()
 
+    performanceManager?.notifyIRGenerationFinished()
     performanceManager?.notifyGenerationFinished()
 
     return ModuleCompilerOutput(generationState, builderFactory)

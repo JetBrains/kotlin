@@ -238,9 +238,9 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             jvmBackendClassResolver = FirJvmBackendClassResolver(components),
         )
 
-        JvmIrCodegenFactory(configuration).generateModuleInFrontendIRMode(
-            generationState,
+        val backendInput = JvmIrCodegenFactory.BackendInput(
             irModuleFragment,
+            frontendResult.firResult.pluginContext.irBuiltIns,
             frontendResult.firResult.symbolTable,
             components.irProviders,
             frontendResult.generatorExtensions,
@@ -252,8 +252,9 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
                     ?.actualizedExpectDeclarations
                     ?.extractFirDeclarations()
             ),
-            frontendResult.firResult.pluginContext
-        ) {}
+            frontendResult.firResult.pluginContext,
+        )
+        JvmIrCodegenFactory(configuration).generateModule(generationState, backendInput)
         generationState.factory.done()
         return generationState
     }

@@ -130,11 +130,11 @@ object GenerationUtils {
             jvmBackendClassResolver = FirJvmBackendClassResolver(components),
             diagnosticReporter = diagnosticReporter,
         )
-
-        JvmIrCodegenFactory(configuration).generateModuleInFrontendIRMode(
-            generationState, moduleFragment, symbolTable, components.irProviders,
+        val backendInput = JvmIrCodegenFactory.BackendInput(
+            moduleFragment, pluginContext.irBuiltIns, symbolTable, components.irProviders,
             fir2IrExtensions, FirJvmBackendExtension(components, actualizedExpectDeclarations = null), pluginContext,
-        ) {}
+        )
+        JvmIrCodegenFactory(configuration).generateModule(generationState, backendInput)
 
         generationState.factory.done()
         return generationState

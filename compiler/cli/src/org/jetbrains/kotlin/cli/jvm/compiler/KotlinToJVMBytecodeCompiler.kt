@@ -295,7 +295,7 @@ object KotlinToJVMBytecodeCompiler {
             JvmGeneratorExtensionsImpl(configuration),
             jvmBackendExtension ?: JvmBackendExtension.Default,
             pluginContext,
-        ) {}
+        )
     }
 
     fun analyze(environment: KotlinCoreEnvironment): AnalysisResult? {

@@ -113,7 +113,6 @@ open class JvmIrCodegenFactory(
         val extensions: JvmGeneratorExtensions,
         val backendExtension: JvmBackendExtension,
         val pluginContext: IrPluginContext?,
-        val notifyCodegenStart: () -> Unit,
     )
 
     data class CodegenInput(
@@ -121,7 +120,6 @@ open class JvmIrCodegenFactory(
         val context: JvmBackendContext,
         val module: IrModuleFragment,
         val allBuiltins: List<IrFile>,
-        val notifyCodegenStart: () -> Unit,
     )
 
     fun convertAndGenerate(files: Collection<KtFile>, state: GenerationState, bindingContext: BindingContext) {
@@ -289,7 +287,7 @@ open class JvmIrCodegenFactory(
             jvmGeneratorExtensions,
             JvmBackendExtension.Default,
             pluginContext,
-        ) {}
+        )
     }
 
     private fun ModuleDescriptor.collectAllDependencyModulesTransitively(): List<ModuleDescriptor> {
@@ -321,7 +319,7 @@ open class JvmIrCodegenFactory(
     }
 
     fun invokeLowerings(state: GenerationState, input: BackendInput): CodegenInput {
-        val (irModuleFragment, irBuiltIns, symbolTable, irProviders, extensions, backendExtension, irPluginContext, notifyCodegenStart) =
+        val (irModuleFragment, irBuiltIns, symbolTable, irProviders, extensions, backendExtension, irPluginContext) =
             input
         val irSerializer = if (
             state.configuration.get(JVMConfigurationKeys.SERIALIZE_IR, JvmSerializeIrMode.NONE) != JvmSerializeIrMode.NONE
@@ -354,17 +352,15 @@ open class JvmIrCodegenFactory(
 
         jvmLoweringPhases.invokeToplevel(state.configuration.phaseConfig ?: PhaseConfig(), context, irModuleFragment)
 
-        return CodegenInput(state, context, irModuleFragment, allBuiltins, notifyCodegenStart)
+        return CodegenInput(state, context, irModuleFragment, allBuiltins)
     }
 
     fun invokeCodegen(input: CodegenInput) {
-        val (state, context, module, allBuiltins, notifyCodegenStart) = input
+        val (state, context, module, allBuiltins) = input
 
         fun hasErrors() = (state.diagnosticReporter as? BaseDiagnosticsCollector)?.hasErrors == true
 
         if (hasErrors()) return
-
-        notifyCodegenStart()
 
         // Generate multifile facades first, to compute and store JVM signatures of const properties which are later used
         // when serializing metadata in the multifile parts.
@@ -456,30 +452,5 @@ open class JvmIrCodegenFactory(
         builder.setQualifiedNameTable(qualifiedNameTableProto)
 
         backendContext.state.factory.setModuleMapping(builder.build())
-    }
-
-    fun generateModuleInFrontendIRMode(
-        state: GenerationState,
-        irModuleFragment: IrModuleFragment,
-        symbolTable: SymbolTable,
-        irProviders: List<IrProvider>,
-        extensions: JvmGeneratorExtensions,
-        backendExtension: JvmBackendExtension,
-        irPluginContext: IrPluginContext,
-        notifyCodegenStart: () -> Unit = {},
-    ) {
-        generateModule(
-            state,
-            BackendInput(
-                irModuleFragment,
-                irPluginContext.irBuiltIns,
-                symbolTable,
-                irProviders,
-                extensions,
-                backendExtension,
-                irPluginContext,
-                notifyCodegenStart
-            )
-        )
     }
 }

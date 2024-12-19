@@ -353,15 +353,16 @@ internal class KaFirCompilerFacility(
 
         ProgressManager.checkCanceled()
 
-        codegenFactory.generateModuleInFrontendIRMode(
-            generationState,
+        val backendInput = JvmIrCodegenFactory.BackendInput(
             fir2IrResult.irModuleFragment,
+            fir2IrResult.pluginContext.irBuiltIns,
             fir2IrResult.symbolTable,
             fir2IrResult.components.irProviders,
             CompilerFacilityJvmGeneratorExtensions(jvmGeneratorExtensions),
             FirJvmBackendExtension(fir2IrResult.components, null),
-            fir2IrResult.pluginContext
+            fir2IrResult.pluginContext,
         )
+        codegenFactory.generateModule(generationState, backendInput)
 
         CodegenFactory.doCheckCancelled(generationState)
         generationState.factory.done()
