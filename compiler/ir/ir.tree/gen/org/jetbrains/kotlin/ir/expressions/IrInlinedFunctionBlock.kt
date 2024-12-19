@@ -28,7 +28,7 @@ abstract class IrInlinedFunctionBlock : IrBlock() {
 
     abstract var inlinedFunctionSymbol: IrFunctionSymbol?
 
-    abstract var fileEntry: IrFileEntry
+    abstract var inlinedFunctionFileEntry: IrFileEntry
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitInlinedFunctionBlock(this, data)

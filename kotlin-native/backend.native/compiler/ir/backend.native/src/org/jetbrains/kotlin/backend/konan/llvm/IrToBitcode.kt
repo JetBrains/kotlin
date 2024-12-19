@@ -1933,17 +1933,17 @@ internal class CodeGeneratorVisitor(
 
     //-------------------------------------------------------------------------//
 
-    private inner class InlinedBlockScope(val inlinedBlock: IrInlinedFunctionBlock) : FileScope(file = null, inlinedBlock.fileEntry) {
+    private inner class InlinedBlockScope(val inlinedBlock: IrInlinedFunctionBlock) : FileScope(file = null, inlinedBlock.inlinedFunctionFileEntry) {
 
         private val inlineFunctionScope: DIScopeOpaqueRef? by lazy {
             val owner = inlinedBlock.inlinedFunctionSymbol?.owner
             if (owner == null) {
                 @Suppress("UNCHECKED_CAST")
                 return@lazy debugInfo.diFunctionScope(
-                        inlinedBlock.fileEntry,
+                        inlinedBlock.inlinedFunctionFileEntry,
                         name = "<inlined-lambda>",
                         linkageName = "<inlined-lambda>",
-                        inlinedBlock.fileEntry.line(inlinedBlock.inlinedFunctionStartOffset),
+                        inlinedBlock.inlinedFunctionFileEntry.line(inlinedBlock.inlinedFunctionStartOffset),
                         debugInfo.subroutineType(debugInfo.llvmTargetData, listOf(inlinedBlock.type)),
                         nodebug = false,
                         isTransparentStepping = false
