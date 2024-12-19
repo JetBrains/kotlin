@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunc
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.resolve.transformers.FirDummyCompilerLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.impl.FirDelegatedMembersFilter
 import org.jetbrains.kotlin.fir.session.registerCommonComponents
 import org.jetbrains.kotlin.fir.session.registerCommonComponentsAfterExtensionsAreConfigured
 import org.jetbrains.kotlin.fir.session.registerJavaComponents
@@ -84,6 +85,7 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
             registerCommonComponents(languageVersionSettings)
             registerCommonComponentsAfterExtensionsAreConfigured()
             registerModuleData(moduleData)
+            register(FirDelegatedMembersFilter::class, FirDelegatedMembersFilter.Default)
 
             if (platform.isJvm()) {
                 registerJavaComponents(JavaModuleResolver.getInstance(project))
