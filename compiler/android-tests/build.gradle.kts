@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.invoke
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 
 plugins {
@@ -24,7 +25,9 @@ dependencies {
     testApi(projectTests(":compiler:tests-compiler-utils"))
     testApi(projectTests(":compiler:tests-common-new"))
 
-    testApi(jpsModel())
+    testApi(jpsModel()) {
+        exclude(group = "com.github.ben-manes.caffeine", module = "caffeine")
+    }
 
     testRuntimeOnly(intellijCore())
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))

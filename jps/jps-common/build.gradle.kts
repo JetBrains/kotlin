@@ -24,15 +24,25 @@ dependencies {
         .forEach { implementation(it) { isTransitive = false } }
 
     compileOnly(intellijUtilRt())
-    compileOnly(intellijPlatformUtil())
-    compileOnly(jpsModel())
-    compileOnly(jpsModelImpl())
-    compileOnly(jpsModelSerialization())
+    compileOnly(intellijPlatformUtil()) {
+        exclude(group = "com.github.ben-manes.caffeine", module = "caffeine")
+    }
+    compileOnly(jpsModel()) {
+        exclude(group = "com.github.ben-manes.caffeine", module = "caffeine")
+    }
+    compileOnly(jpsModelImpl()) {
+        exclude(group = "com.github.ben-manes.caffeine", module = "caffeine")
+    }
+    compileOnly(jpsModelSerialization()) {
+        exclude(group = "com.github.ben-manes.caffeine", module = "caffeine")
+    }
     compileOnly(intellijJDom())
     testCompileOnly(intellijJDom())
 
     testImplementation(project(":compiler:cli-common"))
-    testImplementation(jpsModelSerialization())
+    testImplementation(jpsModelSerialization()) {
+        exclude(group = "com.github.ben-manes.caffeine", module = "caffeine")
+    }
     testImplementation(libs.junit4)
     testImplementation(kotlin("test-junit"))
 }

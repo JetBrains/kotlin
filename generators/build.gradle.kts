@@ -38,6 +38,7 @@ dependencies {
     api(project(":core:util.runtime"))
     api(intellijPlatformUtil()) {
         exclude(module = "annotations")
+        exclude(group = "com.github.ben-manes.caffeine", module = "caffeine")
     }
 
     builtinsApi("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion") { isTransitive = false }
