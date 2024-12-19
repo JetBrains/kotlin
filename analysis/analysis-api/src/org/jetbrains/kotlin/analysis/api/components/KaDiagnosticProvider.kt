@@ -10,18 +10,19 @@ import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
-public interface KaDiagnosticProvider {
+public interface KaDiagnosticProvider : KaSessionComponent {
     /**
-     * Computes diagnostics for the given element.
+     * Collects diagnostics for the given element.
      *
-     * Note that the result may not include diagnostics that are reported for children elements,
-     * as well as diagnostics provided by the containing element checkers.
+     * **Caution:** The result might not include diagnostics that are reported for child elements, as well as diagnostics provided by the
+     * checkers of containing elements. Therefore, the API might not return all expected diagnostics for an element.
+     * [KtFile.collectDiagnostics] should be preferred at the current time.
      */
     @KaExperimentalApi
     public fun KtElement.diagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>>
 
     /**
-     * Computes all diagnostics for the given file.
+     * Collects all diagnostics for the given file.
      */
     public fun KtFile.collectDiagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>>
 }

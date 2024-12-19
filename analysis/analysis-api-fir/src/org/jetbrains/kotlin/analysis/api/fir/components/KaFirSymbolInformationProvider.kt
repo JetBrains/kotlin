@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPackageSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
 
 internal class KaFirSymbolInformationProvider(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaSessionComponent<KaFirSession>(), KaSymbolInformationProvider, KaFirSessionComponent {
+) : KaBaseSessionComponent<KaFirSession>(), KaSymbolInformationProvider, KaFirSessionComponent {
     override val KaSymbol.deprecationStatus: DeprecationInfo?
         get() = withValidityAssertion {
             if (this is KaFirPackageSymbol || this is KaReceiverParameterSymbol) return null

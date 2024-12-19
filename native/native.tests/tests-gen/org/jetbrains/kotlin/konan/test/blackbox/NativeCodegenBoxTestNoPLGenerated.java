@@ -223,6 +223,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
         }
 
         @Test
+        @TestMetadata("rearrangedArgumentsInAnnotationCall.kt")
+        public void testRearrangedArgumentsInAnnotationCall() {
+          runTest("compiler/testData/codegen/box/annotations/instances/rearrangedArgumentsInAnnotationCall.kt");
+        }
+
+        @Test
         @TestMetadata("varargInAnnotationParameterInstantiation.kt")
         public void testVarargInAnnotationParameterInstantiation() {
           runTest("compiler/testData/codegen/box/annotations/instances/varargInAnnotationParameterInstantiation.kt");
@@ -15753,6 +15759,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
       }
 
       @Test
+      @TestMetadata("withNothingConstraintAndExpectedType.kt")
+      public void testWithNothingConstraintAndExpectedType() {
+        runTest("compiler/testData/codegen/box/elvis/withNothingConstraintAndExpectedType.kt");
+      }
+
+      @Test
       @TestMetadata("withReturn.kt")
       public void testWithReturn() {
         runTest("compiler/testData/codegen/box/elvis/withReturn.kt");
@@ -21630,7 +21642,6 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
         register("compiler/testData/codegen/box/inlineClasses/kt57973.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         register("compiler/testData/codegen/box/inlineClasses/kt70461.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         register("compiler/testData/codegen/box/inlineClasses/kt71649.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-        register("compiler/testData/codegen/box/inlineClasses/lateinitInlineClasses.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         register("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunction.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         register("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunctionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         register("compiler/testData/codegen/box/inlineClasses/mangledSuperCalls.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -23526,13 +23537,6 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
       public void testKt71649() {
         // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
         runTest("compiler/testData/codegen/box/inlineClasses/kt71649.kt");
-      }
-
-      @Test
-      @TestMetadata("lateinitInlineClasses.kt")
-      public void testLateinitInlineClasses() {
-        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
-        runTest("compiler/testData/codegen/box/inlineClasses/lateinitInlineClasses.kt");
       }
 
       @Test
@@ -28952,6 +28956,18 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
         @TestMetadata("annotationOnFakeOverride.kt")
         public void testAnnotationOnFakeOverride() {
           runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationOnFakeOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationOnParameterOnFakeOverride.kt")
+        public void testAnnotationOnParameterOnFakeOverride() {
+          runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationOnParameterOnFakeOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationOnTypeOnFakeOverride.kt")
+        public void testAnnotationOnTypeOnFakeOverride() {
+          runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationOnTypeOnFakeOverride.kt");
         }
 
         @Test

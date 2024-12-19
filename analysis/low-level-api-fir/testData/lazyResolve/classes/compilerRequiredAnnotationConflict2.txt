@@ -153,7 +153,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
     public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=Some] constructor(): R|Some| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -164,15 +164,15 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
 
         }
 
-        public final const [ResolvedTo(STATUS)] val FIELD: <implicit> = LAZY_EXPRESSION
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Some] get(): <implicit>
+        public? final? const [ResolvedTo(RAW_FIR)] val FIELD: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): <implicit>
 
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
     public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=Some] constructor(): R|Some| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -183,15 +183,15 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
 
         }
 
-        public final const [ResolvedTo(STATUS)] val FIELD: <implicit> = LAZY_EXPRESSION
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Some] get(): <implicit>
+        public? final? const [ResolvedTo(RAW_FIR)] val FIELD: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): <implicit>
 
     }
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
     public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=Some] constructor(): R|Some| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -202,8 +202,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
 
         }
 
-        public final const [ResolvedTo(STATUS)] val FIELD: <implicit> = LAZY_EXPRESSION
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Some] get(): <implicit>
+        public? final? const [ResolvedTo(RAW_FIR)] val FIELD: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): <implicit>
 
     }
 

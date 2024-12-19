@@ -52,6 +52,7 @@ val shadowJar by task<ShadowJar> {
     manifest {
         attributes["Main-Class"] = "org.jetbrains.kotlin.kotlinp.jvm.Main"
     }
+    mergeServiceFiles()
 }
 
 tasks {

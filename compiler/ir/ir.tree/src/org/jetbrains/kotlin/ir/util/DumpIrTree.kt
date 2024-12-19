@@ -26,8 +26,11 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames.IMPLICIT_SET_PARAMETER
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 fun IrElement.dump(options: DumpIrTreeOptions = DumpIrTreeOptions()): String =
     try {
@@ -48,24 +51,30 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
 /**
  * @property normalizeNames Rename temporary local variables using a stable naming scheme
  * @property stableOrder Print declarations in a sorted order
- * @property stableOrderOfFakeOverrides Print fake overrides for functions and properties in a sorted order
+ * @property stableOrderOfOverriddenSymbols Print overridden symbols for functions and properties in a sorted order
  * @property verboseErrorTypes Whether to dump the value of [IrErrorType.kotlinType] for [IrErrorType] nodes
  * @property printFacadeClassInFqNames Whether printed fully-qualified names of top-level declarations should include the name of
  *   the file facade class (see [IrDeclarationOrigin.FILE_CLASS]) TODO: use [isHiddenDeclaration] instead.
- * @property printFlagsInDeclarationReferences If `false`, flags like `fake_override`, `inline` etc. are not printed in rendered
- *   declaration references.
+ * @property declarationFlagsFilter The filter that allows filtering declaration flags like `fake_override`, `inline` etc. both
+ *   in declarations and in declaration references. See [FlagsFilter] for more details.
  * @property renderOriginForExternalDeclarations If `true`, we only print a declaration's origin if it is not
  * [IrDeclarationOrigin.DEFINED]. If `false`, we don't print the [IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB] origin as well.
  * @property printSignatures Whether to print signatures for nodes that have public signatures
+ * @property printDispatchReceiverTypeInFakeOverrides If the dispatch receiver type should be printed.
+ *   Otherwise, it will be substituted with some fixed placeholder value.
+ * @property printParameterNamesInOverriddenSymbols If names of value parameters should be printed in overridden function symbols.
+ * @property printSealedSubclasses Whether sealed subclasses of a sealed class/interface should be printed.
+ * @property replaceImplicitSetterParameterNameWith If not null, them implicit value parameter name [IMPLICIT_SET_PARAMETER] would be
+ *   replaced by the given value.
  * @property isHiddenDeclaration The filter that can be used to exclude some declarations from printing.
  */
 data class DumpIrTreeOptions(
     val normalizeNames: Boolean = false,
     val stableOrder: Boolean = false,
-    val stableOrderOfFakeOverrides: Boolean = false,
+    val stableOrderOfOverriddenSymbols: Boolean = false,
     val verboseErrorTypes: Boolean = true,
     val printFacadeClassInFqNames: Boolean = true,
-    val printFlagsInDeclarationReferences: Boolean = true,
+    val declarationFlagsFilter: FlagsFilter = FlagsFilter.KEEP_ALL_FLAGS,
     val renderOriginForExternalDeclarations: Boolean = true,
     val printSignatures: Boolean = false,
     val printTypeAbbreviations: Boolean = true,
@@ -73,8 +82,30 @@ data class DumpIrTreeOptions(
     val printFilePath: Boolean = true,
     val printExpectDeclarations: Boolean = true,
     val printSourceRetentionAnnotations: Boolean = true,
+    val printDispatchReceiverTypeInFakeOverrides: Boolean = true,
+    val printParameterNamesInOverriddenSymbols: Boolean = true,
+    val printSealedSubclasses: Boolean = true,
+    val replaceImplicitSetterParameterNameWith: Name? = null,
     val isHiddenDeclaration: (IrDeclaration) -> Boolean = { false },
-)
+) {
+    /**
+     * A customizable filter to exclude some (or all) flags for declarations or declaration references.
+     */
+    fun interface FlagsFilter {
+        /**
+         * @param declaration The declaration for which flags are going to be rendered.
+         * @param isReference Whether the flags are rendered for a declaration reference (`true`) or
+         *   the declaration itself (`false`).
+         * @param flags The flags to filter before rendering.
+         */
+        fun filterFlags(declaration: IrDeclaration, isReference: Boolean, flags: List<String>): List<String>
+
+        companion object {
+            val KEEP_ALL_FLAGS = FlagsFilter { _, _, flags -> flags }
+            val NO_FLAGS_FOR_REFERENCES = FlagsFilter { _, isReference, flags -> flags.takeUnless { isReference }.orEmpty() }
+        }
+    }
+}
 
 private fun IrFile.shouldSkipDump(): Boolean {
     val entry = fileEntry as? NaiveSourceBasedFileEntryImpl ?: return false
@@ -164,7 +195,9 @@ class DumpIrTreeVisitor(
         if (declaration.isExpect && !options.printExpectDeclarations) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
-            declaration.sealedSubclasses.dumpItems("sealedSubclasses") { it.dump() }
+            runIf(options.printSealedSubclasses) {
+                declaration.sealedSubclasses.dumpItems("sealedSubclasses") { it.dump() }
+            }
             declaration.thisReceiver?.accept(this, "\$this")
             declaration.typeParameters.dumpElements()
             declaration.declarations.ordered().dumpElements()
@@ -275,7 +308,7 @@ class DumpIrTreeVisitor(
             dumpTypeArguments(expression)
             expression.dispatchReceiver?.accept(this, "\$this")
             expression.extensionReceiver?.accept(this, "\$receiver")
-            val valueParameterNames = expression.getValueParameterNamesForDebug()
+            val valueParameterNames = expression.getValueParameterNamesForDebug(options)
             for (index in 0 until expression.valueArgumentsCount) {
                 expression.getValueArgument(index)?.accept(this, valueParameterNames[index])
             }
@@ -291,7 +324,7 @@ class DumpIrTreeVisitor(
     }
 
     private fun dumpConstructorValueArguments(expression: IrConstructorCall) {
-        val valueParameterNames = expression.getValueParameterNamesForDebug()
+        val valueParameterNames = expression.getValueParameterNamesForDebug(options)
         for (index in 0 until expression.valueArgumentsCount) {
             expression.getValueArgument(index)?.accept(this, valueParameterNames[index])
         }
@@ -363,7 +396,7 @@ class DumpIrTreeVisitor(
 
     override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: String) {
         expression.dumpLabeledElementWith(data) {
-            val names = expression.invokeFunction.getValueParameterNamesForDebug(expression.boundValues.size)
+            val names = expression.invokeFunction.getValueParameterNamesForDebug(expression.boundValues.size, options)
             expression.overriddenFunctionSymbol.dumpInternal("overriddenFunctionSymbol")
             expression.boundValues.forEachIndexed { index, value ->
                 value.accept(this, "bound ${names[index]}")
@@ -374,7 +407,7 @@ class DumpIrTreeVisitor(
 
     override fun visitRichPropertyReference(expression: IrRichPropertyReference, data: String) {
         expression.dumpLabeledElementWith(data) {
-            val names = expression.getterFunction.getValueParameterNamesForDebug(expression.boundValues.size)
+            val names = expression.getterFunction.getValueParameterNamesForDebug(expression.boundValues.size, options)
             expression.boundValues.forEachIndexed { index, value ->
                 value.accept(this, "bound ${names[index]}")
             }
@@ -472,10 +505,12 @@ class DumpIrTreeVisitor(
 
     private fun Collection<IrSymbol>.dumpFakeOverrideSymbols() {
         if (isEmpty()) return
-        indented("overridden") {
-            map(elementRenderer::renderSymbolReference)
-                .applyIf(options.stableOrderOfFakeOverrides) { sorted() }
-                .forEach { printer.println(it) }
+        elementRenderer.withHiddenParameterNames {
+            indented("overridden") {
+                map(elementRenderer::renderSymbolReference)
+                    .applyIf(options.stableOrderOfOverriddenSymbols) { sorted() }
+                    .forEach { printer.println(it) }
+            }
         }
     }
 
@@ -528,12 +563,12 @@ class DumpTreeFromSourceLineVisitor(
     }
 }
 
-internal fun IrMemberAccessExpression<*>.getValueParameterNamesForDebug(): List<String> {
+internal fun IrMemberAccessExpression<*>.getValueParameterNamesForDebug(options: DumpIrTreeOptions): List<String> {
     val expectedCount = valueArgumentsCount
     if (symbol.isBound) {
         val owner = symbol.owner
         if (owner is IrFunction) {
-            return owner.getValueParameterNamesForDebug(expectedCount)
+            return owner.getValueParameterNamesForDebug(expectedCount, options)
         }
     }
     return getPlaceholderParameterNames(expectedCount)
@@ -541,9 +576,10 @@ internal fun IrMemberAccessExpression<*>.getValueParameterNamesForDebug(): List<
 
 private fun IrFunction.getValueParameterNamesForDebug(
     expectedCount: Int,
+    options: DumpIrTreeOptions,
 ): List<String> = (0 until expectedCount).map {
     if (it < valueParameters.size)
-        valueParameters[it].name.asString()
+        valueParameters[it].renderValueParameterName(options)
     else
         "${it + 1}"
 }

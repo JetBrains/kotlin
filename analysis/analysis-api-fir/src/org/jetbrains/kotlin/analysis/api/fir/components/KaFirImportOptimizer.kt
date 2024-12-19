@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.api.fir.isImplicitDispatchReceiver
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver
 import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
@@ -55,7 +55,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KaFirImportOptimizer(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaSessionComponent<KaFirSession>(), KaImportOptimizer, KaFirSessionComponent {
+) : KaBaseSessionComponent<KaFirSession>(), KaImportOptimizer, KaFirSessionComponent {
     override fun analyzeImportsToOptimize(file: KtFile): KaImportOptimizerResult = withValidityAssertion {
         val existingImports = file.importDirectives
         if (existingImports.isEmpty()) return KaImportOptimizerResult()

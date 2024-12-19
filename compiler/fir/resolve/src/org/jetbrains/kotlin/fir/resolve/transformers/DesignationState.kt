@@ -36,7 +36,10 @@ class DesignationState private constructor(
                 val firProvider = regularClass.moduleData.session.firProvider
                 val outerClasses = generateSequence(symbol.classId) { classId ->
                     classId.outerClassId
-                }.mapTo(mutableListOf()) { firProvider.getFirClassifierByFqName(it) }
+                }.mapTo(mutableListOf()) { classId ->
+                    if (classId == symbol.classId) regularClass // Short path, allows also to avoid id clashes as in KT-73347
+                    else firProvider.getFirClassifierByFqName(classId)
+                }
                 val file = firProvider.getFirClassifierContainerFileIfAny(regularClass.symbol)
                 requireNotNull(file) { "Containing file was not found for\n${regularClass.render()}" }
                 if (includeFile) {

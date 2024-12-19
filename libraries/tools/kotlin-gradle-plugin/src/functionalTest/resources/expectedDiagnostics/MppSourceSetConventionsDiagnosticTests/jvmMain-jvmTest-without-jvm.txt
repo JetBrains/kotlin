@@ -1,20 +1,22 @@
 [PlatformSourceSetConventionUsedWithoutCorrespondingTarget | WARNING] Accessed 'source set jvmMain' without the registering the jvm target:
-  kotlin {
-      jvm() /* <- register the 'jvm' target */
+kotlin {
+    jvm() /* <- register the 'jvm' target */
 
-      sourceSets.jvmMain.dependencies {
+    sourceSets.jvmMain.dependencies {
 
-      }
-  }
+    }
+}
+Please register the jvm target.
 ----
 [PlatformSourceSetConventionUsedWithoutCorrespondingTarget | WARNING] Accessed 'source set jvmTest' without the registering the jvm target:
-  kotlin {
-      jvm() /* <- register the 'jvm' target */
+kotlin {
+    jvm() /* <- register the 'jvm' target */
 
-      sourceSets.jvmTest.dependencies {
+    sourceSets.jvmTest.dependencies {
 
-      }
-  }
+    }
+}
+Please register the jvm target.
 ----
 [UnusedSourceSetsWarning | WARNING] The following Kotlin source sets were configured but not added to any Kotlin compilation:
  * jvmMain

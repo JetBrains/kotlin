@@ -35,6 +35,6 @@ FILE fqName:<root> fileName:/classReference.kt
           $receiver: GET_CLASS type=kotlin.reflect.KClass<out <root>.A>
             CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CLASS_REFERENCE 'CLASS CLASS name:Array modality:FINAL visibility:public superTypes:[kotlin.Any; kotlin.Cloneable; java.io.Serializable]' type=kotlin.reflect.KClass<kotlin.Array<kotlin.String>>
+        CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Array modality:FINAL visibility:public superTypes:[kotlin.Any; kotlin.Cloneable; java.io.Serializable]' type=kotlin.reflect.KClass<kotlin.Array<kotlin.String>>
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CLASS_REFERENCE 'CLASS CLASS name:Array modality:FINAL visibility:public superTypes:[kotlin.Any; kotlin.Cloneable; java.io.Serializable]' type=kotlin.reflect.KClass<kotlin.Array<kotlin.Array<kotlin.IntArray>?>>
+        CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Array modality:FINAL visibility:public superTypes:[kotlin.Any; kotlin.Cloneable; java.io.Serializable]' type=kotlin.reflect.KClass<kotlin.Array<kotlin.Array<kotlin.IntArray>?>>

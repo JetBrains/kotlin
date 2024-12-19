@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.CallableId
 
 /**
- * [KaCallableSymbol] represents callable declarations, such as functions and properties.
+ * [KaCallableSymbol] represents callable declarations, such as functions and variables.
  */
 @OptIn(KaExperimentalApi::class)
 public sealed class KaCallableSymbol : KaDeclarationSymbol, KaContextReceiversOwner {
@@ -22,7 +22,7 @@ public sealed class KaCallableSymbol : KaDeclarationSymbol, KaContextReceiversOw
     public abstract val callableId: CallableId?
 
     /**
-     * The callable's return type. For properties, [returnType] is the type of the property.
+     * The callable's return type. For variables, [returnType] is the type of the variable.
      */
     public abstract val returnType: KaType
 

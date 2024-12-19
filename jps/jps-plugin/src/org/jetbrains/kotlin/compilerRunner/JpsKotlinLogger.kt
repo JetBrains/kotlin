@@ -24,8 +24,8 @@ internal class JpsKotlinLogger(private val log: Logger) : KotlinLogger {
         log.error(msg, throwable)
     }
 
-    override fun warn(msg: String) {
-        log.warn(msg)
+    override fun warn(msg: String, throwable: Throwable?) {
+        log.warn(msg, throwable)
     }
 
     override fun info(msg: String) {

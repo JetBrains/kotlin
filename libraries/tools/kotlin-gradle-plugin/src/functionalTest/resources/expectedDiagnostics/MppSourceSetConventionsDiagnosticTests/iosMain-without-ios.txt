@@ -1,28 +1,30 @@
 [IosSourceSetConventionUsedWithoutIosTarget | WARNING] Accessed 'source set iosMain' without registering any ios target:
-  kotlin {
-     /* Register at least one of the following targets */
-     iosX64()
-     iosArm64()
-     iosSimulatorArm64()
+kotlin {
+    /* Register at least one of the following targets */
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
-     /* Use convention */
-     sourceSets.iosMain.dependencies {
+    /* Use convention */
+    sourceSets.iosMain.dependencies {
 
-     }
-  }
+    }
+}
+Please register at least one of the iOS targets.
 ----
 [IosSourceSetConventionUsedWithoutIosTarget | WARNING] Accessed 'source set iosTest' without registering any ios target:
-  kotlin {
-     /* Register at least one of the following targets */
-     iosX64()
-     iosArm64()
-     iosSimulatorArm64()
+kotlin {
+    /* Register at least one of the following targets */
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
-     /* Use convention */
-     sourceSets.iosTest.dependencies {
+    /* Use convention */
+    sourceSets.iosTest.dependencies {
 
-     }
-  }
+    }
+}
+Please register at least one of the iOS targets.
 ----
 [UnusedSourceSetsWarning | WARNING] The following Kotlin source sets were configured but not added to any Kotlin compilation:
  * iosMain

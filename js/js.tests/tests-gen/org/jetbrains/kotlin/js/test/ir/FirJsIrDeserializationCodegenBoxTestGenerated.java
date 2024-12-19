@@ -201,6 +201,12 @@ public class FirJsIrDeserializationCodegenBoxTestGenerated extends AbstractFirJs
         }
 
         @Test
+        @TestMetadata("rearrangedArgumentsInAnnotationCall.kt")
+        public void testRearrangedArgumentsInAnnotationCall() {
+          runTest("compiler/testData/codegen/box/annotations/instances/rearrangedArgumentsInAnnotationCall.kt");
+        }
+
+        @Test
         @TestMetadata("varargInAnnotationParameterInstantiation.kt")
         public void testVarargInAnnotationParameterInstantiation() {
           runTest("compiler/testData/codegen/box/annotations/instances/varargInAnnotationParameterInstantiation.kt");
@@ -14654,6 +14660,12 @@ public class FirJsIrDeserializationCodegenBoxTestGenerated extends AbstractFirJs
       }
 
       @Test
+      @TestMetadata("withNothingConstraintAndExpectedType.kt")
+      public void testWithNothingConstraintAndExpectedType() {
+        runTest("compiler/testData/codegen/box/elvis/withNothingConstraintAndExpectedType.kt");
+      }
+
+      @Test
       @TestMetadata("withReturn.kt")
       public void testWithReturn() {
         runTest("compiler/testData/codegen/box/elvis/withReturn.kt");
@@ -21697,12 +21709,6 @@ public class FirJsIrDeserializationCodegenBoxTestGenerated extends AbstractFirJs
       @TestMetadata("kt71649.kt")
       public void testKt71649() {
         runTest("compiler/testData/codegen/box/inlineClasses/kt71649.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-      }
-
-      @Test
-      @TestMetadata("lateinitInlineClasses.kt")
-      public void testLateinitInlineClasses() {
-        runTest("compiler/testData/codegen/box/inlineClasses/lateinitInlineClasses.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
       }
 
       @Test

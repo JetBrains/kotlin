@@ -10815,6 +10815,12 @@ public class TieredBackendJvmLightTreeTestGenerated extends AbstractTieredBacken
         public void testForOverrides() {
           runTest("compiler/testData/diagnostics/tests/j+k/deprecations/forOverrides.kt");
         }
+
+        @Test
+        @TestMetadata("hiddenJavaClass.kt")
+        public void testHiddenJavaClass() {
+          runTest("compiler/testData/diagnostics/tests/j+k/deprecations/hiddenJavaClass.kt");
+        }
       }
 
       @Nested

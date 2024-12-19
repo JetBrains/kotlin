@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 
-public interface KaTypeCreator {
+public interface KaTypeCreator : KaSessionComponent {
     /**
      * Builds a class type with the given class ID.
      *
@@ -48,10 +48,13 @@ public interface KaTypeCreator {
     public fun buildClassType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.() -> Unit = {}): KaType
 
     /**
-     * Builds a type parameter type with the given type parameter symbol.
+     * Builds a [KaTypeParameterType] with the given type parameter symbol.
      */
     public fun buildTypeParameterType(symbol: KaTypeParameterSymbol, init: KaTypeParameterTypeBuilder.() -> Unit = {}): KaTypeParameterType
 
+    /**
+     * Builds a [KaStarTypeProjection] (`*`).
+     */
     @KaExperimentalApi
     public fun buildStarTypeProjection(): KaStarTypeProjection
 }
@@ -60,6 +63,8 @@ public interface KaTypeBuilder : KaLifetimeOwner
 
 /**
  * A builder for class types.
+ *
+ * @see KaTypeCreator.buildClassType
  */
 public interface KaClassTypeBuilder : KaTypeBuilder {
     /**
@@ -82,6 +87,8 @@ public interface KaClassTypeBuilder : KaTypeBuilder {
 
 /**
  * A builder for type parameter types.
+ *
+ * @see KaTypeCreator.buildTypeParameterType
  */
 public interface KaTypeParameterTypeBuilder : KaTypeBuilder {
     /**

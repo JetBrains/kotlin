@@ -21,6 +21,7 @@ import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.lower.AbstractComposeLowering
 import androidx.compose.compiler.plugins.kotlin.lower.containsComposableAnnotation
+import androidx.compose.compiler.plugins.kotlin.lower.hasFirDeclaration
 import androidx.compose.compiler.plugins.kotlin.lower.needsComposableRemapping
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -130,6 +131,9 @@ class AddHiddenFromObjCLowering(
     }
 
     private fun IrDeclaration.addHiddenFromObjCAnnotation() {
+        if (!hasFirDeclaration()) {
+            return
+        }
         val annotation = IrConstructorCallImpl.fromSymbolOwner(
             type = hiddenFromObjCAnnotation.defaultType,
             constructorSymbol = hiddenFromObjCAnnotation.constructors.first()

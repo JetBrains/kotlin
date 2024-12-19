@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.types.Variance
 @KaImplementationDetail
 class KaRendererImpl(
     override val analysisSessionProvider: () -> KaSession
-) : KaRenderer, KaSessionComponent<KaSession>() {
+) : KaRenderer, KaBaseSessionComponent<KaSession>() {
     override fun KaDeclarationSymbol.render(renderer: KaDeclarationRenderer): String = withValidityAssertion {
         return with(analysisSession) {
             prettyPrint { renderer.renderDeclaration(useSiteSession, this@render, this) }

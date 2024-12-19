@@ -735,6 +735,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         forcedDefaultValueConversion: Boolean = false,
         predefinedOrigin: IrDeclarationOrigin? = null
     ): IrValueParameter = convertCatching(valueParameter) {
+        valueParameter.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
         val origin = valueParameter.computeIrOrigin(predefinedOrigin)
         val type = valueParameter.returnTypeRef.toIrType(c, typeOrigin)
         val irParameter = valueParameter.convertWithOffsets { startOffset, endOffset ->
@@ -776,7 +777,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 if (!skipDefaultParameter && defaultValue != null) {
                     this.defaultValue = when {
                         forcedDefaultValueConversion && defaultValue !is FirExpressionStub ->
-                            defaultValue.asCompileTimeIrInitializer(c)
+                            defaultValue.asCompileTimeIrInitializerForAnnotationParameter(c)
                         useStubForDefaultValueStub || defaultValue !is FirExpressionStub ->
                             factory.createExpressionBody(
                                 IrErrorExpressionImpl(

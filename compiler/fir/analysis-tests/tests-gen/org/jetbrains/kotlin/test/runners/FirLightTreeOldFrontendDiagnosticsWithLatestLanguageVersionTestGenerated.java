@@ -23663,12 +23663,6 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
-      @TestMetadata("lateinitInlineClassesOn.kt")
-      public void testLateinitInlineClassesOn() {
-        runTest("compiler/testData/diagnostics/tests/inlineClasses/lateinitInlineClassesOn.kt");
-      }
-
-      @Test
       @TestMetadata("presenceOfInitializerBlockInsideInlineClass.kt")
       public void testPresenceOfInitializerBlockInsideInlineClass() {
         runTest("compiler/testData/diagnostics/tests/inlineClasses/presenceOfInitializerBlockInsideInlineClass.kt");
@@ -25307,6 +25301,18 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
         @TestMetadata("forSyntheticPropertyOverrides.kt")
         public void testForSyntheticPropertyOverrides() {
           runTest("compiler/testData/diagnostics/tests/j+k/deprecations/forSyntheticPropertyOverrides.kt");
+        }
+
+        @Test
+        @TestMetadata("hiddenJavaClass.kt")
+        public void testHiddenJavaClass() {
+          runTest("compiler/testData/diagnostics/tests/j+k/deprecations/hiddenJavaClass.kt");
+        }
+
+        @Test
+        @TestMetadata("javaWithHiddenDeprecation.kt")
+        public void testJavaWithHiddenDeprecation() {
+          runTest("compiler/testData/diagnostics/tests/j+k/deprecations/javaWithHiddenDeprecation.kt");
         }
       }
 

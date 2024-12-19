@@ -41,7 +41,7 @@ public final class Container$$serializer : java/lang/Object, kotlinx/serializati
     public kotlinx.serialization.KSerializer[] childSerializers() {
         LABEL (L0)
         LINENUMBER (18)
-          INVOKESTATIC (Container, access$get$childSerializers$cp, ()[Lkotlinx/serialization/KSerializer;)
+          INVOKESTATIC (Container, access$get$childSerializers$cp, ()[Lkotlin/Lazy;)
           ASTORE (1)
           ICONST_1
           ANEWARRAY (kotlinx/serialization/KSerializer)
@@ -51,6 +51,7 @@ public final class Container$$serializer : java/lang/Object, kotlinx/serializati
           ALOAD (1)
           ICONST_0
           AALOAD
+          INVOKEINTERFACE (kotlin/Lazy, getValue, ()Ljava/lang/Object;)
           AASTORE
           ALOAD (2)
           ARETURN
@@ -77,7 +78,7 @@ public final class Container$$serializer : java/lang/Object, kotlinx/serializati
           ALOAD (2)
           INVOKEINTERFACE (kotlinx/serialization/encoding/Decoder, beginStructure, (Lkotlinx/serialization/descriptors/SerialDescriptor;)Lkotlinx/serialization/encoding/CompositeDecoder;)
           ASTORE (7)
-          INVOKESTATIC (Container, access$get$childSerializers$cp, ()[Lkotlinx/serialization/KSerializer;)
+          INVOKESTATIC (Container, access$get$childSerializers$cp, ()[Lkotlin/Lazy;)
           ASTORE (8)
           ALOAD (7)
           INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeDecoder, decodeSequentially, ()Z)
@@ -88,6 +89,7 @@ public final class Container$$serializer : java/lang/Object, kotlinx/serializati
           ALOAD (8)
           ICONST_0
           AALOAD
+          INVOKEINTERFACE (kotlin/Lazy, getValue, ()Ljava/lang/Object;)
           CHECKCAST (kotlinx/serialization/DeserializationStrategy)
           ALOAD (6)
           INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeDecoder, decodeSerializableElement, (Lkotlinx/serialization/descriptors/SerialDescriptor;ILkotlinx/serialization/DeserializationStrategy;Ljava/lang/Object;)Ljava/lang/Object;)
@@ -121,6 +123,7 @@ public final class Container$$serializer : java/lang/Object, kotlinx/serializati
           ALOAD (8)
           ICONST_0
           AALOAD
+          INVOKEINTERFACE (kotlin/Lazy, getValue, ()Ljava/lang/Object;)
           CHECKCAST (kotlinx/serialization/DeserializationStrategy)
           ALOAD (6)
           INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeDecoder, decodeSerializableElement, (Lkotlinx/serialization/descriptors/SerialDescriptor;ILkotlinx/serialization/DeserializationStrategy;Ljava/lang/Object;)Ljava/lang/Object;)
@@ -170,6 +173,45 @@ public final class Container$$serializer : java/lang/Object, kotlinx/serializati
     public kotlinx.serialization.KSerializer[] typeParametersSerializers()
 }
 
+final class Container$Companion$$childSerializers$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
+    public final static Container$Companion$$childSerializers$1 INSTANCE
+
+    static void <clinit>() {
+          NEW (Container$Companion$$childSerializers$1)
+          DUP
+          INVOKESPECIAL (Container$Companion$$childSerializers$1, <init>, ()V)
+          PUTSTATIC (Container$Companion$$childSerializers$1, INSTANCE, LContainer$Companion$$childSerializers$1;)
+          RETURN
+    }
+
+    void <init>() {
+        LABEL (L0)
+          ALOAD (0)
+          ICONST_0
+          INVOKESPECIAL (kotlin/jvm/internal/Lambda, <init>, (I)V)
+          RETURN
+        LABEL (L1)
+    }
+
+    public final kotlinx.serialization.KSerializer invoke() {
+        LABEL (L0)
+          GETSTATIC (Result, Companion, LResult$Companion;)
+          INVOKEVIRTUAL (Result$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
+        LABEL (L1)
+        LINENUMBER (18)
+          ARETURN
+        LABEL (L2)
+    }
+
+    public java.lang.Object invoke() {
+        LABEL (L0)
+          ALOAD (0)
+          INVOKEVIRTUAL (Container$Companion$$childSerializers$1, invoke, ()Lkotlinx/serialization/KSerializer;)
+          ARETURN
+        LABEL (L1)
+    }
+}
+
 public final class Container$Companion : java/lang/Object {
     private void <init>() {
         LABEL (L0)
@@ -199,7 +241,7 @@ public final class Container$Companion : java/lang/Object {
 }
 
 public final class Container : java/lang/Object {
-    private final static kotlinx.serialization.KSerializer[] $childSerializers
+    private final static kotlin.Lazy[] $childSerializers
 
     public final static Container$Companion Companion
 
@@ -214,15 +256,17 @@ public final class Container : java/lang/Object {
         LABEL (L0)
         LINENUMBER (18)
           ICONST_1
-          ANEWARRAY (kotlinx/serialization/KSerializer)
+          ANEWARRAY (kotlin/Lazy)
           ASTORE (0)
           ALOAD (0)
           ICONST_0
-          GETSTATIC (Result, Companion, LResult$Companion;)
-          INVOKEVIRTUAL (Result$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
+          GETSTATIC (kotlin/LazyThreadSafetyMode, PUBLICATION, Lkotlin/LazyThreadSafetyMode;)
+          GETSTATIC (Container$Companion$$childSerializers$1, INSTANCE, LContainer$Companion$$childSerializers$1;)
+          CHECKCAST (kotlin/jvm/functions/Function0)
+          INVOKESTATIC (kotlin/LazyKt, lazy, (Lkotlin/LazyThreadSafetyMode;Lkotlin/jvm/functions/Function0;)Lkotlin/Lazy;)
           AASTORE
           ALOAD (0)
-          PUTSTATIC (Container, $childSerializers, [Lkotlinx/serialization/KSerializer;)
+          PUTSTATIC (Container, $childSerializers, [Lkotlin/Lazy;)
           RETURN
     }
 
@@ -267,14 +311,14 @@ public final class Container : java/lang/Object {
         LABEL (L2)
     }
 
-    public final static kotlinx.serialization.KSerializer[] access$get$childSerializers$cp()
+    public final static kotlin.Lazy[] access$get$childSerializers$cp()
 
     public final Result getR()
 
     public final static void write$Self$main(Container self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc) {
         LABEL (L0)
         LINENUMBER (18)
-          GETSTATIC (Container, $childSerializers, [Lkotlinx/serialization/KSerializer;)
+          GETSTATIC (Container, $childSerializers, [Lkotlin/Lazy;)
           ASTORE (3)
           ALOAD (1)
           ALOAD (2)
@@ -282,6 +326,7 @@ public final class Container : java/lang/Object {
           ALOAD (3)
           ICONST_0
           AALOAD
+          INVOKEINTERFACE (kotlin/Lazy, getValue, ()Ljava/lang/Object;)
           CHECKCAST (kotlinx/serialization/SerializationStrategy)
           ALOAD (0)
           GETFIELD (Container, r, LResult;)

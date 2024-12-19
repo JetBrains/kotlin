@@ -120,6 +120,11 @@ public class CompileAgainstJvmAbiTestGenerated extends AbstractCompileAgainstJvm
     runTest("plugins/jvm-abi-gen/testData/compile/multifileClassWithRemovePrivateOption/");
   }
 
+  @TestMetadata("nestedClassWithDollar")
+  public void testNestedClassWithDollar() {
+    runTest("plugins/jvm-abi-gen/testData/compile/nestedClassWithDollar/");
+  }
+
   @TestMetadata("privateAnnotationsFromJavaApp")
   public void testPrivateAnnotationsFromJavaApp() {
     runTest("plugins/jvm-abi-gen/testData/compile/privateAnnotationsFromJavaApp/");

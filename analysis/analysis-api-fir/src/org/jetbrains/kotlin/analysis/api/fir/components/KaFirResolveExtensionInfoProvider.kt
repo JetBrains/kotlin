@@ -9,7 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.components.KaResolveExtensionInfoProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseEmptyScope
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
 internal class KaFirResolveExtensionInfoProvider(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaSessionComponent<KaFirSession>(), KaResolveExtensionInfoProvider, KaFirSessionComponent {
+) : KaBaseSessionComponent<KaFirSession>(), KaResolveExtensionInfoProvider, KaFirSessionComponent {
     override val resolveExtensionScopeWithTopLevelDeclarations: KaScope
         get() = withValidityAssertion {
             val tools = analysisSession.extensionTools

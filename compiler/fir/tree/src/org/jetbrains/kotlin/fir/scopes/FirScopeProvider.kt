@@ -36,6 +36,10 @@ abstract class FirScopeProvider {
         scopeSession: ScopeSession
     ): FirContainingNamesAwareScope?
 
+    /**
+     * @return scope containing static callable members, and all classifiers, including non-static ones.
+     * This works so because even non-static classifiers are accessible on a qualifier receiver.
+     */
     fun getStaticScope(
         klass: FirClass,
         useSiteSession: FirSession,

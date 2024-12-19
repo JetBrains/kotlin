@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("FunctionName")
+
 package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
 import org.gradle.api.Project
@@ -12,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.ERROR
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.WARNING
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.ID
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.util.applyKotlinJvmPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
@@ -105,9 +108,10 @@ class DiagnosticsReportingFunctionalTest {
         // using same diagnostic with same ID as in "per-project". They should be deduplicated properly.
         root.reportDiagnosticOncePerBuild(
             ToolingDiagnostic(
-                "TEST_DIAGNOSTIC_ONE_PER_PROJECT",
+                ID("TEST_DIAGNOSTIC_ONE_PER_PROJECT", "Test Diagnostic"),
                 "This is a test diagnostics that should be reported once per project\n\nIt has multiple lines of text",
-                WARNING
+                WARNING,
+                listOf("Solution 1", "Solution 2")
             )
         )
         root.evaluate()
@@ -120,7 +124,12 @@ class DiagnosticsReportingFunctionalTest {
         val project = buildProject()
 
         project.applyKotlinJvmPlugin()
-        val diagnostic = ToolingDiagnostic("DIAGNOSTIC_ID", "Sample diagnostic", WARNING)
+        val diagnostic = ToolingDiagnostic(
+            ID("DIAGNOSTIC_ID", "Sample"),
+            "Sample diagnostic",
+            WARNING,
+            listOf("Solution 1", "Solution 2")
+        )
 
         project.kotlinToolingDiagnosticsCollector.report(project, diagnostic)
         project.kotlinToolingDiagnosticsCollector.report(project, diagnostic, reportOnce = true)
@@ -161,6 +170,38 @@ class DiagnosticsReportingFunctionalTest {
             checkDiagnostics("suppressForWarningsDoesntWorkForErrors")
         }
     }
+
+    @Test
+    fun `verify all diagnostic factories have unique ids`() {
+        val diagnosticFactories = KotlinToolingDiagnostics::class.nestedClasses
+            .mapNotNull { it.objectInstance as? ToolingDiagnosticFactory }
+
+        val factoryIds = diagnosticFactories.map { it.id }
+        val uniqueFactoryIds = factoryIds.toSet()
+
+        val duplicates = factoryIds - uniqueFactoryIds
+
+        assert(duplicates.isEmpty()) {
+            "Found duplicate diagnostic factory IDs:\n" + duplicates.joinToString("\n") {
+                "Factory ID '$it' is not unique"
+            }
+        }
+    }
+
+    @Test
+    fun `verify all diagnostic factories have valid ids`() {
+        val diagnosticFactories = KotlinToolingDiagnostics::class.nestedClasses
+            .mapNotNull { it.objectInstance as? ToolingDiagnosticFactory }
+
+        // Ensure all factories have non-empty, non-blank IDs
+        val invalidIdFactories = diagnosticFactories.filter { it.id.isBlank() }
+
+        assert(invalidIdFactories.isEmpty()) {
+            "Found factories with invalid (blank) IDs:\n" + invalidIdFactories.joinToString("\n") {
+                "Factory ${it::class.simpleName} has invalid (blank) ID: '${it.id}'"
+            }
+        }
+    }
 }
 
 private fun buildProjectWithMockedCheckers(
@@ -187,7 +228,12 @@ private fun buildProjectWithMockedCheckers(
 private fun Project.reportTestDiagnostic(severity: Severity = WARNING) {
     kotlinToolingDiagnosticsCollector.report(
         project,
-        ToolingDiagnostic("TEST_DIAGNOSTIC", "This is a test diagnostic\n\nIt has multiple lines of text", severity)
+        ToolingDiagnostic(
+            ID("TEST_DIAGNOSTIC", "Test"),
+            "This is a test diagnostic\n\nIt has multiple lines of text",
+            severity,
+            listOf("Solution 1", "Solution 2")
+        )
     )
 }
 
@@ -195,9 +241,10 @@ private fun Project.reportOnePerProjectTestDiagnostic(severity: Severity = WARNI
     kotlinToolingDiagnosticsCollector.reportOncePerGradleProject(
         project,
         ToolingDiagnostic(
-            "TEST_DIAGNOSTIC_ONE_PER_PROJECT",
+            ID("TEST_DIAGNOSTIC_ONE_PER_PROJECT", "Test Diagnostic"),
             "This is a test diagnostics that should be reported once per project\n\nIt has multiple lines of text",
-            severity
+            severity,
+            listOf("Solution 1", "Solution 2")
         )
     )
 }
@@ -206,9 +253,10 @@ private fun Project.reportOnePerBuildTestDiagnostic(severity: Severity = WARNING
     kotlinToolingDiagnosticsCollector.reportOncePerGradleBuild(
         project,
         ToolingDiagnostic(
-            "TEST_DIAGNOSTIC_ONE_PER_BUILD",
+            ID("TEST_DIAGNOSTIC_ONE_PER_BUILD", "Test Diagnostic"),
             "This is a test diagnostics that should be reported once per build\n\nIt has multiple lines of text",
-            severity
+            severity,
+            listOf("Solution 1", "Solution 2")
         )
     )
 }

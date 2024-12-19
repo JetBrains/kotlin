@@ -224,21 +224,21 @@ FILE: [ResolvedTo(IMPORTS)] nestedClass.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] nestedClass.kt
-    public open [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+    public open [ResolvedTo(SUPER_TYPES)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public open [ResolvedTo(STATUS)] class AnotherTopLevelClass : R|TopLevelClass| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
-            LAZY_super<R|TopLevelClass|>
+    public open [ResolvedTo(SUPER_TYPES)] class AnotherTopLevelClass : R|TopLevelClass| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
+            LAZY_super<TopLevelClass>
         }
 
     }
     public final [ResolvedTo(STATUS)] class OuterClass : R|AnotherTopLevelClass| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
-            LAZY_super<R|AnotherTopLevelClass|>
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
+            LAZY_super<AnotherTopLevelClass>
         }
 
         public final [ResolvedTo(CONTRACTS)] class NestedClass : R|kotlin/Any| {
@@ -252,21 +252,21 @@ FILE: [ResolvedTo(IMPORTS)] nestedClass.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] nestedClass.kt
-    public open [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+    public open [ResolvedTo(SUPER_TYPES)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public open [ResolvedTo(STATUS)] class AnotherTopLevelClass : R|TopLevelClass| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
-            LAZY_super<R|TopLevelClass|>
+    public open [ResolvedTo(SUPER_TYPES)] class AnotherTopLevelClass : R|TopLevelClass| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
+            LAZY_super<TopLevelClass>
         }
 
     }
     public final [ResolvedTo(STATUS)] class OuterClass : R|AnotherTopLevelClass| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
-            LAZY_super<R|AnotherTopLevelClass|>
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
+            LAZY_super<AnotherTopLevelClass>
         }
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class NestedClass : R|kotlin/Any| {
@@ -280,21 +280,21 @@ FILE: [ResolvedTo(IMPORTS)] nestedClass.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] nestedClass.kt
-    public open [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+    public open [ResolvedTo(SUPER_TYPES)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public open [ResolvedTo(STATUS)] class AnotherTopLevelClass : R|TopLevelClass| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
-            LAZY_super<R|TopLevelClass|>
+    public open [ResolvedTo(SUPER_TYPES)] class AnotherTopLevelClass : R|TopLevelClass| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
+            LAZY_super<TopLevelClass>
         }
 
     }
     public final [ResolvedTo(STATUS)] class OuterClass : R|AnotherTopLevelClass| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
-            LAZY_super<R|AnotherTopLevelClass|>
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
+            LAZY_super<AnotherTopLevelClass>
         }
 
         public final [ResolvedTo(CONSTANT_EVALUATION)] class NestedClass : R|kotlin/Any| {
@@ -308,21 +308,21 @@ FILE: [ResolvedTo(IMPORTS)] nestedClass.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] nestedClass.kt
-    public open [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+    public open [ResolvedTo(SUPER_TYPES)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public open [ResolvedTo(STATUS)] class AnotherTopLevelClass : R|TopLevelClass| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
-            LAZY_super<R|TopLevelClass|>
+    public open [ResolvedTo(SUPER_TYPES)] class AnotherTopLevelClass : R|TopLevelClass| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
+            LAZY_super<TopLevelClass>
         }
 
     }
     public final [ResolvedTo(STATUS)] class OuterClass : R|AnotherTopLevelClass| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
-            LAZY_super<R|AnotherTopLevelClass|>
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
+            LAZY_super<AnotherTopLevelClass>
         }
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class NestedClass : R|kotlin/Any| {

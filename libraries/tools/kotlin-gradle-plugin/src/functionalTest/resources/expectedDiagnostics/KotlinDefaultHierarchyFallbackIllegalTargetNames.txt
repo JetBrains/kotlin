@@ -5,5 +5,5 @@ Source sets created by the following targets will clash with source sets created
 Consider renaming the targets or disabling the default template by adding
     'kotlin.mpp.applyDefaultHierarchyTemplate=false'
 to your gradle.properties
-
+Please rename the targets or disable the default template.
 Learn more about hierarchy templates: https://kotl.in/hierarchy-template

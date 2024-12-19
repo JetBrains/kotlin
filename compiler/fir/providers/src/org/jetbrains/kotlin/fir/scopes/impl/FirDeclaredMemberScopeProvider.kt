@@ -94,7 +94,7 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
             }
             else -> {
                 val baseScope = FirClassDeclaredMemberScopeImpl(useSiteSession, klass, existingNamesForLazyNestedClassifierScope)
-                val generatedScope = runIf(origin.fromSource || origin.generated) {
+                val generatedScope = runIf(origin.fromSource) {
                     FirGeneratedClassDeclaredMemberScope.create(
                         useSiteSession,
                         klass.symbol,

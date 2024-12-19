@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
 @KaIdeApi
-public interface KaCompletionCandidateChecker {
+public interface KaCompletionCandidateChecker : KaSessionComponent {
     /**
      * Returns an extension applicability checker for the given context [nameExpression].
      * The function is meant to only be used for providing auto-completion for Kotlin in IntelliJ IDEA.
@@ -38,7 +38,7 @@ public interface KaCompletionCandidateChecker {
 }
 
 @KaIdeApi
-public interface KaCompletionExtensionCandidateChecker {
+public interface KaCompletionExtensionCandidateChecker : KaLifetimeOwner {
     /**
      * Checks if the given [candidate] is applicable as an extension callable in the current context.
      */

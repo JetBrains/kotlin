@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getAvailableScopesForPosition
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseImplicitReceiver
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseScopeContext
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseCompositeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseCompositeTypeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseEmptyScope
@@ -57,7 +57,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KaFirScopeProvider(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaSessionComponent<KaFirSession>(), KaScopeProvider, KaFirSessionComponent {
+) : KaBaseSessionComponent<KaFirSession>(), KaScopeProvider, KaFirSessionComponent {
     private fun getScopeSession(): ScopeSession {
         return analysisSession.getScopeSessionFor(analysisSession.firSession)
     }

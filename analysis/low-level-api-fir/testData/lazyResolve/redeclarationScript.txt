@@ -172,8 +172,8 @@ FILE: [ResolvedTo(IMPORTS)] redeclarationScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-redeclarationScript.kts>] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-redeclarationScript.kts>] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
@@ -193,8 +193,8 @@ FILE: [ResolvedTo(IMPORTS)] redeclarationScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-redeclarationScript.kts>] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-redeclarationScript.kts>] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
@@ -214,8 +214,8 @@ FILE: [ResolvedTo(IMPORTS)] redeclarationScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-redeclarationScript.kts>] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-redeclarationScript.kts>] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
@@ -235,8 +235,8 @@ FILE: [ResolvedTo(IMPORTS)] redeclarationScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-redeclarationScript.kts>] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-redeclarationScript.kts>] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
@@ -256,8 +256,8 @@ FILE: [ResolvedTo(IMPORTS)] redeclarationScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-redeclarationScript.kts>] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-redeclarationScript.kts>] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 

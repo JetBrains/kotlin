@@ -60,14 +60,13 @@ abstract class KotlinTest : AbstractTestTask() {
         runListeners.add(listener)
     }
 
-    private val ignoreTcsmOverflow by lazy {
-        PropertiesProvider(project).ignoreTcsmOverflow
-    }
+    private val ignoreTcsmOverflow = PropertiesProvider(project).ignoreTcsmOverflow
 
+    // This method is called on execution time
     override fun createTestExecuter() = TCServiceMessagesTestExecutor(
         execHandleFactory,
         runListeners,
-        ignoreTcsmOverflow,
+        ignoreTcsmOverflow.get(),
         ignoreRunFailures,
     )
 }

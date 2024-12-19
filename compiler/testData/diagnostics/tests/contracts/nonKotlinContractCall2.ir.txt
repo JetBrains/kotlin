@@ -30,7 +30,7 @@ FILE fqName:<root> fileName:/nonKotlinContractCall2.kt
               $receiver: VALUE_PARAMETER name:$this$testBuilder type:<root>.Test
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
-                  GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
   FUN name:testBuilder visibility:public modality:FINAL <> (id:kotlin.String, lambda:@[ExtensionFunctionType] kotlin.Function1<<root>.Test, kotlin.Unit>) returnType:<root>.Test
     VALUE_PARAMETER name:id index:0 type:kotlin.String
       EXPRESSION_BODY

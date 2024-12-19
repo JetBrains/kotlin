@@ -13467,12 +13467,6 @@ public class TieredFrontendJvmLightTreeTestGenerated extends AbstractTieredFront
       }
 
       @Test
-      @TestMetadata("lateinitInlineClassesOn.kt")
-      public void testLateinitInlineClassesOn() {
-        runTest("compiler/testData/diagnostics/tests/inlineClasses/lateinitInlineClassesOn.kt");
-      }
-
-      @Test
       @TestMetadata("propertiesWithBackingFieldsInsideInlineClass.kt")
       public void testPropertiesWithBackingFieldsInsideInlineClass() {
         runTest("compiler/testData/diagnostics/tests/inlineClasses/propertiesWithBackingFieldsInsideInlineClass.kt");
@@ -14230,6 +14224,12 @@ public class TieredFrontendJvmLightTreeTestGenerated extends AbstractTieredFront
         @TestMetadata("forSyntheticPropertyOverrides.kt")
         public void testForSyntheticPropertyOverrides() {
           runTest("compiler/testData/diagnostics/tests/j+k/deprecations/forSyntheticPropertyOverrides.kt");
+        }
+
+        @Test
+        @TestMetadata("javaWithHiddenDeprecation.kt")
+        public void testJavaWithHiddenDeprecation() {
+          runTest("compiler/testData/diagnostics/tests/j+k/deprecations/javaWithHiddenDeprecation.kt");
         }
       }
 
@@ -29426,6 +29426,12 @@ public class TieredFrontendJvmLightTreeTestGenerated extends AbstractTieredFront
       @TestMetadata("inner.kt")
       public void testInner() {
         runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inner.kt");
+      }
+
+      @Test
+      @TestMetadata("innerInsideNestedSealed.kt")
+      public void testInnerInsideNestedSealed() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/innerInsideNestedSealed.kt");
       }
 
       @Test

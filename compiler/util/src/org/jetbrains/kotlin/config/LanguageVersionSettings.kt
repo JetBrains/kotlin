@@ -436,7 +436,6 @@ enum class LanguageFeature(
 
     JsAllowImplementingFunctionInterface(sinceVersion = null, kind = OTHER),
     CustomEqualsInValueClasses(sinceVersion = null, kind = OTHER), // KT-24874
-    InlineLateinit(sinceVersion = null, kind = OTHER), // KT-23814
     EnableDfaWarningsInK2(sinceVersion = null, kind = OTHER), // KT-50965
     ContractSyntaxV2(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-56127
     ImplicitSignedToUnsignedIntegerConversion(sinceVersion = null), // KT-56583
@@ -622,6 +621,13 @@ interface LanguageOrApiVersion : DescriptionAware {
         }
 }
 
+// This is a public API used in IDEA kotlin plugin code, in particular in
+// community/plugins/kotlin/base/compiler-configuration-ui/src/org/jetbrains/kotlin/idea/base/compilerPreferences/configuration/KotlinCompilerConfigurableTab.java
+@Suppress("unused")
+@Deprecated(
+    message = "This function is no more actual after 2.0 release, consider replacing with isStable",
+    replaceWith = ReplaceWith("isStable")
+)
 fun LanguageVersion.isStableOrReadyForPreview(): Boolean =
     isStable || this == KOTLIN_1_9 || this == KOTLIN_2_0
 

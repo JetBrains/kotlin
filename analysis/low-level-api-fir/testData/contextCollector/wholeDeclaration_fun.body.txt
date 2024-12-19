@@ -30,14 +30,14 @@ Tower Data Context:
                 Type: test.Receiver
 
 FILE: [ResolvedTo(IMPORTS)] wholeDeclaration_fun.kt
-    public final [ResolvedTo(STATUS)] class ContextReceiver : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] constructor(): R|test/ContextReceiver| {
+    public final? [ResolvedTo(RAW_FIR)] class ContextReceiver : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|test/ContextReceiver| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(STATUS)] class Receiver : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] constructor(): R|test/Receiver| {
+    public final? [ResolvedTo(RAW_FIR)] class Receiver : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|test/Receiver| {
             LAZY_super<R|kotlin/Any|>
         }
 

@@ -3,6 +3,8 @@
 // DONT_TARGET_EXACT_BACKEND: NATIVE
 // IGNORE_BACKEND: WASM, JS_IR, JS_IR_ES6
 // IGNORE_BACKEND: ANDROID
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR NATIVE
+// ^^^ There is unlinked call of Result.<init> after deserialization. 'ValueClasses' language feature is still unstable.
 
 // ALLOW_KOTLIN_PACKAGE
 // WITH_STDLIB

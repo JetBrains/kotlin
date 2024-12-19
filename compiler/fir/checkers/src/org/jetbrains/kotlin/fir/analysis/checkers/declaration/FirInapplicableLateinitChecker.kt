@@ -6,14 +6,10 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getInlineClassUnderlyingType
-import org.jetbrains.kotlin.fir.analysis.checkers.isRecursiveValueClassType
 import org.jetbrains.kotlin.fir.analysis.checkers.isSingleFieldValueClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -25,8 +21,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.canBeNull
-import org.jetbrains.kotlin.fir.types.coneType
 
 object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -91,34 +85,13 @@ object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common
                     "is not allowed on $variables of unsigned types",
                     context
                 )
-                !context.languageVersionSettings.supportsFeature(LanguageFeature.InlineLateinit) -> reporter.reportError(
+                else -> reporter.reportError(
                     declaration.source,
                     "is not allowed on $variables of inline class types",
                     context
                 )
-                hasUnderlyingTypeForbiddenForLateinit(declarationType, context.session) -> reporter.reportError(
-                    declaration.source,
-                    "is not allowed on $variables of inline type with underlying type not suitable for lateinit declaration",
-                    context
-                )
             }
         }
-    }
-
-    private fun hasUnderlyingTypeForbiddenForLateinit(type: ConeKotlinType, session: FirSession): Boolean {
-
-        fun isForbiddenTypeForLateinit(type: ConeKotlinType): Boolean {
-            if (type.isPrimitiveOrNullablePrimitive) return true
-            if (type.canBeNull(session)) return true
-            if (type.isSingleFieldValueClass(session)) {
-                return isForbiddenTypeForLateinit(type.getInlineClassUnderlyingType(session))
-            }
-            return false
-        }
-
-        // prevent infinite recursion
-        if (type.isRecursiveValueClassType(session)) return false
-        return isForbiddenTypeForLateinit(type.getInlineClassUnderlyingType(session))
     }
 
     private fun FirProperty.hasGetter() = getter != null && getter !is FirDefaultPropertyGetter

@@ -1,20 +1,22 @@
 [PlatformSourceSetConventionUsedWithoutCorrespondingTarget | WARNING] Accessed 'source set jsMain' without the registering the js target:
-  kotlin {
-      js() /* <- register the 'js' target */
+kotlin {
+    js() /* <- register the 'js' target */
 
-      sourceSets.jsMain.dependencies {
+    sourceSets.jsMain.dependencies {
 
-      }
-  }
+    }
+}
+Please register the js target.
 ----
 [PlatformSourceSetConventionUsedWithoutCorrespondingTarget | WARNING] Accessed 'source set jsTest' without the registering the js target:
-  kotlin {
-      js() /* <- register the 'js' target */
+kotlin {
+    js() /* <- register the 'js' target */
 
-      sourceSets.jsTest.dependencies {
+    sourceSets.jsTest.dependencies {
 
-      }
-  }
+    }
+}
+Please register the js target.
 ----
 [UnusedSourceSetsWarning | WARNING] The following Kotlin source sets were configured but not added to any Kotlin compilation:
  * jsMain

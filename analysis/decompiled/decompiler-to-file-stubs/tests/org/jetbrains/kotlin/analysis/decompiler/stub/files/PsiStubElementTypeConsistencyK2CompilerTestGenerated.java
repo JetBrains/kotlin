@@ -210,6 +210,12 @@ public class PsiStubElementTypeConsistencyK2CompilerTestGenerated extends Abstra
   }
 
   @Test
+  @TestMetadata("MultifileClass__PartKt")
+  public void testMultifileClass__PartKt() {
+    runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/MultifileClass__PartKt/");
+  }
+
+  @Test
   @TestMetadata("NamedCompanionObject")
   public void testNamedCompanionObject() {
     runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/NamedCompanionObject/");

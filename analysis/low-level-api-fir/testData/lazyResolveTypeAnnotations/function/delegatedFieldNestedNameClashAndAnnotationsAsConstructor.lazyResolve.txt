@@ -406,16 +406,16 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsAsConstru
         public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
         }
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
-            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final const [ResolvedTo(STATUS)] val outer: <implicit> = LAZY_EXPRESSION
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+            public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
-            public final const [ResolvedTo(STATUS)] val inner: <implicit> = LAZY_EXPRESSION
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+            public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
         }
 
@@ -453,16 +453,16 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsAsConstru
         public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
         }
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
-            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final const [ResolvedTo(STATUS)] val outer: <implicit> = LAZY_EXPRESSION
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+            public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
-            public final const [ResolvedTo(STATUS)] val inner: <implicit> = LAZY_EXPRESSION
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+            public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
         }
 
@@ -500,16 +500,16 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsAsConstru
         public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
         }
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
-            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final const [ResolvedTo(STATUS)] val outer: <implicit> = LAZY_EXPRESSION
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+            public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
-            public final const [ResolvedTo(STATUS)] val inner: <implicit> = LAZY_EXPRESSION
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+            public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
         }
 

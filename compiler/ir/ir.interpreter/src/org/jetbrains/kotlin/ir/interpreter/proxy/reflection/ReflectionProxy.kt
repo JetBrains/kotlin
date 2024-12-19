@@ -35,7 +35,7 @@ internal interface ReflectionProxy : Proxy {
                     this.isKProperty2() -> KProperty2Proxy(this, callInterceptor)
                     else -> TODO()
                 }
-                is KFunctionState -> KFunctionProxy(this, callInterceptor)
+                is KFunctionState -> KRegularFunctionProxy(this, callInterceptor)
                 is KClassState -> KClassProxy(this, callInterceptor)
                 is KTypeState -> KTypeProxy(this, callInterceptor)
                 is KTypeParameterState -> KTypeParameterProxy(this, callInterceptor)

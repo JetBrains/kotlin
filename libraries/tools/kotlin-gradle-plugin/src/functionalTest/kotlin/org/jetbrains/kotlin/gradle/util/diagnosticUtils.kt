@@ -51,7 +51,8 @@ internal fun Project.checkDiagnostics(
     }.toMap()
     val expectedDiagnostics = expectedDiagnosticsFile(testDataName)
 
-    val filteredDiagnostics = diagnosticsPerProject.mapValues { (_, diagnostics) -> diagnostics.filterNot { it.id in filterDiagnosticIds.map { it.id } }}
+    val filteredDiagnostics =
+        diagnosticsPerProject.mapValues { (_, diagnostics) -> diagnostics.filterNot { it.id in filterDiagnosticIds.map { it.id } } }
 
     if (filteredDiagnostics.all { (_, diagnostics) -> diagnostics.isEmpty() }) {
         if (expectedDiagnostics.exists())

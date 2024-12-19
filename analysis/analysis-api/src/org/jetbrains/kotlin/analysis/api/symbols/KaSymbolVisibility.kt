@@ -115,6 +115,9 @@ public enum class KaSymbolVisibility {
     UNKNOWN,
 }
 
+/**
+ * Converts the Kotlin compiler's [Visibility] to the Analysis API's [KaSymbolVisibility].
+ */
 @KaExperimentalApi
 public val Visibility.asKaSymbolVisibility: KaSymbolVisibility
     get() = when (this) {

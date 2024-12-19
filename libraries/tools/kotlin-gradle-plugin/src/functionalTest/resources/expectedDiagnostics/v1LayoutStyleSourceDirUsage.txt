@@ -2,3 +2,4 @@
 This source directory was supported by: Multiplatform/Android-V1-SourceSetLayout
 Current KotlinAndroidSourceSetLayout: Multiplatform/Android-V2-SourceSetLayout
 New source directory is: src/androidInstrumentedTest/kotlin
+Please migrate to the new source directory: src/androidInstrumentedTest/kotlin

@@ -1,0 +1,17 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=A.kt */
+
+public class A
+    private var privateVar: Int
+        /* TARGET declaration */ private fun <get-privateVar>(): Int
+        /* TARGET declaration */ private fun <set-privateVar>(<set-?>: Int)
+    internal inline fun internalInlineFunction(): KMutableProperty0<Int>
+        local fun <get-privateVar>(<this>: A): Int
+            /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
+        local fun <set-privateVar>(<this>: A, p0: Int)
+            /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)
+    /* ACCESSOR declaration */ internal /* static */ fun access$<get-privateVar>($this: A): Int
+        /* TARGET use-site */ $this.<get-privateVar>()
+    /* ACCESSOR declaration */ internal /* static */ fun access$<set-privateVar>($this: A, <set-?>: Int)
+        /* TARGET use-site */ $this.<set-privateVar>(<set-?> = <set-?>)

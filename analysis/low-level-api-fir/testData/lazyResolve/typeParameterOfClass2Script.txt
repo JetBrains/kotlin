@@ -173,7 +173,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
@@ -194,7 +194,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
@@ -215,7 +215,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
@@ -236,7 +236,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
                 LAZY_super<R|kotlin/Any|>
             }
 

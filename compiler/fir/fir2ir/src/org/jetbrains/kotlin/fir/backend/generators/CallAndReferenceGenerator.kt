@@ -502,7 +502,7 @@ class CallAndReferenceGenerator(
                 explicitReceiverExpression,
                 irType,
                 calleeReference,
-                firSymbol ?: error("Must have had a symbol"),
+                firSymbol,
                 dynamicOperator,
                 noArguments,
             )
@@ -763,7 +763,7 @@ class CallAndReferenceGenerator(
                 explicitReceiverExpression,
                 type,
                 calleeReference,
-                firSymbol ?: error("Must've had a symbol"),
+                firSymbol,
                 irRhsWithCast,
             )
         }

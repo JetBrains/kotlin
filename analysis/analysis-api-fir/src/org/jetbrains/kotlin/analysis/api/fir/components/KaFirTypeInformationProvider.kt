@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.types.*
 
 internal class KaFirTypeInformationProvider(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaSessionComponent<KaFirSession>(), KaTypeInformationProvider, KaFirSessionComponent {
+) : KaBaseSessionComponent<KaFirSession>(), KaTypeInformationProvider, KaFirSessionComponent {
     override val KaType.isFunctionalInterface: Boolean
         get() = withValidityAssertion {
             val coneType = (this as KaFirType).coneType

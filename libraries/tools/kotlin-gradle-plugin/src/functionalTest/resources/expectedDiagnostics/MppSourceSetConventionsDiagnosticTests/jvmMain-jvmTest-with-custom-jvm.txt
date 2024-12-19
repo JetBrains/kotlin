@@ -1,26 +1,36 @@
 [PlatformSourceSetConventionUsedWithCustomTargetName | WARNING] Accessed 'source set jvmMain', but jvm target used a custom name 'desktop' (expected 'jvm'):
 
 Replace:
-    kotlin {
-        jvm("desktop") /* <- custom name used */
-    }
+```
+kotlin {
+    jvm("desktop") /* <- custom name used */
+}
+```
 
 With:
-   kotlin {
-       jvm()
-   }
+```
+kotlin {
+    jvm()
+}
+```
+Please use the jvm() target name.
 ----
 [PlatformSourceSetConventionUsedWithCustomTargetName | WARNING] Accessed 'source set jvmTest', but jvm target used a custom name 'desktop' (expected 'jvm'):
 
 Replace:
-    kotlin {
-        jvm("desktop") /* <- custom name used */
-    }
+```
+kotlin {
+    jvm("desktop") /* <- custom name used */
+}
+```
 
 With:
-   kotlin {
-       jvm()
-   }
+```
+kotlin {
+    jvm()
+}
+```
+Please use the jvm() target name.
 ----
 [UnusedSourceSetsWarning | WARNING] The following Kotlin source sets were configured but not added to any Kotlin compilation:
  * jvmMain

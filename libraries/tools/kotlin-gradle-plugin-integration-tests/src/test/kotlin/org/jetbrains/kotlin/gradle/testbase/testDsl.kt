@@ -421,8 +421,9 @@ class TestProject(
         otherProjectName: String,
         pathPrefix: String = "",
         newSubmoduleName: String = otherProjectName,
-        isKts: Boolean = false,
+        isKts: Boolean = settingsGradleKts.exists(),
         localRepoDir: Path? = null,
+        configure: GradleProject.() -> Unit = {},
     ) {
         val otherProjectPath = if (pathPrefix.isEmpty()) {
             otherProjectName.testProjectPath
@@ -441,6 +442,7 @@ class TestProject(
         )
 
         localRepoDir?.let { subProject(newSubmoduleName).configureLocalRepository(localRepoDir) }
+        subProject(newSubmoduleName).configure()
     }
 
     fun includeOtherProjectAsIncludedBuild(

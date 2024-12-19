@@ -1,0 +1,2 @@
+KtTypeReference: MyUnknownException
+KaType: MyUnknownException: Unresolved type for MyUnknownException

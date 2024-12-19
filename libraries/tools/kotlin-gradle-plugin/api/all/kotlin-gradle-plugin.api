@@ -1129,7 +1129,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingD
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$CreateTarget : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
-	public static final field DEPRECATION_MESSAGE Ljava/lang/String;
 	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$CreateTarget;
 	public final fun invoke ()Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
 }
@@ -1275,11 +1274,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingD
 public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$KonanHomeConflictDeclaration : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$KonanHomeConflictDeclaration;
 	public final fun invoke (Ljava/io/File;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
-}
-
-public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$Kotlin12XMppDeprecation : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$Kotlin12XMppDeprecation;
-	public final fun invoke ()Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics$KotlinCompilationSourceDeprecation : org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticFactory {
@@ -1500,12 +1494,50 @@ public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingD
 	public final fun invoke (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
 }
 
+public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic$Documentation {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic$Documentation;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic$Documentation;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic$Documentation;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAdditionalUrlContext ()Ljava/lang/String;
+	public final fun getUrl ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic$ID {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic$ID;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic$ID;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic$ID;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDisplayName ()Ljava/lang/String;
+	public final fun getId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic$Severity : java/lang/Enum {
 	public static final field ERROR Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic$Severity;
 	public static final field FATAL Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic$Severity;
 	public static final field WARNING Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic$Severity;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic$Severity;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic$Severity;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticBuilder {
+	public abstract fun documentation (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public abstract fun message (Lkotlin/jvm/functions/Function0;)V
+	public abstract fun name (Lkotlin/jvm/functions/Function0;)V
+	public abstract fun solution (Lkotlin/jvm/functions/Function0;)V
+	public abstract fun solutions (Lkotlin/jvm/functions/Function0;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticBuilder$DefaultImpls {
+	public static synthetic fun documentation$default (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticBuilder;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeCompilerArgumentsResolver {
@@ -2810,7 +2842,7 @@ public final class org/jetbrains/kotlin/gradle/report/GradleLoggerAdapter : org/
 	public fun info (Ljava/lang/String;)V
 	public fun isDebugEnabled ()Z
 	public fun lifecycle (Ljava/lang/String;)V
-	public fun warn (Ljava/lang/String;)V
+	public fun warn (Ljava/lang/String;Ljava/lang/Throwable;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/report/ReportDataUtilKt {

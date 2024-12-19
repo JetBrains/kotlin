@@ -1,1 +1,30 @@
-/* empty dump */
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=usePrivateVarFromReferenceInPublicInlineFun.kt */
+
+public class A
+    private var privateVar: Int
+        /* TARGET declaration */ private fun <get-privateVar>(): Int
+        /* TARGET declaration */ private fun <set-privateVar>(<set-?>: Int)
+    public inline fun publicInlineFunction(): KMutableProperty0<Int>
+        local fun <get-privateVar>(<this>: A): Int
+            /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
+        local fun <set-privateVar>(<this>: A, p0: Int)
+            /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)
+    /* ACCESSOR declaration */ public /* static */ fun access$<get-privateVar>($this: A): Int
+        /* TARGET use-site */ $this.<get-privateVar>()
+    /* ACCESSOR declaration */ public /* static */ fun access$<set-privateVar>($this: A, <set-?>: Int)
+        /* TARGET use-site */ $this.<set-privateVar>(<set-?> = <set-?>)
+public fun box(): String
+    local fun <get-privateVar>(<this>: A): Int
+        /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
+    local fun <set-privateVar>(<this>: A, p0: Int)
+        /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)
+    local fun <get-privateVar>(<this>: A): Int
+        /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
+    local fun <set-privateVar>(<this>: A, p0: Int)
+        /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)
+    local fun <get-privateVar>(<this>: A): Int
+        /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
+    local fun <set-privateVar>(<this>: A, p0: Int)
+        /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)

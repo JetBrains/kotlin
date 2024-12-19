@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.interpreter.exceptions.*
 import org.jetbrains.kotlin.ir.interpreter.proxy.CommonProxy.Companion.asProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
-import org.jetbrains.kotlin.ir.interpreter.stack.Field
+import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KClassState
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
@@ -491,11 +491,10 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
                             .first { it.name == OperatorNameConventions.INVOKE && it.valueParameters.size == samFunction.valueParameters.size }
                         val functionClass = invokeFunction.getLastOverridden().parentAsClass
 
-                        // receiver will be stored as up value
-                        val dispatchReceiver = invokeFunction.dispatchReceiverParameter!!.symbol to state
                         val newInvoke = invokeFunction.deepCopyWithSymbols(samClass).apply { dispatchReceiverParameter = null }
-                        KFunctionState(newInvoke, functionClass, environment, mutableMapOf(dispatchReceiver)).apply {
+                        KFunctionState(newInvoke, functionClass, environment).apply {
                             this.funInterface = typeOperand
+                            invokeFunction.dispatchReceiverParameter?.symbol?.let { upValues[it] = Variable(state) }
                         }
                     }
                 }
@@ -595,28 +594,19 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
     private fun interpretFunctionReference(reference: IrFunctionReference) {
         val irFunction = reference.symbol.owner
-
-        val dispatchReceiver = irFunction.getDispatchReceiver()?.let { reference.dispatchReceiver?.let { callStack.popState() } }
-        val extensionReceiver = irFunction.getExtensionReceiver()?.let { reference.extensionReceiver?.let { callStack.popState() } }
-
+        val boundValues = reference.arguments.map { it?.let { callStack.popState() } }
         val function = KFunctionState(
             reference,
             environment,
-            dispatchReceiver?.let { Field(irFunction.getDispatchReceiver()!!, it) },
-            extensionReceiver?.let { Field(irFunction.getExtensionReceiver()!!, it) }
+            boundValues
         )
         if (irFunction.isLocal) callStack.storeUpValues(function)
         callStack.pushState(function)
     }
 
     private fun interpretPropertyReference(propertyReference: IrPropertyReference) {
-        // it is impossible to get KProperty2 through ::, so only one receiver can be not null (or both null)
-        val getter = propertyReference.getter?.owner
-        val dispatchReceiver = getter?.getDispatchReceiver()?.let { propertyReference.dispatchReceiver?.let { callStack.popState() } }
-        val extensionReceiver = getter?.getExtensionReceiver()?.let { propertyReference.extensionReceiver?.let { callStack.popState() } }
-        val receiver = dispatchReceiver ?: extensionReceiver
-
-        val propertyState = KPropertyState(propertyReference, receiver)
+        val boundValues = propertyReference.arguments.map { it?.let { callStack.popState() } }
+        val propertyState = KPropertyState(callInterceptor, propertyReference, boundValues)
 
         fun List<IrTypeParameter>.addToFields() {
             propertyReference.typeArguments.indices.forEach { index ->

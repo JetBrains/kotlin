@@ -66,7 +66,8 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
                     "> Configure project :",
                     """
                     |> Configure project :
-                    |w: [OldNativeVersionDiagnostic | WARNING] '2.0.20' Kotlin Native is being used with an newer '${buildOptions.kotlinVersion}' Kotlin. Please adjust versions to avoid incompatibilities.
+                    |w: [OldNativeVersionDiagnostic | WARNING] '2.0.20' Kotlin/Native is being used with an newer '${buildOptions.kotlinVersion}' Kotlin.
+                    |Please adjust versions to avoid incompatibilities.
                     |#diagnostic-end
                     |    
                     """.trimMargin()

@@ -12,9 +12,9 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.internal.unameExecResult
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
@@ -94,6 +94,44 @@ open class NodeJsRootPlugin : Plugin<Project> {
             npmInstall.outputs.upToDateWhen {
                 npmInstall.nodeModules.getFile().exists()
             }
+
+            npmInstall.rootNodeJsEnvironment
+                .value(
+                    project.rootProject.kotlinNodeJsEnvSpec.env.map {
+                        asNodeJsEnvironment(nodeJsRoot, it)
+                    }
+                )
+                .disallowChanges()
+
+            npmInstall.rootPackageManagerEnvironment
+                .value(nodeJsRoot.packageManagerExtension.map { it.environment })
+                .disallowChanges()
+
+            npmInstall.rootPackageManager
+                .value(nodeJsRoot.packageManagerExtension.map { it.packageManager })
+                .disallowChanges()
+
+            npmInstall.rootPackagesDirectory
+                .value(nodeJsRoot.rootPackageDirectory)
+                .disallowChanges()
+
+            npmInstall.packageJsonFilesProperty
+                .value(
+                    nodeJsRoot.projectPackagesDirectory.map { packagesDirectory ->
+                        nodeJsRoot.resolver.projectResolvers.values
+                            .flatMap { it.compilationResolvers }
+                            .map { it.compilationNpmResolution }
+                            .map { resolution ->
+                                val name = resolution.npmProjectName
+                                packagesDirectory.dir(name).file(NpmProject.PACKAGE_JSON)
+                            }
+                    }
+                )
+                .disallowChanges()
+
+            npmInstall.additionalInstallOutput.from(
+                { nodeJsRoot.packageManagerExtension.get().additionalInstallOutput }
+            )
         }
 
         project.registerTask<Task>(PACKAGE_JSON_UMBRELLA_TASK_NAME)
@@ -124,6 +162,31 @@ open class NodeJsRootPlugin : Plugin<Project> {
             task.description = "Create root package.json"
 
             task.npmResolutionManager.value(npmResolutionManager)
+                .disallowChanges()
+            task.rootPackageDirectory.value(nodeJsRoot.rootPackageDirectory)
+                .disallowChanges()
+            task.projectPackagesDirectory.value(nodeJsRoot.projectPackagesDirectory)
+                .disallowChanges()
+            task.rootPackageManagerEnvironment
+                .value(
+                    nodeJsRoot.packageManagerExtension.map { it.environment }
+                )
+                .disallowChanges()
+            task.rootNodeJsEnvironment
+                .value(
+                    nodeJs.env.map {
+                        asNodeJsEnvironment(nodeJsRoot, it)
+                    }
+                )
+                .disallowChanges()
+            task.compilationsNpmResolution
+                .value(
+                    project.providers.provider {
+                        nodeJsRoot.resolver.projectResolvers.values
+                            .flatMap { it.compilationResolvers }
+                            .map { it.compilationNpmResolution }
+                    }
+                )
                 .disallowChanges()
 
             task.onlyIfCompat("Prepare NPM project only in configuring state") {

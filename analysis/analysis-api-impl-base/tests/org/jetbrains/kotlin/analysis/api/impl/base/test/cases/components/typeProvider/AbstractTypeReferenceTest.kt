@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider
 
+import org.jetbrains.kotlin.analysis.api.types.KaErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -20,10 +21,15 @@ abstract class AbstractTypeReferenceTest : AbstractAnalysisApiBasedTest() {
         val expressionAtCaret = testServices.expressionMarkerProvider.getElementOfTypeAtCaret(mainFile) as KtTypeReference
 
         val actual = analyseForTest(expressionAtCaret) {
-            val ktType = expressionAtCaret.type
+            val kaType = expressionAtCaret.type
             buildString {
                 appendLine("${KtTypeReference::class.simpleName}: ${expressionAtCaret.text}")
-                appendLine("${KaType::class.simpleName}: ${ktType.render(position = Variance.INVARIANT)}")
+                val renderedType = if (kaType is KaErrorType) {
+                    kaType.presentableText + ": " + kaType.errorMessage
+                } else {
+                    kaType.render(position = Variance.INVARIANT)
+                }
+                appendLine("${KaType::class.simpleName}: $renderedType")
             }
         }
 

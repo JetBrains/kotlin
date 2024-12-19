@@ -1977,13 +1977,10 @@ class ComposableFunctionBodyTransformer(
         irCurrentComposer(startOffset, endOffset, nearestComposer ?: nearestComposer())
 
     private fun IrElement.sourceKey(): Int {
-        var hash = currentFunctionScope
-            .function
-            .kotlinFqName
-            .asString()
-            .hashCode()
-        hash = 31 * hash + startOffset
-        hash = 31 * hash + endOffset
+        var hash = functionSourceKey(currentFunctionScope.function)
+        hash = 31 * hash + (startOffset - currentFunctionScope.function.startOffset)
+        hash = 31 * hash + (endOffset - currentFunctionScope.function.startOffset)
+
 
         when (this) {
             // Disambiguate ?. clauses which become a "null" constant expression

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.wasm.test.handlers
 
+import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.js.parser.sourcemaps.*
@@ -35,6 +36,7 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
         val collectedJsArtifacts = collectJsArtifacts(originalFile)
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
 
+        // language=js
         val testFileContent = """
             let messageId = 0;
             const locations = [];
@@ -74,7 +76,11 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
             enableDebugger();
             setBreakpoint(box);
             try {
-                box();
+                if (box.length) {
+                  box(jsModule.makeEmptyContinuation());
+                } else {
+                  box();
+                }
             } catch(e) { console.error(e) }
             disableDebugger();
             print(JSON.stringify(locations))
@@ -93,6 +99,7 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
 
             if (debugMode >= DebugMode.DEBUG) {
                 File(dir, "index.html").writeText(
+                    // language=html
                     """
                         <!DOCTYPE html>
                         <html lang="en">
@@ -102,7 +109,13 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
                                 let test = document.getElementById("test")
                                 try {
                                     const jsModule = await import('./index.mjs');
-                                    try { jsModule.box(); } catch(e) { alert(e) }
+                                    try { 
+                                      if (jsModule.box.length) {
+                                        box(jsModule.makeEmptyContinuation());
+                                      } else {
+                                        jsModule.box();
+                                      }
+                                    } catch(e) { alert(e) }
                                     
                                     test.style.backgroundColor = "#0f0";
                                     test.textContent = "OK"
@@ -117,9 +130,9 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
                     """.trimIndent()
                 )
                 // To have access to the content of original files from a browser's DevTools
-                testServices.moduleStructure.modules.last().files.forEach {
-                    if (it.originalFile === originalFile) File(dir, it.name).writeText(it.originalContent)
-                }
+                testServices.moduleStructure.modules
+                    .flatMap { it.files }
+                    .forEach { File(dir, it.name).writeText(it.originalContent) }
             }
 
             val exception = try {
@@ -143,23 +156,28 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
                     }
                 }
 
-                val groupedByLinesSteppingTestLoggedData = debuggerSteps
-                    .groupBy { Triple(it.fileName, it.functionName, it.location.line) }
-                    .map { (key, debuggerSteps) ->
-                        val (fileName, functionName, lineNumber) = key
-                        val aggregatedColumns = debuggerSteps
-                            .takeIf { it.size > 1 }
-                            .orEmpty()
-                            .map { it.location.column }
-                            .joinToString(", ")
-                            .let { if (it.isNotEmpty()) " ($it)" else it }
+                val groupedByLinesSteppingTestLoggedData = buildList<SteppingTestLoggedData> {
+                    var lastStep = ProcessedStep("DUMMY", "DUMMY", Location(-1, -1))
+                    var columns = mutableListOf<Int>()
 
-                        SteppingTestLoggedData(
-                            lineNumber + 1,
-                            false,
-                            formatAsSteppingTestExpectation(fileName, lineNumber + 1, functionName, false) + aggregatedColumns
-                        )
+                    for (step in debuggerSteps.plus(lastStep)) {
+                        if (lastStep == step) {
+                            continue
+                        }
+
+                        if (!lastStep.isOnTheSameLineAs(step) && columns.isNotEmpty()) {
+                            val (fileName, functionName, location) = lastStep
+                            val lineNumber = location.line + 1
+                            val aggregatedColumns = " (${columns.joinToString(", ")})"
+                            val formatedSteppingExpectation = formatAsSteppingTestExpectation(fileName, lineNumber, functionName, false)
+                            push(SteppingTestLoggedData(lineNumber, false, formatedSteppingExpectation + aggregatedColumns))
+                            columns = mutableListOf()
+                        }
+
+                        columns.push(step.location.column)
+                        lastStep = step
                     }
+                }
 
                 checkSteppingTestResult(
                     frontendKind = mainModule.frontendKind,
@@ -193,9 +211,14 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
             is SourceMapError -> error(parseResult.message)
         }
 
-    private class Location(val line: Int, val column: Int)
+    private data class Location(val line: Int, val column: Int)
     private class Frame(val functionName: String, val pausedLocation: Location)
-    private class ProcessedStep(val fileName: String, val functionName: String, val location: Location)
+    private data class ProcessedStep(val fileName: String, val functionName: String, val location: Location) {
+        fun isOnTheSameLineAs(previous: ProcessedStep) =
+            previous.fileName == fileName &&
+                    previous.functionName == functionName &&
+                    previous.location.line == location.line
+    }
     private class FrameParser(private val input: String) {
         fun parse(): List<Frame> =
             (parseJson(input) as JsonArray).elements

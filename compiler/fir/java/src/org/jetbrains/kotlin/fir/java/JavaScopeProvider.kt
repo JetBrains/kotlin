@@ -117,7 +117,7 @@ object JavaScopeProvider : FirScopeProvider() {
         scopeSession: ScopeSession
     ): FirContainingNamesAwareScope? {
         val scope = getStaticMemberScopeForCallables(klass, useSiteSession, scopeSession, hashSetOf()) ?: return null
-        return FirNameAwareOnlyCallablesScope(FirStaticScope(scope))
+        return FirNameAwareOnlyCallablesScope(scope)
     }
 
     override fun getStaticCallableMemberScopeForBackend(
@@ -180,26 +180,27 @@ object JavaScopeProvider : FirScopeProvider() {
 
     private fun FirRegularClass.findClosestJavaSuperTypes(useSiteSession: FirSession): Collection<FirRegularClass> {
         val result = mutableListOf<FirRegularClass>()
-        DFS.dfs(listOf(this),
-                { regularClass ->
-                    regularClass.superConeTypes.mapNotNull {
-                        it.lookupTag.toRegularClassSymbol(useSiteSession)?.fir
-                    }
-                },
-                object : DFS.AbstractNodeHandler<FirRegularClass, Unit>() {
-                    override fun beforeChildren(current: FirRegularClass?): Boolean {
-                        if (this@findClosestJavaSuperTypes === current) return true
-                        if (current is FirJavaClass) {
-                            result.add(current)
-                            return false
-                        }
-
-                        return true
-                    }
-
-                    override fun result() {}
-
+        DFS.dfs(
+            listOf(this),
+            { regularClass ->
+                regularClass.superConeTypes.mapNotNull {
+                    it.lookupTag.toRegularClassSymbol(useSiteSession)?.fir
                 }
+            },
+            object : DFS.AbstractNodeHandler<FirRegularClass, Unit>() {
+                override fun beforeChildren(current: FirRegularClass?): Boolean {
+                    if (this@findClosestJavaSuperTypes === current) return true
+                    if (current is FirJavaClass) {
+                        result.add(current)
+                        return false
+                    }
+
+                    return true
+                }
+
+                override fun result() {}
+
+            }
         )
 
         return result

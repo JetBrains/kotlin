@@ -1,0 +1,10 @@
+KT element: KtProperty
+KT element text:
+public var publicVariable1: kotlin.Int /* compiled code */
+FIR element: FirPropertyImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] var publicVariable1: R|kotlin/Int|
+    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|

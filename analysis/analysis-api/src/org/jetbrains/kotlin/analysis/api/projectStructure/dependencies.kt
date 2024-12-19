@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.projectStructure
 
 /**
- * A list of all modules that the current module can depend on with regular dependency.
+ * A list of all modules of type [M] that the given module directly depends on with a regular dependency.
  *
  * @see KaModule.directRegularDependencies
  */
@@ -14,7 +14,7 @@ public inline fun <reified M : KaModule> KaModule.directRegularDependenciesOfTyp
     directRegularDependencies.asSequence().filterIsInstance<M>()
 
 /**
- * A list of all modules that the current module can depend on with friend dependency.
+ * A list of all modules of type [M] that the given module directly depends on with a friend dependency.
  *
  * @see KaModule.directFriendDependencies
  */
@@ -22,7 +22,7 @@ public inline fun <reified M : KaModule> KaModule.directFriendDependenciesOfType
     directFriendDependencies.asSequence().filterIsInstance<M>()
 
 /**
- * A list of all modules that the current module can depend on with refinement dependency.
+ * A list of all modules of type [M] that the given module directly depends on with a depends-on dependency.
  *
  * @see KaModule.directDependsOnDependencies
  */
@@ -30,7 +30,7 @@ public inline fun <reified M : KaModule> KaModule.directDependsOnDependenciesOfT
     directDependsOnDependencies.asSequence().filterIsInstance<M>()
 
 /**
- * A list of all other modules that the current module can depend on.
+ * A list of all modules that the given module directly depends on.
  *
  * @see KaModule.directRegularDependencies
  * @see KaModule.directDependsOnDependencies
@@ -44,7 +44,7 @@ public fun KaModule.allDirectDependencies(): Sequence<KaModule> =
     }
 
 /**
- * A list of all other modules of type [M] that the current module can depend on.
+ * A list of all modules of type [M] that the given module directly depends on.
  *
  * @see KaModule.directRegularDependencies
  * @see KaModule.directDependsOnDependencies

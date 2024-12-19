@@ -13,7 +13,13 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.psi.KtExpression
 
-public interface KaVisibilityChecker {
+public interface KaVisibilityChecker : KaSessionComponent {
+    /**
+     * Checks whether the [candidateSymbol] is visible in the [useSiteFile] from the given [position].
+     *
+     * @param receiverExpression The [dispatch receiver](https://kotlin.github.io/analysis-api/receivers.html#types-of-receivers) expression
+     *  which the [candidateSymbol] is called on, if applicable.
+     */
     @KaExperimentalApi
     public fun isVisible(
         candidateSymbol: KaDeclarationSymbol,
@@ -22,14 +28,17 @@ public interface KaVisibilityChecker {
         position: PsiElement
     ): Boolean
 
-    /** Checks if the given symbol (possibly a symbol inherited from a super class) is visible in the given class. */
+    /**
+     * Checks whether the given [KaCallableSymbol] (possibly inherited from a superclass) is visible in the given [classSymbol].
+     */
     @KaExperimentalApi
     public fun KaCallableSymbol.isVisibleInClass(classSymbol: KaClassSymbol): Boolean
 
     /**
-     * Returns true for effectively public symbols, including internal declarations with @PublishedApi annotation.
-     * In 'Explicit API' mode explicit visibility modifier and explicit return types are required for such symbols.
-     * See FirExplicitApiDeclarationChecker.kt
+     * Whether the symbol is effectively public, including internal declarations with the [PublishedApi] annotation.
+     *
+     * In ['Explicit API' mode](https://github.com/Kotlin/KEEP/blob/master/proposals/explicit-api-mode.md), explicit visibility modifiers
+     * and explicit return types are required for such symbols.
      */
     public fun isPublicApi(symbol: KaDeclarationSymbol): Boolean
 }

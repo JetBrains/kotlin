@@ -7,9 +7,9 @@ R|Two|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] whereProperty.kt
-    public abstract [ResolvedTo(STATUS)] interface One : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
     }
-    public abstract [ResolvedTo(STATUS)] interface Two : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val <[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|One|, R|Two|> [ResolvedTo(ANNOTATION_ARGUMENTS)] R|T|.foo: R|T|
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|T| {

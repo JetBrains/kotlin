@@ -1,3 +1,5 @@
 [TEST_DIAGNOSTIC_ONE_PER_PROJECT | WARNING] This is a test diagnostics that should be reported once per project
 
 It has multiple lines of text
+Solution 1
+Solution 2

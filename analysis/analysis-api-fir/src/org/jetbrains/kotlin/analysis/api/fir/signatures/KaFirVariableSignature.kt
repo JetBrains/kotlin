@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
 import org.jetbrains.kotlin.analysis.api.fir.types.AbstractKaFirSubstitutor
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
+import org.jetbrains.kotlin.analysis.api.impl.base.signatures.KaBaseVariableSignature
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.receiverType
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
@@ -21,10 +21,9 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.arrayElementType
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
-internal sealed class KaFirVariableSignature<out S : KaVariableSymbol> : KaVariableSignature<S>, FirSymbolBasedSignature {
+internal sealed class KaFirVariableSignature<out S : KaVariableSymbol> : KaBaseVariableSignature<S>(), FirSymbolBasedSignature {
     abstract override fun substitute(substitutor: KaSubstitutor): KaFirVariableSignature<S>
 
     override fun equals(other: Any?): Boolean {

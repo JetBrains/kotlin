@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseImplicitReceiverSmartCast
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSmartCastInfo
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
@@ -54,7 +54,7 @@ import kotlin.math.sign
 
 internal class KaFirDataFlowProvider(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaSessionComponent<KaFirSession>(), KaDataFlowProvider, KaFirSessionComponent {
+) : KaBaseSessionComponent<KaFirSession>(), KaDataFlowProvider, KaFirSessionComponent {
     override val KtExpression.smartCastInfo: KaSmartCastInfo?
         get() = withValidityAssertion {
             val firSmartCastExpression = getMatchingFirExpressionWithSmartCast(this) ?: return null

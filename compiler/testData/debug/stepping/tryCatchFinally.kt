@@ -131,32 +131,69 @@ fun box() {
 // test.kt:39 box
 
 // EXPECTATIONS WASM
-// test.kt:34 $box
-// test.kt:6 $foo (8, 8, 8)
-// test.kt:26 $mightThrow (8, 8, 8, 22, 22, 16)
-// test.kt:27 $mightThrow (1, 1)
+// test.kt:34 $box (4)
+// test.kt:6 $foo (8)
+// test.kt:26 $mightThrow (8)
+// test.kt:27 $mightThrow (1)
 
 // EXPECTATIONS FIR WASM
-// test.kt:5 $foo (4, 4, 4, 4, 4, 4)
-// test.kt:10 $foo (8, 8, 8, 8, 8, 8)
+// test.kt:5 $foo (4)
+// test.kt:10 $foo (8)
 
 // EXPECTATIONS ClassicFrontend WASM
-// test.kt:5 $foo (4, 4, 4)
-// test.kt:10 $foo (8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8)
+// test.kt:5 $foo (4)
+// test.kt:10 $foo (8)
+
+// EXPECTATIONS FIR WASM
+// test.kt:5 $foo (4)
 
 // EXPECTATIONS WASM
-// test.kt:14 $foo (8, 8, 8)
-// test.kt:30 $mightThrow2 (8, 8, 22, 22, 16, 8, 22, 22, 16)
-// test.kt:31 $mightThrow2
-// test.kt:13 $foo (12, 12, 4, 12, 12, 4, 12, 12, 4)
-// test.kt:18 $foo (8, 8, 8, 8, 8, 8)
-// test.kt:20 $foo (1, 1, 1)
+// test.kt:14 $foo (8)
+// test.kt:30 $mightThrow2 (8)
+// test.kt:31 $mightThrow2 (1)
+// test.kt:13 $foo (12)
+// test.kt:18 $foo (8)
+// test.kt:13 $foo (12, 4)
+// test.kt:20 $foo (1)
 // test.kt:35 $box (13, 4)
-// test.kt:36 $box
-// test.kt:15 $foo (13, 13)
-// test.kt:16 $foo (8, 8, 8, 8, 8, 8, 8, 8)
+// test.kt:36 $box (4)
+// test.kt:6 $foo (8)
+// test.kt:26 $mightThrow (8)
+// test.kt:27 $mightThrow (1)
+// test.kt:5 $foo (4)
+// test.kt:10 $foo (8)
+
+// EXPECTATIONS FIR WASM
+// test.kt:5 $foo (4)
+
+// EXPECTATIONS WASM
+// test.kt:14 $foo (8)
+// test.kt:30 $mightThrow2 (8, 22, 16)
+// test.kt:15 $foo (13)
+// test.kt:16 $foo (8)
+// test.kt:13 $foo (12)
+// test.kt:18 $foo (8)
+// test.kt:13 $foo (12, 4)
+// test.kt:20 $foo (1)
 // test.kt:37 $box (13, 4)
-// test.kt:38 $box
-// test.kt:7 $foo
-// test.kt:8 $foo (8, 8, 8, 8)
-// test.kt:39 $box
+// test.kt:38 $box (4)
+// test.kt:6 $foo (8)
+// test.kt:26 $mightThrow (8, 22, 16)
+// test.kt:7 $foo (13)
+// test.kt:8 $foo (8)
+// test.kt:5 $foo (4)
+// test.kt:10 $foo (8)
+
+// EXPECTATIONS FIR WASM
+// test.kt:5 $foo (4)
+
+// EXPECTATIONS WASM
+// test.kt:14 $foo (8)
+// test.kt:30 $mightThrow2 (8, 22, 16)
+// test.kt:15 $foo (13)
+// test.kt:16 $foo (8)
+// test.kt:13 $foo (12)
+// test.kt:18 $foo (8)
+// test.kt:13 $foo (12, 4)
+// test.kt:20 $foo (1)
+// test.kt:39 $box (1)

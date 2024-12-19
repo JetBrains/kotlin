@@ -486,16 +486,16 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsScript.kt
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsScript.kts>] interface Base : R|kotlin/Any| {
             }
 
-            public final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsScript.kts>] object Companion : R|kotlin/Any| {
-                private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
+            public final? companion [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsScript.kts>] object Companion : R|kotlin/Any| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public final const [ResolvedTo(STATUS)] val outer: <implicit> = LAZY_EXPRESSION
-                    public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+                public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
-                public final const [ResolvedTo(STATUS)] val inner: <implicit> = LAZY_EXPRESSION
-                    public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+                public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
             }
 
@@ -542,16 +542,16 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsScript.kt
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsScript.kts>] interface Base : R|kotlin/Any| {
             }
 
-            public final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsScript.kts>] object Companion : R|kotlin/Any| {
-                private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
+            public final? companion [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsScript.kts>] object Companion : R|kotlin/Any| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public final const [ResolvedTo(STATUS)] val outer: <implicit> = LAZY_EXPRESSION
-                    public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+                public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
-                public final const [ResolvedTo(STATUS)] val inner: <implicit> = LAZY_EXPRESSION
-                    public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+                public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
             }
 
@@ -598,16 +598,16 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsScript.kt
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsScript.kts>] interface Base : R|kotlin/Any| {
             }
 
-            public final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsScript.kts>] object Companion : R|kotlin/Any| {
-                private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
+            public final? companion [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsScript.kts>] object Companion : R|kotlin/Any| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public final const [ResolvedTo(STATUS)] val outer: <implicit> = LAZY_EXPRESSION
-                    public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+                public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
-                public final const [ResolvedTo(STATUS)] val inner: <implicit> = LAZY_EXPRESSION
-                    public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+                public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
             }
 
@@ -654,16 +654,16 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsScript.kt
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsScript.kts>] interface Base : R|kotlin/Any| {
             }
 
-            public final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsScript.kts>] object Companion : R|kotlin/Any| {
-                private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
+            public final? companion [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsScript.kts>] object Companion : R|kotlin/Any| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public final const [ResolvedTo(STATUS)] val outer: <implicit> = LAZY_EXPRESSION
-                    public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+                public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
-                public final const [ResolvedTo(STATUS)] val inner: <implicit> = LAZY_EXPRESSION
-                    public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+                public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
             }
 
@@ -710,16 +710,16 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsScript.kt
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsScript.kts>] interface Base : R|kotlin/Any| {
             }
 
-            public final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsScript.kts>] object Companion : R|kotlin/Any| {
-                private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
+            public final? companion [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsScript.kts>] object Companion : R|kotlin/Any| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public final const [ResolvedTo(STATUS)] val outer: <implicit> = LAZY_EXPRESSION
-                    public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+                public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
-                public final const [ResolvedTo(STATUS)] val inner: <implicit> = LAZY_EXPRESSION
-                    public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+                public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
             }
 

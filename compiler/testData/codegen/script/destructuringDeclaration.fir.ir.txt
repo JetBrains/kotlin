@@ -90,5 +90,5 @@ FILE fqName:<root> fileName:/destructuringDeclaration.kts
       EXPRESSION_BODY
         CALL 'public final fun runCompiledScript (scriptClass: java.lang.Class, vararg args: kotlin.Any?): kotlin.Unit declared in kotlin.script.experimental.jvm.RunnerKt' type=kotlin.Unit origin=null
           scriptClass: CALL 'public final fun <get-java> (): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
-            $receiver: CLASS_REFERENCE 'CLASS INTERFACE name:KClass modality:ABSTRACT visibility:public [expect] superTypes:[kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public [expect] superTypes:[kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
           args: GET_VAR 'args: kotlin.Array<kotlin.String> declared in <root>.DestructuringDeclaration.main' type=kotlin.Array<kotlin.String> origin=null
