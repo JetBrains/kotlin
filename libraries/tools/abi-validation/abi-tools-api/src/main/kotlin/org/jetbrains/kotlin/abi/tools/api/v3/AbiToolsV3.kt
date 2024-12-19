@@ -37,7 +37,7 @@ public interface AbiToolsV3 {
     public fun extractJvmAbi(classfiles: Sequence<File>, target: DumpTarget, filters: AbiFilters): AbiDump
 
     /**
-     * Loads an ABI dump from a file.
+     * Reads an ABI dump from a file.
      *
      * @throws IllegalArgumentException if [dumpFile] is empty.
      * @throws IllegalArgumentException if [dumpFile] is not a file.
@@ -46,7 +46,7 @@ public interface AbiToolsV3 {
     public fun loadDump(dumpFile: File): AbiDump
 
     /**
-     * Loads a klib dump from text lines.
+     * Reads an ABI dump from text lines.
      */
     public fun loadDump(dump: Iterable<String>): AbiDump
 

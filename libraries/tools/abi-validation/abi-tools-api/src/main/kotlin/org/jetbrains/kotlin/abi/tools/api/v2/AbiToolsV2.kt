@@ -51,13 +51,4 @@ public interface AbiToolsV2 {
      * @throws java.io.FileNotFoundException if [klibFile] does not exist.
      */
     public fun extractKlibAbi(klibFile: File, target: KlibTarget, filters: AbiFilters = AbiFilters.Companion.EMPTY): KlibDump
-
-    /**
-     * Compare two files line-by-line.
-     *
-     * @return `null` if there are no differences, diff string otherwise.
-     *
-     * @throws java.io.FileNotFoundException if [expectedFile] and/or [actualFile] does not exist.
-     */
-    public fun filesDiff(expectedFile: File, actualFile: File): String?
 }

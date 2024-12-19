@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.abi.tools.api
 
 import org.jetbrains.kotlin.abi.tools.api.v2.AbiToolsV2
 import org.jetbrains.kotlin.abi.tools.api.v3.AbiToolsV3
+import java.io.File
 
 /**
  * All features of Kotlin ABI Validation tool.
@@ -23,4 +24,13 @@ public interface AbiToolsInterface {
      * A set of features for working with ABI dumps in version 3 format.
      */
     public val v3: AbiToolsV3
+
+    /**
+     * Compare two files line-by-line.
+     *
+     * @return `null` if there are no differences, diff string otherwise.
+     *
+     * @throws java.io.FileNotFoundException if [expectedFile] and/or [actualFile] does not exist.
+     */
+    public fun filesDiff(expectedFile: File, actualFile: File): String?
 }
