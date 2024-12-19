@@ -1060,6 +1060,7 @@ class CoroutineTransformerMethodVisitor(
         suspendPointLineNumber: LineNumberNode?
     ): LabelNode {
         val continuationLabelAfterLoadedResult = LabelNode()
+        val suspendElementLineNumber = lineNumber
         with(methodNode.instructions) {
             // Save state
             insertBefore(
@@ -1079,6 +1080,8 @@ class CoroutineTransformerMethodVisitor(
                 // Exit
                 val returnLabel = LabelNode()
                 visitLabel(returnLabel.label)
+                // Special line number to stop in debugger before suspend return
+                visitLineNumber(suspendElementLineNumber, returnLabel.label)
                 load(suspendMarkerVarIndex, AsmTypes.OBJECT_TYPE)
                 areturn(AsmTypes.OBJECT_TYPE)
                 // Mark place for continuation
