@@ -15,6 +15,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
@@ -205,11 +206,14 @@ constructor(
     @get:Internal
     val apiFiles: ConfigurableFileCollection = objectFactory.fileCollection()
 
-    @Suppress("DEPRECATION")
-    private val externalDependenciesBuilder = ExternalDependenciesBuilder(project, compilation)
-    private val externalDependenciesArgs by lazy {
-        externalDependenciesBuilder.buildCompilerArgs()
-    }
+    private val externalDependenciesArgs: ListProperty<String> = objectFactory.listProperty<String>()
+        .value(
+            project.providers.provider {
+                @Suppress("DEPRECATION")
+                ExternalDependenciesBuilder(project, compilation).buildCompilerArgs()
+            }
+        )
+        .chainedFinalizeValueOnRead()
 
     private val cacheBuilderSettings
         get() = CacheBuilder.Settings(
@@ -218,7 +222,7 @@ constructor(
             gradleUserHomeDir = project.gradle.gradleUserHomeDir,
             konanTarget = konanTarget,
             toolOptions = toolOptions,
-            externalDependenciesArgs = externalDependenciesArgs,
+            externalDependenciesArgs = externalDependenciesArgs.get(),
             debuggable = binary.debuggable,
             optimized = binary.optimized,
             konanDataDir = kotlinNativeProvider.flatMap { it.konanDataDir.map { File(it) } },
@@ -418,7 +422,7 @@ constructor(
             output.parentFile.mkdirs()
 
             val additionalOptions = mutableListOf<String>().apply {
-                addAll(externalDependenciesArgs)
+                addAll(externalDependenciesArgs.get())
                 when (cacheSettings.orchestration) {
                     NativeCacheOrchestration.Compiler -> {
                         if (cacheSettings.kind != NativeCacheKind.NONE
