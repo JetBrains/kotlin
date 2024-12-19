@@ -3,9 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.test.blackbox
+package org.jetbrains.kotlin.konan.test.abi
 
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
+import org.jetbrains.kotlin.konan.test.blackbox.buildDir
+import org.jetbrains.kotlin.konan.test.blackbox.compileToLibrary
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.library.abi.*
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -16,8 +19,13 @@ import org.junit.jupiter.api.Test
 @FirPipeline
 @Tag("frontend-fir")
 @Tag("klib")
+class FirNativeLibraryAbiReaderWithManifestTest : NativeLibraryAbiReaderWithManifestTest()
+
+@Tag("klib")
+class ClassicNativeLibraryAbiReaderWithManifestTest : NativeLibraryAbiReaderWithManifestTest()
+
 @OptIn(ExperimentalLibraryAbiReader::class)
-class NativeLibraryAbiReaderWithManifestTest : AbstractNativeSimpleTest() {
+open class NativeLibraryAbiReaderWithManifestTest : AbstractNativeSimpleTest() {
     @Test
     fun testRenderingAbiWithAndWithoutManifestInfo() {
         val sourceFile = buildDir.resolve("source.kt").apply { writeText("fun foo() = Unit") }
