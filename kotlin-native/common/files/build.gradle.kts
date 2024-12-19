@@ -8,7 +8,7 @@ dependencies {
 
 nativeInteropPlugin {
     defFileName.set("files.konan.backend.kotlin.jetbrains.org.def")
-    usePrebuiltSources.set(false)
+    usePrebuiltSources.set(true)
     commonCompilerArgs.set(listOf("-Wall", "-O2"))
     cCompilerArgs.set(listOf("-std=c99"))
     cppCompilerArgs.set(listOf("-std=c++11"))
