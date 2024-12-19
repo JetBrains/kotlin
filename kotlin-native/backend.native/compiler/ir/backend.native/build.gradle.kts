@@ -9,12 +9,12 @@ dependencies {
 
     compileOnly(jpsModel())
     compileOnly(project(":compiler:cli-common"))
+    compileOnly(commonDependency("org.jetbrains.intellij.deps:log4j")) { isTransitive = false }
 
     implementation(commonDependency("com.fasterxml:aalto-xml")) { isTransitive = false }
     implementation(commonDependency("org.codehaus.woodstox:stax2-api")) { isTransitive = false }
     implementation(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil")) { isTransitive = false }
     implementation(intellijJDom())
-    implementation(commonDependency("org.jetbrains.intellij.deps:log4j")) { isTransitive = false }
     implementation(intellijCore())
     implementation(project(":compiler:cli"))
     implementation(project(":compiler:fir:fir-serialization"))
