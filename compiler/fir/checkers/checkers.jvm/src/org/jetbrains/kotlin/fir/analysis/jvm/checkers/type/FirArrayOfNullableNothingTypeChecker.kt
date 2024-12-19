@@ -10,8 +10,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirTypeAliasExpandsToArrayOfNothingsChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isMalformedExpandedType
+import org.jetbrains.kotlin.fir.analysis.checkers.isMalformedExpandedType
 import org.jetbrains.kotlin.fir.analysis.checkers.type.FirResolvedTypeRefChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression.isArrayOfNullableNothing
@@ -31,9 +30,8 @@ object FirArrayOfNullableNothingTypeChecker : FirResolvedTypeRefChecker(MppCheck
         val lastContainingDeclaration = context.containingDeclarations.lastOrNull()
         val isVararg = (lastContainingDeclaration as? FirValueParameter)?.isVararg == true
         if (!isVararg && fullyExpandedType.isArrayOfNullableNothing()) {
-            if (lastContainingDeclaration !is FirTypeAlias || with(FirTypeAliasExpandsToArrayOfNothingsChecker) {
-                    lastContainingDeclaration.expandedConeType?.isMalformedExpandedType(context, allowNullableNothing = false) == true
-                }
+            if (lastContainingDeclaration !is FirTypeAlias ||
+                lastContainingDeclaration.expandedConeType?.isMalformedExpandedType(context, allowNullableNothing = false) == true
             ) {
                 reporter.reportOn(typeRef.source, FirErrors.UNSUPPORTED, "Array<Nothing?> isn't supported in JVM", context)
             }
