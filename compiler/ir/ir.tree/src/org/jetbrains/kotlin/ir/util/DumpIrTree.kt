@@ -384,6 +384,7 @@ class DumpIrTreeVisitor(
     override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: String) {
         inlinedBlock.dumpLabeledElementWith(data) {
             inlinedBlock.inlinedFunctionSymbol?.dumpInternal("inlinedFunctionSymbol")
+            inlinedBlock.inlinedFunctionFileEntry.dumpInternal("inlinedFunctionFileEntry")
             inlinedBlock.acceptChildren(this, "")
         }
     }
@@ -527,7 +528,12 @@ class DumpIrTreeVisitor(
         } else {
             printer.println(accept(elementRenderer, null))
         }
+    }
 
+    private fun IrFileEntry.dumpInternal(label: String? = null) {
+        val prefix = if (label != null) "$label: " else ""
+        val renderedText = elementRenderer.renderFileEntry(this)
+        printer.println(prefix + renderedText)
     }
 
     private inline fun indented(label: String, body: () -> Unit) {
