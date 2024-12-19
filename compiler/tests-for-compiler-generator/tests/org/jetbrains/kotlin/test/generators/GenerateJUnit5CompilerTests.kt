@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.generators
 
+import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.TestGroup.TestClass
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
@@ -508,36 +509,72 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
 
         // ---------------------------------------------- Tiered tests ----------------------------------------------
 
+        // AbstractPhasedJvmDiagnosticLightTreeTest
         testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/") {
-            testClass<AbstractTieredFrontendJvmLightTreeTest>(
-                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.FRONTEND, allowKts = false),
-            )
+            fun TestClass.phasedModel(allowKts: Boolean) {
+                val relativeRootPaths = listOf(
+                    "testData/diagnostics/tests",
+                    "testData/diagnostics/testsWithStdLib",
+                    "fir/analysis-tests/testData/resolve",
+                    "fir/analysis-tests/testData/resolveWithStdlib",
+                    // Those files might contain code which when being analyzed in the IDE might accidentally freeze it, thus we use a fake
+                    // file extension `nkt` for it.
+                    "fir/analysis-tests/testData/resolveFreezesIDE",
+                )
+                val pattern = when {
+                    allowKts -> "^(.*)\\.(kts?|nkt)$"
+                    else -> "^(.*)\\.(kt|nkt)$"
+                }
 
-            testClass<AbstractTieredFrontendJvmPsiTest>(
-                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.FRONTEND, allowKts = true),
-            )
+                for (path in relativeRootPaths) {
+                    model(
+                        path,
+                        excludeDirs = listOf("declarations/multiplatform/k1"),
+                        skipTestAllFilesCheck = true,
+                        generateEmptyTestClasses = false,
+                        pattern = pattern,
+                        excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
+                    )
+                }
+            }
+            testClass<AbstractPhasedJvmDiagnosticLightTreeTest> {
+                phasedModel(allowKts = false)
+            }
+            testClass<AbstractPhasedJvmDiagnosticPsiTest> {
+                phasedModel(allowKts = true)
+            }
         }
 
-        testGroup("compiler/fir/fir2ir/tests-gen", "compiler/") {
-            testClass<AbstractTieredFir2IrJvmLightTreeTest>(
-                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.FIR2IR, allowKts = false),
-            )
-
-            testClass<AbstractTieredFir2IrJvmPsiTest>(
-                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.FIR2IR, allowKts = true),
-            )
-
-            testClass<AbstractTieredBackendJvmLightTreeTest>(
-                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.BACKEND, allowKts = false),
-            )
-
-            testClass<AbstractTieredBackendJvmPsiTest>(
-                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(
-                    TestTierLabel.BACKEND,
-                    allowKts = true,
-                    excludeDirsRecursively = listOf("lightTree")
-                ),
-            )
-        }
+//        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/") {
+//            testClass<AbstractTieredFrontendJvmLightTreeTest>(
+//                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.FRONTEND, allowKts = false),
+//            )
+//
+//            testClass<AbstractTieredFrontendJvmPsiTest>(
+//                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.FRONTEND, allowKts = true),
+//            )
+//        }
+//
+//        testGroup("compiler/fir/fir2ir/tests-gen", "compiler/") {
+//            testClass<AbstractTieredFir2IrJvmLightTreeTest>(
+//                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.FIR2IR, allowKts = false),
+//            )
+//
+//            testClass<AbstractTieredFir2IrJvmPsiTest>(
+//                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.FIR2IR, allowKts = true),
+//            )
+//
+//            testClass<AbstractTieredBackendJvmLightTreeTest>(
+//                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.BACKEND, allowKts = false),
+//            )
+//
+//            testClass<AbstractTieredBackendJvmPsiTest>(
+//                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(
+//                    TestTierLabel.BACKEND,
+//                    allowKts = true,
+//                    excludeDirsRecursively = listOf("lightTree")
+//                ),
+//            )
+//        }
     }
 }

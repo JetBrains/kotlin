@@ -18,6 +18,10 @@ object TestTierDirectives : SimpleDirectivesContainer() {
         description = "Verify that the test runs successfully until the specified tier (including). See `TestTiers` for the list of tiers"
     )
 
+    val LATEST_EXPECTED_TIER by enumDirective<TestTierLabel>(
+        description = "The last tier of the pipeline in the test"
+    )
+
     /**
      * Essentially, determines the tiered test runner this test must be generated into by specifying the corresponding tier.
      * Overrides/takes precedence over [RUN_PIPELINE_TILL] when both are present.

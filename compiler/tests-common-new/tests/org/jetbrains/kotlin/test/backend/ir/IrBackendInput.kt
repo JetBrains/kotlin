@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.serialization.KotlinFileSerializedData
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelineArtifact
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -111,6 +112,21 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
 
         override val irMangler: KotlinMangler.IrMangler
             get() = moduleInfo.deserializer.fakeOverrideBuilder.mangler
+    }
+
+    class PhasedJvmIrBackendInput(
+        val input: JvmFir2IrPipelineArtifact
+    ) : IrBackendInput() {
+        override val irModuleFragment: IrModuleFragment
+            get() = input.result.irModuleFragment
+        override val irPluginContext: IrPluginContext
+            get() = input.result.pluginContext
+        override val descriptorMangler: KotlinMangler.DescriptorMangler?
+            get() = null
+        override val irMangler: KotlinMangler.IrMangler
+            get() = input.result.components.irMangler
+        override val diagnosticReporter: BaseDiagnosticsCollector
+            get() = input.diagnosticCollector
     }
 
     class JvmIrBackendInput(

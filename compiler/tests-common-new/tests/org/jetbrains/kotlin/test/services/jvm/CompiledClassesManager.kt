@@ -21,31 +21,32 @@ class CompiledClassesManager(val testServices: TestServices) : TestService {
     var specifiedFrontendKind: FrontendKind<*> = FrontendKind.NoFrontend
 
     fun compileKotlinToDiskAndGetOutputDir(module: TestModule, classFileFactory: ClassFileFactory?): File {
-        return outputDirCache.getOrPut(module) {
-            val outputDir = testServices.getOrCreateTempDirectory("module_${module.name}_classes")
+        val outputDir = getOutputDirForModule(module)
 
-            @Suppress("NAME_SHADOWING")
-            val classFileFactory = classFileFactory ?: if (testServices.defaultsProvider.artifactKind == ArtifactKinds.JvmFromK1AndK2) {
-                require(specifiedFrontendKind == FrontendKinds.FIR || specifiedFrontendKind == FrontendKinds.ClassicFrontend)
-                val k1AndK2Artifact = testServices.artifactsProvider.getArtifact(module, ArtifactKinds.JvmFromK1AndK2)
-                if (specifiedFrontendKind == FrontendKinds.FIR) {
-                    k1AndK2Artifact.fromK2.classFileFactory
-                } else {
-                    k1AndK2Artifact.fromK1.classFileFactory
-                }
+        @Suppress("NAME_SHADOWING")
+        val classFileFactory = classFileFactory ?: if (testServices.defaultsProvider.artifactKind == ArtifactKinds.JvmFromK1AndK2) {
+            require(specifiedFrontendKind == FrontendKinds.FIR || specifiedFrontendKind == FrontendKinds.ClassicFrontend)
+            val k1AndK2Artifact = testServices.artifactsProvider.getArtifact(module, ArtifactKinds.JvmFromK1AndK2)
+            if (specifiedFrontendKind == FrontendKinds.FIR) {
+                k1AndK2Artifact.fromK2.classFileFactory
             } else {
-                testServices.artifactsProvider.getArtifact(module, ArtifactKinds.Jvm).classFileFactory
+                k1AndK2Artifact.fromK1.classFileFactory
             }
-            val outputFileCollection = SimpleOutputFileCollection(classFileFactory.currentOutput)
-            val messageCollector = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-                .getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-            outputFileCollection.writeAll(outputDir, messageCollector, reportOutputFiles = false)
-            outputDir
+        } else {
+            testServices.artifactsProvider.getArtifact(module, ArtifactKinds.Jvm).classFileFactory
         }
+        val outputFileCollection = SimpleOutputFileCollection(classFileFactory.currentOutput)
+        val messageCollector = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+            .getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        outputFileCollection.writeAll(outputDir, messageCollector, reportOutputFiles = false)
+        return outputDir
     }
 
-    fun getOutputDirForModule(module: TestModule): File? =
-        outputDirCache[module]
+    fun getOutputDirForModule(module: TestModule): File {
+        return outputDirCache.getOrPut(module) {
+            testServices.getOrCreateTempDirectory("module_${module.name}_classes")
+        }
+    }
 }
 
 val TestServices.compiledClassesManager: CompiledClassesManager by TestServices.testServiceAccessor()

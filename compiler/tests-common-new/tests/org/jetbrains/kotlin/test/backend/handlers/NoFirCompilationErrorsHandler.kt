@@ -36,6 +36,7 @@ class NoFirCompilationErrorsHandler(
     private val seenModules = mutableSetOf<TestModule>()
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
+        Unit
         for (part in info.partsForDependsOnModules) {
             seenModules.add(part.module)
 

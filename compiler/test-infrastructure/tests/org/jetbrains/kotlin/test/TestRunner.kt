@@ -110,7 +110,8 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
 
         testConfiguration.afterAnalysisCheckers.forEach {
             withAssertionCatching(WrappedException::FromAfterAnalysisChecker) {
-                it.check(allFailedExceptions)
+                it.
+                check(allFailedExceptions)
             }
         }
 

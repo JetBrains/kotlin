@@ -9,6 +9,10 @@ import com.intellij.psi.PsiJavaModule.MODULE_INFO_FILE
 import com.intellij.util.lang.JavaVersion
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
+import org.jetbrains.kotlin.cli.common.moduleChunk
+import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
+import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.jvm.addModularRootIfNotNull
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -16,6 +20,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseSet
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
+import org.jetbrains.kotlin.js.config.outputDir
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -244,6 +249,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         configuration.registerModuleDependencies(module)
 
         configuration.addJavaBinaryRootsByCompiledJavaModulesFromModuleDependencies(configurationKind, module)
+        phasedSpecificConfiguration(module, configuration)
 
         val javaFiles = module.javaFiles.ifEmpty { return }
         javaFiles.forEach { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it) }
@@ -278,6 +284,24 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
                 )
             }
         }
+    }
+
+    private fun phasedSpecificConfiguration(
+        module: TestModule,
+        configuration: CompilerConfiguration,
+    ) {
+        val cliModule = ModuleBuilder(module.name, outputDir = "", type = "java-production").apply {
+            // TODO()
+        }
+        configuration.moduleChunk = ModuleChunk(listOf(cliModule))
+        configuration.addKotlinSourceRoots(
+            module.files
+                .filter { it.isKtFile }
+                .map { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it).canonicalPath }
+        )
+        val outputDir = testServices.compiledClassesManager.getOutputDirForModule(module)
+        configuration.outputDir = outputDir
+        configuration.outputDirectory = outputDir
     }
 
     private fun CompilerConfiguration.addJavaSourceRootsByJavaModules(
