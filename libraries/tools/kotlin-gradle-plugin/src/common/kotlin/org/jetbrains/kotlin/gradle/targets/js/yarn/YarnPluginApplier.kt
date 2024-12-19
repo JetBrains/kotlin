@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.ExtensionContainer
-import org.jetbrains.kotlin.gradle.targets.js.HasPlatformDisambiguate
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguate
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.AbstractNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.AbstractNodeJsRootExtension

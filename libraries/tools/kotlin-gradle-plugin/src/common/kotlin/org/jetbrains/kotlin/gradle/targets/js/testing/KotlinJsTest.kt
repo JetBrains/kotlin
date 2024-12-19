@@ -15,7 +15,6 @@ import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.mocha.KotlinMocha
@@ -34,10 +33,6 @@ constructor(
     override var compilation: KotlinJsIrCompilation,
 ) : KotlinTest(),
     RequiresNpmDependencies {
-    @Transient
-    private val nodeJs = project.kotlinNodeJsEnvSpec
-
-    private val nodeExecutable = nodeJs.executable
 
     @Input
     var environment = mutableMapOf<String, String>()

@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.targets.js
 
 import org.gradle.internal.hash.FileHasher
 import org.gradle.internal.hash.Hashing.defaultFunction
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import java.io.File
 import java.nio.file.Files
@@ -38,7 +40,7 @@ fun ByteArray.toHex(): String {
 }
 
 fun FileHasher.calculateDirHash(
-    dir: File
+    dir: File,
 ): String? {
     if (!dir.isDirectory) return null
 
@@ -80,4 +82,32 @@ internal fun writeWasmUnitTestRunner(workingDir: File, compiledFile: File): File
         """.trimIndent()
     )
     return testRunnerFile
+}
+
+internal fun <T> KotlinJsIrCompilation.targetVariant(
+    jsVariant: T,
+    wasmVariant: T,
+): T = target.targetVariant(jsVariant, wasmVariant)
+
+internal fun <T> KotlinJsIrCompilation.targetVariant(
+    jsVariant: () -> T,
+    wasmVariant: () -> T,
+): T = target.targetVariant(jsVariant, wasmVariant)
+
+internal fun <T> KotlinJsIrTarget.targetVariant(
+    jsVariant: () -> T,
+    wasmVariant: () -> T,
+): T = if (wasmTargetType == null) {
+    jsVariant()
+} else {
+    wasmVariant()
+}
+
+internal fun <T> KotlinJsIrTarget.targetVariant(
+    jsVariant: T,
+    wasmVariant: T,
+): T = if (wasmTargetType == null) {
+    jsVariant
+} else {
+    wasmVariant
 }
