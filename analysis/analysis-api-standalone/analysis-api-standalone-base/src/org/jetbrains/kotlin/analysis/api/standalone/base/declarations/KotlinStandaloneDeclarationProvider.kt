@@ -16,10 +16,12 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
+import com.intellij.psi.tree.StubFileElementType
 import com.intellij.util.indexing.FileContentImpl
 import com.intellij.util.io.AbstractStringEnumerator
 import com.intellij.util.io.StringRef
@@ -571,23 +573,25 @@ private fun <T : PsiElement> cloneStubRecursively(
         )
 
         is PsiFileStub -> {
-            val serializer = originalStub.type
-            serializer.serialize(originalStub, StubOutputStream(buffer, storage))
+            @Suppress("UNCHECKED_CAST") val serializer = originalStub.type as StubFileElementType<T>
+            @Suppress("UNCHECKED_CAST")
+            serializer.serialize(originalStub as (T), StubOutputStream(buffer, storage))
             serializer.deserialize(StubInputStream(buffer.toInputStream(), storage), copyParentStub)
         }
 
         else -> {
-            val serializer = originalStub.stubType
-            serializer.serialize(originalStub, StubOutputStream(buffer, storage))
+            @Suppress("UNCHECKED_CAST") val serializer = originalStub.stubType as IStubElementType<T, *>
+            @Suppress("UNCHECKED_CAST")
+            serializer.serialize(originalStub as (T), StubOutputStream(buffer, storage))
             serializer.deserialize(StubInputStream(buffer.toInputStream(), storage), copyParentStub)
         }
     }
 
     for (originalChild in originalStub.childrenStubs) {
-        cloneStubRecursively(originalStub = originalChild, copyParentStub = copyStub, buffer = buffer, storage = storage)
+        cloneStubRecursively(originalStub = originalChild, copyParentStub = copyStub as StubElement<*>?, buffer = buffer, storage = storage)
     }
 
-    return copyStub
+    return copyStub as StubElement<*>
 }
 
 private class StringEnumerator : AbstractStringEnumerator {

@@ -65,7 +65,7 @@ internal class SymbolLightTypeParameterList(
 
     override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameters.toArrayIfNotEmptyOrDefault(PsiTypeParameter.EMPTY_ARRAY)
 
-    override fun getTypeParameterIndex(typeParameter: PsiTypeParameter?): Int = _typeParameters.indexOf(typeParameter)
+    override fun getTypeParameterIndex(typeParameter: PsiTypeParameter): Int = _typeParameters.indexOf(typeParameter)
 
     override fun toString(): String = "SymbolLightTypeParameterList"
 
