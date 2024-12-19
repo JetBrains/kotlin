@@ -25,7 +25,7 @@ kotlin {
 
 rootProject.plugins.apply(org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Plugin::class.java)
 
-tasks.named<org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask>("kotlinStorePackageLock") {
+tasks.named<org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask>("wasmKotlinStorePackageLock") {
     //A little hacky way to make yarn results
     inputFile.fileValue(projectDir.resolve("packageLockStub"))
 }

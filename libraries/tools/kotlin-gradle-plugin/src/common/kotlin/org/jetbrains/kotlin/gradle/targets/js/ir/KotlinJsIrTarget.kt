@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -15,14 +14,14 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesVariant
-import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTestRunFactory
-import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
+import org.jetbrains.kotlin.gradle.targets.js.*
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetConfigurator.Companion.configureJsDefaultOptions
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addIfNotNull
 import javax.inject.Inject
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
 abstract class KotlinJsIrTarget
 @Inject
@@ -160,7 +160,10 @@ constructor(
     }
 
     private val commonLazyDelegate = lazy {
-        NpmResolverPlugin.apply(project)
+        targetVariant(
+            { NpmResolverPlugin.apply(project) },
+            { WasmNpmResolverPlugin.apply(project) },
+        )
         compilations.all { compilation ->
             compilation.binaries
                 .withType(JsIrBinary::class.java)
@@ -186,6 +189,12 @@ constructor(
         val linkTask = binary.linkTask
         val compilation = binary.compilation
         return project.registerTask(binary.validateGeneratedTsTaskName, listOf(compilation)) {
+            it.versions.value(
+                compilation.targetVariant(
+                    { project.rootProject.kotlinNodeJsRootExtension.versions },
+                    { project.rootProject.wasmKotlinNodeJsRootExtension.versions },
+                )
+            ).disallowChanges()
             it.inputDir.set(linkTask.flatMap { it.destinationDirectory })
             it.validationStrategy.set(
                 when (binary.mode) {
@@ -224,8 +233,8 @@ constructor(
         if (wasmTargetType != KotlinWasmTargetType.WASI) {
             commonLazy
         } else {
-            NodeJsPlugin.apply(project)
-            NodeJsRootPlugin.apply(project.rootProject)
+            WasmNodeJsPlugin.apply(project)
+            WasmNodeJsRootPlugin.apply(project.rootProject)
         }
 
         addSubTarget(KotlinNodeJsIr::class.java) {
@@ -244,7 +253,10 @@ constructor(
     //d8
     @OptIn(ExperimentalWasmDsl::class)
     private val d8LazyDelegate = lazy {
-        NodeJsRootPlugin.apply(project.rootProject)
+        targetVariant(
+            { NodeJsRootPlugin.apply(project.rootProject) },
+            { WasmNodeJsRootPlugin.apply(project.rootProject) },
+        )
 
         addSubTarget(KotlinD8Ir::class.java) {
             configureSubTarget()

@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
@@ -20,20 +18,17 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     KotlinJsIrNpmBasedSubTarget(target, "browser"),
     KotlinJsBrowserDsl {
 
-    private val nodeJsRoot = project.rootProject.kotlinNodeJsRootExtension
-    private val nodeJs = project.kotlinNodeJsEnvSpec
-
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
 
     override fun configureTestDependencies(test: KotlinJsTest, binary: JsIrBinary) {
-        test.dependsOn(
-            nodeJsRoot.npmInstallTaskProvider,
-        )
-        with(nodeJs) {
+        with(nodeJsEnvSpec) {
             test.dependsOn(project.nodeJsSetupTaskProvider)
         }
         test.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
+        test.dependsOn(
+            nodeJsRoot.npmInstallTaskProvider,
+        )
 
         test.dependsOn(binary.linkSyncTask)
     }

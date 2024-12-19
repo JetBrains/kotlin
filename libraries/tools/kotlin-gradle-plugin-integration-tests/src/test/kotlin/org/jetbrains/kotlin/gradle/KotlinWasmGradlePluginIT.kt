@@ -29,13 +29,13 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
     fun wasiTarget(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-wasi-test", gradleVersion) {
             build(":wasmWasiTest") {
-                assertTasksExecuted(":kotlinNodeJsSetup")
+                assertTasksExecuted(":wasmKotlinNodeJsSetup")
                 assertTasksExecuted(":compileKotlinWasmWasi")
                 assertTasksExecuted(":wasmWasiNodeTest")
             }
 
             build(":wasmWasiTest") {
-                assertTasksUpToDate(":kotlinNodeJsSetup", ":compileKotlinWasmWasi", ":wasmWasiNodeTest")
+                assertTasksUpToDate(":wasmKotlinNodeJsSetup", ":compileKotlinWasmWasi", ":wasmWasiNodeTest")
             }
 
             projectPath.resolve("src/wasmWasiTest/kotlin/Test.kt").modify {
@@ -84,13 +84,13 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
             )
 
             build("build") {
-                assertTasksExecuted(":kotlinNodeJsSetup")
+                assertTasksExecuted(":wasmKotlinNodeJsSetup")
                 assertTasksExecuted(":compileKotlinWasmJs")
                 assertTasksExecuted(":wasmJsNodeTest")
             }
 
             build(":wasmJsTest") {
-                assertTasksUpToDate(":kotlinNodeJsSetup", ":compileKotlinWasmJs", ":wasmJsNodeTest")
+                assertTasksUpToDate(":wasmKotlinNodeJsSetup", ":compileKotlinWasmJs", ":wasmJsNodeTest")
             }
         }
     }
@@ -304,7 +304,7 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
                 assertTasksExecuted(":wasmJsNodeTest")
                 assertTasksExecuted(":wasmJsTestTestDevelopmentExecutableCompileSync")
 
-                val packageDir = "build/js/packages/mpp-wasm-js-browser-nodejs-wasm-js-test/kotlin"
+                val packageDir = "build/wasm/packages/mpp-wasm-js-browser-nodejs-wasm-js-test/kotlin"
                 assertFileExists(projectPath.resolve("$packageDir/data.json"))
                 assertFileExists(projectPath.resolve("$packageDir/data-test.json"))
             }
@@ -315,7 +315,7 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testPackageJsonDependsOnMainPackageJson(gradleVersion: GradleVersion) {
         project("mpp-wasm-js-browser-nodejs", gradleVersion) {
-            build(":rootPackageJson") {
+            build(":wasmRootPackageJson") {
                 assertTasksExecuted(":wasmJsPackageJson")
                 assertTasksExecuted(":wasmJsTestPackageJson")
                 assertTasksAreNotInTaskGraph(":compileKotlinWasmJs")
@@ -358,13 +358,13 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            build(":rootPackageJson") {
+            build(":wasmRootPackageJson") {
                 assertTasksExecuted(
-                    ":rootPackageJson"
+                    ":wasmRootPackageJson"
                 )
 
                 val moduleDir = projectPath
-                    .resolve("build/js/packages_imported/Kotlin-DateTime-library-kotlinx-datetime-wasm-js/0.6.0")
+                    .resolve("build/wasm/packages_imported/Kotlin-DateTime-library-kotlinx-datetime-wasm-js/0.6.0")
 
                 val kotlinxDatetimePackageJson = moduleDir.resolve("package.json")
 

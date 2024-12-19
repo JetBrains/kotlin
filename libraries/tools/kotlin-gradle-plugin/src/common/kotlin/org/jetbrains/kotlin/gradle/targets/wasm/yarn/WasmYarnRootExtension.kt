@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.wasm.yarn
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.targets.js.HasPlatformDisambiguate
+import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguate
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguate
 import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootExtension

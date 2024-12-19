@@ -15,7 +15,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.internal.ConfigurationPhaseAware
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.*
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.AbstractNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 
 /**
  * Abstract base class for configuring and managing NPM-related tasks and environment within a Kotlin/Gradle project.
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.gradle.targets.web.nodejs.AbstractNodeJsRootExtensio
  */
 abstract class BaseNpmExtension internal constructor(
     val project: Project,
-    val nodeJsRoot: AbstractNodeJsRootExtension,
+    val nodeJsRoot: BaseNodeJsRootExtension,
 ) : ConfigurationPhaseAware<NpmEnv>(), NpmApiExtension<NpmEnvironment, Npm> {
     init {
         check(project == project.rootProject)

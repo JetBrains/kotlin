@@ -27,13 +27,13 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockStoreTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnResolution
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnSetupTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.asYarnEnvironment
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.AbstractNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 
 abstract class BaseYarnRootExtension internal constructor(
     val project: Project,
-    val nodeJsRoot: AbstractNodeJsRootExtension,
+    val nodeJsRoot: BaseNodeJsRootExtension,
     private val yarnSpec: BaseYarnRootEnvSpec,
 ) : AbstractSettings<YarnEnv>(), NpmApiExtension<YarnEnvironment, Yarn> {
     init {

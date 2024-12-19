@@ -3,15 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.targets.js.nodejs
+package org.jetbrains.kotlin.gradle.targets.wasm.nodejs
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguate
 
-internal object JsPlatformDisambiguate : HasPlatformDisambiguate {
-    override val platformDisambiguate: String?
-        get() = null
+internal object WasmPlatformDisambiguate : HasPlatformDisambiguate {
+    override val platformDisambiguate: String
+        get() = wasmPlatform
 
-    internal val jsPlatform: String
-        get() = KotlinPlatformType.js.name
+    private val wasmPlatform: String
+        get() = KotlinPlatformType.wasm.name
 }
