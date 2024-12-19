@@ -99,10 +99,6 @@ class DeclarationGenerator(
         val wasmImportModule = declaration.getWasmImportDescriptor()
         val jsCode = declaration.getJsFunAnnotation()
 
-        val locationTarget = declaration.locationTarget
-        val functionStartLocation = locationTarget.getSourceLocation(declaration.symbol, declaration.fileOrNull)
-        val functionEndLocation = locationTarget.getSourceLocation(declaration.symbol, declaration.fileOrNull, LocationType.END)
-
         val importedName = when {
             wasmImportModule != null -> {
                 check(declaration.isExternal) { "Non-external fun with @WasmImport ${declaration.fqNameWhenAvailable}"}
@@ -125,11 +121,15 @@ class DeclarationGenerator(
             // Imported functions don't have bodies. Declaring the signature:
             wasmFileCodegenContext.defineFunction(
                 declaration.symbol,
-                WasmFunction.Imported(watName, functionTypeSymbol, importedName, functionStartLocation)
+                WasmFunction.Imported(watName, functionTypeSymbol, importedName)
             )
             // TODO: Support re-export of imported functions.
             return
         }
+
+        val locationTarget = declaration.locationTarget
+        val functionStartLocation = locationTarget.getSourceLocation(declaration.symbol, declaration.fileOrNull)
+        val functionEndLocation = locationTarget.getSourceLocation(declaration.symbol, declaration.fileOrNull, LocationType.END)
 
         val function = WasmFunction.Defined(
             watName,

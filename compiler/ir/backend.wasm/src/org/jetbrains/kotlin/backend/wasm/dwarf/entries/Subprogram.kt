@@ -16,7 +16,7 @@ data class Subprogram(
     val startGeneratedLocation: SourceLocationMapping
 ) : DebuggingInformationEntry {
     lateinit var endGeneratedLocation: SourceLocationMapping
-    private val sourceLocation = startGeneratedLocation.sourceLocation as SourceLocation.Location
+    private val sourceLocation = startGeneratedLocation.sourceLocation as SourceLocation.DefinedLocation
 
     val isPublic = true
     val line by lazy { sourceLocation.line + 1 }
