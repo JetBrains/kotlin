@@ -6828,6 +6828,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
     }
 
     @Test
+    @TestMetadata("propertyWithContextAndWithout.kt")
+    public void testPropertyWithContextAndWithout() {
+      runTest("compiler/testData/codegen/box/contextParameters/propertyWithContextAndWithout.kt");
+    }
+
+    @Test
     @TestMetadata("sameNameWithGlobalProperty.kt")
     public void testSameNameWithGlobalProperty() {
       runTest("compiler/testData/codegen/box/contextParameters/sameNameWithGlobalProperty.kt");

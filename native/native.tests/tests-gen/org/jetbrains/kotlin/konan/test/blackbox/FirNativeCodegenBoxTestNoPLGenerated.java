@@ -7835,6 +7835,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       }
 
       @Test
+      @TestMetadata("propertyWithContextAndWithout.kt")
+      public void testPropertyWithContextAndWithout() {
+        runTest("compiler/testData/codegen/box/contextParameters/propertyWithContextAndWithout.kt");
+      }
+
+      @Test
       @TestMetadata("sameNameWithGlobalProperty.kt")
       public void testSameNameWithGlobalProperty() {
         runTest("compiler/testData/codegen/box/contextParameters/sameNameWithGlobalProperty.kt");
