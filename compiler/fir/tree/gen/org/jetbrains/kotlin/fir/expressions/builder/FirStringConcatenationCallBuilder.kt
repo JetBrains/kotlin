@@ -27,6 +27,7 @@ class FirStringConcatenationCallBuilder : FirCallBuilder, FirAnnotationContainer
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override lateinit var argumentList: FirArgumentList
     lateinit var interpolationPrefix: String
+    var isFoldedStrings: Boolean = false
 
     override fun build(): FirStringConcatenationCall {
         return FirStringConcatenationCallImpl(
@@ -34,6 +35,7 @@ class FirStringConcatenationCallBuilder : FirCallBuilder, FirAnnotationContainer
             annotations.toMutableOrEmpty(),
             argumentList,
             interpolationPrefix,
+            isFoldedStrings,
         )
     }
 

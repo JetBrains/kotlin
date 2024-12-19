@@ -1014,6 +1014,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(expression)
 
         +field("interpolationPrefix", string)
+        +field("isFoldedStrings", boolean)
     }
 
     val throwExpression: Element by element(Expression) {

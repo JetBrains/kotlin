@@ -326,6 +326,7 @@ class LightTreeRawFirExpressionBuilder(
             argumentList = buildArgumentList { arguments += output.asReversed().map { getAsFirExpression<FirExpression>(it) } }
             source = binaryExpression.toFirSourceElement()
             interpolationPrefix = ""
+            isFoldedStrings = true
         }
     }
 
