@@ -143,7 +143,7 @@ class SourceMap3Builder(
         outputColumn: Int,
         name: String? = null,
         fileIdentity: Any? = null,
-        sourceContent: Supplier<Reader?> = Supplier { null }
+        sourceContent: Supplier<Reader?> = Supplier { null },
     ) {
         val sourceIndex = getSourceIndex(source.unixStylePath, fileIdentity, sourceContent)
 
