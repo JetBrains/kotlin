@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,8 +11,19 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSettings
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnv
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlatform
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenRootEnvSpec
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenSetupTask
 import org.jetbrains.kotlin.gradle.utils.property
 
+@Deprecated(
+    "Use 'org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenRootExtension' instead",
+    ReplaceWith(
+        "BinaryenRootExtension",
+        "org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenRootExtension"
+    )
+)
 @OptIn(ExperimentalWasmDsl::class)
 open class BinaryenRootExtension(
     @Transient val rootProject: Project,
@@ -43,7 +54,7 @@ open class BinaryenRootExtension(
         .convention("wasm-opt")
 
     val setupTaskProvider: TaskProvider<BinaryenSetupTask>
-        get() = rootProject.tasks.withType(BinaryenSetupTask::class.java).named(BinaryenSetupTask.NAME)
+        get() = rootProject.tasks.withType(BinaryenSetupTask::class.java).named(BinaryenSetupTask.Companion.NAME)
 
     internal val platform: org.gradle.api.provider.Property<BinaryenPlatform> = rootProject.objects.property<BinaryenPlatform>()
 
@@ -52,6 +63,6 @@ open class BinaryenRootExtension(
     }
 
     companion object {
-        const val EXTENSION_NAME: String = "kotlinBinaryen"
+        const val EXTENSION_NAME: String = org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenRootExtension.EXTENSION_NAME
     }
 }
