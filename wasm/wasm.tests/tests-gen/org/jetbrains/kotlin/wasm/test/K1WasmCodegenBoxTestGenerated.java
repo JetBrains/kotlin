@@ -26691,6 +26691,304 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
       }
 
       @Nested
+      @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Generation {
+        @Test
+        public void testAllFilesPresentInGeneration() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all")
+        @TestDataPath("$PROJECT_ROOT")
+        public class My_all_all {
+          @Test
+          public void testAllFilesPresentInMy_all_all() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          }
+
+          @Test
+          @TestMetadata("kDefkkk.kt")
+          public void testKDefkkk() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kDefkkk.kt");
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/jkkkk")
+          @TestDataPath("$PROJECT_ROOT")
+          public class Jkkkk {
+            @Test
+            public void testAllFilesPresentInJkkkk() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/jkkkk"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kjkkkk")
+          @TestDataPath("$PROJECT_ROOT")
+          public class Kjkkkk {
+            @Test
+            public void testAllFilesPresentInKjkkkk() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kjkkkk"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @Test
+            @TestMetadata("kDefjAbskDefkkk.kt")
+            public void testKDefjAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kjkkkk/kDefjAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjkDefkkk.kt")
+            public void testKDefjkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kjkkkk/kDefjkDefkkk.kt");
+            }
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all")
+        @TestDataPath("$PROJECT_ROOT")
+        public class My_allcomp_all {
+          @Test
+          public void testAllFilesPresentInMy_allcomp_all() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          }
+
+          @Test
+          @TestMetadata("kDefkkk.kt")
+          public void testKDefkkk() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kDefkkk.kt");
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/jkkkk")
+          @TestDataPath("$PROJECT_ROOT")
+          public class Jkkkk {
+            @Test
+            public void testAllFilesPresentInJkkkk() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/jkkkk"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kjkkkk")
+          @TestDataPath("$PROJECT_ROOT")
+          public class Kjkkkk {
+            @Test
+            public void testAllFilesPresentInKjkkkk() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kjkkkk"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @Test
+            @TestMetadata("kDefjAbskDefkkk.kt")
+            public void testKDefjAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kjkkkk/kDefjAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjkDefkkk.kt")
+            public void testKDefjkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kjkkkk/kDefjkDefkkk.kt");
+            }
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp")
+        @TestDataPath("$PROJECT_ROOT")
+        public class My_allcomp_allcomp {
+          @Test
+          public void testAllFilesPresentInMy_allcomp_allcomp() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          }
+
+          @Test
+          @TestMetadata("kDefkkk.kt")
+          public void testKDefkkk() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kDefkkk.kt");
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/jkkkk")
+          @TestDataPath("$PROJECT_ROOT")
+          public class Jkkkk {
+            @Test
+            public void testAllFilesPresentInJkkkk() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/jkkkk"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kjkkkk")
+          @TestDataPath("$PROJECT_ROOT")
+          public class Kjkkkk {
+            @Test
+            public void testAllFilesPresentInKjkkkk() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kjkkkk"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @Test
+            @TestMetadata("kDefjAbskDefkkk.kt")
+            public void testKDefjAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kjkkkk/kDefjAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjkDefkkk.kt")
+            public void testKDefjkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kjkkkk/kDefjkDefkkk.kt");
+            }
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all")
+        @TestDataPath("$PROJECT_ROOT")
+        public class My_dis_all {
+          @Test
+          public void testAllFilesPresentInMy_dis_all() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          }
+
+          @Test
+          @TestMetadata("kDefkkk.kt")
+          public void testKDefkkk() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kDefkkk.kt");
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/jkkkk")
+          @TestDataPath("$PROJECT_ROOT")
+          public class Jkkkk {
+            @Test
+            public void testAllFilesPresentInJkkkk() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/jkkkk"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kjkkkk")
+          @TestDataPath("$PROJECT_ROOT")
+          public class Kjkkkk {
+            @Test
+            public void testAllFilesPresentInKjkkkk() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kjkkkk"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @Test
+            @TestMetadata("kDefjAbskDefkkk.kt")
+            public void testKDefjAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kjkkkk/kDefjAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjkDefkkk.kt")
+            public void testKDefjkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kjkkkk/kDefjkDefkkk.kt");
+            }
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm")
+        @TestDataPath("$PROJECT_ROOT")
+        public class My_dis_allcopm {
+          @Test
+          public void testAllFilesPresentInMy_dis_allcopm() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          }
+
+          @Test
+          @TestMetadata("kDefkkk.kt")
+          public void testKDefkkk() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kDefkkk.kt");
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/jkkkk")
+          @TestDataPath("$PROJECT_ROOT")
+          public class Jkkkk {
+            @Test
+            public void testAllFilesPresentInJkkkk() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/jkkkk"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kjkkkk")
+          @TestDataPath("$PROJECT_ROOT")
+          public class Kjkkkk {
+            @Test
+            public void testAllFilesPresentInKjkkkk() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kjkkkk"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @Test
+            @TestMetadata("kDefjAbskDefkkk.kt")
+            public void testKDefjAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kjkkkk/kDefjAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjkDefkkk.kt")
+            public void testKDefjkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kjkkkk/kDefjkDefkkk.kt");
+            }
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis")
+        @TestDataPath("$PROJECT_ROOT")
+        public class My_dis_dis {
+          @Test
+          public void testAllFilesPresentInMy_dis_dis() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          }
+
+          @Test
+          @TestMetadata("kDefkkk.kt")
+          public void testKDefkkk() {
+            runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kDefkkk.kt");
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/jkkkk")
+          @TestDataPath("$PROJECT_ROOT")
+          public class Jkkkk {
+            @Test
+            public void testAllFilesPresentInJkkkk() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/jkkkk"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kjkkkk")
+          @TestDataPath("$PROJECT_ROOT")
+          public class Kjkkkk {
+            @Test
+            public void testAllFilesPresentInKjkkkk() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kjkkkk"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @Test
+            @TestMetadata("kDefjAbskDefkkk.kt")
+            public void testKDefjAbskDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kjkkkk/kDefjAbskDefkkk.kt");
+            }
+
+            @Test
+            @TestMetadata("kDefjkDefkkk.kt")
+            public void testKDefjkDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kjkkkk/kDefjkDefkkk.kt");
+            }
+          }
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls")
       @TestDataPath("$PROJECT_ROOT")
       public class NoDefaultImpls {

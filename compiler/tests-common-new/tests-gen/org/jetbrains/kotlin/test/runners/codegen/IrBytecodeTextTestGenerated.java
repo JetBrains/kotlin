@@ -3422,6 +3422,12 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
       public void testStepThenDifferentStep() {
         runTest("compiler/testData/codegen/bytecodeText/forLoop/unsigned/stepThenDifferentStep.kt");
       }
+
+      @Test
+      @TestMetadata("temptest.kt")
+      public void testTemptest() {
+        runTest("compiler/testData/codegen/bytecodeText/forLoop/unsigned/temptest.kt");
+      }
     }
   }
 

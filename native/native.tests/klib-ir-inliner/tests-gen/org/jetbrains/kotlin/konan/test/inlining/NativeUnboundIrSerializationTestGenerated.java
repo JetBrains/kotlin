@@ -28251,6 +28251,272 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("frontend-fir")
+        @FirPipeline()
+        @Tag("klib")
+        public class Generation {
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all")
+          @TestDataPath("$PROJECT_ROOT")
+          @Tag("frontend-fir")
+          @FirPipeline()
+          @Tag("klib")
+          public class My_all_all {
+            @Test
+            @TestMetadata("kDefkkk.kt")
+            public void testKDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kDefkkk.kt");
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/jkkkk")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("frontend-fir")
+            @FirPipeline()
+            @Tag("klib")
+            public class Jkkkk {
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kjkkkk")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("frontend-fir")
+            @FirPipeline()
+            @Tag("klib")
+            public class Kjkkkk {
+              @Test
+              @TestMetadata("kDefjAbskDefkkk.kt")
+              public void testKDefjAbskDefkkk() {
+                runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kjkkkk/kDefjAbskDefkkk.kt");
+              }
+
+              @Test
+              @TestMetadata("kDefjkDefkkk.kt")
+              public void testKDefjkDefkkk() {
+                runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_all_all/kjkkkk/kDefjkDefkkk.kt");
+              }
+            }
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all")
+          @TestDataPath("$PROJECT_ROOT")
+          @Tag("frontend-fir")
+          @FirPipeline()
+          @Tag("klib")
+          public class My_allcomp_all {
+            @Test
+            @TestMetadata("kDefkkk.kt")
+            public void testKDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kDefkkk.kt");
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/jkkkk")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("frontend-fir")
+            @FirPipeline()
+            @Tag("klib")
+            public class Jkkkk {
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kjkkkk")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("frontend-fir")
+            @FirPipeline()
+            @Tag("klib")
+            public class Kjkkkk {
+              @Test
+              @TestMetadata("kDefjAbskDefkkk.kt")
+              public void testKDefjAbskDefkkk() {
+                runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kjkkkk/kDefjAbskDefkkk.kt");
+              }
+
+              @Test
+              @TestMetadata("kDefjkDefkkk.kt")
+              public void testKDefjkDefkkk() {
+                runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_all/kjkkkk/kDefjkDefkkk.kt");
+              }
+            }
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp")
+          @TestDataPath("$PROJECT_ROOT")
+          @Tag("frontend-fir")
+          @FirPipeline()
+          @Tag("klib")
+          public class My_allcomp_allcomp {
+            @Test
+            @TestMetadata("kDefkkk.kt")
+            public void testKDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kDefkkk.kt");
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/jkkkk")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("frontend-fir")
+            @FirPipeline()
+            @Tag("klib")
+            public class Jkkkk {
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kjkkkk")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("frontend-fir")
+            @FirPipeline()
+            @Tag("klib")
+            public class Kjkkkk {
+              @Test
+              @TestMetadata("kDefjAbskDefkkk.kt")
+              public void testKDefjAbskDefkkk() {
+                runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kjkkkk/kDefjAbskDefkkk.kt");
+              }
+
+              @Test
+              @TestMetadata("kDefjkDefkkk.kt")
+              public void testKDefjkDefkkk() {
+                runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_allcomp_allcomp/kjkkkk/kDefjkDefkkk.kt");
+              }
+            }
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all")
+          @TestDataPath("$PROJECT_ROOT")
+          @Tag("frontend-fir")
+          @FirPipeline()
+          @Tag("klib")
+          public class My_dis_all {
+            @Test
+            @TestMetadata("kDefkkk.kt")
+            public void testKDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kDefkkk.kt");
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/jkkkk")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("frontend-fir")
+            @FirPipeline()
+            @Tag("klib")
+            public class Jkkkk {
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kjkkkk")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("frontend-fir")
+            @FirPipeline()
+            @Tag("klib")
+            public class Kjkkkk {
+              @Test
+              @TestMetadata("kDefjAbskDefkkk.kt")
+              public void testKDefjAbskDefkkk() {
+                runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kjkkkk/kDefjAbskDefkkk.kt");
+              }
+
+              @Test
+              @TestMetadata("kDefjkDefkkk.kt")
+              public void testKDefjkDefkkk() {
+                runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_all/kjkkkk/kDefjkDefkkk.kt");
+              }
+            }
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm")
+          @TestDataPath("$PROJECT_ROOT")
+          @Tag("frontend-fir")
+          @FirPipeline()
+          @Tag("klib")
+          public class My_dis_allcopm {
+            @Test
+            @TestMetadata("kDefkkk.kt")
+            public void testKDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kDefkkk.kt");
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/jkkkk")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("frontend-fir")
+            @FirPipeline()
+            @Tag("klib")
+            public class Jkkkk {
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kjkkkk")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("frontend-fir")
+            @FirPipeline()
+            @Tag("klib")
+            public class Kjkkkk {
+              @Test
+              @TestMetadata("kDefjAbskDefkkk.kt")
+              public void testKDefjAbskDefkkk() {
+                runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kjkkkk/kDefjAbskDefkkk.kt");
+              }
+
+              @Test
+              @TestMetadata("kDefjkDefkkk.kt")
+              public void testKDefjkDefkkk() {
+                runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_allcopm/kjkkkk/kDefjkDefkkk.kt");
+              }
+            }
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis")
+          @TestDataPath("$PROJECT_ROOT")
+          @Tag("frontend-fir")
+          @FirPipeline()
+          @Tag("klib")
+          public class My_dis_dis {
+            @Test
+            @TestMetadata("kDefkkk.kt")
+            public void testKDefkkk() {
+              runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kDefkkk.kt");
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/jkkkk")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("frontend-fir")
+            @FirPipeline()
+            @Tag("klib")
+            public class Jkkkk {
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kjkkkk")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("frontend-fir")
+            @FirPipeline()
+            @Tag("klib")
+            public class Kjkkkk {
+              @Test
+              @TestMetadata("kDefjAbskDefkkk.kt")
+              public void testKDefjAbskDefkkk() {
+                runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kjkkkk/kDefjAbskDefkkk.kt");
+              }
+
+              @Test
+              @TestMetadata("kDefjkDefkkk.kt")
+              public void testKDefjkDefkkk() {
+                runTest("compiler/testData/codegen/box/jvm8/defaults/generation/my_dis_dis/kjkkkk/kDefjkDefkkk.kt");
+              }
+            }
+          }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls")
         @TestDataPath("$PROJECT_ROOT")
         @Tag("frontend-fir")

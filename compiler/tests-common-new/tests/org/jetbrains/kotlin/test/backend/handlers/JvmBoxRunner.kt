@@ -126,6 +126,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
         classLoader: URLClassLoader,
         unexpectedBehaviour: Boolean
     ) {
+        println(classFileFactory.get("Bottom.class")!!.asText())
         val result = if (BOX_IN_SEPARATE_PROCESS_PORT != null) {
             invokeBoxInSeparateProcess(
                 module,
