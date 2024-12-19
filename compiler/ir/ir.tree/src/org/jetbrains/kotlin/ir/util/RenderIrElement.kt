@@ -10,6 +10,7 @@ import com.intellij.util.applyIf
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
+import java.io.File
 
 fun IrElement.render(options: DumpIrTreeOptions = DumpIrTreeOptions()) =
     accept(RenderIrElementVisitor(options), null)
@@ -44,6 +46,14 @@ open class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpI
         } finally {
             hideParameterNames = oldHideParameterNames
         }
+    }
+
+    fun renderFileEntry(fileEntry: IrFileEntry): String {
+        val fullPath = fileEntry.name
+        val renderedPath = if (options.printFilePath) fullPath else File(fullPath).name
+
+        // TODO: use offsets in IR deserialization tests, KT-73171
+        return "FILE_ENTRY path:$renderedPath"
     }
 
     fun renderType(type: IrType) = type.renderTypeWithRenderer(this@RenderIrElementVisitor, options)
