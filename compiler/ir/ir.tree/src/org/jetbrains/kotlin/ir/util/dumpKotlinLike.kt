@@ -1062,7 +1062,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     override fun visitBlock(expression: IrBlock, data: IrDeclaration?) = wrap(expression, data) {
         // TODO special blocks using `origin`
-        // TODO inlineFunctionSymbol for IrReturnableBlock
+        // TODO inlinedFunctionSymbol for IrReturnableBlock
         // TODO no tests for IrReturnableBlock?
         val kind = when (expression) {
             is IrReturnableBlock -> "RETURNABLE BLOCK"

@@ -383,7 +383,7 @@ class DumpIrTreeVisitor(
 
     override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: String) {
         inlinedBlock.dumpLabeledElementWith(data) {
-            inlinedBlock.inlineFunctionSymbol?.dumpInternal("inlineFunctionSymbol")
+            inlinedBlock.inlinedFunctionSymbol?.dumpInternal("inlinedFunctionSymbol")
             inlinedBlock.acceptChildren(this, "")
         }
     }

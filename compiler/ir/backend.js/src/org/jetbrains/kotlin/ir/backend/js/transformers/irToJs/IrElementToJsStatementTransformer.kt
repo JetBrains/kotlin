@@ -40,7 +40,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     override fun visitReturnableBlock(expression: IrReturnableBlock, context: JsGenerationContext): JsStatement {
         val inlinedBlock = expression.statements.singleOrNull() as? IrInlinedFunctionBlock
         val newContext = if (inlinedBlock != null) {
-            context.newInlineFunction(inlinedBlock.fileEntry, inlinedBlock.inlineFunctionSymbol?.owner)
+            context.newInlineFunction(inlinedBlock.fileEntry, inlinedBlock.inlinedFunctionSymbol?.owner)
         } else {
             context
         }
@@ -64,9 +64,9 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     private fun List<JsStatement>.wrapInCommentsInlineFunctionCall(inlinedBlock: IrInlinedFunctionBlock?): List<JsStatement> {
-        val inlineFunction = inlinedBlock?.inlineFunctionSymbol?.owner ?: return this
-        val correspondingProperty = (inlineFunction as? IrSimpleFunction)?.correspondingPropertySymbol
-        val owner = correspondingProperty?.owner ?: inlineFunction
+        val inlinedFunction = inlinedBlock?.inlinedFunctionSymbol?.owner ?: return this
+        val correspondingProperty = (inlinedFunction as? IrSimpleFunction)?.correspondingPropertySymbol
+        val owner = correspondingProperty?.owner ?: inlinedFunction
         val funName = owner.fqNameWhenAvailable ?: owner.name
         return listOf(JsSingleLineComment(" Inline function '$funName' call")) + this
     }
