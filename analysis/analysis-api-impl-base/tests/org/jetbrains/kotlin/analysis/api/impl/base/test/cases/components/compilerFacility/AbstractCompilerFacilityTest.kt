@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -326,7 +326,7 @@ private class CollectingIrGenerationExtension(private val annotationToCheckCalls
     private class CheckCallsWithAnnotationVisitor(
         private val annotationFqName: String,
         private val handleFunctionWithAnnotation: (declaration: IrDeclarationWithName) -> Unit,
-    ) : IrElementVisitorVoid {
+    ) : IrVisitorVoid() {
         val annotationClassId by lazy {
             val annotationFqNameUnsafe = FqNameUnsafe(annotationFqName)
             ClassId(FqName(annotationFqNameUnsafe.parent()), FqName(annotationFqNameUnsafe.shortName().asString()), false)

@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
@@ -89,7 +89,7 @@ class IrSourcePrinterVisitor(
     out: Appendable,
     indentUnit: String = "  ",
     private val useFir: Boolean = false,
-) : IrElementVisitorVoid {
+) : IrVisitorVoid() {
     private val printer = Printer(out, indentUnit)
     private var currentScope: Scope = Scope()
 

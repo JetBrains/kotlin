@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.util.RenderIrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.test.Constructor
@@ -71,7 +71,7 @@ class IrSourceRangesDumpHandler(
     private class DumpSourceLocations(
         out: Appendable,
         val fileEntry: IrFileEntry
-    ) : IrElementVisitorVoid {
+    ) : IrVisitorVoid() {
         val printer = Printer(out, "  ")
         val elementRenderer = RenderIrElementVisitor()
 

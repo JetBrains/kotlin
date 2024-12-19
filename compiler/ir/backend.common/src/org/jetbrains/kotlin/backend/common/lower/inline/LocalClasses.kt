@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.lower.inline
 
-import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.ir.isInlineLambdaBlock
 import org.jetbrains.kotlin.backend.common.ir.isInlineLambdaBlock
@@ -69,7 +69,7 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                 val adaptedFunctions = mutableSetOf<IrSimpleFunction>()
                 val transformer = this
                 for (lambda in inlineLambdas) {
-                    lambda.acceptChildrenVoid(object : IrElementVisitorVoid {
+                    lambda.acceptChildrenVoid(object : IrVisitorVoid() {
                         override fun visitElement(element: IrElement) {
                             element.acceptChildrenVoid(this)
                         }
@@ -151,7 +151,7 @@ private fun IrFunction.collectExtractableLocalClassesInto(classesToExtract: Muta
     if (typeParameters.any { it.isReified }) return
 
     val crossinlineParameters = parameters.filter { it.isCrossinline }.toSet()
-    acceptChildrenVoid(object : IrElementVisitorVoid {
+    acceptChildrenVoid(object : IrVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
@@ -159,7 +159,7 @@ private fun IrFunction.collectExtractableLocalClassesInto(classesToExtract: Muta
         override fun visitClass(declaration: IrClass) {
             var canExtract = true
             if (crossinlineParameters.isNotEmpty()) {
-                declaration.acceptVoid(object : IrElementVisitorVoid {
+                declaration.acceptVoid(object : IrVisitorVoid() {
                     override fun visitElement(element: IrElement) {
                         element.acceptChildrenVoid(this)
                     }

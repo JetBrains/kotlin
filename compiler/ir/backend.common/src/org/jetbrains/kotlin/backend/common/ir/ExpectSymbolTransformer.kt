@@ -18,14 +18,14 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.isExpect
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * [ExpectSymbolTransformer] replaces `expect` symbols in expressions with `actual` symbols. An `actual` symbol must be provided by
  * overriding [getActualClass], [getActualProperty], [getActualConstructor], and [getActualFunction].
  */
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-abstract class ExpectSymbolTransformer : IrElementVisitorVoid {
+abstract class ExpectSymbolTransformer : IrVisitorVoid() {
 
     protected abstract fun getActualClass(descriptor: ClassDescriptor): IrClassSymbol?
 

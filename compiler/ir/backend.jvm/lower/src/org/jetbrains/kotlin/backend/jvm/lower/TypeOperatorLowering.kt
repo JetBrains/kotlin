@@ -33,11 +33,11 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.getArrayElementType
+import org.jetbrains.kotlin.ir.util.isBoxedArray
+import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isSubtypeOf
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
-import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.ir.util.isBoxedArray
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
@@ -801,7 +801,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
     private fun IrElement.extents(): Pair<Int, Int> {
         var startOffset = Int.MAX_VALUE
         var endOffset = 0
-        acceptVoid(object : IrElementVisitorVoid {
+        acceptVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
                 if (element.startOffset in 0 until startOffset)

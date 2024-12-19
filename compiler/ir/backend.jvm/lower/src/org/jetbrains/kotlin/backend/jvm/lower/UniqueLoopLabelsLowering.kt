@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrLoop
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 @PhaseDescription(name = "UniqueLoopLabels")
 internal class UniqueLoopLabelsLowering(@Suppress("UNUSED_PARAMETER", "unused") context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.acceptVoid(object : IrElementVisitorVoid {
+        irFile.acceptVoid(object : IrVisitorVoid() {
             // This counter is intentionally not local to every declaration because their names might clash.
             private var counter = 0
             private val stack = ArrayList<Name>()
