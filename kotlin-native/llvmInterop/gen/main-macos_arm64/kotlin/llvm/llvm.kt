@@ -237,13 +237,13 @@ enum class LLVMOpcode(value: Int) : CEnum {
     LLVMCallBr(67),
     LLVMFreeze(68),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMOpcode = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -277,13 +277,13 @@ enum class LLVMTypeKind(value: Int) : CEnum {
     LLVMBFloatTypeKind(18),
     LLVMX86_AMXTypeKind(19),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMTypeKind = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -314,13 +314,13 @@ enum class LLVMLinkage(value: Int) : CEnum {
     LLVMLinkerPrivateLinkage(15),
     LLVMLinkerPrivateWeakLinkage(16),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMLinkage = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -337,13 +337,13 @@ enum class LLVMVisibility(value: Int) : CEnum {
     LLVMHiddenVisibility(1),
     LLVMProtectedVisibility(2),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMVisibility = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -360,13 +360,13 @@ enum class LLVMUnnamedAddr(value: Int) : CEnum {
     LLVMLocalUnnamedAddr(1),
     LLVMGlobalUnnamedAddr(2),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMUnnamedAddr = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -383,13 +383,13 @@ enum class LLVMDLLStorageClass(value: Int) : CEnum {
     LLVMDLLImportStorageClass(1),
     LLVMDLLExportStorageClass(2),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMDLLStorageClass = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -445,13 +445,13 @@ enum class LLVMCallConv(value: Int) : CEnum {
     LLVMAMDGPULSCallConv(95),
     LLVMAMDGPUESCallConv(96),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMCallConv = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -491,13 +491,13 @@ enum class LLVMValueKind(value: Int) : CEnum {
     LLVMInstructionValueKind(24),
     LLVMPoisonValueValueKind(25),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMValueKind = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -521,13 +521,13 @@ enum class LLVMIntPredicate(value: Int) : CEnum {
     LLVMIntSLT(40),
     LLVMIntSLE(41),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMIntPredicate = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -557,13 +557,13 @@ enum class LLVMRealPredicate(value: Int) : CEnum {
     LLVMRealUNE(14),
     LLVMRealPredicateTrue(15),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMRealPredicate = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -579,13 +579,13 @@ enum class LLVMLandingPadClauseTy(value: Int) : CEnum {
     LLVMLandingPadCatch(0),
     LLVMLandingPadFilter(1),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMLandingPadClauseTy = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -604,13 +604,13 @@ enum class LLVMThreadLocalMode(value: Int) : CEnum {
     LLVMInitialExecTLSModel(3),
     LLVMLocalExecTLSModel(4),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMThreadLocalMode = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -631,13 +631,13 @@ enum class LLVMAtomicOrdering(value: Int) : CEnum {
     LLVMAtomicOrderingAcquireRelease(6),
     LLVMAtomicOrderingSequentiallyConsistent(7),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMAtomicOrdering = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -666,13 +666,13 @@ enum class LLVMAtomicRMWBinOp(value: Int) : CEnum {
     LLVMAtomicRMWBinOpFMax(13),
     LLVMAtomicRMWBinOpFMin(14),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMAtomicRMWBinOp = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -690,13 +690,13 @@ enum class LLVMDiagnosticSeverity(value: Int) : CEnum {
     LLVMDSRemark(2),
     LLVMDSNote(3),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMDiagnosticSeverity = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -712,13 +712,13 @@ enum class LLVMInlineAsmDialect(value: Int) : CEnum {
     LLVMInlineAsmDialectATT(0),
     LLVMInlineAsmDialectIntel(1),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMInlineAsmDialect = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -738,13 +738,13 @@ enum class LLVMModuleFlagBehavior(value: Int) : CEnum {
     LLVMModuleFlagBehaviorAppend(4),
     LLVMModuleFlagBehaviorAppendUnique(5),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMModuleFlagBehavior = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -760,13 +760,13 @@ enum class LLVMByteOrdering(value: Int) : CEnum {
     LLVMBigEndian(0),
     LLVMLittleEndian(1),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMByteOrdering = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -783,13 +783,13 @@ enum class LLVMVerifierFailureAction(value: Int) : CEnum {
     LLVMPrintMessageAction(1),
     LLVMReturnStatusAction(2),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMVerifierFailureAction = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -807,13 +807,13 @@ enum class LLVMCodeGenOptLevel(value: Int) : CEnum {
     LLVMCodeGenLevelDefault(2),
     LLVMCodeGenLevelAggressive(3),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMCodeGenOptLevel = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -834,13 +834,13 @@ enum class LLVMRelocMode(value: Int) : CEnum {
     LLVMRelocRWPI(5),
     LLVMRelocROPI_RWPI(6),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMRelocMode = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -861,13 +861,13 @@ enum class LLVMCodeModel(value: Int) : CEnum {
     LLVMCodeModelMedium(5),
     LLVMCodeModelLarge(6),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMCodeModel = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -883,13 +883,13 @@ enum class LLVMCodeGenFileType(value: Int) : CEnum {
     LLVMAssemblyFile(0),
     LLVMObjectFile(1),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMCodeGenFileType = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -943,13 +943,13 @@ enum class LLVMDWARFSourceLanguage(value: Int) : CEnum {
     LLVMDWARFSourceLanguageGOOGLE_RenderScript(38),
     LLVMDWARFSourceLanguageBORLAND_Delphi(39),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMDWARFSourceLanguage = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -6199,7 +6199,7 @@ typealias DIExpressionRefVar = CPointerVarOf<DIExpressionRef>
 @ExperimentalForeignApi
 typealias DIExpressionRef = CPointer<DIExpression>
 
-// enum (unnamed at /Users/Alexander.Shabalin/.konan/dependencies/llvm-16.0.0-aarch64-macos-dev-63/include/llvm-c/Core.h:461:1):
+// enum (unnamed at /Users/teamcity/.konan/dependencies/llvm-16.0.0-aarch64-macos-dev-63/include/llvm-c/Core.h:461:1):
 
 @ExperimentalForeignApi
 val LLVMAttributeReturnIndex: Int get() = 0
@@ -6348,7 +6348,7 @@ typealias LLVMDWARFEmissionKindVar = IntVarOf<LLVMDWARFEmissionKind>
 @ExperimentalForeignApi
 typealias LLVMDWARFEmissionKind = Int
 
-// enum (unnamed at /Users/Alexander.Shabalin/.konan/dependencies/llvm-16.0.0-aarch64-macos-dev-63/include/llvm-c/DebugInfo.h:137:1):
+// enum (unnamed at /Users/teamcity/.konan/dependencies/llvm-16.0.0-aarch64-macos-dev-63/include/llvm-c/DebugInfo.h:137:1):
 
 @ExperimentalForeignApi
 val LLVMMDStringMetadataKind: Int get() = 0

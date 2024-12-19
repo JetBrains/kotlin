@@ -237,13 +237,13 @@ enum class LLVMOpcode(value: Int) : CEnum {
     LLVMCallBr(67),
     LLVMFreeze(68),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMOpcode = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -276,14 +276,15 @@ enum class LLVMTypeKind(value: Int) : CEnum {
     LLVMScalableVectorTypeKind(17),
     LLVMBFloatTypeKind(18),
     LLVMX86_AMXTypeKind(19),
+    LLVMTargetExtTypeKind(20),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMTypeKind = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -314,13 +315,13 @@ enum class LLVMLinkage(value: Int) : CEnum {
     LLVMLinkerPrivateLinkage(15),
     LLVMLinkerPrivateWeakLinkage(16),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMLinkage = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -337,13 +338,13 @@ enum class LLVMVisibility(value: Int) : CEnum {
     LLVMHiddenVisibility(1),
     LLVMProtectedVisibility(2),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMVisibility = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -360,13 +361,13 @@ enum class LLVMUnnamedAddr(value: Int) : CEnum {
     LLVMLocalUnnamedAddr(1),
     LLVMGlobalUnnamedAddr(2),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMUnnamedAddr = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -383,13 +384,13 @@ enum class LLVMDLLStorageClass(value: Int) : CEnum {
     LLVMDLLImportStorageClass(1),
     LLVMDLLExportStorageClass(2),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMDLLStorageClass = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -445,13 +446,13 @@ enum class LLVMCallConv(value: Int) : CEnum {
     LLVMAMDGPULSCallConv(95),
     LLVMAMDGPUESCallConv(96),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMCallConv = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -490,14 +491,15 @@ enum class LLVMValueKind(value: Int) : CEnum {
     LLVMInlineAsmValueKind(23),
     LLVMInstructionValueKind(24),
     LLVMPoisonValueValueKind(25),
+    LLVMConstantTargetNoneValueKind(26),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMValueKind = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -521,13 +523,13 @@ enum class LLVMIntPredicate(value: Int) : CEnum {
     LLVMIntSLT(40),
     LLVMIntSLE(41),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMIntPredicate = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -557,13 +559,13 @@ enum class LLVMRealPredicate(value: Int) : CEnum {
     LLVMRealUNE(14),
     LLVMRealPredicateTrue(15),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMRealPredicate = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -579,13 +581,13 @@ enum class LLVMLandingPadClauseTy(value: Int) : CEnum {
     LLVMLandingPadCatch(0),
     LLVMLandingPadFilter(1),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMLandingPadClauseTy = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -604,13 +606,13 @@ enum class LLVMThreadLocalMode(value: Int) : CEnum {
     LLVMInitialExecTLSModel(3),
     LLVMLocalExecTLSModel(4),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMThreadLocalMode = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -631,13 +633,13 @@ enum class LLVMAtomicOrdering(value: Int) : CEnum {
     LLVMAtomicOrderingAcquireRelease(6),
     LLVMAtomicOrderingSequentiallyConsistent(7),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMAtomicOrdering = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -666,13 +668,13 @@ enum class LLVMAtomicRMWBinOp(value: Int) : CEnum {
     LLVMAtomicRMWBinOpFMax(13),
     LLVMAtomicRMWBinOpFMin(14),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMAtomicRMWBinOp = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -690,13 +692,13 @@ enum class LLVMDiagnosticSeverity(value: Int) : CEnum {
     LLVMDSRemark(2),
     LLVMDSNote(3),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMDiagnosticSeverity = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -712,13 +714,13 @@ enum class LLVMInlineAsmDialect(value: Int) : CEnum {
     LLVMInlineAsmDialectATT(0),
     LLVMInlineAsmDialectIntel(1),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMInlineAsmDialect = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -738,13 +740,13 @@ enum class LLVMModuleFlagBehavior(value: Int) : CEnum {
     LLVMModuleFlagBehaviorAppend(4),
     LLVMModuleFlagBehaviorAppendUnique(5),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMModuleFlagBehavior = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -760,13 +762,13 @@ enum class LLVMByteOrdering(value: Int) : CEnum {
     LLVMBigEndian(0),
     LLVMLittleEndian(1),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMByteOrdering = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -783,13 +785,13 @@ enum class LLVMVerifierFailureAction(value: Int) : CEnum {
     LLVMPrintMessageAction(1),
     LLVMReturnStatusAction(2),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMVerifierFailureAction = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -807,13 +809,13 @@ enum class LLVMCodeGenOptLevel(value: Int) : CEnum {
     LLVMCodeGenLevelDefault(2),
     LLVMCodeGenLevelAggressive(3),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMCodeGenOptLevel = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -834,13 +836,13 @@ enum class LLVMRelocMode(value: Int) : CEnum {
     LLVMRelocRWPI(5),
     LLVMRelocROPI_RWPI(6),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMRelocMode = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -861,13 +863,13 @@ enum class LLVMCodeModel(value: Int) : CEnum {
     LLVMCodeModelMedium(5),
     LLVMCodeModelLarge(6),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMCodeModel = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -883,13 +885,13 @@ enum class LLVMCodeGenFileType(value: Int) : CEnum {
     LLVMAssemblyFile(0),
     LLVMObjectFile(1),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMCodeGenFileType = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -939,17 +941,26 @@ enum class LLVMDWARFSourceLanguage(value: Int) : CEnum {
     LLVMDWARFSourceLanguageFortran08(34),
     LLVMDWARFSourceLanguageRenderScript(35),
     LLVMDWARFSourceLanguageBLISS(36),
-    LLVMDWARFSourceLanguageMips_Assembler(37),
-    LLVMDWARFSourceLanguageGOOGLE_RenderScript(38),
-    LLVMDWARFSourceLanguageBORLAND_Delphi(39),
+    LLVMDWARFSourceLanguageKotlin(37),
+    LLVMDWARFSourceLanguageZig(38),
+    LLVMDWARFSourceLanguageCrystal(39),
+    LLVMDWARFSourceLanguageC_plus_plus_17(40),
+    LLVMDWARFSourceLanguageC_plus_plus_20(41),
+    LLVMDWARFSourceLanguageC17(42),
+    LLVMDWARFSourceLanguageFortran18(43),
+    LLVMDWARFSourceLanguageAda2005(44),
+    LLVMDWARFSourceLanguageAda2012(45),
+    LLVMDWARFSourceLanguageMips_Assembler(46),
+    LLVMDWARFSourceLanguageGOOGLE_RenderScript(47),
+    LLVMDWARFSourceLanguageBORLAND_Delphi(48),
     ;
-    
+
     companion object {
-        
+
         @Deprecated("Will be removed.", ReplaceWith(""), DeprecationLevel.WARNING)
         fun byValue(value: Int): LLVMDWARFSourceLanguage = values().find { it.value == value }!!
     }
-    
+
     override open val value: Int = value
     class Var(rawPtr: NativePtr) : CEnumVar(rawPtr) {
         @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
@@ -986,3556 +997,3556 @@ fun LLVMShutdown(): Unit {
 }
 
 @ExperimentalForeignApi
+fun LLVMGetVersion(Major: CValuesRef<IntVar>?, Minor: CValuesRef<IntVar>?, Patch: CValuesRef<IntVar>?): Unit {
+    memScoped {
+        return kniBridge5(Major?.getPointer(memScope).rawValue, Minor?.getPointer(memScope).rawValue, Patch?.getPointer(memScope).rawValue)
+    }
+}
+
+@ExperimentalForeignApi
 fun LLVMCreateMessage(Message: String?): CPointer<ByteVar>? {
     memScoped {
-        return interpretCPointer<ByteVar>(kniBridge5(Message?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<ByteVar>(kniBridge6(Message?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMDisposeMessage(Message: CValuesRef<ByteVar>?): Unit {
     memScoped {
-        return kniBridge6(Message?.getPointer(memScope).rawValue)
+        return kniBridge7(Message?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMContextCreate(): LLVMContextRef? {
-    return interpretCPointer<LLVMOpaqueContext>(kniBridge7())
+    return interpretCPointer<LLVMOpaqueContext>(kniBridge8())
 }
 
 @ExperimentalForeignApi
 fun LLVMContextSetDiagnosticHandler(C: LLVMContextRef?, Handler: LLVMDiagnosticHandler?, DiagnosticContext: CValuesRef<*>?): Unit {
     memScoped {
-        return kniBridge8(C.rawValue, Handler.rawValue, DiagnosticContext?.getPointer(memScope).rawValue)
+        return kniBridge9(C.rawValue, Handler.rawValue, DiagnosticContext?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMContextGetDiagnosticHandler(C: LLVMContextRef?): LLVMDiagnosticHandler? {
-    return interpretCPointer<CFunction<(LLVMDiagnosticInfoRef?, COpaquePointer?) -> Unit>>(kniBridge9(C.rawValue))
+    return interpretCPointer<CFunction<(LLVMDiagnosticInfoRef?, COpaquePointer?) -> Unit>>(kniBridge10(C.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMContextGetDiagnosticContext(C: LLVMContextRef?): COpaquePointer? {
-    return interpretCPointer<COpaque>(kniBridge10(C.rawValue))
+    return interpretCPointer<COpaque>(kniBridge11(C.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMContextSetYieldCallback(C: LLVMContextRef?, Callback: LLVMYieldCallback?, OpaqueHandle: CValuesRef<*>?): Unit {
     memScoped {
-        return kniBridge11(C.rawValue, Callback.rawValue, OpaqueHandle?.getPointer(memScope).rawValue)
+        return kniBridge12(C.rawValue, Callback.rawValue, OpaqueHandle?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMContextShouldDiscardValueNames(C: LLVMContextRef?): LLVMBool {
-    return kniBridge12(C.rawValue)
+    return kniBridge13(C.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMContextSetDiscardValueNames(C: LLVMContextRef?, Discard: LLVMBool): Unit {
-    return kniBridge13(C.rawValue, Discard)
+    return kniBridge14(C.rawValue, Discard)
 }
 
 @ExperimentalForeignApi
 fun LLVMContextSetOpaquePointers(C: LLVMContextRef?, OpaquePointers: LLVMBool): Unit {
-    return kniBridge14(C.rawValue, OpaquePointers)
+    return kniBridge15(C.rawValue, OpaquePointers)
 }
 
 @ExperimentalForeignApi
 fun LLVMContextDispose(C: LLVMContextRef?): Unit {
-    return kniBridge15(C.rawValue)
+    return kniBridge16(C.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetDiagInfoDescription(DI: LLVMDiagnosticInfoRef?): CPointer<ByteVar>? {
-    return interpretCPointer<ByteVar>(kniBridge16(DI.rawValue))
+    return interpretCPointer<ByteVar>(kniBridge17(DI.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetDiagInfoSeverity(DI: LLVMDiagnosticInfoRef?): LLVMDiagnosticSeverity {
-    return LLVMDiagnosticSeverity.byValue(kniBridge17(DI.rawValue))
+    return LLVMDiagnosticSeverity.byValue(kniBridge18(DI.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetMDKindIDInContext(C: LLVMContextRef?, Name: String?, SLen: Int): Int {
     memScoped {
-        return kniBridge18(C.rawValue, Name?.cstr?.getPointer(memScope).rawValue, SLen)
+        return kniBridge19(C.rawValue, Name?.cstr?.getPointer(memScope).rawValue, SLen)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetEnumAttributeKindForName(Name: String?, SLen: size_t): Int {
     memScoped {
-        return kniBridge19(Name?.cstr?.getPointer(memScope).rawValue, SLen)
+        return kniBridge20(Name?.cstr?.getPointer(memScope).rawValue, SLen)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetLastEnumAttributeKind(): Int {
-    return kniBridge20()
+    return kniBridge21()
 }
 
 @ExperimentalForeignApi
 fun LLVMCreateEnumAttribute(C: LLVMContextRef?, KindID: Int, Val: uint64_t): LLVMAttributeRef? {
-    return interpretCPointer<LLVMOpaqueAttributeRef>(kniBridge21(C.rawValue, KindID, Val))
+    return interpretCPointer<LLVMOpaqueAttributeRef>(kniBridge22(C.rawValue, KindID, Val))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetEnumAttributeKind(A: LLVMAttributeRef?): Int {
-    return kniBridge22(A.rawValue)
-}
-
-@ExperimentalForeignApi
-fun LLVMGetEnumAttributeValue(A: LLVMAttributeRef?): uint64_t {
     return kniBridge23(A.rawValue)
 }
 
 @ExperimentalForeignApi
+fun LLVMGetEnumAttributeValue(A: LLVMAttributeRef?): uint64_t {
+    return kniBridge24(A.rawValue)
+}
+
+@ExperimentalForeignApi
 fun LLVMCreateTypeAttribute(C: LLVMContextRef?, KindID: Int, type_ref: LLVMTypeRef?): LLVMAttributeRef? {
-    return interpretCPointer<LLVMOpaqueAttributeRef>(kniBridge24(C.rawValue, KindID, type_ref.rawValue))
+    return interpretCPointer<LLVMOpaqueAttributeRef>(kniBridge25(C.rawValue, KindID, type_ref.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetTypeAttributeValue(A: LLVMAttributeRef?): LLVMTypeRef? {
-    return interpretCPointer<LLVMOpaqueType>(kniBridge25(A.rawValue))
+    return interpretCPointer<LLVMOpaqueType>(kniBridge26(A.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMCreateStringAttribute(C: LLVMContextRef?, K: String?, KLength: Int, V: String?, VLength: Int): LLVMAttributeRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueAttributeRef>(kniBridge26(C.rawValue, K?.cstr?.getPointer(memScope).rawValue, KLength, V?.cstr?.getPointer(memScope).rawValue, VLength))
+        return interpretCPointer<LLVMOpaqueAttributeRef>(kniBridge27(C.rawValue, K?.cstr?.getPointer(memScope).rawValue, KLength, V?.cstr?.getPointer(memScope).rawValue, VLength))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetStringAttributeKind(A: LLVMAttributeRef?, Length: CValuesRef<IntVar>?): CPointer<ByteVar>? {
     memScoped {
-        return interpretCPointer<ByteVar>(kniBridge27(A.rawValue, Length?.getPointer(memScope).rawValue))
+        return interpretCPointer<ByteVar>(kniBridge28(A.rawValue, Length?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetStringAttributeValue(A: LLVMAttributeRef?, Length: CValuesRef<IntVar>?): CPointer<ByteVar>? {
     memScoped {
-        return interpretCPointer<ByteVar>(kniBridge28(A.rawValue, Length?.getPointer(memScope).rawValue))
+        return interpretCPointer<ByteVar>(kniBridge29(A.rawValue, Length?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMIsEnumAttribute(A: LLVMAttributeRef?): LLVMBool {
-    return kniBridge29(A.rawValue)
-}
-
-@ExperimentalForeignApi
-fun LLVMIsStringAttribute(A: LLVMAttributeRef?): LLVMBool {
     return kniBridge30(A.rawValue)
 }
 
 @ExperimentalForeignApi
-fun LLVMIsTypeAttribute(A: LLVMAttributeRef?): LLVMBool {
+fun LLVMIsStringAttribute(A: LLVMAttributeRef?): LLVMBool {
     return kniBridge31(A.rawValue)
+}
+
+@ExperimentalForeignApi
+fun LLVMIsTypeAttribute(A: LLVMAttributeRef?): LLVMBool {
+    return kniBridge32(A.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetTypeByName2(C: LLVMContextRef?, Name: String?): LLVMTypeRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueType>(kniBridge32(C.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueType>(kniBridge33(C.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMModuleCreateWithNameInContext(ModuleID: String?, C: LLVMContextRef?): LLVMModuleRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueModule>(kniBridge33(ModuleID?.cstr?.getPointer(memScope).rawValue, C.rawValue))
+        return interpretCPointer<LLVMOpaqueModule>(kniBridge34(ModuleID?.cstr?.getPointer(memScope).rawValue, C.rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMCloneModule(M: LLVMModuleRef?): LLVMModuleRef? {
-    return interpretCPointer<LLVMOpaqueModule>(kniBridge34(M.rawValue))
+    return interpretCPointer<LLVMOpaqueModule>(kniBridge35(M.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMDisposeModule(M: LLVMModuleRef?): Unit {
-    return kniBridge35(M.rawValue)
+    return kniBridge36(M.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetModuleIdentifier(M: LLVMModuleRef?, Len: CValuesRef<size_tVar>?): CPointer<ByteVar>? {
     memScoped {
-        return interpretCPointer<ByteVar>(kniBridge36(M.rawValue, Len?.getPointer(memScope).rawValue))
+        return interpretCPointer<ByteVar>(kniBridge37(M.rawValue, Len?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMSetModuleIdentifier(M: LLVMModuleRef?, Ident: String?, Len: size_t): Unit {
     memScoped {
-        return kniBridge37(M.rawValue, Ident?.cstr?.getPointer(memScope).rawValue, Len)
+        return kniBridge38(M.rawValue, Ident?.cstr?.getPointer(memScope).rawValue, Len)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetSourceFileName(M: LLVMModuleRef?, Len: CValuesRef<size_tVar>?): CPointer<ByteVar>? {
     memScoped {
-        return interpretCPointer<ByteVar>(kniBridge38(M.rawValue, Len?.getPointer(memScope).rawValue))
+        return interpretCPointer<ByteVar>(kniBridge39(M.rawValue, Len?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMSetSourceFileName(M: LLVMModuleRef?, Name: String?, Len: size_t): Unit {
     memScoped {
-        return kniBridge39(M.rawValue, Name?.cstr?.getPointer(memScope).rawValue, Len)
+        return kniBridge40(M.rawValue, Name?.cstr?.getPointer(memScope).rawValue, Len)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetDataLayoutStr(M: LLVMModuleRef?): CPointer<ByteVar>? {
-    return interpretCPointer<ByteVar>(kniBridge40(M.rawValue))
+    return interpretCPointer<ByteVar>(kniBridge41(M.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetDataLayout(M: LLVMModuleRef?): CPointer<ByteVar>? {
-    return interpretCPointer<ByteVar>(kniBridge41(M.rawValue))
+    return interpretCPointer<ByteVar>(kniBridge42(M.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMSetDataLayout(M: LLVMModuleRef?, DataLayoutStr: String?): Unit {
     memScoped {
-        return kniBridge42(M.rawValue, DataLayoutStr?.cstr?.getPointer(memScope).rawValue)
+        return kniBridge43(M.rawValue, DataLayoutStr?.cstr?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetTarget(M: LLVMModuleRef?): CPointer<ByteVar>? {
-    return interpretCPointer<ByteVar>(kniBridge43(M.rawValue))
+    return interpretCPointer<ByteVar>(kniBridge44(M.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMSetTarget(M: LLVMModuleRef?, Triple: String?): Unit {
     memScoped {
-        return kniBridge44(M.rawValue, Triple?.cstr?.getPointer(memScope).rawValue)
+        return kniBridge45(M.rawValue, Triple?.cstr?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMCopyModuleFlagsMetadata(M: LLVMModuleRef?, Len: CValuesRef<size_tVar>?): CPointer<LLVMModuleFlagEntry>? {
     memScoped {
-        return interpretCPointer<LLVMModuleFlagEntry>(kniBridge45(M.rawValue, Len?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMModuleFlagEntry>(kniBridge46(M.rawValue, Len?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMDisposeModuleFlagsMetadata(Entries: CValuesRef<LLVMModuleFlagEntry>?): Unit {
     memScoped {
-        return kniBridge46(Entries?.getPointer(memScope).rawValue)
+        return kniBridge47(Entries?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMModuleFlagEntriesGetFlagBehavior(Entries: CValuesRef<LLVMModuleFlagEntry>?, Index: Int): LLVMModuleFlagBehavior {
     memScoped {
-        return LLVMModuleFlagBehavior.byValue(kniBridge47(Entries?.getPointer(memScope).rawValue, Index))
+        return LLVMModuleFlagBehavior.byValue(kniBridge48(Entries?.getPointer(memScope).rawValue, Index))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMModuleFlagEntriesGetKey(Entries: CValuesRef<LLVMModuleFlagEntry>?, Index: Int, Len: CValuesRef<size_tVar>?): CPointer<ByteVar>? {
     memScoped {
-        return interpretCPointer<ByteVar>(kniBridge48(Entries?.getPointer(memScope).rawValue, Index, Len?.getPointer(memScope).rawValue))
+        return interpretCPointer<ByteVar>(kniBridge49(Entries?.getPointer(memScope).rawValue, Index, Len?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMModuleFlagEntriesGetMetadata(Entries: CValuesRef<LLVMModuleFlagEntry>?, Index: Int): LLVMMetadataRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueMetadata>(kniBridge49(Entries?.getPointer(memScope).rawValue, Index))
+        return interpretCPointer<LLVMOpaqueMetadata>(kniBridge50(Entries?.getPointer(memScope).rawValue, Index))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetModuleFlag(M: LLVMModuleRef?, Key: String?, KeyLen: size_t): LLVMMetadataRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueMetadata>(kniBridge50(M.rawValue, Key?.cstr?.getPointer(memScope).rawValue, KeyLen))
+        return interpretCPointer<LLVMOpaqueMetadata>(kniBridge51(M.rawValue, Key?.cstr?.getPointer(memScope).rawValue, KeyLen))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMAddModuleFlag(M: LLVMModuleRef?, Behavior: LLVMModuleFlagBehavior, Key: String?, KeyLen: size_t, Val: LLVMMetadataRef?): Unit {
     memScoped {
-        return kniBridge51(M.rawValue, Behavior.value, Key?.cstr?.getPointer(memScope).rawValue, KeyLen, Val.rawValue)
+        return kniBridge52(M.rawValue, Behavior.value, Key?.cstr?.getPointer(memScope).rawValue, KeyLen, Val.rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMDumpModule(M: LLVMModuleRef?): Unit {
-    return kniBridge52(M.rawValue)
+    return kniBridge53(M.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMPrintModuleToFile(M: LLVMModuleRef?, Filename: String?, ErrorMessage: CValuesRef<CPointerVar<ByteVar>>?): LLVMBool {
     memScoped {
-        return kniBridge53(M.rawValue, Filename?.cstr?.getPointer(memScope).rawValue, ErrorMessage?.getPointer(memScope).rawValue)
+        return kniBridge54(M.rawValue, Filename?.cstr?.getPointer(memScope).rawValue, ErrorMessage?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMPrintModuleToString(M: LLVMModuleRef?): CPointer<ByteVar>? {
-    return interpretCPointer<ByteVar>(kniBridge54(M.rawValue))
+    return interpretCPointer<ByteVar>(kniBridge55(M.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetModuleInlineAsm(M: LLVMModuleRef?, Len: CValuesRef<size_tVar>?): CPointer<ByteVar>? {
     memScoped {
-        return interpretCPointer<ByteVar>(kniBridge55(M.rawValue, Len?.getPointer(memScope).rawValue))
+        return interpretCPointer<ByteVar>(kniBridge56(M.rawValue, Len?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMSetModuleInlineAsm2(M: LLVMModuleRef?, Asm: String?, Len: size_t): Unit {
     memScoped {
-        return kniBridge56(M.rawValue, Asm?.cstr?.getPointer(memScope).rawValue, Len)
+        return kniBridge57(M.rawValue, Asm?.cstr?.getPointer(memScope).rawValue, Len)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMAppendModuleInlineAsm(M: LLVMModuleRef?, Asm: String?, Len: size_t): Unit {
     memScoped {
-        return kniBridge57(M.rawValue, Asm?.cstr?.getPointer(memScope).rawValue, Len)
+        return kniBridge58(M.rawValue, Asm?.cstr?.getPointer(memScope).rawValue, Len)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetInlineAsm(Ty: LLVMTypeRef?, AsmString: CValuesRef<ByteVar>?, AsmStringSize: size_t, Constraints: CValuesRef<ByteVar>?, ConstraintsSize: size_t, HasSideEffects: LLVMBool, IsAlignStack: LLVMBool, Dialect: LLVMInlineAsmDialect, CanThrow: LLVMBool): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge58(Ty.rawValue, AsmString?.getPointer(memScope).rawValue, AsmStringSize, Constraints?.getPointer(memScope).rawValue, ConstraintsSize, HasSideEffects, IsAlignStack, Dialect.value, CanThrow))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge59(Ty.rawValue, AsmString?.getPointer(memScope).rawValue, AsmStringSize, Constraints?.getPointer(memScope).rawValue, ConstraintsSize, HasSideEffects, IsAlignStack, Dialect.value, CanThrow))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetModuleContext(M: LLVMModuleRef?): LLVMContextRef? {
-    return interpretCPointer<LLVMOpaqueContext>(kniBridge59(M.rawValue))
+    return interpretCPointer<LLVMOpaqueContext>(kniBridge60(M.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetTypeByName(M: LLVMModuleRef?, Name: String?): LLVMTypeRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueType>(kniBridge60(M.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueType>(kniBridge61(M.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetFirstNamedMetadata(M: LLVMModuleRef?): LLVMNamedMDNodeRef? {
-    return interpretCPointer<LLVMOpaqueNamedMDNode>(kniBridge61(M.rawValue))
-}
-
-@ExperimentalForeignApi
-fun LLVMGetLastNamedMetadata(M: LLVMModuleRef?): LLVMNamedMDNodeRef? {
     return interpretCPointer<LLVMOpaqueNamedMDNode>(kniBridge62(M.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMGetNextNamedMetadata(NamedMDNode: LLVMNamedMDNodeRef?): LLVMNamedMDNodeRef? {
-    return interpretCPointer<LLVMOpaqueNamedMDNode>(kniBridge63(NamedMDNode.rawValue))
+fun LLVMGetLastNamedMetadata(M: LLVMModuleRef?): LLVMNamedMDNodeRef? {
+    return interpretCPointer<LLVMOpaqueNamedMDNode>(kniBridge63(M.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMGetPreviousNamedMetadata(NamedMDNode: LLVMNamedMDNodeRef?): LLVMNamedMDNodeRef? {
+fun LLVMGetNextNamedMetadata(NamedMDNode: LLVMNamedMDNodeRef?): LLVMNamedMDNodeRef? {
     return interpretCPointer<LLVMOpaqueNamedMDNode>(kniBridge64(NamedMDNode.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMGetNamedMetadata(M: LLVMModuleRef?, Name: String?, NameLen: size_t): LLVMNamedMDNodeRef? {
-    memScoped {
-        return interpretCPointer<LLVMOpaqueNamedMDNode>(kniBridge65(M.rawValue, Name?.cstr?.getPointer(memScope).rawValue, NameLen))
-    }
+fun LLVMGetPreviousNamedMetadata(NamedMDNode: LLVMNamedMDNodeRef?): LLVMNamedMDNodeRef? {
+    return interpretCPointer<LLVMOpaqueNamedMDNode>(kniBridge65(NamedMDNode.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMGetOrInsertNamedMetadata(M: LLVMModuleRef?, Name: String?, NameLen: size_t): LLVMNamedMDNodeRef? {
+fun LLVMGetNamedMetadata(M: LLVMModuleRef?, Name: String?, NameLen: size_t): LLVMNamedMDNodeRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueNamedMDNode>(kniBridge66(M.rawValue, Name?.cstr?.getPointer(memScope).rawValue, NameLen))
     }
 }
 
 @ExperimentalForeignApi
+fun LLVMGetOrInsertNamedMetadata(M: LLVMModuleRef?, Name: String?, NameLen: size_t): LLVMNamedMDNodeRef? {
+    memScoped {
+        return interpretCPointer<LLVMOpaqueNamedMDNode>(kniBridge67(M.rawValue, Name?.cstr?.getPointer(memScope).rawValue, NameLen))
+    }
+}
+
+@ExperimentalForeignApi
 fun LLVMGetNamedMetadataName(NamedMD: LLVMNamedMDNodeRef?, NameLen: CValuesRef<size_tVar>?): CPointer<ByteVar>? {
     memScoped {
-        return interpretCPointer<ByteVar>(kniBridge67(NamedMD.rawValue, NameLen?.getPointer(memScope).rawValue))
+        return interpretCPointer<ByteVar>(kniBridge68(NamedMD.rawValue, NameLen?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetNamedMetadataNumOperands(M: LLVMModuleRef?, Name: String?): Int {
     memScoped {
-        return kniBridge68(M.rawValue, Name?.cstr?.getPointer(memScope).rawValue)
+        return kniBridge69(M.rawValue, Name?.cstr?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetNamedMetadataOperands(M: LLVMModuleRef?, Name: String?, Dest: CValuesRef<LLVMValueRefVar>?): Unit {
     memScoped {
-        return kniBridge69(M.rawValue, Name?.cstr?.getPointer(memScope).rawValue, Dest?.getPointer(memScope).rawValue)
+        return kniBridge70(M.rawValue, Name?.cstr?.getPointer(memScope).rawValue, Dest?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMAddNamedMetadataOperand(M: LLVMModuleRef?, Name: String?, Val: LLVMValueRef?): Unit {
     memScoped {
-        return kniBridge70(M.rawValue, Name?.cstr?.getPointer(memScope).rawValue, Val.rawValue)
+        return kniBridge71(M.rawValue, Name?.cstr?.getPointer(memScope).rawValue, Val.rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetDebugLocDirectory(Val: LLVMValueRef?, Length: CValuesRef<IntVar>?): CPointer<ByteVar>? {
     memScoped {
-        return interpretCPointer<ByteVar>(kniBridge71(Val.rawValue, Length?.getPointer(memScope).rawValue))
+        return interpretCPointer<ByteVar>(kniBridge72(Val.rawValue, Length?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetDebugLocFilename(Val: LLVMValueRef?, Length: CValuesRef<IntVar>?): CPointer<ByteVar>? {
     memScoped {
-        return interpretCPointer<ByteVar>(kniBridge72(Val.rawValue, Length?.getPointer(memScope).rawValue))
+        return interpretCPointer<ByteVar>(kniBridge73(Val.rawValue, Length?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetDebugLocLine(Val: LLVMValueRef?): Int {
-    return kniBridge73(Val.rawValue)
+    return kniBridge74(Val.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetDebugLocColumn(Val: LLVMValueRef?): Int {
-    return kniBridge74(Val.rawValue)
+    return kniBridge75(Val.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMAddFunction(M: LLVMModuleRef?, Name: String?, FunctionTy: LLVMTypeRef?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge75(M.rawValue, Name?.cstr?.getPointer(memScope).rawValue, FunctionTy.rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge76(M.rawValue, Name?.cstr?.getPointer(memScope).rawValue, FunctionTy.rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetNamedFunction(M: LLVMModuleRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge76(M.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge77(M.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetFirstFunction(M: LLVMModuleRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge77(M.rawValue))
-}
-
-@ExperimentalForeignApi
-fun LLVMGetLastFunction(M: LLVMModuleRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge78(M.rawValue))
 }
 
 @ExperimentalForeignApi
+fun LLVMGetLastFunction(M: LLVMModuleRef?): LLVMValueRef? {
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge79(M.rawValue))
+}
+
+@ExperimentalForeignApi
 fun LLVMGetNextFunction(Fn: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge79(Fn.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge80(Fn.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetPreviousFunction(Fn: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge80(Fn.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge81(Fn.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMSetModuleInlineAsm(M: LLVMModuleRef?, Asm: String?): Unit {
     memScoped {
-        return kniBridge81(M.rawValue, Asm?.cstr?.getPointer(memScope).rawValue)
+        return kniBridge82(M.rawValue, Asm?.cstr?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetTypeKind(Ty: LLVMTypeRef?): LLVMTypeKind {
-    return LLVMTypeKind.byValue(kniBridge82(Ty.rawValue))
+    return LLVMTypeKind.byValue(kniBridge83(Ty.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMTypeIsSized(Ty: LLVMTypeRef?): LLVMBool {
-    return kniBridge83(Ty.rawValue)
+    return kniBridge84(Ty.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetTypeContext(Ty: LLVMTypeRef?): LLVMContextRef? {
-    return interpretCPointer<LLVMOpaqueContext>(kniBridge84(Ty.rawValue))
+    return interpretCPointer<LLVMOpaqueContext>(kniBridge85(Ty.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMDumpType(Val: LLVMTypeRef?): Unit {
-    return kniBridge85(Val.rawValue)
+    return kniBridge86(Val.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMPrintTypeToString(Val: LLVMTypeRef?): CPointer<ByteVar>? {
-    return interpretCPointer<ByteVar>(kniBridge86(Val.rawValue))
+    return interpretCPointer<ByteVar>(kniBridge87(Val.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMInt1TypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
-    return interpretCPointer<LLVMOpaqueType>(kniBridge87(C.rawValue))
-}
-
-@ExperimentalForeignApi
-fun LLVMInt8TypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
     return interpretCPointer<LLVMOpaqueType>(kniBridge88(C.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMInt16TypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
+fun LLVMInt8TypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
     return interpretCPointer<LLVMOpaqueType>(kniBridge89(C.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMInt32TypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
+fun LLVMInt16TypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
     return interpretCPointer<LLVMOpaqueType>(kniBridge90(C.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMInt64TypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
+fun LLVMInt32TypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
     return interpretCPointer<LLVMOpaqueType>(kniBridge91(C.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMInt128TypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
+fun LLVMInt64TypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
     return interpretCPointer<LLVMOpaqueType>(kniBridge92(C.rawValue))
 }
 
 @ExperimentalForeignApi
+fun LLVMInt128TypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
+    return interpretCPointer<LLVMOpaqueType>(kniBridge93(C.rawValue))
+}
+
+@ExperimentalForeignApi
 fun LLVMIntTypeInContext(C: LLVMContextRef?, NumBits: Int): LLVMTypeRef? {
-    return interpretCPointer<LLVMOpaqueType>(kniBridge93(C.rawValue, NumBits))
+    return interpretCPointer<LLVMOpaqueType>(kniBridge94(C.rawValue, NumBits))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetIntTypeWidth(IntegerTy: LLVMTypeRef?): Int {
-    return kniBridge94(IntegerTy.rawValue)
+    return kniBridge95(IntegerTy.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMHalfTypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
-    return interpretCPointer<LLVMOpaqueType>(kniBridge95(C.rawValue))
-}
-
-@ExperimentalForeignApi
-fun LLVMBFloatTypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
     return interpretCPointer<LLVMOpaqueType>(kniBridge96(C.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMFloatTypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
+fun LLVMBFloatTypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
     return interpretCPointer<LLVMOpaqueType>(kniBridge97(C.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMDoubleTypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
+fun LLVMFloatTypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
     return interpretCPointer<LLVMOpaqueType>(kniBridge98(C.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMX86FP80TypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
+fun LLVMDoubleTypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
     return interpretCPointer<LLVMOpaqueType>(kniBridge99(C.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMFP128TypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
+fun LLVMX86FP80TypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
     return interpretCPointer<LLVMOpaqueType>(kniBridge100(C.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMPPCFP128TypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
+fun LLVMFP128TypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
     return interpretCPointer<LLVMOpaqueType>(kniBridge101(C.rawValue))
 }
 
 @ExperimentalForeignApi
+fun LLVMPPCFP128TypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
+    return interpretCPointer<LLVMOpaqueType>(kniBridge102(C.rawValue))
+}
+
+@ExperimentalForeignApi
 fun LLVMBFloatType(): LLVMTypeRef? {
-    return interpretCPointer<LLVMOpaqueType>(kniBridge102())
+    return interpretCPointer<LLVMOpaqueType>(kniBridge103())
 }
 
 @ExperimentalForeignApi
 fun LLVMFunctionType(ReturnType: LLVMTypeRef?, ParamTypes: CValuesRef<LLVMTypeRefVar>?, ParamCount: Int, IsVarArg: LLVMBool): LLVMTypeRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueType>(kniBridge103(ReturnType.rawValue, ParamTypes?.getPointer(memScope).rawValue, ParamCount, IsVarArg))
+        return interpretCPointer<LLVMOpaqueType>(kniBridge104(ReturnType.rawValue, ParamTypes?.getPointer(memScope).rawValue, ParamCount, IsVarArg))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMIsFunctionVarArg(FunctionTy: LLVMTypeRef?): LLVMBool {
-    return kniBridge104(FunctionTy.rawValue)
+    return kniBridge105(FunctionTy.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetReturnType(FunctionTy: LLVMTypeRef?): LLVMTypeRef? {
-    return interpretCPointer<LLVMOpaqueType>(kniBridge105(FunctionTy.rawValue))
+    return interpretCPointer<LLVMOpaqueType>(kniBridge106(FunctionTy.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMCountParamTypes(FunctionTy: LLVMTypeRef?): Int {
-    return kniBridge106(FunctionTy.rawValue)
+    return kniBridge107(FunctionTy.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetParamTypes(FunctionTy: LLVMTypeRef?, Dest: CValuesRef<LLVMTypeRefVar>?): Unit {
     memScoped {
-        return kniBridge107(FunctionTy.rawValue, Dest?.getPointer(memScope).rawValue)
+        return kniBridge108(FunctionTy.rawValue, Dest?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMStructTypeInContext(C: LLVMContextRef?, ElementTypes: CValuesRef<LLVMTypeRefVar>?, ElementCount: Int, Packed: LLVMBool): LLVMTypeRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueType>(kniBridge108(C.rawValue, ElementTypes?.getPointer(memScope).rawValue, ElementCount, Packed))
+        return interpretCPointer<LLVMOpaqueType>(kniBridge109(C.rawValue, ElementTypes?.getPointer(memScope).rawValue, ElementCount, Packed))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMStructCreateNamed(C: LLVMContextRef?, Name: String?): LLVMTypeRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueType>(kniBridge109(C.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueType>(kniBridge110(C.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetStructName(Ty: LLVMTypeRef?): CPointer<ByteVar>? {
-    return interpretCPointer<ByteVar>(kniBridge110(Ty.rawValue))
+    return interpretCPointer<ByteVar>(kniBridge111(Ty.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMStructSetBody(StructTy: LLVMTypeRef?, ElementTypes: CValuesRef<LLVMTypeRefVar>?, ElementCount: Int, Packed: LLVMBool): Unit {
     memScoped {
-        return kniBridge111(StructTy.rawValue, ElementTypes?.getPointer(memScope).rawValue, ElementCount, Packed)
+        return kniBridge112(StructTy.rawValue, ElementTypes?.getPointer(memScope).rawValue, ElementCount, Packed)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMCountStructElementTypes(StructTy: LLVMTypeRef?): Int {
-    return kniBridge112(StructTy.rawValue)
+    return kniBridge113(StructTy.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetStructElementTypes(StructTy: LLVMTypeRef?, Dest: CValuesRef<LLVMTypeRefVar>?): Unit {
     memScoped {
-        return kniBridge113(StructTy.rawValue, Dest?.getPointer(memScope).rawValue)
+        return kniBridge114(StructTy.rawValue, Dest?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMStructGetTypeAtIndex(StructTy: LLVMTypeRef?, i: Int): LLVMTypeRef? {
-    return interpretCPointer<LLVMOpaqueType>(kniBridge114(StructTy.rawValue, i))
+    return interpretCPointer<LLVMOpaqueType>(kniBridge115(StructTy.rawValue, i))
 }
 
 @ExperimentalForeignApi
 fun LLVMIsPackedStruct(StructTy: LLVMTypeRef?): LLVMBool {
-    return kniBridge115(StructTy.rawValue)
-}
-
-@ExperimentalForeignApi
-fun LLVMIsOpaqueStruct(StructTy: LLVMTypeRef?): LLVMBool {
     return kniBridge116(StructTy.rawValue)
 }
 
 @ExperimentalForeignApi
-fun LLVMIsLiteralStruct(StructTy: LLVMTypeRef?): LLVMBool {
+fun LLVMIsOpaqueStruct(StructTy: LLVMTypeRef?): LLVMBool {
     return kniBridge117(StructTy.rawValue)
+}
+
+@ExperimentalForeignApi
+fun LLVMIsLiteralStruct(StructTy: LLVMTypeRef?): LLVMBool {
+    return kniBridge118(StructTy.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetSubtypes(Tp: LLVMTypeRef?, Arr: CValuesRef<LLVMTypeRefVar>?): Unit {
     memScoped {
-        return kniBridge118(Tp.rawValue, Arr?.getPointer(memScope).rawValue)
+        return kniBridge119(Tp.rawValue, Arr?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetNumContainedTypes(Tp: LLVMTypeRef?): Int {
-    return kniBridge119(Tp.rawValue)
+    return kniBridge120(Tp.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMArrayType(ElementType: LLVMTypeRef?, ElementCount: Int): LLVMTypeRef? {
-    return interpretCPointer<LLVMOpaqueType>(kniBridge120(ElementType.rawValue, ElementCount))
+    return interpretCPointer<LLVMOpaqueType>(kniBridge121(ElementType.rawValue, ElementCount))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetArrayLength(ArrayTy: LLVMTypeRef?): Int {
-    return kniBridge121(ArrayTy.rawValue)
+    return kniBridge122(ArrayTy.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMPointerType(ElementType: LLVMTypeRef?, AddressSpace: Int): LLVMTypeRef? {
-    return interpretCPointer<LLVMOpaqueType>(kniBridge122(ElementType.rawValue, AddressSpace))
+    return interpretCPointer<LLVMOpaqueType>(kniBridge123(ElementType.rawValue, AddressSpace))
 }
 
 @ExperimentalForeignApi
 fun LLVMPointerTypeIsOpaque(Ty: LLVMTypeRef?): LLVMBool {
-    return kniBridge123(Ty.rawValue)
+    return kniBridge124(Ty.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMPointerTypeInContext(C: LLVMContextRef?, AddressSpace: Int): LLVMTypeRef? {
-    return interpretCPointer<LLVMOpaqueType>(kniBridge124(C.rawValue, AddressSpace))
+    return interpretCPointer<LLVMOpaqueType>(kniBridge125(C.rawValue, AddressSpace))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetPointerAddressSpace(PointerTy: LLVMTypeRef?): Int {
-    return kniBridge125(PointerTy.rawValue)
+    return kniBridge126(PointerTy.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMVectorType(ElementType: LLVMTypeRef?, ElementCount: Int): LLVMTypeRef? {
-    return interpretCPointer<LLVMOpaqueType>(kniBridge126(ElementType.rawValue, ElementCount))
-}
-
-@ExperimentalForeignApi
-fun LLVMScalableVectorType(ElementType: LLVMTypeRef?, ElementCount: Int): LLVMTypeRef? {
     return interpretCPointer<LLVMOpaqueType>(kniBridge127(ElementType.rawValue, ElementCount))
 }
 
 @ExperimentalForeignApi
+fun LLVMScalableVectorType(ElementType: LLVMTypeRef?, ElementCount: Int): LLVMTypeRef? {
+    return interpretCPointer<LLVMOpaqueType>(kniBridge128(ElementType.rawValue, ElementCount))
+}
+
+@ExperimentalForeignApi
 fun LLVMGetVectorSize(VectorTy: LLVMTypeRef?): Int {
-    return kniBridge128(VectorTy.rawValue)
+    return kniBridge129(VectorTy.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMVoidTypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
-    return interpretCPointer<LLVMOpaqueType>(kniBridge129(C.rawValue))
-}
-
-@ExperimentalForeignApi
-fun LLVMLabelTypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
     return interpretCPointer<LLVMOpaqueType>(kniBridge130(C.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMX86MMXTypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
+fun LLVMLabelTypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
     return interpretCPointer<LLVMOpaqueType>(kniBridge131(C.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMX86AMXTypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
+fun LLVMX86MMXTypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
     return interpretCPointer<LLVMOpaqueType>(kniBridge132(C.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMTokenTypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
+fun LLVMX86AMXTypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
     return interpretCPointer<LLVMOpaqueType>(kniBridge133(C.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMMetadataTypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
+fun LLVMTokenTypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
     return interpretCPointer<LLVMOpaqueType>(kniBridge134(C.rawValue))
 }
 
 @ExperimentalForeignApi
+fun LLVMMetadataTypeInContext(C: LLVMContextRef?): LLVMTypeRef? {
+    return interpretCPointer<LLVMOpaqueType>(kniBridge135(C.rawValue))
+}
+
+@ExperimentalForeignApi
 fun LLVMX86AMXType(): LLVMTypeRef? {
-    return interpretCPointer<LLVMOpaqueType>(kniBridge135())
+    return interpretCPointer<LLVMOpaqueType>(kniBridge136())
+}
+
+@ExperimentalForeignApi
+fun LLVMTargetExtTypeInContext(C: LLVMContextRef?, Name: String?, TypeParams: CValuesRef<LLVMTypeRefVar>?, TypeParamCount: Int, IntParams: CValuesRef<IntVar>?, IntParamCount: Int): LLVMTypeRef? {
+    memScoped {
+        return interpretCPointer<LLVMOpaqueType>(kniBridge137(C.rawValue, Name?.cstr?.getPointer(memScope).rawValue, TypeParams?.getPointer(memScope).rawValue, TypeParamCount, IntParams?.getPointer(memScope).rawValue, IntParamCount))
+    }
 }
 
 @ExperimentalForeignApi
 fun LLVMTypeOf(Val: LLVMValueRef?): LLVMTypeRef? {
-    return interpretCPointer<LLVMOpaqueType>(kniBridge136(Val.rawValue))
+    return interpretCPointer<LLVMOpaqueType>(kniBridge138(Val.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetValueKind(Val: LLVMValueRef?): LLVMValueKind {
-    return LLVMValueKind.byValue(kniBridge137(Val.rawValue))
+    return LLVMValueKind.byValue(kniBridge139(Val.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetValueName2(Val: LLVMValueRef?, Length: CValuesRef<size_tVar>?): CPointer<ByteVar>? {
     memScoped {
-        return interpretCPointer<ByteVar>(kniBridge138(Val.rawValue, Length?.getPointer(memScope).rawValue))
+        return interpretCPointer<ByteVar>(kniBridge140(Val.rawValue, Length?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMSetValueName2(Val: LLVMValueRef?, Name: String?, NameLen: size_t): Unit {
     memScoped {
-        return kniBridge139(Val.rawValue, Name?.cstr?.getPointer(memScope).rawValue, NameLen)
+        return kniBridge141(Val.rawValue, Name?.cstr?.getPointer(memScope).rawValue, NameLen)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMDumpValue(Val: LLVMValueRef?): Unit {
-    return kniBridge140(Val.rawValue)
+    return kniBridge142(Val.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMPrintValueToString(Val: LLVMValueRef?): CPointer<ByteVar>? {
-    return interpretCPointer<ByteVar>(kniBridge141(Val.rawValue))
+    return interpretCPointer<ByteVar>(kniBridge143(Val.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMReplaceAllUsesWith(OldVal: LLVMValueRef?, NewVal: LLVMValueRef?): Unit {
-    return kniBridge142(OldVal.rawValue, NewVal.rawValue)
+    return kniBridge144(OldVal.rawValue, NewVal.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMIsConstant(Val: LLVMValueRef?): LLVMBool {
-    return kniBridge143(Val.rawValue)
-}
-
-@ExperimentalForeignApi
-fun LLVMIsUndef(Val: LLVMValueRef?): LLVMBool {
-    return kniBridge144(Val.rawValue)
-}
-
-@ExperimentalForeignApi
-fun LLVMIsPoison(Val: LLVMValueRef?): LLVMBool {
     return kniBridge145(Val.rawValue)
 }
 
 @ExperimentalForeignApi
+fun LLVMIsUndef(Val: LLVMValueRef?): LLVMBool {
+    return kniBridge146(Val.rawValue)
+}
+
+@ExperimentalForeignApi
+fun LLVMIsPoison(Val: LLVMValueRef?): LLVMBool {
+    return kniBridge147(Val.rawValue)
+}
+
+@ExperimentalForeignApi
 fun LLVMIsAArgument(Val: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge146(Val.rawValue))
-}
-
-@ExperimentalForeignApi
-fun LLVMIsABasicBlock(Val: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge147(Val.rawValue))
-}
-
-@ExperimentalForeignApi
-fun LLVMIsAInlineAsm(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge148(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAUser(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsABasicBlock(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge149(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAConstant(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAInlineAsm(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge150(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsABlockAddress(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAUser(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge151(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAConstantAggregateZero(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAConstant(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge152(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAConstantArray(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsABlockAddress(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge153(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAConstantDataSequential(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAConstantAggregateZero(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge154(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAConstantDataArray(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAConstantArray(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge155(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAConstantDataVector(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAConstantDataSequential(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge156(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAConstantExpr(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAConstantDataArray(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge157(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAConstantFP(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAConstantDataVector(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge158(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAConstantInt(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAConstantExpr(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge159(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAConstantPointerNull(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAConstantFP(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge160(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAConstantStruct(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAConstantInt(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge161(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAConstantTokenNone(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAConstantPointerNull(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge162(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAConstantVector(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAConstantStruct(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge163(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAGlobalValue(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAConstantTokenNone(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge164(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAGlobalAlias(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAConstantVector(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge165(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAGlobalObject(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAGlobalValue(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge166(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAFunction(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAGlobalAlias(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge167(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAGlobalVariable(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAGlobalObject(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge168(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAGlobalIFunc(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAFunction(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge169(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAUndefValue(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAGlobalVariable(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge170(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAPoisonValue(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAGlobalIFunc(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge171(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAInstruction(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAUndefValue(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge172(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAUnaryOperator(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAPoisonValue(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge173(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsABinaryOperator(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAInstruction(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge174(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsACallInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAUnaryOperator(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge175(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAIntrinsicInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsABinaryOperator(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge176(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsADbgInfoIntrinsic(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsACallInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge177(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsADbgVariableIntrinsic(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAIntrinsicInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge178(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsADbgDeclareInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsADbgInfoIntrinsic(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge179(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsADbgLabelInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsADbgVariableIntrinsic(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge180(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAMemIntrinsic(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsADbgDeclareInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge181(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAMemCpyInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsADbgLabelInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge182(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAMemMoveInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAMemIntrinsic(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge183(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAMemSetInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAMemCpyInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge184(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsACmpInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAMemMoveInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge185(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAFCmpInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAMemSetInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge186(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAICmpInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsACmpInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge187(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAExtractElementInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAFCmpInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge188(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAGetElementPtrInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAICmpInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge189(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAInsertElementInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAExtractElementInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge190(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAInsertValueInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAGetElementPtrInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge191(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsALandingPadInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAInsertElementInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge192(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAPHINode(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAInsertValueInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge193(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsASelectInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsALandingPadInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge194(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAShuffleVectorInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAPHINode(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge195(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAStoreInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsASelectInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge196(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsABranchInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAShuffleVectorInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge197(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAIndirectBrInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAStoreInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge198(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAInvokeInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsABranchInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge199(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAReturnInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAIndirectBrInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge200(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsASwitchInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAInvokeInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge201(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAUnreachableInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAReturnInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge202(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAResumeInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsASwitchInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge203(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsACleanupReturnInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAUnreachableInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge204(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsACatchReturnInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAResumeInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge205(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsACatchSwitchInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsACleanupReturnInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge206(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsACallBrInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsACatchReturnInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge207(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAFuncletPadInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsACatchSwitchInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge208(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsACatchPadInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsACallBrInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge209(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsACleanupPadInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAFuncletPadInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge210(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAUnaryInstruction(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsACatchPadInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge211(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAAllocaInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsACleanupPadInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge212(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsACastInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAUnaryInstruction(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge213(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAAddrSpaceCastInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAAllocaInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge214(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsABitCastInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsACastInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge215(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAFPExtInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAAddrSpaceCastInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge216(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAFPToSIInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsABitCastInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge217(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAFPToUIInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAFPExtInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge218(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAFPTruncInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAFPToSIInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge219(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAIntToPtrInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAFPToUIInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge220(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAPtrToIntInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAFPTruncInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge221(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsASExtInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAIntToPtrInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge222(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsASIToFPInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAPtrToIntInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge223(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsATruncInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsASExtInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge224(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAUIToFPInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsASIToFPInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge225(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAZExtInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsATruncInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge226(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAExtractValueInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAUIToFPInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge227(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsALoadInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAZExtInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge228(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAVAArgInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAExtractValueInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge229(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAFreezeInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsALoadInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge230(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAAtomicCmpXchgInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAVAArgInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge231(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAAtomicRMWInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAFreezeInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge232(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAFenceInst(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAAtomicCmpXchgInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge233(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAMDNode(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAAtomicRMWInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge234(Val.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsAMDString(Val: LLVMValueRef?): LLVMValueRef? {
+fun LLVMIsAFenceInst(Val: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge235(Val.rawValue))
 }
 
 @ExperimentalForeignApi
+fun LLVMIsAMDNode(Val: LLVMValueRef?): LLVMValueRef? {
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge236(Val.rawValue))
+}
+
+@ExperimentalForeignApi
+fun LLVMIsAMDString(Val: LLVMValueRef?): LLVMValueRef? {
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge237(Val.rawValue))
+}
+
+@ExperimentalForeignApi
 fun LLVMGetValueName(Val: LLVMValueRef?): CPointer<ByteVar>? {
-    return interpretCPointer<ByteVar>(kniBridge236(Val.rawValue))
+    return interpretCPointer<ByteVar>(kniBridge238(Val.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMSetValueName(Val: LLVMValueRef?, Name: String?): Unit {
     memScoped {
-        return kniBridge237(Val.rawValue, Name?.cstr?.getPointer(memScope).rawValue)
+        return kniBridge239(Val.rawValue, Name?.cstr?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetFirstUse(Val: LLVMValueRef?): LLVMUseRef? {
-    return interpretCPointer<LLVMOpaqueUse>(kniBridge238(Val.rawValue))
+    return interpretCPointer<LLVMOpaqueUse>(kniBridge240(Val.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetNextUse(U: LLVMUseRef?): LLVMUseRef? {
-    return interpretCPointer<LLVMOpaqueUse>(kniBridge239(U.rawValue))
+    return interpretCPointer<LLVMOpaqueUse>(kniBridge241(U.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetUser(U: LLVMUseRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge240(U.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge242(U.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetUsedValue(U: LLVMUseRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge241(U.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge243(U.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetOperand(Val: LLVMValueRef?, Index: Int): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge242(Val.rawValue, Index))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge244(Val.rawValue, Index))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetOperandUse(Val: LLVMValueRef?, Index: Int): LLVMUseRef? {
-    return interpretCPointer<LLVMOpaqueUse>(kniBridge243(Val.rawValue, Index))
+    return interpretCPointer<LLVMOpaqueUse>(kniBridge245(Val.rawValue, Index))
 }
 
 @ExperimentalForeignApi
 fun LLVMSetOperand(User: LLVMValueRef?, Index: Int, Val: LLVMValueRef?): Unit {
-    return kniBridge244(User.rawValue, Index, Val.rawValue)
+    return kniBridge246(User.rawValue, Index, Val.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetNumOperands(Val: LLVMValueRef?): Int {
-    return kniBridge245(Val.rawValue)
+    return kniBridge247(Val.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMConstNull(Ty: LLVMTypeRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge246(Ty.rawValue))
-}
-
-@ExperimentalForeignApi
-fun LLVMConstAllOnes(Ty: LLVMTypeRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge247(Ty.rawValue))
-}
-
-@ExperimentalForeignApi
-fun LLVMGetUndef(Ty: LLVMTypeRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge248(Ty.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMGetPoison(Ty: LLVMTypeRef?): LLVMValueRef? {
+fun LLVMConstAllOnes(Ty: LLVMTypeRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge249(Ty.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMIsNull(Val: LLVMValueRef?): LLVMBool {
-    return kniBridge250(Val.rawValue)
+fun LLVMGetUndef(Ty: LLVMTypeRef?): LLVMValueRef? {
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge250(Ty.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstPointerNull(Ty: LLVMTypeRef?): LLVMValueRef? {
+fun LLVMGetPoison(Ty: LLVMTypeRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge251(Ty.rawValue))
 }
 
 @ExperimentalForeignApi
+fun LLVMIsNull(Val: LLVMValueRef?): LLVMBool {
+    return kniBridge252(Val.rawValue)
+}
+
+@ExperimentalForeignApi
+fun LLVMConstPointerNull(Ty: LLVMTypeRef?): LLVMValueRef? {
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge253(Ty.rawValue))
+}
+
+@ExperimentalForeignApi
 fun LLVMConstInt(IntTy: LLVMTypeRef?, N: Long, SignExtend: LLVMBool): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge252(IntTy.rawValue, N, SignExtend))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge254(IntTy.rawValue, N, SignExtend))
 }
 
 @ExperimentalForeignApi
 fun LLVMConstIntOfArbitraryPrecision(IntTy: LLVMTypeRef?, NumWords: Int, Words: CValuesRef<uint64_tVar>?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge253(IntTy.rawValue, NumWords, Words?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge255(IntTy.rawValue, NumWords, Words?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMConstIntOfString(IntTy: LLVMTypeRef?, Text: String?, Radix: uint8_t): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge254(IntTy.rawValue, Text?.cstr?.getPointer(memScope).rawValue, Radix))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge256(IntTy.rawValue, Text?.cstr?.getPointer(memScope).rawValue, Radix))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMConstIntOfStringAndSize(IntTy: LLVMTypeRef?, Text: String?, SLen: Int, Radix: uint8_t): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge255(IntTy.rawValue, Text?.cstr?.getPointer(memScope).rawValue, SLen, Radix))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge257(IntTy.rawValue, Text?.cstr?.getPointer(memScope).rawValue, SLen, Radix))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMConstReal(RealTy: LLVMTypeRef?, N: Double): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge256(RealTy.rawValue, N))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge258(RealTy.rawValue, N))
 }
 
 @ExperimentalForeignApi
 fun LLVMConstRealOfString(RealTy: LLVMTypeRef?, Text: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge257(RealTy.rawValue, Text?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge259(RealTy.rawValue, Text?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMConstRealOfStringAndSize(RealTy: LLVMTypeRef?, Text: String?, SLen: Int): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge258(RealTy.rawValue, Text?.cstr?.getPointer(memScope).rawValue, SLen))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge260(RealTy.rawValue, Text?.cstr?.getPointer(memScope).rawValue, SLen))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMConstIntGetZExtValue(ConstantVal: LLVMValueRef?): Long {
-    return kniBridge259(ConstantVal.rawValue)
+    return kniBridge261(ConstantVal.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMConstIntGetSExtValue(ConstantVal: LLVMValueRef?): Long {
-    return kniBridge260(ConstantVal.rawValue)
+    return kniBridge262(ConstantVal.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMConstRealGetDouble(ConstantVal: LLVMValueRef?, losesInfo: CValuesRef<LLVMBoolVar>?): Double {
     memScoped {
-        return kniBridge261(ConstantVal.rawValue, losesInfo?.getPointer(memScope).rawValue)
+        return kniBridge263(ConstantVal.rawValue, losesInfo?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMConstStringInContext(C: LLVMContextRef?, Str: String?, Length: Int, DontNullTerminate: LLVMBool): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge262(C.rawValue, Str?.cstr?.getPointer(memScope).rawValue, Length, DontNullTerminate))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge264(C.rawValue, Str?.cstr?.getPointer(memScope).rawValue, Length, DontNullTerminate))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMIsConstantString(c: LLVMValueRef?): LLVMBool {
-    return kniBridge263(c.rawValue)
+    return kniBridge265(c.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetAsString(c: LLVMValueRef?, Length: CValuesRef<size_tVar>?): CPointer<ByteVar>? {
     memScoped {
-        return interpretCPointer<ByteVar>(kniBridge264(c.rawValue, Length?.getPointer(memScope).rawValue))
+        return interpretCPointer<ByteVar>(kniBridge266(c.rawValue, Length?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMConstStructInContext(C: LLVMContextRef?, ConstantVals: CValuesRef<LLVMValueRefVar>?, Count: Int, Packed: LLVMBool): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge265(C.rawValue, ConstantVals?.getPointer(memScope).rawValue, Count, Packed))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge267(C.rawValue, ConstantVals?.getPointer(memScope).rawValue, Count, Packed))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMConstArray(ElementTy: LLVMTypeRef?, ConstantVals: CValuesRef<LLVMValueRefVar>?, Length: Int): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge266(ElementTy.rawValue, ConstantVals?.getPointer(memScope).rawValue, Length))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge268(ElementTy.rawValue, ConstantVals?.getPointer(memScope).rawValue, Length))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMConstNamedStruct(StructTy: LLVMTypeRef?, ConstantVals: CValuesRef<LLVMValueRefVar>?, Count: Int): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge267(StructTy.rawValue, ConstantVals?.getPointer(memScope).rawValue, Count))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge269(StructTy.rawValue, ConstantVals?.getPointer(memScope).rawValue, Count))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetAggregateElement(C: LLVMValueRef?, Idx: Int): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge268(C.rawValue, Idx))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge270(C.rawValue, Idx))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetElementAsConstant(C: LLVMValueRef?, idx: Int): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge269(C.rawValue, idx))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge271(C.rawValue, idx))
 }
 
 @ExperimentalForeignApi
 fun LLVMConstVector(ScalarConstantVals: CValuesRef<LLVMValueRefVar>?, Size: Int): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge270(ScalarConstantVals?.getPointer(memScope).rawValue, Size))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge272(ScalarConstantVals?.getPointer(memScope).rawValue, Size))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetConstOpcode(ConstantVal: LLVMValueRef?): LLVMOpcode {
-    return LLVMOpcode.byValue(kniBridge271(ConstantVal.rawValue))
+    return LLVMOpcode.byValue(kniBridge273(ConstantVal.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMAlignOf(Ty: LLVMTypeRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge272(Ty.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge274(Ty.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMSizeOf(Ty: LLVMTypeRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge273(Ty.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge275(Ty.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMConstNeg(ConstantVal: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge274(ConstantVal.rawValue))
-}
-
-@ExperimentalForeignApi
-fun LLVMConstNSWNeg(ConstantVal: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge275(ConstantVal.rawValue))
-}
-
-@ExperimentalForeignApi
-fun LLVMConstNUWNeg(ConstantVal: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge276(ConstantVal.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstNot(ConstantVal: LLVMValueRef?): LLVMValueRef? {
+fun LLVMConstNSWNeg(ConstantVal: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge277(ConstantVal.rawValue))
 }
 
 @ExperimentalForeignApi
+fun LLVMConstNUWNeg(ConstantVal: LLVMValueRef?): LLVMValueRef? {
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge278(ConstantVal.rawValue))
+}
+
+@ExperimentalForeignApi
+fun LLVMConstNot(ConstantVal: LLVMValueRef?): LLVMValueRef? {
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge279(ConstantVal.rawValue))
+}
+
+@ExperimentalForeignApi
 fun LLVMConstAdd(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge278(LHSConstant.rawValue, RHSConstant.rawValue))
-}
-
-@ExperimentalForeignApi
-fun LLVMConstNSWAdd(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge279(LHSConstant.rawValue, RHSConstant.rawValue))
-}
-
-@ExperimentalForeignApi
-fun LLVMConstNUWAdd(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge280(LHSConstant.rawValue, RHSConstant.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstSub(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
+fun LLVMConstNSWAdd(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge281(LHSConstant.rawValue, RHSConstant.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstNSWSub(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
+fun LLVMConstNUWAdd(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge282(LHSConstant.rawValue, RHSConstant.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstNUWSub(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
+fun LLVMConstSub(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge283(LHSConstant.rawValue, RHSConstant.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstMul(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
+fun LLVMConstNSWSub(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge284(LHSConstant.rawValue, RHSConstant.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstNSWMul(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
+fun LLVMConstNUWSub(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge285(LHSConstant.rawValue, RHSConstant.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstNUWMul(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
+fun LLVMConstMul(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge286(LHSConstant.rawValue, RHSConstant.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstAnd(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
+fun LLVMConstNSWMul(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge287(LHSConstant.rawValue, RHSConstant.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstOr(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
+fun LLVMConstNUWMul(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge288(LHSConstant.rawValue, RHSConstant.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstXor(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
+fun LLVMConstAnd(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge289(LHSConstant.rawValue, RHSConstant.rawValue))
 }
 
 @ExperimentalForeignApi
+fun LLVMConstOr(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge290(LHSConstant.rawValue, RHSConstant.rawValue))
+}
+
+@ExperimentalForeignApi
+fun LLVMConstXor(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge291(LHSConstant.rawValue, RHSConstant.rawValue))
+}
+
+@ExperimentalForeignApi
 fun LLVMConstICmp(Predicate: LLVMIntPredicate, LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge290(Predicate.value, LHSConstant.rawValue, RHSConstant.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge292(Predicate.value, LHSConstant.rawValue, RHSConstant.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMConstFCmp(Predicate: LLVMRealPredicate, LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge291(Predicate.value, LHSConstant.rawValue, RHSConstant.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge293(Predicate.value, LHSConstant.rawValue, RHSConstant.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMConstShl(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge292(LHSConstant.rawValue, RHSConstant.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge294(LHSConstant.rawValue, RHSConstant.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMConstLShr(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge293(LHSConstant.rawValue, RHSConstant.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge295(LHSConstant.rawValue, RHSConstant.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMConstAShr(LHSConstant: LLVMValueRef?, RHSConstant: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge294(LHSConstant.rawValue, RHSConstant.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge296(LHSConstant.rawValue, RHSConstant.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMConstGEP2(Ty: LLVMTypeRef?, ConstantVal: LLVMValueRef?, ConstantIndices: CValuesRef<LLVMValueRefVar>?, NumIndices: Int): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge295(Ty.rawValue, ConstantVal.rawValue, ConstantIndices?.getPointer(memScope).rawValue, NumIndices))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge297(Ty.rawValue, ConstantVal.rawValue, ConstantIndices?.getPointer(memScope).rawValue, NumIndices))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMConstInBoundsGEP2(Ty: LLVMTypeRef?, ConstantVal: LLVMValueRef?, ConstantIndices: CValuesRef<LLVMValueRefVar>?, NumIndices: Int): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge296(Ty.rawValue, ConstantVal.rawValue, ConstantIndices?.getPointer(memScope).rawValue, NumIndices))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge298(Ty.rawValue, ConstantVal.rawValue, ConstantIndices?.getPointer(memScope).rawValue, NumIndices))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMConstTrunc(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge297(ConstantVal.rawValue, ToType.rawValue))
-}
-
-@ExperimentalForeignApi
-fun LLVMConstSExt(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge298(ConstantVal.rawValue, ToType.rawValue))
-}
-
-@ExperimentalForeignApi
-fun LLVMConstZExt(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge299(ConstantVal.rawValue, ToType.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstFPTrunc(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
+fun LLVMConstSExt(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge300(ConstantVal.rawValue, ToType.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstFPExt(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
+fun LLVMConstZExt(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge301(ConstantVal.rawValue, ToType.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstUIToFP(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
+fun LLVMConstFPTrunc(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge302(ConstantVal.rawValue, ToType.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstSIToFP(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
+fun LLVMConstFPExt(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge303(ConstantVal.rawValue, ToType.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstFPToUI(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
+fun LLVMConstUIToFP(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge304(ConstantVal.rawValue, ToType.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstFPToSI(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
+fun LLVMConstSIToFP(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge305(ConstantVal.rawValue, ToType.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstPtrToInt(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
+fun LLVMConstFPToUI(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge306(ConstantVal.rawValue, ToType.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstIntToPtr(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
+fun LLVMConstFPToSI(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge307(ConstantVal.rawValue, ToType.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstBitCast(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
+fun LLVMConstPtrToInt(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge308(ConstantVal.rawValue, ToType.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstAddrSpaceCast(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
+fun LLVMConstIntToPtr(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge309(ConstantVal.rawValue, ToType.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstZExtOrBitCast(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
+fun LLVMConstBitCast(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge310(ConstantVal.rawValue, ToType.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstSExtOrBitCast(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
+fun LLVMConstAddrSpaceCast(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge311(ConstantVal.rawValue, ToType.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstTruncOrBitCast(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
+fun LLVMConstZExtOrBitCast(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge312(ConstantVal.rawValue, ToType.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstPointerCast(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
+fun LLVMConstSExtOrBitCast(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge313(ConstantVal.rawValue, ToType.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstIntCast(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?, isSigned: LLVMBool): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge314(ConstantVal.rawValue, ToType.rawValue, isSigned))
+fun LLVMConstTruncOrBitCast(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge314(ConstantVal.rawValue, ToType.rawValue))
 }
 
 @ExperimentalForeignApi
-fun LLVMConstFPCast(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
+fun LLVMConstPointerCast(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge315(ConstantVal.rawValue, ToType.rawValue))
 }
 
 @ExperimentalForeignApi
+fun LLVMConstIntCast(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?, isSigned: LLVMBool): LLVMValueRef? {
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge316(ConstantVal.rawValue, ToType.rawValue, isSigned))
+}
+
+@ExperimentalForeignApi
+fun LLVMConstFPCast(ConstantVal: LLVMValueRef?, ToType: LLVMTypeRef?): LLVMValueRef? {
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge317(ConstantVal.rawValue, ToType.rawValue))
+}
+
+@ExperimentalForeignApi
 fun LLVMConstSelect(ConstantCondition: LLVMValueRef?, ConstantIfTrue: LLVMValueRef?, ConstantIfFalse: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge316(ConstantCondition.rawValue, ConstantIfTrue.rawValue, ConstantIfFalse.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge318(ConstantCondition.rawValue, ConstantIfTrue.rawValue, ConstantIfFalse.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMConstExtractElement(VectorConstant: LLVMValueRef?, IndexConstant: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge317(VectorConstant.rawValue, IndexConstant.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge319(VectorConstant.rawValue, IndexConstant.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMConstInsertElement(VectorConstant: LLVMValueRef?, ElementValueConstant: LLVMValueRef?, IndexConstant: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge318(VectorConstant.rawValue, ElementValueConstant.rawValue, IndexConstant.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge320(VectorConstant.rawValue, ElementValueConstant.rawValue, IndexConstant.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMConstShuffleVector(VectorAConstant: LLVMValueRef?, VectorBConstant: LLVMValueRef?, MaskConstant: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge319(VectorAConstant.rawValue, VectorBConstant.rawValue, MaskConstant.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge321(VectorAConstant.rawValue, VectorBConstant.rawValue, MaskConstant.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMBlockAddress(F: LLVMValueRef?, BB: LLVMBasicBlockRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge320(F.rawValue, BB.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge322(F.rawValue, BB.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMConstInlineAsm(Ty: LLVMTypeRef?, AsmString: String?, Constraints: String?, HasSideEffects: LLVMBool, IsAlignStack: LLVMBool): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge321(Ty.rawValue, AsmString?.cstr?.getPointer(memScope).rawValue, Constraints?.cstr?.getPointer(memScope).rawValue, HasSideEffects, IsAlignStack))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge323(Ty.rawValue, AsmString?.cstr?.getPointer(memScope).rawValue, Constraints?.cstr?.getPointer(memScope).rawValue, HasSideEffects, IsAlignStack))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetGlobalParent(Global: LLVMValueRef?): LLVMModuleRef? {
-    return interpretCPointer<LLVMOpaqueModule>(kniBridge322(Global.rawValue))
+    return interpretCPointer<LLVMOpaqueModule>(kniBridge324(Global.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMIsDeclaration(Global: LLVMValueRef?): LLVMBool {
-    return kniBridge323(Global.rawValue)
+    return kniBridge325(Global.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetLinkage(Global: LLVMValueRef?): LLVMLinkage {
-    return LLVMLinkage.byValue(kniBridge324(Global.rawValue))
+    return LLVMLinkage.byValue(kniBridge326(Global.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMSetLinkage(Global: LLVMValueRef?, Linkage: LLVMLinkage): Unit {
-    return kniBridge325(Global.rawValue, Linkage.value)
+    return kniBridge327(Global.rawValue, Linkage.value)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetSection(Global: LLVMValueRef?): CPointer<ByteVar>? {
-    return interpretCPointer<ByteVar>(kniBridge326(Global.rawValue))
+    return interpretCPointer<ByteVar>(kniBridge328(Global.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMSetSection(Global: LLVMValueRef?, Section: String?): Unit {
     memScoped {
-        return kniBridge327(Global.rawValue, Section?.cstr?.getPointer(memScope).rawValue)
+        return kniBridge329(Global.rawValue, Section?.cstr?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetVisibility(Global: LLVMValueRef?): LLVMVisibility {
-    return LLVMVisibility.byValue(kniBridge328(Global.rawValue))
+    return LLVMVisibility.byValue(kniBridge330(Global.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMSetVisibility(Global: LLVMValueRef?, Viz: LLVMVisibility): Unit {
-    return kniBridge329(Global.rawValue, Viz.value)
+    return kniBridge331(Global.rawValue, Viz.value)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetDLLStorageClass(Global: LLVMValueRef?): LLVMDLLStorageClass {
-    return LLVMDLLStorageClass.byValue(kniBridge330(Global.rawValue))
+    return LLVMDLLStorageClass.byValue(kniBridge332(Global.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMSetDLLStorageClass(Global: LLVMValueRef?, Class: LLVMDLLStorageClass): Unit {
-    return kniBridge331(Global.rawValue, Class.value)
+    return kniBridge333(Global.rawValue, Class.value)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetUnnamedAddress(Global: LLVMValueRef?): LLVMUnnamedAddr {
-    return LLVMUnnamedAddr.byValue(kniBridge332(Global.rawValue))
+    return LLVMUnnamedAddr.byValue(kniBridge334(Global.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMSetUnnamedAddress(Global: LLVMValueRef?, UnnamedAddr: LLVMUnnamedAddr): Unit {
-    return kniBridge333(Global.rawValue, UnnamedAddr.value)
+    return kniBridge335(Global.rawValue, UnnamedAddr.value)
 }
 
 @ExperimentalForeignApi
 fun LLVMGlobalGetValueType(Global: LLVMValueRef?): LLVMTypeRef? {
-    return interpretCPointer<LLVMOpaqueType>(kniBridge334(Global.rawValue))
+    return interpretCPointer<LLVMOpaqueType>(kniBridge336(Global.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMHasUnnamedAddr(Global: LLVMValueRef?): LLVMBool {
-    return kniBridge335(Global.rawValue)
+    return kniBridge337(Global.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMSetUnnamedAddr(Global: LLVMValueRef?, HasUnnamedAddr: LLVMBool): Unit {
-    return kniBridge336(Global.rawValue, HasUnnamedAddr)
+    return kniBridge338(Global.rawValue, HasUnnamedAddr)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetAlignment(V: LLVMValueRef?): Int {
-    return kniBridge337(V.rawValue)
+    return kniBridge339(V.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMSetAlignment(V: LLVMValueRef?, Bytes: Int): Unit {
-    return kniBridge338(V.rawValue, Bytes)
+    return kniBridge340(V.rawValue, Bytes)
 }
 
 @ExperimentalForeignApi
 fun LLVMGlobalSetMetadata(Global: LLVMValueRef?, Kind: Int, MD: LLVMMetadataRef?): Unit {
-    return kniBridge339(Global.rawValue, Kind, MD.rawValue)
+    return kniBridge341(Global.rawValue, Kind, MD.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGlobalEraseMetadata(Global: LLVMValueRef?, Kind: Int): Unit {
-    return kniBridge340(Global.rawValue, Kind)
+    return kniBridge342(Global.rawValue, Kind)
 }
 
 @ExperimentalForeignApi
 fun LLVMGlobalClearMetadata(Global: LLVMValueRef?): Unit {
-    return kniBridge341(Global.rawValue)
+    return kniBridge343(Global.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGlobalCopyAllMetadata(Value: LLVMValueRef?, NumEntries: CValuesRef<size_tVar>?): CPointer<LLVMValueMetadataEntry>? {
     memScoped {
-        return interpretCPointer<LLVMValueMetadataEntry>(kniBridge342(Value.rawValue, NumEntries?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMValueMetadataEntry>(kniBridge344(Value.rawValue, NumEntries?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMDisposeValueMetadataEntries(Entries: CValuesRef<LLVMValueMetadataEntry>?): Unit {
     memScoped {
-        return kniBridge343(Entries?.getPointer(memScope).rawValue)
+        return kniBridge345(Entries?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMValueMetadataEntriesGetKind(Entries: CValuesRef<LLVMValueMetadataEntry>?, Index: Int): Int {
     memScoped {
-        return kniBridge344(Entries?.getPointer(memScope).rawValue, Index)
+        return kniBridge346(Entries?.getPointer(memScope).rawValue, Index)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMValueMetadataEntriesGetMetadata(Entries: CValuesRef<LLVMValueMetadataEntry>?, Index: Int): LLVMMetadataRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueMetadata>(kniBridge345(Entries?.getPointer(memScope).rawValue, Index))
+        return interpretCPointer<LLVMOpaqueMetadata>(kniBridge347(Entries?.getPointer(memScope).rawValue, Index))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMAddGlobal(M: LLVMModuleRef?, Ty: LLVMTypeRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge346(M.rawValue, Ty.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge348(M.rawValue, Ty.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMAddGlobalInAddressSpace(M: LLVMModuleRef?, Ty: LLVMTypeRef?, Name: String?, AddressSpace: Int): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge347(M.rawValue, Ty.rawValue, Name?.cstr?.getPointer(memScope).rawValue, AddressSpace))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge349(M.rawValue, Ty.rawValue, Name?.cstr?.getPointer(memScope).rawValue, AddressSpace))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetNamedGlobal(M: LLVMModuleRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge348(M.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge350(M.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetFirstGlobal(M: LLVMModuleRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge349(M.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge351(M.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetLastGlobal(M: LLVMModuleRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge350(M.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge352(M.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetNextGlobal(GlobalVar: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge351(GlobalVar.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge353(GlobalVar.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetPreviousGlobal(GlobalVar: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge352(GlobalVar.rawValue))
-}
-
-@ExperimentalForeignApi
-fun LLVMDeleteGlobal(GlobalVar: LLVMValueRef?): Unit {
-    return kniBridge353(GlobalVar.rawValue)
-}
-
-@ExperimentalForeignApi
-fun LLVMGetInitializer(GlobalVar: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge354(GlobalVar.rawValue))
 }
 
 @ExperimentalForeignApi
+fun LLVMDeleteGlobal(GlobalVar: LLVMValueRef?): Unit {
+    return kniBridge355(GlobalVar.rawValue)
+}
+
+@ExperimentalForeignApi
+fun LLVMGetInitializer(GlobalVar: LLVMValueRef?): LLVMValueRef? {
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge356(GlobalVar.rawValue))
+}
+
+@ExperimentalForeignApi
 fun LLVMSetInitializer(GlobalVar: LLVMValueRef?, ConstantVal: LLVMValueRef?): Unit {
-    return kniBridge355(GlobalVar.rawValue, ConstantVal.rawValue)
+    return kniBridge357(GlobalVar.rawValue, ConstantVal.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMIsThreadLocal(GlobalVar: LLVMValueRef?): LLVMBool {
-    return kniBridge356(GlobalVar.rawValue)
-}
-
-@ExperimentalForeignApi
-fun LLVMSetThreadLocal(GlobalVar: LLVMValueRef?, IsThreadLocal: LLVMBool): Unit {
-    return kniBridge357(GlobalVar.rawValue, IsThreadLocal)
-}
-
-@ExperimentalForeignApi
-fun LLVMIsGlobalConstant(GlobalVar: LLVMValueRef?): LLVMBool {
     return kniBridge358(GlobalVar.rawValue)
 }
 
 @ExperimentalForeignApi
+fun LLVMSetThreadLocal(GlobalVar: LLVMValueRef?, IsThreadLocal: LLVMBool): Unit {
+    return kniBridge359(GlobalVar.rawValue, IsThreadLocal)
+}
+
+@ExperimentalForeignApi
+fun LLVMIsGlobalConstant(GlobalVar: LLVMValueRef?): LLVMBool {
+    return kniBridge360(GlobalVar.rawValue)
+}
+
+@ExperimentalForeignApi
 fun LLVMSetGlobalConstant(GlobalVar: LLVMValueRef?, IsConstant: LLVMBool): Unit {
-    return kniBridge359(GlobalVar.rawValue, IsConstant)
+    return kniBridge361(GlobalVar.rawValue, IsConstant)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetThreadLocalMode(GlobalVar: LLVMValueRef?): LLVMThreadLocalMode {
-    return LLVMThreadLocalMode.byValue(kniBridge360(GlobalVar.rawValue))
+    return LLVMThreadLocalMode.byValue(kniBridge362(GlobalVar.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMSetThreadLocalMode(GlobalVar: LLVMValueRef?, Mode: LLVMThreadLocalMode): Unit {
-    return kniBridge361(GlobalVar.rawValue, Mode.value)
+    return kniBridge363(GlobalVar.rawValue, Mode.value)
 }
 
 @ExperimentalForeignApi
 fun LLVMIsExternallyInitialized(GlobalVar: LLVMValueRef?): LLVMBool {
-    return kniBridge362(GlobalVar.rawValue)
+    return kniBridge364(GlobalVar.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMSetExternallyInitialized(GlobalVar: LLVMValueRef?, IsExtInit: LLVMBool): Unit {
-    return kniBridge363(GlobalVar.rawValue, IsExtInit)
+    return kniBridge365(GlobalVar.rawValue, IsExtInit)
 }
 
 @ExperimentalForeignApi
 fun LLVMAddAlias2(M: LLVMModuleRef?, ValueTy: LLVMTypeRef?, AddrSpace: Int, Aliasee: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge364(M.rawValue, ValueTy.rawValue, AddrSpace, Aliasee.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge366(M.rawValue, ValueTy.rawValue, AddrSpace, Aliasee.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetNamedGlobalAlias(M: LLVMModuleRef?, Name: String?, NameLen: size_t): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge365(M.rawValue, Name?.cstr?.getPointer(memScope).rawValue, NameLen))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge367(M.rawValue, Name?.cstr?.getPointer(memScope).rawValue, NameLen))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetFirstGlobalAlias(M: LLVMModuleRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge366(M.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge368(M.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetLastGlobalAlias(M: LLVMModuleRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge367(M.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge369(M.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetNextGlobalAlias(GA: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge368(GA.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge370(GA.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetPreviousGlobalAlias(GA: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge369(GA.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge371(GA.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMAliasGetAliasee(Alias: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge370(Alias.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge372(Alias.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMAliasSetAliasee(Alias: LLVMValueRef?, Aliasee: LLVMValueRef?): Unit {
-    return kniBridge371(Alias.rawValue, Aliasee.rawValue)
+    return kniBridge373(Alias.rawValue, Aliasee.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMDeleteFunction(Fn: LLVMValueRef?): Unit {
-    return kniBridge372(Fn.rawValue)
+    return kniBridge374(Fn.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMHasPersonalityFn(Fn: LLVMValueRef?): LLVMBool {
-    return kniBridge373(Fn.rawValue)
+    return kniBridge375(Fn.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetPersonalityFn(Fn: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge374(Fn.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge376(Fn.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMSetPersonalityFn(Fn: LLVMValueRef?, PersonalityFn: LLVMValueRef?): Unit {
-    return kniBridge375(Fn.rawValue, PersonalityFn.rawValue)
+    return kniBridge377(Fn.rawValue, PersonalityFn.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMLookupIntrinsicID(Name: String?, NameLen: size_t): Int {
     memScoped {
-        return kniBridge376(Name?.cstr?.getPointer(memScope).rawValue, NameLen)
+        return kniBridge378(Name?.cstr?.getPointer(memScope).rawValue, NameLen)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetIntrinsicID(Fn: LLVMValueRef?): Int {
-    return kniBridge377(Fn.rawValue)
+    return kniBridge379(Fn.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetIntrinsicDeclaration(Mod: LLVMModuleRef?, ID: Int, ParamTypes: CValuesRef<LLVMTypeRefVar>?, ParamCount: size_t): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge378(Mod.rawValue, ID, ParamTypes?.getPointer(memScope).rawValue, ParamCount))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge380(Mod.rawValue, ID, ParamTypes?.getPointer(memScope).rawValue, ParamCount))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMIntrinsicGetType(Ctx: LLVMContextRef?, ID: Int, ParamTypes: CValuesRef<LLVMTypeRefVar>?, ParamCount: size_t): LLVMTypeRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueType>(kniBridge379(Ctx.rawValue, ID, ParamTypes?.getPointer(memScope).rawValue, ParamCount))
+        return interpretCPointer<LLVMOpaqueType>(kniBridge381(Ctx.rawValue, ID, ParamTypes?.getPointer(memScope).rawValue, ParamCount))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMIntrinsicGetName(ID: Int, NameLength: CValuesRef<size_tVar>?): CPointer<ByteVar>? {
     memScoped {
-        return interpretCPointer<ByteVar>(kniBridge380(ID, NameLength?.getPointer(memScope).rawValue))
+        return interpretCPointer<ByteVar>(kniBridge382(ID, NameLength?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMIntrinsicCopyOverloadedName(ID: Int, ParamTypes: CValuesRef<LLVMTypeRefVar>?, ParamCount: size_t, NameLength: CValuesRef<size_tVar>?): CPointer<ByteVar>? {
     memScoped {
-        return interpretCPointer<ByteVar>(kniBridge381(ID, ParamTypes?.getPointer(memScope).rawValue, ParamCount, NameLength?.getPointer(memScope).rawValue))
+        return interpretCPointer<ByteVar>(kniBridge383(ID, ParamTypes?.getPointer(memScope).rawValue, ParamCount, NameLength?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMIntrinsicCopyOverloadedName2(Mod: LLVMModuleRef?, ID: Int, ParamTypes: CValuesRef<LLVMTypeRefVar>?, ParamCount: size_t, NameLength: CValuesRef<size_tVar>?): CPointer<ByteVar>? {
     memScoped {
-        return interpretCPointer<ByteVar>(kniBridge382(Mod.rawValue, ID, ParamTypes?.getPointer(memScope).rawValue, ParamCount, NameLength?.getPointer(memScope).rawValue))
+        return interpretCPointer<ByteVar>(kniBridge384(Mod.rawValue, ID, ParamTypes?.getPointer(memScope).rawValue, ParamCount, NameLength?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMIntrinsicIsOverloaded(ID: Int): LLVMBool {
-    return kniBridge383(ID)
+    return kniBridge385(ID)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetFunctionCallConv(Fn: LLVMValueRef?): Int {
-    return kniBridge384(Fn.rawValue)
+    return kniBridge386(Fn.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMSetFunctionCallConv(Fn: LLVMValueRef?, CC: Int): Unit {
-    return kniBridge385(Fn.rawValue, CC)
+    return kniBridge387(Fn.rawValue, CC)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetGC(Fn: LLVMValueRef?): CPointer<ByteVar>? {
-    return interpretCPointer<ByteVar>(kniBridge386(Fn.rawValue))
+    return interpretCPointer<ByteVar>(kniBridge388(Fn.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMSetGC(Fn: LLVMValueRef?, Name: String?): Unit {
     memScoped {
-        return kniBridge387(Fn.rawValue, Name?.cstr?.getPointer(memScope).rawValue)
+        return kniBridge389(Fn.rawValue, Name?.cstr?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMAddAttributeAtIndex(F: LLVMValueRef?, Idx: LLVMAttributeIndex, A: LLVMAttributeRef?): Unit {
-    return kniBridge388(F.rawValue, Idx, A.rawValue)
+    return kniBridge390(F.rawValue, Idx, A.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetAttributeCountAtIndex(F: LLVMValueRef?, Idx: LLVMAttributeIndex): Int {
-    return kniBridge389(F.rawValue, Idx)
+    return kniBridge391(F.rawValue, Idx)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetAttributesAtIndex(F: LLVMValueRef?, Idx: LLVMAttributeIndex, Attrs: CValuesRef<LLVMAttributeRefVar>?): Unit {
     memScoped {
-        return kniBridge390(F.rawValue, Idx, Attrs?.getPointer(memScope).rawValue)
+        return kniBridge392(F.rawValue, Idx, Attrs?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetEnumAttributeAtIndex(F: LLVMValueRef?, Idx: LLVMAttributeIndex, KindID: Int): LLVMAttributeRef? {
-    return interpretCPointer<LLVMOpaqueAttributeRef>(kniBridge391(F.rawValue, Idx, KindID))
+    return interpretCPointer<LLVMOpaqueAttributeRef>(kniBridge393(F.rawValue, Idx, KindID))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetStringAttributeAtIndex(F: LLVMValueRef?, Idx: LLVMAttributeIndex, K: String?, KLen: Int): LLVMAttributeRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueAttributeRef>(kniBridge392(F.rawValue, Idx, K?.cstr?.getPointer(memScope).rawValue, KLen))
+        return interpretCPointer<LLVMOpaqueAttributeRef>(kniBridge394(F.rawValue, Idx, K?.cstr?.getPointer(memScope).rawValue, KLen))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMRemoveEnumAttributeAtIndex(F: LLVMValueRef?, Idx: LLVMAttributeIndex, KindID: Int): Unit {
-    return kniBridge393(F.rawValue, Idx, KindID)
+    return kniBridge395(F.rawValue, Idx, KindID)
 }
 
 @ExperimentalForeignApi
 fun LLVMRemoveStringAttributeAtIndex(F: LLVMValueRef?, Idx: LLVMAttributeIndex, K: String?, KLen: Int): Unit {
     memScoped {
-        return kniBridge394(F.rawValue, Idx, K?.cstr?.getPointer(memScope).rawValue, KLen)
+        return kniBridge396(F.rawValue, Idx, K?.cstr?.getPointer(memScope).rawValue, KLen)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMAddTargetDependentFunctionAttr(Fn: LLVMValueRef?, A: String?, V: String?): Unit {
     memScoped {
-        return kniBridge395(Fn.rawValue, A?.cstr?.getPointer(memScope).rawValue, V?.cstr?.getPointer(memScope).rawValue)
+        return kniBridge397(Fn.rawValue, A?.cstr?.getPointer(memScope).rawValue, V?.cstr?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMCountParams(Fn: LLVMValueRef?): Int {
-    return kniBridge396(Fn.rawValue)
+    return kniBridge398(Fn.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetParams(Fn: LLVMValueRef?, Params: CValuesRef<LLVMValueRefVar>?): Unit {
     memScoped {
-        return kniBridge397(Fn.rawValue, Params?.getPointer(memScope).rawValue)
+        return kniBridge399(Fn.rawValue, Params?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetParam(Fn: LLVMValueRef?, Index: Int): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge398(Fn.rawValue, Index))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge400(Fn.rawValue, Index))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetParamParent(Inst: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge399(Inst.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge401(Inst.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetFirstParam(Fn: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge400(Fn.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge402(Fn.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetLastParam(Fn: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge401(Fn.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge403(Fn.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetNextParam(Arg: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge402(Arg.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge404(Arg.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetPreviousParam(Arg: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge403(Arg.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge405(Arg.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMSetParamAlignment(Arg: LLVMValueRef?, Align: Int): Unit {
-    return kniBridge404(Arg.rawValue, Align)
+    return kniBridge406(Arg.rawValue, Align)
 }
 
 @ExperimentalForeignApi
 fun LLVMAddGlobalIFunc(M: LLVMModuleRef?, Name: String?, NameLen: size_t, Ty: LLVMTypeRef?, AddrSpace: Int, Resolver: LLVMValueRef?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge405(M.rawValue, Name?.cstr?.getPointer(memScope).rawValue, NameLen, Ty.rawValue, AddrSpace, Resolver.rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge407(M.rawValue, Name?.cstr?.getPointer(memScope).rawValue, NameLen, Ty.rawValue, AddrSpace, Resolver.rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetNamedGlobalIFunc(M: LLVMModuleRef?, Name: String?, NameLen: size_t): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge406(M.rawValue, Name?.cstr?.getPointer(memScope).rawValue, NameLen))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge408(M.rawValue, Name?.cstr?.getPointer(memScope).rawValue, NameLen))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetFirstGlobalIFunc(M: LLVMModuleRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge407(M.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge409(M.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetLastGlobalIFunc(M: LLVMModuleRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge408(M.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge410(M.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetNextGlobalIFunc(IFunc: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge409(IFunc.rawValue))
-}
-
-@ExperimentalForeignApi
-fun LLVMGetPreviousGlobalIFunc(IFunc: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge410(IFunc.rawValue))
-}
-
-@ExperimentalForeignApi
-fun LLVMGetGlobalIFuncResolver(IFunc: LLVMValueRef?): LLVMValueRef? {
     return interpretCPointer<LLVMOpaqueValue>(kniBridge411(IFunc.rawValue))
 }
 
 @ExperimentalForeignApi
+fun LLVMGetPreviousGlobalIFunc(IFunc: LLVMValueRef?): LLVMValueRef? {
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge412(IFunc.rawValue))
+}
+
+@ExperimentalForeignApi
+fun LLVMGetGlobalIFuncResolver(IFunc: LLVMValueRef?): LLVMValueRef? {
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge413(IFunc.rawValue))
+}
+
+@ExperimentalForeignApi
 fun LLVMSetGlobalIFuncResolver(IFunc: LLVMValueRef?, Resolver: LLVMValueRef?): Unit {
-    return kniBridge412(IFunc.rawValue, Resolver.rawValue)
+    return kniBridge414(IFunc.rawValue, Resolver.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMEraseGlobalIFunc(IFunc: LLVMValueRef?): Unit {
-    return kniBridge413(IFunc.rawValue)
+    return kniBridge415(IFunc.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMRemoveGlobalIFunc(IFunc: LLVMValueRef?): Unit {
-    return kniBridge414(IFunc.rawValue)
+    return kniBridge416(IFunc.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMMDStringInContext2(C: LLVMContextRef?, Str: String?, SLen: size_t): LLVMMetadataRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueMetadata>(kniBridge415(C.rawValue, Str?.cstr?.getPointer(memScope).rawValue, SLen))
+        return interpretCPointer<LLVMOpaqueMetadata>(kniBridge417(C.rawValue, Str?.cstr?.getPointer(memScope).rawValue, SLen))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMMDNodeInContext2(C: LLVMContextRef?, MDs: CValuesRef<LLVMMetadataRefVar>?, Count: size_t): LLVMMetadataRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueMetadata>(kniBridge416(C.rawValue, MDs?.getPointer(memScope).rawValue, Count))
+        return interpretCPointer<LLVMOpaqueMetadata>(kniBridge418(C.rawValue, MDs?.getPointer(memScope).rawValue, Count))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMMetadataAsValue(C: LLVMContextRef?, MD: LLVMMetadataRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge417(C.rawValue, MD.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge419(C.rawValue, MD.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMValueAsMetadata(Val: LLVMValueRef?): LLVMMetadataRef? {
-    return interpretCPointer<LLVMOpaqueMetadata>(kniBridge418(Val.rawValue))
+    return interpretCPointer<LLVMOpaqueMetadata>(kniBridge420(Val.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetMDString(V: LLVMValueRef?, Length: CValuesRef<IntVar>?): CPointer<ByteVar>? {
     memScoped {
-        return interpretCPointer<ByteVar>(kniBridge419(V.rawValue, Length?.getPointer(memScope).rawValue))
+        return interpretCPointer<ByteVar>(kniBridge421(V.rawValue, Length?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetMDNodeNumOperands(V: LLVMValueRef?): Int {
-    return kniBridge420(V.rawValue)
+    return kniBridge422(V.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetMDNodeOperands(V: LLVMValueRef?, Dest: CValuesRef<LLVMValueRefVar>?): Unit {
     memScoped {
-        return kniBridge421(V.rawValue, Dest?.getPointer(memScope).rawValue)
+        return kniBridge423(V.rawValue, Dest?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMMDStringInContext(C: LLVMContextRef?, Str: String?, SLen: Int): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge422(C.rawValue, Str?.cstr?.getPointer(memScope).rawValue, SLen))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge424(C.rawValue, Str?.cstr?.getPointer(memScope).rawValue, SLen))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMMDNodeInContext(C: LLVMContextRef?, Vals: CValuesRef<LLVMValueRefVar>?, Count: Int): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge423(C.rawValue, Vals?.getPointer(memScope).rawValue, Count))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge425(C.rawValue, Vals?.getPointer(memScope).rawValue, Count))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBasicBlockAsValue(BB: LLVMBasicBlockRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge424(BB.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge426(BB.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMValueIsBasicBlock(Val: LLVMValueRef?): LLVMBool {
-    return kniBridge425(Val.rawValue)
+    return kniBridge427(Val.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMValueAsBasicBlock(Val: LLVMValueRef?): LLVMBasicBlockRef? {
-    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge426(Val.rawValue))
+    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge428(Val.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetBasicBlockName(BB: LLVMBasicBlockRef?): CPointer<ByteVar>? {
-    return interpretCPointer<ByteVar>(kniBridge427(BB.rawValue))
+    return interpretCPointer<ByteVar>(kniBridge429(BB.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetBasicBlockParent(BB: LLVMBasicBlockRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge428(BB.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge430(BB.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetBasicBlockTerminator(BB: LLVMBasicBlockRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge429(BB.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge431(BB.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMCountBasicBlocks(Fn: LLVMValueRef?): Int {
-    return kniBridge430(Fn.rawValue)
+    return kniBridge432(Fn.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetBasicBlocks(Fn: LLVMValueRef?, BasicBlocks: CValuesRef<LLVMBasicBlockRefVar>?): Unit {
     memScoped {
-        return kniBridge431(Fn.rawValue, BasicBlocks?.getPointer(memScope).rawValue)
+        return kniBridge433(Fn.rawValue, BasicBlocks?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetFirstBasicBlock(Fn: LLVMValueRef?): LLVMBasicBlockRef? {
-    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge432(Fn.rawValue))
+    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge434(Fn.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetLastBasicBlock(Fn: LLVMValueRef?): LLVMBasicBlockRef? {
-    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge433(Fn.rawValue))
+    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge435(Fn.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetNextBasicBlock(BB: LLVMBasicBlockRef?): LLVMBasicBlockRef? {
-    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge434(BB.rawValue))
+    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge436(BB.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetPreviousBasicBlock(BB: LLVMBasicBlockRef?): LLVMBasicBlockRef? {
-    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge435(BB.rawValue))
+    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge437(BB.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetEntryBasicBlock(Fn: LLVMValueRef?): LLVMBasicBlockRef? {
-    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge436(Fn.rawValue))
+    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge438(Fn.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMInsertExistingBasicBlockAfterInsertBlock(Builder: LLVMBuilderRef?, BB: LLVMBasicBlockRef?): Unit {
-    return kniBridge437(Builder.rawValue, BB.rawValue)
+    return kniBridge439(Builder.rawValue, BB.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMAppendExistingBasicBlock(Fn: LLVMValueRef?, BB: LLVMBasicBlockRef?): Unit {
-    return kniBridge438(Fn.rawValue, BB.rawValue)
+    return kniBridge440(Fn.rawValue, BB.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMCreateBasicBlockInContext(C: LLVMContextRef?, Name: String?): LLVMBasicBlockRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge439(C.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge441(C.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMAppendBasicBlockInContext(C: LLVMContextRef?, Fn: LLVMValueRef?, Name: String?): LLVMBasicBlockRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge440(C.rawValue, Fn.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge442(C.rawValue, Fn.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMInsertBasicBlockInContext(C: LLVMContextRef?, BB: LLVMBasicBlockRef?, Name: String?): LLVMBasicBlockRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge441(C.rawValue, BB.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge443(C.rawValue, BB.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMDeleteBasicBlock(BB: LLVMBasicBlockRef?): Unit {
-    return kniBridge442(BB.rawValue)
+    return kniBridge444(BB.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMRemoveBasicBlockFromParent(BB: LLVMBasicBlockRef?): Unit {
-    return kniBridge443(BB.rawValue)
+    return kniBridge445(BB.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMMoveBasicBlockBefore(BB: LLVMBasicBlockRef?, MovePos: LLVMBasicBlockRef?): Unit {
-    return kniBridge444(BB.rawValue, MovePos.rawValue)
+    return kniBridge446(BB.rawValue, MovePos.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMMoveBasicBlockAfter(BB: LLVMBasicBlockRef?, MovePos: LLVMBasicBlockRef?): Unit {
-    return kniBridge445(BB.rawValue, MovePos.rawValue)
+    return kniBridge447(BB.rawValue, MovePos.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetFirstInstruction(BB: LLVMBasicBlockRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge446(BB.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge448(BB.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetLastInstruction(BB: LLVMBasicBlockRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge447(BB.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge449(BB.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMHasMetadata(Val: LLVMValueRef?): Int {
-    return kniBridge448(Val.rawValue)
+    return kniBridge450(Val.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetMetadata(Val: LLVMValueRef?, KindID: Int): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge449(Val.rawValue, KindID))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge451(Val.rawValue, KindID))
 }
 
 @ExperimentalForeignApi
 fun LLVMSetMetadata(Val: LLVMValueRef?, KindID: Int, Node: LLVMValueRef?): Unit {
-    return kniBridge450(Val.rawValue, KindID, Node.rawValue)
+    return kniBridge452(Val.rawValue, KindID, Node.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMInstructionGetAllMetadataOtherThanDebugLoc(Instr: LLVMValueRef?, NumEntries: CValuesRef<size_tVar>?): CPointer<LLVMValueMetadataEntry>? {
     memScoped {
-        return interpretCPointer<LLVMValueMetadataEntry>(kniBridge451(Instr.rawValue, NumEntries?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMValueMetadataEntry>(kniBridge453(Instr.rawValue, NumEntries?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetInstructionParent(Inst: LLVMValueRef?): LLVMBasicBlockRef? {
-    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge452(Inst.rawValue))
+    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge454(Inst.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetNextInstruction(Inst: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge453(Inst.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge455(Inst.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetPreviousInstruction(Inst: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge454(Inst.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge456(Inst.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMInstructionRemoveFromParent(Inst: LLVMValueRef?): Unit {
-    return kniBridge455(Inst.rawValue)
-}
-
-@ExperimentalForeignApi
-fun LLVMInstructionEraseFromParent(Inst: LLVMValueRef?): Unit {
-    return kniBridge456(Inst.rawValue)
-}
-
-@ExperimentalForeignApi
-fun LLVMDeleteInstruction(Inst: LLVMValueRef?): Unit {
     return kniBridge457(Inst.rawValue)
 }
 
 @ExperimentalForeignApi
+fun LLVMInstructionEraseFromParent(Inst: LLVMValueRef?): Unit {
+    return kniBridge458(Inst.rawValue)
+}
+
+@ExperimentalForeignApi
+fun LLVMDeleteInstruction(Inst: LLVMValueRef?): Unit {
+    return kniBridge459(Inst.rawValue)
+}
+
+@ExperimentalForeignApi
 fun LLVMGetInstructionOpcode(Inst: LLVMValueRef?): LLVMOpcode {
-    return LLVMOpcode.byValue(kniBridge458(Inst.rawValue))
+    return LLVMOpcode.byValue(kniBridge460(Inst.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetICmpPredicate(Inst: LLVMValueRef?): LLVMIntPredicate {
-    return LLVMIntPredicate.byValue(kniBridge459(Inst.rawValue))
+    return LLVMIntPredicate.byValue(kniBridge461(Inst.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetFCmpPredicate(Inst: LLVMValueRef?): LLVMRealPredicate {
-    return LLVMRealPredicate.byValue(kniBridge460(Inst.rawValue))
+    return LLVMRealPredicate.byValue(kniBridge462(Inst.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMInstructionClone(Inst: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge461(Inst.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge463(Inst.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMIsATerminatorInst(Inst: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge462(Inst.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge464(Inst.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetNumArgOperands(Instr: LLVMValueRef?): Int {
-    return kniBridge463(Instr.rawValue)
-}
-
-@ExperimentalForeignApi
-fun LLVMSetInstructionCallConv(Instr: LLVMValueRef?, CC: Int): Unit {
-    return kniBridge464(Instr.rawValue, CC)
-}
-
-@ExperimentalForeignApi
-fun LLVMGetInstructionCallConv(Instr: LLVMValueRef?): Int {
     return kniBridge465(Instr.rawValue)
 }
 
 @ExperimentalForeignApi
+fun LLVMSetInstructionCallConv(Instr: LLVMValueRef?, CC: Int): Unit {
+    return kniBridge466(Instr.rawValue, CC)
+}
+
+@ExperimentalForeignApi
+fun LLVMGetInstructionCallConv(Instr: LLVMValueRef?): Int {
+    return kniBridge467(Instr.rawValue)
+}
+
+@ExperimentalForeignApi
 fun LLVMSetInstrParamAlignment(Instr: LLVMValueRef?, Idx: LLVMAttributeIndex, Align: Int): Unit {
-    return kniBridge466(Instr.rawValue, Idx, Align)
+    return kniBridge468(Instr.rawValue, Idx, Align)
 }
 
 @ExperimentalForeignApi
 fun LLVMAddCallSiteAttribute(C: LLVMValueRef?, Idx: LLVMAttributeIndex, A: LLVMAttributeRef?): Unit {
-    return kniBridge467(C.rawValue, Idx, A.rawValue)
+    return kniBridge469(C.rawValue, Idx, A.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetCallSiteAttributeCount(C: LLVMValueRef?, Idx: LLVMAttributeIndex): Int {
-    return kniBridge468(C.rawValue, Idx)
+    return kniBridge470(C.rawValue, Idx)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetCallSiteAttributes(C: LLVMValueRef?, Idx: LLVMAttributeIndex, Attrs: CValuesRef<LLVMAttributeRefVar>?): Unit {
     memScoped {
-        return kniBridge469(C.rawValue, Idx, Attrs?.getPointer(memScope).rawValue)
+        return kniBridge471(C.rawValue, Idx, Attrs?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetCallSiteEnumAttribute(C: LLVMValueRef?, Idx: LLVMAttributeIndex, KindID: Int): LLVMAttributeRef? {
-    return interpretCPointer<LLVMOpaqueAttributeRef>(kniBridge470(C.rawValue, Idx, KindID))
+    return interpretCPointer<LLVMOpaqueAttributeRef>(kniBridge472(C.rawValue, Idx, KindID))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetCallSiteStringAttribute(C: LLVMValueRef?, Idx: LLVMAttributeIndex, K: String?, KLen: Int): LLVMAttributeRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueAttributeRef>(kniBridge471(C.rawValue, Idx, K?.cstr?.getPointer(memScope).rawValue, KLen))
+        return interpretCPointer<LLVMOpaqueAttributeRef>(kniBridge473(C.rawValue, Idx, K?.cstr?.getPointer(memScope).rawValue, KLen))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMRemoveCallSiteEnumAttribute(C: LLVMValueRef?, Idx: LLVMAttributeIndex, KindID: Int): Unit {
-    return kniBridge472(C.rawValue, Idx, KindID)
+    return kniBridge474(C.rawValue, Idx, KindID)
 }
 
 @ExperimentalForeignApi
 fun LLVMRemoveCallSiteStringAttribute(C: LLVMValueRef?, Idx: LLVMAttributeIndex, K: String?, KLen: Int): Unit {
     memScoped {
-        return kniBridge473(C.rawValue, Idx, K?.cstr?.getPointer(memScope).rawValue, KLen)
+        return kniBridge475(C.rawValue, Idx, K?.cstr?.getPointer(memScope).rawValue, KLen)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetCalledFunctionType(C: LLVMValueRef?): LLVMTypeRef? {
-    return interpretCPointer<LLVMOpaqueType>(kniBridge474(C.rawValue))
+    return interpretCPointer<LLVMOpaqueType>(kniBridge476(C.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetCalledValue(Instr: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge475(Instr.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge477(Instr.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMIsTailCall(CallInst: LLVMValueRef?): LLVMBool {
-    return kniBridge476(CallInst.rawValue)
+    return kniBridge478(CallInst.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMSetTailCall(CallInst: LLVMValueRef?, IsTailCall: LLVMBool): Unit {
-    return kniBridge477(CallInst.rawValue, IsTailCall)
+    return kniBridge479(CallInst.rawValue, IsTailCall)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetNormalDest(InvokeInst: LLVMValueRef?): LLVMBasicBlockRef? {
-    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge478(InvokeInst.rawValue))
+    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge480(InvokeInst.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetUnwindDest(InvokeInst: LLVMValueRef?): LLVMBasicBlockRef? {
-    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge479(InvokeInst.rawValue))
+    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge481(InvokeInst.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMSetNormalDest(InvokeInst: LLVMValueRef?, B: LLVMBasicBlockRef?): Unit {
-    return kniBridge480(InvokeInst.rawValue, B.rawValue)
+    return kniBridge482(InvokeInst.rawValue, B.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMSetUnwindDest(InvokeInst: LLVMValueRef?, B: LLVMBasicBlockRef?): Unit {
-    return kniBridge481(InvokeInst.rawValue, B.rawValue)
+    return kniBridge483(InvokeInst.rawValue, B.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetNumSuccessors(Term: LLVMValueRef?): Int {
-    return kniBridge482(Term.rawValue)
+    return kniBridge484(Term.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetSuccessor(Term: LLVMValueRef?, i: Int): LLVMBasicBlockRef? {
-    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge483(Term.rawValue, i))
+    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge485(Term.rawValue, i))
 }
 
 @ExperimentalForeignApi
 fun LLVMSetSuccessor(Term: LLVMValueRef?, i: Int, block: LLVMBasicBlockRef?): Unit {
-    return kniBridge484(Term.rawValue, i, block.rawValue)
+    return kniBridge486(Term.rawValue, i, block.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMIsConditional(Branch: LLVMValueRef?): LLVMBool {
-    return kniBridge485(Branch.rawValue)
+    return kniBridge487(Branch.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetCondition(Branch: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge486(Branch.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge488(Branch.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMSetCondition(Branch: LLVMValueRef?, Cond: LLVMValueRef?): Unit {
-    return kniBridge487(Branch.rawValue, Cond.rawValue)
+    return kniBridge489(Branch.rawValue, Cond.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetSwitchDefaultDest(SwitchInstr: LLVMValueRef?): LLVMBasicBlockRef? {
-    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge488(SwitchInstr.rawValue))
+    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge490(SwitchInstr.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetAllocatedType(Alloca: LLVMValueRef?): LLVMTypeRef? {
-    return interpretCPointer<LLVMOpaqueType>(kniBridge489(Alloca.rawValue))
+    return interpretCPointer<LLVMOpaqueType>(kniBridge491(Alloca.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMIsInBounds(GEP: LLVMValueRef?): LLVMBool {
-    return kniBridge490(GEP.rawValue)
+    return kniBridge492(GEP.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMSetIsInBounds(GEP: LLVMValueRef?, InBounds: LLVMBool): Unit {
-    return kniBridge491(GEP.rawValue, InBounds)
+    return kniBridge493(GEP.rawValue, InBounds)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetGEPSourceElementType(GEP: LLVMValueRef?): LLVMTypeRef? {
-    return interpretCPointer<LLVMOpaqueType>(kniBridge492(GEP.rawValue))
+    return interpretCPointer<LLVMOpaqueType>(kniBridge494(GEP.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMAddIncoming(PhiNode: LLVMValueRef?, IncomingValues: CValuesRef<LLVMValueRefVar>?, IncomingBlocks: CValuesRef<LLVMBasicBlockRefVar>?, Count: Int): Unit {
     memScoped {
-        return kniBridge493(PhiNode.rawValue, IncomingValues?.getPointer(memScope).rawValue, IncomingBlocks?.getPointer(memScope).rawValue, Count)
+        return kniBridge495(PhiNode.rawValue, IncomingValues?.getPointer(memScope).rawValue, IncomingBlocks?.getPointer(memScope).rawValue, Count)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMCountIncoming(PhiNode: LLVMValueRef?): Int {
-    return kniBridge494(PhiNode.rawValue)
+    return kniBridge496(PhiNode.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetIncomingValue(PhiNode: LLVMValueRef?, Index: Int): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge495(PhiNode.rawValue, Index))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge497(PhiNode.rawValue, Index))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetIncomingBlock(PhiNode: LLVMValueRef?, Index: Int): LLVMBasicBlockRef? {
-    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge496(PhiNode.rawValue, Index))
+    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge498(PhiNode.rawValue, Index))
 }
 
 @ExperimentalForeignApi
 fun LLVMGetNumIndices(Inst: LLVMValueRef?): Int {
-    return kniBridge497(Inst.rawValue)
+    return kniBridge499(Inst.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetIndices(Inst: LLVMValueRef?): CPointer<IntVar>? {
-    return interpretCPointer<IntVar>(kniBridge498(Inst.rawValue))
+    return interpretCPointer<IntVar>(kniBridge500(Inst.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMCreateBuilderInContext(C: LLVMContextRef?): LLVMBuilderRef? {
-    return interpretCPointer<LLVMOpaqueBuilder>(kniBridge499(C.rawValue))
+    return interpretCPointer<LLVMOpaqueBuilder>(kniBridge501(C.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMPositionBuilder(Builder: LLVMBuilderRef?, Block: LLVMBasicBlockRef?, Instr: LLVMValueRef?): Unit {
-    return kniBridge500(Builder.rawValue, Block.rawValue, Instr.rawValue)
+    return kniBridge502(Builder.rawValue, Block.rawValue, Instr.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMPositionBuilderBefore(Builder: LLVMBuilderRef?, Instr: LLVMValueRef?): Unit {
-    return kniBridge501(Builder.rawValue, Instr.rawValue)
+    return kniBridge503(Builder.rawValue, Instr.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMPositionBuilderAtEnd(Builder: LLVMBuilderRef?, Block: LLVMBasicBlockRef?): Unit {
-    return kniBridge502(Builder.rawValue, Block.rawValue)
+    return kniBridge504(Builder.rawValue, Block.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetInsertBlock(Builder: LLVMBuilderRef?): LLVMBasicBlockRef? {
-    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge503(Builder.rawValue))
+    return interpretCPointer<LLVMOpaqueBasicBlock>(kniBridge505(Builder.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMClearInsertionPosition(Builder: LLVMBuilderRef?): Unit {
-    return kniBridge504(Builder.rawValue)
+    return kniBridge506(Builder.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMInsertIntoBuilder(Builder: LLVMBuilderRef?, Instr: LLVMValueRef?): Unit {
-    return kniBridge505(Builder.rawValue, Instr.rawValue)
+    return kniBridge507(Builder.rawValue, Instr.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMInsertIntoBuilderWithName(Builder: LLVMBuilderRef?, Instr: LLVMValueRef?, Name: String?): Unit {
     memScoped {
-        return kniBridge506(Builder.rawValue, Instr.rawValue, Name?.cstr?.getPointer(memScope).rawValue)
+        return kniBridge508(Builder.rawValue, Instr.rawValue, Name?.cstr?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMDisposeBuilder(Builder: LLVMBuilderRef?): Unit {
-    return kniBridge507(Builder.rawValue)
+    return kniBridge509(Builder.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetCurrentDebugLocation2(Builder: LLVMBuilderRef?): LLVMMetadataRef? {
-    return interpretCPointer<LLVMOpaqueMetadata>(kniBridge508(Builder.rawValue))
+    return interpretCPointer<LLVMOpaqueMetadata>(kniBridge510(Builder.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMSetCurrentDebugLocation2(Builder: LLVMBuilderRef?, Loc: LLVMMetadataRef?): Unit {
-    return kniBridge509(Builder.rawValue, Loc.rawValue)
+    return kniBridge511(Builder.rawValue, Loc.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMSetInstDebugLocation(Builder: LLVMBuilderRef?, Inst: LLVMValueRef?): Unit {
-    return kniBridge510(Builder.rawValue, Inst.rawValue)
+    return kniBridge512(Builder.rawValue, Inst.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMAddMetadataToInst(Builder: LLVMBuilderRef?, Inst: LLVMValueRef?): Unit {
-    return kniBridge511(Builder.rawValue, Inst.rawValue)
+    return kniBridge513(Builder.rawValue, Inst.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMBuilderGetDefaultFPMathTag(Builder: LLVMBuilderRef?): LLVMMetadataRef? {
-    return interpretCPointer<LLVMOpaqueMetadata>(kniBridge512(Builder.rawValue))
+    return interpretCPointer<LLVMOpaqueMetadata>(kniBridge514(Builder.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMBuilderSetDefaultFPMathTag(Builder: LLVMBuilderRef?, FPMathTag: LLVMMetadataRef?): Unit {
-    return kniBridge513(Builder.rawValue, FPMathTag.rawValue)
+    return kniBridge515(Builder.rawValue, FPMathTag.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMSetCurrentDebugLocation(Builder: LLVMBuilderRef?, L: LLVMValueRef?): Unit {
-    return kniBridge514(Builder.rawValue, L.rawValue)
+    return kniBridge516(Builder.rawValue, L.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetCurrentDebugLocation(Builder: LLVMBuilderRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge515(Builder.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge517(Builder.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildRetVoid(arg0: LLVMBuilderRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge516(arg0.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge518(arg0.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildRet(arg0: LLVMBuilderRef?, V: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge517(arg0.rawValue, V.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge519(arg0.rawValue, V.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildAggregateRet(arg0: LLVMBuilderRef?, RetVals: CValuesRef<LLVMValueRefVar>?, N: Int): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge518(arg0.rawValue, RetVals?.getPointer(memScope).rawValue, N))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge520(arg0.rawValue, RetVals?.getPointer(memScope).rawValue, N))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildBr(arg0: LLVMBuilderRef?, Dest: LLVMBasicBlockRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge519(arg0.rawValue, Dest.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge521(arg0.rawValue, Dest.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildCondBr(arg0: LLVMBuilderRef?, If: LLVMValueRef?, Then: LLVMBasicBlockRef?, Else: LLVMBasicBlockRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge520(arg0.rawValue, If.rawValue, Then.rawValue, Else.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge522(arg0.rawValue, If.rawValue, Then.rawValue, Else.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildSwitch(arg0: LLVMBuilderRef?, V: LLVMValueRef?, Else: LLVMBasicBlockRef?, NumCases: Int): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge521(arg0.rawValue, V.rawValue, Else.rawValue, NumCases))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge523(arg0.rawValue, V.rawValue, Else.rawValue, NumCases))
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildIndirectBr(B: LLVMBuilderRef?, Addr: LLVMValueRef?, NumDests: Int): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge522(B.rawValue, Addr.rawValue, NumDests))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge524(B.rawValue, Addr.rawValue, NumDests))
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildInvoke2(arg0: LLVMBuilderRef?, Ty: LLVMTypeRef?, Fn: LLVMValueRef?, Args: CValuesRef<LLVMValueRefVar>?, NumArgs: Int, Then: LLVMBasicBlockRef?, Catch: LLVMBasicBlockRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge523(arg0.rawValue, Ty.rawValue, Fn.rawValue, Args?.getPointer(memScope).rawValue, NumArgs, Then.rawValue, Catch.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge525(arg0.rawValue, Ty.rawValue, Fn.rawValue, Args?.getPointer(memScope).rawValue, NumArgs, Then.rawValue, Catch.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildUnreachable(arg0: LLVMBuilderRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge524(arg0.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge526(arg0.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildResume(B: LLVMBuilderRef?, Exn: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge525(B.rawValue, Exn.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge527(B.rawValue, Exn.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildLandingPad(B: LLVMBuilderRef?, Ty: LLVMTypeRef?, PersFn: LLVMValueRef?, NumClauses: Int, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge526(B.rawValue, Ty.rawValue, PersFn.rawValue, NumClauses, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge528(B.rawValue, Ty.rawValue, PersFn.rawValue, NumClauses, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildCleanupRet(B: LLVMBuilderRef?, CatchPad: LLVMValueRef?, BB: LLVMBasicBlockRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge527(B.rawValue, CatchPad.rawValue, BB.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge529(B.rawValue, CatchPad.rawValue, BB.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildCatchRet(B: LLVMBuilderRef?, CatchPad: LLVMValueRef?, BB: LLVMBasicBlockRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge528(B.rawValue, CatchPad.rawValue, BB.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge530(B.rawValue, CatchPad.rawValue, BB.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildCatchPad(B: LLVMBuilderRef?, ParentPad: LLVMValueRef?, Args: CValuesRef<LLVMValueRefVar>?, NumArgs: Int, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge529(B.rawValue, ParentPad.rawValue, Args?.getPointer(memScope).rawValue, NumArgs, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge531(B.rawValue, ParentPad.rawValue, Args?.getPointer(memScope).rawValue, NumArgs, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildCleanupPad(B: LLVMBuilderRef?, ParentPad: LLVMValueRef?, Args: CValuesRef<LLVMValueRefVar>?, NumArgs: Int, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge530(B.rawValue, ParentPad.rawValue, Args?.getPointer(memScope).rawValue, NumArgs, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge532(B.rawValue, ParentPad.rawValue, Args?.getPointer(memScope).rawValue, NumArgs, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildCatchSwitch(B: LLVMBuilderRef?, ParentPad: LLVMValueRef?, UnwindBB: LLVMBasicBlockRef?, NumHandlers: Int, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge531(B.rawValue, ParentPad.rawValue, UnwindBB.rawValue, NumHandlers, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge533(B.rawValue, ParentPad.rawValue, UnwindBB.rawValue, NumHandlers, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMAddCase(Switch: LLVMValueRef?, OnVal: LLVMValueRef?, Dest: LLVMBasicBlockRef?): Unit {
-    return kniBridge532(Switch.rawValue, OnVal.rawValue, Dest.rawValue)
+    return kniBridge534(Switch.rawValue, OnVal.rawValue, Dest.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMAddDestination(IndirectBr: LLVMValueRef?, Dest: LLVMBasicBlockRef?): Unit {
-    return kniBridge533(IndirectBr.rawValue, Dest.rawValue)
+    return kniBridge535(IndirectBr.rawValue, Dest.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetNumClauses(LandingPad: LLVMValueRef?): Int {
-    return kniBridge534(LandingPad.rawValue)
+    return kniBridge536(LandingPad.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetClause(LandingPad: LLVMValueRef?, Idx: Int): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge535(LandingPad.rawValue, Idx))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge537(LandingPad.rawValue, Idx))
 }
 
 @ExperimentalForeignApi
 fun LLVMAddClause(LandingPad: LLVMValueRef?, ClauseVal: LLVMValueRef?): Unit {
-    return kniBridge536(LandingPad.rawValue, ClauseVal.rawValue)
+    return kniBridge538(LandingPad.rawValue, ClauseVal.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMIsCleanup(LandingPad: LLVMValueRef?): LLVMBool {
-    return kniBridge537(LandingPad.rawValue)
+    return kniBridge539(LandingPad.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMSetCleanup(LandingPad: LLVMValueRef?, Val: LLVMBool): Unit {
-    return kniBridge538(LandingPad.rawValue, Val)
+    return kniBridge540(LandingPad.rawValue, Val)
 }
 
 @ExperimentalForeignApi
 fun LLVMAddHandler(CatchSwitch: LLVMValueRef?, Dest: LLVMBasicBlockRef?): Unit {
-    return kniBridge539(CatchSwitch.rawValue, Dest.rawValue)
+    return kniBridge541(CatchSwitch.rawValue, Dest.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetNumHandlers(CatchSwitch: LLVMValueRef?): Int {
-    return kniBridge540(CatchSwitch.rawValue)
+    return kniBridge542(CatchSwitch.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetHandlers(CatchSwitch: LLVMValueRef?, Handlers: CValuesRef<LLVMBasicBlockRefVar>?): Unit {
     memScoped {
-        return kniBridge541(CatchSwitch.rawValue, Handlers?.getPointer(memScope).rawValue)
+        return kniBridge543(CatchSwitch.rawValue, Handlers?.getPointer(memScope).rawValue)
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetArgOperand(Funclet: LLVMValueRef?, i: Int): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge542(Funclet.rawValue, i))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge544(Funclet.rawValue, i))
 }
 
 @ExperimentalForeignApi
 fun LLVMSetArgOperand(Funclet: LLVMValueRef?, i: Int, value: LLVMValueRef?): Unit {
-    return kniBridge543(Funclet.rawValue, i, value.rawValue)
+    return kniBridge545(Funclet.rawValue, i, value.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetParentCatchSwitch(CatchPad: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge544(CatchPad.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge546(CatchPad.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMSetParentCatchSwitch(CatchPad: LLVMValueRef?, CatchSwitch: LLVMValueRef?): Unit {
-    return kniBridge545(CatchPad.rawValue, CatchSwitch.rawValue)
+    return kniBridge547(CatchPad.rawValue, CatchSwitch.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildAdd(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
-    memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge546(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
-    }
-}
-
-@ExperimentalForeignApi
-fun LLVMBuildNSWAdd(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
-    memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge547(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
-    }
-}
-
-@ExperimentalForeignApi
-fun LLVMBuildNUWAdd(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge548(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildFAdd(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildNSWAdd(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge549(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildSub(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildNUWAdd(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge550(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildNSWSub(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildFAdd(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge551(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildNUWSub(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildSub(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge552(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildFSub(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildNSWSub(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge553(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildMul(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildNUWSub(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge554(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildNSWMul(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildFSub(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge555(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildNUWMul(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildMul(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge556(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildFMul(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildNSWMul(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge557(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildUDiv(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildNUWMul(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge558(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildExactUDiv(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildFMul(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge559(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildSDiv(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildUDiv(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge560(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildExactSDiv(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildExactUDiv(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge561(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildFDiv(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildSDiv(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge562(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildURem(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildExactSDiv(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge563(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildSRem(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildFDiv(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge564(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildFRem(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildURem(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge565(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildShl(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildSRem(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge566(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildLShr(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildFRem(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge567(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildAShr(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildShl(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge568(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildAnd(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildLShr(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge569(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildOr(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildAShr(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge570(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildXor(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildAnd(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge571(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
+fun LLVMBuildOr(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+    memScoped {
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge572(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+    }
+}
+
+@ExperimentalForeignApi
+fun LLVMBuildXor(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+    memScoped {
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge573(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+    }
+}
+
+@ExperimentalForeignApi
 fun LLVMBuildBinOp(B: LLVMBuilderRef?, Op: LLVMOpcode, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge572(B.rawValue, Op.value, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge574(B.rawValue, Op.value, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildNeg(arg0: LLVMBuilderRef?, V: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge573(arg0.rawValue, V.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge575(arg0.rawValue, V.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildNSWNeg(B: LLVMBuilderRef?, V: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge574(B.rawValue, V.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge576(B.rawValue, V.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildNUWNeg(B: LLVMBuilderRef?, V: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge575(B.rawValue, V.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge577(B.rawValue, V.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildFNeg(arg0: LLVMBuilderRef?, V: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge576(arg0.rawValue, V.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge578(arg0.rawValue, V.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildNot(arg0: LLVMBuilderRef?, V: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge577(arg0.rawValue, V.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge579(arg0.rawValue, V.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildMalloc(arg0: LLVMBuilderRef?, Ty: LLVMTypeRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge578(arg0.rawValue, Ty.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge580(arg0.rawValue, Ty.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildArrayMalloc(arg0: LLVMBuilderRef?, Ty: LLVMTypeRef?, Val: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge579(arg0.rawValue, Ty.rawValue, Val.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge581(arg0.rawValue, Ty.rawValue, Val.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildMemSet(B: LLVMBuilderRef?, Ptr: LLVMValueRef?, Val: LLVMValueRef?, Len: LLVMValueRef?, Align: Int): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge580(B.rawValue, Ptr.rawValue, Val.rawValue, Len.rawValue, Align))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge582(B.rawValue, Ptr.rawValue, Val.rawValue, Len.rawValue, Align))
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildMemCpy(B: LLVMBuilderRef?, Dst: LLVMValueRef?, DstAlign: Int, Src: LLVMValueRef?, SrcAlign: Int, Size: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge581(B.rawValue, Dst.rawValue, DstAlign, Src.rawValue, SrcAlign, Size.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge583(B.rawValue, Dst.rawValue, DstAlign, Src.rawValue, SrcAlign, Size.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildMemMove(B: LLVMBuilderRef?, Dst: LLVMValueRef?, DstAlign: Int, Src: LLVMValueRef?, SrcAlign: Int, Size: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge582(B.rawValue, Dst.rawValue, DstAlign, Src.rawValue, SrcAlign, Size.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge584(B.rawValue, Dst.rawValue, DstAlign, Src.rawValue, SrcAlign, Size.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildAlloca(arg0: LLVMBuilderRef?, Ty: LLVMTypeRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge583(arg0.rawValue, Ty.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge585(arg0.rawValue, Ty.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildArrayAlloca(arg0: LLVMBuilderRef?, Ty: LLVMTypeRef?, Val: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge584(arg0.rawValue, Ty.rawValue, Val.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge586(arg0.rawValue, Ty.rawValue, Val.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildFree(arg0: LLVMBuilderRef?, PointerVal: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge585(arg0.rawValue, PointerVal.rawValue))
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge587(arg0.rawValue, PointerVal.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildLoad2(arg0: LLVMBuilderRef?, Ty: LLVMTypeRef?, PointerVal: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge586(arg0.rawValue, Ty.rawValue, PointerVal.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge588(arg0.rawValue, Ty.rawValue, PointerVal.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildStore(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, Ptr: LLVMValueRef?): LLVMValueRef? {
-    return interpretCPointer<LLVMOpaqueValue>(kniBridge587(arg0.rawValue, Val.rawValue, Ptr.rawValue))
-}
-
-@ExperimentalForeignApi
-fun LLVMBuildInBoundsGEP(B: LLVMBuilderRef?, Pointer: LLVMValueRef?, Indices: CValuesRef<LLVMValueRefVar>?, NumIndices: Int, Name: String?): LLVMValueRef? {
-    memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge588(B.rawValue, Pointer.rawValue, Indices?.getPointer(memScope).rawValue, NumIndices, Name?.cstr?.getPointer(memScope).rawValue))
-    }
+    return interpretCPointer<LLVMOpaqueValue>(kniBridge589(arg0.rawValue, Val.rawValue, Ptr.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildGEP2(B: LLVMBuilderRef?, Ty: LLVMTypeRef?, Pointer: LLVMValueRef?, Indices: CValuesRef<LLVMValueRefVar>?, NumIndices: Int, Name: String?): LLVMValueRef? {
-    memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge589(B.rawValue, Ty.rawValue, Pointer.rawValue, Indices?.getPointer(memScope).rawValue, NumIndices, Name?.cstr?.getPointer(memScope).rawValue))
-    }
-}
-
-@ExperimentalForeignApi
-fun LLVMBuildInBoundsGEP2(B: LLVMBuilderRef?, Ty: LLVMTypeRef?, Pointer: LLVMValueRef?, Indices: CValuesRef<LLVMValueRefVar>?, NumIndices: Int, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge590(B.rawValue, Ty.rawValue, Pointer.rawValue, Indices?.getPointer(memScope).rawValue, NumIndices, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
+fun LLVMBuildInBoundsGEP2(B: LLVMBuilderRef?, Ty: LLVMTypeRef?, Pointer: LLVMValueRef?, Indices: CValuesRef<LLVMValueRefVar>?, NumIndices: Int, Name: String?): LLVMValueRef? {
+    memScoped {
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge591(B.rawValue, Ty.rawValue, Pointer.rawValue, Indices?.getPointer(memScope).rawValue, NumIndices, Name?.cstr?.getPointer(memScope).rawValue))
+    }
+}
+
+@ExperimentalForeignApi
 fun LLVMBuildStructGEP2(B: LLVMBuilderRef?, Ty: LLVMTypeRef?, Pointer: LLVMValueRef?, Idx: Int, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge591(B.rawValue, Ty.rawValue, Pointer.rawValue, Idx, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge592(B.rawValue, Ty.rawValue, Pointer.rawValue, Idx, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildGlobalString(B: LLVMBuilderRef?, Str: String?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge592(B.rawValue, Str?.cstr?.getPointer(memScope).rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge593(B.rawValue, Str?.cstr?.getPointer(memScope).rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildGlobalStringPtr(B: LLVMBuilderRef?, Str: String?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge593(B.rawValue, Str?.cstr?.getPointer(memScope).rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge594(B.rawValue, Str?.cstr?.getPointer(memScope).rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetVolatile(MemoryAccessInst: LLVMValueRef?): LLVMBool {
-    return kniBridge594(MemoryAccessInst.rawValue)
+    return kniBridge595(MemoryAccessInst.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMSetVolatile(MemoryAccessInst: LLVMValueRef?, IsVolatile: LLVMBool): Unit {
-    return kniBridge595(MemoryAccessInst.rawValue, IsVolatile)
+    return kniBridge596(MemoryAccessInst.rawValue, IsVolatile)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetWeak(CmpXchgInst: LLVMValueRef?): LLVMBool {
-    return kniBridge596(CmpXchgInst.rawValue)
+    return kniBridge597(CmpXchgInst.rawValue)
 }
 
 @ExperimentalForeignApi
 fun LLVMSetWeak(CmpXchgInst: LLVMValueRef?, IsWeak: LLVMBool): Unit {
-    return kniBridge597(CmpXchgInst.rawValue, IsWeak)
+    return kniBridge598(CmpXchgInst.rawValue, IsWeak)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetOrdering(MemoryAccessInst: LLVMValueRef?): LLVMAtomicOrdering {
-    return LLVMAtomicOrdering.byValue(kniBridge598(MemoryAccessInst.rawValue))
+    return LLVMAtomicOrdering.byValue(kniBridge599(MemoryAccessInst.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMSetOrdering(MemoryAccessInst: LLVMValueRef?, Ordering: LLVMAtomicOrdering): Unit {
-    return kniBridge599(MemoryAccessInst.rawValue, Ordering.value)
+    return kniBridge600(MemoryAccessInst.rawValue, Ordering.value)
 }
 
 @ExperimentalForeignApi
 fun LLVMGetAtomicRMWBinOp(AtomicRMWInst: LLVMValueRef?): LLVMAtomicRMWBinOp {
-    return LLVMAtomicRMWBinOp.byValue(kniBridge600(AtomicRMWInst.rawValue))
+    return LLVMAtomicRMWBinOp.byValue(kniBridge601(AtomicRMWInst.rawValue))
 }
 
 @ExperimentalForeignApi
 fun LLVMSetAtomicRMWBinOp(AtomicRMWInst: LLVMValueRef?, BinOp: LLVMAtomicRMWBinOp): Unit {
-    return kniBridge601(AtomicRMWInst.rawValue, BinOp.value)
+    return kniBridge602(AtomicRMWInst.rawValue, BinOp.value)
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildTrunc(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
-    memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge602(arg0.rawValue, Val.rawValue, DestTy.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
-    }
-}
-
-@ExperimentalForeignApi
-fun LLVMBuildZExt(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge603(arg0.rawValue, Val.rawValue, DestTy.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildSExt(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildZExt(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge604(arg0.rawValue, Val.rawValue, DestTy.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildFPToUI(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildSExt(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge605(arg0.rawValue, Val.rawValue, DestTy.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildFPToSI(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildFPToUI(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge606(arg0.rawValue, Val.rawValue, DestTy.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildUIToFP(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildFPToSI(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge607(arg0.rawValue, Val.rawValue, DestTy.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildSIToFP(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildUIToFP(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge608(arg0.rawValue, Val.rawValue, DestTy.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildFPTrunc(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildSIToFP(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge609(arg0.rawValue, Val.rawValue, DestTy.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildFPExt(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildFPTrunc(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge610(arg0.rawValue, Val.rawValue, DestTy.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildPtrToInt(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildFPExt(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge611(arg0.rawValue, Val.rawValue, DestTy.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildIntToPtr(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildPtrToInt(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge612(arg0.rawValue, Val.rawValue, DestTy.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildBitCast(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildIntToPtr(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge613(arg0.rawValue, Val.rawValue, DestTy.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildAddrSpaceCast(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildBitCast(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge614(arg0.rawValue, Val.rawValue, DestTy.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildZExtOrBitCast(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildAddrSpaceCast(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge615(arg0.rawValue, Val.rawValue, DestTy.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildSExtOrBitCast(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildZExtOrBitCast(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge616(arg0.rawValue, Val.rawValue, DestTy.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
-fun LLVMBuildTruncOrBitCast(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
+fun LLVMBuildSExtOrBitCast(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge617(arg0.rawValue, Val.rawValue, DestTy.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
+fun LLVMBuildTruncOrBitCast(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
+    memScoped {
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge618(arg0.rawValue, Val.rawValue, DestTy.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+    }
+}
+
+@ExperimentalForeignApi
 fun LLVMBuildCast(B: LLVMBuilderRef?, Op: LLVMOpcode, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge618(B.rawValue, Op.value, Val.rawValue, DestTy.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge619(B.rawValue, Op.value, Val.rawValue, DestTy.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildPointerCast(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge619(arg0.rawValue, Val.rawValue, DestTy.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge620(arg0.rawValue, Val.rawValue, DestTy.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildIntCast2(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, IsSigned: LLVMBool, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge620(arg0.rawValue, Val.rawValue, DestTy.rawValue, IsSigned, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge621(arg0.rawValue, Val.rawValue, DestTy.rawValue, IsSigned, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildFPCast(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge621(arg0.rawValue, Val.rawValue, DestTy.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge622(arg0.rawValue, Val.rawValue, DestTy.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildIntCast(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, DestTy: LLVMTypeRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge622(arg0.rawValue, Val.rawValue, DestTy.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge623(arg0.rawValue, Val.rawValue, DestTy.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMGetCastOpcode(Src: LLVMValueRef?, SrcIsSigned: LLVMBool, DestTy: LLVMTypeRef?, DestIsSigned: LLVMBool): LLVMOpcode {
-    return LLVMOpcode.byValue(kniBridge623(Src.rawValue, SrcIsSigned, DestTy.rawValue, DestIsSigned))
+    return LLVMOpcode.byValue(kniBridge624(Src.rawValue, SrcIsSigned, DestTy.rawValue, DestIsSigned))
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildICmp(arg0: LLVMBuilderRef?, Op: LLVMIntPredicate, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
-    memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge624(arg0.rawValue, Op.value, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
-    }
-}
-
-@ExperimentalForeignApi
-fun LLVMBuildFCmp(arg0: LLVMBuilderRef?, Op: LLVMRealPredicate, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
         return interpretCPointer<LLVMOpaqueValue>(kniBridge625(arg0.rawValue, Op.value, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
+fun LLVMBuildFCmp(arg0: LLVMBuilderRef?, Op: LLVMRealPredicate, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
+    memScoped {
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge626(arg0.rawValue, Op.value, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+    }
+}
+
+@ExperimentalForeignApi
 fun LLVMBuildPhi(arg0: LLVMBuilderRef?, Ty: LLVMTypeRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge626(arg0.rawValue, Ty.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge627(arg0.rawValue, Ty.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildCall2(arg0: LLVMBuilderRef?, arg1: LLVMTypeRef?, Fn: LLVMValueRef?, Args: CValuesRef<LLVMValueRefVar>?, NumArgs: Int, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge627(arg0.rawValue, arg1.rawValue, Fn.rawValue, Args?.getPointer(memScope).rawValue, NumArgs, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge628(arg0.rawValue, arg1.rawValue, Fn.rawValue, Args?.getPointer(memScope).rawValue, NumArgs, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildSelect(arg0: LLVMBuilderRef?, If: LLVMValueRef?, Then: LLVMValueRef?, Else: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge628(arg0.rawValue, If.rawValue, Then.rawValue, Else.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge629(arg0.rawValue, If.rawValue, Then.rawValue, Else.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildVAArg(arg0: LLVMBuilderRef?, List: LLVMValueRef?, Ty: LLVMTypeRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge629(arg0.rawValue, List.rawValue, Ty.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge630(arg0.rawValue, List.rawValue, Ty.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildExtractElement(arg0: LLVMBuilderRef?, VecVal: LLVMValueRef?, Index: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge630(arg0.rawValue, VecVal.rawValue, Index.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge631(arg0.rawValue, VecVal.rawValue, Index.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildInsertElement(arg0: LLVMBuilderRef?, VecVal: LLVMValueRef?, EltVal: LLVMValueRef?, Index: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge631(arg0.rawValue, VecVal.rawValue, EltVal.rawValue, Index.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge632(arg0.rawValue, VecVal.rawValue, EltVal.rawValue, Index.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildShuffleVector(arg0: LLVMBuilderRef?, V1: LLVMValueRef?, V2: LLVMValueRef?, Mask: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge632(arg0.rawValue, V1.rawValue, V2.rawValue, Mask.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge633(arg0.rawValue, V1.rawValue, V2.rawValue, Mask.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildExtractValue(arg0: LLVMBuilderRef?, AggVal: LLVMValueRef?, Index: Int, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge633(arg0.rawValue, AggVal.rawValue, Index, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge634(arg0.rawValue, AggVal.rawValue, Index, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildInsertValue(arg0: LLVMBuilderRef?, AggVal: LLVMValueRef?, EltVal: LLVMValueRef?, Index: Int, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge634(arg0.rawValue, AggVal.rawValue, EltVal.rawValue, Index, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge635(arg0.rawValue, AggVal.rawValue, EltVal.rawValue, Index, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildFreeze(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge635(arg0.rawValue, Val.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge636(arg0.rawValue, Val.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildIsNull(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge636(arg0.rawValue, Val.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge637(arg0.rawValue, Val.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
 @ExperimentalForeignApi
 fun LLVMBuildIsNotNull(arg0: LLVMBuilderRef?, Val: LLVMValueRef?, Name: String?): LLVMValueRef? {
     memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge637(arg0.rawValue, Val.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
-    }
-}
-
-@ExperimentalForeignApi
-fun LLVMBuildPtrDiff(arg0: LLVMBuilderRef?, LHS: LLVMValueRef?, RHS: LLVMValueRef?, Name: String?): LLVMValueRef? {
-    memScoped {
-        return interpretCPointer<LLVMOpaqueValue>(kniBridge638(arg0.rawValue, LHS.rawValue, RHS.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
+        return interpretCPointer<LLVMOpaqueValue>(kniBridge638(arg0.rawValue, Val.rawValue, Name?.cstr?.getPointer(memScope).rawValue))
     }
 }
 
@@ -6026,16 +6037,10 @@ typealias LLVMYieldCallbackVar = CPointerVarOf<LLVMYieldCallback>
 typealias LLVMYieldCallback = CPointer<CFunction<(LLVMContextRef?, COpaquePointer?) -> Unit>>
 
 @ExperimentalForeignApi
-typealias __darwin_size_tVar = LongVarOf<__darwin_size_t>
-
-@ExperimentalForeignApi
-typealias __darwin_size_t = Long
-
-@ExperimentalForeignApi
 typealias size_tVar = LongVarOf<size_t>
 
 @ExperimentalForeignApi
-typealias size_t = __darwin_size_t
+typealias size_t = Long
 
 @ExperimentalForeignApi
 typealias uint64_tVar = LongVarOf<uint64_t>
@@ -6199,7 +6204,7 @@ typealias DIExpressionRefVar = CPointerVarOf<DIExpressionRef>
 @ExperimentalForeignApi
 typealias DIExpressionRef = CPointer<DIExpression>
 
-// enum (unnamed at /Users/Alexander.Shabalin/.konan/dependencies/llvm-16.0.0-aarch64-macos-dev-63/include/llvm-c/Core.h:461:1):
+// enum (unnamed at /home/teamcity/.konan/dependencies/llvm-16.0.0-x86_64-linux-dev-80/include/llvm-c/Core.h:463:1):
 
 @ExperimentalForeignApi
 val LLVMAttributeReturnIndex: Int get() = 0
@@ -6348,7 +6353,7 @@ typealias LLVMDWARFEmissionKindVar = IntVarOf<LLVMDWARFEmissionKind>
 @ExperimentalForeignApi
 typealias LLVMDWARFEmissionKind = Int
 
-// enum (unnamed at /Users/Alexander.Shabalin/.konan/dependencies/llvm-16.0.0-aarch64-macos-dev-63/include/llvm-c/DebugInfo.h:137:1):
+// enum (unnamed at /home/teamcity/.konan/dependencies/llvm-16.0.0-x86_64-linux-dev-80/include/llvm-c/DebugInfo.h:146:1):
 
 @ExperimentalForeignApi
 val LLVMMDStringMetadataKind: Int get() = 0
@@ -6455,6 +6460,9 @@ val LLVMDIGenericSubrangeMetadataKind: Int get() = 33
 @ExperimentalForeignApi
 val LLVMDIArgListMetadataKind: Int get() = 34
 
+@ExperimentalForeignApi
+val LLVMDIAssignIDMetadataKind: Int get() = 35
+
 
 @ExperimentalForeignApi
 val LLVMDWARFMacinfoRecordTypeDefine: LLVMDWARFMacinfoRecordType get() = 1
@@ -6481,149 +6489,149 @@ private external fun kniBridge1(): Unit
 private external fun kniBridge2(): Unit
 private external fun kniBridge3(p0: NativePtr): Unit
 private external fun kniBridge4(): Unit
-private external fun kniBridge5(p0: NativePtr): NativePtr
-private external fun kniBridge6(p0: NativePtr): Unit
-private external fun kniBridge7(): NativePtr
-private external fun kniBridge8(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
-private external fun kniBridge9(p0: NativePtr): NativePtr
+private external fun kniBridge5(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
+private external fun kniBridge6(p0: NativePtr): NativePtr
+private external fun kniBridge7(p0: NativePtr): Unit
+private external fun kniBridge8(): NativePtr
+private external fun kniBridge9(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
 private external fun kniBridge10(p0: NativePtr): NativePtr
-private external fun kniBridge11(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
-private external fun kniBridge12(p0: NativePtr): Int
-private external fun kniBridge13(p0: NativePtr, p1: Int): Unit
+private external fun kniBridge11(p0: NativePtr): NativePtr
+private external fun kniBridge12(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
+private external fun kniBridge13(p0: NativePtr): Int
 private external fun kniBridge14(p0: NativePtr, p1: Int): Unit
-private external fun kniBridge15(p0: NativePtr): Unit
-private external fun kniBridge16(p0: NativePtr): NativePtr
-private external fun kniBridge17(p0: NativePtr): Int
-private external fun kniBridge18(p0: NativePtr, p1: NativePtr, p2: Int): Int
-private external fun kniBridge19(p0: NativePtr, p1: Long): Int
-private external fun kniBridge20(): Int
-private external fun kniBridge21(p0: NativePtr, p1: Int, p2: Long): NativePtr
-private external fun kniBridge22(p0: NativePtr): Int
-private external fun kniBridge23(p0: NativePtr): Long
-private external fun kniBridge24(p0: NativePtr, p1: Int, p2: NativePtr): NativePtr
-private external fun kniBridge25(p0: NativePtr): NativePtr
-private external fun kniBridge26(p0: NativePtr, p1: NativePtr, p2: Int, p3: NativePtr, p4: Int): NativePtr
-private external fun kniBridge27(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge15(p0: NativePtr, p1: Int): Unit
+private external fun kniBridge16(p0: NativePtr): Unit
+private external fun kniBridge17(p0: NativePtr): NativePtr
+private external fun kniBridge18(p0: NativePtr): Int
+private external fun kniBridge19(p0: NativePtr, p1: NativePtr, p2: Int): Int
+private external fun kniBridge20(p0: NativePtr, p1: Long): Int
+private external fun kniBridge21(): Int
+private external fun kniBridge22(p0: NativePtr, p1: Int, p2: Long): NativePtr
+private external fun kniBridge23(p0: NativePtr): Int
+private external fun kniBridge24(p0: NativePtr): Long
+private external fun kniBridge25(p0: NativePtr, p1: Int, p2: NativePtr): NativePtr
+private external fun kniBridge26(p0: NativePtr): NativePtr
+private external fun kniBridge27(p0: NativePtr, p1: NativePtr, p2: Int, p3: NativePtr, p4: Int): NativePtr
 private external fun kniBridge28(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge29(p0: NativePtr): Int
+private external fun kniBridge29(p0: NativePtr, p1: NativePtr): NativePtr
 private external fun kniBridge30(p0: NativePtr): Int
 private external fun kniBridge31(p0: NativePtr): Int
-private external fun kniBridge32(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge32(p0: NativePtr): Int
 private external fun kniBridge33(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge34(p0: NativePtr): NativePtr
-private external fun kniBridge35(p0: NativePtr): Unit
-private external fun kniBridge36(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge37(p0: NativePtr, p1: NativePtr, p2: Long): Unit
-private external fun kniBridge38(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge39(p0: NativePtr, p1: NativePtr, p2: Long): Unit
-private external fun kniBridge40(p0: NativePtr): NativePtr
+private external fun kniBridge34(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge35(p0: NativePtr): NativePtr
+private external fun kniBridge36(p0: NativePtr): Unit
+private external fun kniBridge37(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge38(p0: NativePtr, p1: NativePtr, p2: Long): Unit
+private external fun kniBridge39(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge40(p0: NativePtr, p1: NativePtr, p2: Long): Unit
 private external fun kniBridge41(p0: NativePtr): NativePtr
-private external fun kniBridge42(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge43(p0: NativePtr): NativePtr
-private external fun kniBridge44(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge45(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge46(p0: NativePtr): Unit
-private external fun kniBridge47(p0: NativePtr, p1: Int): Int
-private external fun kniBridge48(p0: NativePtr, p1: Int, p2: NativePtr): NativePtr
-private external fun kniBridge49(p0: NativePtr, p1: Int): NativePtr
-private external fun kniBridge50(p0: NativePtr, p1: NativePtr, p2: Long): NativePtr
-private external fun kniBridge51(p0: NativePtr, p1: Int, p2: NativePtr, p3: Long, p4: NativePtr): Unit
-private external fun kniBridge52(p0: NativePtr): Unit
-private external fun kniBridge53(p0: NativePtr, p1: NativePtr, p2: NativePtr): Int
-private external fun kniBridge54(p0: NativePtr): NativePtr
-private external fun kniBridge55(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge56(p0: NativePtr, p1: NativePtr, p2: Long): Unit
+private external fun kniBridge42(p0: NativePtr): NativePtr
+private external fun kniBridge43(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge44(p0: NativePtr): NativePtr
+private external fun kniBridge45(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge46(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge47(p0: NativePtr): Unit
+private external fun kniBridge48(p0: NativePtr, p1: Int): Int
+private external fun kniBridge49(p0: NativePtr, p1: Int, p2: NativePtr): NativePtr
+private external fun kniBridge50(p0: NativePtr, p1: Int): NativePtr
+private external fun kniBridge51(p0: NativePtr, p1: NativePtr, p2: Long): NativePtr
+private external fun kniBridge52(p0: NativePtr, p1: Int, p2: NativePtr, p3: Long, p4: NativePtr): Unit
+private external fun kniBridge53(p0: NativePtr): Unit
+private external fun kniBridge54(p0: NativePtr, p1: NativePtr, p2: NativePtr): Int
+private external fun kniBridge55(p0: NativePtr): NativePtr
+private external fun kniBridge56(p0: NativePtr, p1: NativePtr): NativePtr
 private external fun kniBridge57(p0: NativePtr, p1: NativePtr, p2: Long): Unit
-private external fun kniBridge58(p0: NativePtr, p1: NativePtr, p2: Long, p3: NativePtr, p4: Long, p5: Int, p6: Int, p7: Int, p8: Int): NativePtr
-private external fun kniBridge59(p0: NativePtr): NativePtr
-private external fun kniBridge60(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge61(p0: NativePtr): NativePtr
+private external fun kniBridge58(p0: NativePtr, p1: NativePtr, p2: Long): Unit
+private external fun kniBridge59(p0: NativePtr, p1: NativePtr, p2: Long, p3: NativePtr, p4: Long, p5: Int, p6: Int, p7: Int, p8: Int): NativePtr
+private external fun kniBridge60(p0: NativePtr): NativePtr
+private external fun kniBridge61(p0: NativePtr, p1: NativePtr): NativePtr
 private external fun kniBridge62(p0: NativePtr): NativePtr
 private external fun kniBridge63(p0: NativePtr): NativePtr
 private external fun kniBridge64(p0: NativePtr): NativePtr
-private external fun kniBridge65(p0: NativePtr, p1: NativePtr, p2: Long): NativePtr
+private external fun kniBridge65(p0: NativePtr): NativePtr
 private external fun kniBridge66(p0: NativePtr, p1: NativePtr, p2: Long): NativePtr
-private external fun kniBridge67(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge68(p0: NativePtr, p1: NativePtr): Int
-private external fun kniBridge69(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
+private external fun kniBridge67(p0: NativePtr, p1: NativePtr, p2: Long): NativePtr
+private external fun kniBridge68(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge69(p0: NativePtr, p1: NativePtr): Int
 private external fun kniBridge70(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
-private external fun kniBridge71(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge71(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
 private external fun kniBridge72(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge73(p0: NativePtr): Int
+private external fun kniBridge73(p0: NativePtr, p1: NativePtr): NativePtr
 private external fun kniBridge74(p0: NativePtr): Int
-private external fun kniBridge75(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
-private external fun kniBridge76(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge77(p0: NativePtr): NativePtr
+private external fun kniBridge75(p0: NativePtr): Int
+private external fun kniBridge76(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
+private external fun kniBridge77(p0: NativePtr, p1: NativePtr): NativePtr
 private external fun kniBridge78(p0: NativePtr): NativePtr
 private external fun kniBridge79(p0: NativePtr): NativePtr
 private external fun kniBridge80(p0: NativePtr): NativePtr
-private external fun kniBridge81(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge82(p0: NativePtr): Int
+private external fun kniBridge81(p0: NativePtr): NativePtr
+private external fun kniBridge82(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge83(p0: NativePtr): Int
-private external fun kniBridge84(p0: NativePtr): NativePtr
-private external fun kniBridge85(p0: NativePtr): Unit
-private external fun kniBridge86(p0: NativePtr): NativePtr
+private external fun kniBridge84(p0: NativePtr): Int
+private external fun kniBridge85(p0: NativePtr): NativePtr
+private external fun kniBridge86(p0: NativePtr): Unit
 private external fun kniBridge87(p0: NativePtr): NativePtr
 private external fun kniBridge88(p0: NativePtr): NativePtr
 private external fun kniBridge89(p0: NativePtr): NativePtr
 private external fun kniBridge90(p0: NativePtr): NativePtr
 private external fun kniBridge91(p0: NativePtr): NativePtr
 private external fun kniBridge92(p0: NativePtr): NativePtr
-private external fun kniBridge93(p0: NativePtr, p1: Int): NativePtr
-private external fun kniBridge94(p0: NativePtr): Int
-private external fun kniBridge95(p0: NativePtr): NativePtr
+private external fun kniBridge93(p0: NativePtr): NativePtr
+private external fun kniBridge94(p0: NativePtr, p1: Int): NativePtr
+private external fun kniBridge95(p0: NativePtr): Int
 private external fun kniBridge96(p0: NativePtr): NativePtr
 private external fun kniBridge97(p0: NativePtr): NativePtr
 private external fun kniBridge98(p0: NativePtr): NativePtr
 private external fun kniBridge99(p0: NativePtr): NativePtr
 private external fun kniBridge100(p0: NativePtr): NativePtr
 private external fun kniBridge101(p0: NativePtr): NativePtr
-private external fun kniBridge102(): NativePtr
-private external fun kniBridge103(p0: NativePtr, p1: NativePtr, p2: Int, p3: Int): NativePtr
-private external fun kniBridge104(p0: NativePtr): Int
-private external fun kniBridge105(p0: NativePtr): NativePtr
-private external fun kniBridge106(p0: NativePtr): Int
-private external fun kniBridge107(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge108(p0: NativePtr, p1: NativePtr, p2: Int, p3: Int): NativePtr
-private external fun kniBridge109(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge110(p0: NativePtr): NativePtr
-private external fun kniBridge111(p0: NativePtr, p1: NativePtr, p2: Int, p3: Int): Unit
-private external fun kniBridge112(p0: NativePtr): Int
-private external fun kniBridge113(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge114(p0: NativePtr, p1: Int): NativePtr
-private external fun kniBridge115(p0: NativePtr): Int
+private external fun kniBridge102(p0: NativePtr): NativePtr
+private external fun kniBridge103(): NativePtr
+private external fun kniBridge104(p0: NativePtr, p1: NativePtr, p2: Int, p3: Int): NativePtr
+private external fun kniBridge105(p0: NativePtr): Int
+private external fun kniBridge106(p0: NativePtr): NativePtr
+private external fun kniBridge107(p0: NativePtr): Int
+private external fun kniBridge108(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge109(p0: NativePtr, p1: NativePtr, p2: Int, p3: Int): NativePtr
+private external fun kniBridge110(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge111(p0: NativePtr): NativePtr
+private external fun kniBridge112(p0: NativePtr, p1: NativePtr, p2: Int, p3: Int): Unit
+private external fun kniBridge113(p0: NativePtr): Int
+private external fun kniBridge114(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge115(p0: NativePtr, p1: Int): NativePtr
 private external fun kniBridge116(p0: NativePtr): Int
 private external fun kniBridge117(p0: NativePtr): Int
-private external fun kniBridge118(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge119(p0: NativePtr): Int
-private external fun kniBridge120(p0: NativePtr, p1: Int): NativePtr
-private external fun kniBridge121(p0: NativePtr): Int
-private external fun kniBridge122(p0: NativePtr, p1: Int): NativePtr
-private external fun kniBridge123(p0: NativePtr): Int
-private external fun kniBridge124(p0: NativePtr, p1: Int): NativePtr
-private external fun kniBridge125(p0: NativePtr): Int
-private external fun kniBridge126(p0: NativePtr, p1: Int): NativePtr
+private external fun kniBridge118(p0: NativePtr): Int
+private external fun kniBridge119(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge120(p0: NativePtr): Int
+private external fun kniBridge121(p0: NativePtr, p1: Int): NativePtr
+private external fun kniBridge122(p0: NativePtr): Int
+private external fun kniBridge123(p0: NativePtr, p1: Int): NativePtr
+private external fun kniBridge124(p0: NativePtr): Int
+private external fun kniBridge125(p0: NativePtr, p1: Int): NativePtr
+private external fun kniBridge126(p0: NativePtr): Int
 private external fun kniBridge127(p0: NativePtr, p1: Int): NativePtr
-private external fun kniBridge128(p0: NativePtr): Int
-private external fun kniBridge129(p0: NativePtr): NativePtr
+private external fun kniBridge128(p0: NativePtr, p1: Int): NativePtr
+private external fun kniBridge129(p0: NativePtr): Int
 private external fun kniBridge130(p0: NativePtr): NativePtr
 private external fun kniBridge131(p0: NativePtr): NativePtr
 private external fun kniBridge132(p0: NativePtr): NativePtr
 private external fun kniBridge133(p0: NativePtr): NativePtr
 private external fun kniBridge134(p0: NativePtr): NativePtr
-private external fun kniBridge135(): NativePtr
-private external fun kniBridge136(p0: NativePtr): NativePtr
-private external fun kniBridge137(p0: NativePtr): Int
-private external fun kniBridge138(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge139(p0: NativePtr, p1: NativePtr, p2: Long): Unit
-private external fun kniBridge140(p0: NativePtr): Unit
-private external fun kniBridge141(p0: NativePtr): NativePtr
-private external fun kniBridge142(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge143(p0: NativePtr): Int
-private external fun kniBridge144(p0: NativePtr): Int
+private external fun kniBridge135(p0: NativePtr): NativePtr
+private external fun kniBridge136(): NativePtr
+private external fun kniBridge137(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: NativePtr, p5: Int): NativePtr
+private external fun kniBridge138(p0: NativePtr): NativePtr
+private external fun kniBridge139(p0: NativePtr): Int
+private external fun kniBridge140(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge141(p0: NativePtr, p1: NativePtr, p2: Long): Unit
+private external fun kniBridge142(p0: NativePtr): Unit
+private external fun kniBridge143(p0: NativePtr): NativePtr
+private external fun kniBridge144(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge145(p0: NativePtr): Int
-private external fun kniBridge146(p0: NativePtr): NativePtr
-private external fun kniBridge147(p0: NativePtr): NativePtr
+private external fun kniBridge146(p0: NativePtr): Int
+private external fun kniBridge147(p0: NativePtr): Int
 private external fun kniBridge148(p0: NativePtr): NativePtr
 private external fun kniBridge149(p0: NativePtr): NativePtr
 private external fun kniBridge150(p0: NativePtr): NativePtr
@@ -6713,49 +6721,49 @@ private external fun kniBridge233(p0: NativePtr): NativePtr
 private external fun kniBridge234(p0: NativePtr): NativePtr
 private external fun kniBridge235(p0: NativePtr): NativePtr
 private external fun kniBridge236(p0: NativePtr): NativePtr
-private external fun kniBridge237(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge237(p0: NativePtr): NativePtr
 private external fun kniBridge238(p0: NativePtr): NativePtr
-private external fun kniBridge239(p0: NativePtr): NativePtr
+private external fun kniBridge239(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge240(p0: NativePtr): NativePtr
 private external fun kniBridge241(p0: NativePtr): NativePtr
-private external fun kniBridge242(p0: NativePtr, p1: Int): NativePtr
-private external fun kniBridge243(p0: NativePtr, p1: Int): NativePtr
-private external fun kniBridge244(p0: NativePtr, p1: Int, p2: NativePtr): Unit
-private external fun kniBridge245(p0: NativePtr): Int
-private external fun kniBridge246(p0: NativePtr): NativePtr
-private external fun kniBridge247(p0: NativePtr): NativePtr
+private external fun kniBridge242(p0: NativePtr): NativePtr
+private external fun kniBridge243(p0: NativePtr): NativePtr
+private external fun kniBridge244(p0: NativePtr, p1: Int): NativePtr
+private external fun kniBridge245(p0: NativePtr, p1: Int): NativePtr
+private external fun kniBridge246(p0: NativePtr, p1: Int, p2: NativePtr): Unit
+private external fun kniBridge247(p0: NativePtr): Int
 private external fun kniBridge248(p0: NativePtr): NativePtr
 private external fun kniBridge249(p0: NativePtr): NativePtr
-private external fun kniBridge250(p0: NativePtr): Int
+private external fun kniBridge250(p0: NativePtr): NativePtr
 private external fun kniBridge251(p0: NativePtr): NativePtr
-private external fun kniBridge252(p0: NativePtr, p1: Long, p2: Int): NativePtr
-private external fun kniBridge253(p0: NativePtr, p1: Int, p2: NativePtr): NativePtr
-private external fun kniBridge254(p0: NativePtr, p1: NativePtr, p2: Byte): NativePtr
-private external fun kniBridge255(p0: NativePtr, p1: NativePtr, p2: Int, p3: Byte): NativePtr
-private external fun kniBridge256(p0: NativePtr, p1: Double): NativePtr
-private external fun kniBridge257(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge258(p0: NativePtr, p1: NativePtr, p2: Int): NativePtr
-private external fun kniBridge259(p0: NativePtr): Long
-private external fun kniBridge260(p0: NativePtr): Long
-private external fun kniBridge261(p0: NativePtr, p1: NativePtr): Double
-private external fun kniBridge262(p0: NativePtr, p1: NativePtr, p2: Int, p3: Int): NativePtr
-private external fun kniBridge263(p0: NativePtr): Int
-private external fun kniBridge264(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge265(p0: NativePtr, p1: NativePtr, p2: Int, p3: Int): NativePtr
-private external fun kniBridge266(p0: NativePtr, p1: NativePtr, p2: Int): NativePtr
-private external fun kniBridge267(p0: NativePtr, p1: NativePtr, p2: Int): NativePtr
-private external fun kniBridge268(p0: NativePtr, p1: Int): NativePtr
-private external fun kniBridge269(p0: NativePtr, p1: Int): NativePtr
+private external fun kniBridge252(p0: NativePtr): Int
+private external fun kniBridge253(p0: NativePtr): NativePtr
+private external fun kniBridge254(p0: NativePtr, p1: Long, p2: Int): NativePtr
+private external fun kniBridge255(p0: NativePtr, p1: Int, p2: NativePtr): NativePtr
+private external fun kniBridge256(p0: NativePtr, p1: NativePtr, p2: Byte): NativePtr
+private external fun kniBridge257(p0: NativePtr, p1: NativePtr, p2: Int, p3: Byte): NativePtr
+private external fun kniBridge258(p0: NativePtr, p1: Double): NativePtr
+private external fun kniBridge259(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge260(p0: NativePtr, p1: NativePtr, p2: Int): NativePtr
+private external fun kniBridge261(p0: NativePtr): Long
+private external fun kniBridge262(p0: NativePtr): Long
+private external fun kniBridge263(p0: NativePtr, p1: NativePtr): Double
+private external fun kniBridge264(p0: NativePtr, p1: NativePtr, p2: Int, p3: Int): NativePtr
+private external fun kniBridge265(p0: NativePtr): Int
+private external fun kniBridge266(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge267(p0: NativePtr, p1: NativePtr, p2: Int, p3: Int): NativePtr
+private external fun kniBridge268(p0: NativePtr, p1: NativePtr, p2: Int): NativePtr
+private external fun kniBridge269(p0: NativePtr, p1: NativePtr, p2: Int): NativePtr
 private external fun kniBridge270(p0: NativePtr, p1: Int): NativePtr
-private external fun kniBridge271(p0: NativePtr): Int
-private external fun kniBridge272(p0: NativePtr): NativePtr
-private external fun kniBridge273(p0: NativePtr): NativePtr
+private external fun kniBridge271(p0: NativePtr, p1: Int): NativePtr
+private external fun kniBridge272(p0: NativePtr, p1: Int): NativePtr
+private external fun kniBridge273(p0: NativePtr): Int
 private external fun kniBridge274(p0: NativePtr): NativePtr
 private external fun kniBridge275(p0: NativePtr): NativePtr
 private external fun kniBridge276(p0: NativePtr): NativePtr
 private external fun kniBridge277(p0: NativePtr): NativePtr
-private external fun kniBridge278(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge279(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge278(p0: NativePtr): NativePtr
+private external fun kniBridge279(p0: NativePtr): NativePtr
 private external fun kniBridge280(p0: NativePtr, p1: NativePtr): NativePtr
 private external fun kniBridge281(p0: NativePtr, p1: NativePtr): NativePtr
 private external fun kniBridge282(p0: NativePtr, p1: NativePtr): NativePtr
@@ -6766,15 +6774,15 @@ private external fun kniBridge286(p0: NativePtr, p1: NativePtr): NativePtr
 private external fun kniBridge287(p0: NativePtr, p1: NativePtr): NativePtr
 private external fun kniBridge288(p0: NativePtr, p1: NativePtr): NativePtr
 private external fun kniBridge289(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge290(p0: Int, p1: NativePtr, p2: NativePtr): NativePtr
-private external fun kniBridge291(p0: Int, p1: NativePtr, p2: NativePtr): NativePtr
-private external fun kniBridge292(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge293(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge290(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge291(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge292(p0: Int, p1: NativePtr, p2: NativePtr): NativePtr
+private external fun kniBridge293(p0: Int, p1: NativePtr, p2: NativePtr): NativePtr
 private external fun kniBridge294(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge295(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int): NativePtr
-private external fun kniBridge296(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int): NativePtr
-private external fun kniBridge297(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge298(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge295(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge296(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge297(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int): NativePtr
+private external fun kniBridge298(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int): NativePtr
 private external fun kniBridge299(p0: NativePtr, p1: NativePtr): NativePtr
 private external fun kniBridge300(p0: NativePtr, p1: NativePtr): NativePtr
 private external fun kniBridge301(p0: NativePtr, p1: NativePtr): NativePtr
@@ -6790,240 +6798,240 @@ private external fun kniBridge310(p0: NativePtr, p1: NativePtr): NativePtr
 private external fun kniBridge311(p0: NativePtr, p1: NativePtr): NativePtr
 private external fun kniBridge312(p0: NativePtr, p1: NativePtr): NativePtr
 private external fun kniBridge313(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge314(p0: NativePtr, p1: NativePtr, p2: Int): NativePtr
+private external fun kniBridge314(p0: NativePtr, p1: NativePtr): NativePtr
 private external fun kniBridge315(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge316(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
+private external fun kniBridge316(p0: NativePtr, p1: NativePtr, p2: Int): NativePtr
 private external fun kniBridge317(p0: NativePtr, p1: NativePtr): NativePtr
 private external fun kniBridge318(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
-private external fun kniBridge319(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
-private external fun kniBridge320(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge321(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: Int): NativePtr
-private external fun kniBridge322(p0: NativePtr): NativePtr
-private external fun kniBridge323(p0: NativePtr): Int
-private external fun kniBridge324(p0: NativePtr): Int
-private external fun kniBridge325(p0: NativePtr, p1: Int): Unit
-private external fun kniBridge326(p0: NativePtr): NativePtr
-private external fun kniBridge327(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge328(p0: NativePtr): Int
-private external fun kniBridge329(p0: NativePtr, p1: Int): Unit
+private external fun kniBridge319(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge320(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
+private external fun kniBridge321(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
+private external fun kniBridge322(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge323(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: Int): NativePtr
+private external fun kniBridge324(p0: NativePtr): NativePtr
+private external fun kniBridge325(p0: NativePtr): Int
+private external fun kniBridge326(p0: NativePtr): Int
+private external fun kniBridge327(p0: NativePtr, p1: Int): Unit
+private external fun kniBridge328(p0: NativePtr): NativePtr
+private external fun kniBridge329(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge330(p0: NativePtr): Int
 private external fun kniBridge331(p0: NativePtr, p1: Int): Unit
 private external fun kniBridge332(p0: NativePtr): Int
 private external fun kniBridge333(p0: NativePtr, p1: Int): Unit
-private external fun kniBridge334(p0: NativePtr): NativePtr
-private external fun kniBridge335(p0: NativePtr): Int
-private external fun kniBridge336(p0: NativePtr, p1: Int): Unit
+private external fun kniBridge334(p0: NativePtr): Int
+private external fun kniBridge335(p0: NativePtr, p1: Int): Unit
+private external fun kniBridge336(p0: NativePtr): NativePtr
 private external fun kniBridge337(p0: NativePtr): Int
 private external fun kniBridge338(p0: NativePtr, p1: Int): Unit
-private external fun kniBridge339(p0: NativePtr, p1: Int, p2: NativePtr): Unit
+private external fun kniBridge339(p0: NativePtr): Int
 private external fun kniBridge340(p0: NativePtr, p1: Int): Unit
-private external fun kniBridge341(p0: NativePtr): Unit
-private external fun kniBridge342(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge341(p0: NativePtr, p1: Int, p2: NativePtr): Unit
+private external fun kniBridge342(p0: NativePtr, p1: Int): Unit
 private external fun kniBridge343(p0: NativePtr): Unit
-private external fun kniBridge344(p0: NativePtr, p1: Int): Int
-private external fun kniBridge345(p0: NativePtr, p1: Int): NativePtr
-private external fun kniBridge346(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
-private external fun kniBridge347(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int): NativePtr
-private external fun kniBridge348(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge349(p0: NativePtr): NativePtr
-private external fun kniBridge350(p0: NativePtr): NativePtr
+private external fun kniBridge344(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge345(p0: NativePtr): Unit
+private external fun kniBridge346(p0: NativePtr, p1: Int): Int
+private external fun kniBridge347(p0: NativePtr, p1: Int): NativePtr
+private external fun kniBridge348(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
+private external fun kniBridge349(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int): NativePtr
+private external fun kniBridge350(p0: NativePtr, p1: NativePtr): NativePtr
 private external fun kniBridge351(p0: NativePtr): NativePtr
 private external fun kniBridge352(p0: NativePtr): NativePtr
-private external fun kniBridge353(p0: NativePtr): Unit
+private external fun kniBridge353(p0: NativePtr): NativePtr
 private external fun kniBridge354(p0: NativePtr): NativePtr
-private external fun kniBridge355(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge356(p0: NativePtr): Int
-private external fun kniBridge357(p0: NativePtr, p1: Int): Unit
+private external fun kniBridge355(p0: NativePtr): Unit
+private external fun kniBridge356(p0: NativePtr): NativePtr
+private external fun kniBridge357(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge358(p0: NativePtr): Int
 private external fun kniBridge359(p0: NativePtr, p1: Int): Unit
 private external fun kniBridge360(p0: NativePtr): Int
 private external fun kniBridge361(p0: NativePtr, p1: Int): Unit
 private external fun kniBridge362(p0: NativePtr): Int
 private external fun kniBridge363(p0: NativePtr, p1: Int): Unit
-private external fun kniBridge364(p0: NativePtr, p1: NativePtr, p2: Int, p3: NativePtr, p4: NativePtr): NativePtr
-private external fun kniBridge365(p0: NativePtr, p1: NativePtr, p2: Long): NativePtr
-private external fun kniBridge366(p0: NativePtr): NativePtr
-private external fun kniBridge367(p0: NativePtr): NativePtr
+private external fun kniBridge364(p0: NativePtr): Int
+private external fun kniBridge365(p0: NativePtr, p1: Int): Unit
+private external fun kniBridge366(p0: NativePtr, p1: NativePtr, p2: Int, p3: NativePtr, p4: NativePtr): NativePtr
+private external fun kniBridge367(p0: NativePtr, p1: NativePtr, p2: Long): NativePtr
 private external fun kniBridge368(p0: NativePtr): NativePtr
 private external fun kniBridge369(p0: NativePtr): NativePtr
 private external fun kniBridge370(p0: NativePtr): NativePtr
-private external fun kniBridge371(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge372(p0: NativePtr): Unit
-private external fun kniBridge373(p0: NativePtr): Int
-private external fun kniBridge374(p0: NativePtr): NativePtr
-private external fun kniBridge375(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge376(p0: NativePtr, p1: Long): Int
-private external fun kniBridge377(p0: NativePtr): Int
-private external fun kniBridge378(p0: NativePtr, p1: Int, p2: NativePtr, p3: Long): NativePtr
-private external fun kniBridge379(p0: NativePtr, p1: Int, p2: NativePtr, p3: Long): NativePtr
-private external fun kniBridge380(p0: Int, p1: NativePtr): NativePtr
-private external fun kniBridge381(p0: Int, p1: NativePtr, p2: Long, p3: NativePtr): NativePtr
-private external fun kniBridge382(p0: NativePtr, p1: Int, p2: NativePtr, p3: Long, p4: NativePtr): NativePtr
-private external fun kniBridge383(p0: Int): Int
-private external fun kniBridge384(p0: NativePtr): Int
-private external fun kniBridge385(p0: NativePtr, p1: Int): Unit
-private external fun kniBridge386(p0: NativePtr): NativePtr
-private external fun kniBridge387(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge388(p0: NativePtr, p1: Int, p2: NativePtr): Unit
-private external fun kniBridge389(p0: NativePtr, p1: Int): Int
+private external fun kniBridge371(p0: NativePtr): NativePtr
+private external fun kniBridge372(p0: NativePtr): NativePtr
+private external fun kniBridge373(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge374(p0: NativePtr): Unit
+private external fun kniBridge375(p0: NativePtr): Int
+private external fun kniBridge376(p0: NativePtr): NativePtr
+private external fun kniBridge377(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge378(p0: NativePtr, p1: Long): Int
+private external fun kniBridge379(p0: NativePtr): Int
+private external fun kniBridge380(p0: NativePtr, p1: Int, p2: NativePtr, p3: Long): NativePtr
+private external fun kniBridge381(p0: NativePtr, p1: Int, p2: NativePtr, p3: Long): NativePtr
+private external fun kniBridge382(p0: Int, p1: NativePtr): NativePtr
+private external fun kniBridge383(p0: Int, p1: NativePtr, p2: Long, p3: NativePtr): NativePtr
+private external fun kniBridge384(p0: NativePtr, p1: Int, p2: NativePtr, p3: Long, p4: NativePtr): NativePtr
+private external fun kniBridge385(p0: Int): Int
+private external fun kniBridge386(p0: NativePtr): Int
+private external fun kniBridge387(p0: NativePtr, p1: Int): Unit
+private external fun kniBridge388(p0: NativePtr): NativePtr
+private external fun kniBridge389(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge390(p0: NativePtr, p1: Int, p2: NativePtr): Unit
-private external fun kniBridge391(p0: NativePtr, p1: Int, p2: Int): NativePtr
-private external fun kniBridge392(p0: NativePtr, p1: Int, p2: NativePtr, p3: Int): NativePtr
-private external fun kniBridge393(p0: NativePtr, p1: Int, p2: Int): Unit
-private external fun kniBridge394(p0: NativePtr, p1: Int, p2: NativePtr, p3: Int): Unit
-private external fun kniBridge395(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
-private external fun kniBridge396(p0: NativePtr): Int
-private external fun kniBridge397(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge398(p0: NativePtr, p1: Int): NativePtr
-private external fun kniBridge399(p0: NativePtr): NativePtr
-private external fun kniBridge400(p0: NativePtr): NativePtr
+private external fun kniBridge391(p0: NativePtr, p1: Int): Int
+private external fun kniBridge392(p0: NativePtr, p1: Int, p2: NativePtr): Unit
+private external fun kniBridge393(p0: NativePtr, p1: Int, p2: Int): NativePtr
+private external fun kniBridge394(p0: NativePtr, p1: Int, p2: NativePtr, p3: Int): NativePtr
+private external fun kniBridge395(p0: NativePtr, p1: Int, p2: Int): Unit
+private external fun kniBridge396(p0: NativePtr, p1: Int, p2: NativePtr, p3: Int): Unit
+private external fun kniBridge397(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
+private external fun kniBridge398(p0: NativePtr): Int
+private external fun kniBridge399(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge400(p0: NativePtr, p1: Int): NativePtr
 private external fun kniBridge401(p0: NativePtr): NativePtr
 private external fun kniBridge402(p0: NativePtr): NativePtr
 private external fun kniBridge403(p0: NativePtr): NativePtr
-private external fun kniBridge404(p0: NativePtr, p1: Int): Unit
-private external fun kniBridge405(p0: NativePtr, p1: NativePtr, p2: Long, p3: NativePtr, p4: Int, p5: NativePtr): NativePtr
-private external fun kniBridge406(p0: NativePtr, p1: NativePtr, p2: Long): NativePtr
-private external fun kniBridge407(p0: NativePtr): NativePtr
-private external fun kniBridge408(p0: NativePtr): NativePtr
+private external fun kniBridge404(p0: NativePtr): NativePtr
+private external fun kniBridge405(p0: NativePtr): NativePtr
+private external fun kniBridge406(p0: NativePtr, p1: Int): Unit
+private external fun kniBridge407(p0: NativePtr, p1: NativePtr, p2: Long, p3: NativePtr, p4: Int, p5: NativePtr): NativePtr
+private external fun kniBridge408(p0: NativePtr, p1: NativePtr, p2: Long): NativePtr
 private external fun kniBridge409(p0: NativePtr): NativePtr
 private external fun kniBridge410(p0: NativePtr): NativePtr
 private external fun kniBridge411(p0: NativePtr): NativePtr
-private external fun kniBridge412(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge413(p0: NativePtr): Unit
-private external fun kniBridge414(p0: NativePtr): Unit
-private external fun kniBridge415(p0: NativePtr, p1: NativePtr, p2: Long): NativePtr
-private external fun kniBridge416(p0: NativePtr, p1: NativePtr, p2: Long): NativePtr
-private external fun kniBridge417(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge418(p0: NativePtr): NativePtr
+private external fun kniBridge412(p0: NativePtr): NativePtr
+private external fun kniBridge413(p0: NativePtr): NativePtr
+private external fun kniBridge414(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge415(p0: NativePtr): Unit
+private external fun kniBridge416(p0: NativePtr): Unit
+private external fun kniBridge417(p0: NativePtr, p1: NativePtr, p2: Long): NativePtr
+private external fun kniBridge418(p0: NativePtr, p1: NativePtr, p2: Long): NativePtr
 private external fun kniBridge419(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge420(p0: NativePtr): Int
-private external fun kniBridge421(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge422(p0: NativePtr, p1: NativePtr, p2: Int): NativePtr
-private external fun kniBridge423(p0: NativePtr, p1: NativePtr, p2: Int): NativePtr
-private external fun kniBridge424(p0: NativePtr): NativePtr
-private external fun kniBridge425(p0: NativePtr): Int
+private external fun kniBridge420(p0: NativePtr): NativePtr
+private external fun kniBridge421(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge422(p0: NativePtr): Int
+private external fun kniBridge423(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge424(p0: NativePtr, p1: NativePtr, p2: Int): NativePtr
+private external fun kniBridge425(p0: NativePtr, p1: NativePtr, p2: Int): NativePtr
 private external fun kniBridge426(p0: NativePtr): NativePtr
-private external fun kniBridge427(p0: NativePtr): NativePtr
+private external fun kniBridge427(p0: NativePtr): Int
 private external fun kniBridge428(p0: NativePtr): NativePtr
 private external fun kniBridge429(p0: NativePtr): NativePtr
-private external fun kniBridge430(p0: NativePtr): Int
-private external fun kniBridge431(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge432(p0: NativePtr): NativePtr
-private external fun kniBridge433(p0: NativePtr): NativePtr
+private external fun kniBridge430(p0: NativePtr): NativePtr
+private external fun kniBridge431(p0: NativePtr): NativePtr
+private external fun kniBridge432(p0: NativePtr): Int
+private external fun kniBridge433(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge434(p0: NativePtr): NativePtr
 private external fun kniBridge435(p0: NativePtr): NativePtr
 private external fun kniBridge436(p0: NativePtr): NativePtr
-private external fun kniBridge437(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge438(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge439(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge440(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
-private external fun kniBridge441(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
-private external fun kniBridge442(p0: NativePtr): Unit
-private external fun kniBridge443(p0: NativePtr): Unit
-private external fun kniBridge444(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge445(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge446(p0: NativePtr): NativePtr
-private external fun kniBridge447(p0: NativePtr): NativePtr
-private external fun kniBridge448(p0: NativePtr): Int
-private external fun kniBridge449(p0: NativePtr, p1: Int): NativePtr
-private external fun kniBridge450(p0: NativePtr, p1: Int, p2: NativePtr): Unit
-private external fun kniBridge451(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge452(p0: NativePtr): NativePtr
-private external fun kniBridge453(p0: NativePtr): NativePtr
+private external fun kniBridge437(p0: NativePtr): NativePtr
+private external fun kniBridge438(p0: NativePtr): NativePtr
+private external fun kniBridge439(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge440(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge441(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge442(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
+private external fun kniBridge443(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
+private external fun kniBridge444(p0: NativePtr): Unit
+private external fun kniBridge445(p0: NativePtr): Unit
+private external fun kniBridge446(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge447(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge448(p0: NativePtr): NativePtr
+private external fun kniBridge449(p0: NativePtr): NativePtr
+private external fun kniBridge450(p0: NativePtr): Int
+private external fun kniBridge451(p0: NativePtr, p1: Int): NativePtr
+private external fun kniBridge452(p0: NativePtr, p1: Int, p2: NativePtr): Unit
+private external fun kniBridge453(p0: NativePtr, p1: NativePtr): NativePtr
 private external fun kniBridge454(p0: NativePtr): NativePtr
-private external fun kniBridge455(p0: NativePtr): Unit
-private external fun kniBridge456(p0: NativePtr): Unit
+private external fun kniBridge455(p0: NativePtr): NativePtr
+private external fun kniBridge456(p0: NativePtr): NativePtr
 private external fun kniBridge457(p0: NativePtr): Unit
-private external fun kniBridge458(p0: NativePtr): Int
-private external fun kniBridge459(p0: NativePtr): Int
+private external fun kniBridge458(p0: NativePtr): Unit
+private external fun kniBridge459(p0: NativePtr): Unit
 private external fun kniBridge460(p0: NativePtr): Int
-private external fun kniBridge461(p0: NativePtr): NativePtr
-private external fun kniBridge462(p0: NativePtr): NativePtr
-private external fun kniBridge463(p0: NativePtr): Int
-private external fun kniBridge464(p0: NativePtr, p1: Int): Unit
+private external fun kniBridge461(p0: NativePtr): Int
+private external fun kniBridge462(p0: NativePtr): Int
+private external fun kniBridge463(p0: NativePtr): NativePtr
+private external fun kniBridge464(p0: NativePtr): NativePtr
 private external fun kniBridge465(p0: NativePtr): Int
-private external fun kniBridge466(p0: NativePtr, p1: Int, p2: Int): Unit
-private external fun kniBridge467(p0: NativePtr, p1: Int, p2: NativePtr): Unit
-private external fun kniBridge468(p0: NativePtr, p1: Int): Int
+private external fun kniBridge466(p0: NativePtr, p1: Int): Unit
+private external fun kniBridge467(p0: NativePtr): Int
+private external fun kniBridge468(p0: NativePtr, p1: Int, p2: Int): Unit
 private external fun kniBridge469(p0: NativePtr, p1: Int, p2: NativePtr): Unit
-private external fun kniBridge470(p0: NativePtr, p1: Int, p2: Int): NativePtr
-private external fun kniBridge471(p0: NativePtr, p1: Int, p2: NativePtr, p3: Int): NativePtr
-private external fun kniBridge472(p0: NativePtr, p1: Int, p2: Int): Unit
-private external fun kniBridge473(p0: NativePtr, p1: Int, p2: NativePtr, p3: Int): Unit
-private external fun kniBridge474(p0: NativePtr): NativePtr
-private external fun kniBridge475(p0: NativePtr): NativePtr
-private external fun kniBridge476(p0: NativePtr): Int
-private external fun kniBridge477(p0: NativePtr, p1: Int): Unit
-private external fun kniBridge478(p0: NativePtr): NativePtr
-private external fun kniBridge479(p0: NativePtr): NativePtr
-private external fun kniBridge480(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge481(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge482(p0: NativePtr): Int
-private external fun kniBridge483(p0: NativePtr, p1: Int): NativePtr
-private external fun kniBridge484(p0: NativePtr, p1: Int, p2: NativePtr): Unit
-private external fun kniBridge485(p0: NativePtr): Int
-private external fun kniBridge486(p0: NativePtr): NativePtr
-private external fun kniBridge487(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge470(p0: NativePtr, p1: Int): Int
+private external fun kniBridge471(p0: NativePtr, p1: Int, p2: NativePtr): Unit
+private external fun kniBridge472(p0: NativePtr, p1: Int, p2: Int): NativePtr
+private external fun kniBridge473(p0: NativePtr, p1: Int, p2: NativePtr, p3: Int): NativePtr
+private external fun kniBridge474(p0: NativePtr, p1: Int, p2: Int): Unit
+private external fun kniBridge475(p0: NativePtr, p1: Int, p2: NativePtr, p3: Int): Unit
+private external fun kniBridge476(p0: NativePtr): NativePtr
+private external fun kniBridge477(p0: NativePtr): NativePtr
+private external fun kniBridge478(p0: NativePtr): Int
+private external fun kniBridge479(p0: NativePtr, p1: Int): Unit
+private external fun kniBridge480(p0: NativePtr): NativePtr
+private external fun kniBridge481(p0: NativePtr): NativePtr
+private external fun kniBridge482(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge483(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge484(p0: NativePtr): Int
+private external fun kniBridge485(p0: NativePtr, p1: Int): NativePtr
+private external fun kniBridge486(p0: NativePtr, p1: Int, p2: NativePtr): Unit
+private external fun kniBridge487(p0: NativePtr): Int
 private external fun kniBridge488(p0: NativePtr): NativePtr
-private external fun kniBridge489(p0: NativePtr): NativePtr
-private external fun kniBridge490(p0: NativePtr): Int
-private external fun kniBridge491(p0: NativePtr, p1: Int): Unit
-private external fun kniBridge492(p0: NativePtr): NativePtr
-private external fun kniBridge493(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int): Unit
-private external fun kniBridge494(p0: NativePtr): Int
-private external fun kniBridge495(p0: NativePtr, p1: Int): NativePtr
-private external fun kniBridge496(p0: NativePtr, p1: Int): NativePtr
-private external fun kniBridge497(p0: NativePtr): Int
-private external fun kniBridge498(p0: NativePtr): NativePtr
-private external fun kniBridge499(p0: NativePtr): NativePtr
-private external fun kniBridge500(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
-private external fun kniBridge501(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge502(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge503(p0: NativePtr): NativePtr
-private external fun kniBridge504(p0: NativePtr): Unit
-private external fun kniBridge505(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge506(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
-private external fun kniBridge507(p0: NativePtr): Unit
-private external fun kniBridge508(p0: NativePtr): NativePtr
-private external fun kniBridge509(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge510(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge489(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge490(p0: NativePtr): NativePtr
+private external fun kniBridge491(p0: NativePtr): NativePtr
+private external fun kniBridge492(p0: NativePtr): Int
+private external fun kniBridge493(p0: NativePtr, p1: Int): Unit
+private external fun kniBridge494(p0: NativePtr): NativePtr
+private external fun kniBridge495(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int): Unit
+private external fun kniBridge496(p0: NativePtr): Int
+private external fun kniBridge497(p0: NativePtr, p1: Int): NativePtr
+private external fun kniBridge498(p0: NativePtr, p1: Int): NativePtr
+private external fun kniBridge499(p0: NativePtr): Int
+private external fun kniBridge500(p0: NativePtr): NativePtr
+private external fun kniBridge501(p0: NativePtr): NativePtr
+private external fun kniBridge502(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
+private external fun kniBridge503(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge504(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge505(p0: NativePtr): NativePtr
+private external fun kniBridge506(p0: NativePtr): Unit
+private external fun kniBridge507(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge508(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
+private external fun kniBridge509(p0: NativePtr): Unit
+private external fun kniBridge510(p0: NativePtr): NativePtr
 private external fun kniBridge511(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge512(p0: NativePtr): NativePtr
+private external fun kniBridge512(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge513(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge514(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge515(p0: NativePtr): NativePtr
-private external fun kniBridge516(p0: NativePtr): NativePtr
-private external fun kniBridge517(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge518(p0: NativePtr, p1: NativePtr, p2: Int): NativePtr
+private external fun kniBridge514(p0: NativePtr): NativePtr
+private external fun kniBridge515(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge516(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge517(p0: NativePtr): NativePtr
+private external fun kniBridge518(p0: NativePtr): NativePtr
 private external fun kniBridge519(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge520(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
-private external fun kniBridge521(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int): NativePtr
-private external fun kniBridge522(p0: NativePtr, p1: NativePtr, p2: Int): NativePtr
-private external fun kniBridge523(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: Int, p5: NativePtr, p6: NativePtr, p7: NativePtr): NativePtr
-private external fun kniBridge524(p0: NativePtr): NativePtr
-private external fun kniBridge525(p0: NativePtr, p1: NativePtr): NativePtr
-private external fun kniBridge526(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: NativePtr): NativePtr
-private external fun kniBridge527(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
-private external fun kniBridge528(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
-private external fun kniBridge529(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: NativePtr): NativePtr
-private external fun kniBridge530(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: NativePtr): NativePtr
+private external fun kniBridge520(p0: NativePtr, p1: NativePtr, p2: Int): NativePtr
+private external fun kniBridge521(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge522(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
+private external fun kniBridge523(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int): NativePtr
+private external fun kniBridge524(p0: NativePtr, p1: NativePtr, p2: Int): NativePtr
+private external fun kniBridge525(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: Int, p5: NativePtr, p6: NativePtr, p7: NativePtr): NativePtr
+private external fun kniBridge526(p0: NativePtr): NativePtr
+private external fun kniBridge527(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge528(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: NativePtr): NativePtr
+private external fun kniBridge529(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
+private external fun kniBridge530(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
 private external fun kniBridge531(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: NativePtr): NativePtr
-private external fun kniBridge532(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
-private external fun kniBridge533(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge534(p0: NativePtr): Int
-private external fun kniBridge535(p0: NativePtr, p1: Int): NativePtr
-private external fun kniBridge536(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge537(p0: NativePtr): Int
-private external fun kniBridge538(p0: NativePtr, p1: Int): Unit
-private external fun kniBridge539(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge540(p0: NativePtr): Int
+private external fun kniBridge532(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: NativePtr): NativePtr
+private external fun kniBridge533(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: NativePtr): NativePtr
+private external fun kniBridge534(p0: NativePtr, p1: NativePtr, p2: NativePtr): Unit
+private external fun kniBridge535(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge536(p0: NativePtr): Int
+private external fun kniBridge537(p0: NativePtr, p1: Int): NativePtr
+private external fun kniBridge538(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge539(p0: NativePtr): Int
+private external fun kniBridge540(p0: NativePtr, p1: Int): Unit
 private external fun kniBridge541(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge542(p0: NativePtr, p1: Int): NativePtr
-private external fun kniBridge543(p0: NativePtr, p1: Int, p2: NativePtr): Unit
-private external fun kniBridge544(p0: NativePtr): NativePtr
-private external fun kniBridge545(p0: NativePtr, p1: NativePtr): Unit
-private external fun kniBridge546(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
-private external fun kniBridge547(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
+private external fun kniBridge542(p0: NativePtr): Int
+private external fun kniBridge543(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge544(p0: NativePtr, p1: Int): NativePtr
+private external fun kniBridge545(p0: NativePtr, p1: Int, p2: NativePtr): Unit
+private external fun kniBridge546(p0: NativePtr): NativePtr
+private external fun kniBridge547(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge548(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
 private external fun kniBridge549(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
 private external fun kniBridge550(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
@@ -7048,37 +7056,37 @@ private external fun kniBridge568(p0: NativePtr, p1: NativePtr, p2: NativePtr, p
 private external fun kniBridge569(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
 private external fun kniBridge570(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
 private external fun kniBridge571(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
-private external fun kniBridge572(p0: NativePtr, p1: Int, p2: NativePtr, p3: NativePtr, p4: NativePtr): NativePtr
-private external fun kniBridge573(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
-private external fun kniBridge574(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
+private external fun kniBridge572(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
+private external fun kniBridge573(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
+private external fun kniBridge574(p0: NativePtr, p1: Int, p2: NativePtr, p3: NativePtr, p4: NativePtr): NativePtr
 private external fun kniBridge575(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
 private external fun kniBridge576(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
 private external fun kniBridge577(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
 private external fun kniBridge578(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
-private external fun kniBridge579(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
-private external fun kniBridge580(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: Int): NativePtr
-private external fun kniBridge581(p0: NativePtr, p1: NativePtr, p2: Int, p3: NativePtr, p4: Int, p5: NativePtr): NativePtr
-private external fun kniBridge582(p0: NativePtr, p1: NativePtr, p2: Int, p3: NativePtr, p4: Int, p5: NativePtr): NativePtr
-private external fun kniBridge583(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
-private external fun kniBridge584(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
-private external fun kniBridge585(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge579(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
+private external fun kniBridge580(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
+private external fun kniBridge581(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
+private external fun kniBridge582(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: Int): NativePtr
+private external fun kniBridge583(p0: NativePtr, p1: NativePtr, p2: Int, p3: NativePtr, p4: Int, p5: NativePtr): NativePtr
+private external fun kniBridge584(p0: NativePtr, p1: NativePtr, p2: Int, p3: NativePtr, p4: Int, p5: NativePtr): NativePtr
+private external fun kniBridge585(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
 private external fun kniBridge586(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
-private external fun kniBridge587(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
-private external fun kniBridge588(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: NativePtr): NativePtr
-private external fun kniBridge589(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: Int, p5: NativePtr): NativePtr
+private external fun kniBridge587(p0: NativePtr, p1: NativePtr): NativePtr
+private external fun kniBridge588(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
+private external fun kniBridge589(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
 private external fun kniBridge590(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: Int, p5: NativePtr): NativePtr
-private external fun kniBridge591(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: NativePtr): NativePtr
-private external fun kniBridge592(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
+private external fun kniBridge591(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: Int, p5: NativePtr): NativePtr
+private external fun kniBridge592(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: NativePtr): NativePtr
 private external fun kniBridge593(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
-private external fun kniBridge594(p0: NativePtr): Int
-private external fun kniBridge595(p0: NativePtr, p1: Int): Unit
-private external fun kniBridge596(p0: NativePtr): Int
-private external fun kniBridge597(p0: NativePtr, p1: Int): Unit
-private external fun kniBridge598(p0: NativePtr): Int
-private external fun kniBridge599(p0: NativePtr, p1: Int): Unit
-private external fun kniBridge600(p0: NativePtr): Int
-private external fun kniBridge601(p0: NativePtr, p1: Int): Unit
-private external fun kniBridge602(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
+private external fun kniBridge594(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
+private external fun kniBridge595(p0: NativePtr): Int
+private external fun kniBridge596(p0: NativePtr, p1: Int): Unit
+private external fun kniBridge597(p0: NativePtr): Int
+private external fun kniBridge598(p0: NativePtr, p1: Int): Unit
+private external fun kniBridge599(p0: NativePtr): Int
+private external fun kniBridge600(p0: NativePtr, p1: Int): Unit
+private external fun kniBridge601(p0: NativePtr): Int
+private external fun kniBridge602(p0: NativePtr, p1: Int): Unit
 private external fun kniBridge603(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
 private external fun kniBridge604(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
 private external fun kniBridge605(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
@@ -7094,27 +7102,27 @@ private external fun kniBridge614(p0: NativePtr, p1: NativePtr, p2: NativePtr, p
 private external fun kniBridge615(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
 private external fun kniBridge616(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
 private external fun kniBridge617(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
-private external fun kniBridge618(p0: NativePtr, p1: Int, p2: NativePtr, p3: NativePtr, p4: NativePtr): NativePtr
-private external fun kniBridge619(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
-private external fun kniBridge620(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: NativePtr): NativePtr
-private external fun kniBridge621(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
+private external fun kniBridge618(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
+private external fun kniBridge619(p0: NativePtr, p1: Int, p2: NativePtr, p3: NativePtr, p4: NativePtr): NativePtr
+private external fun kniBridge620(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
+private external fun kniBridge621(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: NativePtr): NativePtr
 private external fun kniBridge622(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
-private external fun kniBridge623(p0: NativePtr, p1: Int, p2: NativePtr, p3: Int): Int
-private external fun kniBridge624(p0: NativePtr, p1: Int, p2: NativePtr, p3: NativePtr, p4: NativePtr): NativePtr
+private external fun kniBridge623(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
+private external fun kniBridge624(p0: NativePtr, p1: Int, p2: NativePtr, p3: Int): Int
 private external fun kniBridge625(p0: NativePtr, p1: Int, p2: NativePtr, p3: NativePtr, p4: NativePtr): NativePtr
-private external fun kniBridge626(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
-private external fun kniBridge627(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: Int, p5: NativePtr): NativePtr
-private external fun kniBridge628(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: NativePtr): NativePtr
-private external fun kniBridge629(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
+private external fun kniBridge626(p0: NativePtr, p1: Int, p2: NativePtr, p3: NativePtr, p4: NativePtr): NativePtr
+private external fun kniBridge627(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
+private external fun kniBridge628(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: Int, p5: NativePtr): NativePtr
+private external fun kniBridge629(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: NativePtr): NativePtr
 private external fun kniBridge630(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
-private external fun kniBridge631(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: NativePtr): NativePtr
+private external fun kniBridge631(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
 private external fun kniBridge632(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: NativePtr): NativePtr
-private external fun kniBridge633(p0: NativePtr, p1: NativePtr, p2: Int, p3: NativePtr): NativePtr
-private external fun kniBridge634(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: NativePtr): NativePtr
-private external fun kniBridge635(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
+private external fun kniBridge633(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: NativePtr): NativePtr
+private external fun kniBridge634(p0: NativePtr, p1: NativePtr, p2: Int, p3: NativePtr): NativePtr
+private external fun kniBridge635(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: Int, p4: NativePtr): NativePtr
 private external fun kniBridge636(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
 private external fun kniBridge637(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
-private external fun kniBridge638(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr): NativePtr
+private external fun kniBridge638(p0: NativePtr, p1: NativePtr, p2: NativePtr): NativePtr
 private external fun kniBridge639(p0: NativePtr, p1: NativePtr, p2: NativePtr, p3: NativePtr, p4: NativePtr): NativePtr
 private external fun kniBridge640(p0: NativePtr, p1: Int, p2: Int, p3: NativePtr): NativePtr
 private external fun kniBridge641(p0: NativePtr, p1: Int, p2: NativePtr, p3: NativePtr, p4: Int, p5: Int): NativePtr
