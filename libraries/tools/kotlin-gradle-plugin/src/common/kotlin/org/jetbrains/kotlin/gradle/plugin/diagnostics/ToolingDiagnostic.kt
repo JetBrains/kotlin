@@ -88,26 +88,9 @@ data class ToolingDiagnostic(
     val id: String get() = identifier.id
 
     override fun toString() = buildString {
-        append("[$identifier | $severity]")
-
-        val subLines = solutions + listOfNotNull(documentation?.additionalUrlContext)
-
-        if (subLines.isEmpty()) {
-            append(" $message")
-        } else {
-            appendLine(" $message")
-        }
-
-        appendSubLines(subLines.filter { it.isNotBlank() })
-    }
-}
-
-private fun StringBuilder.appendSubLines(subLines: List<String>) {
-    subLines.forEachIndexed { index, line ->
-        if (index == subLines.size - 1) {
-            append(line)
-        } else {
-            appendLine(line)
-        }
-    }
+        appendLine("[$id | $severity] ${identifier.displayName}")
+        appendLine(message)
+        solutions.filter { it.isNotBlank() }.forEach { appendLine(it) }
+        documentation?.let { appendLine(it.additionalUrlContext) }
+    }.trimEnd()
 }
