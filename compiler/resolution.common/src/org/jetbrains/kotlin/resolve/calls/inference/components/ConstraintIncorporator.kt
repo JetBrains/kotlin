@@ -138,7 +138,7 @@ class ConstraintIncorporator(
         val freshTypeConstructor = typeVariable.freshTypeConstructor()
         for (storageForOtherVariable in getVariablesWithConstraintsContainingGivenTypeVariable(freshTypeConstructor)) {
             for (otherConstraint in storageForOtherVariable.getConstraintsContainedSpecifiedTypeVariable(freshTypeConstructor)) {
-                generateNewConstraintForInsideOtherConstraintIncorporationKind(
+                generateNewConstraintForSecondIncorporationKind(
                     typeVariable,
                     constraint,
                     storageForOtherVariable.typeVariable,
@@ -149,8 +149,9 @@ class ConstraintIncorporator(
     }
 
 
+    // By "Second" we mean `insideOtherConstraint` here
     // \alpha <: Number, \beta <: Inv<\alpha> => \beta <: Inv<out Number>
-    private fun Context.generateNewConstraintForInsideOtherConstraintIncorporationKind(
+    private fun Context.generateNewConstraintForSecondIncorporationKind(
         // \alpha
         causeOfIncorporationVariable: TypeVariableMarker,
         // \alpha <: Number
@@ -160,7 +161,7 @@ class ConstraintIncorporator(
         // \beta <: Inv<\alpha>
         otherConstraint: Constraint,
     ) {
-        val (type, needApproximation) = computeConstraintTypeForInsideOtherConstraintIncorporationKind(
+        val (type, needApproximation) = computeConstraintTypeForSecondIncorporationKind(
             causeOfIncorporationVariable, causeOfIncorporationConstraint, otherConstraint
         )
 
@@ -171,7 +172,7 @@ class ConstraintIncorporator(
             }
 
         if (otherConstraint.kind != ConstraintKind.LOWER) {
-            addNewConstraintForInsideOtherConstraintsIncorporationKind(
+            addNewConstraintForSecondIncorporationKind(
                 causeOfIncorporationVariable,
                 causeOfIncorporationConstraint,
                 otherVariable,
@@ -182,7 +183,7 @@ class ConstraintIncorporator(
         }
 
         if (otherConstraint.kind != ConstraintKind.UPPER) {
-            addNewConstraintForInsideOtherConstraintsIncorporationKind(
+            addNewConstraintForSecondIncorporationKind(
                 causeOfIncorporationVariable,
                 causeOfIncorporationConstraint,
                 otherVariable,
@@ -194,12 +195,13 @@ class ConstraintIncorporator(
     }
 
     /**
+     * By "Second" we mean `insideOtherConstraint` here
      * \alpha <: Number, \beta <: Inv<\alpha> => \beta <: Inv<out Number>
      *  The second boolean component defines if further approximation is required.
      *
      *  @return `Pair(Inv<Captured(out Number)>, true)`
      */
-    private fun Context.computeConstraintTypeForInsideOtherConstraintIncorporationKind(
+    private fun Context.computeConstraintTypeForSecondIncorporationKind(
         // \alpha
         causeOfIncorporationVariable: TypeVariableMarker,
         // \alpha <: Number
@@ -267,8 +269,9 @@ class ConstraintIncorporator(
         return otherConstraint.type.substitute(this, causeOfIncorporationVariable, alphaReplacement) to needsApproximation
     }
 
+    // By "Second" we mean `insideOtherConstraint` here
     // \alpha <: Number, \beta <: Inv<\alpha> => \beta <: Inv<out Number>
-    private fun Context.addNewConstraintForInsideOtherConstraintsIncorporationKind(
+    private fun Context.addNewConstraintForSecondIncorporationKind(
         // \alpha
         causeOfIncorporationVariable: TypeVariableMarker,
         // \alpha <: Number
