@@ -1,4 +1,5 @@
-[UnsupportedTargetShortcutError | ERROR] The tvos() target shortcut is deprecated and no longer supported.
+[UnsupportedTargetShortcutError | ERROR] 'tvos()' Target Shortcut Deprecated and Unsupported
+The tvos() target shortcut is deprecated and no longer supported.
 Please explicitly declare your targets using:
 kotlin {
     tvosX64()
@@ -8,7 +9,8 @@ kotlin {
 Please remove the tvos() target shortcut and explicitly declare your targets.
 For a complete list of supported targets, refer to the documentation: https://kotl.in/6ixl2f
 ----
-[KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] The Default Kotlin Hierarchy Template was not applied to 'root project 'test'':
+[KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] Default Kotlin Hierarchy Template Not Applied Correctly
+The Default Kotlin Hierarchy Template was not applied to 'root project 'test'':
 Explicit .dependsOn() edges were configured for the following source sets:
 [tvosArm64Main, tvosArm64Test, tvosMain, tvosTest, tvosX64Main, tvosX64Test]
 

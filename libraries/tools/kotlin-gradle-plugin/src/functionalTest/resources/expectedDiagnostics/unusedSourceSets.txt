@@ -1,4 +1,5 @@
-[UnusedSourceSetsWarning | WARNING] The following Kotlin source sets were configured but not added to any Kotlin compilation:
+[UnusedSourceSetsWarning | WARNING] Unused Kotlin Source Sets
+The following Kotlin source sets were configured but not added to any Kotlin compilation:
  * unused1
  * unused2
  * unusedWithDependsOnUsed

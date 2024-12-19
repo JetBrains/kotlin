@@ -1,6 +1,8 @@
-[BrokenKotlinNativeBundleError | ERROR] The Kotlin/Native distribution (kotlin_naitve_home_non_existed_path) used in this build does not provide required subdirectories.
+[BrokenKotlinNativeBundleError | ERROR] Kotlin/Native Distribution Missing Required Subdirectories
+The Kotlin/Native distribution (kotlin_naitve_home_non_existed_path) used in this build does not provide required subdirectories.
 Make sure that the 'kotlin.native.home' property points to a valid Kotlin/Native distribution.
 ----
-[KonanHomeConflictDeclaration | WARNING] Both konan.data.dir=konan_data_dir_non_existed_path and kotlin.native.home=kotlin_naitve_home_non_existed_path are declared.
+[KonanHomeConflictDeclaration | WARNING] Both konan.data.dir and kotlin.native.home Properties Declared
+Both konan.data.dir=konan_data_dir_non_existed_path and kotlin.native.home=kotlin_naitve_home_non_existed_path are declared.
 The konan.data.dir=konan_data_dir_non_existed_path path will be given the highest priority.
 Please remove the kotlin.native.home property from your build script.

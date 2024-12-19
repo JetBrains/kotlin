@@ -1,2 +1,3 @@
-[BrokenKotlinNativeBundleError | ERROR] The Kotlin/Native distribution (non_existed_path) used in this build does not provide required subdirectories.
+[BrokenKotlinNativeBundleError | ERROR] Kotlin/Native Distribution Missing Required Subdirectories
+The Kotlin/Native distribution (non_existed_path) used in this build does not provide required subdirectories.
 Make sure that the 'kotlin.native.home' property points to a valid Kotlin/Native distribution.

@@ -1,10 +1,12 @@
-[UnusedSourceSetsWarning | WARNING] The following Kotlin source sets were configured but not added to any Kotlin compilation:
+[UnusedSourceSetsWarning | WARNING] Unused Kotlin Source Sets
+The following Kotlin source sets were configured but not added to any Kotlin compilation:
  * linuxX64Main
  * linuxX64Test
 You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.
 See https://kotl.in/connecting-source-sets
 ----
-[PlatformSourceSetConventionUsedWithoutCorrespondingTarget | WARNING] Accessed 'source set linuxX64Main' without the registering the linuxX64 target:
+[PlatformSourceSetConventionUsedWithoutCorrespondingTarget | WARNING] Source Set Used Without a Corresponding Target
+Accessed 'source set linuxX64Main' without the registering the linuxX64 target:
 kotlin {
     linuxX64() /* <- register the 'linuxX64' target */
 
@@ -14,7 +16,8 @@ kotlin {
 }
 Please register the linuxX64 target.
 ----
-[PlatformSourceSetConventionUsedWithoutCorrespondingTarget | WARNING] Accessed 'source set linuxX64Test' without the registering the linuxX64 target:
+[PlatformSourceSetConventionUsedWithoutCorrespondingTarget | WARNING] Source Set Used Without a Corresponding Target
+Accessed 'source set linuxX64Test' without the registering the linuxX64 target:
 kotlin {
     linuxX64() /* <- register the 'linuxX64' target */
 

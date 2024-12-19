@@ -1,4 +1,5 @@
-[JvmWithJavaIsIncompatibleWithAndroid | FATAL] 'withJava()' is not compatible with Android Plugins
+[JvmWithJavaIsIncompatibleWithAndroid | FATAL] `withJava()` in JVM Target Incompatible with Android Plugins
+'withJava()' is not compatible with Android Plugins
 Incompatible Android Plugin applied: 'com.android.application'
 
 kotlin {

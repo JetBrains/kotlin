@@ -1,4 +1,5 @@
-[KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] The Default Kotlin Hierarchy Template was not applied to 'root project 'test'':
+[KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] Default Kotlin Hierarchy Template Not Applied Correctly
+The Default Kotlin Hierarchy Template was not applied to 'root project 'test'':
 Explicit .dependsOn() edges were configured for the following source sets:
 [intermediateMain, jvmMain]
 

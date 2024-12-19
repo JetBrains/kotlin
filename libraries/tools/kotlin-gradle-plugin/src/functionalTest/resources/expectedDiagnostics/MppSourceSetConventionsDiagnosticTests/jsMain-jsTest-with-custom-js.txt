@@ -1,4 +1,5 @@
-[PlatformSourceSetConventionUsedWithCustomTargetName | WARNING] Accessed 'source set jsMain', but js target used a custom name 'custom' (expected 'js'):
+[PlatformSourceSetConventionUsedWithCustomTargetName | WARNING] Source Set used with custom target name
+Accessed 'source set jsMain', but js target used a custom name 'custom' (expected 'js'):
 
 Replace:
 ```
@@ -15,7 +16,8 @@ kotlin {
 ```
 Please use the js() target name.
 ----
-[PlatformSourceSetConventionUsedWithCustomTargetName | WARNING] Accessed 'source set jsTest', but js target used a custom name 'custom' (expected 'js'):
+[PlatformSourceSetConventionUsedWithCustomTargetName | WARNING] Source Set used with custom target name
+Accessed 'source set jsTest', but js target used a custom name 'custom' (expected 'js'):
 
 Replace:
 ```
@@ -32,7 +34,8 @@ kotlin {
 ```
 Please use the js() target name.
 ----
-[UnusedSourceSetsWarning | WARNING] The following Kotlin source sets were configured but not added to any Kotlin compilation:
+[UnusedSourceSetsWarning | WARNING] Unused Kotlin Source Sets
+The following Kotlin source sets were configured but not added to any Kotlin compilation:
  * jsMain
  * jsTest
 You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.

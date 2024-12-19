@@ -1,3 +1,4 @@
-[FailedToGetAgpVersionWarning | WARNING] Failed to get Android Gradle Plugin version (for 'com.android.library' plugin).
+[FailedToGetAgpVersionWarning | WARNING] Failed to Retrieve Android Gradle Plugin Version
+Failed to get Android Gradle Plugin version (for 'com.android.library' plugin).
 Please make sure that the Android Gradle Plugin is applied to the project.
 Please report a new Kotlin issue via https://kotl.in/issue.

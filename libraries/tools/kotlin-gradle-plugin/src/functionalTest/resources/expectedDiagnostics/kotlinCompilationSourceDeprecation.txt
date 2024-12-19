@@ -1,9 +1,11 @@
-[KotlinCompilationSourceDeprecation | WARNING] `KotlinCompilation.source(KotlinSourceSet)` method is deprecated
+[KotlinCompilationSourceDeprecation | WARNING] `KotlinCompilation.source(KotlinSourceSet)` Method Deprecated
+`KotlinCompilation.source(KotlinSourceSet)` method is deprecated
 and will be removed in upcoming Kotlin releases.
 Please use `KotlinCompilation.defaultSourceSet` instead.
 See https://kotl.in/compilation-source-deprecation for details.
 ----
-[MultipleSourceSetRootsInCompilation | WARNING] Kotlin Source Sets: 'jvmCustom', 'customMain'
+[MultipleSourceSetRootsInCompilation | WARNING] Missing 'dependsOn' in Source Sets
+Kotlin Source Sets: 'jvmCustom', 'customMain'
 are included to 'custom' compilation of 'jvm' target.
 However, they have no common source set root between them.
 

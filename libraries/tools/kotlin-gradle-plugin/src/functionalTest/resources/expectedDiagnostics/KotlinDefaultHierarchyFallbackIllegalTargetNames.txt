@@ -1,4 +1,5 @@
-[KotlinDefaultHierarchyFallbackIllegalTargetNames | WARNING] The Default Kotlin Hierarchy Template was not applied to 'root project 'test'':
+[KotlinDefaultHierarchyFallbackIllegalTargetNames | WARNING] Default Kotlin Hierarchy Template Misconfiguration Due to Illegal Target Names
+The Default Kotlin Hierarchy Template was not applied to 'root project 'test'':
 Source sets created by the following targets will clash with source sets created by the template:
 [Native, linux]
 
