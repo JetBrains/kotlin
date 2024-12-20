@@ -55300,6 +55300,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       public void testAnnotationUseSites() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationUseSites.kt");
       }
+
+      @Test
+      @TestMetadata("multipleAnnotationsWithAllUseSiteTarget.kt")
+      public void testMultipleAnnotationsWithAllUseSiteTarget() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/multipleAnnotationsWithAllUseSiteTarget.kt");
+      }
     }
 
     @Nested

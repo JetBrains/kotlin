@@ -1,0 +1,25 @@
+FILE: multipleAnnotationsWithAllUseSiteTarget.kt
+    public final annotation class A1 : R|kotlin/Annotation| {
+        public constructor(): R|A1| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final annotation class A2 : R|kotlin/Annotation| {
+        public constructor(): R|A2| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class My : R|kotlin/Any| {
+        public constructor(@ALL:R|A1|() @ALL:R|A2|() x: R|kotlin/Int|, y: R|kotlin/Int|): R|My| {
+            super<R|kotlin/Any|>()
+        }
+
+        @ALL:R|A1|() @ALL:R|A2|() field:@R|A1|() @R|A2|() public final val x: R|kotlin/Int| = R|<local>/x|
+            @R|A1|() @R|A2|() public get(): R|kotlin/Int|
+
+        @PROPERTY:R|A1|() @PROPERTY:R|A2|() public final val y: R|kotlin/Int| = R|<local>/y|
+            public get(): R|kotlin/Int|
+
+    }
