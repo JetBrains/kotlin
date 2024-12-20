@@ -82,7 +82,7 @@ where advanced options include:
                              Use the 'warning' level to issue warnings instead of errors.
   -Xextended-compiler-checks Enable additional compiler checks that might provide verbose diagnostic information for certain errors.
                              Warning: This mode is not backward compatible and might cause compilation errors in previously compiled code.
-  -Xwasm-debug-friendly-build Tell compiler to skip optimizations that can break debugging.
+  -Xwasm-debug-friendly      Tell compiler to avoid optimizations that can break debugging.
   -Xfragment-refines=<fromModuleName>:<onModuleName>
                              Declare that <fromModuleName> refines <onModuleName> with the dependsOn/refines relation.
   -Xfragment-sources=<fragment name>:<path>

@@ -82,7 +82,7 @@ open class AbstractK1WasmSteppingTest : AbstractK1WasmTest(
         useAdditionalSourceProviders(::WasmJsSteppingTestAdditionalSourceProvider)
         defaultDirectives {
             +WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP
-            +WasmEnvironmentConfigurationDirectives.FORCE_DEBUG_FRIENDLY_BUILD
+            +WasmEnvironmentConfigurationDirectives.FORCE_DEBUG_FRIENDLY_COMPILATION
             +WasmEnvironmentConfigurationDirectives.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES
         }
     }

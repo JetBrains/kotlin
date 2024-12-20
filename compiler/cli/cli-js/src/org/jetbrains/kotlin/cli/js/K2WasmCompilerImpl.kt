@@ -81,7 +81,6 @@ internal class K2WasmCompilerImpl(
                 getWasmPhases(
                     configuration,
                     isIncremental = false,
-                    isDebugFriendlyBuild = arguments.forceDebugFriendlyBuild
                 )
             )
         }

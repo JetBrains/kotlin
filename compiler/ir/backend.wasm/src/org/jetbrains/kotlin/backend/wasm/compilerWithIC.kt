@@ -77,7 +77,6 @@ open class WasmCompilerWithIC(
             context,
             context.irFactory.stageController as WholeWorldStageController,
             isIncremental = true,
-            isDebugFriendlyBuild = context.isDebugFriendlyBuild
         )
 
         return dirtyFiles.map { { compileIrFile(it) } }

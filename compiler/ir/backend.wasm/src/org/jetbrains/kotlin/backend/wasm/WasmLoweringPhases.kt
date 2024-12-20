@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.inline.isConsideredAsPrivateForInlining
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.utils.bind
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
 private fun List<CompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFragment>>.toCompilerPhase() =
     reduce { acc, lowering -> acc.then(lowering) }
@@ -591,155 +592,156 @@ val constEvaluationPhase = makeIrModulePhase(
 fun getWasmLowerings(
     configuration: CompilerConfiguration,
     isIncremental: Boolean,
-    isDebugFriendlyBuild: Boolean
-): List<SimpleNamedCompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFragment>> = listOfNotNull(
-    // BEGIN: Common Native/JS/Wasm prefix.
-    validateIrBeforeLowering,
-    lateinitPhase,
-    sharedVariablesLoweringPhase,
-    outerThisSpecialAccessorInInlineFunctionsPhase,
-    localClassesInInlineLambdasPhase,
-    inlineCallableReferenceToLambdaPhase,
-    arrayConstructorPhase,
-    wrapInlineDeclarationsWithReifiedTypeParametersLowering,
-    inlineOnlyPrivateFunctionsPhase,
-    syntheticAccessorGenerationPhase,
-    // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
-    // just because it goes so in Native.
-    validateIrAfterInliningOnlyPrivateFunctionsPhase,
-    inlineAllFunctionsPhase,
-    dumpSyntheticAccessorsPhase.takeIf {
-        configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR] != null
-    },
-    validateIrAfterInliningAllFunctionsPhase,
-    // END: Common Native/JS/Wasm prefix.
+): List<SimpleNamedCompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFragment>> {
+    val syntheticAccessorsDumpDir = configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR]
+    val isDebugFriendlyCompilation = configuration.getBoolean(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION)
 
-    constEvaluationPhase,
-    removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,
+    return listOfNotNull(
+        // BEGIN: Common Native/JS/Wasm prefix.
+        validateIrBeforeLowering,
+        lateinitPhase,
+        sharedVariablesLoweringPhase,
+        outerThisSpecialAccessorInInlineFunctionsPhase,
+        localClassesInInlineLambdasPhase,
+        inlineCallableReferenceToLambdaPhase,
+        arrayConstructorPhase,
+        wrapInlineDeclarationsWithReifiedTypeParametersLowering,
+        inlineOnlyPrivateFunctionsPhase,
+        syntheticAccessorGenerationPhase,
+        // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
+        // just because it goes so in Native.
+        validateIrAfterInliningOnlyPrivateFunctionsPhase,
+        inlineAllFunctionsPhase,
+        dumpSyntheticAccessorsPhase.takeIf { syntheticAccessorsDumpDir != null },
+        validateIrAfterInliningAllFunctionsPhase,
+        // END: Common Native/JS/Wasm prefix.
 
-    jsCodeCallsLowering,
+        constEvaluationPhase,
+        removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,
 
-    generateTests.takeIf { !isIncremental },
-    generateTestsIC.takeIf { isIncremental },
+        jsCodeCallsLowering,
 
-    excludeDeclarationsFromCodegenPhase,
-    expectDeclarationsRemovingPhase,
-    rangeContainsLoweringPhase,
+        generateTests.takeIf { !isIncremental },
+        generateTestsIC.takeIf { isIncremental },
 
-    tailrecLoweringPhase,
+        excludeDeclarationsFromCodegenPhase,
+        expectDeclarationsRemovingPhase,
+        rangeContainsLoweringPhase,
 
-    enumWhenPhase,
-    enumClassConstructorLoweringPhase,
-    enumClassConstructorBodyLoweringPhase,
-    enumEntryInstancesLoweringPhase,
-    enumEntryInstancesBodyLoweringPhase,
-    enumClassCreateInitializerLoweringPhase,
-    enumEntryCreateGetInstancesFunsLoweringPhase,
-    enumSyntheticFunsLoweringPhase,
+        tailrecLoweringPhase,
 
-    propertyReferenceLowering,
-    callableReferencePhase,
-    singleAbstractMethodPhase,
-    localDelegatedPropertiesLoweringPhase,
-    localDeclarationsLoweringPhase,
-    localClassExtractionPhase,
-    staticCallableReferenceLoweringPhase,
-    innerClassesLoweringPhase,
-    innerClassesMemberBodyLoweringPhase,
-    innerClassConstructorCallsLoweringPhase,
-    propertiesLoweringPhase,
-    primaryConstructorLoweringPhase,
-    delegateToPrimaryConstructorLoweringPhase,
+        enumWhenPhase,
+        enumClassConstructorLoweringPhase,
+        enumClassConstructorBodyLoweringPhase,
+        enumEntryInstancesLoweringPhase,
+        enumEntryInstancesBodyLoweringPhase,
+        enumClassCreateInitializerLoweringPhase,
+        enumEntryCreateGetInstancesFunsLoweringPhase,
+        enumSyntheticFunsLoweringPhase,
 
-    wasmStringSwitchOptimizerLowering.takeIf { !isDebugFriendlyBuild },
+        propertyReferenceLowering,
+        callableReferencePhase,
+        singleAbstractMethodPhase,
+        localDelegatedPropertiesLoweringPhase,
+        localDeclarationsLoweringPhase,
+        localClassExtractionPhase,
+        staticCallableReferenceLoweringPhase,
+        innerClassesLoweringPhase,
+        innerClassesMemberBodyLoweringPhase,
+        innerClassConstructorCallsLoweringPhase,
+        propertiesLoweringPhase,
+        primaryConstructorLoweringPhase,
+        delegateToPrimaryConstructorLoweringPhase,
 
-    associatedObjectsLowering,
+        wasmStringSwitchOptimizerLowering.takeIf { !isDebugFriendlyCompilation },
 
-    complexExternalDeclarationsToTopLevelFunctionsLowering,
-    complexExternalDeclarationsUsagesLowering,
+        associatedObjectsLowering,
 
-    jsInteropFunctionsLowering,
+        complexExternalDeclarationsToTopLevelFunctionsLowering,
+        complexExternalDeclarationsUsagesLowering,
 
-    enumUsageLoweringPhase,
-    enumEntryRemovalLoweringPhase,
+        jsInteropFunctionsLowering,
 
-    suspendFunctionsLoweringPhase,
-    initializersLoweringPhase,
-    initializersCleanupLoweringPhase,
+        enumUsageLoweringPhase,
+        enumEntryRemovalLoweringPhase,
 
-    addContinuationToNonLocalSuspendFunctionsLoweringPhase,
-    addContinuationToFunctionCallsLoweringPhase,
-    generateMainFunctionWrappersPhase,
+        suspendFunctionsLoweringPhase,
+        initializersLoweringPhase,
+        initializersCleanupLoweringPhase,
 
-    invokeOnExportedFunctionExitLowering,
+        addContinuationToNonLocalSuspendFunctionsLoweringPhase,
+        addContinuationToFunctionCallsLoweringPhase,
+        generateMainFunctionWrappersPhase,
 
-    unhandledExceptionLowering,
-    tryCatchCanonicalization,
+        invokeOnExportedFunctionExitLowering,
 
-    forLoopsLoweringPhase,
-    propertyLazyInitLoweringPhase,
-    removeInitializersForLazyProperties,
+        unhandledExceptionLowering,
+        tryCatchCanonicalization,
 
-    // This doesn't work with IC as of now for accessors within inline functions because
-    //  there is no special case for Wasm in the computation of inline function transitive
-    //  hashes the same way it's being done with the calculation of symbol hashes.
-    propertyAccessorInlinerLoweringPhase.takeIf { !isIncremental && !isDebugFriendlyBuild },
+        forLoopsLoweringPhase,
+        propertyLazyInitLoweringPhase,
+        removeInitializersForLazyProperties,
 
-    stringConcatenationLowering,
+        // This doesn't work with IC as of now for accessors within inline functions because
+        //  there is no special case for Wasm in the computation of inline function transitive
+        //  hashes the same way it's being done with the calculation of symbol hashes.
+        propertyAccessorInlinerLoweringPhase.takeIf { !isIncremental && !isDebugFriendlyCompilation },
 
-    defaultArgumentStubGeneratorPhase,
-    defaultArgumentPatchOverridesPhase,
-    defaultParameterInjectorPhase,
-    defaultParameterCleanerPhase,
+        stringConcatenationLowering,
+
+        defaultArgumentStubGeneratorPhase,
+        defaultArgumentPatchOverridesPhase,
+        defaultParameterInjectorPhase,
+        defaultParameterCleanerPhase,
 
 //            TODO:
 //            multipleCatchesLoweringPhase,
-    classReferenceLoweringPhase,
+        classReferenceLoweringPhase,
 
-    wasmVarargExpressionLoweringPhase,
-    inlineClassDeclarationLoweringPhase,
-    inlineClassUsageLoweringPhase,
+        wasmVarargExpressionLoweringPhase,
+        inlineClassDeclarationLoweringPhase,
+        inlineClassUsageLoweringPhase,
 
-    expressionBodyTransformer,
-    eraseVirtualDispatchReceiverParametersTypes,
-    bridgesConstructionPhase,
+        expressionBodyTransformer,
+        eraseVirtualDispatchReceiverParametersTypes,
+        bridgesConstructionPhase,
 
-    objectDeclarationLoweringPhase,
-    genericReturnTypeLowering,
-    unitToVoidLowering,
+        objectDeclarationLoweringPhase,
+        genericReturnTypeLowering,
+        unitToVoidLowering,
 
-    // Replace builtins before autoboxing
-    builtInsLoweringPhase0,
+        // Replace builtins before autoboxing
+        builtInsLoweringPhase0,
 
-    autoboxingTransformerPhase,
+        autoboxingTransformerPhase,
 
-    objectUsageLoweringPhase,
-    purifyObjectInstanceGettersLoweringPhase.takeIf { !isIncremental && !isDebugFriendlyBuild },
+        objectUsageLoweringPhase,
+        purifyObjectInstanceGettersLoweringPhase.takeIf { !isIncremental && !isDebugFriendlyCompilation },
 
-    explicitlyCastExternalTypesPhase,
-    typeOperatorLoweringPhase,
+        explicitlyCastExternalTypesPhase,
+        typeOperatorLoweringPhase,
 
-    // Clean up built-ins after type operator lowering
-    builtInsLoweringPhase,
+        // Clean up built-ins after type operator lowering
+        builtInsLoweringPhase,
 
-    virtualDispatchReceiverExtractionPhase,
-    invokeStaticInitializersPhase,
-    staticMembersLoweringPhase,
+        virtualDispatchReceiverExtractionPhase,
+        invokeStaticInitializersPhase,
+        staticMembersLoweringPhase,
 
-    // This is applied for non-IC mode, which is a better optimization than inlineUnitInstanceGettersLowering
-    inlineObjectsWithPureInitializationLoweringPhase.takeIf { !isIncremental && !isDebugFriendlyBuild },
+        // This is applied for non-IC mode, which is a better optimization than inlineUnitInstanceGettersLowering
+        inlineObjectsWithPureInitializationLoweringPhase.takeIf { !isIncremental && !isDebugFriendlyCompilation },
 
-    whenBranchOptimiserLoweringPhase,
-    validateIrAfterLowering,
-)
+        whenBranchOptimiserLoweringPhase,
+        validateIrAfterLowering,
+    )
+}
 
 fun getWasmPhases(
     configuration: CompilerConfiguration,
     isIncremental: Boolean,
-    isDebugFriendlyBuild: Boolean
 ): SameTypeNamedCompilerPhase<WasmBackendContext, IrModuleFragment> = SameTypeNamedCompilerPhase(
     name = "IrModuleLowering",
-    lower = getWasmLowerings(configuration, isIncremental, isDebugFriendlyBuild).toCompilerPhase(),
+    lower = getWasmLowerings(configuration, isIncremental).toCompilerPhase(),
     actions = DEFAULT_IR_ACTIONS,
     nlevels = 1
 )

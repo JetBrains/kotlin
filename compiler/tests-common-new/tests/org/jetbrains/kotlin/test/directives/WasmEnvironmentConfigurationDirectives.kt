@@ -57,8 +57,8 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    val FORCE_DEBUG_FRIENDLY_BUILD by directive(
-        description = "Enable skipping optimizations that can break debugging.",
+    val FORCE_DEBUG_FRIENDLY_COMPILATION by directive(
+        description = "Enable avoiding of the optimizations that can break debugging.",
         applicability = DirectiveApplicability.Global
     )
 

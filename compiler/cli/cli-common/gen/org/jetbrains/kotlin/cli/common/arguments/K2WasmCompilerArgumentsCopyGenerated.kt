@@ -12,7 +12,7 @@ fun copyK2WasmCompilerArguments(from: K2WasmCompilerArguments, to: K2WasmCompile
 
     to.debuggerCustomFormatters = from.debuggerCustomFormatters
     to.generateDwarf = from.generateDwarf
-    to.forceDebugFriendlyBuild = from.forceDebugFriendlyBuild
+    to.forceDebugFriendlyCompilation = from.forceDebugFriendlyCompilation
     to.icCacheReadonly = from.icCacheReadonly
     to.includeUnavailableSourcesIntoSourceMap = from.includeUnavailableSourcesIntoSourceMap
     to.irDceDumpDeclarationIrSizesToFile = from.irDceDumpDeclarationIrSizesToFile
