@@ -830,6 +830,17 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         }
 
     @Argument(
+        value = "-Xnested-type-aliases",
+        description = "Enable experimental language support for nested type aliases."
+    )
+    @Enables(LanguageFeature.NestedTypeAliases)
+    var nestedTypeAliases = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xsuppress-warning",
         valueDescription = "<WARNING_NAME>",
         description = "Suppress specified warning module-wide."
