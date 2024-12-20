@@ -430,6 +430,9 @@ tasks.withType<Test>().configureEach {
         "--add-opens", "java.base/java.net=ALL-UNNAMED",
     )
 
+    // Keep in sync with the default value for [enableGradleDaemonMemoryLimitInMb] in testDsl.kt for runs withDebug to not OOM
+    maxHeapSize = "1024m"
+
     dependsOn(":kotlin-gradle-plugin:validatePlugins")
     dependsOnKotlinGradlePluginInstall()
     dependsOn(":gradle:android-test-fixes:install")
@@ -445,7 +448,7 @@ tasks.withType<Test>().configureEach {
     systemProperty("composeSnapshotId", composeRuntimeSnapshot.versions.snapshot.id.get())
 
     // Add debugTargetProcessWhenDebuggingKGP-IT=true to local.properties to run IT withDebug when debugging the tests in IDE
-    if (kotlinBuildProperties.getBoolean("debugTargetProcessWhenDebuggingKGP-IT", false)) {
+    if (kotlinBuildProperties.getBoolean("debugTargetProcessWhenDebuggingKGP-IT", true)) {
         systemProperty("debugTargetProcessWhenDebuggingKGP-IT", true)
     }
 
