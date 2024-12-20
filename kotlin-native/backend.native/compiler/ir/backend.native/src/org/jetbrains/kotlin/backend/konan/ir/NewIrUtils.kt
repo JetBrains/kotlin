@@ -14,13 +14,10 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IdSignatureValues
-import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -28,18 +25,9 @@ import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
 import org.jetbrains.kotlin.utils.atMostOne
 
-private fun IrClass.isClassTypeWithSignature(signature: IdSignature.CommonSignature): Boolean {
-    return signature == symbol.signature
-}
-
 fun IrClass.isUnit() = this.isClassTypeWithSignature(IdSignatureValues.unit)
 
 fun IrClass.isKotlinArray() = this.isClassTypeWithSignature(IdSignatureValues.array)
-
-val IrClass.superClasses get() = this.superTypes.map { it.classifierOrFail as IrClassSymbol }
-fun IrClass.getSuperClassNotAny() = this.superClasses.map { it.owner }.atMostOne { !it.isInterface && !it.isAny() }
-
-fun IrClass.isAny() = this.isClassTypeWithSignature(IdSignatureValues.any)
 
 fun IrClass.isNothing() = this.isClassTypeWithSignature(IdSignatureValues.nothing)
 

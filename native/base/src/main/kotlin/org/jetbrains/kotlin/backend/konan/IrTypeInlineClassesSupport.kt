@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.makeNullable
@@ -41,12 +42,13 @@ fun IrClass.isUsedAsBoxClass(): Boolean = IrTypeInlineClassesSupport.isUsedAsBox
 
 fun IrType.binaryTypeIsReference(): Boolean = this.computePrimitiveBinaryTypeOrNull() == null
 
-internal inline fun <R> IrType.unwrapToPrimitiveOrReference(
+inline fun <R> IrType.unwrapToPrimitiveOrReference(
         eachInlinedClass: (inlinedClass: IrClass, nullable: Boolean) -> Unit,
         ifPrimitive: (primitiveType: KonanPrimitiveType, nullable: Boolean) -> R,
         ifReference: (type: IrType) -> R
 ): R = IrTypeInlineClassesSupport.unwrapToPrimitiveOrReference(this, eachInlinedClass, ifPrimitive, ifReference)
 
+@OptIn(UnsafeDuringIrConstructionAPI::class)
 internal object IrTypeInlineClassesSupport : InlineClassesSupport<IrClass, IrType>() {
 
     override fun isNullable(type: IrType): Boolean = type.isNullable()
