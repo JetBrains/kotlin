@@ -2,11 +2,29 @@
  * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:OptIn(ExperimentalStdlibApi::class)
 
 package kotlin.coroutines.jvm.internal
 
+import java.util.ServiceLoader
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.jvm.DebugProbes
+
+private val debugProbes: Array<DebugProbes> = run {
+    /*
+    Respect debug probes loading explicitly being enabled or disabled by the System Property.
+    If the property is not specified, we disable the mechanics on Android as using Service Loaders on Android can
+    have unintended performance effects, especially at startup where this code might run.
+     */
+    val isDebugProbesLoadingEnabled = System.getProperty("kotlin.coroutines.jvm.DebugProbes")?.toBooleanStrictOrNull()
+        ?: runCatching { Class.forName("android.os.Build") }.isFailure
+
+    if (isDebugProbesLoadingEnabled) {
+        ServiceLoader.load(DebugProbes::class.java, DebugProbes::class.java.classLoader).toList().toTypedArray()
+    } else emptyArray()
+}
+
 
 /**
  * This probe is invoked when coroutine is being created and it can replace completion
@@ -43,8 +61,9 @@ import kotlin.coroutines.intrinsics.*
  */
 @SinceKotlin("1.3")
 internal fun <T> probeCoroutineCreated(completion: Continuation<T>): Continuation<T> {
-    /** implementation of this function is replaced by debugger */
-    return completion
+    /** implementation of this function can be replaced by debugger */
+    if (debugProbes.isEmpty()) return completion
+    return debugProbes.foldRight(completion) { probe, acc -> probe.probeCoroutineCreated(acc) }
 }
 
 /**
@@ -62,7 +81,9 @@ internal fun <T> probeCoroutineCreated(completion: Continuation<T>): Continuatio
 @SinceKotlin("1.3")
 @Suppress("UNUSED_PARAMETER")
 internal fun probeCoroutineResumed(frame: Continuation<*>) {
-    /** implementation of this function is replaced by debugger */
+    /** implementation of this function can be replaced by debugger */
+    if (debugProbes.isEmpty()) return
+    debugProbes.forEach { it.probeCoroutineResumed(frame) }
 }
 
 /**
@@ -78,6 +99,7 @@ internal fun probeCoroutineResumed(frame: Continuation<*>) {
 @SinceKotlin("1.3")
 @Suppress("UNUSED_PARAMETER")
 internal fun probeCoroutineSuspended(frame: Continuation<*>) {
-    /** implementation of this function is replaced by debugger */
+    /** implementation of this function can be replaced by debugger */
+    if (debugProbes.isEmpty()) return
+    debugProbes.forEach { it.probeCoroutineSuspended(frame) }
 }
-
