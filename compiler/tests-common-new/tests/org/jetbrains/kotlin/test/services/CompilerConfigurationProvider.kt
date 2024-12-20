@@ -151,11 +151,11 @@ fun createCompilerConfiguration(
     configuration.put(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.ERROR)
     configuration.put(
         CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS,
-        !CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS.isApplicableTo(module),
+        !CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS.isApplicableTo(module, testServices),
     )
     configuration.put(
         CommonConfigurationKeys.ENABLE_IR_VARARG_TYPES_CHECKS,
-        !CodegenTestDirectives.DISABLE_IR_VARARG_TYPE_CHECKS.isApplicableTo(module),
+        !CodegenTestDirectives.DISABLE_IR_VARARG_TYPE_CHECKS.isApplicableTo(module, testServices),
     )
 
     val messageCollector = PrintingMessageCollector(System.err, CompilerTestMessageRenderer(module), /*verbose=*/false)

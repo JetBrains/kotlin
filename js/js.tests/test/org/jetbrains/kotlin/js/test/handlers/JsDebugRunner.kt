@@ -140,7 +140,7 @@ class JsDebugRunner(testServices: TestServices, private val localVariables: Bool
         }
         checkSteppingTestResult(
             testServices.defaultsProvider.frontendKind,
-            mainModule.targetBackend ?: TargetBackend.JS_IR,
+            testServices.defaultsProvider.targetBackend ?: TargetBackend.JS_IR,
             originalFile,
             loggedItems,
             testServices.defaultDirectives
