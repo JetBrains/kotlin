@@ -34,8 +34,6 @@ object ThreadPool {
     } ?: error("Call ThreadPool.init() first")
 }
 
-data class Data(val value: Int)
-
 class AtomicIntStressTest {
     @BeforeTest fun init() = ThreadPool.init(20)
     @AfterTest fun deinit() = ThreadPool.deinit()
@@ -55,7 +53,7 @@ class AtomicIntStressTest {
         val initial = 15
         val atomic = AtomicInt(initial)
         val futures = ThreadPool.execute {
-            atomic.incrementAndFetch()
+            atomic.incrementAndGet()
         }
         futures.forEach {
             it.result
@@ -71,7 +69,7 @@ class AtomicIntStressTest {
             // When it is negative - worker executes exclusively.
             val tag = index + 1
             while (place.compareAndExchange(tag, -tag) != tag) {}
-            assertEquals(index + 1, counter.incrementAndFetch())
+            assertEquals(index + 1, counter.incrementAndGet())
             // Now, let the next worker run.
             val previousPlace = place.compareAndExchange(-tag, tag + 1)
             assertEquals(-tag, previousPlace)
@@ -124,6 +122,8 @@ private class LockFreeStack<T> {
 }
 
 class AtomicStressTest {
+    private data class Data(val value: Int)
+
     @BeforeTest fun init() = ThreadPool.init(20)
     @AfterTest fun deinit() = ThreadPool.deinit()
 
@@ -177,7 +177,7 @@ class AtomicIntArrayStressTest {
         val futures = ThreadPool.execute {
             for (i in 0 until 500) {
                 val index = (0 until intArr.length).random()
-                intArr.incrementAndFetchAt(index)
+                intArr.incrementAndGet(index)
             }
         }
         futures.forEach {
@@ -200,7 +200,7 @@ class AtomicLongArrayStressTest {
         val futures = ThreadPool.execute {
             for (i in 0 until 500) {
                 val index = (0 until longArr.length).random()
-                longArr.incrementAndFetchAt(index)
+                longArr.incrementAndGet(index)
             }
         }
         futures.forEach {
@@ -215,6 +215,8 @@ class AtomicLongArrayStressTest {
 }
 
 class AtomicArrayStressTest {
+    private data class Data(val value: Int)
+
     @BeforeTest fun init() = ThreadPool.init(20)
     @AfterTest fun deinit() = ThreadPool.deinit()
 

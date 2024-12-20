@@ -34,8 +34,6 @@ object ThreadPool {
     } ?: error("Call ThreadPool.init() first")
 }
 
-private data class Data(val value: Int)
-
 class AtomicIntStressTest {
     @BeforeTest fun init() = ThreadPool.init(20)
     @AfterTest fun deinit() = ThreadPool.deinit()
@@ -124,6 +122,8 @@ private class LockFreeStack<T> {
 }
 
 class AtomicStressTest {
+    private data class Data(val value: Int)
+
     @BeforeTest fun init() = ThreadPool.init(20)
     @AfterTest fun deinit() = ThreadPool.deinit()
 
@@ -215,6 +215,8 @@ class AtomicLongArrayStressTest {
 }
 
 class AtomicArrayStressTest {
+    private data class Data(val value: Int)
+
     @BeforeTest fun init() = ThreadPool.init(20)
     @AfterTest fun deinit() = ThreadPool.deinit()
 

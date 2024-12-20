@@ -458,6 +458,8 @@ class AtomicLongArrayTest {
 }
 
 class AtomicArrayTest {
+    private data class Data(val value: Int)
+
     @Test fun ctor() {
         val arr2 = AtomicArray<Data?>(10) { null }
         assertEquals(arr2[4], null)

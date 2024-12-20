@@ -144,6 +144,8 @@ class AtomicLongTest {
 }
 
 class AtomicReferenceTest {
+    private data class Data(val value: Int)
+
     @Test fun ctor() {
         val x = AtomicReference(Data(1))
         assertEquals(x.value, Data(1))
