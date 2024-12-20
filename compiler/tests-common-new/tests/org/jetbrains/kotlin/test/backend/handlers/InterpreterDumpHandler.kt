@@ -84,7 +84,7 @@ interface IrInterpreterDumpHandler : EvaluatorHandler {
 
     fun TestModule.isSuppressedForK2(): Boolean {
         val ignoredBackends = this.directives[IGNORE_BACKEND_K2]
-        val targetBackend = testServices.defaultsProvider.defaultTargetBackend ?: this.targetBackend
+        val targetBackend = testServices.defaultsProvider.targetBackend
         return targetBackend in ignoredBackends || TargetBackend.ANY in ignoredBackends
     }
 

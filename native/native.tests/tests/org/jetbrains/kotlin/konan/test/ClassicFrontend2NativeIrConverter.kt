@@ -52,9 +52,9 @@ class ClassicFrontend2NativeIrConverter(
         get() = listOf(service(::LibraryProvider))
 
     override fun transform(module: TestModule, inputArtifact: ClassicFrontendOutputArtifact): IrBackendInput {
-        return when (module.targetBackend) {
+        return when (val targetBackend = testServices.defaultsProvider.targetBackend) {
             TargetBackend.NATIVE -> transformToNativeIr(module, inputArtifact)
-            else -> testServices.assertions.fail { "Target backend ${module.targetBackend} is not supported for transformation into IR" }
+            else -> testServices.assertions.fail { "Target backend $targetBackend is not supported for transformation into IR" }
         }
     }
 

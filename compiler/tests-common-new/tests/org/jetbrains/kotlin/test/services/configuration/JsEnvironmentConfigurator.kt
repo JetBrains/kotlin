@@ -164,13 +164,13 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         val allDependencies = module.transitiveRegularDependencies().map { getJsModuleArtifactPath(testServices, it.name) + ".meta.js" }
         val friends = module.friendDependencies.map { getJsModuleArtifactPath(testServices, it.dependencyModule.name) + ".meta.js" }
 
-        val libraries = when (module.targetBackend) {
+        val libraries = when (val targetBackend = testServices.defaultsProvider.targetBackend) {
             null -> listOf(
                 testServices.standardLibrariesPathProvider.fullJsStdlib().absolutePath,
                 testServices.standardLibrariesPathProvider.kotlinTestJsKLib().absolutePath
             )
             TargetBackend.JS_IR, TargetBackend.JS_IR_ES6 -> dependencies + friends
-            else -> error("Unsupported target backend: ${module.targetBackend}")
+            else -> error("Unsupported target backend: $targetBackend")
         }
         configuration.put(JSConfigurationKeys.LIBRARIES, libraries)
         configuration.put(JSConfigurationKeys.TRANSITIVE_LIBRARIES, allDependencies)

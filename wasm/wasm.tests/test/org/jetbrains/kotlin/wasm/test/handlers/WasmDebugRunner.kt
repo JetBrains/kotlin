@@ -199,7 +199,7 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
 
                 checkSteppingTestResult(
                     frontendKind = testServices.defaultsProvider.frontendKind,
-                    mainModule.targetBackend ?: TargetBackend.WASM,
+                    testServices.defaultsProvider.targetBackend ?: TargetBackend.WASM,
                     originalFile,
                     groupedByLinesSteppingTestLoggedData,
                     testServices.defaultDirectives

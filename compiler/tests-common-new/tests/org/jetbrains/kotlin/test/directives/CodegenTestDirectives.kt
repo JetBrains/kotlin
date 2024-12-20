@@ -263,9 +263,9 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
     )
 }
 
-fun ValueDirective<TargetBackend>.isApplicableTo(module: TestModule): Boolean {
+fun ValueDirective<TargetBackend>.isApplicableTo(module: TestModule, testServices: TestServices): Boolean {
     val specifiedBackends = module.directives[this]
-    return module.targetBackend in specifiedBackends || TargetBackend.ANY in specifiedBackends
+    return testServices.defaultsProvider.targetBackend in specifiedBackends || TargetBackend.ANY in specifiedBackends
 }
 
 fun extractIgnoredDirectiveForTargetBackend(

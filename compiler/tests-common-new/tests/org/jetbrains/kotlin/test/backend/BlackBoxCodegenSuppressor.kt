@@ -46,7 +46,7 @@ class BlackBoxCodegenSuppressor(
         private val customIgnoreDirective: ValueDirective<TargetBackend>?
     ) : TestService {
         fun extractIgnoreDirective(module: TestModule): ValueDirective<TargetBackend>? {
-            val targetBackend = testServices.defaultsProvider.defaultTargetBackend ?: module.targetBackend ?: return null
+            val targetBackend = testServices.defaultsProvider.targetBackend ?: return null
             return extractIgnoredDirectiveForTargetBackend(testServices, module, targetBackend, customIgnoreDirective)
         }
 
@@ -58,7 +58,7 @@ class BlackBoxCodegenSuppressor(
         fun failuresInModuleAreIgnored(module: TestModule, ignoreDirective: ValueDirective<TargetBackend>): SuppressionResult {
             val ignoredBackends = module.directives[ignoreDirective]
 
-            val targetBackend = testServices.defaultsProvider.defaultTargetBackend ?: module.targetBackend
+            val targetBackend = testServices.defaultsProvider.targetBackend
             return when {
                 ignoredBackends.isEmpty() -> SuppressionResult.NO_MUTE
                 targetBackend in ignoredBackends -> SuppressionResult(true, targetBackend)
@@ -101,8 +101,7 @@ class BlackBoxCodegenSuppressor(
         ): AssertionError? {
             if (failed) return null
 
-            val firstModule = testServices.moduleStructure.modules.first()
-            val targetBackend = testServices.defaultsProvider.defaultTargetBackend ?: firstModule.targetBackend
+            val targetBackend = testServices.defaultsProvider.targetBackend
             val message = buildString {
                 append("Looks like this test can be unmuted. Remove ")
                 targetBackend?.name?.let {
