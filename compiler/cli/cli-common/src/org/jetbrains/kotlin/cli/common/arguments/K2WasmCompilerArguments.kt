@@ -31,7 +31,7 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
             field = value
         }
 
-    @Argument(value = "-Xwasm-debug-friendly-build", description = "Tell compiler to skip optimizations that can break debugging.")
+    @Argument(value = "-Xwasm-debug-friendly-build", description = "Skip optimizations that can break debugging.")
     var forceDebugFriendlyBuild = false
         set(value) {
             checkFrozen()
