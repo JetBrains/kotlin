@@ -84,7 +84,12 @@ class SimpleBridgeGeneratorImpl(
         val kotlinLines = mutableListOf<String>()
         val nativeLines = mutableListOf<String>()
 
-        val kotlinFunctionName = "kniBridge${nextUniqueId++}"
+        // stabilize names for JVM cinterop to make bindings cross-platform.
+        val kotlinFunctionName = if (nativeBacked is FunctionStub && platform == KotlinPlatform.JVM && libraryForCStubs.language == Language.C) {
+            "kniBridge${nativeBacked.name}"
+        } else {
+            "kniBridge${nextUniqueId++}"
+        }
         val kotlinParameters = kotlinValues.withIndex().joinToString {
             "p${it.index}: ${it.value.type.kotlinType.render(topLevelKotlinScope)}"
         }
