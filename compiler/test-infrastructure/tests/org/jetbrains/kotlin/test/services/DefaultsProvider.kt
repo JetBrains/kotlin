@@ -12,15 +12,9 @@ import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.model.BinaryKind
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKind
-import org.jetbrains.kotlin.test.model.TestArtifactKind
 
-/*
- * TODO:
- *   - default target artifact
- *   - default libraries
- */
 class DefaultsProvider(
-    val defaultFrontend: FrontendKind<*>,
+    val frontendKind: FrontendKind<*>,
     val defaultLanguageSettings: LanguageVersionSettings,
     private val defaultLanguageSettingsBuilder: LanguageVersionSettingsBuilder,
     val defaultPlatform: TargetPlatform,

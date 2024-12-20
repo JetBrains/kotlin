@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.kapt3.util.prettyPrint
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.jetbrains.kotlin.test.utils.withExtension
 import java.util.Locale
@@ -45,7 +46,7 @@ class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(tes
 
         checkErrors(module, kaptContext, actual)
 
-        val isFir = module.frontendKind == FrontendKinds.FIR
+        val isFir = testServices.defaultsProvider.frontendKind == FrontendKinds.FIR
         val testDataFile = module.files.first().originalFile
         val firFile = testDataFile.withExtension("fir.txt")
         val txtFile = testDataFile.withExtension("txt")
@@ -65,7 +66,7 @@ class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(tes
     ) {
         val expectedErrors = (
                 module.directives[EXPECTED_ERROR] +
-                        module.directives[if (module.frontendKind == FrontendKinds.FIR) EXPECTED_ERROR_K2 else EXPECTED_ERROR_K1]
+                        module.directives[if (testServices.defaultsProvider.frontendKind == FrontendKinds.FIR) EXPECTED_ERROR_K2 else EXPECTED_ERROR_K1]
                 ).sorted()
 
         val log = Log.instance(kaptContext.context) as KaptJavaLogBase

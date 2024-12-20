@@ -66,7 +66,7 @@ interface EvaluatorHandler {
 
 interface IrInterpreterDumpHandler : EvaluatorHandler {
     fun processIrModule(module: TestModule): Map<TestFile, List<ParsedCodeMetaInfo>> {
-        if (!module.isSuppressedForK2() && testServices.defaultsProvider.defaultFrontend == FrontendKinds.ClassicFrontend) {
+        if (!module.isSuppressedForK2() && testServices.defaultsProvider.frontendKind == FrontendKinds.ClassicFrontend) {
             return module.files.associateWith { testFile -> testFile.getExpectedResult() }
         }
 
@@ -93,7 +93,7 @@ interface IrInterpreterDumpHandler : EvaluatorHandler {
         val rangesThatAreNotSupposedToBeRendered = testFile.extractRangesWithoutRender()
         this.load(irFile.nameWithPackage)?.forEach { (pair, constantValue) ->
             if (constantValue is AnnotationValue) return@forEach
-            
+
             val (start, end) = pair
             if (rangesThatAreNotSupposedToBeRendered.any { start >= it.first && start <= it.second }) return@forEach
 

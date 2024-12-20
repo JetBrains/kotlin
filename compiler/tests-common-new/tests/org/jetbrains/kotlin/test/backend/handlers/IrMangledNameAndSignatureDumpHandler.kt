@@ -132,7 +132,7 @@ class IrMangledNameAndSignatureDumpHandler(
 
     private fun computeDumpExtension(): String {
         return if (
-            testServices.defaultsProvider.defaultFrontend == FrontendKinds.ClassicFrontend ||
+            testServices.defaultsProvider.frontendKind == FrontendKinds.ClassicFrontend ||
             separateSignatureDirectiveNotPresent(testServices)
         ) {
             DUMP_EXTENSION
@@ -194,7 +194,7 @@ class IrMangledNameAndSignatureDumpHandler(
             assertions.assertFileDoesntExist(expectedFile, DUMP_SIGNATURES)
             return
         }
-        val frontendKind = testServices.defaultsProvider.defaultFrontend
+        val frontendKind = testServices.defaultsProvider.frontendKind
         val muteDirectives = listOfNotNull(
             MUTE_SIGNATURE_COMPARISON_K2.takeIf { frontendKind == FrontendKinds.FIR },
         )

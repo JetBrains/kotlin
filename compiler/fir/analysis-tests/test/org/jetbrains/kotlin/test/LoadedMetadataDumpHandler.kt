@@ -166,7 +166,7 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         }
 
         val emptyModule = TestModule(
-            name = "dump-${module.name}", module.targetPlatform, module.targetBackend, FrontendKinds.FIR,
+            name = "dump-${module.name}", module.targetPlatform, module.targetBackend,
             BackendKinds.IrBackend, module.binaryKind, files = emptyList(),
             allDependencies = listOf(DependencyDescription(module, dependencyKind, DependencyRelation.RegularDependency)),
             RegisteredDirectives.Empty, languageVersionSettings
@@ -216,7 +216,7 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         if (dumper.isEmpty()) return
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
 
-        val frontendKind = testServices.defaultsProvider.defaultFrontend
+        val frontendKind = testServices.defaultsProvider.frontendKind
 
         val commonExtension = ".fir.txt"
         val (specificExtension, otherSpecificExtension) = when (frontendKind) {

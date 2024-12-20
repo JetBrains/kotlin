@@ -461,7 +461,7 @@ open class FirFrontendFacade(
             module: TestModule,
             testServices: TestServices,
         ): Boolean {
-            val shouldRunAnalysis = module.frontendKind == FrontendKinds.FIR
+            val shouldRunAnalysis = testServices.defaultsProvider.frontendKind == FrontendKinds.FIR
 
             if (!shouldRunAnalysis) {
                 return false

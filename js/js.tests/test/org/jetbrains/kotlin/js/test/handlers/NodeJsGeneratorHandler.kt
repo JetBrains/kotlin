@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.js.test.handlers
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.js.test.utils.extractTestPackage
 import org.jetbrains.kotlin.js.test.utils.getOnlyJsFilesForRunner
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.services.TestServices

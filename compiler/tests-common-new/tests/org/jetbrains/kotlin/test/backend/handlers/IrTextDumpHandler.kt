@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_IDENTIC
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
@@ -47,10 +48,14 @@ class IrTextDumpHandler(
         const val DUMP_EXTENSION = "ir.txt"
         const val DUMP_EXTENSION2 = "ir2.txt"
 
-        fun computeDumpExtension(module: TestModule, defaultExtension: String, ignoreFirIdentical: Boolean = false): String {
+        fun computeDumpExtension(
+            testServices: TestServices,
+            defaultExtension: String,
+            ignoreFirIdentical: Boolean = false,
+        ): String {
             return if (
-                module.frontendKind == FrontendKinds.ClassicFrontend ||
-                (!ignoreFirIdentical && FIR_IDENTICAL in module.directives)
+                testServices.defaultsProvider.frontendKind == FrontendKinds.ClassicFrontend ||
+                (!ignoreFirIdentical && FIR_IDENTICAL in testServices.moduleStructure.allDirectives)
             ) {
                 defaultExtension
             } else {
@@ -135,7 +140,7 @@ class IrTextDumpHandler(
                 {
                     val classDump = info.irPluginContext.findExternalClass(externalClassId).dump(dumpOptions)
                     val suffix = ".__${externalClassId.replace("/", ".")}"
-                    val expectedFile = baseFile.withSuffixAndExtension(suffix, module.getDumpExtension(ignoreFirIdentical = true))
+                    val expectedFile = baseFile.withSuffixAndExtension(suffix, getDumpExtension(ignoreFirIdentical = true))
                     assertions.assertEqualsToFile(expectedFile, classDump)
                 }
             }
@@ -150,7 +155,7 @@ class IrTextDumpHandler(
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val moduleStructure = testServices.moduleStructure
         val defaultExpectedFile = moduleStructure.originalTestDataFiles.first()
-            .withExtension(moduleStructure.modules.first().getDumpExtension())
+            .withExtension(getDumpExtension())
         checkOneExpectedFile(defaultExpectedFile, baseDumper.generateResultingDump())
         buildersForSeparateFileDumps.entries.forEach { (expectedFile, dump) -> checkOneExpectedFile(expectedFile, dump.toString()) }
     }
@@ -163,8 +168,8 @@ class IrTextDumpHandler(
         }
     }
 
-    private fun TestModule.getDumpExtension(ignoreFirIdentical: Boolean = false): String {
-        return computeDumpExtension(this, if (byteCodeListingEnabled) DUMP_EXTENSION2 else DUMP_EXTENSION, ignoreFirIdentical)
+    private fun getDumpExtension(ignoreFirIdentical: Boolean = false): String {
+        return computeDumpExtension(testServices, if (byteCodeListingEnabled) DUMP_EXTENSION2 else DUMP_EXTENSION, ignoreFirIdentical)
     }
 }
 

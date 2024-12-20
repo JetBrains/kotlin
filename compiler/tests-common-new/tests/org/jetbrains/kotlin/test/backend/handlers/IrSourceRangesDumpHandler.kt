@@ -115,7 +115,7 @@ class IrSourceRangesDumpHandler(
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val moduleStructure = testServices.moduleStructure
         val defaultExpectedFile = moduleStructure.originalTestDataFiles.first()
-            .withExtension(moduleStructure.modules.first().getDumpExtension())
+            .withExtension(getDumpExtension())
         checkOneExpectedFile(defaultExpectedFile, baseDumper.generateResultingDump())
         buildersForSeparateFileDumps.entries.forEach { (expectedFile, dump) -> checkOneExpectedFile(expectedFile, dump.toString()) }
     }
@@ -128,7 +128,7 @@ class IrSourceRangesDumpHandler(
         }
     }
 
-    private fun TestModule.getDumpExtension(ignoreFirIdentical: Boolean = false): String {
-        return IrTextDumpHandler.computeDumpExtension(this, DUMP_EXTENSION, ignoreFirIdentical)
+    private fun getDumpExtension(ignoreFirIdentical: Boolean = false): String {
+        return IrTextDumpHandler.computeDumpExtension(testServices, DUMP_EXTENSION, ignoreFirIdentical)
     }
 }

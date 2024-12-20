@@ -67,7 +67,7 @@ class IrPrettyKotlinDumpHandler(
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val moduleStructure = testServices.moduleStructure
-        val extension = computeDumpExtension(moduleStructure.modules.first(), DUMP_EXTENSION)
+        val extension = computeDumpExtension(testServices, DUMP_EXTENSION)
         val expectedFile = moduleStructure.originalTestDataFiles.first().withExtension(extension)
 
         if (dumper.isEmpty()) {

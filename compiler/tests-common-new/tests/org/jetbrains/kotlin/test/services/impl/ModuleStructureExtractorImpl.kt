@@ -91,7 +91,6 @@ class ModuleStructureExtractorImpl(
 
         private var currentModuleName: String? = null
         private var currentModuleTargetPlatform: TargetPlatform? = null
-        private var currentModuleFrontendKind: FrontendKind<*>? = null
         private var currentModuleTargetBackend: TargetBackend? = null
         private var currentModuleLanguageVersionSettingsBuilder: LanguageVersionSettingsBuilder = initLanguageSettingsBuilder()
         private var dependenciesOfCurrentModule = mutableListOf<DependencyDescription>()
@@ -332,7 +331,7 @@ class ModuleStructureExtractorImpl(
             moduleDirectives.forEach { it.checkDirectiveApplicability(contextIsGlobal = isImplicitModule, contextIsModule = true) }
 
             val targetBackend = currentModuleTargetBackend ?: defaultsProvider.defaultTargetBackend
-            val frontendKind = currentModuleFrontendKind ?: defaultsProvider.defaultFrontend
+            val frontendKind = defaultsProvider.frontendKind
 
             currentModuleLanguageVersionSettingsBuilder.configureUsingDirectives(
                 moduleDirectives, environmentConfigurators, targetBackend, useK2 = frontendKind == FrontendKinds.FIR
@@ -345,7 +344,6 @@ class ModuleStructureExtractorImpl(
                 name = moduleName,
                 targetPlatform = targetPlatform,
                 targetBackend = targetBackend,
-                frontendKind = currentModuleFrontendKind ?: defaultsProvider.defaultFrontend,
                 backendKind = BackendKinds.fromTargetBackend(targetBackend),
                 binaryKind = defaultsProvider.defaultArtifactKind ?: targetPlatform.toArtifactKind(frontendKind),
                 files = filesOfCurrentModule,
@@ -418,7 +416,6 @@ class ModuleStructureExtractorImpl(
             currentModuleName = null
             currentModuleTargetPlatform = null
             currentModuleTargetBackend = null
-            currentModuleFrontendKind = null
             currentModuleLanguageVersionSettingsBuilder = initLanguageSettingsBuilder()
             filesOfCurrentModule = mutableListOf()
             dependenciesOfCurrentModule = mutableListOf()

@@ -47,7 +47,7 @@ class BlackBoxCodegenSuppressor(
     ) : TestService {
         fun extractIgnoreDirective(module: TestModule): ValueDirective<TargetBackend>? {
             val targetBackend = testServices.defaultsProvider.defaultTargetBackend ?: module.targetBackend ?: return null
-            return extractIgnoredDirectiveForTargetBackend(module, targetBackend, customIgnoreDirective)
+            return extractIgnoredDirectiveForTargetBackend(testServices, module, targetBackend, customIgnoreDirective)
         }
 
         fun failuresInModuleAreIgnored(module: TestModule): Boolean {
@@ -111,7 +111,7 @@ class BlackBoxCodegenSuppressor(
                 }
                 append(directive.name)
                 append(" directive for ")
-                append(firstModule.frontendKind)
+                append(testServices.defaultsProvider.frontendKind)
 
                 assert(suppressionResult.testMuted)
 
