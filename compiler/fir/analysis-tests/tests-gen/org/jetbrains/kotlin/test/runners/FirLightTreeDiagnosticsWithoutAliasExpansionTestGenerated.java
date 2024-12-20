@@ -289,6 +289,12 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
     @TestDataPath("$PROJECT_ROOT")
     public class NestedTypeAliases {
       @Test
+      @TestMetadata("deepInnerRHS.kt")
+      public void testDeepInnerRHS() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/deepInnerRHS.kt");
+      }
+
+      @Test
       @TestMetadata("kmp.kt")
       public void testKmp() {
         runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/kmp.kt");
