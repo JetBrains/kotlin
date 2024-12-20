@@ -1,5 +1,1 @@
-warning: flag is not supported by this version of the compiler: -Xnested-type-aliases
-compiler/testData/cli/jvm/nestedTypeAliases.kt:4:5: error: nested and local type aliases are not supported.
-    typealias TA = A
-    ^^^^^^^^^^^^^^^^
-COMPILATION_ERROR
+OK
