@@ -429,6 +429,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("useSiteDescription")
         }
         val INAPPLICABLE_FILE_TARGET by error<KtAnnotationEntry>(PositioningStrategy.ANNOTATION_USE_SITE)
+        val INAPPLICABLE_ALL_TARGET by error<KtAnnotationEntry>(PositioningStrategy.ANNOTATION_USE_SITE)
         val REPEATED_ANNOTATION by error<PsiElement>()
         val REPEATED_ANNOTATION_WARNING by warning<PsiElement>()
         val NOT_A_CLASS by error<PsiElement>()

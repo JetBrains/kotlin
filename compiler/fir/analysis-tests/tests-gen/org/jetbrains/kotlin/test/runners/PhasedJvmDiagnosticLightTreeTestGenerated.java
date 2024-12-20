@@ -55139,6 +55139,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
     @TestDataPath("$PROJECT_ROOT")
     public class Annotations {
       @Test
+      @TestMetadata("annotationAllUseSiteTarget.kt")
+      public void testAnnotationAllUseSiteTarget() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationAllUseSiteTarget.kt");
+      }
+
+      @Test
       @TestMetadata("annotationDefaultTargetFirstOnly.kt")
       public void testAnnotationDefaultTargetFirstOnly() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationDefaultTargetFirstOnly.kt");

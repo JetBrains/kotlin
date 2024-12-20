@@ -715,6 +715,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER_WITH_DEFAULT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_ALL_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PARAMETER_NAME_CHANGED_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_FEATURE
@@ -1177,6 +1178,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INAPPLICABLE_PARAM_TARGET, "'@param:' annotations can only be applied to primary constructor parameters.")
         map.put(REDUNDANT_ANNOTATION_TARGET, "Redundant annotation target ''{0}''.", TO_STRING)
         map.put(INAPPLICABLE_FILE_TARGET, "'@file:' annotations can only be applied before package declaration.")
+        map.put(INAPPLICABLE_ALL_TARGET, "'@all:' annotations can only be applied to non-local properties.")
         map.put(
             WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET,
             "This annotation is not applicable to target ''{0}'' and use-site target ''@{1}''. Applicable targets: {2}",

@@ -308,10 +308,44 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
             }
             ALL -> {
                 if (context.languageVersionSettings.supportsFeature(LanguageFeature.AnnotationAllUseSiteTarget)) {
-                    if (annotated !is FirProperty) {
-                        // TODO: report appropriate diagnostic
+                    when (annotated) {
+                        is FirValueParameter -> {
+                            if (annotated.correspondingProperty == null) {
+                                reporter.reportOn(
+                                    annotation.source,
+                                    FirErrors.INAPPLICABLE_ALL_TARGET,
+                                    context
+                                )
+                            }
+                        }
+                        is FirProperty -> {
+                            if (annotated.isLocal) {
+                                reporter.reportOn(
+                                    annotation.source,
+                                    FirErrors.INAPPLICABLE_ALL_TARGET,
+                                    context
+                                )
+                            } else if (KotlinTarget.PROPERTY !in applicableTargets) {
+                                reporter.reportOn(
+                                    annotation.source,
+                                    FirErrors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET,
+                                    "property",
+                                    target.renderName,
+                                    applicableTargets,
+                                    context
+                                )
+                            }
+                        }
+                        else -> {
+                            reporter.reportOn(
+                                annotation.source,
+                                FirErrors.INAPPLICABLE_ALL_TARGET,
+                                context
+                            )
+                        }
                     }
-                } else {
+                } else if (annotated !is FirValueParameter || annotated.correspondingProperty == null) {
+                    // Condition is needed to avoid error duplication
                     reporter.reportOn(
                         annotation.source,
                         FirErrors.UNSUPPORTED_FEATURE,

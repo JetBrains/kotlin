@@ -317,6 +317,12 @@ public class FirPsiBytecodeListingTestGenerated extends AbstractFirPsiBytecodeLi
     }
 
     @Test
+    @TestMetadata("annotationAllTarget.kt")
+    public void testAnnotationAllTarget() {
+      runTest("compiler/testData/codegen/bytecodeListing/annotations/annotationAllTarget.kt");
+    }
+
+    @Test
     @TestMetadata("annotationCtorCallGenerateSynthetic.kt")
     public void testAnnotationCtorCallGenerateSynthetic() {
       runTest("compiler/testData/codegen/bytecodeListing/annotations/annotationCtorCallGenerateSynthetic.kt");

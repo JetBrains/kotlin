@@ -1,0 +1,55 @@
+@java.lang.annotation.Retention(value=RUNTIME)
+@kotlin.Metadata
+public annotation class Default {
+    // source: 'annotationAllTarget.kt'
+}
+
+@kotlin.annotation.Target(allowedTargets=[PROPERTY_SETTER, PROPERTY_GETTER, FUNCTION])
+@java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Target(value=[METHOD])
+@kotlin.Metadata
+public annotation class Function {
+    // source: 'annotationAllTarget.kt'
+}
+
+@kotlin.Metadata
+public final class MyRecord {
+    // source: 'annotationAllTarget.kt'
+    private final @Default @Prop @org.jetbrains.annotations.NotNull field x: java.lang.String
+    public method <init>(@Default @org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public final @org.jetbrains.annotations.NotNull method component1(): java.lang.String
+    public synthetic static method copy$default(p0: MyRecord, p1: java.lang.String, p2: int, p3: java.lang.Object): MyRecord
+    public final @org.jetbrains.annotations.NotNull method copy(@Default @org.jetbrains.annotations.NotNull p0: java.lang.String): MyRecord
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public synthetic deprecated static @Default @Prop method getX$annotations(): void
+    public final @Default @Function @org.jetbrains.annotations.NotNull method getX(): java.lang.String
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class O {
+    // source: 'annotationAllTarget.kt'
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: O
+    private final static @Default @Prop field x: int
+    private static @Default @Prop field y: int
+    private final static @org.jetbrains.annotations.NotNull field z$delegate: kotlin.Lazy
+    static method <clinit>(): void
+    private method <init>(): void
+    public synthetic deprecated static @Default @Prop method getX$annotations(): void
+    public final @Default @Function method getX(): int
+    public synthetic deprecated static @Default @Prop method getY$annotations(): void
+    public final @Default @Function method getY(): int
+    public synthetic deprecated static @Default @Prop method getZ$annotations(): void
+    public final @Default @Function method getZ(): int
+    public final method setY(@Default p0: int): void
+    private final static method z_delegate$lambda$0(): int
+}
+
+@kotlin.annotation.Target(allowedTargets=[FIELD, PROPERTY])
+@java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Target(value=[FIELD])
+@kotlin.Metadata
+public annotation class Prop {
+    // source: 'annotationAllTarget.kt'
+}
