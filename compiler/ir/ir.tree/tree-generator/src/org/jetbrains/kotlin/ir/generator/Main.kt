@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.generator
 
-import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.printer.TreeGenerator
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.print.*
@@ -31,9 +30,10 @@ fun main(args: Array<String>) {
             elementBaseType,
             ::ElementPrinter,
             listOf(
-                elementVisitorType to ::VisitorPrinter,
-                elementVisitorVoidType to ::VisitorVoidPrinter,
-                elementTransformerType to ::TransformerPrinter.bind(model.rootElement),
+                legacyVisitorType to ::VisitorPrinter,
+                legacyVisitorVoidType to ::LegacyVisitorVoidPrinter,
+                legacyTransformerType to ::TransformerPrinter.bind(model.rootElement),
+                irVisitorVoidType to ::VisitorVoidPrinter,
                 elementTransformerVoidType to ::TransformerVoidPrinter,
                 typeVisitorType to ::TypeVisitorPrinter.bind(model.rootElement),
                 typeVisitorVoidType to ::TypeVisitorVoidPrinter.bind(model.rootElement),

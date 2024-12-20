@@ -187,6 +187,24 @@ data class PrimaryConstructorParameter(
 
 private fun String.asStringLiteral(): String = "\"" + replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n") + "\""
 
+private fun ImportCollectingPrinter.printAnnotationArgument(argument: Any?) {
+    when (argument) {
+        is String -> print(argument.asStringLiteral())
+        is Enum<*> -> print(argument::class.asRef<PositionTypeParameterRef>().render(), ".", argument.name)
+        is Array<*> -> {
+            print("[")
+            for ((i, element) in argument.withIndex()) {
+                printAnnotationArgument(element)
+                if (i != argument.lastIndex) {
+                    print(", ")
+                }
+            }
+            print("]")
+        }
+        else -> print(argument)
+    }
+}
+
 fun <A : Annotation> ImportCollectingPrinter.printAnnotation(annotation: A) {
     @Suppress("UNCHECKED_CAST")
     val annotationInterface = annotation::class.java.interfaces.single().kotlin as KClass<Annotation>
@@ -197,11 +215,7 @@ fun <A : Annotation> ImportCollectingPrinter.printAnnotation(annotation: A) {
         withIndent {
             for (property in properties) {
                 print(property.name, " = ")
-                when (val value = property.get(annotation)) {
-                    is String -> print(value.asStringLiteral())
-                    is Enum<*> -> print(value::class.asRef<PositionTypeParameterRef>().render(), ".", value.name)
-                    else -> print(value)
-                }
+                printAnnotationArgument(property.get(annotation))
                 println(",")
             }
         }
