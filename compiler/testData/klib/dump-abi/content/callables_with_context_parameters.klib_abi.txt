@@ -6,6 +6,7 @@
 // Library unique name: <callables_with_context_parameters>
 final class callables_with_context_parameters.test/FunctionContainer { // callables_with_context_parameters.test/FunctionContainer|null[0]
     constructor <init>() // callables_with_context_parameters.test/FunctionContainer.<init>|<init>(){}[0]
+    final fun context(kotlin/Int, kotlin/Long) funWithDefaultArgs(kotlin/Int = ..., kotlin/Long, kotlin/String = ...): kotlin/String // callables_with_context_parameters.test/FunctionContainer.funWithDefaultArgs|funWithDefaultArgs!kotlin.Int!kotlin.Long(kotlin.Int;kotlin.Long;kotlin.String){}[0]
     final fun context(kotlin/Int) regularFun(): kotlin/String // callables_with_context_parameters.test/FunctionContainer.regularFun|regularFun!kotlin.Int(){}[0]
     final fun context(kotlin/Int) regularFun(kotlin/Int): kotlin/String // callables_with_context_parameters.test/FunctionContainer.regularFun|regularFun!kotlin.Int(kotlin.Int){}[0]
     final fun context(kotlin/Int) regularFun(kotlin/Number): kotlin/String // callables_with_context_parameters.test/FunctionContainer.regularFun|regularFun!kotlin.Int(kotlin.Number){}[0]
@@ -27,6 +28,7 @@ final class callables_with_context_parameters.test/FunctionContainer { // callab
     final fun context(kotlin/Long, kotlin/Int) (kotlin/Long).regularFun(): kotlin/String // callables_with_context_parameters.test/FunctionContainer.regularFun|regularFun!kotlin.Int!kotlin.Long@kotlin.Long(){}[0]
     final fun context(kotlin/Number, kotlin/Int) (kotlin/Number).regularFun(): kotlin/String // callables_with_context_parameters.test/FunctionContainer.regularFun|regularFun!kotlin.Int!kotlin.Long@kotlin.Number(){}[0]
 }
+final fun context(kotlin/Int, kotlin/Long) callables_with_context_parameters.test/funWithDefaultArgs(kotlin/Int = ..., kotlin/Long, kotlin/String = ...): kotlin/String // callables_with_context_parameters.test/funWithDefaultArgs|funWithDefaultArgs!kotlin.Int!kotlin.Long(kotlin.Int;kotlin.Long;kotlin.String){}[0]
 final fun context(kotlin/Int) callables_with_context_parameters.test/regularFun(): kotlin/String // callables_with_context_parameters.test/regularFun|regularFun!kotlin.Int(){}[0]
 final fun context(kotlin/Int) callables_with_context_parameters.test/regularFun(kotlin/Int): kotlin/String // callables_with_context_parameters.test/regularFun|regularFun!kotlin.Int(kotlin.Int){}[0]
 final fun context(kotlin/Int) callables_with_context_parameters.test/regularFun(kotlin/Number): kotlin/String // callables_with_context_parameters.test/regularFun|regularFun!kotlin.Int(kotlin.Number){}[0]

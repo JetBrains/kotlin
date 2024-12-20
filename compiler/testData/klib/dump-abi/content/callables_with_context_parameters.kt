@@ -25,6 +25,7 @@ context(Int, Long) fun regularFun(p1: Number, p2: Number): String = ""
 context(Int, Long) fun Int.regularFun(): String = ""
 context(Int, Long) fun Long.regularFun(): String = ""
 context(Int, Long) fun Number.regularFun(): String = ""
+context(Int, Long) fun funWithDefaultArgs(p1: Int = 42, p2: Long, p3: String = ""): String = ""
 
 class FunctionContainer {
     context(Int) fun regularFun(): String = ""
@@ -48,4 +49,5 @@ class FunctionContainer {
     context(Int, Long) fun Int.regularFun(): String = ""
     context(Int, Long) fun Long.regularFun(): String = ""
     context(Int, Long) fun Number.regularFun(): String = ""
+    context(Int, Long) fun funWithDefaultArgs(p1: Int = 42, p2: Long, p3: String = ""): String = ""
 }
