@@ -80,7 +80,7 @@ class RegeneratedLambdaFieldRemapper(
             else
                 field.type,
             Type.getObjectType(newLambdaInternalName), /*TODO owner type*/
-            field.newFieldName, false,
+            field.newFieldName,
             prefix ?: StackValue.LOCAL_0
         )
 

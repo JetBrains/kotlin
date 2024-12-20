@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.isSmartcastFromHigherThanNullable
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
+import org.jetbrains.kotlin.codegen.BranchedValue
 import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.genAreEqualCall
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
@@ -210,7 +211,7 @@ class Ieee754Equals(val operandType: Type) : IntrinsicMethod() {
             !arg0isNullable && !arg1isNullable ->
                 object : IntrinsicFunction(expression, signature, classCodegen, listOf(operandType, operandType)) {
                     override fun genInvokeInstruction(v: InstructionAdapter) {
-                        StackValue.cmp(KtTokens.EQEQ, operandType, StackValue.onStack(operandType), StackValue.onStack(operandType))
+                        BranchedValue.cmp(KtTokens.EQEQ, operandType, StackValue.onStack(operandType), StackValue.onStack(operandType))
                             .put(Type.BOOLEAN_TYPE, v)
                     }
                 }

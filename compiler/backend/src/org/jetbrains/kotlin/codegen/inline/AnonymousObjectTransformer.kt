@@ -543,7 +543,7 @@ class AnonymousObjectTransformer(
                         recapturedParamInfo.functionalArgument = NonInlineArgumentForInlineSuspendParameter.INLINE_LAMBDA_AS_VARIABLE
                     }
                     capturedParamBuilder.addCapturedParam(recapturedParamInfo, recapturedParamInfo.newFieldName).remapValue =
-                        StackValue.field(desc.type, oldObjectType, recapturedParamInfo.newFieldName, false, StackValue.LOCAL_0)
+                        StackValue.field(desc.type, oldObjectType, recapturedParamInfo.newFieldName, StackValue.LOCAL_0)
                     allRecapturedParameters.add(desc)
                 }
             }
