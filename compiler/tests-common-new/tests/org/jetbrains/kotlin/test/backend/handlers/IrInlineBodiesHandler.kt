@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.defaultsProvider
 
 class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(testServices) {
     val declaredInlineFunctions = hashSetOf<IrSimpleFunction>()
@@ -27,7 +28,7 @@ class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(test
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun processModule(module: TestModule, info: IrBackendInput) {
         info.irModuleFragment.acceptChildrenVoid(InlineFunctionsCollector())
-        info.irModuleFragment.acceptChildrenVoid(InlineCallBodiesCheck(firEnabled = module.frontendKind == FrontendKinds.FIR))
+        info.irModuleFragment.acceptChildrenVoid(InlineCallBodiesCheck(firEnabled = testServices.defaultsProvider.frontendKind == FrontendKinds.FIR))
 
         assertions.assertTrue((info as IrBackendInput.JvmIrBackendInput).backendInput.symbolTable.descriptorExtension.allUnboundSymbols.isEmpty())
     }

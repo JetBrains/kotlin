@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
@@ -379,7 +380,7 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
         val extension = when {
             inlineScopesNumbersEnabled && inlineScopesDifference ->
                 INLINE_SCOPES_DUMP_EXTENSION
-            firDifference && firstModule.frontendKind == FrontendKinds.FIR ->
+            firDifference && testServices.defaultsProvider.frontendKind == FrontendKinds.FIR ->
                 FIR_DUMP_EXTENSION
             else ->
                 DUMP_EXTENSION

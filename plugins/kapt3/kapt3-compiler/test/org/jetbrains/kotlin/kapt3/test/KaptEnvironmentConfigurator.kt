@@ -69,7 +69,7 @@ class KaptEnvironmentConfigurator(
 
             processingOptions.putAll(processorOptions)
             detectMemoryLeaks = DetectMemoryLeaksMode.NONE
-            if (module.frontendKind == FrontendKinds.FIR) {
+            if (testServices.defaultsProvider.frontendKind == FrontendKinds.FIR) {
                 mode = AptMode.STUBS_AND_APT
 
                 if (processingClasspath.isEmpty()) {
@@ -87,7 +87,7 @@ class KaptEnvironmentConfigurator(
         configuration.addJvmClasspathRoot(runtimeLibrary)
         configuration.put(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT, true)
 
-        if (module.frontendKind == FrontendKinds.FIR) {
+        if (testServices.defaultsProvider.frontendKind == FrontendKinds.FIR) {
             configuration.put(JVMConfigurationKeys.SKIP_BODIES, true)
 
             val moduleBuilder = ModuleBuilder(module.name, "", "test-module")

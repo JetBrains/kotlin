@@ -42,7 +42,7 @@ class CliOutputHandler(testServices: TestServices) : BinaryArtifactHandler<CliAr
         val defaultOutFile = sourceFile.withExtension(".out")
         val firOutFile = sourceFile.withExtension(".fir.out")
 
-        val isFir = testServices.defaultsProvider.defaultFrontend == FrontendKinds.FIR
+        val isFir = testServices.defaultsProvider.frontendKind == FrontendKinds.FIR
 
         val outFile = if (isFir && firOutFile.exists()) firOutFile else defaultOutFile
 

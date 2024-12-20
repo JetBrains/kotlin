@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.model
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.defaultsProvider
 
 interface ServicesAndDirectivesContainer {
     val additionalServices: List<ServiceRegistrationData>
@@ -36,7 +37,7 @@ abstract class FrontendFacade<FrontendOutputArtifact>(
         get() = SourcesKind
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return module.frontendKind == outputKind
+        return testServices.defaultsProvider.frontendKind == outputKind
     }
 
     abstract fun analyze(module: TestModule): FrontendOutputArtifact
