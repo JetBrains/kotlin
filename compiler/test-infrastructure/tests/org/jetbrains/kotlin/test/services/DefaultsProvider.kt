@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.test.services
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
+import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.BinaryKind
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKind
 
 class DefaultsProvider(
     val frontendKind: FrontendKind<*>,
+    val backendKind: BackendKind<*>,
     private val defaultLanguageSettingsBuilder: LanguageVersionSettingsBuilder,
     val defaultPlatform: TargetPlatform,
     val defaultArtifactKind: BinaryKind<*>?,

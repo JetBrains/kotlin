@@ -39,7 +39,6 @@ class SplittingModuleTransformerForBoxTests : ModuleStructureTransformer() {
         val firstModule = TestModule(
             name = "lib",
             module.targetPlatform,
-            module.backendKind,
             module.binaryKind,
             files = firstModuleFiles + additionalFiles,
             allDependencies = emptyList(),
@@ -50,7 +49,6 @@ class SplittingModuleTransformerForBoxTests : ModuleStructureTransformer() {
         val secondModule = TestModule(
             name = "main",
             module.targetPlatform,
-            module.backendKind,
             module.binaryKind,
             files = listOf(secondModuleFile) + additionalFiles,
             allDependencies = listOf(DependencyDescription(firstModule, DependencyKind.Binary, DependencyRelation.FriendDependency)),

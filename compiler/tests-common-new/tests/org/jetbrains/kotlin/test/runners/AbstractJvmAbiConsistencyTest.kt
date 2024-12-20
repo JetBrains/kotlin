@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.ENABLE_
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.K1AndK2FrontendFacade
 import org.jetbrains.kotlin.test.frontend.K1AndK2ToIrConverter
+import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.codegen.commonServicesConfigurationForCodegenAndDebugTest
 import org.jetbrains.kotlin.test.runners.codegen.configureModernJavaWhenNeeded
@@ -32,6 +33,10 @@ open class AbstractJvmAbiConsistencyTest :
     override fun TestConfigurationBuilder.configuration() {
 
         commonServicesConfigurationForCodegenAndDebugTest(FrontendKinds.ClassicAndFIR)
+
+        globalDefaults {
+            backendKind = BackendKinds.IrBackendForK1AndK2
+        }
 
         defaultDirectives {
             FirDiagnosticsDirectives.FIR_PARSER with FirParser.Psi

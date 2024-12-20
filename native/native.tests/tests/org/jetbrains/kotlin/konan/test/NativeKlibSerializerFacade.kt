@@ -43,7 +43,7 @@ abstract class AbstractNativeKlibSerializerFacade(
     testServices: TestServices
 ) : IrBackendFacade<BinaryArtifacts.KLib>(testServices, ArtifactKinds.KLib) {
     final override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return module.backendKind == inputKind && SKIP_GENERATING_KLIB !in module.directives
+        return testServices.defaultsProvider.backendKind == inputKind && SKIP_GENERATING_KLIB !in module.directives
     }
 
     final override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.KLib {

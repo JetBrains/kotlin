@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.getDependencies
+import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.libraryProvider
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
@@ -39,7 +40,7 @@ class WasmDeserializerFacade(
 ) : DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>(testServices, ArtifactKinds.KLib, BackendKinds.IrBackend) {
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {
-        require(module.backendKind == outputKind)
+        require(testServices.defaultsProvider.backendKind == outputKind)
         return WasmEnvironmentConfigurator.isMainModule(module, testServices)
     }
 
