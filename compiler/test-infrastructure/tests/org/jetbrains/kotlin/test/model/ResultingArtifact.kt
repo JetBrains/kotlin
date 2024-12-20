@@ -32,11 +32,11 @@ abstract class ResultingArtifact<A : ResultingArtifact<A>> {
     }
 
     abstract class Binary<A : Binary<A>> : ResultingArtifact<A>() {
-        abstract override val kind: BinaryKind<A>
+        abstract override val kind: ArtifactKind<A>
 
         object Empty : Binary<Empty>() {
-            override val kind: BinaryKind<Empty>
-                get() = BinaryKind.NoArtifact
+            override val kind: ArtifactKind<Empty>
+                get() = ArtifactKind.NoArtifact
         }
     }
 }

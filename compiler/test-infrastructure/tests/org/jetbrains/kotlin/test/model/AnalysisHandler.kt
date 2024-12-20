@@ -44,7 +44,7 @@ abstract class BackendInputHandler<I : ResultingArtifact.BackendInput<I>>(
 
 abstract class BinaryArtifactHandler<A : ResultingArtifact.Binary<A>>(
     testServices: TestServices,
-    override val artifactKind: BinaryKind<A>,
+    override val artifactKind: ArtifactKind<A>,
     failureDisablesNextSteps: Boolean,
     doNotRunIfThereWerePreviousFailures: Boolean
 ) : AnalysisHandler<A>(testServices, failureDisablesNextSteps, doNotRunIfThereWerePreviousFailures)

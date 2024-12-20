@@ -51,7 +51,7 @@ abstract class AbstractLibraryAbiReaderTest<FrontendOutput : ResultingArtifact.F
         globalDefaults {
             frontend = this@AbstractLibraryAbiReaderTest.frontend
             targetPlatform = this@AbstractLibraryAbiReaderTest.targetPlatform
-            artifactKind = BinaryKind.NoArtifact
+            artifactKind = ArtifactKind.NoArtifact
             targetBackend = this@AbstractLibraryAbiReaderTest.targetBackend
             dependencyKind = DependencyKind.Binary
         }
