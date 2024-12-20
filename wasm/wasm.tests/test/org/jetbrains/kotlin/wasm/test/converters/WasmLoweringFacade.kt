@@ -39,7 +39,7 @@ class WasmLoweringFacade(
     private val supportedOptimizer: WasmOptimizer = WasmOptimizer.Binaryen
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {
-        require(module.backendKind == inputKind && module.binaryKind == outputKind)
+        require(testServices.defaultsProvider.backendKind == inputKind && module.binaryKind == outputKind)
         return WasmEnvironmentConfigurator.isMainModule(module, testServices)
     }
 

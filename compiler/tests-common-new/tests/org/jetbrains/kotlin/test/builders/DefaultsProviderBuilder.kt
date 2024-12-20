@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.test.builders
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.model.BackendKind
+import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.BinaryKind
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKind
@@ -20,6 +22,7 @@ class DefaultsProviderBuilder {
     lateinit var frontend: FrontendKind<*>
     var targetBackend: TargetBackend? = null
     lateinit var targetPlatform: TargetPlatform
+    var backendKind: BackendKind<*>? = null
     var artifactKind: BinaryKind<*>? = null
     lateinit var dependencyKind: DependencyKind
 
@@ -33,6 +36,7 @@ class DefaultsProviderBuilder {
     fun build(): DefaultsProvider {
         return DefaultsProvider(
             frontend,
+            backendKind ?: BackendKinds.fromTargetBackend(targetBackend),
             languageVersionSettingsBuilder ?: LanguageVersionSettingsBuilder(),
             targetPlatform,
             artifactKind,
