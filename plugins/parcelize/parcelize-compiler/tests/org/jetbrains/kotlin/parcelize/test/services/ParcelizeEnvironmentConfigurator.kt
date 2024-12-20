@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
@@ -64,7 +65,7 @@ class ParcelizeEnvironmentConfigurator(testServices: TestServices) : Environment
             this,
             additionalAnnotation,
             experimentalCodeGeneration,
-            useFir = module.frontendKind == FrontendKinds.FIR
+            useFir = testServices.defaultsProvider.frontendKind == FrontendKinds.FIR
         )
     }
 }

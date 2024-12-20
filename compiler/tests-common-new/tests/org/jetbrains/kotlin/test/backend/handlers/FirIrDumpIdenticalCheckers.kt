@@ -48,7 +48,7 @@ class FirIrDumpIdenticalChecker(testServices: TestServices) : AfterAnalysisCheck
     override fun check(failedAssertions: List<WrappedException>) {
         if (failedAssertions.isNotEmpty()) return
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
-        if (testServices.defaultsProvider.defaultFrontend != FrontendKinds.FIR)
+        if (testServices.defaultsProvider.frontendKind != FrontendKinds.FIR)
             return
         val allDirectives = testServices.moduleStructure.allDirectives
         if (DUMP_IR !in allDirectives)

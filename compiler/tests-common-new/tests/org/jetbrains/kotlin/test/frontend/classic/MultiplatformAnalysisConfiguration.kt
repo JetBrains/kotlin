@@ -30,11 +30,7 @@ internal fun MultiplatformAnalysisConfiguration(testServices: TestServices): Mul
             testServices.moduleDescriptorProvider,
         )
     } else {
-        MultiplatformSeparateAnalysisConfiguration(
-            testServices.artifactsProvider,
-            testServices.sourceFileProvider,
-            testServices.moduleDescriptorProvider
-        )
+        MultiplatformSeparateAnalysisConfiguration(testServices)
     }
 }
 
@@ -53,10 +49,11 @@ internal interface MultiplatformAnalysisConfiguration {
  * This mode works similar to how actual user projects would compile platforms like 'jvm', 'native' or js targets.
  */
 internal class MultiplatformSeparateAnalysisConfiguration(
-    private val artifactsProvider: ArtifactsProvider,
-    private val sourceFileProvider: SourceFileProvider,
-    private val moduleDescriptorProvider: ModuleDescriptorProvider
+    private val testServices: TestServices,
 ) : MultiplatformAnalysisConfiguration {
+    private val artifactsProvider: ArtifactsProvider = testServices.artifactsProvider
+    private val sourceFileProvider: SourceFileProvider = testServices.sourceFileProvider
+    private val moduleDescriptorProvider: ModuleDescriptorProvider = testServices.moduleDescriptorProvider
 
     override fun getCompilerEnvironment(module: TestModule): TargetEnvironment {
         return CompilerEnvironment
@@ -85,7 +82,7 @@ internal class MultiplatformSeparateAnalysisConfiguration(
             if (dependencies.isEmpty()) return
             for (dependency in dependencies) {
                 val dependencyModule = dependency.dependencyModule
-                val artifact = if (module.frontendKind == FrontendKinds.ClassicAndFIR) {
+                val artifact = if (testServices.defaultsProvider.frontendKind == FrontendKinds.ClassicAndFIR) {
                     artifactsProvider.getArtifact(dependencyModule, FrontendKinds.ClassicAndFIR).k1Artifact
                 } else {
                     artifactsProvider.getArtifact(dependencyModule, FrontendKinds.ClassicFrontend)

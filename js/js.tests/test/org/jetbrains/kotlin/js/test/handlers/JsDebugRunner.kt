@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.defaultDirectives
+import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.*
 import java.io.File
@@ -138,7 +139,7 @@ class JsDebugRunner(testServices: TestServices, private val localVariables: Bool
             waitForResumeEvent()
         }
         checkSteppingTestResult(
-            mainModule.frontendKind,
+            testServices.defaultsProvider.frontendKind,
             mainModule.targetBackend ?: TargetBackend.JS_IR,
             originalFile,
             loggedItems,

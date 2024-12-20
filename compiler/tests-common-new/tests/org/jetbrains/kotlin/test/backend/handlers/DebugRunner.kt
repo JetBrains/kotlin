@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultDirectives
+import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.BOX_MAIN_FILE_NAME
 import org.jetbrains.kotlin.test.utils.*
@@ -41,7 +42,7 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
     ): Process {
         // Extract target backend, frontend, and the full test file used to extract test expectations.
         backend = module.targetBackend ?: backend
-        frontend = module.frontendKind
+        frontend = testServices.defaultsProvider.frontendKind
         wholeFile = module.files.single { it.name == "test.kt" }.originalFile
 
         // Setup the java process to suspend waiting for debugging connection on a free port.

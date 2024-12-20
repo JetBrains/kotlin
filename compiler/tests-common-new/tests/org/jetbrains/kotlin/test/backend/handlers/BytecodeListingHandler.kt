@@ -52,7 +52,7 @@ class BytecodeListingHandler(testServices: TestServices) : JvmBinaryArtifactHand
         val irTxtFile = sourceFile.withExtension(".ir.txt")
         val firTxtFile = sourceFile.withExtension(".fir.txt")
 
-        val isFir = testServices.defaultsProvider.defaultFrontend == FrontendKinds.FIR
+        val isFir = testServices.defaultsProvider.frontendKind == FrontendKinds.FIR
         val isIr = testServices.defaultsProvider.defaultTargetBackend?.isIR == true
 
         val actualFile = when {
