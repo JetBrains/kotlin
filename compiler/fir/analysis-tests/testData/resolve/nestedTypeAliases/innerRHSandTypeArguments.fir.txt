@@ -1,0 +1,53 @@
+FILE: innerRHSandTypeArguments.kt
+    public final class Outer<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Outer<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner class Inner<Outer(T)> : R|kotlin/Any| {
+            public Outer<T>.constructor(): R|Outer.Inner<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final inner class InnerWithParameter<K, Outer(T)> : R|kotlin/Any| {
+            public Outer<T>.constructor<K>(): R|Outer.InnerWithParameter<K, T>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final inner class InnerInsideInner<Outer(K), Outer(T)> : R|kotlin/Any| {
+                public Outer.InnerWithParameter<K, T>.constructor(): R|Outer.InnerWithParameter.InnerInsideInner<K, T>| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            public final typealias TAtoInnerInsideInner = R|Outer.InnerWithParameter.InnerInsideInner<K, T>|
+
+        }
+
+        public final typealias TAtoExplicitInner = R|Outer.Inner<ERROR CLASS: Symbol not found for T>|
+
+        public final typealias TAToInner = R|Outer.Inner<T>|
+
+        public final typealias TAToIntInner = R|Outer.Inner<kotlin/Int>|
+
+        public final typealias TAWithTypeParameterToInner<K> = R|Outer.Inner<K>|
+
+        public final typealias TAtoInnerWithTypeParameters = R|Outer.InnerWithParameter<kotlin/String, T>|
+
+        public final typealias TAtoIntInnerWithTypeParameters = R|Outer.InnerWithParameter<kotlin/String, kotlin/Int>|
+
+        public final typealias TAtoTA = R|{Outer.TAToInner=} Outer.Inner<T>|
+
+        public final fun test(): R|kotlin/Unit| {
+            this@R|/Outer|.R|/Outer.Inner.Inner|()
+            this@R|/Outer|.R|/Outer.Inner.Inner|()
+            this@R|/Outer|.R|/Outer.Inner.Inner<None of the following candidates is applicable because of receiver type mismatch: [/Outer.Inner.Inner]>#|()
+            this@R|/Outer|.R|/Outer.Inner.Inner<None of the following candidates is applicable because of receiver type mismatch: [/Outer.Inner.Inner]>#|<R|kotlin/String|>()
+            this@R|/Outer|.R|/Outer.InnerWithParameter.InnerWithParameter|()
+            this@R|/Outer|.R|/Outer.InnerWithParameter.InnerWithParameter<None of the following candidates is applicable because of receiver type mismatch: [/Outer.InnerWithParameter.InnerWithParameter]>#|()
+        }
+
+    }
