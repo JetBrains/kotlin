@@ -100,6 +100,8 @@ dependencies {
         testImplementation(projectTests(":native:native.tests"))
     }
     testImplementation(project(":native:kotlin-native-utils"))
+    testImplementation(projectTests(":native:native.tests:klib-ir-inliner"))
+    testImplementation(project(":kotlin-util-klib-abi"))
     testImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
 
     // todo: remove unnecessary dependencies
