@@ -29599,6 +29599,12 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
     @TestDataPath("$PROJECT_ROOT")
     public class NestedTypeAliases {
       @Test
+      @TestMetadata("kmp.kt")
+      public void testKmp() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/kmp.kt");
+      }
+
+      @Test
       @TestMetadata("local.kt")
       public void testLocal() {
         runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/local.kt");

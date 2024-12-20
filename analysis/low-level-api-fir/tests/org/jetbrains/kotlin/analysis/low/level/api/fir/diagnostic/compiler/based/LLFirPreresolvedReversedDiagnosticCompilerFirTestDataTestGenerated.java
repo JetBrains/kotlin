@@ -4254,6 +4254,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       }
 
       @Test
+      @TestMetadata("kmp.kt")
+      public void testKmp() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/kmp.kt");
+      }
+
+      @Test
       @TestMetadata("local.kt")
       public void testLocal() {
         runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/local.kt");
