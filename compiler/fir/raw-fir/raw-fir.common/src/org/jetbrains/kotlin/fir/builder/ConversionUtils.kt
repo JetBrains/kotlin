@@ -751,7 +751,8 @@ fun FirExpression.guardedBy(
 fun AnnotationUseSiteTarget?.appliesToPrimaryConstructorParameter() = this == null ||
         this == AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER ||
         this == AnnotationUseSiteTarget.RECEIVER ||
-        this == AnnotationUseSiteTarget.FILE
+        this == AnnotationUseSiteTarget.FILE ||
+        this == AnnotationUseSiteTarget.ALL
 
 fun FirErrorTypeRef.wrapIntoArray(): FirResolvedTypeRef {
     val typeRef = this

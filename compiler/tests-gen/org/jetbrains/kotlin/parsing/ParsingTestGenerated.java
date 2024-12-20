@@ -1174,6 +1174,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/annotation/targeted"), Pattern.compile("^(.*)\\.kts?$"), null, true);
         }
 
+        @TestMetadata("onAll.kt")
+        public void testOnAll() {
+          runTest("compiler/testData/psi/annotation/targeted/onAll.kt");
+        }
+
         @TestMetadata("compiler/testData/psi/annotation/targeted/onField")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

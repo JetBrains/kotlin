@@ -377,6 +377,7 @@ class LightTreeRawFirDeclarationBuilder(
         lateinit var annotationTarget: AnnotationUseSiteTarget
         annotationUseSiteTarget.forEachChildren {
             when (it.tokenType) {
+                ALL_KEYWORD -> annotationTarget = ALL
                 FIELD_KEYWORD -> annotationTarget = FIELD
                 FILE_KEYWORD -> annotationTarget = FILE
                 PROPERTY_KEYWORD -> annotationTarget = AnnotationUseSiteTarget.PROPERTY

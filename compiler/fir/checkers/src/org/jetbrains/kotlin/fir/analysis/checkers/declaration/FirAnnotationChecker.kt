@@ -159,6 +159,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
 
                 else -> return
             }
+            ALL -> TODO() // How @all: interoperates with ValueClasses feature?
         }
         reportIfMfvc(context, reporter, annotation, hint, type)
     }
@@ -302,6 +303,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                     context
                 )
             }
+            ALL -> TODO() // Add reporting of UNSUPPORTED_FEATURE / WRONG_ANNOTATION_TARGET_... etc.
         }
     }
 

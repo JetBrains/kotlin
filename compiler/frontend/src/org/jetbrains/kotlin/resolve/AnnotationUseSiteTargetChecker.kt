@@ -116,6 +116,7 @@ object AnnotationUseSiteTargetChecker {
                 AnnotationUseSiteTarget.RECEIVER ->
                     // annotation with use-site target `receiver` can be only on type reference, but not on declaration
                     reportDiagnosticOnce(WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET.on(annotation, "declaration", target.renderName))
+                AnnotationUseSiteTarget.ALL -> TODO() // Add reporting of UNSUPPORTED_FEATURE
             }
         }
     }

@@ -174,6 +174,7 @@ public interface KtTokens {
     int EXPECT_KEYWORD_Id = 145;
     int ACTUAL_KEYWORD_Id = 146;
     int INTERPOLATION_PREFIX_Id = 147;
+    int ALL_KEYWORD_Id = 148;
 
     KtToken EOF   = new KtToken("EOF", EOF_Id);
 
@@ -289,6 +290,7 @@ public interface KtTokens {
     KtSingleValueToken COMMA       = new KtSingleValueToken("COMMA", ",", COMMA_Id);
 
     KtToken EOL_OR_SEMICOLON   = new KtToken("EOL_OR_SEMICOLON", EOL_OR_SEMICOLON_Id);
+    KtKeywordToken ALL_KEYWORD    = KtKeywordToken.softKeyword("all", ALL_KEYWORD_Id);
     KtKeywordToken FILE_KEYWORD    = KtKeywordToken.softKeyword("file", FILE_KEYWORD_Id);
     KtKeywordToken FIELD_KEYWORD     = KtKeywordToken.softKeyword("field", FIELD_KEYWORD_Id);
     KtKeywordToken PROPERTY_KEYWORD     = KtKeywordToken.softKeyword("property", PROPERTY_KEYWORD_Id);
