@@ -62,6 +62,7 @@ class WasmIrToText(
             stringBuilder.append(it.name)
             when (it.data) {
                 is DebugData.StringData -> stringBuilder.append(" \"${it.data.value}\"")
+                else -> error("Unsupported debug data type ${it.data::class}")
             }
             stringBuilder.append(" ;)")
         }
@@ -94,7 +95,7 @@ class WasmIrToText(
             debugInformationGenerator?.addSourceLocation(
                 SourceLocationMappingToText(
                     it,
-                    SourceLocation.Location("", "", stringBuilder.lineNumber, stringBuilder.columnNumber),
+                    SourceLocation.DefinedLocation("", "", stringBuilder.lineNumber, stringBuilder.columnNumber),
                 )
             )
         }

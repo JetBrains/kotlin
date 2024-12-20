@@ -8,6 +8,8 @@ package kotlin.browser
 import org.w3c.dom.*
 import kotlin.internal.LowPriorityInOverloadResolution
 
+// TODO: drop package suppressions in docs when this file is removed
+
 @Deprecated(
     message = "This API is moved to another package, use 'kotlinx.browser.window' instead.",
     replaceWith = ReplaceWith("window", "kotlinx.browser.window")

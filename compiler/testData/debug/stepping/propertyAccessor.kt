@@ -32,4 +32,5 @@ fun box() {
 // test.kt:9 $A.<init> (1)
 // test.kt:12 $box (8)
 // test.kt:7 $A.<get-prop> (19, 12)
+// test.kt:12 $box (8)
 // test.kt:13 $box (1)

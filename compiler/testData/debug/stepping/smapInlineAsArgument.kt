@@ -64,4 +64,5 @@ fun fail() : String {
 // test.kt:8 $box (4)
 // test.kt:13 $checkEquals (4)
 // test.kt:14 $checkEquals (1)
+// test.kt:8 $box (4)
 // test.kt:10 $box (1)

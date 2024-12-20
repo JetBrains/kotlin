@@ -1,4 +1,4 @@
-compiler/testData/cli/js/extraCheckers.kt:2:9: warning: [UNUSED_VARIABLE] Variable is unused.
+compiler/testData/cli/js/extraCheckers.kt:2:9: warning: variable is unused.
     val a = a + 1
         ^
 OK

@@ -354,9 +354,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
 
     private fun generateIsExternalClass(argument: IrExpression, klass: IrClass): IrExpression {
         val instanceCheckFunction = context.mapping.wasmExternalClassToInstanceCheck[klass]!!
-        val wrappedInstanceCheckIfAny = context.mapping.wasmJsInteropFunctionToWrapper[instanceCheckFunction] ?: instanceCheckFunction
-
-        return builder.irCall(wrappedInstanceCheckIfAny).also {
+        return builder.irCall(instanceCheckFunction).also {
             it.putValueArgument(
                 index = 0,
                 valueArgument = narrowType(argument.type, context.irBuiltIns.anyType, argument) //TODO("Why we need it?)

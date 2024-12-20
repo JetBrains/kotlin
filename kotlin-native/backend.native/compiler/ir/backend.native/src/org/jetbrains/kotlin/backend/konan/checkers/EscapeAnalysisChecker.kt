@@ -48,7 +48,7 @@ internal class EscapeAnalysisChecker(
 
     // From DFGBuilder.kt
     private val symbolsHandledByDFG: Set<IrSymbol> = with(symbols) {
-        setOf(createUninitializedInstance, createUninitializedArray, reinterpret, initInstance)
+        setOf(createUninitializedInstance, createUninitializedArray, createEmptyString, reinterpret, initInstance)
     }
 
     private val IrSymbol.handledByDFG: Boolean

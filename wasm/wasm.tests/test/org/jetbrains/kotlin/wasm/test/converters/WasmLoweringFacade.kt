@@ -67,6 +67,7 @@ class WasmLoweringFacade(
 
         val testPackage = extractTestPackage(testServices)
         val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
+        val generateDwarf = WasmEnvironmentConfigurationDirectives.GENERATE_DWARF in testServices.moduleStructure.allDirectives
         val generateSourceMaps = WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP in testServices.moduleStructure.allDirectives
         val generateDts = WasmEnvironmentConfigurationDirectives.CHECK_TYPESCRIPT_DECLARATIONS in testServices.moduleStructure.allDirectives
         val (allModules, backendContext, typeScriptFragment) = compileToLoweredIr(
@@ -99,6 +100,7 @@ class WasmLoweringFacade(
             emitNameSection = true,
             generateWat = generateWat,
             generateSourceMaps = generateSourceMaps,
+            generateDwarf = generateDwarf
         )
 
         val dceDumpNameCache = DceDumpNameCache()
@@ -124,6 +126,7 @@ class WasmLoweringFacade(
             emitNameSection = true,
             generateWat = generateWat,
             generateSourceMaps = generateSourceMaps,
+            generateDwarf = generateDwarf
         )
 
         return BinaryArtifacts.Wasm(

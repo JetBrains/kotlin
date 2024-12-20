@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -51,7 +51,8 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  *         println(x.element)
  *     }
  */
-open class SharedVariablesLowering(val sharedVariablesManager: SharedVariablesManager) : BodyLoweringPass {
+@PhaseDescription(name = "SharedVariables")
+class SharedVariablesLowering(val context: LoweringContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         SharedVariablesTransformer(irBody, container).lowerSharedVariables()
     }
@@ -152,11 +153,11 @@ open class SharedVariablesLowering(val sharedVariablesManager: SharedVariablesMa
 
                     if (declaration !in sharedVariables) return declaration
 
-                    val newDeclaration = sharedVariablesManager.declareSharedVariable(declaration)
+                    val newDeclaration = context.sharedVariablesManager.declareSharedVariable(declaration)
                     newDeclaration.parent = declaration.parent
                     transformedSymbols[declaration.symbol] = newDeclaration.symbol
 
-                    return sharedVariablesManager.defineSharedValue(declaration, newDeclaration)
+                    return context.sharedVariablesManager.defineSharedValue(declaration, newDeclaration)
                 }
             })
 
@@ -166,7 +167,7 @@ open class SharedVariablesLowering(val sharedVariablesManager: SharedVariablesMa
 
                     val newDeclaration = getTransformedSymbol(expression.symbol) ?: return expression
 
-                    return sharedVariablesManager.getSharedValue(newDeclaration, expression)
+                    return context.sharedVariablesManager.getSharedValue(newDeclaration, expression)
                 }
 
                 override fun visitSetValue(expression: IrSetValue): IrExpression {
@@ -174,7 +175,7 @@ open class SharedVariablesLowering(val sharedVariablesManager: SharedVariablesMa
 
                     val newDeclaration = getTransformedSymbol(expression.symbol) ?: return expression
 
-                    return sharedVariablesManager.setSharedValue(newDeclaration, expression)
+                    return context.sharedVariablesManager.setSharedValue(newDeclaration, expression)
                 }
 
                 private fun getTransformedSymbol(oldSymbol: IrValueSymbol): IrVariableSymbol? =

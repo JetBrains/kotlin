@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.dump
@@ -41,8 +41,10 @@ open class LateinitLowering(
     private val loweringContext: LoweringContext,
     private val uninitializedPropertyAccessExceptionThrower: UninitializedPropertyAccessExceptionThrower,
 ) : FileLoweringPass, IrElementTransformerVoid() {
-    constructor(backendContext: CommonBackendContext) :
-            this(backendContext, UninitializedPropertyAccessExceptionThrower(backendContext.ir.symbols))
+    private val visitedLateinitVariables = mutableSetOf<IrVariable>()
+
+    constructor(loweringContext: LoweringContext) :
+            this(loweringContext, UninitializedPropertyAccessExceptionThrower(loweringContext.ir.symbols))
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
@@ -55,10 +57,11 @@ open class LateinitLowering(
     override fun visitProperty(declaration: IrProperty): IrStatement {
         if (declaration.isRealLateinit()) {
             val backingField = declaration.backingField!!
-            transformLateinitBackingField(backingField, declaration)
-
-            declaration.getter?.let {
-                transformGetter(backingField, it)
+            if (!backingField.type.isMarkedNullable()) {
+                transformLateinitBackingField(backingField, declaration)
+                declaration.getter?.let {
+                    transformGetter(backingField, it)
+                }
             }
         }
 
@@ -69,7 +72,8 @@ open class LateinitLowering(
     override fun visitVariable(declaration: IrVariable): IrStatement {
         declaration.transformChildrenVoid()
 
-        if (declaration.isLateinit) {
+        if (declaration.isLateinit && !declaration.type.isMarkedNullable()) {
+            visitedLateinitVariables += declaration
             declaration.type = declaration.type.makeNullable()
             declaration.isVar = true
             declaration.initializer =
@@ -83,7 +87,7 @@ open class LateinitLowering(
         expression.transformChildrenVoid()
 
         val irValue = expression.symbol.owner
-        if (irValue !is IrVariable || !irValue.isLateinit) {
+        if (irValue !is IrVariable || irValue !in visitedLateinitVariables) {
             return expression
         }
 

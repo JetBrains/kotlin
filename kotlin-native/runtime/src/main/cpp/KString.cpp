@@ -19,6 +19,7 @@
 #include <limits>
 #include <string.h>
 #include <string>
+#include <optional>
 
 #include "KAssert.h"
 #include "Exceptions.h"
@@ -39,7 +40,19 @@ namespace {
 static constexpr const uint32_t MAX_STRING_SIZE =
     static_cast<uint32_t>(std::numeric_limits<int32_t>::max());
 
-KChar* StringUtf16Data(ObjHeader* kstring) {
+char* StringRawData(KRef kstring) {
+    return StringHeader::of(kstring)->data();
+}
+
+const char* StringRawData(KConstRef kstring) {
+    return StringHeader::of(kstring)->data();
+}
+
+size_t StringRawSize(KConstRef kstring) {
+    return StringHeader::of(kstring)->size();
+}
+
+KChar* StringUtf16Data(KRef kstring) {
     return reinterpret_cast<KChar*>(StringRawData(kstring));
 }
 
@@ -48,7 +61,7 @@ const KChar* StringUtf16Data(KConstRef kstring) {
 }
 
 size_t StringUtf16Length(KConstRef kstring) {
-    return kstring->array()->count_;
+    return StringRawSize(kstring) / sizeof(KChar);
 }
 
 template <typename CharCountF /*= uint32_t(const char*, const char*) */, typename ConvertF /*= void(const char*, const char*, KChar*) */>
@@ -64,8 +77,6 @@ OBJ_GETTER(convertToUTF16, const char* rawString, size_t rawStringLength, CharCo
 
 template <KStringConversionMode mode>
 OBJ_GETTER(unsafeConvertToUTF8, KConstRef thiz, KInt start, KInt size) {
-    RuntimeAssert(thiz->type_info() == theStringTypeInfo, "Must use String");
-
     std::string utf8;
     try {
         utf8 = kotlin::to_string<mode>(thiz, static_cast<size_t>(start), static_cast<size_t>(size));
@@ -161,7 +172,7 @@ extern "C" OBJ_GETTER(CreateStringFromUtf16, const KChar* utf16, uint32_t length
 }
 
 extern "C" OBJ_GETTER(CreateUninitializedUtf16String, uint32_t lengthChars) {
-    RETURN_RESULT_OF(AllocArrayInstance, theStringTypeInfo, lengthChars);
+    RETURN_RESULT_OF(AllocArrayInstance, theStringTypeInfo, lengthChars + StringHeader::extraLength(0) / sizeof(KChar));
 }
 
 extern "C" char* CreateCStringFromString(KConstRef kref) {
@@ -181,7 +192,7 @@ extern "C" KRef CreatePermanentStringFromCString(const char* nullTerminatedUTF8)
     //   while it indeed manipulates Kotlin objects, it doesn't in fact access _Kotlin heap_,
     //   because the accessed object is off-heap, imitating permanent static objects.
     const char* end = nullTerminatedUTF8 + strlen(nullTerminatedUTF8);
-    size_t count = utf8::with_replacement::utf16_length(nullTerminatedUTF8, end);
+    size_t count = utf8::with_replacement::utf16_length(nullTerminatedUTF8, end) + StringHeader::extraLength(0) / sizeof(KChar);
     size_t headerSize = alignUp(sizeof(ArrayHeader), alignof(char16_t));
     size_t arraySize = headerSize + count * sizeof(char16_t);
 
@@ -213,11 +224,6 @@ extern "C" OBJ_GETTER(Kotlin_String_replace, KConstRef thiz, KChar oldChar, KCha
 }
 
 extern "C" OBJ_GETTER(Kotlin_String_plusImpl, KConstRef thiz, KConstRef other) {
-    RuntimeAssert(thiz != nullptr, "this cannot be null");
-    RuntimeAssert(other != nullptr, "other cannot be null");
-    RuntimeAssert(thiz->type_info() == theStringTypeInfo, "Must be a string");
-    RuntimeAssert(other->type_info() == theStringTypeInfo, "Must be a string");
-
     auto thizLength = StringUtf16Length(thiz);
     auto otherLength = StringUtf16Length(other);
     RuntimeAssert(thizLength <= MAX_STRING_SIZE, "this cannot be this large");
@@ -324,6 +330,15 @@ extern "C" KInt Kotlin_StringBuilder_insertInt(KRef builder, KInt position, KInt
     return from - cstring;
 }
 
+static std::optional<KInt> Kotlin_String_cachedHashCode(KConstRef thiz) {
+    auto header = StringHeader::of(thiz);
+    if (header->size() == 0) return 0;
+    auto hash = kotlin::std_support::atomic_ref{header->hashCode_}.load(std::memory_order_relaxed);
+    if (hash || kotlin::std_support::atomic_ref{header->flags_}.load(std::memory_order_relaxed) & StringHeader::HASHCODE_IS_ZERO) {
+        return hash;
+    }
+    return {};
+}
 
 extern "C" KBoolean Kotlin_String_equals(KConstRef thiz, KConstRef other) {
     if (other == nullptr || other->type_info() != theStringTypeInfo) return false;
@@ -442,18 +457,28 @@ extern "C" KInt Kotlin_String_lastIndexOfString(KConstRef thiz, KConstRef other,
     }
 }
 
-extern "C" KInt Kotlin_String_hashCode(KConstRef thiz) {
-    // TODO: consider caching strings hashes.
-    return polyHash(StringUtf16Length(thiz), StringUtf16Data(thiz));
+extern "C" KInt Kotlin_String_hashCode(KRef thiz) {
+    if (auto cached = Kotlin_String_cachedHashCode(thiz)) {
+        return *cached;
+    }
+    KInt result = polyHash(StringUtf16Length(thiz), StringUtf16Data(thiz));
+
+    auto header = StringHeader::of(thiz);
+    // Having exactly one write per computation allows them to be relaxed, since there's no need to order them with any other write.
+    // Since most relevant platforms have atomic word-sized writes by default, this is theoretically much faster.
+    if (result != 0) {
+        kotlin::std_support::atomic_ref{header->hashCode_}.store(result, std::memory_order_relaxed);
+    } else {
+        kotlin::std_support::atomic_ref{header->flags_}.fetch_or(StringHeader::HASHCODE_IS_ZERO, std::memory_order_relaxed);
+    }
+    return result;
 }
 
 extern "C" const KChar* Kotlin_String_utf16pointer(KConstRef message) {
-    RuntimeAssert(message->type_info() == theStringTypeInfo, "Must use a string");
     return StringUtf16Data(message);
 }
 
 extern "C" KInt Kotlin_String_utf16length(KConstRef message) {
-    RuntimeAssert(message->type_info() == theStringTypeInfo, "Must use a string");
     return StringRawSize(message);
 }
 
@@ -463,7 +488,6 @@ extern "C" KConstNativePtr Kotlin_Arrays_getStringAddressOfElement(KConstRef thi
 
 template <KStringConversionMode mode>
 std::string kotlin::to_string(KConstRef kstring, size_t start, size_t size) noexcept(mode != KStringConversionMode::CHECKED) {
-    RuntimeAssert(kstring->type_info() == theStringTypeInfo, "A Kotlin String expected");
     auto length = StringUtf16Length(kstring);
     RuntimeAssert(start <= length, "start index out of bounds");
     auto utf16 = StringUtf16Data(kstring) + start;

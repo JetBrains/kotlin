@@ -117,6 +117,7 @@ data class SourceMapSegment(
     val sourceLineNumber: Int,
     val sourceColumnNumber: Int,
     val name: String?,
+    val isIgnored: Boolean,
 )
 
 class SourceMapGroup {

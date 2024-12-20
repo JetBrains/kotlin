@@ -32,4 +32,5 @@ fun test(a: Boolean, b: Boolean, c: Boolean): Boolean {
 // test.kt:11 $test (15)
 // test.kt:12 $test (15)
 // test.kt:10 $test (4)
+// test.kt:6 $box (4)
 // test.kt:7 $box (1)

@@ -9,6 +9,7 @@ import org.gradle.api.JavaVersion
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions.NativeOptions
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -209,11 +210,18 @@ class AppleFrameworkIT : KGPBaseTest() {
     @DisplayName("embedAndSignAppleFrameworkForXcode fail")
     @GradleTest
     fun shouldFailWithExecutingEmbedAndSignAppleFrameworkForXcode(
-        gradleVersion: GradleVersion,
+        gradleVersion: GradleVersion
     ) {
-        nativeProject("sharedAppleFramework", gradleVersion) {
+        nativeProject(
+            "sharedAppleFramework",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED
+            )
+        ) {
             buildAndFail(":shared:embedAndSignAppleFrameworkForXcode") {
                 assertOutputContains("Please run the embedAndSignAppleFrameworkForXcode task from Xcode")
+                assertOutputDoesNotContain("ConfigurationCacheProblemsException: Configuration cache problems found in this build")
             }
         }
     }

@@ -10,19 +10,21 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescSyntheticFieldSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyAccessorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 
 internal class KaFe10DescSyntheticFieldSymbolPointer(
-    private val psiPointer: KaPsiBasedSymbolPointer<KaPropertyAccessorSymbol>
-) : KaSymbolPointer<KaBackingFieldSymbol>() {
+    private val psiPointer: KaBasePsiSymbolPointer<KaPropertyAccessorSymbol>,
+    originalSymbol: KaBackingFieldSymbol?,
+) : KaBaseCachedSymbolPointer<KaBackingFieldSymbol>(originalSymbol) {
     @KaImplementationDetail
-    override fun restoreSymbol(analysisSession: KaSession): KaBackingFieldSymbol? {
+    override fun restoreIfNotCached(analysisSession: KaSession): KaBackingFieldSymbol? {
         check(analysisSession is KaFe10Session)
         val analysisContext = analysisSession.analysisContext
         val accessorSymbol = psiPointer.restoreSymbol(analysisSession) ?: return null

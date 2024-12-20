@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.ir
 
-import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -155,7 +154,7 @@ fun IrExpression.isInlineLambdaBlock(): Boolean {
 
     val block = this as IrBlock
     val reference = block.statements.last() as? IrFunctionReference
-    return reference?.origin == LoweredStatementOrigins.INLINE_LAMBDA
+    return reference?.origin == IrStatementOrigin.INLINE_LAMBDA
 }
 
 fun IrFunction.isReifiable(): Boolean =

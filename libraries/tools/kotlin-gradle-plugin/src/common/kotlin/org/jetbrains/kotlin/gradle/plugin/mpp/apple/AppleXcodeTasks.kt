@@ -156,8 +156,10 @@ private fun Project.registerDsymArchiveTask(
     }
 }
 
-private fun fireEnvException(frameworkTaskName: String, environment: XcodeEnvironment): Nothing {
-    val envBuildType = environment.buildType
+private fun fireEnvException(frameworkTaskName: String, environment: XcodeEnvironment): Nothing =
+    fireEnvException(frameworkTaskName, environment.buildType, environment.toString())
+
+private fun fireEnvException(frameworkTaskName: String, envBuildType: NativeBuildType?, environment: String): Nothing {
     val envConfiguration = System.getenv("CONFIGURATION")
     if (envConfiguration != null && envBuildType == null) {
         throw IllegalStateException(
@@ -292,6 +294,7 @@ private fun Project.isRunWithXcodeEnvironment(
 ): Boolean {
     val envBuildType = environment.buildType
     val envTargets = environment.targets
+    val envRepresentation = environment.toString()
     val envEmbeddedFrameworksDir = environment.embeddedFrameworksDir
 
     if (envBuildType == null || envTargets.isEmpty() || envEmbeddedFrameworksDir == null) {
@@ -299,7 +302,7 @@ private fun Project.isRunWithXcodeEnvironment(
             task.group = BasePlugin.BUILD_GROUP
             task.description = taskDescription
             task.doFirst {
-                fireEnvException(taskName, environment)
+                fireEnvException(taskName, envBuildType, envRepresentation)
             }
         }
 

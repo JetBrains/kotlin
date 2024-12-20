@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.backend.common.lower.inline
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
+import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.*
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -25,9 +27,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 /**
  * Generates a special private member accessor for outer@this implicit value parameter in inline functions.
  */
-class OuterThisInInlineFunctionsSpecialAccessorLowering(
-    context: LoweringContext,
-
+@PhaseDescription("OuterThisInInlineFunctionsSpecialAccessorLowering")
+class OuterThisInInlineFunctionsSpecialAccessorLowering(context: LoweringContext) : FileLoweringPass {
     /**
      * This key is a temporary workaround for static caches in Kotlin/Native:
      * - The "outer this" accessors are supposed to be _private_ and non-static.
@@ -41,8 +42,8 @@ class OuterThisInInlineFunctionsSpecialAccessorLowering(
      * - To work around this we shall generate public "outer this" accessors if [SyntheticAccessorLowering]
      *   is not enabled.
      */
-    private val generatePublicAccessors: Boolean = false
-) : FileLoweringPass {
+    private val generatePublicAccessors: Boolean = context.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING)
+
     private val accessorGenerator = KlibSyntheticAccessorGenerator(context)
 
     override fun lower(irFile: IrFile) {

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.config.phaser.Action
 import org.jetbrains.kotlin.config.phaser.ActionState
-import org.jetbrains.kotlin.config.phaser.PhaseConfigurationService
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.config.phaser.SimpleNamedCompilerPhase
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -71,7 +71,7 @@ abstract class PipelinePhase<I : PipelineArtifact, O : PipelineArtifact>(
     abstract fun executePhase(input: I): O?
 
     override fun outputIfNotEnabled(
-        phaseConfig: PhaseConfigurationService,
+        phaseConfig: PhaseConfig,
         phaserState: PhaserState<I>,
         context: PipelineContext,
         input: I,

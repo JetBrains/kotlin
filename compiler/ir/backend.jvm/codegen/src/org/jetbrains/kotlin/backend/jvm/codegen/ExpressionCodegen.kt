@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
-import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
-import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethod
 import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
@@ -295,7 +293,7 @@ class ExpressionCodegen(
 
         if ((DescriptorVisibilities.isPrivate(irFunction.visibility) && !shouldGenerateNonNullAssertionsForPrivateFun(irFunction)) ||
             irFunction.origin.isSynthetic ||
-            irFunction.origin == LoweredDeclarationOrigins.INLINE_LAMBDA ||
+            irFunction.origin == IrDeclarationOrigin.INLINE_LAMBDA ||
             // TODO: refine this condition to not generate nullability assertions on parameters
             //       corresponding to captured variables and anonymous object super constructor arguments
             (irFunction is IrConstructor && irFunction.parentAsClass.isAnonymousObject) ||
@@ -396,7 +394,7 @@ class ExpressionCodegen(
 
     override fun visitBlock(expression: IrBlock, data: BlockInfo): PromisedValue {
         assert(expression !is IrReturnableBlock) { "unlowered returnable block: ${expression.dump()}" }
-        val isSynthesizedInitBlock = expression.origin == LoweredStatementOrigins.SYNTHESIZED_INIT_BLOCK
+        val isSynthesizedInitBlock = expression.origin == IrStatementOrigin.SYNTHESIZED_INIT_BLOCK
         if (isSynthesizedInitBlock) {
             expression.markLineNumber(startOffset = true)
             mv.nop()
@@ -1589,7 +1587,7 @@ class ExpressionCodegen(
     }
 
     val isFinallyMarkerRequired: Boolean
-        get() = irFunction.isInline || irFunction.origin == LoweredDeclarationOrigins.INLINE_LAMBDA
+        get() = irFunction.isInline || irFunction.origin == IrDeclarationOrigin.INLINE_LAMBDA
 
     companion object {
         internal fun generateClassInstance(v: InstructionAdapter, classType: IrType, typeMapper: IrTypeMapper, wrapPrimitives: Boolean) {

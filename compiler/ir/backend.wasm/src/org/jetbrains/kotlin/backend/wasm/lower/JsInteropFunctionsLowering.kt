@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.wasm.lower
 
-import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -16,21 +15,20 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.toJsStringLiteral
 import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
 import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -117,29 +115,39 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         if (resultAdapter == null && valueParametersAdapters.all { it == null })
             return null
 
-        val newFun = context.irFactory.createStaticFunctionWithReceivers(
-            function.parent,
-            name = Name.identifier(function.name.asStringStripSpecialMarkers() + "__externalAdapter"),
-            function,
-            remapMultiFieldValueClassStructure = context::remapMultiFieldValueClassStructure
-        )
+        val jsFunction = context.irFactory.buildFun {
+            origin = JS_CALL_INTEROP_FUNCTION
+            name = function.name
+            visibility = DescriptorVisibilities.PRIVATE
+            returnType = resultAdapter?.fromType ?: function.returnType
+            modality = Modality.FINAL
+            isExternal = true
+        }
 
-        function.valueParameters.forEachIndexed { index, newParameter ->
+        jsFunction.parent = function.parent
+        function.isExternal = false
+        function.name = Name.identifier(function.name.asStringStripSpecialMarkers() + "__externalAdapter")
+
+        val jsFunAnnotation = function.getAnnotation(FqName("kotlin.JsFun"))
+        if (jsFunAnnotation != null) {
+            function.annotations = function.annotations.filter { it.symbol != jsFunAnnotation.symbol }
+            jsFunction.annotations = listOf(jsFunAnnotation)
+        }
+
+        function.valueParameters.forEachIndexed { index, functionParameter ->
             val adapter = valueParametersAdapters[index]
-            if (adapter != null) {
-                newParameter.type = adapter.toType
+            jsFunction.addValueParameter {
+                origin = JS_CALL_INTEROP_FUNCTION
+                kind = functionParameter.kind
+                name = functionParameter.name
+                type = adapter?.toType ?: functionParameter.type
             }
         }
-        resultAdapter?.let {
-            function.returnType = resultAdapter.fromType
-        }
 
-        val builder = context.createIrBuilder(newFun.symbol)
-        newFun.body = createAdapterFunctionBody(builder, newFun, function, valueParametersAdapters, resultAdapter)
-        newFun.annotations = emptyList()
+        val builder = context.createIrBuilder(function.symbol)
+        function.body = createAdapterFunctionBody(builder, function, jsFunction, valueParametersAdapters, resultAdapter)
 
-        context.mapping.wasmJsInteropFunctionToWrapper[function] = newFun
-        return listOf(function, newFun)
+        return listOf(function, jsFunction)
     }
 
     /**
@@ -925,6 +933,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
 
     companion object {
         const val CALL_FUNCTION = "__callFunction_"
+        val JS_CALL_INTEROP_FUNCTION by IrDeclarationOriginImpl.Synthetic
     }
 }
 
@@ -935,23 +944,3 @@ internal fun StringBuilder.appendParameterList(size: Int, name: String = "p", is
         if (!isEnd || it + 1 < size)
             append(", ")
     }
-
-/**
- * Redirect calls to external and @JsExport functions to created wrappers
- */
-class JsInteropFunctionCallsLowering(val context: WasmBackendContext) : BodyLoweringPass {
-    override fun lower(irBody: IrBody, container: IrDeclaration) {
-        if (!context.isWasmJsTarget) return
-        irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitCall(expression: IrCall): IrExpression {
-                expression.transformChildrenVoid()
-                val newFun: IrSimpleFunction? = context.mapping.wasmJsInteropFunctionToWrapper[expression.symbol.owner]
-                return if (newFun != null && container != newFun) {
-                    irCall(expression, newFun)
-                } else {
-                    expression
-                }
-            }
-        })
-    }
-}

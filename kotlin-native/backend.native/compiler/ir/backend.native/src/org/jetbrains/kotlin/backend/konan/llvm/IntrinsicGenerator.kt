@@ -64,6 +64,7 @@ internal enum class IntrinsicType {
     // Other
     CREATE_UNINITIALIZED_INSTANCE,
     CREATE_UNINITIALIZED_ARRAY,
+    CREATE_EMPTY_STRING,
     IDENTITY,
     IMMUTABLE_BLOB,
     INIT_INSTANCE,
@@ -255,6 +256,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.INTEROP_GET_POINTER_SIZE -> emitGetPointerSize()
                 IntrinsicType.CREATE_UNINITIALIZED_INSTANCE -> emitCreateUninitializedInstance(callSite, resultSlot)
                 IntrinsicType.CREATE_UNINITIALIZED_ARRAY -> emitCreateUninitializedArray(callSite, resultSlot, args)
+                IntrinsicType.CREATE_EMPTY_STRING -> emitCreateEmptyString(callSite, resultSlot)
                 IntrinsicType.IS_SUBTYPE -> emitIsSubtype(callSite, args)
                 IntrinsicType.INTEROP_NATIVE_PTR_TO_LONG -> emitNativePtrToLong(callSite, args)
                 IntrinsicType.INTEROP_NATIVE_PTR_PLUS_LONG -> emitNativePtrPlusLong(args)
@@ -477,6 +479,12 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         val type = callSite.typeArguments[0]!!
         val clazz = type.getClass()!!
         return allocArray(clazz, args.single(), environment.calculateLifetime(callSite), environment.exceptionHandler, resultSlot)
+    }
+
+    private fun FunctionGenerationContext.emitCreateEmptyString(callSite: IrCall, resultSlot: LLVMValueRef?): LLVMValueRef {
+        val clazz = context.ir.symbols.string.owner
+        val size = llvm.constInt32(runtime.stringHeaderExtraSize / 2).llvm // in Chars
+        return allocArray(clazz, size, environment.calculateLifetime(callSite), environment.exceptionHandler, resultSlot)
     }
 
     private fun FunctionGenerationContext.emitIsSubtype(callSite: IrCall, args: List<LLVMValueRef>) =

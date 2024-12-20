@@ -29,4 +29,13 @@ public class WasmConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> WASM_USE_JS_TAG =
             CompilerConfigurationKey.create("use WebAssembly.JSTag to catch JS thrown values");
+
+    public static final CompilerConfigurationKey<Boolean> WASM_DEBUG =
+            CompilerConfigurationKey.create("Generate debug information");
+
+    public static final CompilerConfigurationKey<String> DCE_DUMP_DECLARATION_IR_SIZES_TO_FILE =
+            CompilerConfigurationKey.create("Path for dumping declaration IR sizes to file");
+
+    public static final CompilerConfigurationKey<Boolean> WASM_GENERATE_DWARF =
+            CompilerConfigurationKey.create("generate DWARF debug information");
 }

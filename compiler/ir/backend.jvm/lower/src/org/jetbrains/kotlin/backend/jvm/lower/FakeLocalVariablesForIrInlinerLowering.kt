@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.*
-import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -23,10 +22,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -262,7 +258,7 @@ private fun IrInlinedFunctionBlock.getReceiverParameterName(): String {
 private fun List<IrInlinedFunctionBlock>.extractDeclarationWhereGivenElementWasInlined(inlinedElement: IrElement): IrDeclaration? {
     fun IrAttributeContainer.unwrapInlineLambdaIfAny(): IrAttributeContainer = when (this) {
         is IrBlock -> (statements.lastOrNull() as? IrAttributeContainer)?.unwrapInlineLambdaIfAny() ?: this
-        is IrFunctionReference -> takeIf { it.origin == LoweredStatementOrigins.INLINE_LAMBDA } ?: this
+        is IrFunctionReference -> takeIf { it.origin == IrStatementOrigin.INLINE_LAMBDA } ?: this
         else -> this
     }
 

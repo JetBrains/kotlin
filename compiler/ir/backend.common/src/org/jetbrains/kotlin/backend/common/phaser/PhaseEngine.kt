@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.common.phaser
 import org.jetbrains.kotlin.backend.common.DisposableContext
 import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
-import org.jetbrains.kotlin.config.phaser.PhaseConfigurationService
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.config.phaser.changePhaserStateType
 
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.config.phaser.changePhaserStateType
  * This way, [PhaseEngine] forces the user to create more specialized contexts that have a limited lifetime.
  */
 class PhaseEngine<Context : LoggingContext>(
-    val phaseConfig: PhaseConfigurationService,
+    val phaseConfig: PhaseConfig,
     val phaserState: PhaserState<Any>,
     val context: Context
 ) {

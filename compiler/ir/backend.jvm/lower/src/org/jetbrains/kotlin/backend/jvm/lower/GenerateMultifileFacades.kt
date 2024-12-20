@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.defaultArgumentsOriginalFunction
-import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.*
@@ -227,7 +226,7 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
     if (DescriptorVisibilities.isPrivate(originalVisibility) ||
         name == StaticInitializersLowering.clinitName ||
         origin == IrDeclarationOrigin.SYNTHETIC_ACCESSOR ||
-        origin == LoweredDeclarationOrigins.INLINE_LAMBDA ||
+        origin == IrDeclarationOrigin.INLINE_LAMBDA ||
         origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA ||
         origin == IrDeclarationOrigin.PROPERTY_DELEGATE ||
         origin == IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR ||

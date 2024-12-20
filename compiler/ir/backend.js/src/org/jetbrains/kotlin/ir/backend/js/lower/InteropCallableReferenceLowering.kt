@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.compilationException
 
-import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.reflectedNameAccessor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -472,7 +471,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         return statements
             .asSequence()
             .filterIsInstance<IrSetField>()
-            .filter { it.origin == LoweredStatementOrigins.STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE }
+            .filter { it.origin == IrStatementOrigin.STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE }
             .mapNotNull { irSetField ->
                 remapVP(irSetField.value.cast<IrGetValue>().symbol.cast())?.let {
                     irSetField.symbol to it

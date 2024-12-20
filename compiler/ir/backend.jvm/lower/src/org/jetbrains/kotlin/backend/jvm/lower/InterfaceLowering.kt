@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.defaultArgumentsOriginalFunction
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
-import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
@@ -139,7 +138,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                         || function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS)) ||
                         (function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS &&
                                 isCompatibilityMode && function.isCompiledToJvmDefault(jvmDefaultMode)) -> {
-                    if (function.origin == LoweredDeclarationOrigins.INLINE_LAMBDA) {
+                    if (function.origin == IrDeclarationOrigin.INLINE_LAMBDA) {
                         //move as is
                         val defaultImplsClass = context.cachedDeclarations.getDefaultImplsClass(irClass)
                         defaultImplsClass.declarations.add(function)

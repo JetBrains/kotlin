@@ -146,4 +146,5 @@ fun box() {
 // test.kt:40 $Zoo.<init> (16, 8)
 // test.kt:43 $Zoo.<init> (19, 11)
 // test.kt:44 $Zoo.<init> (1)
+// test.kt:52 $box (4)
 // test.kt:53 $box (1)

@@ -7991,6 +7991,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/contextParameters/contextParameterToDefaultArgument.kt");
     }
 
+    @TestMetadata("propertyWithContextAndWithout.kt")
+    public void testPropertyWithContextAndWithout() {
+      runTest("compiler/testData/codegen/box/contextParameters/propertyWithContextAndWithout.kt");
+    }
+
     @TestMetadata("sameNameWithGlobalProperty.kt")
     public void testSameNameWithGlobalProperty() {
       runTest("compiler/testData/codegen/box/contextParameters/sameNameWithGlobalProperty.kt");

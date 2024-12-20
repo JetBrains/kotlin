@@ -111,6 +111,13 @@ interface IrStatementOrigin {
         val SYNTHETIC_NOT_AUTOBOXED_CHECK by IrStatementOriginImpl
 
         val PARTIAL_LINKAGE_RUNTIME_ERROR by IrStatementOriginImpl
+
+        val SYNTHESIZED_INIT_BLOCK by IrStatementOriginImpl
+        val DEFAULT_DISPATCH_CALL by IrStatementOriginImpl
+        val STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE by IrStatementOriginImpl("INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE")
+        val INLINED_FUNCTION_REFERENCE by IrStatementOriginImpl
+        val INLINE_LAMBDA by IrStatementOriginImpl
+        val INLINE_ARGS_CONTAINER by IrStatementOriginImpl
     }
 
     data class COMPONENT_N private constructor(val index: Int) : IrStatementOrigin {

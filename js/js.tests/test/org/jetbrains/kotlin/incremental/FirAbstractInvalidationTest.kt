@@ -5,25 +5,24 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
-import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
-import org.jetbrains.kotlin.config.phaser.PhaserState
+import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.cli.common.collectSources
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
-import org.jetbrains.kotlin.cli.js.klib.compileModulesToAnalyzedFirWithLightTree
-import org.jetbrains.kotlin.cli.js.klib.serializeFirKlib
-import org.jetbrains.kotlin.cli.js.klib.transformFirToIr
+import org.jetbrains.kotlin.cli.pipeline.web.WebFir2IrPipelinePhase.transformFirToIr
+import org.jetbrains.kotlin.cli.pipeline.web.WebFrontendPipelinePhase.compileModulesToAnalyzedFirWithLightTree
+import org.jetbrains.kotlin.cli.pipeline.web.WebKlibSerializationPipelinePhase.serializeFirKlib
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.phaseConfig
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
+import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringContext
 import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringPhasesProvider
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
@@ -127,7 +126,7 @@ abstract class FirAbstractInvalidationTest(
             configuration.phaseConfig ?: PhaseConfig(),
             PhaserState(),
             JsPreSerializationLoweringContext(fir2IrActualizedResult.irBuiltIns, configuration),
-        ).runPreSerializationLoweringPhases(fir2IrActualizedResult, JsPreSerializationLoweringPhasesProvider, configuration)
+        ).runPreSerializationLoweringPhases(fir2IrActualizedResult, JsPreSerializationLoweringPhasesProvider)
 
         serializeFirKlib(
             moduleStructure = moduleStructure,

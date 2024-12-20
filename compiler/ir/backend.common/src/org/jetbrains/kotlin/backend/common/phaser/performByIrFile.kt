@@ -29,7 +29,7 @@ class PerformByIrFilePhase<Context : LoweringContext>(
     private val supportParallel: Boolean,
 ) : SameTypeCompilerPhase<Context, IrModuleFragment> {
     override fun invoke(
-        phaseConfig: PhaseConfigurationService,
+        phaseConfig: PhaseConfig,
         phaserState: PhaserState<IrModuleFragment>,
         context: Context,
         input: IrModuleFragment
@@ -42,7 +42,7 @@ class PerformByIrFilePhase<Context : LoweringContext>(
     }
 
     private fun invokeSequential(
-        phaseConfig: PhaseConfigurationService, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment
+        phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment
     ): IrModuleFragment {
         for (irFile in input.files) {
             try {
@@ -65,7 +65,7 @@ class PerformByIrFilePhase<Context : LoweringContext>(
     }
 
     private fun invokeParallel(
-        phaseConfig: PhaseConfigurationService, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment, nThreads: Int
+        phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment, nThreads: Int
     ): IrModuleFragment {
         if (input.files.isEmpty()) return input
 

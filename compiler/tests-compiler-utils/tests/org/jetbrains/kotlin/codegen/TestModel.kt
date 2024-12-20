@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.ir.backend.js.ic.DirtyFileState
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
+import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.io.File
 import java.util.regex.Pattern

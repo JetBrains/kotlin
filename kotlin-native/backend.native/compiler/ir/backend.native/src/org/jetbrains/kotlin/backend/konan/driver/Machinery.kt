@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.driver
 import org.jetbrains.kotlin.backend.common.DisposableContext
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.config.LoggingContext
-import org.jetbrains.kotlin.config.phaser.PhaseConfigurationService
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.config.phaser.SimpleNamedCompilerPhase
@@ -60,7 +60,7 @@ internal fun PhaseEngine.Companion.startTopLevel(config: KonanConfig, body: (Pha
             body(engine)
         }
 
-        override fun outputIfNotEnabled(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Any>, context: PhaseContext, input: Any) {
+        override fun outputIfNotEnabled(phaseConfig: PhaseConfig, phaserState: PhaserState<Any>, context: PhaseContext, input: Any) {
             error("Compiler was disabled")
         }
     }

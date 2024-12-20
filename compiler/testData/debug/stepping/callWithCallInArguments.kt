@@ -62,4 +62,5 @@ fun box() {
 // test.kt:6 $bar (16)
 // test.kt:4 $A.<init> (7)
 // test.kt:6 $bar (19)
+// test.kt:10 $box (4)
 // test.kt:15 $box (1)

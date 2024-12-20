@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10DescSamConstructorSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -72,13 +72,13 @@ internal class KaFe10DescSamConstructorSymbol(
 
 
     override fun createPointer(): KaSymbolPointer<KaSamConstructorSymbol> = withValidityAssertion {
-        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaSamConstructorSymbol>(this)?.let {
+        KaBasePsiSymbolPointer.createForSymbolFromSource<KaSamConstructorSymbol>(this)?.let {
             return it
         }
 
         val classId = descriptor.baseDescriptorForSynthetic.classId
         if (classId != null) {
-            return KaFe10DescSamConstructorSymbolPointer(classId)
+            return KaFe10DescSamConstructorSymbolPointer(classId, this)
         }
 
         return KaFe10NeverRestoringSymbolPointer()

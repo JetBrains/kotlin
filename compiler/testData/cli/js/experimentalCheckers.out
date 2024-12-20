@@ -1,4 +1,4 @@
-compiler/testData/cli/js/experimentalCheckers.kt:2:12: warning: [REDUNDANT_EXPLICIT_TYPE] Redundant explicit type.
+compiler/testData/cli/js/experimentalCheckers.kt:2:12: warning: redundant explicit type.
     val i: Int = 1
            ^^^
 OK

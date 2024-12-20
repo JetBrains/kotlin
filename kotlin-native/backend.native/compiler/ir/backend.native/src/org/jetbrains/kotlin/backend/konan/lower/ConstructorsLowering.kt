@@ -74,6 +74,7 @@ internal val LOWERED_DELEGATING_CONSTRUCTOR_CALL by IrStatementOriginImpl
 internal class ConstructorsLowering(private val context: Context) : FileLoweringPass, IrTransformer<IrDeclaration?>() {
     private val createUninitializedInstance = context.ir.symbols.createUninitializedInstance
     private val createUninitializedArray = context.ir.symbols.createUninitializedArray
+    private val createEmptyString = context.ir.symbols.createEmptyString
     private val initInstance = context.ir.symbols.initInstance
 
     override fun lower(irFile: IrFile) {
@@ -180,9 +181,7 @@ internal class ConstructorsLowering(private val context: Context) : FileLowering
             constructedType.isString() -> irBuilder.run {
                 require(expression.dispatchReceiver == null) { "A string constructor call cannot have the dispatch receiver: ${expression.render()}" }
                 require(expression.valueArgumentsCount == 0) { "Expected a call to the string constructor with no arguments: ${expression.render()}" }
-                irCall(createUninitializedArray, constructedType, listOf(constructedType)).apply {
-                    putValueArgument(0, irInt(0))
-                }
+                irBuilder.irCall(createEmptyString, constructedType)
             }
             constructedType.isAny() -> {
                 require(expression.dispatchReceiver == null) { "A kotlin.Any constructor call cannot have the dispatch receiver: ${expression.render()}" }

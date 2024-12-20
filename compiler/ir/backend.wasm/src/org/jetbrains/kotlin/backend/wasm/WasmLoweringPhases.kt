@@ -143,7 +143,7 @@ private val arrayConstructorPhase = makeIrModulePhase(
 )
 
 private val sharedVariablesLoweringPhase = makeIrModulePhase(
-    { context: WasmBackendContext -> SharedVariablesLowering(WasmSharedVariablesManager(context.wasmSymbols)) },
+    ::SharedVariablesLowering,
     name = "SharedVariablesLowering",
     prerequisite = setOf(lateinitPhase)
 )
@@ -224,11 +224,6 @@ private val complexExternalDeclarationsUsagesLowering = makeIrModulePhase(
 private val jsInteropFunctionsLowering = makeIrModulePhase(
     ::JsInteropFunctionsLowering,
     name = "JsInteropFunctionsLowering",
-)
-
-private val jsInteropFunctionCallsLowering = makeIrModulePhase(
-    ::JsInteropFunctionCallsLowering,
-    name = "JsInteropFunctionCallsLowering",
 )
 
 private val enumWhenPhase = makeIrModulePhase(
@@ -663,7 +658,6 @@ fun getWasmLowerings(
     complexExternalDeclarationsUsagesLowering,
 
     jsInteropFunctionsLowering,
-    jsInteropFunctionCallsLowering,
 
     enumUsageLoweringPhase,
     enumEntryRemovalLoweringPhase,

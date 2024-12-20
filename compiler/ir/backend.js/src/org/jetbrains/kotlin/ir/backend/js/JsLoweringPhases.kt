@@ -179,9 +179,7 @@ private val arrayConstructorPhase = makeIrModulePhase(
 )
 
 private val sharedVariablesLoweringPhase = makeIrModulePhase(
-    { context: JsIrBackendContext ->
-        SharedVariablesLowering(JsSharedVariablesManager(context.irBuiltIns, context.dynamicType, context.intrinsics))
-    },
+    ::SharedVariablesLowering,
     name = "SharedVariablesLowering",
     prerequisite = setOf(lateinitPhase)
 )

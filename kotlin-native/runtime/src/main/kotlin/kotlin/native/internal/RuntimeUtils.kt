@@ -219,6 +219,11 @@ public external fun initInstance(thiz: Any, constructorCall: Any): Unit
 @InternalForKotlinNative
 public external fun <T> createUninitializedArray(size: Int): T
 
+@TypedIntrinsic(IntrinsicType.CREATE_EMPTY_STRING)
+@InternalForKotlinNative
+@PublishedApi
+internal external fun createEmptyString(): String
+
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.IS_SUBTYPE)
 internal external fun <T> isSubtype(objTypeInfo: NativePtr): Boolean

@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.backend.common.lower.inline
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
+import org.jetbrains.kotlin.backend.common.ir.isInlineLambdaBlock
+import org.jetbrains.kotlin.backend.common.ir.isInlineLambdaBlock
 import org.jetbrains.kotlin.backend.common.lower.LocalClassPopupLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -34,6 +37,7 @@ import org.jetbrains.kotlin.ir.visitors.*
  *    are copied. But the compiler could optimize the usage of some local classes and not copy them.
  *    So in this case all local classes MIGHT BE COPIED.
  */
+@PhaseDescription("LocalClassesInInlineLambdasLowering")
 class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLoweringPass {
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile)
@@ -86,6 +90,15 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                             localFunctions.add(declaration)
                         }
 
+                        override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty) {
+                            // Do not extract local delegates from the inline function.
+                            // Doing that can lead to inconsistent IR. Local delegated property consists of two elements: property and
+                            // accessors to it. Inside the accessor we have a reference to the property.
+                            // `LocalClassesInInlineLambdasLowering` can only extract the accessor out of inline lambda, leaving the
+                            // property in place. Because of this, we have not entirely correct reference.
+                            return
+                        }
+
                         override fun visitCall(expression: IrCall) {
                             val callee = expression.symbol.owner
                             if (!callee.isInline) {
@@ -94,8 +107,9 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                             }
 
                             expression.arguments.zip(callee.parameters).forEach { (argument, parameter) ->
-                                // Skip adapted function references - they will be inlined later.
-                                if (parameter.isInlineParameter() && argument?.isAdaptedFunctionReference() == true)
+                                // Skip adapted function references and inline lambdas - they will be inlined later.
+                                val shouldSkip = argument != null && (argument.isAdaptedFunctionReference() || argument.isInlineLambdaBlock())
+                                if (parameter.isInlineParameter() && shouldSkip)
                                     adaptedFunctions += (argument as IrBlock).statements[0] as IrSimpleFunction
                                 else
                                     argument?.acceptVoid(this)

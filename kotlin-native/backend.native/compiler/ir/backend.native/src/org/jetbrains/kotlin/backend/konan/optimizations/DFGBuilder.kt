@@ -401,6 +401,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
     private val arraySetSymbols = symbols.arraySet.values
     private val createUninitializedInstanceSymbol = symbols.createUninitializedInstance
     private val createUninitializedArraySymbol = symbols.createUninitializedArray
+    private val createEmptyStringSymbol = symbols.createEmptyString
     private val initInstanceSymbol = symbols.initInstance
     private val executeImplSymbol = symbols.executeImpl
     private val executeImplProducerClass = symbols.functionN(0).owner
@@ -644,6 +645,11 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                                     DataFlowIR.Node.AllocArray(symbolTable.mapClassReferenceType(
                                             value.typeArguments[0]!!.getClass()!!
                                     ), size = expressionToEdge(value.getValueArgument(0)!!), value)
+
+                                createEmptyStringSymbol ->
+                                    // Technically, this allocates an array. However, this is an empty string, so let's treat it
+                                    // like a fixed-size object.
+                                    DataFlowIR.Node.AllocInstance(symbolTable.mapType(createEmptyStringSymbol.owner.returnType), value)
 
                                 reinterpret -> getNode(value.extensionReceiver!!).value
 

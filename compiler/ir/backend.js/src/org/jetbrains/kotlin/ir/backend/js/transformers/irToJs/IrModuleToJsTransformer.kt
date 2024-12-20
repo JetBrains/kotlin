@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterface
+import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.export.*
-import org.jetbrains.kotlin.ir.backend.js.ic.JsPerFileCache
 import org.jetbrains.kotlin.ir.backend.js.lower.JsCodeOutliningLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass
@@ -80,12 +80,6 @@ fun generateProxyIrModuleWith(
         listOf(programFragment),
         importedWithEffectInModuleWithName = importedWithEffectInModuleWithName
     )
-}
-
-enum class JsGenerationGranularity {
-    WHOLE_PROGRAM,
-    PER_MODULE,
-    PER_FILE
 }
 
 enum class TranslationMode(

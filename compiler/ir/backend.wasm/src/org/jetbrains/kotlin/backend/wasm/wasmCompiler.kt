@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.JsCodeSnippet
 import org.jetbrains.kotlin.backend.wasm.lower.JsInteropFunctionsLowering
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
+import org.jetbrains.kotlin.backend.wasm.utils.DwarfGenerator
 import org.jetbrains.kotlin.backend.wasm.utils.SourceMapGenerator
 import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
+import org.jetbrains.kotlin.wasm.ir.debug.DebugInformationGeneratorImpl
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.file.Files
@@ -144,7 +146,8 @@ fun compileWasm(
     emitNameSection: Boolean = false,
     generateWat: Boolean = false,
     generateSourceMaps: Boolean = false,
-    useDebuggerCustomFormatters: Boolean = false
+    useDebuggerCustomFormatters: Boolean = false,
+    generateDwarf: Boolean = false
 ): WasmCompilerResult {
     val useJsTag = configuration.getBoolean(WasmConfigurationKeys.WASM_USE_JS_TAG)
     val isWasmJsTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET) != WasmTarget.WASI
@@ -159,6 +162,9 @@ fun compileWasm(
 
     val linkedModule = wasmCompiledModuleFragment.linkWasmCompiledFragments()
 
+    val dwarfGeneratorForBinary = runIf(generateDwarf) {
+        DwarfGenerator()
+    }
     val sourceMapGeneratorForBinary = runIf(generateSourceMaps) {
         SourceMapGenerator("$baseFileName.wasm", configuration)
     }
@@ -182,7 +188,10 @@ fun compileWasm(
             linkedModule,
             moduleName,
             emitNameSection,
-            sourceMapGeneratorForBinary
+            DebugInformationGeneratorImpl(
+                sourceMapGenerator = sourceMapGeneratorForBinary,
+                dwarfGenerator = dwarfGeneratorForBinary,
+            )
         )
 
     wasmIrToBinary.appendWasmModule()

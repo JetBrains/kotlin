@@ -15,9 +15,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 @KaImplementationDetail
 class KaBaseReceiverParameterSymbolPointer(
     private val ownerPointer: KaSymbolPointer<KaCallableSymbol>,
-) : KaSymbolPointer<KaReceiverParameterSymbol>() {
+    originalSymbol: KaReceiverParameterSymbol?,
+) : KaBaseCachedSymbolPointer<KaReceiverParameterSymbol>(originalSymbol) {
     @KaImplementationDetail
-    override fun restoreSymbol(analysisSession: KaSession): KaReceiverParameterSymbol? {
+    override fun restoreIfNotCached(analysisSession: KaSession): KaReceiverParameterSymbol? {
         val callableSymbol = with(analysisSession) {
             ownerPointer.restoreSymbol()
         }
