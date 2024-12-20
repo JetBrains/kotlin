@@ -20,6 +20,7 @@ dependencies {
     implementation(project(":compiler:fir:fir-serialization"))
     implementation(project(":compiler:fir:native"))
     implementation(project(":compiler:ir.backend.common"))
+    implementation(project(":compiler:ir.backend.native"))
     implementation(project(":compiler:ir.inline"))
     implementation(project(":compiler:ir.objcinterop"))
     implementation(project(":compiler:ir.psi2ir"))

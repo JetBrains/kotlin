@@ -671,9 +671,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     }
 }
 
-fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String)
-    = this.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(priority, message)
-
 private fun String.isRelease(): Boolean {
     // major.minor.patch-meta-build where patch, meta and build are optional.
     val versionPattern = "(\\d+)\\.(\\d+)(?:\\.(\\d+))?(?:-(\\p{Alpha}*\\p{Alnum}+(?:\\.\\p{Alnum}+)*|-[\\p{Alnum}.-]+))?(?:-(\\d+))?".toRegex()

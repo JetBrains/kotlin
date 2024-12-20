@@ -72,14 +72,14 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
 
     private fun MutableList<TestFunction>.registerFunction(
             function: IrFunction,
-            kinds: Collection<Pair<FunctionKind, /* ignored: */ Boolean>>) =
+            kinds: Collection<Pair<TestProcessorFunctionKind, /* ignored: */ Boolean>>) =
         kinds.forEach { (kind, ignored) ->
             add(TestFunction(function, kind, ignored))
         }
 
     private fun MutableList<TestFunction>.registerFunction(
         function: IrFunction,
-        kind: FunctionKind,
+        kind: TestProcessorFunctionKind,
         ignored: Boolean
     ) = add(TestFunction(function, kind, ignored))
 
@@ -121,7 +121,7 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
             parent: IrDeclarationParent,
     ) {
         functions.forEach {
-            if (it.kind == FunctionKind.TEST) {
+            if (it.kind == TestProcessorFunctionKind.TEST) {
                 // Call registerTestCase(name: String, testFunction: () -> Unit) method.
                 +irCall(registerTestCase).apply {
                     dispatchReceiver = irGet(receiver)
@@ -148,29 +148,14 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
     // endregion
 
     // region Classes for annotation collection.
-    internal enum class FunctionKind(annotationNameString: String, val runtimeKindString: String) {
-        TEST("kotlin.test.Test", ""),
-        BEFORE_TEST("kotlin.test.BeforeTest", "BEFORE_TEST"),
-        AFTER_TEST("kotlin.test.AfterTest", "AFTER_TEST"),
-        BEFORE_CLASS("kotlin.test.BeforeClass", "BEFORE_CLASS"),
-        AFTER_CLASS("kotlin.test.AfterClass", "AFTER_CLASS");
-
-        val annotationFqName = FqName(annotationNameString)
-
-        companion object {
-            val INSTANCE_KINDS = listOf(TEST, BEFORE_TEST, AFTER_TEST)
-            val COMPANION_KINDS = listOf(BEFORE_CLASS, AFTER_CLASS)
-        }
-    }
-
-    private val FunctionKind.runtimeKind: IrEnumEntrySymbol
+    private val TestProcessorFunctionKind.runtimeKind: IrEnumEntrySymbol
         get() = symbols.getTestFunctionKind(this)
 
     private fun IrType.isTestFunctionKind() = classifierOrNull == symbols.testFunctionKind
 
     private data class TestFunction(
             val function: IrFunction,
-            val kind: FunctionKind,
+            val kind: TestProcessorFunctionKind,
             val ignored: Boolean
     ) {
         val functionName: String get() = function.name.identifier
@@ -183,7 +168,7 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
         val suiteClassId: ClassId = ownerClass.classId ?: error(ownerClass.render())
         val suiteName: String get() = suiteClassId.asFqNameString()
 
-        fun registerFunction(function: IrFunction, kind: FunctionKind, ignored: Boolean) =
+        fun registerFunction(function: IrFunction, kind: TestProcessorFunctionKind, ignored: Boolean) =
                 functions.registerFunction(function, kind, ignored)
     }
 
@@ -231,14 +216,14 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
 
         fun registerClassFunction(irClass: IrClass,
                                   function: IrFunction,
-                                  kinds: Collection<Pair<FunctionKind, /* ignored: */ Boolean>>) {
+                                  kinds: Collection<Pair<TestProcessorFunctionKind, /* ignored: */ Boolean>>) {
 
             fun warn(msg: String) = context.reportWarning(msg, irFile, function)
 
             kinds.forEach { (kind, ignored) ->
                 val annotation = kind.annotationFqName
                 when (kind) {
-                    in FunctionKind.INSTANCE_KINDS -> with(irClass) {
+                    in TestProcessorFunctionKind.INSTANCE_KINDS -> with(irClass) {
                         when {
                             isInner ->
                                 warn("Annotation $annotation is not allowed for methods of an inner class")
@@ -258,7 +243,7 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
                                 testClasses.getTestClass(irClass).registerFunction(function, kind, ignored)
                         }
                     }
-                    in FunctionKind.COMPANION_KINDS ->
+                    in TestProcessorFunctionKind.COMPANION_KINDS ->
                         when {
                             irClass.isCompanion -> {
                                 val containingClass = irClass.parentAsClass
@@ -294,7 +279,7 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
         }
 
         private fun warnAboutInheritedAnnotations(
-            kind: FunctionKind,
+            kind: TestProcessorFunctionKind,
             function: IrFunctionSymbol,
             annotatedFunction: IrFunctionSymbol
         ) {
@@ -309,9 +294,9 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
         }
 
         private fun warnAboutLoneIgnore(functionSymbol: IrFunctionSymbol): Unit = with(functionSymbol) {
-            if (hasAnnotation(IGNORE_FQ_NAME) && !hasAnnotation(FunctionKind.TEST.annotationFqName)) {
+            if (hasAnnotation(IGNORE_FQ_NAME) && !hasAnnotation(TestProcessorFunctionKind.TEST.annotationFqName)) {
                 context.reportWarning(
-                    "Unused $IGNORE_FQ_NAME annotation (not paired with ${FunctionKind.TEST.annotationFqName}).",
+                    "Unused $IGNORE_FQ_NAME annotation (not paired with ${TestProcessorFunctionKind.TEST.annotationFqName}).",
                     irFile,
                     owner
                 )
@@ -324,10 +309,10 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
             val parent = declaration.parent
 
             warnAboutLoneIgnore(symbol)
-            val kinds = FunctionKind.values().mapNotNull { kind ->
+            val kinds = TestProcessorFunctionKind.values().mapNotNull { kind ->
                 symbol.findAnnotatedFunction(kind.annotationFqName)?.let { annotatedFunction ->
                     warnAboutInheritedAnnotations(kind, symbol, annotatedFunction)
-                    kind to (kind == FunctionKind.TEST && annotatedFunction.hasAnnotation(IGNORE_FQ_NAME))
+                    kind to (kind == TestProcessorFunctionKind.TEST && annotatedFunction.hasAnnotation(IGNORE_FQ_NAME))
                 }
             }
 
@@ -625,7 +610,7 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
         }
 
         annotationCollector.testClasses.filter {
-            it.value.functions.any { it.kind == FunctionKind.TEST }
+            it.value.functions.any { it.kind == TestProcessorFunctionKind.TEST }
         }.forEach { (_, testClass) ->
             statements.add(generateClassSuite(testClass, irFile))
         }
@@ -665,7 +650,7 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
         val testCasesToDump = mutableMapOf<ClassId, MutableCollection<String>>()
 
         fun recordFunction(suiteClassId: ClassId, function: TestFunction) {
-            if (function.kind == FunctionKind.TEST)
+            if (function.kind == TestProcessorFunctionKind.TEST)
                 testCasesToDump.computeIfAbsent(suiteClassId) { mutableListOf() } += function.functionName
         }
 

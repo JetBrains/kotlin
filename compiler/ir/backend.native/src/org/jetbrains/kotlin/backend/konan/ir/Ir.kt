@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
-import org.jetbrains.kotlin.backend.konan.lower.TestProcessor
+import org.jetbrains.kotlin.backend.konan.lower.TestProcessorFunctionKind
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
@@ -30,15 +30,15 @@ object KonanNameConventions {
     val getWithoutBoundCheck = Name.special("<getWithoutBoundCheck>")
 }
 
-internal interface SymbolLookupUtils {
+interface SymbolLookupUtils {
     fun getValueParameterPrimitiveBinaryType(function: IrFunctionSymbol, index: Int): PrimitiveBinaryType?
 }
 
 // This is what Context collects about IR.
-internal class KonanIr(override val symbols: KonanSymbols): Ir()
+class KonanIr(override val symbols: KonanSymbols): Ir()
 
-@OptIn(InternalSymbolFinderAPI::class)
-internal class KonanSymbols(
+@OptIn(InternalSymbolFinderAPI::class, InternalKotlinNativeApi::class)
+class KonanSymbols(
         context: ErrorReportingContext,
         val lookup: SymbolLookupUtils,
         irBuiltIns: IrBuiltIns,
@@ -462,7 +462,7 @@ internal class KonanSymbols(
     override val setWithoutBoundCheckName: Name? = KonanNameConventions.setWithoutBoundCheck
 
     private val testFunctionKindCache by lazy {
-        TestProcessor.FunctionKind.entries.associateWith { kind ->
+        TestProcessorFunctionKind.entries.associateWith { kind ->
             if (kind.runtimeKindString.isEmpty())
                 null
             else
@@ -473,17 +473,17 @@ internal class KonanSymbols(
         }
     }
 
-    fun getTestFunctionKind(kind: TestProcessor.FunctionKind) = testFunctionKindCache[kind]!!
+    fun getTestFunctionKind(kind: TestProcessorFunctionKind) = testFunctionKindCache[kind]!!
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-internal class SymbolOverDescriptorsLookupUtils(val symbolTable: SymbolTable) : SymbolLookupUtils {
+class SymbolOverDescriptorsLookupUtils(val symbolTable: SymbolTable) : SymbolLookupUtils {
     override fun getValueParameterPrimitiveBinaryType(function: IrFunctionSymbol, index: Int): PrimitiveBinaryType? {
         return function.descriptor.valueParameters[0].type.computePrimitiveBinaryTypeOrNull()
     }
 }
 
-internal class SymbolOverIrLookupUtils() : SymbolLookupUtils {
+class SymbolOverIrLookupUtils() : SymbolLookupUtils {
     override fun getValueParameterPrimitiveBinaryType(function: IrFunctionSymbol, index: Int): PrimitiveBinaryType? {
         return function.owner.valueParameters[0].type.computePrimitiveBinaryTypeOrNull()
     }

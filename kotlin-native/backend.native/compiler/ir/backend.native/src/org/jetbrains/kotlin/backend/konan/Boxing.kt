@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.ConstValue
 import org.jetbrains.kotlin.backend.konan.llvm.StaticData
 import org.jetbrains.kotlin.backend.konan.llvm.constValue
 import org.jetbrains.kotlin.backend.konan.llvm.toLLVMType
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
@@ -202,27 +201,3 @@ internal fun IrConstantPrimitive.toBoxCacheValue(generationState: NativeGenerati
 
 private fun createConstant(llvmType: LLVMTypeRef, value: Int): ConstValue =
         constValue(LLVMConstInt(llvmType, value.toLong(), 1)!!)
-
-// Memory usage is around 20kb.
-private val BoxCache.defaultRange get() = when (this) {
-    BoxCache.BOOLEAN -> (0 to 1)
-    BoxCache.BYTE -> (-128 to 127)
-    BoxCache.SHORT -> (-128 to 127)
-    BoxCache.CHAR -> (0 to 255)
-    BoxCache.INT -> (-128 to 127)
-    BoxCache.LONG -> (-128 to 127)
-}
-
-internal fun IrBuiltIns.getKotlinClass(cache: BoxCache): IrClass = when (cache) {
-    BoxCache.BOOLEAN -> booleanClass
-    BoxCache.BYTE -> byteClass
-    BoxCache.SHORT -> shortClass
-    BoxCache.CHAR -> charClass
-    BoxCache.INT -> intClass
-    BoxCache.LONG -> longClass
-}.owner
-
-// TODO: consider adding box caches for unsigned types.
-enum class BoxCache {
-    BOOLEAN, BYTE, SHORT, CHAR, INT, LONG
-}

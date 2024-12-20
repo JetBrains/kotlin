@@ -89,6 +89,7 @@
 /compiler/ir/backend.common/ "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
 /compiler/ir/backend.js/ "Kotlin Common Backend"
 /compiler/ir/backend.jvm/ "Kotlin JVM"
+/compiler/ir/backend.native/ "Kotlin Native" "Kotlin Common Backend"
 /compiler/ir/backend.wasm/ "Kotlin Wasm"
 /compiler/ir/ir.actualization/ "Kotlin Frontend" "Kotlin Common Backend"
 /compiler/ir/ir.interpreter/ "Kotlin Common Backend"
