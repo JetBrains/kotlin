@@ -25,7 +25,7 @@ class CompiledClassesManager(val testServices: TestServices) : TestService {
             val outputDir = testServices.getOrCreateTempDirectory("module_${module.name}_classes")
 
             @Suppress("NAME_SHADOWING")
-            val classFileFactory = classFileFactory ?: if (module.binaryKind == ArtifactKinds.JvmFromK1AndK2) {
+            val classFileFactory = classFileFactory ?: if (testServices.defaultsProvider.artifactKind == ArtifactKinds.JvmFromK1AndK2) {
                 require(specifiedFrontendKind == FrontendKinds.FIR || specifiedFrontendKind == FrontendKinds.ClassicFrontend)
                 val k1AndK2Artifact = testServices.artifactsProvider.getArtifact(module, ArtifactKinds.JvmFromK1AndK2)
                 if (specifiedFrontendKind == FrontendKinds.FIR) {
