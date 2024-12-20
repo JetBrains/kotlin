@@ -29,8 +29,8 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
     }
 
     private lateinit var wholeFile: File
-    private lateinit var backend: TargetBackend
-    private lateinit var frontend: FrontendKind<*>
+    private val backend: TargetBackend = testServices.defaultsProvider.targetBackend!!
+    private val frontend: FrontendKind<*> = testServices.defaultsProvider.frontendKind
 
     abstract fun storeStep(loggedItems: ArrayList<SteppingTestLoggedData>, event: Event)
 
@@ -40,9 +40,6 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
         classPath: List<URL>,
         mainClassAndArguments: List<String>
     ): Process {
-        // Extract target backend, frontend, and the full test file used to extract test expectations.
-        backend = module.targetBackend ?: backend
-        frontend = testServices.defaultsProvider.frontendKind
         wholeFile = module.files.single { it.name == "test.kt" }.originalFile
 
         // Setup the java process to suspend waiting for debugging connection on a free port.

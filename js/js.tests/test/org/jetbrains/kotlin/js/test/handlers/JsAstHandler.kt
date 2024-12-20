@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.isKtFile
 import java.io.File
 
@@ -28,7 +29,7 @@ class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testSer
             ?.outputs[TranslationMode.FULL_DEV]
             ?.jsProgram
             ?: return
-        processJsProgram(jsProgram, ktFiles, module.targetBackend!!)
+        processJsProgram(jsProgram, ktFiles, testServices.defaultsProvider.targetBackend!!)
     }
 
     private fun processJsProgram(program: JsProgram, psiFiles: Map<File, String>, targetBackend: TargetBackend) {

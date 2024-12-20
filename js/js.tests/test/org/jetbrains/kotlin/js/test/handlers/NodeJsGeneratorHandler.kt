@@ -25,7 +25,7 @@ class NodeJsGeneratorHandler(testServices: TestServices) : AbstractJsArtifactsCo
         val globalDirectives = testServices.moduleStructure.allDirectives
 
         val dontRunGeneratedCode = globalDirectives[JsEnvironmentConfigurationDirectives.DONT_RUN_GENERATED_CODE]
-            .contains(testServices.defaultsProvider.defaultTargetBackend?.name)
+            .contains(testServices.defaultsProvider.targetBackend?.name)
         val generateNodeJsRunner = JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER in globalDirectives
         val skipNodeJs = JsEnvironmentConfigurationDirectives.SKIP_NODE_JS in globalDirectives
         val esModules = JsEnvironmentConfigurationDirectives.ES_MODULES in globalDirectives
@@ -38,7 +38,7 @@ class NodeJsGeneratorHandler(testServices: TestServices) : AbstractJsArtifactsCo
         val mainModuleName = getMainModuleName(testServices)
         val outputDir = File(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices).absolutePath)
         val ignored = globalDirectives[CodegenTestDirectives.IGNORE_BACKEND]
-            .contains(testServices.defaultsProvider.defaultTargetBackend)
+            .contains(testServices.defaultsProvider.targetBackend)
         val testPackage = extractTestPackage(testServices)
         val nodeRunnerText = generateNodeRunner(allJsFiles, outputDir, mainModuleName, ignored, testPackage)
 

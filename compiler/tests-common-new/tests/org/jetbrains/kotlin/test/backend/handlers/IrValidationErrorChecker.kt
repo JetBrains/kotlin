@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.services.defaultsProvider
  */
 class IrValidationErrorChecker(testServices: TestServices) : AfterAnalysisChecker(testServices) {
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        val targetBackend = testServices.defaultsProvider.defaultTargetBackend ?: TargetBackend.ANY
+        val targetBackend = testServices.defaultsProvider.targetBackend ?: TargetBackend.ANY
         return failedAssertions.map {
             if (it.cause is IrValidationError) {
                 IrValidationError(

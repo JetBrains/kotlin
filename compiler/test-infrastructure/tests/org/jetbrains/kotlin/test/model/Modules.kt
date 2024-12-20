@@ -7,14 +7,12 @@ package org.jetbrains.kotlin.test.model
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import java.io.File
 
 data class TestModule(
     val name: String,
     val targetPlatform: TargetPlatform,
-    val targetBackend: TargetBackend?,
     val backendKind: BackendKind<*>,
     val binaryKind: BinaryKind<*>,
     val files: List<TestFile>,

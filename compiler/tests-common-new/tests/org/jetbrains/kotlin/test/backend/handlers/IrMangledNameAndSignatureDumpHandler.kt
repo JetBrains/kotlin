@@ -173,7 +173,6 @@ class IrMangledNameAndSignatureDumpHandler(
             dumper,
             KotlinLikeDumpOptions(
                 customDumpStrategy = DumpStrategy(
-                    module,
                     info.irMangler,
                     info.descriptorMangler,
                     info.irPluginContext.irBuiltIns,
@@ -204,14 +203,13 @@ class IrMangledNameAndSignatureDumpHandler(
     }
 
     private inner class DumpStrategy(
-        val module: TestModule,
         val irMangler: KotlinMangler.IrMangler,
         val descriptorMangler: KotlinMangler.DescriptorMangler?,
         val irBuiltIns: IrBuiltIns,
     ) : CustomKotlinLikeDumpStrategy {
 
         private val targetBackend: TargetBackend
-            get() = module.targetBackend!!
+            get() = testServices.defaultsProvider.targetBackend!!
 
         private val IrDeclaration.isFunctionWithNonUnitReturnType: Boolean
             get() = this is IrSimpleFunction && !returnType.isUnit()

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.test.Assertions
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
@@ -91,7 +90,6 @@ class ModuleStructureExtractorImpl(
 
         private var currentModuleName: String? = null
         private var currentModuleTargetPlatform: TargetPlatform? = null
-        private var currentModuleTargetBackend: TargetBackend? = null
         private var currentModuleLanguageVersionSettingsBuilder: LanguageVersionSettingsBuilder = initLanguageSettingsBuilder()
         private var dependenciesOfCurrentModule = mutableListOf<DependencyDescription>()
         private var filesOfCurrentModule = mutableListOf<TestFile>()
@@ -330,7 +328,7 @@ class ModuleStructureExtractorImpl(
             val moduleDirectives = moduleDirectivesBuilder.build() + testServices.defaultDirectives + globalDirectives
             moduleDirectives.forEach { it.checkDirectiveApplicability(contextIsGlobal = isImplicitModule, contextIsModule = true) }
 
-            val targetBackend = currentModuleTargetBackend ?: defaultsProvider.defaultTargetBackend
+            val targetBackend = defaultsProvider.targetBackend
             val frontendKind = defaultsProvider.frontendKind
 
             currentModuleLanguageVersionSettingsBuilder.configureUsingDirectives(
@@ -343,7 +341,6 @@ class ModuleStructureExtractorImpl(
             val testModule = TestModule(
                 name = moduleName,
                 targetPlatform = targetPlatform,
-                targetBackend = targetBackend,
                 backendKind = BackendKinds.fromTargetBackend(targetBackend),
                 binaryKind = defaultsProvider.defaultArtifactKind ?: targetPlatform.toArtifactKind(frontendKind),
                 files = filesOfCurrentModule,
@@ -415,7 +412,6 @@ class ModuleStructureExtractorImpl(
             firstFileInModule = true
             currentModuleName = null
             currentModuleTargetPlatform = null
-            currentModuleTargetBackend = null
             currentModuleLanguageVersionSettingsBuilder = initLanguageSettingsBuilder()
             filesOfCurrentModule = mutableListOf()
             dependenciesOfCurrentModule = mutableListOf()

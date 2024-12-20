@@ -17,7 +17,7 @@ class DefaultsProvider(
     private val defaultLanguageSettingsBuilder: LanguageVersionSettingsBuilder,
     val defaultPlatform: TargetPlatform,
     val defaultArtifactKind: BinaryKind<*>?,
-    val defaultTargetBackend: TargetBackend?,
+    val targetBackend: TargetBackend?,
     val defaultDependencyKind: DependencyKind
 ) : TestService {
     fun newLanguageSettingsBuilder(): LanguageVersionSettingsBuilder {

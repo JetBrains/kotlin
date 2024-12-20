@@ -53,7 +53,7 @@ class BytecodeListingHandler(testServices: TestServices) : JvmBinaryArtifactHand
         val firTxtFile = sourceFile.withExtension(".fir.txt")
 
         val isFir = testServices.defaultsProvider.frontendKind == FrontendKinds.FIR
-        val isIr = testServices.defaultsProvider.defaultTargetBackend?.isIR == true
+        val isIr = testServices.defaultsProvider.targetBackend?.isIR == true
 
         val actualFile = when {
             isFir -> firTxtFile.takeIf { it.exists() } ?: irTxtFile.takeIf { it.exists() } ?: defaultTxtFile
