@@ -5,18 +5,15 @@
 
 package org.jetbrains.kotlin.test.builders
 
-import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.model.BinaryKind
-import org.jetbrains.kotlin.test.services.DefaultsDsl
-import org.jetbrains.kotlin.test.services.DefaultsProvider
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKind
+import org.jetbrains.kotlin.test.services.DefaultsDsl
+import org.jetbrains.kotlin.test.services.DefaultsProvider
+import org.jetbrains.kotlin.util.PrivateForInline
 
 @DefaultsDsl
 class DefaultsProviderBuilder {
@@ -33,17 +30,9 @@ class DefaultsProviderBuilder {
     var languageVersionSettingsBuilder: LanguageVersionSettingsBuilder? = null
 
     @OptIn(PrivateForInline::class)
-    inline fun languageSettings(init: LanguageVersionSettingsBuilder.() -> Unit) {
-        languageVersionSettings = LanguageVersionSettingsBuilder().apply(init).also {
-            languageVersionSettingsBuilder = it
-        }.build()
-    }
-
-    @OptIn(PrivateForInline::class)
     fun build(): DefaultsProvider {
         return DefaultsProvider(
             frontend,
-            languageVersionSettings ?: LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE),
             languageVersionSettingsBuilder ?: LanguageVersionSettingsBuilder(),
             targetPlatform,
             artifactKind,
