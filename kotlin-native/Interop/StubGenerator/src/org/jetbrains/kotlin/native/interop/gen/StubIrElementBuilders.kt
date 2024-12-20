@@ -573,7 +573,7 @@ internal class EnumStubBuilder(
         val baseKotlinType = context.mirror(enumDef.baseType).argType
         val meta = if (enumDef.isAnonymous) {
             kotlinType = baseKotlinType
-            StubContainerMeta(textAtStart = if (constants.isNotEmpty()) "// ${enumDef.spelling}:" else "")
+            StubContainerMeta()
         } else {
             val typeMirror = context.mirror(EnumType(enumDef))
             if (typeMirror !is TypeMirror.ByValue) {
