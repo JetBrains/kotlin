@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.constructors
 
-internal class KonanSharedVariablesManager(private val irBuiltIns: IrBuiltIns, symbols: KonanSymbols) : SharedVariablesManager {
+class KonanSharedVariablesManager(private val irBuiltIns: IrBuiltIns, symbols: KonanSymbols) : SharedVariablesManager {
 
     private val refClass = symbols.refClass
 
