@@ -9,15 +9,15 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.model.BackendFacade
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.BinaryKind
+import org.jetbrains.kotlin.test.model.ArtifactKind
 import org.jetbrains.kotlin.test.model.DeserializerFacade
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class IrBackendFacade<BinaryOutputArtifact : ResultingArtifact.Binary<BinaryOutputArtifact>>(
     testServices: TestServices,
-    binaryKind: BinaryKind<BinaryOutputArtifact>
-) : BackendFacade<IrBackendInput, BinaryOutputArtifact>(testServices, BackendKinds.IrBackend, binaryKind)
+    artifactKind: ArtifactKind<BinaryOutputArtifact>
+) : BackendFacade<IrBackendInput, BinaryOutputArtifact>(testServices, BackendKinds.IrBackend, artifactKind)
 
 data class KlibFacades(
     val serializerFacade: Constructor<IrBackendFacade<BinaryArtifacts.KLib>>,

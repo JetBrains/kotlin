@@ -46,14 +46,14 @@ object BackendKinds {
 }
 
 object ArtifactKinds {
-    object Jvm : BinaryKind<BinaryArtifacts.Jvm>("JVM")
-    object JvmFromK1AndK2 : BinaryKind<BinaryArtifacts.JvmFromK1AndK2>("JvmFromK1AndK2")
-    object Js : BinaryKind<BinaryArtifacts.Js>("JS")
-    object Native : BinaryKind<BinaryArtifacts.Native>("Native")
-    object Wasm : BinaryKind<BinaryArtifacts.Wasm>("Wasm")
-    object KLib : BinaryKind<BinaryArtifacts.KLib>("KLib")
+    object Jvm : ArtifactKind<BinaryArtifacts.Jvm>("JVM")
+    object JvmFromK1AndK2 : ArtifactKind<BinaryArtifacts.JvmFromK1AndK2>("JvmFromK1AndK2")
+    object Js : ArtifactKind<BinaryArtifacts.Js>("JS")
+    object Native : ArtifactKind<BinaryArtifacts.Native>("Native")
+    object Wasm : ArtifactKind<BinaryArtifacts.Wasm>("Wasm")
+    object KLib : ArtifactKind<BinaryArtifacts.KLib>("KLib")
 
-    fun fromString(string: String): BinaryKind<*>? {
+    fun fromString(string: String): ArtifactKind<*>? {
         return when (string) {
             "Jvm" -> Jvm
             "Js" -> Js
