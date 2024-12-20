@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +MultiPlatformProjects
 // MODULE: common
-// TARGET_PLATFORM: Common
 
 expect class Test
 

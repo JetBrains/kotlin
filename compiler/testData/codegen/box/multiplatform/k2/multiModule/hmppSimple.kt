@@ -45,7 +45,6 @@ fun test_2(): String {
 }
 
 // MODULE: jvm()()(intermediate)
-// TARGET_PLATFORM: JVM
 // FILE: main.kt
 
 actual var prop: String = "!"

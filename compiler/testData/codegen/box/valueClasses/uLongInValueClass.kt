@@ -6,7 +6,6 @@
 // WITH_STDLIB
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: expect.kt
 
 @kotlin.jvm.JvmInline

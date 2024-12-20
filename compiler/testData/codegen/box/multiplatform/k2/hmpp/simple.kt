@@ -8,13 +8,10 @@
  */
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: common.kt
 expect open class A()
 
 // MODULE: intermediate()()(common)
-// TARGET_PLATFORM: JVM, JS
-
 // FILE: intermediate.kt
 class B : A() {
     fun foo(): String = "O"

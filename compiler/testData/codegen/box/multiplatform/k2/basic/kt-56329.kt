@@ -2,7 +2,6 @@
 // ISSUE: KT-56329
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: common.kt
 
 expect class S

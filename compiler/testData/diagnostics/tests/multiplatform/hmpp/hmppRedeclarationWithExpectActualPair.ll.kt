@@ -1,7 +1,6 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: FRONTEND
 // MODULE: common
-// TARGET_PLATFORM: Common
 
 expect class A
 
@@ -10,7 +9,6 @@ expect class B
 class C
 
 // MODULE: intermediate()()(common)
-// TARGET_PLATFORM: Common
 
 actual class A
 

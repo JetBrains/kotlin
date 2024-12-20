@@ -1,7 +1,6 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: FIR2IR
 // MODULE: common
-// TARGET_PLATFORM: Common
 expect abstract <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{COMMON}!>class Foo<!>() {
     abstract fun foo()
 }
@@ -13,7 +12,6 @@ fun common() {
 }
 
 // MODULE: intermediate()()(common)
-// TARGET_PLATFORM: Common
 interface I {
     fun foo()
 }
