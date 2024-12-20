@@ -5,5 +5,5 @@
 
 // Library unique name: <main>
 final class /MyClass { // /MyClass|null[0]
-    constructor context(kotlin/Unit, kotlin/Int) <init>() // /MyClass.<init>|<init>!kotlin.Unit!kotlin.Int(){}[0]
+    constructor context(kotlin/Unit, kotlin/Int) <init>() // /MyClass.<init>|<init>(kotlin.Unit;kotlin.Int)(){}[0]
 }

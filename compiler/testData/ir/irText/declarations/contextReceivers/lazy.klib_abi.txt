@@ -6,6 +6,6 @@
 // Library unique name: <main>
 abstract interface <#A: kotlin/Any?> /Lazy // /Lazy|null[0]
 final fun <#A: kotlin/Any?> /f(/Lazy<kotlin/Int>, /Lazy<kotlin/CharSequence>, /Lazy<#A>, /Lazy</Lazy<#A>>) // /f|f(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>;Lazy<0:0>;Lazy<Lazy<0:0>>){0§<kotlin.Any?>}[0]
-final fun context(/Lazy<kotlin/Int>, /Lazy<kotlin/CharSequence>) /test1() // /test1|test1!Lazy<kotlin.Int>!Lazy<kotlin.CharSequence>(){}[0]
-final fun <#A: kotlin/Any?> context(/Lazy<kotlin/Int>) (/Lazy<kotlin/Int>)./test2() // /test2|test2!Lazy<0:0>@Lazy<kotlin.Int>(){0§<kotlin.Any?>}[0]
-final fun <#A: kotlin/Any?> context(/Lazy<kotlin/Int>) (/Lazy<kotlin/Int>)./test3() // /test3|test3!Lazy<Lazy<0:0>>@Lazy<kotlin.Int>(){0§<kotlin.Any?>}[0]
+final fun context(/Lazy<kotlin/Int>, /Lazy<kotlin/CharSequence>) /test1() // /test1|test1(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>)(){}[0]
+final fun <#A: kotlin/Any?> context(/Lazy<kotlin/Int>) (/Lazy<kotlin/Int>)./test2() // /test2|test2(Lazy<0:0>)@Lazy<kotlin.Int>(){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> context(/Lazy<kotlin/Int>) (/Lazy<kotlin/Int>)./test3() // /test3|test3(Lazy<Lazy<0:0>>)@Lazy<kotlin.Int>(){0§<kotlin.Any?>}[0]

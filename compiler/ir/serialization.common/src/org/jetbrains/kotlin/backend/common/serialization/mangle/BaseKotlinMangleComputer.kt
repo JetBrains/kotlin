@@ -169,9 +169,11 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
 
         platformSpecificFunctionMarks().forEach { builder.appendSignature(it) }
 
-        getContextParameterTypes(this).forEach {
-            builder.appendSignature(MangleConstant.CONTEXT_RECEIVER_PREFIX)
-            mangleType(builder, it, session)
+        val contextParameters = getContextParameterTypes(this)
+        if (contextParameters.isNotEmpty()) {
+            contextParameters.collectForMangler(builder, MangleConstant.VALUE_PARAMETERS) {
+                mangleType(this, it, session)
+            }
         }
 
         getExtensionReceiverParameterType(this)?.let {

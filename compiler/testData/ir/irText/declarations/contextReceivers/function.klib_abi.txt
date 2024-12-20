@@ -10,4 +10,4 @@ final class /C { // /C|null[0]
     constructor <init>() // /C.<init>|<init>(){}[0]
 }
 final fun /bar(/C) // /bar|bar(C){}[0]
-final fun context(/C) /foo() // /foo|foo!C(){}[0]
+final fun context(/C) /foo() // /foo|foo(C)(){}[0]

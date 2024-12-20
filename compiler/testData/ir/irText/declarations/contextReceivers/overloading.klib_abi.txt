@@ -4,6 +4,6 @@
 // - Show declarations: true
 
 // Library unique name: <main>
-final fun context(kotlin/Int) /foo(): kotlin/Int // /foo|foo!kotlin.Int(){}[0]
-final fun context(kotlin/Int, kotlin/String) /foo(): kotlin/Int // /foo|foo!kotlin.Int!kotlin.String(){}[0]
+final fun context(kotlin/Int) /foo(): kotlin/Int // /foo|foo(kotlin.Int)(){}[0]
+final fun context(kotlin/Int, kotlin/String) /foo(): kotlin/Int // /foo|foo(kotlin.Int;kotlin.String)(){}[0]
 final fun /test() // /test|test(){}[0]

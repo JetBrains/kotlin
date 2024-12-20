@@ -14,6 +14,6 @@ final class /OK { // /OK|null[0]
         final fun <get-k>(): kotlin/String // /OK.k.<get-k>|<get-k>(){}[0]
     final val result // /OK.result|{}result[0]
         final fun <get-result>(): kotlin/String // /OK.result.<get-result>|<get-result>(){}[0]
-    constructor context(/O) <init>(kotlin/String) // /OK.<init>|<init>!O(kotlin.String){}[0]
+    constructor context(/O) <init>(kotlin/String) // /OK.<init>|<init>(O)(kotlin.String){}[0]
 }
 final fun /box(): kotlin/String // /box|box(){}[0]
