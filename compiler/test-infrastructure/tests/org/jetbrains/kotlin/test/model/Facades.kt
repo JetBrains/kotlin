@@ -56,7 +56,7 @@ abstract class Frontend2BackendConverter<FrontendOutputArtifact, BackendInputArt
         where FrontendOutputArtifact : ResultingArtifact.FrontendOutput<FrontendOutputArtifact>,
               BackendInputArtifact : ResultingArtifact.BackendInput<BackendInputArtifact> {
     override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return module.backendKind == outputKind
+        return testServices.defaultsProvider.backendKind == outputKind
     }
 }
 
@@ -75,7 +75,7 @@ abstract class BackendFacade<BackendInputArtifact, BinaryOutputArtifact>(
         where BackendInputArtifact : ResultingArtifact.BackendInput<BackendInputArtifact>,
               BinaryOutputArtifact : ResultingArtifact.Binary<BinaryOutputArtifact> {
     override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return module.backendKind == inputKind && module.binaryKind == outputKind
+        return testServices.defaultsProvider.backendKind == inputKind && module.binaryKind == outputKind
     }
 }
 
@@ -88,6 +88,6 @@ abstract class DeserializerFacade<BinaryArtifact, BackendInputArtifact>(
               BackendInputArtifact : ResultingArtifact.BackendInput<BackendInputArtifact> {
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return module.backendKind == outputKind
+        return testServices.defaultsProvider.backendKind == outputKind
     }
 }

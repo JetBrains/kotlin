@@ -13,7 +13,6 @@ import java.io.File
 data class TestModule(
     val name: String,
     val targetPlatform: TargetPlatform,
-    val backendKind: BackendKind<*>,
     val binaryKind: BinaryKind<*>,
     val files: List<TestFile>,
     val allDependencies: List<DependencyDescription>,

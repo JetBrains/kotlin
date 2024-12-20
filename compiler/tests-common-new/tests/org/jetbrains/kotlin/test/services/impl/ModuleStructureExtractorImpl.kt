@@ -341,7 +341,6 @@ class ModuleStructureExtractorImpl(
             val testModule = TestModule(
                 name = moduleName,
                 targetPlatform = targetPlatform,
-                backendKind = BackendKinds.fromTargetBackend(targetBackend),
                 binaryKind = defaultsProvider.defaultArtifactKind ?: targetPlatform.toArtifactKind(frontendKind),
                 files = filesOfCurrentModule,
                 allDependencies = dependenciesOfCurrentModule,
