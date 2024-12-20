@@ -77,4 +77,8 @@ internal fun HashMap<LanguageFeature, LanguageFeature.State>.configureCommonLang
     if (arguments.nestedTypeAliases) {
         put(LanguageFeature.NestedTypeAliases, LanguageFeature.State.ENABLED)
     }
+
+    if (arguments.annotationTargetAll) {
+        put(LanguageFeature.AnnotationAllUseSiteTarget, LanguageFeature.State.ENABLED)
+    }
 }

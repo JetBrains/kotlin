@@ -1,0 +1,4 @@
+compiler/testData/cli/jvm/annotationTargetAll.kt:3:10: error: the feature "annotation all use site target" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xannotation-target-all', but note that no stability guarantees are provided.
+class My(@all:Simple val x: Int)
+         ^^^^^^^^^^^
+COMPILATION_ERROR

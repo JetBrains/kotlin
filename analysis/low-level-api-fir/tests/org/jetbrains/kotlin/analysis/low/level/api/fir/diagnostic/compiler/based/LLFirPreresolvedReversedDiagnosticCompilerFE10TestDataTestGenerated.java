@@ -46571,6 +46571,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("annotationAllUseSiteTargetOff.kt")
+      public void testAnnotationAllUseSiteTargetOff() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationAllUseSiteTargetOff.kt");
+      }
+
+      @Test
       @TestMetadata("annotationTargetResolvedAmbiguously.kt")
       public void testAnnotationTargetResolvedAmbiguously() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationTargetResolvedAmbiguously.kt");

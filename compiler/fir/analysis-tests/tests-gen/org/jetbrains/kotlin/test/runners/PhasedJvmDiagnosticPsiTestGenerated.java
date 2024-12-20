@@ -44817,6 +44817,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
     @TestDataPath("$PROJECT_ROOT")
     public class Annotations {
       @Test
+      @TestMetadata("annotationAllUseSiteTargetOff.kt")
+      public void testAnnotationAllUseSiteTargetOff() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationAllUseSiteTargetOff.kt");
+      }
+
+      @Test
       @TestMetadata("annotationTargetResolvedAmbiguously.kt")
       public void testAnnotationTargetResolvedAmbiguously() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationTargetResolvedAmbiguously.kt");

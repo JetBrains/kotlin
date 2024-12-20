@@ -208,14 +208,17 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                 context
             )
         } else if (useSiteTarget != null) {
-            reporter.reportOn(
-                annotation.source,
-                FirErrors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET,
-                targetDescription,
-                useSiteTarget.renderName,
-                applicableTargets,
-                context
-            )
+            if (useSiteTarget != ALL) {
+                // We report specific diagnostics for ALL use-site target
+                reporter.reportOn(
+                    annotation.source,
+                    FirErrors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET,
+                    targetDescription,
+                    useSiteTarget.renderName,
+                    applicableTargets,
+                    context
+                )
+            }
         } else {
             reporter.reportOn(
                 annotation.source,
@@ -303,7 +306,20 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                     context
                 )
             }
-            ALL -> TODO() // Add reporting of UNSUPPORTED_FEATURE / WRONG_ANNOTATION_TARGET_... etc.
+            ALL -> {
+                if (context.languageVersionSettings.supportsFeature(LanguageFeature.AnnotationAllUseSiteTarget)) {
+                    if (annotated !is FirProperty) {
+                        // TODO: report appropriate diagnostic
+                    }
+                } else {
+                    reporter.reportOn(
+                        annotation.source,
+                        FirErrors.UNSUPPORTED_FEATURE,
+                        LanguageFeature.AnnotationAllUseSiteTarget to context.languageVersionSettings,
+                        context
+                    )
+                }
+            }
         }
     }
 

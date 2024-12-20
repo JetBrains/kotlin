@@ -163,6 +163,7 @@ where advanced options include:
                              -Xannotation-default-target=first-only-warn: same as first-only, and raise warnings when both '@param:' and either '@property:' or '@field:' are allowed;
                              -Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
                              default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before.
+  -Xannotation-target-all    Enable experimental language support for @all: annotation use-site target.
   -Xcheck-phase-conditions   Check pre- and postconditions of IR lowering phases.
   -Xcheck-sticky-phase-conditions
                              Run sticky condition checks on subsequent phases. Implicitly enables '-Xcheck-phase-conditions'.

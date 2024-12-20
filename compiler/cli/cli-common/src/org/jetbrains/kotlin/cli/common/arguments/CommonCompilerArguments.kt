@@ -876,6 +876,17 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
             field = value
         }
 
+    @Argument(
+        value = "-Xannotation-target-all",
+        description = "Enable experimental language support for @all: annotation use-site target."
+    )
+    @Enables(LanguageFeature.AnnotationAllUseSiteTarget)
+    var annotationTargetAll = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @OptIn(IDEAPluginsCompatibilityAPI::class)
     open fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {

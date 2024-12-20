@@ -13,6 +13,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.allowAnyScriptsInSourceRoots = from.allowAnyScriptsInSourceRoots
     to.allowKotlinPackage = from.allowKotlinPackage
     to.annotationDefaultTarget = from.annotationDefaultTarget
+    to.annotationTargetAll = from.annotationTargetAll
     to.apiVersion = from.apiVersion
     to.autoAdvanceApiVersion = from.autoAdvanceApiVersion
     to.autoAdvanceLanguageVersion = from.autoAdvanceLanguageVersion
