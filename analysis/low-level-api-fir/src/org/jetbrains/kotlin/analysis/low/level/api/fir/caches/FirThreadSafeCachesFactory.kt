@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -90,9 +90,12 @@ private class FirCaffeineCache<K : Any, V, CONTEXT>(
     private val cache: Cache<K, Any>,
     private val createValue: (K, CONTEXT) -> V,
 ) : FirCache<K, V, CONTEXT>() {
-    override fun getValue(key: K, context: CONTEXT): V {
-        @Suppress("UNCHECKED_CAST")
-        return cache.get(key) { k -> createValue(k, context) ?: NullValue }?.nullValueToNull() as V
+
+    /**
+     * [Cache.get] cannot be used here as [createValue] may access the map recursively
+     */
+    override fun getValue(key: K, context: CONTEXT): V = cache.asMap().getOrPutWithNullableValue(key) {
+        createValue(it, context)
     }
 
     override fun getValueIfComputed(key: K): V? = cache.getIfPresent(key)?.nullValueToNull()
