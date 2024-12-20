@@ -1,0 +1,106 @@
+Module: common
+FILE: expect1.kt
+    public final expect class E1 : R|kotlin/Any| {
+        public final expect class I : R|kotlin/Any| {
+        }
+
+    }
+FILE: expect2.kt
+    public final expect class E2 : R|kotlin/Any| {
+        public final expect class I : R|kotlin/Any| {
+        }
+
+    }
+FILE: expect3.kt
+    public final expect class E3 : R|kotlin/Any| {
+        public final expect class I : R|kotlin/Any| {
+        }
+
+    }
+FILE: actual1.kt
+    public final actual class E1 : R|kotlin/Any| {
+        public constructor(): R|E1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final actual typealias I = R|kotlin/Int|
+
+    }
+FILE: actual2.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final typealias I = R|kotlin/Int|
+
+    }
+    public final actual typealias E2 = R|A|
+FILE: actual3.kt
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class I : R|kotlin/Any| {
+            public constructor(): R|B.I| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final actual typealias E3 = R|B|
+Module: platform
+FILE: expect1.kt
+    public final expect class E1 : R|kotlin/Any| {
+        public final expect class I : R|kotlin/Any| {
+        }
+
+    }
+FILE: expect2.kt
+    public final expect class E2 : R|kotlin/Any| {
+        public final expect class I : R|kotlin/Any| {
+        }
+
+    }
+FILE: expect3.kt
+    public final expect class E3 : R|kotlin/Any| {
+        public final expect class I : R|kotlin/Any| {
+        }
+
+    }
+FILE: actual1.kt
+    public final actual class E1 : R|kotlin/Any| {
+        public constructor(): R|E1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final actual typealias I = R|kotlin/Int|
+
+    }
+FILE: actual2.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final typealias I = R|kotlin/Int|
+
+    }
+    public final actual typealias E2 = R|A|
+FILE: actual3.kt
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class I : R|kotlin/Any| {
+            public constructor(): R|B.I| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final actual typealias E3 = R|B|
