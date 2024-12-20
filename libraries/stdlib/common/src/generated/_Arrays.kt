@@ -11925,6 +11925,8 @@ public inline fun <K> CharArray.distinctBy(selector: (Char) -> K): List<Char> {
  * The returned set preserves the element iteration order of the original array.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
+ * 
+ * @sample samples.collections.Collections.BinaryOperations.intersectOfGeneric
  */
 public infix fun <T> Array<out T>.intersect(other: Iterable<T>): Set<T> {
     val set = this.toMutableSet()
@@ -11938,6 +11940,8 @@ public infix fun <T> Array<out T>.intersect(other: Iterable<T>): Set<T> {
  * The returned set preserves the element iteration order of the original array.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
+ * 
+ * @sample samples.collections.Collections.BinaryOperations.intersectOfByte
  */
 public infix fun ByteArray.intersect(other: Iterable<Byte>): Set<Byte> {
     val set = this.toMutableSet()
@@ -11951,6 +11955,8 @@ public infix fun ByteArray.intersect(other: Iterable<Byte>): Set<Byte> {
  * The returned set preserves the element iteration order of the original array.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
+ * 
+ * @sample samples.collections.Collections.BinaryOperations.intersectOfShort
  */
 public infix fun ShortArray.intersect(other: Iterable<Short>): Set<Short> {
     val set = this.toMutableSet()
@@ -11964,6 +11970,8 @@ public infix fun ShortArray.intersect(other: Iterable<Short>): Set<Short> {
  * The returned set preserves the element iteration order of the original array.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
+ * 
+ * @sample samples.collections.Collections.BinaryOperations.intersectOfInt
  */
 public infix fun IntArray.intersect(other: Iterable<Int>): Set<Int> {
     val set = this.toMutableSet()
@@ -11977,6 +11985,8 @@ public infix fun IntArray.intersect(other: Iterable<Int>): Set<Int> {
  * The returned set preserves the element iteration order of the original array.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
+ * 
+ * @sample samples.collections.Collections.BinaryOperations.intersectOfLong
  */
 public infix fun LongArray.intersect(other: Iterable<Long>): Set<Long> {
     val set = this.toMutableSet()
@@ -11990,6 +12000,8 @@ public infix fun LongArray.intersect(other: Iterable<Long>): Set<Long> {
  * The returned set preserves the element iteration order of the original array.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
+ * 
+ * @sample samples.collections.Collections.BinaryOperations.intersectOfFloat
  */
 public infix fun FloatArray.intersect(other: Iterable<Float>): Set<Float> {
     val set = this.toMutableSet()
@@ -12003,6 +12015,8 @@ public infix fun FloatArray.intersect(other: Iterable<Float>): Set<Float> {
  * The returned set preserves the element iteration order of the original array.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
+ * 
+ * @sample samples.collections.Collections.BinaryOperations.intersectOfDouble
  */
 public infix fun DoubleArray.intersect(other: Iterable<Double>): Set<Double> {
     val set = this.toMutableSet()
@@ -12016,6 +12030,8 @@ public infix fun DoubleArray.intersect(other: Iterable<Double>): Set<Double> {
  * The returned set preserves the element iteration order of the original array.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
+ * 
+ * @sample samples.collections.Collections.BinaryOperations.intersectOfBoolean
  */
 public infix fun BooleanArray.intersect(other: Iterable<Boolean>): Set<Boolean> {
     val set = this.toMutableSet()
@@ -12029,6 +12045,8 @@ public infix fun BooleanArray.intersect(other: Iterable<Boolean>): Set<Boolean> 
  * The returned set preserves the element iteration order of the original array.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
+ * 
+ * @sample samples.collections.Collections.BinaryOperations.intersectOfChar
  */
 public infix fun CharArray.intersect(other: Iterable<Char>): Set<Char> {
     val set = this.toMutableSet()
