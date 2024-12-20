@@ -4,7 +4,6 @@
 // WITH_KOTLIN_JVM_ANNOTATIONS
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: common.kt
 
 open class CommonBase {

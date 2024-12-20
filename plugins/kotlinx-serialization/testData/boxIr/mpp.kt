@@ -4,7 +4,6 @@
 // WITH_STDLIB
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: common.kt
 
 import kotlinx.serialization.*
@@ -16,7 +15,6 @@ class Bar<T>(val t: T)
 class Wrapper(val b: Bar<String>)
 
 // MODULE: jvm()()(common)
-// TARGET_PLATFORM: JVM
 // FILE: main.kt
 
 import kotlinx.serialization.*

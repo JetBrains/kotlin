@@ -4,7 +4,6 @@
 // OPT_IN: kotlin.ExperimentalMultiplatform
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: common.kt
 
 expect class C()
@@ -29,7 +28,6 @@ actual annotation class WithActual(actual val x: Int)
 actual fun k() = "K"
 
 // MODULE: common2
-// TARGET_PLATFORM: Common
 // FILE: common2.kt
 
 @WithoutActual("OK")

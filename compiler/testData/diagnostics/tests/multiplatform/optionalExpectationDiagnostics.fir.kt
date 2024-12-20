@@ -5,7 +5,6 @@
 // MUTE_LL_FIR: LL tests don't run IR actualizer to report NO_ACTUAL_FOR_EXPECT
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: common.kt
 
 @OptionalExpectation

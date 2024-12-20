@@ -3,7 +3,6 @@
 // WITH_STDLIB
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: annotation.kt
 
 package kotlin.internal

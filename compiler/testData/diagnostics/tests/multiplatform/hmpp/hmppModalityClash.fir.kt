@@ -1,7 +1,6 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: FIR2IR
 // MODULE: common
-// TARGET_PLATFORM: Common
 <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> abstract class Foo() {
     abstract fun <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>foo<!>()
 }
@@ -13,7 +12,6 @@ fun common() {
 }
 
 // MODULE: intermediate()()(common)
-// TARGET_PLATFORM: Common
 interface I {
     fun foo()
 }

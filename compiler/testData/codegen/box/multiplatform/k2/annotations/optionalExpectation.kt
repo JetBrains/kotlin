@@ -4,7 +4,6 @@
 // ISSUE: KT-69024
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: expected.kt
 
 package a
@@ -26,7 +25,6 @@ package a
 actual annotation class A(actual val x: Int)
 
 // MODULE: common2
-// TARGET_PLATFORM: Common
 // FILE: common2.kt
 
 package usage

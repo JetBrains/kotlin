@@ -3,7 +3,6 @@
 // TARGET_BACKEND: JVM
 // LANGUAGE: +MultiPlatformProjects
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: common.kt
 
 expect interface S1
@@ -14,7 +13,6 @@ open <!CANNOT_INFER_VISIBILITY, MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>class A<
 <!CANNOT_INFER_VISIBILITY!>class B<!> : A()
 
 // MODULE: jvm()()(common)
-// TARGET_PLATFORM: JVM
 // FILE: main.kt
 
 actual interface S1 {

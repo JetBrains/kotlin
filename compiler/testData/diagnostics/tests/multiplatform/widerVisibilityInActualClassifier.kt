@@ -3,7 +3,6 @@
 // ISSUE: KT-59355
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 internal expect open class Some {
     protected class ProtectedNested
     internal class InternalNested

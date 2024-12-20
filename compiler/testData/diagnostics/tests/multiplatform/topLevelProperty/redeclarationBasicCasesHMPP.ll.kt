@@ -3,7 +3,6 @@
 // LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 expect val x1: Int
 
 expect val x2: Int
@@ -11,7 +10,6 @@ expect val x2: Int
 expect val x3: Int
 
 // MODULE: intermediate()()(common)
-// TARGET_PLATFORM: Common
 expect val x1: Int
 
 val <!ACTUAL_MISSING!>x2<!> = 2

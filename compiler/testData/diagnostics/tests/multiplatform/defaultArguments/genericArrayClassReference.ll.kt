@@ -1,7 +1,6 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: FRONTEND
 // MODULE: m1-common
-// TARGET_PLATFORM: Common
 // FILE: common.kt
 
 import kotlin.reflect.KClass
@@ -19,7 +18,6 @@ annotation class A(val value: String)
 fun test() {}
 
 // MODULE: m2-js()()(m1-common)
-// TARGET_PLATFORM: JS
 // FILE: js.kt
 import kotlin.reflect.KClass
 
@@ -28,7 +26,6 @@ actual annotation class Anno(
 )
 
 // MODULE: m2-jvm()()(m1-common)
-// TARGET_PLATFORM: JVM
 // FILE: jvm.kt
 
 actual typealias Anno = Jnno

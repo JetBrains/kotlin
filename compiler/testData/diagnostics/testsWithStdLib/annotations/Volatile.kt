@@ -4,7 +4,6 @@
 
 // MODULE: common
 // FILE: common.kt
-// TARGET_PLATFORM: Common
 import kotlin.<!UNRESOLVED_REFERENCE!>concurrent<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>Volatile<!>
 import kotlin.<!UNRESOLVED_REFERENCE!>properties<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>Delegates<!>
 
@@ -25,7 +24,6 @@ class ConcurrentVolatile(@<!UNRESOLVED_REFERENCE!>Volatile<!> val s: Int) {
 
 // MODULE: jvm
 // FILE: jvm.kt
-// TARGET_PLATFORM: JVM
 import kotlin.jvm.Volatile as JvmVolatile
 import kotlin.concurrent.Volatile
 import kotlin.properties.Delegates
