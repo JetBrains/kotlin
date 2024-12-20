@@ -156,6 +156,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
             args.multiDollarInterpolation = originalArguments.multiDollarInterpolation
             args.skipPrereleaseCheck = originalArguments.skipPrereleaseCheck
             args.whenGuards = originalArguments.whenGuards
+            args.nestedTypeAliases = originalArguments.nestedTypeAliases
 
         } else {
             args.jvmTarget = JVM_TARGET

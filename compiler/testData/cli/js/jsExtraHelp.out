@@ -110,6 +110,7 @@ where advanced options include:
   -Xmetadata-version         Change the metadata version of the generated binary files.
   -Xmulti-dollar-interpolation Enable experimental multi-dollar interpolation.
   -Xmulti-platform           Enable language support for multiplatform projects.
+  -Xnested-type-aliases      Enable experimental language support for nested type aliases.
   -Xnew-inference            Enable the new experimental generic type inference algorithm.
   -Xno-check-actual          Do not check for the presence of the 'actual' modifier in multiplatform projects.
   -Xklib-no-double-inlining  Turn off double-inlining mode.
