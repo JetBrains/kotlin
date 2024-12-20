@@ -28,6 +28,8 @@ class K1AndK2JvmIrBackendFacade(testServices: TestServices) :
     }
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return testServices.defaultsProvider.backendKind == BackendKinds.IrBackendForK1AndK2 && module.binaryKind == ArtifactKinds.JvmFromK1AndK2
+        return with(testServices.defaultsProvider) {
+            backendKind == BackendKinds.IrBackendForK1AndK2 && artifactKind == ArtifactKinds.JvmFromK1AndK2
+        }
     }
 }

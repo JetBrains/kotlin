@@ -18,7 +18,7 @@ class DefaultsProvider(
     val backendKind: BackendKind<*>,
     private val defaultLanguageSettingsBuilder: LanguageVersionSettingsBuilder,
     val defaultPlatform: TargetPlatform,
-    val defaultArtifactKind: BinaryKind<*>?,
+    val artifactKind: BinaryKind<*>,
     val targetBackend: TargetBackend?,
     val defaultDependencyKind: DependencyKind
 ) : TestService {

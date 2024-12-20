@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.test.services.impl.TestModuleStructureImpl.Companion.toArtifactKind
 import org.jetbrains.kotlin.test.util.joinToArrayString
 import org.jetbrains.kotlin.utils.DFS
 import java.io.File
@@ -341,7 +340,6 @@ class ModuleStructureExtractorImpl(
             val testModule = TestModule(
                 name = moduleName,
                 targetPlatform = targetPlatform,
-                binaryKind = defaultsProvider.defaultArtifactKind ?: targetPlatform.toArtifactKind(frontendKind),
                 files = filesOfCurrentModule,
                 allDependencies = dependenciesOfCurrentModule,
                 directives = moduleDirectives,
