@@ -29504,6 +29504,12 @@ public class TieredFrontendJvmLightTreeTestGenerated extends AbstractTieredFront
     @TestDataPath("$PROJECT_ROOT")
     public class NestedTypeAliases {
       @Test
+      @TestMetadata("kmp.kt")
+      public void testKmp() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/kmp.kt");
+      }
+
+      @Test
       @TestMetadata("nestedTypeAliasVisibility.kt")
       public void testNestedTypeAliasVisibility() {
         runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/nestedTypeAliasVisibility.kt");
