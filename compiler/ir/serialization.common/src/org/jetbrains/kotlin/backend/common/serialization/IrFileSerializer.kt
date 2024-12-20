@@ -214,7 +214,7 @@ open class IrFileSerializer(
         serializeString(origin.debugName)
 
     private fun serializeCoordinates(start: Int, end: Int): Long =
-        if (settings.bodiesOnlyForInlines && !isInsideInline) 0 else BinaryCoordinates.encode(start, end)
+        if (settings.publicAbiOnly && !isInsideInline) 0 else BinaryCoordinates.encode(start, end)
 
     /* ------- Strings ---------------------------------------------------------- */
 
@@ -1086,10 +1086,7 @@ open class IrFileSerializer(
     private fun serializeIrDeclarationBase(declaration: IrDeclaration, flags: Long?): ProtoDeclarationBase {
         return with(ProtoDeclarationBase.newBuilder()) {
             symbol = serializeIrSymbol((declaration as IrSymbolOwner).symbol, isDeclared = true)
-            coordinates = if (settings.publicAbiOnly && !isInsideInline)
-                0L
-            else
-                serializeCoordinates(declaration.startOffset, declaration.endOffset)
+            coordinates = serializeCoordinates(declaration.startOffset, declaration.endOffset)
             addAllAnnotation(serializeAnnotations(declaration.annotations))
             flags?.let { setFlags(it) }
             originName = serializeIrDeclarationOrigin(declaration.origin)
@@ -1300,12 +1297,7 @@ open class IrFileSerializer(
 
     private fun serializeIrErrorDeclaration(errorDeclaration: IrErrorDeclaration): ProtoErrorDeclaration {
         val proto = ProtoErrorDeclaration.newBuilder()
-            .setCoordinates(
-                if (settings.publicAbiOnly)
-                    0L
-                else
-                    serializeCoordinates(errorDeclaration.startOffset, errorDeclaration.endOffset)
-            )
+            .setCoordinates(serializeCoordinates(errorDeclaration.startOffset, errorDeclaration.endOffset))
         return proto.build()
     }
 
