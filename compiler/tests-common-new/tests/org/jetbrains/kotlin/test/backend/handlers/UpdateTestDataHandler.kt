@@ -31,7 +31,7 @@ import java.io.File
 class UpdateTestDataHandler(
     testServices: TestServices
 ) : AfterAnalysisChecker(testServices) {
-    private val enabled = false
+    private val enabled = true
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         if (enabled || System.getProperty("kotlin.test.update.test.data") == "true") {
