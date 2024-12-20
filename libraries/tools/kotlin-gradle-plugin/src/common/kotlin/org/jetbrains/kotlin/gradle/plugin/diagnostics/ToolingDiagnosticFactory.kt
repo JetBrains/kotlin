@@ -18,7 +18,7 @@ abstract class ToolingDiagnosticFactory(
         severity: ToolingDiagnostic.Severity? = null,
         throwable: Throwable? = null,
         builder: ToolingDiagnosticBuilder.() -> Unit,
-    ) = ToolingDiagnosticBuilderImp().apply(builder).let { diagnosticBuilder ->
+    ) = ToolingDiagnosticBuilderImpl().apply(builder).let { diagnosticBuilder ->
         val finalSeverity = severity ?: predefinedSeverity ?: error(
             "Can't determine severity. Either provide it in constructor of ToolingDiagnosticFactory," +
                     " or in the 'build'-function invocation"
@@ -42,6 +42,7 @@ abstract class ToolingDiagnosticFactory(
     }
 }
 
+@InternalKotlinGradlePluginApi
 interface ToolingDiagnosticBuilder {
     fun name(string: () -> String)
     fun message(string: () -> String)
@@ -50,7 +51,7 @@ interface ToolingDiagnosticBuilder {
     fun documentation(url: String, urlBuilder: (String) -> String = { "See $url for more details." })
 }
 
-internal class ToolingDiagnosticBuilderImp : ToolingDiagnosticBuilder {
+private class ToolingDiagnosticBuilderImpl : ToolingDiagnosticBuilder {
 
     val name: String get() = _name ?: error("Name is not provided")
     val message: String get() = _message ?: error("Message is not provided")

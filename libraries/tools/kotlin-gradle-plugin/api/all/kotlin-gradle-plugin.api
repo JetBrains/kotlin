@@ -1528,18 +1528,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnos
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic$Severity;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticBuilder {
-	public abstract fun documentation (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
-	public abstract fun message (Lkotlin/jvm/functions/Function0;)V
-	public abstract fun name (Lkotlin/jvm/functions/Function0;)V
-	public abstract fun solution (Lkotlin/jvm/functions/Function0;)V
-	public abstract fun solutions (Lkotlin/jvm/functions/Function0;)V
-}
-
-public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticBuilder$DefaultImpls {
-	public static synthetic fun documentation$default (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnosticBuilder;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
-}
-
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeCompilerArgumentsResolver {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeCompilerArgumentsResolver$Companion;
 	public static fun instance (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeCompilerArgumentsResolver;
