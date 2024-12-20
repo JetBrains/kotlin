@@ -18,7 +18,7 @@ internal fun ExpectActualMatchingContext<*>.getPossibleActualsByExpectName(
 ): List<DeclarationSymbolMarker> {
     val actualMembers = actualMembersByName[nameOf(expectMember)]?.filter { actualMember ->
         expectMember is CallableSymbolMarker && actualMember is CallableSymbolMarker ||
-                expectMember is RegularClassSymbolMarker && actualMember is RegularClassSymbolMarker
+                expectMember is RegularClassSymbolMarker && actualMember is ClassLikeSymbolMarker
     }.orEmpty()
     return actualMembers
 }

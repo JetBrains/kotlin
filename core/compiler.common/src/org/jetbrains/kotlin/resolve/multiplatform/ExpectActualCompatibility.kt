@@ -91,6 +91,7 @@ sealed class ExpectActualCheckingCompatibility<out D> : ExpectActualCompatibilit
     object ClassModifiers : Incompatible<Nothing>("modifiers are different (companion, inner, inline, value)")
     object FunInterfaceModifier : Incompatible<Nothing>("actual declaration for fun expect interface is not a functional interface")
     object Supertypes : Incompatible<Nothing>("some supertypes are missing in the actual declaration")
+    object NestedTypeAlias : Incompatible<Nothing>("actualization by nested type alias is prohibited")
     class ClassScopes<D>(
         val mismatchedMembers: List<Pair</* expect */ D, Map<Mismatch, /* actuals */ Collection<D>>>>,
         val incompatibleMembers: List<Pair</* expect */ D, Map<Incompatible<D>, /* actuals */ Collection<D>>>>,
