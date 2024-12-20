@@ -24,6 +24,7 @@
 # OWNER_LIST: Simon.Ogorodnik Stanislav.Erokhin
 # OWNER_LIST: Alexander.Shabalin Aleksei.Glushko Sergey.Bogolepov Svyatoslav.Scherbina
 # OWNER_LIST: Brian.Norman
+# OWNER_LIST: Ilya.Chernikov Alejandro.Serrano.Mena
 # OWNER_LIST: Sergej.Jaskiewicz
 # OWNER_LIST: Wojciech.Litewka
 # Kotlin Libraries
@@ -72,14 +73,14 @@
 /compiler/container/ "Kotlin Frontend"
 /compiler/daemon/ "Kotlin Build Tools"
 /compiler/fir/ "Kotlin Frontend"
-/compiler/fir/checkers/src/org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrorsDefaultMessages.kt Brian.Norman Kirill.Rakhman
-/compiler/fir/checkers/checkers.jvm/src/org/jetbrains/kotlin/fir/analysis/diagnostics/jvm/FirJvmErrorsDefaultMessages.kt Brian.Norman Kirill.Rakhman
-/compiler/fir/checkers/checkers.native/src/org/jetbrains/kotlin/fir/analysis/diagnostics/native/FirNativeErrorsDefaultMessages.kt Brian.Norman Kirill.Rakhman
-/compiler/fir/checkers/checkers.wasm/src/org/jetbrains/kotlin/fir/analysis/diagnostics/wasm/FirWasmErrorsDefaultMessages.kt Brian.Norman Kirill.Rakhman
-/compiler/fir/raw-fir/raw-fir.common/src/org/jetbrains/kotlin/fir/builder/FirSyntaxErrorsDefaultMessages.kt Brian.Norman Kirill.Rakhman
+/compiler/fir/checkers/src/org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrorsDefaultMessages.kt Alejandro.Serrano.Mena Brian.Norman Ilya.Chernikov Kirill.Rakhman
+/compiler/fir/checkers/checkers.jvm/src/org/jetbrains/kotlin/fir/analysis/diagnostics/jvm/FirJvmErrorsDefaultMessages.kt Alejandro.Serrano.Mena Brian.Norman Ilya.Chernikov Kirill.Rakhman
+/compiler/fir/checkers/checkers.native/src/org/jetbrains/kotlin/fir/analysis/diagnostics/native/FirNativeErrorsDefaultMessages.kt Alejandro.Serrano.Mena Brian.Norman Ilya.Chernikov Kirill.Rakhman
+/compiler/fir/checkers/checkers.wasm/src/org/jetbrains/kotlin/fir/analysis/diagnostics/wasm/FirWasmErrorsDefaultMessages.kt Alejandro.Serrano.Mena Brian.Norman Ilya.Chernikov Kirill.Rakhman
+/compiler/fir/raw-fir/raw-fir.common/src/org/jetbrains/kotlin/fir/builder/FirSyntaxErrorsDefaultMessages.kt Alejandro.Serrano.Mena Brian.Norman Ilya.Chernikov Kirill.Rakhman
 /compiler/fir/fir2ir/tests-gen/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
 /compiler/frontend/ "Kotlin Frontend"
-/compiler/frontend/src/org/jetbrains/kotlin/diagnostics/rendering/KtDefaultErrorMessages.kt Brian.Norman Kirill.Rakhman
+/compiler/frontend/src/org/jetbrains/kotlin/diagnostics/rendering/KtDefaultErrorMessages.kt Alejandro.Serrano.Mena Brian.Norman Ilya.Chernikov Kirill.Rakhman
 /compiler/frontend.common/ "Kotlin Frontend"
 /compiler/frontend.common.jvm/ "Kotlin Frontend"
 /compiler/frontend.common-psi/ "Kotlin Frontend"
@@ -409,7 +410,7 @@
 /plugins/kapt3/ "Kotlin JVM"
 /plugins/kapt4/ "Kotlin JVM"
 /plugins/kotlinx-serialization/ Sergey.Shanshin Leonid.Startsev
-/plugins/kotlinx-serialization/kotlinx-serialization.k2/src/org/jetbrains/kotlinx/serialization/compiler/fir/checkers/KtDefaultErrorMessagesSerialization.kt Brian.Norman Kirill.Rakhman
+/plugins/kotlinx-serialization/kotlinx-serialization.k2/src/org/jetbrains/kotlinx/serialization/compiler/fir/checkers/KtDefaultErrorMessagesSerialization.kt Alejandro.Serrano.Mena Brian.Norman Ilya.Chernikov Kirill.Rakhman
 /plugins/js-plain-objects/ Artem.Kobzar "Kotlin Common Backend"
 /libraries/tools/js-plain-objects Artem.Kobzar "Kotlin Common Backend"
 /plugins/lombok/ "Kotlin Frontend"
