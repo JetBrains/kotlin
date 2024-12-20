@@ -28,7 +28,7 @@ class DwarfGenerator : DebugInformationGenerator {
     }
 
     override fun startFunction(location: SourceLocationMapping, name: String) {
-        val sourceLocation = location.sourceLocation as? SourceLocation.Location ?: return
+        val sourceLocation = location.sourceLocation as? SourceLocation.DefinedLocation ?: return
         val function = Subprogram(dwarf.strings.add(name), sourceLocation.fileId, location)
 
         sourceLocationMappings.add(SourceLocationMappingWithPositionInFunction(location, PositionInFunction.START))
@@ -38,21 +38,21 @@ class DwarfGenerator : DebugInformationGenerator {
     }
 
     override fun endFunction(location: SourceLocationMapping) {
-        if (location.sourceLocation !is SourceLocation.Location) return
+        if (location.sourceLocation !is SourceLocation.DefinedLocation) return
         val function = subprogramStack.pop()
         sourceLocationMappings.add(SourceLocationMappingWithPositionInFunction(location, PositionInFunction.END))
         function.endGeneratedLocation = location
     }
 
     override fun generateDebugInformation(): DebugInformation {
-        var prev: SourceLocation.Location? = null
+        var prev: SourceLocation.DefinedLocation? = null
 
         for ((index, sourceLocationMapping) in sourceLocationMappings.withIndex()) {
             val (mapping, position) = sourceLocationMapping
-            val sourceLocation = mapping.sourceLocation.takeIf { it != prev || position == PositionInFunction.END } as? SourceLocation.Location ?: continue
+            val sourceLocation = mapping.sourceLocation.takeIf { it != prev || position == PositionInFunction.END } as? SourceLocation.DefinedLocation ?: continue
             val previousSourceLocationMapping = sourceLocationMappings.getOrNull(index - 1)?.sourceLocationMapping
 
-            if (previousSourceLocationMapping != null && previousSourceLocationMapping.sourceLocation !is SourceLocation.Location) {
+            if (previousSourceLocationMapping != null && previousSourceLocationMapping.sourceLocation !is SourceLocation.DefinedLocation) {
                 dwarf.lines.addEmptyMapping(previousSourceLocationMapping.generatedLocationRelativeToCodeSection.column)
             }
 
@@ -79,7 +79,7 @@ class DwarfGenerator : DebugInformationGenerator {
         }
     }
 
-    private val SourceLocation.Location.fileId: FileId
+    private val SourceLocation.DefinedLocation.fileId: FileId
         get() {
             val (fileName, directoryPath) = directoryAndFileName()
             return dwarf.lines.addFile(
@@ -88,7 +88,7 @@ class DwarfGenerator : DebugInformationGenerator {
             )
         }
 
-    private fun SourceLocation.Location.directoryAndFileName(): Pair<String, String> =
+    private fun SourceLocation.DefinedLocation.directoryAndFileName(): Pair<String, String> =
         when (file.indexOf('/')) {
             -1 -> "." to file
             0 -> "." to file.substringAfterLast('/')

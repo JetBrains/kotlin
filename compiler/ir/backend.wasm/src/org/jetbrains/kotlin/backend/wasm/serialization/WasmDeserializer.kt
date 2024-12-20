@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.wasm.ir.convertors.MyByteReader
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 import java.io.ByteArrayInputStream
 import java.io.InputStream
-import kotlin.collections.ArrayList
 import kotlin.collections.LinkedHashMap
 import kotlin.collections.LinkedHashSet
 
@@ -63,10 +62,10 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
             withTag { tag ->
                 when (tag) {
                     FunctionTags.DEFINED -> {
-                        val startLocation = deserializeSourceLocation()
-                        val endLocation = deserializeSourceLocation()
                         val locals = deserializeList(::deserializeLocal)
                         val instructions = deserializeList(::deserializeInstr)
+                        val startLocation = deserializeSourceLocation()
+                        val endLocation = deserializeSourceLocation()
                         WasmFunction.Defined(
                             name,
                             type,
@@ -80,7 +79,6 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                         name,
                         type,
                         deserializeImportDescriptor(),
-                        deserializeSourceLocation()
                     )
                     else -> tagError(tag)
                 }
@@ -398,14 +396,15 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         withTag { tag ->
             when (tag) {
                 LocationTags.NO_LOCATION -> SourceLocation.NoLocation
+                LocationTags.IGNORED_LOCATION -> SourceLocation.IgnoredLocation
+                LocationTags.NEXT_LOCATION -> SourceLocation.NextLocation
                 else -> {
                     val module = deserializeString()
                     val file = deserializeString()
                     val line = deserializeInt()
                     val column = deserializeInt()
                     when (tag) {
-                        LocationTags.LOCATION -> SourceLocation.Location(module, file, line, column)
-                        LocationTags.IGNORED_LOCATION -> SourceLocation.IgnoredLocation(module, file, line, column)
+                        LocationTags.LOCATION -> SourceLocation.DefinedLocation(module, file, line, column)
                         else -> tagError(tag)
                     }
                 }

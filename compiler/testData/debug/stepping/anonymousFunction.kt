@@ -32,4 +32,5 @@ fun box() {
 // test.kt:4 $eval (27)
 // test.kt:8 $box$lambda.invoke (8, 12)
 // test.kt:4 $eval (30)
+// test.kt:7 $box (4)
 // test.kt:10 $box (1)

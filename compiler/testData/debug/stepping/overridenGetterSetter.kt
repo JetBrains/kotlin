@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: WASM
+
 // FILE: test.kt
 
 interface MyInterfaceWithoutBreakpoints {
@@ -91,15 +91,13 @@ fun box() {
 // test.kt:28 $MyInterfaceImplWithBreakpoints.<init> (1)
 // test.kt:32 $box (4, 11)
 // test.kt:9 $MyInterfaceWithoutBreakpoints.testPropertyInInterface (8)
-// test.kt:18 $MyInterfaceImplWithBreakpoints.<get-propVal2> (13)
 // test.kt:10 $MyInterfaceWithoutBreakpoints.testPropertyInInterface (8)
-// test.kt:21 $MyInterfaceImplWithBreakpoints.<get-propVar2> (13)
 // test.kt:11 $MyInterfaceWithoutBreakpoints.testPropertyInInterface (8, 19, 8)
-// test.kt:21 $MyInterfaceImplWithBreakpoints.<set-propVar2> (13, 29)
 // test.kt:12 $MyInterfaceWithoutBreakpoints.testPropertyInInterface (5)
 // test.kt:33 $box (4, 11)
 // test.kt:24 $MyInterfaceImplWithBreakpoints.testPropertyInInterfaceImpl (8)
 // test.kt:25 $MyInterfaceImplWithBreakpoints.testPropertyInInterfaceImpl (8)
 // test.kt:26 $MyInterfaceImplWithBreakpoints.testPropertyInInterfaceImpl (8, 19, 8)
 // test.kt:27 $MyInterfaceImplWithBreakpoints.testPropertyInInterfaceImpl (5)
+// test.kt:33 $box (11)
 // test.kt:34 $box (1)

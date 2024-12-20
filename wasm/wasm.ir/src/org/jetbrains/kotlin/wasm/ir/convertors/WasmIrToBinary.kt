@@ -479,10 +479,10 @@ class WasmIrToBinary(
         b.writeVarUInt32(t.type.id!!)
     }
 
-    private fun appendExpr(expr: Iterable<WasmInstr>) {
+    private fun appendExpr(expr: Iterable<WasmInstr>, endLocation: SourceLocation = SourceLocation.NoLocation("End of instruction list")) {
         val expressionWithEndOp = sequence {
             yieldAll(expr)
-            yield(WasmInstrWithLocation(WasmOp.END, SourceLocation.NoLocation("End of instruction list")))
+            yield(WasmInstrWithLocation(WasmOp.END, endLocation))
         }
 
         if (optimizeInstructionFlow) {
@@ -567,7 +567,21 @@ class WasmIrToBinary(
     }
 
     private fun appendCode(function: WasmFunction.Defined) {
+        val shouldWriteLocationBeforeFunctionHeader = function.endLocation is SourceLocation.IgnoredLocation
+
+        if (shouldWriteLocationBeforeFunctionHeader) {
+            debugInformationGenerator?.addSourceLocation(
+                SourceLocationMappingToBinary(SourceLocation.IgnoredLocation, offsets + Box(b.written), ::codeSectionOffset)
+            )
+        }
+
         withVarUInt32PayloadSizePrepended {
+            if (!shouldWriteLocationBeforeFunctionHeader) {
+                debugInformationGenerator?.addSourceLocation(
+                    SourceLocationMappingToBinary(SourceLocation.NextLocation, offsets + Box(b.written), ::codeSectionOffset)
+                )
+            }
+
             b.writeVarUInt32(function.locals.count { !it.isParameter })
             function.locals.forEach { local ->
                 if (!local.isParameter) {
@@ -577,7 +591,7 @@ class WasmIrToBinary(
             }
 
             debugInformationGenerator?.startFunction(getCurrentSourceLocationMapping(function.startLocation), function.name)
-            appendExpr(function.instructions)
+            appendExpr(function.instructions, function.endLocation)
             debugInformationGenerator?.endFunction(getCurrentSourceLocationMapping(function.endLocation))
         }
     }
@@ -647,8 +661,8 @@ class WasmIrToBinary(
         private val offsets: List<Box>,
         private val codeSectionOffsetProvider: () -> Int
     ) : SourceLocationMapping() {
-        override val generatedLocation: SourceLocation.Location by lazy {
-            SourceLocation.Location(
+        override val generatedLocation by lazy {
+            SourceLocation.DefinedLocation(
                 module = "",
                 file = "",
                 line = 0,
@@ -659,7 +673,7 @@ class WasmIrToBinary(
             )
         }
 
-        override val generatedLocationRelativeToCodeSection: SourceLocation.Location by lazy {
+        override val generatedLocationRelativeToCodeSection by lazy {
             generatedLocation.copy(column = generatedLocation.column - codeSectionOffsetProvider())
         }
     }

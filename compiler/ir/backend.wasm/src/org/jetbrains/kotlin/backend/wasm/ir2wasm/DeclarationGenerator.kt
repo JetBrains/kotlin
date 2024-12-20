@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.originalFqName
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -97,8 +98,6 @@ class DeclarationGenerator(
 
         val wasmImportModule = declaration.getWasmImportDescriptor()
         val jsCode = declaration.getJsFunAnnotation()
-        val functionStartLocation = declaration.getSourceLocation(declaration.symbol, declaration.fileOrNull)
-        val functionEndLocation = declaration.getSourceLocation(declaration.symbol, declaration.fileOrNull, LocationType.END)
 
         val importedName = when {
             wasmImportModule != null -> {
@@ -122,11 +121,15 @@ class DeclarationGenerator(
             // Imported functions don't have bodies. Declaring the signature:
             wasmFileCodegenContext.defineFunction(
                 declaration.symbol,
-                WasmFunction.Imported(watName, functionTypeSymbol, importedName, functionStartLocation)
+                WasmFunction.Imported(watName, functionTypeSymbol, importedName)
             )
             // TODO: Support re-export of imported functions.
             return
         }
+
+        val locationTarget = declaration.locationTarget
+        val functionStartLocation = locationTarget.getSourceLocation(declaration.symbol, declaration.fileOrNull)
+        val functionEndLocation = locationTarget.getSourceLocation(declaration.symbol, declaration.fileOrNull, LocationType.END)
 
         val function = WasmFunction.Defined(
             watName,
@@ -552,5 +555,16 @@ fun generateConstExpression(
             body.buildConstI32(stringValue.length, location)
             body.buildCall(context.referenceFunction(backendContext.wasmSymbols.stringGetLiteral), location)
             body.commentGroupEnd()
+        }
+    }
+
+val IrFunction.locationTarget: IrElement
+    get() = when (origin) {
+        IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER -> this
+        IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA -> this
+        else -> when (parentClassOrNull?.origin) {
+            CallableReferenceLowering.LAMBDA_IMPL,
+            IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA -> this
+            else -> body ?: this
         }
     }

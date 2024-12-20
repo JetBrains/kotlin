@@ -25,4 +25,5 @@ fun foo(i: Int) {
 // test.kt:6 $box (12)
 // test.kt:5 $box (4)
 // test.kt:11 $foo (1)
+// test.kt:5 $box (4)
 // test.kt:8 $box (1)

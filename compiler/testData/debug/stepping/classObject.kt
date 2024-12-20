@@ -55,4 +55,5 @@ fun box() {
 // test.kt:16 $box (6)
 // test.kt:17 $box (6)
 // test.kt:9 $Companion.foo (19, 27, 19, 12)
+// test.kt:17 $box (6)
 // test.kt:18 $box (1)
