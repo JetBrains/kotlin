@@ -133,12 +133,6 @@ public class ClassicNativeLibraryAbiReaderTestGenerated extends AbstractClassicN
   }
 
   @Test
-  @TestMetadata("value_parameters_with_context_parameters.kt")
-  public void testValue_parameters_with_context_parameters() {
-    runTest("compiler/testData/klib/dump-abi/content/value_parameters_with_context_parameters.kt");
-  }
-
-  @Test
   @TestMetadata("visibilities.kt")
   public void testVisibilities() {
     runTest("compiler/testData/klib/dump-abi/content/visibilities.kt");
