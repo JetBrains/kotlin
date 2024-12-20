@@ -1648,6 +1648,16 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/modulesWithDependencyCycle.args");
     }
 
+    @TestMetadata("nestedTypeAliasesEnabled.args")
+    public void testNestedTypeAliasesEnabled() {
+      runTest("compiler/testData/cli/jvm/nestedTypeAliasesEnabled.args");
+    }
+
+    @TestMetadata("nestedTypeAliasesError.args")
+    public void testNestedTypeAliasesError() {
+      runTest("compiler/testData/cli/jvm/nestedTypeAliasesError.args");
+    }
+
     @TestMetadata("noJdkAvoidFailure.args")
     public void testNoJdkAvoidFailure() {
       runTest("compiler/testData/cli/jvm/noJdkAvoidFailure.args");
