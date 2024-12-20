@@ -88,7 +88,7 @@ open class AbstractNativeUnboundIrSerializationTest : AbstractKotlinCompilerWith
         globalDefaults {
             frontend = FrontendKinds.FIR
             targetPlatform = NativePlatforms.unspecifiedNativePlatform
-            artifactKind = BinaryKind.NoArtifact
+            artifactKind = ArtifactKind.NoArtifact
             dependencyKind = DependencyKind.KLib
         }
 

@@ -181,9 +181,9 @@ data class CliArtifact(
     val kotlinDiagnostics: List<CliDiagnostic>,
     val kotlinOutput: String,
 ) : ResultingArtifact.Binary<CliArtifact>() {
-    object Kind : BinaryKind<CliArtifact>("CliArtifact")
+    object Kind : ArtifactKind<CliArtifact>("CliArtifact")
 
-    override val kind: BinaryKind<CliArtifact> get() = Kind
+    override val kind: ArtifactKind<CliArtifact> get() = Kind
 }
 
 abstract class CliArtifactHandler(

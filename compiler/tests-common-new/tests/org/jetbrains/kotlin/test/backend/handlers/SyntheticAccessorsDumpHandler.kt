@@ -20,7 +20,7 @@ import java.io.File
 
 abstract class SyntheticAccessorsDumpHandler<A : ResultingArtifact.Binary<A>>(
     testServices: TestServices,
-    artifactKind: BinaryKind<A>,
+    artifactKind: ArtifactKind<A>,
 ) : BinaryArtifactHandler<A>(
     testServices,
     artifactKind,

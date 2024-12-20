@@ -133,7 +133,7 @@ fun <FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> TestConf
     includeAllDumpHandlers: Boolean,
 ) {
     globalDefaults {
-        artifactKind = BinaryKind.NoArtifact
+        artifactKind = ArtifactKind.NoArtifact
         this.targetBackend = targetBackend
         dependencyKind = when (targetBackend) {
             TargetBackend.JS_IR, TargetBackend.WASM -> DependencyKind.KLib // these irText pipelines register Klib artifacts during *KlibSerializerFacade

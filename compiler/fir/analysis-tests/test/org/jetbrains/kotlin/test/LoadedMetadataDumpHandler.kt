@@ -144,7 +144,7 @@ class KlibLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoaded
 
 abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>>(
     testServices: TestServices,
-    override val artifactKind: BinaryKind<A>
+    override val artifactKind: ArtifactKind<A>
 ) : BinaryArtifactHandler<A>(
     testServices,
     artifactKind,

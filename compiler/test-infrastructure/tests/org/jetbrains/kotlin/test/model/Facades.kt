@@ -70,7 +70,7 @@ abstract class IrInliningFacade<BackendInputArtifact>(
 abstract class BackendFacade<BackendInputArtifact, BinaryOutputArtifact>(
     val testServices: TestServices,
     final override val inputKind: BackendKind<BackendInputArtifact>,
-    final override val outputKind: BinaryKind<BinaryOutputArtifact>,
+    final override val outputKind: ArtifactKind<BinaryOutputArtifact>,
 ) : AbstractTestFacade<BackendInputArtifact, BinaryOutputArtifact>()
         where BackendInputArtifact : ResultingArtifact.BackendInput<BackendInputArtifact>,
               BinaryOutputArtifact : ResultingArtifact.Binary<BinaryOutputArtifact> {
@@ -83,7 +83,7 @@ abstract class BackendFacade<BackendInputArtifact, BinaryOutputArtifact>(
 
 abstract class DeserializerFacade<BinaryArtifact, BackendInputArtifact>(
     val testServices: TestServices,
-    final override val inputKind: BinaryKind<BinaryArtifact>,
+    final override val inputKind: ArtifactKind<BinaryArtifact>,
     final override val outputKind: BackendKind<BackendInputArtifact>,
 ) : AbstractTestFacade<BinaryArtifact, BackendInputArtifact>()
         where BinaryArtifact : ResultingArtifact.Binary<BinaryArtifact>,

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.BackendKinds
-import org.jetbrains.kotlin.test.model.BinaryKind
+import org.jetbrains.kotlin.test.model.ArtifactKind
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.services.DefaultsDsl
@@ -24,7 +24,7 @@ class DefaultsProviderBuilder {
     var targetBackend: TargetBackend? = null
     lateinit var targetPlatform: TargetPlatform
     var backendKind: BackendKind<*>? = null
-    var artifactKind: BinaryKind<*>? = null
+    var artifactKind: ArtifactKind<*>? = null
     lateinit var dependencyKind: DependencyKind
 
     @PrivateForInline

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.model.BackendKind
-import org.jetbrains.kotlin.test.model.BinaryKind
+import org.jetbrains.kotlin.test.model.ArtifactKind
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKind
 
@@ -18,7 +18,7 @@ class DefaultsProvider(
     val backendKind: BackendKind<*>,
     private val defaultLanguageSettingsBuilder: LanguageVersionSettingsBuilder,
     val defaultPlatform: TargetPlatform,
-    val artifactKind: BinaryKind<*>,
+    val artifactKind: ArtifactKind<*>,
     val targetBackend: TargetBackend?,
     val defaultDependencyKind: DependencyKind
 ) : TestService {
