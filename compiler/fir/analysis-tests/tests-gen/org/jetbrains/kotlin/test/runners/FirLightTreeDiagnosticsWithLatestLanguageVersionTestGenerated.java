@@ -4298,6 +4298,12 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
       }
 
       @Test
+      @TestMetadata("innerRHSandTypeArguments.kt")
+      public void testInnerRHSandTypeArguments() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/innerRHSandTypeArguments.kt");
+      }
+
+      @Test
       @TestMetadata("kmp.kt")
       public void testKmp() {
         runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/kmp.kt");
