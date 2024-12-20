@@ -231,7 +231,7 @@ private class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirR
         val classId = classSymbol.classId
         val classTypeParameters = firJavaClass.typeParameters.filterIsInstance<FirTypeParameter>()
         val classKind = firJavaClass.classKind
-        val classStatus = firJavaClass.status
+        val classStatus = firJavaClass.originalStatus
         val classResolvePhase = firJavaClass.resolvePhase
         val classSource = firJavaClass.source
 
@@ -642,6 +642,7 @@ private fun convertJavaConstructorToFir(
     val session = moduleData.session
     val constructorSymbol = FirConstructorSymbol(constructorId)
     return buildJavaConstructor {
+        val javaFirClass = classSymbol.fir as FirJavaClass
         containingClassSymbol = classSymbol
         source = javaConstructor?.toSourceElement() ?: javaClass.toSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
         this.moduleData = moduleData
@@ -649,7 +650,7 @@ private fun convertJavaConstructorToFir(
         symbol = constructorSymbol
         isInner = javaClass.outerClass != null && !javaClass.isStatic
         val isThisInner = this.isInner
-        val visibility = javaConstructor?.visibility ?: classSymbol.visibility
+        val visibility = javaConstructor?.visibility ?: javaFirClass.originalStatus.visibility
         status = FirResolvedDeclarationStatusImpl(
             visibility,
             Modality.FINAL,

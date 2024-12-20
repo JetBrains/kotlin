@@ -444,6 +444,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("functionWithNestedJavaClass.kt")
+    public void testFunctionWithNestedJavaClass() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/functionWithNestedJavaClass.kt");
+    }
+
+    @Test
     @TestMetadata("incWithArrayAccessConvention.kt")
     public void testIncWithArrayAccessConvention() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/incWithArrayAccessConvention.kt");
