@@ -25,8 +25,8 @@ expect class E3 {
 
 // FILE: actual1.kt
 
-actual class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS("actual class E1 : Any;     expect class I : Any")!>E1<!> {
-    actual typealias I = Int  // 'actual typealias' not allowed
+actual class E1 {
+    actual typealias <!ACTUAL_WITHOUT_EXPECT("actual typealias I = Int; The following declaration is incompatible because actualization by nested type alias is prohibited:    expect class I : Any")!>I<!> = Int
 }
 
 // FILE: actual2.kt
@@ -35,7 +35,7 @@ class A {
     typealias I = Int
 }
 
-actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS("actual typealias E2 = A;     expect class I : Any")!>E2<!> = A  // actualizing nested 'expect class' with typealias not allowed
+actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS("actual typealias E2 = A;     expect class I : Any    The following declaration is incompatible because actualization by nested type alias is prohibited:        typealias I = Int")!>E2<!> = A
 
 // FILE: actual3.kt
 

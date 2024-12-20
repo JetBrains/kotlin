@@ -108,8 +108,12 @@ object AbstractExpectActualChecker {
 
         val actualClass = when (actualClassLikeSymbol) {
             is RegularClassSymbolMarker -> actualClassLikeSymbol
-            is TypeAliasSymbolMarker -> actualClassLikeSymbol.expandToRegularClass()
-                ?: return ExpectActualCheckingCompatibility.Compatible // do not report extra error on erroneous typealias
+            is TypeAliasSymbolMarker -> if (actualClassLikeSymbol.classId.isNestedClass) {
+                return ExpectActualCheckingCompatibility.NestedTypeAlias
+            } else {
+                // do not report extra error on erroneous typealias
+                actualClassLikeSymbol.expandToRegularClass() ?: return ExpectActualCheckingCompatibility.Compatible
+            }
             else -> error("Incorrect actual classifier for $expectClassSymbol: $actualClassLikeSymbol")
         }
 
