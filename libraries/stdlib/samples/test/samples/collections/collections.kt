@@ -1209,4 +1209,30 @@ class Collections {
         }
 
     }
+
+    class BinaryOperations {
+        @Sample
+        fun crossJoinToPairs() {
+            val colors = listOf("green", "yellow")
+            val fruits = listOf("apple", "banana")
+            val pairs = colors crossJoin fruits
+            assertPrints(pairs.toList(), "[(green, apple), (green, banana), (yellow, apple), (yellow, banana)]")
+        }
+
+        @Sample
+        fun crossJoinWithTransformation() {
+            data class Fruit(val color: String, val type: String)
+            val colors = listOf("green", "yellow")
+            val fruits = listOf("apple", "banana")
+
+            val transformedPairs = crossJoin(colors, fruits) { color, type ->
+                Fruit(color, type)
+            }
+            assertPrints(
+                transformedPairs.toList(),
+                "[Fruit(color=green, type=apple), Fruit(color=green, type=banana), Fruit(color=yellow, type=apple), Fruit(color=yellow, type=banana)]"
+            )
+        }
+
+    }
 }
