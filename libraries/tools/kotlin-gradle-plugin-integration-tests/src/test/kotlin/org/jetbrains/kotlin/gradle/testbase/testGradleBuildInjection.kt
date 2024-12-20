@@ -146,8 +146,8 @@ class ReturnFromBuildScriptAfterExecution<T>(
     }
 }
 
-inline fun <reified T> TestProject.buildScriptReturn(
-    crossinline returnFromProject: GradleProjectBuildScriptInjectionContext.() -> T,
+fun <T> TestProject.buildScriptReturn(
+    returnFromProject: GradleProjectBuildScriptInjectionContext.() -> T,
 ): ReturnFromBuildScriptAfterExecution<T> {
     enableBuildScriptInjectionsIfNecessary(
         buildGradle,
