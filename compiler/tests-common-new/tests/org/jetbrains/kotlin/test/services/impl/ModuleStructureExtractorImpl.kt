@@ -336,7 +336,7 @@ class ModuleStructureExtractorImpl(
             val moduleName = currentModuleName
                 ?: testServices.defaultDirectives[ModuleStructureDirectives.MODULE].firstOrNull()
                 ?: DEFAULT_MODULE_NAME
-            val targetPlatform = currentModuleTargetPlatform ?: parseModulePlatformByName(moduleName) ?: defaultsProvider.defaultPlatform
+            val targetPlatform = currentModuleTargetPlatform ?: defaultsProvider.defaultPlatform
             val testModule = TestModule(
                 name = moduleName,
                 targetPlatform = targetPlatform,
@@ -358,19 +358,6 @@ class ModuleStructureExtractorImpl(
             modules += testModule
             firstFileInModule = true
             resetModuleCaches()
-        }
-
-        private fun parseModulePlatformByName(moduleName: String): TargetPlatform? {
-            val nameSuffix = moduleName.substringAfterLast("-", "").uppercase()
-            return when {
-                nameSuffix == "COMMON" -> CommonPlatforms.defaultCommonPlatform
-                nameSuffix == "JVM" -> JvmPlatforms.unspecifiedJvmPlatform // TODO(dsavvinov): determine JvmTarget precisely
-                nameSuffix == "JS" -> JsPlatforms.defaultJsPlatform
-                nameSuffix == "WASM" -> WasmPlatforms.wasmJs
-                nameSuffix == "NATIVE" -> NativePlatforms.unspecifiedNativePlatform
-                nameSuffix.isEmpty() -> null // TODO(dsavvinov): this leads to 'null'-platform in ModuleDescriptor
-                else -> throw IllegalStateException("Can't determine platform by name $nameSuffix")
-            }
         }
 
         private fun finishFile(lineNumber: Int) {
