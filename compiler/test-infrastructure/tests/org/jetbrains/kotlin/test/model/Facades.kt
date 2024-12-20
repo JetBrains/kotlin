@@ -75,7 +75,9 @@ abstract class BackendFacade<BackendInputArtifact, BinaryOutputArtifact>(
         where BackendInputArtifact : ResultingArtifact.BackendInput<BackendInputArtifact>,
               BinaryOutputArtifact : ResultingArtifact.Binary<BinaryOutputArtifact> {
     override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return testServices.defaultsProvider.backendKind == inputKind && module.binaryKind == outputKind
+        return with(testServices.defaultsProvider) {
+            backendKind == inputKind && artifactKind == outputKind
+        }
     }
 }
 
