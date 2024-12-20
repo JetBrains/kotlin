@@ -61,7 +61,7 @@ abstract class FirNestedClassifierScope(val klass: FirClass, val useSiteSession:
 }
 
 class FirNestedClassifierScopeImpl(klass: FirClass, useSiteSession: FirSession) : FirNestedClassifierScope(klass, useSiteSession) {
-    private val classIndex: Map<Name, FirClassLikeSymbol<*>> = run {
+    private val classIndex: Map<Name, FirClassLikeSymbol<*>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val result = mutableMapOf<Name, FirClassLikeSymbol<*>>()
         for (declaration in klass.declarations) {
             when (declaration) {
@@ -70,6 +70,7 @@ class FirNestedClassifierScopeImpl(klass: FirClass, useSiteSession: FirSession) 
                 else -> {}
             }
         }
+
         result
     }
 

@@ -188,6 +188,12 @@ public class FirPsiPluginDiagnosticTestGenerated extends AbstractFirPsiPluginDia
     }
 
     @Test
+    @TestMetadata("functionWithNestedJavaClass.kt")
+    public void testFunctionWithNestedJavaClass() {
+      runTest("plugins/plugin-sandbox/testData/diagnostics/status/functionWithNestedJavaClass.kt");
+    }
+
+    @Test
     @TestMetadata("javaVisibilityTransformationViolation.kt")
     public void testJavaVisibilityTransformationViolation() {
       runTest("plugins/plugin-sandbox/testData/diagnostics/status/javaVisibilityTransformationViolation.kt");
