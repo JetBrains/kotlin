@@ -2,7 +2,6 @@
 // ISSUE: KT-60523
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: common.kt
 
 expect fun warn(): String

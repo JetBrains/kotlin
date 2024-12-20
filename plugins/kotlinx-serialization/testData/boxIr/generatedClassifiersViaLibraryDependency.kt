@@ -3,7 +3,6 @@
 // WITH_STDLIB
 
 // MODULE: lib
-// TARGET_PLATFORM: JVM
 // FILE: lib.kt
 
 import kotlinx.serialization.*
@@ -12,7 +11,6 @@ import kotlinx.serialization.*
 class Test
 
 // MODULE: jvm(lib)()()
-// TARGET_PLATFORM: JVM
 // FILE: main.kt
 
 import kotlinx.serialization.*

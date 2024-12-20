@@ -14,7 +14,6 @@ fun common() {
 
 // MODULE: jvm
 // FILE: jvm.kt
-// TARGET_PLATFORM: JVM
 
 import kotlin.collections.mapOf
 

@@ -2,11 +2,9 @@
 // FIR_IDENTICAL
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 expect open class A()
 
 // MODULE: intermediate()()(common)
-// TARGET_PLATFORM: Common
 class B : A() {
     fun foo(): String = "O"
 }

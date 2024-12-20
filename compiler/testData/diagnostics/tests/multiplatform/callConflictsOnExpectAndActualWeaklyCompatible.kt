@@ -3,7 +3,6 @@
 // based on of kotlin.text.startsWith from kotlin-stdlib
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: common.kt
 
 expect fun String.foo(prefix: String, ignoreCase: Boolean = false): Boolean
@@ -11,7 +10,6 @@ expect fun String.foo(prefix: String, ignoreCase: Boolean = false): Boolean
 expect fun String.foo(prefix: String, startIndex: Int, ignoreCase: Boolean = false): Boolean
 
 // MODULE: jvm()()(common)
-// TARGET_PLATFORM: JVM
 // FILE: jvm.kt
 
 
@@ -26,7 +24,6 @@ actual fun String.foo(prefix: String, startIndex: Int, ignoreCase: Boolean = fal
 }
 
 // MODULE: client(jvm)()()
-// TARGET_PLATFORM: JVM
 // FILE: client.kt
 
 fun main() {

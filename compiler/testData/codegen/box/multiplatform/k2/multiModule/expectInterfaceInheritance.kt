@@ -3,7 +3,6 @@
 // ISSUE: KT-56398
 
 // MODULE: common
-// TARGET_PLATFORM: Common
 // FILE: common.kt
 
 expect interface Interface {
@@ -15,7 +14,6 @@ class Klass : Interface {
 }
 
 // MODULE: jvm()()(common)
-// TARGET_PLATFORM: JVM
 // FILE: main.kt
 
 actual interface Interface {
