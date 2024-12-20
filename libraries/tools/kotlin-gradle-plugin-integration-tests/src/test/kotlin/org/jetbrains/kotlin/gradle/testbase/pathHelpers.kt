@@ -67,7 +67,7 @@ internal fun Iterable<Path>.relativizeTo(basePath: Path): Iterable<Path> = map {
 internal fun String.normalizePath() = replace("\\", "/")
 
 internal fun Path.copyRecursively(dest: Path) {
-    Files.walkFileTree(this, object : SimpleFileVisitor<Path>() {
+    Files.walkFileTree(this, setOf(FileVisitOption.FOLLOW_LINKS), Int.MAX_VALUE, object : SimpleFileVisitor<Path>() {
         override fun preVisitDirectory(
             dir: Path,
             attrs: BasicFileAttributes

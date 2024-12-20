@@ -188,6 +188,17 @@ inline fun <reified T> TestProject.buildScriptReturn(
         ObjectOutputStream(it).writeObject(injection)
     }
 
+    fun whenPropertySpecified(
+        property: String,
+        execute: String,
+    ): String = """
+    
+        if (project.hasProperty("${property}")) {
+            ${execute}
+        }
+        
+    """.trimIndent()
+
     when {
         buildGradleKts.exists() -> buildGradleKts.appendText(
             whenPropertySpecified(
@@ -276,17 +287,6 @@ fun <Context, Target> GradleProject.loadInjectionDuringEvaluation(
         else -> error("Can't find the build script to append the injection")
     }
 }
-
-fun whenPropertySpecified(
-    property: String,
-    execute: String,
-): String = """
-    
-    if (project.hasProperty("${property}")) {
-        ${execute}
-    }
-    
-""".trimIndent()
 
 /**
  * Settings injections must use [scriptIsolatedInjectionLoad] instead of the [enableBuildScriptInjectionsIfNecessary] mechanism. This is
