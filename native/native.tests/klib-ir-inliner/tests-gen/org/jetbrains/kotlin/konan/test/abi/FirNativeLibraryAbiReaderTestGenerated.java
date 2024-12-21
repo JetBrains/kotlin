@@ -113,6 +113,12 @@ public class FirNativeLibraryAbiReaderTestGenerated extends AbstractFirNativeLib
   }
 
   @Test
+  @TestMetadata("properties_with_context_parameters.kt")
+  public void testProperties_with_context_parameters() {
+    runTest("compiler/testData/klib/dump-abi/content/properties_with_context_parameters.kt");
+  }
+
+  @Test
   @TestMetadata("root_package.kt")
   public void testRoot_package() {
     runTest("compiler/testData/klib/dump-abi/content/root_package.kt");
