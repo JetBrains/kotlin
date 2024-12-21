@@ -183,7 +183,14 @@ open class IrMangleComputer(
                 builder.appendSignature(MangleConstant.STATIC_MEMBER_MARK)
             }
 
-            accessor?.extensionReceiverParameter?.let {
+            val contextParameters = accessor?.parameters?.filter { it.kind == IrParameterKind.Context }.orEmpty()
+            if (contextParameters.isNotEmpty()) {
+                contextParameters.collectForMangler(builder, MangleConstant.VALUE_PARAMETERS) {
+                    mangleValueParameter(this, it, null)
+                }
+            }
+
+            accessor?.parameters?.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.let {
                 builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
                 mangleValueParameter(builder, it, null)
             }

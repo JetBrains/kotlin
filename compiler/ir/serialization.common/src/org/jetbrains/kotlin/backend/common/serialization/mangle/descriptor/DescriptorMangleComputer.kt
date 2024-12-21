@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor
 
 import org.jetbrains.kotlin.backend.common.serialization.mangle.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptor
 import org.jetbrains.kotlin.ir.util.varargElementType
@@ -16,6 +17,8 @@ import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 import org.jetbrains.kotlin.types.error.ErrorClassDescriptor
 import org.jetbrains.kotlin.types.model.TypeSystemContext
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import kotlin.collections.isNotEmpty
+import kotlin.collections.orEmpty
 
 /**
  * The descriptor-based mangle computer. Used to compute a mangled name for a declaration given its [DeclarationDescriptor].
@@ -204,10 +207,7 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
             if (descriptor is IrImplementingDelegateDescriptor) {
                 descriptor.mangleSimpleDeclaration(descriptor.name.asString())
             } else {
-
                 val actualDescriptor = (descriptor as? IrPropertyDelegateDescriptor)?.correspondingProperty ?: descriptor
-
-                val extensionReceiver = actualDescriptor.extensionReceiverParameter
 
                 typeParameterContainers.add(actualDescriptor)
                 actualDescriptor.containingDeclaration.visit()
@@ -216,6 +216,14 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
                     builder.appendSignature(MangleConstant.STATIC_MEMBER_MARK)
                 }
 
+                val contextParameters = actualDescriptor.contextReceiverParameters
+                if (contextParameters.isNotEmpty()) {
+                    contextParameters.collectForMangler(builder, MangleConstant.VALUE_PARAMETERS) {
+                        mangleValueParameter(this, it, null)
+                    }
+                }
+
+                val extensionReceiver = actualDescriptor.extensionReceiverParameter
                 if (extensionReceiver != null) {
                     builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
                     mangleValueParameter(builder, extensionReceiver, null)
