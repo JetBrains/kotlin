@@ -716,6 +716,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PARAMETER_NAME_CHANGED_ON_OVERRIDE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_FEATURE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_INHERITANCE_FROM_JAVA_MEMBER_REFERENCING_KOTLIN_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_SEALED_FUN_INTERFACE
@@ -2770,6 +2771,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION,
             "Type alias with type projection ('in', 'out' or '*') in expanded type in constructor call or supertype position. " +
             "See https://youtrack.jetbrains.com/issue/KT-60305."
+        )
+        map.put(
+            TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS,
+            "Type alias expansion captures outer type parameters: ''{0}''.",
+            commaSeparated(SYMBOL_WITH_CONTAINING_DECLARATION),
         )
 
         // Returns

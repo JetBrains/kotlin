@@ -3504,6 +3504,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ConstructorOrSupertypeOnTypealiasWithTypeProjectionWarning::class
     }
 
+    interface TypealiasExpansionCapturesOuterTypeParameters : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = TypealiasExpansionCapturesOuterTypeParameters::class
+        val outerTypeParameters: List<KaTypeParameterSymbol>
+    }
+
     interface RedundantVisibilityModifier : KaFirDiagnostic<KtModifierListOwner> {
         override val diagnosticClass get() = RedundantVisibilityModifier::class
     }
