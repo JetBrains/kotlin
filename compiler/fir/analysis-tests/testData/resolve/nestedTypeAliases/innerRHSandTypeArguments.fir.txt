@@ -1,4 +1,10 @@
 FILE: innerRHSandTypeArguments.kt
+    public final class C<L> : R|kotlin/Any| {
+        public constructor<L>(): R|C<L>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
     public final class Outer<T> : R|kotlin/Any| {
         public constructor<T>(): R|Outer<T>| {
             super<R|kotlin/Any|>()
@@ -40,6 +46,16 @@ FILE: innerRHSandTypeArguments.kt
         public final typealias TAtoIntInnerWithTypeParameters = R|Outer.InnerWithParameter<kotlin/String, kotlin/Int>|
 
         public final typealias TAtoTA = R|{Outer.TAToInner=} Outer.Inner<T>|
+
+        public final typealias TAtoClassThatHasInnerInTypeArgument = R|C<Outer.Inner<T>>|
+
+        public final typealias TAtoClassThatHasTAtoInnerInTypeArgument = R|C<Outer.TAToInner>|
+
+        public final typealias TAWithExplicitParameterInTypeArgument = R|C<Outer.Inner<ERROR CLASS: Symbol not found for T>>|
+
+        public final typealias TAWithNonCapturingParameterInTypeArgument<K> = R|C<Outer.Inner<K>>|
+
+        public final typealias TAtoInnerAndInnerInTypeArgument<L> = R|Outer.InnerWithParameter<Outer.InnerWithParameter<L, T>, T>|
 
         public final fun test(): R|kotlin/Unit| {
             this@R|/Outer|.R|/Outer.Inner.Inner|()

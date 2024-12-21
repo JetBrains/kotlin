@@ -4214,6 +4214,12 @@ internal class ConstructorOrSupertypeOnTypealiasWithTypeProjectionWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ConstructorOrSupertypeOnTypealiasWithTypeProjectionWarning
 
+internal class TypealiasExpansionCapturesOuterTypeParametersImpl(
+    override val outerTypeParameters: List<KaTypeParameterSymbol>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.TypealiasExpansionCapturesOuterTypeParameters
+
 internal class RedundantVisibilityModifierImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
