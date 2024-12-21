@@ -41502,6 +41502,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
     }
 
     @Test
+    @TestMetadata("nestedTypeAliasesAndStaticScope.kt")
+    public void testNestedTypeAliasesAndStaticScope() {
+      runTest("compiler/testData/codegen/box/typealias/nestedTypeAliasesAndStaticScope.kt");
+    }
+
+    @Test
     @TestMetadata("nestedTypeAliasesAndTypeArguments.kt")
     public void testNestedTypeAliasesAndTypeArguments() {
       runTest("compiler/testData/codegen/box/typealias/nestedTypeAliasesAndTypeArguments.kt");
