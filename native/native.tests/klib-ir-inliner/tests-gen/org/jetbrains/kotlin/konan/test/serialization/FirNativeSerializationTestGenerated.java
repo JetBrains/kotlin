@@ -44079,6 +44079,12 @@ public class FirNativeSerializationTestGenerated extends AbstractFirNativeSerial
       }
 
       @Test
+      @TestMetadata("nestedTypeAliasesAndTypeArguments.kt")
+      public void testNestedTypeAliasesAndTypeArguments() {
+        runTest("compiler/testData/codegen/box/typealias/nestedTypeAliasesAndTypeArguments.kt");
+      }
+
+      @Test
       @TestMetadata("objectLiteralConstructor.kt")
       public void testObjectLiteralConstructor() {
         runTest("compiler/testData/codegen/box/typealias/objectLiteralConstructor.kt");
