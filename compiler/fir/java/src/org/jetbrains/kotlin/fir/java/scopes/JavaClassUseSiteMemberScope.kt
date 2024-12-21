@@ -83,13 +83,13 @@ class JavaClassUseSiteMemberScope(
 ) : AbstractFirUseSiteMemberScope(
     klass.symbol.toLookupTag(),
     session,
-    JavaOverrideChecker(session, klass.javaTypeParameterStack, superTypeScopes, considerReturnTypeKinds = true),
+    JavaOverrideChecker(session, klass, superTypeScopes, considerReturnTypeKinds = true),
     overrideCheckerForIntersection = null,
     superTypeScopes,
     klass.defaultType(),
     declaredMemberScope
 ) {
-    private val typeParameterStack = klass.javaTypeParameterStack
+    private val typeParameterStack get() = klass.javaTypeParameterStack
 
     private val canUseSpecialGetters: Boolean by lazy { !klass.hasKotlinSuper(session) }
 
@@ -474,7 +474,7 @@ class JavaClassUseSiteMemberScope(
         // TODO: consider some more transparent approach
         val overrideCheckerForSpecialFunctions = JavaOverrideChecker(
             session,
-            klass.javaTypeParameterStack,
+            klass,
             superTypeScopes,
             considerReturnTypeKinds = false
         )
