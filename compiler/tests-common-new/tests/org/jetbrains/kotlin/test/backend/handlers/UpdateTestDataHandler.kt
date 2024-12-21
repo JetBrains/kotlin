@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
 import org.opentest4j.AssertionFailedError
 import org.opentest4j.FileInfo
+import org.opentest4j.MultipleFailuresError
 import java.io.File
 
 /**
@@ -34,7 +35,10 @@ class UpdateTestDataHandler(
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         if (enabled || System.getProperty("kotlin.test.update.test.data") == "true") {
-            for (failure in failedAssertions.mapNotNull { it.cause as? AssertionFailedError }) {
+            val assertationFailures = failedAssertions
+                .flatMap { (it.cause as? MultipleFailuresError)?.failures ?: listOf(it.cause) }
+                .filterIsInstance<AssertionFailedError>()
+            for (failure in assertationFailures) {
                 val path = (failure.expected?.value as? FileInfo)?.path ?: continue
                 File(path).writeText(failure.actual.stringRepresentation)
             }
