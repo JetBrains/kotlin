@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
-import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
@@ -21,11 +21,11 @@ class JavaClassStaticUseSiteScope internal constructor(
     private val declaredMemberScope: FirContainingNamesAwareScope,
     private val superClassScope: FirContainingNamesAwareScope,
     private val superTypesScopes: List<FirContainingNamesAwareScope>,
-    private val javaTypeParameterStack: JavaTypeParameterStack,
+    private val klass: FirJavaClass,
 ) : FirContainingNamesAwareScope() {
     private val functions = hashMapOf<Name, Collection<FirNamedFunctionSymbol>>()
     private val properties = hashMapOf<Name, Collection<FirVariableSymbol<*>>>()
-    private val overrideChecker = JavaOverrideChecker(session, javaTypeParameterStack, baseScopes = null, considerReturnTypeKinds = false)
+    private val overrideChecker = JavaOverrideChecker(session, klass, baseScopes = null, considerReturnTypeKinds = false)
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         functions.getOrPut(name) {
@@ -113,7 +113,7 @@ class JavaClassStaticUseSiteScope internal constructor(
             declaredMemberScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: declaredMemberScope,
             superClassScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: superClassScope,
             superTypesScopes.withReplacedSessionOrNull(newSession, newScopeSession) ?: superTypesScopes,
-            javaTypeParameterStack
+            klass,
         )
     }
 }
