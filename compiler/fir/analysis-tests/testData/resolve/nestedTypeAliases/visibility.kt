@@ -39,9 +39,6 @@ open class OuterClass {
     }
 }
 
-private typealias PrivateOuterTA = OuterClass.InnerClass
-typealias PublicOuterTA = OuterClass.InnerClass
-
 class OuterClassInheritor : OuterClass() {
     fun testProtected() {
         <!INVISIBLE_REFERENCE!>PrivateTAInner<!>() // ERROR (invisible)

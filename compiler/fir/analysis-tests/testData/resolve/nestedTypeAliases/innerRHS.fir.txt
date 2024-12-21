@@ -1,4 +1,4 @@
-FILE: nestedTypeAliasWithInnerRHS.kt
+FILE: innerRHS.kt
     public open class Outer : R|kotlin/Any| {
         public constructor(): R|Outer| {
             super<R|kotlin/Any|>()
