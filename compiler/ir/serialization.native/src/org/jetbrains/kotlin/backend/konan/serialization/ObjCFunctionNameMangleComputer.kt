@@ -71,7 +71,7 @@ abstract class ObjCFunctionNameMangleComputer<ValueParameter : Any> : PlatformSp
 @ObsoleteDescriptorBasedAPI
 class DescriptorObjCFunctionNameMangleComputer(
     private val function: FunctionDescriptor
-) : ObjCFunctionNameMangleComputer<ValueParameterDescriptor>() {
+) : ObjCFunctionNameMangleComputer<ParameterDescriptor>() {
 
     override fun getObjCMethodInfo(): ObjCMethodInfo? =
         (if (function is ConstructorDescriptor && function.isObjCConstructor) function.getObjCInitMethod() else function)
@@ -92,7 +92,7 @@ class DescriptorObjCFunctionNameMangleComputer(
 
     override fun isObjCClassMethod(): Boolean = function.containingDeclaration.let { it is ClassDescriptor && it.isObjCClass() }
 
-    override fun getValueParameterName(valueParameter: ValueParameterDescriptor): Name = valueParameter.name
+    override fun getValueParameterName(valueParameter: ParameterDescriptor): Name = valueParameter.name
 }
 
 class IrObjCFunctionNameMangleComputer(private val function: IrFunction) : ObjCFunctionNameMangleComputer<IrValueParameter>() {
