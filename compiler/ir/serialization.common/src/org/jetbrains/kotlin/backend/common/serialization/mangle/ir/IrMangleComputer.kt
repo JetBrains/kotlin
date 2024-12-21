@@ -68,20 +68,18 @@ open class IrMangleComputer(
         realParent.acceptVoid(Visitor())
     }
 
-    override fun getContextParameterTypes(function: IrFunction): List<IrType> =
+    override fun getContextParameters(function: IrFunction): List<IrValueParameter> =
         function
             .valueParameters
             .asSequence()
             .take(function.contextReceiverParametersCount)
             .filterNot { it.isHidden }
-            .map { it.type }
             .toList()
 
-    override fun getExtensionReceiverParameterType(function: IrFunction) =
+    override fun getExtensionReceiverParameter(function: IrFunction): IrValueParameter? =
         function
             .extensionReceiverParameter
             ?.takeUnless { it.isHidden }
-            ?.type
 
     override fun getRegularParameters(function: IrFunction): List<IrValueParameter> =
         function

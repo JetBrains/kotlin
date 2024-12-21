@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor
 
-import org.jetbrains.kotlin.backend.common.serialization.isExpectMember
 import org.jetbrains.kotlin.backend.common.serialization.mangle.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptor
+import org.jetbrains.kotlin.ir.util.varargElementType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
@@ -25,7 +25,7 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
             /*Declaration=*/DeclarationDescriptor,
             /*Type=*/KotlinType,
             /*TypeParameter=*/TypeParameterDescriptor,
-            /*ValueParameter=*/ValueParameterDescriptor,
+            /*ValueParameter=*/ParameterDescriptor,
             /*TypeParameterContainer=*/DeclarationDescriptor, // CallableDescriptor or ClassDescriptor
             /*FunctionDeclaration=*/FunctionDescriptor,
             /*Session=*/Nothing?,
@@ -54,11 +54,11 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
     override fun DeclarationDescriptor.asTypeParameterContainer(): DeclarationDescriptor =
         this
 
-    override fun getContextParameterTypes(function: FunctionDescriptor): List<KotlinType> =
-        function.contextReceiverParameters.map { it.type }
+    override fun getContextParameters(function: FunctionDescriptor): List<ParameterDescriptor> =
+        function.contextReceiverParameters
 
-    override fun getExtensionReceiverParameterType(function: FunctionDescriptor): KotlinType? =
-        function.extensionReceiverParameter?.type
+    override fun getExtensionReceiverParameter(function: FunctionDescriptor): ParameterDescriptor? =
+        function.extensionReceiverParameter
 
     override fun getRegularParameters(function: FunctionDescriptor): List<ValueParameterDescriptor> =
         function.valueParameters
@@ -78,13 +78,9 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
 
     override fun isUnit(type: KotlinType) = type.isUnit()
 
-    private fun mangleExtensionReceiverParameter(vpBuilder: StringBuilder, param: ReceiverParameterDescriptor) {
-        mangleType(vpBuilder, param.type, null)
-    }
+    final override fun isVararg(valueParameter: ParameterDescriptor) = valueParameter.varargElementType != null
 
-    final override fun isVararg(valueParameter: ValueParameterDescriptor) = valueParameter.varargElementType != null
-
-    final override fun getValueParameterType(valueParameter: ValueParameterDescriptor): KotlinType =
+    final override fun getValueParameterType(valueParameter: ParameterDescriptor): KotlinType =
         valueParameter.type
 
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
@@ -222,7 +218,7 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
 
                 if (extensionReceiver != null) {
                     builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
-                    mangleExtensionReceiverParameter(builder, extensionReceiver)
+                    mangleValueParameter(builder, extensionReceiver, null)
                 }
 
                 actualDescriptor.typeParameters.collectForMangler(builder, MangleConstant.TYPE_PARAMETERS) {

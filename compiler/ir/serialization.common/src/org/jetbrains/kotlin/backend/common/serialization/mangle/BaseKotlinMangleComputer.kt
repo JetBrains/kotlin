@@ -109,9 +109,9 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
         builder.appendName(name)
     }
 
-    protected abstract fun getContextParameterTypes(function: FunctionDeclaration): List<Type>
+    protected abstract fun getContextParameters(function: FunctionDeclaration): List<ValueParameter>
 
-    protected abstract fun getExtensionReceiverParameterType(function: FunctionDeclaration): Type?
+    protected abstract fun getExtensionReceiverParameter(function: FunctionDeclaration): ValueParameter?
 
     protected abstract fun getRegularParameters(function: FunctionDeclaration): List<ValueParameter>
 
@@ -169,16 +169,16 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
 
         platformSpecificFunctionMarks().forEach { builder.appendSignature(it) }
 
-        val contextParameters = getContextParameterTypes(this)
+        val contextParameters = getContextParameters(this)
         if (contextParameters.isNotEmpty()) {
             contextParameters.collectForMangler(builder, MangleConstant.VALUE_PARAMETERS) {
-                mangleType(this, it, session)
+                mangleValueParameter(this, it, session)
             }
         }
 
-        getExtensionReceiverParameterType(this)?.let {
+        getExtensionReceiverParameter(this)?.let {
             builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
-            mangleType(builder, it, session)
+            mangleValueParameter(builder, it, session)
         }
 
         getRegularParameters(this).collectForMangler(builder, MangleConstant.VALUE_PARAMETERS) {
