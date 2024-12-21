@@ -14,10 +14,15 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkTypeRefForUnderscore
 import org.jetbrains.kotlin.fir.analysis.checkers.isMalformedExpandedType
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
+import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 
@@ -34,6 +39,8 @@ object FirAnyTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
         val expandedTypeRef = declaration.expandedTypeRef
         val fullyExpandedType = expandedTypeRef.coneType.fullyExpandedType(context.session)
 
+        declaration.checkTypeAliasExpandsToClassThatCapturesOuterTypeParameters(fullyExpandedType, expandedTypeRef, context, reporter)
+
         declaration.checkTypealiasShouldExpandToClass(fullyExpandedType, expandedTypeRef, context, reporter)
 
         checkTypeRefForUnderscore(expandedTypeRef, context, reporter)
@@ -44,6 +51,38 @@ object FirAnyTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
                 declaration.expandedTypeRef.source,
                 FirErrors.TYPEALIAS_EXPANDS_TO_ARRAY_OF_NOTHINGS,
                 fullyExpandedType,
+                context
+            )
+        }
+    }
+
+    @OptIn(SymbolInternals::class)
+    private fun FirTypeAlias.checkTypeAliasExpandsToClassThatCapturesOuterTypeParameters(
+        fullyExpandedType: ConeKotlinType,
+        expandedTypeRef: FirTypeRef,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+    ) {
+        if (context.isTopLevel || isInner || isLocal) return
+
+        val regularClassSymbol = fullyExpandedType.toRegularClassSymbol(context.session) ?: return
+
+        val outerTypeParameterRefs = regularClassSymbol.fir.typeParameters.filterIsInstance<FirOuterClassTypeParameterRef>()
+            .takeIf { it.isNotEmpty() } ?: return
+
+        val unsubstitutedOuterTypeParameters = buildList {
+            for (outerTypeParameterRef in outerTypeParameterRefs) {
+                if (fullyExpandedType.typeArguments.any { it.type?.toTypeParameterSymbol(context.session) == outerTypeParameterRef.symbol }) {
+                    add(outerTypeParameterRef.symbol)
+                }
+            }
+        }
+
+        if (unsubstitutedOuterTypeParameters.isNotEmpty()) {
+            reporter.reportOn(
+                expandedTypeRef.source,
+                FirErrors.TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS,
+                unsubstitutedOuterTypeParameters,
                 context
             )
         }

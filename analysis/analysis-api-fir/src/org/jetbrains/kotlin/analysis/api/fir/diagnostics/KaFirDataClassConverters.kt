@@ -5024,6 +5024,15 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS) { firDiagnostic ->
+        TypealiasExpansionCapturesOuterTypeParametersImpl(
+            firDiagnostic.a.map { firTypeParameterSymbol ->
+                firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firTypeParameterSymbol)
+            },
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.REDUNDANT_VISIBILITY_MODIFIER) { firDiagnostic ->
         RedundantVisibilityModifierImpl(
             firDiagnostic as KtPsiDiagnostic,

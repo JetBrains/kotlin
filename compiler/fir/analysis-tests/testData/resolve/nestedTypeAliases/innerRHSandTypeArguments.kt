@@ -7,17 +7,17 @@ class Outer<T> {
     inner class InnerWithParameter<K> {
         inner class InnerInsideInner
 
-        typealias TAtoInnerInsideInner = InnerInsideInner // Error, type alias RHS can't capture outer type parameters (they are implicit)
+        typealias TAtoInnerInsideInner = <!TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS("'K' defined in '/Outer.InnerWithParameter', 'T' defined in '/Outer'")!>InnerInsideInner<!> // Error, type alias RHS can't capture outer type parameters (they are implicit)
     }
 
     typealias TAtoExplicitInner = Outer<<!UNRESOLVED_REFERENCE!>T<!>>.Inner // Error, UNRESOLVED_REFERENCE `T`
-    typealias TAToInner = Inner // Error, type alias RHS can't capture outer type parameters (they are implicit)
+    typealias TAToInner = <!TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS("'T' defined in '/Outer'")!>Inner<!> // Error, type alias RHS can't capture outer type parameters (they are implicit)
     typealias TAToIntInner = Outer<Int>.Inner // OK
     typealias TAWithTypeParameterToInner<K> = Outer<K>.Inner // OK
-    typealias TAtoInnerWithTypeParameters = InnerWithParameter<String> // Error, type alias RHS can't capture outer type parameters (they are implicit)
+    typealias TAtoInnerWithTypeParameters = <!TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS("'T' defined in '/Outer'")!>InnerWithParameter<String><!> // Error, type alias RHS can't capture outer type parameters (they are implicit)
     typealias TAtoIntInnerWithTypeParameters = Outer<Int>.InnerWithParameter<String> // OK
 
-    typealias TAtoTA = TAToInner // Error, type alias RHS can't capture outer type parameters
+    typealias TAtoTA = <!TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS("'T' defined in '/Outer'")!>TAToInner<!> // Error, type alias RHS can't capture outer type parameters
 
     fun test() {
         TAtoExplicitInner()
