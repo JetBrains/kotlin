@@ -60275,6 +60275,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
     }
 
     @Test
+    @TestMetadata("nestedTypeAliases.kt")
+    public void testNestedTypeAliases() {
+      runTest("compiler/testData/codegen/box/typealias/nestedTypeAliases.kt");
+    }
+
+    @Test
     @TestMetadata("objectLiteralConstructor.kt")
     public void testObjectLiteralConstructor() {
       runTest("compiler/testData/codegen/box/typealias/objectLiteralConstructor.kt");
