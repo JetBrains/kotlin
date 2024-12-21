@@ -4254,6 +4254,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       }
 
       @Test
+      @TestMetadata("innerRHS.kt")
+      public void testInnerRHS() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/innerRHS.kt");
+      }
+
+      @Test
       @TestMetadata("innerRHSandTypeArguments.kt")
       public void testInnerRHSandTypeArguments() {
         runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/innerRHSandTypeArguments.kt");
@@ -4266,21 +4272,15 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       }
 
       @Test
-      @TestMetadata("nestedTypeAliasVisibility.kt")
-      public void testNestedTypeAliasVisibility() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/nestedTypeAliasVisibility.kt");
-      }
-
-      @Test
-      @TestMetadata("nestedTypeAliasWithInnerRHS.kt")
-      public void testNestedTypeAliasWithInnerRHS() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/nestedTypeAliasWithInnerRHS.kt");
-      }
-
-      @Test
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/simple.kt");
+      }
+
+      @Test
+      @TestMetadata("visibility.kt")
+      public void testVisibility() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/visibility.kt");
       }
     }
 

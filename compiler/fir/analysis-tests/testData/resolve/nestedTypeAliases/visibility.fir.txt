@@ -1,4 +1,4 @@
-FILE: nestedTypeAliasVisibility.kt
+FILE: visibility.kt
     public final class Class : R|kotlin/Any| {
         public constructor(): R|Class| {
             super<R|kotlin/Any|>()
@@ -67,8 +67,6 @@ FILE: nestedTypeAliasVisibility.kt
         }
 
     }
-    private final typealias PrivateOuterTA = R|OuterClass.InnerClass|
-    public final typealias PublicOuterTA = R|OuterClass.InnerClass|
     public final class OuterClassInheritor : R|OuterClass| {
         public constructor(): R|OuterClassInheritor| {
             super<R|OuterClass|>()
