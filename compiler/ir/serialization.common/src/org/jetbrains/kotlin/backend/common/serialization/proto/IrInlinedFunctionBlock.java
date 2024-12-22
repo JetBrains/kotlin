@@ -84,6 +84,16 @@ public final class IrInlinedFunctionBlock extends
             bitField0_ |= 0x00000004;
             break;
           }
+          case 32: {
+            bitField0_ |= 0x00000008;
+            inlinedFunctionStartOffset_ = input.readInt32();
+            break;
+          }
+          case 40: {
+            bitField0_ |= 0x00000010;
+            inlinedFunctionEndOffset_ = input.readInt32();
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -163,10 +173,42 @@ public final class IrInlinedFunctionBlock extends
     return base_;
   }
 
+  public static final int INLINED_FUNCTION_START_OFFSET_FIELD_NUMBER = 4;
+  private int inlinedFunctionStartOffset_;
+  /**
+   * <code>required int32 inlined_function_start_offset = 4;</code>
+   */
+  public boolean hasInlinedFunctionStartOffset() {
+    return ((bitField0_ & 0x00000008) == 0x00000008);
+  }
+  /**
+   * <code>required int32 inlined_function_start_offset = 4;</code>
+   */
+  public int getInlinedFunctionStartOffset() {
+    return inlinedFunctionStartOffset_;
+  }
+
+  public static final int INLINED_FUNCTION_END_OFFSET_FIELD_NUMBER = 5;
+  private int inlinedFunctionEndOffset_;
+  /**
+   * <code>required int32 inlined_function_end_offset = 5;</code>
+   */
+  public boolean hasInlinedFunctionEndOffset() {
+    return ((bitField0_ & 0x00000010) == 0x00000010);
+  }
+  /**
+   * <code>required int32 inlined_function_end_offset = 5;</code>
+   */
+  public int getInlinedFunctionEndOffset() {
+    return inlinedFunctionEndOffset_;
+  }
+
   private void initFields() {
     inlineFunctionSymbol_ = 0L;
     fileEntry_ = org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance();
     base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock.getDefaultInstance();
+    inlinedFunctionStartOffset_ = 0;
+    inlinedFunctionEndOffset_ = 0;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -179,6 +221,14 @@ public final class IrInlinedFunctionBlock extends
       return false;
     }
     if (!hasBase()) {
+      memoizedIsInitialized = 0;
+      return false;
+    }
+    if (!hasInlinedFunctionStartOffset()) {
+      memoizedIsInitialized = 0;
+      return false;
+    }
+    if (!hasInlinedFunctionEndOffset()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -206,6 +256,12 @@ public final class IrInlinedFunctionBlock extends
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       output.writeMessage(3, base_);
     }
+    if (((bitField0_ & 0x00000008) == 0x00000008)) {
+      output.writeInt32(4, inlinedFunctionStartOffset_);
+    }
+    if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      output.writeInt32(5, inlinedFunctionEndOffset_);
+    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -226,6 +282,14 @@ public final class IrInlinedFunctionBlock extends
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(3, base_);
+    }
+    if (((bitField0_ & 0x00000008) == 0x00000008)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(4, inlinedFunctionStartOffset_);
+    }
+    if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(5, inlinedFunctionEndOffset_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -327,6 +391,10 @@ public final class IrInlinedFunctionBlock extends
       bitField0_ = (bitField0_ & ~0x00000002);
       base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000004);
+      inlinedFunctionStartOffset_ = 0;
+      bitField0_ = (bitField0_ & ~0x00000008);
+      inlinedFunctionEndOffset_ = 0;
+      bitField0_ = (bitField0_ & ~0x00000010);
       return this;
     }
 
@@ -362,6 +430,14 @@ public final class IrInlinedFunctionBlock extends
         to_bitField0_ |= 0x00000004;
       }
       result.base_ = base_;
+      if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+        to_bitField0_ |= 0x00000008;
+      }
+      result.inlinedFunctionStartOffset_ = inlinedFunctionStartOffset_;
+      if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+        to_bitField0_ |= 0x00000010;
+      }
+      result.inlinedFunctionEndOffset_ = inlinedFunctionEndOffset_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -377,6 +453,12 @@ public final class IrInlinedFunctionBlock extends
       if (other.hasBase()) {
         mergeBase(other.getBase());
       }
+      if (other.hasInlinedFunctionStartOffset()) {
+        setInlinedFunctionStartOffset(other.getInlinedFunctionStartOffset());
+      }
+      if (other.hasInlinedFunctionEndOffset()) {
+        setInlinedFunctionEndOffset(other.getInlinedFunctionEndOffset());
+      }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
       return this;
@@ -388,6 +470,14 @@ public final class IrInlinedFunctionBlock extends
         return false;
       }
       if (!hasBase()) {
+        
+        return false;
+      }
+      if (!hasInlinedFunctionStartOffset()) {
+        
+        return false;
+      }
+      if (!hasInlinedFunctionEndOffset()) {
         
         return false;
       }
@@ -570,6 +660,70 @@ public final class IrInlinedFunctionBlock extends
       base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock.getDefaultInstance();
 
       bitField0_ = (bitField0_ & ~0x00000004);
+      return this;
+    }
+
+    private int inlinedFunctionStartOffset_ ;
+    /**
+     * <code>required int32 inlined_function_start_offset = 4;</code>
+     */
+    public boolean hasInlinedFunctionStartOffset() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>required int32 inlined_function_start_offset = 4;</code>
+     */
+    public int getInlinedFunctionStartOffset() {
+      return inlinedFunctionStartOffset_;
+    }
+    /**
+     * <code>required int32 inlined_function_start_offset = 4;</code>
+     */
+    public Builder setInlinedFunctionStartOffset(int value) {
+      bitField0_ |= 0x00000008;
+      inlinedFunctionStartOffset_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>required int32 inlined_function_start_offset = 4;</code>
+     */
+    public Builder clearInlinedFunctionStartOffset() {
+      bitField0_ = (bitField0_ & ~0x00000008);
+      inlinedFunctionStartOffset_ = 0;
+      
+      return this;
+    }
+
+    private int inlinedFunctionEndOffset_ ;
+    /**
+     * <code>required int32 inlined_function_end_offset = 5;</code>
+     */
+    public boolean hasInlinedFunctionEndOffset() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    /**
+     * <code>required int32 inlined_function_end_offset = 5;</code>
+     */
+    public int getInlinedFunctionEndOffset() {
+      return inlinedFunctionEndOffset_;
+    }
+    /**
+     * <code>required int32 inlined_function_end_offset = 5;</code>
+     */
+    public Builder setInlinedFunctionEndOffset(int value) {
+      bitField0_ |= 0x00000010;
+      inlinedFunctionEndOffset_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>required int32 inlined_function_end_offset = 5;</code>
+     */
+    public Builder clearInlinedFunctionEndOffset() {
+      bitField0_ = (bitField0_ & ~0x00000010);
+      inlinedFunctionEndOffset_ = 0;
+      
       return this;
     }
 

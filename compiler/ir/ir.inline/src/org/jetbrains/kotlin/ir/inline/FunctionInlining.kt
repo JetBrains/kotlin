@@ -22,9 +22,8 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.isPrivate
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.Scope
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
-import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -298,8 +297,10 @@ open class FunctionInlining(
             val inlinedBlock = IrInlinedFunctionBlockImpl(
                 startOffset = callSite.startOffset,
                 endOffset = callSite.endOffset,
+                inlinedFunctionStartOffset = inlineFunctionToStore.startOffset,
+                inlinedFunctionEndOffset = inlineFunctionToStore.endOffset,
                 type = returnType,
-                inlineFunctionSymbol = inlineFunctionToStore.symbol,
+                inlineFunctionSymbol = inlineFunctionToStore.symbol.takeIf { originalInlinedElement is IrFunction },
                 fileEntry = inlineFunctionToStore.fileEntry,
                 origin = null,
                 statements = copiedParameters + newStatementsFromDefault + newStatements
@@ -309,6 +310,16 @@ open class FunctionInlining(
                 this.inlineCall = callSite
                 @OptIn(JvmIrInlineExperimental::class)
                 this.inlinedElement = originalInlinedElement
+
+                // Insert a return statement for the function that is supposed to return Unit
+                if (inlineFunctionToStore.returnType.isUnit()) {
+                    val potentialReturn = this.statements.lastOrNull() as? IrReturn
+                    if (potentialReturn == null) {
+                        irBuilder.at(inlineFunctionToStore.endOffset, inlineFunctionToStore.endOffset).run {
+                            this@apply.statements += irReturn(irGetObject(context.irBuiltIns.unitClass))
+                        }
+                    }
+                }
             }
 
             val retBlock = IrReturnableBlockImpl(

@@ -20,8 +20,15 @@ class InferenceComponents(val session: FirSession) : FirSessionComponent {
     private val typeContext: ConeInferenceContext = session.typeContext
     private val approximator = session.typeApproximator
 
-    val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle = TrivialConstraintTypeInferenceOracle.create(typeContext)
-    private val incorporator = ConstraintIncorporator(approximator, trivialConstraintTypeInferenceOracle, ConeConstraintSystemUtilContext)
+    val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle =
+        TrivialConstraintTypeInferenceOracle.create(typeContext)
+    private val incorporator =
+        ConstraintIncorporator(
+            approximator,
+            trivialConstraintTypeInferenceOracle,
+            ConeConstraintSystemUtilContext,
+            session.languageVersionSettings
+        )
     private val injector = ConstraintInjector(
         incorporator,
         approximator,

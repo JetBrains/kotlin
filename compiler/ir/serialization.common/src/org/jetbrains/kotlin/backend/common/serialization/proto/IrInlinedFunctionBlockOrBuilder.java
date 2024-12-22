@@ -33,4 +33,22 @@ public interface IrInlinedFunctionBlockOrBuilder extends
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock base = 3;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock getBase();
+
+  /**
+   * <code>required int32 inlined_function_start_offset = 4;</code>
+   */
+  boolean hasInlinedFunctionStartOffset();
+  /**
+   * <code>required int32 inlined_function_start_offset = 4;</code>
+   */
+  int getInlinedFunctionStartOffset();
+
+  /**
+   * <code>required int32 inlined_function_end_offset = 5;</code>
+   */
+  boolean hasInlinedFunctionEndOffset();
+  /**
+   * <code>required int32 inlined_function_end_offset = 5;</code>
+   */
+  int getInlinedFunctionEndOffset();
 }

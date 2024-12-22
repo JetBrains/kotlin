@@ -4014,6 +4014,28 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
       }
 
       @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inference/incorporation")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Incorporation {
+        @Test
+        public void testAllFilesPresentInIncorporation() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference/incorporation"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("insideOtherConstraintsWithFlexibleTypes.kt")
+        public void testInsideOtherConstraintsWithFlexibleTypes() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/inference/incorporation/insideOtherConstraintsWithFlexibleTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("insideOtherConstraintsWithFlexibleTypesOriginal.kt")
+        public void testInsideOtherConstraintsWithFlexibleTypesOriginal() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/inference/incorporation/insideOtherConstraintsWithFlexibleTypesOriginal.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inference/pcla")
       @TestDataPath("$PROJECT_ROOT")
       public class Pcla {

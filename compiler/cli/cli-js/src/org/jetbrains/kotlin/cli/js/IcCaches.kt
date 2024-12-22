@@ -32,6 +32,7 @@ sealed class IcCachesConfigurationData {
         override val includes: String,
         val wasmDebug: Boolean,
         val preserveIcOrder: Boolean,
+        val generateWat: Boolean,
     ) : IcCachesConfigurationData()
 }
 
@@ -50,7 +51,8 @@ internal fun prepareIcCaches(
         arguments.wasm -> IcCachesConfigurationData.Wasm(
             arguments.includes!!,
             arguments.wasmDebug,
-            arguments.preserveIcOrder
+            arguments.preserveIcOrder,
+            arguments.wasmGenerateWat,
         )
         else -> IcCachesConfigurationData.Js(
             arguments.includes!!,
@@ -98,7 +100,8 @@ internal fun prepareIcCaches(
         is IcCachesConfigurationData.Wasm -> WasmICContext(
             allowIncompleteImplementations = false,
             skipLocalNames = !icConfigurationData.wasmDebug,
-            safeFragmentTags = icConfigurationData.preserveIcOrder
+            safeFragmentTags = icConfigurationData.preserveIcOrder,
+            skipCommentInstructions = !icConfigurationData.generateWat,
         )
     }
     val cacheUpdater = CacheUpdater(

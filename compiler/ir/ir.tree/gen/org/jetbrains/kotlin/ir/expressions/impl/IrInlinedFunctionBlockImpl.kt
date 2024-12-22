@@ -25,6 +25,8 @@ class IrInlinedFunctionBlockImpl internal constructor(
     override val endOffset: Int,
     override var type: IrType,
     override var origin: IrStatementOrigin?,
+    override var inlinedFunctionStartOffset: Int,
+    override var inlinedFunctionEndOffset: Int,
     override var inlineFunctionSymbol: IrFunctionSymbol?,
     override var fileEntry: IrFileEntry,
 ) : IrInlinedFunctionBlock() {

@@ -348,6 +348,11 @@ enum class LanguageFeature(
     // Common feature for all non-PCLA inference enhancements in 2.1
     InferenceEnhancementsIn21(KOTLIN_2_1, kind = OTHER), // KT-61227
 
+    // It's not a fully blown LF, but mostly a way to manage potential unexpected semantic changes
+    // See the single usage at org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintIncorporator.computeNewDerivedFrom
+    // We enable it for already released 2.1 because it's a bug fix
+    StricterConstraintIncorporationRecursionDetector(KOTLIN_2_1, kind = OTHER), // KT-73434
+
     // 2.2
 
     ErrorAboutDataClassCopyVisibilityChange(KOTLIN_2_2, kind = BUG_FIX), // KT-11914 Deprecation phase 2

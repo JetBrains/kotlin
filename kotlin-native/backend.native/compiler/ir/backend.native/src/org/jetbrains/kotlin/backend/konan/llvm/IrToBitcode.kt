@@ -1935,11 +1935,23 @@ internal class CodeGeneratorVisitor(
 
     private inner class InlinedBlockScope(val inlinedBlock: IrInlinedFunctionBlock) : FileScope(file = null, inlinedBlock.fileEntry) {
 
-        private val inlineFunctionScope by lazy {
-            inlinedBlock.inlineFunctionSymbol?.owner.let {
-                require(it is IrSimpleFunction) { "Inline constructors should've been lowered: ${it?.render()}" }
-                it.scope(fileEntry().line(it.startOffset))
+        private val inlineFunctionScope: DIScopeOpaqueRef? by lazy {
+            val owner = inlinedBlock.inlineFunctionSymbol?.owner
+            if (owner == null) {
+                @Suppress("UNCHECKED_CAST")
+                return@lazy debugInfo.diFunctionScope(
+                        inlinedBlock.fileEntry,
+                        name = "<inlined-lambda>",
+                        linkageName = "<inlined-lambda>",
+                        inlinedBlock.fileEntry.line(inlinedBlock.inlinedFunctionStartOffset),
+                        debugInfo.subroutineType(debugInfo.llvmTargetData, listOf(inlinedBlock.type)),
+                        nodebug = false,
+                        isTransparentStepping = false
+                ) as DIScopeOpaqueRef
             }
+
+            require(owner is IrSimpleFunction) { "Inline constructors should've been lowered: ${owner.render()}" }
+            owner.scope(fileEntry().line(inlinedBlock.inlinedFunctionStartOffset))
         }
 
         override fun location(offset: Int): LocationInfo? {
@@ -1949,18 +1961,9 @@ internal class CodeGeneratorVisitor(
             return LocationInfo(diScope, line, column, inlinedAt)
         }
 
-        /**
-         * Note: DILexicalBlocks aren't nested, they should be scoped with the parent function.
-         */
-        private val scope by lazy {
-            if (!context.shouldContainLocationDebugInfo() || inlinedBlock.startOffset == UNDEFINED_OFFSET)
-                return@lazy null
-            val lexicalBlockFile = DICreateLexicalBlockFile(debugInfo.builder, functionScope()!!.scope(), super.fileEntry.diFileScope())
-            val (line, column) = inlinedBlock.startLineAndColumn()
-            DICreateLexicalBlock(debugInfo.builder, lexicalBlockFile, super.fileEntry.diFileScope(), line, column)!!
+        override fun scope(): DIScopeOpaqueRef? {
+            return inlineFunctionScope.takeIf { context.shouldContainLocationDebugInfo() && inlinedBlock.startOffset != UNDEFINED_OFFSET }
         }
-
-        override fun scope() = scope
 
         override fun wrapException(e: Exception): NativeCodeGeneratorException {
             return NativeCodeGeneratorException.wrap(e, inlinedBlock.inlineFunctionSymbol?.owner)
