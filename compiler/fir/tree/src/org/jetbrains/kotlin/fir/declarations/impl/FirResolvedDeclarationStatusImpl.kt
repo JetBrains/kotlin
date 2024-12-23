@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 
 open class FirResolvedDeclarationStatusImpl(
@@ -44,9 +45,6 @@ open class FirResolvedDeclarationStatusImpl(
         this.flags = flags
     }
 
-    override val visibility: Visibility
-        get() = super.visibility
-
     override val modality: Modality
         get() = super.modality!!
 }
@@ -68,4 +66,18 @@ class FirResolvedDeclarationStatusWithAlteredDefaults(
     ) : this(visibility, modality, defaultVisibility, defaultModality, effectiveVisibility) {
         this.flags = flags
     }
+}
+
+class FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+    visibility: Visibility,
+    modality: Modality,
+    @property:FirImplementationDetail
+    val lazyEffectiveVisibility: Lazy<EffectiveVisibility>,
+) : FirDeclarationStatusImpl(visibility, modality), FirResolvedDeclarationStatus {
+    @OptIn(FirImplementationDetail::class)
+    override val effectiveVisibility: EffectiveVisibility
+        get() = lazyEffectiveVisibility.value
+
+    override val modality: Modality
+        get() = super.modality!!
 }
