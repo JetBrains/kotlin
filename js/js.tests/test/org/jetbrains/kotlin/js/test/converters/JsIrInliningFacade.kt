@@ -33,7 +33,6 @@ class JsIrInliningFacade(
         }
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val phases = JsPreSerializationLoweringPhasesProvider.lowerings()
         val phaseConfig = createTestPhaseConfig(testServices, module)
 
         val transformedModule = PhaseEngine(

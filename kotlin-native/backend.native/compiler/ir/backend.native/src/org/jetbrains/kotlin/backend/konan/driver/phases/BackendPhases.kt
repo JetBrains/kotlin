@@ -86,13 +86,6 @@ internal fun <T : PhaseContext> PhaseEngine<T>.runK2SpecialBackendChecks(fir2IrO
 }
 
 private object NativePreSerializationLoweringPhasesProvider : PreSerializationLoweringPhasesProvider<NativePreSerializationLoweringContext>() {
-
-    override val klibAssertionWrapperLowering: ((NativePreSerializationLoweringContext) -> FileLoweringPass)?
-        get() = ::NativeAssertionWrapperLowering
-
-    override val irMangler: KotlinMangler.IrMangler
-        get() = KonanManglerIr
-
     override fun getLowerings(): List<SimpleNamedCompilerPhase<NativePreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> {
         return loweringsOfTheFirstPhase
     }

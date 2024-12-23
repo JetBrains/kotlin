@@ -31,7 +31,16 @@ fun createPhaseConfig(
 }
 
 fun PhaseConfig.list(compoundPhase: CompilerPhase<*, *, *>) {
-    for ((depth, phase) in compoundPhase.getNamedSubphases()) {
+    list(compoundPhase.getNamedSubphases())
+}
+
+@JvmName("listPhases")
+fun PhaseConfig.list(phases: List<NamedCompilerPhase<*, *, *>>) {
+    list(phases.indices.zip(phases))
+}
+
+fun PhaseConfig.list(phases: List<Pair<Int, NamedCompilerPhase<*, *, *>>>) {
+    for ((depth, phase) in phases) {
         println(buildString {
             append("    ".repeat(depth))
             append(phase.name)
