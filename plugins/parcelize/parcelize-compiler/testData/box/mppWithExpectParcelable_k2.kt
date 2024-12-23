@@ -1,10 +1,11 @@
 // TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND_K1: ANY
 // LANGUAGE: +MultiPlatformProjects
 // WITH_STDLIB
+// DIAGNOSTICS: -EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE
 
 // Metadata compilations do not see through the expect/actuals and therefore,
 // there are parcelize errors in metadata compilations.
-// IGNORE_FIR_DIAGNOSTICS_DIFF
 
 // MODULE: m1-common
 // FILE: common.kt
@@ -16,7 +17,7 @@ expect interface MyParcelable
 annotation class TriggerParcelize
 
 @TriggerParcelize
-data class User(val name: String) : MyParcelable
+data class <!NO_PARCELABLE_SUPERTYPE{METADATA}!>User<!>(val name: String) : MyParcelable
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: android.kt
