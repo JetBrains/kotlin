@@ -22,23 +22,23 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
  * @see org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
  */
 abstract class FirLazyDeclarationResolver : FirSessionComponent {
-    var lazyResolveContractChecksEnabled: Boolean = true
+    val lazyResolveContractChecksEnabled: ThreadLocal<Boolean> = ThreadLocal.withInitial { true }
 
     abstract fun startResolvingPhase(phase: FirResolvePhase)
 
     abstract fun finishResolvingPhase(phase: FirResolvePhase)
 
     fun disableLazyResolveContractChecks() {
-        lazyResolveContractChecksEnabled = false
+        lazyResolveContractChecksEnabled.set(false)
     }
 
     inline fun <T> disableLazyResolveContractChecksInside(action: () -> T): T {
-        val current = lazyResolveContractChecksEnabled
-        lazyResolveContractChecksEnabled = false
+        val current = lazyResolveContractChecksEnabled.get()
+        lazyResolveContractChecksEnabled.set(false)
         try {
             return action()
         } finally {
-            lazyResolveContractChecksEnabled = current
+            lazyResolveContractChecksEnabled.set(current)
         }
     }
 
