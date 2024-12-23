@@ -204,7 +204,6 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
             sourceMapContentEmbedding = SourceMapSourceEmbedding.INLINING
         }
         configuration.sourceMapEmbedSources = sourceMapContentEmbedding
-        configuration.sourceMapIncludeMappingsFromUnavailableFiles = arguments.includeUnavailableSourcesIntoSourceMap
 
         if (!arguments.sourceMap && sourceMapEmbedContentString != null) {
             messageCollector.report(WARNING, "source-map-embed-sources argument has no effect without source map", null)
