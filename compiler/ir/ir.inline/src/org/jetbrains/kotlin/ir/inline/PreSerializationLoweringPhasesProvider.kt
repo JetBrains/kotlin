@@ -59,7 +59,6 @@ abstract class PreSerializationLoweringPhasesProvider<Context : LoweringContext>
             lower = buildModuleLoweringsPhase(
                 ::IrValidationBeforeLoweringPhase,
             ) then performByIrFile(
-                name = "PrepareForFunctionInlining",
                 createFilePhases(
                     klibAssertionWrapperLowering, // Only on Native
                     jsCodeOutliningLowering, // Only on JS
@@ -76,7 +75,6 @@ abstract class PreSerializationLoweringPhasesProvider<Context : LoweringContext>
             ) then buildModuleLoweringsPhase(
 //              validateIrAfterInliningOnlyPrivateFunctions,
             ) then performByIrFile(
-                name = "FunctionInlining",
                 createFilePhases(
 //                  { FunctionInlining(it, inlineFunctionResolver(context, InlineMode.ALL_INLINE_FUNCTIONS), produceOuterThisFields = false) },
                 ),

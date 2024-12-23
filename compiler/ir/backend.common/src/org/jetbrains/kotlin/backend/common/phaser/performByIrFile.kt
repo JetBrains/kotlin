@@ -16,24 +16,20 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
 fun <Context : LoweringContext> performByIrFile(
-    name: String,
     lower: List<SimpleNamedCompilerPhase<Context, IrFile, IrFile>>,
-): SameTypeNamedCompilerPhase<Context, IrModuleFragment> =
-    SameTypeNamedCompilerPhase(
-        name, emptySet(), PerformByIrFilePhase(lower, supportParallel = false), emptySet(), emptySet(), emptySet(),
-        setOf(getIrDumper()), nlevels = 1,
-    )
+): SimpleNamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment> = PerformByIrFilePhase(lower, supportParallel = false)
 
 class PerformByIrFilePhase<Context : LoweringContext>(
     private val lower: List<SimpleNamedCompilerPhase<Context, IrFile, IrFile>>,
     private val supportParallel: Boolean,
-) : SameTypeCompilerPhase<Context, IrModuleFragment> {
-    override fun invoke(
-        phaseConfig: PhaseConfig,
-        phaserState: PhaserState<IrModuleFragment>,
-        context: Context,
-        input: IrModuleFragment
+) : SimpleNamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment>(name = "PerformByIrFilePhase") {
+    override fun outputIfNotEnabled(
+        phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment,
     ): IrModuleFragment {
+        return input
+    }
+
+    override fun phaseBody(context: Context, input: IrModuleFragment): IrModuleFragment {
         val nThreads = context.configuration.get(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS) ?: 1
         return if (supportParallel && nThreads > 1)
             invokeParallel(context, input, nThreads)
