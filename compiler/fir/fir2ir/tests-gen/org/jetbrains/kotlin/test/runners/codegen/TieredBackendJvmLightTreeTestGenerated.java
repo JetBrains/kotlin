@@ -26801,5 +26801,27 @@ public class TieredBackendJvmLightTreeTestGenerated extends AbstractTieredBacken
     public void testManyCapturedTypes() {
       runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/manyCapturedTypes.nkt");
     }
+
+    @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolveFreezesIDE/pcla")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Pcla {
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolveFreezesIDE/pcla/issues")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Issues {
+        @Test
+        @TestMetadata("kt73771Original.nkt")
+        public void testKt73771Original() {
+          runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/pcla/issues/kt73771Original.nkt");
+        }
+
+        @Test
+        @TestMetadata("kt73771Simple.nkt")
+        public void testKt73771Simple() {
+          runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/pcla/issues/kt73771Simple.nkt");
+        }
+      }
+    }
   }
 }

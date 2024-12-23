@@ -1,0 +1,25 @@
+FILE: main.kt
+    public final val townsWiki: R|kotlin/collections/List<kotlin/Any>| = R|kotlin/collections/buildList|<R|kotlin/Any|>(<L> = buildList@fun R|kotlin/collections/MutableList<kotlin/Any>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+        R|kotlin/collections/listOf|<R|kotlin/String|>(String(  ,       Towny.   -    .)).R|kotlin/run|<R|kotlin/collections/List<kotlin/String>|, R|kotlin/Boolean|>(::R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|)
+        R|kotlin/collections/listOf|<R|kotlin/String|>(String(  -  -   /towny menu)).R|kotlin/run|<R|kotlin/collections/List<kotlin/String>|, R|kotlin/Boolean|>(::R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|)
+        R|kotlin/collections/listOf|<R|kotlin/String|>(String()).R|kotlin/run|<R|kotlin/collections/List<kotlin/String>|, R|kotlin/Boolean|>(::R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|)
+        String(        ).R|kotlin/run|<R|kotlin/String|, R|kotlin/Boolean|>(::R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|)
+        R|kotlin/collections/listOf|<R|kotlin/String|>(<strcat>(String(/towny universe -  ,  ,   .), String(/town list -  ), String(/nation list -  ), String(/towny prices -      .), String(/town -     ), String(/town plots -     ), String(/towny time -       ))).R|kotlin/run|<R|kotlin/collections/List<kotlin/String>|, R|kotlin/Boolean|>(::R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|)
+        R|kotlin/collections/listOf|<R|kotlin/String|>(String( )).R|kotlin/run|<R|kotlin/collections/List<kotlin/String>|, R|kotlin/Boolean|>(::R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|)
+        String().R|kotlin/run|<R|kotlin/String|, R|kotlin/Boolean|>(::R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|)
+        String(.  F3+G   ).R|kotlin/run|<R|kotlin/String|, R|kotlin/Boolean|>(::R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|)
+        String().R|kotlin/run|<R|kotlin/String|, R|kotlin/Boolean|>(::R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|)
+        R|kotlin/collections/listOf|<R|kotlin/String|>(<strcat>(String(/town new ___ -  .   ,  ,    , ), String(/town _ -   ), String(/resident _ -   ), String(/t spawn -   ), String(/town set spawn -         ), String(/resident toggle constantplotborder -  F3+G), String(/town claim -   ), String(/town map -     ), String(/town buy bonus 1 -    ), String(/town invite  -    ), String(/town toggle open -   /  ))).R|kotlin/run|<R|kotlin/collections/List<kotlin/String>|, R|kotlin/Boolean|>(::R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|)
+        R|kotlin/collections/listOf|<R|kotlin/String|>(String()).R|kotlin/run|<R|kotlin/collections/List<kotlin/String>|, R|kotlin/Boolean|>(::R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|)
+        R|kotlin/collections/listOf|<R|kotlin/String|>(String(   -  .     .)).R|kotlin/run|<R|kotlin/collections/List<kotlin/String>|, R|kotlin/Boolean|>(::R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|)
+        R|kotlin/collections/listOf|<R|kotlin/String|>(String(  /town          )).R|kotlin/run|<R|kotlin/collections/List<kotlin/String>|, R|kotlin/Boolean|>(::R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|)
+        R|kotlin/collections/listOf|<R|kotlin/String|>(String(     -  .      .     /town   .     -        !)).R|kotlin/run|<R|kotlin/collections/List<kotlin/String>|, R|kotlin/Boolean|>(::R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|)
+        R|kotlin/collections/listOf|<R|kotlin/String|>(<strcat>(String(), String(,      10$ -   5       100$. ), String(        100$     . ), String(           .))).R|kotlin/run|<R|kotlin/collections/List<kotlin/String>|, R|kotlin/Boolean|>(::R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|)
+        R|kotlin/collections/listOf|<R|kotlin/String|>(String(     !)).R|kotlin/run|<R|kotlin/collections/List<kotlin/String>|, R|kotlin/Boolean|>(::R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|)
+        R|kotlin/collections/listOf|<R|kotlin/String|>(String(   !))
+        String(  ).R|kotlin/run|<R|kotlin/String|, R|kotlin/Boolean|>(::R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|)
+        R|kotlin/collections/listOf|<R|kotlin/String|>(String(!))
+        <strcat>(String(), String(), String(), String()).R|kotlin/run|<R|kotlin/String|, R|kotlin/Boolean|>(::R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|)
+    }
+    )
+        public get(): R|kotlin/collections/List<kotlin/Any>|
