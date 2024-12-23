@@ -1,0 +1,1 @@
+@R|kotlin/Deprecated|[CompilerRequiredAnnotations](String()) public final [ResolvedTo(SUPER_TYPES)] typealias AAA = R|kotlin/String|

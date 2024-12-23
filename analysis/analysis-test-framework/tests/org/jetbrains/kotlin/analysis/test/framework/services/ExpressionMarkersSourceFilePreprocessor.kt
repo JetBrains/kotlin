@@ -107,7 +107,7 @@ class ExpressionMarkerProvider : TestService {
     fun getSelectedRangeOrNull(file: PsiFile): TextRange? = selected[file.name]
     fun getSelectedRange(file: PsiFile): TextRange = getSelectedRangeOrNull(file) ?: error("No selected expression found in file")
 
-    inline fun <reified P : KtElement> getElementOfTypeAtCaret(file: KtFile, caretTag: String? = null): P {
+    inline fun <reified P : PsiElement> getElementOfTypeAtCaret(file: PsiFile, caretTag: String? = null): P {
         val offset = getCaretPosition(file, caretTag)
         return file.findElementAt(offset)?.parentOfType() ?: error("No expression found at caret")
     }

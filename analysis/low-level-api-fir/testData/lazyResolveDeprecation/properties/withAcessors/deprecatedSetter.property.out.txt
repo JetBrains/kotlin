@@ -1,0 +1,3 @@
+Declaration deprecation: null
+Getter deprecation: null
+Setter deprecation: SimpleDeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)

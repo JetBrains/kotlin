@@ -44,6 +44,10 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model("lazyAnnotations", pattern = TestGeneratorUtil.KTS)
         }
 
+        testClass<AbstractSourceDeprecationsResolveTest> {
+            model("lazyResolveDeprecation", pattern = TestGeneratorUtil.KT)
+        }
+
         testClass<AbstractFirSourceLazyDeclarationResolveTest> {
             model("lazyResolve", pattern = TestGeneratorUtil.KT)
         }
