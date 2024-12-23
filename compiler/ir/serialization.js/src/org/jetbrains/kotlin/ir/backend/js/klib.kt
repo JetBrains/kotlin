@@ -630,6 +630,7 @@ fun serializeModuleIntoKlib(
                         fqName.toByteArray(),
                         fileMetadata,
                         debugInfo,
+                        fileEntries,
                     )
                 }
             }
@@ -732,6 +733,7 @@ fun IncrementalDataProvider.getSerializedData(newSources: List<KtSourceFile>): L
                 declarations,
                 debugInfo,
                 fileMetadata,
+                fileEntries,
             )
         }
         storage.add(KotlinFileSerializedData(metaFile.metadata, irFile))
