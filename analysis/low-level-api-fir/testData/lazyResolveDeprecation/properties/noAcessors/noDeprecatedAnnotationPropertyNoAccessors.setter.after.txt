@@ -1,0 +1,3 @@
+public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] var aa: Int = LAZY_EXPRESSION
+    public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): Int
+    public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] set([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] value: Int): R|kotlin/Unit|
