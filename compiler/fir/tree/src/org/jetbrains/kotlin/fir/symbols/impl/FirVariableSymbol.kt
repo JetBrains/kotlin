@@ -93,7 +93,7 @@ open class FirPropertySymbol(callableId: CallableId) : FirVariableSymbol<FirProp
         }
 
     override fun deprecationsAreDefinitelyEmpty(): Boolean {
-        return super.currentDeclarationDeprecationsAreDefinitelyEmpty()
+        return currentDeclarationDeprecationsAreDefinitelyEmpty()
                 && getterSymbol?.currentDeclarationDeprecationsAreDefinitelyEmpty() != false
                 && setterSymbol?.currentDeclarationDeprecationsAreDefinitelyEmpty() != false
                 && backingFieldSymbol?.currentDeclarationDeprecationsAreDefinitelyEmpty() != false
@@ -120,7 +120,7 @@ class FirBackingFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirBacki
         get() = fir.propertySymbol.fir.getter?.symbol
 
     override fun deprecationsAreDefinitelyEmpty(): Boolean {
-        return super.currentDeclarationDeprecationsAreDefinitelyEmpty() && propertySymbol.currentDeclarationDeprecationsAreDefinitelyEmpty()
+        return currentDeclarationDeprecationsAreDefinitelyEmpty() && propertySymbol.currentDeclarationDeprecationsAreDefinitelyEmpty()
     }
 }
 
