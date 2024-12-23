@@ -218,12 +218,11 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
         if (!data.mode.canEvaluateCallableReference(expression)) return false
 
         val owner = expression.symbol.owner
-        val boundValuesComputable = expression.arguments.none { it?.accept(this, data) == false }
 
         if (!data.mode.canEvaluateFunction(owner)) return false
 
         val bodyComputable = visitBodyIfNeeded(owner, data)
-        return boundValuesComputable && bodyComputable
+        return expression.visitValueArguments(data) && bodyComputable
     }
 
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: IrInterpreterCheckerData): Boolean {
