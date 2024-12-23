@@ -43,9 +43,9 @@ class FirTowerResolver(
         info: CallInfo,
         context: ResolutionContext,
         collector: CandidateCollector,
-        manager: TowerResolveManager
+        manager: TowerResolveManager,
+        candidateFactory: CandidateFactory = CandidateFactory(context, info),
     ): CandidateCollector {
-        val candidateFactory = CandidateFactory(context, info)
         val candidateFactoriesAndCollectors = CandidateFactoriesAndCollectors(candidateFactory, collector)
 
         enqueueResolutionTasks(context, manager, candidateFactoriesAndCollectors, info)

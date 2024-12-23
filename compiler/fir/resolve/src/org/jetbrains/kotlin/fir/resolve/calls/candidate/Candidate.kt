@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
@@ -114,8 +113,6 @@ class Candidate(
 
     var resultingTypeForCallableReference: ConeKotlinType? = null
         private set
-    var outerConstraintBuilderEffect: (ConstraintSystemOperation.() -> Unit)? = null
-        private set
 
     val usesSamConversion: Boolean get() = functionTypesOfSamConversions != null
     val usesSamConversionOrSamConstructor: Boolean get() = usesSamConversion || symbol.origin == FirDeclarationOrigin.SamConstructor
@@ -125,14 +122,13 @@ class Candidate(
 
     internal fun initializeCallableReferenceAdaptation(
         callableReferenceAdaptation: CallableReferenceAdaptation?,
-        resultingTypeForCallableReference: ConeKotlinType,
-        outerConstraintBuilderEffect: ConstraintSystemOperation.() -> Unit
+        resultingTypeForCallableReference: ConeKotlinType
     ) {
         require(this.callableReferenceAdaptation == null) { "callableReferenceAdaptation already initialized" }
         this.callableReferenceAdaptation = callableReferenceAdaptation
         this.resultingTypeForCallableReference = resultingTypeForCallableReference
-        this.outerConstraintBuilderEffect = outerConstraintBuilderEffect
-        usesFunctionConversion = callableReferenceAdaptation?.suspendConversionStrategy is CallableReferenceConversionStrategy.CustomConversion
+        usesFunctionConversion =
+            callableReferenceAdaptation?.suspendConversionStrategy is CallableReferenceConversionStrategy.CustomConversion
         if (callableReferenceAdaptation != null) {
             numDefaults = callableReferenceAdaptation.defaults
         }
