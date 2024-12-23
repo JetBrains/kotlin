@@ -26,7 +26,7 @@ internal class DefaultIterableHandler(private val context: CommonBackendContext)
         expression.type.isSubtypeOfClass(iterableClassSymbol)
 
     override fun build(expression: IrExpression, data: Nothing?, scopeOwner: IrSymbol): HeaderInfo =
-        with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
+        with(context.createIrBuilder(scopeOwner)) {
             val iteratorFun =
                 iterableClassSymbol.getSimpleFunction(OperatorNameConventions.ITERATOR.asString())!!.owner
             IterableHeaderInfo(

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower.loops
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -57,7 +58,9 @@ abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
                         nameHint = inductionVariableName,
                         isMutable = true,
                         origin = this@NumericForLoopHeader.context.inductionVariableOrigin,
-                        irType = elementClass.defaultType
+                        irType = elementClass.defaultType,
+                        startOffset = UNDEFINED_OFFSET,
+                        endOffset = UNDEFINED_OFFSET,
                     )
 
                 // Due to features of PSI2IR we can obtain nullable arguments here while actually

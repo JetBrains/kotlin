@@ -30,7 +30,7 @@ internal class RangeToHandler(private val context: CommonBackendContext) : Heade
     }
 
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol) =
-        with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
+        with(context.createIrBuilder(scopeOwner)) {
             val first = expression.arguments[0]!!
             val last = expression.arguments[1]!!
             val step = irInt(1)

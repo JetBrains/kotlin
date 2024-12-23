@@ -232,10 +232,12 @@ fun Scope.createTmpVariable(
     nameHint: String? = null,
     isMutable: Boolean = false,
     origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
-    irType: IrType? = null
+    irType: IrType? = null,
+    startOffset: Int = irExpression.startOffset,
+    endOffset: Int = irExpression.endOffset,
 ): IrVariable =
     buildVariable(
-        getLocalDeclarationParent(), irExpression.startOffset, irExpression.endOffset, origin, Name.identifier(nameHint ?: "tmp"),
+        getLocalDeclarationParent(), startOffset, endOffset, origin, Name.identifier(nameHint ?: "tmp"),
         irType ?: irExpression.type, isMutable
     ).apply {
         initializer = irExpression

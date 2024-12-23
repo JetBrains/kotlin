@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfo
 import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfoHandler
 import org.jetbrains.kotlin.backend.common.lower.loops.IndexedGetHeaderInfo
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
@@ -31,7 +32,7 @@ abstract class IndexedGetIterationHandler(
     private val canCacheLast: Boolean
 ) : HeaderInfoHandler<IrExpression, Nothing?> {
     override fun build(expression: IrExpression, data: Nothing?, scopeOwner: IrSymbol): HeaderInfo? =
-        with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
+        with(context.createIrBuilder(scopeOwner)) {
             // Consider the case like:
             //
             //   for (elem in A) { f(elem) }`
@@ -48,7 +49,10 @@ abstract class IndexedGetIterationHandler(
             // This also ensures that the semantics of re-assignment of array variables used in the loop is consistent with the semantics
             // proposed in https://youtrack.jetbrains.com/issue/KT-21354.
             val objectVariable = scope.createTmpVariable(
-                expression, nameHint = "indexedObject"
+                expression,
+                nameHint = "indexedObject",
+                startOffset = UNDEFINED_OFFSET,
+                endOffset = UNDEFINED_OFFSET
             )
 
             val last = irCall(expression.type.sizePropertyGetter).apply {

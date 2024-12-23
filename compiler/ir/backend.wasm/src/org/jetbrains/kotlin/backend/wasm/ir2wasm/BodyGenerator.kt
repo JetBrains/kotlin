@@ -1208,8 +1208,9 @@ class BodyGenerator(
         //         (br $CONTINUE_LABEL)))
 
         val label = loop.label
+        val loopStartLocation = loop.getSourceLocation()
 
-        body.buildLoop(label) { wasmLoop ->
+        body.buildLoop(label, startLocation = loopStartLocation, endLocation = loop.nextLocation()) { wasmLoop ->
             body.buildBlock("BREAK_$label") { wasmBreakBlock ->
                 functionContext.defineLoopLevel(loop, LoopLabelType.BREAK, wasmBreakBlock)
                 functionContext.defineLoopLevel(loop, LoopLabelType.CONTINUE, wasmLoop)
@@ -1221,7 +1222,7 @@ class BodyGenerator(
                 loop.body?.let {
                     generateAsStatement(it)
                 }
-                body.buildBr(wasmLoop, SourceLocation.NoLocation("Continue in the loop"))
+                body.buildBr(wasmLoop, loopStartLocation)
             }
         }
 
@@ -1294,4 +1295,9 @@ class BodyGenerator(
     private fun IrElement.getSourceEndLocation() = getSourceLocation(
         functionContext.currentFunctionSymbol, functionContext.currentFunctionSymbol?.owner?.fileOrNull, type = LocationType.END
     )
+
+    private fun IrElement.nextLocation() = when (getSourceLocation()) {
+        is SourceLocation.DefinedLocation -> SourceLocation.NextLocation
+        else -> SourceLocation.NoLocation
+    }
 }
