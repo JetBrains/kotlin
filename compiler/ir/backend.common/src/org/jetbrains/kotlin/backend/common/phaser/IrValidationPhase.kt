@@ -29,7 +29,6 @@ abstract class IrValidationPhase<Context : LoweringContext>(val context: Context
     protected open fun IrValidationContext.additionalValidation(irModule: IrModuleFragment, phaseName: String) {}
 }
 
-@PhaseDescription(name = "ValidateIrBeforeLowering")
 open class IrValidationBeforeLoweringPhase<Context : LoweringContext>(context: Context) : IrValidationPhase<Context>(context) {
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig(
@@ -46,7 +45,6 @@ open class IrValidationBeforeLoweringPhase<Context : LoweringContext>(context: C
         )
 }
 
-@PhaseDescription(name = "IrValidationAfterInliningOnlyPrivateFunctionsPhase")
 class IrValidationAfterInliningOnlyPrivateFunctionsPhase<Context : LoweringContext>(
     context: Context,
     private val checkInlineFunctionCallSites: InlineFunctionUseSiteChecker

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.ir.util.isInlineParameter
 /**
  * Transforms all callable references (including defaults) to inline lambdas, marks inline lambdas for later passes.
  */
-@PhaseDescription("CommonInlineCallableReferenceToLambdaPhase")
 open class CommonInlineCallableReferenceToLambdaPhase(
     context: LoweringContext,
     inlineFunctionResolver: InlineFunctionResolver
