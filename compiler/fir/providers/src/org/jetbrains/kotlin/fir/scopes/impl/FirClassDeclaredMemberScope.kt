@@ -42,6 +42,8 @@ class FirClassDeclaredMemberScopeImpl(
 
     /**
      * This index should be lazy to avoid SOE for Java classes as [FirClass.declarations] in this case may lead to it
+     *
+     * Issues: KT-72660
      */
     private val callablesIndex: Map<Name, List<FirCallableSymbol<*>>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val result = mutableMapOf<Name, MutableList<FirCallableSymbol<*>>>()
