@@ -762,6 +762,44 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         context.typeDeserializer.typeRef(this)
 
     private fun Visibility.toDeserializedEffectiveVisibility(owner: FirClassLikeSymbol<*>?): EffectiveVisibility {
-        return c.outerClassEffectiveVisibility.lowerBound(this.toEffectiveVisibility(owner), c.session.typeContext)
+        return this.toDeserializedEffectiveVisibility(owner, c, c.session, forClass = false)
+    }
+}
+
+internal fun Visibility.toDeserializedEffectiveVisibility(
+    owner: FirClassLikeSymbol<*>?,
+    c: FirDeserializationContext?,
+    session: FirSession,
+    forClass: Boolean
+): EffectiveVisibility {
+    /*
+     * `lowerBound` operation for `EffectiveVisibility.Protected` involves subtyping between container classes.
+     * In some cases, during deserialization, this subtyping might lead to the infinite recursion.
+     * Consider the following example:
+     *
+     * ```
+     * class Outer {
+     *     protected class Inner(protected val x: Any)
+     * }
+     * ```
+     *
+     * Here `Inner` class has effective visibility `protected (in Outer)` and `x` has `protected (in Inner)`.
+     * So to perform the `lowerBound` operation between these two visibilities, the compiler needs to check the
+     * subtyping between the `Outer` and `Inner`. BUT this happens during the deserialization in the following chain:
+     * `deserialize Outer -> deserialize Inner -> deserialize x`, and none class symbols are not published yey (neither
+     * FIR element for them is created). So when subtyping tries to access supertypes of any of these classes, it triggers
+     * deserialization once again which leads to stack overflow eventually.
+     *
+     * So the `unbindProtected` call is needed to remove this type-dependent effective visibility.
+     */
+    val selfEffectiveVisibility = this.toEffectiveVisibility(owner, forClass = forClass).unbindProtected()
+    val parentEffectiveVisibility = c?.outerClassEffectiveVisibility ?: EffectiveVisibility.Public
+    return parentEffectiveVisibility.lowerBound(selfEffectiveVisibility, session.typeContext)
+}
+
+private fun EffectiveVisibility.unbindProtected(): EffectiveVisibility {
+    return when (this) {
+        is EffectiveVisibility.Protected -> EffectiveVisibility.ProtectedBound
+        else -> this
     }
 }

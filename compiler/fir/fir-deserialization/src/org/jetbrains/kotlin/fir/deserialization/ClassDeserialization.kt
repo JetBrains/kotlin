@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.serialization.deserialization.loadValueClassRepresentation
 
+private var i = 0
 fun deserializeClassToSymbol(
     classId: ClassId,
     classProto: ProtoBuf.Class,
@@ -58,17 +59,20 @@ fun deserializeClassToSymbol(
     origin: FirDeclarationOrigin = FirDeclarationOrigin.Library,
     deserializeNestedClass: (ClassId, FirDeserializationContext) -> FirRegularClassSymbol?
 ) {
+    if (i++ > 100) {
+        Unit
+    }
     val flags = classProto.flags
     val kind = Flags.CLASS_KIND.get(flags)
     val modality = ProtoEnumFlags.modality(Flags.MODALITY.get(flags))
     val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
-    val selfEffectiveVisibility = visibility.toEffectiveVisibility(parentContext?.outerClassSymbol, forClass = true)
-    val parentEffectiveVisibility = parentContext?.outerClassEffectiveVisibility ?: EffectiveVisibility.Public
-    val status = FirResolvedDeclarationStatusImpl(
-        visibility,
-        modality,
-        effectiveVisibility = parentEffectiveVisibility.lowerBound(selfEffectiveVisibility, session.typeContext)
-    ).apply {
+    val effectiveVisibility = visibility.toDeserializedEffectiveVisibility(
+        owner = parentContext?.outerClassSymbol,
+        c = parentContext,
+        session,
+        forClass = true
+    )
+    val status = FirResolvedDeclarationStatusImpl(visibility, modality, effectiveVisibility).apply {
         isExpect = Flags.IS_EXPECT_CLASS.get(flags)
         isActual = false
         isCompanion = kind == ProtoBuf.Class.Kind.COMPANION_OBJECT
