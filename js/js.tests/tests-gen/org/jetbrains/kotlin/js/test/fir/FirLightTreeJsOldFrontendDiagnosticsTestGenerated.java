@@ -695,21 +695,9 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
     }
 
     @Test
-    @TestMetadata("expectShouldBeJSExportable.ll.kt")
-    public void testExpectShouldBeJSExportable_ll() {
-      runTest("compiler/testData/diagnostics/testsWithJsStdLib/mpp/expectShouldBeJSExportable.ll.kt");
-    }
-
-    @Test
     @TestMetadata("JsExternalTypeExtendsActualExternalType.kt")
     public void testJsExternalTypeExtendsActualExternalType() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/mpp/JsExternalTypeExtendsActualExternalType.kt");
-    }
-
-    @Test
-    @TestMetadata("JsExternalTypeExtendsActualExternalType.ll.kt")
-    public void testJsExternalTypeExtendsActualExternalType_ll() {
-      runTest("compiler/testData/diagnostics/testsWithJsStdLib/mpp/JsExternalTypeExtendsActualExternalType.ll.kt");
     }
   }
 
