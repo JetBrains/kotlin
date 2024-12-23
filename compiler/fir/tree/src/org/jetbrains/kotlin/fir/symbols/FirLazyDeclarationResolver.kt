@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.util.PrivateForInline
 
 /**
  * A component to lazy resolve [FirBasedSymbol] to the required phase.
@@ -22,23 +23,31 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
  * @see org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
  */
 abstract class FirLazyDeclarationResolver : FirSessionComponent {
-    var lazyResolveContractChecksEnabled: Boolean = true
+    @PrivateForInline
+    @Suppress("PropertyName")
+    val _lazyResolveContractChecksEnabled: ThreadLocal<Boolean> = ThreadLocal.withInitial { true }
+
+    @OptIn(PrivateForInline::class)
+    val lazyResolveContractChecksEnabled: Boolean
+        get() = _lazyResolveContractChecksEnabled.get()
 
     abstract fun startResolvingPhase(phase: FirResolvePhase)
 
     abstract fun finishResolvingPhase(phase: FirResolvePhase)
 
+    @OptIn(PrivateForInline::class)
     fun disableLazyResolveContractChecks() {
-        lazyResolveContractChecksEnabled = false
+        _lazyResolveContractChecksEnabled.set(false)
     }
 
+    @OptIn(PrivateForInline::class)
     inline fun <T> disableLazyResolveContractChecksInside(action: () -> T): T {
-        val current = lazyResolveContractChecksEnabled
-        lazyResolveContractChecksEnabled = false
+        val current = _lazyResolveContractChecksEnabled.get()
+        _lazyResolveContractChecksEnabled.set(false)
         try {
             return action()
         } finally {
-            lazyResolveContractChecksEnabled = current
+            _lazyResolveContractChecksEnabled.set(current)
         }
     }
 
