@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusWithLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.expressions.builder.buildEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -257,11 +258,19 @@ fun generateEntriesGetter(
     }
 }
 
+@OptIn(FirImplementationDetail::class)
 private fun createStatus(parentStatus: FirDeclarationStatus): FirDeclarationStatusImpl {
-    val parentEffectiveVisibility = (parentStatus as? FirResolvedDeclarationStatusImpl)?.effectiveVisibility
-    return if (parentEffectiveVisibility != null) {
-        FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, parentEffectiveVisibility)
-    } else {
-        FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
+    return when (parentStatus) {
+        is FirResolvedDeclarationStatusImpl -> FirResolvedDeclarationStatusImpl(
+            Visibilities.Public,
+            Modality.FINAL,
+            parentStatus.effectiveVisibility
+        )
+        is FirResolvedDeclarationStatusWithLazyEffectiveVisibility -> FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+            Visibilities.Public,
+            Modality.FINAL,
+            parentStatus.lazyEffectiveVisibility,
+        )
+        else -> FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
     }
 }

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusWithLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.addDeclarations
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.moduleName
@@ -62,11 +63,12 @@ fun deserializeClassToSymbol(
     val kind = Flags.CLASS_KIND.get(flags)
     val modality = ProtoEnumFlags.modality(Flags.MODALITY.get(flags))
     val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
-    val status = FirResolvedDeclarationStatusImpl(
-        visibility,
-        modality,
-        visibility.toEffectiveVisibility(parentContext?.outerClassSymbol, forClass = true)
-    ).apply {
+    val effectiveVisibility = visibility.toLazyEffectiveVisibility(
+        owner = parentContext?.outerClassSymbol,
+        session,
+        forClass = true
+    )
+    val status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(visibility, modality, effectiveVisibility).apply {
         isExpect = Flags.IS_EXPECT_CLASS.get(flags)
         isActual = false
         isCompanion = kind == ProtoBuf.Class.Kind.COMPANION_OBJECT
@@ -105,7 +107,8 @@ fun deserializeClassToSymbol(
             flexibleTypeFactory,
             constDeserializer,
             containerSource,
-            symbol
+            symbol,
+            status.effectiveVisibility
         )
     if (status.isCompanion) {
         parentContext?.let {

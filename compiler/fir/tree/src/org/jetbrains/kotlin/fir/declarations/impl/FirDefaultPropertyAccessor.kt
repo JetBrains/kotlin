@@ -35,11 +35,7 @@ abstract class FirDefaultPropertyAccessor(
     valueParameters: MutableList<FirValueParameter>,
     propertySymbol: FirPropertySymbol,
     isGetter: Boolean,
-    visibility: Visibility,
-    modality: Modality,
-    effectiveVisibility: EffectiveVisibility?,
-    isInline: Boolean,
-    isOverride: Boolean,
+    status: FirDeclarationStatus,
     symbol: FirPropertyAccessorSymbol,
     resolvePhase: FirResolvePhase,
     attributes: FirDeclarationAttributes,
@@ -49,13 +45,7 @@ abstract class FirDefaultPropertyAccessor(
     moduleData,
     origin,
     attributes,
-    status = when (effectiveVisibility) {
-        null -> FirDeclarationStatusImpl(visibility, modality)
-        else -> FirResolvedDeclarationStatusImpl(visibility, modality, effectiveVisibility)
-    }.apply {
-        this.isInline = isInline
-        this.isOverride = isOverride
-    },
+    status,
     propertyTypeRef,
     deprecationsProvider = UnresolvedDeprecationProvider,
     containerSource = null,
@@ -107,12 +97,8 @@ class FirDefaultPropertyGetter(
     moduleData: FirModuleData,
     origin: FirDeclarationOrigin,
     propertyTypeRef: FirTypeRef,
-    visibility: Visibility,
     propertySymbol: FirPropertySymbol,
-    modality: Modality = Modality.FINAL,
-    effectiveVisibility: EffectiveVisibility? = null,
-    isInline: Boolean = false,
-    isOverride: Boolean = false,
+    status: FirDeclarationStatus,
     symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
     resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
     attributes: FirDeclarationAttributes = FirDeclarationAttributes()
@@ -124,15 +110,37 @@ class FirDefaultPropertyGetter(
     valueParameters = mutableListOf(),
     propertySymbol,
     isGetter = true,
-    visibility = visibility,
-    modality = modality,
-    effectiveVisibility = effectiveVisibility,
-    isInline = isInline,
-    isOverride = isOverride,
+    status = status,
     symbol = symbol,
     resolvePhase = resolvePhase,
     attributes = attributes,
-)
+) {
+    constructor(
+        source: KtSourceElement?,
+        moduleData: FirModuleData,
+        origin: FirDeclarationOrigin,
+        propertyTypeRef: FirTypeRef,
+        visibility: Visibility,
+        propertySymbol: FirPropertySymbol,
+        modality: Modality = Modality.FINAL,
+        effectiveVisibility: EffectiveVisibility? = null,
+        isInline: Boolean = false,
+        isOverride: Boolean = false,
+        symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
+        resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+        attributes: FirDeclarationAttributes = FirDeclarationAttributes()
+    ) : this(
+        source,
+        moduleData,
+        origin,
+        propertyTypeRef,
+        propertySymbol,
+        status = createStatus(visibility, modality, effectiveVisibility, isInline, isOverride),
+        symbol = symbol,
+        resolvePhase = resolvePhase,
+        attributes = attributes,
+    )
+}
 
 /**
  * @param [parameterSource] Should be specified only in the case of invalid code,
@@ -143,12 +151,8 @@ class FirDefaultPropertySetter(
     moduleData: FirModuleData,
     origin: FirDeclarationOrigin,
     propertyTypeRef: FirTypeRef,
-    visibility: Visibility,
     propertySymbol: FirPropertySymbol,
-    modality: Modality = Modality.FINAL,
-    effectiveVisibility: EffectiveVisibility? = null,
-    isInline: Boolean = false,
-    isOverride: Boolean = false,
+    status: FirDeclarationStatus,
     propertyAccessorSymbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
     parameterSource: KtSourceElement? = null,
     parameterAnnotations: List<FirAnnotation> = emptyList(),
@@ -173,12 +177,52 @@ class FirDefaultPropertySetter(
     ),
     propertySymbol,
     isGetter = false,
-    visibility = visibility,
-    modality = modality,
-    effectiveVisibility = effectiveVisibility,
-    isInline = isInline,
-    isOverride = isOverride,
+    status = status,
     symbol = propertyAccessorSymbol,
     resolvePhase = resolvePhase,
     attributes = attributes,
-)
+) {
+    constructor(
+        source: KtSourceElement?,
+        moduleData: FirModuleData,
+        origin: FirDeclarationOrigin,
+        propertyTypeRef: FirTypeRef,
+        visibility: Visibility,
+        propertySymbol: FirPropertySymbol,
+        modality: Modality = Modality.FINAL,
+        effectiveVisibility: EffectiveVisibility? = null,
+        isInline: Boolean = false,
+        isOverride: Boolean = false,
+        propertyAccessorSymbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
+        parameterSource: KtSourceElement? = null,
+        parameterAnnotations: List<FirAnnotation> = emptyList(),
+        resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+        attributes: FirDeclarationAttributes = FirDeclarationAttributes()
+    ) : this(
+        source,
+        moduleData,
+        origin,
+        propertyTypeRef,
+        propertySymbol,
+        status = createStatus(visibility, modality, effectiveVisibility, isInline, isOverride),
+        propertyAccessorSymbol,
+        parameterSource,
+        parameterAnnotations,
+        resolvePhase,
+        attributes,
+    )
+}
+
+private fun createStatus(
+    visibility: Visibility,
+    modality: Modality,
+    effectiveVisibility: EffectiveVisibility?,
+    isInline: Boolean,
+    isOverride: Boolean,
+): FirDeclarationStatusImpl = when (effectiveVisibility) {
+    null -> FirDeclarationStatusImpl(visibility, modality)
+    else -> FirResolvedDeclarationStatusImpl(visibility, modality, effectiveVisibility)
+}.apply {
+    this.isInline = isInline
+    this.isOverride = isOverride
+}

@@ -855,6 +855,11 @@ public class IncrementalK2FirICJvmCompilerRunnerTestGenerated extends AbstractIn
       runTest("jps/jps-plugin/testData/incremental/classHierarchyAffected/methodRemoved/");
     }
 
+    @TestMetadata("outerClassVisibilityChanged")
+    public void testOuterClassVisibilityChanged() {
+      runTest("jps/jps-plugin/testData/incremental/classHierarchyAffected/outerClassVisibilityChanged/");
+    }
+
     @TestMetadata("overrideExplicit")
     public void testOverrideExplicit() {
       runTest("jps/jps-plugin/testData/incremental/classHierarchyAffected/overrideExplicit/");

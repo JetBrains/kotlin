@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.extensionService
@@ -241,9 +240,6 @@ class FirStatusResolver(
     ): FirResolvedDeclarationStatus {
         if (status is FirResolvedDeclarationStatus) return status
         require(status is FirDeclarationStatusImpl)
-
-        @Suppress("UNCHECKED_CAST")
-        overriddenStatuses as List<FirResolvedDeclarationStatusImpl>
         val visibility = when (status.visibility) {
             Visibilities.Unknown -> when {
                 isLocal -> Visibilities.Local
@@ -262,7 +258,7 @@ class FirStatusResolver(
         if (overriddenStatuses.isNotEmpty()) {
             for (modifier in MODIFIERS_FROM_OVERRIDDEN) {
                 status[modifier] = status[modifier] || overriddenStatuses.fold(false) { acc, overriddenStatus ->
-                    acc || overriddenStatus[modifier]
+                    acc || (overriddenStatus as FirDeclarationStatusImpl)[modifier]
                 }
             }
             status[FirDeclarationStatusImpl.Modifier.OVERRIDE] = true
@@ -312,7 +308,7 @@ class FirStatusResolver(
         declaration: FirDeclaration,
         containingClass: FirClass?,
         containingProperty: FirProperty?,
-        overriddenStatuses: List<FirResolvedDeclarationStatusImpl>
+        overriddenStatuses: List<FirResolvedDeclarationStatus>
     ): Visibility {
         if (declaration is FirConstructor && containingClass?.hasPrivateConstructor() == true) return Visibilities.Private
 
