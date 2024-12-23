@@ -77,7 +77,6 @@ class WasmDeserializerFacade(
         val moduleInfo = loadIr(
             depsDescriptors = moduleStructure,
             irFactory = IrFactoryImplForWasmIC(WholeWorldStageController()),
-            verifySignatures = false,
             loadFunctionInterfacesIntoStdlib = true,
         )
 

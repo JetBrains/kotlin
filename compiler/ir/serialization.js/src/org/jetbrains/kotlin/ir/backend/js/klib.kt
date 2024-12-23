@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.serialization.*
-import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
-import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Ir2DescriptorManglerAdapter
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
@@ -47,7 +45,6 @@ import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForWeb
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -162,7 +159,6 @@ fun deserializeDependencies(
 fun loadIr(
     depsDescriptors: ModulesStructure,
     irFactory: IrFactory,
-    verifySignatures: Boolean,
     filesToLoad: Set<String>? = null,
     loadFunctionInterfacesIntoStdlib: Boolean = false,
 ): IrModuleInfo {
@@ -193,7 +189,6 @@ fun loadIr(
                 symbolTable,
                 messageLogger,
                 loadFunctionInterfacesIntoStdlib,
-                verifySignatures,
             ) { depsDescriptors.getModuleDescriptor(it) }
         }
         is MainModule.Klib -> {
@@ -287,7 +282,6 @@ fun getIrModuleInfoForSourceFiles(
     symbolTable: SymbolTable,
     messageCollector: MessageCollector,
     loadFunctionInterfacesIntoStdlib: Boolean,
-    verifySignatures: Boolean,
     mapping: (KotlinLibrary) -> ModuleDescriptor
 ): IrModuleInfo {
     val irBuiltIns = psi2IrContext.irBuiltIns
@@ -319,19 +313,9 @@ fun getIrModuleInfoForSourceFiles(
 
     val (moduleFragment, _) = psi2IrContext.generateModuleFragmentWithPlugins(project, files, irLinker, messageCollector)
 
-    // TODO: not sure whether this check should be enabled by default. Add configuration key for it.
-    val mangleChecker = ManglerChecker(JsManglerIr, Ir2DescriptorManglerAdapter(JsManglerDesc))
-    if (verifySignatures) {
-        moduleFragment.acceptVoid(mangleChecker)
-    }
-
     if (configuration.getBoolean(JSConfigurationKeys.FAKE_OVERRIDE_VALIDATOR)) {
         val fakeOverrideChecker = FakeOverrideChecker(JsManglerIr, JsManglerDesc)
         irLinker.modules.forEach { fakeOverrideChecker.check(it) }
-    }
-
-    if (verifySignatures) {
-        irBuiltIns.knownBuiltins.forEach { it.acceptVoid(mangleChecker) }
     }
 
     return IrModuleInfo(

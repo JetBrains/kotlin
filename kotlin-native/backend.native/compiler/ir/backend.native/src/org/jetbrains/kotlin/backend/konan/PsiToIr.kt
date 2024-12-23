@@ -7,8 +7,6 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageS
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
-import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
-import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Ir2DescriptorManglerAdapter
 import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrContext
 import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrInput
 import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrOutput
@@ -35,7 +33,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.StubGeneratorExtensions
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isHeader
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
@@ -229,8 +226,6 @@ internal fun PsiToIrContext.psiToIr(
     stubGenerator.unboundSymbolGeneration = true
 
     messageCollector.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
-
-    mainModule.acceptVoid(ManglerChecker(KonanManglerIr, Ir2DescriptorManglerAdapter(KonanManglerDesc)))
 
     val modules = if (isProducingLibrary) emptyMap() else (irDeserializer as KonanIrLinker).modules
 

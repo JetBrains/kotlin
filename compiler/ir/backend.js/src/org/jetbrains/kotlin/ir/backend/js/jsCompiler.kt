@@ -42,14 +42,13 @@ fun compile(
     exportedDeclarations: Set<FqName> = emptySet(),
     keep: Set<String> = emptySet(),
     dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
-    verifySignatures: Boolean = true,
     safeExternalBoolean: Boolean = false,
     safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
     filesToLower: Set<String>? = null,
     granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM,
 ): LoweredIr {
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName) =
-        loadIr(depsDescriptors, irFactory, verifySignatures, filesToLower, loadFunctionInterfacesIntoStdlib = true)
+        loadIr(depsDescriptors, irFactory, filesToLower, loadFunctionInterfacesIntoStdlib = true)
 
     return compileIr(
         moduleFragment,
