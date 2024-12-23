@@ -15,14 +15,14 @@ fun Index.fileBased(
             filter: GlobalSearchScope,
             processor: Processor<in V>,
         ): Boolean {
-            val valueDescriptor = fileBasedIndexExtensions.mapType(indexId)
+            val valueType = fileBasedIndexExtensions.mapType(indexId)
             val keyType = fileBasedIndexExtensions.keyTypesMap.keyType(indexId)
             return index
                 .files(IndexKey(keyType, dataKey))
                 .filter { filter.contains(virtualFileFactory.virtualFile(it)) }
                 .mapNotNull { documentId ->
                     index
-                        .value(documentId, valueDescriptor)
+                        .value(documentId, valueType)
                         ?.get(dataKey)
                 }
                 .all { (v) -> processor.process(v) }

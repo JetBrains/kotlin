@@ -12,6 +12,15 @@ data class IndexedSerializedStubTree(
     val stub: SerializedStubTree,
     val index: Map<StubIndexKey<*, *>, Map<Any?, IntArray>>,
 ) {
+
+    fun indexKeys(keyTypesMap: KeyTypesMap): List<IndexKey<*>> =
+        index.flatMap { (indexId, map) ->
+            val keyType = keyTypesMap.keyType(indexId) as KeyType<Any?>
+            map.keys.map { key ->
+                IndexKey(keyType, key)
+            }
+        }
+
     companion object {
         fun serializer(keyTypesMap: KeyTypesMap): Serializer<IndexedSerializedStubTree> {
             return object : Serializer<IndexedSerializedStubTree> {
