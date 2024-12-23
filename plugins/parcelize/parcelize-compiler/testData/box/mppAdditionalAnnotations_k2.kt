@@ -1,10 +1,11 @@
 // TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND_K1: ANY
 // LANGUAGE: +MultiPlatformProjects
 // WITH_STDLIB
+// DIAGNOSTICS: -EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE
 
 // Metadata compilations do not see through the expect/actuals and therefore,
 // there are parcelize errors in metadata compilations.
-// IGNORE_FIR_DIAGNOSTICS_DIFF
 
 // MODULE: m1-common
 // FILE: common.kt
@@ -26,7 +27,7 @@ expect annotation class MyTypeParceler<T, P : MyParceler<in T>>()
 expect object SpecialStringParceler : MyParceler<String>
 
 @TriggerParcelize
-data class User(
+data class <!NO_PARCELABLE_SUPERTYPE{METADATA}!>User<!>(
     val i: Int,
     @MyTypeParceler<String, SpecialStringParceler> val s: String,
     @MyIgnore val name: String = "test",
