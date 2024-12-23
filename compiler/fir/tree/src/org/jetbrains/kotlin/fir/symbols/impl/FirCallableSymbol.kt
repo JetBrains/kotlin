@@ -113,6 +113,10 @@ abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbo
      * such as parent or child declarations.
      */
     internal fun currentDeclarationDeprecationsAreDefinitelyEmpty(): Boolean {
+        if (origin is FirDeclarationOrigin.Java) {
+            // Java may perform lazy resolution when accessing FIR tree internals, see KT-55387
+            return false
+        }
         if (annotations.isEmpty() && fir.versionRequirements.isNullOrEmpty() && !rawStatus.isOverride) return true
         if (fir.deprecationsProvider == EmptyDeprecationsProvider) {
             return true
