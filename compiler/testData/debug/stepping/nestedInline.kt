@@ -75,13 +75,13 @@ inline fun html(init: () -> Unit) {
 
 // EXPECTATIONS WASM
 // test.kt:20 $box (19)
-// test.kt:8 $box (14, 4)
+// test.kt:8 $box (14)
 // test.kt:10 $box (4)
 // 1.kt:42 $box (11)
 // 1.kt:30 $box (4)
 // test.kt:11 $box (8)
 // 1.kt:38 $box (44)
-// 1.kt:34 $box (12, 4)
+// 1.kt:34 $box (12)
 // 1.kt:35 $box (4)
 // test.kt:12 $box (18, 12)
 // test.kt:13 $box (9)
