@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
-import org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences
 import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
@@ -87,16 +86,6 @@ internal fun <T : PhaseContext> PhaseEngine<T>.runK2SpecialBackendChecks(fir2IrO
 }
 
 private object NativePreSerializationLoweringPhasesProvider : PreSerializationLoweringPhasesProvider<NativePreSerializationLoweringContext>() {
-
-    override val klibAssertionWrapperLowering: ((NativePreSerializationLoweringContext) -> FileLoweringPass)?
-        get() = ::NativeAssertionWrapperLowering
-
-    override val upgradeCallableReferenceLowering: ((NativePreSerializationLoweringContext) -> FileLoweringPass)?
-        get() = ::UpgradeCallableReferences
-
-    override val irMangler: KotlinMangler.IrMangler
-        get() = KonanManglerIr
-
     override fun getLowerings(): List<SimpleNamedCompilerPhase<NativePreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> {
         return nativeLoweringsOfTheFirstPhase
     }

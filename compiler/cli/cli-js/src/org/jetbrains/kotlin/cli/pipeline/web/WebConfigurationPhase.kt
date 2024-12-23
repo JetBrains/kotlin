@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
-import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringPhasesProvider
 import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
@@ -87,9 +86,7 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
 
         // setup phase config for the first compilation stage (KLIB compilation)
         if (arguments.includes == null) {
-            configuration.phaseConfig = createPhaseConfig(arguments).also {
-                if (arguments.listPhases) it.list(JsPreSerializationLoweringPhasesProvider.lowerings())
-            }
+            configuration.phaseConfig = createPhaseConfig(arguments)
         }
 
         if (arguments.includes == null && arguments.irProduceJs) {
