@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.cli.pipeline.SuccessfulPipelineExecutionException
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.phaseConfig
-import org.jetbrains.kotlin.ir.backend.js.getJsPhases
+import org.jetbrains.kotlin.ir.backend.js.getJsLowerings
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
@@ -38,7 +38,7 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
         // setup phase config for the second compilation stage (JS codegen)
         if (arguments.includes != null) {
             configuration.phaseConfig = createPhaseConfig(arguments).also {
-                it.list(getJsPhases(configuration))
+                it.list(getJsLowerings(configuration))
             }
         }
     }

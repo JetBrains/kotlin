@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
-import org.jetbrains.kotlin.config.phaser.CompilerPhase
-import org.jetbrains.kotlin.config.phaser.SameTypeNamedCompilerPhase
 import org.jetbrains.kotlin.config.phaser.SimpleNamedCompilerPhase
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
@@ -30,13 +28,6 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.inline.*
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.platform.js.JsPlatforms
-
-private fun List<CompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>>.toCompilerPhase() =
-    reduce { acc, lowering -> acc.then(lowering) }
-
-// --- Lowerings of the first stage ---
-
-// --- END ---
 
 private val validateIrBeforeLowering = makeIrModulePhase(
     ::IrValidationBeforeLoweringPhase,
@@ -856,15 +847,6 @@ fun getJsLowerings(
     validateIrAfterLowering,
 )
 
-fun getJsPhases(
-    configuration: CompilerConfiguration
-): SameTypeNamedCompilerPhase<JsIrBackendContext, IrModuleFragment> = SameTypeNamedCompilerPhase(
-    name = "IrModuleLowering",
-    lower = getJsLowerings(configuration).toCompilerPhase(),
-    actions = DEFAULT_IR_ACTIONS,
-    nlevels = 1
-)
-
 private val es6CollectConstructorsWhichNeedBoxParameterLowering = makeIrModulePhase(
     ::ES6CollectConstructorsWhichNeedBoxParameters,
     name = "ES6CollectConstructorsWhichNeedBoxParameters",
@@ -912,11 +894,4 @@ val optimizationLoweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContex
     es6PrimaryConstructorUsageOptimizationLowering,
     purifyObjectInstanceGetters,
     inlineObjectsWithPureInitialization
-)
-
-val jsOptimizationPhases = SameTypeNamedCompilerPhase(
-    name = "IrModuleOptimizationLowering",
-    lower = optimizationLoweringList.toCompilerPhase(),
-    actions = DEFAULT_IR_ACTIONS,
-    nlevels = 1
 )
