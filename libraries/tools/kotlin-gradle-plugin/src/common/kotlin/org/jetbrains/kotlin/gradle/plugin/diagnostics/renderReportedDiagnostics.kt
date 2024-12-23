@@ -33,15 +33,17 @@ internal fun renderReportedDiagnostic(
     }
 }
 
+internal typealias KotlinDiagnosticsException = InvalidUserCodeException
+
 internal fun ToolingDiagnostic.createAnExceptionForFatalDiagnostic(
     renderingOptions: ToolingDiagnosticRenderingOptions
-): InvalidUserCodeException {
+): KotlinDiagnosticsException {
     // NB: override showStacktrace to false, because it will be shown as 'cause' anyways
     val message = render(renderingOptions, showStacktrace = false)
     if (throwable != null)
-        throw InvalidUserCodeException(message, throwable)
+        throw KotlinDiagnosticsException(message, throwable)
     else
-        throw InvalidUserCodeException(message)
+        throw KotlinDiagnosticsException(message)
 }
 
 private fun ToolingDiagnostic.render(

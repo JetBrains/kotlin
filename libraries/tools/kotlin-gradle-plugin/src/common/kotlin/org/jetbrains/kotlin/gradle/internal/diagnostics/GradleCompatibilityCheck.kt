@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.internal.diagnostics
 
 import org.gradle.api.Project
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinDiagnosticsException
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 
@@ -21,12 +22,19 @@ internal object GradleCompatibilityCheck {
     ) {
         val currentVersion = gradleVersionProvider.get()
         if (gradleVersionProvider.get() < minSupportedGradleVersion) {
-            reportDiagnosticOncePerBuild(
-                KotlinToolingDiagnostics.IncompatibleGradleVersionTooLowFatalError(
-                    currentVersion,
-                    minSupportedGradleVersion,
-                )
+            val diagnostic = KotlinToolingDiagnostics.IncompatibleGradleVersionTooLowFatalError(
+                currentVersion,
+                minSupportedGradleVersion,
             )
+            try {
+                reportDiagnosticOncePerBuild(diagnostic)
+            } catch (e: KotlinDiagnosticsException) {
+                throw e
+            } catch (e: Throwable) {
+                // a special case of diagnostic that may be not reported properly because the build is run on an incompatible Gradle version
+                logger.error("Failed to report Gradle version incompatibility diagnostic properly. Throwing it straight away.", e)
+                throw KotlinDiagnosticsException(diagnostic.toString())
+            }
         }
     }
 
