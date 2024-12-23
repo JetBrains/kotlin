@@ -89,11 +89,9 @@ interface Wobbler : AutoCloseable {
 
     fun createProject(): WobblerProject
 
-    val fileBasedIndexExtensions: FileBasedIndexExtensions
+    fun mapFile(psiFile: PsiFile): FileValues
 
-    val stubIndexExtensions: StubIndexExtensions
-
-    val stubSerializersTable: StubSerializersTable
+    val valueTypes: List<ValueType<*>>
 }
 
 interface WobblerProject : AutoCloseable {
@@ -232,12 +230,16 @@ fun createWobbler(): Wobbler {
             }
         }
 
-        override val fileBasedIndexExtensions: FileBasedIndexExtensions
-            get() = fileBasedIndexExtensions
-        override val stubIndexExtensions: StubIndexExtensions
-            get() = stubIndexExtensions
-        override val stubSerializersTable: StubSerializersTable
-            get() = stubSerializersTable
+        override val valueTypes: List<ValueType<*>>
+            get() = allValueTypes(stubIndexExtensions, fileBasedIndexExtensions)
+
+        override fun mapFile(psiFile: PsiFile): FileValues =
+            mapFile(
+                file = psiFile,
+                stubSerializerTable = stubSerializersTable,
+                stubIndexExtensions = stubIndexExtensions,
+                fileBasedIndexExtensions = fileBasedIndexExtensions
+            )
 
         override fun close() {
             Disposer.dispose(applicationDisposable)

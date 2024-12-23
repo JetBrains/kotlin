@@ -65,12 +65,7 @@ fun test1() {
                 files.keys.associateWith { fileId ->
                     val vFile = WobblerVirtualFile(fileReader, fileId, KotlinFileType.INSTANCE)
                     val psiFile = psiManager.findFile(vFile)!!
-                    mapFile(
-                        file = psiFile,
-                        fileBasedIndexExtensions = fileBasedIndexExtensions,
-                        stubIndexExtensions = stubIndexExtensions,
-                        stubSerializerTable = stubSerializersTable,
-                    )
+                    mapFile(psiFile)
                 }
             )
         }
