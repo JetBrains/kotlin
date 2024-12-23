@@ -12,7 +12,8 @@ object CompanionObjectMapping {
             PrimitiveType.NUMBER_TYPES.map(StandardNames::getPrimitiveFqName) +
                     StandardNames.FqNames.string.toSafe() +
                     StandardNames.FqNames._boolean.toSafe() +
-                    StandardNames.FqNames._enum.toSafe()
+                    StandardNames.FqNames._enum.toSafe() +
+                    StandardNames.FqNames.list
             ).mapTo(linkedSetOf(), ClassId::topLevel)
 
     fun allClassesWithIntrinsicCompanions(): Set<ClassId> = classIds

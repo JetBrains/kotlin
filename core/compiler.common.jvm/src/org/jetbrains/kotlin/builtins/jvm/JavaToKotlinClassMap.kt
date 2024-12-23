@@ -130,7 +130,8 @@ object JavaToKotlinClassMap {
      * - java.lang.String -> kotlin.String
      * - java.lang.Integer -> kotlin.Int
      * - kotlin.jvm.internal.IntCompanionObject -> kotlin.Int.Companion
-     * - java.util.List -> kotlin.List
+     * - kotlin.jvm.internal.ListCompanionObject -> kotlin.List.Companion
+     * - java.util.List -> kotlin.collections.List
      * - java.util.Map.Entry -> kotlin.Map.Entry
      * - java.lang.Void -> null
      * - kotlin.jvm.functions.Function3 -> kotlin.Function3
@@ -150,6 +151,7 @@ object JavaToKotlinClassMap {
      * - kotlin.Throwable -> java.lang.Throwable
      * - kotlin.Int -> java.lang.Integer
      * - kotlin.Int.Companion -> kotlin.jvm.internal.IntCompanionObject
+     * - kotlin.collections.List.Companion -> kotlin.jvm.internal.ListCompanionObject
      * - kotlin.Nothing -> java.lang.Void
      * - kotlin.IntArray -> null
      * - kotlin.Function3 -> kotlin.jvm.functions.Function3
