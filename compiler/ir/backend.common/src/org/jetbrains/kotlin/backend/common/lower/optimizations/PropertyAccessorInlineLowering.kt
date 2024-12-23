@@ -145,7 +145,7 @@ open class PropertyAccessorInlineLowering(
             if (!isSimpleSetter(callee, backingField)) return null
 
             return call.run {
-                val value = getValueArgument(0) ?: error("Setter should have a value argument")
+                val value = arguments.last() ?: error("Setter should have a value argument")
                 IrSetFieldImpl(startOffset, endOffset, backingField.symbol, call.dispatchReceiver, value, unitType, origin)
             }
         }
@@ -165,7 +165,7 @@ open class PropertyAccessorInlineLowering(
 
             // TODO: support constant setters
             val setValue = setFieldStmt.value as? IrGetValue ?: return false
-            val valueSymbol = callee.valueParameters.single().symbol
+            val valueSymbol = callee.parameters.single { it.kind == IrParameterKind.Regular }.symbol
             if (setValue.symbol !== valueSymbol) return false
 
             val receiver = setFieldStmt.receiver
