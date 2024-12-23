@@ -1,0 +1,17 @@
+public final class CodeFragment {
+    // source: 'fragment.kt'
+    public method <init>(): void
+    public final static method run(): int
+}
+
+public final class ContextKt {
+    // source: 'context.kt'
+    public final static field prefix: java.lang.String
+    private static field prop: int
+    static method <clinit>(): void
+    public final static method main(): void
+    public synthetic static method main(p0: java.lang.String[]): void
+    public final static method prefix_f1(): int
+    public final static method prefix_getter(): int
+    public final static method prefix_setter(p0: int): void
+}
