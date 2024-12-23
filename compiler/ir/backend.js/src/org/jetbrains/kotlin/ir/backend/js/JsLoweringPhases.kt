@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols.Companion.isTypeOfIntrinsic
 import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.common.lower.*
@@ -36,13 +37,13 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 private fun List<CompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>>.toCompilerPhase() =
     reduce { acc, lowering -> acc.then(lowering) }
 
-private val validateIrBeforeLowering = makeIrModulePhase<JsIrBackendContext>(
+private val validateIrBeforeLowering = makeIrModulePhase(
     ::IrValidationBeforeLoweringPhase,
     name = "ValidateIrBeforeLowering",
 )
 
 private val validateIrAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
-    { context: JsIrBackendContext ->
+    { context: LoweringContext ->
         IrValidationAfterInliningOnlyPrivateFunctionsPhase(
             context,
             checkInlineFunctionCallSites = { inlineFunctionUseSite ->
@@ -66,7 +67,7 @@ private val dumpSyntheticAccessorsPhase = makeIrModulePhase<JsIrBackendContext>(
 )
 
 private val validateIrAfterInliningAllFunctions = makeIrModulePhase(
-    { context: JsIrBackendContext ->
+    { context: LoweringContext ->
         IrValidationAfterInliningAllFunctionsPhase(
             context,
             checkInlineFunctionCallSites = { inlineFunctionUseSite ->
@@ -87,7 +88,7 @@ private val validateIrAfterInliningAllFunctions = makeIrModulePhase(
     name = "IrValidationAfterInliningAllFunctionsPhase",
 )
 
-private val validateIrAfterLowering = makeIrModulePhase<JsIrBackendContext>(
+private val validateIrAfterLowering = makeIrModulePhase(
     ::IrValidationAfterLoweringPhase,
     name = "ValidateIrAfterLowering",
 )
@@ -167,9 +168,14 @@ private val noDispatchReceiverApplyingPhase = makeIrModulePhase(
     name = "NoDispatchReceiverAnnotationApplyingLowering",
 )
 
-private val jsCodeOutliningPhase = makeIrModulePhase(
+private val jsCodeOutliningPhaseOnSecondStage = makeIrModulePhase(
     { context: JsIrBackendContext -> JsCodeOutliningLowering(context, context.intrinsics, context.dynamicType) },
-    name = "JsCodeOutliningLowering",
+    name = "JsCodeOutliningLoweringOnSecondStage",
+)
+
+private val jsCodeOutliningPhaseOnFirstStage = makeIrModulePhase(
+    { context: JsPreSerializationLoweringContext -> JsCodeOutliningLowering(context, context.intrinsics, context.dynamicType) },
+    name = "JsCodeOutliningLoweringOnFirstStage",
 )
 
 private val inlineCallableReferenceToLambdaPhase = makeIrModulePhase<JsIrBackendContext>(
@@ -240,7 +246,7 @@ private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
     prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
 )
 
-internal val syntheticAccessorGenerationPhase = makeIrModulePhase(
+private val syntheticAccessorGenerationPhase = makeIrModulePhase(
     lowering = ::SyntheticAccessorLowering,
     name = "SyntheticAccessorGeneration",
     prerequisite = setOf(inlineOnlyPrivateFunctionsPhase),
@@ -741,13 +747,16 @@ val mainFunctionCallWrapperLowering = makeIrModulePhase<JsIrBackendContext>(
     name = "MainFunctionCallWrapperLowering",
 )
 
+val jsLoweringsOfTheFirstPhase: List<SimpleNamedCompilerPhase<JsPreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> =
+    listOf(jsCodeOutliningPhaseOnFirstStage) + loweringsOfTheFirstPhase
+
 fun getJsLowerings(
     configuration: CompilerConfiguration
 ): List<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> = listOfNotNull(
     // BEGIN: Common Native/JS/Wasm prefix.
     validateIrBeforeLowering,
     noDispatchReceiverApplyingPhase,
-    jsCodeOutliningPhase,
+    jsCodeOutliningPhaseOnSecondStage,
     lateinitPhase,
     sharedVariablesLoweringPhase,
     outerThisSpecialAccessorInInlineFunctionsPhase,

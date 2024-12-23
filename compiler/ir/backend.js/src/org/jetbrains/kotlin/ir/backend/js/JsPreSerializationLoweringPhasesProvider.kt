@@ -24,6 +24,6 @@ object JsPreSerializationLoweringPhasesProvider : PreSerializationLoweringPhases
         get() = JsManglerIr
 
     override fun getLowerings(): List<SimpleNamedCompilerPhase<JsPreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> {
-        return emptyList()
+        return jsLoweringsOfTheFirstPhase
     }
 }
