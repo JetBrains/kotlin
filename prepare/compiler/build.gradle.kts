@@ -138,6 +138,7 @@ val distCompilerPluginProjectsCompat = listOf(
 val distSourcesProjects = listOfNotNull(
     ":kotlin-annotations-jvm",
     ":kotlin-script-runtime",
+    ":kotlin-metadata-jvm",
 )
 
 configurations.all {
