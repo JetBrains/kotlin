@@ -107,17 +107,6 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
         }
 
 
-    @Argument(
-        value = "-Xwasm-source-map-include-mappings-from-unavailable-sources",
-        description = "Insert source mappings from libraries even if their sources are unavailable on the end-user machine."
-    )
-    var includeUnavailableSourcesIntoSourceMap = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-
     @Argument(value = "-Xwasm-preserve-ic-order", description = "Preserve wasm file structure between IC runs.")
     var preserveIcOrder = false
         set(value) {

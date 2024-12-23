@@ -129,8 +129,8 @@ class DeclarationGenerator(
         }
 
         val locationTarget = declaration.locationTarget
-        val functionStartLocation = locationTarget.getSourceLocation(declaration.symbol, declaration.fileOrNull)
-        val functionEndLocation = locationTarget.getSourceLocation(declaration.symbol, declaration.fileOrNull, LocationType.END)
+        val functionStartLocation = locationTarget.getSourceLocation(declaration.symbol, declaration.fileEntry)
+        val functionEndLocation = locationTarget.getSourceLocation(declaration.symbol, declaration.fileEntry, LocationType.END)
 
         val function = WasmFunction.Defined(
             watName,
@@ -452,7 +452,7 @@ class DeclarationGenerator(
                     wasmExpressionGenerator,
                     wasmFileCodegenContext,
                     backendContext,
-                    initValue.getSourceLocation(declaration.symbol, declaration.fileOrNull)
+                    declaration.getSourceLocation(declaration.symbol, declaration.fileEntry)
                 )
             } else {
                 val stubFunction = WasmFunction.Defined("static_fun_stub", WasmSymbol())

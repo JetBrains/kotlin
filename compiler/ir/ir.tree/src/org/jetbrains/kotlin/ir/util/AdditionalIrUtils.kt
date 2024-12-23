@@ -170,7 +170,7 @@ fun List<IrConstructorCall>.findAnnotation(fqName: FqName): IrConstructorCall? =
     firstOrNull { it.annotationClass.hasEqualFqName(fqName) }
 
 val IrDeclaration.fileEntry: IrFileEntry
-    get() = parent.let {
+    get() = (this as? IrClass)?.sourceFileEntry ?: parent.let {
         when (it) {
             is IrFile -> it.fileEntry
             is IrPackageFragment -> TODO("Unknown file")

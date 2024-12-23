@@ -22,7 +22,6 @@ sealed class SourceLocation {
 
     // Both line and column are zero-based
     data class DefinedLocation(
-        val module: String,
         override val file: String,
         override val line: Int,
         override val column: Int

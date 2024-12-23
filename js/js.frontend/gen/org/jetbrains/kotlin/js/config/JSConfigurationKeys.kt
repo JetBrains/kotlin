@@ -61,9 +61,6 @@ object JSConfigurationKeys {
     val SOURCEMAP_NAMES_POLICY = CompilerConfigurationKey.create<SourceMapNamesPolicy>("a policy to generate a mapping from generated identifiers to their corresponding original names")
 
     @JvmField
-    val SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES = CompilerConfigurationKey.create<Boolean>("insert source mappings from libraries even if their sources are unavailable on the end-user machine")
-
-    @JvmField
     val META_INFO = CompilerConfigurationKey.create<Boolean>("generate .meta.js and .kjsm files")
 
     @JvmField
@@ -244,10 +241,6 @@ var CompilerConfiguration.sourceMapEmbedSources: SourceMapSourceEmbedding?
 var CompilerConfiguration.sourcemapNamesPolicy: SourceMapNamesPolicy?
     get() = get(JSConfigurationKeys.SOURCEMAP_NAMES_POLICY)
     set(value) { put(JSConfigurationKeys.SOURCEMAP_NAMES_POLICY, requireNotNull(value) { "nullable values are not allowed" }) }
-
-var CompilerConfiguration.sourceMapIncludeMappingsFromUnavailableFiles: Boolean
-    get() = getBoolean(JSConfigurationKeys.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES)
-    set(value) { put(JSConfigurationKeys.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES, value) }
 
 var CompilerConfiguration.metaInfo: Boolean
     get() = getBoolean(JSConfigurationKeys.META_INFO)

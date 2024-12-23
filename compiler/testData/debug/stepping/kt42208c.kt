@@ -56,10 +56,10 @@ fun baz(v:(() -> Unit)) {
 // test3.kt:16 $baz (4)
 
 // EXPECTATIONS ClassicFrontend WASM
-// test.kt:10 $box$lambda.invoke (12)
+// test1.kt:13 $box$lambda.invoke (0)
 
 // EXPECTATIONS FIR WASM
-// test.kt:10 $box$lambda.invoke (13)
+// test1.kt:13 $box$lambda.invoke (1)
 
 // EXPECTATIONS WASM
 // test3.kt:16 $baz (4)
@@ -70,10 +70,10 @@ fun baz(v:(() -> Unit)) {
 // test3.kt:16 $baz (4)
 
 // EXPECTATIONS ClassicFrontend WASM
-// test.kt:10 $box$lambda.invoke (12)
+// test1.kt:13 $box$lambda.invoke (0)
 
 // EXPECTATIONS FIR WASM
-// test.kt:10 $box$lambda.invoke (13)
+// test1.kt:13 $box$lambda.invoke (1)
 
 // EXPECTATIONS WASM
 // test3.kt:16 $baz (4)

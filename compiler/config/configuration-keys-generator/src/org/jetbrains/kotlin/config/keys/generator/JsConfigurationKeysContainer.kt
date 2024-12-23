@@ -44,8 +44,6 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
 
     val SOURCEMAP_NAMES_POLICY by key<SourceMapNamesPolicy>("a policy to generate a mapping from generated identifiers to their corresponding original names")
 
-    val SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES by key<Boolean>("insert source mappings from libraries even if their sources are unavailable on the end-user machine")
-
     val META_INFO by key<Boolean>("generate .meta.js and .kjsm files")
 
     val TARGET by key<EcmaVersion>("ECMA version target")

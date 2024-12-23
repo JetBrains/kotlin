@@ -44,7 +44,6 @@ class SourceMapGenerator(
             sourceMapsInfo.sourceRoots,
             sourceMapsInfo.sourceMapPrefix,
             sourceMapsInfo.outputDir,
-            sourceMapsInfo.includeUnavailableSourcesIntoSourceMap
         )
 
         var prev: SourceLocation? = null
@@ -77,9 +76,7 @@ class SourceMapGenerator(
                 is SourceLocation.WithFileAndLineNumberInformation -> {
                     // TODO resulting path goes too deep since temporary directory we compiled first is deeper than final destination.
                     val relativePath = if (sourceLocation is SourceLocation.DefinedLocation) {
-                        pathResolver
-                            .getPathRelativeToSourceRootsIfExists(sourceLocation.module, File(sourceLocation.file))
-                            ?.replace(Regex("^\\.\\./"), "") ?: continue
+                        pathResolver.getPathRelativeToSourceRoots(File(sourceLocation.file)).replace(Regex("^\\.\\./"), "")
                     } else sourceLocation.file
 
                     if (offsetExpectedNextLocation != -1) {

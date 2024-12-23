@@ -1305,11 +1305,11 @@ class BodyGenerator(
     }
 
     private fun IrElement.getSourceLocation() = getSourceLocation(
-        functionContext.currentFunctionSymbol, functionContext.currentFunctionSymbol?.owner?.fileOrNull
+        functionContext.currentFunctionSymbol, functionContext.currentFileEntry
     )
 
     private fun IrElement.getSourceEndLocation() = getSourceLocation(
-        functionContext.currentFunctionSymbol, functionContext.currentFunctionSymbol?.owner?.fileOrNull, type = LocationType.END
+        functionContext.currentFunctionSymbol, functionContext.currentFileEntry, type = LocationType.END
     )
 
     private fun IrElement.nextLocation() = when (getSourceLocation()) {
