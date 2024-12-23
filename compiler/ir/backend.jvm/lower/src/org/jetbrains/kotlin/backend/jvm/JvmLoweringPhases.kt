@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.lower.*
-import org.jetbrains.kotlin.config.phaser.SameTypeNamedCompilerPhase
 
 private val jvmFilePhases = createFilePhases<JvmBackendContext>(
     ::TypeAliasAnnotationMethodsLowering,
@@ -123,33 +122,28 @@ private val jvmFilePhases = createFilePhases<JvmBackendContext>(
     ::SpecialAccessLowering,
 )
 
-val jvmLoweringPhases = SameTypeNamedCompilerPhase(
-    name = "IrLowering",
-    nlevels = 1,
-    actions = DEFAULT_IR_ACTIONS,
-    lower = buildModuleLoweringsPhase(
-        ::ExternalPackageParentPatcherLowering,
-        ::FragmentSharedVariablesLowering,
-        ::JvmIrValidationBeforeLoweringPhase,
-        ::ProcessOptionalAnnotations,
-        ::JvmExpectDeclarationRemover,
-        ::ConstEvaluationLowering,
-        ::SerializeIrPhase,
-        ::FileClassLowering,
-        ::JvmStaticInObjectLowering,
-        ::RepeatedAnnotationLowering,
-        ::JvmInlineCallableReferenceToLambdaWithDefaultsPhase,
-        ::JvmIrInliner,
-        ::ApiVersionIsAtLeastEvaluationLowering,
-        ::CreateSeparateCallForInlinedLambdasLowering,
-        ::MarkNecessaryInlinedClassesAsRegeneratedLowering,
-        ::InlinedClassReferencesBoxingLowering,
-        ::RestoreInlineLambda,
-    ).then(
-        performByIrFile(jvmFilePhases)
-    ) then buildModuleLoweringsPhase(
-        ::GenerateMultifileFacades,
-        ::ResolveInlineCalls,
-        ::JvmIrValidationAfterLoweringPhase
-    )
+val jvmLoweringPhases = buildModuleLoweringsPhase(
+    ::ExternalPackageParentPatcherLowering,
+    ::FragmentSharedVariablesLowering,
+    ::JvmIrValidationBeforeLoweringPhase,
+    ::ProcessOptionalAnnotations,
+    ::JvmExpectDeclarationRemover,
+    ::ConstEvaluationLowering,
+    ::SerializeIrPhase,
+    ::FileClassLowering,
+    ::JvmStaticInObjectLowering,
+    ::RepeatedAnnotationLowering,
+    ::JvmInlineCallableReferenceToLambdaWithDefaultsPhase,
+    ::JvmIrInliner,
+    ::ApiVersionIsAtLeastEvaluationLowering,
+    ::CreateSeparateCallForInlinedLambdasLowering,
+    ::MarkNecessaryInlinedClassesAsRegeneratedLowering,
+    ::InlinedClassReferencesBoxingLowering,
+    ::RestoreInlineLambda,
+).then(
+    performByIrFile(jvmFilePhases)
+) then buildModuleLoweringsPhase(
+    ::GenerateMultifileFacades,
+    ::ResolveInlineCalls,
+    ::JvmIrValidationAfterLoweringPhase
 )
