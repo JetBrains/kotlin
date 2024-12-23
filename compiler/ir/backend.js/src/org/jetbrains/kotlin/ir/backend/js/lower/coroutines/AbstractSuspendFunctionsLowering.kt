@@ -424,17 +424,16 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
             if (delegatingCall.isReturnIfSuspendedCall(context))
                 delegatingCall.getValueArgument(0)!!
             else delegatingCall
-        val body = irFunction.body as IrBlockBody
 
-        // Set both offsets to body.endOffset.previousOffset (check the description of the `previousOffset` method)
-        // so that a breakpoint set at the closing brace of a lambda expression could be hit.
+        val body = irFunction.body as IrBlockBody
+        val statements = body.statements
+        val lastStatement = statements.last()
+
         context.createIrBuilder(
             irFunction.symbol,
-            startOffset = body.endOffset.previousOffset,
-            endOffset = body.endOffset.previousOffset
+            startOffset = lastStatement.startOffset,
+            endOffset = lastStatement.endOffset
         ).run {
-            val statements = body.statements
-            val lastStatement = statements.last()
             assert(lastStatement == delegatingCall || lastStatement is IrReturn) { "Unexpected statement $lastStatement" }
 
             // Instead of returning right away, we save the value to a temporary variable and after that return that variable.
