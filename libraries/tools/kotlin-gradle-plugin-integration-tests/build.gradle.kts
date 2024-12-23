@@ -258,7 +258,6 @@ val gradleVersions = listOf(
 
 if (project.kotlinBuildProperties.isTeamcityBuild) {
     val junitTags = listOf("JvmKGP", "DaemonsKGP", "JsKGP", "NativeKGP", "MppKGP", "AndroidKGP", "OtherKGP")
-    val requiresKotlinNative = listOf("NativeKGP", "MppKGP", "OtherKGP")
     val gradleVersionTaskGroup = "Kotlin Gradle Plugin Verification grouped by Gradle version"
 
     junitTags.forEach { junitTag ->
@@ -271,9 +270,7 @@ if (project.kotlinBuildProperties.isTeamcityBuild) {
 
                 systemProperty("gradle.integration.tests.gradle.version.filter", gradleVersion)
                 systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
-                if (junitTag in requiresKotlinNative) {
-                    applyKotlinNativeFromCurrentBranchIfNeeded()
-                }
+                applyKotlinNativeFromCurrentBranchIfNeeded()
 
                 useJUnitPlatform {
                     includeTags(junitTag)
