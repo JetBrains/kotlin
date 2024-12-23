@@ -1288,6 +1288,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.INAPPLICABLE_ALL_TARGET_IN_MULTI_ANNOTATION) { firDiagnostic ->
+        InapplicableAllTargetInMultiAnnotationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.REPEATED_ANNOTATION) { firDiagnostic ->
         RepeatedAnnotationImpl(
             firDiagnostic as KtPsiDiagnostic,
