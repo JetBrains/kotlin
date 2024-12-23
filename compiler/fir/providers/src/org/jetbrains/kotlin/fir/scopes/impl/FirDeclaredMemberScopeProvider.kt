@@ -134,10 +134,10 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
             } else {
                 baseScope
             }
-        }?.takeUnless {
+        }?.takeIf {
             // For Java declarations `isEmpty` check may trigger expensive and recursive iteration
             // through declarations which may end up with SOE
-            origin != FirDeclarationOrigin.Java.Source && it.isEmpty()
+            origin == FirDeclarationOrigin.Java.Source || !it.isEmpty()
         }
     }
 }
