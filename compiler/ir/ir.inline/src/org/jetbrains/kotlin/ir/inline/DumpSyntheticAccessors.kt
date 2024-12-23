@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.ir.inline
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
-import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.syntheticBodyIsNotSupported
-import org.jetbrains.kotlin.backend.common.temporarilyPushing
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.ir.IrElement
@@ -28,7 +25,7 @@ import java.io.File
 /**
  * Dumps synthetic accessors and their call sites (used only for testing and debugging).
  */
-class DumpSyntheticAccessors(context: CommonBackendContext) : ModuleLoweringPass {
+class DumpSyntheticAccessors(context: LoweringContext) : ModuleLoweringPass {
     private val dumpDirectory: File? = getDumpDirectoryOrNull(context.configuration)
 
     override fun lower(irModule: IrModuleFragment) {
