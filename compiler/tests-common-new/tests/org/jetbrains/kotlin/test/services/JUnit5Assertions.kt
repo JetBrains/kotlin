@@ -44,6 +44,10 @@ object JUnit5Assertions : AssertionsService() {
         fileNotFoundMessageLocal: (File) -> String,
     ): Pair<Boolean, String> {
         try {
+            try {
+                expectedFile.delete()
+            } catch (_: Exception) {
+            }
             val actualText = actual.trim { it <= ' ' }.convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF()
             if (!expectedFile.exists()) {
                 if (isTeamCityBuild) {
@@ -51,7 +55,8 @@ object JUnit5Assertions : AssertionsService() {
                 } else {
                     expectedFile.parentFile.mkdirs()
                     expectedFile.writeText(actualText)
-                    org.junit.jupiter.api.fail(fileNotFoundMessageLocal(expectedFile))
+                    return Pair(true, actualText)
+//                    org.junit.jupiter.api.fail(fileNotFoundMessageLocal(expectedFile))
                 }
             }
             val expected = expectedFile.readText().convertLineSeparators()

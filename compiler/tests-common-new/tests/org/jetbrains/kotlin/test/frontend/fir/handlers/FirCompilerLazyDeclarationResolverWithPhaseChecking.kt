@@ -45,7 +45,7 @@ class FirCompilerLazyDeclarationResolverWithPhaseChecking : FirLazyDeclarationRe
     }
 
     private fun checkIfCanLazyResolveToPhase(requestedPhase: FirResolvePhase, elementPhase: FirResolvePhase) {
-        if (!lazyResolveContractChecksEnabled || elementPhase >= requestedPhase) return
+        if (!lazyResolveContractChecksEnabled.get() || elementPhase >= requestedPhase) return
 
         val currentPhase = currentTransformerPhase
             ?: error("Current phase is not set, please call ${this::startResolvingPhase.name} before starting transforming the file")

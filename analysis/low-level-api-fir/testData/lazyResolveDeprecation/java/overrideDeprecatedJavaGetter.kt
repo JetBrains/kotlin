@@ -1,15 +1,18 @@
 // FILE: Kotlin.kt
+import j.Java
 
 class Kotlin : Java {
     override val aa<caret>a = 1
 }
 
-// FILE: Java.java
+// FILE: j/Java.java
 
-/**
- * @deprecated Deprecated
- */
+package j;
+
 class Java {
+    /**
+     * @deprecated Deprecated
+     */
     @Deprecated
     int getAaa() {}
 }

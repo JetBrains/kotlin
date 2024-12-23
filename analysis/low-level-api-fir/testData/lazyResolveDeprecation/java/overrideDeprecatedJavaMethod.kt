@@ -6,11 +6,12 @@ class Kotlin : Java {
 }
 
 // FILE: j/Java.java
-package j
-/**
- * @deprecated Deprecated
- */
+package j;
+
 class Java {
+    /**
+     * @deprecated Deprecated
+     */
     @Deprecated
     void aaa() {}
 }
