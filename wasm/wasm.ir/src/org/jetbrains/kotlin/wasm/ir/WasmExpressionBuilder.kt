@@ -87,8 +87,12 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipComm
         buildInstrWithNoLocation(WasmOp.IF, WasmImmediate.BlockType.Value(resultType))
     }
 
-    fun buildElse() {
-        buildInstrWithNoLocation(WasmOp.ELSE)
+    fun buildElse(location: SourceLocation? = null) {
+        if (location != null) {
+            buildInstr(WasmOp.ELSE, location)
+        } else {
+            buildInstrWithNoLocation(WasmOp.ELSE)
+        }
     }
 
     fun buildBlock(resultType: WasmType? = null): Int {
@@ -96,8 +100,12 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipComm
         return numberOfNestedBlocks
     }
 
-    fun buildEnd() {
-        buildInstrWithNoLocation(WasmOp.END)
+    fun buildEnd(location: SourceLocation? = null) {
+        if (location != null) {
+            buildInstr(WasmOp.END, location)
+        } else {
+            buildInstrWithNoLocation(WasmOp.END)
+        }
     }
 
     fun buildBrInstr(brOp: WasmOp, absoluteBlockLevel: Int, location: SourceLocation) {

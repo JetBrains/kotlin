@@ -49,7 +49,6 @@ fun bar(x: Int) =
 // EXPECTATIONS WASM
 // test.kt:14 $box (8, 4)
 // foo.kt:5 $foo (8, 13, 8)
-// foo.kt:6 $foo (8)
 // foo.kt:8 $foo (15, 11)
 // test.kt:18 $bar (8, 12, 8)
 // test.kt:19 $bar (12, 8)
