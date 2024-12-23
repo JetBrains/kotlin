@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringContext
-import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringPhasesProvider
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
+import org.jetbrains.kotlin.ir.backend.js.jsLoweringsOfTheFirstPhase
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
@@ -126,7 +126,7 @@ abstract class FirAbstractInvalidationTest(
             configuration.phaseConfig ?: PhaseConfig(),
             PhaserState(),
             JsPreSerializationLoweringContext(fir2IrActualizedResult.irBuiltIns, configuration),
-        ).runPreSerializationLoweringPhases(fir2IrActualizedResult, JsPreSerializationLoweringPhasesProvider)
+        ).runPreSerializationLoweringPhases(fir2IrActualizedResult, jsLoweringsOfTheFirstPhase)
 
         serializeFirKlib(
             moduleStructure = moduleStructure,

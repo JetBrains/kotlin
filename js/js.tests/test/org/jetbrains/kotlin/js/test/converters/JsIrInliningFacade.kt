@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringContext
-import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringPhasesProvider
+import org.jetbrains.kotlin.ir.backend.js.jsLoweringsOfTheFirstPhase
 import org.jetbrains.kotlin.js.test.utils.createTestPhaseConfig
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.model.BackendKinds
@@ -40,8 +40,8 @@ class JsIrInliningFacade(
             PhaserState(),
             JsPreSerializationLoweringContext(inputArtifact.irPluginContext.irBuiltIns, configuration)
         ).runPreSerializationLoweringPhases(
+            jsLoweringsOfTheFirstPhase,
             inputArtifact.irModuleFragment,
-            JsPreSerializationLoweringPhasesProvider,
         )
 
         // The returned artifact will be stored in dependencyProvider instead of `inputArtifact`, with same kind=BackendKinds.IrBackend
