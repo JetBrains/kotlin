@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicReference
 
 fun <Context : LoweringContext> performByIrFile(
     name: String,
-    lower: List<CompilerPhase<Context, IrFile, IrFile>>,
+    lower: List<SimpleNamedCompilerPhase<Context, IrFile, IrFile>>,
 ): SameTypeNamedCompilerPhase<Context, IrModuleFragment> =
     SameTypeNamedCompilerPhase(
         name, emptySet(), PerformByIrFilePhase(lower, supportParallel = false), emptySet(), emptySet(), emptySet(),
@@ -25,7 +25,7 @@ fun <Context : LoweringContext> performByIrFile(
     )
 
 class PerformByIrFilePhase<Context : LoweringContext>(
-    private val lower: List<CompilerPhase<Context, IrFile, IrFile>>,
+    private val lower: List<SimpleNamedCompilerPhase<Context, IrFile, IrFile>>,
     private val supportParallel: Boolean,
 ) : SameTypeCompilerPhase<Context, IrModuleFragment> {
     override fun invoke(
@@ -36,19 +36,18 @@ class PerformByIrFilePhase<Context : LoweringContext>(
     ): IrModuleFragment {
         val nThreads = context.configuration.get(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS) ?: 1
         return if (supportParallel && nThreads > 1)
-            invokeParallel(phaseConfig, phaserState, context, input, nThreads)
+            invokeParallel(context, input, nThreads)
         else
-            invokeSequential(phaseConfig, phaserState, context, input)
+            invokeSequential(context, input)
     }
 
     private fun invokeSequential(
-        phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment
+        context: Context, input: IrModuleFragment
     ): IrModuleFragment {
         for (irFile in input.files) {
             try {
-                val filePhaserState = phaserState.changePhaserStateType<IrModuleFragment, IrFile>()
                 for (phase in lower) {
-                    phase.invoke(phaseConfig, filePhaserState, context, irFile)
+                    phase.phaseBody(context, irFile)
                 }
             } catch (e: Throwable) {
                 CodegenUtil.reportBackendException(e, "IR lowering", irFile.fileEntry.name) { offset ->
@@ -65,25 +64,19 @@ class PerformByIrFilePhase<Context : LoweringContext>(
     }
 
     private fun invokeParallel(
-        phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment, nThreads: Int
+        context: Context, input: IrModuleFragment, nThreads: Int
     ): IrModuleFragment {
         if (input.files.isEmpty()) return input
 
         // We can only report one exception through ISE
         val thrownFromThread = AtomicReference<Pair<Throwable, IrFile>?>(null)
 
-        // Each thread needs its own copy of phaserState.alreadyDone
-        val filesAndStates = input.files.map {
-            it to phaserState.copyOf()
-        }
-
         val executor = Executors.newFixedThreadPool(nThreads)
-        for ((irFile, state) in filesAndStates) {
+        for (irFile in input.files) {
             executor.execute {
                 try {
-                    val filePhaserState = state.changePhaserStateType<IrModuleFragment, IrFile>()
                     for (phase in lower) {
-                        phase.invoke(phaseConfig, filePhaserState, context, irFile)
+                        phase.phaseBody(context, irFile)
                     }
                 } catch (e: Throwable) {
                     thrownFromThread.set(Pair(e, irFile))
@@ -101,9 +94,6 @@ class PerformByIrFilePhase<Context : LoweringContext>(
                 }
             }
         }
-
-        // Presumably each thread has run through the same list of phases.
-        phaserState.alreadyDone.addAll(filesAndStates[0].second.alreadyDone)
 
         // TODO: no guarantee that module identity is preserved by `lower`
         return input
