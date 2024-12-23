@@ -161,7 +161,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
             else -> property.name.asString()
         }
 
-        val argsType = irFunction.parameters.map { it.type }.map { it.fqNameWithNullability() }
+        val argsType = irFunction.parameters.map { it.type.fqNameWithNullability() }
         val argsValues = args.wrap(this, irFunction)
 
         withExceptionHandler(environment) {
