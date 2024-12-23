@@ -91,27 +91,10 @@ abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbo
     }
 
 
-    /**
-     * Checks whether the deprecations of this declaration and of all other declarations that may affect this declaration are empty.
-     *
-     * This method may yield false negatives but guarantees no false positives.
-     *
-     * This method can traverse to parent or child declarations to perform the check.
-     * In contrast, [currentDeclarationDeprecationsAreDefinitelyEmpty] only checks the current declaration
-     * and does not traverse to other declarations.
-     */
     protected open fun deprecationsAreDefinitelyEmpty(): Boolean {
         return currentDeclarationDeprecationsAreDefinitelyEmpty()
     }
 
-    /**
-     * Checks whether the deprecations of the current declaration are definitely empty.
-     *
-     * This method may yield false negatives but guarantees no false positives.
-     *
-     * Unlike [deprecationsAreDefinitelyEmpty], this method does not check other declarations
-     * such as parent or child declarations.
-     */
     internal fun currentDeclarationDeprecationsAreDefinitelyEmpty(): Boolean {
         if (annotations.isEmpty() && fir.versionRequirements.isNullOrEmpty() && !rawStatus.isOverride) return true
         if (fir.deprecationsProvider == EmptyDeprecationsProvider) {
