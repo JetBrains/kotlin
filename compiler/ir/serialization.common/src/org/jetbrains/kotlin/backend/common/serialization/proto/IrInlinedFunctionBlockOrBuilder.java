@@ -17,11 +17,19 @@ public interface IrInlinedFunctionBlockOrBuilder extends
   long getInlineFunctionSymbol();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+   *
+   * <pre>
+   * if absent, `file_entry_id` must present, pointing to an entry in FileEntry table
+   * </pre>
    */
   boolean hasFileEntry();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+   *
+   * <pre>
+   * if absent, `file_entry_id` must present, pointing to an entry in FileEntry table
+   * </pre>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry getFileEntry();
 
@@ -51,4 +59,13 @@ public interface IrInlinedFunctionBlockOrBuilder extends
    * <code>required int32 inlined_function_end_offset = 5;</code>
    */
   int getInlinedFunctionEndOffset();
+
+  /**
+   * <code>optional int32 file_entry_id = 6;</code>
+   */
+  boolean hasFileEntryId();
+  /**
+   * <code>optional int32 file_entry_id = 6;</code>
+   */
+  int getFileEntryId();
 }

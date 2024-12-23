@@ -137,6 +137,11 @@ public final class IrFile extends
             input.popLimit(limit);
             break;
           }
+          case 48: {
+            bitField0_ |= 0x00000002;
+            fileEntryId_ = input.readInt32();
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -209,13 +214,21 @@ public final class IrFile extends
   public static final int FILE_ENTRY_FIELD_NUMBER = 2;
   private org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry fileEntry_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+   *
+   * <pre>
+   * if absent, `file_entry_id` must present, pointing to an entry in FileEntry table
+   * </pre>
    */
   public boolean hasFileEntry() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+   *
+   * <pre>
+   * if absent, `file_entry_id` must present, pointing to an entry in FileEntry table
+   * </pre>
    */
   public org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry getFileEntry() {
     return fileEntry_;
@@ -302,12 +315,28 @@ public final class IrFile extends
   }
   private int explicitlyExportedToCompilerMemoizedSerializedSize = -1;
 
+  public static final int FILE_ENTRY_ID_FIELD_NUMBER = 6;
+  private int fileEntryId_;
+  /**
+   * <code>optional int32 file_entry_id = 6;</code>
+   */
+  public boolean hasFileEntryId() {
+    return ((bitField0_ & 0x00000002) == 0x00000002);
+  }
+  /**
+   * <code>optional int32 file_entry_id = 6;</code>
+   */
+  public int getFileEntryId() {
+    return fileEntryId_;
+  }
+
   private void initFields() {
     declarationId_ = java.util.Collections.emptyList();
     fileEntry_ = org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance();
     fqName_ = java.util.Collections.emptyList();
     annotation_ = java.util.Collections.emptyList();
     explicitlyExportedToCompiler_ = java.util.Collections.emptyList();
+    fileEntryId_ = 0;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -315,13 +344,11 @@ public final class IrFile extends
     if (isInitialized == 1) return true;
     if (isInitialized == 0) return false;
 
-    if (!hasFileEntry()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!getFileEntry().isInitialized()) {
-      memoizedIsInitialized = 0;
-      return false;
+    if (hasFileEntry()) {
+      if (!getFileEntry().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
     }
     for (int i = 0; i < getAnnotationCount(); i++) {
       if (!getAnnotation(i).isInitialized()) {
@@ -362,6 +389,9 @@ public final class IrFile extends
     }
     for (int i = 0; i < explicitlyExportedToCompiler_.size(); i++) {
       output.writeInt64NoTag(explicitlyExportedToCompiler_.get(i));
+    }
+    if (((bitField0_ & 0x00000002) == 0x00000002)) {
+      output.writeInt32(6, fileEntryId_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -421,6 +451,10 @@ public final class IrFile extends
             .computeInt32SizeNoTag(dataSize);
       }
       explicitlyExportedToCompilerMemoizedSerializedSize = dataSize;
+    }
+    if (((bitField0_ & 0x00000002) == 0x00000002)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(6, fileEntryId_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -526,6 +560,8 @@ public final class IrFile extends
       bitField0_ = (bitField0_ & ~0x00000008);
       explicitlyExportedToCompiler_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000010);
+      fileEntryId_ = 0;
+      bitField0_ = (bitField0_ & ~0x00000020);
       return this;
     }
 
@@ -573,6 +609,10 @@ public final class IrFile extends
         bitField0_ = (bitField0_ & ~0x00000010);
       }
       result.explicitlyExportedToCompiler_ = explicitlyExportedToCompiler_;
+      if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
+        to_bitField0_ |= 0x00000002;
+      }
+      result.fileEntryId_ = fileEntryId_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -622,19 +662,20 @@ public final class IrFile extends
         }
         
       }
+      if (other.hasFileEntryId()) {
+        setFileEntryId(other.getFileEntryId());
+      }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
       return this;
     }
 
     public final boolean isInitialized() {
-      if (!hasFileEntry()) {
-        
-        return false;
-      }
-      if (!getFileEntry().isInitialized()) {
-        
-        return false;
+      if (hasFileEntry()) {
+        if (!getFileEntry().isInitialized()) {
+          
+          return false;
+        }
       }
       for (int i = 0; i < getAnnotationCount(); i++) {
         if (!getAnnotation(i).isInitialized()) {
@@ -732,19 +773,31 @@ public final class IrFile extends
 
     private org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry fileEntry_ = org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance();
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+     *
+     * <pre>
+     * if absent, `file_entry_id` must present, pointing to an entry in FileEntry table
+     * </pre>
      */
     public boolean hasFileEntry() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+     *
+     * <pre>
+     * if absent, `file_entry_id` must present, pointing to an entry in FileEntry table
+     * </pre>
      */
     public org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry getFileEntry() {
       return fileEntry_;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+     *
+     * <pre>
+     * if absent, `file_entry_id` must present, pointing to an entry in FileEntry table
+     * </pre>
      */
     public Builder setFileEntry(org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry value) {
       if (value == null) {
@@ -756,7 +809,11 @@ public final class IrFile extends
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+     *
+     * <pre>
+     * if absent, `file_entry_id` must present, pointing to an entry in FileEntry table
+     * </pre>
      */
     public Builder setFileEntry(
         org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.Builder builderForValue) {
@@ -766,7 +823,11 @@ public final class IrFile extends
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+     *
+     * <pre>
+     * if absent, `file_entry_id` must present, pointing to an entry in FileEntry table
+     * </pre>
      */
     public Builder mergeFileEntry(org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry value) {
       if (((bitField0_ & 0x00000002) == 0x00000002) &&
@@ -781,7 +842,11 @@ public final class IrFile extends
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+     *
+     * <pre>
+     * if absent, `file_entry_id` must present, pointing to an entry in FileEntry table
+     * </pre>
      */
     public Builder clearFileEntry() {
       fileEntry_ = org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance();
@@ -1043,6 +1108,38 @@ public final class IrFile extends
     public Builder clearExplicitlyExportedToCompiler() {
       explicitlyExportedToCompiler_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000010);
+      
+      return this;
+    }
+
+    private int fileEntryId_ ;
+    /**
+     * <code>optional int32 file_entry_id = 6;</code>
+     */
+    public boolean hasFileEntryId() {
+      return ((bitField0_ & 0x00000020) == 0x00000020);
+    }
+    /**
+     * <code>optional int32 file_entry_id = 6;</code>
+     */
+    public int getFileEntryId() {
+      return fileEntryId_;
+    }
+    /**
+     * <code>optional int32 file_entry_id = 6;</code>
+     */
+    public Builder setFileEntryId(int value) {
+      bitField0_ |= 0x00000020;
+      fileEntryId_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>optional int32 file_entry_id = 6;</code>
+     */
+    public Builder clearFileEntryId() {
+      bitField0_ = (bitField0_ & ~0x00000020);
+      fileEntryId_ = 0;
       
       return this;
     }
