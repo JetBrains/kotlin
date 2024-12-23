@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom.Companion.creat
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 
 enum class ImplicitInvokeMode {
     // Supposed to be the most regular situation: we're just resolving to simple functions or properties
@@ -112,9 +111,7 @@ class CallableReferenceInfo(
     containingFile: FirFile,
     containingDeclarations: List<FirDeclaration>,
 
-    // Five properties for callable references only
     val expectedType: ConeKotlinType?,
-    val outerCSBuilder: ConstraintSystemBuilder?,
     val lhs: DoubleColonLHS?,
     val hasSyntheticOuterCall: Boolean,
 
@@ -137,6 +134,6 @@ class CallableReferenceInfo(
     ): CallableReferenceInfo = CallableReferenceInfo(
         callSite, name, explicitReceiver,
         session, containingFile, containingDeclarations,
-        expectedType, outerCSBuilder, lhs, hasSyntheticOuterCall, origin
+        expectedType, lhs, hasSyntheticOuterCall, origin
     )
 }

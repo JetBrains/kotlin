@@ -50,8 +50,6 @@ import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
-import org.jetbrains.kotlin.resolve.calls.inference.runTransaction
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
@@ -444,15 +442,15 @@ class FirCallResolver(
     ): Pair<CandidateApplicability, Boolean> = components.context.inferenceSession.runCallableReferenceResolution(containingCallCandidate) {
         require(resolvedCallableReferenceAtom.needsResolution)
 
-        val constraintSystemBuilder = containingCallCandidate.csBuilder
+        val containingCallCS = containingCallCandidate.csBuilder
         val callableReferenceAccess = resolvedCallableReferenceAtom.expression
         val calleeReference = callableReferenceAccess.calleeReference
         val lhs = resolvedCallableReferenceAtom.lhs
-        val coneSubstitutor = constraintSystemBuilder.buildCurrentSubstitutor() as ConeSubstitutor
+        val coneSubstitutor = containingCallCS.buildCurrentSubstitutor() as ConeSubstitutor
         val expectedType = resolvedCallableReferenceAtom.expectedType?.let(coneSubstitutor::substituteOrSelf)
 
         val info = createCallableReferencesInfoForLHS(
-            callableReferenceAccess, lhs, expectedType, constraintSystemBuilder, hasSyntheticOuterCall
+            callableReferenceAccess, lhs, expectedType, hasSyntheticOuterCall
         )
         // No reset here!
         val localCollector = CandidateCollector(components, components.resolutionStageRunner)
@@ -463,6 +461,9 @@ class FirCallResolver(
                 transformer.resolutionContext,
                 collector = localCollector,
                 manager = TowerResolveManager(localCollector),
+                candidateFactory = CandidateFactory.createForCallableReferenceCandidate(
+                    transformer.resolutionContext, containingCallCandidate
+                )
             )
         }
 
@@ -509,10 +510,12 @@ class FirCallResolver(
         val chosenCandidate = reducedCandidates.single()
         chosenCandidate.updateSourcesOfReceivers()
 
-        constraintSystemBuilder.runTransaction {
-            chosenCandidate.outerConstraintBuilderEffect!!(this)
-            true
-        }
+        // Due to CandidateFactory.Companion.creteForCallableReferenceCandidate, it's guaranteed that
+        // all callable reference candidates' CS are effectively clones of the contain call ones.
+        //
+        // And after we processed the reference candidate, its CS becomes a superset of the original one.
+        // Thus, we apply it back for the single successful chosen candidate
+        containingCallCS.replaceContentWith(chosenCandidate.system.currentStorage())
 
         val reference = createResolvedNamedReference(
             calleeReference,
@@ -727,7 +730,6 @@ class FirCallResolver(
         callableReferenceAccess: FirCallableReferenceAccess,
         lhs: DoubleColonLHS?,
         expectedType: ConeKotlinType?,
-        outerConstraintSystemBuilder: ConstraintSystemBuilder?,
         hasSyntheticOuterCall: Boolean,
     ): CallInfo {
         return CallableReferenceInfo(
@@ -739,7 +741,6 @@ class FirCallResolver(
             transformer.components.containingDeclarations,
             // Additional things for callable reference resolve
             expectedType,
-            outerConstraintSystemBuilder,
             lhs,
             hasSyntheticOuterCall,
         )
