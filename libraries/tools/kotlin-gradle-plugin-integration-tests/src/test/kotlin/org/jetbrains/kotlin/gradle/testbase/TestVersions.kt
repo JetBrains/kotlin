@@ -15,6 +15,7 @@ interface TestVersions {
     // https://gradle.org/nightly/
     // Gradle nightly releases retention policy is 3 months
     object Gradle {
+        const val G_7_0 = "7.0"
         const val G_7_6 = "7.6.3"
         const val G_8_0 = "8.0.2"
         const val G_8_1 = "8.1.1"
@@ -28,6 +29,11 @@ interface TestVersions {
         const val G_8_9 = "8.9"
         const val G_8_10 = "8.10.2"
         const val G_8_11 = "8.11.1"
+
+        /**
+         * Check [org.jetbrains.kotlin.gradle.GradleCompatibilityIT.testIncompatibleGradleVersion]
+         */
+        const val MIN_UNSUPPORTED_VERSION_TO_CHECK = G_7_0
 
         // Should be the same as GradleCompatibilityCheck.minSupportedGradleVersion
         const val MIN_SUPPORTED = MINIMALLY_SUPPORTED_GRADLE_VERSION
