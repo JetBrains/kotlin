@@ -1,0 +1,3 @@
+public? open? override [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] var aaa: <implicit> = LAZY_EXPRESSION
+    public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit>
+    public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] set([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] value: <implicit>): R|kotlin/Unit|

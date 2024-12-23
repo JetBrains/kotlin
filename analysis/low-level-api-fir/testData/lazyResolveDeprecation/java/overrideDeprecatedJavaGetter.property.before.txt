@@ -1,0 +1,2 @@
+public? open? override [ResolvedTo(RAW_FIR)] val aaa: <implicit> = LAZY_EXPRESSION
+    public? [ResolvedTo(RAW_FIR)] get(): <implicit>

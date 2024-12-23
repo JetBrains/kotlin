@@ -1,0 +1,1 @@
+public? open? override [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun aaa(): R|kotlin/Unit| { LAZY_BLOCK }

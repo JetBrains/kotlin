@@ -1,0 +1,3 @@
+public? open? override [ResolvedTo(RAW_FIR)] var aaa: <implicit> = LAZY_EXPRESSION
+    public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|

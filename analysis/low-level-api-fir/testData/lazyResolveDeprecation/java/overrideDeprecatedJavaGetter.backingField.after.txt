@@ -1,0 +1,2 @@
+public? open? override [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val aaa: <implicit> = LAZY_EXPRESSION
+    public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit>
