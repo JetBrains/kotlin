@@ -61,6 +61,15 @@ abstract class FirNestedClassifierScope(val klass: FirClass, val useSiteSession:
 }
 
 class FirNestedClassifierScopeImpl(klass: FirClass, useSiteSession: FirSession) : FirNestedClassifierScope(klass, useSiteSession) {
+    /**
+     * This index should be lazily calculated as [FirClass.declarations] may lead to indefinite recursion
+     * at least for Java classes as their resolution is not under control.
+     *
+     * Additionally, this index may not be used in the Analysis API mode, so its instant calculation
+     * may be redundant.
+     *
+     * Issue: KT-74097
+     */
     private val classIndex: Map<Name, FirClassLikeSymbol<*>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val result = mutableMapOf<Name, FirClassLikeSymbol<*>>()
         for (declaration in klass.declarations) {
