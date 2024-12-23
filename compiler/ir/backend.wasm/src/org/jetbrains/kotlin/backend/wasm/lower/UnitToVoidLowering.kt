@@ -88,7 +88,7 @@ class UnitToVoidLowering(val context: WasmBackendContext) : FileLoweringPass, Ab
 
         return when (expr) {
             is IrContainerExpression ->
-                expr.statements.isNotEmpty() && expr !is IrReturnableBlock && shouldVoidify(expr.statements.last())
+                expr.statements.isNotEmpty() && shouldVoidify(expr.statements.last())
 
             is IrWhen, is IrTry ->
                 true

@@ -160,12 +160,14 @@ class DeclarationGenerator(
             wasmModuleTypeTransformer,
         )
 
+        val declarationBody = declaration.body
+        require(declarationBody is IrBlockBody) { "Only IrBlockBody is supported" }
+
         if (declaration is IrConstructor) {
             bodyBuilder.generateObjectCreationPrefixIfNeeded(declaration)
         }
 
-        require(declaration.body is IrBlockBody) { "Only IrBlockBody is supported" }
-        declaration.body?.acceptVoid(bodyBuilder)
+        declarationBody.acceptVoid(bodyBuilder)
 
         // Return implicit this from constructions to avoid extra tmp
         // variables on constructor call sites.
@@ -450,7 +452,7 @@ class DeclarationGenerator(
                     wasmExpressionGenerator,
                     wasmFileCodegenContext,
                     backendContext,
-                    declaration.getSourceLocation(declaration.symbol, declaration.fileOrNull)
+                    initValue.getSourceLocation(declaration.symbol, declaration.fileOrNull)
                 )
             } else {
                 val stubFunction = WasmFunction.Defined("static_fun_stub", WasmSymbol())

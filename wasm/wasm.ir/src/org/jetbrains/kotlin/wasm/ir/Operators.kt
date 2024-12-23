@@ -122,7 +122,9 @@ sealed class WasmImmediate {
 enum class WasmOp(
     val mnemonic: String,
     val opcode: Int,
-    val immediates: List<WasmImmediateKind> = emptyList()
+    val immediates: List<WasmImmediateKind> = emptyList(),
+    val breakControlFlowImmediately: Boolean = false,
+    val endPreviousControlBlock: Boolean = false,
 ) {
 
     // Unary
@@ -324,20 +326,20 @@ enum class WasmOp(
     BLOCK("block", 0x02, BLOCK_TYPE),
     LOOP("loop", 0x03, BLOCK_TYPE),
     IF("if", 0x04, BLOCK_TYPE),
-    ELSE("else", 0x05),
-    END("end", 0x0B),
-    BR("br", 0x0C, LABEL_IDX),
+    ELSE("else", 0x05, endPreviousControlBlock = true),
+    END("end", 0x0B, endPreviousControlBlock = true),
+    BR("br", 0x0C, LABEL_IDX, breakControlFlowImmediately = true),
     BR_IF("br_if", 0x0D, LABEL_IDX),
     BR_TABLE("br_table", 0x0E, listOf(LABEL_IDX_VECTOR, LABEL_IDX)),
-    RETURN("return", 0x0F),
+    RETURN("return", 0x0F, breakControlFlowImmediately = true),
     CALL("call", 0x10, FUNC_IDX),
     CALL_INDIRECT("call_indirect", 0x11, listOf(TYPE_IDX, TABLE_IDX)),
     TRY("try", 0x06, BLOCK_TYPE),
-    CATCH("catch", 0x07, TAG_IDX),
-    CATCH_ALL("catch_all", 0x19),
+    CATCH("catch", 0x07, TAG_IDX, endPreviousControlBlock = true),
+    CATCH_ALL("catch_all", 0x19, endPreviousControlBlock = true),
     DELEGATE("delegate", 0x18, LABEL_IDX),
-    THROW("throw", 0x08, TAG_IDX),
-    RETHROW("rethrow", 0x09, LABEL_IDX),
+    THROW("throw", 0x08, TAG_IDX, breakControlFlowImmediately = true),
+    RETHROW("rethrow", 0x09, LABEL_IDX, breakControlFlowImmediately = true),
 
     // Parametric
     DROP("drop", 0x1A),
@@ -445,7 +447,13 @@ enum class WasmOp(
     MACRO_TABLE_END("<macro-table-end>", WASM_OP_PSEUDO_OPCODE),
     ;
 
-    constructor(mnemonic: String, opcode: Int, vararg immediates: WasmImmediateKind) : this(mnemonic, opcode, immediates.toList())
+    constructor(
+        mnemonic: String,
+        opcode: Int,
+        vararg immediates: WasmImmediateKind,
+        breakControlFlowImmediately: Boolean = false,
+        endPreviousControlBlock: Boolean = false,
+    ) : this(mnemonic, opcode, immediates.toList(), breakControlFlowImmediately, endPreviousControlBlock)
 }
 
 const val WASM_OP_PSEUDO_OPCODE = 0xFFFF
