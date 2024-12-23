@@ -10,24 +10,27 @@ import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.config.phaser.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 fun <Context : LoweringContext> performByIrFile(
-    name: String,
-    lower: List<CompilerPhase<Context, IrFile, IrFile>>,
-): SameTypeNamedCompilerPhase<Context, IrModuleFragment> =
-    SameTypeNamedCompilerPhase(
-        name, emptySet(), PerformByIrFilePhase(lower), emptySet(), emptySet(), emptySet(),
-        setOf(getIrDumper()), nlevels = 1,
-    )
+    lower: List<SimpleNamedCompilerPhase<Context, IrFile, IrFile>>,
+): SimpleNamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment> = PerformByIrFilePhase(lower)
 
 class PerformByIrFilePhase<Context : LoweringContext>(
-    private val lower: List<CompilerPhase<Context, IrFile, IrFile>>,
-) : SameTypeCompilerPhase<Context, IrModuleFragment> {
+    private val lower: List<SimpleNamedCompilerPhase<Context, IrFile, IrFile>>,
+) : SimpleNamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment>(name = "PerformByIrFilePhase") {
+    override fun outputIfNotEnabled(
+        phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment,
+    ): IrModuleFragment {
+        return input
+    }
+
+    override fun phaseBody(context: Context, input: IrModuleFragment): IrModuleFragment {
+        shouldNotBeCalled()
+    }
+
     override fun invoke(
-        phaseConfig: PhaseConfig,
-        phaserState: PhaserState<IrModuleFragment>,
-        context: Context,
-        input: IrModuleFragment
+        phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment
     ): IrModuleFragment {
         for (irFile in input.files) {
             try {
