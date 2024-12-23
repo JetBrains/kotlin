@@ -51,6 +51,7 @@ fun baz(v:(() -> Unit)) {
 
 // EXPECTATIONS WASM
 // test.kt:6 $box (8)
+// test1.kt:12 $box (19)
 // test1.kt:13 $box (1)
 // test.kt:6 $box (4)
 // test3.kt:16 $baz (4)
@@ -65,6 +66,7 @@ fun baz(v:(() -> Unit)) {
 // test3.kt:16 $baz (4)
 // test3.kt:17 $baz (1)
 // test.kt:7 $box (12)
+// test1.kt:12 $box (19)
 // test1.kt:13 $box (1)
 // test.kt:8 $box (8, 4)
 // test3.kt:16 $baz (4)

@@ -27,11 +27,13 @@ object JsIrBuilder {
         typeArguments: List<IrType>? = null,
         origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT,
         superQualifierSymbol: IrClassSymbol? = null,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET,
     ): IrCall {
         val owner = target.owner
         return IrCallImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
+            startOffset,
+            endOffset,
             type ?: owner.returnType,
             target,
             superQualifierSymbol = superQualifierSymbol,

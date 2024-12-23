@@ -113,7 +113,11 @@ class ObjectUsageLowering(val context: JsCommonBackendContext) : BodyLoweringPas
             override fun visitGetObjectValue(expression: IrGetObjectValue): IrExpression {
                 val obj: IrClass = expression.symbol.owner
                 if (obj.isEffectivelyExternal()) return expression
-                return JsIrBuilder.buildCall(context.getOrCreateGetInstanceFunction(obj).symbol)
+                return JsIrBuilder.buildCall(
+                    context.getOrCreateGetInstanceFunction(obj).symbol,
+                    startOffset = expression.startOffset,
+                    endOffset = expression.endOffset,
+                )
             }
 
             override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
