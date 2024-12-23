@@ -61,8 +61,7 @@ open class AbstractFirNativeSerializationTest : AbstractKotlinCompilerWithTarget
     val frontendToIrConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
         get() = ::Fir2IrNativeResultsConverter
     open val irInliningFacade: Constructor<IrInliningFacade<IrBackendInput>>
-        // KT-73624: TODO In a new sub-class AbstractFirNativeSerializationWithInlinedFunInKlibTest, bind NativePreSerializationLoweringPhasesProvider instead
-        get() = ::NativeInliningFacade.bind(null)
+        get() = ::NativeInliningFacade
     val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
         get() = ::FirNativeKlibSerializerFacade
     val deserializerFacade: Constructor<DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>

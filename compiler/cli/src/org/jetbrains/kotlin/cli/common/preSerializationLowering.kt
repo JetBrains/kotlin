@@ -12,16 +12,8 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.phaser.SimpleNamedCompilerPhase
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.inline.PreSerializationLoweringPhasesProvider
 
 fun <T : PreSerializationLoweringContext> PhaseEngine<T>.runPreSerializationLoweringPhases(
-    irModuleFragment: IrModuleFragment,
-    loweringProvider: PreSerializationLoweringPhasesProvider<T>,
-): IrModuleFragment {
-    return runPreSerializationLoweringsPhases(loweringProvider.getLowerings(), irModuleFragment)
-}
-
-private fun <T : PreSerializationLoweringContext> PhaseEngine<T>.runPreSerializationLoweringsPhases(
     lowerings: List<SimpleNamedCompilerPhase<T, IrModuleFragment, IrModuleFragment>>,
     irModuleFragment: IrModuleFragment,
 ): IrModuleFragment {
@@ -36,10 +28,10 @@ private fun <T : PreSerializationLoweringContext> PhaseEngine<T>.runPreSerializa
 
 fun <T : PreSerializationLoweringContext> PhaseEngine<T>.runPreSerializationLoweringPhases(
     fir2IrActualizedResult: Fir2IrActualizedResult,
-    loweringProvider: PreSerializationLoweringPhasesProvider<T>,
+    lowerings: List<SimpleNamedCompilerPhase<T, IrModuleFragment, IrModuleFragment>>
 ): Fir2IrActualizedResult = fir2IrActualizedResult.copy(
     irModuleFragment = runPreSerializationLoweringPhases(
+        lowerings,
         fir2IrActualizedResult.irModuleFragment,
-        loweringProvider,
     )
 )

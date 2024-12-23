@@ -146,7 +146,7 @@ private val validateIrAfterInliningAllFunctions = makeIrModulePhase(
     name = "IrValidationAfterInliningAllFunctionsPhase",
 )
 
-internal val loweringsOfTheFirstPhase: List<SimpleNamedCompilerPhase<JsPreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = listOfNotNull(
+val loweringsOfTheFirstPhase: List<SimpleNamedCompilerPhase<JsPreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = listOfNotNull(
     jsCodeOutliningPhase,
     lateinitPhase,
     sharedVariablesLoweringPhase,
