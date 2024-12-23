@@ -94,7 +94,7 @@ private object NativePreSerializationLoweringPhasesProvider : PreSerializationLo
         get() = KonanManglerIr
 
     override fun getLowerings(): List<SimpleNamedCompilerPhase<NativePreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> {
-        return emptyList()
+        return loweringsOfTheFirstPhase
     }
 }
 

@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.dump
 
 internal class NativeInlineFunctionResolver(
-        private val generationState: NativeGenerationState,
+        context: Context,
         inlineMode: InlineMode,
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<Context>(generationState.context, inlineMode) {
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<Context>(context, inlineMode) {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         val function = super.getFunctionDeclaration(symbol) ?: return null
 
@@ -60,7 +60,7 @@ internal class NativeInlineFunctionResolver(
         ArrayConstructorLowering(context).lower(body, function)
 
         if (doubleInliningEnabled) {
-            NativeIrInliner(generationState, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS).lower(body, function)
+            NativeIrInliner(context, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS).lower(body, function)
             SyntheticAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
         }
     }

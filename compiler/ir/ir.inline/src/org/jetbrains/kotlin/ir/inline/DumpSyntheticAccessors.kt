@@ -25,7 +25,7 @@ import java.io.File
 /**
  * Dumps synthetic accessors and their call sites (used only for testing and debugging).
  */
-class DumpSyntheticAccessors(context: CommonBackendContext) : ModuleLoweringPass {
+class DumpSyntheticAccessors(context: LoweringContext) : ModuleLoweringPass {
     private val dumpDirectory: File? = getDumpDirectoryOrNull(context.configuration)
 
     override fun lower(irModule: IrModuleFragment) {
