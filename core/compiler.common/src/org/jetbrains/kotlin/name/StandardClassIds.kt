@@ -216,6 +216,7 @@ object StandardClassIds {
         val KotlinActual = "KotlinActual".annotationsJvmId()
 
         val jvmStatic = "JvmStatic".jvmId()
+        val jvmName = "JvmName".jvmId()
 
         val AssociatedObjectKey = "AssociatedObjectKey".reflectId()
         val ExperimentalAssociatedObjects = "ExperimentalAssociatedObjects".reflectId()

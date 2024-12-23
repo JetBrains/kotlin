@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi
@@ -113,7 +114,7 @@ private class CodeFragmentCapturedValueVisitor(
         if (element is FirExpression) {
             val symbol = element.resolvedType.toSymbol(session)
             if (symbol != null) {
-                registerFile(symbol)
+                registerFileIfRequired(symbol)
             }
         }
 
@@ -229,6 +230,7 @@ private class CodeFragmentCapturedValueVisitor(
                 } else {
                     // Property call generation depends on complete backing field resolution (Fir2IrLazyProperty.backingField)
                     symbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+                    registerFileIfRequired(symbol)
                 }
             }
             is FirBackingFieldSymbol -> {
@@ -238,9 +240,7 @@ private class CodeFragmentCapturedValueVisitor(
                 register(CodeFragmentCapturedSymbol(capturedValue, symbol, symbol.resolvedReturnTypeRef))
             }
             is FirNamedFunctionSymbol -> {
-                if (symbol.isLocal) {
-                    registerFile(symbol)
-                }
+                registerFileIfRequired(symbol)
             }
         }
 
@@ -268,14 +268,30 @@ private class CodeFragmentCapturedValueVisitor(
         }
 
         collectedMappings[id] = mapping
-        registerFile(mapping.symbol)
+        registerFileIfRequired(mapping.symbol)
     }
 
-    private fun registerFile(symbol: FirBasedSymbol<*>) {
+    private val FirFunctionSymbol<*>.isAnnotatedWithNonLiteralJvmName: Boolean
+        get() {
+            val jvmNameAnnotation = annotations.getAnnotationByClassId(StandardClassIds.Annotations.jvmName, session) ?: return false
+            val argument = jvmNameAnnotation.argumentMapping.mapping[Name.identifier("name")]
+                ?: error("`name` must be specified for @JvmName annotation")
+            return argument !is FirLiteralExpression
+        }
+
+    private val FirFunctionSymbol<*>.hasAnnotationArgumentShouldBeEvaluated: Boolean
+        get() {
+            return isAnnotatedWithNonLiteralJvmName
+        }
+
+    private fun registerFileIfRequired(symbol: FirBasedSymbol<*>) {
         val needsRegistration = when (symbol) {
             is FirRegularClassSymbol -> symbol.isLocal
             is FirAnonymousObjectSymbol -> true
-            is FirNamedFunctionSymbol -> symbol.callableId.isLocal
+            is FirNamedFunctionSymbol -> symbol.callableId.isLocal || symbol.hasAnnotationArgumentShouldBeEvaluated
+            is FirPropertySymbol ->
+                symbol.getterSymbol?.hasAnnotationArgumentShouldBeEvaluated == true
+                        || symbol.setterSymbol?.hasAnnotationArgumentShouldBeEvaluated == true
             else -> false
         }
 
