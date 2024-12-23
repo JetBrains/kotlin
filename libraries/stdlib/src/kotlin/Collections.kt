@@ -175,6 +175,13 @@ public expect interface List<out E> : Collection<E> {
      * Structural changes in the base list make the behavior of the view undefined.
      */
     public fun subList(fromIndex: Int, toIndex: Int): List<E>
+
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+    public companion object {
+        public fun <T> of(): List<T>
+        public fun <T> of(element: T): List<T>
+        public fun <T> of(vararg elements: T): List<T>
+    }
 }
 
 /**

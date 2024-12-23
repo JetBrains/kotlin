@@ -190,6 +190,13 @@ public actual interface List<out E> : Collection<E> {
     @ExperimentalJsCollectionsApi
     @SinceKotlin("2.0")
     public fun asJsReadonlyArrayView(): JsReadonlyArray<E> = createJsReadonlyArrayViewFrom(this)
+
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+    public actual companion object {
+        public actual fun <T> of(): List<T> = emptyList()
+        public actual fun <T> of(element: T): List<T> = arrayListOf(element)
+        public actual fun <T> of(vararg elements: T): List<T> = if (elements.size > 0) elements.asList() else emptyList()
+    }
 }
 
 /**

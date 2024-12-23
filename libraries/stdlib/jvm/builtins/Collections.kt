@@ -170,6 +170,13 @@ public actual interface List<out E> : Collection<E> {
      * Structural changes in the base list make the behavior of the view undefined.
      */
     public actual fun subList(fromIndex: Int, toIndex: Int): List<E>
+
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
+    public actual companion object {
+        public actual fun <T> of(): List<T>
+        public actual fun <T> of(element: T): List<T>
+        public actual fun <T> of(vararg elements: T): List<T>
+    }
 }
 
 /**
