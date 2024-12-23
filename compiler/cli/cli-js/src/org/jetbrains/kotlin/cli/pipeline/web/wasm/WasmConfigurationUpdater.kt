@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web.wasm
 
-import org.jetbrains.kotlin.backend.wasm.getWasmPhases
+import org.jetbrains.kotlin.backend.wasm.getWasmLowerings
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.createPhaseConfig
 import org.jetbrains.kotlin.cli.common.list
@@ -31,7 +31,7 @@ object WasmConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() 
         // setup phase config for the second compilation stage (Wasm codegen)
         if (arguments.includes != null) {
             configuration.phaseConfig = createPhaseConfig(arguments).also {
-                it.list(getWasmPhases(configuration, isIncremental = false))
+                it.list(getWasmLowerings(configuration, isIncremental = false))
             }
         }
     }
