@@ -20,13 +20,13 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirErrorCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.resolve.calls.inference.runTransaction
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 internal object CheckCallableReferenceExpectedType : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         callInfo as CallableReferenceInfo
-        val outerCsBuilder = callInfo.outerCSBuilder ?: return
         val expectedType = callInfo.expectedType
         if (candidate.symbol !is FirCallableSymbol<*>) return
 
@@ -79,31 +78,15 @@ internal object CheckCallableReferenceExpectedType : ResolutionStage() {
         candidate.initializeCallableReferenceAdaptation(
             callableReferenceAdaptation,
             resultingType,
-        ) {
-            addOtherSystem(candidate.system.currentStorage())
+        )
 
-            // Callable references are either arguments to a call or are wrapped in a synthetic call for resolution.
-            val position = ConeArgumentConstraintPosition(callInfo.callSite)
-
-            if (expectedType != null && !resultingType.contains {
-                    it is ConeTypeVariableType && it.typeConstructor !in outerCsBuilder.currentStorage().allTypeVariables
-                }
-            ) {
-                addSubtypeConstraint(resultingType, expectedType, position)
-            }
+        if (expectedType != null && candidate.symbol !is FirErrorCallableSymbol<*>) {
+            candidate.system.addSubtypeConstraint(
+                resultingType, expectedType, ConeArgumentConstraintPosition(callInfo.callSite)
+            )
         }
 
-        var isApplicable = true
-
-        outerCsBuilder.runTransaction {
-            candidate.outerConstraintBuilderEffect!!(this)
-
-            isApplicable = !hasContradiction
-
-            false
-        }
-
-        if (!isApplicable) {
+        if (candidate.system.hasContradiction) {
             sink.yieldDiagnostic(InapplicableCandidate)
         }
     }

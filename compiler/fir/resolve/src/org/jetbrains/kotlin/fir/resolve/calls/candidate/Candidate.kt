@@ -125,13 +125,11 @@ class Candidate(
 
     internal fun initializeCallableReferenceAdaptation(
         callableReferenceAdaptation: CallableReferenceAdaptation?,
-        resultingTypeForCallableReference: ConeKotlinType,
-        outerConstraintBuilderEffect: ConstraintSystemOperation.() -> Unit
+        resultingTypeForCallableReference: ConeKotlinType
     ) {
         require(this.callableReferenceAdaptation == null) { "callableReferenceAdaptation already initialized" }
         this.callableReferenceAdaptation = callableReferenceAdaptation
         this.resultingTypeForCallableReference = resultingTypeForCallableReference
-        this.outerConstraintBuilderEffect = outerConstraintBuilderEffect
         usesFunctionConversion = callableReferenceAdaptation?.suspendConversionStrategy is CallableReferenceConversionStrategy.CustomConversion
         if (callableReferenceAdaptation != null) {
             numDefaults = callableReferenceAdaptation.defaults
