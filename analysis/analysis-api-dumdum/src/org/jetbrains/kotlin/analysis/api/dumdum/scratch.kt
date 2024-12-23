@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.dumdum.filesystem.FileReader
 import org.jetbrains.kotlin.analysis.api.dumdum.filesystem.WobblerVirtualFile
-import org.jetbrains.kotlin.analysis.api.dumdum.index.FileId
-import org.jetbrains.kotlin.analysis.api.dumdum.index.VirtualFileFactory
-import org.jetbrains.kotlin.analysis.api.dumdum.index.inMemoryIndex
-import org.jetbrains.kotlin.analysis.api.dumdum.index.indexFile
+import org.jetbrains.kotlin.analysis.api.dumdum.index.*
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallableMemberCall
@@ -65,11 +62,10 @@ fun test1() {
         val index = withProject {
             val psiManager = PsiManager.getInstance(project)
             inMemoryIndex(
-                files.flatMap { (fileId, str) ->
+                files.keys.associateWith { fileId ->
                     val vFile = WobblerVirtualFile(fileReader, fileId, KotlinFileType.INSTANCE)
                     val psiFile = psiManager.findFile(vFile)!!
-                    indexFile(
-                        fileId = fileId,
+                    mapFile(
                         file = psiFile,
                         fileBasedIndexExtensions = fileBasedIndexExtensions,
                         stubIndexExtensions = stubIndexExtensions,

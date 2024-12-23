@@ -35,12 +35,7 @@ fun Index.stubIndex(
             scope: GlobalSearchScope,
         ): Iterator<VirtualFile> =
             index
-                .files(
-                    IndexKey(
-                        keyType = stubIndexExtensions.keyTypesMap.keyType(indexId),
-                        key = dataKey
-                    )
-                )
+                .files(stubIndexExtensions.keyTypesMap.keyType(indexId), dataKey)
                 .map(virtualFileFactory::virtualFile)
                 .filter(scope::contains)
                 .iterator()
@@ -54,12 +49,7 @@ fun Index.stubIndex(
             processor: Processor<in Psi>,
         ): Boolean =
             index
-                .files(
-                    IndexKey(
-                        keyType = stubIndexExtensions.keyTypesMap.keyType(indexKey),
-                        key = key
-                    )
-                )
+                .files(stubIndexExtensions.keyTypesMap.keyType(indexKey), key)
                 .flatMap { fileId ->
                     virtualFileFactory.virtualFile(fileId)
                         .takeIf { scope.contains(it) }

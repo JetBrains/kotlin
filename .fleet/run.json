@@ -1,0 +1,15 @@
+{
+    "configurations": [
+        
+        {
+            "name": "publish analyzer",
+            "type": "gradle",
+            "workingDir": "$PROJECT_DIR$",
+            "tasks": ["analysis:analysis-api-dumdum-shadow:publishToMavenLocal"],
+            "args": [""],
+            "initScripts": {
+                "flmapper": "ext.mapPath = { path -> path }"
+            }
+        }
+    ]
+}

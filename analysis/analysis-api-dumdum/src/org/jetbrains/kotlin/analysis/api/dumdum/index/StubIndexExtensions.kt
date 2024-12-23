@@ -5,6 +5,7 @@ import com.intellij.util.io.KeyDescriptor
 data class StubIndexExtensions(
     val keyTypesMap: KeyTypesMap,
     val indexedSerializedStubTreeType: ValueType<IndexedSerializedStubTree>,
+    val extensions: List<StubIndexExtension<*, *>>,
 )
 
 fun stubIndexExtensions(
@@ -20,9 +21,18 @@ fun stubIndexExtensions(
         keyTypesMap = keyTypesMap,
         indexedSerializedStubTreeType = ValueType(
             id = "stub",
+            keys = keyTypesMap.keyTypes.toSet(),
             serializer = IndexedSerializedStubTree.serializer(
                 keyTypesMap = keyTypesMap,
-            )
+            ),
+            valueIndexer = ValueIndexer { tree ->
+                ValueIndex(
+                    tree.index.map { (indexId, map) ->
+                        keyTypesMap.keyType(indexId) to map.keys
+                    }.toMap()
+                )
+            }
         ),
+        extensions = stubIndexExtensions,
     )
 }

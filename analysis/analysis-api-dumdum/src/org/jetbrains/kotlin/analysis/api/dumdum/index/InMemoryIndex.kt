@@ -17,49 +17,56 @@ data class ValueKey<T>(
     val valueType: ValueType<T>,
 )
 
-fun inMemoryIndex(updates: List<IndexUpdate<*>>): Index {
-    val fileToValue: Map<ValueKey<*>, List<ByteArray>> =
-        updates.groupBy(
-            keySelector = { indexUpdate ->
-                ValueKey(indexUpdate.fileId, indexUpdate.valueType)
-            },
-            valueTransform = { indexUpdate ->
-                indexUpdate.serializeValue()
-            }
-        )
+data class TypedKey<K>(
+    val keyType: KeyType<K>,
+    val bytes: ByteArrayKey,
+)
 
-    val keyToFiles: Map<ByteArrayKey, List<FileId>> =
-        updates.flatGroupBy(
-            keySelector = { it.keys },
-            keyTransformer = { key ->
-                ByteArrayKey(key.serialize())
-            },
-            valueTransformer = { it.fileId }
+fun inMemoryIndex(files: Map<FileId, FileValues>): Index {
+    val fileToValue: Map<ValueKey<*>, ByteArray> =
+        files.flatMap { (fileId, fileValues) ->
+            fileValues.map.map { (valueType, value) ->
+                @Suppress("UNCHECKED_CAST")
+                valueType as ValueType<Any?>
+                ValueKey(fileId, valueType) to valueType.serializer.serialize(value)
+            }
+        }.toMap()
+
+    val keyToFiles: Map<TypedKey<*>, List<FileId>> =
+        files.flatMap { (fileId, fileValues) ->
+            fileValues.map.flatMap { (valueType, value) ->
+                @Suppress("UNCHECKED_CAST")
+                valueType as ValueType<Any?>
+                valueType.valueIndexer.indexValue(value).map.flatMap { (keyType, keys) ->
+                    @Suppress("UNCHECKED_CAST")
+                    keyType as KeyType<Any?>
+                    keys.map { key ->
+                        TypedKey(keyType, ByteArrayKey(keyType.serializer.serialize(key))) to fileId
+                    }
+                }
+            }
+        }.groupBy(
+            keySelector = { it.first },
+            valueTransform = { it.second },
         )
 
     val keyTypeToKeys: Map<KeyType<*>, List<ByteArray>> =
-        updates
-            .flatMap { indexUpdate ->
-                indexUpdate.keys.map { key ->
-                    key.keyType to key.serialize()
-                }
-            }
-            .groupBy(
-                keySelector = { it.first },
-                valueTransform = { it.second }
-            )
+        keyToFiles.keys.groupBy(
+            keySelector = { it.keyType },
+            valueTransform = { it.bytes.bytes }
+        )
+
 
     return object : Index {
 
         override fun <S> value(fileId: FileId, valueType: ValueType<S>): S? =
             fileToValue[ValueKey(fileId, valueType)]
-                ?.firstOrNull()
                 ?.let { bb ->
                     valueType.serializer.deserialize(bb)
                 }
 
-        override fun <K> files(key: IndexKey<K>): Sequence<FileId> =
-            keyToFiles[ByteArrayKey(key.serialize())]
+        override fun <K> files(keyType: KeyType<K>, key: K): Sequence<FileId> =
+            keyToFiles[TypedKey(keyType, ByteArrayKey(keyType.serializer.serialize(key)))]
                 ?.asSequence()
                 .orEmpty()
 

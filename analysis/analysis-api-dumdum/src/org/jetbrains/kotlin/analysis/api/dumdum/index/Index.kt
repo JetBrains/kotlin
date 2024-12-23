@@ -3,21 +3,13 @@ package org.jetbrains.kotlin.analysis.api.dumdum.index
 interface Index {
     fun <S> value(fileId: FileId, valueType: ValueType<S>): S?
 
-    fun <K> files(key: IndexKey<K>): Sequence<FileId>
+    fun <K> files(keyType: KeyType<K>, key: K): Sequence<FileId>
 
     fun <K> keys(keyType: KeyType<K>): Sequence<K>
 }
 
 @JvmInline
 value class FileId(val id: String)
-
-data class IndexKey<K>(
-    val keyType: KeyType<K>,
-    val key: K,
-)
-
-fun <K> IndexKey<K>.serialize(): ByteArray =
-    keyType.serializer.serialize(key)
 
 interface Serializer<T> {
     fun serialize(value: T): ByteArray
@@ -35,9 +27,17 @@ class KeyType<K>(
         id.hashCode() + 1
 }
 
+data class ValueIndex(val map: Map<KeyType<*>, Set<Any?>>)
+
+fun interface ValueIndexer<V> {
+    fun indexValue(value: V): ValueIndex
+}
+
 class ValueType<S>(
     val id: String,
     val serializer: Serializer<S>,
+    val keys: Set<KeyType<*>>,
+    val valueIndexer: ValueIndexer<S>,
 ) {
     override fun equals(other: Any?): Boolean =
         other === this || (other is ValueType<*> && other.id == this.id)

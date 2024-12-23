@@ -18,11 +18,12 @@ fun Index.fileBased(
             val valueType = fileBasedIndexExtensions.mapType(indexId)
             val keyType = fileBasedIndexExtensions.keyTypesMap.keyType(indexId)
             return index
-                .files(IndexKey(keyType, dataKey))
+                .files(keyType, dataKey)
                 .filter { filter.contains(virtualFileFactory.virtualFile(it)) }
                 .mapNotNull { documentId ->
                     index
                         .value(documentId, valueType)
+                        ?.map
                         ?.get(dataKey)
                 }
                 .all { (v) -> processor.process(v) }
@@ -38,7 +39,7 @@ fun Index.fileBased(
                 .keys(keyType)
                 .filter { k ->
                     index
-                        .files(IndexKey(keyType, k))
+                        .files(keyType, k)
                         .any { filter.contains(virtualFileFactory.virtualFile(it)) }
                 }
                 .all(processor::process)
