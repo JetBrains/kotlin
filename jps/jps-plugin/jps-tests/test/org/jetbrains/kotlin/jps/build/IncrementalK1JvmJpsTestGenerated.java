@@ -3286,6 +3286,11 @@ public class IncrementalK1JvmJpsTestGenerated extends AbstractIncrementalK1JvmJp
       runTest("jps/jps-plugin/testData/incremental/classHierarchyAffected/methodRemoved/");
     }
 
+    @TestMetadata("outerClassVisibilityChanged")
+    public void testOuterClassVisibilityChanged() {
+      runTest("jps/jps-plugin/testData/incremental/classHierarchyAffected/outerClassVisibilityChanged/");
+    }
+
     @TestMetadata("overrideExplicit")
     public void testOverrideExplicit() {
       runTest("jps/jps-plugin/testData/incremental/classHierarchyAffected/overrideExplicit/");
@@ -3720,6 +3725,19 @@ public class IncrementalK1JvmJpsTestGenerated extends AbstractIncrementalK1JvmJp
 
       public void testAllFilesPresentInMethodRemoved() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/classHierarchyAffected/methodRemoved"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+      }
+    }
+
+    @TestMetadata("jps/jps-plugin/testData/incremental/classHierarchyAffected/outerClassVisibilityChanged")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class OuterClassVisibilityChanged extends AbstractIncrementalK1JvmJpsTest {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInOuterClassVisibilityChanged() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/classHierarchyAffected/outerClassVisibilityChanged"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
       }
     }
 

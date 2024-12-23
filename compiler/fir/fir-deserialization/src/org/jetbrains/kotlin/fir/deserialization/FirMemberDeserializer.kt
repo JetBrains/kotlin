@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.fir.deserialization
 
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
@@ -53,6 +55,8 @@ class FirDeserializationContext(
     val constDeserializer: FirConstDeserializer,
     val containerSource: DeserializedContainerSource?,
     val outerClassSymbol: FirRegularClassSymbol?,
+    // If there is no outer class `EffectiveVisibility.Public` is used
+    val outerClassEffectiveVisibility: EffectiveVisibility,
     val outerTypeParameters: List<FirTypeParameterSymbol>
 ) {
     val session: FirSession = moduleData.session
@@ -68,6 +72,7 @@ class FirDeserializationContext(
         relativeClassName: FqName? = this.relativeClassName,
         containerSource: DeserializedContainerSource? = this.containerSource,
         outerClassSymbol: FirRegularClassSymbol? = this.outerClassSymbol,
+        outerClassEffectiveVisibility: EffectiveVisibility = this.outerClassEffectiveVisibility,
         annotationDeserializer: AbstractAnnotationDeserializer = this.annotationDeserializer,
         constDeserializer: FirConstDeserializer = this.constDeserializer,
         capturesTypeParameters: Boolean = true,
@@ -85,6 +90,7 @@ class FirDeserializationContext(
         constDeserializer,
         containerSource,
         outerClassSymbol,
+        outerClassEffectiveVisibility,
         if (capturesTypeParameters) allTypeParameters else emptyList()
     )
 
@@ -115,6 +121,7 @@ class FirDeserializationContext(
             typeParameterProtos = emptyList(),
             containerSource,
             outerClassSymbol = null,
+            outerClassEffectiveVisibility = EffectiveVisibility.Public,
             containingDeclarationSymbol = null
         )
 
@@ -127,7 +134,8 @@ class FirDeserializationContext(
             flexibleTypeFactory: FirTypeDeserializer.FlexibleTypeFactory,
             constDeserializer: FirConstDeserializer,
             containerSource: DeserializedContainerSource?,
-            outerClassSymbol: FirRegularClassSymbol
+            outerClassSymbol: FirRegularClassSymbol,
+            outerClassEffectiveVisibility: EffectiveVisibility,
         ): FirDeserializationContext = createRootContext(
             nameResolver,
             TypeTable(classProto.typeTable),
@@ -141,6 +149,7 @@ class FirDeserializationContext(
             classProto.typeParameterList,
             containerSource,
             outerClassSymbol,
+            outerClassEffectiveVisibility,
             outerClassSymbol
         )
 
@@ -157,6 +166,7 @@ class FirDeserializationContext(
             typeParameterProtos: List<ProtoBuf.TypeParameter>,
             containerSource: DeserializedContainerSource?,
             outerClassSymbol: FirRegularClassSymbol?,
+            outerClassEffectiveVisibility: EffectiveVisibility,
             containingDeclarationSymbol: FirBasedSymbol<*>?
         ): FirDeserializationContext {
             return FirDeserializationContext(
@@ -179,6 +189,7 @@ class FirDeserializationContext(
                 constDeserializer,
                 containerSource,
                 outerClassSymbol,
+                outerClassEffectiveVisibility,
                 emptyList()
             )
         }
@@ -213,7 +224,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             status = FirResolvedDeclarationStatusImpl(
                 visibility,
                 Modality.FINAL,
-                visibility.toEffectiveVisibility(owner = null)
+                visibility.toDeserializedEffectiveVisibility(owner = null),
             ).apply {
                 isExpect = Flags.IS_EXPECT_CLASS.get(flags)
                 isActual = false
@@ -244,7 +255,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val getterFlags = if (proto.hasGetterFlags()) proto.getterFlags else defaultAccessorFlags
         val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(getterFlags))
         val accessorModality = ProtoEnumFlags.modality(Flags.MODALITY.get(getterFlags))
-        val effectiveVisibility = visibility.toEffectiveVisibility(classSymbol)
+        val effectiveVisibility = visibility.toDeserializedEffectiveVisibility(classSymbol)
         return if (Flags.IS_NOT_DEFAULT.get(getterFlags)) {
             buildPropertyAccessor {
                 moduleData = c.moduleData
@@ -297,7 +308,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val setterFlags = if (proto.hasSetterFlags()) proto.setterFlags else defaultAccessorFlags
         val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(setterFlags))
         val accessorModality = ProtoEnumFlags.modality(Flags.MODALITY.get(setterFlags))
-        val effectiveVisibility = visibility.toEffectiveVisibility(classSymbol)
+        val effectiveVisibility = visibility.toDeserializedEffectiveVisibility(classSymbol)
         return if (Flags.IS_NOT_DEFAULT.get(setterFlags)) {
             buildPropertyAccessor {
                 moduleData = c.moduleData
@@ -400,7 +411,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             dispatchReceiverType = c.dispatchReceiver
             isLocal = false
             val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
-            status = FirResolvedDeclarationStatusImpl(visibility, propertyModality, visibility.toEffectiveVisibility(classSymbol)).apply {
+            status = FirResolvedDeclarationStatusImpl(visibility, propertyModality, visibility.toDeserializedEffectiveVisibility(classSymbol)).apply {
                 isExpect = Flags.IS_EXPECT_PROPERTY.get(flags)
                 isActual = false
                 isOverride = false
@@ -576,7 +587,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             status = FirResolvedDeclarationStatusImpl(
                 visibility,
                 ProtoEnumFlags.modality(Flags.MODALITY.get(flags)),
-                visibility.toEffectiveVisibility(classSymbol)
+                visibility.toDeserializedEffectiveVisibility(classSymbol)
             ).apply {
                 isExpect = Flags.IS_EXPECT_FUNCTION.get(flags)
                 isActual = false
@@ -658,7 +669,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             status = FirResolvedDeclarationStatusImpl(
                 visibility,
                 Modality.FINAL,
-                visibility.toEffectiveVisibility(classBuilder.symbol)
+                visibility.toDeserializedEffectiveVisibility(classBuilder.symbol)
             ).apply {
                 // We don't store information about expect modifier on constructors
                 // It is inherited from containing class
@@ -749,4 +760,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
     private fun ProtoBuf.Type.toTypeRef(context: FirDeserializationContext): FirResolvedTypeRef =
         context.typeDeserializer.typeRef(this)
+
+    private fun Visibility.toDeserializedEffectiveVisibility(owner: FirClassLikeSymbol<*>?): EffectiveVisibility {
+        return c.outerClassEffectiveVisibility.lowerBound(this.toEffectiveVisibility(owner), c.session.typeContext)
+    }
 }

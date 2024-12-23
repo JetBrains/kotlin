@@ -62,10 +62,12 @@ fun deserializeClassToSymbol(
     val kind = Flags.CLASS_KIND.get(flags)
     val modality = ProtoEnumFlags.modality(Flags.MODALITY.get(flags))
     val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
+    val selfEffectiveVisibility = visibility.toEffectiveVisibility(parentContext?.outerClassSymbol, forClass = true)
+    val parentEffectiveVisibility = parentContext?.outerClassEffectiveVisibility ?: EffectiveVisibility.Public
     val status = FirResolvedDeclarationStatusImpl(
         visibility,
         modality,
-        visibility.toEffectiveVisibility(parentContext?.outerClassSymbol, forClass = true)
+        effectiveVisibility = parentEffectiveVisibility.lowerBound(selfEffectiveVisibility, session.typeContext)
     ).apply {
         isExpect = Flags.IS_EXPECT_CLASS.get(flags)
         isActual = false
@@ -92,6 +94,7 @@ fun deserializeClassToSymbol(
             classId.relativeClassName,
             containerSource,
             outerClassSymbol = symbol,
+            outerClassEffectiveVisibility = status.effectiveVisibility,
             annotationDeserializer,
             when {
                 status.isCompanion || platformConstDeserializer == null -> parentContext.constDeserializer
@@ -107,7 +110,8 @@ fun deserializeClassToSymbol(
             flexibleTypeFactory,
             constDeserializer,
             containerSource,
-            symbol
+            symbol,
+            status.effectiveVisibility
         )
     if (status.isCompanion) {
         parentContext?.let {
