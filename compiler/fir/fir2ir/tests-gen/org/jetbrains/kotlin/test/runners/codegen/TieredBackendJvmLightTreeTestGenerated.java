@@ -12006,12 +12006,6 @@ public class TieredBackendJvmLightTreeTestGenerated extends AbstractTieredBacken
       }
 
       @Test
-      @TestMetadata("actualExternalInJs.kt")
-      public void testActualExternalInJs() {
-        runTest("compiler/testData/diagnostics/tests/multiplatform/actualExternalInJs.kt");
-      }
-
-      @Test
       @TestMetadata("actualTypealiasToSpecialAnnotation_oldLanguageVersion.kt")
       public void testActualTypealiasToSpecialAnnotation_oldLanguageVersion() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/actualTypealiasToSpecialAnnotation_oldLanguageVersion.kt");
@@ -12114,12 +12108,6 @@ public class TieredBackendJvmLightTreeTestGenerated extends AbstractTieredBacken
       }
 
       @Test
-      @TestMetadata("expectShouldBeJSExportable.kt")
-      public void testExpectShouldBeJSExportable() {
-        runTest("compiler/testData/diagnostics/tests/multiplatform/expectShouldBeJSExportable.kt");
-      }
-
-      @Test
       @TestMetadata("expectTailrec_oldLanguageVersion.kt")
       public void testExpectTailrec_oldLanguageVersion() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/expectTailrec_oldLanguageVersion.kt");
@@ -12147,12 +12135,6 @@ public class TieredBackendJvmLightTreeTestGenerated extends AbstractTieredBacken
       @TestMetadata("incDecOperatorsInExpectClass.kt")
       public void testIncDecOperatorsInExpectClass() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/incDecOperatorsInExpectClass.kt");
-      }
-
-      @Test
-      @TestMetadata("JsExternalTypeExtendsActualExternalType.kt")
-      public void testJsExternalTypeExtendsActualExternalType() {
-        runTest("compiler/testData/diagnostics/tests/multiplatform/JsExternalTypeExtendsActualExternalType.kt");
       }
 
       @Test
