@@ -104,7 +104,6 @@ abstract class IrAbstractInvalidationTest(
             sortDependencies(sourceModule.moduleDependencies),
             icData,
             IrFactoryImpl,
-            verifySignatures = true
         ) {
             sourceModule.getModuleDescriptor(it)
         }

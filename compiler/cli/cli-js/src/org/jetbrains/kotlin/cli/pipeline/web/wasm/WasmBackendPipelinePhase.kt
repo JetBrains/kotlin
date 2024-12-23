@@ -135,7 +135,6 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         val irModuleInfo = loadIr(
             depsDescriptors = module,
             irFactory = irFactory,
-            verifySignatures = false,
             loadFunctionInterfacesIntoStdlib = true,
         )
 

@@ -270,7 +270,6 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                 sourceModule.allDependencies,
                 icData,
                 IrFactoryImpl,
-                verifySignatures = true
             ) {
                 sourceModule.getModuleDescriptor(it)
             }

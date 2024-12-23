@@ -74,11 +74,6 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    val SKIP_MANGLE_VERIFICATION by directive(
-        description = "",
-        applicability = DirectiveApplicability.Global
-    )
-
     val PROPERTY_LAZY_INITIALIZATION by directive(
         description = "",
         applicability = DirectiveApplicability.Global
