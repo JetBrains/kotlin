@@ -60,7 +60,6 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
         configuration.moduleKind = moduleKind
         configuration.propertyLazyInitialization = arguments.irPropertyLazyInitialization
         configuration.generatePolyfills = arguments.generatePolyfills
-        configuration.generateDts = arguments.generateDts
         configuration.generateInlineAnonymousFunctions = arguments.irGenerateInlineAnonymousFunctions
         configuration.useEs6Classes = arguments.useEsClasses ?: isES2015
         configuration.compileSuspendAsJsGenerator = arguments.useEsGenerators ?: isES2015

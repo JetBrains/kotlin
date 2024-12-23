@@ -107,7 +107,7 @@ fun compileToLoweredIr(
         allModules,
         context,
         context.irFactory.stageController as WholeWorldStageController,
-        isIncremental = false
+        isIncremental = false,
     )
 
     performanceManager?.notifyIRLoweringFinished()
@@ -119,7 +119,7 @@ fun lowerPreservingTags(
     modules: Iterable<IrModuleFragment>,
     context: WasmBackendContext,
     controller: WholeWorldStageController,
-    isIncremental: Boolean
+    isIncremental: Boolean,
 ) {
     // Lower all the things
     controller.currentStage = 0

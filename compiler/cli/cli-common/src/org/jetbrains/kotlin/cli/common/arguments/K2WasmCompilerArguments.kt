@@ -31,6 +31,13 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
             field = value
         }
 
+    @Argument(value = "-Xwasm-debug-friendly", description = "Avoid optimizations that can break debugging.")
+    var forceDebugFriendlyCompilation = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @Argument(value = "-Xwasm-generate-wat", description = "Generate a .wat file.")
     var wasmGenerateWat = false
         set(value) {

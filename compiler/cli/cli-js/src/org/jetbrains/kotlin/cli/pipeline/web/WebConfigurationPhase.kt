@@ -166,6 +166,7 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         }
 
         configuration.friendPathsDisabled = arguments.friendModulesDisabled
+        configuration.generateDts = arguments.generateDts
         configuration.generateStrictImplicitExport = arguments.strictImplicitExportType
 
         val friendModules = arguments.friendModules
