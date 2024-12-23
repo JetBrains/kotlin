@@ -15,12 +15,3 @@ actual fun foo(x: Int): Int {
 }
 
 fun callFromJVM(x: Int) = foo(x)
-
-// MODULE: m3-js()()(m1-common)
-// FILE: js.kt
-
-actual fun foo(x: Int): Int {
-    return x - 1
-}
-
-fun callFromJS(x: Int) = foo(x)
