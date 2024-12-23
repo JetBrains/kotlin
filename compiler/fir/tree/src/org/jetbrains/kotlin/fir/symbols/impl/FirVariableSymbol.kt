@@ -93,7 +93,7 @@ open class FirPropertySymbol(callableId: CallableId) : FirVariableSymbol<FirProp
         }
 
     override fun deprecationsAreDefinitelyEmpty(): Boolean {
-        return currentDeclarationDeprecationsAreDefinitelyEmpty()
+        return super.currentDeclarationDeprecationsAreDefinitelyEmpty()
                 && getterSymbol?.currentDeclarationDeprecationsAreDefinitelyEmpty() != false
                 && setterSymbol?.currentDeclarationDeprecationsAreDefinitelyEmpty() != false
                 && backingFieldSymbol?.currentDeclarationDeprecationsAreDefinitelyEmpty() != false

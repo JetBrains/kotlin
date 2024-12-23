@@ -119,7 +119,7 @@ open class FirPropertyAccessorSymbol : FirFunctionWithoutNameSymbol<FirPropertyA
     open val propertySymbol: FirPropertySymbol get() = fir.propertySymbol
 
     override fun deprecationsAreDefinitelyEmpty(): Boolean {
-        return currentDeclarationDeprecationsAreDefinitelyEmpty() && propertySymbol.currentDeclarationDeprecationsAreDefinitelyEmpty()
+        return super.currentDeclarationDeprecationsAreDefinitelyEmpty() && propertySymbol.currentDeclarationDeprecationsAreDefinitelyEmpty()
     }
 }
 
