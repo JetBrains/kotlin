@@ -357,7 +357,12 @@ class NewConstraintSystemImpl(
         addOtherSystem(otherSystem, isAddingOuter = false, replacingContent = true)
     }
 
-    private fun addOtherSystem(otherSystem: ConstraintStorage, isAddingOuter: Boolean, replacingContent: Boolean = false) {
+    private fun addOtherSystem(
+        otherSystem: ConstraintStorage,
+        // Used only for assertions
+        isAddingOuter: Boolean,
+        replacingContent: Boolean = false,
+    ) {
         @OptIn(AssertionsOnly::class)
         runOuterCSRelatedAssertions(otherSystem, isAddingOuter)
 
@@ -375,7 +380,7 @@ class NewConstraintSystemImpl(
             storage.initialConstraints.clear()
             storage.errors.clear()
             storage.constraintsFromAllForkPoints.clear()
-            // NB: `postponedTypeVariables` can't be non-empty in K2/PCLA, thus no need to clear it
+            // NB: `postponedTypeVariables` is always empty in K2/PCLA, thus no need to clear it
         }
 
         for ((variable, constraints) in otherSystem.notFixedTypeVariables) {
