@@ -344,7 +344,8 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                             )
                         }
                     }
-                } else {
+                } else if (annotated !is FirValueParameter || annotated.correspondingProperty == null) {
+                    // Condition is needed to avoid error duplication
                     reporter.reportOn(
                         annotation.source,
                         FirErrors.UNSUPPORTED_FEATURE,
