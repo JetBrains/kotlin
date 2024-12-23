@@ -113,7 +113,7 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : Lowering
 /**
  * These resolvers are supposed to be run at the first compilation stage for all non-JVM targets.
  */
-internal class PreSerializationPrivateInlineFunctionResolver(
+class PreSerializationPrivateInlineFunctionResolver(
     context: LoweringContext,
     override val allowExternalInlining: Boolean,
 ) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, InlineMode.PRIVATE_INLINE_FUNCTIONS) {
@@ -126,7 +126,7 @@ internal class PreSerializationPrivateInlineFunctionResolver(
     }
 }
 
-internal class PreSerializationNonPrivateInlineFunctionResolver(
+class PreSerializationNonPrivateInlineFunctionResolver(
     context: LoweringContext,
     override val allowExternalInlining: Boolean,
     irMangler: KotlinMangler.IrMangler,
