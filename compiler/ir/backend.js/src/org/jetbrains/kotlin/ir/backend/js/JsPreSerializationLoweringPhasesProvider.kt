@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.config.phaser.SimpleNamedCompilerPhase
 import org.jetbrains.kotlin.ir.backend.js.lower.JsCodeOutliningLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.inline.PreSerializationLoweringPhasesProvider
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 
@@ -23,4 +25,8 @@ object JsPreSerializationLoweringPhasesProvider : PreSerializationLoweringPhases
 
     override val irMangler: KotlinMangler.IrMangler
         get() = JsManglerIr
+
+    override fun getLowerings(): List<SimpleNamedCompilerPhase<JsPreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> {
+        return emptyList()
+    }
 }

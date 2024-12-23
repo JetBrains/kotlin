@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.phaser.SimpleNamedCompilerPhase
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.inline.PreSerializationLoweringPhasesProvider
@@ -16,12 +17,22 @@ import org.jetbrains.kotlin.ir.inline.PreSerializationLoweringPhasesProvider
 fun <T : PreSerializationLoweringContext> PhaseEngine<T>.runPreSerializationLoweringPhases(
     irModuleFragment: IrModuleFragment,
     loweringProvider: PreSerializationLoweringPhasesProvider<T>,
-): IrModuleFragment =
-    runPhase(
-        loweringProvider.lowerings(),
-        irModuleFragment,
-        disable = !this.context.configuration.languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization),
-    )
+): IrModuleFragment {
+    return runPreSerializationLoweringsPhases(loweringProvider.getLowerings(), irModuleFragment)
+}
+
+private fun <T : PreSerializationLoweringContext> PhaseEngine<T>.runPreSerializationLoweringsPhases(
+    lowerings: List<SimpleNamedCompilerPhase<T, IrModuleFragment, IrModuleFragment>>,
+    irModuleFragment: IrModuleFragment,
+): IrModuleFragment {
+    return lowerings.fold(irModuleFragment) { module, lowering ->
+        runPhase(
+            lowering,
+            module,
+            disable = !this.context.configuration.languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization),
+        )
+    }
+}
 
 fun <T : PreSerializationLoweringContext> PhaseEngine<T>.runPreSerializationLoweringPhases(
     fir2IrActualizedResult: Fir2IrActualizedResult,

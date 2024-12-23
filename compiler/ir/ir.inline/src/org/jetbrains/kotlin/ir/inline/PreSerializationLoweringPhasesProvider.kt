@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLamb
 import org.jetbrains.kotlin.backend.common.lower.inline.OuterThisInInlineFunctionsSpecialAccessorLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.config.phaser.SameTypeNamedCompilerPhase
+import org.jetbrains.kotlin.config.phaser.SimpleNamedCompilerPhase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.util.KotlinMangler.IrMangler
@@ -35,6 +36,8 @@ abstract class PreSerializationLoweringPhasesProvider<Context : LoweringContext>
         get() = null
 
     protected abstract val irMangler: IrMangler
+
+    abstract fun getLowerings(): List<SimpleNamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment>>
 
     private fun privateInlineFunctionResolver(context: Context): InlineFunctionResolver {
         return PreSerializationPrivateInlineFunctionResolver(
