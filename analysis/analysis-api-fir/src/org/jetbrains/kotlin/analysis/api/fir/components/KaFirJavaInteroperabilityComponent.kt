@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.lang.java.JavaLanguage
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.*
 import com.intellij.psi.impl.compiled.ClsElementImpl
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
@@ -422,15 +423,19 @@ private fun ConeKotlinType.simplifyType(
     val isInlineFunction = false
     var currentType = this
     do {
+        ProgressManager.checkCanceled()
+
         val oldType = currentType
         currentType = currentType.fullyExpandedType(session)
         if (currentType is ConeDynamicType) {
             return currentType
         }
+
         currentType = currentType.upperBoundIfFlexible()
         if (visibilityForApproximation != Visibilities.Local) {
             currentType = substitutor.substituteOrSelf(currentType)
         }
+
         val needLocalTypeApproximation = needLocalTypeApproximation(visibilityForApproximation, isInlineFunction, session, useSitePosition)
         // TODO: can we approximate local types in type arguments *selectively* ?
         currentType = PublicTypeApproximator.approximateTypeToPublicDenotable(currentType, session, needLocalTypeApproximation)
@@ -555,6 +560,9 @@ private class AnonymousTypesSubstitutor(
     ): Boolean {
         if (typeArguments.isEmpty()) return false
         if (!visited.add(this)) return true
+
+        ProgressManager.checkCanceled()
+
         for (projection in typeArguments) {
             // E.g., Test : Comparable<Test>
             val type = (projection as? ConeKotlinTypeProjection)?.type ?: continue
@@ -563,6 +571,7 @@ private class AnonymousTypesSubstitutor(
             // Visit new type: e.g., Test, as a type argument, is substituted with Comparable<Test>, again.
             if (newType.hasRecursiveTypeArgument(visited)) return true
         }
+
         return false
     }
 
