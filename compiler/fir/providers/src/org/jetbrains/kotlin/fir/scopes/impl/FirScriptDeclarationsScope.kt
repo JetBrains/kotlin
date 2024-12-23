@@ -21,6 +21,9 @@ class FirScriptDeclarationsScope(
     val useSiteSession: FirSession,
     val script: FirScript,
 ) : FirContainingNamesAwareScope() {
+    /**
+     * This index is lazily calculated as its value may not be used in the Analysis API mode
+     */
     private val callablesIndex: Map<Name, List<FirCallableSymbol<*>>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val result = mutableMapOf<Name, MutableList<FirCallableSymbol<*>>>()
         for (statement in script.declarations) {
@@ -39,6 +42,9 @@ class FirScriptDeclarationsScope(
         result
     }
 
+    /**
+     * This index is lazily calculated as its value may not be used in the Analysis API mode
+     */
     private val classIndex: Map<Name, FirRegularClassSymbol> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val result = mutableMapOf<Name, FirRegularClassSymbol>()
         for (declaration in script.declarations) {
