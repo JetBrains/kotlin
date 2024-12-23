@@ -9,7 +9,7 @@ expect interface <!NO_ACTUAL_FOR_EXPECT!>Dummy<!> {
     interface ExternalInterface
 }
 
-<!WRONG_MODIFIER_TARGET!>external<!> class ExternalClass: Dummy.ExternalInterface
+external class <!EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE!>ExternalClass<!>: Dummy.ExternalInterface
 
 // MODULE: main-js()()(common)
 

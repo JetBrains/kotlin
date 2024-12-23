@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-64951
 // WITH_STDLIB
 

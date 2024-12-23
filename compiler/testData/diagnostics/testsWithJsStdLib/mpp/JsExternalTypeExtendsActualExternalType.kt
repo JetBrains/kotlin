@@ -1,9 +1,10 @@
 // RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +MultiPlatformProjects
 // MODULE: commonjs
 // TARGET_PLATFORM: JS
 // FILE: commonjs.kt
 
-expect interface ExternalInterface
+expect interface <!NO_ACTUAL_FOR_EXPECT!>ExternalInterface<!>
 
 external class <!EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE!>ExternalClass<!>: ExternalInterface
 
