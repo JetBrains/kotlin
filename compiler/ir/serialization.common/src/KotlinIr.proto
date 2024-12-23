@@ -9,10 +9,6 @@ option optimize_for = LITE_RUNTIME;
 
 /* ------ Top Level --------------------------------------------- */
 
-// Protobuf 2.x does not generate `ProtoFileEntry.equals()` and `ProtoFileEntry.hashCode()`,
-// so data class `IrFileSerializer.ProtoFileEntryDeduplicationKey` is used to generate them.
-// For correct deduplication, `ProtoFileEntryDeduplicationKey` must have the same fields as `FileEntry` here.
-// TODO: KT-74258: bump Protobuf version to >3.x to have generated `ProtoFileEntry.equals()` and `ProtoFileEntry.hashCode()`
 message FileEntry {
   required string name = 1;
   repeated int32 line_start_offset = 2 [packed=true];

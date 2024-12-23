@@ -25,6 +25,7 @@ class RemoteIncrementalResultsConsumer(
         fqn: ByteArray,
         fileMetadata: ByteArray,
         debugInfo: ByteArray?,
+        fileEntries: ByteArray,
     ) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
