@@ -114,7 +114,7 @@ internal class AbiRendererImpl(
                  * Always sort declarations in a strictly specific order before printing them to make the output
                  * be unaffected by the actual serialization order:
                  *   1. by declaration kind, see [orderByDeclarationKind]
-                 *   2. by a fully-qualified name of the declaration
+                 *   2. by a fully qualified name of the declaration
                  *   3. by an additional ordering factor #1, see implementations of [RenderedDeclaration.additionalOrderingFactor1]
                  *   4. by the text of the rendered declaration (excluding signatures!)
                  *   5. by an additional ordering factor #2, see implementations of [RenderedDeclaration.additionalOrderingFactor2]
@@ -166,7 +166,7 @@ internal class AbiRendererImpl(
             }
 
             fun StringBuilder.appendNameOf(declaration: AbiDeclaration) {
-                // For non-top level declarations print only simple declaration's name.
+                // For non-top level declarations print only a simple declaration's name.
                 val isTopLevel = declaration.qualifiedName.relativeName.nameSegmentsCount == 1
                 append(if (isTopLevel) declaration.qualifiedName else declaration.qualifiedName.relativeName.simpleName)
             }
@@ -332,7 +332,7 @@ internal class AbiRendererImpl(
         /**
          * Use rendered text of [getter] or [setter], because the rendered text of the property does not include
          * any value parameter information useful for the proper ordering among all properties that share
-         * the same qualified name (i.e. among overloaded properties).
+         * the same qualified name (i.e., among overloaded properties).
          */
         override val additionalOrderingFactor2 get() = (getter ?: setter)?.text.orEmpty()
 
@@ -373,9 +373,9 @@ internal class AbiRendererImpl(
     ) {
         /**
          * Determines the relative order of a function to put it upper or lower in the renderer's output:
-         * - Functions without extension receiver go above functions with an extension receiver.
+         * - Functions without an extension receiver go above functions with an extension receiver.
          * - Functions without context parameters go above functions with context parameters.
-         * - The more regular value parameters function has, the lower it goes.
+         * - The more regular value parameters a function has, the lower it goes.
          * - Same among functions with context parameters.
          */
         override val additionalOrderingFactor1: Int

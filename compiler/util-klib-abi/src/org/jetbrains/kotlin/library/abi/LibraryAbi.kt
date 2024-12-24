@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.library.abi.impl.AbiSignatureVersions
  *   Corresponds to the `unique_name` manifest property.
  * @property signatureVersions The versions of signatures supported by the KLIB. Note that not every [AbiSignatureVersion]
  *   which is supported by the KLIB is also supported by the ABI reader. To check this please use
- *   [AbiSignatureVersion.isSupportedByAbiReader]. An attempt to obtain a signature of unsupported version will result
+ *   [AbiSignatureVersion.isSupportedByAbiReader]. An attempt to get a signature of an unsupported version will result
  *   in an exception. See also [AbiSignatures.get].
  * @property topLevelDeclarations The list of top-level declarations.
  */
@@ -32,7 +32,7 @@ class LibraryAbi(
  *
  * @property versionNumber The unique version number of the IR signature.
  * @property isSupportedByAbiReader Whether this IR signature version is supported by the current implementation of
- *   the ABI reader. If it's not supported then such signatures can't be read by the ABI reader, and the version itself
+ *   the ABI reader. If it's not supported, then such signatures can't be read by the ABI reader, and the version itself
  *   just serves for information purposes.
  * @property description Brief description of the IR signature version, if available. To be used purely for discovery
  *   purposes by ABI reader clients. Warning: The description text may be freely changed in the future. So, it should
@@ -66,7 +66,7 @@ interface AbiSignatures {
      * - If the signature version is not supported by the ABI reader (according to [AbiSignatureVersion.isSupportedByAbiReader])
      *   then throw an exception.
      * - If the signature version is supported by the ABI reader, but the signature is unavailable for some other reason
-     *   (e.g. a particular type of declaration misses a signature of a particular version), then return `null`.
+     *   (e.g., a particular type of declaration misses a signature of a particular version), then return `null`.
      **/
     operator fun get(signatureVersion: AbiSignatureVersion): String?
 }
@@ -261,7 +261,7 @@ interface AbiTopLevelDeclarations : AbiDeclarationContainer
  * @property isInner Whether the class is an inner class.
  * @property isValue Whether the class is a value-class.
  * @property isFunction Whether the interface represented by this [AbiClass] is a fun-interface.
- * @property superTypes The set of non-trivial supertypes (i.e. excluding [kotlin.Any]).
+ * @property superTypes The set of non-trivial supertypes (i.e., excluding [kotlin.Any]).
  *   Important: The order of supertypes is preserved exactly as in serialized IR.
  */
 @ExperimentalLibraryAbiReader
@@ -393,7 +393,7 @@ sealed interface AbiTypeParametersContainer : AbiDeclaration {
  *   with the type parameter's name.
  * @property variance The type parameter variance.
  * @property isReified Whether the type parameter is a reified parameter.
- * @property upperBounds The set of non-trivial upper bounds (i.e. excluding nullable [kotlin.Any]).
+ * @property upperBounds The set of non-trivial upper bounds (i.e., excluding nullable [kotlin.Any]).
  *   Important: The order of upper bounds is preserved exactly as in serialized IR.
  */
 @ExperimentalLibraryAbiReader
@@ -443,7 +443,7 @@ sealed interface AbiTypeArgument {
      * A regular type argument.
      *
      * @property type The type argument's type.
-     * @property variance The type arguemnt's variance.
+     * @property variance The type argument's variance.
      */
     interface TypeProjection : AbiTypeArgument {
         val type: AbiType
