@@ -186,15 +186,13 @@ class DeclarationGenerator(
             )
         }
 
-        if (declaration.fileOrNull?.name != "parallelHierarchy.kt" && declaration.origin != KOTLIN_TO_JS_CLOSURE_ORIGIN) {
-            val signature = (backendContext.irFactory as IdSignatureRetriever).declarationSignature(declaration)
-            wasmFileCodegenContext.addExport(
-                WasmExport.Function(
-                    field = function,
-                    name = "func_$signature"
-                )
+        val signature = (backendContext.irFactory as IdSignatureRetriever).declarationSignature(declaration)
+        wasmFileCodegenContext.addExport(
+            WasmExport.Function(
+                field = function,
+                name = "func_$signature"
             )
-        }
+        )
     }
 
     private fun createVirtualTableStruct(
@@ -258,15 +256,13 @@ class DeclarationGenerator(
             wasmGlobal = global
         )
 
-        if (klass.fileOrNull?.name != "parallelHierarchy.kt") {
-            val signature = (backendContext.irFactory as IdSignatureRetriever).declarationSignature(klass)
-            wasmFileCodegenContext.addExport(
-                WasmExport.Global(
-                    name = "vtable_$signature",
-                    field = global
-                )
+        val signature = (backendContext.irFactory as IdSignatureRetriever).declarationSignature(klass)
+        wasmFileCodegenContext.addExport(
+            WasmExport.Global(
+                name = "vtable_$signature",
+                field = global
             )
-        }
+        )
     }
 
     private fun getSamMethod(supportedIFaces: Set<IrClass>): Pair<IrClass, IrFunction>? {
@@ -359,15 +355,13 @@ class DeclarationGenerator(
         )
         wasmFileCodegenContext.defineGlobalClassITable(klass.symbol, wasmClassIFaceGlobal)
 
-        if (klass.fileOrNull?.name != "parallelHierarchy.kt") {
-            val signature = (backendContext.irFactory as IdSignatureRetriever).declarationSignature(klass)
-            wasmFileCodegenContext.addExport(
-                WasmExport.Global(
-                    name = "itable_$signature",
-                    field = wasmClassIFaceGlobal
-                )
+        val signature = (backendContext.irFactory as IdSignatureRetriever).declarationSignature(klass)
+        wasmFileCodegenContext.addExport(
+            WasmExport.Global(
+                name = "itable_$signature",
+                field = wasmClassIFaceGlobal
             )
-        }
+        )
     }
 
     override fun visitClass(declaration: IrClass) {

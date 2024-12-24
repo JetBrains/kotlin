@@ -150,7 +150,11 @@ fun deserializeDependencies(
     return sortedDependencies.associateBy { klib ->
         val descriptor = mapping(klib)
         //STDLIB
-        irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.ALL })
+        if (klib == mainModuleLib) {
+            irLinker.deserializeHeadersWithInlineBodies(descriptor, klib)
+        } else {
+            irLinker.deserializeFullModule(descriptor, klib)
+        }
 
 //        when {
 //            mainModuleLib == null -> irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
