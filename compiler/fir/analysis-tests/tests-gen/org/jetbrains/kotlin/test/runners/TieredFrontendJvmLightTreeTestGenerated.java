@@ -15467,12 +15467,6 @@ public class TieredFrontendJvmLightTreeTestGenerated extends AbstractTieredFront
       }
 
       @Test
-      @TestMetadata("expectsWithJsExport.kt")
-      public void testExpectsWithJsExport() {
-        runTest("compiler/testData/diagnostics/tests/multiplatform/expectsWithJsExport.kt");
-      }
-
-      @Test
       @TestMetadata("headerFunInNonHeaderClass.kt")
       public void testHeaderFunInNonHeaderClass() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/headerFunInNonHeaderClass.kt");
