@@ -23,7 +23,10 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.name.Name
 
-abstract class DefaultArgumentFunctionFactory(val context: CommonBackendContext) {
+abstract class DefaultArgumentFunctionFactory(
+    val context: CommonBackendContext,
+    val copyOriginalFunctionLocation: Boolean = true,
+) {
 
     protected fun IrFunction.generateDefaultArgumentsFunctionName() =
         Name.identifier("${name}\$default")
@@ -194,6 +197,11 @@ abstract class DefaultArgumentFunctionFactory(val context: CommonBackendContext)
                         isPrimary = false
                         isExpect = false
                         visibility = newVisibility
+
+                        if (!copyOriginalFunctionLocation) {
+                            startOffset = UNDEFINED_OFFSET
+                            endOffset = UNDEFINED_OFFSET
+                        }
                     }
                 }
             is IrSimpleFunction ->
@@ -207,6 +215,11 @@ abstract class DefaultArgumentFunctionFactory(val context: CommonBackendContext)
                         isExternal = false
                         isTailrec = false
                         visibility = newVisibility
+
+                        if (!copyOriginalFunctionLocation) {
+                            startOffset = UNDEFINED_OFFSET
+                            endOffset = UNDEFINED_OFFSET
+                        }
                     }
                 }
         }
