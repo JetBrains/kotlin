@@ -113,13 +113,13 @@ public class CompileEnvironmentUtil {
             OutputFileCollection outputFiles,
             MessageCollector messageCollector
     ) {
-        FileOutputStream outputStream = null;
+        BufferedOutputStream outputStream = null;
         try {
             // we should try to create the output dir first
             if (jarPath.getParentFile() != null) {
                 jarPath.getParentFile().mkdirs();
             }
-            outputStream = new FileOutputStream(jarPath);
+            outputStream = new BufferedOutputStream(new FileOutputStream(jarPath));
             doWriteToJar(outputFiles, outputStream, mainClass, jarRuntime, noReflect, resetJarTimestamps);
             outputStream.close();
         }
