@@ -51,7 +51,7 @@ internal open class BasicPhaseContext(
 }
 
 internal fun PhaseEngine.Companion.startTopLevel(config: KonanConfig, body: (PhaseEngine<PhaseContext>) -> Unit) {
-    val phaserState = PhaserState<Any>()
+    val phaserState = PhaserState()
     val phaseConfig = config.phaseConfig
     val context = BasicPhaseContext(config)
     val topLevelPhase = object : SimpleNamedCompilerPhase<PhaseContext, Any, Unit>("Compiler") {
@@ -60,7 +60,7 @@ internal fun PhaseEngine.Companion.startTopLevel(config: KonanConfig, body: (Pha
             body(engine)
         }
 
-        override fun outputIfNotEnabled(phaseConfig: PhaseConfig, phaserState: PhaserState<Any>, context: PhaseContext, input: Any) {
+        override fun outputIfNotEnabled(phaseConfig: PhaseConfig, phaserState: PhaserState, context: PhaseContext, input: Any) {
             error("Compiler was disabled")
         }
     }

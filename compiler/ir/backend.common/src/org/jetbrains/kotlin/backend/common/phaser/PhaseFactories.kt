@@ -52,7 +52,7 @@ fun <Context : LoweringContext> buildModuleLoweringsPhase(
 
 private fun <Context : LoweringContext, T> noopPhase(): CompilerPhase<Context, T, T> =
     object : CompilerPhase<Context, T, T> {
-        override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<T>, context: Context, input: T): T = input
+        override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState, context: Context, input: T): T = input
     }
 
 private inline fun <ReturnType, reified FunctionType : Function<ReturnType>>

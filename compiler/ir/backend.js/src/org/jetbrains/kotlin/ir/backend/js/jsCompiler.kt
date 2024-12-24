@@ -139,7 +139,7 @@ fun compileIr(
     (irFactory.stageController as? WholeWorldStageController)?.let {
         lowerPreservingTags(allModules, context, it)
     } ?: run {
-        val phaserState = PhaserState<IrModuleFragment>()
+        val phaserState = PhaserState()
         getJsLowerings(configuration).forEachIndexed { _, lowering ->
             allModules.forEach { module ->
                 lowering.invoke(context.phaseConfig, phaserState, context, module)

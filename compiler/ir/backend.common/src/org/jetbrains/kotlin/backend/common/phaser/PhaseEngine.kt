@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
-import org.jetbrains.kotlin.config.phaser.changePhaserStateType
 
 /**
  * PhaseEngine is the heart of the dynamic compiler driver.
@@ -26,7 +25,7 @@ import org.jetbrains.kotlin.config.phaser.changePhaserStateType
  */
 class PhaseEngine<Context : LoggingContext>(
     val phaseConfig: PhaseConfig,
-    val phaserState: PhaserState<Any>,
+    val phaserState: PhaserState,
     val context: Context
 ) {
     companion object;
@@ -60,10 +59,9 @@ class PhaseEngine<Context : LoggingContext>(
         disable: Boolean = false,
     ): Output {
         if (disable) {
-            return phase.outputIfNotEnabled(phaseConfig, phaserState.changePhaserStateType(), context, input)
+            return phase.outputIfNotEnabled(phaseConfig, phaserState, context, input)
         }
-        // We lose sticky postconditions here, but it should be ok, since type is changed.
-        return phase.invoke(phaseConfig, phaserState.changePhaserStateType(), context, input)
+        return phase.invoke(phaseConfig, phaserState, context, input)
     }
 
 

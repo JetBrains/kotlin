@@ -16,14 +16,11 @@ private class CompositePhase<Context : LoggingContext, Input, Output>(
     val phases: List<CompilerPhase<Context, Any?, Any?>>
 ) : CompilerPhase<Context, Input, Output> {
 
-    override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input): Output {
-        @Suppress("UNCHECKED_CAST") val currentState = phaserState as PhaserState<Any?>
-        var result = phases.first().invoke(phaseConfig, currentState, context, input)
-        for (phase in phases.drop(1)) {
-            result = phase.invoke(phaseConfig, currentState, context, result)
-        }
+    override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState, context: Context, input: Input): Output {
         @Suppress("UNCHECKED_CAST")
-        return result as Output
+        return phases.fold(input as Any?) { acc, phase ->
+            phase.invoke(phaseConfig, phaserState, context, acc)
+        } as Output
     }
 
     override fun getNamedSubphases(startDepth: Int): List<Pair<Int, NamedCompilerPhase<Context, *, *>>> =
@@ -44,7 +41,7 @@ fun <Context : LoggingContext, Input, Output> createSimpleNamedCompilerPhase(
     preactions: Set<Action<Input, Context>> = emptySet(),
     postactions: Set<Action<Output, Context>> = emptySet(),
     prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
-    outputIfNotEnabled: (PhaseConfig, PhaserState<Input>, Context, Input) -> Output,
+    outputIfNotEnabled: (PhaseConfig, PhaserState, Context, Input) -> Output,
     op: (Context, Input) -> Output
 ): SimpleNamedCompilerPhase<Context, Input, Output> = object : SimpleNamedCompilerPhase<Context, Input, Output>(
     name,
@@ -54,7 +51,7 @@ fun <Context : LoggingContext, Input, Output> createSimpleNamedCompilerPhase(
     }.toSet(),
     prerequisite = prerequisite,
 ) {
-    override fun outputIfNotEnabled(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input): Output =
+    override fun outputIfNotEnabled(phaseConfig: PhaseConfig, phaserState: PhaserState, context: Context, input: Input): Output =
         outputIfNotEnabled(phaseConfig, phaserState, context, input)
 
     override fun phaseBody(context: Context, input: Input): Output =
@@ -75,7 +72,7 @@ fun <Context : LoggingContext, Input> createSimpleNamedCompilerPhase(
     }.toSet(),
     prerequisite = prerequisite,
 ) {
-    override fun outputIfNotEnabled(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input) {}
+    override fun outputIfNotEnabled(phaseConfig: PhaseConfig, phaserState: PhaserState, context: Context, input: Input) {}
 
     override fun phaseBody(context: Context, input: Input): Unit =
         op(context, input)

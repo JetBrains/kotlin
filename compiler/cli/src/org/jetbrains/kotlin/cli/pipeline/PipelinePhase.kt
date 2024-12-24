@@ -72,7 +72,7 @@ abstract class PipelinePhase<I : PipelineArtifact, O : PipelineArtifact>(
 
     override fun outputIfNotEnabled(
         phaseConfig: PhaseConfig,
-        phaserState: PhaserState<I>,
+        phaserState: PhaserState,
         context: PipelineContext,
         input: I,
     ): O {
