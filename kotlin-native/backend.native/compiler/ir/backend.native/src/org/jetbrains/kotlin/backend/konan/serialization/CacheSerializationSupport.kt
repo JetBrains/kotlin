@@ -562,6 +562,7 @@ internal object ClassFieldsSerializer {
             override fun type(index: Int) = error("Types are not needed for IdSignature deserialization")
             override fun expressionBody(index: Int) = error("Expression bodies are not needed for IdSignature deserialization")
             override fun statementBody(index: Int) = error("Statement bodies are not needed for IdSignature deserialization")
+            override fun fileEntry(index: Int) = error("File entries are not needed for IdSignature deserialization")
 
             override fun signature(index: Int): ProtoIdSignature {
                 val bytes = signatures.tableItemBytes(index)
