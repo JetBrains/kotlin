@@ -2829,6 +2829,30 @@ public inline fun <T> Sequence<T>.partition(predicate: (T) -> Boolean): Pair<Lis
 }
 
 /**
+ * Splits the original sequence into pair of lists,
+ * where *first* list contains elements for which [predicate] yielded `true`,
+ * while *second* list contains elements for which [predicate] yielded `false`.
+ * @param [predicate] function that takes the index of an element and the element itself
+ * and returns the result of predicate evaluation on the element.
+ *
+ * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Sequences.Transformations.partitionIndexed
+ */
+public inline fun <T> Sequence<T>.partitionIndexed(predicate: (index: Int, T) -> Boolean): Pair<List<T>, List<T>> {
+    val first = ArrayList<T>()
+    val second = ArrayList<T>()
+    for ((idx, element) in this.withIndex()) {
+        if (predicate(idx, element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
+
+/**
  * Returns a sequence containing all elements of the original sequence and then the given [element].
  *
  * The operation is _intermediate_ and _stateless_.
