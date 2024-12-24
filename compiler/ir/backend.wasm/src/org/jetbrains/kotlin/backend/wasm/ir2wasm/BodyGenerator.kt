@@ -1159,10 +1159,6 @@ class BodyGenerator(
         val isLogicalOperator = expression.origin == IrStatementOrigin.ANDAND || expression.origin == IrStatementOrigin.OROR
         val expressionLocation = expression.takeIf { isLogicalOperator }?.getSourceLocation()
 
-        if (functionContext.irFunction?.name?.asString()?.contains("doResume") == true && functionContext.currentFileEntry?.name?.contains("inlineCallWithReturns.kt") == true) {
-            println("caught")
-        }
-
         for (branch in branches) {
             if (!isElseBranch(branch)) {
                 if (ifCount > 0) body.buildElse()
