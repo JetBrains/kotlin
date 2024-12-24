@@ -263,6 +263,7 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
         output.writeArray(value.fqn)
         output.writeArray(value.fileMetadata)
         value.debugInfo?.let { output.writeArray(it) }
+        output.writeArray(value.fileEntries)
     }
 
     private fun DataOutput.writeArray(array: ByteArray) {
