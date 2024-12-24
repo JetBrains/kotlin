@@ -273,15 +273,20 @@ class WasmCompiledModuleFragment(
 
         val recursiveGroups = createRecursiveTypeGroups(recGroupTypes)
 
-        val mixInIndexesForGroups = mutableMapOf<Hash128Bits, Int>()
         val groupsWithMixIns = mutableListOf<RecursiveTypeGroup>()
-        recursiveGroups.mapTo(groupsWithMixIns) { group ->
-            group
-//            if (group.all { it !in vTablesAndGcTypes }) {
-//                group
-//            } else {
-//                addMixInGroup(group, mixInIndexesForGroups)
-//            }
+
+        recursiveGroups.forEach { group ->
+            canonicalSort(group)
+            val firstIdSignature = group.firstOrNull { it is WasmStructDeclaration }?.let { firstStruct ->
+                wasmCompiledFileFragments.firstNotNullOfOrNull {
+                    it.gcTypes.wasmToIr[firstStruct] ?: it.vTableGcTypes.wasmToIr[firstStruct]
+                }
+            }
+            if (firstIdSignature != null) {
+                val mixIn = WasmStructDeclaration("mixin_type", encodeIndex(firstIdSignature.toString().hashCode().toUInt()), null, true)
+                group.add(mixIn)
+            }
+            groupsWithMixIns.add(group)
         }
 
         groupsWithMixIns.add(additionalTypes)
