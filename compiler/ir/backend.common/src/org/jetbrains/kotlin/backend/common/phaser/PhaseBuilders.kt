@@ -17,15 +17,10 @@ private class CompositePhase<Context : LoggingContext, Input, Output>(
 ) : CompilerPhase<Context, Input, Output> {
 
     override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input): Output {
-        @Suppress("UNCHECKED_CAST") var currentState = phaserState as PhaserState<Any?>
+        @Suppress("UNCHECKED_CAST") val currentState = phaserState as PhaserState<Any?>
         var result = phases.first().invoke(phaseConfig, currentState, context, input)
-        for ((previous, next) in phases.zip(phases.drop(1))) {
-            if (next !is SameTypeCompilerPhase<*, *>) {
-                // Discard `stickyPostconditions`, they are useless since data type is changing.
-                currentState = currentState.changePhaserStateType()
-            }
-            currentState.stickyPostconditions.addAll(previous.stickyPostconditions)
-            result = next.invoke(phaseConfig, currentState, context, result)
+        for (phase in phases.drop(1)) {
+            result = phase.invoke(phaseConfig, currentState, context, result)
         }
         @Suppress("UNCHECKED_CAST")
         return result as Output
@@ -33,8 +28,6 @@ private class CompositePhase<Context : LoggingContext, Input, Output>(
 
     override fun getNamedSubphases(startDepth: Int): List<Pair<Int, NamedCompilerPhase<Context, *, *>>> =
         phases.flatMap { it.getNamedSubphases(startDepth) }
-
-    override val stickyPostconditions get() = phases.last().stickyPostconditions
 }
 
 @Suppress("UNCHECKED_CAST")

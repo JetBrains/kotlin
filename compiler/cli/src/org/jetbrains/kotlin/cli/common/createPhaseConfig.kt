@@ -28,7 +28,6 @@ fun createPhaseConfig(
         arguments.dumpOnlyFqName,
         arguments.profilePhases,
         arguments.checkPhaseConditions,
-        arguments.checkStickyPhaseConditions
     )
 }
 

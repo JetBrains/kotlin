@@ -480,16 +480,6 @@ They should be a subset of sources passed as free arguments."""
             field = value
         }
 
-    @Argument(
-        value = "-Xcheck-sticky-phase-conditions",
-        description = "Run sticky condition checks on subsequent phases. Implicitly enables '-Xcheck-phase-conditions'."
-    )
-    var checkStickyPhaseConditions = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
     @GradleDeprecatedOption(
         message = "Compiler flag -Xuse-k2 is deprecated; please use language version 2.0 instead",
         level = DeprecationLevel.ERROR,

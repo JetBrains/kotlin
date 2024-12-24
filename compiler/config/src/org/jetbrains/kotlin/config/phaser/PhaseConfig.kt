@@ -20,7 +20,6 @@ class PhaseConfig(
     val dumpOnlyFqName: String? = null,
     val needProfiling: Boolean = false,
     val checkConditions: Boolean = false,
-    val checkStickyConditions: Boolean = false
 ) {
     fun isEnabled(phase: AnyNamedPhase): Boolean =
         phase !in disabled

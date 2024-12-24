@@ -14,20 +14,17 @@ import kotlin.system.measureTimeMillis
  * @property alreadyDone A set of already executed phases.
  * @property depth shows The index of the currently running phase.
  * @property phaseCount A unique ID that can show the order in which phases were executed.
- * @property stickyPostconditions A set of conditions that must be checked after each phase.
- * When a condition is added into [stickyPostconditions], it will be executed each time some phase is executed, until we change [Data].
  */
 class PhaserState<Data>(
     val alreadyDone: MutableSet<AnyNamedPhase> = mutableSetOf(),
     var depth: Int = 0,
     var phaseCount: Int = 0,
-    val stickyPostconditions: MutableSet<Checker<Data>> = mutableSetOf()
 ) {
-    fun copyOf() = PhaserState(alreadyDone.toMutableSet(), depth, phaseCount, stickyPostconditions)
+    fun copyOf() = PhaserState(alreadyDone.toMutableSet(), depth, phaseCount)
 }
 
 // Copy state, forgetting the sticky postconditions (which will not be applicable to the new type)
-fun <Input, Output> PhaserState<Input>.changePhaserStateType() = PhaserState<Output>(alreadyDone, depth, phaseCount, mutableSetOf())
+fun <Input, Output> PhaserState<Input>.changePhaserStateType() = PhaserState<Output>(alreadyDone, depth, phaseCount)
 
 inline fun <R, D> PhaserState<D>.downlevel(nlevels: Int, block: () -> R): R {
     depth += nlevels
@@ -50,9 +47,6 @@ interface CompilerPhase<in Context : LoggingContext, Input, Output> {
     fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input): Output
 
     fun getNamedSubphases(startDepth: Int = 0): List<Pair<Int, NamedCompilerPhase<Context, *, *>>> = emptyList()
-
-    // In phase trees, `stickyPostconditions` is inherited along the right edge to be used in `then`.
-    val stickyPostconditions: Set<Checker<Output>> get() = emptySet()
 }
 
 fun <Context : LoggingContext, Input, Output> CompilerPhase<Context, Input, Output>.invokeToplevel(
@@ -151,7 +145,6 @@ class SameTypeNamedCompilerPhase<in Context : LoggingContext, Data>(
     private val lower: CompilerPhase<Context, Data, Data>,
     preconditions: Set<Checker<Data>> = emptySet(),
     postconditions: Set<Checker<Data>> = emptySet(),
-    override val stickyPostconditions: Set<Checker<Data>> = emptySet(),
     private val actions: Set<Action<Data, Context>> = emptySet(),
     nlevels: Int = 0
 ) : NamedCompilerPhase<Context, Data, Data>(
@@ -181,10 +174,6 @@ class SameTypeNamedCompilerPhase<in Context : LoggingContext, Data>(
 
         if (phaseConfig.checkConditions) {
             for (post in postconditions) post(output)
-            for (post in stickyPostconditions) post(output)
-            if (phaseConfig.checkStickyConditions) {
-                for (post in phaserState.stickyPostconditions) post(output)
-            }
         }
     }
 
@@ -235,10 +224,6 @@ abstract class SimpleNamedCompilerPhase<in Context : LoggingContext, Input, Outp
 
         if (phaseConfig.checkConditions) {
             for (post in postconditions) post(output)
-            for (post in stickyPostconditions) post(output)
-            if (phaseConfig.checkStickyConditions) {
-                for (post in phaserState.stickyPostconditions) post(output)
-            }
         }
     }
 
