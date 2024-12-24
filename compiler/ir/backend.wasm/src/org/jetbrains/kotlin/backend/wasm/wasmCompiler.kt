@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.JsCodeSnippet
 import org.jetbrains.kotlin.backend.wasm.lower.JsInteropFunctionsLowering
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
+import org.jetbrains.kotlin.backend.wasm.serialization.WasmDeserializer
 import org.jetbrains.kotlin.backend.wasm.utils.SourceMapGenerator
 import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
+import org.jetbrains.kotlin.konan.file.use
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.serialization.js.ModuleKind
@@ -158,7 +160,16 @@ fun compileWasm(
         isWasmJsTarget && useJsTag,
     )
 
-    val linkedModule = wasmCompiledModuleFragment.linkWasmCompiledFragments()
+    val file = File(
+        "/Users/Igor.Yakovlev/Projects/kotlin/master/wasm/wasm.tests/build/out/codegen/firBox/casts/parallelHierarchy/dev",
+        "$baseFileName.typeinfo.bin"
+    )
+
+    var typeAndMemoryInfo = TypeAndMemoryInfo()
+    file.inputStream().use {
+        typeAndMemoryInfo = WasmDeserializer(it).deserializeTypeAndMemoryInfo()
+    }
+    val linkedModule = wasmCompiledModuleFragment.linkWasmCompiledFragments(typeAndMemoryInfo)
 
     val sourceMapGeneratorForBinary = runIf(generateSourceMaps) {
         SourceMapGenerator("$baseFileName.wasm", configuration)
