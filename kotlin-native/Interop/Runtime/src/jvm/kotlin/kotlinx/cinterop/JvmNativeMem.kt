@@ -45,10 +45,10 @@ internal object nativeMemUtils {
 
     fun getShort(mem: NativePointed) = unsafe.getShort(mem.address)
     fun putShort(mem: NativePointed, value: Short) = unsafe.putShort(mem.address, value)
-    
+
     fun getInt(mem: NativePointed) = unsafe.getInt(mem.address)
     fun putInt(mem: NativePointed, value: Int) = unsafe.putInt(mem.address, value)
-    
+
     fun getLong(mem: NativePointed) = unsafe.getLong(mem.address)
     fun putLong(mem: NativePointed, value: Long) = unsafe.putLong(mem.address, value)
 
@@ -77,11 +77,19 @@ internal object nativeMemUtils {
     }
 
     fun getCharArray(source: NativePointed, dest: CharArray, length: Int) {
-        unsafe.copyMemory(null, source.address, dest, charArrayBaseOffset, length.toLong() * 2)
+        unsafe.copyMemory(null, source.address, dest, charArrayBaseOffset, length.toLong() * Char.SIZE_BYTES)
     }
 
     fun putCharArray(source: CharArray, dest: NativePointed, length: Int) {
-        unsafe.copyMemory(source, charArrayBaseOffset, null, dest.address, length.toLong() * 2)
+        unsafe.copyMemory(source, charArrayBaseOffset, null, dest.address, length.toLong() * Char.SIZE_BYTES)
+    }
+
+    fun getFloatArray(source: NativePointed, dest: FloatArray, length: Int) {
+        unsafe.copyMemory(null, source.address, dest, floatArrayBaseOffset, length.toLong() * Float.SIZE_BYTES)
+    }
+
+    fun putFloatArray(source: FloatArray, dest: NativePointed, length: Int) {
+        unsafe.copyMemory(source, floatArrayBaseOffset, null, dest.address, length.toLong() * Float.SIZE_BYTES)
     }
 
     fun zeroMemory(dest: NativePointed, length: Int): Unit =
@@ -90,6 +98,65 @@ internal object nativeMemUtils {
     fun copyMemory(dest: NativePointed, length: Int, src: NativePointed) =
             unsafe.copyMemory(src.address, dest.address, length.toLong())
 
+    fun memset(mem: NativePointed, value: Byte, size: Int) {
+        unsafe.setMemory(mem.address, size.toLong(), value)
+    }
+
+    fun memset(mem: NativePointed, value: Byte, size: Long) {
+        unsafe.setMemory(mem.address, size, value)
+    }
+
+    fun memcpy(dstMem: NativePointed, srcMem: NativePointed, size: Int) {
+        unsafe.copyMemory(srcMem.address, dstMem.address, size.toLong())
+    }
+
+    fun memcpy(dstMem: NativePointed, srcMem: NativePointed, size: Long) {
+        unsafe.copyMemory(srcMem.address, dstMem.address, size)
+    }
+
+    fun memmove(dstMem: NativePointed, srcMem: NativePointed, size: Int) {
+        val src = srcMem.address
+        val dest = dstMem.address
+        if (src < dest) { // Backwards copy to allow overlap
+            var index = size - 1
+            while (index > 0) {
+                unsafe.putByte(dest + index, unsafe.getByte(src + index))
+                index++
+            }
+            return
+        }
+        unsafe.copyMemory(src, dest, size.toLong())
+    }
+
+    fun memmove(dstMem: NativePointed, srcMem: NativePointed, size: Long) {
+        val src = srcMem.address
+        val dest = dstMem.address
+        if (src < dest) { // Backwards copy to allow overlap
+            var index = size - 1L
+            while (index > 0) {
+                unsafe.putByte(dest + index, unsafe.getByte(src + index))
+                index++
+            }
+            return
+        }
+        unsafe.copyMemory(src, dest, size)
+    }
+
+    fun memcmp(memA: NativePointed, memB: NativePointed, size: Long): Int {
+        var index = 0L
+        val addressA = memA.address
+        val addressB = memB.address
+        while (index < size) {
+            val a = unsafe.getByte(addressA + index)
+            val b = unsafe.getByte(addressB + index)
+            when {
+                a < b -> return -1
+                a > b -> return 1
+            }
+            index++
+        }
+        return 0
+    }
 
     @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     inline fun <reified T> allocateInstance(): T {
@@ -117,4 +184,5 @@ internal object nativeMemUtils {
 
     private val byteArrayBaseOffset = unsafe.arrayBaseOffset(ByteArray::class.java).toLong()
     private val charArrayBaseOffset = unsafe.arrayBaseOffset(CharArray::class.java).toLong()
+    private val floatArrayBaseOffset = unsafe.arrayBaseOffset(FloatArray::class.java).toLong()
 }
