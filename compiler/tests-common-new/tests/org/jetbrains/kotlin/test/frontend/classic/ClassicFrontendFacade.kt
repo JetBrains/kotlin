@@ -163,7 +163,7 @@ class ClassicFrontendFacade(
         ) {
             CommonPlatforms.defaultCommonPlatform
         } else {
-            module.targetPlatform
+            module.targetPlatform(testServices)
         }
         return when {
             targetPlatform.isJvm() -> performJvmModuleResolve(
@@ -185,7 +185,8 @@ class ClassicFrontendFacade(
                 compilerEnvironment,
                 dependencyDescriptors,
                 friendsDescriptors,
-                files
+                files,
+                targetPlatform
             )
             else -> error("Should not be here")
         }
@@ -414,6 +415,7 @@ class ClassicFrontendFacade(
         dependencyDescriptors: List<ModuleDescriptorImpl>,
         friendsDescriptors: List<ModuleDescriptorImpl>,
         files: List<KtFile>,
+        targetPlatform: TargetPlatform,
     ): AnalysisResult {
         val moduleDescriptor = createModuleContext(
             module, project,
@@ -427,7 +429,7 @@ class ClassicFrontendFacade(
             Name.special("<${module.name}>"),
             dependOnBuiltIns = true,
             module.languageVersionSettings,
-            module.targetPlatform,
+            targetPlatform,
             compilerEnvironment,
             dependenciesContainer = CommonDependenciesContainerImpl(moduleDescriptor)
         ) {
@@ -476,7 +478,7 @@ class ClassicFrontendFacade(
 
         val builtIns = builtInsFactory(storageManager)
         val moduleDescriptor = ModuleDescriptorImpl(
-            Name.special("<${module.name}>"), storageManager, builtIns, module.targetPlatform, capabilities
+            Name.special("<${module.name}>"), storageManager, builtIns, module.targetPlatform(testServices), capabilities
         )
         val dependencies = buildSet {
             add(moduleDescriptor)

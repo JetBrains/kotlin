@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModul
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkersSourceFilePreprocessor
+import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformDirectives
+import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformProviderForAnalysisApiTests
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
@@ -326,6 +328,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         useDirectives(*AbstractKotlinCompilerTest.defaultDirectiveContainers.toTypedArray())
         useDirectives(JvmEnvironmentConfigurationDirectives)
         useDirectives(TestModuleCompiler.Directives)
+        useDirectives(TargetPlatformDirectives)
 
 
         useSourcePreprocessor(::ExpressionMarkersSourceFilePreprocessor)

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.targetPlatform
 import java.io.File
 
 private const val JAVA_CLASS_PATH = "java.class.path"
@@ -23,7 +24,7 @@ private val defaultClassPath by lazy {
 
 class ComposePluginAnnotationsProvider(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
-        val platform = module.targetPlatform
+        val platform = module.targetPlatform(testServices)
         when {
             platform.isJvm() -> {
                 defaultClassPath.filter { it.absolutePath.contains("androidx.compose") }.forEach {

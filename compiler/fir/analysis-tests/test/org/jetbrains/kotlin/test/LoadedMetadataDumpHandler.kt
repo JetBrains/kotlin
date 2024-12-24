@@ -166,7 +166,7 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         }
 
         val emptyModule = TestModule(
-            name = "dump-${module.name}", module.targetPlatform, files = emptyList(),
+            name = "dump-${module.name}", files = emptyList(),
             allDependencies = listOf(DependencyDescription(module, dependencyKind, DependencyRelation.RegularDependency)),
             RegisteredDirectives.Empty, languageVersionSettings
         )
@@ -224,7 +224,7 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
             else -> shouldNotBeCalled()
         }
 
-        val targetPlatform = testServices.defaultsProvider.targetPlatform
+        val targetPlatform = testServices.moduleStructure.modules.last().targetPlatform(testServices)
         if (PLATFORM_DEPENDANT_METADATA in testServices.moduleStructure.allDirectives) {
             val platformExtension = specificExtension.replace(".txt", "${targetPlatform.suffix}.txt")
             val otherPlatformExtension = specificExtension.replace(".txt", "${targetPlatform.oppositeSuffix}.txt")

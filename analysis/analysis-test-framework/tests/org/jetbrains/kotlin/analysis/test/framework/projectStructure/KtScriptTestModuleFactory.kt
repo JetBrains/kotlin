@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.targetPlatform
 import java.nio.file.Path
 
 /**
@@ -26,7 +27,7 @@ object KtScriptTestModuleFactory : KtTestModuleFactory {
         val ktFile = TestModuleStructureFactory.createSourcePsiFiles(testModule, testServices, project).single() as KtFile
         val module = KaScriptModuleImpl(
             ktFile,
-            testModule.targetPlatform,
+            testModule.targetPlatform(testServices),
             testModule.languageVersionSettings,
             project,
         )

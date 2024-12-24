@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.parseAnalysisFlags
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.defaultsProvider
+import org.jetbrains.kotlin.test.services.targetPlatform
 
 class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override val directiveContainers: List<DirectivesContainer>
@@ -45,7 +45,7 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
             configuration.put(key as CompilerConfigurationKey<Any>, value)
         }
 
-        if (module.targetPlatform.isCommon() && WITH_STDLIB in module.directives) {
+        if (module.targetPlatform(testServices).isCommon() && WITH_STDLIB in module.directives) {
             configuration.add(
                 CLIConfigurationKeys.CONTENT_ROOTS,
                 JvmClasspathRoot(ForTestCompileRuntime.stdlibCommonForTests())

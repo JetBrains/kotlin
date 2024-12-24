@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.targetPlatform
 import java.io.File
 import java.io.FilenameFilter
 
 class PluginAnnotationsProvider(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
-        // TODO: handle property
-        val platform = module.targetPlatform
+        val platform = module.targetPlatform(testServices)
         when {
             platform.isJvm() -> {
                 val jar = findJvmLib()
@@ -37,9 +37,10 @@ class PluginAnnotationsProvider(testServices: TestServices) : EnvironmentConfigu
 
 class PluginRuntimeAnnotationsProvider(testServices: TestServices) : RuntimeClasspathProvider(testServices) {
     override fun runtimeClassPaths(module: TestModule): List<File> {
+        val targetPlatform = module.targetPlatform(testServices)
         return when {
-            module.targetPlatform.isJvm() -> listOf(findJvmLib())
-            module.targetPlatform.isJs() -> listOf(findJsLib())
+            targetPlatform.isJvm() -> listOf(findJvmLib())
+            targetPlatform.isJs() -> listOf(findJsLib())
             else -> emptyList()
         }
     }

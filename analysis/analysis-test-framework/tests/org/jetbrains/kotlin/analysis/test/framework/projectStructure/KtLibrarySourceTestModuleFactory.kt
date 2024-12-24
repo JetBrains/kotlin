@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.platform.isMultiPlatform
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.targetPlatform
 import org.junit.Assume
 import java.nio.file.Path
 
@@ -30,7 +31,7 @@ object KtLibrarySourceTestModuleFactory : KtTestModuleFactory {
         testServices: TestServices,
         project: Project,
     ): KtTestModule {
-        Assume.assumeFalse("Compilation of multi-platform libraries is not supported", testModule.targetPlatform.isMultiPlatform())
+        Assume.assumeFalse("Compilation of multi-platform libraries is not supported", testModule.targetPlatform(testServices).isMultiPlatform())
 
         val (libraryJars, librarySourcesJars) = testServices.compiledLibraryProvider.compileToLibrary(testModule, dependencyBinaryRoots)
 
@@ -54,9 +55,10 @@ fun createKtLibrarySourceModule(
     project: Project,
     testServices: TestServices,
 ): KtTestModule {
+    val targetPlatform = testModule.targetPlatform(testServices)
     val libraryKtModule = KaLibraryModuleImpl(
         testModule.name,
-        testModule.targetPlatform,
+        targetPlatform,
         StandaloneProjectFactory.createSearchScopeByLibraryRoots(
             libraryJars,
             emptyList(),
@@ -71,7 +73,7 @@ fun createKtLibrarySourceModule(
     val decompiledPsiFilesFromSourceJar = librarySourcesJars.flatMap { LibraryUtils.getAllPsiFilesFromJar(it, project) }
     val librarySourceKtModule = KaLibrarySourceModuleImpl(
         testModule.name,
-        testModule.targetPlatform,
+        targetPlatform,
         GlobalSearchScope.filesScope(project, decompiledPsiFilesFromSourceJar.map { it.virtualFile }),
         project,
         binaryLibrary = libraryKtModule,

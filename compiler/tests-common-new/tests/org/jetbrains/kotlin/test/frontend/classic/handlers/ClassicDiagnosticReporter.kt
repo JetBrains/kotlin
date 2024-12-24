@@ -62,7 +62,7 @@ class ClassicDiagnosticReporter(private val testServices: TestServices) {
             metaInfo.attributes += if (newInferenceEnabled) OldNewInferenceMetaInfoProcessor.NI else OldNewInferenceMetaInfoProcessor.OI
         }
         if (file !in module.files) {
-            val targetPlatform = module.targetPlatform
+            val targetPlatform = module.targetPlatform(testServices)
             metaInfo.attributes += when {
                 targetPlatform.isJvm() -> "JVM"
                 targetPlatform.isJs() -> "JS"

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.targetPlatform
 import java.nio.file.Path
 
 object AnalysisApiFirOutOfContentRootTestConfigurator : AnalysisApiFirSourceLikeTestConfigurator(false) {
@@ -71,7 +72,7 @@ private object KtOutOfContentRootTestModuleFactory : KtTestModuleFactory {
         project: Project,
     ): KtTestModule {
         val psiFiles = TestModuleStructureFactory.createSourcePsiFiles(testModule, testServices, project)
-        val platform = testModule.targetPlatform
+        val platform = testModule.targetPlatform(testServices)
         val ktModule = KaNotUnderContentRootModuleForTest(testModule.name, psiFiles.first(), platform)
         return KtTestModule(TestModuleKind.NotUnderContentRoot, testModule, ktModule, psiFiles)
     }
