@@ -320,12 +320,6 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionT
   }
 
   @Test
-  @TestMetadata("expectsWithJsExport.kt")
-  public void testExpectsWithJsExport() {
-    runTest("compiler/testData/diagnostics/tests/multiplatform/expectsWithJsExport.kt");
-  }
-
-  @Test
   @TestMetadata("extraNestedClassOnActualViaActualTypealias.kt")
   public void testExtraNestedClassOnActualViaActualTypealias() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/extraNestedClassOnActualViaActualTypealias.kt");
