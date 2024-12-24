@@ -22,6 +22,12 @@ internal object MutableListCompanionObject {
     /*operator*/ fun <T> of(): MutableList<T> = ArrayList()
 }
 
+internal object SetCompanionObject {
+    /*operator*/ fun <T> of(vararg elements: T): Set<T> = elements.toSet()
+    /*operator*/ fun <T> of(element: T): Set<T> = java.util.Collections.singleton(element)
+    /*operator*/ fun <T> of(): Set<T> = EmptySet
+}
+
 private class ArrayAsCollection<T>(val values: Array<out T>, val isVarargs: Boolean) : Collection<T> {
     override val size: Int get() = values.size
     override fun isEmpty(): Boolean = values.isEmpty()

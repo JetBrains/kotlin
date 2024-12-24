@@ -266,6 +266,12 @@ public actual interface Set<out E> : Collection<E> {
 
     // Bulk Operations
     actual override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
+
+    public actual companion object {
+        public actual fun <T> of(): Set<T>
+        public actual fun <T> of(element: T): Set<T>
+        public actual fun <T> of(vararg elements: T): Set<T
+    }
 }
 
 /**

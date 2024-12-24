@@ -314,6 +314,12 @@ public actual interface Set<out E> : Collection<E> {
     @ExperimentalJsCollectionsApi
     @SinceKotlin("2.0")
     public fun asJsReadonlySetView(): JsReadonlySet<E> = createJsReadonlySetViewFrom(this)
+
+    public actual companion object {
+        public actual fun <T> of(): Set<T> = emptySet()
+        public actual fun <T> of(element: T): Set<T> = setOf(element)
+        public actual fun <T> of(vararg elements: T): Set<T> = elements.toSet()
+    }
 }
 
 /**

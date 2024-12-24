@@ -272,6 +272,12 @@ public expect interface Set<out E> : Collection<E> {
 
     // Bulk Operations
     override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
+
+    public companion object {
+        public fun <T> of(): Set<T>
+        public fun <T> of(element: T): Set<T>
+        public fun <T> of(vararg elements: T): Set<T>
+    }
 }
 
 /**
