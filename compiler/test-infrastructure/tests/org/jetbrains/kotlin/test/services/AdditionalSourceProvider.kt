@@ -14,10 +14,11 @@ import java.io.File
 import java.nio.file.Paths
 
 abstract class AdditionalSourceProvider(val testServices: TestServices) : ServicesAndDirectivesContainer {
-    /**
-     * Note that you can not use [testServices.moduleStructure] here because it's not initialized yet
-     */
-    abstract fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile>
+    abstract fun produceAdditionalFiles(
+        globalDirectives: RegisteredDirectives,
+        module: TestModule,
+        testModuleStructure: TestModuleStructure,
+    ): List<TestFile>
 
     protected fun containsDirective(globalDirectives: RegisteredDirectives, module: TestModule, directive: SimpleDirective): Boolean {
         return globalDirectives.contains(directive) || module.directives.contains(directive)

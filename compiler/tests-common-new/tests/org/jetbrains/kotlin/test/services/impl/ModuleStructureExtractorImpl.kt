@@ -82,6 +82,7 @@ class ModuleStructureExtractorImpl(
         private var currentModuleLanguageVersionSettingsBuilder: LanguageVersionSettingsBuilder = initLanguageSettingsBuilder()
         private var dependenciesOfCurrentModule = mutableListOf<DependencyDescription>()
         private var filesOfCurrentModule = mutableListOf<TestFile>()
+        private val mutableFilesListPerModule = mutableMapOf<TestModule, MutableList<TestFile>>()
 
         private var currentFileName: String? = null
         private var currentSnippetNumber: Int = 1
@@ -118,7 +119,9 @@ class ModuleStructureExtractorImpl(
             finishModule(lineNumber = -1)
             val sortedModules = sortModules(modules)
             checkCycles(modules)
-            return TestModuleStructureImpl(sortedModules, testDataFiles)
+            return TestModuleStructureImpl(sortedModules, testDataFiles).also {
+                generateAdditionalFiles(it)
+            }
         }
 
         private fun sortModules(modules: List<TestModule>): List<TestModule> {
@@ -303,16 +306,7 @@ class ModuleStructureExtractorImpl(
                 directives = moduleDirectives,
                 languageVersionSettings = currentModuleLanguageVersionSettingsBuilder.build()
             )
-            additionalSourceProviders.flatMapTo(filesOfCurrentModule) { additionalSourceProvider ->
-                additionalSourceProvider.produceAdditionalFiles(
-                    globalDirectives ?: RegisteredDirectives.Empty,
-                    testModule
-                ).also { additionalFiles ->
-                    require(additionalFiles.all { it.isAdditional }) {
-                        "Files produced by ${additionalSourceProvider::class.qualifiedName} should have flag `isAdditional = true`"
-                    }
-                }
-            }
+            mutableFilesListPerModule[testModule] = filesOfCurrentModule
             modules += testModule
             firstFileInModule = true
             resetModuleCaches()
@@ -392,6 +386,22 @@ class ModuleStructureExtractorImpl(
 
         private fun initLanguageSettingsBuilder(): LanguageVersionSettingsBuilder {
             return defaultsProvider.newLanguageSettingsBuilder()
+        }
+
+        private fun generateAdditionalFiles(testModuleStructure: TestModuleStructure) {
+            for ((module, files) in mutableFilesListPerModule) {
+                additionalSourceProviders.flatMapTo(files) { additionalSourceProvider ->
+                    additionalSourceProvider.produceAdditionalFiles(
+                        globalDirectives ?: RegisteredDirectives.Empty,
+                        module,
+                        testModuleStructure
+                    ).also { additionalFiles ->
+                        require(additionalFiles.all { it.isAdditional }) {
+                            "Files produced by ${additionalSourceProvider::class.qualifiedName} should have flag `isAdditional = true`"
+                        }
+                    }
+                }
+            }
         }
     }
 

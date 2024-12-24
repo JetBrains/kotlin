@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.services.sourceProviders
 
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.REQUIRES_SEPARATE_PROCESS
@@ -15,9 +14,9 @@ import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
+import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
-import java.io.File
 
 open class MainFunctionForBlackBoxTestsSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     companion object {
@@ -68,7 +67,11 @@ open class MainFunctionForBlackBoxTestsSourceProvider(testServices: TestServices
         """.trimIndent()
     }
 
-    override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
+    override fun produceAdditionalFiles(
+        globalDirectives: RegisteredDirectives,
+        module: TestModule,
+        testModuleStructure: TestModuleStructure
+    ): List<TestFile> {
         if (REQUIRES_SEPARATE_PROCESS !in module.directives && module.directives.singleOrZeroValue(JDK_KIND)?.requiresSeparateProcess != true) {
             return emptyList()
         }

@@ -87,7 +87,7 @@ private fun TestModule.transitiveDependencies(
  * @return true if there are no other modules that depend on the current one
  */
 fun TestModule.isLeafModule(testServices: TestServices): Boolean {
-    return isLeafModule(testServices, TestModule::allDependencies)
+    return isLeafModule(testServices.moduleStructure, TestModule::allDependencies)
 }
 
 /**
@@ -106,15 +106,19 @@ fun TestModule.isLeafModule(testServices: TestServices): Boolean {
  * only `app-platform` is just a leaf module
  */
 fun TestModule.isLeafModuleInMppGraph(testServices: TestServices): Boolean {
-    return isLeafModule(testServices, TestModule::dependsOnDependencies)
+    return isLeafModuleInMppGraph(testServices.moduleStructure)
+}
+
+fun TestModule.isLeafModuleInMppGraph(moduleStructure: TestModuleStructure): Boolean {
+    return isLeafModule(moduleStructure, TestModule::dependsOnDependencies)
 }
 
 private inline fun TestModule.isLeafModule(
-    testServices: TestServices,
+    moduleStructure: TestModuleStructure,
     dependencies: TestModule.() -> List<DependencyDescription>,
 ): Boolean {
     val targetModule = this
-    return testServices.moduleStructure.modules.none {
+    return moduleStructure.modules.none {
         it != targetModule && targetModule in it.dependencies().map { it.dependencyModule }
     }
 }

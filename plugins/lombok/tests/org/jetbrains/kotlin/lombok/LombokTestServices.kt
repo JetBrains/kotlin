@@ -26,7 +26,11 @@ class LombokAdditionalSourceFileProvider(testServices: TestServices) : Additiona
         const val COMMON_SOURCE_PATH = "plugins/lombok/testData/common.kt"
     }
 
-    override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
+    override fun produceAdditionalFiles(
+        globalDirectives: RegisteredDirectives,
+        module: TestModule,
+        testModuleStructure: TestModuleStructure
+    ): List<TestFile> {
         if (ENABLE_LOMBOK !in module.directives) return emptyList()
         return listOf(File(COMMON_SOURCE_PATH).toTestFile())
     }
