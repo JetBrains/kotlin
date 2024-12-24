@@ -297,6 +297,10 @@ class StabilityInferencer(
             }
         }
 
+        declaration.superClass?.let {
+            stability += stabilityOf(it, substitutions, analyzing)
+        }
+
         return stability
     }
 
