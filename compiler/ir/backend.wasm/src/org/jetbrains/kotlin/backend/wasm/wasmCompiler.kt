@@ -108,7 +108,7 @@ fun compileToLoweredIr(
         allModules,
         context,
         context.irFactory.stageController as WholeWorldStageController,
-        isIncremental = false
+        isIncremental = true
     )
 
     performanceManager?.notifyIRLoweringFinished()
@@ -148,7 +148,8 @@ fun compileWasm(
     emitNameSection: Boolean = false,
     generateWat: Boolean = false,
     generateSourceMaps: Boolean = false,
-    useDebuggerCustomFormatters: Boolean = false
+    useDebuggerCustomFormatters: Boolean = false,
+    typeAndMemoryInfo: TypeAndMemoryInfo? = null,
 ): WasmCompilerResult {
     val useJsTag = configuration.getBoolean(WasmConfigurationKeys.WASM_USE_JS_TAG)
     val isWasmJsTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET) != WasmTarget.WASI
@@ -160,15 +161,7 @@ fun compileWasm(
         isWasmJsTarget && useJsTag,
     )
 
-    val file = File(
-        "/Users/Igor.Yakovlev/Projects/kotlin/master/wasm/wasm.tests/build/out/codegen/firBox/casts/parallelHierarchy/dev",
-        "$baseFileName.typeinfo.bin"
-    )
-
-    var typeAndMemoryInfo = TypeAndMemoryInfo()
-    file.inputStream().use {
-        typeAndMemoryInfo = WasmDeserializer(it).deserializeTypeAndMemoryInfo()
-    }
+    val typeAndMemoryInfo = typeAndMemoryInfo ?: TypeAndMemoryInfo()
     val linkedModule = wasmCompiledModuleFragment.linkWasmCompiledFragments(typeAndMemoryInfo)
 
     val sourceMapGeneratorForBinary = runIf(generateSourceMaps) {

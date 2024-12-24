@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.ic.WasmModuleArtifact
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
+import org.jetbrains.kotlin.backend.wasm.serialization.WasmDeserializer
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.OK
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.ir.backend.js.loadIr
+import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.name.FqName
@@ -168,12 +170,39 @@ internal class K2WasmCompilerImpl(
             irFactory,
             allowIncompleteImplementations = arguments.irDce,
         )
-        val wasmCompiledFileFragments = allModules.map { codeGenerator.generateModuleAsSingleFileFragment(it) }
+//        val wasmCompiledFileFragments = allModules.map { codeGenerator.generateModuleAsSingleFileFragment(it) }
+//
+//
+        backendContext.emitFunctionsAsUsual = true
+        val mainIrModuleFragment = allModules.last()
+        val wasmCompiledFileFragment = codeGenerator.generateModuleAsSingleFileFragment(mainIrModuleFragment)
+
+        val factory = backendContext.symbolTable.irFactory as IrFactoryImplForWasmIC
+
+        val unitGetInstanceSignature = factory.declarationSignature(backendContext.findUnitGetInstanceFunction())
+        backendContext.importDeclarations.addAll(wasmCompiledFileFragment.functions.unbound.keys)
+        backendContext.importDeclarations.addAll(wasmCompiledFileFragment.globalVTables.unbound.keys)
+        backendContext.importDeclarations.addAll(wasmCompiledFileFragment.globalClassITables.unbound.keys)
+        backendContext.importDeclarations.add(unitGetInstanceSignature)
+
+        backendContext.emitFunctionsAsUsual = false
+        val nonMainWasmCompiledFileFragments = allModules.filter { it != mainIrModuleFragment }.map {
+            val fragment = codeGenerator.generateModuleAsSingleFileFragment(it)
+            fragment
+        }
+        val wasmCompiledFileFragments = nonMainWasmCompiledFileFragments + wasmCompiledFileFragment
+
 
         @OptIn(UnsafeDuringIrConstructionAPI::class)
         val specialITableTypes = WasmBackendContext.getSpecialITableTypes(backendContext.irBuiltIns).map {
             irFactory.declarationSignature(it.owner)
         }
+
+        val typeAndMemoryInfo =
+            File("/Users/Igor.Yakovlev/composeTest/stdlib.typeinfo.bin").inputStream()
+                .use {
+                    WasmDeserializer(it).deserializeTypeAndMemoryInfo()
+                }
 
         val res = compileWasm(
             wasmCompiledFileFragments = wasmCompiledFileFragments,
@@ -185,7 +214,8 @@ internal class K2WasmCompilerImpl(
             emitNameSection = arguments.wasmDebug,
             generateWat = configuration.get(WasmConfigurationKeys.WASM_GENERATE_WAT, false),
             generateSourceMaps = generateSourceMaps,
-            useDebuggerCustomFormatters = useDebuggerCustomFormatters
+            useDebuggerCustomFormatters = useDebuggerCustomFormatters,
+            typeAndMemoryInfo = typeAndMemoryInfo,
         )
 
         performanceManager?.notifyIRGenerationFinished()

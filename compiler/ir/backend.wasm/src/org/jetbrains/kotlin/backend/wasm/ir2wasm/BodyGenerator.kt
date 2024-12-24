@@ -1021,7 +1021,7 @@ class BodyGenerator(
             }
 
             wasmSymbols.unsafeGetScratchRawMemory -> {
-                body.buildConstI32Symbol(wasmFileCodegenContext.scratchMemAddr, location)
+                body.buildGetGlobal(wasmFileCodegenContext.scratchMemAddr, location)
             }
 
             wasmSymbols.returnArgumentIfItIsKotlinAny -> {

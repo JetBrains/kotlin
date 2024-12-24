@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
+import org.jetbrains.kotlin.backend.wasm.serialization.WasmDeserializer
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.konan.file.use
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.test.DebugMode
@@ -117,6 +119,14 @@ class WasmLoweringFacade(
             (moduleInfo.symbolTable.irFactory as IrFactoryImplForWasmIC).declarationSignature(it.owner)
         }
 
+        val file = File(
+            "/Users/Igor.Yakovlev/Projects/kotlin/master/wasm/wasm.tests/build/out/codegen/firBox/casts/parallelHierarchy/dev",
+            "$baseFileName.typeinfo.bin"
+        )
+        val typeAndMemoryInfo = file.inputStream().use {
+            WasmDeserializer(it).deserializeTypeAndMemoryInfo()
+        }
+
         val compilerResult = compileWasm(
             wasmCompiledFileFragments = wasmCompiledFileFragments,
             specialITableTypes = specialITableTypes,
@@ -127,6 +137,7 @@ class WasmLoweringFacade(
             emitNameSection = true,
             generateWat = generateWat,
             generateSourceMaps = generateSourceMaps,
+            typeAndMemoryInfo = typeAndMemoryInfo,
         )
 
 //        val dceDumpNameCache = DceDumpNameCache()

@@ -636,7 +636,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         jsFuns = deserializeJsFuns(),
         jsModuleImports = deserializeJsModuleImports(),
         exports = deserializeExports(),
-        scratchMemAddr = deserializeNullableIntSymbol(),
+        scratchMemAddr = deserializeNullable { deserializeSymbol(::deserializeGlobal) },
         stringPoolSize = deserializeNullableIntSymbol(),
         throwableTagIndex = deserializeNullableIntSymbol(),
         jsExceptionTagIndex = deserializeNullableIntSymbol(),

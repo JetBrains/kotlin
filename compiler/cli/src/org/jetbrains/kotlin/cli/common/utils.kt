@@ -51,17 +51,17 @@ fun <F> checkKotlinPackageUsage(
     if (configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE)) {
         return true
     }
-    val kotlinPackage = FqName("kotlin")
-    for (file in files) {
-        if (getPackage(file).isSubpackageOf(kotlinPackage)) {
-            messageCollector.report(
-                CompilerMessageSeverity.ERROR,
-                "Only the Kotlin standard library is allowed to use the 'kotlin' package",
-                getMessageLocation(file),
-            )
-            return false
-        }
-    }
+//    val kotlinPackage = FqName("kotlin")
+//    for (file in files) {
+//        if (getPackage(file).isSubpackageOf(kotlinPackage)) {
+//            messageCollector.report(
+//                CompilerMessageSeverity.ERROR,
+//                "Only the Kotlin standard library is allowed to use the 'kotlin' package",
+//                getMessageLocation(file),
+//            )
+//            return false
+//        }
+//    }
     return true
 }
 
