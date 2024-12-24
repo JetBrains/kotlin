@@ -11,6 +11,7 @@ fun someSideEffect(value: Any?) = {}
 class A {
     val a = ""
     fun b() = ""
+    fun withParameters(a: Int, b: String) = ""
 
     init {
         someSideEffect("A init")
@@ -33,7 +34,10 @@ class A {
         val complexExpression1 = A()::a.<!EVALUATED("a")!>name<!> + A()::b.<!EVALUATED("b")!>name<!>
         val complexExpression2 = <!EVALUATED("ab")!>A::a.name + A::b.name<!>
 
-        var recursive = ::test.<!EVALUATED("test")!>name<!>
+        val recursive = ::test.<!EVALUATED("test")!>name<!>
+
+        val wihtParams1 = A::withParameters.<!EVALUATED("withParameters")!>name<!>
+        val wihtParams2 = A()::withParameters.<!EVALUATED("withParameters")!>name<!>
     }
 
     fun getA(): A = A()
