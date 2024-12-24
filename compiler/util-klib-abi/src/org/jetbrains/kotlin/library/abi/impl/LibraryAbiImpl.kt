@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.library.abi.impl
 
 import org.jetbrains.kotlin.library.abi.*
-import org.jetbrains.kotlin.library.abi.impl.AbiFunctionImpl.Companion.BITS_ENOUGH_FOR_STORING_PARAMETERS_COUNT
 import org.jetbrains.kotlin.metadata.deserialization.Flags.FlagField
 
 @ExperimentalLibraryAbiReader
@@ -102,18 +101,20 @@ internal class AbiConstructorImpl(
     override val signatures: AbiSignatures,
     private val annotations: Set<AbiQualifiedName>,
     isInline: Boolean,
-    contextReceiverParametersCount: Int,
     override val valueParameters: List<AbiValueParameter>
 ) : AbiFunction {
-    private val flags = IS_INLINE.toFlags(isInline) or
-            CONTEXT_RECEIVERS_COUNT.toFlags(contextReceiverParametersCount)
+    private val flags = IS_INLINE.toFlags(isInline)
 
     override val modality get() = AbiModality.FINAL // No need to render modality for constructors.
     override val isConstructor get() = true
     override val isInline get() = IS_INLINE.get(flags)
     override val isSuspend get() = false
+
+    @Suppress("OVERRIDE_DEPRECATION")
     override val hasExtensionReceiverParameter get() = false
-    override val contextReceiverParametersCount get() = CONTEXT_RECEIVERS_COUNT.get(flags)
+
+    @Suppress("OVERRIDE_DEPRECATION")
+    override val contextReceiverParametersCount get() = valueParameters.count { it.kind == AbiValueParameterKind.CONTEXT }
     override val returnType get() = null // No need to render return type for constructors.
     override val typeParameters get() = emptyList<AbiTypeParameter>()
 
@@ -123,7 +124,6 @@ internal class AbiConstructorImpl(
 
     companion object {
         private val IS_INLINE = FlagField.booleanFirst()
-        private val CONTEXT_RECEIVERS_COUNT = FlagFieldEx.intAfter(IS_INLINE, BITS_ENOUGH_FOR_STORING_PARAMETERS_COUNT)
     }
 }
 
@@ -136,42 +136,43 @@ internal class AbiFunctionImpl(
     isInline: Boolean,
     isSuspend: Boolean,
     override val typeParameters: List<AbiTypeParameter>,
-    hasExtensionReceiverParameter: Boolean,
-    contextReceiverParametersCount: Int,
     override val valueParameters: List<AbiValueParameter>,
     override val returnType: AbiType?
 ) : AbiFunction {
     private val flags = IS_INLINE.toFlags(isInline) or
             IS_SUSPEND.toFlags(isSuspend) or
-            HAS_EXTENSION_RECEIVER.toFlags(hasExtensionReceiverParameter) or
-            CONTEXT_RECEIVERS_COUNT.toFlags(contextReceiverParametersCount) or
             MODALITY.toFlags(modality)
 
     override val modality get() = MODALITY.get(flags)
     override val isConstructor get() = false
     override val isInline get() = IS_INLINE.get(flags)
     override val isSuspend get() = IS_SUSPEND.get(flags)
-    override val hasExtensionReceiverParameter get() = HAS_EXTENSION_RECEIVER.get(flags)
-    override val contextReceiverParametersCount get() = CONTEXT_RECEIVERS_COUNT.get(flags)
+
+    @Deprecated("Use annotatedWith instead.", replaceWith = ReplaceWith("annotatedWith"), level = DeprecationLevel.WARNING)
+
+    @Suppress("OVERRIDE_DEPRECATION")
+    override val hasExtensionReceiverParameter get() = valueParameters.any { it.kind == AbiValueParameterKind.EXTENSION_RECEIVER }
+
+    @Suppress("OVERRIDE_DEPRECATION")
+    override val contextReceiverParametersCount get() = valueParameters.count { it.kind == AbiValueParameterKind.CONTEXT }
 
     @Deprecated("Use annotatedWith instead.", replaceWith = ReplaceWith("annotatedWith"), level = DeprecationLevel.WARNING)
     override fun hasAnnotation(annotationClassName: AbiQualifiedName) = annotationClassName in annotations
     override fun annotatedWith(): List<AbiAnnotation> = annotations.map { AbiAnnotationImpl(it) }
 
     companion object {
-        /** JVM allows max 255 parameters for a function. Storing such number requires just 8 bits. */
+        /** JVM allows max 255 parameters for a function. Storing such a number requires just 8 bits. */
         const val BITS_ENOUGH_FOR_STORING_PARAMETERS_COUNT = 8
 
         private val IS_INLINE = FlagField.booleanFirst()
         private val IS_SUSPEND = FlagField.booleanAfter(IS_INLINE)
-        private val HAS_EXTENSION_RECEIVER = FlagField.booleanAfter(IS_SUSPEND)
-        private val CONTEXT_RECEIVERS_COUNT = FlagFieldEx.intAfter(HAS_EXTENSION_RECEIVER, BITS_ENOUGH_FOR_STORING_PARAMETERS_COUNT)
-        private val MODALITY = FlagFieldEx.after<AbiModality>(CONTEXT_RECEIVERS_COUNT)
+        private val MODALITY = FlagFieldEx.after<AbiModality>(IS_SUSPEND)
     }
 }
 
 @ExperimentalLibraryAbiReader
 internal class AbiValueParameterImpl(
+    kind: AbiValueParameterKind,
     override val type: AbiType,
     isVararg: Boolean,
     hasDefaultArg: Boolean,
@@ -181,8 +182,10 @@ internal class AbiValueParameterImpl(
     private val flags = IS_VARARG.toFlags(isVararg) or
             HAS_DEFAULT_ARG.toFlags(hasDefaultArg) or
             IS_NOINLINE.toFlags(isNoinline) or
-            IS_CROSSINLINE.toFlags(isCrossinline)
+            IS_CROSSINLINE.toFlags(isCrossinline) or
+            PARAMETER_KIND.toFlags(kind)
 
+    override val kind: AbiValueParameterKind get() = PARAMETER_KIND.get(flags)
     override val isVararg get() = IS_VARARG.get(flags)
     override val hasDefaultArg get() = HAS_DEFAULT_ARG.get(flags)
     override val isNoinline get() = IS_NOINLINE.get(flags)
@@ -193,6 +196,7 @@ internal class AbiValueParameterImpl(
         private val HAS_DEFAULT_ARG = FlagField.booleanAfter(IS_VARARG)
         private val IS_NOINLINE = FlagField.booleanAfter(HAS_DEFAULT_ARG)
         private val IS_CROSSINLINE = FlagField.booleanAfter(IS_NOINLINE)
+        private val PARAMETER_KIND = FlagFieldEx.after<AbiValueParameterKind>(IS_CROSSINLINE)
     }
 }
 

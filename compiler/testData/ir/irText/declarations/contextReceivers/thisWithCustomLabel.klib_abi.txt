@@ -20,5 +20,5 @@ final class /C { // /C|null[0]
     constructor <init>(kotlin/Any) // /C.<init>|<init>(kotlin.Any){}[0]
 }
 final val /p // /p|(A<kotlin.Int>;A<kotlin.String>;B)@C{}p[0]
-    final fun context(/C, /A<kotlin/Int>, /A<kotlin/String>) (/C).<get-p>(): kotlin/Int // /p.<get-p>|<get-p>(A<kotlin.Int>;A<kotlin.String>;B)@C(){}[0]
+    final fun context(/A<kotlin/Int>, /A<kotlin/String>, /B) (/C).<get-p>(): kotlin/Int // /p.<get-p>|<get-p>(A<kotlin.Int>;A<kotlin.String>;B)@C(){}[0]
 final fun context(/A<kotlin/Int>, /A<kotlin/String>, /B) /f() // /f|f(A<kotlin.Int>;A<kotlin.String>;B)(){}[0]

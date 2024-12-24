@@ -18,4 +18,4 @@ final class /Param { // /Param|null[0]
     constructor <init>() // /Param.<init>|<init>(){}[0]
 }
 final fun /box(): kotlin/String // /box|box(){}[0]
-final fun <#A: kotlin/Any?> context(/K) (/K)./f(kotlin/Function3</O, /K, /Param, #A>): #A // /f|f(O)@K(kotlin.Function3<O,K,Param,0:0>){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> context(/O) (/K)./f(kotlin/Function3</O, /K, /Param, #A>): #A // /f|f(O)@K(kotlin.Function3<O,K,Param,0:0>){0§<kotlin.Any?>}[0]

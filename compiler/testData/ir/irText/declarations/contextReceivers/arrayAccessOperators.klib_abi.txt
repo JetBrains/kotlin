@@ -16,5 +16,5 @@ final class /MyContainer { // /MyContainer|null[0]
     final fun toString(): kotlin/String // /MyContainer.toString|toString(){}[0]
 }
 final fun /box(): kotlin/String // /box|box(){}[0]
-final fun context(/MyContainer) (/MyContainer)./get(kotlin/Int): kotlin/String? // /get|get(kotlin.Int)@MyContainer(kotlin.Int){}[0]
-final fun context(/MyContainer) (/MyContainer)./set(kotlin/Int, kotlin/String) // /set|set(kotlin.Int)@MyContainer(kotlin.Int;kotlin.String){}[0]
+final fun context(kotlin/Int) (/MyContainer)./get(kotlin/Int): kotlin/String? // /get|get(kotlin.Int)@MyContainer(kotlin.Int){}[0]
+final fun context(kotlin/Int) (/MyContainer)./set(kotlin/Int, kotlin/String) // /set|set(kotlin.Int)@MyContainer(kotlin.Int;kotlin.String){}[0]

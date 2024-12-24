@@ -22,4 +22,4 @@ final object /StringMonoid : /Monoid<kotlin/String> { // /StringMonoid|null[0]
     final fun (kotlin/String).combine(kotlin/String): kotlin/String // /StringMonoid.combine|combine@kotlin.String(kotlin.String){}[0]
 }
 final fun /box(): kotlin/String // /box|box(){}[0]
-final fun <#A: kotlin/Any?> context(kotlin.collections/List<#A>) (kotlin.collections/List<#A>)./sum(): #A // /sum|sum(Monoid<0:0>)@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> context(/Monoid<#A>) (kotlin.collections/List<#A>)./sum(): #A // /sum|sum(Monoid<0:0>)@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}[0]

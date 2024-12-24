@@ -353,14 +353,31 @@ private class LibraryDeserializer(
             }
 
             val extensionReceiver = if (proto.hasExtensionReceiver())
-                deserializeValueParameter(proto.extensionReceiver, thisFunctionTypeParameterResolver)
+                deserializeValueParameter(
+                    proto = proto.extensionReceiver,
+                    kind = AbiValueParameterKind.EXTENSION_RECEIVER,
+                    typeParameterResolver = thisFunctionTypeParameterResolver
+                )
             else
                 null
-            val contextReceiversCount = if (proto.hasContextReceiverParametersCount()) proto.contextReceiverParametersCount else 0
+            val contextParametersCount = if (proto.hasContextReceiverParametersCount()) proto.contextReceiverParametersCount else 0
 
             val allValueParameters = ArrayList<AbiValueParameter>()
+            proto.valueParameterList.take(contextParametersCount).mapTo(allValueParameters) { contextParameterProto ->
+                deserializeValueParameter(
+                    proto = contextParameterProto,
+                    kind = AbiValueParameterKind.CONTEXT,
+                    typeParameterResolver = thisFunctionTypeParameterResolver
+                )
+            }
             allValueParameters.addIfNotNull(extensionReceiver)
-            proto.valueParameterList.mapTo(allValueParameters) { deserializeValueParameter(it, thisFunctionTypeParameterResolver) }
+            proto.valueParameterList.drop(contextParametersCount).mapTo(allValueParameters) { regularParameterProto ->
+                deserializeValueParameter(
+                    proto = regularParameterProto,
+                    kind = AbiValueParameterKind.REGULAR,
+                    typeParameterResolver = thisFunctionTypeParameterResolver
+                )
+            }
 
             return if (isConstructor) {
                 check(extensionReceiver == null) { "Unexpected extension receiver found for constructor $functionName" }
@@ -370,7 +387,6 @@ private class LibraryDeserializer(
                     signatures = deserializeIdSignature(proto.base.symbol).toAbiSignatures(),
                     annotations = annotations,
                     isInline = flags.isInline,
-                    contextReceiverParametersCount = contextReceiversCount,
                     valueParameters = allValueParameters.compact()
                 )
             } else {
@@ -386,8 +402,6 @@ private class LibraryDeserializer(
                     isInline = flags.isInline,
                     isSuspend = flags.isSuspend,
                     typeParameters = deserializeTypeParameters(proto.typeParameterList, thisFunctionTypeParameterResolver),
-                    hasExtensionReceiverParameter = extensionReceiver != null,
-                    contextReceiverParametersCount = contextReceiversCount,
                     valueParameters = allValueParameters.compact(),
                     returnType = nonTrivialReturnType
                 )
@@ -526,11 +540,13 @@ private class LibraryDeserializer(
 
         private fun deserializeValueParameter(
             proto: ProtoValueParameter,
+            kind: AbiValueParameterKind,
             typeParameterResolver: TypeParameterResolver
         ): AbiValueParameter {
             val flags = ValueParameterFlags.decode(proto.base.flags)
 
             return AbiValueParameterImpl(
+                kind = kind,
                 type = typeDeserializer.deserializeType(BinaryNameAndType.decode(proto.nameType).typeIndex, typeParameterResolver),
                 isVararg = proto.hasVarargElementType(),
                 hasDefaultArg = proto.hasDefaultValue(),

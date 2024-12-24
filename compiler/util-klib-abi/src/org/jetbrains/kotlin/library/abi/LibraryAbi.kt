@@ -178,7 +178,6 @@ interface AbiAnnotatedEntity {
     /**
      * Annotations are not a part of ABI. But sometimes it is useful to have the ability to check if some declaration
      * has a specific annotation. See [AbiReadingFilter.NonPublicMarkerAnnotations] as an example.
-     *
      */
     @Deprecated(level = DeprecationLevel.WARNING, message = "Use annotatedWith instead.", replaceWith = ReplaceWith("annotatedWith"))
     fun hasAnnotation(annotationClassName: AbiQualifiedName): Boolean
@@ -293,12 +292,10 @@ interface AbiEnumEntry : AbiDeclaration
  * @property isInline Whether this is an `inline` function.
  * @property isSuspend Whether this is a `suspend` function.
  * @property hasExtensionReceiverParameter If this function has an extension receiver parameter.
- * @property contextReceiverParametersCount The number of context receiver parameters.
+ * @property contextReceiverParametersCount The number of context parameters.
  * @property valueParameters The function value parameters.
  *   Important: All value parameters of the function are stored in the single place, in the [valueParameters] list in
- *   a well-defined order. First, unless [hasExtensionReceiverParameter] is false, goes the extension receiver parameter.
- *   It is followed by [contextReceiverParametersCount] context receiver parameters. The remainder are the regular
- *   value parameters of the function.
+ *   a well-defined order: context parameters, extension receiver, regular parameters.
  * @property returnType The function's return type. Always `null` for constructors.
  */
 @ExperimentalLibraryAbiReader
@@ -306,7 +303,17 @@ interface AbiFunction : AbiDeclarationWithModality, AbiTypeParametersContainer {
     val isConstructor: Boolean
     val isInline: Boolean
     val isSuspend: Boolean
+
+    @Deprecated(
+        "Please use `valueParameters.any { it.kind == AbiValueParameterKind.EXTENSION_RECEIVER }`",
+        ReplaceWith("valueParameters.any { it.kind == AbiValueParameterKind.EXTENSION_RECEIVER }")
+    )
     val hasExtensionReceiverParameter: Boolean
+
+    @Deprecated(
+        "Please use `valueParameters.count { it.kind == AbiValueParameterKind.CONTEXT }`",
+        ReplaceWith("valueParameters.count { it.kind == AbiValueParameterKind.CONTEXT }")
+    )
     val contextReceiverParametersCount: Int
     val valueParameters: List<AbiValueParameter>
     val returnType: AbiType?
@@ -315,6 +322,7 @@ interface AbiFunction : AbiDeclarationWithModality, AbiTypeParametersContainer {
 /**
  * An individual value parameter of a function.
  *
+ * @property kind The value parameter kind.
  * @property type The type of the value parameter.
  * @property isVararg Whether the value parameter is a var-arg parameter.
  * @property hasDefaultArg Whether the value parameter has a default value.
@@ -323,11 +331,17 @@ interface AbiFunction : AbiDeclarationWithModality, AbiTypeParametersContainer {
  */
 @ExperimentalLibraryAbiReader
 interface AbiValueParameter {
+    val kind: AbiValueParameterKind
     val type: AbiType
     val isVararg: Boolean
     val hasDefaultArg: Boolean
     val isNoinline: Boolean
     val isCrossinline: Boolean
+}
+
+/** All known kinds of value parameters that may appear in ABI. */
+enum class AbiValueParameterKind {
+    CONTEXT, EXTENSION_RECEIVER, REGULAR;
 }
 
 /**
