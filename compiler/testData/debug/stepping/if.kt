@@ -43,4 +43,4 @@ inline fun getB(): Int {
 // test.kt:9 $box (11)
 // test.kt:15 $box (11, 4)
 // test.kt:9 $box (4)
-// test.kt:8 $box (8)
+// test.kt:10 $box (1)

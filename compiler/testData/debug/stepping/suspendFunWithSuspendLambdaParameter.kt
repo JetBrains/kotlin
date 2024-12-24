@@ -41,7 +41,7 @@ suspend fun box() {
 // test.kt:11 $box$slambda.doResume (8)
 // test.kt:7 $foo (0)
 // test.kt:10 $$boxCOROUTINE$0.doResume (4)
-// test.kt:13 $$boxCOROUTINE$0.doResume (0)
+// test.kt:13 $$boxCOROUTINE$0.doResume (1)
 // test.kt:10 $$boxCOROUTINE$0.doResume (8, 4)
 // test.kt:13 $$boxCOROUTINE$0.doResume (0)
 // test.kt:13 $box (1)

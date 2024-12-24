@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.utils.isCanonical
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -178,14 +179,14 @@ internal class CatchMerger(private val ctx: WasmBackendContext) : IrElementTrans
                 }
             } ?: -1
 
-            val newCatchBody = irBlock(aTry) {
+            val newCatchBody = irBlock(aTry, startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET) {
                 +irWhen(
                     aTry.type,
                     activeCatches.mapIndexedNotNull { i, it ->
                         runIf(i != jsExceptionCatchIndex) {
                             irBranch(
                                 irIs(irGet(newCatchParameter), it.catchParameter.type),
-                                irBlock(it.result) {
+                                irBlock(it.result, startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET) {
 
                                     it.catchParameter.initializer = irImplicitCast(irGet(newCatchParameter), it.catchParameter.type)
                                     it.catchParameter.origin = IrDeclarationOrigin.DEFINED

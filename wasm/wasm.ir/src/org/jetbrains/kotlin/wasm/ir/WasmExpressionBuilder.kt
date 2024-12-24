@@ -189,8 +189,8 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipComm
         )
     }
 
-    fun buildCatch(tagIdx: WasmSymbol<Int>) {
-        buildInstrWithNoLocation(WasmOp.CATCH, WasmImmediate.TagIdx(tagIdx))
+    fun buildCatch(tagIdx: WasmSymbol<Int>, location: SourceLocation = SourceLocation.NoLocation("Catch")) {
+        buildInstr(WasmOp.CATCH, location, WasmImmediate.TagIdx(tagIdx))
     }
 
     fun buildCatchAll() {

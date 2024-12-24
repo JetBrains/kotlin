@@ -393,7 +393,7 @@ class BodyGenerator(
         else
             wasmFileCodegenContext.jsExceptionTagIndex
 
-        body.buildCatch(tag)
+        body.buildCatch(tag, SourceLocation.NextLocation)
 
         if (tag === wasmFileCodegenContext.jsExceptionTagIndex) {
             lastCatchBlock.wrapJsThrownValueIntoJsException()
