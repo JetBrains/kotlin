@@ -151,7 +151,8 @@ object TestModuleStructureFactory {
 
             val (jdkRoots, libraryRoots) = classpathRoots.partition { jdkHome != null && it.startsWith(jdkHome) }
 
-            if (testModule.targetPlatform.isJvm() && jdkRoots.isNotEmpty()) {
+            val targetPlatform = testModule.targetPlatform(testServices)
+            if (targetPlatform.isJvm() && jdkRoots.isNotEmpty()) {
                 ktModule.directRegularDependencies.add(
                     libraryCache.getOrCreateJdkModule(jdkRoots)
                 )
@@ -164,7 +165,7 @@ object TestModuleStructureFactory {
 
                 val platform = when (libraryRoot.extension.toLowerCaseAsciiOnly()) {
                     "jar" -> JvmPlatforms.defaultJvmPlatform
-                    else -> testModule.targetPlatform
+                    else -> targetPlatform
                 }
 
                 val libraryModule = libraryCache.getOrCreateLibraryModule(libraryRoot) {

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.targetPlatform
 
 @RequiresOptIn("Please use common converter `Fir2IrResultsConverter` instead")
 annotation class InternalFir2IrConverterAPI
@@ -31,16 +32,19 @@ class Fir2IrResultsConverter(
     private val jsResultsConverter = Fir2IrJsResultsConverter(testServices)
     private val wasmResultsConverter = Fir2IrWasmResultsConverter(testServices)
 
-    override fun transform(module: TestModule, inputArtifact: FirOutputArtifact): IrBackendInput? = when {
-        module.targetPlatform.isJvm() || module.targetPlatform.isCommon() -> {
-            jvmResultsConverter.transform(module, inputArtifact)
+    override fun transform(module: TestModule, inputArtifact: FirOutputArtifact): IrBackendInput? {
+        val targetPlatform = module.targetPlatform(testServices)
+        return when {
+            targetPlatform.isJvm() || targetPlatform.isCommon() -> {
+                jvmResultsConverter.transform(module, inputArtifact)
+            }
+            targetPlatform.isJs() -> {
+                jsResultsConverter.transform(module, inputArtifact)
+            }
+            targetPlatform.isWasm() -> {
+                wasmResultsConverter.transform(module, inputArtifact)
+            }
+            else -> error("Unsupported platform: $targetPlatform")
         }
-        module.targetPlatform.isJs() -> {
-            jsResultsConverter.transform(module, inputArtifact)
-        }
-        module.targetPlatform.isWasm() -> {
-            wasmResultsConverter.transform(module, inputArtifact)
-        }
-        else -> error("Unsupported platform: ${module.targetPlatform}")
     }
 }

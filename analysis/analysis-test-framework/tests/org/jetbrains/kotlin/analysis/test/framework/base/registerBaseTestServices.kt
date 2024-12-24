@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.ApplicationDisposableProvider
 import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
+import org.jetbrains.kotlin.test.services.TargetPlatformProvider
 import org.jetbrains.kotlin.utils.bind
 
 @OptIn(TestInfrastructureInternals::class)
@@ -26,6 +27,9 @@ fun TestConfigurationBuilder.registerAnalysisApiBaseTestServices(
     testDisposable: Disposable,
     configurator: AnalysisApiTestConfigurator,
 ) {
+    useAdditionalService<TargetPlatformProvider>(::TargetPlatformProviderForAnalysisApiTests)
+    useDirectives(TargetPlatformDirectives)
+
     useAdditionalService<TestDisposableProvider>(::TestDisposableProviderImpl)
     useAdditionalService<AnalysisApiKtTestModuleStructureProvider>(::AnalysisApiKtTestModuleStructureProviderImpl)
     useAdditionalService<AnalysisApiEnvironmentManager>(::AnalysisApiEnvironmentManagerImpl.bind(testDisposable))

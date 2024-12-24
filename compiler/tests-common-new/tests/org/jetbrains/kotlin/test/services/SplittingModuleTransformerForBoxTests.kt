@@ -38,7 +38,6 @@ class SplittingModuleTransformerForBoxTests : ModuleStructureTransformer() {
         val secondModuleFile = realFiles.last()
         val firstModule = TestModule(
             name = "lib",
-            module.targetPlatform,
             files = firstModuleFiles + additionalFiles,
             allDependencies = emptyList(),
             module.directives,
@@ -47,7 +46,6 @@ class SplittingModuleTransformerForBoxTests : ModuleStructureTransformer() {
 
         val secondModule = TestModule(
             name = "main",
-            module.targetPlatform,
             files = listOf(secondModuleFile) + additionalFiles,
             allDependencies = listOf(DependencyDescription(firstModule, DependencyKind.Binary, DependencyRelation.FriendDependency)),
             RegisteredDirectivesBuilder(module.directives).apply {

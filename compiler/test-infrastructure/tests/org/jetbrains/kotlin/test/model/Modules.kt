@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.test.model
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import java.io.File
 
 data class TestModule(
     val name: String,
-    val targetPlatform: TargetPlatform,
     val files: List<TestFile>,
     val allDependencies: List<DependencyDescription>,
     val directives: RegisteredDirectives,
@@ -33,7 +31,6 @@ data class TestModule(
     override fun toString(): String {
         return buildString {
             appendLine("Module: $name")
-            appendLine("targetPlatform = $targetPlatform")
             appendLine("Dependencies:")
             allDependencies.forEach { appendLine("  $it") }
             appendLine("Directives:\n  $directives")

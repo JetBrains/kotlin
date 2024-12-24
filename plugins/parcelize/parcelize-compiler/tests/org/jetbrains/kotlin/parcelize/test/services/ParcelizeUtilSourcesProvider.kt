@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.parcelize.test.services
 
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_PARCELIZE
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.defaultsProvider
+import org.jetbrains.kotlin.test.services.isLeafModuleInMppGraph
 import java.io.File
 
 class ParcelizeUtilSourcesProvider(testServices: TestServices, baseDir: String = ".") : AdditionalSourceProvider(testServices) {
@@ -21,6 +24,6 @@ class ParcelizeUtilSourcesProvider(testServices: TestServices, baseDir: String =
 
         // Only provide the additional files for a JVM only module. In multiplatform tests, this ensures that the
         // additional files are only provided once and in the right module.
-        return if (module.targetPlatform.all { it.platformName == "JVM" }) listOf(File(libraryPath).toTestFile()) else listOf()
+        return if (module.isLeafModuleInMppGraph(testServices)) listOf(File(libraryPath).toTestFile()) else listOf()
     }
 }

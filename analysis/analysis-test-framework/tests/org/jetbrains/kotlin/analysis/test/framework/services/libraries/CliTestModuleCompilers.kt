@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.sourceFileProvider
 import org.jetbrains.kotlin.test.services.standardLibrariesPathProvider
+import org.jetbrains.kotlin.test.services.targetPlatform
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.ByteArrayInputStream
 import java.nio.file.Path
@@ -65,7 +66,7 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
     ): Path {
         val allowedLibraryPlatforms = module.directives[Directives.LIBRARY_PLATFORMS].map { it.targetPlatform }
         val compilationErrorExpected = Directives.COMPILATION_ERRORS in module.directives
-                || (allowedLibraryPlatforms.isNotEmpty() && module.targetPlatform !in allowedLibraryPlatforms)
+                || (allowedLibraryPlatforms.isNotEmpty() && module.targetPlatform(testServices) !in allowedLibraryPlatforms)
 
         val library = try {
             val outputPath = libraryOutputPath(tmpDir, libraryName)
@@ -269,19 +270,20 @@ object DispatchingTestModuleCompiler : TestModuleCompiler() {
         dependencyBinaryRoots: Collection<Path>,
         testServices: TestServices
     ): Path {
-        return getCompiler(module).compile(tmpDir, module, libraryName, dependencyBinaryRoots, testServices)
+        return getCompiler(module, testServices).compile(tmpDir, module, libraryName, dependencyBinaryRoots, testServices)
     }
 
     override fun compileSources(files: List<TestFile>, module: TestModule, testServices: TestServices): Path {
-        return getCompiler(module).compileSources(module.files, module, testServices)
+        return getCompiler(module, testServices).compileSources(module.files, module, testServices)
     }
 
-    private fun getCompiler(module: TestModule): CliTestModuleCompiler {
+    private fun getCompiler(module: TestModule, testServices: TestServices): CliTestModuleCompiler {
+        val targetPlatform = module.targetPlatform(testServices)
         return when {
-            module.targetPlatform.isJvm() -> JvmJarTestModuleCompiler
-            module.targetPlatform.isJs() -> JsKlibTestModuleCompiler
-            module.targetPlatform.isCommon() -> MetadataKlibDirTestModuleCompiler
-            else -> error("DispatchingTestModuleCompiler doesn't support the platform: ${module.targetPlatform}")
+            targetPlatform.isJvm() -> JvmJarTestModuleCompiler
+            targetPlatform.isJs() -> JsKlibTestModuleCompiler
+            targetPlatform.isCommon() -> MetadataKlibDirTestModuleCompiler
+            else -> error("DispatchingTestModuleCompiler doesn't support the platform: $targetPlatform")
         }
     }
 }

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.test.frontend.fir.getAllNativeDependenciesPaths
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.test.services.targetPlatform
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 import java.nio.file.Path
@@ -52,7 +53,7 @@ abstract class KtModuleByCompilerConfiguration(
     }
 
     private fun computeLibraryDependencies(): List<KaLibraryModule> {
-        val targetPlatform = testModule.targetPlatform
+        val targetPlatform = testModule.targetPlatform(testServices)
         return when {
             targetPlatform.isNative() -> {
                 librariesByRoots(getAllNativeDependenciesPaths(testModule, testServices).map { Paths.get(it) })
@@ -112,7 +113,7 @@ abstract class KtModuleByCompilerConfiguration(
         get() = testModule.languageVersionSettings
 
     val targetPlatform: TargetPlatform
-        get() = testModule.targetPlatform
+        get() = testModule.targetPlatform(testServices)
 }
 
 class KaSourceModuleByCompilerConfiguration(

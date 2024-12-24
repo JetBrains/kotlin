@@ -102,7 +102,7 @@ open class FirReplFrontendFacade(
         val configuration = this.testServices.compilerConfigurationProvider.getCompilerConfiguration(firstSnippetModule)
         val libraryList = createLibraryListForJvm("repl", configuration, emptyList())
         val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
-        val targetPlatform = firstSnippetModule.targetPlatform
+        val targetPlatform = firstSnippetModule.targetPlatform(testServices)
         val predefinedJavaComponents = runIf(targetPlatform.isJvm()) {
             FirSharableJavaComponents(firCachesFactoryForCliMode)
         }
@@ -180,9 +180,10 @@ open class FirReplFrontendFacade(
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
         val projectEnvironment: AbstractProjectEnvironment?
         val languageVersionSettings = module.languageVersionSettings
-        val isCommon = module.targetPlatform.isCommon()
+        val targetPlatform = module.targetPlatform(testServices)
+        val isCommon = targetPlatform.isCommon()
         val session = when {
-            isCommon || module.targetPlatform.isJvm() -> {
+            isCommon || targetPlatform.isJvm() -> {
                 val packagePartProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(module)
                 projectEnvironment = VfsBasedProjectEnvironment(
                     project, VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
@@ -225,7 +226,7 @@ open class FirReplFrontendFacade(
                     ).also(::registerExtraComponents)
                 }
             }
-            module.targetPlatform.isJs() -> {
+            targetPlatform.isJs() -> {
                 projectEnvironment = null
                 TestFirJsSessionFactory.createLibrarySession(
                     moduleName,
@@ -237,7 +238,7 @@ open class FirReplFrontendFacade(
                     extensionRegistrars,
                 ).also(::registerExtraComponents)
             }
-            module.targetPlatform.isNative() -> {
+            targetPlatform.isNative() -> {
                 projectEnvironment = null
                 TestFirNativeSessionFactory.createLibrarySession(
                     moduleName,
@@ -250,7 +251,7 @@ open class FirReplFrontendFacade(
                     languageVersionSettings,
                 ).also(::registerExtraComponents)
             }
-            module.targetPlatform.isWasm() -> {
+            targetPlatform.isWasm() -> {
                 projectEnvironment = null
                 TestFirWasmSessionFactory.createLibrarySession(
                     moduleName,

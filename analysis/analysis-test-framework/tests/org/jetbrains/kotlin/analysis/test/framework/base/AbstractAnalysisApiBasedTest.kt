@@ -327,7 +327,6 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         useDirectives(JvmEnvironmentConfigurationDirectives)
         useDirectives(TestModuleCompiler.Directives)
 
-
         useSourcePreprocessor(::ExpressionMarkersSourceFilePreprocessor)
         useAdditionalService { ExpressionMarkerProvider() }
         useDirectives(ExpressionMarkerProvider.Directives)

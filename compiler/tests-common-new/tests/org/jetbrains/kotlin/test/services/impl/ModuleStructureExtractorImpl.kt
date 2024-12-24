@@ -5,16 +5,11 @@
 
 package org.jetbrains.kotlin.test.services.impl
 
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
 import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
-import org.jetbrains.kotlin.test.directives.TargetPlatformEnum
 import org.jetbrains.kotlin.test.directives.model.ComposedRegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -84,7 +79,6 @@ class ModuleStructureExtractorImpl(
             get() = currentTestDataFile.name
 
         private var currentModuleName: String? = null
-        private var currentModuleTargetPlatform: TargetPlatform? = null
         private var currentModuleLanguageVersionSettingsBuilder: LanguageVersionSettingsBuilder = initLanguageSettingsBuilder()
         private var dependenciesOfCurrentModule = mutableListOf<DependencyDescription>()
         private var filesOfCurrentModule = mutableListOf<TestFile>()
@@ -220,36 +214,6 @@ class ModuleStructureExtractorImpl(
                 ModuleStructureDirectives.ALLOW_FILES_WITH_SAME_NAMES -> {
                     allowFilesWithSameNames = true
                 }
-                ModuleStructureDirectives.TARGET_PLATFORM -> {
-                    if (currentModuleTargetPlatform != null) {
-                        assertions.fail { "Target platform already specified twice for module $currentModuleName" }
-                    }
-                    val platforms = values.map { (it as TargetPlatformEnum).targetPlatform }
-                    currentModuleTargetPlatform = when (platforms.size) {
-                        0 -> assertions.fail { "Target platform specified incorrectly\nUsage: ${directive.description}" }
-                        1 -> platforms.single()
-                        else -> {
-                            if (TargetPlatformEnum.Common in values) {
-                                assertions.fail { "You can't specify `Common` platform in combination with others" }
-                            }
-                            TargetPlatform(platforms.flatMapTo(mutableSetOf()) { it.componentPlatforms })
-                        }
-                    }
-                }
-                ModuleStructureDirectives.JVM_TARGET -> {
-                    if (!defaultsProvider.targetPlatform.isJvm()) return false
-                    if (currentModuleTargetPlatform != null) {
-                        assertions.fail { "Target platform already specified twice for module $currentModuleName" }
-                    }
-                    currentModuleTargetPlatform = if (values.size != 1) {
-                        assertions.fail { "JVM target should be single" }
-                    } else {
-                        val jvmTarget = JvmTarget.fromString(values.single().toString())
-                            ?: assertions.fail { "Unknown JVM target: ${values.single()}" }
-                        JvmPlatforms.jvmPlatformByTargetVersion(jvmTarget)
-                    }
-                    return false // Workaround for FE and FIR
-                }
                 else -> return false
             }
 
@@ -332,10 +296,8 @@ class ModuleStructureExtractorImpl(
             val moduleName = currentModuleName
                 ?: testServices.defaultDirectives[ModuleStructureDirectives.MODULE].firstOrNull()
                 ?: DEFAULT_MODULE_NAME
-            val targetPlatform = currentModuleTargetPlatform ?: defaultsProvider.targetPlatform
             val testModule = TestModule(
                 name = moduleName,
-                targetPlatform = targetPlatform,
                 files = filesOfCurrentModule,
                 allDependencies = dependenciesOfCurrentModule,
                 directives = moduleDirectives,
@@ -391,7 +353,6 @@ class ModuleStructureExtractorImpl(
         private fun resetModuleCaches() {
             firstFileInModule = true
             currentModuleName = null
-            currentModuleTargetPlatform = null
             currentModuleLanguageVersionSettingsBuilder = initLanguageSettingsBuilder()
             filesOfCurrentModule = mutableListOf()
             dependenciesOfCurrentModule = mutableListOf()

@@ -74,7 +74,7 @@ class AnalysisApiEnvironmentManagerImpl(
         val ktTestModuleStructure = testServices.ktTestModuleStructure
         val useSiteModule = testServices.moduleStructure.modules.first()
         val useSiteCompilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(useSiteModule)
-        val builtinsModule = KaBuiltinsModuleImpl(useSiteModule.targetPlatform, getProject())
+        val builtinsModule = KaBuiltinsModuleImpl(useSiteModule.targetPlatform(testServices), getProject())
 
         val globalLanguageVersionSettings = useSiteModule.languageVersionSettings
 
