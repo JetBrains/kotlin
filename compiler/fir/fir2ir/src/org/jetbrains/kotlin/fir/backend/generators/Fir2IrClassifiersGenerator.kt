@@ -354,7 +354,6 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
             scopeProvider = session.kotlinScopeProvider
         }
         (firSnippetClass.symbol.toLookupTag() as? ConeClassLikeLookupTagImpl)?.bindSymbolToLookupTag(session, firSnippetClassSymbol)
-        // TODO: verify that this (ab)use of the FirLazyClass is valid
         return lazyDeclarationsGenerator.createIrLazyClass(firSnippetClass, containingPackageFragment, symbol)
     }
 

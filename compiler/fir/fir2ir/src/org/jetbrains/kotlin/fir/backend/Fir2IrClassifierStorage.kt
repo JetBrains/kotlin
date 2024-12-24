@@ -427,10 +427,19 @@ class Fir2IrClassifierStorage(
 
     // ------------------------------------ REPL snippets ------------------------------------
 
+    /**
+     * Get IrClass corresponding to the REPL Snippet compiled earlier.
+     * (see [createAndCacheEarlierSnippetClass] for details
+     */
     fun getCachedEarlierSnippetClass(snippetSymbol: FirReplSnippetSymbol): IrClass? {
         return earlierSnippetsCache[snippetSymbol]
     }
 
+    /**
+     * Create a (lazy) IrClass that corresponds to the REPL Snippet compiled previously.
+     * The class is created from its FIR representation and required only for binding
+     * declarations from earlier snippets that are used in the currently compiled one.
+     */
     fun createAndCacheEarlierSnippetClass(snippetSymbol: FirReplSnippetSymbol, containingPackageFragment: IrPackageFragment): IrClass {
         val symbol = createClassSymbol()
         return classifiersGenerator.createEarlierSnippetClass(snippetSymbol.fir, containingPackageFragment, symbol).also {
@@ -440,5 +449,4 @@ class Fir2IrClassifierStorage(
             }
         }
     }
-
 }

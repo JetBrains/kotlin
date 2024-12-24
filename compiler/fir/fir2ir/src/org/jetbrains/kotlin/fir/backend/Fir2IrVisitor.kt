@@ -364,7 +364,7 @@ class Fir2IrVisitor(
             }
         }
 
-        irSnippet.receiversParameters = replSnippet.receivers.mapIndexed { index, receiver ->
+        irSnippet.receiverParameters = replSnippet.receivers.mapIndexed { index, receiver ->
             val name = Name.identifier("${SCRIPT_RECEIVER_NAME_PREFIX}_$index")
             val origin = IrDeclarationOrigin.SCRIPT_IMPLICIT_RECEIVER
             receiver.convertWithOffsets { startOffset, endOffset ->
@@ -375,7 +375,8 @@ class Fir2IrVisitor(
                 ).also {
                     it.parent = irSnippet
                     @OptIn(DelicateIrParameterIndexSetter::class)
-                    it.index = index
+                    it.indexInParameters = index
+                    it.kind = IrParameterKind.Context
                 }
             }
         }

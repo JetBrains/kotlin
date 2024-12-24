@@ -358,7 +358,7 @@ fun FirBasedSymbol<*>.packageFqName(): FqName {
         is FirClassLikeSymbol<*> -> classId.packageFqName
         is FirPropertyAccessorSymbol -> propertySymbol.packageFqName()
         is FirCallableSymbol<*> -> callableId.packageName
-        is FirReplSnippetSymbol -> FqName.ROOT // TODO: add package FQN to snippet symbol
+        is FirReplSnippetSymbol -> FqName.ROOT // TODO: add package FQN to snippet symbol (KT-74126)
         else -> error("No package fq name for $this")
     }
 }

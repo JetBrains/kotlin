@@ -910,7 +910,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
 
     fun createIrReplSnippet(snippet: FirReplSnippet, symbol: IrReplSnippetSymbol): IrReplSnippet =
         snippet.convertWithOffsets { startOffset, endOffset ->
-            IrReplSnippetImpl(symbol, snippet.name, IrFactoryImpl, startOffset, endOffset).also { irSnippet ->
+            IrReplSnippetImpl(startOffset, endOffset, IrFactoryImpl, snippet.name, symbol).also { irSnippet ->
                 irSnippet.metadata = FirMetadataSource.ReplSnippet(snippet)
             }
         }
