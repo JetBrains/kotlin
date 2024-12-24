@@ -2,7 +2,7 @@
 // RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
-expect class Foo {
+expect class <!NO_ACTUAL_FOR_EXPECT!>Foo<!> {
     <!EXPECTED_DECLARATION_WITH_BODY!>init<!> {
         "no"
     }

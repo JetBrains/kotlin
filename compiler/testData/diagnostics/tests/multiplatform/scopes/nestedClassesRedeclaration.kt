@@ -4,17 +4,17 @@
 
 // MODULE: common
 // FILE: common.kt
-expect class <!NO_ACTUAL_FOR_EXPECT!>A<!> {
+expect class A {
     class N
 }
 
-expect class <!NO_ACTUAL_FOR_EXPECT!>B<!> {}
+expect class B {}
 
-expect class <!NO_ACTUAL_FOR_EXPECT!>C<!> {
+expect class C {
     class N
 }
 
-expect abstract class <!NO_ACTUAL_FOR_EXPECT!>D<!>()
+expect abstract class D()
 
 class E : D() {
     class N

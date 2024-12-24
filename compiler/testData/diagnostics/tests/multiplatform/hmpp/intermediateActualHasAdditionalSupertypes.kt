@@ -6,7 +6,7 @@ interface CompletionHandler {
     fun foo()
 }
 
-expect <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{COMMON}!>class CompletionHandlerBase<!>()
+expect <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM}!>class CompletionHandlerBase<!>()
 
 fun invokeOnCompletion(handler: CompletionHandler) {}
 

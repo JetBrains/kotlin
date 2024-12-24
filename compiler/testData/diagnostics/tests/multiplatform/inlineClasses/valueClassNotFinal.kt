@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +MultiPlatformProjects
@@ -5,7 +6,7 @@
 
 // MODULE: common
 // FILE: common.kt
-expect final value class <!NO_ACTUAL_FOR_EXPECT!>A<!>(val s: String)
+expect final value class A(val s: String)
 
 // MODULE: jvm()()(common)
 // FILE: jvm.kt

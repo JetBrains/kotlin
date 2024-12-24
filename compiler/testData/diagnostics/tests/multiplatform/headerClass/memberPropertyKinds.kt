@@ -3,7 +3,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class Foo {
+expect class <!NO_ACTUAL_FOR_EXPECT!>Foo<!> {
     val justVal: String
     var justVar: String
 

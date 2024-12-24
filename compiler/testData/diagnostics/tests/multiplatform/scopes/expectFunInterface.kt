@@ -5,21 +5,21 @@
 
 // MODULE: common
 // FILE: common.kt
-expect fun interface <!NO_ACTUAL_FOR_EXPECT!>F1<!> {
+expect fun interface F1 {
     fun foo()
 }
 
-expect <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS, FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS{JVM}!>fun<!> interface <!NO_ACTUAL_FOR_EXPECT!>F2<!>
+expect <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS, FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS{JVM}!>fun<!> interface F2
 
-expect fun interface <!NO_ACTUAL_FOR_EXPECT!>F3<!> {
+expect fun interface F3 {
     fun foo()
 }
 
-expect fun interface <!NO_ACTUAL_FOR_EXPECT!>F4<!> {
+expect fun interface F4 {
     fun foo()
 }
 
-expect <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS, FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS{JVM}!>fun<!> interface <!NO_ACTUAL_FOR_EXPECT!>F5<!>
+expect <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS, FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS{JVM}!>fun<!> interface F5
 
 // MODULE: jvm()()(common)
 // FILE: main.kt

@@ -4,7 +4,7 @@
 
 // MODULE: common
 // FILE: common.kt
-expect class <!AMBIGUOUS_ACTUALS{JVM}, NO_ACTUAL_FOR_EXPECT, PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>A<!> {}
+expect class <!AMBIGUOUS_ACTUALS{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>A<!> {}
 
 // MODULE: jvm()()(common)
 // FILE: main.kt

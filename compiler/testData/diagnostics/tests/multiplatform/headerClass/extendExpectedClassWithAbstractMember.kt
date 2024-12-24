@@ -3,10 +3,10 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect abstract class BaseA() {
+expect abstract class <!NO_ACTUAL_FOR_EXPECT!>BaseA<!>() {
     abstract fun foo()
 }
-expect open class BaseAImpl() : BaseA
+expect open class <!NO_ACTUAL_FOR_EXPECT!>BaseAImpl<!>() : BaseA
 
 class DerivedA1 : BaseAImpl()
 class DerivedA2 : BaseAImpl() {
@@ -15,10 +15,10 @@ class DerivedA2 : BaseAImpl() {
 
 
 
-expect interface BaseB {
+expect interface <!NO_ACTUAL_FOR_EXPECT!>BaseB<!> {
     fun foo()
 }
-expect open class BaseBImpl() : BaseB
+expect open class <!NO_ACTUAL_FOR_EXPECT!>BaseBImpl<!>() : BaseB
 
 class DerivedB1 : BaseBImpl()
 class DerivedB2 : BaseBImpl() {
@@ -27,10 +27,10 @@ class DerivedB2 : BaseBImpl() {
 
 
 
-expect interface BaseC {
+expect interface <!NO_ACTUAL_FOR_EXPECT!>BaseC<!> {
     fun foo()
 }
-expect abstract class BaseCImpl() : BaseC
+expect abstract class <!NO_ACTUAL_FOR_EXPECT!>BaseCImpl<!>() : BaseC
 
 <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class DerivedC1<!> : BaseCImpl()
 class DerivedC2 : BaseCImpl() {
@@ -39,7 +39,7 @@ class DerivedC2 : BaseCImpl() {
 
 
 
-expect interface BaseD {
+expect interface <!NO_ACTUAL_FOR_EXPECT!>BaseD<!> {
     fun foo()
 }
 abstract class BaseDImpl() : BaseD {
@@ -48,7 +48,7 @@ abstract class BaseDImpl() : BaseD {
 
 
 
-expect interface BaseE {
+expect interface <!NO_ACTUAL_FOR_EXPECT!>BaseE<!> {
     fun foo()
 }
 sealed class BaseEImpl() : BaseE {
@@ -57,17 +57,17 @@ sealed class BaseEImpl() : BaseE {
 
 
 
-expect interface BaseF {
+expect interface <!NO_ACTUAL_FOR_EXPECT!>BaseF<!> {
     fun foo()
 }
-expect class BaseFImpl() : BaseF
+expect class <!NO_ACTUAL_FOR_EXPECT!>BaseFImpl<!>() : BaseF
 
 
 
-expect abstract class BaseG() {
+expect abstract class <!NO_ACTUAL_FOR_EXPECT!>BaseG<!>() {
     abstract fun foo()
 }
-expect open class BaseGImpl() : BaseG {
+expect open class <!NO_ACTUAL_FOR_EXPECT!>BaseGImpl<!>() : BaseG {
     override fun foo()
 }
 class DerivedG1 : BaseGImpl()

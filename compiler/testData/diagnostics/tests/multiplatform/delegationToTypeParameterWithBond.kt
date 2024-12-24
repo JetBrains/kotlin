@@ -1,7 +1,8 @@
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: common
 // FILE: common.kt
-expect interface <!NO_ACTUAL_FOR_EXPECT!>Base<!><T> {
+expect interface Base<T> {
     fun foo():T
 }
 class DelegatedImpl<T : Base<T>>(val a: T) : Base<T> by a

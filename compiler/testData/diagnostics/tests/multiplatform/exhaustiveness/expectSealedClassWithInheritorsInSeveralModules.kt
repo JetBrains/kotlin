@@ -5,7 +5,7 @@
 
 // MODULE: common
 // FILE: common.kt
-expect sealed class <!NO_ACTUAL_FOR_EXPECT!>Base<!>()
+expect sealed class Base()
 
 class CommonDerived : Base()
 

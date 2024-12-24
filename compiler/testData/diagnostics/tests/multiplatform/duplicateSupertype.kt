@@ -8,7 +8,7 @@ interface A {
     open fun foo() {}
 }
 
-expect interface <!NO_ACTUAL_FOR_EXPECT!>B<!>
+expect interface B
 
 class C : A, <!SUPERTYPE_APPEARS_TWICE{JVM}!>B<!> {}
 

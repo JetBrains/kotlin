@@ -1,15 +1,16 @@
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: common
 // FILE: common.kt
-expect interface <!NO_ACTUAL_FOR_EXPECT!>Base1<!> {
+expect interface Base1 {
     fun foo(a: String): String
 }
 
-expect interface <!NO_ACTUAL_FOR_EXPECT!>Base2<!> {
+expect interface Base2 {
     fun foo(a: Any): Any
 }
 
-expect interface <!NO_ACTUAL_FOR_EXPECT!>Base3<!> {
+expect interface Base3 {
     fun foo(a: String): String
 }
 

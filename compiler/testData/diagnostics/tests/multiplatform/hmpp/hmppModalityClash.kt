@@ -1,11 +1,11 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: FIR2IR
 // MODULE: common
-expect abstract <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{COMMON}!>class Foo<!>() {
+expect abstract <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM}!>class Foo<!>() {
     abstract fun foo()
 }
 
-<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED{COMMON}!>class Impl<!> : Foo() {}
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED{JVM}!>class Impl<!> : Foo() {}
 
 fun common() {
     Impl().foo()
