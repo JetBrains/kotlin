@@ -53,7 +53,7 @@ fun box() {
 // test.kt:27 compute:
 // test.kt:28 compute: s2:java.lang.String="NOPE":java.lang.String
 // test.kt:29 compute: s2:java.lang.String="NOPE":java.lang.String, j:int=0:int
-// test.kt:28 compute: s2:java.lang.String="OK":java.lang.String, j:int=0:int
+// test.kt:28 compute: s2:java.lang.String="OK":java.lang.String, j:int=1:int
 // test.kt:31 compute: s2:java.lang.String="OK":java.lang.String
 // test.kt:37 box:
 // test.kt:38 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String
