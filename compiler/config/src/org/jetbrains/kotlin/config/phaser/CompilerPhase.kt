@@ -113,6 +113,7 @@ abstract class NamedCompilerPhase<in Context : LoggingContext, Input, Output>(
         }
         runAfter(phaseConfig, changePhaserStateType(phaserState), context, input, output)
 
+        context.inVerbosePhase = false
         phaserState.alreadyDone.add(this)
         phaserState.phaseCount++
 
