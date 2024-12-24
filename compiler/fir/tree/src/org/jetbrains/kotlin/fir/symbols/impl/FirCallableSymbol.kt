@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.symbols.impl
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.mpp.CallableSymbolMarker
@@ -114,15 +115,17 @@ abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbo
      * such as parent or child declarations.
      */
     internal fun currentDeclarationDeprecationsAreDefinitelyEmpty(): Boolean {
-        if (origin is FirDeclarationOrigin.Java) {
-            // Java may perform lazy resolution when accessing FIR tree internals, see KT-55387
+        moduleData.session.lazyDeclarationResolver.forbidLazyResolveInside {
+            if (origin is FirDeclarationOrigin.Java) {
+                // Java may perform lazy resolution when accessing FIR tree internals, see KT-55387
+                return false
+            }
+            if (annotations.isEmpty() && fir.versionRequirements.isNullOrEmpty() && !rawStatus.isOverride) return true
+            if (fir.deprecationsProvider == EmptyDeprecationsProvider) {
+                return true
+            }
             return false
         }
-        if (annotations.isEmpty() && fir.versionRequirements.isNullOrEmpty() && !rawStatus.isOverride) return true
-        if (fir.deprecationsProvider == EmptyDeprecationsProvider) {
-            return true
-        }
-        return false
     }
 
     private fun ensureType(typeRef: FirTypeRef?) {

@@ -31,6 +31,11 @@ abstract class FirLazyDeclarationResolver : FirSessionComponent {
     val lazyResolveContractChecksEnabled: Boolean
         get() = _lazyResolveContractChecksEnabled.get()
 
+
+    @PrivateForInline
+    @Suppress("PropertyName")
+    val _lazyResolveIsAllowed: ThreadLocal<Boolean> = ThreadLocal.withInitial { true }
+
     abstract fun startResolvingPhase(phase: FirResolvePhase)
 
     abstract fun finishResolvingPhase(phase: FirResolvePhase)
@@ -51,6 +56,24 @@ abstract class FirLazyDeclarationResolver : FirSessionComponent {
         }
     }
 
+    @OptIn(PrivateForInline::class)
+    inline fun <T> forbidLazyResolveInside(action: () -> T): T {
+        val current = _lazyResolveIsAllowed.get()
+        _lazyResolveIsAllowed.set(false)
+        try {
+            return action()
+        } finally {
+            _lazyResolveIsAllowed.set(current)
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
+    protected fun assertLazyResolveAllowed() {
+        if (!_lazyResolveIsAllowed.get()) {
+            throw FirLazyResolveForbiddenException()
+        }
+    }
+
     /**
      * @see org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
      */
@@ -66,6 +89,8 @@ abstract class FirLazyDeclarationResolver : FirSessionComponent {
      */
     abstract fun lazyResolveToPhaseRecursively(element: FirElementWithResolveState, toPhase: FirResolvePhase)
 }
+
+class FirLazyResolveForbiddenException() : IllegalStateException("Lazy resolve is forbidden")
 
 class FirLazyResolveContractViolationException(
     currentPhase: FirResolvePhase,
