@@ -5,7 +5,7 @@
 
 // MODULE: common-a
 
-expect sealed <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{COMMON}, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{COMMON}!>class Base<!>()
+expect sealed <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM}, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM}!>class Base<!>()
 class A : Base() // OK, A in same module with Base
 
 // MODULE: common-b()()(common-a)
@@ -14,7 +14,7 @@ class B : Base() // OK, B inherits `expect` class, not `actual`
 
 // MODULE: common-c()()(common-b)
 
-actual sealed <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{COMMON}!>class Base<!> actual constructor()
+actual sealed <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM}!>class Base<!> actual constructor()
 class C : Base() // OK, C in same module with actual Base
 
 // MODULE: common-d()()(common-c)

@@ -4,7 +4,7 @@
 
 // MODULE: common
 // FILE: common.kt
-expect interface <!NO_ACTUAL_FOR_EXPECT!>Foo<!> {
+expect interface Foo {
     fun test(a: Int = 7)
 }
 

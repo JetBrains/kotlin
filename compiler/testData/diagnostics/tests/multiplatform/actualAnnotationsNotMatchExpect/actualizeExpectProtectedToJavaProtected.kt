@@ -8,7 +8,7 @@
 // FILE: common.kt
 package pkg
 
-expect open class <!NO_ACTUAL_FOR_EXPECT!>Foo<!> {
+expect open class Foo {
     protected fun foo()
 }
 

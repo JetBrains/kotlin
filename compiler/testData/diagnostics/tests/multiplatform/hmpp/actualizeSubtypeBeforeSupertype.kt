@@ -1,8 +1,8 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: FRONTEND
 // MODULE: common
-expect <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{COMMON}!>class A<!>() : B
-expect <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{COMMON}!>class C<!>() : B
+expect <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM}!>class A<!>() : B
+expect <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM}!>class C<!>() : B
 expect open class B()
 
 // MODULE: intermediate()()(common)

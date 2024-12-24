@@ -2,4 +2,4 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect fun foo()
+expect fun <!NO_ACTUAL_FOR_EXPECT!>foo<!>()

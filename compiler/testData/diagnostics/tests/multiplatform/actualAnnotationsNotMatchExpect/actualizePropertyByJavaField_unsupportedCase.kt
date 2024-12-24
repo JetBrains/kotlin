@@ -8,7 +8,7 @@
 // FILE: common.kt
 package foo
 
-public expect abstract class <!NO_ACTUAL_FOR_EXPECT!>AbstractMutableList<!>() {
+public expect abstract class AbstractMutableList() {
     protected var modCount: Int
 }
 

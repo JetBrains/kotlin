@@ -4,7 +4,7 @@
 
 // MODULE: common
 // FILE: common.kt
-expect abstract class <!NO_ACTUAL_FOR_EXPECT!>Memory<!>
+expect abstract class Memory
 
 // MODULE: jvm()()(common)
 // FILE: kotlin.kt

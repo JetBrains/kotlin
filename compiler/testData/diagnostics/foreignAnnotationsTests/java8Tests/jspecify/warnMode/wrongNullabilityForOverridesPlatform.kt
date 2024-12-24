@@ -2,7 +2,7 @@
 
 // MODULE: common
 // FILE: common.kt
-expect class <!NO_ACTUAL_FOR_EXPECT!>A<!>() {}
+expect class A() {}
 
 // MODULE: jvm()()(common)
 // FILE: J.java

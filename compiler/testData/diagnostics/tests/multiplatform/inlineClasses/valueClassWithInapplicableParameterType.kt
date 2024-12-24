@@ -5,14 +5,14 @@
 
 // MODULE: common
 // FILE: common.kt
-expect class <!NO_ACTUAL_FOR_EXPECT!>N<!>
+expect class N
 
-@JvmInline
+@<!UNRESOLVED_REFERENCE!>JvmInline<!>
 value class A(val n: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE{JVM}!>N<!>)
 
-expect class <!NO_ACTUAL_FOR_EXPECT!>U<!>
+expect class U
 
-@JvmInline
+@<!UNRESOLVED_REFERENCE!>JvmInline<!>
 value class B(val u: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE{JVM}!>U<!>)
 
 // MODULE: jvm()()(common)
