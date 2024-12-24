@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.ModuleStructureExtractor
+import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
 
@@ -19,7 +20,11 @@ open class JsSteppingTestAdditionalSourceProvider(testServices: TestServices) : 
     protected open val minimalTestHelpersLocation: String? = "$HELPERS_DIR/jsMinimalTestHelpers.kt"
     protected open val withStdlibTestHelpersFile: String? = "$HELPERS_DIR/jsWithStdlibTestHelpers.kt"
 
-    override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
+    override fun produceAdditionalFiles(
+        globalDirectives: RegisteredDirectives,
+        module: TestModule,
+        testModuleStructure: TestModuleStructure
+    ): List<TestFile> {
         // HACK: For some reason if we add the same additional files to each module (not only the main one),
         // we get the 'Symbol already bound' exception during linking.
         // The craziest part is that we run most of the box tests with additional files, where we _do_ add the same additional files

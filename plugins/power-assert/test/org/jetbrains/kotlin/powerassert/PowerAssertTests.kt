@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCod
 import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
 
@@ -81,7 +82,11 @@ class AdditionalSourceFilesProvider(testServices: TestServices) : AdditionalSour
     override val directiveContainers: List<DirectivesContainer> =
         listOf(AdditionalFilesDirectives)
 
-    override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
+    override fun produceAdditionalFiles(
+        globalDirectives: RegisteredDirectives,
+        module: TestModule,
+        testModuleStructure: TestModuleStructure
+    ): List<TestFile> {
         return buildList {
             add(File("plugins/power-assert/testData/helpers/InfixDispatch.kt").toTestFile())
             add(File("plugins/power-assert/testData/helpers/InfixExtension.kt").toTestFile())
