@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
+import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.types.Variance
@@ -90,7 +91,11 @@ abstract class AbstractIsDenotableTest : AbstractAnalysisApiBasedTest() {
     }
 
     private class TestHelperProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
-        override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
+        override fun produceAdditionalFiles(
+            globalDirectives: RegisteredDirectives,
+            module: TestModule,
+            testModuleStructure: TestModuleStructure
+        ): List<TestFile> {
             return listOf(File("analysis/analysis-api/testData/helpers/isDenotable/helpers.kt").toTestFile())
         }
     }

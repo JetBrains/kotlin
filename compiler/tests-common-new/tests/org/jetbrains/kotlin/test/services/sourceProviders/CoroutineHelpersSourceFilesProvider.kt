@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
+import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
 
@@ -29,7 +30,11 @@ class CoroutineHelpersSourceFilesProvider(testServices: TestServices, testDataPa
         listOf(AdditionalFilesDirectives)
 
     @OptIn(ExperimentalStdlibApi::class)
-    override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
+    override fun produceAdditionalFiles(
+        globalDirectives: RegisteredDirectives,
+        module: TestModule,
+        testModuleStructure: TestModuleStructure
+    ): List<TestFile> {
         if (WITH_COROUTINES !in module.directives) return emptyList()
         return buildList {
             add(File(coroutineHelpersPath).toTestFile())

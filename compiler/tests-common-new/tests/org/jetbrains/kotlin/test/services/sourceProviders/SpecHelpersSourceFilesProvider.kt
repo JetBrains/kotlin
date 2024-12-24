@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
+import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
 
@@ -21,7 +22,11 @@ class SpecHelpersSourceFilesProvider(testServices: TestServices, testType: Strin
     override val directiveContainers: List<DirectivesContainer> =
         listOf(AdditionalFilesDirectives)
 
-    override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
+    override fun produceAdditionalFiles(
+        globalDirectives: RegisteredDirectives,
+        module: TestModule,
+        testModuleStructure: TestModuleStructure
+    ): List<TestFile> {
         if (SPEC_HELPERS !in module.directives) return emptyList()
         return File(helpersDirPath).walkTopDown().mapNotNull {
             if (it.isDirectory) return@mapNotNull null
