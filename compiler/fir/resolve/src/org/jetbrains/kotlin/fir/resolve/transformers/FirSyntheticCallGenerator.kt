@@ -203,11 +203,11 @@ class FirSyntheticCallGenerator(
         resolutionMode: ResolutionMode,
     ): FirFunctionCall {
         return when {
-            expectedTypeConeType.isList -> generateCollectionOfCall(Name.identifier("listOf"), arrayLiteral, context, resolutionMode)
-            expectedTypeConeType.isMutableList -> generateCollectionOfCall(Name.identifier("listOf"), arrayLiteral, context, resolutionMode)
-            expectedTypeConeType.isSet -> generateCollectionOfCall(Name.identifier("setOf"), arrayLiteral, context, resolutionMode)
-            expectedTypeConeType.isMutableSet -> generateCollectionOfCall(Name.identifier("mutableSetOf"), arrayLiteral, context, resolutionMode)
-            expectedTypeConeType.isArrayType -> generateArrayOfCall(arrayLiteral, expectedTypeConeType, context, resolutionMode)
+            // expectedTypeConeType.isList -> generateCollectionOfCall(Name.identifier("listOf"), arrayLiteral, context, resolutionMode)
+            // expectedTypeConeType.isMutableList -> generateCollectionOfCall(Name.identifier("listOf"), arrayLiteral, context, resolutionMode)
+            // expectedTypeConeType.isSet -> generateCollectionOfCall(Name.identifier("setOf"), arrayLiteral, context, resolutionMode)
+            // expectedTypeConeType.isMutableSet -> generateCollectionOfCall(Name.identifier("mutableSetOf"), arrayLiteral, context, resolutionMode)
+            // expectedTypeConeType.isArrayType -> generateArrayOfCall(arrayLiteral, expectedTypeConeType, context, resolutionMode)
             else -> {
                 val toSymbol = expectedTypeConeType.toSymbol(session) ?: error("todo: expectedTypeConeType.toSymbol == null")
                 val klass = toSymbol.fir as? FirRegularClass ?: error("todo ${toSymbol.fir::class} is not FirRegularClass")
