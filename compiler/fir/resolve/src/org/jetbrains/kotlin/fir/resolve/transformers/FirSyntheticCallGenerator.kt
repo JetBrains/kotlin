@@ -262,7 +262,7 @@ class FirSyntheticCallGenerator(
                     //     dispatchReceiver = receiver
                     // )
 
-                    origin = FirFunctionCallOrigin.Operator
+                    // origin = FirFunctionCallOrigin.Operator
                 }
             }
         }
