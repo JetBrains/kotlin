@@ -224,7 +224,7 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
             else -> shouldNotBeCalled()
         }
 
-        val targetPlatform = testServices.defaultsProvider.defaultPlatform
+        val targetPlatform = testServices.defaultsProvider.targetPlatform
         if (PLATFORM_DEPENDANT_METADATA in testServices.moduleStructure.allDirectives) {
             val platformExtension = specificExtension.replace(".txt", "${targetPlatform.suffix}.txt")
             val otherPlatformExtension = specificExtension.replace(".txt", "${targetPlatform.oppositeSuffix}.txt")

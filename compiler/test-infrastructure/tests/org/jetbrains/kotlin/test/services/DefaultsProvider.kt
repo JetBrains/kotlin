@@ -17,7 +17,7 @@ class DefaultsProvider(
     val frontendKind: FrontendKind<*>,
     val backendKind: BackendKind<*>,
     private val defaultLanguageSettingsBuilder: LanguageVersionSettingsBuilder,
-    val defaultPlatform: TargetPlatform,
+    val targetPlatform: TargetPlatform,
     val artifactKind: ArtifactKind<*>,
     val targetBackend: TargetBackend?,
     val defaultDependencyKind: DependencyKind
