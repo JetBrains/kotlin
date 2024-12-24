@@ -149,12 +149,11 @@ fun deserializeDependencies(
 ): Map<IrModuleFragment, KotlinLibrary> {
     return sortedDependencies.associateBy { klib ->
         val descriptor = mapping(klib)
-        irLinker.deserializeIrModuleHeader(descriptor, klib, {
-            if (it.contains("parallelHierarchy.kt")) return@deserializeIrModuleHeader DeserializationStrategy.ALL
-            if (it.contains("StringLiteral.kt")) return@deserializeIrModuleHeader DeserializationStrategy.ALL
-            DeserializationStrategy.WITH_INLINE_BODIES
-        })
-
+        if (klib == mainModuleLib) {
+            irLinker.deserializeFullModule(descriptor, klib)
+        } else {
+            irLinker.deserializeHeadersWithInlineBodies(descriptor, klib)
+        }
 //        when {
 //            mainModuleLib == null -> irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
 //            filesToLoad != null && klib == mainModuleLib -> irLinker.deserializeDirtyFiles(descriptor, klib, filesToLoad)
