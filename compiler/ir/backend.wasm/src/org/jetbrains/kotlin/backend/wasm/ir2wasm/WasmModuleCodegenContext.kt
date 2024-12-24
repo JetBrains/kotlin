@@ -109,9 +109,9 @@ class WasmFileCodegenContext(
         wasmFileFragment.jsModuleImports[irFunction.getReferenceKey()] = module
     }
 
-    val scratchMemAddr: WasmSymbol<Int>
+    val scratchMemAddr: WasmSymbol<WasmGlobal>
         get() = wasmFileFragment.scratchMemAddr
-            ?: WasmSymbol<Int>().also { wasmFileFragment.scratchMemAddr = it }
+            ?: WasmSymbol<WasmGlobal>().also { wasmFileFragment.scratchMemAddr = it }
 
     val stringPoolSize: WasmSymbol<Int>
         get() = wasmFileFragment.stringPoolSize
