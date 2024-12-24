@@ -190,6 +190,7 @@ private fun createToFreshVariableSubstitutorAndAddInitialConstraints(
     session: FirSession,
     scopeSession: ScopeSession,
 ): Pair<ConeSubstitutor, List<ConeTypeVariable>> {
+    // todo causes `NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER` for non List-literals arguments
     val declarationOwnTypeParams = declaration.typeParameters.map { it.symbol }
     val incorporatedCollectionOperatorOfTypeParams = (declaration as? FirFunction)?.valueParameters.orEmpty()
         .mapNotNull { resolveVarargOfMemberFunction(it.returnTypeRef.coneType, session, scopeSession) }
