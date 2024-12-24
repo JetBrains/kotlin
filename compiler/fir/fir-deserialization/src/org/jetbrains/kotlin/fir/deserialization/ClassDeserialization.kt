@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.serialization.deserialization.loadValueClassRepresentation
 
-private var i = 0
 fun deserializeClassToSymbol(
     classId: ClassId,
     classProto: ProtoBuf.Class,
@@ -59,9 +58,6 @@ fun deserializeClassToSymbol(
     origin: FirDeclarationOrigin = FirDeclarationOrigin.Library,
     deserializeNestedClass: (ClassId, FirDeserializationContext) -> FirRegularClassSymbol?
 ) {
-    if (i++ > 100) {
-        Unit
-    }
     val flags = classProto.flags
     val kind = Flags.CLASS_KIND.get(flags)
     val modality = ProtoEnumFlags.modality(Flags.MODALITY.get(flags))

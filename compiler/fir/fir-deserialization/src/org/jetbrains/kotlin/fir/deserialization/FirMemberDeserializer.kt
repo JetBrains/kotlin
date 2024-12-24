@@ -773,6 +773,7 @@ internal fun Visibility.toDeserializedEffectiveVisibility(
     forClass: Boolean
 ): EffectiveVisibility {
     /*
+     * TODO: update the comment
      * `lowerBound` operation for `EffectiveVisibility.Protected` involves subtyping between container classes.
      * In some cases, during deserialization, this subtyping might lead to the infinite recursion.
      * Consider the following example:
@@ -792,14 +793,8 @@ internal fun Visibility.toDeserializedEffectiveVisibility(
      *
      * So the `unbindProtected` call is needed to remove this type-dependent effective visibility.
      */
-    val selfEffectiveVisibility = this.toEffectiveVisibility(owner, forClass = forClass).unbindProtected()
+    val selfEffectiveVisibility = this.toEffectiveVisibility(owner, forClass = forClass)
+    if (selfEffectiveVisibility is EffectiveVisibility.Protected) return selfEffectiveVisibility
     val parentEffectiveVisibility = c?.outerClassEffectiveVisibility ?: EffectiveVisibility.Public
     return parentEffectiveVisibility.lowerBound(selfEffectiveVisibility, session.typeContext)
-}
-
-private fun EffectiveVisibility.unbindProtected(): EffectiveVisibility {
-    return when (this) {
-        is EffectiveVisibility.Protected -> EffectiveVisibility.ProtectedBound
-        else -> this
-    }
 }
