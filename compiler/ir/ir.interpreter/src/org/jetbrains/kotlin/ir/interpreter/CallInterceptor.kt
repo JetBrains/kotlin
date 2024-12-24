@@ -67,11 +67,8 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
             receiver is Primitive -> calculateBuiltIns(irFunction, args) // check for js char, js long and get field for primitives
             // TODO try to save fields in Primitive -> then it is possible to move up next branch
             // TODO try to create backing field if it is missing
-            irFunction.body == null && irFunction.isAccessorOfPropertyWithBackingField() -> {
-                val backingField = irFunction.property!!.backingField!!
-                val getField = backingField.createGetField(irFunction.dispatchReceiverParameter)
-                callStack.pushCompoundInstruction(getField)
-            }
+            irFunction.body == null && irFunction.isAccessorOfPropertyWithBackingField() ->
+                callStack.pushCompoundInstruction(irFunction.createGetFieldOfCorrespondingProperty())
             irFunction.body == null -> irFunction.trySubstituteFunctionBody() ?: calculateBuiltIns(irFunction, args)
             else -> defaultAction()
         }
