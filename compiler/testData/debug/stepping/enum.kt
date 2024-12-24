@@ -40,17 +40,20 @@ fun box() {
 
 // EXPECTATIONS JS_IR
 // test.kt:23 box
+// test.kt:5 E_initEntries
 // test.kt:12 <init>
 // test.kt:4 <init>
+// test.kt:6 E_initEntries
 // test.kt:12 <init>
 // test.kt:4 <init>
 // test.kt:23 box
 // test.kt:10 foo
 // test.kt:8 E$foo$lambda
+// test.kt:24 box
 // test.kt:16 E2_initEntries
 // test.kt:15 <init>
 // test.kt:15 <init>
-// test.kt:18 E2_initEntries
+// test.kt:17 E2_initEntries
 // test.kt:15 <init>
 // test.kt:15 <init>
 // test.kt:25 box
