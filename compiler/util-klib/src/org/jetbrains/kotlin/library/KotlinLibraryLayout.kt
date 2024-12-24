@@ -70,6 +70,8 @@ interface IrKotlinLibraryLayout : KotlinLibraryLayout {
         get() = File(irDir, "files.knf")
     val irDebugInfo
         get() = File(irDir, "debugInfo.knd")
+    val irFileEntries
+        get() = File(irDir, "fileEntries.knf")
 
     fun irDeclarations(file: File): File = File(file, "irDeclarations.knd")
     fun irTypes(file: File): File = File(file, "types.knt")
@@ -78,4 +80,5 @@ interface IrKotlinLibraryLayout : KotlinLibraryLayout {
     fun irBodies(file: File): File = File(file, "body.knb")
     fun irFile(file: File): File = File(file, "file.knf")
     fun irDebugInfo(file: File): File = File(file, "debugInfo.knd")
+    fun irFileEntries(file: File): File = File(file, "fileEntries.knf")
 }
