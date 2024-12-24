@@ -1068,6 +1068,23 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
     )
 
     @Test
+    fun testChildOfUnstableClass() = assertStability(
+        "",
+        """
+            open class Parent {
+                var age: Int = 0
+                var name: String = ""
+
+                fun info() = name + "|" + age.toString()
+            }
+
+            class Child : Parent()
+        """,
+        "Child()",
+        "Unstable"
+    )
+
+    @Test
     fun testPersistentMapOfCallWithStableTypeIsStable() = assertStability(
         "",
         """
