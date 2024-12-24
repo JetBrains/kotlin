@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.parseAnalysisFlags
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.defaultsProvider
 
 class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override val directiveContainers: List<DirectivesContainer>

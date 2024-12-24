@@ -6,13 +6,9 @@
 package org.jetbrains.kotlin.test.services.impl
 
 import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.platform.konan.NativePlatforms
-import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
@@ -241,7 +237,7 @@ class ModuleStructureExtractorImpl(
                     }
                 }
                 ModuleStructureDirectives.JVM_TARGET -> {
-                    if (!defaultsProvider.defaultPlatform.isJvm()) return false
+                    if (!defaultsProvider.targetPlatform.isJvm()) return false
                     if (currentModuleTargetPlatform != null) {
                         assertions.fail { "Target platform already specified twice for module $currentModuleName" }
                     }
@@ -336,7 +332,7 @@ class ModuleStructureExtractorImpl(
             val moduleName = currentModuleName
                 ?: testServices.defaultDirectives[ModuleStructureDirectives.MODULE].firstOrNull()
                 ?: DEFAULT_MODULE_NAME
-            val targetPlatform = currentModuleTargetPlatform ?: defaultsProvider.defaultPlatform
+            val targetPlatform = currentModuleTargetPlatform ?: defaultsProvider.targetPlatform
             val testModule = TestModule(
                 name = moduleName,
                 targetPlatform = targetPlatform,
