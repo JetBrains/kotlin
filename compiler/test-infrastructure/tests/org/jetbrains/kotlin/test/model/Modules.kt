@@ -33,7 +33,6 @@ data class TestModule(
     override fun toString(): String {
         return buildString {
             appendLine("Module: $name")
-            appendLine("targetPlatform = $targetPlatform")
             appendLine("Dependencies:")
             allDependencies.forEach { appendLine("  $it") }
             appendLine("Directives:\n  $directives")

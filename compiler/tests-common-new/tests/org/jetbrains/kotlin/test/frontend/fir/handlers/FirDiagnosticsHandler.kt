@@ -610,7 +610,7 @@ fun KtDiagnostic.toMetaInfos(
         metaInfo.attributes += if (lightTreeEnabled) PsiLightTreeMetaInfoProcessor.LT else PsiLightTreeMetaInfoProcessor.PSI
     }
     if (file !in module.files) {
-        val targetPlatform = module.targetPlatform
+        val targetPlatform = globalMetadataInfoHandler.testServices.defaultsProvider.targetPlatform
         metaInfo.attributes += when {
             targetPlatform.isJvm() -> "JVM"
             targetPlatform.isJs() -> "JS"

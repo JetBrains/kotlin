@@ -45,7 +45,7 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
             configuration.put(key as CompilerConfigurationKey<Any>, value)
         }
 
-        if (module.targetPlatform.isCommon() && WITH_STDLIB in module.directives) {
+        if (testServices.defaultsProvider.targetPlatform.isCommon() && WITH_STDLIB in module.directives) {
             configuration.add(
                 CLIConfigurationKeys.CONTENT_ROOTS,
                 JvmClasspathRoot(ForTestCompileRuntime.stdlibCommonForTests())

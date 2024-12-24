@@ -84,7 +84,7 @@ open class CompilerConfigurationProviderImpl(
 
     @OptIn(TestInfrastructureInternals::class)
     protected open fun createKotlinCoreEnvironment(module: TestModule): KotlinCoreEnvironment {
-        val platform = module.targetPlatform
+        val platform = testServices.defaultsProvider.targetPlatform
         val configFiles = platform.platformToEnvironmentConfigFiles()
         val applicationEnvironment = KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForTests(
             testRootDisposable,

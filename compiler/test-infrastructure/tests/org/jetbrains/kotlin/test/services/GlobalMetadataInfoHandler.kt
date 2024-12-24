@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 
 class GlobalMetadataInfoHandler(
-    private val testServices: TestServices,
+    val testServices: TestServices,
     private val processors: List<AdditionalMetaInfoProcessor>
 ) : TestService {
     private lateinit var existingInfosPerFile: Map<TestFile, List<ParsedCodeMetaInfo>>
