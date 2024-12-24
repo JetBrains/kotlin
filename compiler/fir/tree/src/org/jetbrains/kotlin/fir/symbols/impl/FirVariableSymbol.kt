@@ -96,7 +96,6 @@ open class FirPropertySymbol(callableId: CallableId) : FirVariableSymbol<FirProp
         return currentDeclarationDeprecationsAreDefinitelyEmpty()
                 && getterSymbol?.currentDeclarationDeprecationsAreDefinitelyEmpty() != false
                 && setterSymbol?.currentDeclarationDeprecationsAreDefinitelyEmpty() != false
-                && backingFieldSymbol?.currentDeclarationDeprecationsAreDefinitelyEmpty() != false
     }
 }
 
@@ -120,7 +119,8 @@ class FirBackingFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirBacki
         get() = fir.propertySymbol.fir.getter?.symbol
 
     override fun deprecationsAreDefinitelyEmpty(): Boolean {
-        return currentDeclarationDeprecationsAreDefinitelyEmpty() && propertySymbol.currentDeclarationDeprecationsAreDefinitelyEmpty()
+        // The backing field cannot be deprecated because `kotlin.Deprecated`'s target does not include `AnnotationTarget.FIELD`
+        return true
     }
 }
 
