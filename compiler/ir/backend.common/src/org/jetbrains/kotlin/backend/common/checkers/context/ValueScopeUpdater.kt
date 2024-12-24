@@ -55,12 +55,6 @@ internal object ValueScopeUpdater : ContextUpdater {
             }
         }
 
-        override fun visitReplSnippet(declaration: IrReplSnippet, data: Nothing?) {
-            context.withScopeOwner(declaration, block) {
-//                addIfNotNull(declaration.thisReceiver?.symbol)
-            }
-        }
-
         override fun visitFunction(declaration: IrFunction) {
             context.withScopeOwner(declaration, block) {
                 // A function parameter's default value may reference the parameters that come after it,

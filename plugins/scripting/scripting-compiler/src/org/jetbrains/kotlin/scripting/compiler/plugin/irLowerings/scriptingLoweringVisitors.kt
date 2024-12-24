@@ -42,20 +42,20 @@ internal data class ScriptLikeToClassTransformerContext(
     val fieldForScriptThis: IrFieldSymbol?,
     val valueParameterForFieldReceiver: IrValueParameterSymbol?,
     val isInScriptConstructor: Boolean,
-    val topLevelDeclaration: IrDeclaration? = null,
+    val topLevelDeclarationWithScriptReceiver: IrDeclaration? = null,
 ) {
     companion object {
         fun makeRootContext(
             valueParameterForScriptThis: IrValueParameterSymbol?,
             isInScriptConstructor: Boolean,
-            topLevelDeclaration: IrDeclaration? = null
+            topLevelDeclarationWithScriptReceiver: IrDeclaration? = null
         ) =
             ScriptLikeToClassTransformerContext(
                 valueParameterForScriptThis = valueParameterForScriptThis,
                 fieldForScriptThis = null,
                 valueParameterForFieldReceiver = null,
                 isInScriptConstructor = isInScriptConstructor,
-                topLevelDeclaration = topLevelDeclaration
+                topLevelDeclarationWithScriptReceiver = topLevelDeclarationWithScriptReceiver
             )
     }
 }
@@ -407,10 +407,10 @@ internal abstract class ScriptLikeToClassTransformer(
     protected open fun isValidNameForReceiver(name: Name) = name == SpecialNames.THIS
 
     private fun IrDeclaration.isCurrentScriptTopLevelDeclaration(data: ScriptLikeToClassTransformerContext): Boolean {
-        if (data.topLevelDeclaration == null || (parent != irScriptLike && parent != irTargetClass)) return false
+        if (data.topLevelDeclarationWithScriptReceiver == null || (parent != irScriptLike && parent != irTargetClass)) return false
         val declarationToCompare = if (this is IrFunction) this.propertyIfAccessor else this
         // TODO: might be fragile, if we'll start to use transformed declaration on either side, try to find a way to detect or avoid (KT-72943)
-        return declarationToCompare == data.topLevelDeclaration
+        return declarationToCompare == data.topLevelDeclarationWithScriptReceiver
     }
 
     private fun IrDeclaration.needsScriptReceiver() =

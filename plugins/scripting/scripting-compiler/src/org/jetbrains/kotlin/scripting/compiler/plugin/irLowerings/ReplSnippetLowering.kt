@@ -14,30 +14,23 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
-import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
-import org.jetbrains.kotlin.name.SpecialNames
 
 @PhaseDescription(name = "ReplSnippetsToClasses")
+@OptIn(UnsafeDuringIrConstructionAPI::class)
 internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : ModuleLoweringPass {
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun lower(irModule: IrModuleFragment) {
         val snippets = mutableListOf<IrReplSnippet>()
 
@@ -63,24 +56,22 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
     }
 
     private fun prepareReplSnippetClass(irFile: IrFile, irSnippet: IrReplSnippet): IrClass {
-        val fileEntry = irFile.fileEntry
         return context.irFactory.buildClass {
-            startOffset = 0
-            endOffset = fileEntry.maxOffset
+            startOffset = irSnippet.startOffset
+            endOffset = irSnippet.endOffset
             origin = IrDeclarationOrigin.REPL_SNIPPET_CLASS
             name = NameUtils.getScriptTargetClassName(irSnippet.name)
             kind = ClassKind.OBJECT
             visibility = DescriptorVisibilities.PUBLIC
             modality = Modality.FINAL
         }.also { irSnippetClass ->
-            irSnippetClass.superTypes += (context.irBuiltIns.anyNType)
+            irSnippetClass.superTypes += context.irBuiltIns.anyType
             irSnippetClass.parent = irFile
             irSnippetClass.metadata = irSnippet.metadata
             irSnippet.targetClass = irSnippetClass.symbol
         }
     }
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun finalizeReplSnippetClass(irSnippet: IrReplSnippet, symbolRemapper: ReplSnippetsToClassesSymbolRemapper) {
 
         val irSnippetClass = irSnippet.targetClass!!.owner
@@ -91,7 +82,8 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
         val valsToFields = mutableMapOf<IrVariableSymbol, IrFieldSymbol>()
 
         val irSnippetClassType = IrSimpleTypeImpl(irSnippetClass.symbol, false, emptyList(), emptyList())
-        val irSnippetClassThisReceiver = irSnippet.createThisReceiverParameter(context, IrDeclarationOrigin.INSTANCE_RECEIVER, irSnippetClassType)
+        val irSnippetClassThisReceiver =
+            irSnippet.createThisReceiverParameter(context, IrDeclarationOrigin.INSTANCE_RECEIVER, irSnippetClassType)
         irSnippetClass.thisReceiver = irSnippetClassThisReceiver
 
         val snippetAccessCallsGenerator = ReplSnippetAccessCallsGenerator(
@@ -104,17 +96,25 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
             name = Name.identifier("eval")
             startOffset = irSnippet.startOffset
             endOffset = irSnippet.endOffset
-            returnType = context.irBuiltIns.unitType // TODO: implement value returning
+            returnType = context.irBuiltIns.unitType
             visibility = INTERNAL
         }.also { evalFun ->
             evalFun.parent = irSnippetClass
-            evalFun.dispatchReceiverParameter =
+            evalFun.parameters = listOf(
                 evalFun.buildReceiverParameter {
                     origin = irSnippetClass.origin
                     type = irSnippetClass.defaultType
                 }
+            )
             evalFun.body =
                 context.irBuiltIns.createIrBuilder(evalFun.symbol).irBlockBody {
+                    +snippetAccessCallsGenerator.createPutSelfToState(
+                        ScriptLikeToClassTransformerContext.makeRootContext(
+                            valueParameterForScriptThis = evalFun.dispatchReceiverParameter?.symbol,
+                            isInScriptConstructor = false,
+                            topLevelDeclarationWithScriptReceiver = evalFun
+                        )
+                    )
                     val flattenedStatements = irSnippet.body.statements.flatMap { snippetStatement ->
                         if (snippetStatement is IrComposite) {
                             snippetStatement.statements
@@ -136,11 +136,9 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
                                 is IrVariable -> {
                                     irSnippetClass.addField {
                                         startOffset = statement.startOffset
-                                        endOffset= statement.endOffset
+                                        endOffset = statement.endOffset
                                         name = statement.name
                                         type = statement.type
-                                        visibility = DescriptorVisibilities.PUBLIC
-                                        origin = IrDeclarationOrigin.DEFINED
                                     }.also { field ->
                                         statement.initializer?.let { initializer ->
                                             +IrSetFieldImpl(
@@ -167,13 +165,6 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
                             }
                         }
                     }
-                    +snippetAccessCallsGenerator.createPutSelfToState(
-                        ScriptLikeToClassTransformerContext.makeRootContext(
-                            valueParameterForScriptThis = evalFun.dispatchReceiverParameter?.symbol,
-                            isInScriptConstructor = false,
-                            topLevelDeclaration = evalFun
-                        )
-                    )
                     lastExpression?.let {
                         +irReturn(IrGetValueImpl(it.startOffset, it.endOffset, lastExpressionVar!!.symbol))
                     }
@@ -197,34 +188,19 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
                 if (it is IrConstructor)
                     ScriptLikeToClassTransformerContext.makeRootContext(irSnippetClass.thisReceiver!!.symbol, true)
                 else
-                    ScriptLikeToClassTransformerContext.makeRootContext(null, isInScriptConstructor = false, topLevelDeclaration = it)
+                    ScriptLikeToClassTransformerContext.makeRootContext(null, isInScriptConstructor = false)
             it.transform(scriptTransformer, rootContext)
                 .transform(lambdaPatcher, ScriptFixLambdasTransformerContext())
         }
 
+        // TODO: find out what problems could arise from copying annotations applicable to file only (KT-74176)
         irSnippetClass.annotations += (irSnippetClass.parent as IrFile).annotations
     }
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun createConstructor(irSnippetClass: IrClass): IrConstructor =
-        with(IrFunctionBuilder().apply {
+        irSnippetClass.factory.buildConstructor {
             isPrimary = true
-            returnType = irSnippetClass.thisReceiver!!.type as IrSimpleType
-        }) {
-            irSnippetClass.factory.createConstructor(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                origin = origin,
-                name = SpecialNames.INIT,
-                visibility = visibility,
-                isInline = isInline,
-                isExpect = isExpect,
-                returnType = returnType,
-                symbol = IrConstructorSymbolImpl(),
-                isPrimary = isPrimary,
-                isExternal = isExternal,
-                containerSource = containerSource,
-            )
+            returnType = irSnippetClass.defaultType
         }.also { irConstructor ->
             irConstructor.body = context.irBuiltIns.createIrBuilder(irConstructor.symbol).irBlockBody {
                 +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
@@ -243,7 +219,7 @@ private class ReplSnippetsToClassesSymbolRemapper : SymbolRemapper.Empty() {
 private class ReplSnippetAccessCallsGenerator(
     context: IrPluginContext,
     snippetClassReceiver: IrValueParameter,
-    implicitReceiversFieldsWithParameters: ArrayList<Pair<IrField, IrValueParameter>>,
+    implicitReceiversFieldsWithParameters: List<Pair<IrField, IrValueParameter>>,
     val irSnippetClass: IrClass,
     val irReplStateObjectSymbol: IrClassSymbol
 ) : ScriptLikeAccessCallsGenerator(context, snippetClassReceiver, implicitReceiversFieldsWithParameters) {
@@ -251,7 +227,12 @@ private class ReplSnippetAccessCallsGenerator(
     private val mapGet = mapClass.functions.single { it.name.asString() == "get" }
     private val mapPut = mapClass.functions.single { it.name.asString() == "put" }
 
-    fun createIrGetValFromState(startOffset: Int, endOffset: Int, irSnippetClassFromState: IrClassSymbol, irTargetField: IrFieldSymbol, data: ScriptLikeToClassTransformerContext): IrExpression =
+    fun createIrGetValFromState(
+        startOffset: Int,
+        endOffset: Int,
+        irSnippetClassFromState: IrClassSymbol,
+        irTargetField: IrFieldSymbol
+    ): IrExpression =
         IrGetFieldImpl(
             startOffset,
             endOffset,
@@ -260,73 +241,71 @@ private class ReplSnippetAccessCallsGenerator(
             IrStatementOrigin.GET_PROPERTY
         ).also {
             it.receiver =
-                createAccessToSnippet(irSnippetClassFromState, data, startOffset, endOffset)
+                createAccessToSnippet(irSnippetClassFromState, startOffset, endOffset)
         }
 
-    fun createIrSetValInState(startOffset: Int, endOffset: Int, irSnippetClassFromState: IrClassSymbol, irTargetField: IrFieldSymbol, expression: IrExpression, data: ScriptLikeToClassTransformerContext) : IrExpression =
+    fun createIrSetValInState(
+        startOffset: Int,
+        endOffset: Int,
+        irSnippetClassFromState: IrClassSymbol,
+        irTargetField: IrFieldSymbol,
+        expression: IrExpression
+    ): IrExpression =
         IrSetFieldImpl(
             startOffset,
             endOffset,
             irTargetField,
             context.irBuiltIns.unitType,
         ).also {
-            it.receiver = createAccessToSnippet(irSnippetClassFromState, data, startOffset, endOffset)
+            it.receiver = createAccessToSnippet(irSnippetClassFromState, startOffset, endOffset)
             it.value = expression
         }
 
     fun createPutSelfToState(data: ScriptLikeToClassTransformerContext): IrCall =
         IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, mapPut.returnType, mapPut.symbol).apply {
-            dispatchReceiver =
+            arguments[0] =
                 IrGetObjectValueImpl(
                     startOffset, endOffset,
                     irReplStateObjectSymbol.typeWith(),
                     irReplStateObjectSymbol,
                 )
-            putValueArgument(
-                0,
+            arguments[1] =
                 IrConstImpl.string(
                     startOffset,
                     endOffset,
                     context.irBuiltIns.stringType,
                     irSnippetClass.name.asString()
                 )
-            )
-            putValueArgument(1, getAccessCallForSelf(data, startOffset, endOffset, null, null))
+            arguments[2] = getAccessCallForSelf(data, startOffset, endOffset, null, null)
         }
 
     fun createAccessToSnippet(
         irSnippetClassFromState: IrClassSymbol,
-        data: ScriptLikeToClassTransformerContext,
         startOffset: Int,
         endOffset: Int,
-    ): IrExpression? =
-        if (irSnippetClassFromState == irSnippetClass.symbol)
-            getAccessCallForSelf(data, startOffset, endOffset, IrStatementOrigin.GET_PROPERTY, null)
-        else {
-            val getSnippetCall = IrCallImpl(startOffset, endOffset, mapGet.returnType, mapGet.symbol).apply {
-                dispatchReceiver =
-                    IrGetObjectValueImpl(
-                        startOffset, endOffset,
-                        irReplStateObjectSymbol.typeWith(),
-                        irReplStateObjectSymbol,
-                    )
-                putValueArgument(
-                    0,
-                    IrConstImpl.string(
-                        startOffset,
-                        endOffset,
-                        context.irBuiltIns.stringType,
-                        irSnippetClassFromState.owner.name.asString()
-                    )
+    ): IrExpression? {
+        val getSnippetCall = IrCallImpl(startOffset, endOffset, mapGet.returnType, mapGet.symbol).apply {
+            arguments[0] =
+                IrGetObjectValueImpl(
+                    startOffset, endOffset,
+                    irReplStateObjectSymbol.typeWith(),
+                    irReplStateObjectSymbol,
                 )
-            }
-            val targetType = irSnippetClassFromState.typeWith()
-            IrTypeOperatorCallImpl(
-                startOffset, endOffset, targetType,
-                IrTypeOperator.CAST,
-                targetType, getSnippetCall
-            )
+            arguments[1] =
+                IrConstImpl.string(
+                    startOffset,
+                    endOffset,
+                    context.irBuiltIns.stringType,
+                    irSnippetClassFromState.owner.name.asString()
+                )
         }
+        val targetType = irSnippetClassFromState.typeWith()
+        return IrTypeOperatorCallImpl(
+            startOffset, endOffset, targetType,
+            IrTypeOperator.CAST,
+            targetType, getSnippetCall
+        )
+    }
 
 }
 
@@ -366,8 +345,7 @@ private class ReplSnippetToClassTransformer(
             accessCallsGenerator.createIrGetValFromState(
                 expression.startOffset, expression.endOffset,
                 irTargetClass.symbol,
-                targetFieldInThisSnippet,
-                data
+                targetFieldInThisSnippet
             ).also { it.transformChildren(this, data) }
         } else {
             val targetFieldFromOtherSnippets =
@@ -378,8 +356,7 @@ private class ReplSnippetToClassTransformer(
                 accessCallsGenerator.createIrGetValFromState(
                     expression.startOffset, expression.endOffset,
                     targetFieldFromOtherSnippets.owner.parentAsClass.symbol,
-                    targetFieldFromOtherSnippets,
-                    data
+                    targetFieldFromOtherSnippets
                 ).also { it.transformChildren(this, data) }
             } else {
                 super.visitGetValue(expression, data)
@@ -397,8 +374,7 @@ private class ReplSnippetToClassTransformer(
                 expression.startOffset, expression.endOffset,
                 irTargetClass.symbol,
                 targetFieldInThisSnippet,
-                expression.value,
-                data
+                expression.value
             ).also { it.transformChildren(this, data) }
         } else {
             val targetFieldFromOtherSnippets =
@@ -410,8 +386,7 @@ private class ReplSnippetToClassTransformer(
                     expression.startOffset, expression.endOffset,
                     targetFieldFromOtherSnippets.owner.parentAsClass.symbol,
                     targetFieldFromOtherSnippets,
-                    expression.value,
-                    data
+                    expression.value
                 ).also { it.transformChildren(this, data) }
             } else {
                 super.visitSetValue(expression, data)
@@ -419,30 +394,15 @@ private class ReplSnippetToClassTransformer(
         }
     }
 
-    override fun visitCall(expression: IrCall, data: ScriptLikeToClassTransformerContext): IrElement {
-        return if (expression.symbol.owner in irSnippet.capturingDeclarationsFromOtherSnippets) {
-            expression.insertDispatchReceiver(
-                accessCallsGenerator.createAccessToSnippet(
-                    (expression.symbol.owner.parent as IrClass).symbol,
-                    data, expression.startOffset, expression.endOffset
-                )
-            )
-            expression.transformChildren(this, data)
-            expression
-        } else {
-            super.visitCall(expression, data)
-        }
-    }
-
     override fun visitConstructorCall(
         expression: IrConstructorCall,
         data: ScriptLikeToClassTransformerContext,
     ): IrExpression {
-        return if ((expression.symbol.owner.parent as? IrDeclaration)?.let { it in irSnippet.capturingDeclarationsFromOtherSnippets } == true) {
+        return if ((expression.symbol.owner.parent as? IrDeclaration)?.let { it in irSnippet.declarationsFromOtherSnippets } == true) {
             expression.arguments +=
                 accessCallsGenerator.createAccessToSnippet(
                     ((expression.symbol.owner.parent as IrClass).parent as IrClass).symbol,
-                    data, expression.startOffset, expression.endOffset
+                    expression.startOffset, expression.endOffset
                 )
             expression.transformChildren(this, data)
             expression
@@ -453,34 +413,20 @@ private class ReplSnippetToClassTransformer(
 }
 
 @OptIn(UnsafeDuringIrConstructionAPI::class)
-private fun makeImplicitReceiversFieldsWithParameters(irSnippetClass: IrClass, typeRemapper: SimpleTypeRemapper, irSnippet: IrReplSnippet) =
-    arrayListOf<Pair<IrField, IrValueParameter>>().apply {
-
-        fun createField(name: Name, type: IrType): IrField {
-            val field = irSnippetClass.factory.createField(
-                startOffset = UNDEFINED_OFFSET,
-                endOffset = UNDEFINED_OFFSET,
-                origin = IrDeclarationOrigin.SCRIPT_IMPLICIT_RECEIVER,
-                name = name,
-                visibility = DescriptorVisibilities.PRIVATE,
-                symbol = IrFieldSymbolImpl(),
-                type = typeRemapper.remapType(type),
-                isFinal = true,
-                isStatic = false,
-                isExternal = false
-            )
-            field.parent = irSnippetClass
-            irSnippetClass.declarations.add(field)
-            return field
-        }
-
-        irSnippet.receiversParameters.forEach { param ->
-            val typeName = param.type.classFqName?.shortName()?.identifierOrNullIfSpecial
-            add(
-                createField(
-                    Name.identifier($$$"$$implicitReceiver_$$${typeName ?: param.indexInParameters.toString()}"),
-                    param.type
-                ) to param
-            )
-        }
+private fun makeImplicitReceiversFieldsWithParameters(
+    irSnippetClass: IrClass,
+    typeRemapper: SimpleTypeRemapper,
+    irSnippet: IrReplSnippet,
+): List<Pair<IrField, IrValueParameter>> =
+    irSnippet.receiverParameters.map { param ->
+        val typeName = param.type.classFqName?.shortName()?.identifierOrNullIfSpecial
+        irSnippetClass.addField {
+            startOffset = UNDEFINED_OFFSET
+            endOffset = UNDEFINED_OFFSET
+            origin = IrDeclarationOrigin.SCRIPT_IMPLICIT_RECEIVER
+            name = Name.identifier("\$\$implicitReceiver_${typeName ?: param.indexInParameters.toString()}")
+            visibility = DescriptorVisibilities.PRIVATE
+            type = typeRemapper.remapType(param.type)
+            isFinal = true
+        } to param
     }
