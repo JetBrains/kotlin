@@ -5,11 +5,11 @@
 
 // MODULE: common
 
-expect interface <!NO_ACTUAL_FOR_EXPECT!>Dummy<!> {
+expect interface Dummy {
     interface ExternalInterface
 }
 
-external class <!EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE!>ExternalClass<!>: Dummy.ExternalInterface
+external class ExternalClass: Dummy.ExternalInterface
 
 // MODULE: main-js()()(common)
 

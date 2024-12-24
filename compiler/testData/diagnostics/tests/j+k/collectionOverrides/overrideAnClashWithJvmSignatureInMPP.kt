@@ -9,11 +9,11 @@
 
 // MODULE: common
 // FILE: Common.kt
-expect abstract class <!NO_ACTUAL_FOR_EXPECT!>B<!>() {
+expect abstract class B() {
     open fun get(index: Int): Char
 }
 
-expect abstract class <!NO_ACTUAL_FOR_EXPECT!>KA<!> : B {
+expect abstract class KA : B {
     override fun get(index: Int): Char
 }
 

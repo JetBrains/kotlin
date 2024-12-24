@@ -3,7 +3,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-<!CONFLICTING_OVERLOADS!>expect fun foo()<!>
-<!CONFLICTING_OVERLOADS!>expect fun foo()<!>
+<!CONFLICTING_OVERLOADS!>expect fun <!NO_ACTUAL_FOR_EXPECT!>foo<!>()<!>
+<!CONFLICTING_OVERLOADS!>expect fun <!NO_ACTUAL_FOR_EXPECT!>foo<!>()<!>
 
-expect fun foo(x: Int)
+expect fun <!NO_ACTUAL_FOR_EXPECT!>foo<!>(x: Int)

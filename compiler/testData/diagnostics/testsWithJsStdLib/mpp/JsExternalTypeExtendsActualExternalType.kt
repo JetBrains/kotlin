@@ -3,9 +3,9 @@
 // MODULE: commonjs
 // FILE: commonjs.kt
 
-expect interface <!NO_ACTUAL_FOR_EXPECT!>ExternalInterface<!>
+expect interface ExternalInterface
 
-external class <!EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE!>ExternalClass<!>: ExternalInterface
+external class ExternalClass: ExternalInterface
 
 // MODULE: js()()(commonjs)
 // FILE: js.kt

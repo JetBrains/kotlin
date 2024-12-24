@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: common
-expect <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{COMMON}!>class Foo<!>() {
+expect <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM}!>class Foo<!>() {
     fun foo()
 }
 
