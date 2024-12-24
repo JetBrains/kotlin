@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeature.MultiPlatformProjects
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerExperimentalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
@@ -154,7 +155,7 @@ open class FirReplFrontendFacade(
                     dependsOnModules,
                     friendModules,
                     replCompilationEnvironment.targetPlatform,
-                    isCommon = module.targetPlatform.isCommon(),
+                    isCommon = module.languageVersionSettings.supportsFeature(MultiPlatformProjects) && !module.isLeafModuleInMppGraph(testServices),
                 )
 
                 moduleInfoProvider.registerModuleData(module, moduleData)

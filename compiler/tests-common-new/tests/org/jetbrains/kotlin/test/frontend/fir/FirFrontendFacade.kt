@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeature.MultiPlatformProjects
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerExperimentalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
@@ -88,7 +89,7 @@ open class FirFrontendFacade(
     }
 
     override fun analyze(module: TestModule): FirOutputArtifact {
-        val isMppSupported = module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
+        val isMppSupported = module.languageVersionSettings.supportsFeature(MultiPlatformProjects)
 
         val sortedModules = if (isMppSupported) sortDependsOnTopologically(module) else listOf(module)
 
@@ -151,7 +152,7 @@ open class FirFrontendFacade(
                 dependsOnModules,
                 friendModules,
                 mainModule.targetPlatform,
-                isCommon = module.targetPlatform.isCommon(),
+                isCommon = module.languageVersionSettings.supportsFeature(MultiPlatformProjects) && !module.isLeafModuleInMppGraph(testServices),
             )
 
             moduleInfoProvider.registerModuleData(module, moduleData)
@@ -467,7 +468,7 @@ open class FirFrontendFacade(
                 return false
             }
 
-            return if (module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
+            return if (module.languageVersionSettings.supportsFeature(MultiPlatformProjects)) {
                 module.isLeafModuleInMppGraph(testServices)
             } else {
                 true
