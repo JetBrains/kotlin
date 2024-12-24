@@ -1,7 +1,5 @@
 package org.jetbrains.kotlin.analysis.api.dumdum
 
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.dumdum.index.*
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.core.JavaCoreProjectEnvironment
 import com.intellij.ide.plugins.PluginUtil
@@ -12,11 +10,12 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.application.TransactionGuardImpl
 import com.intellij.openapi.extensions.PluginId
+import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.PlainTextFileType
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.FileIndexFacade
 import com.intellij.openapi.roots.PackageIndex
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSet
@@ -31,13 +30,10 @@ import com.intellij.psi.impl.smartPointers.SmartTypePointerManagerImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubTreeLoader
 import com.intellij.psi.util.JavaClassSupers
-import com.intellij.psi.util.descendantsOfType
-import com.intellij.testFramework.LightVirtualFile
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.dumdum.filebasedindex.names.*
-import org.jetbrains.kotlin.analysis.api.dumdum.filesystem.WobblerVirtualFile
+import org.jetbrains.kotlin.analysis.api.dumdum.filesystem.LazyVirtualFile
+import org.jetbrains.kotlin.analysis.api.dumdum.filesystem.LazyVirtualFileSystem
 import org.jetbrains.kotlin.analysis.api.dumdum.index.*
 import org.jetbrains.kotlin.analysis.api.dumdum.stubindex.*
 import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin
@@ -56,8 +52,6 @@ import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
-import org.jetbrains.kotlin.analysis.api.resolution.KaCallableMemberCall
-import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProviderCliImpl
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
@@ -65,22 +59,14 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMode
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
-import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.utils.PathUtil
@@ -92,9 +78,12 @@ interface Wobbler : AutoCloseable {
     fun mapFile(psiFile: PsiFile): FileValues
 
     val valueTypes: List<ValueType<*>>
+
+    fun virtualFile(fileId: FileId, fileType: FileType, content: () -> ByteArray): VirtualFile
 }
 
 interface WobblerProject : AutoCloseable {
+    val wobbler: Wobbler
     val project: Project
 
     fun createAnalyzer(
@@ -171,8 +160,14 @@ fun createWobbler(): Wobbler {
 
     val stubSerializersTable = stubSerializersTable()
 
+    val vfs = LazyVirtualFileSystem()
+
     return object : Wobbler {
+        override fun virtualFile(fileId: FileId, fileType: FileType, content: () -> ByteArray): VirtualFile =
+            LazyVirtualFile(vfs, fileId, fileType, content)
+
         override fun createProject(): WobblerProject {
+            val wobbler = this
             return Disposer.newDisposable(applicationDisposable).let { projectDisposable ->
                 val projectEnvironment = object : JavaCoreProjectEnvironment(projectDisposable, applicationEnvironment) {
                     override fun createCoreFileManager(): JavaFileManager {
@@ -188,6 +183,9 @@ fun createWobbler(): Wobbler {
                     }
                 }
                 object : WobblerProject {
+                    override val wobbler: Wobbler
+                        get() = wobbler
+
                     override val project: Project
                         get() = projectEnvironment.project
 
@@ -206,7 +204,7 @@ fun createWobbler(): Wobbler {
                             stubIndexExtensions = stubIndexExtensions,
                             virtualFileFactory = virtualFileFactory,
                             documentIdMapper = { virtualFile ->
-                                (virtualFile as WobblerVirtualFile).fileId
+                                (virtualFile as LazyVirtualFile).fileId
                             },
                             psiFileFactory = { psiManager.findFile(it)!! },
                             stubSerializersTable = stubSerializersTable,

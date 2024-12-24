@@ -8,8 +8,9 @@ interface Index {
     fun <K> keys(keyType: KeyType<K>): Sequence<K>
 }
 
-@JvmInline
-value class FileId(val id: String)
+interface FileId {
+    val fileName: String
+}
 
 interface Serializer<T> {
     fun serialize(value: T): ByteArray
@@ -25,6 +26,9 @@ class KeyType<K>(
 
     override fun hashCode(): Int =
         id.hashCode() + 1
+
+    override fun toString(): String =
+        id
 }
 
 data class ValueIndex(val map: Map<KeyType<*>, Set<Any?>>)
@@ -44,4 +48,7 @@ class ValueType<S>(
 
     override fun hashCode(): Int =
         id.hashCode() + 2
+
+    override fun toString(): String =
+        id
 }
