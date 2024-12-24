@@ -27,7 +27,7 @@ suspend fun box() {
 // test.kt:10 doResume
 // test.kt:10 box$slambda
 // test.kt:10 doResume
-// test.kt:7 foo
+// test.kt:6 foo
 // test.kt:6 foo
 // test.kt:11 doResume
 // test.kt:13 doResume
