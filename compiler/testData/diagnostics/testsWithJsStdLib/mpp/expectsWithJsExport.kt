@@ -1,5 +1,6 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-64951
 
 // MODULE: m1-common

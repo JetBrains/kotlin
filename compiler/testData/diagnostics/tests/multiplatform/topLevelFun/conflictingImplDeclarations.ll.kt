@@ -10,9 +10,3 @@ expect fun foo()
 
 actual <!CONFLICTING_OVERLOADS!>fun foo()<!> {}
 actual <!CONFLICTING_OVERLOADS!>fun foo()<!> {}
-
-// MODULE: m3-js()()(m1-common)
-// FILE: js.kt
-
-actual <!CONFLICTING_OVERLOADS!>fun foo()<!> {}
-actual <!CONFLICTING_OVERLOADS!>fun foo()<!> {}
