@@ -131,7 +131,7 @@ abstract class NamedCompilerPhase<in Context : LoggingContext, Input, Output>(
     abstract fun runAfter(phaseConfig: PhaseConfig, phaserState: PhaserState<Output>, context: Context, input: Input, output: Output)
 
     private fun runAndProfile(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, source: Input): Output {
-        var result: Output? = null
+        val result: Output
         val msec = measureTimeMillis {
             result = phaserState.downlevel(nlevels) {
                 phaseBody(phaseConfig, phaserState, context, source)
@@ -139,7 +139,7 @@ abstract class NamedCompilerPhase<in Context : LoggingContext, Input, Output>(
         }
         // TODO: use a proper logger
         println("${"\t".repeat(phaserState.depth)}$name: $msec msec")
-        return result!!
+        return result
     }
 
     override fun toString() = "Compiler Phase @$name"
