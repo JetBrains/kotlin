@@ -37,7 +37,7 @@ internal abstract class LibraryFilterCachingService : BuildService<BuildServiceP
 
     companion object {
         fun registerIfAbsent(project: Project): Provider<LibraryFilterCachingService> =
-            project.rootProject.gradle.sharedServices.registerIfAbsent(
+            project.gradle.sharedServices.registerIfAbsent(
                 "${LibraryFilterCachingService::class.java.canonicalName}_${LibraryFilterCachingService::class.java.classLoader.hashCode()}",
                 LibraryFilterCachingService::class.java
             ) {}.also { serviceProvider ->
