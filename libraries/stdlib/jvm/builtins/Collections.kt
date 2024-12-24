@@ -242,6 +242,12 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
 
     // View
     actual override fun subList(fromIndex: Int, toIndex: Int): MutableList<E>
+
+    public actual companion object {
+        public actual fun <T> of(): MutableList<T>
+        public actual fun <T> of(element: T): MutableList<T>
+        public actual fun <T> of(vararg elements: T): MutableList<T>
+    }
 }
 
 /**

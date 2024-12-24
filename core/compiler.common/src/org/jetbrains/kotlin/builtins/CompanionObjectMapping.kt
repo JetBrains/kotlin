@@ -13,7 +13,8 @@ object CompanionObjectMapping {
                     StandardNames.FqNames.string.toSafe() +
                     StandardNames.FqNames._boolean.toSafe() +
                     StandardNames.FqNames._enum.toSafe() +
-                    StandardNames.FqNames.list
+                    StandardNames.FqNames.list +
+                    StandardNames.FqNames.mutableList
             ).mapTo(linkedSetOf(), ClassId::topLevel)
 
     fun allClassesWithIntrinsicCompanions(): Set<ClassId> = classIds

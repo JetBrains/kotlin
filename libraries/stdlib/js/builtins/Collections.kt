@@ -191,7 +191,6 @@ public actual interface List<out E> : Collection<E> {
     @SinceKotlin("2.0")
     public fun asJsReadonlyArrayView(): JsReadonlyArray<E> = createJsReadonlyArrayViewFrom(this)
 
-    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
     public actual companion object {
         public actual fun <T> of(): List<T> = emptyList()
         public actual fun <T> of(element: T): List<T> = arrayListOf(element)
@@ -273,6 +272,18 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
     @ExperimentalJsCollectionsApi
     @SinceKotlin("2.0")
     public fun asJsArrayView(): JsArray<E> = createJsArrayViewFrom(this)
+
+    public actual companion object {
+        public actual fun <T> of(): MutableList<T> = ArrayList()
+
+        public actual fun <T> of(element: T): MutableList<T> {
+            val result = ArrayList<T>(1)
+            result.add(element)
+            return result
+        }
+
+        public actual fun <T> of(vararg elements: T): MutableList<T> = mutableListOf(*elements) // todo redundant copy
+    }
 }
 
 /**

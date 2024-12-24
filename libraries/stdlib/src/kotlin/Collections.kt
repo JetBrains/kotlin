@@ -176,7 +176,6 @@ public expect interface List<out E> : Collection<E> {
      */
     public fun subList(fromIndex: Int, toIndex: Int): List<E>
 
-    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
     public companion object {
         public fun <T> of(): List<T>
         public fun <T> of(element: T): List<T>
@@ -248,6 +247,12 @@ public expect interface MutableList<E> : List<E>, MutableCollection<E> {
 
     // View
     override fun subList(fromIndex: Int, toIndex: Int): MutableList<E>
+
+    public companion object {
+        public fun <T> of(): MutableList<T>
+        public fun <T> of(element: T): MutableList<T>
+        public fun <T> of(vararg elements: T): MutableList<T>
+    }
 }
 
 /**
