@@ -21,7 +21,6 @@ class MppIncorrectCompileOnlyDependenciesValidationIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata(value = "mpp-compile-only-dep")
-    @GradleTestVersions(minVersion = TypesafeProjectAccessorsMinimumGradleVersion)
     fun `when typesafe project accessor is used as compileOnly dependency, and is correctly exposed as an api dependency, expect no warning`(
         gradleVersion: GradleVersion,
     ) {
@@ -58,7 +57,6 @@ class MppIncorrectCompileOnlyDependenciesValidationIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata(value = "mpp-compile-only-dep")
-    @GradleTestVersions(minVersion = VersionCatalogsMinimumGradleVersion)
     fun `when version catalog dependency is used as commonMain compileOnly dependency, and is correctly exposed as an api dependency, expect no warning`(
         gradleVersion: GradleVersion,
     ) {
@@ -95,7 +93,6 @@ class MppIncorrectCompileOnlyDependenciesValidationIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata(value = "mpp-compile-only-dep")
-    @GradleTestVersions(minVersion = VersionCatalogsMinimumGradleVersion)
     fun `when commonMain compileOnly dependency is correctly exposed as an api dependency using version catalog dependency, expect no warning`(
         gradleVersion: GradleVersion,
     ) {
@@ -132,7 +129,6 @@ class MppIncorrectCompileOnlyDependenciesValidationIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata(value = "mpp-compile-only-dep")
-    @GradleTestVersions(minVersion = VersionCatalogsMinimumGradleVersion)
     fun `when compileOnly dependency is external, and api dependency is project with the same coords, expect warning`(
         gradleVersion: GradleVersion,
     ) {
@@ -168,19 +164,8 @@ class MppIncorrectCompileOnlyDependenciesValidationIT : KGPBaseTest() {
         }
     }
 
-    @Suppress("ConstPropertyName")
     companion object {
-        /** The minimum Gradle version required for typesafe project accessors. */
-        private const val TypesafeProjectAccessorsMinimumGradleVersion = "7.0"
-
-        /** The minimum Gradle version required for Version Catalogs. */
-        private const val VersionCatalogsMinimumGradleVersion = "7.0"
-
         private fun TestProject.enableVersionCatalog() {
-            require(gradleVersion >= VersionCatalogsMinimumGradleVersion) {
-                "Version Catalogs can only be enabled in Gradle $VersionCatalogsMinimumGradleVersion or higher," +
-                        "but current Gradle version is $gradleVersion."
-            }
             if (gradleVersion < "8.0") {
                 // VERSION_CATALOGS flag was removed in 8.0, and thereafter enabled by default
                 settingsGradleKts.append("""enableFeaturePreview("VERSION_CATALOGS")""")
