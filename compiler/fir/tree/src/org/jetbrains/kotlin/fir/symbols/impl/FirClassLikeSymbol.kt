@@ -30,7 +30,10 @@ sealed class FirClassLikeSymbol<out D : FirClassLikeDeclaration>(
     val name: Name get() = classId.shortClassName
 
     fun getOwnDeprecation(languageVersionSettings: LanguageVersionSettings): DeprecationsPerUseSite? {
-        if (deprecationsAreDefinitelyEmpty()) return EmptyDeprecationsPerUseSite
+        if (deprecationsAreDefinitelyEmpty()) {
+            // here should probably be `null`, see KT-74133
+            return EmptyDeprecationsPerUseSite
+        }
 
         lazyResolveToPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
         return fir.deprecationsProvider.getDeprecationsInfo(languageVersionSettings)
