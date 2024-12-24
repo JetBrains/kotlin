@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.compiledLibraryProvider
+import org.jetbrains.kotlin.analysis.test.framework.services.targetPlatform
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.platform.isMultiPlatform
 import org.jetbrains.kotlin.test.model.TestModule
@@ -30,7 +31,7 @@ object KtLibrarySourceTestModuleFactory : KtTestModuleFactory {
         testServices: TestServices,
         project: Project,
     ): KtTestModule {
-        Assume.assumeFalse("Compilation of multi-platform libraries is not supported", testModule.targetPlatform.isMultiPlatform())
+        Assume.assumeFalse("Compilation of multi-platform libraries is not supported", testModule.targetPlatform(testServices).isMultiPlatform())
 
         val (libraryJars, librarySourcesJars) = testServices.compiledLibraryProvider.compileToLibrary(testModule, dependencyBinaryRoots)
 
@@ -54,9 +55,10 @@ fun createKtLibrarySourceModule(
     project: Project,
     testServices: TestServices,
 ): KtTestModule {
+    val targetPlatform = testModule.targetPlatform(testServices)
     val libraryKtModule = KaLibraryModuleImpl(
         testModule.name,
-        testModule.targetPlatform,
+        targetPlatform,
         StandaloneProjectFactory.createSearchScopeByLibraryRoots(
             libraryJars,
             emptyList(),
@@ -71,7 +73,7 @@ fun createKtLibrarySourceModule(
     val decompiledPsiFilesFromSourceJar = librarySourcesJars.flatMap { LibraryUtils.getAllPsiFilesFromJar(it, project) }
     val librarySourceKtModule = KaLibrarySourceModuleImpl(
         testModule.name,
-        testModule.targetPlatform,
+        targetPlatform,
         GlobalSearchScope.filesScope(project, decompiledPsiFilesFromSourceJar.map { it.virtualFile }),
         project,
         binaryLibrary = libraryKtModule,

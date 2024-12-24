@@ -10,6 +10,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.compiledLibraryProvider
+import org.jetbrains.kotlin.analysis.test.framework.services.targetPlatform
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -35,7 +36,7 @@ abstract class KtLibraryBinaryTestModuleFactoryBase : KtTestModuleFactory {
             testModule,
             KaLibraryModuleImpl(
                 testModule.name,
-                testModule.targetPlatform,
+                testModule.targetPlatform(testServices),
                 StandaloneProjectFactory.createSearchScopeByLibraryRoots(
                     binaryRoots,
                     emptyList(),

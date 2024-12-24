@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.test.framework.services.libraries
 
-import org.jetbrains.kotlin.test.directives.TargetPlatformEnum
+import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestFile

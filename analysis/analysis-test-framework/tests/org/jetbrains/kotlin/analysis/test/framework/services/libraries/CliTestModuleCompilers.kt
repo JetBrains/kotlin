@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.test.framework.services.libraries
 
+import org.jetbrains.kotlin.analysis.test.framework.services.targetPlatform
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -64,7 +65,7 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
     ): Path {
         val allowedLibraryPlatforms = module.directives[Directives.LIBRARY_PLATFORMS].map { it.targetPlatform }
         val compilationErrorExpected = Directives.COMPILATION_ERRORS in module.directives
-                || (allowedLibraryPlatforms.isNotEmpty() && module.targetPlatform !in allowedLibraryPlatforms)
+                || (allowedLibraryPlatforms.isNotEmpty() && module.targetPlatform(testServices) !in allowedLibraryPlatforms)
 
         val library = try {
             val outputPath = libraryOutputPath(tmpDir, module.name)
@@ -262,19 +263,20 @@ object MetadataKlibDirTestModuleCompiler : CliTestModuleCompiler() {
  */
 object DispatchingTestModuleCompiler : TestModuleCompiler() {
     override fun compile(tmpDir: Path, module: TestModule, dependencyBinaryRoots: Collection<Path>, testServices: TestServices): Path {
-        return getCompiler(module).compile(tmpDir, module, dependencyBinaryRoots, testServices)
+        return getCompiler(module, testServices).compile(tmpDir, module, dependencyBinaryRoots, testServices)
     }
 
     override fun compileSources(files: List<TestFile>, module: TestModule, testServices: TestServices): Path {
-        return getCompiler(module).compileSources(module.files, module, testServices)
+        return getCompiler(module, testServices).compileSources(module.files, module, testServices)
     }
 
-    private fun getCompiler(module: TestModule): CliTestModuleCompiler {
+    private fun getCompiler(module: TestModule, testServices: TestServices): CliTestModuleCompiler {
+        val targetPlatform = module.targetPlatform(testServices)
         return when {
-            module.targetPlatform.isJvm() -> JvmJarTestModuleCompiler
-            module.targetPlatform.isJs() -> JsKlibTestModuleCompiler
-            module.targetPlatform.isCommon() -> MetadataKlibDirTestModuleCompiler
-            else -> error("DispatchingTestModuleCompiler doesn't support the platform: ${module.targetPlatform}")
+            targetPlatform.isJvm() -> JvmJarTestModuleCompiler
+            targetPlatform.isJs() -> JsKlibTestModuleCompiler
+            targetPlatform.isCommon() -> MetadataKlibDirTestModuleCompiler
+            else -> error("DispatchingTestModuleCompiler doesn't support the platform: $targetPlatform")
         }
     }
 }

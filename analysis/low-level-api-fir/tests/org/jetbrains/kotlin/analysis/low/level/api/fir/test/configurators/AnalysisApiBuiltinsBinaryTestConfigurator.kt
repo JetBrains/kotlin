@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaBuiltinsMo
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.services.targetPlatform
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -37,7 +38,7 @@ private object KtBuiltinsBinaryTestModuleFactory : KtTestModuleFactory {
         return KtTestModule(
             TestModuleKind.LibraryBinary,
             testModule,
-            KaBuiltinsModuleImpl(testModule.targetPlatform, project),
+            KaBuiltinsModuleImpl(testModule.targetPlatform(testServices), project),
             decompiledFiles,
         )
     }

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.platform.projectStructure.computeTransi
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
+import org.jetbrains.kotlin.analysis.test.framework.services.targetPlatform
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -52,7 +53,7 @@ abstract class KtModuleByCompilerConfiguration(
     }
 
     private fun computeLibraryDependencies(): List<KaLibraryModule> {
-        val targetPlatform = testModule.targetPlatform
+        val targetPlatform = testModule.targetPlatform(testServices)
         return when {
             targetPlatform.isNative() -> {
                 librariesByRoots(getAllNativeDependenciesPaths(testModule, testServices).map { Paths.get(it) })
@@ -112,7 +113,7 @@ abstract class KtModuleByCompilerConfiguration(
         get() = testModule.languageVersionSettings
 
     val targetPlatform: TargetPlatform
-        get() = testModule.targetPlatform
+        get() = testModule.targetPlatform(testServices)
 }
 
 class KaSourceModuleByCompilerConfiguration(

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModul
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.TestModuleStructureFactory
+import org.jetbrains.kotlin.analysis.test.framework.services.targetPlatform
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.analysis.test.framework.utils.SkipTestException
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -71,7 +72,7 @@ private object KtOutOfContentRootTestModuleFactory : KtTestModuleFactory {
         project: Project,
     ): KtTestModule {
         val psiFiles = TestModuleStructureFactory.createSourcePsiFiles(testModule, testServices, project)
-        val platform = testModule.targetPlatform
+        val platform = testModule.targetPlatform(testServices)
         val ktModule = KaNotUnderContentRootModuleForTest(testModule.name, psiFiles.first(), platform)
         return KtTestModule(TestModuleKind.NotUnderContentRoot, testModule, ktModule, psiFiles)
     }

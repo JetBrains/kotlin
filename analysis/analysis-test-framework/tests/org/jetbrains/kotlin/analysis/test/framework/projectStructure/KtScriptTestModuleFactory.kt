@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.test.framework.projectStructure
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.test.framework.services.targetPlatform
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
@@ -26,7 +27,7 @@ object KtScriptTestModuleFactory : KtTestModuleFactory {
         val ktFile = TestModuleStructureFactory.createSourcePsiFiles(testModule, testServices, project).single() as KtFile
         val module = KaScriptModuleImpl(
             ktFile,
-            testModule.targetPlatform,
+            testModule.targetPlatform(testServices),
             testModule.languageVersionSettings,
             project,
         )

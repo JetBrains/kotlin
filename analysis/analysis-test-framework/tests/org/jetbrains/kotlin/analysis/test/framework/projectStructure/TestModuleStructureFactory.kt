@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.Standa
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.TestModuleStructureFactory.addLibraryDependencies
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
+import org.jetbrains.kotlin.analysis.test.framework.services.targetPlatform
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -164,7 +165,8 @@ object TestModuleStructureFactory {
 
             val (jdkRoots, libraryRoots) = classpathRoots.partition { jdkHome != null && it.startsWith(jdkHome) }
 
-            if (testModule.targetPlatform.isJvm() && jdkRoots.isNotEmpty()) {
+            val targetPlatform = testModule.targetPlatform(testServices)
+            if (targetPlatform.isJvm() && jdkRoots.isNotEmpty()) {
                 val jdkModule = libraryCache(jdkRoots.toSet()) {
                     val jdkScope = getScopeForLibraryByRoots(jdkRoots, testServices)
                     KaLibraryModuleImpl(
@@ -187,7 +189,7 @@ object TestModuleStructureFactory {
 
                 val platform = when (libraryRoot.extension.toLowerCaseAsciiOnly()) {
                     "jar" -> JvmPlatforms.defaultJvmPlatform
-                    else -> testModule.targetPlatform
+                    else -> targetPlatform
                 }
 
                 val libraryModule = libraryCache(setOf(libraryRoot)) {
