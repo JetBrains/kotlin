@@ -65,7 +65,7 @@ fun test1() {
             val psiManager = PsiManager.getInstance(project)
             inMemoryIndex(
                 files.keys.associateWith { fileId ->
-                    val vFile = virtualFile(fileId, KotlinFileType.INSTANCE) {
+                    val vFile = virtualFile(fileId) {
                         files[fileId]!!.toByteArray()
                     }
                     val psiFile = psiManager.findFile(vFile)!!
@@ -88,7 +88,7 @@ fun test1() {
                 )
                 val psiManager = PsiManager.getInstance(project)
 
-                val vFile = virtualFile(fileId, KotlinFileType.INSTANCE) {
+                val vFile = virtualFile(fileId) {
                     text.toByteArray()
                 }
                 val psiFile = psiManager.findFile(vFile)!!
@@ -97,7 +97,7 @@ fun test1() {
                     index = index,
                     singleModule = singleModule,
                     virtualFileFactory = { id ->
-                        virtualFile(id, KotlinFileType.INSTANCE) {
+                        virtualFile(id) {
                             files[id]!!.toByteArray()
                         }
                     }

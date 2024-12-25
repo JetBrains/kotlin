@@ -79,7 +79,7 @@ interface Wobbler : AutoCloseable {
 
     val valueTypes: List<ValueType<*>>
 
-    fun virtualFile(fileId: FileId, fileType: FileType, content: () -> ByteArray): VirtualFile
+    fun virtualFile(fileId: FileId, content: () -> ByteArray): VirtualFile
 }
 
 interface WobblerProject : AutoCloseable {
@@ -163,8 +163,8 @@ fun createWobbler(): Wobbler {
     val vfs = LazyVirtualFileSystem()
 
     return object : Wobbler {
-        override fun virtualFile(fileId: FileId, fileType: FileType, content: () -> ByteArray): VirtualFile =
-            LazyVirtualFile(vfs, fileId, fileType, content)
+        override fun virtualFile(fileId: FileId, content: () -> ByteArray): VirtualFile =
+            LazyVirtualFile(vfs, fileId, content)
 
         override fun createProject(): WobblerProject {
             val wobbler = this

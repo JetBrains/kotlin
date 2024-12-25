@@ -5,12 +5,9 @@ import com.intellij.util.io.KeyDescriptor
 data class StubIndexExtensions(
     val keyTypesMap: KeyTypesMap,
     val indexedSerializedStubTreeType: ValueType<IndexedSerializedStubTree>,
-    val extensions: List<StubIndexExtension<*, *>>,
 )
 
-fun stubIndexExtensions(
-    stubIndexExtensions: List<StubIndexExtension<*, *>>,
-): StubIndexExtensions {
+fun stubIndexExtensions(stubIndexExtensions: List<StubIndexExtension<*, *>>): StubIndexExtensions {
     val keyTypesMap = keyTypesMap(
         stubIndexExtensions.map { extension ->
             @Suppress("UNCHECKED_CAST")
@@ -32,7 +29,6 @@ fun stubIndexExtensions(
                     }.toMap()
                 )
             }
-        ),
-        extensions = stubIndexExtensions,
+        )
     )
 }

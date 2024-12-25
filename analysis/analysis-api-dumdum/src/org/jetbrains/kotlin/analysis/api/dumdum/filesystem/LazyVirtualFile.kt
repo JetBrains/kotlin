@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.analysis.api.dumdum.filesystem
 
-import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.vfs.DeprecatedVirtualFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
@@ -32,7 +31,6 @@ class LazyVirtualFileSystem : DeprecatedVirtualFileSystem() {
 class LazyVirtualFile(
     val vfs: LazyVirtualFileSystem,
     val fileId: FileId,
-    fileType: FileType,
     val fileReader: () -> ByteArray,
 ) : VirtualFile(), VirtualFileWithId {
 
