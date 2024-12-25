@@ -28,8 +28,6 @@ class MppIncorrectCompileOnlyDependenciesValidationIT : KGPBaseTest() {
             projectName = "mpp-compile-only-dep",
             gradleVersion = gradleVersion,
         ) {
-            enableVersionCatalog()
-
             subProject("demo-app").apply {
                 buildGradleKts.append(
                     """
@@ -64,8 +62,6 @@ class MppIncorrectCompileOnlyDependenciesValidationIT : KGPBaseTest() {
             projectName = "mpp-compile-only-dep",
             gradleVersion = gradleVersion,
         ) {
-            enableVersionCatalog()
-
             subProject("demo-app").apply {
                 buildGradleKts.append(
                     """
@@ -100,8 +96,6 @@ class MppIncorrectCompileOnlyDependenciesValidationIT : KGPBaseTest() {
             projectName = "mpp-compile-only-dep",
             gradleVersion = gradleVersion,
         ) {
-            enableVersionCatalog()
-
             subProject("demo-app").apply {
                 buildGradleKts.append(
                     """
@@ -136,8 +130,6 @@ class MppIncorrectCompileOnlyDependenciesValidationIT : KGPBaseTest() {
             projectName = "mpp-compile-only-dep",
             gradleVersion = gradleVersion,
         ) {
-            enableVersionCatalog()
-
             subProject("demo-app").apply {
                 buildGradleKts.append(
                     """
@@ -162,17 +154,5 @@ class MppIncorrectCompileOnlyDependenciesValidationIT : KGPBaseTest() {
                 )
             }
         }
-    }
-
-    companion object {
-        private fun TestProject.enableVersionCatalog() {
-            if (gradleVersion < "8.0") {
-                // VERSION_CATALOGS flag was removed in 8.0, and thereafter enabled by default
-                settingsGradleKts.append("""enableFeaturePreview("VERSION_CATALOGS")""")
-            }
-        }
-
-        private operator fun GradleVersion.compareTo(other: String): Int =
-            compareTo(GradleVersion.version(other))
     }
 }
