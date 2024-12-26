@@ -824,9 +824,6 @@ class BodyResolveContext(
         f: () -> T
     ): T {
         require(mode !is ResolutionMode.ContextDependent)
-        if (mode !is ResolutionMode.LambdaResolution) {
-            storeContextForAnonymousFunction(anonymousFunction)
-        }
         return withTowerDataCleanup {
             addLocalScope(FirLocalScope(holder.session))
             val receiverTypeRef = anonymousFunction.receiverParameter?.typeRef
