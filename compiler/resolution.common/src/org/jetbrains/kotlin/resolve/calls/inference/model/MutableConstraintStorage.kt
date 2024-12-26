@@ -270,16 +270,6 @@ class MutableVariableWithConstraints private constructor(
         }
     }
 
-    fun runConstraintsSimplification() {
-        val currentState = constraints.toList()
-        // No need to nullify `constraintsGroupedByContainedTypeVariables` because the final result would be the same
-        // as it's built from `constraints` which is not changed
-        mutableConstraints.apply {
-            clear()
-            addAll(currentState)
-        }
-    }
-
     private fun isUsefulConstraint(constraint: Constraint, equalityConstraints: Map<Int, List<Constraint>>): Boolean {
         if (constraint.kind == ConstraintKind.EQUALITY) return true
         return equalityConstraints[constraint.typeHashCode]?.none { it.type == constraint.type } ?: true

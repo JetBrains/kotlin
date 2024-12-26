@@ -34,8 +34,6 @@ abstract class FirInferenceSession {
         return null
     }
 
-    open fun <T> runCallableReferenceResolution(candidate: Candidate, block: () -> T): T = block()
-
     open fun addSubtypeConstraintIfCompatible(lowerType: ConeKotlinType, upperType: ConeKotlinType, element: FirElement) {}
 
     /**
