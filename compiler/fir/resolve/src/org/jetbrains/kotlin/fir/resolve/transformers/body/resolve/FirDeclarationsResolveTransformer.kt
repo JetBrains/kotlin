@@ -1138,8 +1138,11 @@ open class FirDeclarationsResolveTransformer(
         data: ResolutionMode
     ): FirAnonymousFunction {
         val anonymousFunction = anonymousFunctionExpression.anonymousFunction
-        // Either ContextDependent, ContextIndependent or WithExpectedType could be here
         anonymousFunction.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
+
+        // Either ContextDependent, ContextIndependent or WithExpectedType could be here
+        // We don't need to transform signature parts for LambdaResolution, as they've been prepared
+        // around LambdaAnalyzerImpl::analyzeAndGetLambdaReturnArguments
         if (data !is ResolutionMode.LambdaResolution) {
             anonymousFunction.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
             anonymousFunction.transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
@@ -1161,7 +1164,7 @@ open class FirDeclarationsResolveTransformer(
                 transformAnonymousFunctionBody(anonymousFunction, expectedReturnTypeRef, data)
             }
             is ResolutionMode.WithExpectedType -> {
-                transformAnonymousFunctionWithExpectedType(anonymousFunctionExpression, data.expectedType, data)
+                transformTopLevelAnonymousFunction(anonymousFunctionExpression, data.expectedType, data)
             }
 
 
@@ -1169,7 +1172,7 @@ open class FirDeclarationsResolveTransformer(
             is ResolutionMode.AssignmentLValue,
             is ResolutionMode.ReceiverResolution,
             is ResolutionMode.Delegate,
-            -> transformAnonymousFunctionWithExpectedType(anonymousFunctionExpression, null, data)
+                -> transformTopLevelAnonymousFunction(anonymousFunctionExpression, null, data)
             is ResolutionMode.WithStatus -> error("Should not be here in WithStatus/WithExpectedTypeFromCast mode")
         }
     }
@@ -1191,7 +1194,11 @@ open class FirDeclarationsResolveTransformer(
         }.apply { replaceTypeRef(lambdaType) }
     }
 
-    private fun transformAnonymousFunctionWithExpectedType(
+    /**
+     * For lambdas, which are not a part of a value argument list of some call, like
+     * `val x: () -> Unit = {}` or `{}.invoke()`
+     */
+    private fun transformTopLevelAnonymousFunction(
         anonymousFunctionExpression: FirAnonymousFunctionExpression,
         expectedType: ConeKotlinType?,
         data: ResolutionMode

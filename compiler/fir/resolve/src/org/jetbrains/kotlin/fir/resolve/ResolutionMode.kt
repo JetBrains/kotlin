@@ -100,6 +100,15 @@ sealed class ResolutionMode(
         }
     }
 
+    /**
+     * Represents a resolution mode for lambda resolution as a part of call completion.
+     *
+     * When a lambda is a call argument, at the point of regular argument resolution, it's being resolved with ContextDependent.
+     * And there we only save resolution contexts which would be used later when the relevant postponed lambda atom will be ready
+     * to be resolved (potentially with some known expected return type for lambda return expressions).
+     *
+     * NB: Soon, all the lambdas defined outside the calls would be resolved as parts of synthetic calls.
+     */
     class LambdaResolution(val expectedReturnTypeRef: FirResolvedTypeRef?) : ResolutionMode(forceFullCompletion = false) {
         override fun toString(): String {
             return "LambdaResolution: ${expectedReturnTypeRef.prettyString()}"
