@@ -1112,31 +1112,7 @@ open class FirDeclarationsResolveTransformer(
         data: ResolutionMode
     ): FirStatement = whileAnalysing(session, anonymousFunctionExpression) {
         dataFlowAnalyzer.enterAnonymousFunctionExpression(anonymousFunctionExpression)
-        val transformedAnonymousFunction = doTransformAnonymousFunction(anonymousFunctionExpression, data)
-        anonymousFunctionExpression.replaceAnonymousFunction(transformedAnonymousFunction)
-        anonymousFunctionExpression
-    }
 
-    override fun transformAnonymousFunction(
-        anonymousFunction: FirAnonymousFunction,
-        data: ResolutionMode
-    ): FirAnonymousFunction = whileAnalysing(session, anonymousFunction) {
-        error("Transformation of anonymous function should be performed via `transformAnonymousFunctionExpression`")
-    }
-
-    /**
-     * This function might be called from two places:
-     * 1. `transformAnonymousFunctionExpression` for independent/withExpectedType/dependant modes
-     * 2. `LambdaAnalyzerImpl.analyzeAndGetLambdaReturnArguments` for postponed lambdas, which are
-     *     being analyzed during completion
-     *
-     * This method cannot be merged with `transformAnonymousFunctionExpression`, because the latter performs some
-     *   CFA preparations for lambdas, which should be called only once, during first visiting of the lambda
-     */
-    private fun doTransformAnonymousFunction(
-        anonymousFunctionExpression: FirAnonymousFunctionExpression,
-        data: ResolutionMode
-    ): FirAnonymousFunction {
         require(data !is ResolutionMode.LambdaResolution)
         val anonymousFunction = anonymousFunctionExpression.anonymousFunction
         anonymousFunction.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
@@ -1150,7 +1126,7 @@ open class FirDeclarationsResolveTransformer(
             anonymousFunction.runContractResolveForFunction(session, scopeSession, context)
         }
 
-        return when (data) {
+        val transformedAnonymousFunction = when (data) {
             is ResolutionMode.ContextDependent -> {
                 context.storeContextForAnonymousFunction(anonymousFunction)
                 anonymousFunction
@@ -1167,6 +1143,16 @@ open class FirDeclarationsResolveTransformer(
                 -> transformTopLevelAnonymousFunction(anonymousFunctionExpression, null, data)
             is ResolutionMode.WithStatus, is ResolutionMode.LambdaResolution -> error("Should not be here in WithStatus/LambdaResolution mode")
         }
+
+        anonymousFunctionExpression.replaceAnonymousFunction(transformedAnonymousFunction)
+        anonymousFunctionExpression
+    }
+
+    override fun transformAnonymousFunction(
+        anonymousFunction: FirAnonymousFunction,
+        data: ResolutionMode
+    ): FirAnonymousFunction = whileAnalysing(session, anonymousFunction) {
+        error("Transformation of anonymous function should be performed via `transformAnonymousFunctionExpression`")
     }
 
     internal fun doTransformAnonymousFunctionBodyFromCallCompletion(
