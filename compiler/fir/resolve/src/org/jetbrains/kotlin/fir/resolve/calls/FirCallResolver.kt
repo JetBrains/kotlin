@@ -439,7 +439,7 @@ class FirCallResolver(
         containingCallCandidate: Candidate,
         resolvedCallableReferenceAtom: ConeResolvedCallableReferenceAtom,
         hasSyntheticOuterCall: Boolean,
-    ): Pair<CandidateApplicability, Boolean> = components.context.inferenceSession.runCallableReferenceResolution(containingCallCandidate) {
+    ): Pair<CandidateApplicability, Boolean> {
         require(resolvedCallableReferenceAtom.needsResolution)
 
         val containingCallCS = containingCallCandidate.csBuilder
@@ -490,7 +490,7 @@ class FirCallResolver(
                     calleeReference.source
                 )
                 resolvedCallableReferenceAtom.initializeResultingReference(errorReference)
-                return@runCallableReferenceResolution applicability to false
+                return applicability to false
             }
             reducedCandidates.size > 1 -> {
                 if (resolvedCallableReferenceAtom.isPostponedBecauseOfAmbiguity) {
@@ -500,10 +500,10 @@ class FirCallResolver(
                         calleeReference.source
                     )
                     resolvedCallableReferenceAtom.initializeResultingReference(errorReference)
-                    return@runCallableReferenceResolution applicability to false
+                    return applicability to false
                 }
                 resolvedCallableReferenceAtom.state = ConeResolvedCallableReferenceAtom.State.POSTPONED_BECAUSE_OF_AMBIGUITY
-                return@runCallableReferenceResolution applicability to true
+                return applicability to true
             }
         }
 
@@ -528,7 +528,7 @@ class FirCallResolver(
         resolvedCallableReferenceAtom.initializeResultingReference(reference)
         resolvedCallableReferenceAtom.resultingTypeForCallableReference = chosenCandidate.resultingTypeForCallableReference
 
-        return@runCallableReferenceResolution applicability to true
+        return applicability to true
     }
 
     fun callInfoForDelegatingConstructorCall(

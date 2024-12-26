@@ -93,20 +93,6 @@ class FirPCLAInferenceSession(
         return null
     }
 
-    override fun <T> runCallableReferenceResolution(candidate: Candidate, block: () -> T): T {
-        candidate.system.apply {
-            // It's necessary because otherwise when we create CS for a child, it would simplify constraints
-            // (see 3rd constructor of MutableVariableWithConstraints)
-            // and merging it back might become a problem for transaction logic because the latter literally remembers
-            // the number of constraints for each variable and then restores it back.
-            // But since the constraints are simplified in the child, their number might become even fewer, leading to incorrect behavior
-            // or runtime exceptions.
-            // See callableReferenceAsArgumentForTransaction.kt test data
-            notFixedTypeVariables.values.forEach { it.runConstraintsSimplification() }
-        }
-        return runWithSpecifiedCurrentCommonSystem(candidate.system, block)
-    }
-
     private fun <T> runWithSpecifiedCurrentCommonSystem(newSystem: NewConstraintSystemImpl, block: () -> T): T {
         val previous = currentCommonSystem
         return try {
