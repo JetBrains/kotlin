@@ -1133,21 +1133,18 @@ open class FirDeclarationsResolveTransformer(
      * This method cannot be merged with `transformAnonymousFunctionExpression`, because the latter performs some
      *   CFA preparations for lambdas, which should be called only once, during first visiting of the lambda
      */
-    internal fun doTransformAnonymousFunction(
+    private fun doTransformAnonymousFunction(
         anonymousFunctionExpression: FirAnonymousFunctionExpression,
         data: ResolutionMode
     ): FirAnonymousFunction {
+        require(data !is ResolutionMode.LambdaResolution)
         val anonymousFunction = anonymousFunctionExpression.anonymousFunction
         anonymousFunction.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
 
         // Either ContextDependent, ContextIndependent or WithExpectedType could be here
-        // We don't need to transform signature parts for LambdaResolution, as they've been prepared
-        // around LambdaAnalyzerImpl::analyzeAndGetLambdaReturnArguments
-        if (data !is ResolutionMode.LambdaResolution) {
-            anonymousFunction.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
-            anonymousFunction.transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
-            anonymousFunction.valueParameters.forEach { it.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent) }
-        }
+        anonymousFunction.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
+        anonymousFunction.transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
+        anonymousFunction.valueParameters.forEach { it.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent) }
 
         if (anonymousFunction.contractDescription != null) {
             anonymousFunction.runContractResolveForFunction(session, scopeSession, context)
@@ -1157,11 +1154,6 @@ open class FirDeclarationsResolveTransformer(
             is ResolutionMode.ContextDependent -> {
                 context.storeContextForAnonymousFunction(anonymousFunction)
                 anonymousFunction
-            }
-            is ResolutionMode.LambdaResolution -> {
-                val expectedReturnTypeRef =
-                    data.expectedReturnTypeRef ?: anonymousFunction.returnTypeRef.takeUnless { it is FirImplicitTypeRef }
-                transformAnonymousFunctionBody(anonymousFunction, expectedReturnTypeRef, data)
             }
             is ResolutionMode.WithExpectedType -> {
                 transformTopLevelAnonymousFunction(anonymousFunctionExpression, data.expectedType, data)
@@ -1173,8 +1165,18 @@ open class FirDeclarationsResolveTransformer(
             is ResolutionMode.ReceiverResolution,
             is ResolutionMode.Delegate,
                 -> transformTopLevelAnonymousFunction(anonymousFunctionExpression, null, data)
-            is ResolutionMode.WithStatus -> error("Should not be here in WithStatus/WithExpectedTypeFromCast mode")
+            is ResolutionMode.WithStatus, is ResolutionMode.LambdaResolution -> error("Should not be here in WithStatus/LambdaResolution mode")
         }
+    }
+
+    internal fun doTransformAnonymousFunctionBodyFromCallCompletion(
+        anonymousFunctionExpression: FirAnonymousFunctionExpression,
+        data: ResolutionMode.LambdaResolution,
+    ) {
+        val anonymousFunction = anonymousFunctionExpression.anonymousFunction
+        val expectedReturnTypeRef =
+            data.expectedReturnTypeRef ?: anonymousFunction.returnTypeRef.takeUnless { it is FirImplicitTypeRef }
+        transformAnonymousFunctionBody(anonymousFunction, expectedReturnTypeRef, data)
     }
 
     private fun transformAnonymousFunctionBody(
