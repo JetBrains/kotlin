@@ -467,14 +467,13 @@ class FirCallResolver(
         }
 
         val (reducedCandidates, applicability) = reduceCandidates(result, callableReferenceAccess.explicitReceiver)
-        val nonEmptyAndAllSuccessful = reducedCandidates.isNotEmpty() && reducedCandidates.all { it.isSuccessful }
 
         (callableReferenceAccess.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)?.replaceResolvedToCompanionObject(
             reducedCandidates.isNotEmpty() && reducedCandidates.all { it.isFromCompanionObjectTypeScope }
         )
 
         when {
-            !nonEmptyAndAllSuccessful -> {
+            reducedCandidates.isEmpty() || reducedCandidates.any { !it.isSuccessful } -> {
                 val errorReference = buildReferenceWithErrorCandidate(
                     info,
                     when {
