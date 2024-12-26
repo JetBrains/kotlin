@@ -230,7 +230,7 @@ class FirPCLAInferenceSession(
                 // We should integrate even simple calls into the PCLA tree, too
                 callInfo.resolutionMode.expectedType.containsNotFixedTypeVariables() -> return false
             }
-            is ResolutionMode.WithStatus, is ResolutionMode.LambdaResolution ->
+            is ResolutionMode.WithStatus ->
                 error("$this call should not be analyzed in ${callInfo.resolutionMode}")
 
             is ResolutionMode.AssignmentLValue,

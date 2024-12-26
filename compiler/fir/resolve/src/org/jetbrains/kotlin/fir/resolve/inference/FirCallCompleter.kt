@@ -10,11 +10,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirValueParameterKind
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferReceiverParameterType
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferValueParameterType
@@ -468,7 +464,7 @@ class FirCallCompleter(
                     transformer.context.withInferenceSession(pclaInferenceSession) {
                         declarationsTransformer.doTransformAnonymousFunctionBodyFromCallCompletion(
                             lambdaExpression,
-                            ResolutionMode.LambdaResolution(expectedReturnTypeRef)
+                            expectedReturnTypeRef,
                         )
 
                         applyResultsToMainCandidate()
@@ -478,7 +474,7 @@ class FirCallCompleter(
                         transformer.context.inferenceSession.runLambdaCompletion(candidate, forOverloadByLambdaReturnType) {
                             declarationsTransformer.doTransformAnonymousFunctionBodyFromCallCompletion(
                                 lambdaExpression,
-                                ResolutionMode.LambdaResolution(expectedReturnTypeRef)
+                                expectedReturnTypeRef,
                             )
                         }
                 }
