@@ -210,13 +210,18 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
         super.visitUnaryExpression(expression, null);
     }
 
+    /**
+     * Visits the input expression using a stack if it's a string literals concatenation expression (to prevent potential stack overflow exception),
+     * otherwise visits the expression using regular recursive calls.
+
+     * If you need to handle nested binary and parenthesized expressions inside string literals concatenation,
+     * you have to override this method and write the necessary logic there.
+     */
     public void visitBinaryExpression(@NotNull KtBinaryExpression expression) {
-        @Nullable List<KtExpression> foldingStringConcatenationStack = tryVisitFoldingStringConcatenation(expression, true);
+        @Nullable List<KtExpression> foldingStringConcatenationStack = tryVisitFoldingStringConcatenation(expression, false);
         if (foldingStringConcatenationStack != null) {
             for (KtExpression childExpression : foldingStringConcatenationStack) {
-                if (!(childExpression instanceof KtBinaryExpression)) {
-                    visitExpression(childExpression);
-                }
+                visitExpression(childExpression);
             }
         } else {
             super.visitBinaryExpression(expression, null);

@@ -242,11 +242,45 @@ internal class KaFirResolver(
         )
     }
 
+    private val stringPlusSymbol by lazy {
+        val session = analysisSession.firSession
+        val stringClassSymbol = session.builtinTypes.stringType.toRegularClassSymbol(session)!!
+        stringClassSymbol.declarationSymbols.single { it is FirFunctionSymbol && it.callableId.callableName == OperatorNameConventions.PLUS }
+    }
+
     private fun FirElement.toKtCallInfo(
         psi: KtElement,
         resolveCalleeExpressionOfFunctionCall: Boolean,
         resolveFragmentOfCall: Boolean,
     ): KaCallInfo? {
+        // FIR does not have an intermediate symbol of String.plus() function call in case of folded string literals.
+        //
+        // Example:
+        // Expression `"a" + "b" + "c"` is represented by one FirStringConcatenationCall containing `"a"`, `"b"`, and `"c"` as arguments.
+        //
+        // We have to patch `FirElement.toKtCallInfo` to return String.plus() call info for contained binary expressions.
+        if (this is FirStringConcatenationCall && this.isFoldedStrings && psi is KtBinaryExpression) {
+            var signature = (stringPlusSymbol as FirNamedFunctionSymbol).toKaSignature()
+            val leftArg = psi.left ?: return null
+            val rightArg = psi.right ?: return null
+            return KaBaseSuccessCallInfo(
+                KaBaseSimpleFunctionCall(
+                    KaBasePartiallyAppliedSymbol(
+                        signature,
+                        KaBaseExplicitReceiverValue(
+                            leftArg,
+                            analysisSession.firSession.builtinTypes.stringType.coneType.asKtType(),
+                            false
+                        ),
+                        null
+                    ),
+                    mapOf(rightArg to signature.valueParameters.first()),
+                    emptyMap(),
+                    false
+                )
+            )
+        }
+
         if (this is FirResolvedQualifier) {
             val callExpression = (psi as? KtExpression)?.getPossiblyQualifiedCallExpression()
             if (callExpression != null) {

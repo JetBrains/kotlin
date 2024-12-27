@@ -87,8 +87,6 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
                     cache(descendant, stringConcatenationCall, data)
                 }
             }
-
-            // Associate arguments in the default pass because the pass above doesn't associate them since they hold real FIR nodes
         }
 
         super.visitStringConcatenationCall(stringConcatenationCall, data)
