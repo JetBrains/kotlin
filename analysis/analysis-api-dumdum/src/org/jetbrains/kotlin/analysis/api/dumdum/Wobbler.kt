@@ -116,6 +116,11 @@ fun createWobbler(): Wobbler {
             KotlinPartialPackageNamesIndex(),
             KotlinTopLevelCallableByPackageShortNameIndex(),
             KotlinTopLevelClassLikeDeclarationByPackageShortNameIndex(),
+            KotlinBuiltInsMetadataIndex(),
+            KotlinMetadataFileIndex(),
+            KotlinMetadataFilePackageIndex(),
+            KotlinStdlibIndex(),
+            KotlinClassFileIndex()
         )
     )
 
