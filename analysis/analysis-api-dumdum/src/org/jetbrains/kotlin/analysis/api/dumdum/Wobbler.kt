@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
@@ -370,6 +371,10 @@ private fun MockProject.loadAnalysisApiServices(
         StubIndexProjectService(stubIndex)
     )
 
+    registerService(
+        VirtualFileFinderFactory::class.java,
+        IdeVirtualFileFinderFactory(fileBasedIndex)
+    )
 
     registerService(
         KotlinGlobalSearchScopeMerger::class.java,
