@@ -249,7 +249,6 @@ class FirSyntheticCallGenerator(
         callableReferenceAccess: FirCallableReferenceAccess,
         expectedType: ConeKotlinType?,
         context: ResolutionContext,
-        resolutionMode: ResolutionMode,
     ): FirCallableReferenceAccess {
         val argumentList = buildUnaryArgumentList(callableReferenceAccess)
 
@@ -258,7 +257,6 @@ class FirSyntheticCallGenerator(
             argumentList,
             expectedType,
             context,
-            resolutionMode,
         )
         var initialCallWasUnresolved = false
 
@@ -276,7 +274,6 @@ class FirSyntheticCallGenerator(
                     argumentList,
                     context.session.builtinTypes.anyType.coneType,
                     context,
-                    resolutionMode,
                 )
             initialCallWasUnresolved = true
         }
@@ -343,7 +340,6 @@ class FirSyntheticCallGenerator(
         argumentList: FirArgumentList,
         expectedType: ConeKotlinType?,
         context: ResolutionContext,
-        resolutionMode: ResolutionMode,
     ): FirNamedReferenceWithCandidate {
         val parameterType =
             when {
@@ -352,7 +348,7 @@ class FirSyntheticCallGenerator(
             }
 
         return generateCalleeReferenceToFunctionWithSingleParameterOfSpecifiedType(
-            callSite, argumentList, parameterType, context, resolutionMode,
+            callSite, argumentList, parameterType, context,
         )
     }
 
@@ -364,7 +360,6 @@ class FirSyntheticCallGenerator(
         argumentList: FirArgumentList,
         parameterType: ConeKotlinType,
         context: ResolutionContext,
-        resolutionMode: ResolutionMode,
     ): FirNamedReferenceWithCandidate {
         check(argumentList.arguments.size == 1)
         val callableId = SyntheticCallableId.ACCEPT_SPECIFIC_TYPE
@@ -382,7 +377,7 @@ class FirSyntheticCallGenerator(
             callableId.callableName,
             CallKind.SyntheticIdForCallableReferencesResolution,
             context,
-            resolutionMode,
+            ResolutionMode.ContextIndependent,
         )
     }
 
