@@ -20,6 +20,7 @@ import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSet
 import com.intellij.openapi.vfs.VirtualFileSetFactory
+import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.pom.java.InternalPersistentJavaLanguageLevelReaderService
 import com.intellij.psi.*
 import com.intellij.psi.impl.JavaClassSupersImpl
@@ -81,6 +82,9 @@ interface Wobbler : AutoCloseable {
     val valueTypes: List<ValueType<*>>
 
     fun virtualFile(fileId: FileId, content: () -> ByteArray): VirtualFile
+
+
+    val jarFileSystem: VirtualFileSystem
 }
 
 interface WobblerProject : AutoCloseable {
@@ -171,6 +175,9 @@ fun createWobbler(): Wobbler {
     return object : Wobbler {
         override fun virtualFile(fileId: FileId, content: () -> ByteArray): VirtualFile =
             LazyVirtualFile(vfs, fileId, content)
+
+        override val jarFileSystem: VirtualFileSystem
+            get() = applicationEnvironment.jarFileSystem
 
         override fun createProject(): WobblerProject {
             val wobbler = this
