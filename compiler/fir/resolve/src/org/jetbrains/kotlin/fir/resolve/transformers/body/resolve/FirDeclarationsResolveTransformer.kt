@@ -1153,43 +1153,6 @@ open class FirDeclarationsResolveTransformer(
         error("Transformation of anonymous function should be performed via `transformAnonymousFunctionExpression`")
     }
 
-    internal fun doTransformAnonymousFunctionBodyFromCallCompletion(
-        anonymousFunctionExpression: FirAnonymousFunctionExpression,
-        // When completer knows which return type is expected.
-        // Otherwise, return expressions are resolved in ContextDependent mode.
-        expectedReturnTypeFromCallPosition: FirResolvedTypeRef?,
-    ) {
-        val anonymousFunction = anonymousFunctionExpression.anonymousFunction
-        val expectedReturnTypeRef =
-            expectedReturnTypeFromCallPosition
-            // For the case of `fun (): ReturnType = ...`
-                ?: anonymousFunction.returnTypeRef.takeUnless { it is FirImplicitTypeRef }
-
-        if (expectedReturnTypeFromCallPosition == null) {
-            context.withLambdaBeingAnalyzedInDependentContext(anonymousFunction.symbol) {
-                transformAnonymousFunctionBody(anonymousFunction, expectedReturnTypeRef)
-            }
-        } else {
-            transformAnonymousFunctionBody(anonymousFunction, expectedReturnTypeRef)
-        }
-    }
-
-    private fun transformAnonymousFunctionBody(
-        anonymousFunction: FirAnonymousFunction,
-        expectedReturnTypeRef: FirTypeRef?
-    ): FirAnonymousFunction {
-        // `transformFunction` will replace both `typeRef` and `returnTypeRef`, so make sure to keep the former.
-        val lambdaType = anonymousFunction.typeRef
-        return context.withAnonymousFunction(anonymousFunction, components) {
-            withFullBodyResolve {
-                transformFunction(
-                    anonymousFunction,
-                    expectedReturnTypeRef?.let(::withExpectedType) ?: ResolutionMode.ContextDependent
-                ) as FirAnonymousFunction
-            }
-        }.apply { replaceTypeRef(lambdaType) }
-    }
-
     /**
      * For lambdas, which are not a part of a value argument list of some call, like
      * `val x: () -> Unit = {}` or `{}.invoke()`
@@ -1355,6 +1318,43 @@ open class FirDeclarationsResolveTransformer(
                 param
             }
         }
+    }
+
+    internal fun doTransformAnonymousFunctionBodyFromCallCompletion(
+        anonymousFunctionExpression: FirAnonymousFunctionExpression,
+        // When completer knows which return type is expected.
+        // Otherwise, return expressions are resolved in ContextDependent mode.
+        expectedReturnTypeFromCallPosition: FirResolvedTypeRef?,
+    ) {
+        val anonymousFunction = anonymousFunctionExpression.anonymousFunction
+        val expectedReturnTypeRef =
+            expectedReturnTypeFromCallPosition
+            // For the case of `fun (): ReturnType = ...`
+                ?: anonymousFunction.returnTypeRef.takeUnless { it is FirImplicitTypeRef }
+
+        if (expectedReturnTypeFromCallPosition == null) {
+            context.withLambdaBeingAnalyzedInDependentContext(anonymousFunction.symbol) {
+                transformAnonymousFunctionBody(anonymousFunction, expectedReturnTypeRef)
+            }
+        } else {
+            transformAnonymousFunctionBody(anonymousFunction, expectedReturnTypeRef)
+        }
+    }
+
+    private fun transformAnonymousFunctionBody(
+        anonymousFunction: FirAnonymousFunction,
+        expectedReturnTypeRef: FirTypeRef?
+    ): FirAnonymousFunction {
+        // `transformFunction` will replace both `typeRef` and `returnTypeRef`, so make sure to keep the former.
+        val lambdaType = anonymousFunction.typeRef
+        return context.withAnonymousFunction(anonymousFunction, components) {
+            withFullBodyResolve {
+                transformFunction(
+                    anonymousFunction,
+                    expectedReturnTypeRef?.let(::withExpectedType) ?: ResolutionMode.ContextDependent
+                ) as FirAnonymousFunction
+            }
+        }.apply { replaceTypeRef(lambdaType) }
     }
 
     override fun transformBackingField(
