@@ -1124,13 +1124,13 @@ open class FirDeclarationsResolveTransformer(
             anonymousFunction.runContractResolveForFunction(session, scopeSession, context)
         }
 
-        val transformedAnonymousFunction = when (data) {
+        return when (data) {
             is ResolutionMode.ContextDependent -> {
                 context.storeContextForAnonymousFunction(anonymousFunction)
-                anonymousFunction
+                anonymousFunctionExpression // return the same instance
             }
             is ResolutionMode.WithExpectedType -> {
-                transformTopLevelAnonymousFunction(anonymousFunctionExpression, data.expectedType)
+                transformTopLevelAnonymousFunctionExpression(anonymousFunctionExpression, data.expectedType)
             }
 
 
@@ -1138,12 +1138,9 @@ open class FirDeclarationsResolveTransformer(
             is ResolutionMode.AssignmentLValue,
             is ResolutionMode.ReceiverResolution,
             is ResolutionMode.Delegate,
-                -> transformTopLevelAnonymousFunction(anonymousFunctionExpression, null)
+                -> transformTopLevelAnonymousFunctionExpression(anonymousFunctionExpression, null)
             is ResolutionMode.WithStatus -> error("Should not be here in WithStatus mode")
         }
-
-        anonymousFunctionExpression.replaceAnonymousFunction(transformedAnonymousFunction)
-        anonymousFunctionExpression
     }
 
     override fun transformAnonymousFunction(
@@ -1157,9 +1154,16 @@ open class FirDeclarationsResolveTransformer(
      * For lambdas, which are not a part of a value argument list of some call, like
      * `val x: () -> Unit = {}` or `{}.invoke()`
      */
-    private fun transformTopLevelAnonymousFunction(
+    private fun transformTopLevelAnonymousFunctionExpression(
         anonymousFunctionExpression: FirAnonymousFunctionExpression,
         expectedType: ConeKotlinType?,
+    ): FirStatement = anonymousFunctionExpression.also {
+        it.replaceAnonymousFunction(transformTopLevelAnonymousFunction(anonymousFunctionExpression, expectedType))
+    }
+
+    private fun transformTopLevelAnonymousFunction(
+        anonymousFunctionExpression: FirAnonymousFunctionExpression,
+        expectedType: ConeKotlinType?
     ): FirAnonymousFunction {
         val anonymousFunction = anonymousFunctionExpression.anonymousFunction
         val resolvedLambdaAtom = expectedType?.let {
