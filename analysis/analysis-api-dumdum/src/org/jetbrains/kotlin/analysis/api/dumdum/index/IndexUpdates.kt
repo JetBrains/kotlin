@@ -26,11 +26,14 @@ fun <K, V> buildFileBasedMap(
     project: Project,
     virtualFile: VirtualFile,
     extension: FileBasedIndexExtension<K, V>,
-): FileBasedMap<K, V> {
-    val fileContent = FileContentImpl.createByFile(virtualFile, project)
-    val map = extension.indexer.map(fileContent)
-    return FileBasedMap(map.mapValues { (_, v) -> Box(v) })
-}
+): FileBasedMap<K, V>? =
+    if (virtualFile.fileType in extension.inputFilter) {
+        val fileContent = FileContentImpl.createByFile(virtualFile, project)
+        val map = extension.indexer.map(fileContent)
+        FileBasedMap(map.mapValues { (_, v) -> Box(v) })
+    } else {
+        null
+    }
 
 data class FileValues(val map: Map<ValueType<*>, *>)
 
@@ -42,8 +45,10 @@ fun mapFile(
 ): FileValues =
     FileValues(
         mapOf(stubIndexExtensions.indexedSerializedStubTreeType to buildStub(stubSerializerTable, file)) +
-                fileBasedIndexExtensions.extensions.map { extension ->
-                    fileBasedIndexExtensions.mapType(extension.name) to buildFileBasedMap(file.project, file.virtualFile, extension)
+                fileBasedIndexExtensions.extensions.mapNotNull { extension ->
+                    buildFileBasedMap(file.project, file.virtualFile, extension)?.let { fileBasedMap ->
+                        fileBasedIndexExtensions.mapType(extension.name) to fileBasedMap
+                    }
                 }
     )
 
