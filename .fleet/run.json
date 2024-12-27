@@ -10,6 +10,15 @@
             "initScripts": {
                 "flmapper": "ext.mapPath = { path -> path }"
             }
+        },
+        {
+            "name": "run scratch",
+            "type": "gradle",
+            "workingDir": "$PROJECT_DIR$",
+            "tasks": ["analysis:analysis-api-dumdum:run"],
+            "initScripts": {
+                "flmapper": "ext.mapPath = { path -> path }"
+            }
         }
     ]
 }
