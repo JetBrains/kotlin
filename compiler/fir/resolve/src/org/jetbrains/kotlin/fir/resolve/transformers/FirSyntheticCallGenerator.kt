@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateErr
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -254,16 +253,10 @@ class FirSyntheticCallGenerator(
     ): FirCallableReferenceAccess {
         val argumentList = buildUnaryArgumentList(callableReferenceAccess)
 
-        val parameterType =
-            when {
-                expectedType != null && !expectedType.isUnitOrFlexibleUnit -> expectedType
-                else -> context.session.builtinTypes.anyType.coneType
-            }
-
-        var reference = generateCalleeReferenceWithCandidate(
+        var reference = generateCalleeReferenceToFunctionWithExpectedTypeForArgument(
             callableReferenceAccess,
             argumentList,
-            parameterType,
+            expectedType,
             context,
             resolutionMode,
         )
@@ -278,7 +271,7 @@ class FirSyntheticCallGenerator(
             }
 
             reference =
-                generateCalleeReferenceWithCandidate(
+                generateCalleeReferenceToFunctionWithSingleParameterOfSpecifiedType(
                     callableReferenceAccess,
                     argumentList,
                     context.session.builtinTypes.anyType.coneType,
@@ -340,13 +333,40 @@ class FirSyntheticCallGenerator(
         }
     }
 
-    private fun generateCalleeReferenceWithCandidate(
-        callableReferenceAccess: FirCallableReferenceAccess,
+    /**
+     * Used for resolving lambdas and callable references in-the-air/on-top-level in a way like they belong to some call.
+     * For no expected type or Unit one, it runs resolution with them as arguments for the function `fun accept(p: Any): Unit`
+     * Otherwise, it's `fun accept(p: <expectedType>): Unit`
+     */
+    private fun generateCalleeReferenceToFunctionWithExpectedTypeForArgument(
+        callSite: FirExpression,
+        argumentList: FirArgumentList,
+        expectedType: ConeKotlinType?,
+        context: ResolutionContext,
+        resolutionMode: ResolutionMode,
+    ): FirNamedReferenceWithCandidate {
+        val parameterType =
+            when {
+                expectedType != null && !expectedType.isUnitOrFlexibleUnit -> expectedType
+                else -> context.session.builtinTypes.anyType.coneType
+            }
+
+        return generateCalleeReferenceToFunctionWithSingleParameterOfSpecifiedType(
+            callSite, argumentList, parameterType, context, resolutionMode,
+        )
+    }
+
+    /**
+     * Runs candidate resolution for synthetic call with a shape like `fun accept(p: <parameterTypeRef>): Unit`
+     */
+    private fun generateCalleeReferenceToFunctionWithSingleParameterOfSpecifiedType(
+        callSite: FirExpression,
         argumentList: FirArgumentList,
         parameterType: ConeKotlinType,
         context: ResolutionContext,
         resolutionMode: ResolutionMode,
     ): FirNamedReferenceWithCandidate {
+        check(argumentList.arguments.size == 1)
         val callableId = SyntheticCallableId.ACCEPT_SPECIFIC_TYPE
         val functionSymbol = FirSyntheticFunctionSymbol(callableId)
         // fun accept(p: <parameterTypeRef>): Unit
@@ -356,7 +376,7 @@ class FirSyntheticCallGenerator(
             }.build()
 
         return generateCalleeReferenceWithCandidate(
-            callableReferenceAccess,
+            callSite,
             function,
             argumentList,
             callableId.callableName,
