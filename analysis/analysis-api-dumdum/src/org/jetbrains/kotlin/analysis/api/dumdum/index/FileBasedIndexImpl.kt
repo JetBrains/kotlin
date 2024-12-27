@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.analysis.api.dumdum.index
 
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.Processor
 import com.intellij.util.indexing.ID
@@ -9,6 +10,17 @@ fun Index.fileBased(
     fileBasedIndexExtensions: FileBasedIndexExtensions,
 ): FileBasedIndex = let { index ->
     object : FileBasedIndex {
+        override fun <K> getContainingFilesIterator(
+            indexId: ID<K, *>,
+            key: K,
+            scope: GlobalSearchScope,
+        ): Iterator<VirtualFile> =
+            index
+                .files(fileBasedIndexExtensions.keyTypesMap.keyType(indexId), key)
+                .filter { scope.contains(virtualFileFactory.virtualFile(it)) }
+                .map { virtualFileFactory.virtualFile(it) }
+                .iterator()
+
         override fun <K, V> processValues(
             indexId: ID<K, V>,
             dataKey: K,
