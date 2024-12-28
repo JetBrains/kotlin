@@ -1,0 +1,122 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+fun <T : Any> TypeCrossfade(
+    state: T,
+    content: @Composable context(BoxScope) T.() -> Unit
+) {
+    Crossfade(state) {
+        with(BoxScope) {
+            content(it)
+        }
+    }
+}
+
+@Composable fun App() {
+    TypeCrossfade(States.A()) {
+        Text(this.toString())
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun <T: Any> TypeCrossfade(state: T, content: @[ExtensionFunctionType] Function4<BoxScope, T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(TypeCrossfade)P(1)<{>,<Crossf...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
+      %composer.changed(state)
+    } else {
+      %composer.changedInstance(state)
+    }
+    ) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(content)) 0b00100000 else 0b00010000
+  }
+  if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    Crossfade(state, rememberComposableLambda(<>, true, { it: T, %composer: Composer?, %changed: Int ->
+      sourceInformation(%composer, "C*<conten...>:Test.kt")
+      val %dirty = %changed
+      if (%changed and 0b0110 == 0) {
+        %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
+          %composer.changed(it)
+        } else {
+          %composer.changedInstance(it)
+        }
+        ) 0b0100 else 0b0010
+      }
+      if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %dirty, -1, <>)
+        }
+        with(BoxScope) {
+          content(%this%with, it, %composer, 0b1000 and %dirty shl 0b0011 or 0b01110000 and %dirty shl 0b0011)
+        }
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+      } else {
+        %composer.skipToGroupEnd()
+      }
+    }, %composer, 0b00110110), %composer, 0b00110000 or 0b1000 and %dirty or 0b1110 and %dirty)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    TypeCrossfade(state, content, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun App(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(App)<TypeCr...>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    TypeCrossfade(A(), ComposableSingletons%TestKt.lambda%-1203334793, %composer, 0b00110000)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    App(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+internal object ComposableSingletons%TestKt {
+  val lambda%-1203334793: @[ExtensionFunctionType] Function4<BoxScope, A, Composer, Int, Unit> = composableLambdaInstance(<>, false) { <unused var>: BoxScope, %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C<Text(t...>:Test.kt")
+    val %dirty = %changed
+    if (%changed and 0b00110000 == 0) {
+      %dirty = %dirty or if (%composer.changed(%this%TypeCrossfade)) 0b00100000 else 0b00010000
+    }
+    if (%dirty and 0b10010001 != 0b10010000 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %dirty, -1, <>)
+      }
+      Text(%this%TypeCrossfade.toString(), %composer, 0)
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+}

@@ -117,14 +117,13 @@ fun defaultsBitIndex(index: Int): Int = index.rem(BITS_PER_INT)
 
 /**
  * The number of implicit ('this') parameters the function has.
- *
- * Note that extension and dispatch receiver params will not show up in [IrFunction.valueParameters]
- * but context receiver parameter ([IrFunction.contextReceiverParametersCount]) will.
  */
 val IrFunction.thisParamCount
-    get() = contextReceiverParametersCount +
-            (if (dispatchReceiverParameter != null) 1 else 0) +
-            (if (extensionReceiverParameter != null) 1 else 0)
+    get() = parameters.count {
+        it.kind == IrParameterKind.DispatchReceiver ||
+                it.kind == IrParameterKind.ExtensionReceiver ||
+                it.kind == IrParameterKind.Context
+    }
 
 /**
  * Calculates the number of 'changed' params needed based on the function's parameters.
@@ -4096,7 +4095,11 @@ class ComposableFunctionBodyTransformer(
             init {
                 val defaultParams = mutableListOf<IrValueParameter>()
                 val changedParams = mutableListOf<IrValueParameter>()
-                for (param in function.valueParameters) {
+                for (param in function.parameters) {
+                    if (param.kind != IrParameterKind.Regular) {
+                        continue
+                    }
+
                     val paramName = param.name.asString()
                     when {
                         paramName == ComposeNames.COMPOSER_PARAMETER.identifier ->
@@ -4140,11 +4143,24 @@ class ComposableFunctionBodyTransformer(
 
             val isComposable = composerParameter != null
 
-            val allTrackedParams = listOfNotNull(function.extensionReceiverParameter) +
-                    function.valueParameters.take(
-                        function.contextReceiverParametersCount + realValueParamCount
-                    ) +
-                    listOfNotNull(function.dispatchReceiverParameter)
+            // Kotlin orders params as [dispatch receiver, context, extension receiver, normal parameters].
+            // Compose uses a different order: [extension receiver, context, normal parameters, dispatch receiver]
+            // Normally this does not matter, but lambda calls with context / extension params are converted into
+            // regular params on a call site (because it calls a generic FunctionN). This means that we need to
+            // use a different order for lambdas to avoid breaking the ABI for regular functions.
+            // todo(ashikov): avoid building multiple lists with .filter
+            val allTrackedParams =
+                if (function.isLambda()) {
+                    function.parameters.filter { it.kind == IrParameterKind.Context } +
+                            function.parameters.filter { it.kind == IrParameterKind.ExtensionReceiver } +
+                            function.parameters.filter { it.kind == IrParameterKind.Regular }.take(realValueParamCount) +
+                            function.parameters.filter { it.kind == IrParameterKind.DispatchReceiver }
+                } else {
+                    function.parameters.filter { it.kind == IrParameterKind.ExtensionReceiver } +
+                            function.parameters.filter { it.kind == IrParameterKind.Context } +
+                            function.parameters.filter { it.kind == IrParameterKind.Regular }.take(realValueParamCount) +
+                            function.parameters.filter { it.kind == IrParameterKind.DispatchReceiver }
+                }
 
             fun defaultIndexForSlotIndex(index: Int): Int {
                 return if (function.extensionReceiverParameter != null) index - 1 else index
