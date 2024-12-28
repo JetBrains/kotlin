@@ -5,22 +5,22 @@
 import androidx.compose.runtime.Composable
 
 
-context(Foo, Bar)
+context(foo: Foo, bar: Bar)
 @Composable
-fun String.A() { }
+fun A() { }
 
-context(Foo, Bar, FooBar)
+context(foo: Foo, bar: Bar, fooBar: FooBar)
 @Composable
-fun String.B() { }
+fun B() { }
 
 //
 // Transformed IR
 // ------------------------------------------
 
 @Composable
-fun String.A(%context_receiver_0: Foo, %context_receiver_1: Bar, %composer: Composer?, %changed: Int) {
+fun A(foo: Foo, bar: Bar, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(A):Test.kt")
+  sourceInformation(%composer, "C(A)P(1):Test.kt")
   if (%changed and 0b0001 != 0 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
@@ -32,13 +32,13 @@ fun String.A(%context_receiver_0: Foo, %context_receiver_1: Bar, %composer: Comp
     %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-    A(%context_receiver_0, %context_receiver_1, %composer, updateChangedFlags(%changed or 0b0001))
+    A(foo, bar, %composer, updateChangedFlags(%changed or 0b0001))
   }
 }
 @Composable
-fun String.B(%context_receiver_0: Foo, %context_receiver_1: Bar, %context_receiver_2: FooBar, %composer: Composer?, %changed: Int) {
+fun B(foo: Foo, bar: Bar, fooBar: FooBar, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(B):Test.kt")
+  sourceInformation(%composer, "C(B)P(1):Test.kt")
   if (%changed and 0b0001 != 0 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
@@ -50,6 +50,6 @@ fun String.B(%context_receiver_0: Foo, %context_receiver_1: Bar, %context_receiv
     %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-    B(%context_receiver_0, %context_receiver_1, %context_receiver_2, %composer, updateChangedFlags(%changed or 0b0001))
+    B(foo, bar, fooBar, %composer, updateChangedFlags(%changed or 0b0001))
   }
 }

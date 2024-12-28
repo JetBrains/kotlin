@@ -22,15 +22,18 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
-class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
+@RunWith(JUnit4::class)
+class ContextParametersTransformTests : AbstractIrTransformTest(true) {
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
         languageVersionSettings = LanguageVersionSettingsImpl(
             languageVersion = languageVersionSettings.languageVersion,
             apiVersion = languageVersionSettings.apiVersion,
             specificFeatures = mapOf(
-                LanguageFeature.ContextReceivers to LanguageFeature.State.ENABLED
+                LanguageFeature.ContextParameters to LanguageFeature.State.ENABLED
             )
         )
     }
@@ -61,7 +64,7 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
             class Foo { }
         """,
         """
-            context(Foo)
+            context(foo: Foo)
             @Composable
             fun Test() { }
         """
@@ -75,11 +78,11 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
             class FooBar { }
         """,
         """
-            context(Foo, Bar)
+            context(foo: Foo, bar: Bar)
             @Composable
             fun A() { }
 
-            context(Foo, Bar, FooBar)
+            context(foo: Foo, bar: Bar, fooBar: FooBar)
             @Composable
             fun B() { }
         """
@@ -93,11 +96,11 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
             class FooBar { }
         """,
         """
-            context(Foo, Bar)
+            context(foo: Foo, bar: Bar)
             @Composable
             fun String.A() { }
 
-            context(Foo, Bar, FooBar)
+            context(foo: Foo, bar: Bar, fooBar: FooBar)
             @Composable
             fun String.B() { }
         """
@@ -133,7 +136,7 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
             class FooBar { }
         """,
         """
-            context(Foo, Bar, FooBar)
+            context(foo: Foo, bar: Bar, fooBar: FooBar)
             @Composable
             fun String.B(a: Int, b: String = "", c: Int = 1) { }
         """
@@ -142,7 +145,7 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
     @Test
     fun testContextReceiversWith(): Unit = contextReceivers(
         """
-            context(Foo)
+            context(foo: Foo)
             @Composable
             fun A() { }
 
@@ -162,11 +165,11 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
     @Test
     fun testContextReceiversNestedWith(): Unit = contextReceivers(
         """
-            context(Foo)
+            context(foo: Foo)
             @Composable
             fun A() { }
 
-            context(Foo, Bar)
+            context(foo: Foo, bar: Bar)
             @Composable
             fun B() { }
 
@@ -222,7 +225,7 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
             class L { }
         """,
         """
-            context(A, B, C, D, E, F, G, H, I, J, K, L)
+            context(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L)
             @Composable
             fun Test() {
             }
@@ -270,6 +273,52 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
                 if (someString == combineParams) {
                     println("Same same")
                 }
+            }
+        """
+    )
+
+
+    // regression test for b/353744956
+    @Test
+    fun testMemoizationContextParameters() = verifyGoldenComposeIrTransform(
+        """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun <T : Any> TypeCrossfade(
+                state: T,
+                content: @Composable context(BoxScope) T.() -> Unit
+            ) {
+                Crossfade(state) {
+                    with(BoxScope) {
+                        content(it)
+                    }
+                }
+            }
+
+            @Composable fun App() {
+                TypeCrossfade(States.A()) {
+                    Text(this.toString())
+                }
+            }
+        """,
+        """
+            import androidx.compose.runtime.Composable
+
+            sealed interface States {
+                data class A(val i: Int = 0) : States
+                data object B : States
+            }
+
+            @Composable fun Text(text: String) { }
+
+            object BoxScope
+
+            @Composable
+            fun <T : Any> Crossfade(
+                state: T,
+                content: @Composable (T) -> Unit
+            ) {
             }
         """
     )

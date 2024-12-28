@@ -5,7 +5,7 @@
 import androidx.compose.runtime.Composable
 
 
-context(Foo, Bar, FooBar)
+context(foo: Foo, bar: Bar, fooBar: FooBar)
 @Composable
 fun String.B(a: Int, b: String = "", c: Int = 1) { }
 
@@ -14,9 +14,9 @@ fun String.B(a: Int, b: String = "", c: Int = 1) { }
 // ------------------------------------------
 
 @Composable
-fun String.B(%context_receiver_0: Foo, %context_receiver_1: Bar, %context_receiver_2: FooBar, a: Int, b: String?, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
+fun String.B(foo: Foo, bar: Bar, fooBar: FooBar, a: Int, b: String?, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(B):Test.kt")
+  sourceInformation(%composer, "C(B)P(4,2,5):Test.kt")
   if (%changed and 0b0001 != 0 || !%composer.skipping) {
     if (%default and 0b00010000 != 0) {
       b = ""
@@ -34,6 +34,6 @@ fun String.B(%context_receiver_0: Foo, %context_receiver_1: Bar, %context_receiv
     %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-    B(%context_receiver_0, %context_receiver_1, %context_receiver_2, a, b, c, %composer, updateChangedFlags(%changed or 0b0001), %default)
+    B(foo, bar, fooBar, a, b, c, %composer, updateChangedFlags(%changed or 0b0001), %default)
   }
 }

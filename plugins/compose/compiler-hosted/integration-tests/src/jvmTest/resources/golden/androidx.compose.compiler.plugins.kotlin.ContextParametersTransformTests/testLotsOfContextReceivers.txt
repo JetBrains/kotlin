@@ -5,21 +5,22 @@
 import androidx.compose.runtime.Composable
 
 
-context(Foo)
+context(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L)
 @Composable
-fun Test() { }
+fun Test() {
+}
 
 //
 // Transformed IR
 // ------------------------------------------
 
 @Composable
-fun Test(%context_receiver_0: Foo, %composer: Composer?, %changed: Int) {
+fun Test(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L, %composer: Composer?, %changed: Int, %changed1: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test):Test.kt")
-  if (%changed and 0b0001 != 0 || !%composer.skipping) {
+  if (%changed and 0b0001 != 0 || %changed1 and 0b0001 != 0 || !%composer.skipping) {
     if (isTraceInProgress()) {
-      traceEventStart(<>, %changed, -1, <>)
+      traceEventStart(<>, %changed, %changed1, <>)
     }
     if (isTraceInProgress()) {
       traceEventEnd()
@@ -28,6 +29,6 @@ fun Test(%context_receiver_0: Foo, %composer: Composer?, %changed: Int) {
     %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-    Test(%context_receiver_0, %composer, updateChangedFlags(%changed or 0b0001))
+    Test(a, b, c, d, e, f, g, h, i, j, k, l, %composer, updateChangedFlags(%changed or 0b0001), updateChangedFlags(%changed1))
   }
 }
