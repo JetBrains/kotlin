@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.analysis.api.dumdum.filesystem
 
-import com.intellij.openapi.vfs.DeprecatedVirtualFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.openapi.vfs.VirtualFileWithId
@@ -9,24 +8,6 @@ import com.intellij.util.io.UnsyncByteArrayInputStream
 import org.jetbrains.kotlin.analysis.api.dumdum.index.FileId
 import java.io.InputStream
 import java.io.OutputStream
-
-class LazyVirtualFileSystem : DeprecatedVirtualFileSystem() {
-    override fun getProtocol(): String =
-        "wobbler"
-
-    override fun findFileByPath(path: String): VirtualFile? {
-        throw UnsupportedOperationException("not implemented")
-    }
-
-    override fun refresh(asynchronous: Boolean) {
-
-    }
-
-    override fun refreshAndFindFileByPath(path: String): VirtualFile? {
-        throw UnsupportedOperationException("not implemented")
-    }
-
-}
 
 class LazyVirtualFile(
     val vfs: LazyVirtualFileSystem,
