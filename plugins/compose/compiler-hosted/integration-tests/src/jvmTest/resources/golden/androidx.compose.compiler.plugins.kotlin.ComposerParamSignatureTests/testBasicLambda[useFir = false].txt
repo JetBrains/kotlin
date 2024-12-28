@@ -13,20 +13,20 @@ val foo = @Composable { x: Int -> print(x)  }
 
 public final class ComposableSingletons%TestKt {
   public <init>()V
-  public final getLambda%202954256%test_module()Lkotlin/jvm/functions/Function3;
+  public final getLambda%-112788585%test_module()Lkotlin/jvm/functions/Function3;
   static <clinit>()V
   public final static LComposableSingletons%TestKt; INSTANCE
-  private static Lkotlin/jvm/functions/Function3; lambda%202954256
-  final static INNERCLASS ComposableSingletons%TestKt%lambda%202954256%1 null null
+  private static Lkotlin/jvm/functions/Function3; lambda%-112788585
+  final static INNERCLASS ComposableSingletons%TestKt%lambda%-112788585%1 null null
 }
-final class ComposableSingletons%TestKt%lambda%202954256%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function3 {
+final class ComposableSingletons%TestKt%lambda%-112788585%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function3 {
   <init>()V
   public final invoke(ILandroidx/compose/runtime/Composer;I)V
   public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
   static <clinit>()V
-  public final static LComposableSingletons%TestKt%lambda%202954256%1; INSTANCE
+  public final static LComposableSingletons%TestKt%lambda%-112788585%1; INSTANCE
   OUTERCLASS ComposableSingletons%TestKt null
-  final static INNERCLASS ComposableSingletons%TestKt%lambda%202954256%1 null null
+  final static INNERCLASS ComposableSingletons%TestKt%lambda%-112788585%1 null null
 }
 public final class TestKt {
   public final static getFoo()Lkotlin/jvm/functions/Function3;

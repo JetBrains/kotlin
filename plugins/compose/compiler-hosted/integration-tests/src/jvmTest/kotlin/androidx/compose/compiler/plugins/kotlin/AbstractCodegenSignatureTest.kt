@@ -35,7 +35,7 @@ abstract class AbstractCodegenSignatureTest(useFir: Boolean) : AbstractCodegenTe
         dumpClasses: Boolean = false,
         additionalPaths: List<File> = emptyList(),
     ) {
-        val className = "Test_REPLACEME_${uniqueNumber++}"
+        val className = "Test"
         val fileName = "$className.kt"
 
         val loader = classLoader(
