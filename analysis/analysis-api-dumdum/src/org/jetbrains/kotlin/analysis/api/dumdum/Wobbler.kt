@@ -55,6 +55,9 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProviderCliImpl
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.DummyFileAttributeService
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.FileAttributeService
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
@@ -304,6 +307,8 @@ private fun createApplicationEnvironment(applicationDisposable: Disposable): Cor
             });
 
             registerService(StubIndexService::class.java, IdeStubIndexService())
+            registerService(FileAttributeService::class.java, DummyFileAttributeService())
+            registerService(ClsKotlinBinaryClassCache::class.java, ClsKotlinBinaryClassCache())
         }
 
         registerFileType(PlainTextFileType.INSTANCE, "xml")
