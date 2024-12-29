@@ -21,11 +21,11 @@ class FileIndexFacadeImpl(project: Project) : FileIndexFacade(project) {
     }
 
     override fun isInLibrary(file: VirtualFile): Boolean {
-        TODO("Not yet implemented")
+        TODO("isInLibrary($file)")
     }
 
     override fun isInLibraryClasses(file: VirtualFile): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 
     override fun isInLibrarySource(file: VirtualFile): Boolean {
