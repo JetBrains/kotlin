@@ -313,6 +313,7 @@ private fun createApplicationEnvironment(applicationDisposable: Disposable): Cor
 
         registerFileType(PlainTextFileType.INSTANCE, "xml")
         registerParserDefinition(JavaParserDefinition())
+        registerFileType(ManifestFileType.INSTANCE, "MF")
 
         //                registerApplicationExtensionPointsAndExtensionsFrom(configuration, "extensions/compiler.xml")
         CoreApplicationEnvironment.registerExtensionPointAndExtensions(
