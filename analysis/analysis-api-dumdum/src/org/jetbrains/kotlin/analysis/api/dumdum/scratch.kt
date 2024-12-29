@@ -3,23 +3,18 @@
 package org.jetbrains.kotlin.analysis.api.dumdum
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.openapi.vfs.VirtualFileSystem
+import com.intellij.openapi.vfs.*
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.descendantsOfType
-import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.dumdum.index.FileId
+import org.jetbrains.kotlin.analysis.api.dumdum.index.FileValues
+import org.jetbrains.kotlin.analysis.api.dumdum.index.compose
 import org.jetbrains.kotlin.analysis.api.dumdum.index.inMemoryIndex
-import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -28,12 +23,10 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaCallableMemberCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaErrorCallInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.resolution.symbol
-import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtCallElement
@@ -42,6 +35,10 @@ import java.io.File
 import java.nio.file.Path
 
 data class StringFileId(val id: String) : FileId {
+    override val fileName: String get() = id
+}
+
+data class JarFileId(val id: String) : FileId {
     override val fileName: String get() = id
 }
 
@@ -60,7 +57,7 @@ fun test1() {
                     
                     fun foo() { }
                     
-                    """.trimIndent(),
+                    """.trimIndent().toByteArray(),
 
             StringFileId("/src/bar/bar.kt") to """
 
@@ -75,7 +72,7 @@ fun test1() {
                     
                     fun bar() { foo() }
                     
-                    """.trimIndent(),
+                    """.trimIndent().toByteArray(),
 
             StringFileId("/src/bar/baz.kt") to """
 
@@ -83,26 +80,58 @@ fun test1() {
                     
                     fun baz() { listOf(1) }
                     
-                    """.trimIndent()
+                    """.trimIndent().toByteArray()
         )
 
-
-        val index = withProject {
-            val psiManager = PsiManager.getInstance(project)
-            inMemoryIndex(
-                files.keys.associateWith { fileId ->
-                    val vFile = virtualFile(fileId) {
-                        files[fileId]!!.toByteArray()
+        val stdlibPath = File("/Users/jetzajac/Projects/kotlin/dist/kotlinc/lib/kotlin-stdlib.jar").toPath()
+        val jarFiles =
+            buildMap {
+                val jarRoot = jarFileSystem.findFileByPath("$stdlibPath!/")!!
+                VfsUtilCore.visitChildrenRecursively(jarRoot, object : VirtualFileVisitor<Any>() {
+                    override fun visitFile(file: VirtualFile): Boolean {
+                        if (!file.isDirectory) {
+                            put(JarFileId(file.path), file)
+                        }
+                        return true
                     }
-                    val psiFile = psiManager.findFile(vFile)!!
-                    mapFile(psiFile)
+                })
+
+            }
+
+        val libIndex = withProject {
+            val psiManager = PsiManager.getInstance(project)
+            val jarFileValues: Map<FileId, FileValues> = jarFiles.mapNotNull { (jarFileId, virtualFile) ->
+                psiManager.findFile(virtualFile)?.let { psiFile ->
+                    jarFileId to mapFile(psiFile)
+                } ?: run {
+                    println("PSI File not found for jar file: $virtualFile")
+                    null
                 }
+            }.toMap()
+            inMemoryIndex(jarFileValues)
+        }
+
+        val sourceIndex = withProject {
+            val psiManager = PsiManager.getInstance(project)
+            val sourceFileValues: Map<FileId, FileValues> = files.mapNotNull { (fileId, fileBytes) ->
+                val vFile = virtualFile(fileId) {
+                    fileBytes
+                }
+                psiManager.findFile(vFile)?.let { psiFile ->
+                    fileId to mapFile(psiFile)
+                } ?: run {
+                    println("PSI File not found for source file: $vFile")
+                    null
+                }
+            }.toMap()
+            inMemoryIndex(
+                sourceFileValues
             )
         }
 
-        val stdlibPath = File("/Users/jetzajac/Projects/kotlin/dist/kotlinc/lib/kotlin-stdlib.jar").toPath()
+        val index = libIndex.compose(sourceIndex)
 
-        files.forEach { (fileId, text) ->
+        files.forEach { (fileId, fileBytes) ->
             withProject {
                 val binaryRoots = listOf(stdlibPath)
                 val lib = KaLibraryModuleImpl(
@@ -115,12 +144,7 @@ fun test1() {
                     directDependsOnDependencies = emptyList(),
                     transitiveDependsOnDependencies = emptyList(),
                     directFriendDependencies = emptyList(),
-                    contentScope = createSearchScopeByLibraryRoots(
-                        binaryRoots = binaryRoots,
-                        binaryVirtualFiles = listOf(),
-                        project = project,
-                        jarFileSystem = jarFileSystem
-                    ),
+                    contentScope = GlobalSearchScope.filesScope(project, jarFiles.values),
                     targetPlatform = JvmPlatforms.defaultJvmPlatform,
                     project = project
                 )
@@ -139,7 +163,7 @@ fun test1() {
                 val psiManager = PsiManager.getInstance(project)
 
                 val vFile = virtualFile(fileId) {
-                    text.toByteArray()
+                    fileBytes
                 }
                 val psiFile = psiManager.findFile(vFile)!!
 
@@ -147,8 +171,12 @@ fun test1() {
                     index = index,
                     singleModule = singleModule,
                     virtualFileFactory = { id ->
-                        virtualFile(id) {
-                            files[id]!!.toByteArray()
+                        when (id) {
+                            is JarFileId -> jarFiles[id]!!
+                            is StringFileId -> virtualFile(id) {
+                                files[id]!!
+                            }
+                            else -> error("unknown file id")
                         }
                     }
                 ) {
@@ -221,85 +249,3 @@ internal class KaLibraryModuleImpl(
     override val project: Project,
 ) : KaLibraryModule
 
-fun createSearchScopeByLibraryRoots(
-    binaryRoots: Collection<Path>,
-    binaryVirtualFiles: Collection<VirtualFile>,
-    project: Project,
-    jarFileSystem: VirtualFileSystem,
-): GlobalSearchScope {
-    @OptIn(KaImplementationDetail::class)
-    fun getVirtualFileUrlsForLibraryRootsRecursively(
-        binaryVirtualFiles: Collection<VirtualFile>,
-    ): Set<String> =
-        buildSet {
-            for (vf in binaryVirtualFiles) {
-                LibraryUtils.getAllVirtualFilesFromRoot(vf, includeRoot = true)
-                    .mapTo(this) { it.url }
-            }
-        }
-
-    @OptIn(KaImplementationDetail::class, KaImplementationDetail::class)
-    fun getVirtualFileUrlsForLibraryRootsRecursively(
-        roots: Collection<Path>,
-        jarFileSystem: VirtualFileSystem,
-    ): Set<String> {
-        fun getVirtualFilesForLibraryRoots(
-            roots: Collection<Path>,
-            jarFileSystem: VirtualFileSystem,
-        ): List<VirtualFile> {
-            fun adjustModulePath(pathString: String): String {
-                return if (pathString.contains(URLUtil.JAR_SEPARATOR)) {
-                    // URLs loaded from JDK point to module names in a JRT protocol format,
-                    // e.g., "jrt:///path/to/jdk/home!/java.base" (JRT protocol prefix + JDK home path + JAR separator + module name)
-                    // After protocol erasure, we will see "/path/to/jdk/home!/java.base" as a binary root.
-                    // CoreJrtFileSystem.CoreJrtHandler#findFile, which uses Path#resolve, finds a virtual file path to the file itself,
-                    // e.g., "/path/to/jdk/home!/modules/java.base". (JDK home path + JAR separator + actual file path)
-                    // To work with that JRT handler, a hacky workaround here is to add "modules" before the module name so that it can
-                    // find the actual file path.
-                    // See [LLFirJavaFacadeForBinaries#getBinaryPath] and [StandaloneProjectFactory#getBinaryPath] for a similar hack.
-                    val (libHomePath, pathInImage) = CoreJrtFileSystem.splitPath(pathString)
-                    libHomePath + URLUtil.JAR_SEPARATOR + "modules/$pathInImage"
-                } else
-                    pathString
-            }
-
-            return roots.mapNotNull { path ->
-                val pathString = FileUtil.toSystemIndependentName(path.toAbsolutePath().toString())
-                when {
-                    pathString.endsWith(StandardFileSystems.JAR_PROTOCOL) || pathString.endsWith(KLIB_FILE_EXTENSION) -> {
-                        jarFileSystem.findFileByPath(pathString + URLUtil.JAR_SEPARATOR)
-                    }
-
-                    pathString.contains(URLUtil.JAR_SEPARATOR) -> {
-                        jarFileSystem.findFileByPath(adjustModulePath(pathString))
-                    }
-
-                    else -> {
-                        VirtualFileManager.getInstance().findFileByNioPath(path)
-                    }
-                }
-            }.distinct()
-        }
-
-        return buildSet {
-            for (root in getVirtualFilesForLibraryRoots(roots, jarFileSystem)) {
-                LibraryUtils.getAllVirtualFilesFromRoot(root, includeRoot = true)
-                    .mapTo(this) { it.url }
-            }
-        }
-    }
-
-    val virtualFileUrlsFromBinaryRoots = getVirtualFileUrlsForLibraryRootsRecursively(binaryRoots, jarFileSystem)
-    val virtualFileUrlsFromBinaryVirtualFiles = getVirtualFileUrlsForLibraryRootsRecursively(binaryVirtualFiles)
-    val virtualFileUrls = virtualFileUrlsFromBinaryRoots + virtualFileUrlsFromBinaryVirtualFiles
-
-    return object : GlobalSearchScope(project) {
-        override fun contains(file: VirtualFile): Boolean = file.url in virtualFileUrls
-
-        override fun isSearchInModuleContent(aModule: com.intellij.openapi.module.Module): Boolean = false
-
-        override fun isSearchInLibraries(): Boolean = true
-
-        override fun toString(): String = virtualFileUrls.toString()
-    }
-}
