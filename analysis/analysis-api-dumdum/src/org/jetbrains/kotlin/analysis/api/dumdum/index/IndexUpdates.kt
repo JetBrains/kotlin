@@ -44,12 +44,16 @@ fun mapFile(
     fileBasedIndexExtensions: FileBasedIndexExtensions,
 ): FileValues =
     FileValues(
-        mapOf(stubIndexExtensions.indexedSerializedStubTreeType to buildStub(stubSerializerTable, file)) +
-                fileBasedIndexExtensions.extensions.mapNotNull { extension ->
-                    buildFileBasedMap(file.project, file.virtualFile, extension)?.let { fileBasedMap ->
-                        fileBasedIndexExtensions.mapType(extension.name) to fileBasedMap
-                    }
+        buildMap {
+            buildStub(stubSerializerTable, file)?.let { stub ->
+                put(stubIndexExtensions.indexedSerializedStubTreeType, stub)
+            }
+            fileBasedIndexExtensions.extensions.forEach { extension ->
+                buildFileBasedMap(file.project, file.virtualFile, extension)?.let { fileBasedMap ->
+                    put(fileBasedIndexExtensions.mapType(extension.name), fileBasedMap)
                 }
+            }
+        }
     )
 
 fun allValueTypes(
