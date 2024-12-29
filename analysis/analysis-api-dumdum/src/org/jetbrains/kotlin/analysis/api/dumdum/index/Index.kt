@@ -52,3 +52,16 @@ class ValueType<S>(
     override fun toString(): String =
         id
 }
+
+fun Index.compose(rhs: Index): Index = let { lhs ->
+    object : Index {
+        override fun <S> value(fileId: FileId, valueType: ValueType<S>): S? =
+            rhs.value(fileId, valueType) ?: lhs.value(fileId, valueType)
+
+        override fun <K> files(keyType: KeyType<K>, key: K): Sequence<FileId> =
+            (rhs.files(keyType, key) + lhs.files(keyType, key)).distinct()
+
+        override fun <K> keys(keyType: KeyType<K>): Sequence<K> =
+            (rhs.keys(keyType) + lhs.keys(keyType)).distinct()
+    }
+}
