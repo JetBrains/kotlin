@@ -84,6 +84,7 @@ abstract class NameByPackageShortNameIndex : FileBasedIndexExtension<FqName, Lis
                 }
             } catch (e: Throwable) {
                 if (e is ControlFlowException) throw e
+                e.printStackTrace()
                 LOG.warn("Error `(${e.javaClass.simpleName}: ${e.message})` while indexing file ${fileContent.fileName} using ${name} index. Probably the file is broken.")
                 emptyMap()
             }
