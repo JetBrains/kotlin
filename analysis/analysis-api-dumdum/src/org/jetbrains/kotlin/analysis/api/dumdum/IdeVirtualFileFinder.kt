@@ -47,12 +47,13 @@ class IdeVirtualFileFinder(
         findVirtualFileWithHeader(classId.asSingleFqName(), KotlinClassFileIndex.NAME)
 
     private fun findVirtualFileWithHeader(fqName: FqName, key: ID<FqName, *>): VirtualFile? {
-        println("IdeVirtualFileFinder.findVirtualFileWithHeader($fqName, $key)")
         val iterator = fileBasedIndex.getContainingFilesIterator(key, fqName, scope)
         return if (iterator.hasNext()) {
             iterator.next()
         } else {
             null
+        }.also {
+            println("IdeVirtualFileFinder.findVirtualFileWithHeader($fqName, $key) = $it")
         }
     }
 
