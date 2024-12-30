@@ -31,7 +31,7 @@ open class AbstractKaptStubConverterTest : AbstractKotlinCompilerTest() {
     protected open val kaptFacade: Constructor<AbstractTestFacade<ResultingArtifact.Source, KaptContextBinaryArtifact>>
         get() = { JvmCompilerWithKaptFacade(it) }
 
-    final override fun TestConfigurationBuilder.configuration() {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
             frontend = frontendKind
             targetPlatform = JvmPlatforms.defaultJvmPlatform

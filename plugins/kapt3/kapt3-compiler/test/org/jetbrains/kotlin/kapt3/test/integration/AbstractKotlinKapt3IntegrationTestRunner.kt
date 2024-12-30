@@ -35,7 +35,7 @@ class AbstractKotlinKapt3IntegrationTestRunner(
         doOpenInternalPackagesIfRequired()
     }
 
-    final override fun TestConfigurationBuilder.configuration() {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
             frontend = FrontendKinds.ClassicFrontend
             targetPlatform = JvmPlatforms.defaultJvmPlatform

@@ -40,11 +40,7 @@ abstract class AbstractDiagnosticsNativeTestBase<R : ResultingArtifact.FrontendO
     abstract val targetFrontend: FrontendKind<R>
     abstract val frontend: Constructor<FrontendFacade<R>>
 
-    final override fun TestConfigurationBuilder.configuration() = Unit
-
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        super.configure(builder)
-
         globalDefaults {
             frontend = targetFrontend
             targetPlatform = NativePlatforms.unspecifiedNativePlatform

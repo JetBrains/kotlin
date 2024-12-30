@@ -35,7 +35,7 @@ class AbstractFirKotlinKaptIntegrationTestRunner(
         doOpenInternalPackagesIfRequired()
     }
 
-    final override fun TestConfigurationBuilder.configuration() {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
             frontend = FrontendKinds.FIR
             targetPlatform = JvmPlatforms.defaultJvmPlatform

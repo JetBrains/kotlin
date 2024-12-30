@@ -27,7 +27,7 @@ abstract class AbstractFirLoadCompiledJvmKotlinTestBase<F : ResultingArtifact.Fr
     protected abstract val frontendFacade: Constructor<FrontendFacade<F>>
     protected abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<F, IrBackendInput>>
 
-    final override fun TestConfigurationBuilder.configuration() {
+    override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
         commonConfigurationForTest(frontendKind, frontendFacade, frontendToBackendConverter)
 
         configureJvmArtifactsHandlersStep {

@@ -134,7 +134,7 @@ abstract class AbstractTieredFir2IrJvmTest(
     open val klibFacades: KlibFacades?
         get() = null
 
-    final override fun TestConfigurationBuilder.configuration() {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         // See: compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/checkDiagnosticFullText.kt
         // It expects `+MultiPlatformProjects` to be present a priori because of its location.
         // Also, it's important to configure the same handlers, otherwise differences with the `.fir.kt` files

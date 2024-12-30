@@ -84,7 +84,7 @@ open class AbstractNativeUnboundIrSerializationTest : AbstractKotlinCompilerWith
         registeredSourceTransformers[getAbsoluteFile(testDataFilePath)] = sourceTransformer
     }
 
-    final override fun TestConfigurationBuilder.configuration() {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
             frontend = FrontendKinds.FIR
             targetPlatform = NativePlatforms.unspecifiedNativePlatform

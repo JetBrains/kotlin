@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 
 abstract class AbstractLowLevelCompilerBasedTest : AbstractCompilerBasedTest() {
-    final override fun TestConfigurationBuilder.configuration() {
+    final override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
             frontend = FrontendKinds.FIR
             targetPlatform = JvmPlatforms.defaultJvmPlatform

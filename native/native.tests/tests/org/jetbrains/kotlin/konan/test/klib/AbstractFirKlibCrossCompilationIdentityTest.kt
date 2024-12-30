@@ -55,7 +55,7 @@ import java.security.MessageDigest
  */
 @Tag("klib")
 open class AbstractFirKlibCrossCompilationIdentityTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE) {
-    final override fun TestConfigurationBuilder.configuration() {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
             frontend = FrontendKinds.FIR
             targetPlatform = NativePlatforms.unspecifiedNativePlatform

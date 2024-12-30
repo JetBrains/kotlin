@@ -30,7 +30,7 @@ open class AbstractJvmAbiConsistencyTest :
     AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR),
     RunnerWithTargetBackendForTestGeneratorMarker {
 
-    final override fun TestConfigurationBuilder.configuration() {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
 
         commonServicesConfigurationForCodegenAndDebugTest(FrontendKinds.ClassicAndFIR)
 

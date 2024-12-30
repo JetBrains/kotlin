@@ -31,7 +31,7 @@ abstract class AbstractJvmIntegrationDiagnosticTest(
 ) : AbstractKotlinCompilerTest() {
     abstract val jvmCliFacade: Constructor<JvmCliFacade>
 
-    final override fun TestConfigurationBuilder.configuration() {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
             frontend = targetFrontend
             targetPlatform = JvmPlatforms.defaultJvmPlatform

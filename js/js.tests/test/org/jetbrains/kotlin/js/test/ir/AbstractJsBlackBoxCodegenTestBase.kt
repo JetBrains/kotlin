@@ -93,7 +93,7 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
     protected open val enableBoxHandlers: Boolean
         get() = true
 
-    final override fun TestConfigurationBuilder.configuration() {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         commonConfigurationForJsBlackBoxCodegenTest()
         if (enableBoxHandlers) {
             configureJsArtifactsHandlersStep {

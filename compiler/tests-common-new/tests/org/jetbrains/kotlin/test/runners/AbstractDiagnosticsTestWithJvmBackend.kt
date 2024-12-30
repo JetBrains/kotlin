@@ -44,7 +44,7 @@ abstract class AbstractDiagnosticsTestWithConverter<R : ResultingArtifact.Fronte
     abstract val frontend: Constructor<FrontendFacade<R>>
     abstract val converter: Constructor<Frontend2BackendConverter<R, IrBackendInput>>
 
-    final override fun TestConfigurationBuilder.configuration() {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
             frontend = targetFrontend
             targetBackend = TargetBackend.JVM_IR
