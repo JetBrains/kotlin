@@ -44,7 +44,7 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 open class AbstractReplWithTestExtensionsDiagnosticsTest : AbstractKotlinCompilerTest() {
-    override fun TestConfigurationBuilder.configuration() {
+    final override fun TestConfigurationBuilder.configuration() {
         baseFirDiagnosticTestConfiguration(frontendFacade = ::FirReplFrontendFacade)
         enableLazyResolvePhaseChecking()
         configureFirParser(FirParser.Psi)

@@ -77,7 +77,7 @@ open class AbstractK1WasmSteppingTest : AbstractK1WasmTest(
     override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
         get() = ::WasmDebugRunner
 
-    override fun TestConfigurationBuilder.configuration() {
+    final override fun TestConfigurationBuilder.configuration() {
         commonConfigurationForWasmBlackBoxCodegenTest()
         useAdditionalSourceProviders(::WasmJsSteppingTestAdditionalSourceProvider)
         defaultDirectives {

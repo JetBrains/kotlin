@@ -34,7 +34,7 @@ abstract class AbstractFirWasmDiagnosticTestBase(
     private val targetPlatform: TargetPlatform,
     private val wasmEnvironmentConfigurator: Constructor<AbstractEnvironmentConfigurator>,
 ) : AbstractKotlinCompilerTest() {
-    override fun TestConfigurationBuilder.configuration() {
+    final override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
             frontend = FrontendKinds.FIR
             targetPlatform = this@AbstractFirWasmDiagnosticTestBase.targetPlatform

@@ -38,7 +38,7 @@ enum class ForeignAnnotationsTestKind(val compiledJava: Boolean, val psiClassLoa
 }
 
 abstract class AbstractForeignAnnotationsTestBase(private val kind: ForeignAnnotationsTestKind) : AbstractKotlinCompilerTest() {
-    override fun TestConfigurationBuilder.configuration() {
+    final override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
             targetPlatform = JvmPlatforms.defaultJvmPlatform
             dependencyKind = DependencyKind.Source

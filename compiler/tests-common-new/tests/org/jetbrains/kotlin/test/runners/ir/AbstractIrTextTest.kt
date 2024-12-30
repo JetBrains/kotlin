@@ -50,7 +50,7 @@ abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOut
 
     open fun TestConfigurationBuilder.applyConfigurators() {}
 
-    override fun TestConfigurationBuilder.configuration() {
+    final override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
             frontend = this@AbstractIrTextTest.frontend
             targetPlatform = this@AbstractIrTextTest.targetPlatform

@@ -154,7 +154,7 @@ fun TestConfigurationBuilder.configureTieredBackendJvmTest(
 abstract class AbstractTieredBackendJvmTest(
     private val parser: FirParser,
 ) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
-    override fun TestConfigurationBuilder.configuration() {
+    final override fun TestConfigurationBuilder.configuration() {
         configureTieredBackendJvmTest(
             parser, ::Fir2IrResultsConverter, targetBackend,
             klibFacades = null,

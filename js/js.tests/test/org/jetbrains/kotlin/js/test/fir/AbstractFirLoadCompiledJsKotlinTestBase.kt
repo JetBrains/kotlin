@@ -25,7 +25,7 @@ abstract class AbstractFirLoadCompiledJsKotlinTestBase<F : ResultingArtifact.Fro
     protected abstract val frontendFacade: Constructor<FrontendFacade<F>>
     protected abstract val frontendToIrConverter: Constructor<Frontend2BackendConverter<F, IrBackendInput>>
 
-    override fun TestConfigurationBuilder.configuration() {
+    final override fun TestConfigurationBuilder.configuration() {
         commonConfigurationForJsCodegenTest(
             targetFrontend = frontendKind,
             frontendFacade = frontendFacade,

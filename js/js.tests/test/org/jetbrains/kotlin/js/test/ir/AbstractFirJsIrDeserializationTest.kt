@@ -48,7 +48,7 @@ abstract class AbstractFirJsIrDeserializationTest(
     override val backendFacades: JsBackendFacades
         get() = JsBackendFacades.WithSeparatedDeserialization
 
-    override fun TestConfigurationBuilder.configuration() {
+    final override fun TestConfigurationBuilder.configuration() {
         defaultDirectives {
             runIf(useIrInlinerAtFirstCompilationPhase) { LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}" }
             +JsEnvironmentConfigurationDirectives.PER_MODULE

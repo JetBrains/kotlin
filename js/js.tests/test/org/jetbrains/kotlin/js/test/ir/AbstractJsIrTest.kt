@@ -175,7 +175,7 @@ open class AbstractIrJsSteppingTest : AbstractJsIrTest(
     pathToTestDir = "compiler/testData/debug/stepping/",
     testGroupOutputDirPrefix = "debug/irStepping/"
 ) {
-    override fun TestConfigurationBuilder.configuration() {
+    final override fun TestConfigurationBuilder.configuration() {
         commonConfigurationForJsBlackBoxCodegenTest()
         configureSteppingTests()
     }
@@ -185,7 +185,7 @@ open class AbstractIrJsLocalVariableTest : AbstractJsIrTest(
     pathToTestDir = "compiler/testData/debug/localVariables/",
     testGroupOutputDirPrefix = "debug/localVariables/"
 ) {
-    override fun TestConfigurationBuilder.configuration() {
+    final override fun TestConfigurationBuilder.configuration() {
         commonConfigurationForJsBlackBoxCodegenTest()
         defaultDirectives {
             +JsEnvironmentConfigurationDirectives.NO_COMMON_FILES

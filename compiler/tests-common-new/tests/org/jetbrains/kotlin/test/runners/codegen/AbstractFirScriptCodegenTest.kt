@@ -47,7 +47,7 @@ open class AbstractFirScriptAndReplCodegenTest(val frontendFacade: Constructor<F
     AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR)
 {
 
-    override fun TestConfigurationBuilder.configuration() {
+    final override fun TestConfigurationBuilder.configuration() {
         configureFirParser(FirParser.Psi)
 
         globalDefaults {
