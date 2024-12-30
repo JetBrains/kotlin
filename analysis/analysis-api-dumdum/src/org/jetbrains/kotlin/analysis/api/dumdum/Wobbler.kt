@@ -64,6 +64,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMode
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.KotlinModuleFileType
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
@@ -313,7 +314,8 @@ private fun createApplicationEnvironment(applicationDisposable: Disposable): Cor
 
         registerFileType(PlainTextFileType.INSTANCE, "xml")
         registerParserDefinition(JavaParserDefinition())
-        registerFileType(ManifestFileType.INSTANCE, "MF")
+        registerFileType(ManifestFileType.INSTANCE, ManifestFileType.INSTANCE.defaultExtension)
+        registerFileType(KotlinModuleFileType.INSTANCE, KotlinModuleFileType.INSTANCE.defaultExtension)
 
         //                registerApplicationExtensionPointsAndExtensionsFrom(configuration, "extensions/compiler.xml")
         CoreApplicationEnvironment.registerExtensionPointAndExtensions(
