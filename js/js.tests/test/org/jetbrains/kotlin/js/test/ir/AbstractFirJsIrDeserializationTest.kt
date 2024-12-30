@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.IGNORE_IR_DESERIALIZATION_TEST
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
+import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
@@ -48,17 +49,25 @@ abstract class AbstractFirJsIrDeserializationTest(
     override val backendFacades: JsBackendFacades
         get() = JsBackendFacades.WithSeparatedDeserialization
 
-    final override fun TestConfigurationBuilder.configuration() {
-        defaultDirectives {
-            runIf(useIrInlinerAtFirstCompilationPhase) { LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}" }
-            +JsEnvironmentConfigurationDirectives.PER_MODULE
-            +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
-            FirDiagnosticsDirectives.FIR_PARSER with FirParser.LightTree
+    override val customIgnoreDirective: ValueDirective<TargetBackend>?
+        get() = IGNORE_IR_DESERIALIZATION_TEST
+
+    override val enableBoxHandlers: Boolean
+        get() = false
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                runIf(useIrInlinerAtFirstCompilationPhase) { LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}" }
+                +JsEnvironmentConfigurationDirectives.PER_MODULE
+                +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
+                FirDiagnosticsDirectives.FIR_PARSER with FirParser.LightTree
+            }
+            useAfterAnalysisCheckers(
+                ::FirMetaInfoDiffSuppressor
+            )
         }
-        useAfterAnalysisCheckers(
-            ::FirMetaInfoDiffSuppressor
-        )
-        commonConfigurationForJsBlackBoxCodegenTest(IGNORE_IR_DESERIALIZATION_TEST)
     }
 }
 
