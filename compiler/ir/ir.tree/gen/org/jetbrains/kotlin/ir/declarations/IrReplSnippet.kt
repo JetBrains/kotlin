@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
+ * Represents REPL Snippet entity that corresponds to the analogous FIR entity
+ *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.replSnippet]
  */
 abstract class IrReplSnippet : IrDeclarationBase(), IrDeclarationWithName, IrDeclarationParent, IrMetadataSourceOwner {
@@ -28,31 +30,40 @@ abstract class IrReplSnippet : IrDeclarationBase(), IrDeclarationWithName, IrDec
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: ReplSnippetDescriptor
 
-    abstract var receiversParameters: List<IrValueParameter>
+    /**
+     * Stores implicit receiver parameters configured for the snippet.
+     */
+    abstract var receiverParameters: List<IrValueParameter>
 
     abstract val variablesFromOtherSnippets: MutableList<IrVariable>
 
-    abstract val capturingDeclarationsFromOtherSnippets: MutableList<IrDeclaration>
+    abstract val declarationsFromOtherSnippets: MutableList<IrDeclaration>
 
+    /**
+     * Contains link to the static state object for this compilation session.
+     */
     abstract var stateObject: IrClassSymbol?
 
     abstract var body: IrBody
 
     abstract var returnType: IrType?
 
+    /**
+     * Contains link to the IrClass symbol to which this snippet should be lowered on the appropriate stage.
+     */
     abstract var targetClass: IrClassSymbol?
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitReplSnippet(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        receiversParameters.forEach { it.accept(visitor, data) }
+        receiverParameters.forEach { it.accept(visitor, data) }
         variablesFromOtherSnippets.forEach { it.accept(visitor, data) }
         body.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        receiversParameters = receiversParameters.transformIfNeeded(transformer, data)
+        receiverParameters = receiverParameters.transformIfNeeded(transformer, data)
         variablesFromOtherSnippets.transformInPlace(transformer, data)
         body = body.transform(transformer, data)
     }

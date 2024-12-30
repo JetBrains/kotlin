@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
 class IrReplSnippetImpl(
-    override val symbol: IrReplSnippetSymbol,
-    override var name: Name,
-    override val factory: IrFactory,
     override val startOffset: Int,
     override val endOffset: Int,
+    override val factory: IrFactory,
+    override var name: Name,
+    override val symbol: IrReplSnippetSymbol,
 ) : IrReplSnippet() {
     override var annotations: List<IrConstructorCall> = emptyList()
 
@@ -37,11 +37,11 @@ class IrReplSnippetImpl(
     override val descriptor: ReplSnippetDescriptor
         get() = symbol.descriptor
 
-    override lateinit var receiversParameters: List<IrValueParameter>
+    override lateinit var receiverParameters: List<IrValueParameter>
 
     override val variablesFromOtherSnippets: MutableList<IrVariable> = ArrayList()
 
-    override val capturingDeclarationsFromOtherSnippets: MutableList<IrDeclaration> = ArrayList()
+    override val declarationsFromOtherSnippets: MutableList<IrDeclaration> = ArrayList()
 
     override var stateObject: IrClassSymbol? = null
 

@@ -548,15 +548,31 @@ object IrTree : AbstractTreeBuilder() {
         parent(declarationParent)
         parent(metadataSourceOwner)
 
+        kDoc = """
+            Represents REPL Snippet entity that corresponds to the analogous FIR entity
+        """.trimIndent()
+
         +declaredSymbol(replSnippetSymbol)
         +descriptor("ReplSnippetDescriptor")
-        +listField("receiversParameters", valueParameter, mutability = Var)
+        +listField("receiverParameters", valueParameter, mutability = Var) {
+            kDoc = """
+                Stores implicit receiver parameters configured for the snippet.
+            """.trimIndent()
+        }
         +listField("variablesFromOtherSnippets", variable, mutability = MutableList)
-        +listField("capturingDeclarationsFromOtherSnippets", declaration, mutability = MutableList, isChild = false)
-        +referencedSymbol("stateObject", classSymbol, nullable = true)
+        +listField("declarationsFromOtherSnippets", declaration, mutability = MutableList, isChild = false)
+        +referencedSymbol("stateObject", classSymbol, nullable = true) {
+            kDoc = """
+                Contains link to the static state object for this compilation session.
+            """.trimIndent()
+        }
         +field("body", body)
         +field("returnType", irTypeType, nullable = true)
-        +referencedSymbol("targetClass", classSymbol, nullable = true)
+        +referencedSymbol("targetClass", classSymbol, nullable = true){
+            kDoc = """
+                Contains link to the IrClass symbol to which this snippet should be lowered on the appropriate stage.
+            """.trimIndent()
+        }
     }
     val simpleFunction: Element by element(Declaration) {
         parent(function)
