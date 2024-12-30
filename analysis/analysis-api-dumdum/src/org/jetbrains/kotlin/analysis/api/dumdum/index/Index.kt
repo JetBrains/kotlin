@@ -65,3 +65,22 @@ fun Index.compose(rhs: Index): Index = let { lhs ->
             (rhs.keys(keyType) + lhs.keys(keyType)).distinct()
     }
 }
+
+fun Index.traced(): Index = let { original ->
+    object : Index {
+        override fun <S> value(fileId: FileId, valueType: ValueType<S>): S? =
+            original.value(fileId, valueType).also {
+                println("Index.value($fileId, ${valueType.id}) = $it")
+            }
+
+        override fun <K> files(keyType: KeyType<K>, key: K): Sequence<FileId> =
+            original.files(keyType, key).also {
+                println("Index.files(${keyType}, $key) = ${it.toList()}")
+            }
+
+        override fun <K> keys(keyType: KeyType<K>): Sequence<K> =
+            original.keys(keyType).also {
+                println("Index.keys(${keyType}) = ${it.toList()}")
+            }
+    }
+}
