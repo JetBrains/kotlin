@@ -80,6 +80,21 @@ fun test1() {
                     
                     fun baz() { listOf(1) }
                     
+                    """.trimIndent().toByteArray(),
+
+            StringFileId("/src/bar/fizz.kt") to """
+
+                    package fizz
+                    
+                    fun Int.extension() {}
+                    
+                    fun Float.extension() {}
+                    
+                    fun fizz() {
+                        1.extension()
+                        1f.extension()
+                    }
+                    
                     """.trimIndent().toByteArray()
         )
 
