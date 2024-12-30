@@ -38,15 +38,12 @@ import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.ir.builders.declarations.addField
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrReplSnippet
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
-import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
-import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -122,23 +119,23 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
                 ).run {
                     parent = actualParent
                     visibility = DescriptorVisibilities.PUBLIC
-                    dispatchReceiverParameter = IrFactoryImpl.createValueParameter(
-                        startOffset = startOffset,
-                        endOffset = endOffset,
-                        origin = origin,
-                        kind = null,
-                        name = SpecialNames.THIS,
-                        type = actualParent.thisReceiver!!.type,
-                        isAssignable = false,
-                        symbol = IrValueParameterSymbolImpl(),
-                        varargElementType = null,
-                        isCrossinline = false,
-                        isNoinline = false,
-                        isHidden = false,
-                    ).apply {
-                        parent = this@run
-                    }
-                    irSnippet.capturingDeclarationsFromOtherSnippets.add(this)
+//                    dispatchReceiverParameter = IrFactoryImpl.createValueParameter(
+//                        startOffset = startOffset,
+//                        endOffset = endOffset,
+//                        origin = origin,
+//                        kind = null,
+//                        name = SpecialNames.THIS,
+//                        type = actualParent.thisReceiver!!.type,
+//                        isAssignable = false,
+//                        symbol = IrValueParameterSymbolImpl(),
+//                        varargElementType = null,
+//                        isCrossinline = false,
+//                        isNoinline = false,
+//                        isHidden = false,
+//                    ).apply {
+//                        parent = this@run
+//                    }
+                    irSnippet.declarationsFromOtherSnippets.add(this)
                 }
             }
         }
@@ -175,31 +172,14 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
         irSnippet: IrReplSnippet
     ): IrClass {
         val actualParent = getOrBuildActualParent(classSymbol, parentClassOrSnippet, irSnippet)
+        // relying on the classifierStorage's mechanics for generating lazy IR classes for such FIR
         return classifierStorage.getIrClass(
             classSymbol.fir
-//        )
-//            ?: lazyDeclarationsGenerator.createIrLazyClass(
-//                classSymbol.fir,
-//                actualParent,
-//                IrClassSymbolImpl()
-            ).apply {
-                parent = actualParent
-                origin = IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET
-
-//                visibility = DescriptorVisibilities.PUBLIC
-//                createThisReceiverParameter()
-//                classSymbol.fir.declarations.forEach { declaration ->
-//                    when (declaration) {
-//                        is FirProperty -> declarationStorage.createAndCacheIrProperty(
-//                            declaration,
-//                            this,
-//                            predefinedOrigin = IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET
-//                        )
-//                        else -> {}
-//                    }
-//                }
-                irSnippet.capturingDeclarationsFromOtherSnippets.add(this)
-            }
+        ).apply {
+            parent = actualParent
+            origin = IrDeclarationOrigin.REPL_FROM_OTHER_SNIPPET
+            irSnippet.declarationsFromOtherSnippets.add(this)
+        }
     }
 
     @OptIn(SymbolInternals::class, LookupTagInternals::class)
