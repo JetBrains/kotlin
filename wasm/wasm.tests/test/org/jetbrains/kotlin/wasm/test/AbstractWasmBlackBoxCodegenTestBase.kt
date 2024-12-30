@@ -102,7 +102,7 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
         }
     }
 
-    final override fun TestConfigurationBuilder.configuration() {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         commonConfigurationForWasmBlackBoxCodegenTest()
 
         forTestsNotMatching(

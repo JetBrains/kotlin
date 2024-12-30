@@ -68,7 +68,7 @@ open class AbstractFirNativeSerializationTest : AbstractKotlinCompilerWithTarget
     val deserializerFacade: Constructor<DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>
         get() = ::NativeDeserializerFacade
 
-    final override fun TestConfigurationBuilder.configuration() {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         commonConfigurationForNativeBlackBoxCodegenTest(IGNORE_IR_DESERIALIZATION_TEST)
     }
 

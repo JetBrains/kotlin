@@ -25,7 +25,7 @@ abstract class AbstractIrKotlinKaptContextTest : AbstractKotlinCompilerTest() {
         doOpenInternalPackagesIfRequired()
     }
 
-    final override fun TestConfigurationBuilder.configuration() {
+    override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
         globalDefaults {
             frontend = FrontendKinds.ClassicFrontend
             targetPlatform = JvmPlatforms.defaultJvmPlatform

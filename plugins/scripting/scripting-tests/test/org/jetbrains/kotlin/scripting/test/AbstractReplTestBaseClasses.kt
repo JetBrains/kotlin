@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
 open class AbstractReplWithCustomDefDiagnosticsTestBase : AbstractKotlinCompilerTest() {
-    final override fun TestConfigurationBuilder.configuration() {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         baseFirDiagnosticTestConfiguration(frontendFacade = ::FirReplFrontendFacade)
         enableLazyResolvePhaseChecking()
         configureFirParser(FirParser.Psi)

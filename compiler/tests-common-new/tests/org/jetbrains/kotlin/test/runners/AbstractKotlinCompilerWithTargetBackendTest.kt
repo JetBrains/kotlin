@@ -6,13 +6,15 @@
 package org.jetbrains.kotlin.test.runners
 
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
 abstract class AbstractKotlinCompilerWithTargetBackendTest(
     override val targetBackend: TargetBackend
 ) : AbstractKotlinCompilerTest(), RunnerWithTargetBackendForTestGeneratorMarker {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
+    @TestInfrastructureInternals
+    final override fun configureInternal(builder: TestConfigurationBuilder) {
+        configure(builder)
         with(builder) {
             globalDefaults {
                 val targetBackendFromMarker = this@AbstractKotlinCompilerWithTargetBackendTest.targetBackend

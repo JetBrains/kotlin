@@ -62,7 +62,7 @@ fun TestConfigurationBuilder.configureDiagnosticTest(parser: FirParser) {
 }
 
 abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
-    final override fun TestConfigurationBuilder.configuration() {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         configureDiagnosticTest(parser)
 
         forTestsMatching(
@@ -106,7 +106,7 @@ abstract class AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest : Abstra
 }
 
 abstract class AbstractTieredFrontendJvmTest(val parser: FirParser) : AbstractKotlinCompilerTest() {
-    final override fun TestConfigurationBuilder.configuration() {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         configureTieredFrontendJvmTest(parser)
 
         val (handlers, checker) = listOfNotNull(
@@ -152,16 +152,11 @@ class LightTreeSyntaxDiagnosticsReporterHolder : TestService {
 val TestServices.lightTreeSyntaxDiagnosticsReporterHolder: LightTreeSyntaxDiagnosticsReporterHolder? by TestServices.nullableTestServiceAccessor()
 
 abstract class AbstractFirWithActualizerDiagnosticsTest(val parser: FirParser) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            defaultDirectives {
-                +CodegenTestDirectives.IGNORE_FIR2IR_EXCEPTIONS_IF_FIR_CONTAINS_ERRORS
-            }
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
+        defaultDirectives {
+            +CodegenTestDirectives.IGNORE_FIR2IR_EXCEPTIONS_IF_FIR_CONTAINS_ERRORS
         }
-    }
 
-    final override fun TestConfigurationBuilder.configuration() {
         configureFirParser(parser)
         baseFirDiagnosticTestConfiguration()
 
