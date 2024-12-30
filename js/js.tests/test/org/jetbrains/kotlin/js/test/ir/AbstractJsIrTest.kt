@@ -175,9 +175,12 @@ open class AbstractIrJsSteppingTest : AbstractJsIrTest(
     pathToTestDir = "compiler/testData/debug/stepping/",
     testGroupOutputDirPrefix = "debug/irStepping/"
 ) {
-    final override fun TestConfigurationBuilder.configuration() {
-        commonConfigurationForJsBlackBoxCodegenTest()
-        configureSteppingTests()
+    override val enableBoxHandlers: Boolean
+        get() = false
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureSteppingTests()
     }
 }
 
@@ -185,16 +188,21 @@ open class AbstractIrJsLocalVariableTest : AbstractJsIrTest(
     pathToTestDir = "compiler/testData/debug/localVariables/",
     testGroupOutputDirPrefix = "debug/localVariables/"
 ) {
-    final override fun TestConfigurationBuilder.configuration() {
-        commonConfigurationForJsBlackBoxCodegenTest()
-        defaultDirectives {
-            +JsEnvironmentConfigurationDirectives.NO_COMMON_FILES
-        }
-        useAdditionalSourceProviders(::JsSteppingTestAdditionalSourceProvider)
-        jsArtifactsHandlersStep {
-            useHandlers(
-                ::JsDebugRunner.bind(true)
-            )
+    override val enableBoxHandlers: Boolean
+        get() = false
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                +JsEnvironmentConfigurationDirectives.NO_COMMON_FILES
+            }
+            useAdditionalSourceProviders(::JsSteppingTestAdditionalSourceProvider)
+            jsArtifactsHandlersStep {
+                useHandlers(
+                    ::JsDebugRunner.bind(true)
+                )
+            }
         }
     }
 }

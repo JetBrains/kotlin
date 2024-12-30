@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
+import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
@@ -212,9 +213,12 @@ open class AbstractFirJsSteppingTest : AbstractFirJsTest(
     pathToTestDir = "compiler/testData/debug/stepping/",
     testGroupOutputDirPrefix = "debug/firStepping/"
 ) {
-    final override fun TestConfigurationBuilder.configuration() {
-        commonConfigurationForJsBlackBoxCodegenTest()
-        configureSteppingTests()
+    override val enableBoxHandlers: Boolean
+        get() = false
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureSteppingTests()
     }
 }
 
@@ -231,11 +235,19 @@ abstract class AbstractFirJsKlibSyntheticAccessorTest(
     pathToTestDir = "compiler/testData/klib/syntheticAccessors/",
     testGroupOutputDirPrefix,
 ) {
-    final override fun TestConfigurationBuilder.configuration() {
-        commonConfigurationForJsBlackBoxCodegenTest(IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS)
-        defaultDirectives {
-            +KlibBasedCompilerTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
-            if (narrowedAccessorVisibility) +KlibBasedCompilerTestDirectives.KLIB_SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY
+    override val customIgnoreDirective: ValueDirective<TargetBackend>?
+        get() = IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS
+
+    override val enableBoxHandlers: Boolean
+        get() = false
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                +KlibBasedCompilerTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
+                if (narrowedAccessorVisibility) +KlibBasedCompilerTestDirectives.KLIB_SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY
+            }
         }
     }
 }

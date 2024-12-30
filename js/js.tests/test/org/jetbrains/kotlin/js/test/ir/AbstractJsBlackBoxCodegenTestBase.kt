@@ -87,18 +87,26 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
     abstract val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
     abstract val backendFacades: JsBackendFacades
 
+    protected open val customIgnoreDirective: ValueDirective<TargetBackend>?
+        get() = null
+
+    protected open val enableBoxHandlers: Boolean
+        get() = true
+
     final override fun TestConfigurationBuilder.configuration() {
         commonConfigurationForJsBlackBoxCodegenTest()
-        jsArtifactsHandlersStep {
-            useHandlers(
-                ::NodeJsGeneratorHandler,
-                ::JsBoxRunner,
-                ::JsAstHandler
-            )
+        if (enableBoxHandlers) {
+            configureJsArtifactsHandlersStep {
+                useHandlers(
+                    ::NodeJsGeneratorHandler,
+                    ::JsBoxRunner,
+                    ::JsAstHandler
+                )
+            }
         }
     }
 
-    protected fun TestConfigurationBuilder.commonConfigurationForJsBlackBoxCodegenTest(customIgnoreDirective: ValueDirective<TargetBackend>? = null) {
+    protected fun TestConfigurationBuilder.commonConfigurationForJsBlackBoxCodegenTest() {
         commonConfigurationForJsCodegenTest(
             targetFrontend = targetFrontend,
             frontendFacade = frontendFacade,

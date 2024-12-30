@@ -129,12 +129,14 @@ open class AbstractFirWasmJsSteppingTest : AbstractFirWasmJsTest(
     override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
         get() = ::WasmDebugRunner
 
-    final override fun TestConfigurationBuilder.configuration() {
-        commonConfigurationForWasmBlackBoxCodegenTest()
-        useAdditionalSourceProviders(::WasmJsSteppingTestAdditionalSourceProvider)
-        defaultDirectives {
-            +WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP
-            +WasmEnvironmentConfigurationDirectives.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            useAdditionalSourceProviders(::WasmJsSteppingTestAdditionalSourceProvider)
+            defaultDirectives {
+                +WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP
+                +WasmEnvironmentConfigurationDirectives.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES
+            }
         }
     }
 }
