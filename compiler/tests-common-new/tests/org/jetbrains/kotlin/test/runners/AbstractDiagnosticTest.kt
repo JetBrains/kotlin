@@ -48,7 +48,7 @@ abstract class AbstractDiagnosticTest : AbstractKotlinCompilerTest() {
         ).map { "-$it" }
     }
 
-    override fun TestConfigurationBuilder.configuration() {
+    final override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
             frontend = FrontendKinds.ClassicFrontend
             targetPlatform = JvmPlatforms.defaultJvmPlatform

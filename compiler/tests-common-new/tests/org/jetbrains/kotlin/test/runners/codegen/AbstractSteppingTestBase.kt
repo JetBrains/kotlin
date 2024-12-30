@@ -28,7 +28,7 @@ abstract class AbstractSteppingTestBase<R : ResultingArtifact.FrontendOutput<R>>
     abstract val frontendFacade: Constructor<FrontendFacade<R>>
     abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, IrBackendInput>>
 
-    override fun TestConfigurationBuilder.configuration() {
+    final override fun TestConfigurationBuilder.configuration() {
         commonConfigurationForTest(targetFrontend, frontendFacade, frontendToBackendConverter, ::MainFunctionForDebugTestsSourceProvider)
 
         commonHandlersForCodegenTest()

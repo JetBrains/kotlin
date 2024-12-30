@@ -32,7 +32,7 @@ abstract class AbstractBytecodeListingTestBase<R : ResultingArtifact.FrontendOut
     abstract val frontendFacade: Constructor<FrontendFacade<R>>
     abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, IrBackendInput>>
 
-    override fun TestConfigurationBuilder.configuration() {
+    final override fun TestConfigurationBuilder.configuration() {
         defaultDirectives {
             +CodegenTestDirectives.CHECK_BYTECODE_LISTING
         }

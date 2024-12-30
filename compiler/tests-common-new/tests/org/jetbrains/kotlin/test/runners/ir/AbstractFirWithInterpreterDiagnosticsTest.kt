@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.test.runners.DuplicateFileNameChecker
 import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
 
 abstract class AbstractFirWithInterpreterDiagnosticsTest(val parser: FirParser) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
-    override fun TestConfigurationBuilder.configuration() {
+    final override fun TestConfigurationBuilder.configuration() {
         configureFirParser(parser)
         baseFirDiagnosticTestConfiguration()
 

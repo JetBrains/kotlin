@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.test.services.sourceProviders.IrInterpreterHelpersSo
 open class AbstractIrInterpreterTest(
     private val frontendKind: FrontendKind<*>, targetBackend: TargetBackend
 ) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
-    override fun TestConfigurationBuilder.configuration() {
+    final override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
             frontend = frontendKind
             artifactKind = ArtifactKind.NoArtifact

@@ -44,7 +44,7 @@ abstract class AbstractFirJsIrDeserializationTest(
     override val backendFacades: JsBackendFacades
         get() = JsBackendFacades.WithSeparatedDeserialization
 
-    override fun TestConfigurationBuilder.configuration() {
+    final override fun TestConfigurationBuilder.configuration() {
         defaultDirectives {
             +JsEnvironmentConfigurationDirectives.PER_MODULE
             +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE

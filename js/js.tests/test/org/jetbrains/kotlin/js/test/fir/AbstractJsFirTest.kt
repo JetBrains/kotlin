@@ -212,7 +212,7 @@ open class AbstractFirJsSteppingTest : AbstractFirJsTest(
     pathToTestDir = "compiler/testData/debug/stepping/",
     testGroupOutputDirPrefix = "debug/firStepping/"
 ) {
-    override fun TestConfigurationBuilder.configuration() {
+    final override fun TestConfigurationBuilder.configuration() {
         commonConfigurationForJsBlackBoxCodegenTest()
         configureSteppingTests()
     }
@@ -231,7 +231,7 @@ abstract class AbstractFirJsKlibSyntheticAccessorTest(
     pathToTestDir = "compiler/testData/klib/syntheticAccessors/",
     testGroupOutputDirPrefix,
 ) {
-    override fun TestConfigurationBuilder.configuration() {
+    final override fun TestConfigurationBuilder.configuration() {
         commonConfigurationForJsBlackBoxCodegenTest(IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS)
         defaultDirectives {
             +KlibBasedCompilerTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS

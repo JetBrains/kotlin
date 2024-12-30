@@ -42,7 +42,7 @@ import java.net.URLClassLoader
 
 open class AbstractFirScriptCodegenTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
 
-    override fun TestConfigurationBuilder.configuration() {
+    final override fun TestConfigurationBuilder.configuration() {
         configureFirParser(FirParser.Psi)
 
         globalDefaults {

@@ -35,7 +35,7 @@ abstract class AbstractAsmLikeInstructionListingTestBase<R : ResultingArtifact.F
     abstract val frontendFacade: Constructor<FrontendFacade<R>>
     abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, IrBackendInput>>
 
-    override fun TestConfigurationBuilder.configuration() {
+    final override fun TestConfigurationBuilder.configuration() {
         defaultDirectives {
             +CHECK_ASM_LIKE_INSTRUCTIONS
         }

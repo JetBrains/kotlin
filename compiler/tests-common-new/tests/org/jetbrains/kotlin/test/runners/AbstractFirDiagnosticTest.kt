@@ -62,7 +62,7 @@ fun TestConfigurationBuilder.configureDiagnosticTest(parser: FirParser) {
 }
 
 abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
-    override fun TestConfigurationBuilder.configuration() {
+    final override fun TestConfigurationBuilder.configuration() {
         configureDiagnosticTest(parser)
 
         forTestsMatching(
@@ -106,7 +106,7 @@ abstract class AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest : Abstra
 }
 
 abstract class AbstractTieredFrontendJvmTest(val parser: FirParser) : AbstractKotlinCompilerTest() {
-    override fun TestConfigurationBuilder.configuration() {
+    final override fun TestConfigurationBuilder.configuration() {
         configureTieredFrontendJvmTest(parser)
 
         val (handlers, checker) = listOfNotNull(
@@ -161,7 +161,7 @@ abstract class AbstractFirWithActualizerDiagnosticsTest(val parser: FirParser) :
         }
     }
 
-    override fun TestConfigurationBuilder.configuration() {
+    final override fun TestConfigurationBuilder.configuration() {
         configureFirParser(parser)
         baseFirDiagnosticTestConfiguration()
 
