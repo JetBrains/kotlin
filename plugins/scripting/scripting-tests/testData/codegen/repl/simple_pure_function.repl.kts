@@ -7,6 +7,8 @@ fun f() = "OK"
 
 val y = f()
 
+// EXPECTED: y == "OK"
+
 // SNIPPET
 
 val res = f()
