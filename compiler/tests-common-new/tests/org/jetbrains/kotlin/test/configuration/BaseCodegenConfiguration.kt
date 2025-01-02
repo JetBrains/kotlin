@@ -37,6 +37,16 @@ import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFi
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
 
+/**
+ * Setups the pipeline for all JVM backend tests
+ *
+ * Steps:
+ * - FIR frontend
+ * - FIR2IR
+ * - JVM backend
+ *
+ * There are handler steps after each facade step.
+ */
 fun <F : ResultingArtifact.FrontendOutput<F>, B : ResultingArtifact.BackendInput<B>> TestConfigurationBuilder.commonConfigurationForTest(
     targetFrontend: FrontendKind<F>,
     frontendFacade: Constructor<FrontendFacade<F>>,
@@ -54,6 +64,12 @@ fun <F : ResultingArtifact.FrontendOutput<F>, B : ResultingArtifact.BackendInput
     jvmArtifactsHandlersStep(init = {})
 }
 
+/**
+ * Setups the base test configuration for JVM backend tests, including
+ * - global defaults
+ * - environment configurators
+ * - additional source providers
+ */
 fun TestConfigurationBuilder.commonServicesConfigurationForCodegenAndDebugTest(targetFrontend: FrontendKind<*>) {
     useConfigurators(
         ::CommonEnvironmentConfigurator,
@@ -69,6 +85,15 @@ fun TestConfigurationBuilder.commonServicesConfigurationForCodegenAndDebugTest(t
     commonServicesMinimalSettingsConfigurationForCodegenAndDebugTest(targetFrontend)
 }
 
+/**
+ * Setups the bare minimum test configuration for JVM backend tests, including
+ * - global defaults
+ * - environment configurators
+ * - additional source providers
+ *
+ * This method is used as an implementation detail for [commonServicesConfigurationForCodegenAndDebugTest] and
+ * [configureTieredBackendJvmTest], so consider using them instead of this method.
+ */
 fun TestConfigurationBuilder.commonServicesMinimalSettingsConfigurationForCodegenAndDebugTest(targetFrontend: FrontendKind<*>) {
     globalDefaults {
         frontend = targetFrontend
@@ -89,6 +114,9 @@ fun TestConfigurationBuilder.commonServicesMinimalSettingsConfigurationForCodege
     )
 }
 
+/**
+ * Adds inline handlers to the test
+ */
 fun TestConfigurationBuilder.useInlineHandlers() {
     configureJvmArtifactsHandlersStep {
         useHandlers(
@@ -104,18 +132,27 @@ fun TestConfigurationBuilder.useInlineHandlers() {
     }
 }
 
+/**
+ * Enables IR inliner for JVM backend
+ */
 fun TestConfigurationBuilder.useIrInliner() {
     defaultDirectives {
         +LanguageSettingsDirectives.ENABLE_JVM_IR_INLINER
     }
 }
 
+/**
+ * Enables inline scope numbers for debugger-related tests
+ */
 fun TestConfigurationBuilder.useInlineScopesNumbers() {
     defaultDirectives {
         +LanguageSettingsDirectives.USE_INLINE_SCOPES_NUMBERS
     }
 }
 
+/**
+ * Adds IR and Bytecode dump handlers to the test
+ */
 fun TestConfigurationBuilder.configureDumpHandlersForCodegenTest(includeAllDumpHandlers: Boolean = true) {
     configureIrHandlersStep {
         useHandlers(
@@ -131,6 +168,9 @@ fun TestConfigurationBuilder.configureDumpHandlersForCodegenTest(includeAllDumpH
     }
 }
 
+/**
+ * Add all handlers usually used in codegen tests and the [JvmBoxRunner] handler
+ */
 fun TestConfigurationBuilder.configureCommonHandlersForBoxTest() {
     commonHandlersForCodegenTest()
     configureJvmArtifactsHandlersStep {
@@ -138,6 +178,9 @@ fun TestConfigurationBuilder.configureCommonHandlersForBoxTest() {
     }
 }
 
+/**
+ * Add all handlers usually used in codegen tests
+ */
 fun TestConfigurationBuilder.commonHandlersForCodegenTest() {
     configureClassicFrontendHandlersStep {
         commonClassicFrontendHandlersForCodegenTest()
@@ -151,18 +194,27 @@ fun TestConfigurationBuilder.commonHandlersForCodegenTest() {
     }
 }
 
+/**
+ * Adds a handler which checks that there are no compilation errors reported at the K1 frontend step
+ */
 fun HandlersStepBuilder<ClassicFrontendOutputArtifact, FrontendKinds.ClassicFrontend>.commonClassicFrontendHandlersForCodegenTest() {
     useHandlers(
         ::NoCompilationErrorsHandler,
     )
 }
 
+/**
+ * Adds a handler which checks that there are no compilation errors reported at the K2 frontend step
+ */
 fun HandlersStepBuilder<FirOutputArtifact, FrontendKinds.FIR>.commonFirHandlersForCodegenTest() {
     useHandlers(
         ::NoFirCompilationErrorsHandler,
     )
 }
 
+/**
+ * Add JVM artifact handlers usually used in codegen tests
+ */
 fun HandlersStepBuilder<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.commonBackendHandlersForCodegenTest() {
     useHandlers(
         ::JvmBackendDiagnosticsHandler,
@@ -171,15 +223,12 @@ fun HandlersStepBuilder<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.commonBackendHan
     )
 }
 
-fun TestConfigurationBuilder.configureModernJavaTest(jdkKind: TestJdkKind, jvmTarget: JvmTarget) {
-    defaultDirectives {
-        JvmEnvironmentConfigurationDirectives.JDK_KIND with jdkKind
-        JvmEnvironmentConfigurationDirectives.JVM_TARGET with jvmTarget
-        +WITH_STDLIB
-        +CodegenTestDirectives.IGNORE_DEXING
-    }
-}
-
+/**
+ * Setups the bare minimum test configuration for JVM box tests.
+ *
+ * This method is used as an implementation detail for [baseFirBlackBoxCodegenTestDirectivesConfiguration] and
+ * [configureTieredBackendJvmTest], so consider using them instead of this method.
+ */
 fun TestConfigurationBuilder.configureBlackBoxTestSettings() {
     defaultDirectives {
         // See KT-44152
@@ -193,6 +242,9 @@ fun TestConfigurationBuilder.configureBlackBoxTestSettings() {
     baseFirBlackBoxCodegenTestDirectivesConfiguration()
 }
 
+/**
+ * Setups additional services and directives used in JVM box tests
+ */
 fun TestConfigurationBuilder.baseFirBlackBoxCodegenTestDirectivesConfiguration() {
     forTestsMatching("*WithStdLib/*") {
         defaultDirectives {
@@ -207,6 +259,9 @@ fun TestConfigurationBuilder.baseFirBlackBoxCodegenTestDirectivesConfiguration()
     }
 }
 
+/**
+ * Setups the backend-specific handlers and directives exclusively used by JVM box tests
+ */
 fun TestConfigurationBuilder.configureJvmBoxCodegenSettings(includeAllDumpHandlers: Boolean) {
     configureJvmArtifactsHandlersStep {
         if (includeAllDumpHandlers) {
@@ -260,6 +315,9 @@ fun TestConfigurationBuilder.configureJvmBoxCodegenSettings(includeAllDumpHandle
     }
 }
 
+/**
+ * Enables specific JVM versions for tests inside `compiler/testData/codegen/boxModernJdk`
+ */
 fun TestConfigurationBuilder.configureModernJavaWhenNeeded() {
     forTestsMatching("compiler/testData/codegen/boxModernJdk/testsWithJava11/*") {
         configureModernJavaTest(TestJdkKind.FULL_JDK_11, JvmTarget.JVM_11)
@@ -271,5 +329,17 @@ fun TestConfigurationBuilder.configureModernJavaWhenNeeded() {
 
     forTestsMatching("compiler/testData/codegen/boxModernJdk/testsWithJava21/*") {
         configureModernJavaTest(TestJdkKind.FULL_JDK_21, JvmTarget.JVM_21)
+    }
+}
+
+/**
+ * Utility for setting up the target JVM version
+ */
+fun TestConfigurationBuilder.configureModernJavaTest(jdkKind: TestJdkKind, jvmTarget: JvmTarget) {
+    defaultDirectives {
+        JvmEnvironmentConfigurationDirectives.JDK_KIND with jdkKind
+        JvmEnvironmentConfigurationDirectives.JVM_TARGET with jvmTarget
+        +WITH_STDLIB
+        +CodegenTestDirectives.IGNORE_DEXING
     }
 }

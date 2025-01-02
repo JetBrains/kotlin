@@ -30,6 +30,9 @@ import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
 import org.jetbrains.kotlin.test.services.fir.LightTreeSyntaxDiagnosticsReporterHolder
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
 
+/**
+ * Utility for proper handling failures in tiered tests
+ */
 fun <A : ResultingArtifact<A>> List<Constructor<AnalysisHandler<A>>>.toTieredHandlersAndCheckerOf(
     tier: TestTierLabel,
 ): Pair<List<Constructor<AnalysisHandler<A>>>, Constructor<AfterAnalysisChecker>> {
@@ -38,6 +41,9 @@ fun <A : ResultingArtifact<A>> List<Constructor<AnalysisHandler<A>>>.toTieredHan
     return invertedHandlers to checker
 }
 
+/**
+ * Setups the tiered test configuration up to [TestTierLabel.FRONTEND] tier
+ */
 fun TestConfigurationBuilder.configureTieredFrontendJvmTest(parser: FirParser) {
     configureDiagnosticTest(parser)
 
@@ -46,6 +52,9 @@ fun TestConfigurationBuilder.configureTieredFrontendJvmTest(parser: FirParser) {
     }
 }
 
+/**
+ * Setups the tiered test configuration up to [TestTierLabel.FIR2IR] tier
+ */
 fun TestConfigurationBuilder.configureTieredFir2IrJvmTest(
     parser: FirParser,
     targetBackend: TargetBackend,
@@ -120,6 +129,9 @@ fun TestConfigurationBuilder.configureTieredFir2IrJvmTest(
     }
 }
 
+/**
+ * Setups the tiered test configuration up to [TestTierLabel.BACKEND] tier
+ */
 fun TestConfigurationBuilder.configureTieredBackendJvmTest(
     parser: FirParser,
     converter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>,
