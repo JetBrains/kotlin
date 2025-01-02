@@ -260,6 +260,11 @@ fun main(args: Array<String>) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir + irInterpreterTests)
                 model("boxInline")
             }
+
+            testClass<AbstractFirJsIrDeserializationCodegenBoxWithInlinedFunInKlibTest> {
+                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir + irInterpreterTests)
+                model("boxInline")
+            }
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData/debug", testRunnerMethodName = "runTest0") {

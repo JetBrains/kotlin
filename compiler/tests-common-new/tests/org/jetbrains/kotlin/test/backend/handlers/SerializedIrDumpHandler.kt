@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.IR_EXTERNAL_DECLARATION_STUB
 import org.jetbrains.kotlin.ir.declarations.IrPossiblyExternalDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrProperty
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.dumpTreesFromLineNumber
 import org.jetbrains.kotlin.ir.util.isKFunction
 import org.jetbrains.kotlin.ir.util.isKSuspendFunction
+import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.SKIP_IR_DESERIALIZATION_CHECKS
@@ -147,8 +149,24 @@ class SerializedIrDumpHandler(
              */
             replaceImplicitSetterParameterNameWith = DEFAULT_VALUE_PARAMETER,
 
-            /** Reuse the existing rules for filtering declarations as in IR text tests. */
-            isHiddenDeclaration = { IrTextDumpHandler.isHiddenDeclaration(it, info.irPluginContext.irBuiltIns) },
+            isHiddenDeclaration = { declaration ->
+                if (IrTextDumpHandler.isHiddenDeclaration(declaration, info.irPluginContext.irBuiltIns)) {
+                    /** Reuse the existing rules for filtering declarations as in IR text tests. */
+                    true
+                } else if (isAfterDeserialization &&
+                    declaration is IrSimpleFunction &&
+                    declaration.isFakeOverride &&
+                    declaration.resolveFakeOverride()?.origin == IrDeclarationOrigin.SYNTHETIC_ACCESSOR
+                ) {
+                    /**
+                     * Ignore fake overrides for synthetic accessors generated in the deserialized IR.
+                     * There were no fake overrides for synthetic accessors in IR built by Fir2Ir.
+                     */
+                    true
+                } else {
+                    false
+                }
+            },
         )
 
         val builder = dumper.builderForModule(module.name)
