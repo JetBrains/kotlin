@@ -5,6 +5,8 @@
 
 package kotlin.metadata.test
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.metadata.*
 import org.junit.Test
 import kotlin.metadata.internal.FlagImpl
@@ -13,6 +15,8 @@ import kotlin.reflect.KMutableProperty0
 import kotlin.test.*
 
 class FlagDelegatesTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     private class Private
 
     public class Public {

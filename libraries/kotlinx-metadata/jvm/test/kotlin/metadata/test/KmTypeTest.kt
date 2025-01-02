@@ -5,6 +5,8 @@
 
 package kotlin.metadata.test
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.metadata.KmClassifier
 import kotlin.metadata.KmType
 import kotlin.reflect.KClass
@@ -16,6 +18,7 @@ import kotlin.test.assertNotEquals
 typealias ListString = List<String>
 
 class KmTypeTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private fun KClass<*>.functionTypesByName(): Map<String, KmType> =
         java.readMetadataAsKmClass().functions.associateBy({ it.name }, { it.returnType })

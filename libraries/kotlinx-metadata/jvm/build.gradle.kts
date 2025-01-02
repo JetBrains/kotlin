@@ -32,6 +32,7 @@ dependencies {
     testImplementation(libs.junit4)
     testImplementation(libs.intellij.asm)
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    testImplementation(project(":compiler:tests-mutes:mutes-junit4"))
 }
 
 kotlin {
@@ -53,6 +54,10 @@ val runtimeJar = runtimeJarWithRelocation {
             attributes("Automatic-Module-Name" to "kotlin.metadata.jvm")
         }
     }
+}
+
+tasks.test {
+    muteWithDatabase()
 }
 
 tasks.apiBuild {
