@@ -1,0 +1,5 @@
+FILE: contextualLateinit.kt
+    context(a: R|kotlin/Int|)
+    public final lateinit var b: R|kotlin/String|
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): R|kotlin/Unit|

@@ -1,0 +1,25 @@
+Caused by: org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments: Exception in declaration checkers
+        at org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckersDiagnosticComponent.visitProperty(DeclarationCheckersDiagnosticComponent.kt:219)
+        at org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckersDiagnosticComponent.visitProperty(DeclarationCheckersDiagnosticComponent.kt:25)
+        at org.jetbrains.kotlin.fir.declarations.FirProperty.accept(FirProperty.kt:58)
+        at org.jetbrains.kotlin.fir.analysis.collectors.CheckerRunningDiagnosticCollectorVisitor.checkElement(CheckerRunningDiagnosticCollectorVisitor.kt:24)
+        at org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorVisitor.access$checkElement(AbstractDiagnosticCollectorVisitor.kt:29)
+        at org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorVisitor.visitProperty(AbstractDiagnosticCollectorVisitor.kt:908)
+        at org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorVisitor.visitProperty(AbstractDiagnosticCollectorVisitor.kt:29)
+        at org.jetbrains.kotlin.fir.declarations.FirProperty.accept(FirProperty.kt:58)
+        at org.jetbrains.kotlin.fir.declarations.impl.FirFileImpl.acceptChildren(FirFileImpl.kt:57)
+        at org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorVisitor.visitNestedElements(AbstractDiagnosticCollectorVisitor.kt:37)
+        at org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorVisitor.visitFile(AbstractDiagnosticCollectorVisitor.kt:1213)
+        at org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorVisitor.visitFile(AbstractDiagnosticCollectorVisitor.kt:29)
+        at org.jetbrains.kotlin.fir.declarations.FirFile.accept(FirFile.kt:42)
+        at org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector.collectDiagnostics(AbstractDiagnosticCollector.kt:36)
+        at org.jetbrains.kotlin.fir.pipeline.AnalyseKt.runCheckers(analyse.kt:37)
+        ... 39 more
+Caused by: java.lang.IllegalArgumentException: source must not be null
+        at org.jetbrains.kotlin.diagnostics.KtDiagnosticReportHelpersKt.requireNotNull(KtDiagnosticReportHelpers.kt:68)
+        at org.jetbrains.kotlin.diagnostics.KtDiagnosticReportHelpersKt.reportOn(KtDiagnosticReportHelpers.kt:18)
+        at org.jetbrains.kotlin.diagnostics.KtDiagnosticReportHelpersKt.reportOn$default(KtDiagnosticReportHelpers.kt:12)
+        at org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirContextReceiversPropertyBackingFieldChecker.check(FirContextReceiversPropertyBackingFieldChecker.kt:27)
+        at org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirContextReceiversPropertyBackingFieldChecker.check(FirContextReceiversPropertyBackingFieldChecker.kt:17)
+        at org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckersDiagnosticComponent.visitProperty(DeclarationCheckersDiagnosticComponent.kt:207)
+        ... 53 more
