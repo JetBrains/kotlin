@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.tools.tests
 
 import kotlinx.validation.api.*
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.*
 import org.junit.rules.TestName
 import java.io.File
@@ -23,6 +24,7 @@ class CasesPublicAPITest {
 
     @[Rule JvmField]
     val testName = TestName()
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test fun companions() { snapshotAPIAndCompare(testName.methodName) }
 
