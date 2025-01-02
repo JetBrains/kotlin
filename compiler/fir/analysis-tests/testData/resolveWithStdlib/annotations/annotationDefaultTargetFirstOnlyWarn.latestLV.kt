@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +PropertyParamAnnotationDefaultTargetMode
+// LANGUAGE: +AnnotationDefaultTargetMigrationWarning
+// LANGUAGE: -PropertyParamAnnotationDefaultTargetMode
 // LATEST_LV_DIFFERENCE
 // Reason: KT-73831 ^^
 // ISSUE: KT-73255
@@ -32,10 +33,10 @@ class My(
     @ParamOnly
     @PropertyOnly
     @FieldOnly
-    @ParamProperty
-    @ParamField
+    <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD("property")!>@ParamProperty<!>
+    <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD("field")!>@ParamField<!>
     @PropertyField
-    @ParamPropertyField
+    <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD("property")!>@ParamPropertyField<!>
     <!WRONG_ANNOTATION_TARGET!>@Inapplicable<!>
     val x: Int
 ) {
@@ -63,11 +64,11 @@ class My(
 annotation class Your(
     @ParamOnly
     @PropertyOnly
-    <!WRONG_ANNOTATION_TARGET_WARNING!>@FieldOnly<!>
-    @ParamProperty
-    <!WRONG_ANNOTATION_TARGET_WARNING!>@ParamField<!>
+    <!WRONG_ANNOTATION_TARGET!>@FieldOnly<!>
+    <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD!>@ParamProperty<!>
+    <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD!>@ParamField<!>
     @PropertyField
-    @ParamPropertyField
+    <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD!>@ParamPropertyField<!>
     <!WRONG_ANNOTATION_TARGET!>@Inapplicable<!>
     val s: String
 )
