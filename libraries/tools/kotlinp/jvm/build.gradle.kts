@@ -7,7 +7,7 @@ plugins {
     id("jps-compatible")
 }
 
-val kotlinpAsmVersion = "9.0"
+val kotlinpAsmVersion = "9.6.1"
 val shadows by configurations.creating
 
 dependencies {
