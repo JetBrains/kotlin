@@ -11,7 +11,7 @@ class C2 {
     <!UNSUPPORTED!>context(_: String)<!>
     constructor() {}
 
-    context(_: String)
+    <!UNSUPPORTED!>context(_: String)<!>
     init {
     }
 }

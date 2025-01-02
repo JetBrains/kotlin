@@ -35,6 +35,15 @@ object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppChe
             )
         }
 
+        if (declaration is FirAnonymousInitializer) {
+            reporter.reportOn(
+                source,
+                FirErrors.UNSUPPORTED,
+                "Context parameters on initializers are unsupported.",
+                context
+            )
+        }
+
         val contextParameters = declaration.getContextParameters()
         if (contextParameters.isEmpty()) return
 
