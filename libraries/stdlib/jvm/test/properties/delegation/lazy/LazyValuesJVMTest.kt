@@ -5,10 +5,14 @@
 
 package test.properties.delegation.lazy
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 import kotlin.jvm.Volatile
 
 class SynchronizedLazyValTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Volatile
     var result = 0
     val a by lazy(this) {

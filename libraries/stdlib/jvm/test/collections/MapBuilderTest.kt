@@ -7,12 +7,15 @@
 
 package test.collections
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.collections.builders.MapBuilder
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.Test
 
 class MapBuilderTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun capacityOverflow() {

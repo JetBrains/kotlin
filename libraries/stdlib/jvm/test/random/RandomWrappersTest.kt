@@ -5,10 +5,14 @@
 
 package test.random
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.random.*
 import kotlin.test.*
 
 class RandomWrappersTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun kotlinRandomAsJavaRandom() {
         val expect = Random(42)

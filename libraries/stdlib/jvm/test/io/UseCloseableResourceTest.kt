@@ -5,11 +5,14 @@
 
 package test.io
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import test.platformNull
 import java.io.*
 import kotlin.test.*
 
 class UseCloseableResourceTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun useReader() {

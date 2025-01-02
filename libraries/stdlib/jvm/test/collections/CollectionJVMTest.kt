@@ -5,6 +5,8 @@
 
 package test.collections
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import test.assertStaticAndRuntimeTypeIs
 import test.io.deserializeFromHex
 import test.io.serializeAndDeserialize
@@ -14,6 +16,7 @@ import java.util.*
 import kotlin.test.*
 
 class CollectionJVMTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private fun <T> identitySetOf(vararg values: T): MutableSet<T> {
         val map = IdentityHashMap<T, String>()

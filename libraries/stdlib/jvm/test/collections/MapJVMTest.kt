@@ -5,11 +5,15 @@
 
 package test.collections
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 import kotlin.test.*
 
 class MapJVMTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test fun createSortedMap() {
         val map = sortedMapOf(Pair("c", 3), Pair("b", 2), Pair("a", 1))
         assertEquals(1, map["a"])

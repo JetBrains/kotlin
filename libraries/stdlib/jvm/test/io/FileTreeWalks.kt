@@ -5,12 +5,15 @@
 
 package test.io
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import java.io.File
 import java.io.IOException
 import java.util.*
 import kotlin.test.*
 
 class FileTreeWalkTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     companion object {
         val referenceFilenames =

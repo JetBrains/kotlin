@@ -5,6 +5,8 @@
 
 package test.reflection
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import java.lang.reflect.*
 import kotlin.reflect.javaType
@@ -19,6 +21,8 @@ import kotlin.test.fail
     "FINAL_UPPER_BOUND"
 )
 class JavaTypeTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun primitives() {
         assertEquals(Boolean::class.java, javaTypeOf<Boolean>())

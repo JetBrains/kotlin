@@ -5,6 +5,8 @@
 
 package test.io
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
@@ -15,6 +17,7 @@ import kotlin.io.encoding.encodingWith
 import kotlin.test.*
 
 class Base64IOStreamTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private fun testCoding(base64: Base64, text: String, encodedText: String) {
         val encodedBytes = ByteArray(encodedText.length) { encodedText[it].code.toByte() }

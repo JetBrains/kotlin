@@ -5,12 +5,15 @@
 
 package test.exceptions
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import test.collections.assertArrayNotSameButEquals
 import java.io.*
 import java.nio.charset.Charset
 import kotlin.test.*
 
 class ExceptionJVMTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun printStackTraceOnRuntimeException() {

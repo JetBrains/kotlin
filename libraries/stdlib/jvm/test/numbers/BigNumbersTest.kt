@@ -5,6 +5,8 @@
 
 package test.numbers
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import java.math.BigInteger
 import java.math.BigDecimal
 
@@ -13,6 +15,8 @@ import java.math.MathContext
 import java.math.RoundingMode
 
 class BigNumbersTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test fun testBigInteger() {
         val a = BigInteger("2")
         val b = BigInteger("3")

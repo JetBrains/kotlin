@@ -5,6 +5,8 @@
 
 package test.text
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 import test.collections.compare
 import test.io.*
@@ -12,6 +14,7 @@ import java.util.regex.Pattern
 
 
 class RegexJVMTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test fun matchGroups() {
         val input = "1a 2b 3"

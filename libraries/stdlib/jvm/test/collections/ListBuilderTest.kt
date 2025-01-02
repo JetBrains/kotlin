@@ -5,11 +5,15 @@
 
 package test.collections
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.collections.builders.*
 import kotlin.test.*
 
 @Suppress("INVISIBLE_MEMBER")
 class ListBuilderTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN", "UNCHECKED_CAST")
     fun toArray() {

@@ -5,6 +5,8 @@
 
 package test.utils
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 import kotlin.concurrent.thread
 import test.io.serializeAndDeserialize
@@ -16,6 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
 class LazyJVMTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test fun synchronizedLazy() {
         val counter = AtomicInteger(0)
