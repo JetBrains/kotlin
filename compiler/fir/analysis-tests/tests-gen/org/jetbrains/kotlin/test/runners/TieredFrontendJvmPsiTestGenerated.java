@@ -28712,6 +28712,12 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
       }
 
       @Test
+      @TestMetadata("bridgeMethod.kt")
+      public void testBridgeMethod() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/bridgeMethod.kt");
+      }
+
+      @Test
       @TestMetadata("classInSupertypeForEnum.kt")
       public void testClassInSupertypeForEnum() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/classInSupertypeForEnum.kt");

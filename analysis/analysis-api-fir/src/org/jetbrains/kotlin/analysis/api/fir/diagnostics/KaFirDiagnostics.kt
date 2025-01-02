@@ -3985,6 +3985,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val hidden: KaVariableSymbol
     }
 
+    interface InheritedFunctionNameClashWithBridgeMethod : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = InheritedFunctionNameClashWithBridgeMethod::class
+        val bridgeMethodOf: KaFunctionSymbol
+        val inheritedFunction: KaFunctionSymbol
+    }
+
     interface JavaTypeMismatch : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = JavaTypeMismatch::class
         val expectedType: KaType

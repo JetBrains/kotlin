@@ -1,0 +1,181 @@
+FILE: bridgeMethod.kt
+    public abstract interface I1<T> : R|kotlin/Any| {
+        public abstract fun foo(t: R|T|): R|kotlin/Unit|
+
+    }
+    public open class A1 : R|kotlin/Any| {
+        public constructor(): R|A1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open fun foo(o: R|kotlin/Any|): R|kotlin/Unit| {
+        }
+
+    }
+    public final class B1 : R|A1|, R|I1<kotlin/Int>| {
+        public constructor(): R|B1| {
+            super<R|A1|>()
+        }
+
+        public open override fun foo(t: R|kotlin/Int|): R|kotlin/Unit| {
+        }
+
+    }
+    public abstract interface I2<T> : R|kotlin/Any| {
+        public abstract fun foo(t: R|T|): R|kotlin/Unit|
+
+    }
+    public open class A2 : R|kotlin/Any| {
+        public constructor(): R|A2| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open fun <T> foo(o: R|T|): R|kotlin/Unit| {
+        }
+
+    }
+    public final class B2 : R|A2|, R|I2<kotlin/Int>| {
+        public constructor(): R|B2| {
+            super<R|A2|>()
+        }
+
+        public open override fun foo(t: R|kotlin/Int|): R|kotlin/Unit| {
+        }
+
+    }
+    public abstract interface I3<T> : R|kotlin/Any| {
+        public abstract fun foo(t: R|T|): R|kotlin/Unit|
+
+    }
+    public open class A3<T> : R|kotlin/Any| {
+        public constructor<T>(): R|A3<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open fun foo(o: R|T|): R|kotlin/Unit| {
+        }
+
+    }
+    public final class B3 : R|A3<kotlin/Any>|, R|I3<kotlin/Int>| {
+        public constructor(): R|B3| {
+            super<R|A3<kotlin/Any>|>()
+        }
+
+        public open override fun foo(t: R|kotlin/Int|): R|kotlin/Unit| {
+        }
+
+    }
+    public open class D4a : R|kotlin/Any| {
+        public constructor(): R|D4a| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class D4b : R|D4a| {
+        public constructor(): R|D4b| {
+            super<R|D4a|>()
+        }
+
+    }
+    public abstract interface I4a<T> : R|kotlin/Any| {
+        public abstract fun foo(t: R|T|): R|kotlin/Unit|
+
+    }
+    public abstract interface I4b<T> : R|kotlin/Any| {
+        public abstract fun foo(t: R|T|): R|kotlin/Unit|
+
+    }
+    public open class A : R|I4b<kotlin/Any>| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override fun foo(t: R|kotlin/Any|): R|kotlin/Unit| {
+        }
+
+    }
+    public final class B4 : R|A|, R|I4a<D4b>| {
+        public constructor(): R|B4| {
+            super<R|A|>()
+        }
+
+        public open override fun foo(t: R|D4b|): R|kotlin/Unit| {
+        }
+
+    }
+    public open class A5<T> : R|kotlin/Any| {
+        public constructor<T>(): R|A5<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open fun foo(t: R|T|): R|kotlin/Unit| {
+        }
+
+    }
+    public final class B5 : R|A5<kotlin/Int>| {
+        public constructor(): R|B5| {
+            super<R|A5<kotlin/Int>|>()
+        }
+
+        public open override fun foo(t: R|kotlin/Int|): R|kotlin/Unit| {
+        }
+
+    }
+    public abstract interface I6<T1> : R|kotlin/Any| {
+        public abstract fun <T2> foo(t1: R|T1|, t2: R|T2|): R|kotlin/Unit|
+
+    }
+    public open class A6 : R|kotlin/Any| {
+        public constructor(): R|A6| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open fun <T2> foo(t1: R|kotlin/Any|, t2: R|T2|): R|kotlin/Unit| {
+        }
+
+    }
+    public final class B6 : R|A6|, R|I6<kotlin/Int>| {
+        public constructor(): R|B6| {
+            super<R|A6|>()
+        }
+
+        public open override fun <T> foo(t1: R|kotlin/Int|, t2: R|T|): R|kotlin/Unit| {
+        }
+
+    }
+    public abstract interface I7<T1, T2> : R|kotlin/Any| {
+        public abstract fun foo(t1: R|T1|, t2: R|T2|): R|kotlin/Unit|
+
+    }
+    public open class A7<T1> : R|kotlin/Any| {
+        public constructor<T1>(): R|A7<T1>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open inner class A7a<T2, Outer(T1)> : R|kotlin/Any| {
+            public A7<T1>.constructor<T2>(): R|A7.A7a<T2, T1>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(t1: R|T1|, t2: R|T2|): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    public final class B7 : R|A7<kotlin/Any>| {
+        public constructor(): R|B7| {
+            super<R|A7<kotlin/Any>|>()
+        }
+
+        public final inner class B7a : R|A7.A7a<kotlin/Any, kotlin/Any>|, R|I7<kotlin/Int, kotlin/Int>| {
+            public B7.constructor(): R|B7.B7a| {
+                this@R|/B7|.super<R|A7.A7a<kotlin/Any, kotlin/Any>|>()
+            }
+
+            public open override fun foo(t1: R|kotlin/Int|, t2: R|kotlin/Int|): R|kotlin/Unit| {
+            }
+
+        }
+
+    }

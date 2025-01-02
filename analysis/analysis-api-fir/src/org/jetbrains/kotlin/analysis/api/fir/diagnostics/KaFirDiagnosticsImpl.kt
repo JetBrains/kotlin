@@ -4801,6 +4801,13 @@ internal class PropertyHidesJavaFieldImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KaFirDiagnostic.PropertyHidesJavaField
 
+internal class InheritedFunctionNameClashWithBridgeMethodImpl(
+    override val bridgeMethodOf: KaFunctionSymbol,
+    override val inheritedFunction: KaFunctionSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.InheritedFunctionNameClashWithBridgeMethod
+
 internal class JavaTypeMismatchImpl(
     override val expectedType: KaType,
     override val actualType: KaType,
