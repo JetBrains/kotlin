@@ -449,6 +449,12 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
     }
 
     @Test
+    @TestMetadata("genericTypeMismatch.kt")
+    public void testGenericTypeMismatch() {
+      runTest("compiler/testData/diagnostics/tests/genericTypeMismatch.kt");
+    }
+
+    @Test
     @TestMetadata("IdentityComparisonWithPrimitives.kt")
     public void testIdentityComparisonWithPrimitives() {
       runTest("compiler/testData/diagnostics/tests/IdentityComparisonWithPrimitives.kt");
