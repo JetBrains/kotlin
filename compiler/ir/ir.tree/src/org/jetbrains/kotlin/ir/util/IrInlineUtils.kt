@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.ir.irAttribute
 annotation class JvmIrInlineExperimental
 
 @JvmIrInlineExperimental
-var IrInlinedFunctionBlock.inlineCall: IrFunctionAccessExpression? by irAttribute(followAttributeOwner = true)
+var IrInlinedFunctionBlock.inlineCall: IrFunctionAccessExpression? by irAttribute(copyByDefault = true)
 @JvmIrInlineExperimental
-var IrInlinedFunctionBlock.inlinedElement: IrElement? by irAttribute(followAttributeOwner = true)
+var IrInlinedFunctionBlock.inlinedElement: IrElement? by irAttribute(copyByDefault = true)
 
 @OptIn(JvmIrInlineExperimental::class)
 fun IrInlinedFunctionBlock.isFunctionInlining(): Boolean {

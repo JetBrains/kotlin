@@ -62,7 +62,7 @@ private fun translateJsCodeIntoStatementList(
     return parseExpressionOrStatement(jsCode, ThrowExceptionOnErrorReporter, currentScope, CodePosition(startLine, offset), fileName)
 }
 
-private var IrField.lazyInitializerExpression: IrExpression? by irAttribute(followAttributeOwner = false)
+private var IrField.lazyInitializerExpression: IrExpression? by irAttribute(copyByDefault = false)
 
 private fun foldString(expression: IrExpression): String? {
     val builder = StringBuilder()

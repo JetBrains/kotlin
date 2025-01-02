@@ -165,7 +165,7 @@ class OuterThisInInlineFunctionsSpecialAccessorLowering(context: LoweringContext
     }
 }
 
-private var IrFile.generatedOuterThisAccessors: GeneratedOuterThisAccessors? by irAttribute(followAttributeOwner = false)
+private var IrFile.generatedOuterThisAccessors: GeneratedOuterThisAccessors? by irAttribute(copyByDefault = false)
 
 private class GeneratedOuterThisAccessors {
     private val accessors = HashSet<IrSimpleFunction>()

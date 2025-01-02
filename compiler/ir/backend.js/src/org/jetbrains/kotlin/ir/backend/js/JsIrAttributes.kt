@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.irFlag
 /**
  * Whether the class's ES6 constructor requires an additional `box` value parameter.
  */
-internal var IrClass.needsBoxParameter: Boolean by irFlag(followAttributeOwner = false)
+internal var IrClass.needsBoxParameter: Boolean by irFlag(copyByDefault = false)
 
 /**
  * The parameterless constructor that will be used to create instances with `KClass<*>.createInstance`.
@@ -25,30 +25,30 @@ internal var IrClass.needsBoxParameter: Boolean by irFlag(followAttributeOwner =
  * a constructor could be replaced by a factory function.
  * [findDefaultConstructorForReflection] will respect that.
  */
-internal var IrClass.defaultConstructorForReflection: IrConstructor? by irAttribute(followAttributeOwner = false)
+internal var IrClass.defaultConstructorForReflection: IrConstructor? by irAttribute(copyByDefault = false)
 
 /**
  * The factory function which this constructor is replaced by.
  */
-internal var IrConstructor.constructorFactory: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+internal var IrConstructor.constructorFactory: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
 /**
  * If [this] is a `main` function, the wrapper that actually calls the `main` function.
  *
  * @see org.jetbrains.kotlin.ir.backend.js.lower.MainFunctionCallWrapperLowering
  */
-internal var IrSimpleFunction.mainFunctionWrapper: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+internal var IrSimpleFunction.mainFunctionWrapper: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
 /**
  * If `this` is an object, contains the corresponding `getInstance` function that returns the single instance of the object.
  *
  * @see org.jetbrains.kotlin.ir.backend.js.lower.ObjectDeclarationLowering
  */
-var IrClass.objectGetInstanceFunction: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+var IrClass.objectGetInstanceFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
 /**
  * If `this` is an object, contains the field in which the singletone instance of the object is stored.
  *
  * @see org.jetbrains.kotlin.ir.backend.js.lower.ObjectDeclarationLowering
  */
-internal var IrClass.objectInstanceField: IrField? by irAttribute(followAttributeOwner = false)
+internal var IrClass.objectInstanceField: IrField? by irAttribute(copyByDefault = false)

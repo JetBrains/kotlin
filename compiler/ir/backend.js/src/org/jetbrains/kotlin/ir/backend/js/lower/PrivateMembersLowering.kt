@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 private val STATIC_THIS_PARAMETER by IrDeclarationOriginImpl
 
-private var IrFunction.correspondingStatic: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+private var IrFunction.correspondingStatic: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
 /**
  * Extracts private members from classes.

@@ -521,7 +521,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.backingField?.takeUnless { it.isStatic } }.single()
 }
 
-private var IrConstructor.loweredInlineClassConstructor: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+private var IrConstructor.loweredInlineClassConstructor: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
 private fun Context.getLoweredInlineClassConstructor(irConstructor: IrConstructor): IrSimpleFunction = irConstructor::loweredInlineClassConstructor.getOrSetIfNull {
     require(irConstructor.constructedClass.isInlined())

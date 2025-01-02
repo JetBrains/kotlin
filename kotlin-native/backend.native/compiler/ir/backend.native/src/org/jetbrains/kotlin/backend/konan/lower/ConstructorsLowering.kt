@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.ir.isAny
 import org.jetbrains.kotlin.backend.konan.ir.isArray
@@ -33,8 +32,8 @@ import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
-internal var IrConstructor.loweredConstructorFunction: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
-internal var IrSimpleFunction.originalConstructor: IrConstructor? by irAttribute(followAttributeOwner = false)
+internal var IrConstructor.loweredConstructorFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
+internal var IrSimpleFunction.originalConstructor: IrConstructor? by irAttribute(copyByDefault = false)
 
 internal fun Context.getLoweredConstructorFunction(irConstructor: IrConstructor): IrSimpleFunction =
         irConstructor::loweredConstructorFunction.getOrSetIfNull {

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
-private var IrProperty.replacementForValueClasses: IrProperty? by irAttribute(followAttributeOwner = false)
+private var IrProperty.replacementForValueClasses: IrProperty? by irAttribute(copyByDefault = false)
 
 abstract class MemoizedValueClassAbstractReplacements(
     protected val irFactory: IrFactory,

@@ -46,8 +46,8 @@ internal val DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION = IrDeclarationOri
 private fun IrClass.defaultOrNullableType(hasQuestionMark: Boolean) =
         if (hasQuestionMark) this.defaultType.makeNullable() else this.defaultType
 
-private var IrClass.boxFunction: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
-private var IrClass.unboxFunction: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+private var IrClass.boxFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
+private var IrClass.unboxFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
 internal fun Context.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::boxFunction.getOrSetIfNull {
     require(inlinedClass.isUsedAsBoxClass())

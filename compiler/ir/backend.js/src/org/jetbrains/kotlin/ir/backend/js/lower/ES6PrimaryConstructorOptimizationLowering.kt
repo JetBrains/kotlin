@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 
 const val CREATE_EXTERNAL_THIS_CONSTRUCTOR_PARAMETERS = 2
 
-private var IrClass.possibilityToOptimizeForEsClass: MutableReference<Boolean>? by irAttribute(followAttributeOwner = false)
+private var IrClass.possibilityToOptimizeForEsClass: MutableReference<Boolean>? by irAttribute(copyByDefault = false)
 
 /**
  * Optimization: replaces synthetically generated static factory method with a plain old ES6 constructor whenever it's possible.

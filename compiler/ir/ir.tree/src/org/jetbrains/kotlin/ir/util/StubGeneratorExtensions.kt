@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -19,7 +18,7 @@ import org.jetbrains.kotlin.types.KotlinType
  * Null if the class doesn't contain IR info that can be deserialized.
  * The boolean return value of Lazy class indicates whether the deserialization was successful.
  */
-var IrClass.deserializedIr: Lazy<Boolean>? by irAttribute(followAttributeOwner = false)
+var IrClass.deserializedIr: Lazy<Boolean>? by irAttribute(copyByDefault = false)
 
 open class StubGeneratorExtensions {
     open fun computeExternalDeclarationOrigin(descriptor: DeclarationDescriptor): IrDeclarationOrigin? = null
