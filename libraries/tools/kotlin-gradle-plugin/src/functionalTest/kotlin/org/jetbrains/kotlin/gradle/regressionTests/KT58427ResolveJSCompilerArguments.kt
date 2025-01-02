@@ -12,10 +12,14 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.main
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class KT58427ResolveJSCompilerArguments {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Suppress("DEPRECATION_ERROR")
     @Test
     fun `test - resolve js compiler arguments with CompilerArgumentsAware`() {

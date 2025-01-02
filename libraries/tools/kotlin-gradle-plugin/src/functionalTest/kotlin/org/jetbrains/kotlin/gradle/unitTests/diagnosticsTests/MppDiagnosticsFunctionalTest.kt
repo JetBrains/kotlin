@@ -10,9 +10,12 @@ import org.jetbrains.kotlin.gradle.dsl.targetFromPresetInternal
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmWithJavaTargetPreset
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 
 class MppDiagnosticsFunctionalTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun testCommonMainOrTestWithDependsOn() {

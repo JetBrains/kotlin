@@ -13,10 +13,14 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.utils.targets
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ResourcesTasksTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test - default resources task names are consistent`() {
         val project = buildProjectWithJvm()

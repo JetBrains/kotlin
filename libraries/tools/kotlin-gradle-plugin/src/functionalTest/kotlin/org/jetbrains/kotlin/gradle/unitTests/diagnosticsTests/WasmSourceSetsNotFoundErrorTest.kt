@@ -16,10 +16,13 @@ import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertFails
 
 class WasmSourceSetsNotFoundErrorTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `wasmMain SourceSet`() {

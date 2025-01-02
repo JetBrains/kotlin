@@ -16,11 +16,14 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.I
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.prettyName
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.fail
 
 @OptIn(ExperimentalWasmDsl::class)
 class MultiplatformIncorrectCompileOnlyDependenciesValidationTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private fun setupKmpProject(
         preApplyCode: Project.() -> Unit = {},

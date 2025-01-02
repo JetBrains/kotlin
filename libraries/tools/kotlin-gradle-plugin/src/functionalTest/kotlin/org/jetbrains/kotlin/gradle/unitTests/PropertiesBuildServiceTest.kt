@@ -10,10 +10,13 @@ import org.jetbrains.kotlin.gradle.internal.properties.propertiesService
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.registerMinimalVariantImplementationFactoriesForTests
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Assert.assertEquals
+import org.junit.Rule
 import org.junit.Test
 
 class PropertiesBuildServiceTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun testPrecedenceOrder() {

@@ -18,9 +18,12 @@ import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.gradle.utils.isPluginApplied
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 
 class PluginManagerUtilTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private fun buildSampleProject(action: Project.() -> Unit = {}) = buildProjectWithMPP {
         action()

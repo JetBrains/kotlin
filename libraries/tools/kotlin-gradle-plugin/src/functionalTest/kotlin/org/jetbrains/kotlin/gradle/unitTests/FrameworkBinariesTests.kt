@@ -10,11 +10,14 @@ import org.gradle.api.attributes.Attribute
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.utils.setAttribute
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class FrameworkBinariesTests {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `framework output file - reflects link task output file`() {

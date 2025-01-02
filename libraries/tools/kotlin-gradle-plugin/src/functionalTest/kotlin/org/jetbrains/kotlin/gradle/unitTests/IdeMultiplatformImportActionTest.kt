@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportAction
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -19,6 +21,7 @@ import kotlin.test.assertTrue
 import kotlin.test.fail
 
 class IdeMultiplatformImportActionTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test - action is not launched when not in idea sync`() {

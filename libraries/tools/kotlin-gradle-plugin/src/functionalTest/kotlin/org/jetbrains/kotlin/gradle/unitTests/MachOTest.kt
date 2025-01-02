@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.utils.MachO
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -17,6 +18,7 @@ import java.io.InputStream
 import kotlin.test.assertEquals
 
 class MachOTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @get:Rule
     val temporaryFolder = TemporaryFolder()

@@ -21,13 +21,16 @@ import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.getByType
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.util.assertDoesNotThrow
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
 class ExternalAndroidTargetPrototypeSmokeTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @BeforeTest
     fun checkSdk() {

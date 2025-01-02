@@ -35,10 +35,13 @@ import org.jetbrains.kotlin.gradle.util.enableNonPackedKlibsUsage
 import org.jetbrains.kotlin.gradle.util.enableSecondaryJvmClassesVariant
 import org.jetbrains.kotlin.gradle.util.osVariantSeparatorsPathString
 import org.jetbrains.kotlin.gradle.utils.setAttribute
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertTrue
+import org.junit.Rule
 import kotlin.test.*
 
 class MultiplatformSecondaryOutgoingVariantsTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private fun buildProjectWithMPPAndJvmClassesVariant(
         code: Project.() -> Unit = {},

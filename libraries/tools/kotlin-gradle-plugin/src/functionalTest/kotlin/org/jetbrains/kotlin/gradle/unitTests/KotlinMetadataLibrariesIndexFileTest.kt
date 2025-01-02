@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataLibrariesIndexFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.TransformedMetadataLibraryRecord
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
@@ -18,6 +19,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class KotlinMetadataLibrariesIndexFileTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @get:Rule
     val temporaryFolder = TemporaryFolder()

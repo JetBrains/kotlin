@@ -11,9 +11,11 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.utils.extrasStoredProperty
 import org.jetbrains.kotlin.gradle.utils.projectStoredProperty
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
+import org.junit.Rule
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -21,6 +23,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertSame
 
 class StoredPropertyTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private data class Value(val id: Any)
 

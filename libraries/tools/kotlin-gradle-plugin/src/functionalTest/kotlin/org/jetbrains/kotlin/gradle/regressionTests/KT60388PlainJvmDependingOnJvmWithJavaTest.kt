@@ -16,10 +16,14 @@ import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.fail
 
 class KT60388PlainJvmDependingOnJvmWithJavaTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     private val rootProject = buildProject()
 
     @Test

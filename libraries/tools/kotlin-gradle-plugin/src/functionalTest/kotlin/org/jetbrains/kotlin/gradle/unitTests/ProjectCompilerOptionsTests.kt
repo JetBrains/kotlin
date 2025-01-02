@@ -17,12 +17,15 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile as KotlinJvmCompileTas
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.named
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertTrue
+import org.junit.Rule
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ProjectCompilerOptionsTests {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun nativeTargetCompilerOptionsDSL() {

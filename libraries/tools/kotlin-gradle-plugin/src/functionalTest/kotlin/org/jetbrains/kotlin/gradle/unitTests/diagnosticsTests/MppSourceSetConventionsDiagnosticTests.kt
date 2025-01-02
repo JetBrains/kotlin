@@ -14,10 +14,14 @@ import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConv
 import org.jetbrains.kotlin.gradle.plugin.configurationResult
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import org.jetbrains.kotlin.gradle.util.checkDiagnostics as checkDiagnosticsUtil
 
 class MppSourceSetConventionsDiagnosticTests {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     private fun Project.checkDiagnostics(name: String) = checkDiagnosticsUtil("MppSourceSetConventionsDiagnosticTests/$name")
 
     @Test

@@ -22,11 +22,14 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.overriddenGradleVersionF
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals
 
 class KotlinTargetResourcesPublicationImplTests {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test publication callback - after resources publication`() {

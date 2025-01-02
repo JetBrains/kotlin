@@ -22,8 +22,12 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 
 class ReportDataTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     private val kotlinTaskPath = "testKotlin"
 
     @Test

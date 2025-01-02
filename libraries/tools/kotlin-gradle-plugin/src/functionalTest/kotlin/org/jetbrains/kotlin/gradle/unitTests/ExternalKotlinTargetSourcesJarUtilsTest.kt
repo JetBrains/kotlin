@@ -17,13 +17,17 @@ import org.jetbrains.kotlin.gradle.plugin.configurationResult
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.*
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.tooling.core.withClosure
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.fail
 
 class ExternalKotlinTargetSourcesJarUtilsTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test - includeSources`() = buildProjectWithMPP().runLifecycleAwareTest {
         val target = multiplatformExtension.createExternalKotlinTarget<FakeTarget> { defaults() }

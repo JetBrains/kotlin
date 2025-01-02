@@ -12,10 +12,14 @@ import org.jetbrains.kotlin.gradle.plugin.KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAM
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.utils.targets
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertNull
 
 class KotlinJvmFunctionalTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test setting dependencies via compilation dependency handler`() {
         val project = buildProjectWithJvm {

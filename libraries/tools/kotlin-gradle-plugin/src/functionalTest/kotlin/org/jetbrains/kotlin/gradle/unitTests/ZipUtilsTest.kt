@@ -11,6 +11,7 @@ import com.intellij.util.io.Compressor
 import org.gradle.kotlin.dsl.support.unzipTo
 import org.jetbrains.kotlin.gradle.utils.copyZipFilePartially
 import org.jetbrains.kotlin.gradle.utils.listDescendants
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.util.assertThrows
 import org.junit.Rule
 import org.junit.Test
@@ -24,6 +25,8 @@ import kotlin.test.assertTrue
 import kotlin.test.fail
 
 class ZipUtilsTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @get:Rule
     val temporaryFolder = TemporaryFolder()
 

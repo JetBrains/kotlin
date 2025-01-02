@@ -10,11 +10,14 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 
 class KotlinToolingVersionTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test - kotlinToolingVersion is cached in project`() {

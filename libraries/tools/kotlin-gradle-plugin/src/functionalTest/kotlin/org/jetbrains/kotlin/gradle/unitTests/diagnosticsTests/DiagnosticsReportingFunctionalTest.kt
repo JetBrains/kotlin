@@ -20,9 +20,12 @@ import org.jetbrains.kotlin.gradle.util.applyKotlinJvmPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.checkDiagnostics
 import org.jetbrains.kotlin.gradle.util.set
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 
 class DiagnosticsReportingFunctionalTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun testNonDuplicatedReporting() {

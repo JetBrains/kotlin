@@ -24,10 +24,14 @@ import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.main
 import org.jetbrains.kotlin.gradle.util.mockXcodeVersion
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import java.io.File
 import kotlin.test.*
 
 class KotlinNativeCompileArgumentsTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test - simple project - old buildCompilerArgs and new CompilerArgumentsProducer - return same arguments`() {
         val project = buildProjectWithMPP()

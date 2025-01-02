@@ -12,11 +12,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.util.assertThrows
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class KotlinNativeLinkTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `apiFiles - contain api dependencies - when KotlinNativeLink task is configured before compilation's api dependencies`() {

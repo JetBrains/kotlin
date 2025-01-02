@@ -1,11 +1,14 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
 class SortSourceSetsByDependsOnRelationTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun simpleCase() {

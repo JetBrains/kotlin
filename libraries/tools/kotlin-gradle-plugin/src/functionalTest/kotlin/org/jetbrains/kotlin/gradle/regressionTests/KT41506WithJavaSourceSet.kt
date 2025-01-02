@@ -12,10 +12,14 @@ import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.utils.javaSourceSets
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.fail
 
 class KT41506WithJavaSourceSet {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test that arbitrary compilation can be created with java enabled in Multiplatform project`() {
         val project = buildProjectWithMPP {

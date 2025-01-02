@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.internal.kapt.incremental
 
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -12,6 +13,8 @@ import org.junit.rules.TemporaryFolder
 import java.io.File
 
 class ClasspathSnapshotTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Rule
     @JvmField
     var tmp = TemporaryFolder()

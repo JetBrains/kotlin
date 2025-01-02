@@ -12,10 +12,13 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 
 @Suppress("DEPRECATION")
 class LegacyTargetShortcutTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test error diagnostic with ios() legacy target shortcut`() {

@@ -13,12 +13,16 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationArchiveTasks
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.fail
 
 class KotlinCompilationArchiveTasksTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     private fun Project.enableKotlinCompilationArchiveTasksCreation(enabled: Boolean = true) {
         propertiesExtension.set(KOTLIN_CREATE_ARCHIVE_TASKS_FOR_CUSTOM_COMPILATIONS, enabled.toString())
     }

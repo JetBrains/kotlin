@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class MergeWithTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     private fun Map<String, Set<Int>>.prettyStringForDiff() = entries
         .sortedBy { it.key }
         .joinToString("\n") { (key, setOfInts) -> "$key => ${setOfInts.sorted()}" }

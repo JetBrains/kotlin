@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 
 class JsLikeDiagnosticsFunctionalTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun testJsReportWarning() {

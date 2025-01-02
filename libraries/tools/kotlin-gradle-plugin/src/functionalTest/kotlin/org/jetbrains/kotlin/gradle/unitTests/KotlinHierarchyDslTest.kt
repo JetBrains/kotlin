@@ -15,10 +15,12 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyTemplate
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.buildHierarchy
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 
 class KotlinHierarchyDslTest {
-
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private val project = buildProjectWithMPP()
     private val kotlin = project.multiplatformExtension

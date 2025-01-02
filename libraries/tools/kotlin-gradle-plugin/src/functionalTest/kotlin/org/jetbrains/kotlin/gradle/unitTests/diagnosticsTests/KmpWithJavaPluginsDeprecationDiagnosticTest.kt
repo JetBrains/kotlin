@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.checkDiagnostics
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 
 class KmpWithJavaPluginsDeprecationDiagnosticTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun testKmpWithJavaPluginApplied() {

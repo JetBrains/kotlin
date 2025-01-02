@@ -14,10 +14,13 @@ import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.utils.createConsumable
 import org.jetbrains.kotlin.gradle.utils.createResolvable
 import org.jetbrains.kotlin.gradle.utils.named
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class CInteropCommonizerArtifactTypeAttributeTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test - transformation from klib-collection-dir to klibs`() {

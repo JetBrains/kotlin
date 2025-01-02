@@ -19,11 +19,14 @@ import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
 class LazyResolvedConfigurationTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test - creating LazyResolvedConfiguration - will not resolve source configuration`() {

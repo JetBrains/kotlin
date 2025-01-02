@@ -15,11 +15,14 @@ import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSo
 import org.jetbrains.kotlin.gradle.plugin.sources.android.singleTargetAndroidSourceSetLayout
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.setMultiplatformAndroidSourceSetLayoutVersion
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class KotlinAndroidSourceSetLayoutExtensionTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `single platform plugin`() {

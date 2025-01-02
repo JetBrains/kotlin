@@ -7,10 +7,14 @@ package org.jetbrains.kotlin.gradle.internal.testing.tcsmc
 
 import jetbrains.buildServer.messages.serviceMessages.TestStarted
 import jetbrains.buildServer.messages.serviceMessages.TestSuiteStarted
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class TestCrash : TCServiceMessagesClientTest() {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun testNativeCrash() {
         treatFailedTestOutputAsStacktrace = true

@@ -28,11 +28,14 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrCreateCIntero
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.util.main
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class KT56143CinteropConfigurationAttributes {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private val targetAttribute = Attribute.of("for.target", String::class.java)
     private val compilationAttribute = Attribute.of("for.compilation", String::class.java)

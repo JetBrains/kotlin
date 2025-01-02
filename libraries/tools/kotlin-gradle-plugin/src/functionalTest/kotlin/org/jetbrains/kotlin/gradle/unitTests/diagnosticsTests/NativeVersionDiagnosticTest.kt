@@ -9,9 +9,13 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 
 class NativeVersionDiagnosticTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     private fun setUpProject(nativeVersion: String): ProjectInternal {
         val project = buildProjectWithJvm(
             preApplyCode = {

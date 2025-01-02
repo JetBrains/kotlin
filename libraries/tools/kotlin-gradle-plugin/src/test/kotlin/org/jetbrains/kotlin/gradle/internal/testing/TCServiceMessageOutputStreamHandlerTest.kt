@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.internal.testing
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessageParserCallback
 import jetbrains.buildServer.messages.serviceMessages.TestFailed
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import org.slf4j.event.EventRecodingLogger
 import org.slf4j.event.SubstituteLoggingEvent
@@ -17,6 +19,8 @@ import java.util.concurrent.ArrayBlockingQueue
 import kotlin.test.assertEquals
 
 class TCServiceMessageOutputStreamHandlerTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     private val client = Mock()
     private val logEvents = ArrayBlockingQueue<SubstituteLoggingEvent>(10)
     private val log = EventRecodingLogger(SubstituteLogger("", logEvents, false), logEvents)

@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.native.internal.inferCommonizerTarget
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
+import org.junit.Rule
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -24,6 +26,7 @@ import kotlin.test.assertNull
 
 @OptIn(UnsafeApi::class)
 class SourceSetCommonizerTargetTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private lateinit var project: ProjectInternal
     private lateinit var kotlin: KotlinMultiplatformExtension

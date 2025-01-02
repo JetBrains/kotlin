@@ -11,10 +11,13 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.propertiesExtension
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class AndroidExtensionsPluginFT {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun producesErrorSeverityWarningByDefault() {

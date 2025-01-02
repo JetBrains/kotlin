@@ -13,11 +13,15 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtension
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_ARCHIVES_TASK_OUTPUT_AS_FRIEND_ENABLED
 import org.jetbrains.kotlin.gradle.plugin.mpp.decoratedInstance
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class KT69330StableFriendPathsArchiveTaskDependencyTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test KT-69330 - Task dependency is created so friendPaths are stable at compile time`() {
         val project = setupProject()

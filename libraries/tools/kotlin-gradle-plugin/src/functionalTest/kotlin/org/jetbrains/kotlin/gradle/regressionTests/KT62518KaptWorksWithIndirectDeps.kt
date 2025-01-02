@@ -11,9 +11,13 @@ import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 
 class KT62518KaptWorksWithIndirectDeps {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `let kapt extend from another configuration`() {
         val project = buildProjectWithJvm {

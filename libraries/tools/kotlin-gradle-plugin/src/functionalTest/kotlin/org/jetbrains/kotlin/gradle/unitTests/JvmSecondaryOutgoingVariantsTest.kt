@@ -13,9 +13,12 @@ import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.util.enableSecondaryJvmClassesVariant
 import org.jetbrains.kotlin.gradle.util.osVariantSeparatorsPathString
 import org.jetbrains.kotlin.gradle.utils.javaSourceSets
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 
 class JvmSecondaryOutgoingVariantsTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private fun buildProjectWithJvmAndClassesVariant(
         code: Project.() -> Unit = {}
