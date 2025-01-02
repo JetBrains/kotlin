@@ -35,8 +35,8 @@ import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.runners.codegen.commonConfigurationForTest
-import org.jetbrains.kotlin.test.runners.codegen.configureCommonHandlersForBoxTest
+import org.jetbrains.kotlin.test.configuration.commonConfigurationForTest
+import org.jetbrains.kotlin.test.configuration.configureCommonHandlersForBoxTest
 import org.jetbrains.kotlin.test.services.jvm.JvmBoxMainClassProvider
 import org.jetbrains.kotlin.test.services.service
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider

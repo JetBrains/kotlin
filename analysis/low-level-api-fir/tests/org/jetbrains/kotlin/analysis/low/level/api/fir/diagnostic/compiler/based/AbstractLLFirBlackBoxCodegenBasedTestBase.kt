@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirScopeDumpHandler
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
-import org.jetbrains.kotlin.test.runners.codegen.baseFirBlackBoxCodegenTestDirectivesConfiguration
-import org.jetbrains.kotlin.test.runners.codegen.configureModernJavaWhenNeeded
+import org.jetbrains.kotlin.test.configuration.baseFirBlackBoxCodegenTestDirectivesConfiguration
+import org.jetbrains.kotlin.test.configuration.configureModernJavaWhenNeeded
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider

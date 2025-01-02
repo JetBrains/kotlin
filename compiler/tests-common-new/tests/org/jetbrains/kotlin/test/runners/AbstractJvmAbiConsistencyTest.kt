@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.test.frontend.K1AndK2FrontendFacade
 import org.jetbrains.kotlin.test.frontend.K1AndK2ToIrConverter
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.runners.codegen.commonServicesConfigurationForCodegenAndDebugTest
-import org.jetbrains.kotlin.test.runners.codegen.configureModernJavaWhenNeeded
+import org.jetbrains.kotlin.test.configuration.commonServicesConfigurationForCodegenAndDebugTest
+import org.jetbrains.kotlin.test.configuration.configureModernJavaWhenNeeded
 import org.jetbrains.kotlin.test.services.configuration.JavaForeignAnnotationType
 
 open class AbstractJvmAbiConsistencyTest :

@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
+import org.jetbrains.kotlin.test.configuration.configureBlackBoxTestSettings
+import org.jetbrains.kotlin.test.configuration.configureDumpHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
@@ -26,7 +28,7 @@ import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.runners.configureTieredBackendJvmTest
+import org.jetbrains.kotlin.test.configuration.configureTieredBackendJvmTest
 import org.jetbrains.kotlin.test.services.TestTierChecker
 import org.jetbrains.kotlin.test.services.TestTierLabel
 import org.junit.jupiter.api.Tag

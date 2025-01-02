@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.base
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.AbstractLowLevelCompilerBasedTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.facades.LLFirAnalyzerFacadeFactoryWithoutPreresolve
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
+import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
 import org.jetbrains.kotlin.test.runners.baseFirSpecDiagnosticTestConfiguration
 import org.jetbrains.kotlin.utils.bind
 

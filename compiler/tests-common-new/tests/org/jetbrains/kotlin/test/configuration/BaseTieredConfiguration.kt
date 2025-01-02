@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.test.runners
+package org.jetbrains.kotlin.test.configuration
 
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
@@ -25,10 +25,6 @@ import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
-import org.jetbrains.kotlin.test.runners.codegen.commonBackendHandlersForCodegenTest
-import org.jetbrains.kotlin.test.runners.codegen.commonServicesMinimalSettingsConfigurationForCodegenAndDebugTest
-import org.jetbrains.kotlin.test.runners.codegen.configureBlackBoxTestSettings
-import org.jetbrains.kotlin.test.runners.codegen.configureJvmBoxCodegenSettings
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
 import org.jetbrains.kotlin.test.services.fir.LightTreeSyntaxDiagnosticsReporterHolder

@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
-import org.jetbrains.kotlin.test.runners.configureTieredFir2IrJvmTest
-import org.jetbrains.kotlin.test.runners.toTieredHandlersAndCheckerOf
+import org.jetbrains.kotlin.test.configuration.configureTieredFir2IrJvmTest
+import org.jetbrains.kotlin.test.configuration.toTieredHandlersAndCheckerOf
 import org.jetbrains.kotlin.test.services.TestTierLabel
 
 abstract class AbstractFirJvmIrTextTest(

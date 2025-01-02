@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.runners.codegen.configureModernJavaTest
+import org.jetbrains.kotlin.test.configuration.configureModernJavaTest
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.RuntimeClasspathJsProvider
 import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider

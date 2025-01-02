@@ -14,6 +14,12 @@ import org.jetbrains.kotlin.test.backend.handlers.NoPsiParsingErrorsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
+import org.jetbrains.kotlin.test.configuration.configurationForTestWithLatestLanguageVersion
+import org.jetbrains.kotlin.test.configuration.configureDiagnosticTest
+import org.jetbrains.kotlin.test.configuration.configureIrActualizerDiagnosticsTest
+import org.jetbrains.kotlin.test.configuration.configureTieredFrontendJvmTest
+import org.jetbrains.kotlin.test.configuration.toTieredHandlersAndCheckerOf
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.DISABLE_TYPEALIAS_EXPANSION
 import org.jetbrains.kotlin.test.directives.configureFirParser

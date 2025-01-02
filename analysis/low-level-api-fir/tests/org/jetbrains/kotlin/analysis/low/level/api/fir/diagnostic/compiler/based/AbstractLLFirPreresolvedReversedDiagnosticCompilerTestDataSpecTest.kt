@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirOnlyReversedTestSupp
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.AbstractLowLevelCompilerBasedTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.facades.LLFirAnalyzerFacadeFactoryWithPreresolveInReversedOrder
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
+import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
 import org.jetbrains.kotlin.utils.bind
 
 abstract class AbstractLLFirPreresolvedReversedDiagnosticCompilerTestDataSpecTest : AbstractLowLevelCompilerBasedTest() {
