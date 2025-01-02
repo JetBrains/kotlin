@@ -203,7 +203,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
     }
 
     /**
-     * General documentation for builder inference algorithm is located at `/docs/fir/builder_inference.md`
+     * General documentation for PCLA algorithm is located at `/docs/fir/pcla.md`
      *
      * This function checks if any of the postponed arguments are suitable for builder inference, and performs it for all eligible lambda arguments
      * @return true if we got new proper constraints after builder inference

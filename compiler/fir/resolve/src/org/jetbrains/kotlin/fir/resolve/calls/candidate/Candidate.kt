@@ -327,7 +327,7 @@ class Candidate(
     /**
      * Please avoid updating symbol in the candidate whenever it's possible.
      * The only case when currently it seems to be unavoidable is at
-     * [org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer.refineSubstitutedMemberIfReceiverContainsTypeVariable]
+     * [org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer.updateSubstitutedMemberIfReceiverContainsTypeVariable]
      */
     @RequiresOptIn
     annotation class UpdatingCandidateInvariants

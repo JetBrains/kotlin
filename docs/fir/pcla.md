@@ -12,7 +12,7 @@ The most basic scenario where PCLA is used is calls to builder-like functions:
 fun <E> buildList(builderAction: MutableList<E>.() -> Unit): List<E> = ...
 
 fun main() {
-    buildList { 
+    buildList {
         add("")
     } // E is inferred to `String`
 }
@@ -33,19 +33,28 @@ uninferred TVs.
 
 PCLA is the way of lambda analysis during call completion that happens when some input types are not properly inferred, and there are no other sources of constraints.
 
-**PCLA lambda** = lambda analyzed with PCLA
+> Please note that PCLA analysis runs during call completion, which in turn only happens when the overload resolution has successfully ended with the single candidate result (When no `OVERLOAD_RESOLUTION_AMBIGUITY` is reported)
 
-**Main call/candidate** is the call that contains PCLA lambda
+**PCLA lambda** is the lambda analyzed with PCLA algorithm.
 
-**Nested call/candidate** is a call being resolved in other than `ContextDependent` mode (usually statement-level) that belongs to PCLA lambda
-  * **Postponed nested calls** are nested calls which we decided not to complete in the FULL mode immediately
+**Main call/candidate** is the call that contains *PCLA lambda*.
+*Main candidate* is the only candidate left after overload resolution that corresponds to the *main call*.
 
-**Shared CS** is a constraint system being shared between postponed nested calls inside PCLA lambda
+**Nested call/candidate** is a "statement-level" call (non-`ContextDependent`-mode expressions) inside lambda.
+In the context of PCLA, we don't complete *nested calls* in the `FULL` mode immediately, but postpone them.
+We call such calls **Postponed nested calls**.
 
-**Outer CS**
-  * Defined only for nested postponed candidates (for shared CS)
-  * It consists of type variables of the containing PCLA lambdas and all the type variables of already processed inner candidates
-  * For inner CS, all the outer CS-related type variables are always coming at the beginning of the list of all variables
+**Shared CS** is the constraint system being shared between postponed *nested calls* inside *PCLA lambda*.
+
+**Outer/Inner CS** is another, perpendicular way to classify constraint systems.
+Or it's rather an implementation mechanism.
+Outer CS is the "original CS", while "inner CS" is the CS that built on top of the outer CS.
+Inner CS has access to all outer CS type variables and constraints.
+In the context of PCLA, we use "inner CS" mechanism to analyze *nested calls*.
+*Shared CS* is implemented as *inner CS*.
+
+* *Outer CS* consists of type variables of the containing PCLA lambdas and all the type variables of already processed *nested candidates*
+* For *inner CS*, all the outer CS-related type variables are always coming at the beginning of the list of all variables
 
 **Outer Type Variable (TV)**
   * In the context of *shared CS*, it's a subset of type variables that are brought from the *outer CS*
@@ -54,8 +63,8 @@ PCLA is the way of lambda analysis during call completion that happens when some
 
 ## Entry-point to PCLA
 
-The conditions to run a lambda resolution in PCLA mode is the following:
-- Completion mode for the current call tree is `FULL` 
+The conditions to run a lambda resolution in PCLA mode are the following:
+- Completion mode for the current call tree is `FULL`
 - There are no other ways to infer some new constraints for any type variable.
 - There is some lambda that among its input types has at least one with a not fixed TV being used as type argument
     - So, if one of the input types is `MutableList<Ev>` that lambda suits for PCLA
@@ -94,13 +103,13 @@ as usual, and after that at completion results writing phase all type variables 
 
 * In the end, the **root CS** (aka CS for the Main candidate) contains TVs for all incomplete nested candidates.
 * And may just continue `FULL` completion process on the Main, i.e., fixing variables for which we now have new proper constraints, 
-  and analyze other lambdas.
+  and analyze other lambdas (which might run PCLA analysis for other lambdas).
 * In the end, beside completion results writing for the main call, we also write results (inferred type arguments/expression type update) 
   for all incomplete/postponed calls (see `FirCallCompletionResultsWriterTransformer.runPCLARelatedTasksForCandidate`).
 
 ### Example 1
 
-```
+```kotlin
 fun foo() {}
 
 fun main() {
@@ -119,11 +128,11 @@ fun main() {
         // And constraints
         // String <: Tv [from List<String> <: Iterable<Tv>]
         // MutableList<Ev> <: Cv
-        // Rv <: Ev [incorporation from MutableList<Ev> <: MutableCollection<in Rv> 
+        // Rv <: Ev [incorporation from MutableList<Ev> <: MutableCollection<in Rv>]
         // Fixing Tv := String
         // Starting lamda analysis
         // Having 
-        // Rv <: String constraint
+        // String <: Rv constraint
         // 
         // Then add all the new constraints to the shared CS
         x.mapTo(this) { it } // Postponed nested call
@@ -133,14 +142,17 @@ fun main() {
     // Ev := String
     // Rv := String
     // Cv := MutableList<String>
+}
 ```
 
 ### Example 2
 ```kotlin
-fun <A, B, C> twoSteps(first: Inv<A>.() -> Unit, b: B, second: (B) -> C): Triple<A, B, C> {
+class Inv<A>() { fun set(a: A) = Unit }
+
+fun <A, B, C> twoSteps(first: Inv<A>.() -> Unit, b: B, second: (B) -> C): Triple<Inv<A>, B, C> {
     val a = Inv<A>().apply(first)
-    val c = second(value)
-    return Triple(a, value, c)
+    val c = second(b)
+    return Triple(a, b, c)
 }
 
 fun main() {
@@ -255,7 +267,7 @@ constraints to `buildList` type variable `Ev` in shared CS.
 And after that we finally call `processPartiallyResolvedCall` for `myOtherCallWithLambda { ... }`, but it doesn't contain constraints 
 on `Ev` from `add(""")`, thus overwriting existing information.
 
-That might be workarounded with some kind of merging constraints for the same TV instead of just replacement 
+That might be circumvented with some kind of merging constraints for the same TV instead of just replacement
 (see `NewConstraintSystemImpl.addOtherSystem`), but that seems to be hacky too.
 
 So, the current approach is the following: during nested lambda resolution we assume that currently *shared CS* is equal to the CS of the
@@ -337,7 +349,7 @@ i.e., it would be a set of fresh type variables of the candidate itself, type va
 of lambdas. That part works the same way as for regular calls outside PCLA context.
 
 ### Example
-```
+```kotlin
 fun foo(x: List<String>) {
     buildList {
         x.mapTo(this) { // `mapTo` analyzed in PCLA_POSTPONED_CALL
@@ -426,7 +438,7 @@ But there are some of them
 (e.g., [KT-68940](https://youtrack.jetbrains.com/issue/KT-68940/K2-IllegalArgumentException-All-variables-should-be-fixed-to-something)) 
 where the return type might contain not-fixed type variables.
 
-For **non**-PCLA lambdas using expected types with non-fixed type variables would lead to illegal state: 
+For **non**-PCLA lambdas, using expected types with non-fixed type variables would lead to illegal state:
 calls inside return statements are not aware of type variables of the containing call.
 
 But for PCLA, we resolve everything within a common CS; thus it's ok. 
@@ -455,8 +467,8 @@ fun main() {
 }
 ```
 
-By default, (e.g., in non-PCLA context) we would postpone the lambda in the `let` call, and after exiting PCLA for `myBuildSet` would fix `Ev`
-into the only existing constraint at that moment, i.e., to `Base1` and then when got back to the nested lambda analysis would report
+By default, (e.g., in non-PCLA context) we would postpone the lambda in the `let` call, and after exiting lambda for `myBuildSet`, we would fix `Ev`
+into the only existing constraint at that moment, i.e., to `Derived1` and then when got back to the nested lambda analysis would report
 a `TYPE_MISMATCH` in the `it.add(Derived2())` because the variable has been already fixed to less permissive type.
 
 But that looks counter-intuitive, and moreover, the example above was green in Builder Inference implementation in K1.
@@ -479,6 +491,7 @@ fun main(b: Boolean) {
             }
         }
         builder.add({ x: String -> })
+        builder.first()
     }
 }
 ```
@@ -553,7 +566,7 @@ fun foo(x: MutableList<String>) {
     buildList {
         // Adding the constraints
         // MutableList<String> <: Sv
-        // MutableList<Ev <: Sv
+        // MutableList<Ev> <: Sv
         // But to analyze lambda we fix Sv to CST(MutableList<String>, MutableList<Ev>) = MutableList<CST(String, Ev)>
         // The question is what is CST(String, Ev)
         selectL(x, this) { x ->
