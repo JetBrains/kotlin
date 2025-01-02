@@ -18,6 +18,19 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils.getPackagePartClassNamePrefix
 import java.io.File
 
+/**
+ * This does two things:
+ *  1. Copies [IrAttribute]s of element [other] to [this]. Attributes already present on [this] are not removed, but will be overridden
+ *  if [other] also has a given attribute. The semantics is therefore the same as [MutableMap.putAll].
+ *  2. Copies [IrElement.attributeOwnerId] of [other].
+ *
+ *  Now, those two operations are not clearly connected to each other, although they have been historically.
+ *  In particular, [IrElement.attributeOwnerId] has lost much of its meaning since.
+ *  But still, _most likely_ you want them both at the same time, which is what we do here. It may be investigated closer in the future.
+ *
+ *  @param includeAll if `true`, copy all the attributes present in [other],
+ *  if `false`, only those with [IrAttribute.copyByDefault] == `true`.
+ */
 fun IrElement.copyAttributes(other: IrElement, includeAll: Boolean = false) {
     (this as IrElementBase).copyAttributesFrom(other as IrElementBase, includeAll)
     attributeOwnerId = other.attributeOwnerId
