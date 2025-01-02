@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.tools.tests
 import kotlinx.validation.api.filterOutAnnotated
 import kotlinx.validation.api.filterOutNonPublic
 import kotlinx.validation.api.loadApiFromJvmClasses
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestName
@@ -18,6 +19,7 @@ class RuntimePublicAPITest {
 
     @[Rule JvmField]
     val testName = TestName()
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test fun kotlinStdlibRuntimeMerged() {
         snapshotAPIAndCompare("../../stdlib/build/libs", "kotlin-stdlib", listOf("kotlin.jvm.internal"))

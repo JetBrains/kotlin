@@ -9,7 +9,9 @@ package org.jetbrains.kotlin.tools.tests
 
 import kotlinx.validation.ExperimentalBCVApi
 import kotlinx.validation.api.klib.*
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Assume
+import org.junit.Rule
 import java.io.File
 import kotlin.io.path.*
 import kotlin.test.Test
@@ -17,6 +19,7 @@ import kotlin.test.assertTrue
 import kotlin.test.fail
 
 class KlibPublicAPITest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun jsWasmJsWasmWasiStdlib() {
