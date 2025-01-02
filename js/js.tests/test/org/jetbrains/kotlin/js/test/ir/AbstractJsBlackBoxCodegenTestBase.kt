@@ -223,6 +223,7 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
     irHandlersStep()
 
     facadeStep(::JsIrInliningFacade)
+    inlinedIrHandlersStep()
 
     facadeStep(serializerFacade)
     klibArtifactsHandlersStep {
