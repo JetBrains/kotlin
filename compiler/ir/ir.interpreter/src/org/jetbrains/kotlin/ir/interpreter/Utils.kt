@@ -42,12 +42,6 @@ val evaluateIntrinsicAnnotation = FqName("kotlin.EvaluateIntrinsic")
 internal val IrElement.fqName: String
     get() = (this as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString() ?: ""
 
-internal fun IrFunction.getDispatchReceiver(): IrValueParameterSymbol? = this.dispatchReceiverParameter?.symbol
-
-internal fun IrFunction.getExtensionReceiver(): IrValueParameterSymbol? = this.extensionReceiverParameter?.symbol
-
-internal fun IrFunction.getReceiver(): IrSymbol? = this.getDispatchReceiver() ?: this.getExtensionReceiver()
-
 internal fun IrFunctionAccessExpression.getThisReceiver(): IrValueSymbol = this.symbol.owner.parentAsClass.thisReceiver!!.symbol
 
 internal fun IrConst.toPrimitive(): Primitive = when {
@@ -72,7 +66,7 @@ fun IrAnnotationContainer.getAnnotation(annotation: FqName): IrConstructorCall {
 internal fun IrAnnotationContainer.getEvaluateIntrinsicValue(): String? {
     if (this is IrClass && this.fqName.startsWith("java")) return this.fqName
     if (!this.hasAnnotation(evaluateIntrinsicAnnotation)) return null
-    return (this.getAnnotation(evaluateIntrinsicAnnotation).getValueArgument(0) as IrConst).value.toString()
+    return (this.getAnnotation(evaluateIntrinsicAnnotation).arguments[0] as IrConst).value.toString()
 }
 
 internal fun getPrimitiveClass(irType: IrType, asObject: Boolean = false): Class<*>? =
@@ -124,9 +118,9 @@ internal fun List<Any?>.toPrimitiveStateArray(type: IrType): Primitive {
 }
 
 fun IrFunctionAccessExpression.getVarargType(index: Int): IrType? {
-    val varargType = this.symbol.owner.valueParameters[index].varargElementType ?: return null
-    varargType.classOrNull?.let { return this.symbol.owner.valueParameters[index].type }
-    val type = this.symbol.owner.valueParameters[index].type as? IrSimpleType ?: return null
+    val varargType = this.symbol.owner.parameters[index].varargElementType ?: return null
+    varargType.classOrNull?.let { return this.symbol.owner.parameters[index].type }
+    val type = this.symbol.owner.parameters[index].type as? IrSimpleType ?: return null
     return type.buildSimpleType {
         val typeParameter = varargType.classifierOrFail.owner as IrTypeParameter
         arguments = listOf(makeTypeProjection(typeArguments[typeParameter.index]!!, Variance.OUT_VARIANCE))
@@ -197,7 +191,7 @@ internal fun IrFunction.getArgsForMethodInvocation(
 
     // TODO if vararg isn't last parameter
     // must convert vararg array into separated elements for correct invoke
-    if (this.valueParameters.lastOrNull()?.varargElementType != null) {
+    if (this.parameters.lastOrNull()?.varargElementType != null) {
         val varargValue = argsValues.last()
         argsValues.removeAt(argsValues.size - 1)
         argsValues.addAll(varargValue as Array<out Any?>)
@@ -235,15 +229,17 @@ internal fun IrClass.getOriginalPropertyByName(name: String): IrProperty {
 internal fun IrFunctionAccessExpression.getFunctionThatContainsDefaults(): IrFunction {
     val irFunction = this.symbol.owner
     fun IrValueParameter.lookup(): IrFunction? {
-        return defaultValue?.let { this.parent as IrFunction }
-            ?: (this.parent as? IrSimpleFunction)?.overriddenSymbols
-                ?.map { it.owner.valueParameters[this.indexInOldValueParameters] }
+        return defaultValue
+            ?.let { this.parent as IrFunction }
+            ?: (this.parent as? IrSimpleFunction)
+                ?.overriddenSymbols
+                ?.map { it.owner.parameters[this.indexInParameters] }
                 ?.firstNotNullOfOrNull { it.lookup() }
     }
 
-    return (0 until this.valueArgumentsCount)
-        .first { this.getValueArgument(it) == null }
-        .let { irFunction.valueParameters[it].lookup() ?: irFunction }
+    return (arguments zip irFunction.parameters)
+        .first { (arg, _) -> arg == null }
+        .let { (_, param) -> param.lookup() ?: irFunction }
 }
 
 internal fun IrValueParameter.getDefaultWithActualParameters(
@@ -257,10 +253,7 @@ internal fun IrValueParameter.getDefaultWithActualParameters(
         override fun visitGetValue(expression: IrGetValue): IrExpression {
             val parameter = expression.symbol.owner as? IrValueParameter ?: return super.visitGetValue(expression)
             if (parameter.parent != parameterOwner) return super.visitGetValue(expression)
-            val newParameter = when (parameter.indexInOldValueParameters) {
-                -1 -> newParent.dispatchReceiverParameter ?: newParent.extensionReceiverParameter
-                else -> actualParameters[parameter.indexInOldValueParameters]
-            }
+            val newParameter = actualParameters[parameter.indexInParameters]
             return IrGetValueImpl(expression.startOffset, expression.endOffset, expression.type, newParameter!!.symbol)
         }
     }

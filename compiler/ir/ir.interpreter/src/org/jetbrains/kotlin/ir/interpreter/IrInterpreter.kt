@@ -138,12 +138,12 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
     private fun interpretValueParameter(valueParameter: IrValueParameter) {
         val irFunction = valueParameter.parent as IrFunction
-        fun isReceiver() = irFunction.dispatchReceiverParameter == valueParameter || irFunction.extensionReceiverParameter == valueParameter
-
         val state = callStack.popState()
 
         state.checkNullability(valueParameter.type, environment) {
-            if (isReceiver()) return@checkNullability NullPointerException()
+            if (valueParameter.kind == IrParameterKind.DispatchReceiver || valueParameter.kind == IrParameterKind.ExtensionReceiver)
+                return@checkNullability NullPointerException()
+
             val method = irFunction.getCapitalizedFileName() + "." + irFunction.fqName
             val parameter = valueParameter.name
             IllegalArgumentException("Parameter specified as non-null is null: method $method, parameter $parameter")
@@ -162,13 +162,12 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
         val owner = call.symbol.owner
         // 1. load evaluated arguments from stack
-        val valueArguments = owner.valueParameters.map { callStack.popState() }.reversed()
-        val extensionReceiver = owner.getExtensionReceiver()?.let { callStack.popState() }
-        val dispatchReceiver = owner.getDispatchReceiver()?.let { callStack.popState() }
+        val nonDispatchArguments = owner.nonDispatchParameters.map { callStack.popState() }.reversed()
+        val dispatchReceiver = owner.dispatchReceiverParameter?.let { callStack.popState() }
 
         // 2. get correct function for interpretation
         val irFunction = dispatchReceiver?.getIrFunctionByIrCall(call) ?: call.symbol.owner
-        val args = listOfNotNull(dispatchReceiver.getThisOrSuperReceiver(irFunction), extensionReceiver) + valueArguments
+        val args = listOfNotNull(dispatchReceiver.getThisOrSuperReceiver(irFunction)) + nonDispatchArguments
 
         // 3. evaluate reified type arguments; must do it here, before new frame, because outer type arguments can be loaded at this point
         val reifiedTypeArguments = environment.loadReifiedTypeArguments(call)
@@ -178,13 +177,11 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
         // 4. load up values onto stack; do it at first to set low priority of these variables
         if (dispatchReceiver is StateWithClosure) callStack.loadUpValues(dispatchReceiver)
-        if (extensionReceiver is StateWithClosure) callStack.loadUpValues(extensionReceiver)
         if (irFunction.isLocal) callStack.copyUpValuesFromPreviousFrame()
 
         // 5. store arguments in memory (remap args on actual names)
-        irFunction.getDispatchReceiver()?.let { callStack.storeState(it, dispatchReceiver) }
-        irFunction.getExtensionReceiver()?.let { callStack.storeState(it, extensionReceiver) }
-        irFunction.valueParameters.forEachIndexed { i, param -> callStack.storeState(param.symbol, valueArguments[i]) }
+        irFunction.dispatchReceiverParameter?.let { callStack.storeState(it.symbol, dispatchReceiver) }
+        irFunction.nonDispatchParameters.forEachIndexed { i, param -> callStack.storeState(param.symbol, nonDispatchArguments[i]) }
         // `call.type` is used in check cast and emptyArray
         callStack.storeState(irFunction.symbol, KTypeState(call.type, environment.kTypeClass.owner))
 
@@ -222,7 +219,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
     private fun interpretConstructorCall(constructorCall: IrFunctionAccessExpression) {
         val constructor = constructorCall.symbol.owner
-        val valueArguments = constructor.valueParameters.map { callStack.popState() }.reversed()
+        val nonDispatchArguments = constructor.nonDispatchParameters.map { callStack.popState() }.reversed()
         val irClass = constructor.parentAsClass
         val receiverSymbol = constructor.dispatchReceiverParameter?.symbol
 
@@ -245,7 +242,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         if (irClass.isLocal) callStack.loadUpValues(objectState as StateWithClosure)
 
         callStack.storeState(constructorCall.getThisReceiver(), objectState)
-        constructor.valueParameters.forEachIndexed { i, param -> callStack.storeState(param.symbol, valueArguments[i]) }
+        constructor.nonDispatchParameters.forEachIndexed { i, param -> callStack.storeState(param.symbol, nonDispatchArguments[i]) }
         callStack.storeState(constructor.symbol, KTypeState(returnType, environment.kTypeClass.owner))
 
         val superReceiver = when (val irStatement = constructor.body?.statements?.getOrNull(0)) {
@@ -270,7 +267,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
             }
         }
 
-        callInterceptor.interceptConstructor(constructorCall, valueArguments) {
+        callInterceptor.interceptConstructor(constructorCall, nonDispatchArguments) {
             callStack.pushCompoundInstruction(constructor)
         }
 
@@ -300,7 +297,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
             val unsignedClass = expression.type.classOrNull!!
             val constructor = unsignedClass.constructors.single().owner
             val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
-            constructorCall.putValueArgument(0, expression.value.toIrConst(signedType))
+            constructorCall.arguments[0] = expression.value.toIrConst(signedType)
 
             return callStack.pushCompoundInstruction(constructorCall)
         }
@@ -488,7 +485,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
                         val samFunction = samClass.getSingleAbstractMethod()
 
                         val invokeFunction = state.irClass.declarations.filterIsInstance<IrFunction>()
-                            .first { it.name == OperatorNameConventions.INVOKE && it.valueParameters.size == samFunction.valueParameters.size }
+                            .first { it.name == OperatorNameConventions.INVOKE && it.parameters.size == samFunction.parameters.size }
                         val functionClass = invokeFunction.getLastOverridden().parentAsClass
 
                         val newInvoke = invokeFunction.deepCopyWithSymbols(samClass).apply { dispatchReceiverParameter = null }

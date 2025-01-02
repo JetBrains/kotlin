@@ -7,22 +7,15 @@ package org.jetbrains.kotlin.ir.interpreter.preprocessor
 
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrOverridableMember
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrCallableReference
-import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.interpreter.property
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.isKFunction
-import org.jetbrains.kotlin.ir.util.isSubclassOf
-import org.jetbrains.kotlin.ir.util.properties
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.SpecialNames
 
 // Note: this class still will not allow us to evaluate things like `A()::a.name + `A()::b.name`.
@@ -33,25 +26,33 @@ class IrInterpreterKCallableNamePreprocessor : IrInterpreterPreprocessor() {
 
         val callableReference = expression.dispatchReceiver as? IrCallableReference<*> ?: return super.visitCall(expression, data)
 
-        // receiver is needed for bound callable reference
-        val receiver = callableReference.dispatchReceiver ?: callableReference.extensionReceiver ?: return expression
+        val boundArgs = callableReference.arguments.filterNotNull()
 
+        // Transform reference from bound to unbound one
         val typeArguments = (callableReference.type as IrSimpleType).arguments.map { it.typeOrNull!! }
-        if (callableReference.type.isKFunction()) {
+        if (boundArgs.isNotEmpty() && callableReference.type.isKFunction()) {
             val kFunction = data.irBuiltIns.kFunctionN(typeArguments.size)
-            val newType = kFunction.typeWith(receiver.type, *typeArguments.toTypedArray())
-            callableReference.type = newType
+
+            val typeArgIterator = typeArguments.iterator()
+            val newTypeArgs = callableReference.arguments
+                .mapTo(mutableListOf()) { it?.type ?: typeArgIterator.next() }
+                .also { it.add(typeArgIterator.next()) /* add the return type */ }
+
+            callableReference.type = kFunction.typeWith(*newTypeArgs.toTypedArray<IrType>())
         }
 
         // We want to change symbol to keep IR correct. If something goes wrong during interpretation, we still will have compilable code.
         expression.symbol = data.irBuiltIns.kCallableClass.owner.properties.single { it.name.asString() == "name" }.getter!!.symbol
 
-        callableReference.dispatchReceiver = null
-        callableReference.extensionReceiver = null
-        if (receiver is IrGetValue && receiver.symbol.owner.name == SpecialNames.THIS) return expression
+        // Callable reference shouldn't have any bound arguments
+        callableReference.arguments.fill(null)
+
+        val boundArgsWithoutThis = boundArgs.filterNot { it is IrGetValue && it.symbol.owner.name == SpecialNames.THIS }
+        if (boundArgsWithoutThis.isEmpty()) return expression
 
         return IrCompositeImpl(
-            expression.startOffset, expression.endOffset, expression.type, origin = null, statements = listOf(receiver, expression)
+            expression.startOffset, expression.endOffset,
+            expression.type, origin = null, statements = boundArgsWithoutThis + listOf(expression)
         )
     }
 
@@ -73,7 +74,7 @@ class IrInterpreterKCallableNamePreprocessor : IrInterpreterPreprocessor() {
 
         fun IrCall.isEnumName(): Boolean {
             val owner = this.symbol.owner
-            if (owner.extensionReceiverParameter != null || owner.valueParameters.isNotEmpty()) return false
+            if (!owner.hasShape(dispatchReceiver = true, regularParameters = 0)) return false
             val property = owner.property ?: return false
             return this.dispatchReceiver is IrGetEnumValue && property.name.asString() == "name"
         }

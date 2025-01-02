@@ -42,7 +42,7 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
         val constructor = expression.symbol.owner
 
         if (!data.mode.canEvaluateFunction(constructor)) return false
-        if (!visitValueArguments(expression, data)) return false
+        if (!expression.visitValueArguments(data)) return false
         return visitBodyIfNeeded(constructor, data) &&
                 constructor.parentAsClass.declarations.filterIsInstance<IrAnonymousInitializer>().all { it.accept(this, data) }
     }
@@ -62,14 +62,7 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
             expression.dispatchReceiver.isAccessToNotNullableObject() && expression.isGetterToConstVal() -> visitBodyIfNeeded(owner, data)
             !data.mode.canEvaluateExpression(expression) || !data.mode.canEvaluateFunction(owner) -> false
             expression.isKCallableNameCall(data.irBuiltIns) || expression.isEnumName() -> true
-            else -> {
-                val dispatchReceiverComputable = expression.dispatchReceiver?.accept(this, data) ?: true
-                val extensionReceiverComputable = expression.extensionReceiver?.accept(this, data) ?: true
-                dispatchReceiverComputable &&
-                        extensionReceiverComputable &&
-                        visitValueArguments(expression, data) &&
-                        visitBodyIfNeeded(owner, data)
-            }
+            else -> expression.visitValueArguments(data) && visitBodyIfNeeded(owner, data)
         }
     }
 
@@ -77,10 +70,8 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
         return declaration.initializer?.accept(this, data) ?: true
     }
 
-    private fun visitValueArguments(expression: IrFunctionAccessExpression, data: IrInterpreterCheckerData): Boolean {
-        return (0 until expression.valueArgumentsCount)
-            .map { expression.getValueArgument(it) }
-            .none { it?.accept(this, data) == false }
+    private fun IrMemberAccessExpression<*>.visitValueArguments(data: IrInterpreterCheckerData): Boolean {
+        return arguments.none { it?.accept(this@IrInterpreterCommonChecker, data) == false }
     }
 
     override fun visitBody(body: IrBody, data: IrInterpreterCheckerData): Boolean {
@@ -227,13 +218,11 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
         if (!data.mode.canEvaluateCallableReference(expression)) return false
 
         val owner = expression.symbol.owner
-        val dispatchReceiverComputable = expression.dispatchReceiver?.accept(this, data) ?: true
-        val extensionReceiverComputable = expression.extensionReceiver?.accept(this, data) ?: true
 
         if (!data.mode.canEvaluateFunction(owner)) return false
 
         val bodyComputable = visitBodyIfNeeded(owner, data)
-        return dispatchReceiverComputable && extensionReceiverComputable && bodyComputable
+        return expression.visitValueArguments(data) && bodyComputable
     }
 
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: IrInterpreterCheckerData): Boolean {
@@ -304,11 +293,8 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
     override fun visitPropertyReference(expression: IrPropertyReference, data: IrInterpreterCheckerData): Boolean {
         if (!data.mode.canEvaluateCallableReference(expression)) return false
 
-        val dispatchReceiverComputable = expression.dispatchReceiver?.accept(this, data) ?: true
-        val extensionReceiverComputable = expression.extensionReceiver?.accept(this, data) ?: true
-
         val getterIsComputable = expression.getter?.let { data.mode.canEvaluateFunction(it.owner) } ?: true
-        return dispatchReceiverComputable && extensionReceiverComputable && getterIsComputable
+        return expression.visitValueArguments(data) && getterIsComputable
     }
 
     override fun visitClassReference(expression: IrClassReference, data: IrInterpreterCheckerData): Boolean {
