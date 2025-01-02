@@ -14,12 +14,11 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
-private var IrProperty.replacementForValueClasses: IrProperty? by irAttribute(followAttributeOwner = false)
+private var IrProperty.replacementForValueClasses: IrProperty? by irAttribute(copyByDefault = false)
 
 abstract class MemoizedValueClassAbstractReplacements(
     protected val irFactory: IrFactory,

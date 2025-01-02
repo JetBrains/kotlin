@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-var IrFunction.originalFunctionOfStaticInlineClassReplacement: IrFunction? by irAttribute(followAttributeOwner = false)
+var IrFunction.originalFunctionOfStaticInlineClassReplacement: IrFunction? by irAttribute(copyByDefault = false)
 
 /**
  * Keeps track of replacement functions and inline class box/unbox functions.

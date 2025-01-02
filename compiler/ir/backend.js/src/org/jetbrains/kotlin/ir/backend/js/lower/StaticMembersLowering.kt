@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.FqName
  * If this is a static declaration that was extracted to the top level by [StaticMembersLowering],
  * contains the fully qualified name of this declaration before extraction.
  */
-var IrClass.originalFqName: FqName? by irAttribute(followAttributeOwner = false)
+var IrClass.originalFqName: FqName? by irAttribute(copyByDefault = false)
 
 /**
  * Moves static member declarations from classes to the top level.

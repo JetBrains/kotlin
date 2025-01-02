@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.types.Variance
 // [NativeSuspendFunctionsLowering] checks annotation of an extension receiver parameter type.
 // Unfortunately, it can't be checked on invoke method of lambda/reference, as it can't
 // distinguish between extension receiver and first argument. So we just store it in attribute of invoke function
-var IrFunction.isRestrictedSuspensionInvokeMethod by irFlag<IrFunction>(followAttributeOwner = true)
+var IrFunction.isRestrictedSuspensionInvokeMethod by irFlag<IrFunction>(copyByDefault = true)
 
 /**
  * Transforms a function reference into a subclass of `kotlin.native.internal.KFunctionImpl` and `kotlin.FunctionN`,

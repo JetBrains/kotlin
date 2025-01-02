@@ -367,4 +367,4 @@ class InlineClassLowering(val context: CommonBackendContext) {
         )
 }
 
-private var IrFunction.staticMethod: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+private var IrFunction.staticMethod: IrSimpleFunction? by irAttribute(copyByDefault = false)
