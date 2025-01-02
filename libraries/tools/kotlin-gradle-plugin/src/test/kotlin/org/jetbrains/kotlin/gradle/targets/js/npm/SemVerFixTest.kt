@@ -5,14 +5,18 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Test
 
 import org.junit.Assert.*
+import org.junit.Rule
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
 @RunWith(Parameterized::class)
 class SemVerFixTest(val expected: String, val actual: String) {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     companion object {
         @Parameterized.Parameters(name = "fix({1}) == {0}")
         @JvmStatic

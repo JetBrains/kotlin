@@ -14,12 +14,15 @@ import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.cocoapods
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Assume
+import org.junit.Rule
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class XCFrameworkCocoaPodsTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @BeforeTest
     fun runOnMacOSOnly() {

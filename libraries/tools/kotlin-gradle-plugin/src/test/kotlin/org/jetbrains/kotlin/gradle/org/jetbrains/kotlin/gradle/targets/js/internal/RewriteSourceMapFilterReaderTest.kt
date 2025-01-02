@@ -1,12 +1,16 @@
 package org.jetbrains.kotlin.gradle.org.jetbrains.kotlin.gradle.targets.js.internal
 
 import org.jetbrains.kotlin.gradle.targets.js.internal.RewriteSourceMapFilterReader
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Assert.assertEquals
+import org.junit.Rule
 import org.junit.Test
 import java.io.Reader
 import java.io.StringReader
 
 class RewriteSourceMapFilterReaderTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun testShort() {
         // input json should fit in buffer (1024)

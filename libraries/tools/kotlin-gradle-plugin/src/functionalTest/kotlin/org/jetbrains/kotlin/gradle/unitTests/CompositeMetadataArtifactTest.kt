@@ -10,12 +10,14 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.gradle.kotlin.dsl.support.unzipTo
 import org.gradle.kotlin.dsl.support.zipTo
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
 import kotlin.test.*
 
 class CompositeMetadataArtifactTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @get:Rule
     val temporaryFolder = TemporaryFolder()

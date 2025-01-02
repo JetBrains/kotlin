@@ -19,10 +19,14 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.util.assertDoesNotThrow
+import org.junit.Rule
 import kotlin.test.Test
 
 class KT61652AddSourceSetInSubpluginAndEarlyTaskMaterialization {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test GranularMetadataTransformation doesn't fail when it is created too early and subplugin applied`() {
         class TestSubplugin : KotlinCompilerPluginSupportPlugin {

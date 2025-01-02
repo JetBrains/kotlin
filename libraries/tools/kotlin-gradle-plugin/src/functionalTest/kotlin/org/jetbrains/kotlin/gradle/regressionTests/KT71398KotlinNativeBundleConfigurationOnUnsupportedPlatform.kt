@@ -10,11 +10,14 @@ import org.jetbrains.kotlin.gradle.plugin.KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAM
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Assume
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertNull
 
 class KT71398KotlinNativeBundleConfigurationOnUnsupportedPlatform {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `KT-71398 - project with multiplatform plugin should not add kotlinNativeBundleConfiguration`() {

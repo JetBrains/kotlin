@@ -12,11 +12,14 @@ import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.enableMppResourcesPublication
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 class RegisterMultiplatformResourcesPublicationExtensionActionTests {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test mppResourcesPublication toggle - prevents extension creation`() {

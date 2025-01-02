@@ -12,9 +12,12 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeDependsOnDependencyResolver
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 
 class IdeDependsOnDependencyResolverTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test - sample 0 - default dependsOn to commonMain and commonTest`() {

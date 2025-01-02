@@ -15,11 +15,15 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
 import org.jetbrains.kotlin.gradle.targets.metadata.awaitMetadataCompilationsCreated
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
 class KotlinMetadataTargetCompilationsTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test - metadata compilations created for shared source sets`() {
         val project = buildProjectWithMPP()

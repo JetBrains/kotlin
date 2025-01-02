@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertNotNull
 
 class GradleNodeModuleBuilderTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     // Gson (used in fromSrcPackageJson) deserialize json to PackageJson no matter on nullability and default values
     //  Check that in case where there is no dependencies fields, we don't get nullable fields, that declared as non-nullable

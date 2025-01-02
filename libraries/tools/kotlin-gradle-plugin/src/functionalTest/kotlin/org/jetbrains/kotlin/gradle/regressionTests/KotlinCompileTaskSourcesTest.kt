@@ -15,10 +15,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.relativeTo
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class KotlinCompileTaskSourcesTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test - sources - shared native compile - KT-54995`() {

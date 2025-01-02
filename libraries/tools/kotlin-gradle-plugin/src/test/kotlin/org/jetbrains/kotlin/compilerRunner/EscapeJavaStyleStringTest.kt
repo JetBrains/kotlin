@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Test
+import org.junit.Rule
 import kotlin.test.DefaultAsserter.assertEquals
 
 class EscapeJavaStyleStringTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun testEscapeJavaStyleString() {

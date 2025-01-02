@@ -18,9 +18,12 @@ import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 
 class IdeOriginalMetadataDependencyResolverTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test kotlin-test-common`() {

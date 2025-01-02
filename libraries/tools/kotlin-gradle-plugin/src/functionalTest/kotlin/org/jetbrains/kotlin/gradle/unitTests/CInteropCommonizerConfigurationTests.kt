@@ -22,12 +22,15 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.createConsumable
 import org.jetbrains.kotlin.gradle.utils.createResolvable
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
 class CInteropCommonizerConfigurationTests {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test - compatibility rule - superset is compatible`() {

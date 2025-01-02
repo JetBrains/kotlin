@@ -11,11 +11,14 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertNull
 import kotlin.test.assertSame
 
 class KT60462WithJavaZombieCompilationTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     /**
      * Regression was introduced by:

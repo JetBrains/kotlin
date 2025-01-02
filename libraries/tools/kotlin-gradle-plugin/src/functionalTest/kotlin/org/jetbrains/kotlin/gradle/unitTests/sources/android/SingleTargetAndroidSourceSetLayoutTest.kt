@@ -14,12 +14,16 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.util.configureDefaults
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 
 class SingleTargetAndroidSourceSetLayoutTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     private val project = ProjectBuilder.builder().build() as ProjectInternal
 
     private val android: LibraryExtension = run {

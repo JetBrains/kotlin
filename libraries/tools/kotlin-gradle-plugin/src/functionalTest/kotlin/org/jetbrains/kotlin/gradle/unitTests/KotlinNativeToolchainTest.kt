@@ -15,13 +15,16 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Assume
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 private const val STABLE_VERSION = "2.0.20"
 
 class KotlinNativeToolchainTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `check that kotlin native compiler stable version has been resolved correctly`() {

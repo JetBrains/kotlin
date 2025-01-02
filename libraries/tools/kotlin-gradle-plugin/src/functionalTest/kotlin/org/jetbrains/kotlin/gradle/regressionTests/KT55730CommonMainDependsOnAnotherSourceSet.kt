@@ -11,10 +11,14 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class KT55730CommonMainDependsOnAnotherSourceSet {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `legacy metadata compilation should have commonMain with its depends on closure`() {
         val project = buildProject {

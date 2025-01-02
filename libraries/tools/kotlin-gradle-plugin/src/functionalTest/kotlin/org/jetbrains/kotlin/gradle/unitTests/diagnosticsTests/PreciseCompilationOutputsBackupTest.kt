@@ -13,9 +13,13 @@ import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 
 class PreciseCompilationOutputsBackupTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun testDisablingPreciseOutputsBackupProducesWarning() {
         buildProjectWithJvm(preApplyCode = {

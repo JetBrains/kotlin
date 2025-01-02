@@ -11,11 +11,14 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtension
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.utils.javaSourceSets
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 
 class KT54867KotlinWithJavaCompilationClasspathTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test - jvm project - kotlin with java compilation - setting classpath on javaSourceSet`() {

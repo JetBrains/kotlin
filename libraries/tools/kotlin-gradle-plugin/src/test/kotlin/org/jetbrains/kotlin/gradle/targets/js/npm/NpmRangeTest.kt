@@ -5,11 +5,15 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
 
 class NpmRangeTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun intersectTest() {
         fun assertIntersect(range1: NpmRange, range2: NpmRange, expected: NpmRange?) {

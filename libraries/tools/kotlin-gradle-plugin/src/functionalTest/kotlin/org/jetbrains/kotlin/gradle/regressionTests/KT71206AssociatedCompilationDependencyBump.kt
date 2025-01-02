@@ -14,9 +14,13 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 
 class KT71206AssociatedCompilationDependencyBump {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun nativeDependencyBumpInTest() {
         val project = buildProject {

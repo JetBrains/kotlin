@@ -11,10 +11,13 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.util.buildProject
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertTrue
 
 class KT55347JsProjectImport {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `GranularMetadataTransformation should be accessible in pure js projects -- IR`() {

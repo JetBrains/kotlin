@@ -9,9 +9,12 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.statistics.metrics.StringAnonymizationPolicy
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 
 class KotlinBuildStatHandlerTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test // Checks that all KonanTarget names are presented in MPP_PLATFORMS statistic's report validator
     fun mppPlatformsShouldContainAllKonanTargetsTest() {

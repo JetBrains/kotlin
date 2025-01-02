@@ -6,11 +6,15 @@
 package org.jetbrains.kotlin.gradle.model.builder
 
 import org.jetbrains.kotlin.gradle.model.KotlinProject
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class KotlinModelBuilderTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun testCanBuild() {
         val modelBuilder = KotlinModelBuilder("version", null)

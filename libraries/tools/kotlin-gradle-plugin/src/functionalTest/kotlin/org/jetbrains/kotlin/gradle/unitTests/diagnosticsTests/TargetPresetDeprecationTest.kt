@@ -12,9 +12,12 @@ import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.checkDiagnostics
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 
 class TargetPresetDeprecationTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `targetFromPreset usage - emits TargetFromPreset diagnostic`() = checkDiagnostics(

@@ -17,10 +17,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.util.configureDefaults
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.junit.Rule
 import kotlin.test.*
 
 class JvmAndAndroidIntermediateSourceSetTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private lateinit var project: ProjectInternal
     private lateinit var kotlin: KotlinMultiplatformExtension

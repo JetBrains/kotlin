@@ -13,10 +13,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.enableCInteropCommonization
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class KT62877ProjectMutationAfterEvaluation {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test multiplatform project's collections can't be mutated after evaluation`() {

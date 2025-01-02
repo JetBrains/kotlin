@@ -17,10 +17,13 @@ import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeCompilerArgumentsResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.fail
 
 class IdeCompilerArgumentsResolverTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test - compilation and compile task resolve same arguments`() = buildProjectWithMPP().runLifecycleAwareTest {

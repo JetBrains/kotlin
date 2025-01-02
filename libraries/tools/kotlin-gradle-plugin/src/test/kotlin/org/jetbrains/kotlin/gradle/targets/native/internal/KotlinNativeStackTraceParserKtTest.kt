@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Assert.assertEquals
+import org.junit.Rule
 import org.junit.Test
 
 class KotlinNativeStackTraceParserKtTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun testDebug() {
         assertEquals(

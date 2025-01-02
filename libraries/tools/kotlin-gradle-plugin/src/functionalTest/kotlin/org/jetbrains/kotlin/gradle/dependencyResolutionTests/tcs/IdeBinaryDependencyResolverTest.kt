@@ -19,11 +19,14 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver.Companion.gr
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeBinaryDependencyResolver
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.androidExtension
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
 class IdeBinaryDependencyResolverTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test - MVIKotlin - on jvm and linux platform source sets`() {

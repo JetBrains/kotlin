@@ -25,10 +25,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.toMap
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.tooling.core.extrasKeyOf
+import org.junit.Rule
 import kotlin.test.*
 
 class ExternalKotlinTargetApiTests {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     val project = buildProjectWithMPP()
     val kotlin = project.multiplatformExtension

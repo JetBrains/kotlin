@@ -17,9 +17,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.enableCInteropCommonization
 import org.jetbrains.kotlin.gradle.util.propertiesExtension
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 
 class DisabledCInteropCommonizationWarningTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private val project by lazy { ProjectBuilder.builder().build() as ProjectInternal }
 

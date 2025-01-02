@@ -15,9 +15,13 @@ import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.resolveMetadat
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 
 class KT59446TransformationOnTransitiveJavaDependencyTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test - transform transitive java dependency`() {
         val rootProject = buildProject()

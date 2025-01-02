@@ -17,10 +17,13 @@ import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.configureDefaults
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.utils.androidExtension
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import java.io.File
 
 class KotlinAndroidTargetResourcesPublicationTests {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private val Project.expectedReleaseResourcePath
         get() = layout.buildDirectory.dir(

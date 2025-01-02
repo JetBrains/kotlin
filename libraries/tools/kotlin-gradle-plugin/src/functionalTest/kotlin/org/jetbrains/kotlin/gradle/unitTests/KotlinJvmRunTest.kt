@@ -15,10 +15,14 @@ import org.jetbrains.kotlin.gradle.plugin.configurationResult
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Assume
+import org.junit.Rule
 import kotlin.test.*
 
 class KotlinJvmRunTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test - simple jvm target`() = buildProjectWithMPP().runLifecycleAwareTest {
         val kotlin = project.multiplatformExtension

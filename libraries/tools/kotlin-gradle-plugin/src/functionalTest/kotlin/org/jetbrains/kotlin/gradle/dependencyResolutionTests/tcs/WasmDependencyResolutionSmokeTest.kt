@@ -18,9 +18,12 @@ import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 
 class WasmDependencyResolutionSmokeTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test - project to project ide dependency resolution`() {

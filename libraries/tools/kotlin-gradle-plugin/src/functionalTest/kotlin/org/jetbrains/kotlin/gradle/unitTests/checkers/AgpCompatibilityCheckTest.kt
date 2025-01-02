@@ -14,11 +14,15 @@ import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.checkDiagnostics
 import org.jetbrains.kotlin.gradle.util.registerMinimalVariantImplementationFactoriesForTests
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertFails
 import kotlin.test.assertTrue
 
 class AgpCompatibilityCheckTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     private val projectWithAgpApplied = buildProject() {
         gradle.registerMinimalVariantImplementationFactoriesForTests()
         plugins.apply("com.android.library")

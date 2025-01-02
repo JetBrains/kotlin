@@ -14,10 +14,14 @@ import org.jetbrains.kotlin.gradle.util.applyKotlinJvmPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.main
 import org.jetbrains.kotlin.gradle.util.test
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.fail
 
 class KT58280JvmWithJavaTestCompileClasspath {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     /**
      * Context:
      * https://youtrack.jetbrains.com/issue/KT-58280/org.jetbrains.kotlin.jvm-Gradle-plugin-contributes-build-directories-to-the-test-compile-classpath

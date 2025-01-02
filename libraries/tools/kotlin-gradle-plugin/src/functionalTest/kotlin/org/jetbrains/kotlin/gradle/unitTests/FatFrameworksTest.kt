@@ -15,9 +15,13 @@ import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.util.assertConfigurationsHaveTaskDependencies
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 
 class FatFrameworksTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `two apple frameworks get bundled to a fat framework`() {
         val project = buildProjectWithMPP {

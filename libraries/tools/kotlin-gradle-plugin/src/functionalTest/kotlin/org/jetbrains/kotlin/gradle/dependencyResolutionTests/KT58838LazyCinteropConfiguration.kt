@@ -10,9 +10,13 @@ package org.jetbrains.kotlin.gradle.dependencyResolutionTests
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 
 class KT58838LazyCinteropConfiguration {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test - configure cinterop settings lazy`() = buildProjectWithMPP().runLifecycleAwareTest {
         val project = buildProjectWithMPP()

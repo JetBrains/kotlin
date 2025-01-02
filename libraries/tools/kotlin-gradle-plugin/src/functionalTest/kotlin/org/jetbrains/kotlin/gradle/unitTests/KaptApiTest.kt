@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinApiPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinJvmFactory
 import org.jetbrains.kotlin.gradle.tasks.Kapt
 import org.jetbrains.kotlin.gradle.util.buildProject
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -20,6 +21,7 @@ import org.junit.rules.TemporaryFolder
 import kotlin.test.assertEquals
 
 class KaptApiTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @get:Rule
     val tmpDir = TemporaryFolder()

@@ -13,10 +13,13 @@ import org.jetbrains.kotlin.gradle.util.configureDefaults
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
 import org.jetbrains.kotlin.gradle.util.setAndroidSdkDirProperty
 import org.jetbrains.kotlin.gradle.utils.named
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class AndroidClasspathOrderingTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private fun createProject() = ProjectBuilder.builder().build() as ProjectInternal
 

@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.gradle.util.assertIsInstance
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.utils.future
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 
 /**
@@ -24,6 +26,7 @@ import kotlin.test.*
  * However, this class is designed to provide readable samples to showcase the behaviour and usage of the KotlinPluginLifecycle
  */
 class KotlinPluginLifecycleSample {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     /**
      * Launching in 'EvaluateBuildscript' will execute the launched code right away!

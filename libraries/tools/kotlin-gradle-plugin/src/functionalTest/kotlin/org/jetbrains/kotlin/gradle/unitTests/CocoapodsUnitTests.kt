@@ -20,11 +20,15 @@ import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Assume
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class CocoapodsUnitTests {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `warning is reported on non-mac machines`() {
         Assume.assumeTrue(!HostManager.hostIsMac)

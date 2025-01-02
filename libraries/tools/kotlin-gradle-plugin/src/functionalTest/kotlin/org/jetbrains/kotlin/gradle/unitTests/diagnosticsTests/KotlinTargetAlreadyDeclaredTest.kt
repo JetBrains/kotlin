@@ -10,9 +10,12 @@ import com.android.build.gradle.LibraryPlugin
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinTargetAlreadyDeclaredError
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinTargetAlreadyDeclaredWarning
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 
 class KotlinTargetAlreadyDeclaredTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `no diagnostic reported when only single targets declared`() {

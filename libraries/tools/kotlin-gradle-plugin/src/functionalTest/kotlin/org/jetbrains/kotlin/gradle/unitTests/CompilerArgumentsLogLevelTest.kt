@@ -15,10 +15,14 @@ import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.utils.named
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class CompilerArgumentsLogLevelTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun checkTheDefaultLevel() {
         checkLogLevel(KotlinCompilerArgumentsLogLevel.DEFAULT)

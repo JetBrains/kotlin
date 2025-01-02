@@ -12,10 +12,13 @@ import org.jetbrains.kotlin.gradle.util.androidApplication
 import org.jetbrains.kotlin.gradle.util.androidLibrary
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.checkDiagnostics
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertFails
 
 class JvmWithJavaIsIncompatibleWithAndroidDiagnosticTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test - withJava and android library`() {

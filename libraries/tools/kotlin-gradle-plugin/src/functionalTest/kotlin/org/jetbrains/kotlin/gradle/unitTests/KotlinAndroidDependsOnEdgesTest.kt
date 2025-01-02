@@ -18,11 +18,15 @@ import org.jetbrains.kotlin.gradle.util.androidLibrary
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.configureDefaults
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.tooling.core.withClosure
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class KotlinAndroidDependsOnEdgesTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `default android source set declares dependsOn commonMain`() {
         val project = createProject()

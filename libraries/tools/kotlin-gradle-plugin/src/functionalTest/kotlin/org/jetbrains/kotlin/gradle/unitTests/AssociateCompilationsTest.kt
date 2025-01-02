@@ -10,11 +10,14 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 
 class AssociateCompilationsTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test - associatedCompilations and allAssociatedCompilations sets`() {

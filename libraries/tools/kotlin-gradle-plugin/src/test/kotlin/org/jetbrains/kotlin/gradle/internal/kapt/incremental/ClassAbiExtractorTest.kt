@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.internal.kapt.incremental
 
 import org.jetbrains.kotlin.gradle.util.compileSources
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -17,6 +18,8 @@ import org.junit.rules.TemporaryFolder
 import java.util.*
 
 class ClassAbiExtractorTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Rule
     @JvmField
     var tmp = TemporaryFolder()
