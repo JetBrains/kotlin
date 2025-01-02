@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.baseFirNativeDiagnosticTestConfiguration
-import org.jetbrains.kotlin.test.builders.baseNativeDiagnosticTestConfiguration
 import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.*

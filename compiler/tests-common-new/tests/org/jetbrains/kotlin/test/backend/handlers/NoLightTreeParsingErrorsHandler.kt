@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirAnalysisHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCollectorService
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.runners.lightTreeSyntaxDiagnosticsReporterHolder
+import org.jetbrains.kotlin.test.services.fir.lightTreeSyntaxDiagnosticsReporterHolder
 import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.diagnosticsService

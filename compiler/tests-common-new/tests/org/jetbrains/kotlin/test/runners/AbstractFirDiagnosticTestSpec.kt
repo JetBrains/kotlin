@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.frontend.classic.handlers.FirTestDataConsistencyHandler
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
+import org.jetbrains.kotlin.test.services.fir.LightTreeSyntaxDiagnosticsReporterHolder
 import org.jetbrains.kotlin.test.services.sourceProviders.SpecHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
 

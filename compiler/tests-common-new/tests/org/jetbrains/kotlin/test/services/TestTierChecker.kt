@@ -1,27 +1,24 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.test.runners
+package org.jetbrains.kotlin.test.services
 
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.TestTierDirectives
 import org.jetbrains.kotlin.test.directives.TestTierDirectives.DISABLE_NEXT_TIER_SUGGESTION
 import org.jetbrains.kotlin.test.directives.TestTierDirectives.RUN_PIPELINE_TILL
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
-import org.jetbrains.kotlin.test.model.*
-import org.jetbrains.kotlin.test.services.TestModuleStructure
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.assertions
-import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.model.AnalysisHandler
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.partitionNotNull
 import org.jetbrains.kotlin.utils.joinToEnglishAndString
 import org.jetbrains.kotlin.utils.joinToEnglishOrString
 import org.opentest4j.AssertionFailedError
 import java.io.File
-import kotlin.collections.plus
 
 /**
  * The list of all possible test tier labels one can use in

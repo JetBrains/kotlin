@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.runners.lightTreeSyntaxDiagnosticsReporterHolder
+import org.jetbrains.kotlin.test.services.fir.lightTreeSyntaxDiagnosticsReporterHolder
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.wasmTarget
