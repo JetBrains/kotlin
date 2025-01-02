@@ -16,10 +16,14 @@ import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import org.junit.Rule
 import kotlin.test.*
 
 internal class CompilationSpecificPluginPath {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `native common sourceset should be compiled with common plugins`() {
         // Given plugin but with legacy-native-specific artifact

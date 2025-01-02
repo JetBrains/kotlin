@@ -10,12 +10,15 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPub
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 
 class KT67636JvmWithJavaSetSrcDirsTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `resources publication - for jvm withJava target - doesn't fail project evaluation`() {

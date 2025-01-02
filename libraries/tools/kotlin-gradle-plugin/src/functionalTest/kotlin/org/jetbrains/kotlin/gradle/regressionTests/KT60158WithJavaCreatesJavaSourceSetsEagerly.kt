@@ -11,11 +11,15 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.gradle.utils.javaSourceSets
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 class KT60158WithJavaCreatesJavaSourceSetsEagerly {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test jvm withJava creates corresponding java source sets eagerly`() = buildProjectWithMPP().runLifecycleAwareTest {
         assertNull(javaSourceSets.findByName("main"))

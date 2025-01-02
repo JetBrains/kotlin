@@ -19,9 +19,12 @@ import org.jetbrains.kotlin.gradle.plugin.sources.android.findKotlinSourceSet
 import org.jetbrains.kotlin.gradle.util.checkDiagnostics
 import org.jetbrains.kotlin.gradle.util.configureDefaults
 import org.jetbrains.kotlin.gradle.util.setMultiplatformAndroidSourceSetLayoutVersion
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 
 class MultiplatformAndroidSourceSetLayoutV1Test {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private lateinit var project: ProjectInternal
     private lateinit var kotlin: KotlinMultiplatformExtension

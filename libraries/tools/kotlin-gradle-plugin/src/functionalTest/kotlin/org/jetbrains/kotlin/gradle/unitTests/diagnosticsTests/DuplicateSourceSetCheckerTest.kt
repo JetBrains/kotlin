@@ -9,10 +9,13 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.checkDiagnostics
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertFails
 
 class DuplicateSourceSetCheckerTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `target with custom name duplicates defualt name failes build`() {

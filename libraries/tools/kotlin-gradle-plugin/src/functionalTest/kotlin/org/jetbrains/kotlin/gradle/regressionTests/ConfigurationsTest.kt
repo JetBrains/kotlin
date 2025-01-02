@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.targets
 import org.jetbrains.kotlin.gradle.utils.toMap
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import java.util.*
 import kotlin.test.*
 
@@ -307,6 +309,8 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
     }
 
     class TestDisambiguationAttributePropagation {
+        @get:Rule val muteableTestRule = MuteableTestRule()
+
         private val disambiguationAttribute = org.gradle.api.attributes.Attribute.of("disambiguationAttribute", String::class.java)
 
         private val mppProject

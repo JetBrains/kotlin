@@ -18,11 +18,15 @@ import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
 class DefaultHierarchySetupTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test - default target hierarchy is applied for simple project`() = buildProjectWithMPP().runLifecycleAwareTest {
         val kotlin = multiplatformExtension

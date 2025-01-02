@@ -9,12 +9,15 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeVersionTask
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 class XcodeVersionTaskTests {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `xcodeVersion task is registered with apple targets`() {

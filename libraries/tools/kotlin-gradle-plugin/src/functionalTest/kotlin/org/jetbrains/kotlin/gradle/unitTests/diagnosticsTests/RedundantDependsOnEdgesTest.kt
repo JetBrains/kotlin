@@ -8,9 +8,13 @@ package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.util.checkDiagnosticsWithMppProject
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 
 class RedundantDependsOnEdgesTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     private fun checkDiagnostics(name: String, projectConfiguration: Project.() -> Unit) =
         checkDiagnosticsWithMppProject("RedundantDependsOnEdgesTest/${name}", projectConfiguration)
 

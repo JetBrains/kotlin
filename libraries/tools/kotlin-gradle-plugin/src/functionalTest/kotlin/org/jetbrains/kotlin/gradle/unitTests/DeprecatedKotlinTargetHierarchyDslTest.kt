@@ -10,6 +10,8 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyBuilder
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
@@ -19,6 +21,7 @@ import kotlin.test.fail
  * 'KotlinHierarchyDsl'
  */
 class DeprecatedKotlinTargetHierarchyDslTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     val legacyProject = buildProjectWithMPP()
     val project = buildProjectWithMPP()

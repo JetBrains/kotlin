@@ -9,9 +9,13 @@ import jetbrains.buildServer.messages.serviceMessages.TestFinished
 import jetbrains.buildServer.messages.serviceMessages.TestStarted
 import jetbrains.buildServer.messages.serviceMessages.TestSuiteFinished
 import jetbrains.buildServer.messages.serviceMessages.TestSuiteStarted
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 
 class TestLineEndings : TCServiceMessagesClientTest() {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun test() {
         assertEvents(

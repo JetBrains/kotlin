@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.Fragment
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.RefinesEdge
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -32,6 +34,8 @@ import kotlin.test.assertNull
 import kotlin.test.fail
 
 class K2MultiplatformStructureTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     private val project = buildProject {
         /* Resolving dependencies is necessary for creating compiler arguments */
         enableDefaultStdlibDependency(false)

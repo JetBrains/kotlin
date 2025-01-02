@@ -8,7 +8,9 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.AssembleHierarchicalResourcesTask
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
+import org.junit.Rule
 import org.junit.Test
 import java.io.File
 import java.nio.file.Path
@@ -16,6 +18,7 @@ import java.nio.file.Paths
 import kotlin.test.assertEquals
 
 class AssembleHierarchicalResourcesTaskSourceSetWalkTests {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test simple resource root`() {

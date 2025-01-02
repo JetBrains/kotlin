@@ -9,11 +9,14 @@ import org.gradle.api.internal.plugins.PluginApplicationException
 import org.jetbrains.kotlin.gradle.util.applyKotlinJvmPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.propertiesExtension
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.util.assertThrows
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ConfigureReportingTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun validateMandatoryJsonDirectory() {

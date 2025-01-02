@@ -11,10 +11,14 @@ import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertSame
 
 class KT54783JvmWithJavaCompilationFactoryTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test - create custom jvm compilation`() {
         val project = buildProjectWithJvm()

@@ -13,10 +13,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.main
 import org.jetbrains.kotlin.gradle.util.relativeTo
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class KotlinNativeCompileRefinesPathsTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test - shared linux - refinesPaths`() {
         val project = buildProjectWithMPP()

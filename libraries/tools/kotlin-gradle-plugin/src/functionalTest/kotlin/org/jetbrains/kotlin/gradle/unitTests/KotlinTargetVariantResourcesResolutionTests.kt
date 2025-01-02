@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetReso
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals
@@ -35,6 +37,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 class KotlinTargetVariantResourcesResolutionTests {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test direct dependency - is the same - for all resolution methods and supported scopes`() {

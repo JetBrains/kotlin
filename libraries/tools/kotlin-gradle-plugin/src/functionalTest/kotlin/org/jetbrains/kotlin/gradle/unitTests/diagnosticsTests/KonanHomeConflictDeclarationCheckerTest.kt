@@ -11,9 +11,12 @@ import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.checkDiagnostics
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 
 class KonanHomeConflictDeclarationCheckerTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `kotlin native home and konan data dir property conflict`() {

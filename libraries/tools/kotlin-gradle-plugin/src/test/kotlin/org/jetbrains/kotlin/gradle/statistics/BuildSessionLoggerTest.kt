@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import java.io.File
 import java.nio.file.Files
 import java.util.*
@@ -19,6 +21,7 @@ import kotlin.collections.ArrayList
 import kotlin.test.*
 
 class BuildSessionLoggerTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private lateinit var rootFolder: File
 

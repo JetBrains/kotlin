@@ -13,11 +13,14 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmWithJavaTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmTargetPreset
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.fail
 
 class KotlinHierarchyBuilderTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test - interface offers functions for known presets`() {

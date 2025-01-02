@@ -21,11 +21,14 @@ import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.util.allCauses
 import org.jetbrains.kotlin.gradle.util.assertContains
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.util.assertThrows
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class LanguageSettingsTests {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun languageSettingsSyncToCompilerOptions() {

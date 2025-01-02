@@ -14,8 +14,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 
 class KotlinNativeCacheKindArgumentTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun testDefaultCacheKindForLinuxX64() {

@@ -1,9 +1,13 @@
 package org.jetbrains.kotlin.gradle.internal.testing.tcsmc
 
 import jetbrains.buildServer.messages.serviceMessages.*
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 
 class Complex : TCServiceMessagesClientTest() {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun testComplexJs() {
         rootNodeName = "jsTest"

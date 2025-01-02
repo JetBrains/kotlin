@@ -19,12 +19,16 @@ import org.jetbrains.kotlin.gradle.targets.metadata.findMetadataCompilation
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerDependent
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropIdentifier
 import org.jetbrains.kotlin.gradle.targets.native.internal.from
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.BeforeTest
 import kotlin.test.assertNotNull
 import kotlin.test.fail
 
 
 abstract class MultiplatformExtensionTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     protected val project: ProjectInternal = ProjectBuilder.builder().build() as ProjectInternal
     protected lateinit var kotlin: KotlinMultiplatformExtension
 

@@ -16,10 +16,14 @@ import org.jetbrains.kotlin.gradle.util.androidLibrary
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProject
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 
 @Suppress("FunctionName")
 class AndroidPublicationNotConfiguredTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     private fun testProject(block: ProjectInternal.() -> Unit): ProjectInternal {
         val project = buildProject()
         project.androidLibrary {}

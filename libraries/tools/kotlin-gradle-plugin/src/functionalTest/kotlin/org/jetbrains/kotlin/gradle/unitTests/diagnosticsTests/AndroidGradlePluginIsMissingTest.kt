@@ -9,10 +9,14 @@ package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertFails
 
 class AndroidGradlePluginIsMissingTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test - android plugin is not applied`() {
         val project = buildProjectWithMPP()

@@ -10,9 +10,12 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.main
 import org.jetbrains.kotlin.gradle.util.test
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 
 class KotlinNativeCompilationModuleNameTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `main compilation module name convention`() {

@@ -11,6 +11,8 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -20,6 +22,7 @@ import kotlin.test.assertTrue
  * reproducible binary artifacts between builds.
  */
 class ArchiveReproducibilityTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test simple multiplatform project`() {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.internal.kapt.incremental
 
 import org.jetbrains.kotlin.gradle.util.compileSources
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -14,6 +15,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 class ClassTypeExtractorVisitorTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Rule
     @JvmField
     var tmp = TemporaryFolder()

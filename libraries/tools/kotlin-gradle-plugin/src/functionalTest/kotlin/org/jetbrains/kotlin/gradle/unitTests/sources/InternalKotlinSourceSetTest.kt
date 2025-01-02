@@ -19,10 +19,14 @@ import org.jetbrains.kotlin.gradle.util.assertAllImplementationsAlsoImplement
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.utils.future
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class InternalKotlinSourceSetTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test - all implementations of KotlinSourceSet - implement InternalKotlinSourceSet`() {
         assertAllImplementationsAlsoImplement(KotlinSourceSet::class, InternalKotlinSourceSet::class)

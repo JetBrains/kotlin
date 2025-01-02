@@ -14,10 +14,13 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.targets
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 
 abstract class SourceSetDependenciesResolution {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @get:Rule
     val tempFolder = TemporaryFolder()
 

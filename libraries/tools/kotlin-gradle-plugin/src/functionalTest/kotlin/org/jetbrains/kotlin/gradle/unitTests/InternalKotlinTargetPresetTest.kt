@@ -8,10 +8,14 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.util.assertAllImplementationsAlsoImplement
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 
 @Suppress("FunctionName")
 class InternalKotlinTargetPresetTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test - all implementations of KotlinTargetPreset - implement InternalKotlinTargetPreset`() {
         assertAllImplementationsAlsoImplement(KotlinTargetPreset::class, InternalKotlinTargetPreset::class)

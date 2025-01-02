@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionCommonizerLock
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -24,6 +25,7 @@ import kotlin.reflect.full.declaredFunctions
 import kotlin.test.fail
 
 class NativeDistributionCommonizerLockTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @get:Rule
     val temporaryFolderRule = TemporaryFolder()

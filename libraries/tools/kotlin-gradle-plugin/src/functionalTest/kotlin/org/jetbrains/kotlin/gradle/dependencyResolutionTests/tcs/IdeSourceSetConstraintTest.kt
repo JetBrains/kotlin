@@ -17,10 +17,14 @@ import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.configureDefaults
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
 import org.jetbrains.kotlin.gradle.utils.androidExtension
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import java.util.*
 
 class IdeSourceSetConstraintTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test single target JVM project`() {
         val project = buildMppProject()

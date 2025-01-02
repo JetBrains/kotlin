@@ -13,10 +13,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPub
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import java.io.File
 
 class KotlinJvmTargetResourcesPublicationTests {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private val Project.expectedResourcePath get() = layout.buildDirectory.dir(
         "kotlin-multiplatform-resources/assemble-hierarchically/jvm"

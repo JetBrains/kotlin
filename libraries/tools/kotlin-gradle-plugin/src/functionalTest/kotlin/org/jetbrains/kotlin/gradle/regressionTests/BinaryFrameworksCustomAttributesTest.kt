@@ -10,9 +10,13 @@ package org.jetbrains.kotlin.gradle.regressionTests
 import org.gradle.api.attributes.Attribute
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 
 class BinaryFrameworksCustomAttributesTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test that outgoing configuration of binary frameworks should have user defined attributes`() {
         val disambiguationAttribute1 = Attribute.of("myDisambiguation1Attribute", String::class.java)

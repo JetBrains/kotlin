@@ -9,9 +9,12 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 
 class NativeBinaryTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test baseNameProvider`() {

@@ -10,6 +10,8 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.SourceSetMetadataLayout.KLIB
 import org.jetbrains.kotlin.gradle.plugin.mpp.SourceSetMetadataLayout.METADATA
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -17,6 +19,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class KotlinProjectStructureMetadataSerializationTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private val sampleMetadata = KotlinProjectStructureMetadata(
         sourceSetNamesByVariantName = mapOf(

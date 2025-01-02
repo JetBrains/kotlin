@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.internal
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class NodeJsStackTraceParserKtTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun parseNodeJsStackTrace() {
         val parsed = parseNodeJsStackTrace(

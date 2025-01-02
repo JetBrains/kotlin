@@ -24,10 +24,13 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.createConsumable
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.junit.Rule
 import kotlin.test.*
 
 class MppPublicationTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private val project = ProjectBuilder.builder().build() as ProjectInternal
 

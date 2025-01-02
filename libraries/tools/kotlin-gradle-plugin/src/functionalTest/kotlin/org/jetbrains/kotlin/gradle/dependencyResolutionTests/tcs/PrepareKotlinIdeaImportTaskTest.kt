@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.assertDependsOn
 import org.jetbrains.kotlin.gradle.util.assertTaskDependenciesEquals
 import org.jetbrains.kotlin.gradle.util.enableCInteropCommonization
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -25,6 +27,7 @@ import kotlin.test.assertTrue
 
 @OptIn(UnsafeApi::class)
 class PrepareKotlinIdeaImportTaskTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private companion object {
         const val prepareKotlinIdeaImportTaskName = "prepareKotlinIdeaImport"

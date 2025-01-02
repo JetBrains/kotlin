@@ -33,7 +33,9 @@ import org.jetbrains.kotlin.gradle.utils.exclude
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Assume
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
@@ -41,6 +43,8 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 class SwiftExportUnitTests {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @BeforeTest
     fun runOnMacOSOnly() {
         Assume.assumeTrue("macOS host required for this test", HostManager.hostIsMac)

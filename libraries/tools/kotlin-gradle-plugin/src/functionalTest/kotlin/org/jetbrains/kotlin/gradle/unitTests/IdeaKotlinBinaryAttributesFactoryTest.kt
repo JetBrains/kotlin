@@ -12,10 +12,13 @@ import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinBinaryAttributes
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.utils.named
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class IdeaKotlinBinaryAttributesFactoryTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test - sample 0`() {

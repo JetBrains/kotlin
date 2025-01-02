@@ -14,11 +14,15 @@ import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.utils.getByType
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertFalse
 
 class WhenEvaluatedTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test - whenEvaluated - waits for Android plugins afterEvaluate`() {
         val project = buildProject()

@@ -12,12 +12,15 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.utils.setAttribute
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class FrameworkBinariesTests {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `assemble task dependencies includes framework tasks`() {

@@ -9,10 +9,13 @@ import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.util.kotlinArtifacts
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class KotlinNativeFatFrameworkTests {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `kotlinArtifacts universal framework task - keeps task dependencies on link tasks`() {

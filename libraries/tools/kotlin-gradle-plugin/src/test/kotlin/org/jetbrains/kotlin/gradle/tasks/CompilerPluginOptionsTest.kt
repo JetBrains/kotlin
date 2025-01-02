@@ -6,10 +6,14 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class CompilerPluginOptionsTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun shouldCreateNewOneWithoutLoosingExistingOptions() {
         val compilerOptions1 = CompilerPluginOptions()

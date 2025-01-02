@@ -16,9 +16,13 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency.Type.Regu
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 
 class IdeSourceDependencyResolutionTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test - multiplatform to multiplatform - sample 0`() {
         val root = buildProject()

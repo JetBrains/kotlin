@@ -16,9 +16,13 @@ import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 
 class TestFixturesTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun testNoDuplicatedClasspathInJvm() = testNoDuplicatedResourcesInClasspath(
         buildProjectWithJvm(

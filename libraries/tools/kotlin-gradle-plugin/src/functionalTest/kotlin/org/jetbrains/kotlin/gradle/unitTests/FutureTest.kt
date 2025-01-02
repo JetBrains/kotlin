@@ -17,12 +17,15 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.ReadyForEx
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.util.assertThrows
+import org.junit.Rule
 import org.junit.Test
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.test.*
 
 class FutureTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private val project = buildProject().also { project ->
         project.startKotlinPluginLifecycle()

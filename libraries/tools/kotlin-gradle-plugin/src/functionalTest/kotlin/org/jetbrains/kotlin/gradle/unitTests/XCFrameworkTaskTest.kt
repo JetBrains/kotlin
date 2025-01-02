@@ -15,12 +15,15 @@ import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.util.assertThrows
 import org.junit.Assume
+import org.junit.Rule
 import java.io.File
 import kotlin.test.*
 
 class XCFrameworkTaskTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @BeforeTest
     fun runOnMacOSOnly() {

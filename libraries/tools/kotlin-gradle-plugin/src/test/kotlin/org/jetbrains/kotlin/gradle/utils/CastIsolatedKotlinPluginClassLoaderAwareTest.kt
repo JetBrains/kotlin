@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.util.assertThrows
 import org.junit.AssumptionViolatedException
+import org.junit.Rule
 import java.net.URLClassLoader
 import kotlin.test.Test
 import kotlin.test.assertNull
@@ -15,6 +17,8 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class CastIsolatedKotlinPluginClassLoaderAwareTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     interface A
     interface B : A
 

@@ -16,9 +16,12 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCo
 import org.jetbrains.kotlin.gradle.plugin.sources.android.findAndroidSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 
 class MultiplatformAndroidSourceSetLayoutV2DiagnosticsTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private fun buildMinimalAndroidMultiplatformProject(
         preApplyCode: Project.() -> Unit = {}

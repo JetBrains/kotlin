@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinApiPlugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.util.buildProject
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -25,6 +26,7 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 
 class KotlinCompileApiTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @get:Rule
     val tmpDir = TemporaryFolder()

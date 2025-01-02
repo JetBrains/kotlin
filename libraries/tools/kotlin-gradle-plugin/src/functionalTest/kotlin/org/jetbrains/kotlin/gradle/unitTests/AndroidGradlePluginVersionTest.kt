@@ -10,10 +10,13 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.jetbrains.kotlin.gradle.plugin.AndroidGradlePluginVersion
 import org.jetbrains.kotlin.gradle.plugin.AndroidGradlePluginVersionOrNull
 import org.jetbrains.kotlin.gradle.plugin.isAtLeast
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.*
 
 class AndroidGradlePluginVersionTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test - AndroidGradlePluginVersion current - matches AGP version`() {

@@ -10,11 +10,14 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportFiles
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SPMManifestGenerator
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals
 
 class SPMManifestGeneratorTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test swift export SPM manifest generation`() {

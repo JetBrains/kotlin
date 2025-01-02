@@ -16,11 +16,14 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPub
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.registerAssembleHierarchicalResourcesTaskProvider
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals
 
 class AssembleHierarchicalResourcesTaskTests {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test copying order - matches default target hierarchy`() {

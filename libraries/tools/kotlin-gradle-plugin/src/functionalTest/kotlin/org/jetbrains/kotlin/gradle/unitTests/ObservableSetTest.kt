@@ -8,10 +8,13 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.utils.MutableObservableSetImpl
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class ObservableSetTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     class TestListener : (Int) -> Unit {
         val invocations = mutableListOf<Int>()

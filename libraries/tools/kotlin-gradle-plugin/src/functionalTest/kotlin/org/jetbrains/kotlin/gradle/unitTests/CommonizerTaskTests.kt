@@ -13,9 +13,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.targets.native.internal.cInteropCommonizationEnabled
 import org.jetbrains.kotlin.gradle.targets.native.internal.copyCommonizeCInteropForIdeTask
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 
 class CommonizerTaskTests {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     companion object {
         const val JVM_ECOSYSTEM_PLUGIN_ID = "jvm-ecosystem"

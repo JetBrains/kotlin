@@ -8,11 +8,14 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerBuild
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class SingleActionTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private val projectWithSubproject = buildProjectWithJvm {}
     private val subProjectA = buildProject(

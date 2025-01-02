@@ -26,9 +26,12 @@ import org.jetbrains.kotlin.gradle.util.configureDefaults
 import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
 import org.jetbrains.kotlin.gradle.utils.androidExtension
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 
 class IdeStdlibResolutionTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test single jvm target`() {

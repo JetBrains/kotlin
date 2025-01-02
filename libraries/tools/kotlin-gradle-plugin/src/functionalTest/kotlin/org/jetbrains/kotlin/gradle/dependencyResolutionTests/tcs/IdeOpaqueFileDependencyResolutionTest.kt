@@ -19,11 +19,15 @@ import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
 class IdeOpaqueFileDependencyResolutionTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test - simple jar file`() {
         val project = buildProject {

@@ -11,10 +11,14 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_KGP_DEPENDENCY_RESOLUTION
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class JsPluginKgpDependencyResolutionPropertyTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test project with js plugin has kgp dependency resolution disabled`() {
         val project = buildProject {

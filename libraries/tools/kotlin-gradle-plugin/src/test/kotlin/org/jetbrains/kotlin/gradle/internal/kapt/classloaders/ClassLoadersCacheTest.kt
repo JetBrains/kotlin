@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.internal.kapt.classloaders
 
 import com.google.gson.Gson
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import java.io.File
 import java.net.URLDecoder
@@ -14,6 +16,7 @@ import kotlin.test.assertNotSame
 import kotlin.test.assertSame
 
 class ClassLoadersCacheTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private val rootClassLoader = this.javaClass.classLoader.rootOrSelf()
 

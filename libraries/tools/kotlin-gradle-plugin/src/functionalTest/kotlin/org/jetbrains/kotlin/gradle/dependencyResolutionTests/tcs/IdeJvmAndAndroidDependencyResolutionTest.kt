@@ -24,10 +24,13 @@ import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeJvmAndAndro
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.androidExtension
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class IdeJvmAndAndroidDependencyResolutionTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @BeforeTest
     fun checkEnvironment() {

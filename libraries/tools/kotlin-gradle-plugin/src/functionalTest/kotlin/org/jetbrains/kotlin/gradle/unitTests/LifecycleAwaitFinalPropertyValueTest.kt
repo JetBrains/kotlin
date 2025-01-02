@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.*
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.gradle.utils.newProperty
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -20,6 +22,8 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
 
 class LifecycleAwaitFinalPropertyValueTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     private val project = buildProjectWithMPP()
 
     @Test

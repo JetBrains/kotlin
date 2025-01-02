@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Assert.*
+import org.junit.Rule
 import org.junit.Test
 
 class SemVerTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun testParse() {
         assertEquals("SemVer(major=0, minor=0, patch=0, preRelease=null, build=null)", SemVer.from("0.0.0").toDebugString())

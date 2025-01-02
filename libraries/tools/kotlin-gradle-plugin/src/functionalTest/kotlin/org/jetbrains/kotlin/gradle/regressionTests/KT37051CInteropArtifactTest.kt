@@ -12,10 +12,13 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.utils.named
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.fail
 
 class KT37051CInteropArtifactTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test - cinterop artifact on linuxX64`() {

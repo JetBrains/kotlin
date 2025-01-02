@@ -14,11 +14,14 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.resolveMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.util.assertDoesNotThrow
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.fail
 
 class StdlibJsExplicitDependencyResolutionTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `project with jvm and js targets - with stdlib-js dependency in commonMain - fails to resolve jvm compile classpath`() {

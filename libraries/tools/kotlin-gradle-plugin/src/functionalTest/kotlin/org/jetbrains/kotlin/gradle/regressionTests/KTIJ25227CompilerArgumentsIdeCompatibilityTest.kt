@@ -15,11 +15,14 @@ import org.jetbrains.kotlin.gradle.regressionTests.KTIJ25227CompilerArgumentsIde
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.util.main
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import java.lang.reflect.Method
 import kotlin.test.fail
 
 class KTIJ25227CompilerArgumentsIdeCompatibilityTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test - jvm compile task - is compatible with old CompilerArgumentsExtractor in older IDEs`() {

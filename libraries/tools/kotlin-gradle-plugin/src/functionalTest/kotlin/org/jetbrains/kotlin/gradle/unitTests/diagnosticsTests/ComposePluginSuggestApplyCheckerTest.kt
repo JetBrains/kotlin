@@ -11,9 +11,13 @@ import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradleSubplug
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.AndroidGradlePluginVersion
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 
 class ComposePluginSuggestApplyCheckerTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     private val isAgp850AndAbove get() = AndroidGradlePluginVersion.current >= AndroidGradlePluginVersion(8, 5, 0)
 
     @Test

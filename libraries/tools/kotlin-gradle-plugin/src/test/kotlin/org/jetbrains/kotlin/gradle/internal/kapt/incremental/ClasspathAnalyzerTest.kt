@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.internal.kapt.incremental
 
 import org.gradle.api.artifacts.transform.TransformOutputs
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.junit.Assert.*
@@ -17,6 +18,8 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 class ClasspathAnalyzerTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Rule
     @JvmField
     var tmp = TemporaryFolder()

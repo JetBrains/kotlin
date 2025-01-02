@@ -13,10 +13,14 @@ import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConv
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.linuxMain
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureCompilePath
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DependsOnClosureCompilePathTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     private val project = buildProjectWithMPP()
     private val kotlin = project.multiplatformExtension
 

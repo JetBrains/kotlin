@@ -17,9 +17,11 @@ import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.gradle.utils.future
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.tooling.core.withClosure
 import org.jetbrains.kotlin.tooling.core.withLinearClosure
 import org.jetbrains.kotlin.utils.addToStdlib.cast
+import org.junit.Rule
 import org.junit.Test
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
@@ -27,6 +29,7 @@ import java.util.concurrent.atomic.AtomicReference
 import kotlin.test.*
 
 class KotlinPluginLifecycleTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private val project = buildProjectWithMPP()
     private val lifecycle = project.kotlinPluginLifecycle as KotlinPluginLifecycleImpl

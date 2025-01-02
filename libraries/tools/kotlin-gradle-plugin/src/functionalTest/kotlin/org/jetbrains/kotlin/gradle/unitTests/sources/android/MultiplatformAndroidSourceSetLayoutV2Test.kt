@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.gradle.util.configureDefaults
 import org.jetbrains.kotlin.gradle.util.setMultiplatformAndroidSourceSetLayoutVersion
 import org.jetbrains.kotlin.gradle.utils.androidExtension
 import org.jetbrains.kotlin.gradle.utils.forAllAndroidVariants
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -25,6 +27,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class MultiplatformAndroidSourceSetLayoutV2Test {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private val project = ProjectBuilder.builder().build()
         .run { this as ProjectInternal }

@@ -17,10 +17,13 @@ import org.jetbrains.kotlin.gradle.plugin.currentKotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.kotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTargetVariantDslImpl
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class KotlinAndroidTargetHierarchyDsl {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test -  module - not set`() = buildProjectWithMPP().runLifecycleAwareTest {

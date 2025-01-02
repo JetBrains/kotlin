@@ -18,8 +18,10 @@ import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Assume
 import org.junit.Before
+import org.junit.Rule
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -27,6 +29,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class EmbedAndSignTaskTests {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Before
     fun runOnlyOnMacOS() {

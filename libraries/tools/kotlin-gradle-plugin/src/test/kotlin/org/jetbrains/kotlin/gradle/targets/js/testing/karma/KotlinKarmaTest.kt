@@ -5,11 +5,15 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing.karma
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import java.nio.file.Files.createTempDirectory
 import kotlin.test.assertEquals
 
 class KotlinKarmaTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun checkLoadWasm() {
         val npmProjectDir = createTempDirectory("tmp")

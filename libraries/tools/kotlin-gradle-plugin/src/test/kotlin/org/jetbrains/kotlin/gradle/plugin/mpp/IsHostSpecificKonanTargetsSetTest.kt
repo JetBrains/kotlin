@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class IsHostSpecificKonanTargetsSetTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private val hostManager = HostManager()
 

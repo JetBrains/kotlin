@@ -10,10 +10,14 @@ package org.jetbrains.kotlin.gradle.regressionTests
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class KT57023CompileTaskDescriptionsTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test - description of compile tasks`() {
         val project = buildProjectWithMPP()

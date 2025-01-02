@@ -198,6 +198,7 @@ dependencies {
     testImplementation(project(":kotlin-compiler-runner"))
     testImplementation(kotlinTest("junit"))
     testImplementation(libs.junit4)
+    testImplementation(project(":compiler:tests-mutes:mutes-junit4"))
     testImplementation(project(":kotlin-gradle-statistics"))
     testImplementation(project(":kotlin-tooling-metadata"))
     testImplementation(libs.lincheck)
@@ -525,6 +526,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
     tasks.withType<Test>().configureEach {
         if (!name.startsWith("functional")) return@configureEach
 
+        muteWithDatabase()
         group = JavaBasePlugin.VERIFICATION_GROUP
         description = "Runs functional tests"
         testClassesDirs = functionalTestSourceSet.output.classesDirs

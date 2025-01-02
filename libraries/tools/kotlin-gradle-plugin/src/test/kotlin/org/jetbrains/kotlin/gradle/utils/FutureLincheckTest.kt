@@ -5,12 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlinx.lincheck.annotations.Operation
 import org.jetbrains.kotlinx.lincheck.check
 import org.jetbrains.kotlinx.lincheck.strategy.stress.StressOptions
+import org.junit.Rule
 import org.junit.Test
 
 class FutureLincheckTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     private val future = CompletableFuture<Int>()
 
     @Operation
@@ -27,6 +31,8 @@ class FutureLincheckTest {
 }
 
 class MappedFutureLincheckTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     private val future = CompletableFuture<Int>()
     private val mapped = future.map { "$it" }
 

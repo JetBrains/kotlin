@@ -22,9 +22,13 @@ import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.propertiesExtension
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.gradle.utils.named
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 
 class PublishJvmEnvironmentAttributeTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test - default value`() = buildProjectWithMPP().runLifecycleAwareTest {
         val kotlin = multiplatformExtension

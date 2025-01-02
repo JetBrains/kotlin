@@ -18,8 +18,10 @@ import org.jetbrains.kotlin.gradle.util.assertContainsDependencies
 import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.tooling.core.extrasReadWriteProperty
 import org.jetbrains.kotlin.util.assertDoesNotThrow
+import org.junit.Rule
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -27,6 +29,8 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 
 class KotlinMultiplatformSourceSetConventionsTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     private var KotlinSourceSet.testMarker by extrasReadWriteProperty<String>("testMarker")
 
     @Test

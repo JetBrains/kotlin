@@ -18,12 +18,15 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExte
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.enableMppResourcesPublication
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 class KotlinTargetVariantResourcesPublicationTests {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test variant publication - doesn't happen - when resources publication is disabled`() {

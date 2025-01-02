@@ -13,11 +13,15 @@ import org.jetbrains.kotlin.gradle.util.registerMinimalVariantImplementationFact
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internal.diagnostics.GradleCompatibilityCheck
 import org.jetbrains.kotlin.gradle.internal.diagnostics.GradleCompatibilityCheck.runGradleCompatibilityCheck
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertFails
 import kotlin.test.assertTrue
 
 class GradleCompatibilityCheckTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     private val genericProject = buildProject {
         gradle.registerMinimalVariantImplementationFactoriesForTests()
     }

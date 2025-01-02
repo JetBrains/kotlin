@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing.karma
 
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Assert.assertEquals
+import org.junit.Rule
 import org.junit.Test
 
 class KarmaStackTraceProcessorKtTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun processKarmaStackTrace() {

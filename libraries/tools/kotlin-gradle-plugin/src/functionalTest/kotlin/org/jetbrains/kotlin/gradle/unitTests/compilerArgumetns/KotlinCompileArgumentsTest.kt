@@ -28,11 +28,14 @@ import org.jetbrains.kotlin.gradle.util.assertNotNull
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.main
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.reflect.jvm.javaField
 import kotlin.test.*
 
 
 class KotlinCompileArgumentsTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test - simple project - compare CompilerArgumentsAware with KotlinCompilerArgumentsAware implementations`() {

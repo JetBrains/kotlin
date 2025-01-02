@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImportStatistics
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.androidExtension
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.fail
@@ -24,6 +26,7 @@ import kotlin.test.fail
  * 'Android' refers to the 'classic' Android plugins (like com.android.application, ...library, ...)
  */
 class IdeAndroidDependencyResolutionTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private val project = buildProject {
         enableDefaultStdlibDependency(true)

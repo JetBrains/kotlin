@@ -14,11 +14,14 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyTemplate
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.fail
 
 @Suppress("DEPRECATION") /* Configurations are scheduled for removal */
 class KT55929MetadataConfigurationsTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `test - deprecated metadata configurations - contain dependencies from common source set`() {

@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.tooling.core.withLinearClosure
+import org.junit.Rule
 import org.junit.Test
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.test.assertEquals
@@ -22,6 +24,7 @@ import kotlin.test.assertFails
 import kotlin.test.fail
 
 class InvokeWhenCreatedTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     data class Value(private val name: String) : Named {
         override fun getName(): String = name

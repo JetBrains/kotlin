@@ -17,11 +17,15 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.metadataTransformation
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.fail
 
 class KT58319ProjectMetadataProvider {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test - ProjectMetadataProviderImpl - supports single target projects`() {
         val rootProject = buildProject()

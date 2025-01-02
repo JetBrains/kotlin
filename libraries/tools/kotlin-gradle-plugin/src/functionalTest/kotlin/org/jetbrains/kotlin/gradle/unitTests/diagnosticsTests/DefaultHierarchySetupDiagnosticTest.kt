@@ -16,10 +16,14 @@ import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.checkDiagnostics
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Assume
+import org.junit.Rule
 import kotlin.test.Test
 
 class DefaultHierarchySetupDiagnosticTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test - warning KotlinTargetHierarchyFallbackDependsOnUsageDetected`() = buildProjectWithMPP().runLifecycleAwareTest {
         val kotlin = multiplatformExtension

@@ -11,13 +11,16 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.E
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Assume.assumeTrue
+import org.junit.Rule
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 @Suppress("FunctionName")
 @OptIn(KotlinNativeArtifactDSL.ExperimentalArtifactDsl::class)
 class KotlinArtifactsDslTests {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `usage emits a warning`() {
