@@ -5,8 +5,7 @@
 
 package samples.text
 
-import samples.Sample
-import samples.assertPrints
+import samples.*
 import kotlin.test.assertFailsWith
 
 class Numbers {

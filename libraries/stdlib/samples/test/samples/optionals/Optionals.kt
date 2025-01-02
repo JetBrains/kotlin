@@ -5,8 +5,7 @@
 
 package samples.optionals
 
-import samples.Sample
-import samples.assertPrints
+import samples.*
 import java.util.Optional
 import kotlin.jvm.optionals.*
 
