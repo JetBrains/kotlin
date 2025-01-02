@@ -1,5 +1,4 @@
 // For now the checker is working before inlining. The test should be corrected after KT-71416.
-// LANGUAGE: +ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs
 // DIAGNOSTICS: -NOTHING_TO_INLINE
 // FIR_IDENTICAL
 

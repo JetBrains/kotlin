@@ -17,7 +17,7 @@ private class S public constructor() {
 }
 // This function exposes S.Z and S.E, nested into a private class S (package-private in the byte code)
 // They can be accessed outside the `test` package now that S.Z, S.E are public in the byte code, but that may be changed later
-@Suppress("IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR")
+@Suppress("IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION")
 internal inline fun call(s: () -> String): String {
     return s() + S.Z().empty + S.E.EMPTY.s + S.Z().a()
 }

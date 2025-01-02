@@ -14,7 +14,7 @@ private class S {
 // This function exposes S which is a private class (package-private in the byte code)
 // It can be accessed outside the `test` package, which may lead to IllegalAccessError.
 // This behavior may be changed later
-@Suppress("IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR")
+@Suppress("IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION")
 internal inline fun call(s: () -> String): String {
     val s = test()
     return s() + test2(s)
