@@ -50,7 +50,7 @@ fun <E : IrElement> irFlag(followAttributeOwner: Boolean): IrAttribute.Flag.Dele
  * Returns a value of [attribute], or null if the value is missing.
  */
 operator fun <E : IrElement, T : Any> E.get(attribute: IrAttribute<E, T>): T? {
-    return (unwrapAttributeOwner(attribute) as IrElementBase).getAttributeInternal(attribute)
+    return (this as IrElementBase).getAttributeInternal(attribute)
 }
 
 /**
@@ -59,29 +59,8 @@ operator fun <E : IrElement, T : Any> E.get(attribute: IrAttribute<E, T>): T? {
  * @return The previous value associated with the attribute, or null if the attribute was not present.
  */
 operator fun <E : IrElement, T : Any> E.set(attribute: IrAttribute<E, T>, value: T?): T? {
-    return (unwrapAttributeOwner(attribute) as IrElementBase).setAttributeInternal(attribute, value)
+    return (this as IrElementBase).setAttributeInternal(attribute, value)
 }
-
-private fun <E : IrElement> E.unwrapAttributeOwner(attribute: IrAttribute<E, *>): IrElement {
-    // This mechanism is intended to aid with future migration off of attributeOwnerId.
-    // The main change would be that [copyAttributes] wouldn't just set attributeOwnerId to the copied element,
-    // but do a proper clone of an attribute array.
-    // Details:
-    // This place allows us to record if/when a given property is accessed via attributeOwnerId or not.
-    // If it always is, it means that this particular property should be copied in [copyAttributes] by default.
-    // Otherwise, we should probably still seek for a possibility to copy it by default. For that, we can also add tracking
-    // of properties' gets/sets, and check,during compiler execution, whether a value returned from a copy always
-    // matches the one returned via `attributeOwnerId.get`. If it does, it is probably safe to always copy it as well.
-    // There is one more peculiarity in the current implementation of [copyAttributes] via attributeOwnerId - it is
-    // essentially not a copy, but a link between two objects which share the same attributes - if
-    // those are accessed via attributeOwnerId, this is. However, attributes will employ a hard copy.
-    // To ensure the new behavior is the-same-or-better, the tracking and comparison can be used as well.
-
-    return if (attribute.followAttributeOwner)
-        this.attributeOwnerId
-    else this
-}
-
 
 /**
  * A key for storing additional data inside [IrElement].
