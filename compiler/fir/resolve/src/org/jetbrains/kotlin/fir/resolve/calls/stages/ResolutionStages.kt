@@ -582,10 +582,10 @@ internal object MapArguments : ResolutionStage() {
         val arguments = buildList {
             candidate.getExpectedContextParameterTypesForInvoke(context, function, sink)?.let { expectedContextTypes ->
                 // Those stubs shall be replaced at CheckContextArguments.replaceArgumentPrefixForInvokeWithImplicitlyMappedContextValues
-                addAll(expectedContextTypes.map {
+                expectedContextTypes.mapTo(this) {
                     @OptIn(UnsafeExpressionUtility::class) // It's a temporary atom anyway
                     ConeResolutionAtom.createRawAtomForPotentiallyUnresolvedExpression(buildExpressionStub())
-                })
+                }
                 candidate.expectedContextParameterTypesForInvoke = expectedContextTypes
             }
             callInfo.arguments.mapTo(this) { ConeResolutionAtom.createRawAtom(it) }
