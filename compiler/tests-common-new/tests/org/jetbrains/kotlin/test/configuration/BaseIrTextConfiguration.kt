@@ -36,6 +36,9 @@ import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
 
+/**
+ * Adds IR text handlers to the IR handlers step
+ */
 fun <InputArtifactKind> HandlersStepBuilder<IrBackendInput, InputArtifactKind>.useIrTextHandlers(
     testConfigurationBuilder: TestConfigurationBuilder,
     includeAllDumpHandlers: Boolean = true,
@@ -55,6 +58,22 @@ fun <InputArtifactKind> HandlersStepBuilder<IrBackendInput, InputArtifactKind>.u
     )
 }
 
+/**
+ * General configuration for all IR text tests for all backends
+ * Steps (JVM):
+ * - FIR frontend
+ * - FIR2IR
+ *
+ * Steps (non-JVM):
+ * - FIR frontend
+ * - FIR2IR
+ * - KLib serializer
+ * - KLib deserializer
+ *
+ * IR text handlers are set up for:
+ * - IR produced by fir2ir
+ * - IR deserialized from KLibs (if present)
+ */
 fun <FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> TestConfigurationBuilder.configureAbstractIrTextSettings(
     targetBackend: TargetBackend,
     converter: Constructor<Frontend2BackendConverter<FrontendOutput, IrBackendInput>>,

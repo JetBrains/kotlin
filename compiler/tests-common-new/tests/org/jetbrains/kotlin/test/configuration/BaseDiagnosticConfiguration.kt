@@ -52,6 +52,9 @@ import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsS
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
 
+/**
+ * General test configuration for FIR-based diagnostic tests
+ */
 fun TestConfigurationBuilder.configureDiagnosticTest(parser: FirParser) {
     baseFirDiagnosticTestConfiguration()
     enableLazyResolvePhaseChecking()
@@ -60,6 +63,10 @@ fun TestConfigurationBuilder.configureDiagnosticTest(parser: FirParser) {
     useAdditionalService(::LibraryProvider)
 }
 
+/**
+ * Adds an IR handlers step with diagnostic handler. Used for diagnostic tests which are supposed to report diagnostics
+ * from the FIR2IR step
+ */
 fun TestConfigurationBuilder.configureIrActualizerDiagnosticsTest() {
     irHandlersStep {
         useHandlers(
@@ -71,6 +78,10 @@ fun TestConfigurationBuilder.configureIrActualizerDiagnosticsTest() {
     useModuleStructureTransformers(DuplicateFileNameChecker)
 }
 
+/**
+ * Setups the configuration for K2 diagnostics tests which share the testdata with K1 diagnostic tests.
+ * Enables duplication of testdata in `.fir.kt` files in case if diagnostics are different between K1 and K2
+ */
 fun TestConfigurationBuilder.configurationForClassicAndFirTestsAlongside(
     testDataConsistencyHandler: Constructor<AfterAnalysisChecker> = ::FirTestDataConsistencyHandler,
 ) {
@@ -84,7 +95,21 @@ fun TestConfigurationBuilder.configurationForClassicAndFirTestsAlongside(
     useMetaTestConfigurators(::FirOldFrontendMetaConfigurator)
 }
 
-// `baseDir` is used in Kotlin plugin from IJ infra
+/**
+ * Setups the base configuration for diagnostic tests
+ * Steps:
+ * - only FIR frontend step
+ * - source dependency kind between modules
+ * - target platform is JVM
+ *
+ * @param [baseDir] is used in Kotlin plugin from IJ infra
+ * @param [testDataConsistencyHandler] is used to ensure consistency between `.kt` and `.xxx.kt` files if they are present.
+ * Known usages:
+ * - `.fir.kt` for diagnostics testdata shared between the K1 and K2
+ * - `.latestLV.kt` for tests which run with latest LV instead of latest stable LV
+ * - `.ll.kt` for AA tests
+ * - `.reversed.fir.kt` for reversed AA tests
+ */
 fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
     baseDir: String = ".",
     frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>> = ::FirFrontendFacade,
@@ -130,6 +155,9 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
     configureCommonDiagnosticTestPaths(testDataConsistencyHandler)
 }
 
+/**
+ * Setups specific directives for tests located (or not located) in some specific directories
+ */
 fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths(
     testDataConsistencyHandler: Constructor<AfterAnalysisChecker> = ::FirTestDataConsistencyHandler,
 ) {
@@ -232,6 +260,9 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths(
     }
 }
 
+/**
+ * Setups running the test with latest LV instead of latest stable LV
+ */
 fun TestConfigurationBuilder.configurationForTestWithLatestLanguageVersion() {
     defaultDirectives {
         LANGUAGE_VERSION with LanguageVersion.entries.last()
@@ -245,6 +276,10 @@ fun TestConfigurationBuilder.configurationForTestWithLatestLanguageVersion() {
     )
 }
 
+/**
+ * Enables special handler which ensures that `FirBasedSymbol.lazyResolve()` is called consistently inside the compiler.
+ * Note that this handler should be used for regular compiler tests, not AA tests
+ */
 fun TestConfigurationBuilder.enableLazyResolvePhaseChecking() {
     useAdditionalServices(
         service<FirSessionComponentRegistrar>(::FirLazyDeclarationResolverWithPhaseCheckingSessionComponentRegistrar.coerce())
