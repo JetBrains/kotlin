@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
-private var IrClass.outerThisField: IrField? by irAttribute(followAttributeOwner = false)
+private var IrClass.outerThisField: IrField? by irAttribute(copyByDefault = false)
 
 internal class NativeInnerClassesSupport(private val irFactory: IrFactory) : InnerClassesSupport {
     override fun getOuterThisField(innerClass: IrClass): IrField {

@@ -12,4 +12,4 @@ package org.jetbrains.kotlin.ir
  *
  * `null` <=> `this` element wasn't inlined.
  */
-var IrElement.originalBeforeInline: IrElement? by irAttribute(followAttributeOwner = false)
+var IrElement.originalBeforeInline: IrElement? by irAttribute(copyByDefault = false)

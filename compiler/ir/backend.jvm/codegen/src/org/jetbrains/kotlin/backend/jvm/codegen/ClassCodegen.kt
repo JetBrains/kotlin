@@ -564,7 +564,7 @@ class ClassCodegen private constructor(
     }
 
     companion object {
-        private var IrClass.classCodegen: ClassCodegen? by irAttribute(followAttributeOwner = false)
+        private var IrClass.classCodegen: ClassCodegen? by irAttribute(copyByDefault = false)
 
         fun getOrCreate(
             irClass: IrClass,

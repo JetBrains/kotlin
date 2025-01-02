@@ -23,7 +23,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 // It might benefit performance, but can lead to confusing behavior if some declarations are changed along the way.
 // For example, adding an override for a declaration whose signature is already cached can result in incorrect signature
 // if its return type is a primitive type, and the new override's return type is an object type.
-private var IrFunction.cachedJvmSignature: Method? by irAttribute(followAttributeOwner = false)
+private var IrFunction.cachedJvmSignature: Method? by irAttribute(copyByDefault = false)
 
 class BridgeLoweringCache(private val context: JvmBackendContext) {
     private val specialBridgeMethods = SpecialBridgeMethods(context)

@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
-private var IrFunction.bridges: MutableMap<BridgeDirections, IrSimpleFunction>? by irAttribute(followAttributeOwner = false)
+private var IrFunction.bridges: MutableMap<BridgeDirections, IrSimpleFunction>? by irAttribute(copyByDefault = false)
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal fun IrFunction.getDefaultValueForOverriddenBuiltinFunction() = BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(descriptor)

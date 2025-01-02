@@ -35,15 +35,15 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 import java.util.concurrent.ConcurrentHashMap
 
-var IrConstructor.originalConstructorOfThisMfvcConstructorReplacement: IrConstructor? by irAttribute(followAttributeOwner = false)
+var IrConstructor.originalConstructorOfThisMfvcConstructorReplacement: IrConstructor? by irAttribute(copyByDefault = false)
 
-private var IrClass.mfvcFieldsToRemove: MutableSet<IrField>? by irAttribute(followAttributeOwner = false)
+private var IrClass.mfvcFieldsToRemove: MutableSet<IrField>? by irAttribute(copyByDefault = false)
 
-var IrValueParameter.oldMfvcDefaultArgument: IrExpression? by irAttribute(followAttributeOwner = false)
+var IrValueParameter.oldMfvcDefaultArgument: IrExpression? by irAttribute(copyByDefault = false)
 
-var IrFunction.parameterTemplateStructureOfThisOldMfvcBidingFunction: List<RemappedParameter>? by irAttribute(followAttributeOwner = false)
+var IrFunction.parameterTemplateStructureOfThisOldMfvcBidingFunction: List<RemappedParameter>? by irAttribute(copyByDefault = false)
 
-private var IrFunction._parameterTemplateStructureOfThisNewMfvcBidingFunction: List<RemappedParameter>? by irAttribute(followAttributeOwner = false)
+private var IrFunction._parameterTemplateStructureOfThisNewMfvcBidingFunction: List<RemappedParameter>? by irAttribute(copyByDefault = false)
 var IrFunction.parameterTemplateStructureOfThisNewMfvcBidingFunction: List<RemappedParameter>?
     get() = _parameterTemplateStructureOfThisNewMfvcBidingFunction
     set(value) {

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.library.isHeader
 
-private var IrFunction.wasLowered: Boolean? by irAttribute(followAttributeOwner = true)
+private var IrFunction.wasLowered: Boolean? by irAttribute(copyByDefault = true)
 
 internal class NativeInlineFunctionResolver(
         val generationState: NativeGenerationState,

@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
-private var IrClass.outerThisAccessor: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
-private var IrProperty.lateinitPropertyAccessor: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
-private var IrField.topLevelFieldAccessor: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+private var IrClass.outerThisAccessor: IrSimpleFunction? by irAttribute(copyByDefault = false)
+private var IrProperty.lateinitPropertyAccessor: IrSimpleFunction? by irAttribute(copyByDefault = false)
+private var IrField.topLevelFieldAccessor: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
 /**
  * Allows to distinguish external declarations to internal ABI.

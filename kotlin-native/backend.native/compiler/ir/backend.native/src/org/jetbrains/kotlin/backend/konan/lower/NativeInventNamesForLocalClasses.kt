@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.name.Name
 
-internal var IrClass.hasSyntheticNameToBeHiddenInReflection by irFlag(followAttributeOwner = true)
+internal var IrClass.hasSyntheticNameToBeHiddenInReflection by irFlag(copyByDefault = true)
 
 // TODO: consider replacing '$' by another delimeter that can't be used in class name specified with backticks (``)
 internal class NativeInventNamesForLocalClasses(val generationState: NativeGenerationState) : InventNamesForLocalClasses() {
