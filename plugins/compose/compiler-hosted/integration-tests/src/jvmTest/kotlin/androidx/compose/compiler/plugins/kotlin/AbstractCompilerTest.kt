@@ -32,8 +32,10 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.registerExtensionsForTest
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.After
 import org.junit.BeforeClass
+import org.junit.Rule
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.io.File
@@ -74,6 +76,8 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
 
         val defaultClassLoader = this::class.java.classLoader
     }
+
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private val testRootDisposable = Disposer.newDisposable()
 
