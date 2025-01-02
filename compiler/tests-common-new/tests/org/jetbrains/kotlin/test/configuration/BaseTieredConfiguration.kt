@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.backend.handlers.NoFir2IrCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
-import org.jetbrains.kotlin.test.backend.handlers.NoLightTreeParsingErrorsHandler
 import org.jetbrains.kotlin.test.backend.handlers.testTierExceptionInverter
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrConstCheckerHandler
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
-import org.jetbrains.kotlin.test.services.fir.LightTreeSyntaxDiagnosticsReporterHolder
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
 
 /**
@@ -39,17 +37,6 @@ fun <A : ResultingArtifact<A>> List<Constructor<AnalysisHandler<A>>>.toTieredHan
     val invertedHandlers = map { testTierExceptionInverter(tier, it) }
     val checker = { it: TestServices -> TestTierChecker(tier, numberOfMarkerHandlersPerModule = invertedHandlers.size, it) }
     return invertedHandlers to checker
-}
-
-/**
- * Setups the tiered test configuration up to [TestTierLabel.FRONTEND] tier
- */
-fun TestConfigurationBuilder.configureTieredFrontendJvmTest(parser: FirParser) {
-    configureDiagnosticTest(parser)
-
-    if (parser == FirParser.LightTree) {
-        useAdditionalService { LightTreeSyntaxDiagnosticsReporterHolder() }
-    }
 }
 
 /**
@@ -67,17 +54,10 @@ fun TestConfigurationBuilder.configureTieredFir2IrJvmTest(
     // Also, it's important to configure the same handlers, otherwise differences with the `.fir.kt` files
     // (the absence of diagnostics) would be considered as FIR tier failure.
 
-    configureTieredFrontendJvmTest(parser)
+    configureDiagnosticTest(parser)
 
     configureFirHandlersStep {
         useHandlers({ NoFirCompilationErrorsHandler(it, failureDisablesNextSteps = false) })
-
-        // "No Psi parsing handler" is not added as it's the same handler as
-        // the one checking "no fir2ir compilation", which is added later.
-        // See: compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/valueParameters.kt
-        if (parser == FirParser.LightTree) {
-            useHandlers(::NoLightTreeParsingErrorsHandler)
-        }
     }
 
     configureAbstractIrTextSettings(targetBackend, converter, klibFacades, includeAllDumpHandlers = false)

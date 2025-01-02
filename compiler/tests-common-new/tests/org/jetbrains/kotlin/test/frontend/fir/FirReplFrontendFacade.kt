@@ -48,11 +48,12 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleValue
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCollectorService
+import org.jetbrains.kotlin.test.frontend.fir.handlers.firDiagnosticCollectorService
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.fir.lightTreeSyntaxDiagnosticsReporterHolder
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.wasmTarget
@@ -68,7 +69,10 @@ open class FirReplFrontendFacade(
     fun interface SessionConfiguration : (FirSessionConfigurator) -> Unit
 
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::FirModuleInfoProvider))
+        get() = listOf(
+            service(::FirModuleInfoProvider),
+            service(::FirDiagnosticCollectorService),
+        )
 
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(FirDiagnosticsDirectives)
@@ -322,7 +326,7 @@ open class FirReplFrontendFacade(
             ktFiles.values,
             lightTreeFiles.values,
             parser,
-            testServices.lightTreeSyntaxDiagnosticsReporterHolder?.reporter,
+            testServices.firDiagnosticCollectorService.reporterForLTSyntaxErrors,
         )
         val firFiles = firAnalyzerFacade.runResolution()
 
