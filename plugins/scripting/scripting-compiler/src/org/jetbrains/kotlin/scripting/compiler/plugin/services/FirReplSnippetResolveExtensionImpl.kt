@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripting.test.repl
+package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
@@ -18,11 +18,18 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.scripting.resolve.FirReplHistoryScope
+import kotlin.script.experimental.api.ReplScriptingHostConfigurationKeys
+import kotlin.script.experimental.api.repl
 import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.host.ScriptingHostConfigurationKeys
 import kotlin.script.experimental.util.PropertiesCollection
 
-val ScriptingHostConfigurationKeys.firReplHistoryProvider by PropertiesCollection.key<FirReplHistoryProvider>(isTransient = true)
+/**
+ * The key for passing an implementation of frontend REPL history container. Not optional - should be provided by the REPL implementation!
+ *
+ * Although default implementation [FirReplSnippetResolveExtensionImpl] is sufficient, due to the extension lifecycle, it cannot
+ * be provided by default and should be configured in the REPL implementation.
+ */
+val ReplScriptingHostConfigurationKeys.firReplHistoryProvider by PropertiesCollection.key<FirReplHistoryProvider>(isTransient = true)
 
 class FirReplHistoryProviderImpl : FirReplHistoryProvider() {
     private val history = LinkedHashSet<FirReplSnippetSymbol>()
@@ -36,14 +43,13 @@ class FirReplHistoryProviderImpl : FirReplHistoryProvider() {
     override fun isFirstSnippet(symbol: FirReplSnippetSymbol): Boolean = history.firstOrNull() == symbol
 }
 
-
-class FirTestReplSnippetResolveExtensionImpl(
+class FirReplSnippetResolveExtensionImpl(
     session: FirSession,
     hostConfiguration: ScriptingHostConfiguration,
 ) : FirReplSnippetResolveExtension(session) {
 
     private val replHistoryProvider: FirReplHistoryProvider =
-        hostConfiguration[ScriptingHostConfiguration.firReplHistoryProvider]!!
+        hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider] ?: FirReplHistoryProviderImpl()
 
     @OptIn(SymbolInternals::class)
     override fun getSnippetScope(currentSnippet: FirReplSnippet, useSiteSession: FirSession): FirScope? {
@@ -84,7 +90,7 @@ class FirTestReplSnippetResolveExtensionImpl(
 
     companion object {
         fun getFactory(hostConfiguration: ScriptingHostConfiguration): Factory {
-            return Factory { session -> FirTestReplSnippetResolveExtensionImpl(session, hostConfiguration) }
+            return Factory { session -> FirReplSnippetResolveExtensionImpl(session, hostConfiguration) }
         }
     }
 }

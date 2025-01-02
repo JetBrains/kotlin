@@ -14,9 +14,10 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.REPL_SNIPPET_EVAL_FUN_NAME
-import org.jetbrains.kotlin.scripting.test.repl.FirReplHistoryProviderImpl
-import org.jetbrains.kotlin.scripting.test.repl.TestReplCompilerPluginRegistrar
-import org.jetbrains.kotlin.scripting.test.repl.firReplHistoryProvider
+import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplHistoryProviderImpl
+import org.jetbrains.kotlin.scripting.compiler.plugin.ReplCompilerPluginRegistrar
+import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
+import org.jetbrains.kotlin.scripting.compiler.plugin.services.isReplSnippetSource
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.handlers.JvmBinaryArtifactHandler
 import org.jetbrains.kotlin.test.backend.handlers.computeTestRuntimeClasspath
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurat
 import org.jetbrains.kotlin.test.services.standardLibrariesPathProvider
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
+import kotlin.script.experimental.api.repl
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
@@ -83,10 +85,12 @@ open class AbstractReplWithTestExtensionsCodegenTest : AbstractFirScriptAndReplC
 private class ReplConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
-            firReplHistoryProvider(FirReplHistoryProviderImpl())
-            // TODO: add jdk path and other params if needed
+            repl {
+                firReplHistoryProvider(FirReplHistoryProviderImpl())
+                isReplSnippetSource { sourceFile, scriptSource -> true }
+            }
         }
-        configuration.add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, TestReplCompilerPluginRegistrar(hostConfiguration))
+        configuration.add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, ReplCompilerPluginRegistrar(hostConfiguration))
     }
 }
 

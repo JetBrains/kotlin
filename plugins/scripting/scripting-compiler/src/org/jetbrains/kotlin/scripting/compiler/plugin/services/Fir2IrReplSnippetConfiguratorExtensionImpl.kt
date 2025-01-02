@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripting.test.repl
+package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
 import org.jetbrains.kotlin.backend.jvm.originalSnippetValueSymbol
 import org.jetbrains.kotlin.descriptors.*
@@ -45,11 +45,17 @@ import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import kotlin.script.experimental.api.ReplScriptingHostConfigurationKeys
+import kotlin.script.experimental.api.repl
 import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.host.ScriptingHostConfigurationKeys
 import kotlin.script.experimental.util.PropertiesCollection
 
-val ScriptingHostConfigurationKeys.replStateObjectFqName by PropertiesCollection.key<String>()
+/**
+ * FQName of the state object (Map<String, Any?) if provided externally
+ *
+ * if is not provided - generated automatically along with the first snippet class
+ */
+val ReplScriptingHostConfigurationKeys.replStateObjectFqName by PropertiesCollection.key<String>()
 
 private val replStateDefaultName = Name.identifier("ReplState")
 
@@ -57,7 +63,6 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
     session: FirSession,
     private val hostConfiguration: ScriptingHostConfiguration,
 ) : Fir2IrReplSnippetConfiguratorExtension(session) {
-
 
     @OptIn(SymbolInternals::class)
     override fun Fir2IrComponents.prepareSnippet(fir2IrVisitor: Fir2IrVisitor, firReplSnippet: FirReplSnippet, irSnippet: IrReplSnippet) {
@@ -123,8 +128,8 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             getStateObject(
                 irSnippet,
                 fir2IrVisitor,
-                createIfNotFound = hostConfiguration[ScriptingHostConfiguration.replStateObjectFqName] == null &&
-                        hostConfiguration[ScriptingHostConfiguration.firReplHistoryProvider]!!.isFirstSnippet(firReplSnippet.symbol)
+                createIfNotFound = hostConfiguration[ScriptingHostConfiguration.repl.replStateObjectFqName] == null &&
+                        hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider]!!.isFirstSnippet(firReplSnippet.symbol)
             )
 
         irSnippet.stateObject = stateObject.symbol
@@ -167,7 +172,7 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             return ClassId(fqn.parent(), fqn.shortName())
         }
 
-        val classId = hostConfiguration[ScriptingHostConfiguration.replStateObjectFqName]?.let(::fqn2cid)
+        val classId = hostConfiguration[ScriptingHostConfiguration.repl.replStateObjectFqName]?.let(::fqn2cid)
             ?: ClassId(irSnippet.getPackageFragment().packageFqName, replStateDefaultName)
 
         val firReplStateFromDependencies =
