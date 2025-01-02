@@ -5,10 +5,13 @@
 
 package kotlin.metadata.test
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.metadata.jvm.JvmMetadataVersion
 import kotlin.test.*
 
 class JvmMetadataVersionTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     fun mv(major: Int, minor: Int, patch: Int) = JvmMetadataVersion(major, minor, patch)
 

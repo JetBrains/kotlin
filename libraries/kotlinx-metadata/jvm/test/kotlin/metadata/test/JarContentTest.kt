@@ -6,6 +6,7 @@
 package kotlin.metadata.test
 
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmNameResolverBase
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassReader.SKIP_DEBUG
 import org.jetbrains.org.objectweb.asm.ClassReader.SKIP_FRAMES
@@ -14,11 +15,14 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes.API_VERSION
 import org.junit.Assert.*
 import org.junit.Ignore
+import org.junit.Rule
 import org.junit.Test
 import java.io.File
 import java.util.zip.ZipFile
 
 class JarContentTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun testJarContents() {
         val jars = File("build/libs").walk().filter { it.name.endsWith(".jar") }.toList()

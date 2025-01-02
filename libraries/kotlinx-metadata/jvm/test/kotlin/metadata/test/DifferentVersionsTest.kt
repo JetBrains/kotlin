@@ -7,13 +7,17 @@ package kotlin.metadata.test
 
 import kotlin.metadata.jvm.KotlinClassMetadata
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Ignore
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 
 class DifferentVersionsTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     val metadata = DifferentVersionsTest::class.java.getMetadata()
 
     fun Metadata.changeVersion(newVersion: IntArray) = Metadata(
