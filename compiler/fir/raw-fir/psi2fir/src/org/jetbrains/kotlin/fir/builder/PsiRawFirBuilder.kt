@@ -742,7 +742,12 @@ open class PsiRawFirBuilder(
                 val propertySource = toFirSourceElement(KtFakeSourceElementKind.PropertyFromParameter)
                 val parameterAnnotations = mutableListOf<FirAnnotationCall>()
                 for (annotationEntry in annotationEntries) {
-                    parameterAnnotations += annotationEntry.convert<FirAnnotationCall>()
+                    parameterAnnotations += annotationEntry.convert<FirAnnotationCall>().let {
+                        // Filter error annotation calls to avoid double-reporting of INAPPLICABLE_ALL_TARGET_IN_MULTI_ANNOTATION
+                        // (it's already reported on a value parameter)
+                        // It also duplicates LT behavior, see ValueParameter.toFirPropertyFromPrimaryConstructor
+                        if (it !is FirErrorAnnotationCall) it else buildAnnotationCallCopy(it) {}
+                    }
                 }
 
                 return buildProperty {
