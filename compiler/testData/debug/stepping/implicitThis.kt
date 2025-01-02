@@ -76,7 +76,7 @@ class A {
 // test.kt:29 $A.<init> (1)
 // test.kt:5 $box (8)
 // test.kt:11 $A.test (8)
-// test.kt:18 $Companion.foo (20, 12)
+// test.kt:18 $Companion.foo (20)
 // test.kt:19 $Companion.foo (9)
 // test.kt:11 $A.test (8)
 // test.kt:12 $A.test (8)

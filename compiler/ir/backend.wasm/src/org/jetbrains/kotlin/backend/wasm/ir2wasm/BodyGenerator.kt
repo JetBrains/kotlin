@@ -1253,7 +1253,7 @@ class BodyGenerator(
         val init = declaration.initializer!!
         generateExpression(init)
         val varName = functionContext.referenceLocal(declaration.symbol)
-        body.buildSetLocal(varName, declaration.getSourceLocation())
+        body.buildSetLocal(varName, init.getSourceLocation())
     }
 
     // Return true if function is recognized as intrinsic.

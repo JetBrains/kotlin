@@ -49,5 +49,5 @@ fun foo(n :Int ) : Int {
 // test.kt:9 $foo (8, 13, 8, 18)
 // test.kt:10 $foo (15, 8)
 // test.kt:12 $foo (22, 11, 4, 22, 11, 4)
-// test.kt:5 $box (4)
+// test.kt:5 $box (12)
 // test.kt:6 $box (1)

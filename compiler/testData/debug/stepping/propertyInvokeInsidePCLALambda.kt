@@ -90,7 +90,7 @@ fun box(): String {
 // test.kt:27 box
 
 // EXPECTATIONS WASM
-// test.kt:22 $box (17, 4)
+// test.kt:22 $box (17)
 // test.kt:23 $box (8, 4)
 // test.kt:16 $bar (13, 4)
 // test.kt:6 $generate (4, 10)
