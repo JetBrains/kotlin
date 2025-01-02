@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
-import org.jetbrains.kotlin.test.backend.handlers.NoLightTreeParsingErrorsHandler
-import org.jetbrains.kotlin.test.backend.handlers.NoPsiParsingErrorsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
@@ -18,7 +16,6 @@ import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguratio
 import org.jetbrains.kotlin.test.configuration.configurationForTestWithLatestLanguageVersion
 import org.jetbrains.kotlin.test.configuration.configureDiagnosticTest
 import org.jetbrains.kotlin.test.configuration.configureIrActualizerDiagnosticsTest
-import org.jetbrains.kotlin.test.configuration.configureTieredFrontendJvmTest
 import org.jetbrains.kotlin.test.configuration.toTieredHandlersAndCheckerOf
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.DISABLE_TYPEALIAS_EXPANSION
@@ -29,7 +26,7 @@ import org.jetbrains.kotlin.test.services.PartialTestTierChecker
 import org.jetbrains.kotlin.test.services.PlatformModuleProvider
 import org.jetbrains.kotlin.test.services.TestTierLabel
 import org.jetbrains.kotlin.test.services.fir.FirWithoutAliasExpansionTestSuppressor
-import org.jetbrains.kotlin.test.services.fir.LightTreeSyntaxDiagnosticsReporterHolder
+import org.jetbrains.kotlin.utils.bind
 
 abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
@@ -48,12 +45,7 @@ abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKo
 }
 
 abstract class AbstractFirPsiDiagnosticTest : AbstractFirDiagnosticTestBase(FirParser.Psi)
-abstract class AbstractFirLightTreeDiagnosticsTest : AbstractFirDiagnosticTestBase(FirParser.LightTree) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.useAdditionalService { LightTreeSyntaxDiagnosticsReporterHolder() }
-    }
-}
+abstract class AbstractFirLightTreeDiagnosticsTest : AbstractFirDiagnosticTestBase(FirParser.LightTree)
 
 abstract class AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest : AbstractFirLightTreeDiagnosticsTest() {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -77,18 +69,13 @@ abstract class AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest : Abstra
 
 abstract class AbstractTieredFrontendJvmTest(val parser: FirParser) : AbstractKotlinCompilerTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        configureTieredFrontendJvmTest(parser)
+        configureDiagnosticTest(parser)
 
         val (handlers, checker) = listOfNotNull(
             // Makes the FIR tier fail if there are errors; otherwise, it would fail on meta-infos mismatch.
             // But it's important to continue processing next modules in diagnostic tests, otherwise
             // we won't collect their meta-infos and see a difference.
-            { NoFirCompilationErrorsHandler(it, failureDisablesNextSteps = false) },
-            // `<SYNTAX>` is reported separately
-            when (parser) {
-                FirParser.LightTree -> ::NoLightTreeParsingErrorsHandler
-                FirParser.Psi -> ::NoPsiParsingErrorsHandler
-            },
+            ::NoFirCompilationErrorsHandler.bind(false) // failureDisablesNextSteps
         ).toTieredHandlersAndCheckerOf(TestTierLabel.FRONTEND)
 
         configureFirHandlersStep { useHandlers(handlers) }
