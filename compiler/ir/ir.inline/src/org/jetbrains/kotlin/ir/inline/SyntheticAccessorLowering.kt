@@ -258,7 +258,7 @@ class SyntheticAccessorLowering(private val context: LoweringContext, isExecuted
     }
 }
 
-private var IrFile.generatedAccessors: GeneratedAccessors? by irAttribute(followAttributeOwner = false)
+private var IrFile.generatedAccessors: GeneratedAccessors? by irAttribute(copyByDefault = false)
 
 private class GeneratedAccessors {
     private val accessors = HashMap<IrFunction, GeneratedAccessor>()

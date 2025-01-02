@@ -36,7 +36,7 @@ class SuspendState(type: IrType) {
     var id = -1
 }
 
-private var IrComposite.suspendState: SuspendState? by irAttribute(followAttributeOwner = false)
+private var IrComposite.suspendState: SuspendState? by irAttribute(copyByDefault = false)
 
 data class LoopBounds(val headState: SuspendState, val exitState: SuspendState)
 

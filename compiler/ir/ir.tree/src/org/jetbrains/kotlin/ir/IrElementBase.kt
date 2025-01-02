@@ -166,7 +166,7 @@ abstract class IrElementBase : IrElement {
         }
         for (i in srcAttributes.indices step 2) {
             val attr = srcAttributes[i] as IrAttribute<*, *>? ?: break
-            if (attr.followAttributeOwner || includeAll) {
+            if (attr.copyByDefault || includeAll) {
                 mergedAttributes[attr] = srcAttributes[i + 1]
             }
         }

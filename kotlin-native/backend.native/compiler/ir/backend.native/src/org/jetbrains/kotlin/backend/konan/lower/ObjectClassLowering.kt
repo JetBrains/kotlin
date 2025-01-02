@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.objcinterop.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
-private var IrClass.objectClassInstanceFunction: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+private var IrClass.objectClassInstanceFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
 internal fun Context.getObjectClassInstanceFunction(clazz: IrClass) = clazz::objectClassInstanceFunction.getOrSetIfNull {
     when {

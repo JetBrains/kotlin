@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
-import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 /**
  * Generates static functions for each secondary constructor.
@@ -224,7 +223,7 @@ private fun JsIrBackendContext.buildFactoryDeclaration(constructor: IrConstructo
     }
 }
 
-private var IrConstructor.secondaryConstructorDelegate: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+private var IrConstructor.secondaryConstructorDelegate: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
 private fun JsIrBackendContext.buildConstructorDelegate(constructor: IrConstructor, klass: IrClass): IrSimpleFunction {
     return constructor::secondaryConstructorDelegate.getOrSetIfNull {

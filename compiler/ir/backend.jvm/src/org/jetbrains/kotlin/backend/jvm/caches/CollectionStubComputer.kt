@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
-private var IrClass.cachedStubsForCollectionClass: List<StubsForCollectionClass>? by irAttribute(followAttributeOwner = false)
+private var IrClass.cachedStubsForCollectionClass: List<StubsForCollectionClass>? by irAttribute(copyByDefault = false)
 
 class CollectionStubComputer(val context: JvmBackendContext) {
     private class LazyStubsForCollectionClass(

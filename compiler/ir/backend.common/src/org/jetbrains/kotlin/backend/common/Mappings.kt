@@ -11,26 +11,25 @@ import org.jetbrains.kotlin.ir.get
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.set
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
 
-var IrFunction.defaultArgumentsDispatchFunction: IrFunction? by irAttribute(followAttributeOwner = false)
+var IrFunction.defaultArgumentsDispatchFunction: IrFunction? by irAttribute(copyByDefault = false)
 
-var IrClass.capturedFields: Collection<IrField>? by irAttribute(followAttributeOwner = false)
+var IrClass.capturedFields: Collection<IrField>? by irAttribute(copyByDefault = false)
 
-var IrClass.reflectedNameAccessor: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+var IrClass.reflectedNameAccessor: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
 /**
  * If this is a `suspend` function, returns its corresponding function with continuations.
  */
-var IrSimpleFunction.functionWithContinuations: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+var IrSimpleFunction.functionWithContinuations: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
 /**
  * If this is a function with continuation, returns its corresponding `suspend` function.
  */
-var IrSimpleFunction.suspendFunction: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+var IrSimpleFunction.suspendFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
-var IrFunction.defaultArgumentsOriginalFunction: IrFunction? by irAttribute(followAttributeOwner = false)
+var IrFunction.defaultArgumentsOriginalFunction: IrFunction? by irAttribute(copyByDefault = false)
 
 open class Mapping {
     val capturedConstructors: MapBasedMapping<IrConstructor, IrConstructor> = MapBasedMapping()
@@ -90,7 +89,7 @@ open class Mapping {
         private lateinit var mapping: AttributeBasedMapping<K, V>
 
         operator fun provideDelegate(thisRef: Any?, desc: KProperty<*>): AttributeBasedMappingDelegate<K, V> {
-            val attribute = irAttribute<K, V>(followAttributeOwner = false).provideDelegate(thisRef, desc)
+            val attribute = irAttribute<K, V>(copyByDefault = false).provideDelegate(thisRef, desc)
             this.mapping = AttributeBasedMapping(attribute)
             return this
         }

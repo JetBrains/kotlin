@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.compactIfPossible
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
-private var IrSimpleFunction.replacementWithoutBoxParameter: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+private var IrSimpleFunction.replacementWithoutBoxParameter: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
 /**
  * Optimization: replaces constructors with the `box` parameter with constructors without the `box` parameter where possible.

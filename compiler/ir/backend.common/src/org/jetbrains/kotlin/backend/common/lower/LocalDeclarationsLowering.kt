@@ -54,7 +54,7 @@ val BOUND_VALUE_PARAMETER by IrDeclarationOriginImpl.Synthetic
 
 val BOUND_RECEIVER_PARAMETER by IrDeclarationOriginImpl.Synthetic
 
-private var IrSymbolOwner.scopeWithCounter: ScopeWithCounter? by irAttribute(followAttributeOwner = false)
+private var IrSymbolOwner.scopeWithCounter: ScopeWithCounter? by irAttribute(copyByDefault = false)
 
 /*
  * Moves local declarations into nearest declaration container.
