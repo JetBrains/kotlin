@@ -85,6 +85,10 @@ public actual class Array<T> {
     @GCUnsafeCall("Kotlin_Array_getArrayLength")
     @Escapes.Nothing
     private external fun getArrayLength(): Int
+
+    public actual companion object {
+        public actual inline fun <reified T> of(vararg elements: T): Array<T> = elements as Array<T>
+    }
 }
 
 private class ArrayIterator<T> constructor(val array: Array<T>) : Iterator<T> {

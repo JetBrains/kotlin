@@ -87,6 +87,10 @@ internal constructor(size: Int) {
     /** Creates an [Iterator] for iterating over the elements of the array. */
     public actual operator fun iterator(): Iterator<T> =
         ArrayIterator(this)
+
+    public actual companion object {
+        public actual inline fun <reified T> of(vararg elements: T): Array<T> = elements as Array<T>
+    }
 }
 
 private class ArrayIterator<T> constructor(val array: Array<T>) : Iterator<T> {

@@ -6,26 +6,30 @@
 package kotlin.jvm.internal
 
 internal object ListCompanionObject {
-    /*operator*/ fun <T> of(vararg elements: T): List<T> = if (elements.size > 0) elements.asList() else emptyList()
-    /*operator*/ fun <T> of(element: T): List<T> = java.util.Collections.singletonList(element)
-    /*operator*/ fun <T> of(): List<T> = emptyList()
+    public /*operator*/ fun <T> of(vararg elements: T): List<T> = if (elements.size > 0) elements.asList() else emptyList()
+    public /*operator*/ fun <T> of(element: T): List<T> = java.util.Collections.singletonList(element)
+    public /*operator*/ fun <T> of(): List<T> = emptyList()
 }
 
 internal object MutableListCompanionObject {
-    /*operator*/ fun <T> of(vararg elements: T): MutableList<T> =
+    public /*operator*/ fun <T> of(vararg elements: T): MutableList<T> =
         if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements, isVarargs = true))
-    /*operator*/ fun <T> of(element: T): MutableList<T> {
+    public /*operator*/ fun <T> of(element: T): MutableList<T> {
         val result = ArrayList<T>(1)
         result.add(element)
         return result
     }
-    /*operator*/ fun <T> of(): MutableList<T> = ArrayList()
+    public /*operator*/ fun <T> of(): MutableList<T> = ArrayList()
 }
 
 internal object SetCompanionObject {
-    /*operator*/ fun <T> of(vararg elements: T): Set<T> = elements.toSet()
-    /*operator*/ fun <T> of(element: T): Set<T> = java.util.Collections.singleton(element)
-    /*operator*/ fun <T> of(): Set<T> = EmptySet
+    public /*operator*/ fun <T> of(vararg elements: T): Set<T> = elements.toSet()
+    public /*operator*/ fun <T> of(element: T): Set<T> = java.util.Collections.singleton(element)
+    public /*operator*/ fun <T> of(): Set<T> = EmptySet
+}
+
+internal object ArrayCompanionObject {
+    public /*operator*/ inline fun <reified T> of(vararg elements: T): Array<T> = elements as Array<T>
 }
 
 private class ArrayAsCollection<T>(val values: Array<out T>, val isVarargs: Boolean) : Collection<T> {

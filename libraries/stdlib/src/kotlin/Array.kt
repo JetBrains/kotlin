@@ -65,4 +65,8 @@ public expect class Array<T> {
 
     /** Creates an [Iterator] for iterating over the elements of the array. */
     public operator fun iterator(): Iterator<T>
+
+    public companion object {
+        public inline fun <reified T> of(vararg elements: T): Array<T>
+    }
 }

@@ -68,4 +68,8 @@ public actual class Array<T> {
     /** Creates an [Iterator] for iterating over the elements of the array. */
     @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
     public actual operator fun iterator(): Iterator<T>
+
+    public actual companion object {
+        public actual inline fun <reified T> of(vararg elements: T): Array<T> = elements as Array<T>
+    }
 }
