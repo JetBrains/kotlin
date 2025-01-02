@@ -5,9 +5,12 @@
 
 package test.text
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 
 class CharJVMTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun getCategory() {

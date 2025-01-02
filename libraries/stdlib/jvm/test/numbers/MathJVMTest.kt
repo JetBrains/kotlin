@@ -5,10 +5,13 @@
 
 package test.numbers
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 import kotlin.math.*
 
 class MathJVMTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test fun IEEEremainder() {
         val data = arrayOf(  //  a    a IEEErem 2.5

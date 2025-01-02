@@ -5,10 +5,13 @@
 
 package test.collections
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 import java.util.*
 
 class IteratorsJVMTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test fun testEnumeration() {
         val v = Vector<Int>()

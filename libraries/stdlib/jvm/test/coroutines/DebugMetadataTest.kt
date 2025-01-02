@@ -7,6 +7,8 @@
 
 package test.coroutines
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -37,6 +39,8 @@ private class MyContinuation : BaseContinuationImpl(null) {
 }
 
 class DebugMetadataTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun testRuntimeDebugMetadata() {
         val myContinuation = MyContinuation()

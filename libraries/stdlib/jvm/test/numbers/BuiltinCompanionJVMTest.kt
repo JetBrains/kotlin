@@ -5,10 +5,14 @@
 
 package test.numbers
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 
 
 class BuiltinCompanionJVMTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test fun intTest() {
         val i = Int
         assertEquals(java.lang.Integer.MAX_VALUE, i.MAX_VALUE)

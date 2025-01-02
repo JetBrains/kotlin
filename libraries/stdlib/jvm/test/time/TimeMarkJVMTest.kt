@@ -5,11 +5,14 @@
 
 package test.time
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 import kotlin.time.*
 import kotlin.time.Duration.Companion.nanoseconds
 
 class TimeMarkJVMTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun longDurationElapsed() {

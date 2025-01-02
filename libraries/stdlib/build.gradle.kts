@@ -742,6 +742,9 @@ tasks {
 
     val jvmTest by existing(Test::class)
 
+    jvmTest.configure {
+        muteWithDatabase()
+    }
     listOf(JdkMajorVersion.JDK_9_0, JdkMajorVersion.JDK_11_0).forEach { jvmVersion ->
         val jvmVersionTest = register("jvm${jvmVersion.majorVersion}Test", Test::class) {
             group = "verification"
@@ -750,7 +753,7 @@ tasks {
             // after KMP plugin stopped applying java plugin
             classpath = jvmTest.get().classpath
             testClassesDirs = jvmTest.get().testClassesDirs
-
+            muteWithDatabase()
         }
         check.configure { dependsOn(jvmVersionTest) }
     }

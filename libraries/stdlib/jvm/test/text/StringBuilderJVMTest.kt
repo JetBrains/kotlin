@@ -5,9 +5,13 @@
 
 package test.text
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 
 class StringBuilderJVMTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     // KT-52336
     // Tests that the deprecated Common StringBuilder.append(CharArray, Int, Int) does not affect JVM target.
     @Test
