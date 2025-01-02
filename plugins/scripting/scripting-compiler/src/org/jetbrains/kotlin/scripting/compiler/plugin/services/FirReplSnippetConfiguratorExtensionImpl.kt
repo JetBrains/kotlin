@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripting.test.repl
+package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtSourceElement
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirFileBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirReplSnippetBuilder
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 
-class FirTestReplSnippetConfiguratorExtensionImpl(
+class FirReplSnippetConfiguratorExtensionImpl(
     session: FirSession,
     // TODO: left here because it seems it will be needed soon, remove supression if used or remove the param if it is not the case
     @Suppress("UNUSED_PARAMETER", "unused") hostConfiguration: ScriptingHostConfiguration,
@@ -33,7 +33,7 @@ class FirTestReplSnippetConfiguratorExtensionImpl(
 
     companion object {
         fun getFactory(hostConfiguration: ScriptingHostConfiguration): Factory {
-            return Factory { session -> FirTestReplSnippetConfiguratorExtensionImpl(session, hostConfiguration) }
+            return Factory { session -> FirReplSnippetConfiguratorExtensionImpl(session, hostConfiguration) }
         }
     }
 }

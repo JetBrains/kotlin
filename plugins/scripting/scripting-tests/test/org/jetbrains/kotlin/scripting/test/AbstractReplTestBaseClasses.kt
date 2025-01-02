@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.scripting.test.repl.FirReplHistoryProviderImpl
-import org.jetbrains.kotlin.scripting.test.repl.TestReplCompilerPluginRegistrar
-import org.jetbrains.kotlin.scripting.test.repl.firReplHistoryProvider
+import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplHistoryProviderImpl
+import org.jetbrains.kotlin.scripting.compiler.plugin.ReplCompilerPluginRegistrar
+import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.handlers.JvmBinaryArtifactHandler
 import org.jetbrains.kotlin.test.backend.handlers.computeTestRuntimeClasspath
@@ -86,7 +86,7 @@ private class ReplConfigurator(testServices: TestServices) : EnvironmentConfigur
             firReplHistoryProvider(FirReplHistoryProviderImpl())
             // TODO: add jdk path and other params if needed
         }
-        configuration.add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, TestReplCompilerPluginRegistrar(hostConfiguration))
+        configuration.add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, ReplCompilerPluginRegistrar(hostConfiguration))
     }
 }
 
