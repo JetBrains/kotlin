@@ -14,6 +14,7 @@ dependencies {
     }
 
     testApi(kotlinTest("junit"))
+    testImplementation(project(":compiler:tests-mutes:mutes-junit4"))
 
     testArtifacts(project(":kotlin-stdlib"))
     testArtifacts(project(":kotlin-stdlib-jdk7"))
@@ -36,6 +37,7 @@ val test by tasks.existing(Test::class) {
         dependsOn(":kotlin-native:runtime:nativeStdlib")
     }
 
+    muteWithDatabase()
     systemProperty("native.enabled", kotlinBuildProperties.isKotlinNativeEnabled)
     systemProperty("overwrite.output", project.providers.gradleProperty("overwrite.output").orNull ?: System.getProperty("overwrite.output", "false"))
     systemProperty("kotlinVersion", project.version)
