@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.test.runners.codegen.inlineScopes
 
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.configuration.useInlineScopesNumbers
+import org.jetbrains.kotlin.test.configuration.useIrInliner
 import org.jetbrains.kotlin.test.runners.codegen.*
 
 /*

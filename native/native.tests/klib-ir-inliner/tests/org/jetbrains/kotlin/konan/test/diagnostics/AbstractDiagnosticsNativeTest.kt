@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
-import org.jetbrains.kotlin.test.runners.configurationForClassicAndFirTestsAlongside
-import org.jetbrains.kotlin.test.runners.enableLazyResolvePhaseChecking
+import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
+import org.jetbrains.kotlin.test.configuration.enableLazyResolvePhaseChecking
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.junit.jupiter.api.Assumptions
 import java.io.File

@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureClassicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
+import org.jetbrains.kotlin.test.configuration.commonConfigurationForTest
+import org.jetbrains.kotlin.test.configuration.configureCommonHandlersForBoxTest
+import org.jetbrains.kotlin.test.configuration.configureJvmBoxCodegenSettings
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter

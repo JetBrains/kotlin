@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
-import org.jetbrains.kotlin.test.runners.codegen.commonConfigurationForTest
+import org.jetbrains.kotlin.test.configuration.commonConfigurationForTest
 
 abstract class AbstractFirLoadCompiledJvmKotlinTestBase<F : ResultingArtifact.FrontendOutput<F>> :
     AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR)

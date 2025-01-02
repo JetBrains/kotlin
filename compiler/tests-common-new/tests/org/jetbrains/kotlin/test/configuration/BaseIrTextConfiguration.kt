@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.test.runners
+package org.jetbrains.kotlin.test.configuration
 
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.HandlersStepBuilder

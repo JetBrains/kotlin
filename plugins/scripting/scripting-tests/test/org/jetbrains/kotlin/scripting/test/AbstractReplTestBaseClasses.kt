@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.FirReplFrontendFacade
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
-import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
-import org.jetbrains.kotlin.test.runners.enableLazyResolvePhaseChecking
+import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
+import org.jetbrains.kotlin.test.configuration.enableLazyResolvePhaseChecking
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
