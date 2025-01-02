@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.project
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
@@ -47,6 +48,7 @@ kotlin {
                 implementation(project.dependencies.platform(libs.junit.bom))
                 implementation(libs.junit.jupiter.api)
                 runtimeOnly(libs.junit.jupiter.engine)
+                implementation(project(":compiler:tests-mutes:mutes-junit4"))
 
 
                 runtimeOnly(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
@@ -96,6 +98,7 @@ kotlin {
 }
 
 tasks.withType(Test::class.java).configureEach {
+    muteWithDatabase()
     this.workingDir = rootDir
     this.maxHeapSize = "1024m"
     this.jvmArgs("--add-opens=jdk.jdi/com.sun.tools.jdi=ALL-UNNAMED")
