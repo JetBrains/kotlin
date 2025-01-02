@@ -1147,18 +1147,29 @@ class BodyGenerator(
             return
         }
 
+        val branches = expression.branches
+        val onlyOneBranch = branches.singleOrNull()
+
+        if (onlyOneBranch != null && isElseBranch(onlyOneBranch)) {
+            generateExpression(onlyOneBranch.result)
+            return
+        }
+
         val resultType = wasmModuleTypeTransformer.transformBlockResultType(expression.type)
         var ifCount = 0
         var seenElse = false
+        val isLogicalOperator = expression.origin == IrStatementOrigin.ANDAND || expression.origin == IrStatementOrigin.OROR
+        val expressionLocation = expression.takeIf { isLogicalOperator }?.getSourceLocation()
 
-        for (branch in expression.branches) {
+        for (branch in branches) {
             if (!isElseBranch(branch)) {
+                if (ifCount > 0) body.buildElse()
                 generateExpression(branch.condition)
                 body.buildIf(null, resultType)
                 generateWithExpectedType(branch.result, expression.type)
-                body.buildElse()
                 ifCount++
             } else {
+                body.buildElse(expressionLocation)
                 generateWithExpectedType(branch.result, expression.type)
                 seenElse = true
                 break
@@ -1170,13 +1181,17 @@ class BodyGenerator(
         if (!seenElse && resultType != null) {
             assert(expression.type != irBuiltIns.nothingType)
             if (expression.type.isUnit()) {
+                if (branches.isNotEmpty()) body.buildElse()
                 body.buildGetUnit()
             } else {
                 error("'When' without else branch and non Unit type: ${expression.type.dumpKotlinLike()}")
             }
         }
 
-        repeat(ifCount) { body.buildEnd() }
+        repeat(ifCount) {
+            val endLocation = branches[branches.lastIndex - it].takeIf { !isLogicalOperator }?.nextLocation()
+            body.buildEnd(endLocation)
+        }
     }
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop) {
@@ -1296,4 +1311,9 @@ class BodyGenerator(
     private fun IrElement.getSourceEndLocation() = getSourceLocation(
         functionContext.currentFunctionSymbol, functionContext.currentFunctionSymbol?.owner?.fileOrNull, type = LocationType.END
     )
+
+    private fun IrElement.nextLocation() = when (getSourceLocation()) {
+        is SourceLocation.DefinedLocation -> SourceLocation.NextLocation
+        else -> SourceLocation.NoLocation
+    }
 }
