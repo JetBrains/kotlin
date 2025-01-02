@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.scripting.test.repl
 
-import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.backend.jvm.originalSnippetValueSymbol
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
@@ -41,14 +40,11 @@ import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrReplSnippet
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.ScriptingHostConfigurationKeys
 import kotlin.script.experimental.util.PropertiesCollection
@@ -56,12 +52,6 @@ import kotlin.script.experimental.util.PropertiesCollection
 val ScriptingHostConfigurationKeys.replStateObjectFqName by PropertiesCollection.key<String>()
 
 private val replStateDefaultName = Name.identifier("ReplState")
-
-object ScriptingGeneratorKey : GeneratedDeclarationKey() {
-    override fun toString(): String {
-        return "ScriptingGeneratorKey"
-    }
-}
 
 class Fir2IrReplSnippetConfiguratorExtensionImpl(
     session: FirSession,
@@ -119,22 +109,6 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
                 ).run {
                     parent = actualParent
                     visibility = DescriptorVisibilities.PUBLIC
-//                    dispatchReceiverParameter = IrFactoryImpl.createValueParameter(
-//                        startOffset = startOffset,
-//                        endOffset = endOffset,
-//                        origin = origin,
-//                        kind = null,
-//                        name = SpecialNames.THIS,
-//                        type = actualParent.thisReceiver!!.type,
-//                        isAssignable = false,
-//                        symbol = IrValueParameterSymbolImpl(),
-//                        varargElementType = null,
-//                        isCrossinline = false,
-//                        isNoinline = false,
-//                        isHidden = false,
-//                    ).apply {
-//                        parent = this@run
-//                    }
                     irSnippet.declarationsFromOtherSnippets.add(this)
                 }
             }
