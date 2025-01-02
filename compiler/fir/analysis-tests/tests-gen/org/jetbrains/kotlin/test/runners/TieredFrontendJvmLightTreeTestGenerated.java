@@ -28567,6 +28567,12 @@ public class TieredFrontendJvmLightTreeTestGenerated extends AbstractTieredFront
           public void testVisibilityOfContextTypeOnFunction() {
             runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/visibilityOfContextTypeOnFunction.kt");
           }
+
+          @Test
+          @TestMetadata("visibilityOfContextTypeOnProperty.kt")
+          public void testVisibilityOfContextTypeOnProperty() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/visibilityOfContextTypeOnProperty.kt");
+          }
         }
       }
     }

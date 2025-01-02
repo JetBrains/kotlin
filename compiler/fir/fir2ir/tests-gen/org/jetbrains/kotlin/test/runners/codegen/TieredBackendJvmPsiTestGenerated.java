@@ -23291,12 +23291,6 @@ public class TieredBackendJvmPsiTestGenerated extends AbstractTieredBackendJvmPs
           public void testPropertyWithContextAndContextType() {
             runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/propertyWithContextAndContextType.kt");
           }
-
-          @Test
-          @TestMetadata("visibilityOfContextTypeOnProperty.kt")
-          public void testVisibilityOfContextTypeOnProperty() {
-            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/visibilityOfContextTypeOnProperty.kt");
-          }
         }
       }
     }

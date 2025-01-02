@@ -12,11 +12,11 @@ open class OpenClass {
     protected class ProtectedClass {
         val a: String = ""
     }
-    context(a: ProtectedClass)
+    context(<!EXPOSED_PARAMETER_TYPE!>a: ProtectedClass<!>)
     public fun test1() {
         a.a
     }
-    context(a: ProtectedClass)
+    context(<!EXPOSED_PARAMETER_TYPE!>a: ProtectedClass<!>)
     internal fun test2() {
         a.a
     }
@@ -34,7 +34,7 @@ internal class InternalClass {
 }
 
 
-context(w: PublicClass, x: PrivateClass, y: OpenClass.<!INVISIBLE_REFERENCE!>ProtectedClass<!>, z: InternalClass)
+context(w: PublicClass, <!EXPOSED_PARAMETER_TYPE!>x: PrivateClass<!>, <!EXPOSED_PARAMETER_TYPE!>y: OpenClass.<!INVISIBLE_REFERENCE!>ProtectedClass<!><!>, <!EXPOSED_PARAMETER_TYPE!>z: InternalClass<!>)
 public fun test1() {
     w.a
     x.a
@@ -42,7 +42,7 @@ public fun test1() {
     z.a
 }
 
-context(w: PublicClass, x: PrivateClass, y: OpenClass.<!INVISIBLE_REFERENCE!>ProtectedClass<!>, z: InternalClass)
+context(w: PublicClass, <!EXPOSED_PARAMETER_TYPE!>x: PrivateClass<!>, <!EXPOSED_PARAMETER_TYPE!>y: OpenClass.<!INVISIBLE_REFERENCE!>ProtectedClass<!><!>, z: InternalClass)
 internal fun test2() {
     w.a
     x.a
@@ -63,7 +63,7 @@ class ProtectedChild: OpenClass() {
     private fun foo1() {
         y.a
     }
-    context(y: OpenClass.ProtectedClass)
+    context(<!EXPOSED_PARAMETER_TYPE!>y: OpenClass.ProtectedClass<!>)
     public fun foo2() {
         y.a
     }
@@ -71,7 +71,7 @@ class ProtectedChild: OpenClass() {
     protected fun foo3() {
         y.a
     }
-    context(y: OpenClass.ProtectedClass)
+    context(<!EXPOSED_PARAMETER_TYPE!>y: OpenClass.ProtectedClass<!>)
     internal fun foo4() {
         y.a
     }

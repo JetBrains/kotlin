@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.RelationToType
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -156,43 +155,10 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
             }
 
             for (valueParameter in declaration.valueParameters) {
-                var exposureFound = false
-
-                if (isNonLocal) {
-                    valueParameter.returnTypeRef.coneType
-                        .findVisibilityExposure(context, functionVisibility)?.let { (restricting, restrictingVisibility, relation) ->
-                            reporter.reportOn(
-                                valueParameter.source,
-                                FirErrors.EXPOSED_PARAMETER_TYPE,
-                                functionVisibility,
-                                restricting,
-                                relation,
-                                restrictingVisibility,
-                                context
-                            )
-                            exposureFound = true
-                        }
-                }
-
-                if (exposureFound) continue
-
-                val property = valueParameter.correspondingProperty ?: continue
-                if (property.isLocal) continue
-                val propertyVisibility = property.effectiveVisibility
-
-                if (propertyVisibility == EffectiveVisibility.Local) continue
-                property.returnTypeRef.coneType
-                    .findVisibilityExposure(context, propertyVisibility)?.let { (restricting, restrictingVisibility, relation) ->
-                        reporter.reportOn(
-                            valueParameter.source,
-                            FirErrors.EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR,
-                            propertyVisibility,
-                            restricting,
-                            relation,
-                            restrictingVisibility,
-                            context
-                        )
-                    }
+                valueParameter.checkExposure(functionVisibility, reporter, context)
+            }
+            for (valueParameter in declaration.contextParameters) {
+                valueParameter.checkExposure(functionVisibility, reporter, context)
             }
         }
 
@@ -226,7 +192,51 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
             }
         checkMemberReceiver(declaration.receiverParameter?.typeRef, declaration, reporter, context)
         checkParameterBounds(declaration, propertyVisibility, reporter, context)
+        for (parameter in declaration.contextParameters) {
+            parameter.checkExposure(propertyVisibility, reporter, context)
+        }
     }
+
+    private fun FirValueParameter.checkExposure(
+        declarationVisibility: EffectiveVisibility,
+        reporter: DiagnosticReporter,
+        context: CheckerContext,
+    ) {
+        if (declarationVisibility != EffectiveVisibility.Local) {
+            returnTypeRef.coneType
+                .findVisibilityExposure(context, declarationVisibility)?.let { (restricting, restrictingVisibility, relation) ->
+                    reporter.reportOn(
+                        source,
+                        FirErrors.EXPOSED_PARAMETER_TYPE,
+                        declarationVisibility,
+                        restricting,
+                        relation,
+                        restrictingVisibility,
+                        context
+                    )
+                    return
+                }
+        }
+
+        val property = correspondingProperty ?: return
+        if (property.isLocal) return
+        val propertyVisibility = property.effectiveVisibility
+
+        if (propertyVisibility == EffectiveVisibility.Local) return
+        property.returnTypeRef.coneType
+            .findVisibilityExposure(context, propertyVisibility)?.let { (restricting, restrictingVisibility, relation) ->
+                reporter.reportOn(
+                    source,
+                    FirErrors.EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR,
+                    propertyVisibility,
+                    restricting,
+                    relation,
+                    restrictingVisibility,
+                    context
+                )
+            }
+    }
+
 
     private fun checkMemberReceiver(
         typeRef: FirTypeRef?,

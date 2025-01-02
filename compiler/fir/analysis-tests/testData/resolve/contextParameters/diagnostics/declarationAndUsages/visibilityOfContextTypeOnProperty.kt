@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextParameters
 // ISSUE: KT-73716
 
@@ -12,7 +12,7 @@ open class OpenClass {
     protected class ProtectedClass {
         val a: String = ""
     }
-    context(n: ProtectedClass)
+    context(<!EXPOSED_PARAMETER_TYPE!>n: ProtectedClass<!>)
     public var privateInOpenProperty: String
         get() {
             n.a
@@ -22,7 +22,7 @@ open class OpenClass {
             n.a
         }
 
-    context(n: ProtectedClass)
+    context(<!EXPOSED_PARAMETER_TYPE!>n: ProtectedClass<!>)
     internal var internalInOpen: String
         get() {
             n.a
@@ -56,7 +56,7 @@ internal class InternalClass {
     val a: String = ""
 }
 
-context(w: PublicClass, x: PrivateClass, z: InternalClass)
+context(w: PublicClass, <!EXPOSED_PARAMETER_TYPE!>x: PrivateClass<!>, <!EXPOSED_PARAMETER_TYPE!>z: InternalClass<!>)
 public var publicProperty: String
     get() {
         w.a
@@ -84,7 +84,7 @@ private var privateProperty: String
         z.a
     }
 
-context(w: PublicClass, x: PrivateClass, z: InternalClass)
+context(w: PublicClass, <!EXPOSED_PARAMETER_TYPE!>x: PrivateClass<!>, z: InternalClass)
 internal var internalProperty: String
     get() {
         w.a
@@ -99,7 +99,7 @@ internal var internalProperty: String
     }
 
 class YChild : OpenClass() {
-    context(n: ProtectedClass)
+    context(<!EXPOSED_PARAMETER_TYPE!>n: ProtectedClass<!>)
     public var publicInChild: String
         get() {
             n.a
@@ -109,7 +109,7 @@ class YChild : OpenClass() {
             n.a
         }
 
-    context(n: ProtectedClass)
+    context(<!EXPOSED_PARAMETER_TYPE!>n: ProtectedClass<!>)
     internal var internalInChild: String
         get() {
             n.a
@@ -141,7 +141,7 @@ class YChild : OpenClass() {
 }
 
 
-context(w: PublicClass, x: PrivateClass, z: InternalClass)
+context(w: PublicClass, <!EXPOSED_PARAMETER_TYPE!>x: PrivateClass<!>, <!EXPOSED_PARAMETER_TYPE!>z: InternalClass<!>)
 var privateSetter: String
     public get() {
         w.a
@@ -155,7 +155,7 @@ var privateSetter: String
         z.a
     }
 
-context(w: PublicClass, x: PrivateClass, z: InternalClass)
+context(w: PublicClass, <!EXPOSED_PARAMETER_TYPE!>x: PrivateClass<!>, <!EXPOSED_PARAMETER_TYPE!>z: InternalClass<!>)
 var internalSetter: String
     public get() {
         w.a
