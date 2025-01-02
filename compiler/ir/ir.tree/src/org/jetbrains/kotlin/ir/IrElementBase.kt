@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import java.util.IdentityHashMap
 
 abstract class IrElementBase : IrElement {
     /**
@@ -154,5 +155,36 @@ abstract class IrElementBase : IrElement {
         }
         attributeMap[lastKeyIndex] = null
         attributeMap[lastKeyIndex + 1] = null
+    }
+
+    internal fun copyAttributesFrom(other: IrElementBase, includeAll: Boolean) {
+        var attributeMap = attributeMap
+        val srcAttributeMap = other.attributeMap ?: return
+
+        val mergedAttributes = IdentityHashMap<IrAttribute<*, *>, Any?>(srcAttributeMap.size + (attributeMap?.size ?: 0))
+        if (attributeMap != null) {
+            for (i in attributeMap.indices step 2) {
+                val attr = attributeMap[i] as IrAttribute<*, *>? ?: break
+                mergedAttributes[attr] = attributeMap[i + 1]
+            }
+        }
+        for (i in srcAttributeMap.indices step 2) {
+            val attr = srcAttributeMap[i] as IrAttribute<*, *>? ?: break
+            if (attr.followAttributeOwner || includeAll) {
+                mergedAttributes[attr] = srcAttributeMap[i + 1]
+            }
+        }
+
+        if (attributeMap == null || attributeMap.size <= mergedAttributes.size * 2) {
+            attributeMap = arrayOfNulls(mergedAttributes.size * 2)
+            this.attributeMap = attributeMap
+        }
+
+        var i = 0
+        for ((attr, value) in mergedAttributes) {
+            attributeMap[i] = attr
+            attributeMap[i + 1] = value
+            i += 2
+        }
     }
 }
