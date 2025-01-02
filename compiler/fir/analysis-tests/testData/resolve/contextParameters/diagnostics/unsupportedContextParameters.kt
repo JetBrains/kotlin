@@ -10,6 +10,10 @@ class C {
 class C2 {
     <!UNSUPPORTED!>context(_: String)<!>
     constructor() {}
+
+    context(_: String)
+    init {
+    }
 }
 
 <!UNSUPPORTED!>context(_: String)<!>

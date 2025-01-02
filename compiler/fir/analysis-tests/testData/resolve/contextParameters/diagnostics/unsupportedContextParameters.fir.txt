@@ -11,6 +11,9 @@ FILE: unsupportedContextParameters.kt
             super<R|kotlin/Any|>()
         }
 
+        init {
+        }
+
     }
     context(<unused var>: R|kotlin/String|)
     public abstract interface I : R|kotlin/Any| {
