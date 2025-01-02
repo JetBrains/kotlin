@@ -135,12 +135,9 @@ object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
         for (valueParameter in function.valueParameters) {
             checkValOrVar(valueParameter, reporter, context)
         }
-        for (contextParameter in function.contextParameters) {
-            checkValOrVar(contextParameter, reporter, context)
-        }
     }
 
-    private fun checkValOrVar(
+    internal fun checkValOrVar(
         valueParameter: FirValueParameter,
         reporter: DiagnosticReporter,
         context: CheckerContext,

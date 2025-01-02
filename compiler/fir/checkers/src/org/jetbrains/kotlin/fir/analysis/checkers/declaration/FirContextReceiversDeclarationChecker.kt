@@ -104,6 +104,8 @@ object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppChe
                     parameter.source?.getModifierList()?.modifiers?.forEach { modifier ->
                         reporter.reportOn(modifier.source, FirErrors.WRONG_MODIFIER_TARGET, modifier.token, "context parameter", context)
                     }
+
+                    FirFunctionParameterChecker.checkValOrVar(parameter, reporter, context)
                 }
             }
         } else {
