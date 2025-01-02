@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirBlackBoxCodegenTestBase
 import org.jetbrains.kotlin.test.services.PackageNamePreprocessor
+import org.jetbrains.kotlin.test.services.fir.LightTreeSyntaxDiagnosticsReporterHolder
 import org.jetbrains.kotlin.test.services.sourceProviders.SpecHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
 

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.runners.codegen.inlineScopes.*
 import org.jetbrains.kotlin.test.runners.ir.*
 import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractJvmIrInterpreterAfterFirPsi2IrTest
 import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractJvmIrInterpreterAfterPsi2IrTest
+import org.jetbrains.kotlin.test.services.TestTierLabel
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
 fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {

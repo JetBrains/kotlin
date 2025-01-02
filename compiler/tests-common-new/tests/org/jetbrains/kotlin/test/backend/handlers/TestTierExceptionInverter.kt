@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.test.model.AnalysisHandler
 import org.jetbrains.kotlin.test.model.ResultingArtifact
-import org.jetbrains.kotlin.test.runners.TestTierLabel
-import org.jetbrains.kotlin.test.runners.TierPassesMarker
-import org.jetbrains.kotlin.test.runners.applicableTestTiers
+import org.jetbrains.kotlin.test.services.TestTierLabel
+import org.jetbrains.kotlin.test.services.TierPassesMarker
+import org.jetbrains.kotlin.test.services.applicableTestTiers
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 

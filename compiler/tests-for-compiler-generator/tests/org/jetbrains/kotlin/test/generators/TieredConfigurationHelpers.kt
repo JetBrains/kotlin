@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.test.generators
 
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.test.directives.TestTierDirectives
-import org.jetbrains.kotlin.test.runners.TestTierLabel
+import org.jetbrains.kotlin.test.services.TestTierLabel
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import java.io.File
 
