@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.currentLineId
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplFromTerminal.WhatNextAfterOneLine
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.configuration.ConsoleReplConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.configuration.ReplConfiguration
-import org.jetbrains.kotlin.scripting.test.repl.FirReplHistoryProviderImpl
-import org.jetbrains.kotlin.scripting.test.repl.TestReplCompilerPluginRegistrar
-import org.jetbrains.kotlin.scripting.test.repl.firReplHistoryProvider
-import org.jetbrains.kotlin.scripting.test.repl.replStateObjectFqName
+import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplHistoryProviderImpl
+import org.jetbrains.kotlin.scripting.compiler.plugin.ReplCompilerPluginRegistrar
+import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
+import org.jetbrains.kotlin.scripting.compiler.plugin.services.replStateObjectFqName
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
@@ -84,7 +84,7 @@ private class ExampleRepl(val replConfiguration: ReplConfiguration, rootDisposab
         messageCollector,
         rootDisposable
     ) {
-        add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, TestReplCompilerPluginRegistrar(hostConfiguration))
+        add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, ReplCompilerPluginRegistrar(hostConfiguration))
     }
 
     private val compiler = ScriptJvmCompilerFromEnvironment(compilerContext.environment)
