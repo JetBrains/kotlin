@@ -341,6 +341,12 @@ public class LLFirBlackBoxModernJdkCodegenBasedTestGenerated extends AbstractLLF
     @TestDataPath("$PROJECT_ROOT")
     public class Records {
       @Test
+      @TestMetadata("allAnnotation.kt")
+      public void testAllAnnotation() {
+        runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/allAnnotation.kt");
+      }
+
+      @Test
       public void testAllFilesPresentInRecords() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/records"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }

@@ -388,8 +388,12 @@ class ClassCodegen private constructor(
         }
 
         if (irClass.hasAnnotation(JVM_RECORD_ANNOTATION_FQ_NAME) && !field.isStatic) {
-            // TODO: Write annotations to the component
-            visitor.addRecordComponent(fieldName, fieldType.descriptor, fieldSignature)
+            val rcv = visitor.addRecordComponent(fieldName, fieldType.descriptor, fieldSignature)
+            if (context.config.languageVersionSettings.supportsFeature(LanguageFeature.AnnotationAllUseSiteTarget)) {
+                val recordComponentAnnotationCodegen = RecordComponentAnnotationCodegen(this@ClassCodegen, rcv)
+                // Probably we should filter out non-all and inapplicable annotations
+                field.correspondingPropertySymbol?.owner?.let { recordComponentAnnotationCodegen.genAnnotations(it) }
+            }
         }
     }
 
@@ -636,3 +640,12 @@ private val DescriptorVisibility.flags: Int
 // From `isAnonymousClass` in inlineCodegenUtils.kt
 private val Type.isAnonymousClass: Boolean
     get() = internalName.substringAfterLast("$", "").toIntOrNull() != null
+
+class RecordComponentAnnotationCodegen(
+    classCodegen: ClassCodegen,
+    private val rcv: RecordComponentVisitor,
+) : AnnotationCodegen(classCodegen) {
+    override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
+        return rcv.visitAnnotation(descr, visible)
+    }
+}

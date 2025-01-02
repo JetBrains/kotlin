@@ -1179,6 +1179,7 @@ class JvmSymbols(
 
         val typeParameterTarget = buildEnumEntry(elementTypeEnum, "TYPE_PARAMETER")
         val typeUseTarget = buildEnumEntry(elementTypeEnum, "TYPE_USE")
+        val recordComponentTarget = buildEnumEntry(elementTypeEnum, "RECORD_COMPONENT")
     }
 
     companion object {

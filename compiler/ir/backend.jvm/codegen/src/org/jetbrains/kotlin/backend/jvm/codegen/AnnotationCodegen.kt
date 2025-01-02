@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.isAnnotationWithAllUseSiteTarget
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -77,6 +78,10 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
                     "Inconsistent target list for object literal annotation: $applicableTargets on $annotated"
                 }
                 continue
+            }
+            if (annotated is IrProperty && this is RecordComponentAnnotationCodegen) {
+                if (KotlinTarget.PROPERTY !in applicableTargets) continue
+                if (annotation.isAnnotationWithAllUseSiteTarget != true) continue
             }
 
             genAnnotation(annotation, null, false)?.let { descriptor ->

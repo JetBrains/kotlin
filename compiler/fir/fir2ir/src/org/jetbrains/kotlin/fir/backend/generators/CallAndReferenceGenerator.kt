@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.utils.*
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.isAnnotationWithAllUseSiteTarget
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
@@ -957,7 +959,11 @@ class CallAndReferenceGenerator(
                         typeArgumentsCount = fullyExpandedConstructorSymbol.typeParameterSymbols.size,
                         constructorTypeArgumentsCount = 0,
                         source = FirAnnotationSourceElement(annotation),
-                    )
+                    ).apply {
+                        if (annotation.useSiteTarget == AnnotationUseSiteTarget.ALL) {
+                            this.isAnnotationWithAllUseSiteTarget = true
+                        }
+                    }
                 }
             }
         }

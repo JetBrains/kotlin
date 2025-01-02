@@ -9,6 +9,9 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -84,7 +87,7 @@ internal class AdditionalClassAnnotationLowering(private val context: JvmBackend
         if (irClass.hasAnnotation(JvmAnnotationNames.TARGET_ANNOTATION)) return
 
         val targets = irClass.applicableTargetSet() ?: return
-        val javaTargets = targets.mapNotNullTo(HashSet(), ::mapTarget).sortedBy {
+        val javaTargets = targets.mapNotNullTo(HashSet()) { target -> mapTarget(target, irClass) }.sortedBy {
             ElementType.valueOf(it.symbol.owner.name.asString())
         }
 
@@ -109,10 +112,16 @@ internal class AdditionalClassAnnotationLowering(private val context: JvmBackend
             }
     }
 
-    private fun mapTarget(target: KotlinTarget): IrEnumEntry? =
+    private fun mapTarget(target: KotlinTarget, irAnnotationClass: IrClass): IrEnumEntry? =
         when (target) {
             KotlinTarget.TYPE_PARAMETER -> symbols.typeParameterTarget.takeUnless { noNewJavaAnnotationTargets }
             KotlinTarget.TYPE -> symbols.typeUseTarget.takeUnless { noNewJavaAnnotationTargets }
+            KotlinTarget.PROPERTY -> symbols.recordComponentTarget.takeIf {
+                context.config.languageVersionSettings.supportsFeature(LanguageFeature.AnnotationAllUseSiteTarget) &&
+                        context.config.target >= JvmTarget.JVM_16 &&
+                        irAnnotationClass.getAnnotationRetention().let { it == null || it == KotlinRetention.RUNTIME }
+
+            }
             else -> symbols.jvmTargetMap[target]
         }
 
