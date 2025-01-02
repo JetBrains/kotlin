@@ -1,7 +1,6 @@
 // SKIP_UNBOUND_IR_SERIALIZATION
 // ^^^ Muted: Class `S` is private. Function `S.a()` is effectively private. However, both are used in
-//     `internal inline fun S.call2()` which is a compilation warning since 2.1.0 (see KT-69681)
-//     and should become a compilation error in 2.1.20 (see KT-70916).
+//     `internal inline fun S.call2()` which is compilation error since 2.1.20 (see KT-70916).
 
 // FILE: 1.kt
 
@@ -21,7 +20,7 @@ private class S {
 }
 
 @Suppress(
-    "IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR",
+    "IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION",
     "PRIVATE_CLASS_MEMBER_FROM_INLINE",
     "EXPOSED_PARAMETER_TYPE",
     "EXPOSED_RECEIVER_TYPE",

@@ -11,7 +11,7 @@ private class FooImpl : Foo {
 
 private inline fun privateMethod() = FooImpl()
 
-@Suppress("IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR")
+@Suppress("IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION")
 internal inline fun internalMethod(): Foo {
     return privateMethod()
 }
