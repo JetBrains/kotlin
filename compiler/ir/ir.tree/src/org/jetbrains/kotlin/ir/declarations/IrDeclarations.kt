@@ -9,18 +9,17 @@ import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
-import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.ir.IrAttribute
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.originalBeforeInline
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils.getPackagePartClassNamePrefix
 import java.io.File
 
-fun IrElement.copyAttributes(other: IrElement) {
+fun IrElement.copyAttributes(other: IrElement, includeAll: Boolean = false) {
+    (this as IrElementBase).copyAttributesFrom(other as IrElementBase, includeAll)
     attributeOwnerId = other.attributeOwnerId
     originalBeforeInline = other.originalBeforeInline
 }
