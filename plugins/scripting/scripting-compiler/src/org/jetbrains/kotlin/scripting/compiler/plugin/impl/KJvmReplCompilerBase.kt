@@ -46,7 +46,7 @@ import kotlin.script.experimental.util.PropertiesCollection
 import kotlin.script.experimental.util.add
 
 // NOTE: this implementation, as it is used in the REPL infrastructure, may be created for every snippet and provided with the state
-// so it should not keep any compilation state outside of the stste field
+// so it should not keep any compilation state outside the state field
 open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
     protected val hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration,
     val state: JvmReplCompilerState<*> = JvmReplCompilerState({ createCompilationState(it, hostConfiguration) })
