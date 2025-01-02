@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.utils.DummyDelegate
 import java.lang.ref.WeakReference
 import java.util.function.Function
 import kotlin.properties.PropertyDelegateProvider
-import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 /**
@@ -18,17 +17,11 @@ import kotlin.reflect.KProperty
  *
  * See [IrAttribute] for details.
  *
- * @param followAttributeOwner If true, every read and write of this attribute will be performed not
- * on the given element directly, but on its `attributeOwnerId`.
- * I.e. `element.foo = 123` will effectively transform to `element.attributeOwnerId.foo = 123`.
- *
- * This is a temporary mechanism, while the goal is to drop `attributeOwnerId`.
- * When that happens, this parameter will likely be replaced with something like `copyByDefault`, which would
- * have similar behavior w.r.t. [copyAttributes], but with an actual copy, instead of following the link.
- * For details, see [unwrapAttributeOwner].
+ * @param copyByDefault Whether to copy this attribute in [IrElement.copyAttributes] by default.
+ * If [false], it will only be copied when specifying `copyAttributes(other, includeAll = true)`.
  */
-fun <E : IrElement, T : Any> irAttribute(followAttributeOwner: Boolean): IrAttribute.Delegate<E, T> =
-    IrAttribute.Delegate(followAttributeOwner)
+fun <E : IrElement, T : Any> irAttribute(copyByDefault: Boolean): IrAttribute.Delegate<E, T> =
+    IrAttribute.Delegate(copyByDefault)
 
 /**
  * Creates new [IrAttribute] which can be used to put an additional mark
@@ -42,8 +35,8 @@ fun <E : IrElement, T : Any> irAttribute(followAttributeOwner: Boolean): IrAttri
  *
  * See [irAttribute] for details.
  */
-fun <E : IrElement> irFlag(followAttributeOwner: Boolean): IrAttribute.Flag.Delegate<E> =
-    IrAttribute.Flag.Delegate<E>(IrAttribute.Delegate<E, Boolean>(followAttributeOwner))
+fun <E : IrElement> irFlag(copyByDefault: Boolean): IrAttribute.Flag.Delegate<E> =
+    IrAttribute.Flag.Delegate<E>(IrAttribute.Delegate<E, Boolean>(copyByDefault))
 
 
 /**
@@ -106,7 +99,7 @@ operator fun <E : IrElement, T : Any> E.set(attribute: IrAttribute<E, T>, value:
 class IrAttribute<E : IrElement, T : Any> internal constructor(
     val name: String?,
     owner: Any?,
-    val followAttributeOwner: Boolean,
+    val copyByDefault: Boolean,
 ) {
     /**
      * Used solely for debug, to help distinguish between multiple instances of attribute keys.
@@ -168,13 +161,13 @@ class IrAttribute<E : IrElement, T : Any> internal constructor(
     }
 
     class Delegate<E : IrElement, T : Any> internal constructor(
-        private val followAttributeOwner: Boolean,
+        private val copyByDefault: Boolean,
     ) {
         fun create(owner: Any?, name: String?): IrAttribute<E, T> {
             return IrAttribute(
                 name = name,
                 owner = owner,
-                followAttributeOwner = followAttributeOwner,
+                copyByDefault = copyByDefault,
             )
         }
 
