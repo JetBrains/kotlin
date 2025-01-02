@@ -12,11 +12,14 @@ import kotlin.metadata.jvm.KotlinClassMetadata
 import kotlin.metadata.jvm.Metadata
 import kotlin.metadata.jvm.internal.writeProtoBufData
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class UnknownVersionRequirementTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
     @kotlin.internal.RequireKotlin("1.8.0", "foobar")

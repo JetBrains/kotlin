@@ -11,10 +11,14 @@ import kotlin.metadata.jvm.KotlinClassMetadata
 import kotlin.metadata.jvm.Metadata
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion as CompilerMetadataVersion
 import org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.*
 
 class MetadataExceptionsTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun testReadMalformedInput() {
         val malformedInput = "abcdefdkdgwaydgyuawdfg543awyudfuiawty" // random string guaranteed by dropping ball on a keyboard

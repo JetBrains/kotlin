@@ -5,7 +5,9 @@
 
 package kotlin.metadata.test
 
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Ignore
+import org.junit.Rule
 import kotlin.metadata.jvm.JvmMetadataVersion
 import kotlin.metadata.jvm.KotlinClassMetadata
 import kotlin.metadata.jvm.Metadata
@@ -15,6 +17,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class WritersContractTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     val classMd = WritersContractTest::class.java.getMetadata()
     val l: () -> Unit = @JvmSerializableLambda {}
     val lambdaMd = l::class.java.getMetadata()

@@ -10,7 +10,9 @@ import kotlin.metadata.KmClass;
 import kotlin.metadata.jvm.JvmMetadataVersion;
 import kotlin.metadata.jvm.KotlinClassHeader;
 import kotlin.metadata.jvm.KotlinClassMetadata;
+import org.jetbrains.kotlin.test.MuteableTestRule;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.Objects;
@@ -18,6 +20,7 @@ import java.util.Objects;
 import static org.junit.Assert.*;
 
 public class JavaUsageTest {
+    @Rule public MuteableTestRule muteableTestRule = new MuteableTestRule();
 
     @Test
     public void testKotlinClassHeader() {

@@ -5,10 +5,12 @@
 
 package kotlin.metadata.test
 
+import org.jetbrains.kotlin.test.MuteableTestRule
 import kotlin.metadata.*
 import kotlin.metadata.jvm.*
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.junit.Rule
 import org.junit.Test
 import java.net.URLClassLoader
 import kotlin.coroutines.CoroutineContext
@@ -17,6 +19,7 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.test.*
 
 class MetadataSmokeTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun listInlineFunctions() {

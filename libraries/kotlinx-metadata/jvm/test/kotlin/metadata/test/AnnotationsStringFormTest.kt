@@ -5,6 +5,8 @@
 
 package kotlin.metadata.test
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.metadata.KmAnnotation
 import kotlin.metadata.KmAnnotationArgument
 import kotlin.metadata.jvm.annotations
@@ -22,6 +24,7 @@ internal annotation class MyAnnNested(val e: E, val a: Array<String>)
 
 internal enum class E { A, B }
 class AnnotationsStringFormTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private fun doTest(argumentToExpected: Map<KmAnnotationArgument, String>) {
         val valuesArgMap = argumentToExpected.keys.mapIndexed { i, km ->
