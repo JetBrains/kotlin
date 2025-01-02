@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 
 object FirContextReceiversPropertyBackingFieldChecker : FirPropertyChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -23,9 +24,9 @@ object FirContextReceiversPropertyBackingFieldChecker : FirPropertyChecker(MppCh
         }
         if (declaration.contextParameters.isEmpty()) return
 
-        if (declaration.hasBackingField) {
+        if (declaration.hasBackingField && !declaration.isLateInit) {
             reporter.reportOn(
-                declaration.initializer?.source,
+                declaration.initializer?.source ?: declaration.source,
                 FirErrors.CONTEXT_PARAMETERS_WITH_BACKING_FIELD,
                 context
             )

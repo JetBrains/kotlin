@@ -2,4 +2,4 @@
 // LANGUAGE: +ContextParameters
 
 context(a: Int)
-lateinit var b: String
+<!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var b: String
