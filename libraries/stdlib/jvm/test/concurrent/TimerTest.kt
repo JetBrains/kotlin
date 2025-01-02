@@ -5,6 +5,8 @@
 
 package test.concurrent
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import java.util.*
 import kotlin.concurrent.*
 import kotlin.test.*
@@ -15,6 +17,8 @@ import java.util.concurrent.TimeoutException
 
 
 class TimerTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test fun scheduledTask() {
         val timer = Timer()
 

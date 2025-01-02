@@ -5,11 +5,15 @@
 
 package test.collections
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class UArrayJVMTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun binarySearch() {
 

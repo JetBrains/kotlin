@@ -5,12 +5,16 @@
 
 package test.io
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 import java.io.Writer
 import java.io.BufferedReader
 import kotlin.random.Random
 
 class IOStreamsTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test fun testGetStreamOfFile() {
         val tmpFile = @Suppress("DEPRECATION") createTempFile()
         var writer: Writer? = null

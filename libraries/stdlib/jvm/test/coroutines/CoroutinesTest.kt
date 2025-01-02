@@ -5,6 +5,8 @@
 
 package test.coroutines
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import java.util.concurrent.Semaphore
 import kotlin.coroutines.*
 import kotlin.test.*
@@ -13,6 +15,8 @@ import kotlin.test.*
  * Tests on coroutines standard library functions.
  */
 class CoroutinesTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     /**
      * Makes sure that using [startCoroutine] with suspending references properly establishes intercepted context.
      */

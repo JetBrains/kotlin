@@ -5,9 +5,12 @@
 
 package test.collections
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 
 class SequenceJVMTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test fun filterIsInstance() {
         val src: Sequence<Any> = listOf(1, 2, 3.toDouble(), "abc", "cde").asSequence()

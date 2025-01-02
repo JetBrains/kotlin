@@ -5,11 +5,15 @@
 
 package test.random
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import test.io.*
 import kotlin.random.*
 import kotlin.test.*
 
 class RandomSerializationTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun defaultIsSerializable() {
         val instance = Random

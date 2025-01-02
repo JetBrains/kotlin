@@ -5,10 +5,13 @@
 
 package test.text
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import test.*
 import kotlin.test.*
 
 class StringNumberConversionJVMTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test fun toIntArabicDigits() {
         compareConversion({ it.toInt() }, { it.toIntOrNull() }) {

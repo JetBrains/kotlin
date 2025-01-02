@@ -5,6 +5,8 @@
 
 package test.concurrent
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.concurrent.*
 import kotlin.test.*
 
@@ -13,6 +15,8 @@ import java.util.concurrent.*
 import java.util.concurrent.TimeUnit.*
 
 class ThreadTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test fun scheduledTask() {
 
         val pool = Executors.newFixedThreadPool(1)

@@ -5,11 +5,14 @@
 
 package test.collections
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import java.util.Collections
 import kotlin.test.*
 
 
 class ArraysJVMTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Suppress("HasPlatformType", "UNCHECKED_CAST")
     fun <T> platformNull() = Collections.singletonList(null as T).first()
