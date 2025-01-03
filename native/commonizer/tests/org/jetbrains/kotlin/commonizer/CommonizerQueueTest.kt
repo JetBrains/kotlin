@@ -11,10 +11,13 @@ import org.jetbrains.kotlin.commonizer.mergedtree.CirRootNode
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
 import org.jetbrains.kotlin.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class CommonizerQueueTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     data class CommonizerInvocation(val inputs: TargetDependent<CirTreeRoot?>, val output: SharedCommonizerTarget)
 

@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.commonizer
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class SelectInputTargetsTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun `missing leaf targets`() {

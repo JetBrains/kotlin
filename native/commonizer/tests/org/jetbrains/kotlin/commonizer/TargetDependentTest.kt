@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.commonizer
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class TargetDependentTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun toMap() {
         val targetDependent = TargetDependent(listOf(LeafCommonizerTarget("a"), LeafCommonizerTarget("b"))) {

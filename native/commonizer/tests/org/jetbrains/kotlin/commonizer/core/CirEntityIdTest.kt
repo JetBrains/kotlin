@@ -9,12 +9,16 @@ import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.cir.CirPackageName
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class CirEntityIdTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun createAndIntern() {
         class TestRow(

@@ -7,11 +7,15 @@ package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 
 class CirNameTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun createAndIntern() {
         listOf("", "foo", "bar", "<stdlib>").forEach { rawName ->

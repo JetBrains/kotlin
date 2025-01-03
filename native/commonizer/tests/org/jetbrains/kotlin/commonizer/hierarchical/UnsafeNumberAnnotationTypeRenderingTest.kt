@@ -7,11 +7,15 @@ package org.jetbrains.kotlin.commonizer.hierarchical
 
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.core.renderTypeForUnsafeNumberAnnotation
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.jetbrains.kotlin.types.Variance
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class UnsafeNumberAnnotationTypeRenderingTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun `test simple class type with no arguments`() {
         val type = CirClassType.createInterned(

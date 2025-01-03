@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.commonizer.cir.CirPackageName
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -14,6 +16,8 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class CirPackageNameTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun createAndIntern() {
         listOf(

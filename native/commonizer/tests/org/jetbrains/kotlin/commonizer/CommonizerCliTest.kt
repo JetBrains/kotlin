@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.commonizer.cli.NativeDistributionListTargets
 import org.jetbrains.kotlin.commonizer.cli.Task
 import org.jetbrains.kotlin.commonizer.cli.TaskType
 import org.jetbrains.kotlin.commonizer.cli.parseTasksFromCommandLineArguments
+import org.jetbrains.kotlin.test.MuteableTestRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestName
@@ -19,6 +20,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class CommonizerCliTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Rule
     @JvmField
     var testName: TestName = TestName()
