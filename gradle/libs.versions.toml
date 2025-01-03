@@ -42,7 +42,7 @@ compose-stable = "1.7.0-alpha08" # Used for Compose compiler plugin tests
 androidx-collections = "1.5.0-alpha02" # Used for Compose compiler plugin tests
 ant = "1.10.14"
 kotlin-for-gradle-plugins-compilation = "2.0.20-RC"
-intellij-asm = "9.0"
+intellij-asm = "9.6.1"
 diff-utils = "4.12"
 opentelemetry-api = "1.41.0"
 # Wasm specific
