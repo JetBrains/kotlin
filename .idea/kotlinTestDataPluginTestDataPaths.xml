@@ -6,72 +6,65 @@
         <entry key="$PROJECT_DIR$/compiler/testData/codegen/box">
           <value>
             <array>
-              <option
-                  value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/codegen/{box,irBox,irEs6Box,firBox,firEs6Box}/$TEST_DATA_FILE$_v5.js"/>
-              <option value="$PROJECT_DIR$/js/js.translator/testData/out/codegen/wasmBox/$TEST_DATA_FILE$.wat"/>
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/codegen/{box,irBox,irEs6Box,firBox,firEs6Box}/$TEST_DATA_FILE$_v5.js" />
+              <option value="$PROJECT_DIR$/js/js.translator/testData/out/codegen/wasmBox/$TEST_DATA_FILE$.wat" />
             </array>
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/compiler/testData/codegen/boxInline">
           <value>
             <array>
-              <option
-                  value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/codegen/{boxInline,irBoxInline,irEs6BoxInline,firBoxInline,firEs6BoxInline}/$TEST_DATA_FILE$_v5.js"/>
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/codegen/{boxInline,irBoxInline,irEs6BoxInline,firBoxInline,firEs6BoxInline}/$TEST_DATA_FILE$_v5.js" />
             </array>
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/compiler/testData/debug">
           <value>
             <array>
-              <option
-                  value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/debug/$TEST_DATA_FILE$_v5.js"/>
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/debug/$TEST_DATA_FILE$_v5.js" />
             </array>
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/js/js.translator/testData/box">
           <value>
             <array>
-              <option
-                  value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/{box,irBox,firBox,firPsiBox,firLightTreeBox,firEs6Box}/$TEST_DATA_FILE$_v5.js"/>
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/{box,irBox,firBox,firPsiBox,firLightTreeBox,firEs6Box}/$TEST_DATA_FILE$_v5.js" />
             </array>
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/js/js.translator/testData/lineNumbers">
           <value>
             <array>
-              <option
-                  value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/{lineNumbers,irLineNumbers}/$TEST_DATA_FILE${-lib,}_v5-lines.js"/>
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/{lineNumbers,irLineNumbers}/$TEST_DATA_FILE${-lib,}_v5-lines.js" />
             </array>
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/js/js.translator/testData/sourcemap">
           <value>
             <array>
-              <option value="$PROJECT_DIR$/js/js.tests/build/node/out/sourcemap/$TEST_DATA_FILE$_v5.js{.map,}"/>
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/out/sourcemap/$TEST_DATA_FILE$_v5.js{.map,}" />
             </array>
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/js/js.translator/testData/typescript-export">
           <value>
             <array>
-              <option
-                  value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/typescript-export/{fir,fir-es6,ir,ir-es6}/$TEST_DATA_FILE$-JS_TESTS{.d.ts,_v5.js}"/>
-              <option value="$PROJECT_DIR$/js/js.translator/testData/typescript-export/$TEST_DATA_FILE$__main.{js,ts}"/>
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/typescript-export/{fir,fir-es6,ir,ir-es6}/$TEST_DATA_FILE$-JS_TESTS{.d.ts,_v5.js}" />
+              <option value="$PROJECT_DIR$/js/js.translator/testData/typescript-export/$TEST_DATA_FILE$__main.{js,ts}" />
             </array>
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/js/js.translator/testData/webDemoExamples">
           <value>
             <array>
-              <option value="$PROJECT_DIR$/js/js.tests/build/node/out/webDemoExamples/$TEST_DATA_FILE$_v5.js{.map,}"/>
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/out/webDemoExamples/$TEST_DATA_FILE$_v5.js{.map,}" />
             </array>
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/plugins/js-plain-objects/compiler-plugin/testData/box">
           <value>
             <array>
-              <option
-                  value="$PROJECT_DIR$/plugins/js-plain-objects/compiler-plugin/build/{out,out-min,out-per-module,out-per-module-min}/codegen/serializationBoxIr/plugins/js-plain-objects/compiler-plugin/testData/box/$TEST_DATA_FILE$_v5.js{.map,}"/>
+              <option value="$PROJECT_DIR$/plugins/js-plain-objects/compiler-plugin/build/{out,out-min,out-per-module,out-per-module-min}/codegen/serializationBoxIr/plugins/js-plain-objects/compiler-plugin/testData/box/$TEST_DATA_FILE$_v5.js{.map,}" />
             </array>
           </value>
         </entry>
@@ -79,216 +72,34 @@
     </option>
     <option name="testDataFiles">
       <array>
-        <option value="$PROJECT_DIR$/compiler/testData"/>
-        <option value="$PROJECT_DIR$/compiler/fir/analysis-tests/testData"/>
-        <option value="$PROJECT_DIR$/compiler/tests-spec/testData"/>
-        <option value="$PROJECT_DIR$/js/js.translator/testData"/>
-        <option value="$PROJECT_DIR$/compiler/fir/raw-fir/psi2fir/testData"/>
-        <option value="$PROJECT_DIR$/plugins/allopen/testData"/>
-        <option value="$PROJECT_DIR$/plugins/atomicfu/atomicfu-compiler/testData"/>
-        <option value="$PROJECT_DIR$/plugins/imports-dumper/testData"/>
-        <option value="$PROJECT_DIR$/plugins/jvm-abi-gen/testData"/>
-        <option value="$PROJECT_DIR$/plugins/kapt3/kapt3-base/testData"/>
-        <option value="$PROJECT_DIR$/plugins/kapt3/kapt3-cli/testData"/>
-        <option value="$PROJECT_DIR$/plugins/kapt3/kapt3-compiler/testData"/>
-        <option value="$PROJECT_DIR$/plugins/noarg/testData"/>
-        <option value="$PROJECT_DIR$/plugins/plugin-sandbox/testData"/>
-        <option value="$PROJECT_DIR$/plugins/parcelize/parcelize-compiler/testData"/>
-        <option value="$PROJECT_DIR$/plugins/lombok/testData"/>
-        <option value="$PROJECT_DIR$/plugins/sam-with-receiver/testData"/>
-        <option value="$PROJECT_DIR$/plugins/kotlinx-serialization/testData"/>
-        <option value="$PROJECT_DIR$/plugins/assign-plugin/testData"/>
-        <option value="$PROJECT_DIR$/plugins/power-assert/testData"/>
-        <option value="$PROJECT_DIR$/analysis/analysis-api/testData"/>
-        <option value="$PROJECT_DIR$/analysis/symbol-light-classes/testData"/>
-        <option value="$PROJECT_DIR$/analysis/low-level-api-fir/testData"/>
-        <option value="$PROJECT_DIR$/native/native.tests/testData"/>
-        <option value="$PROJECT_DIR$/plugins/plugins-interactions-testing/testData"/>
-        <option value="$PROJECT_DIR$/plugins/js-plain-objects/compiler-plugin/testData"/>
-        <option value="$PROJECT_DIR$/plugins/compose/compiler-hosted/testData"/>
+        <option value="$PROJECT_DIR$/compiler/testData" />
+        <option value="$PROJECT_DIR$/compiler/fir/analysis-tests/testData" />
+        <option value="$PROJECT_DIR$/compiler/tests-spec/testData" />
+        <option value="$PROJECT_DIR$/js/js.translator/testData" />
+        <option value="$PROJECT_DIR$/compiler/fir/raw-fir/psi2fir/testData" />
+        <option value="$PROJECT_DIR$/plugins/allopen/testData" />
+        <option value="$PROJECT_DIR$/plugins/atomicfu/atomicfu-compiler/testData" />
+        <option value="$PROJECT_DIR$/plugins/imports-dumper/testData" />
+        <option value="$PROJECT_DIR$/plugins/jvm-abi-gen/testData" />
+        <option value="$PROJECT_DIR$/plugins/kapt3/kapt3-base/testData" />
+        <option value="$PROJECT_DIR$/plugins/kapt3/kapt3-cli/testData" />
+        <option value="$PROJECT_DIR$/plugins/kapt3/kapt3-compiler/testData" />
+        <option value="$PROJECT_DIR$/plugins/noarg/testData" />
+        <option value="$PROJECT_DIR$/plugins/plugin-sandbox/testData" />
+        <option value="$PROJECT_DIR$/plugins/parcelize/parcelize-compiler/testData" />
+        <option value="$PROJECT_DIR$/plugins/lombok/testData" />
+        <option value="$PROJECT_DIR$/plugins/sam-with-receiver/testData" />
+        <option value="$PROJECT_DIR$/plugins/kotlinx-serialization/testData" />
+        <option value="$PROJECT_DIR$/plugins/assign-plugin/testData" />
+        <option value="$PROJECT_DIR$/plugins/power-assert/testData" />
+        <option value="$PROJECT_DIR$/analysis/analysis-api/testData" />
+        <option value="$PROJECT_DIR$/analysis/symbol-light-classes/testData" />
+        <option value="$PROJECT_DIR$/analysis/low-level-api-fir/testData" />
+        <option value="$PROJECT_DIR$/native/native.tests/testData" />
+        <option value="$PROJECT_DIR$/plugins/plugins-interactions-testing/testData" />
+        <option value="$PROJECT_DIR$/plugins/js-plain-objects/compiler-plugin/testData" />
+        <option value="$PROJECT_DIR$/plugins/compose/compiler-hosted/testData" />
       </array>
-    </option>
-    <option name="testTags">
-      <map>
-        <entry key="DiagnosticCompilerTest.*TestdataTestGenerated">
-          <value>
-            <array>
-              <option value="AA"/>
-            </array>
-          </value>
-        </entry>
-        <entry key="LLFirPreresolved.*TestGenerated">
-          <value>
-            <array>
-              <option value="AA"/>
-            </array>
-          </value>
-        </entry>
-        <entry key="Fir.*Diagnostic.*TestGenerated">
-          <value>
-            <array>
-              <option value="FIR"/>
-            </array>
-          </value>
-        </entry>
-        <entry key="Diagnostic.*TestGenerated">
-          <value>
-            <array>
-              <option value="K1"/>
-            </array>
-          </value>
-        </entry>
-        <entry key="Fir.*BoxCodegen.*">
-          <value>
-            <array>
-              <option value="FIR"/>
-              <option value="JVM"/>
-            </array>
-          </value>
-        </entry>
-        <entry key="IrBlackBoxCodegen.*">
-          <value>
-            <array>
-              <option value="K1"/>
-              <option value="JVM"/>
-            </array>
-          </value>
-        </entry>
-        <entry key="JvmAbiConsistency.*">
-          <value>
-            <array>
-              <option value="JVM"/>
-            </array>
-          </value>
-        </entry>
-        <entry key="LL.*BoxCodegen.*">
-          <value>
-            <array>
-              <option value="AA"/>
-            </array>
-          </value>
-        </entry>
-        <entry key="LightAnalysisModeTestGenerated">
-          <value>
-            <array>
-              <option value="K1"/>
-              <option value="JVM"/>
-            </array>
-          </value>
-        </entry>
-        <entry key="FirJs.*Codegen.*">
-          <value>
-            <array>
-              <option value="FIR"/>
-              <option value="JS"/>
-            </array>
-          </value>
-        </entry>
-        <entry key="FirNative.*Codegen.*">
-          <value>
-            <array>
-              <option value="FIR"/>
-              <option value="Native"/>
-            </array>
-          </value>
-        </entry>
-        <entry key="FirWasm.*.Codegen.*">
-          <value>
-            <array>
-              <option value="FIR"/>
-              <option value="WASM"/>
-            </array>
-          </value>
-        </entry>
-        <entry key="IrJs.*Codegen.*">
-          <value>
-            <array>
-              <option value="K1"/>
-              <option value="JS"/>
-            </array>
-          </value>
-        </entry>
-        <entry key="K1Wasm.*Codegen.*">
-          <value>
-            <array>
-              <option value="K1"/>
-              <option value="WASM"/>
-            </array>
-          </value>
-        </entry>
-        <entry key="Native.*Codegen.*">
-          <value>
-            <array>
-              <option value="K1"/>
-              <option value="Native"/>
-            </array>
-          </value>
-        </entry>
-        <entry key="ClassicJsIrText.*">
-          <value>
-            <array>
-              <option value="K1"/>
-              <option value="JS"/>
-            </array>
-          </value>
-        </entry>
-        <entry key="ClassicJvmIrText.*">
-          <value>
-            <array>
-              <option value="K1"/>
-              <option value="JVM"/>
-            </array>
-          </value>
-        </entry>
-        <entry key="ClassicNativeIrText.*">
-          <value>
-            <array>
-              <option value="K1"/>
-              <option value="Native"/>
-            </array>
-          </value>
-        </entry>
-        <entry key="Fir.*JsIrText.*">
-          <value>
-            <array>
-              <option value="FIR"/>
-              <option value="JS"/>
-            </array>
-          </value>
-        </entry>
-        <entry key="Fir.*JvmIrText.*">
-          <value>
-            <array>
-              <option value="FIR"/>
-              <option value="JVM"/>
-            </array>
-          </value>
-        </entry>
-        <entry key="Fir.*NativeIrText.*">
-          <value>
-            <array>
-              <option value="FIR"/>
-              <option value="Native"/>
-            </array>
-          </value>
-        </entry>
-        <entry key="Fir.*WasmIrText.*">
-          <value>
-            <array>
-              <option value="FIR"/>
-              <option value="WASM"/>
-            </array>
-          </value>
-        </entry>
-        <entry key="Tiered.*Jvm.*">
-          <value>
-            <array>
-              <option value="FIR" />
-              <option value="JVM" />
-            </array>
-          </value>
-        </entry>
-      </map>
     </option>
   </component>
 </project>
