@@ -5,7 +5,7 @@ fun test() {
         // should fix OTv := ScopeOwner for scope navigation
         otvOwner.provide() < ScopeOwner()
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner")!>Interloper<!>)
     }
     // expected: ScopeOwner
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultA<!>
@@ -15,7 +15,7 @@ fun test() {
         // should fix OTv := ScopeOwner for scope navigation
         otvOwner.provide() <= ScopeOwner()
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner")!>Interloper<!>)
     }
     // expected: ScopeOwner
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultB<!>
@@ -25,7 +25,7 @@ fun test() {
         // should fix OTv := ScopeOwner for scope navigation
         otvOwner.provide() > ScopeOwner()
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner")!>Interloper<!>)
     }
     // expected: ScopeOwner
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultC<!>
@@ -35,7 +35,7 @@ fun test() {
         // should fix OTv := ScopeOwner for scope navigation
         otvOwner.provide() >= ScopeOwner()
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("ScopeOwner; Interloper")!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner")!>Interloper<!>)
     }
     // expected: ScopeOwner
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultD<!>
@@ -45,7 +45,7 @@ fun test() {
         // should fix OTv := Double for scope navigation
         otvOwner.provide() < 0.0
         // expected: kotlin.Int </: kotlin.Double
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("kotlin.Double; kotlin.Int")!>42<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("kotlin.Int; kotlin.Double")!>42<!>)
     }
     // expected: kotlin.Double
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Double")!>resultE<!>
@@ -55,7 +55,7 @@ fun test() {
         // should fix OTv := Float for scope navigation
         otvOwner.provide() < 0.0
         // expected: kotlin.Int </: kotlin.Float
-        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("kotlin.Float; kotlin.Int")!>42<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("kotlin.Int; kotlin.Float")!>42<!>)
     }
     // expected: kotlin.Float
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float")!>resultF<!>

@@ -5,7 +5,7 @@
 fun test() {
     val buildee = build {
         setTypeVariable(TargetType())
-        <!ARGUMENT_TYPE_MISMATCH("TargetType; DifferentType")!>getTypeVariable().<!UNRESOLVED_REFERENCE_WRONG_RECEIVER("fun DifferentType.consumeDifferentTypeReceiver(): Unit")!>consumeDifferentTypeReceiver<!>()<!>
+        <!ARGUMENT_TYPE_MISMATCH("DifferentType; TargetType")!>getTypeVariable().<!UNRESOLVED_REFERENCE_WRONG_RECEIVER("fun DifferentType.consumeDifferentTypeReceiver(): Unit")!>consumeDifferentTypeReceiver<!>()<!>
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests

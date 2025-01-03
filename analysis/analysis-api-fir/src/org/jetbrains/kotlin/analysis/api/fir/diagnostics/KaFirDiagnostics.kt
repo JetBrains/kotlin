@@ -1509,8 +1509,8 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface ArgumentTypeMismatch : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = ArgumentTypeMismatch::class
-        val expectedType: KaType
         val actualType: KaType
+        val expectedType: KaType
         val isMismatchDueToNullability: Boolean
     }
 
@@ -4012,8 +4012,8 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface TypeMismatchWhenFlexibilityChanges : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = TypeMismatchWhenFlexibilityChanges::class
-        val expectedType: KaType
         val actualType: KaType
+        val expectedType: KaType
     }
 
     interface JavaClassOnCompanion : KaFirDiagnostic<PsiElement> {

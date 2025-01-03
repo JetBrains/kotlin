@@ -1474,7 +1474,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(CONDITION_TYPE_MISMATCH, "Condition type mismatch: inferred type is ''{0}'' but ''Boolean'' was expected.", RENDER_TYPE, NOT_RENDERED)
         map.put(
             ARGUMENT_TYPE_MISMATCH,
-            "Argument type mismatch: actual type is ''{1}'', but ''{0}'' was expected.",
+            "Argument type mismatch: actual type is ''{0}'', but ''{1}'' was expected.",
             RENDER_TYPE,
             RENDER_TYPE,
             NOT_RENDERED

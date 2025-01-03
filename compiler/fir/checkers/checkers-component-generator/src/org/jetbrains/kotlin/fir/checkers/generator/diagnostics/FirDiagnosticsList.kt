@@ -657,8 +657,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val ARGUMENT_TYPE_MISMATCH by error<PsiElement> {
-            parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
+            parameter<ConeKotlinType>("expectedType")
             parameter<Boolean>("isMismatchDueToNullability")
         }
 
