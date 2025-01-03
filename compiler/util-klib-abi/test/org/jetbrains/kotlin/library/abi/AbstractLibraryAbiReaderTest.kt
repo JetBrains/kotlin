@@ -106,9 +106,6 @@ open class AbstractFirJsLibraryAbiReaderTest : AbstractJsLibraryAbiReaderTest<Fi
         get() = ::FirJsKlibSerializerFacade
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        defaultDirectives {
-            LANGUAGE with "+ContextReceivers"
-        }
         configureFirParser(FirParser.LightTree)
         super.configure(builder)
     }
