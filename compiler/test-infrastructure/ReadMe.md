@@ -81,12 +81,12 @@ If there are no `FILE` directives in module, then all content of module belongs 
 
 Each module can declare that it depends on some other module with following syntax:
 ```
-// MODULE: name[(dep1, dep2)[(friend 1, friend2)][(refined dep 1, refiend dep 2)]]
+// MODULE: name[(dep1, dep2)[(friend 1, friend2)][(dependsOn dep 1, dependsOn dep 2)]]
 ```
 - if module has no friend modules, you can write just `// MODULE: name(dep1, dep2)`
 - if module has no dependencies at all, you can write only module name: `// MODULE: name`
 - if module has no dependencies but has friends, then you should declare empty parentheses of dependencies: `// MODULE: name()(friend1, friend2)`
-- if module does not have normal dependencies but has refined ones, then you should declare empty parentheses for first two kinds: `// MODULE: name()()(refined dep 1, refiend dep 2)`
+- if module does not have normal dependencies but has dependsOn ones, then you should declare empty parentheses for first two kinds: `// MODULE: name()()(dependsOn dep 1, dependsOn dep 2)`
 
 # Implementation details
 
